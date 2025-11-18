@@ -29,6 +29,7 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 /// Allows browsing files shared across all conversations
 package struct FilesBrowserView: FilesViewProtocol {
     @StateObject package var viewModel: FilesViewModel
+    @Environment(\.colorScheme) private var colorScheme
     package var isBrowsing: Bool { true }
 
     package init(viewModel: @autoclosure @escaping () -> FilesViewModel) {
@@ -64,7 +65,7 @@ package struct FilesBrowserView: FilesViewProtocol {
             .navigationTitle(Strings.AllFiles.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
+            .toolbarBackground(colorScheme == .dark ? BaseColorPalette.Grays.gray95.color : .white, for: .navigationBar)
             .toolbar { toolbarContent }
             .if(showSearchBar) { view in
                 view.searchable(
@@ -108,7 +109,7 @@ package struct FilesBrowserView: FilesViewProtocol {
 // MARK: - Toolbar
 
 private extension FilesBrowserView {
-    
+
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .navigationBarTrailing) {
             Button {
@@ -119,7 +120,7 @@ private extension FilesBrowserView {
 
         }
     }
-    
+
 }
 
 // MARK: - Helper

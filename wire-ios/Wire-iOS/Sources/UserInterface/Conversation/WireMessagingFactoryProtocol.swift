@@ -43,7 +43,7 @@ protocol WireMessagingFactoryProtocol {
 
     @MainActor
     func makeFilesBrowserView(accentColor: WireAccentColor) -> UIViewController
-    
+
     @MainActor
     func makeAttachmentsPreviewView(
         attachments: [WireCellsMessageAttachment],

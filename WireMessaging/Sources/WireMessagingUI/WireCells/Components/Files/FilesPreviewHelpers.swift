@@ -122,21 +122,21 @@ extension FilesItemViewModel {
 }
 
 extension FilesFiltersViewModel {
-    
+
     /// A stubbed instance of `FilesFiltersViewModel` for SwiftUI previews.
     static func preview() -> FilesFiltersViewModel {
         let nodesAPI = MockNodesAPIProtocol()
         nodesAPI.getAllTags_MockValue = mockTags
-        
+
         return FilesFiltersViewModel(
             fetchTagsUseCase:
-                WireCellsGetTagSuggestionsUseCase(
-                    nodesAPI: nodesAPI
-                ),
-            appliedTags: nil
+            WireCellsGetTagSuggestionsUseCase(
+                nodesAPI: nodesAPI
+            ),
+            savedTags: nil
         )
     }
-    
+
 }
 
 // MARK: - Dependencies

@@ -24,94 +24,79 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 /// View model for the `FilesFiltersView`.
 @MainActor
 package final class FilesFiltersViewModel: ObservableObject {
-    
+
     struct TagModel: Identifiable, Hashable {
         let id = UUID()
         let name: String
         var isSelected: Bool
     }
-    
-    private let collapsedTagsLimit = 7
-    
-    private var expandedTags: [TagModel] = []
-    
-    private var collapsedTags: [TagModel] {
-        Array(expandedTags.prefix(collapsedTagsLimit))
-    }
-    
+
+    private let tagsBatchCount = 7
+    private var tags: [TagModel] = []
+
     var selectedTags: [TagModel] {
-        expandedTags.filter(\.isSelected)
+        tags.filter(\.isSelected)
     }
-    
-    var expandButtonTitle: String {
-        isExpanded ? Strings.AllFiles.Filters.Tags.showLess : Strings.AllFiles.Filters.Tags.showMore
+
+    var hasMore: Bool {
+        presentedTags.count < tags.count
     }
-    
-    var showExpandButton: Bool {
-        expandedTags.count > collapsedTagsLimit
-    }
-    
+
     var navigationTitle: String {
-        let selectedTagsCount = expandedTags.filter(\.isSelected).count
+        let selectedTagsCount = tags.filter(\.isSelected).count
         return selectedTagsCount == 0 ? Strings.AllFiles.Filters.navigationTitle : "\(Strings.AllFiles.Filters.navigationTitle) (\(selectedTagsCount))"
     }
-    
+
     @Published var presentedTags: [TagModel] = []
     @Published var isLoading: Bool = false
-    @Published var appliedTags: [String]
+    @Published var savedTags: [String]
     @Published var showError: Bool = false
-    
-    private var isExpanded = false
+
     private var preselectedTags: [String]?
     private let fetchTagsUseCase: any WireCellsGetTagSuggestionsUseCaseProtocol
-    
+
     init(
         fetchTagsUseCase: any WireCellsGetTagSuggestionsUseCaseProtocol,
-        appliedTags: [String]?
-        
+        savedTags: [String]?
+
     ) {
         self.fetchTagsUseCase = fetchTagsUseCase
-        self.appliedTags = appliedTags ?? []
+        self.savedTags = savedTags ?? []
     }
-    
+
     // MARK: - Actions
-    
+
     func fetch() async {
         do {
             isLoading = true
             defer { isLoading = false }
             let tags = try await fetchTagsUseCase.invoke()
-            expandedTags = tags
+            self.tags = tags
                 .filter { !$0.isEmpty }
-                .map { .init(name: $0, isSelected: appliedTags.contains($0)) }
+                .map { .init(name: $0, isSelected: savedTags.contains($0)) }
                 .sorted { $0.isSelected && !$1.isSelected }
-            presentedTags = collapsedTags
+            loadMore()
         } catch {
             showError = true
         }
     }
-    
-    func selectTag(tag: TagModel) {
-        guard let tagIndex = expandedTags.firstIndex(where: { tag.id == $0.id }) else { return }
-        expandedTags[tagIndex].isSelected.toggle()
+
+    func selectTag(_ tag: TagModel) {
+        guard let tagIndex = tags.firstIndex(where: { tag.id == $0.id }) else { return }
+        tags[tagIndex].isSelected.toggle()
         presentedTags[tagIndex].isSelected.toggle()
     }
 
-    func toggleTagsVisibility() {
-        isExpanded.toggle()
-        presentedTags = isExpanded ? expandedTags : collapsedTags
+    func loadMore() {
+        presentedTags += Array(tags[presentedTags.count...].prefix(tagsBatchCount))
     }
-    
+
     func apply() async {
-        appliedTags = selectedTags.map(\.name)
+        savedTags = selectedTags.map(\.name)
     }
-    
+
     func clearAll() async {
-        expandedTags.indices.forEach {
-            expandedTags[$0].isSelected = false
-        }
-        presentedTags.indices.forEach {
-            presentedTags[$0].isSelected = false
-        }
+        tags.indices.forEach { tags[$0].isSelected = false }
+        presentedTags.indices.forEach { presentedTags[$0].isSelected = false }
     }
 }

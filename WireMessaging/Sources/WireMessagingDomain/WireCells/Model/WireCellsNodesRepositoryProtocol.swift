@@ -79,7 +79,7 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
 
     /// An optional search term to filter nodes by name.
     package let searchTerm: String?
-    
+
     /// Filter nodes by tags names.
     package let tags: [String]
 

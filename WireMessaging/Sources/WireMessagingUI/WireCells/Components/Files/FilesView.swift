@@ -88,28 +88,30 @@ package struct FilesView: FilesViewProtocol {
             )
             .sheet(
                 item: $viewModel.sheetNavigation,
-                onDismiss: { Task { await viewModel.onDismiss() } }
-            ) { navigationItem in
-                switch navigationItem {
-                case let .editTags(fileItem: fileItem):
-                    TagsEditView(
-                        fileItem: fileItem,
-                        useCases: .init(
-                            updateTags: viewModel.useCases.updateTags,
-                            getSuggestions: viewModel.useCases.getTagSuggestions
-                        ),
-                        postSaveAction: {
-                            await viewModel.reload()
-                        }
-                    )
-                case let .renameFile(fileRenameView):
-                    fileRenameView
-                case let .createFolder(folderView):
-                    folderView
-                default:
-                    EmptyView()
+                onDismiss: {
+                    Task { await viewModel.onDismiss() }
+                }, content: { navigationItem in
+                    switch navigationItem {
+                    case let .editTags(fileItem: fileItem):
+                        TagsEditView(
+                            fileItem: fileItem,
+                            useCases: .init(
+                                updateTags: viewModel.useCases.updateTags,
+                                getSuggestions: viewModel.useCases.getTagSuggestions
+                            ),
+                            postSaveAction: {
+                                await viewModel.reload()
+                            }
+                        )
+                    case let .renameFile(fileRenameView):
+                        fileRenameView
+                    case let .createFolder(folderView):
+                        folderView
+                    default:
+                        EmptyView()
+                    }
                 }
-            }
+            )
         }
     }
 

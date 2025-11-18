@@ -23,12 +23,12 @@ import WireFoundation
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-struct FilesFilterView: View {
+struct FilesFiltersView: View {
     @StateObject package var viewModel: FilesFiltersViewModel
     @Environment(\.dismiss) var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
-    
+
     let id = UUID()
 
     package init(
@@ -36,13 +36,13 @@ struct FilesFilterView: View {
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
     }
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
                 ColorTheme.Backgrounds.background.color
                     .ignoresSafeArea(.all)
-                
+
                 ScrollView { tagsView }
             }
             .toolbar { toolbarContent }
@@ -50,7 +50,7 @@ struct FilesFilterView: View {
             .navigationTitle(viewModel.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .alert(L10n.Localizable.General.failure, isPresented: $viewModel.showError) {
-                Button(L10n.Localizable.General.confirm, role: .cancel) { }
+                Button(L10n.Localizable.General.confirm, role: .cancel) {}
             }
             .safeAreaInset(edge: .bottom, spacing: 0) { applyButton } // floating button
             .overlay { if viewModel.isLoading { ProgressView() } }
@@ -62,12 +62,12 @@ struct FilesFilterView: View {
 
 // MARK: - Tags
 
-private extension FilesFilterView {
+private extension FilesFiltersView {
     var tagsView: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text(Strings.AllFiles.Filters.Tags.sectionTitle)
                 .wireTextStyle(.body3)
-            
+
             FlowLayout(spacing: 16, alignment: .leading) {
                 ForEach(viewModel.presentedTags) { tag in
                     TagPill(
@@ -75,50 +75,55 @@ private extension FilesFilterView {
                         isSelected: tag.isSelected
                     )
                     .onTapGesture {
-                        viewModel.selectTag(tag: tag)
+                        viewModel.selectTag(tag)
                     }
                 }
             }.frame(maxWidth: .infinity, alignment: .leading)
-            
-            if viewModel.showExpandButton {
+
+            if viewModel.hasMore {
                 Button {
                     withAnimation {
-                        viewModel.toggleTagsVisibility()
+                        viewModel.loadMore()
                     }
                 } label: {
-                    Text(viewModel.expandButtonTitle)
+                    Text(Strings.AllFiles.Filters.Tags.loadMore)
+                        .accessibilityIdentifier("loadMoreButton")
                 }
-                
             }
-            
+
             Divider()
-            
+
         }.padding()
     }
-    
+
     private struct TagPill: View {
         let text: String
         let isSelected: Bool
 
         var body: some View {
             Text(text)
-                .foregroundStyle(isSelected ? ColorTheme.Base.primary.color : ColorTheme.Backgrounds.onSurface.color)
-                .wireTextStyle(.h4).fontWeight(.semibold)
+                .foregroundStyle(
+                    isSelected
+                        ? ColorTheme.Base.primary.color
+                        : ColorTheme.Backgrounds.onSurface.color
+                )
+                .wireTextStyle(.h4)
+                .fontWeight(.semibold)
                 .padding(.horizontal, 8)
-                .padding(.vertical, 8)
+                .padding(.vertical, 4)
                 .background(
                     isSelected
-                    ? ColorTheme.Base.onPrimaryVariant.color.opacity(0.1)
-                    : ColorTheme.Backgrounds.surface.color
+                        ? ColorTheme.Base.primaryVariant.color
+                        : ColorTheme.Backgrounds.surface.color
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 8))
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(
                             isSelected
-                            ? ColorTheme.Base.onPrimaryVariant.color
-                            : .clear,
-                            lineWidth: 2
+                                ? ColorTheme.Base.onPrimaryVariant.color
+                                : .clear,
+                            lineWidth: 1
                         )
                 )
                 .shadow(color: Color.black.opacity(0.05), radius: 1, y: 1)
@@ -126,9 +131,20 @@ private extension FilesFilterView {
     }
 }
 
+// MARK: - Toolbar
+
+private extension FilesFiltersView {
+
+    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) { clearAllButton }
+        ToolbarItem(placement: .topBarTrailing) { closeButton }
+    }
+
+}
+
 // MARK: - Buttons
 
-private extension FilesFilterView {
+private extension FilesFiltersView {
     var applyButton: some View {
         Button {
             Task {
@@ -147,17 +163,7 @@ private extension FilesFilterView {
         .wireTextStyle(.buttonBig)
         .padding()
     }
-}
 
-// MARK: - Toolbar
-
-private extension FilesFilterView {
-    
-    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) { clearAllButton }
-        ToolbarItem(placement: .topBarTrailing) { closeButton }
-    }
-    
     var clearAllButton: some View {
         Button {
             Task { await viewModel.clearAll() }
@@ -167,7 +173,7 @@ private extension FilesFilterView {
         }.disabled(viewModel.selectedTags.isEmpty)
 
     }
-    
+
     var closeButton: some View {
         Button(
             action: { dismiss() },
@@ -178,11 +184,10 @@ private extension FilesFilterView {
             }
         )
         .accessibilityLabel(Accessibility.Files.close)
-        .accessibilityIdentifier("close")
+        .accessibilityIdentifier("closeButton")
     }
-    
 }
 
 #Preview {
-    FilesFilterView(viewModel: .preview())
+    FilesFiltersView(viewModel: .preview())
 }

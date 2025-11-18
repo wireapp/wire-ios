@@ -79,7 +79,7 @@ package final class FilesViewModel: ObservableObject {
         case editTags(fileItem: FilesViewItem)
         case renameFile(view: FileRenameView)
         case createFolder(view: CreateFolderView)
-        case filters(view: FilesFilterView)
+        case filters(view: FilesFiltersView)
 
         var id: String {
             switch self {
@@ -269,22 +269,22 @@ package final class FilesViewModel: ObservableObject {
             },
         )
     }
-    
+
     func openFilters() {
         let filesFiltersViewModel = FilesFiltersViewModel(
             fetchTagsUseCase: useCases.getTagSuggestions,
-            appliedTags: selectedTags
+            savedTags: selectedTags
         )
-        
-        filesFiltersViewModel.$appliedTags
+
+        filesFiltersViewModel.$savedTags
             .sink { [weak self] tags in
                 guard let self else { return }
                 shouldReload = selectedTags != tags
                 selectedTags = tags
             }.store(in: &subscriptions)
-        
+
         sheetNavigation = .filters(
-            view: FilesFilterView(viewModel: filesFiltersViewModel)
+            view: FilesFiltersView(viewModel: filesFiltersViewModel)
         )
     }
 
@@ -319,7 +319,7 @@ package final class FilesViewModel: ObservableObject {
 
         setNavigation(newPath)
     }
-    
+
     func onDismiss() async {
         if shouldReload {
             await reload()
@@ -367,11 +367,11 @@ package final class FilesViewModel: ObservableObject {
 
         // to know whether we need to reload nodes.
         viewModel.$didCreate
-            .filter { $0 }
+            .filter(\.self)
             .sink { [weak self] didCreate in
                 self?.shouldReload = didCreate
             }.store(in: &subscriptions)
-        
+
         let createFolderView = CreateFolderView(
             viewModel: viewModel
         )
