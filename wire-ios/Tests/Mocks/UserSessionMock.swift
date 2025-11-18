@@ -326,8 +326,8 @@ final class UserSessionMock: UserSession {
         MockCreateConversationGuestLinkUseCaseProtocol()
     }
 
-    func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
-        MockSetAllowGuestAndServicesUseCaseProtocol()
+    func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol {
+        MockSetAllowGuestAndAppsUseCaseProtocol()
     }
 
     func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol {

@@ -37,7 +37,7 @@ package struct AllMeetingsView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button {
-                            viewModel.meetNowTapped()
+                            viewModel.createInstantMeetingTapped()
                         } label: {
                             Label(Strings.meetNow, systemImage: "chevron.forward")
                         }
@@ -52,9 +52,16 @@ package struct AllMeetingsView: View {
                             .renderingMode(.template)
                     }
                     .accessibilityIdentifier("scheduleMeetingBarButton")
+                    .accessibilityLabel(Text(L10n.Accessibility.WireMeetings.VideoButton.description))
                 }
             }
             .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
+            .sheet(isPresented: $viewModel.isCreateInstantMeetingPresented) {
+                CreateInstantMeetingView(viewModel: viewModel.makeCreateInstantMeetingViewModel())
+            }
+            .sheet(isPresented: $viewModel.isScheduleMeetingPresented) {
+                ScheduleMeetingView(viewModel: viewModel.makeScheduleMeetingViewModel())
+            }
     }
 }

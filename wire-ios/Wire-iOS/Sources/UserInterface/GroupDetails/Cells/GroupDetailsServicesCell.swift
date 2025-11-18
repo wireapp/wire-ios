@@ -42,7 +42,7 @@ final class GroupDetailsServicesCell: GroupDetailsDisclosureOptionsCell {
     }
 
     func configure(with conversation: GroupDetailsConversationType) {
-        isOn = conversation.allowServices
+        isOn = conversation.allowApps
     }
 
     override var isHighlighted: Bool {

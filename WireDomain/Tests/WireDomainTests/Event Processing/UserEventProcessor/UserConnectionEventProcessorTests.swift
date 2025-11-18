@@ -75,6 +75,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         // Mock
 
         connectionsRepository.updateConnection_MockMethod = { _ in }
+        connectionsRepository.scheduleToSyncConversationWith_MockMethod = { _ in }
         oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in
             expectation.fulfill()
             return .noAction
@@ -88,6 +89,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         // Then
 
         XCTAssertEqual(connectionsRepository.updateConnection_Invocations, [event.connection])
+        XCTAssertEqual(connectionsRepository.scheduleToSyncConversationWith_Invocations, [event.connection])
         XCTAssertEqual(oneOnOneResolver.resolveOneOnOneConversationWith_Invocations.count, 1)
     }
 
@@ -118,6 +120,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
 
         XCTAssertEqual(connectionsRepository.updateConnection_Invocations, [event.connection])
         XCTAssertEqual(oneOnOneResolver.resolveOneOnOneConversationWith_Invocations.count, 1)
+        XCTAssertEqual(connectionsRepository.scheduleToSyncConversationWith_Invocations.count, 0)
     }
 
     private enum Scaffolding {

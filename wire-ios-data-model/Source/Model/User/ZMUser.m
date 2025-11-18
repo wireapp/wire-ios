@@ -157,12 +157,12 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 @implementation ZMUser
 
-- (BOOL)isServiceUser
+- (BOOL)isApp
 {
     return self.serviceIdentifier != nil && self.providerIdentifier != nil;
 }
 
-+ (NSSet<NSString *> *)keyPathsForValuesAffectingIsServiceUser
++ (NSSet<NSString *> *)keyPathsForValuesAffectingIsApp
 {
     return [NSSet setWithObjects:ServiceIdentifierKey, ProviderIdentifierKey, nil];
 }
@@ -243,7 +243,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 - (BOOL)canBeConnected;
 {
-    if (self.isServiceUser || self.isWirelessUser) {
+    if (self.isApp || self.isWirelessUser) {
         return NO;
     }
     return ! self.isConnected && ! self.isPendingApprovalByOtherUser;
@@ -505,11 +505,11 @@ static NSString *const PrimaryKey = @"primaryKey";
     NSArray<NSString *> *arrayProtocols = [transportData optionalArrayForKey:@"supported_protocols"];
     if (arrayProtocols != nil) {
         NSSet<NSString *> *supportedProtocols = [[NSSet alloc] initWithArray:arrayProtocols];
-        [self setSupportedProtocols:supportedProtocols];
+        [self updateSupportedProtocols:supportedProtocols];
     } else {
         // fallback to proteus as default supported protocol,
         // we don't have swift constants here unfortunately.
-        [self setSupportedProtocols:[[NSSet alloc] initWithObjects:@"proteus", nil]];
+        [self updateSupportedProtocols:[[NSSet alloc] initWithObjects:@"proteus", nil]];
     }
 
 

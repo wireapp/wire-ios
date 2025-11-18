@@ -27,7 +27,7 @@ struct FileRenameView: View, Identifiable {
     @StateObject package var viewModel: FileRenameViewModel
     @Environment(\.dismiss) var dismiss
 
-    var id = UUID()
+    let id = UUID()
 
     init(viewModel: @autoclosure @escaping () -> FileRenameViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
@@ -41,8 +41,8 @@ struct FileRenameView: View, Identifiable {
 
                 VStack {
                     ValidationTextField(
-                        title: Strings.Files.FileName.title,
-                        placeholder: Strings.Files.RenameFile.placeholder,
+                        title: viewModel.title,
+                        placeholder: viewModel.placeholder,
                         textInput: $viewModel.filenameInput,
                         errorMessage: $viewModel.errorMessage,
                         isFocused: $viewModel.isFocused
@@ -58,7 +58,7 @@ struct FileRenameView: View, Identifiable {
                     Spacer()
                 }
             }
-            .navigationTitle(Strings.Files.RenameFile.navigationTitle)
+            .navigationTitle(viewModel.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
             .toolbar { toolbarContent }
@@ -124,5 +124,5 @@ private extension FileRenameView {
 }
 
 #Preview {
-    FileRenameView(viewModel: .preview())
+    FileRenameView(viewModel: .preview(kind: .file))
 }

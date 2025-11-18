@@ -32,117 +32,136 @@ final class FileRenameViewTests: XCTestCase {
     private var snapshotHelper: SnapshotHelper!
     private var renameNodeUseCase: MockWireCellsRenameNodeUseCaseProtocol!
     private var viewModel: FileRenameViewModel!
+    private let kinds = [FilesViewItem.Kind.file, .folder]
 
     @MainActor
     override func setUp() async throws {
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
         renameNodeUseCase = MockWireCellsRenameNodeUseCaseProtocol()
-
-        let fileRenameModel = FileRenameViewModel.FileRenameModel(
-            nodeID: .mockID1,
-            filename: "foo.png",
-            filepath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image foo.png"
-        )
-
-        viewModel = FileRenameViewModel(
-            renameNodeUseCase: renameNodeUseCase,
-            fileRenameModel: fileRenameModel
-        )
     }
 
     @MainActor
     override func tearDown() async throws {
         snapshotHelper = nil
         renameNodeUseCase = nil
-        viewModel = nil
     }
 
     @MainActor
-    func testFilesRenameView() {
-        let view = makeView()
+    func testFileRenameView() {
+        for kind in kinds {
+            let (_, view) = makeView(kind: kind)
+            let name = kind == .file ? ".file." : ".folder."
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: view, named: "\(name)" + "light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: view, named: "\(name)" + "dark")
+        }
     }
 
     @MainActor
-    func testFilesRenameView_WrongCharacterInputError() {
-        let view = makeView()
-        viewModel.filenameInput = "/"
+    func testFileRenameView_WrongCharacterInputError() {
+        for kind in kinds {
+            let (viewModel, view) = makeView(kind: kind)
+            viewModel.filenameInput = "/"
+            let name = kind == .file ? ".file." : ".folder."
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: view, named: "\(name)" + "light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: view, named: "\(name)" + "dark")
+        }
     }
 
     @MainActor
-    func testFilesRenameView_TooLongInputError() {
-        let view = makeView()
-        viewModel.filenameInput = Array(repeating: "r", count: 65).joined()
+    func testFileRenameView_TooLongInputError() {
+        for kind in kinds {
+            let (viewModel, view) = makeView(kind: kind)
+            viewModel.filenameInput = Array(repeating: "r", count: 65).joined()
+            let name = kind == .file ? ".file." : ".folder."
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: view, named: "\(name)" + "light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: view, named: "\(name)" + "dark")
+        }
     }
 
     @MainActor
-    func testFilesRenameView_Loading() {
-        let view = makeView()
-        viewModel.isLoading = true
+    func testFileRenameView_Loading() {
+        for kind in kinds {
+            let (viewModel, view) = makeView(kind: kind)
+            viewModel.isLoading = true
+            let name = kind == .file ? ".file." : ".folder."
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: view, named: "\(name)" + "light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: view, named: "\(name)" + "dark")
+        }
     }
 
     @MainActor
-    func testFilesRenameView_FileAlreadyExistsError() async {
-        let view = makeView()
-        renameNodeUseCase.invokeNodeIDNodeFilepathNewFilename_MockError = WireCellsRenameNodeError.fileAlreadyExists
-        _ = await viewModel.save()
+    func testFileRenameView_AlreadyExistsError() async {
+        for kind in kinds {
+            let (viewModel, view) = makeView(kind: kind)
+            renameNodeUseCase.invokeNodeIDNodeFilepathNewFilename_MockError = WireCellsRenameNodeError.fileAlreadyExists
+            _ = await viewModel.save()
+            let name = kind == .file ? ".file." : ".folder."
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: view, named: "\(name)" + "light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: view, named: "\(name)" + "dark")
+        }
     }
 
     @MainActor
-    func testFilesRenameView_EmptyInput() {
-        let view = makeView()
-        viewModel.filenameInput = ""
+    func testFileRenameView_EmptyInput() {
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+        for kind in kinds {
+            let (viewModel, view) = makeView(kind: kind)
+            viewModel.filenameInput = ""
+            let name = kind == .file ? ".file." : ".folder."
+
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: view, named: "\(name)" + "light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: view, named: "\(name)" + "dark")
+        }
     }
 
     @MainActor
-    private func makeView() -> some View {
-        let viewModel = viewModel!
+    private func makeView(kind: FilesViewItem.Kind = .file) -> (FileRenameViewModel, some View) {
+        let model = FileRenameViewModel.Model(
+            nodeID: .mockID1,
+            filename: "foo.png",
+            filepath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image foo.png"
+        )
 
-        return FileRenameView(viewModel: viewModel)
+        let viewModel = FileRenameViewModel(
+            renameNodeUseCase: renameNodeUseCase,
+            model: model,
+            kind: kind
+        )
+
+        let view = FileRenameView(viewModel: viewModel)
             .frame(width: 375, height: 667)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+
+        return (viewModel, view)
     }
 
 }

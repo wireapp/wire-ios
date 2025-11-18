@@ -92,14 +92,14 @@ struct WireCellsAttachmentsPreviewItemView: View {
                 .frame(height: 74)
                 .frame(idealWidth: 288)
             case (.document, .large):
-                WireCellsDocumentAttachmentPreview(
+                WireCellsLargeDocumentPreviewView(
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
                     progress: viewModel.progress,
-                    isError: viewModel.isAssetDownloadError,
+                    downloadError: viewModel.isAssetDownloadError,
+                    url: viewModel.imagePreviewURL,
                 )
-                .frame(height: 74)
                 .frame(idealWidth: 288)
             case (.audio, .small), (.audio, .large):
                 WireCellsDocumentAttachmentPreview(
@@ -135,5 +135,4 @@ struct WireCellsAttachmentsPreviewItemView: View {
     WireCellsAttachmentsPreviewItemView(
         viewModel: WireCellsAttachmentsPreviewViewModel.makePreview().itemViewModel(index: 0)
     )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

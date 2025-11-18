@@ -247,6 +247,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         dismissConversationListIfNeeded()
         dismissArchiveIfNeeded()
         dismissSettingsIfNeeded()
+        dismissMeetingsIfNeeded()
 
         // move the files from the tab bar controller to the split view controller
         if let filesUI = tabBarController.filesUI {

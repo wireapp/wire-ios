@@ -41,38 +41,13 @@ struct WireCellsDocumentAttachmentPreview: View {
             progress: progress,
             progressColor: isError ? Constants.errorColor : ColorTheme.Base.primary.color
         ) {
-            VStack(alignment: .leading) {
-                HStack(spacing: 4) {
-                    if isError {
-                        Image(systemName: "exclamationmark.triangle")
-                            .fontWeight(.semibold)
-                            .font(.system(size: 14 * scale))
-                            .foregroundStyle(Constants.errorColor)
-                    } else {
-                        headerIcon
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 16 * scale)
-                    }
-
-                    Text(headerText)
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                        .wireTextStyle(.subline1)
-                        .lineLimit(1)
-
-                    Spacer()
-                }
-                .padding([.horizontal, .top], 8)
-
-                Spacer(minLength: 0)
-
-                Text(labelText)
-                    .foregroundStyle(ColorTheme.Backgrounds.onSurfaceVariant.color)
-                    .wireTextStyle(.h5)
-                    .lineLimit(2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding([.horizontal, .bottom], 8)
-            }
+            WireCellsDocumentHeaderView(
+                headerIcon: headerIcon,
+                headerText: headerText,
+                labelText: labelText,
+                progress: progress,
+                isError: isError,
+            )
             .background(ColorTheme.Backgrounds.surfaceVariant.color)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
@@ -88,5 +63,4 @@ struct WireCellsDocumentAttachmentPreview: View {
         isError: false
     )
     .frame(width: 222, height: 74)
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

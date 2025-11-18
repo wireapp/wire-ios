@@ -111,7 +111,7 @@ package struct DetermineAuthMethodView: View {
     @ViewBuilder private var message: some View {
         Text(Strings.Identity.Input.body)
             .multilineTextAlignment(.center)
-            .wireTextStyle(.body1)
+            .font(for: .body1)
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.trailing)
