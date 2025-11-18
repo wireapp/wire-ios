@@ -114,7 +114,7 @@ final class FileRenameViewTests: XCTestCase {
     func testFileRenameView_AlreadyExistsError() async {
         for kind in kinds {
             let (viewModel, view) = makeView(kind: kind)
-            renameNodeUseCase.invokeNodeIDNodeFilepathNewFilename_MockError = WireCellsRenameNodeError.fileAlreadyExists
+            renameNodeUseCase.invokeNodeIDNodeFilepathNewFilenameIsFolder_MockError = WireCellsRenameNodeError.fileAlreadyExists
             _ = await viewModel.save()
             let name = kind == .file ? ".file." : ".folder."
 

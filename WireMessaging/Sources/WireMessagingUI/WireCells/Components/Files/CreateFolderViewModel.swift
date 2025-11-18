@@ -31,6 +31,10 @@ final class CreateFolderViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var isFocused: Bool = true
     @Published var didCreate: Bool = false
+    
+    var isCreatedDisabled: Bool {
+        errorMessage != nil || folderNameInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
 
     private let createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol
     private let folderPath: String
@@ -74,6 +78,7 @@ final class CreateFolderViewModel: ObservableObject {
             return false
         } catch {
             isLoading = false
+            errorMessage = L10n.Localizable.General.failure
             WireLogger.wireCells.error("Creating folder failed: \(error)")
             return false
         }

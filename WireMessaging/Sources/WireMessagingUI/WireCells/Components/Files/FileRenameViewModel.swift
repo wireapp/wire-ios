@@ -42,6 +42,10 @@ final class FileRenameViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var isFocused: Bool = true
     @Published var didRename: Bool = false
+    
+    var isSaveDisabled: Bool {
+        errorMessage != nil || filenameInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
 
     private let renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol
     private let model: Model
@@ -99,7 +103,7 @@ final class FileRenameViewModel: ObservableObject {
         kind: FilesViewItem.Kind
     ) {
         self.renameNodeUseCase = renameNodeUseCase
-        self.filenameInput = Self.removeFileExtension(from: model.filename)
+        self.filenameInput = kind == .folder ? model.filename : Self.removeFileExtension(from: model.filename)
         self.model = model
         self.kind = kind
 
@@ -117,7 +121,8 @@ final class FileRenameViewModel: ObservableObject {
             try await renameNodeUseCase.invoke(
                 nodeID: nodeID,
                 nodeFilepath: nodeFilePath,
-                newFilename: filenameInput
+                newFilename: filenameInput,
+                isFolder: kind == .folder
             )
 
             didRename = true
@@ -136,6 +141,7 @@ final class FileRenameViewModel: ObservableObject {
             return false
         } catch {
             isLoading = false
+            errorMessage = L10n.Localizable.General.failure
             WireLogger.wireCells.error("Renaming file failed: \(error)")
             return false
         }
