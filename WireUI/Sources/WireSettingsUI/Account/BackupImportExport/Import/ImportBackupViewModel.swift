@@ -163,8 +163,8 @@ final class ImportBackupViewModel: ObservableObject {
             } catch ImportBackupError.invalidFileExtension {
                 logger.warn("restore failed due to invalid file extension")
                 alertContent = .init(
-                    title: Strings.Alert.IncompatibleBackupError.title,
-                    message: Strings.Alert.IncompatibleBackupError.message,
+                    title: Strings.Alert.InvalidFileExtensionError.title,
+                    message: Strings.Alert.InvalidFileExtensionError.message,
                     action: Strings.Alert.ok
                 )
                 state = .restoreFailed

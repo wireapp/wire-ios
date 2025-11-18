@@ -50,6 +50,8 @@
 "importBackup.alert.success.message" = "Your history is restored.";
 "importBackup.alert.genericError.title" = "Something went wrong";
 "importBackup.alert.genericError.message" = "Your history could not be restored. Please try again or contact the Wire customer support.";
+"importBackup.alert.invalidFileExtensionError.title" = "Invalid file";
+"importBackup.alert.invalidFileExtensionError.message" = "The selected file is not a valid backup file. Please select a file with extension .wbu, .ios_wbu, or .ios-wbu.";
 "importBackup.alert.incompatibleBackupError.title" = "Incompatible backup";
 "importBackup.alert.incompatibleBackupError.message" = "This backup was created by a newer or outdated version of Wire and cannot be restored here.";
 "importBackup.alert.wrongFileError.title" = "Wrong backup file";
