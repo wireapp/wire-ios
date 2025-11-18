@@ -27,7 +27,6 @@ struct FilesFiltersView: View {
     @StateObject package var viewModel: FilesFiltersViewModel
     @Environment(\.dismiss) var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
-    @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
 
     let id = UUID()
 
@@ -55,7 +54,6 @@ struct FilesFiltersView: View {
             .safeAreaInset(edge: .bottom, spacing: 0) { applyButton } // floating button
             .overlay { if viewModel.isLoading { ProgressView() } }
             .task { await viewModel.fetch() }
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         }
     }
 }
@@ -66,7 +64,7 @@ private extension FilesFiltersView {
     var tagsView: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text(Strings.AllFiles.Filters.Tags.sectionTitle)
-                .wireTextStyle(.body3)
+                .font(for: .body3)
 
             FlowLayout(spacing: 16, alignment: .leading) {
                 ForEach(viewModel.presentedTags) { tag in
@@ -107,7 +105,7 @@ private extension FilesFiltersView {
                         ? ColorTheme.Base.primary.color
                         : ColorTheme.Backgrounds.onSurface.color
                 )
-                .wireTextStyle(.h4)
+                .font(for: .h4)
                 .fontWeight(.semibold)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
@@ -159,8 +157,8 @@ private extension FilesFiltersView {
         .buttonStyle(.borderedProminent)
         .controlSize(.large)
         .buttonBorderShape(.roundedRectangle(radius: 16))
-        .tint(wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color)
-        .wireTextStyle(.buttonBig)
+        .tint(Color(wireAccentColor))
+        .font(for: .buttonBig)
         .padding()
     }
 

@@ -53,7 +53,6 @@ final class FilesFiltersViewTests: XCTestCase {
         let viewModel = await makeViewModel(tags: Array(mockTags.prefix(7)))
         let view = FilesFiltersView(viewModel: viewModel)
             .frame(width: 375, height: 667)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -72,7 +71,6 @@ final class FilesFiltersViewTests: XCTestCase {
 
         let view = FilesFiltersView(viewModel: viewModel)
             .frame(width: 375, height: 667)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -90,7 +88,6 @@ final class FilesFiltersViewTests: XCTestCase {
 
         let view = FilesFiltersView(viewModel: viewModel)
             .frame(width: 375, height: 667)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         viewModel.loadMore()
 

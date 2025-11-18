@@ -193,7 +193,6 @@ public extension WireMessagingFactory {
                 )
             )
             .environment(\.wireAccentColor, accentColor)
-            .environment(\.wireAccentColorMapping, WireAccentColorMapping())
         )
     }
 
