@@ -31,9 +31,12 @@ enum NavigationDestination {
 }
 
 protocol AuthenticatedRouterProtocol: AnyObject {
+//    func startObservingCalls()
     func updateActiveCallPresentationState()
     func minimizeCallOverlay(animated: Bool, completion: Completion?)
     func navigate(to destination: NavigationDestination)
+    func markUIReadyForCallPresentation()
+    var shouldCheckForActiveCallOnAppear: Bool { get set }
 }
 
 final class AuthenticatedRouter {
@@ -59,6 +62,8 @@ final class AuthenticatedRouter {
         _zClientViewController = zClientViewController
         return zClientViewController
     }
+
+    var shouldCheckForActiveCallOnAppear = false
 
     // MARK: - Init
 
@@ -165,6 +170,14 @@ final class AuthenticatedRouter {
 // MARK: - AuthenticatedRouterProtocol
 
 extension AuthenticatedRouter: AuthenticatedRouterProtocol {
+
+//    func startObservingCalls() {
+//        activeCallRouter.startObserving()
+//    }
+
+    func markUIReadyForCallPresentation() {
+        activeCallRouter.markUIReadyForCallPresentation()
+    }
 
     func updateActiveCallPresentationState() {
         activeCallRouter.updateActiveCallPresentationState()

@@ -126,7 +126,13 @@ final class AppRootRouter {
             duration: 0.2,
             options: .transitionCrossDissolve,
             animations: {},
-            completion: { _ in completion() }
+            completion: { _ in
+                // Defer completion to next run loop to ensure view hierarchy is fully ready
+                // This allows the view controller to complete viewDidAppear before we present modals
+                DispatchQueue.main.async {
+                    completion()
+                }
+            }
         )
     }
 
@@ -431,16 +437,10 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         self.authenticatedRouter = authenticatedRouter
 
-//        replaceRootViewController(by: authenticatedRouter.zClientViewController, completion: completion)
-//        replaceRootViewController(by: authenticatedRouter.zClientViewController) { [weak self] in
-//            // UI is now ready - safe to present modals
-//            self?.authenticatedRouter?.updateActiveCallPresentationState()
-//            completion()
-//        }
-        replaceRootViewController(by: authenticatedRouter.zClientViewController) { [weak self] in
-            // UI is now ready - safe to present modals
-            self?.authenticatedRouter?.updateActiveCallPresentationState()
+        // Signal that we should check for active call when view appears
+        authenticatedRouter.shouldCheckForActiveCallOnAppear = true
 
+        replaceRootViewController(by: authenticatedRouter.zClientViewController) { [weak self] in
             // UI is ready now - safe to wire up URL router
             self?.urlActionRouter.authenticatedRouter = authenticatedRouter
             completion()
@@ -522,12 +522,17 @@ extension AppRootRouter {
             presentAlertForDeletedAccountIfNeeded(error)
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
         case .authenticated:
-            // This is needed to display an ongoing call when coming from the background.
-//            authenticatedRouter?.updateActiveCallPresentationState()
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-//                self?.authenticatedRouter?.updateActiveCallPresentationState()
-//            }
-            //urlActionRouter.authenticatedRouter = authenticatedRouter
+//            // Start observing calls now that UI is ready and state transition is complete
+//            // This prevents observers from firing before root view controller is set up
+//            authenticatedRouter?.startObservingCalls()
+
+            // Mark UI ready FIRST (before any presentation attempts)
+            authenticatedRouter?.markUIReadyForCallPresentation()
+
+            // Note: Call presentation now happens in ZClientViewController.viewDidAppear()
+            // when shouldCheckForActiveCallOnAppear flag is set (set in showAuthenticated)
+            // This ensures the view hierarchy is fully ready before presenting the call UI
+
             ZClientViewController.shared?.legalHoldDisclosureController?.discloseCurrentState(cause: .appOpen)
             sessionManager.processPendingURLActionRequiresAuthentication()
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
