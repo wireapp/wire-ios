@@ -54,7 +54,7 @@ package struct OnPremHeaderView: View {
         })
         .accessibilityIdentifier(Locators.WelcomePage.onPremInfoButton.rawValue)
         .multilineTextAlignment(.center)
-        .font(.textStyle(.h2))
+        .font(for: .h2)
         .lineLimit(nil)
         .fixedSize(horizontal: false, vertical: true)
         .alert(Strings.Alert.title, isPresented: $showCustomBackendAlert) {

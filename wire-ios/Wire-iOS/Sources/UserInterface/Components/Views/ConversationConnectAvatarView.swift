@@ -111,10 +111,10 @@ extension Mode {
         case (0, _):
             self = .none
         case (1, .group?):
-            let isServiceUser = users[0].isServiceUser
-            self = isServiceUser ? .one(serviceUser: isServiceUser) : .four
+            let isApp = users[0].isApp
+            self = isApp ? .one(serviceUser: isApp) : .four
         case (1, _):
-            self = .one(serviceUser: users[0].isServiceUser)
+            self = .one(serviceUser: users[0].isApp)
         default:
             self = .four
         }

@@ -35,7 +35,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     private var userIsSelfUser = false
     private var isSelfUserPartOfATeam = false
-    private var userIsServiceUser = false
+    private var userIsApp = false
 
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
@@ -352,7 +352,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         if !checkmarkIconView.isHidden {
             accessibilityHint = isSelected ? CreateConversation.SelectedUser.hint : CreateConversation.UnselectedUser
                 .hint
-        } else if userIsServiceUser {
+        } else if userIsApp {
             accessibilityHint = ServicesList.ServiceCell.hint
         } else {
             accessibilityHint = ContactsList.UserCell.hint
@@ -389,7 +389,7 @@ extension UserCell {
         self.userStatus = userStatus
         self.userIsSelfUser = userIsSelfUser
         self.isSelfUserPartOfATeam = isSelfUserPartOfATeam
-        userIsServiceUser = user.isServiceUser
+        userIsApp = user.isApp
 
         let subtitle: NSAttributedString? = if overrideSubtitle == nil {
             self.subtitle(for: user)
@@ -451,7 +451,7 @@ extension UserCell: UserCellSubtitleProtocol {}
 extension UserCell {
 
     private func subtitle(for user: UserType) -> NSAttributedString? {
-        if user.isServiceUser, let service = user as? SearchServiceUser {
+        if user.isApp, let service = user as? SearchServiceUser {
             subtitle(forServiceUser: service)
         } else {
             subtitle(forRegularUser: user)

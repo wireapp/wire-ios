@@ -41,7 +41,7 @@ struct CompletionView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text(String.formated(key: "individualToTeam.completion.body", bundle: .module, teamName))
-                .wireTextStyle(.body1)
+                .font(for: .body1)
             Spacer()
 
             Button(

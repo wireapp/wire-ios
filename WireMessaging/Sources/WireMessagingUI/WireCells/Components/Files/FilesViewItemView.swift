@@ -31,13 +31,16 @@ struct FilesViewItemView: View {
     @ScaledMetric private var imageHeight: CGFloat = 28
 
     private var canRenameFile: Bool
+    private var canEditTags: Bool
 
     init(
         viewModel: @autoclosure @escaping () -> FilesItemViewModel,
-        canRenameFile: Bool = false
+        canRenameFile: Bool = false,
+        canEditTags: Bool = false,
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
         self.canRenameFile = canRenameFile
+        self.canEditTags = canEditTags
     }
 
     var body: some View {
@@ -50,18 +53,44 @@ struct FilesViewItemView: View {
                     .frame(width: 56, height: imageHeight)
                     .padding(.horizontal, 4)
 
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: 5) {
                     Text(viewModel.fileName)
-                        .wireTextStyle(.body2)
+                        .font(for: .body2)
                         .lineLimit(1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
-                    Text(viewModel.subtitle ?? "")
-                        .wireTextStyle(.subline1)
-                        .lineLimit(1)
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                }.environment(\.wireTextStyleMapping, WireTextStyleMapping())
+                    HStack(spacing: 5) {
+                        let tagsInfo = viewModel.tagsInfo
 
+                        if let firstTag = tagsInfo.firstTag {
+                            Text(firstTag)
+                                .font(for: .subline1)
+                                .fontWeight(.medium)
+                                .lineLimit(1)
+                                .foregroundStyle(ColorTheme.Base.primary.color)
+                                .padding(.vertical, 2)
+                                .padding(.horizontal, 5)
+                                .background {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(ColorTheme.Base.primaryVariant.color)
+                                }
+                        }
+
+                        if let additionalTagsIndicator = tagsInfo.additionalTagsIndicator {
+                            Text(additionalTagsIndicator)
+                                .font(for: .subline1)
+                                .fontWeight(.medium)
+                                .lineLimit(1)
+                                .foregroundStyle(ColorTheme.Base.primary.color)
+                                .padding(.trailing, 2)
+                        }
+
+                        Text(viewModel.subtitle ?? "")
+                            .font(for: .subline1)
+                            .lineLimit(1)
+                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    }
+                }
                 Spacer()
 
                 Menu {
@@ -78,6 +107,12 @@ struct FilesViewItemView: View {
                     if canRenameFile {
                         Button(action: rename) {
                             Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
+                        }
+                    }
+
+                    if canEditTags {
+                        Button(action: editTags) {
+                            Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
                         }
                     }
 
@@ -128,6 +163,10 @@ struct FilesViewItemView: View {
         Task { await viewModel.rename() }
     }
 
+    private func editTags() {
+        viewModel.onEditTagsSelected()
+    }
+
     private func delete() {
         viewModel.showDeleteConfirmation()
     }
@@ -143,6 +182,10 @@ struct FilesViewItemView: View {
 }
 
 #Preview {
-    FilesViewItemView(viewModel: .preview(), canRenameFile: true)
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    VStack(spacing: 0) {
+        FilesViewItemView(viewModel: .preview())
+        FilesViewItemView(viewModel: .preview(), canRenameFile: true, canEditTags: true)
+        FilesViewItemView(viewModel: .preview(tags: ["urgent"]), canRenameFile: true, canEditTags: true)
+        FilesViewItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]))
+    }
 }

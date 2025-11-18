@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDesign
 import WireDomain
 import WireLocators
+import WireFoundation
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
@@ -883,10 +884,13 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
     @objc
     private func onFilesButtonPressed(_ sender: AnyObject?) {
+        let selfUserColorRawValue = userSession.selfUser.accentColorValue
+
         let filesView = wireMessagingFactory
             .makeFilesView(
                 cellName: conversation.wireCellName,
-                isCellsStatePending: wireCellsState == .pending
+                isCellsStatePending: wireCellsState == .pending,
+                accentColor: WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
             )
 
         filesView.presentOverAll(animated: true)

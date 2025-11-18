@@ -37,12 +37,12 @@ package struct NoHistoryView: View {
         VStack(spacing: 20) {
             Text(viewModel.didReauthenticate ? Strings.MissingHistory.title : Strings.NoHistory.title)
                 .multilineTextAlignment(.center)
-                .font(.textStyle(.h2))
+                .font(for: .h2)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
             Text(viewModel.didReauthenticate ? Strings.MissingHistory.message : Strings.NoHistory.message)
                 .multilineTextAlignment(.center)
-                .wireTextStyle(.body1)
+                .font(for: .body1)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 

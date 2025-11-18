@@ -39,7 +39,6 @@ public struct SelfProfileViewCallToActionBanner: View {
         contentView(actionCallback: actionCallback)
             .padding(8)
             .bannerBackground()
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 }
 
@@ -51,12 +50,12 @@ private func contentView(
     VStack(alignment: .leading, spacing: 12) {
         Label(title: {
             Text(String.localized(key: "individualToTeam.banner.title", bundle: .module))
-                .wireTextStyle(.h5)
+                .font(for: .h5)
         }, icon: {
             Image.infoCircle
         })
         Text(String.localized(key: "individualToTeam.banner.body", bundle: .module))
-            .wireTextStyle(.body1)
+            .font(for: .body1)
             .lineLimit(nil)
 
         Button(

@@ -18,12 +18,14 @@
 
 import SwiftUI
 package import WireMessagingDomain
+package import WireMessagingData
 
 package struct FilesViewContainer: View {
 
     @State private var path: [FilesViewItem] = []
 
     private let cellName: String
+    private let nodesAPI: NodesAPI
     private let nodesRepository: any WireCellsNodesRepositoryProtocol
     private let isCellsStatePending: Bool
     private let localAssetStore: any WireCellsLocalAssetStoreProtocol
@@ -35,6 +37,7 @@ package struct FilesViewContainer: View {
 
     package init(
         cellName: String,
+        nodesAPI: NodesAPI,
         nodesRepository: any WireCellsNodesRepositoryProtocol,
         isCellsStatePending: Bool,
         localAssetStore: any WireCellsLocalAssetStoreProtocol,
@@ -45,6 +48,7 @@ package struct FilesViewContainer: View {
         isFoldersEnabled: Bool
     ) {
         self.cellName = cellName
+        self.nodesAPI = nodesAPI
         self.nodesRepository = nodesRepository
         self.isCellsStatePending = isCellsStatePending
         self.localAssetStore = localAssetStore
@@ -66,32 +70,39 @@ package struct FilesViewContainer: View {
 
     private func makeViewModel() -> FilesViewModel {
         FilesViewModel(
+            useCases: .init(
+                fetchNodes: WireCellsFetchNodesUseCase(
+                    configuration: .conversationFileView(
+                        root: path.last.map { .id($0.id) } ?? .path(cellName),
+                        isFoldersEnabled: isFoldersEnabled
+                    ),
+                    repository: nodesRepository
+                ),
+                deleteNodes: WireCellsDeleteNodesUseCase(
+                    repository: nodesRepository,
+                    fileCache: fileCache,
+                    localAssetStore: localAssetStore
+                ),
+                renameNode: WireCellsRenameNodeUseCase(
+                    nodesRepository: nodesRepository,
+                    localAssetsRepository: localAssetRepository,
+                    nodeCache: nodeCache,
+                    nodeRenameNotifier: nodeRenameNotifier
+                ),
+                updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
+                getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
+                createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
+            ),
             title: path.last?.name,
             navigationPath: path,
             setNavigation: { items in
                 path = items
             },
-            fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                configuration: .conversationFileView(
-                    root: path.last.map { .id($0.id) } ?? .path(cellName),
-                    isFoldersEnabled: isFoldersEnabled
-                ),
-                repository: nodesRepository
-            ),
-            deleteNodesUseCase: WireCellsDeleteNodesUseCase(
-                repository: nodesRepository,
-                fileCache: fileCache,
-                localAssetStore: localAssetStore
-            ),
-            renameNodeUseCase: WireCellsRenameNodeUseCase(
-                nodesRepository: nodesRepository,
-                localAssetsRepository: localAssetRepository,
-                nodeCache: nodeCache,
-                nodeRenameNotifier: nodeRenameNotifier
-            ),
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
-            fileCache: fileCache
+            fileCache: fileCache,
+            cellName: cellName,
+            isFoldersEnabled: isFoldersEnabled
         )
     }
 }

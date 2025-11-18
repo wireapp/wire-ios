@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import WireFoundation
 
 struct SecondaryButtonStyle: SwiftUI.ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
@@ -32,7 +31,7 @@ struct SecondaryButtonStyle: SwiftUI.ButtonStyle {
             .frame(maxWidth: .infinity)
             .background(isEnabled ? Theme.enabled.color : Theme.disabled.color)
             .foregroundStyle(isEnabled ? Theme.onEnabled.color : Theme.onDisabled.color)
-            .wireTextStyle(.buttonBig)
+            .font(for: .buttonBig)
             .overlay {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(isEnabled ? Theme.enabledOutline.color : Theme.disabledOutline.color, lineWidth: 1)

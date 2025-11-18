@@ -157,12 +157,12 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 @implementation ZMUser
 
-- (BOOL)isServiceUser
+- (BOOL)isApp
 {
     return self.serviceIdentifier != nil && self.providerIdentifier != nil;
 }
 
-+ (NSSet<NSString *> *)keyPathsForValuesAffectingIsServiceUser
++ (NSSet<NSString *> *)keyPathsForValuesAffectingIsApp
 {
     return [NSSet setWithObjects:ServiceIdentifierKey, ProviderIdentifierKey, nil];
 }
@@ -243,7 +243,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 - (BOOL)canBeConnected;
 {
-    if (self.isServiceUser || self.isWirelessUser) {
+    if (self.isApp || self.isWirelessUser) {
         return NO;
     }
     return ! self.isConnected && ! self.isPendingApprovalByOtherUser;
