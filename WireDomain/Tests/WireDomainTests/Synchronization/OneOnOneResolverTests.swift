@@ -336,7 +336,7 @@ final class OneOnOneResolverTests: XCTestCase {
         userLocalStore
             .fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.receiverQualifiedID.toDomainModel()]
 
-        pullMLSOneOnOneSync.pullUserIDUserDomain_MockValue = Scaffolding.mlsGroupID
+        pullMLSOneOnOneSync.pullUserIDUserDomain_MockValue = (Scaffolding.mlsGroupID, Scaffolding.mlsPublicKeys)
         conversationLocalStore.fetchMLSConversationGroupID_MockValue = mlsOneOnOneConversation
 
         mlsService.establishGroupForWithRemovalKeys_MockValue = Scaffolding.ciphersuite
@@ -379,6 +379,12 @@ final class OneOnOneResolverTests: XCTestCase {
             base64Encoded: base64EncodedString
         )!
 
+        static let mlsPublicKeys = WireNetwork.MLSPublicKeys(ed25519: .randomAlphanumerical(length: 5),
+                                                             ed448: .randomAlphanumerical(length: 5),
+                                                             p256: .randomAlphanumerical(length: 5),
+                                                             p384: .randomAlphanumerical(length: 5),
+                                                             p521: .randomAlphanumerical(length: 5))
+        
         static let defaultsSuiteName = UUID().uuidString
     }
 

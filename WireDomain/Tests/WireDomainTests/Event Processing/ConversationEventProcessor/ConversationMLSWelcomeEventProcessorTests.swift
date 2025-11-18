@@ -94,7 +94,7 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
         conversationLocalStore.updateOrCreateMLSGroupGroupID_MockMethod = { _ in }
         mlsService.uploadKeyPackagesIfNeeded_MockMethod = {}
         conversationLocalStore.fetchOtherUserIDInOneOnOneConversationConversation_MockValue = Scaffolding.qualifiedID
-        oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in }
+        oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in return .migratedToMLSGroup(identifier: Scaffolding.mlsGroupID) }
 
         // When
 

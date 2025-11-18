@@ -77,6 +77,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         connectionsRepository.updateConnection_MockMethod = { _ in }
         oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in
             expectation.fulfill()
+            return .noAction
         }
 
         // When
@@ -101,7 +102,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         // Mock
 
         connectionsRepository.updateConnection_MockMethod = { _ in }
-        oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in }
+        oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in return .noAction }
         _ = await context.perform { [self] in
             modelHelper.createUser(
                 qualifiedID: Scaffolding.receiverQualifiedID.toDomainModel(),
