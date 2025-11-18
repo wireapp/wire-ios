@@ -75,7 +75,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: "Foo Bar",
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {
@@ -100,7 +100,7 @@ final class ConversationServiceTests: MessagingTestBase {
         XCTAssertEqual(performedAction.unqualifiedUserIDs, [])
         XCTAssertEqual(performedAction.name, "Foo Bar")
         XCTAssertEqual(performedAction.accessMode, .allowGuests)
-        XCTAssertEqual(performedAction.accessRoles, [.guest, .service, .nonTeamMember, .teamMember])
+        XCTAssertEqual(performedAction.accessRoles, [.guest, .app, .nonTeamMember, .teamMember])
         XCTAssertEqual(performedAction.legacyAccessRole, nil)
         XCTAssertEqual(performedAction.teamID, team.remoteIdentifier)
         XCTAssertEqual(performedAction.isReadReceiptsEnabled, true)
@@ -129,7 +129,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: "Foo Bar",
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {
@@ -224,7 +224,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {
@@ -259,7 +259,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {
@@ -325,7 +325,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .mls
         ) {
@@ -407,7 +407,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1, user2],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .mls
         ) {
@@ -480,7 +480,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .mls
         ) {
@@ -513,7 +513,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: nil,
             users: [user1],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {
@@ -558,7 +558,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: "Test",
             users: [user1, user2],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .mls
         ) {
@@ -603,7 +603,7 @@ final class ConversationServiceTests: MessagingTestBase {
             name: "New",
             users: [user1, user2],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: true,
             messageProtocol: .proteus
         ) {

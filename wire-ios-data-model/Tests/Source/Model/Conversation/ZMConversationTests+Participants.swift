@@ -43,7 +43,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         XCTAssertEqual(sut.sortedOtherParticipants as! [ZMUser], [user2, user1])
     }
 
-    func testThatSortedServiceUsersReturnsUsersSortedByName() {
+    func testThatSortedAppsReturnsUsersSortedByName() {
         // GIVEN
         let sut = createConversation(in: uiMOC)
 
@@ -63,7 +63,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         sut.addParticipantsAndUpdateConversationState(users: Set([user2, user1, user3]), role: nil)
 
         // WHEN & THEN
-        XCTAssertEqual(sut.sortedServiceUsers as! [ZMUser], [user2, user1])
+        XCTAssertEqual(sut.sortedApps as! [ZMUser], [user2, user1])
     }
 
     func testThatLocalParticipantsExcludesUsersMarkedForDeletion() {

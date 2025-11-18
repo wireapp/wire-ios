@@ -366,7 +366,6 @@ final class StartUIViewController: UIViewController {
                 .edgesIgnoringSafeArea(.all)
             banner
         }
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         let hostingController = UIHostingController(rootView: rootView)
         hostingController.view.backgroundColor = .clear

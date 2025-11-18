@@ -35,6 +35,10 @@ final class FilesViewTests: XCTestCase {
     private var fetchNodesUseCase: WireCellsFetchNodesUseCase!
     private var deleteNodeUseCase: WireCellsDeleteNodesUseCase!
     private var renameNodeUseCase: WireCellsRenameNodeUseCase!
+    private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
+    private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
+
+    private let record: Bool? = nil
 
     @MainActor
     override func setUp() async throws {
@@ -42,6 +46,11 @@ final class FilesViewTests: XCTestCase {
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
         nodesRepository = MockWireCellsNodesRepositoryProtocol()
         nodesRepository.getNodes_MockMethod = { _ in ([], nil) }
+
+        let nodesApi = MockNodesAPIProtocol()
+        nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
+        nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
+
         fetchNodesUseCase = WireCellsFetchNodesUseCase(
             configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
             repository: nodesRepository
@@ -52,11 +61,13 @@ final class FilesViewTests: XCTestCase {
             localAssetStore: MockWireCellsLocalAssetStoreProtocol()
         )
         renameNodeUseCase = WireCellsRenameNodeUseCase(
-            nodesRepository: MockWireCellsNodesRepositoryProtocol(),
+            nodesRepository: nodesRepository,
             localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
             nodeCache: MockWireCellsNodeCacheProtocol(),
             nodeRenameNotifier: WireCellsNodeRenameNotifier()
         )
+        updateTagsUseCase = WireCellsUpdateTagsUseCase(nodesAPI: nodesApi)
+        getTagSuggestionsUseCase = WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi)
     }
 
     @MainActor
@@ -64,6 +75,9 @@ final class FilesViewTests: XCTestCase {
         snapshotHelper = nil
         nodesRepository = nil
         fetchNodesUseCase = nil
+        renameNodeUseCase = nil
+        updateTagsUseCase = nil
+        getTagSuggestionsUseCase = nil
     }
 
     @MainActor
@@ -75,19 +89,19 @@ final class FilesViewTests: XCTestCase {
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
-            icon: .image
+            icon: .image,
+            tags: []
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
             .frame(width: 390)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -99,19 +113,67 @@ final class FilesViewTests: XCTestCase {
             filePath: "",
             ownedBy: "Liana Margaret Smith-Jones",
             modifiedAt: modifiedAt,
-            icon: .spreadsheet
+            icon: .spreadsheet,
+            tags: []
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
             .frame(width: 390)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
+    }
+
+    @MainActor
+    func testFilesViewItemView_withOneTag() {
+        let item = FilesViewItem(
+            id: UUID(),
+            kind: .file,
+            name: "image.jpg",
+            filePath: "",
+            ownedBy: "Natsuko Shiroi",
+            modifiedAt: modifiedAt,
+            icon: .image,
+            tags: ["important"]
+        )
+
+        let view = FilesViewItemView(viewModel: .make(item: item))
+            .frame(width: 390)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light", record: record)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark", record: record)
+    }
+
+    @MainActor
+    func testFilesViewItemView_withThreeTags() {
+        let item = FilesViewItem(
+            id: UUID(),
+            kind: .file,
+            name: "image.jpg",
+            filePath: "",
+            ownedBy: "Natsuko Shiroi",
+            modifiedAt: modifiedAt,
+            icon: .image,
+            tags: ["tag1", "tag2", "abcdef"]
+        )
+
+        let view = FilesViewItemView(viewModel: .make(item: item))
+            .frame(width: 390)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light", record: record)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -123,18 +185,19 @@ final class FilesViewTests: XCTestCase {
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
-            icon: .spreadsheet
+            icon: .spreadsheet,
+            tags: []
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
             .frame(width: 390)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         for dynamicTypeSize in [DynamicTypeSize.allCases.min()!, DynamicTypeSize.allCases.max()!] {
             snapshotHelper
                 .verify(
                     matching: view.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
+                    named: "\(dynamicTypeSize)",
+                    record: record
                 )
         }
     }
@@ -148,7 +211,8 @@ final class FilesViewTests: XCTestCase {
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
-            icon: .image
+            icon: .image,
+            tags: []
         )
         let asset = WireCellsLocalAsset(
             nodeID: item.id,
@@ -161,14 +225,13 @@ final class FilesViewTests: XCTestCase {
 
         let view = FilesViewItemView(viewModel: .make(item: item, asset: asset))
             .frame(width: 390)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -180,7 +243,8 @@ final class FilesViewTests: XCTestCase {
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
-            icon: .image
+            icon: .image,
+            tags: []
         )
         let asset = WireCellsLocalAsset(
             nodeID: item.id,
@@ -193,14 +257,13 @@ final class FilesViewTests: XCTestCase {
 
         let view = FilesViewItemView(viewModel: .make(item: item, asset: asset))
             .frame(width: 390)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -209,10 +272,10 @@ final class FilesViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -221,10 +284,10 @@ final class FilesViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -233,10 +296,10 @@ final class FilesViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -245,10 +308,10 @@ final class FilesViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -256,12 +319,20 @@ final class FilesViewTests: XCTestCase {
         state: FilesViewModel.State
     ) -> some View {
         let filesViewModel = FilesViewModel(
-            fetchNodesUseCase: fetchNodesUseCase,
-            deleteNodesUseCase: deleteNodeUseCase,
-            renameNodeUseCase: renameNodeUseCase,
+            useCases: .init(
+                fetchNodes: fetchNodesUseCase,
+                deleteNodes: deleteNodeUseCase,
+                renameNode: renameNodeUseCase,
+                updateTags: updateTagsUseCase,
+                getTagSuggestions: getTagSuggestionsUseCase,
+                createFolder: WireCellsCreateFolderUseCase(
+                    nodesRepository: nodesRepository
+                ),
+            ),
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
-            fileCache: MockFileCache()
+            fileCache: MockFileCache(),
+            isFoldersEnabled: true,
         )
 
         filesViewModel.state = state
@@ -270,7 +341,6 @@ final class FilesViewTests: XCTestCase {
             FilesView(viewModel: filesViewModel)
         }
         .frame(width: 375, height: 667)
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 
 }
@@ -292,6 +362,7 @@ private extension FilesItemViewModel {
             localAssetRepository: localAssetRepository,
             onOpen: { _ in },
             onDelete: { _ in },
+            onEditTagsSelected: { _ in },
             locale: Locale(identifier: "en_US_POSIX"),
             calendar: Calendar(identifier: .gregorian),
             timeZone: .gmt

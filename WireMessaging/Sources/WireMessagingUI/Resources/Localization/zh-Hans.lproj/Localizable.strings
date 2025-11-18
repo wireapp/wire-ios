@@ -70,7 +70,7 @@
 
 "conversation.creationForm.options.footer" = "所有团队成员均可加入公开频道。但只有频道管理员或成员才能将人员添加到私人频道。私人频道之后无法更改为公开频道。";
 
-"conversation.creationForm.services.toggle" = "允许服务";
+"conversation.creationForm.apps.toggle" = "允许服务";
 "conversation.creationForm.guests.toggle" = "允许访客";
 "conversation.creationForm.guests.description" = "向您的团队或服务之外的人员开放此对话。";
 

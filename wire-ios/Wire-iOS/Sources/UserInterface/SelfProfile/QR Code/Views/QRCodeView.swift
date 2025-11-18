@@ -66,7 +66,7 @@ struct QRCodeView: View {
 
     private var infoTextView: some View {
         Text(L10n.Localizable.Qrcode.shareMessage)
-            .font(.textStyle(.body1))
+            .font(for: .body1)
             .multilineTextAlignment(.center)
             .foregroundColor(Color.secondaryText)
             .fixedSize(horizontal: false, vertical: true)
@@ -77,7 +77,7 @@ struct QRCodeView: View {
             Button(L10n.Localizable.Qrcode.ShareProfileLink.Button.title) {
                 isShareTextSheetPresented = true
             }
-            .font(.textStyle(.buttonBig))
+            .font(for: .buttonBig)
             .buttonStyle(SecondaryButtonStyle())
             .sheet(isPresented: $isShareTextSheetPresented) {
                 ShareSheet(activityItems: [viewModel.profileLink])
@@ -87,7 +87,7 @@ struct QRCodeView: View {
                 isShareImageSheetPresented = true
                 shouldCaptureImage = true
             }
-            .font(.textStyle(.buttonBig))
+            .font(for: .buttonBig)
             .buttonStyle(SecondaryButtonStyle())
             .sheet(isPresented: $isShareImageSheetPresented) {
                 if let image = capturedImage {

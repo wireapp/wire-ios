@@ -103,7 +103,7 @@ struct WireCellsLargeDocumentPreviewView: View {
                 ProgressView()
                     .tint(ColorTheme.Backgrounds.onTransparentDark.color)
                 Text(text)
-                    .wireTextStyle(.subline2)
+                    .font(for: .subline2)
                     .foregroundColor(ColorTheme.Backgrounds.onTransparentDark.color)
             }
         }
@@ -114,7 +114,7 @@ struct WireCellsLargeDocumentPreviewView: View {
         ZStack {
             Color(ColorTheme.Backdrop.background)
             Text(text)
-                .wireTextStyle(.subline2)
+                .font(for: .subline2)
                 .foregroundColor(ColorTheme.Backgrounds.onTransparentDark.color)
                 .multilineTextAlignment(.center)
                 .padding()
@@ -134,5 +134,4 @@ struct WireCellsLargeDocumentPreviewView: View {
             "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
         )
     )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

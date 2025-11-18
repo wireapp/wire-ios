@@ -70,7 +70,7 @@
 
 "conversation.creationForm.options.footer" = "Todos los miembros del equipo pueden unirse a canales públicos. Pero sólo los administradores del canal o los miembros pueden añadir personas a un canal privado. Un canal privado no se puede cambiar a público más adelante.";
 
-"conversation.creationForm.services.toggle" = "Permitir servicios";
+"conversation.creationForm.apps.toggle" = "Permitir servicios";
 "conversation.creationForm.guests.toggle" = "Permitir invitados";
 "conversation.creationForm.guests.description" = "Abre esta conversación a personas ajenas a tu equipo o servicios.";
 
