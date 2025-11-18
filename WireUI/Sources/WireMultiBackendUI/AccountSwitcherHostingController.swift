@@ -47,7 +47,7 @@ public struct AccountSwitcherRootView: View {
         VStack(alignment: .leading, spacing: 10) {
             if !otherAccounts.isEmpty {
                 Text(L10n.Localizable.Accounts.header.uppercased())
-                    .font(Font.textStyle(.h5))
+                    .font(for: .h5)
                     .foregroundStyle(Color(SemanticColors.Label.baseSecondaryText))
                     .padding(.leading, 16)
             }

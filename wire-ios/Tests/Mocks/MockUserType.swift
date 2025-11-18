@@ -126,9 +126,9 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     var isSelfUser: Bool = false
 
-    var mockedIsServiceUser: Bool = false
-    var isServiceUser: Bool {
-        mockedIsServiceUser
+    var mockedIsApp: Bool = false
+    var isApp: Bool {
+        mockedIsApp
     }
 
     var isVerified: Bool = false

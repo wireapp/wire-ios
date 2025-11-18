@@ -77,7 +77,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
     @Published var channelHistoryOption: ChannelHistoryOption
     @Published var channelHistoryOptionCustom: ChannelHistoryOption.Custom = .init()
     @Published var showUpgradeBanner: Bool = false
-    @Published var servicesAllowed: Bool
+    @Published var appsAllowed: Bool
     @Published var guestsAllowed: Bool
     @Published var readReceiptsEnabled: Bool
     @Published var fileManagementEnabled: Bool = false
@@ -95,7 +95,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
         channelAccess: ChannelAccessOption = .private,
         channelInvitePolicy: ChannelInvitePolicyOption = .admins,
         channelHistoryOption: ChannelHistoryOption = .off,
-        servicesAllowed: Bool = true,
+        appsAllowed: Bool = true,
         guestsAllowed: Bool = true,
         readReceiptsEnabled: Bool = true,
         isUserPremium: Bool,
@@ -110,7 +110,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
         self.channelAccess = channelAccess
         self.channelInvitePolicy = channelInvitePolicy
         self.channelHistoryOption = channelHistoryOption
-        self.servicesAllowed = servicesAllowed
+        self.appsAllowed = appsAllowed
         self.guestsAllowed = guestsAllowed
         self.readReceiptsEnabled = readReceiptsEnabled
         self.isUserPremium = isUserPremium
@@ -202,7 +202,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
                     channelAccess: channelAccess.wireChannelAccess(
                         invitePolicy: channelInvitePolicy
                     ),
-                    servicesAllowed: servicesAllowed,
+                    appsAllowed: appsAllowed,
                     guestsAllowed: guestsAllowed,
                     readReceiptsEnabled: readReceiptsEnabled,
                     historyDepth: getHistoryDepth(),

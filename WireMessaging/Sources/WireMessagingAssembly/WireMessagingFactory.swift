@@ -156,7 +156,6 @@ public extension WireMessagingFactory {
                 isFoldersEnabled: isFoldersEnabled
             )
             .environment(\.wireAccentColor, accentColor)
-            .environment(\.wireAccentColorMapping, WireAccentColorMapping())
         )
     }
 
@@ -220,8 +219,7 @@ public extension WireMessagingFactory {
                     lastOpenRequest: lastOpenRequest,
                     nodeRenameNotifier: nodeRenameNotifier
                 )
-            ).environment(\.wireTextStyleMapping, WireTextStyleMapping())
-        )
+            ))
         viewController.view.backgroundColor = .clear
         return viewController
     }

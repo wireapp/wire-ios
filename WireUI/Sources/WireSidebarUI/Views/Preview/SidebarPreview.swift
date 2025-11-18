@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireFoundation
+import WireDesign
 
 @available(iOS 17.0, *)
 struct SidebarPreview: View {

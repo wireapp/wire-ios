@@ -303,11 +303,11 @@ extension ZMUserSession: UserSession {
     }
 
     public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
-        CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: makeSetConversationGuestsAndServicesUseCase())
+        CreateConversationGuestLinkUseCase(setGuestsAndAppsUseCase: makeSetConversationGuestsAndAppsUseCase())
     }
 
-    public func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
-        SetAllowGuestAndServicesUseCase()
+    public func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol {
+        SetAllowGuestAndAppsUseCase()
     }
 
     @MainActor

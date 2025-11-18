@@ -40,7 +40,7 @@ public protocol CreateConversationGuestLinkUseCaseProtocol {
 
 struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol {
 
-    let setGuestsAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol
+    let setGuestsAndAppsUseCase: SetAllowGuestAndAppsUseCaseProtocol
 
     public func invoke(
         conversation: ZMConversation,
@@ -49,10 +49,10 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
     ) {
 
         if conversation.isLegacyAccessMode {
-            setGuestsAndServicesUseCase.invoke(
+            setGuestsAndAppsUseCase.invoke(
                 conversation: conversation,
                 allowGuests: true,
-                allowServices: conversation.allowServices
+                allowApps: conversation.allowApps
             ) { result in
                 switch result {
                 case let .failure(error):
