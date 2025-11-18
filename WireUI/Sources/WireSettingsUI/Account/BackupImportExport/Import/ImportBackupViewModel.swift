@@ -160,6 +160,14 @@ final class ImportBackupViewModel: ObservableObject {
                 logger.warn("failed to decrypt backup file, presenting the password input again")
                 state = .requestingPassword(url: url, isPasswordIncorrect: true)
                 return // don't clean up temporary file
+            } catch ImportBackupError.invalidFileExtension {
+                logger.warn("restore failed due to invalid file extension")
+                alertContent = .init(
+                    title: Strings.Alert.IncompatibleBackupError.title,
+                    message: Strings.Alert.IncompatibleBackupError.message,
+                    action: Strings.Alert.ok
+                )
+                state = .restoreFailed
             } catch ImportBackupError.incompatibleFileFormat {
                 logger.warn("restore failed due to incompatible file format")
                 alertContent = .init(

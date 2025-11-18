@@ -44,7 +44,7 @@ struct ImportBackupView: View {
             .foregroundStyle(Color.primaryText)
             .fileImporter(
                 isPresented: $isFileImporterPresented,
-                allowedContentTypes: WireBackupUTIs,
+                allowedContentTypes: [.data], // Allow all data files; validation happens in ViewModel
                 onCompletion: viewModel.pickedBackupFile
             )
 
