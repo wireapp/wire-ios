@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-final class ConversationCreateServicesCell: IconToggleCell {
+final class ConversationCreateServicesCell: IconToggleCell { // TODO: rename
 
     override func setUp() {
         super.setUp()
@@ -40,5 +40,6 @@ final class ConversationCreateServicesCell: IconToggleCell {
 extension ConversationCreateServicesCell: ConversationCreationValuesConfigurable {
     func configure(with values: ConversationCreationValues) {
         isOn = values.allowApps
+        toggle.isUserInteractionEnabled = values.isAppsFeatureEnabled
     }
 }
