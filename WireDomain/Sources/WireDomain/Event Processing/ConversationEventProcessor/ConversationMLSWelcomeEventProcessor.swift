@@ -36,35 +36,17 @@ struct ConversationMLSWelcomeEventProcessor: ConversationMLSWelcomeEventProcesso
         let welcomeMessage = event.welcomeMessage
         let conversationID = event.conversationID
 
-        WireLogger.mls.info("MLS event processor is processing welcome message")
-
         // Decrypts the welcome message which returns the group ID of the conversation we were added to.
         let groupID = try await mlsDecryptionService.processWelcomeMessage(
             welcomeMessage: welcomeMessage,
             context: nil
         )
 
-        var conversation = await conversationRepository.fetchConversation(
+        // create conversation if needed and it will be sync by worker
+        let conversation = await conversationRepository.fetchOrCreateConversation(
             id: conversationID.id,
             domain: conversationID.domain
         )
-
-        if conversation == nil {
-            // sync conversation with backend
-            try await conversationRepository.pullConversation(
-                id: conversationID.id,
-                domain: conversationID.domain
-            )
-
-            conversation = await conversationRepository.fetchConversation(
-                id: conversationID.id,
-                domain: conversationID.domain
-            )
-        }
-
-        guard let conversation else {
-            throw Failure.conversationNotFound
-        }
 
         // This conversation is now a MLS one so we need to update its group ID and set MLS status to ready..
         await conversationLocalStore.storeMLSConversationEstablished(

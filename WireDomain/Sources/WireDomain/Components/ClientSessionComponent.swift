@@ -806,4 +806,15 @@ public final class ClientSessionComponent {
         conversationEventProcessor: conversationEventProcessor
     )
 
+    public lazy var workAgent: WorkAgent = .init(scheduler: PriorityOrderWorkItemScheduler())
+
+    public lazy var conversationUpdatesGenerator: ConversationUpdatesGeneratorProtocol = ConversationUpdatesGenerator(
+        repository: conversationRepository,
+        context: syncContext,
+        onConversationUpdated: { [weak self] workItem in
+
+            self?.workAgent.submitItem(workItem)
+        }
+    )
+
 }
