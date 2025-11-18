@@ -46,7 +46,9 @@ struct UserConnectionEventProcessor: UserConnectionEventProcessorProtocol {
 
                     try await oneOnOneResolver.resolveOneOnOneConversation(with: userID)
 
-                    await context.perform {
+                    try await connectionsRepository.scheduleToSyncConversation(with: connection)
+
+                    await context.perform { [context] in
                         _ = context.saveOrRollback()
                     }
                 } catch {

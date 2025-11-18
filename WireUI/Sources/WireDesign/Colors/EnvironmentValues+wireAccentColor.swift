@@ -17,14 +17,10 @@
 //
 
 public import SwiftUI
-
-private struct WireAccentColorKey: EnvironmentKey {
-    static var defaultValue: AccentColor { .default }
-}
+public import WireFoundation
 
 public extension EnvironmentValues {
-    var wireAccentColor: WireAccentColor {
-        get { self[WireAccentColorKey.self] }
-        set { self[WireAccentColorKey.self] = newValue }
-    }
+
+    @Entry var wireAccentColor = WireAccentColor.default
+
 }

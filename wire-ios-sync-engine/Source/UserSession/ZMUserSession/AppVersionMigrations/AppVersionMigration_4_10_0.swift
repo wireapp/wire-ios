@@ -16,11 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireFoundation
+import Foundation
+import WireCoreCrypto
+import WireDomain
 
-public extension Color {
-    init(_ wireAccentColor: WireAccentColor) {
-        self = WireAccentColorMapping().color(for: wireAccentColor)
+/// **Issue:**: Missing groups are not synced - [WPB-20123]
+struct AppVersionMigration_4_10_0: AppVersionMigration {
+
+    let version: SemanticVersion = "4.10.0"
+    let journal: any JournalProtocol
+
+    func perform() async throws {
+        // in order to fix conversations that does not show in the list
+        // we need to force a conversation sync
+        journal[.isConversationSyncRequired] = true
     }
+
 }
