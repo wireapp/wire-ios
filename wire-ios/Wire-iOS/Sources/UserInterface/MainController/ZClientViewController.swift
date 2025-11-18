@@ -281,7 +281,10 @@ final class ZClientViewController: UIViewController {
                 guard let self else { return }
                 switch featureState.name {
                 case .cells where featureState.isEnabled:
-                    let filesBrowserView = wireMessagingFactory.makeFilesBrowserView()
+                    let selfUserColorRawValue = userSession.selfUser.accentColorValue
+                    let filesBrowserView = wireMessagingFactory.makeFilesBrowserView(
+                        accentColor: WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
+                    )
                     if UIDevice.current.userInterfaceIdiom == .pad {
                         guard !sidebarViewController.showFiles else { break }
                         sidebarViewController.showFiles = true
@@ -391,7 +394,10 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
         if userSession.isWireCellsEnabled {
-            let filesBrowserView = wireMessagingFactory.makeFilesBrowserView()
+            let selfUserColorRawValue = userSession.selfUser.accentColorValue
+            let filesBrowserView = wireMessagingFactory.makeFilesBrowserView(
+                accentColor: WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
+            )
             mainTabBarController.filesUI = filesBrowserView
         }
 

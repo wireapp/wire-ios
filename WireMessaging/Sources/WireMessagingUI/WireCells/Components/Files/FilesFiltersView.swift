@@ -26,6 +26,10 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 struct FilesFilterView: View {
     @StateObject package var viewModel: FilesFiltersViewModel
     @Environment(\.dismiss) var dismiss
+    @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
+    
+    let id = UUID()
 
     package init(
         viewModel: @autoclosure @escaping () -> FilesFiltersViewModel
@@ -39,43 +43,85 @@ struct FilesFilterView: View {
                 ColorTheme.Backgrounds.background.color
                     .ignoresSafeArea(.all)
                 
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
-                        Text(Strings.AllFiles.Filters.Tags.sectionTitle)
-                            .wireTextStyle(.h2)
-                        
-                        FlowLayout(spacing: 16, alignment: .leading) {
-                            ForEach(viewModel.presentedTags, id: \.self) { tag in
-                                TagPill(
-                                    text: tag.name,
-                                    isSelected: tag.isSelected
-                                )
-                                .onTapGesture {
-                                    viewModel.selectTag(tag: tag)
-                                }
-                            }
-                        }.frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        Button {
-                            withAnimation(.easeInOut) {
-                                viewModel.expandOrCollapse()
-                            }
-                        } label: {
-                            Text(viewModel.showAllTagsButtonTitle)
-                        }
-                        
-                    }
-                    .padding()
-                    
-                }
+                ScrollView { tagsView }
             }
             .toolbar { toolbarContent }
+            .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
             .navigationTitle(viewModel.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                applyButton
+            .alert(L10n.Localizable.General.failure, isPresented: $viewModel.showError) {
+                Button(L10n.Localizable.General.confirm, role: .cancel) { }
             }
+            .safeAreaInset(edge: .bottom, spacing: 0) { applyButton } // floating button
+            .overlay { if viewModel.isLoading { ProgressView() } }
+            .task { await viewModel.fetch() }
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        }
+    }
+}
+
+// MARK: - Tags
+
+private extension FilesFilterView {
+    var tagsView: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            Text(Strings.AllFiles.Filters.Tags.sectionTitle)
+                .wireTextStyle(.body3)
+            
+            FlowLayout(spacing: 16, alignment: .leading) {
+                ForEach(viewModel.presentedTags) { tag in
+                    TagPill(
+                        text: tag.name,
+                        isSelected: tag.isSelected
+                    )
+                    .onTapGesture {
+                        viewModel.selectTag(tag: tag)
+                    }
+                }
+            }.frame(maxWidth: .infinity, alignment: .leading)
+            
+            if viewModel.showExpandButton {
+                Button {
+                    withAnimation {
+                        viewModel.toggleTagsVisibility()
+                    }
+                } label: {
+                    Text(viewModel.expandButtonTitle)
+                }
+                
+            }
+            
+            Divider()
+            
+        }.padding()
+    }
+    
+    private struct TagPill: View {
+        let text: String
+        let isSelected: Bool
+
+        var body: some View {
+            Text(text)
+                .foregroundStyle(isSelected ? ColorTheme.Base.primary.color : ColorTheme.Backgrounds.onSurface.color)
+                .wireTextStyle(.h4).fontWeight(.semibold)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 8)
+                .background(
+                    isSelected
+                    ? ColorTheme.Base.onPrimaryVariant.color.opacity(0.1)
+                    : ColorTheme.Backgrounds.surface.color
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(
+                            isSelected
+                            ? ColorTheme.Base.onPrimaryVariant.color
+                            : .clear,
+                            lineWidth: 2
+                        )
+                )
+                .shadow(color: Color.black.opacity(0.05), radius: 1, y: 1)
         }
     }
 }
@@ -97,7 +143,7 @@ private extension FilesFilterView {
         .buttonStyle(.borderedProminent)
         .controlSize(.large)
         .buttonBorderShape(.roundedRectangle(radius: 16))
-        .tint(ColorTheme.Base.primary.color)
+        .tint(wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color)
         .wireTextStyle(.buttonBig)
         .padding()
     }
@@ -135,37 +181,6 @@ private extension FilesFilterView {
         .accessibilityIdentifier("close")
     }
     
-}
-
-// MARK: - Tags
-
-private struct TagPill: View {
-    let text: String
-    let isSelected: Bool
-
-    var body: some View {
-        Text(text)
-            .foregroundStyle(isSelected ? ColorTheme.Base.primary.color : ColorTheme.Backgrounds.onSurface.color)
-            .wireTextStyle(.body2)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
-            .background(
-                isSelected
-                ? ColorTheme.Base.onPrimaryVariant.color.opacity(0.1)
-                : ColorTheme.Backgrounds.surface.color
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(
-                        isSelected
-                        ? ColorTheme.Base.onPrimaryVariant.color
-                        : .clear,
-                        lineWidth: 2
-                    )
-            )
-            .shadow(color: Color.black.opacity(0.05), radius: 1, y: 1)
-    }
 }
 
 #Preview {

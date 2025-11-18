@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 
@@ -24,74 +25,90 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 @MainActor
 package final class FilesFiltersViewModel: ObservableObject {
     
-    struct TagModel: Hashable {
+    struct TagModel: Identifiable, Hashable {
+        let id = UUID()
         let name: String
         var isSelected: Bool
     }
     
-    private var allTags = [
-        TagModel(name: "Test1", isSelected: false),
-        TagModel(name: "Test2", isSelected: false),
-        TagModel(name: "Test3", isSelected: false),
-        TagModel(name: "Test4", isSelected: false),
-        TagModel(name: "Test5", isSelected: false),
-        TagModel(name: "Test6", isSelected: false),
-        TagModel(name: "Test7", isSelected: false),
-        TagModel(name: "Test8", isSelected: false),
-        TagModel(name: "Test9", isSelected: false),
-        TagModel(name: "Test10", isSelected: false),
-        TagModel(name: "Test11", isSelected: false),
-        TagModel(name: "Test12", isSelected: false),
-        TagModel(name: "Test13", isSelected: false),
-        TagModel(name: "Test14", isSelected: false),
-        TagModel(name: "Test15", isSelected: false)
-    ]
+    private let collapsedTagsLimit = 7
     
-    private var mainTags: [TagModel] {
-        Array(allTags.prefix(7))
+    private var expandedTags: [TagModel] = []
+    
+    private var collapsedTags: [TagModel] {
+        Array(expandedTags.prefix(collapsedTagsLimit))
     }
     
     var selectedTags: [TagModel] {
-        allTags.filter(\.isSelected)
+        expandedTags.filter(\.isSelected)
     }
     
-    var showAllTagsButtonTitle: String {
-        showAllTags ? Strings.AllFiles.Filters.Tags.showLess : Strings.AllFiles.Filters.Tags.showMore
+    var expandButtonTitle: String {
+        isExpanded ? Strings.AllFiles.Filters.Tags.showLess : Strings.AllFiles.Filters.Tags.showMore
+    }
+    
+    var showExpandButton: Bool {
+        expandedTags.count > collapsedTagsLimit
     }
     
     var navigationTitle: String {
-        let selectedTagsCount = allTags.filter(\.isSelected).count
+        let selectedTagsCount = expandedTags.filter(\.isSelected).count
         return selectedTagsCount == 0 ? Strings.AllFiles.Filters.navigationTitle : "\(Strings.AllFiles.Filters.navigationTitle) (\(selectedTagsCount))"
     }
     
     @Published var presentedTags: [TagModel] = []
     @Published var isLoading: Bool = false
-    @Published var didApplyTags: [TagModel] = []
-    private var showAllTags = false
+    @Published var appliedTags: [String]
+    @Published var showError: Bool = false
     
-    init() {
-        presentedTags = mainTags
+    private var isExpanded = false
+    private var preselectedTags: [String]?
+    private let fetchTagsUseCase: any WireCellsGetTagSuggestionsUseCaseProtocol
+    
+    init(
+        fetchTagsUseCase: any WireCellsGetTagSuggestionsUseCaseProtocol,
+        appliedTags: [String]?
+        
+    ) {
+        self.fetchTagsUseCase = fetchTagsUseCase
+        self.appliedTags = appliedTags ?? []
+    }
+    
+    // MARK: - Actions
+    
+    func fetch() async {
+        do {
+            isLoading = true
+            defer { isLoading = false }
+            let tags = try await fetchTagsUseCase.invoke()
+            expandedTags = tags
+                .filter { !$0.isEmpty }
+                .map { .init(name: $0, isSelected: appliedTags.contains($0)) }
+                .sorted { $0.isSelected && !$1.isSelected }
+            presentedTags = collapsedTags
+        } catch {
+            showError = true
+        }
     }
     
     func selectTag(tag: TagModel) {
-        guard let tagIndex = allTags.firstIndex(where: { tag.name == $0.name }) else { return }
-        allTags[tagIndex].isSelected.toggle()
+        guard let tagIndex = expandedTags.firstIndex(where: { tag.id == $0.id }) else { return }
+        expandedTags[tagIndex].isSelected.toggle()
         presentedTags[tagIndex].isSelected.toggle()
     }
 
-    func expandOrCollapse() {
-        showAllTags.toggle()
-        presentedTags = showAllTags ? allTags : mainTags
-        
+    func toggleTagsVisibility() {
+        isExpanded.toggle()
+        presentedTags = isExpanded ? expandedTags : collapsedTags
     }
     
     func apply() async {
-        didApplyTags = selectedTags
+        appliedTags = selectedTags.map(\.name)
     }
     
     func clearAll() async {
-        allTags.indices.forEach {
-            allTags[$0].isSelected = false
+        expandedTags.indices.forEach {
+            expandedTags[$0].isSelected = false
         }
         presentedTags.indices.forEach {
             presentedTags[$0].isSelected = false

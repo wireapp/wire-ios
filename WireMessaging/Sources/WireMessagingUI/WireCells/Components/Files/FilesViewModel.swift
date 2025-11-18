@@ -77,11 +77,20 @@ package final class FilesViewModel: ObservableObject {
 
     enum SheetNavigation: Identifiable {
         case editTags(fileItem: FilesViewItem)
+        case renameFile(view: FileRenameView)
+        case createFolder(view: CreateFolderView)
+        case filters(view: FilesFilterView)
 
         var id: String {
             switch self {
             case let .editTags(fileItem: item):
                 "editTags(\(item.id))"
+            case let .createFolder(view):
+                "createFolder(\(view.id))"
+            case let .renameFile(view):
+                "renameFile(\(view.id))"
+            case let .filters(view):
+                "filters(\(view.id))"
             }
         }
     }
@@ -162,11 +171,9 @@ package final class FilesViewModel: ObservableObject {
     @Published var viewingURL: URL?
     @Published var state: State
     @Published var sheetNavigation: SheetNavigation?
-    @Published var createFolderView: CreateFolderView?
-    @Published var fileRenameView: FileRenameView?
 
-    var didCreateFolder: Bool = false
-    var didRenameFile: Bool = false
+    var shouldReload: Bool = false
+    var selectedTags: [String] = []
     let title: String?
 
     package init(
@@ -254,11 +261,30 @@ package final class FilesViewModel: ObservableObject {
                 await self?.deleteItem(item)
             },
             onRename: { [weak self] item in
-                self?.fileRenameView = self?.makeFileRenameView(item: item)
+                guard let self else { return }
+                sheetNavigation = .renameFile(view: makeFileRenameView(item: item))
             },
             onEditTagsSelected: { [weak self] item in
                 self?.sheetNavigation = .editTags(fileItem: item)
             },
+        )
+    }
+    
+    func openFilters() {
+        let filesFiltersViewModel = FilesFiltersViewModel(
+            fetchTagsUseCase: useCases.getTagSuggestions,
+            appliedTags: selectedTags
+        )
+        
+        filesFiltersViewModel.$appliedTags
+            .sink { [weak self] tags in
+                guard let self else { return }
+                shouldReload = selectedTags != tags
+                selectedTags = tags
+            }.store(in: &subscriptions)
+        
+        sheetNavigation = .filters(
+            view: FilesFilterView(viewModel: filesFiltersViewModel)
         )
     }
 
@@ -292,6 +318,13 @@ package final class FilesViewModel: ObservableObject {
         }
 
         setNavigation(newPath)
+    }
+    
+    func onDismiss() async {
+        if shouldReload {
+            await reload()
+            shouldReload = false
+        }
     }
 
     // MARK: - Private
@@ -334,13 +367,16 @@ package final class FilesViewModel: ObservableObject {
 
         // to know whether we need to reload nodes.
         viewModel.$didCreate
+            .filter { $0 }
             .sink { [weak self] didCreate in
-                self?.didCreateFolder = didCreate
+                self?.shouldReload = didCreate
             }.store(in: &subscriptions)
-
-        createFolderView = CreateFolderView(
+        
+        let createFolderView = CreateFolderView(
             viewModel: viewModel
         )
+
+        sheetNavigation = .createFolder(view: createFolderView)
     }
 
     // MARK: - Private
@@ -402,6 +438,7 @@ package final class FilesViewModel: ObservableObject {
     ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
         let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
             searchTerm: searchText.isEmpty ? nil : searchText,
+            tags: selectedTags,
             offset: offset
         )
 
@@ -502,7 +539,7 @@ package final class FilesViewModel: ObservableObject {
         // to know whether we need to reload items.
         viewModel.$didRename
             .sink { [weak self] didRename in
-                self?.didRenameFile = didRename
+                self?.shouldReload = didRename
             }.store(in: &subscriptions)
 
         return FileRenameView(viewModel: viewModel)

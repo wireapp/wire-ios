@@ -23,7 +23,7 @@ import WireReusableUIComponents
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-struct CreateFolderView: View, Identifiable {
+struct CreateFolderView: View {
     @StateObject package var viewModel: CreateFolderViewModel
     @Environment(\.dismiss) var dismiss
 

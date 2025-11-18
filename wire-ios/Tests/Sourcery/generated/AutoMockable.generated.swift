@@ -1878,20 +1878,20 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
 
     // MARK: - makeFilesBrowserView
 
-    var makeFilesBrowserView_Invocations: [Void] = []
-    var makeFilesBrowserView_MockMethod: (() -> UIViewController)?
-    var makeFilesBrowserView_MockValue: UIViewController?
+    var makeFilesBrowserViewAccentColor_Invocations: [WireAccentColor] = []
+    var makeFilesBrowserViewAccentColor_MockMethod: ((WireAccentColor) -> UIViewController)?
+    var makeFilesBrowserViewAccentColor_MockValue: UIViewController?
 
     @MainActor
-    func makeFilesBrowserView() -> UIViewController {
-        makeFilesBrowserView_Invocations.append(())
+    func makeFilesBrowserView(accentColor: WireAccentColor) -> UIViewController {
+        makeFilesBrowserViewAccentColor_Invocations.append(accentColor)
 
-        if let mock = makeFilesBrowserView_MockMethod {
-            return mock()
-        } else if let mock = makeFilesBrowserView_MockValue {
+        if let mock = makeFilesBrowserViewAccentColor_MockMethod {
+            return mock(accentColor)
+        } else if let mock = makeFilesBrowserViewAccentColor_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeFilesBrowserView`")
+            fatalError("no mock for `makeFilesBrowserViewAccentColor`")
         }
     }
 

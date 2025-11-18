@@ -42,7 +42,8 @@ protocol WireMessagingFactoryProtocol {
     ) -> UIViewController
 
     @MainActor
-    func makeFilesBrowserView() -> UIViewController
+    func makeFilesBrowserView(accentColor: WireAccentColor) -> UIViewController
+    
     @MainActor
     func makeAttachmentsPreviewView(
         attachments: [WireCellsMessageAttachment],

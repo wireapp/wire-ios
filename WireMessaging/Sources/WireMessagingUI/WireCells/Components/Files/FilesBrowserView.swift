@@ -80,6 +80,16 @@ package struct FilesBrowserView: FilesViewProtocol {
                 message: { Text($0.message) },
                 actions: { _ in confirmButton }
             )
+            .sheet(item: $viewModel.sheetNavigation) {
+                Task { await viewModel.onDismiss() }
+            } content: { navigationItem in
+                switch navigationItem {
+                case let .filters(filtersView):
+                    filtersView
+                default:
+                    EmptyView()
+                }
+            }
         }
     }
 
@@ -102,7 +112,7 @@ private extension FilesBrowserView {
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .navigationBarTrailing) {
             Button {
-                
+                viewModel.openFilters()
             } label: {
                 Image(systemName: "line.3.horizontal.decrease.circle")
             }

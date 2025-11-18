@@ -86,7 +86,10 @@ package struct FilesView: FilesViewProtocol {
                 message: { Text($0.message) },
                 actions: { _ in confirmButton }
             )
-            .sheet(item: $viewModel.sheetNavigation) { navigationItem in
+            .sheet(
+                item: $viewModel.sheetNavigation,
+                onDismiss: { Task { await viewModel.onDismiss() } }
+            ) { navigationItem in
                 switch navigationItem {
                 case let .editTags(fileItem: fileItem):
                     TagsEditView(
@@ -99,28 +102,14 @@ package struct FilesView: FilesViewProtocol {
                             await viewModel.reload()
                         }
                     )
+                case let .renameFile(fileRenameView):
+                    fileRenameView
+                case let .createFolder(folderView):
+                    folderView
+                default:
+                    EmptyView()
                 }
             }
-            .sheet(
-                item: $viewModel.fileRenameView,
-                onDismiss: {
-                    if viewModel.didRenameFile {
-                        reloadTask()
-                        viewModel.didRenameFile = false
-                    }
-                },
-                content: { $0 }
-            )
-            .sheet(
-                item: $viewModel.createFolderView,
-                onDismiss: {
-                    if viewModel.didCreateFolder {
-                        reloadTask()
-                        viewModel.didCreateFolder = false
-                    }
-                },
-                content: { $0 }
-            )
         }
     }
 

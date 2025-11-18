@@ -161,7 +161,9 @@ public extension WireMessagingFactory {
     }
 
     @MainActor
-    func makeFilesBrowserView() -> UIViewController {
+    func makeFilesBrowserView(
+        accentColor: WireAccentColor
+    ) -> UIViewController {
         UIHostingController(
             rootView: FilesBrowserView(
                 viewModel: FilesViewModel(
@@ -191,6 +193,8 @@ public extension WireMessagingFactory {
                     isFoldersEnabled: false
                 )
             )
+            .environment(\.wireAccentColor, accentColor)
+            .environment(\.wireAccentColorMapping, WireAccentColorMapping())
         )
     }
 
