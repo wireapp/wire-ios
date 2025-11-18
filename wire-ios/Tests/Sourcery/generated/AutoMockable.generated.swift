@@ -484,15 +484,15 @@ class MockCreateGroupConversationViewControllerBuilderProtocol: CreateGroupConve
     // MARK: - build
 
     var build_Invocations: [Void] = []
-    var build_MockMethod: (() -> UIViewController)?
+    var build_MockMethod: (() async -> UIViewController)?
     var build_MockValue: UIViewController?
 
     @MainActor
-    func build() -> UIViewController {
+    func build() async -> UIViewController {
         build_Invocations.append(())
 
         if let mock = build_MockMethod {
-            return mock()
+            return await mock()
         } else if let mock = build_MockValue {
             return mock
         } else {
