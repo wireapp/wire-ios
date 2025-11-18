@@ -124,6 +124,5 @@ private struct MockWorkItem: WorkItem, Equatable {
     let id = UUID()
     let priority: WorkItemPriority
     func start() async throws {}
-    func cancel() async {}
 
 }
