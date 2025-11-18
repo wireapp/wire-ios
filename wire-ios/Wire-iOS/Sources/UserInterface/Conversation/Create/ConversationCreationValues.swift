@@ -36,12 +36,12 @@ final class ConversationCreationValues {
     var channelHistoryDepth: String?
     var name: String
     var allowGuests: Bool
-    var allowServices: Bool
+    var allowApps: Bool
     var enableReceipts: Bool
     var enableFileManagement: Bool
     var encryptionProtocol: MessageProtocol {
         didSet {
-            allowServices = shouldIncludeServices
+            allowApps = shouldIncludeServices
         }
     }
 
@@ -58,9 +58,9 @@ final class ConversationCreationValues {
                 result = UserSet(noGuests)
             }
 
-            if !allowServices {
-                let noServices = result.filter { !$0.isServiceUser }
-                result = UserSet(noServices)
+            if !allowApps {
+                let noApps = result.filter { !$0.isApp }
+                result = UserSet(noApps)
             }
 
             return result
@@ -77,7 +77,7 @@ final class ConversationCreationValues {
         name: String = "",
         participants: UserSet = UserSet(),
         allowGuests: Bool = true,
-        allowServices: Bool = true,
+        allowApps: Bool = true,
         enableReceipts: Bool = true,
         enableFileManagement: Bool = false,
         encryptionProtocol: MessageProtocol,
@@ -87,7 +87,7 @@ final class ConversationCreationValues {
         self.name = name
         self.unfilteredParticipants = participants
         self.allowGuests = allowGuests
-        self.allowServices = allowServices
+        self.allowApps = allowApps
         self.enableReceipts = enableReceipts
         self.enableFileManagement = enableFileManagement
         self.encryptionProtocol = encryptionProtocol

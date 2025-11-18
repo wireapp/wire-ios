@@ -98,7 +98,7 @@ public extension ZMConversation {
         name: String? = nil,
         team: Team? = nil,
         allowGuests: Bool = true,
-        allowServices: Bool = true,
+        allowApps: Bool = true,
         readReceipts: Bool = false,
         participantsRole: Role? = nil
     ) -> ZMConversation? {
@@ -108,7 +108,7 @@ public extension ZMConversation {
             name: name,
             team: team,
             allowGuests: allowGuests,
-            allowServices: allowServices,
+            allowApps: allowApps,
             readReceipts: readReceipts,
             participantsRole: participantsRole
         )
@@ -124,7 +124,7 @@ public extension ZMConversation {
         name: String? = nil,
         team: Team? = nil,
         allowGuests: Bool = true,
-        allowServices: Bool = true,
+        allowApps: Bool = true,
         readReceipts: Bool = false,
         participantsRole: Role? = nil
     ) -> ZMConversation? {
@@ -134,7 +134,7 @@ public extension ZMConversation {
             name: name,
             team: team,
             allowGuests: allowGuests,
-            allowServices: allowServices,
+            allowApps: allowApps,
             readReceipts: readReceipts,
             participantsRole: participantsRole,
             type: .group
@@ -150,7 +150,7 @@ public extension ZMConversation {
         name: String? = nil,
         team: Team? = nil,
         allowGuests: Bool = true,
-        allowServices: Bool = true,
+        allowApps: Bool = true,
         readReceipts: Bool = false,
         participantsRole: Role? = nil,
         type: ZMConversationType,
@@ -172,7 +172,7 @@ public extension ZMConversation {
 
         if team != nil {
             conversation.allowGuests = allowGuests
-            conversation.allowServices = allowServices
+            conversation.allowApps = allowApps
             conversation.hasReadReceiptsEnabled = readReceipts
         }
 

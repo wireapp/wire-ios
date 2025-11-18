@@ -111,7 +111,7 @@ final class UserCellTests: XCTestCase {
 
     func testServiceUser() {
         // GIVEN && WHEN
-        mockUser.mockedIsServiceUser = true
+        mockUser.mockedIsApp = true
 
         // THEN
         verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
