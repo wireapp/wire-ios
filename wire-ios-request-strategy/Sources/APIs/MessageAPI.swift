@@ -452,13 +452,16 @@ final class MessageAPIV13: MessageAPIV12 {
             guard let data = response.rawData else {
                 throw NetworkError.errorDecodingResponse(response)
             }
+
+            let missingUsers: Set<QualifiedID>
             do {
                 let decoder = JSONDecoder.defaultDecoder
                 let payload = try decoder.decode(MissingUsersPayload.self, from: data)
-                throw SendMLSMessageFailure.groupOutOfSync(missingUsers: payload.missingUsers)
+                missingUsers = payload.missingUsers
             } catch {
                 throw NetworkError.errorDecodingResponse(response)
             }
+            throw SendMLSMessageFailure.groupOutOfSync(missingUsers: missingUsers)
         } else {
             throw customMapFailureResponse(response)
         }
