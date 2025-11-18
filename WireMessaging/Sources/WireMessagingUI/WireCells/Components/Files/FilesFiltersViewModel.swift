@@ -52,7 +52,6 @@ package final class FilesFiltersViewModel: ObservableObject {
     @Published var savedTags: [String]
     @Published var showError: Bool = false
 
-    private var preselectedTags: [String]?
     private let fetchTagsUseCase: any WireCellsGetTagSuggestionsUseCaseProtocol
 
     init(
