@@ -59,9 +59,14 @@ class SettingsPage: PageModel {
         if conversationsTab.exists {
             conversationsTab.tap()
         } else {
-            app.onPad { [self] in
-                if sideBarPanel.exists { sideBarPanel.tap() }
-                if allConversations.exists { allConversations.tap() }
+            app.iPadOnly { [self] in
+                if sideBarPanel.exists {
+                    sideBarPanel.tap()
+                }
+
+                if allConversations.exists {
+                    allConversations.tap()
+                }
             }
         }
         return try ConversationsPage()

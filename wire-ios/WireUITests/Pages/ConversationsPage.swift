@@ -61,7 +61,7 @@ class ConversationsPage: PageModel {
     }
 
     func openSettings() throws -> SettingsPage {
-        app.onPad {
+        app.iPadOnly {
             if self.sideBarPanel.exists {
                 self.sideBarPanel.tap()
             }
@@ -71,7 +71,7 @@ class ConversationsPage: PageModel {
     }
 
     func openUserAccountPageForUser(with input: String) throws -> UserAccountPage {
-        app.onPad {
+        app.iPadOnly {
             if self.sideBarPanel.exists {
                 self.sideBarPanel.tap()
             }
@@ -85,7 +85,7 @@ class ConversationsPage: PageModel {
     }
 
     func tapPlusButtonToCreateGroup() throws -> NewConversationPage {
-        app.onPad {
+        app.iPadOnly {
             if self.sidePanel.exists {
                 self.sidePanel.tap()
             }
@@ -95,7 +95,7 @@ class ConversationsPage: PageModel {
     }
 
     func openPendingRequest() throws -> ConnectionRequestsPage {
-        app.onPad {
+        app.iPadOnly {
             if self.sidePanel.exists {
                 self.sidePanel.tap()
             }
@@ -115,7 +115,7 @@ class ConversationsPage: PageModel {
     }
 
     func openConversation() throws -> ActiveConversationPage {
-        app.onPad {
+        app.iPadOnly {
             if self.sidePanel.exists {
                 self.sidePanel.tap()
             }
@@ -146,7 +146,7 @@ class ConversationsPage: PageModel {
     }
 
     func getNameLabel() -> String? {
-        app.onPad {
+        app.iPadOnly {
             if self.sidePanel.exists {
                 self.sidePanel.tap()
             }

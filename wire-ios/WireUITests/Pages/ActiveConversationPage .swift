@@ -77,7 +77,7 @@ class ActiveConversationPage: PageModel {
         // Revert this temporary workaround once WPB-17997 is fixed
         // See: https://wearezeta.atlassian.net/browse/WPB-17997
         let hideKeyboard = app.buttons["Hide keyboard"]
-        app.onPad {
+        app.iPadOnly {
             hideKeyboard.tap()
         }
         return self

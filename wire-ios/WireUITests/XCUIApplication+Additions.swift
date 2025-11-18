@@ -37,7 +37,7 @@ extension XCUIApplication {
     }
 
     @discardableResult
-    func onPad(_ block: (() -> Void)? = nil) -> Bool {
+    func iPadOnly(_ block: (() -> Void)? = nil) -> Bool {
         guard UIDevice.current.userInterfaceIdiom == .pad else { return false }
         block?()
         return true

@@ -60,7 +60,7 @@ class BackupOrRestorePage: PageModel {
     }
 
     private func sortFiles() {
-        if app.onPad() {
+        if app.iPadOnly() {
             return
         }
         if !browseButtonOnBottom.isSelected {
