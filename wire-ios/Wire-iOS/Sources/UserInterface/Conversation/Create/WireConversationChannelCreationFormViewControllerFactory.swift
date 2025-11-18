@@ -30,11 +30,10 @@ final class WireConversationChannelCreationFormViewControllerFactory {
     @MainActor
     func create(
         userSession: UserSession
-    ) -> WireConversationChannelCreationFormViewController {
-        let vc = WireConversationChannelCreationFormViewController(
-            userSession: userSession
-        )
+    ) async -> WireConversationChannelCreationFormViewController {
+        let vc = await WireConversationChannelCreationFormViewController(userSession: userSession)
         vc.delegate = delegate
         return vc
     }
+
 }

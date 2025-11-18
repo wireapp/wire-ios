@@ -33,21 +33,14 @@ final class ConversationCreationValues {
     private let selfUser: UserType
 
     let isChannel: Bool
+    let isAppsFeatureEnabled: Bool
     var channelHistoryDepth: String?
     var name: String
     var allowGuests: Bool
     var allowApps: Bool
     var enableReceipts: Bool
     var enableFileManagement: Bool
-    var encryptionProtocol: MessageProtocol {
-        didSet {
-            allowApps = shouldIncludeServices
-        }
-    }
-
-    var shouldIncludeServices: Bool {
-        encryptionProtocol.supportsBots
-    }
+    var encryptionProtocol: MessageProtocol
 
     var participants: UserSet {
         get {
@@ -74,6 +67,7 @@ final class ConversationCreationValues {
 
     init(
         isChannel: Bool,
+        isAppsFeatureEnabled: Bool,
         name: String = "",
         participants: UserSet = UserSet(),
         allowGuests: Bool = true,
@@ -84,10 +78,11 @@ final class ConversationCreationValues {
         selfUser: UserType
     ) {
         self.isChannel = isChannel
+        self.isAppsFeatureEnabled = isAppsFeatureEnabled
         self.name = name
         self.unfilteredParticipants = participants
         self.allowGuests = allowGuests
-        self.allowApps = allowApps
+        self.allowApps = isAppsFeatureEnabled ? allowApps : false
         self.enableReceipts = enableReceipts
         self.enableFileManagement = enableFileManagement
         self.encryptionProtocol = encryptionProtocol
