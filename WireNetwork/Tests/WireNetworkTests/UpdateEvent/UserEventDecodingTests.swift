@@ -295,7 +295,7 @@ final class UserEventDecodingTests: XCTestCase {
                     ed448: "ed448_key",
                     p256: "p256_key",
                     p384: "p384_key",
-                    p512: "p512_key"
+                    p521: "p512_key"
                 ),
                 cookie: "cookieData",
                 capabilities: [

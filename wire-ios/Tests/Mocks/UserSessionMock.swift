@@ -30,7 +30,10 @@ import WireSyncEngineSupport
 @testable import Wire
 
 final class UserSessionMock: UserSession {
-
+    func resolveOneOnOneConversation(with userID: WireDataModel.QualifiedID) async throws -> WireDataModel.OneOnOneConversationResolution {
+        return .noAction
+    }
+    
     var apiVersion: APIVersion = .v0
     var localDomain = "wire.com"
     var isFederationEnabled = false

@@ -594,10 +594,40 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(conversation.addPermission, .everyone) // Can be decoded in API >= v8
     }
 
-    func testGetMLSOneToOneConversation_Success_Response_V5_And_Next_Versions() async throws {
+    // MARK: - GetMLSOneToOneConversation
+    
+    func testGetMLSOneToOneConversation_Success_Response_V6_And_Next_Versions() async throws {
         // Given
 
-        let supportedVersions = APIVersion.v5.andNextVersions
+        let supportedVersions = APIVersion.v6.andNextVersions
+
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testGetMLSOneOnOneConversationV6SuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // When
+
+        for sut in suts {
+            let (mlsConversation, publicKeys) = try await sut.getMLSOneToOneConversation(
+                userID: Scaffolding.userID,
+                in: Scaffolding.domain
+            )
+
+            XCTAssertEqual(mlsConversation.id, Scaffolding.mlsConversationID)
+            XCTAssertEqual(publicKeys, Scaffolding.publicKeys)
+        }
+    }
+
+    
+    func testGetMLSOneToOneConversation_Success_Response_V5() async throws {
+        // Given
+
+        let supportedVersions = [APIVersion.v5]
 
         let mocks: [MockAPIServiceProtocol.Response] = Array(
             repeating: (.ok, "testGetMLSOneOnOneConversationV5SuccessResponse200"),
@@ -611,12 +641,13 @@ final class ConversationsAPITests: XCTestCase {
         // When
 
         for sut in suts {
-            let mlsConversation = try await sut.getMLSOneToOneConversation(
+            let (mlsConversation, publicKeys) = try await sut.getMLSOneToOneConversation(
                 userID: Scaffolding.userID,
                 in: Scaffolding.domain
             )
 
             XCTAssertEqual(mlsConversation.id, Scaffolding.mlsConversationID)
+            XCTAssertNil(publicKeys)
         }
     }
 
@@ -1789,6 +1820,7 @@ final class ConversationsAPITests: XCTestCase {
         static let userID = "99db9768-04e3-4b5d-9268-831b6a25c4ab"
         static let domain = "domain.com"
         static let mlsConversationID = UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
+        static let publicKeys = MLSPublicKeys(ed25519: "string", ed448: nil, p256: "string", p384: "string", p521: "string")
         static let conversationID = UUID.mockID1
         static let guestLinkV0 = "https://exampleV0.com"
         static let guestLinkV4 = "https://exampleV4.com"

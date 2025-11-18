@@ -19,6 +19,7 @@
 class ConversationsAPIV6: ConversationsAPIV5 {
     override var apiVersion: APIVersion { .v6 }
     
+    // https://nginz-https.anta.wire.link/v12/api/swagger-ui/#/default/get-one-to-one-mls-conversation
     override func getMLSOneToOneConversation(
         userID: String,
         in domain: String
@@ -37,24 +38,41 @@ class ConversationsAPIV6: ConversationsAPIV5 {
             request,
             requiringAccessToken: true
         )
-
+        
         return try ResponseParser()
-            .success(code: .ok, type: ConversationWithPublicKeys.self)
+            .success(code: .ok, type: ConversationWithPublicKeys<ConversationV5>.self)
             .failure(code: .badRequest, label: "mls-not-enabled", error: ConversationsAPIError.mlsNotEnabled)
             .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.usersNotConnected)
             .parse(code: response.statusCode, data: data)
     }
 }
 
+protocol DecodableConversation: Decodable, ToAPIModelConvertible where APIModel == Conversation {}
 
-private struct ConversationWithPublicKeys: Decodable, ToAPIModelConvertible {
+struct ConversationWithPublicKeys<T: DecodableConversation>: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
         case conversation
         case publicKeys = "public_keys"
     }
     
-    var conversation: ConversationV5
+    
+    struct RemovalKeys: Decodable {
+        enum CodingKeys: String, CodingKey {
+            case removalKeys = "removal"
+        }
+
+        var removalKeys: MLSPublicKeysV0
+    }
+    
+    var conversation: T
     var publicKeys: MLSPublicKeysV0
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.conversation = try container.decode(T.self, forKey: .conversation)
+        let removalKeys = try container.decode(RemovalKeys.self, forKey: .publicKeys)
+        self.publicKeys = removalKeys.removalKeys
+    }
     
     func toAPIModel() -> (Conversation, MLSPublicKeys) {
         (
@@ -63,4 +81,3 @@ private struct ConversationWithPublicKeys: Decodable, ToAPIModelConvertible {
         )
     }
 }
-

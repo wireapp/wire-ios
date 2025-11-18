@@ -79,7 +79,7 @@ final class MLSAPITests: XCTestCase {
                                 ed448: nil,
                                 p256: "BM036midcNiOMgny9m7N",
                                 p384: "BPSlomkR8K4BcFLGTDOJx",
-                                p512: "BAC3OmJi7rAPFAIXjU"
+                                p521: "BAC3OmJi7rAPFAIXjU"
                             )
                         )
                     )
