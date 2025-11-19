@@ -20,18 +20,9 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
-extension MessageProtocol {
-    var supportsBots: Bool {
-        !isOne(of: .mls, .mixed)
-    }
-}
-
 extension ConversationLike where Self: GroupDetailsConversationType {
     var botCanBeAdded: Bool {
-        conversationType != .oneOnOne &&
-            teamType != nil &&
-            allowApps &&
-            messageProtocol.supportsBots
+        conversationType != .oneOnOne && teamType != nil && allowApps
     }
 }
 
