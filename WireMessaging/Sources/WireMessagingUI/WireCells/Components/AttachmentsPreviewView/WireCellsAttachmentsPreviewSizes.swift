@@ -16,26 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireMainNavigationUI
-import WireSyncEngine
+import SwiftUI
 
-final class CreateGroupConversationViewControllerBuilder: CreateGroupConversationViewControllerBuilderProtocol {
-
-    let userSession: UserSession
-    weak var delegate: ConversationCreationControllerDelegate?
-
-    init(userSession: UserSession) {
-        self.userSession = userSession
-    }
-
-    @MainActor
-    func build() async -> UIViewController {
-        let viewController = await ConversationCreationController(
-            preSelectedParticipants: nil,
-            userSession: userSession
-        )
-        viewController.delegate = delegate
-        return viewController
-    }
+enum WireCellsAttachmentsPreviewSizes {
+    static let smallWidth: CGFloat = 120
+    static let smallHeight: CGFloat = 120
 }

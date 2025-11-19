@@ -62,24 +62,23 @@ struct WireCellsAttachmentsPreviewItemView: View {
                     )
                 )
             case (.video, .small):
-                WireCellsDocumentAttachmentPreview(
-                    headerIcon: Image(viewModel.icon),
-                    headerText: viewModel.headerText,
-                    labelText: viewModel.fileName,
+                WireCellsSmallVideoPreviewView(
+                    url: viewModel.imagePreviewURL,
                     progress: viewModel.progress,
-                    isError: viewModel.isAssetDownloadError,
+                    downloadError: viewModel.isAssetDownloadError,
+                    duration: viewModel.attachmentDuration,
                 )
-                .frame(height: 74)
-                .frame(idealWidth: 288)
             case (.video, .large):
-                WireCellsDocumentAttachmentPreview(
+                WireCellsLargeVideoPreviewView(
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
                     progress: viewModel.progress,
-                    isError: viewModel.isAssetDownloadError,
+                    downloadError: viewModel.isAssetDownloadError,
+                    url: viewModel.imagePreviewURL,
+                    imageAspectRatio: viewModel.previewAspectRatio,
+                    duration: viewModel.attachmentDuration,
                 )
-                .frame(height: 74)
                 .frame(idealWidth: 288)
             case (.document, .small):
                 WireCellsDocumentAttachmentPreview(
