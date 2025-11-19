@@ -58,7 +58,7 @@ package struct WireCellsRenameNodeUseCase: WireCellsRenameNodeUseCaseProtocol {
         }
 
         let targetPath: URL
-        
+
         if isFolder {
             let directory = url.deletingLastPathComponent()
             targetPath = directory.appendingPathComponent("\(newFilename)")

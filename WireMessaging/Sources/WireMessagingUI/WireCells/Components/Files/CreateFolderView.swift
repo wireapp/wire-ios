@@ -50,7 +50,7 @@ struct CreateFolderView: View, Identifiable {
                     .padding()
                     .submitLabel(.send)
                     .onSubmit {
-                        if !viewModel.isCreatedDisabled {
+                        if !viewModel.isCreateDisabled {
                             create()
                         }
                     }
@@ -109,7 +109,7 @@ private extension CreateFolderView {
                     Text(L10n.Localizable.General.create)
                 }
             )
-            .disabled(viewModel.isCreatedDisabled)
+            .disabled(viewModel.isCreateDisabled)
             .accessibilityIdentifier("createButton")
         }
     }

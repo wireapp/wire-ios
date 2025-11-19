@@ -26,19 +26,22 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 @MainActor
 final class CreateFolderViewModel: ObservableObject {
+
     @Published var folderNameInput: String = ""
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     @Published var isFocused: Bool = true
     @Published var didCreate: Bool = false
-    
-    var isCreatedDisabled: Bool {
-        errorMessage != nil || folderNameInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+
+    var isCreateDisabled: Bool {
+        errorMessage != nil || !isInputValid
     }
 
     private let createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol
     private let folderPath: String
     private var subscriptions = Set<AnyCancellable>()
+    private let filenameValidator = FilenameValidator()
+    private var isInputValid = true
 
     init(
         createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol,
@@ -88,18 +91,26 @@ final class CreateFolderViewModel: ObservableObject {
 
     private func bindTextInput() {
         $folderNameInput
-            .sink { [weak self] input in
-                self?.validateTextInput(input)
-            }.store(in: &subscriptions)
+            .flatMap(filenameValidator.validate)
+            .sink(receiveValue: handleValidationResult)
+            .store(in: &subscriptions)
     }
 
-    private func validateTextInput(_ textInput: String) {
-        if textInput.count > 64 {
-            errorMessage = Strings.Files.NewFolder.folderNameTooLongError
-        } else if textInput.contains("/") {
-            errorMessage = Strings.Files.NewFolder.wrongCharacterError
-        } else {
+    private func handleValidationResult(_ result: Result<Void, FilenameValidator.Failure>) {
+        switch result {
+        case .success:
+            isInputValid = true
             errorMessage = nil
+        case let .failure(failure):
+            isInputValid = false
+            switch failure {
+            case .tooLong:
+                errorMessage = Strings.Files.NewFolder.folderNameTooLongError
+            case .slashCharacter:
+                errorMessage = Strings.Files.RenameFile.wrongCharacterError
+            default:
+                errorMessage = nil
+            }
         }
     }
 

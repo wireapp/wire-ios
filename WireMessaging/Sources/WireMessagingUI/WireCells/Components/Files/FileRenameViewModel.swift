@@ -27,10 +27,6 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 @MainActor
 final class FileRenameViewModel: ObservableObject {
 
-    private enum Constants {
-        static let maxInputLength = 64
-    }
-
     struct Model {
         let nodeID: UUID
         let filename: String
@@ -42,15 +38,17 @@ final class FileRenameViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var isFocused: Bool = true
     @Published var didRename: Bool = false
-    
+
     var isSaveDisabled: Bool {
-        errorMessage != nil || filenameInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        errorMessage != nil || !isInputValid
     }
 
     private let renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol
     private let model: Model
     private let kind: FilesViewItem.Kind
     private var subscriptions = Set<AnyCancellable>()
+    private let filenameValidator = FilenameValidator()
+    private var isInputValid = true
 
     var title: String {
         switch kind {
@@ -151,18 +149,26 @@ final class FileRenameViewModel: ObservableObject {
 
     private func bindTextInput() {
         $filenameInput
-            .sink { [weak self] input in
-                self?.validateTextInput(input)
-            }.store(in: &subscriptions)
+            .flatMap(filenameValidator.validate)
+            .sink(receiveValue: handleValidationResult)
+            .store(in: &subscriptions)
     }
 
-    private func validateTextInput(_ textInput: String) {
-        if textInput.count > Constants.maxInputLength {
-            errorMessage = inputTooLongErrorMessage
-        } else if textInput.contains("/") {
-            errorMessage = Strings.Files.RenameFile.wrongCharacterError
-        } else {
+    private func handleValidationResult(_ result: Result<Void, FilenameValidator.Failure>) {
+        switch result {
+        case .success:
+            isInputValid = true
             errorMessage = nil
+        case let .failure(failure):
+            isInputValid = false
+            switch failure {
+            case .tooLong:
+                errorMessage = inputTooLongErrorMessage
+            case .slashCharacter:
+                errorMessage = Strings.Files.RenameFile.wrongCharacterError
+            default:
+                errorMessage = nil
+            }
         }
     }
 
