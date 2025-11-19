@@ -27,7 +27,7 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 package protocol FilesViewProtocol: View {
     var viewModel: FilesViewModel { get }
     var isBrowsing: Bool { get }
-    init(viewModel: @autoclosure @escaping () -> FilesViewModel)
+    init(viewModel: @autoclosure @escaping () -> FilesViewModel, onOpenRecycleBin: @escaping () -> Void)
 }
 
 // MARK: - List

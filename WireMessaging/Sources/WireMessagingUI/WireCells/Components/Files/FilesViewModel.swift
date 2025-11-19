@@ -86,14 +86,6 @@ package final class FilesViewModel: ObservableObject {
         }
     }
     
-    enum FullScreenCoverNavigation: String, Identifiable {
-        case recycleBin
-        
-        var id: String {
-            rawValue
-        }
-    }
-
     /// An navigation option displayed in the navigation folder menu.
     enum FolderMenuOption: Hashable {
         case folder(nodeID: UUID, title: String)
@@ -171,7 +163,6 @@ package final class FilesViewModel: ObservableObject {
     @Published var viewingURL: URL?
     @Published var state: State
     @Published var sheetNavigation: SheetNavigation?
-    @Published var fullScreenCoverNavigation: FullScreenCoverNavigation?
     @Published var createFolderView: CreateFolderView?
     @Published var fileRenameView: FileRenameView?
 

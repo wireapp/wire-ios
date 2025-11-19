@@ -23,6 +23,7 @@ package import WireMessagingData
 package struct FilesViewContainer: View {
 
     @State private var path: [FilesViewItem] = []
+    @State private var recycleBinPath: [FilesViewItem] = []
 
     private let cellName: String
     private let nodesAPI: NodesAPI
@@ -35,6 +36,16 @@ package struct FilesViewContainer: View {
     private let fileCache: any FileCache
     private let isFoldersEnabled: Bool
 
+    enum FullScreenCoverNavigation: String, Identifiable {
+        case recycleBin
+        
+        var id: String {
+            rawValue
+        }
+    }
+    
+    @State private var fullScreenCoverNavigation: FullScreenCoverNavigation?
+    
     package init(
         cellName: String,
         nodesAPI: NodesAPI,
@@ -45,7 +56,7 @@ package struct FilesViewContainer: View {
         nodeCache: any WireCellsNodeCacheProtocol,
         nodeRenameNotifier: WireCellsNodeRenameNotifier,
         fileCache: any FileCache,
-        isFoldersEnabled: Bool
+        isFoldersEnabled: Bool,
     ) {
         self.cellName = cellName
         self.nodesAPI = nodesAPI
@@ -60,16 +71,33 @@ package struct FilesViewContainer: View {
     }
 
     var body: some View {
+        let onOpenRecycleBin: () -> Void = {
+            fullScreenCoverNavigation = .recycleBin
+        }
+        
         NavigationStack(path: $path) {
-            FilesView(viewModel: makeViewModel())
+            FilesView(viewModel: makeViewModel(), onOpenRecycleBin: onOpenRecycleBin)
                 .navigationDestination(for: FilesViewItem.self) { _ in
-                    FilesView(viewModel: makeViewModel())
+                    FilesView(viewModel: makeViewModel(), onOpenRecycleBin: onOpenRecycleBin)
                 }
+        }
+        .fullScreenCover(item: $fullScreenCoverNavigation) { navigationItem in
+            switch navigationItem {
+            case .recycleBin:
+                NavigationStack(path: $recycleBinPath) {
+                    FilesView(viewModel: makeViewModel(forRecycleBin: true))
+                        .navigationDestination(for: FilesViewItem.self) { _ in
+                            FilesView(viewModel: makeViewModel(forRecycleBin: true))
+                        }
+                }
+            }
         }
     }
 
-    private func makeViewModel() -> FilesViewModel {
-        FilesViewModel(
+    private func makeViewModel(forRecycleBin: Bool = false) -> FilesViewModel {
+        let path = forRecycleBin ? recycleBinPath : self.path
+        
+        return FilesViewModel(
             useCases: .init(
                 fetchNodes: WireCellsFetchNodesUseCase(
                     configuration: .conversationFileView(
@@ -96,13 +124,18 @@ package struct FilesViewContainer: View {
             title: path.last?.name,
             navigationPath: path,
             setNavigation: { items in
-                path = items
+                if forRecycleBin {
+                    self.recycleBinPath = items
+                } else {
+                    self.path = items
+                }
             },
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
             fileCache: fileCache,
             cellName: cellName,
-            isFoldersEnabled: isFoldersEnabled
+            isFoldersEnabled: isFoldersEnabled,
+            isRecycleBin: forRecycleBin,
         )
     }
 }

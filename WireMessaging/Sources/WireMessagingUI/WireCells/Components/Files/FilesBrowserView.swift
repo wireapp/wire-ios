@@ -30,9 +30,12 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 package struct FilesBrowserView: FilesViewProtocol {
     @StateObject package var viewModel: FilesViewModel
     package var isBrowsing: Bool { true }
+    
+    let onOpenRecycleBin: () -> Void //TODO: use this somewhere
 
-    package init(viewModel: @autoclosure @escaping () -> FilesViewModel) {
+    package init(viewModel: @autoclosure @escaping () -> FilesViewModel, onOpenRecycleBin: @escaping () -> Void = {}) {
         self._viewModel = StateObject(wrappedValue: viewModel())
+        self.onOpenRecycleBin = onOpenRecycleBin
     }
 
     package var body: some View {

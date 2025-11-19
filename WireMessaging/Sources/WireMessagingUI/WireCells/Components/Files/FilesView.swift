@@ -31,9 +31,12 @@ package struct FilesView: FilesViewProtocol {
     package var isBrowsing: Bool { false }
     @StateObject package var viewModel: FilesViewModel
     @Environment(\.dismiss) var dismiss
+    
+    let onOpenRecycleBin: () -> Void
 
-    package init(viewModel: @autoclosure @escaping () -> FilesViewModel) {
+    package init(viewModel: @autoclosure @escaping () -> FilesViewModel, onOpenRecycleBin: @escaping () -> Void = {}) {
         self._viewModel = StateObject(wrappedValue: viewModel())
+        self.onOpenRecycleBin = onOpenRecycleBin
     }
 
     package var body: some View {
@@ -58,7 +61,7 @@ package struct FilesView: FilesViewProtocol {
                                 .refreshable { reloadTask(refreshing: true) }
                         }
 
-                        if viewModel.isFoldersEnabled {
+                        if viewModel.isFoldersEnabled && !viewModel.isRecycleBin {
                             CreateFolderCTA {
                                 viewModel.onCreateFolder()
                             }
@@ -121,14 +124,6 @@ package struct FilesView: FilesViewProtocol {
                 },
                 content: { $0 }
             )
-            .fullScreenCover(item: $viewModel.fullScreenCoverNavigation) { navigationItem in
-                switch navigationItem {
-                case .recycleBin:
-                    NavigationStack {
-                        Text("TODO: Recycle Bin")
-                    }
-                }
-            }
         }
     }
 
@@ -145,7 +140,7 @@ private extension FilesView {
             }
         }
         
-        if !viewModel.isRecycleBin {
+        if !viewModel.isRecycleBin && viewModel.isFoldersEnabled {
             ToolbarItem(placement: .navigationBarTrailing) {
                 moreActionsButton
             }
@@ -182,7 +177,7 @@ private extension FilesView {
     var moreActionsButton: some View {
         Menu {
             Button {
-                viewModel.fullScreenCoverNavigation = .recycleBin
+                onOpenRecycleBin()
             } label: {
                 Label {
                     Text(Strings.Files.openRecycleBin)
