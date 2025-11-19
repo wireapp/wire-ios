@@ -596,10 +596,64 @@ final class ConversationsAPITests: XCTestCase {
 
     // MARK: - GetMLSOneToOneConversation
     
-    func testGetMLSOneToOneConversation_Success_Response_V6_And_Next_Versions() async throws {
+    func testGetMLSOneToOneConversation_Success_Response_V10_AndNext_Versions() async throws {
         // Given
 
-        let supportedVersions = APIVersion.v6.andNextVersions
+        let supportedVersions = APIVersion.v10.andNextVersions
+
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testGetMLSOneOnOneConversationV10SuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // When
+
+        for sut in suts {
+            let (mlsConversation, publicKeys) = try await sut.getMLSOneToOneConversation(
+                userID: Scaffolding.userID,
+                in: Scaffolding.domain
+            )
+
+            XCTAssertEqual(mlsConversation.id, Scaffolding.mlsConversationID)
+            XCTAssertEqual(publicKeys, Scaffolding.publicKeys)
+        }
+    }
+
+    func testGetMLSOneToOneConversation_Success_Response_V8_V9() async throws {
+        // Given
+
+        let supportedVersions = [APIVersion.v8, APIVersion.v9]
+
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testGetMLSOneOnOneConversationV8SuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // When
+
+        for sut in suts {
+            let (mlsConversation, publicKeys) = try await sut.getMLSOneToOneConversation(
+                userID: Scaffolding.userID,
+                in: Scaffolding.domain
+            )
+
+            XCTAssertEqual(mlsConversation.id, Scaffolding.mlsConversationID)
+            XCTAssertEqual(publicKeys, Scaffolding.publicKeys)
+        }
+    }
+
+    func testGetMLSOneToOneConversation_Success_Response_V6_V7() async throws {
+        // Given
+
+        let supportedVersions = [APIVersion.v6, APIVersion.v7]
 
         let mocks: [MockAPIServiceProtocol.Response] = Array(
             repeating: (.ok, "testGetMLSOneOnOneConversationV6SuccessResponse200"),

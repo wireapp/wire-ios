@@ -73,6 +73,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         }
     }
     
+    @discardableResult
     public func resolveOneOnOneConversation(
         with userID: WireDataModel.QualifiedID
     ) async throws -> OneOnOneConversationResolution {
