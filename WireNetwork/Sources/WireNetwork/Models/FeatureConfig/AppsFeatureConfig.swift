@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A configuration for the *Apps* feature.
+/// A configuration for enabling the *Apps* feature.
+/// This flag only affects new-style apps, not old-style services/bots.
 
 public struct AppsFeatureConfig: Equatable, Sendable {
 
