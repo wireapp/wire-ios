@@ -56,7 +56,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
             "clearedChanged",
             "securityLevelChanged",
             "allowGuestsChanged",
-            "allowServicesChanged",
+            "allowAppsChanged",
             "destructionTimeoutChanged",
             "languageChanged",
             "hasReadReceiptsEnabledChanged",
@@ -781,7 +781,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                 .guest
             ] },
             expectedChangedFields: [
-                "allowServicesChanged",
+                "allowAppsChanged",
                 "allowGuestsChanged"
             ],
             expectedChangedKeys: [#keyPath(ZMConversation.accessRoleStringsV2)]
@@ -1122,8 +1122,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         checkThatItNotifiesTheObserverOfAChange(
             conversation,
             modifier: { _, _ in
-                user.serviceIdentifier = UUID().uuidString
-                user.providerIdentifier = UUID().uuidString
+                user.type = .bot
             },
             expectedChangedFields: ["externalParticipantsStateChanged"],
             expectedChangedKeys: ["externalParticipantsState"]

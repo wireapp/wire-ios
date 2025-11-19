@@ -17,6 +17,7 @@
 //
 
 import Foundation
+
 @testable import WireDataModel
 
 class ZMConversationTests_Transport: ZMConversationTestsBase {
@@ -26,7 +27,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     func testThatItUpdateAccessStatus() {
         syncMOC.performGroupedAndWait {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            let accessRoles: Set<ConversationAccessRoleV2> = [.teamMember, .guest, .service]
+            let accessRoles: Set<ConversationAccessRoleV2> = [.teamMember, .guest, .app]
             let accessMode = ConversationAccessMode.allowGuests
 
             // when

@@ -55,7 +55,7 @@ struct FilesViewItemView: View {
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(viewModel.fileName)
-                        .wireTextStyle(.body2)
+                        .font(for: .body2)
                         .lineLimit(1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
@@ -64,7 +64,7 @@ struct FilesViewItemView: View {
 
                         if let firstTag = tagsInfo.firstTag {
                             Text(firstTag)
-                                .wireTextStyle(.subline1)
+                                .font(for: .subline1)
                                 .fontWeight(.medium)
                                 .lineLimit(1)
                                 .foregroundStyle(ColorTheme.Base.primary.color)
@@ -78,7 +78,7 @@ struct FilesViewItemView: View {
 
                         if let additionalTagsIndicator = tagsInfo.additionalTagsIndicator {
                             Text(additionalTagsIndicator)
-                                .wireTextStyle(.subline1)
+                                .font(for: .subline1)
                                 .fontWeight(.medium)
                                 .lineLimit(1)
                                 .foregroundStyle(ColorTheme.Base.primary.color)
@@ -86,12 +86,11 @@ struct FilesViewItemView: View {
                         }
 
                         Text(viewModel.subtitle ?? "")
-                            .wireTextStyle(.subline1)
+                            .font(for: .subline1)
                             .lineLimit(1)
                             .foregroundStyle(ColorTheme.Base.secondaryText.color)
                     }
-                }.environment(\.wireTextStyleMapping, WireTextStyleMapping())
-
+                }
                 Spacer()
 
                 Menu {
@@ -189,5 +188,4 @@ struct FilesViewItemView: View {
         FilesViewItemView(viewModel: .preview(tags: ["urgent"]), canRenameFile: true, canEditTags: true)
         FilesViewItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]))
     }
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

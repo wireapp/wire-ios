@@ -30,7 +30,7 @@ struct TertiaryButtonStyle: SwiftUI.ButtonStyle {
             .padding(8)
             .background(isEnabled ? Theme.enabled.color : Theme.disabled.color)
             .foregroundStyle(isEnabled ? Theme.onEnabled.color : Theme.onDisabled.color)
-            .wireTextStyle(.buttonSmall)
+            .font(for: .buttonSmall)
             .overlay {
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(isEnabled ? Theme.enabledOutline.color : Theme.disabledOutline.color, lineWidth: 1)

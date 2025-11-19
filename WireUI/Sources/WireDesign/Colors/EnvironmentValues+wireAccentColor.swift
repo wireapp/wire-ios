@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireFoundation
+public import SwiftUI
+public import WireFoundation
 
-public extension Color {
-    init(_ wireAccentColor: WireAccentColor) {
-        self = WireAccentColorMapping().color(for: wireAccentColor)
-    }
+public extension EnvironmentValues {
+
+    @Entry var wireAccentColor = WireAccentColor.default
+
 }

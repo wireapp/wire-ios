@@ -33,7 +33,11 @@ final class SetCorrectUserTypeAction: CoreDataMigrationAction {
             fetchRequest.fetchBatchSize = batchSize
             let users = try context.fetch(fetchRequest) as! [ZMUser]
             for user in users {
-                let type = if user.isServiceUser { TypeOfUser.bot } else { TypeOfUser.regular }
+                let type = if user.serviceIdentifier != nil, user.providerIdentifier != nil {
+                    TypeOfUser.bot
+                } else {
+                    TypeOfUser.regular
+                }
                 user.setValue(type.rawValue, forKey: "typeValue")
             }
         } catch {

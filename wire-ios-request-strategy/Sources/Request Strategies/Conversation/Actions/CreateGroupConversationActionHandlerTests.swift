@@ -130,7 +130,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
             unqualifiedUserIDs: [],
             name: "foo bar",
             accessMode: .allowGuests,
-            accessRoles: [.guest, .service, .nonTeamMember, .teamMember],
+            accessRoles: [.guest, .app, .nonTeamMember, .teamMember],
             legacyAccessRole: nil,
             teamID: teamID,
             isReadReceiptsEnabled: true
@@ -306,7 +306,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
         XCTAssertEqual(conversation.userDefinedName, "foo bar")
         XCTAssertEqual(conversation.localParticipants.count, 2)
         XCTAssertTrue(conversation.allowGuests)
-        XCTAssertTrue(conversation.allowServices)
+        XCTAssertTrue(conversation.allowApps)
         XCTAssertTrue(conversation.hasReadReceiptsEnabled)
     }
 
@@ -366,7 +366,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
                 unqualifiedUserIDs: [],
                 name: "foo bar",
                 accessMode: .allowGuests,
-                accessRoles: [.guest, .service, .nonTeamMember, .teamMember],
+                accessRoles: [.guest, .app, .nonTeamMember, .teamMember],
                 legacyAccessRole: nil,
                 teamID: teamID,
                 isReadReceiptsEnabled: true
@@ -420,7 +420,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
                 unqualifiedUserIDs: [],
                 name: "foo bar",
                 accessMode: .allowGuests,
-                accessRoles: [.guest, .service, .nonTeamMember, .teamMember],
+                accessRoles: [.guest, .app, .nonTeamMember, .teamMember],
                 legacyAccessRole: nil,
                 teamID: teamID,
                 isReadReceiptsEnabled: true
