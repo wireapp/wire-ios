@@ -728,17 +728,18 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
                 indexPath: indexPath,
                 onLongPress: { [weak self] cell in
                     guard let actionController = cellDescription.actionController else { return }
-                    
+
                     let messageActionController = MessageActionsViewController.controller(
                         withActions: MessageAction.allCases,
                         actionController: actionController
                     )
-                    
+
                     self?.conversationCellDelegate?.conversationMessageCell(
                         cell,
                         present: messageActionController
                     )
-                })
+                }
+            )
 
         } else {
 

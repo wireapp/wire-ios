@@ -20,7 +20,11 @@ import SwiftUI
 
 final class MultipartAttachmentsConversationCell: UITableViewCell {
 
-    func configure(content: WireCellsAttachmentsPreviewView, insets: EdgeInsets, onLongPress: @escaping (UITableViewCell) -> Void) {
+    func configure(
+        content: WireCellsAttachmentsPreviewView,
+        insets: EdgeInsets,
+        onLongPress: @escaping (UITableViewCell) -> Void
+    ) {
         contentConfiguration = UIHostingConfiguration {
             content
                 .onLongPressGesture {
@@ -30,7 +34,7 @@ final class MultipartAttachmentsConversationCell: UITableViewCell {
         .margins(.all, insets)
         .minSize(width: 0, height: 0)
         .background(.clear)
-        
+
     }
 
     override func prepareForReuse() {
