@@ -292,7 +292,6 @@ final class UserEventDecodingTests: XCTestCase {
                 lastActiveDate: date(from: "2024-06-04T15:03:07Z"),
                 mlsPublicKeys: MLSPublicKeys(
                     ed25519: "ed25519_key",
-                    ed448: "ed448_key",
                     p256: "p256_key",
                     p384: "p384_key",
                     p521: "p512_key"

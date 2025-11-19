@@ -572,7 +572,10 @@ final class ConversationViewController: UIViewController {
             let viewContext = conversation.managedObjectContext,
             let syncContext = viewContext.zm_sync
         else {
-            WireLogger.conversation.warn("missing expected value to resolve 1-1 conversation!", attributes: [.conversationId: conversation.remoteIdentifier ?? "<nil>"])
+            WireLogger.conversation.warn(
+                "missing expected value to resolve 1-1 conversation!",
+                attributes: [.conversationId: conversation.remoteIdentifier ?? "<nil>"]
+            )
             return
         }
 

@@ -379,12 +379,13 @@ final class OneOnOneResolverTests: XCTestCase {
             base64Encoded: base64EncodedString
         )!
 
-        static let mlsPublicKeys = WireNetwork.MLSPublicKeys(ed25519: .randomAlphanumerical(length: 5),
-                                                             ed448: .randomAlphanumerical(length: 5),
-                                                             p256: .randomAlphanumerical(length: 5),
-                                                             p384: .randomAlphanumerical(length: 5),
-                                                             p521: .randomAlphanumerical(length: 5))
-        
+        static let mlsPublicKeys = WireNetwork.MLSPublicKeys(
+            ed25519: .randomAlphanumerical(length: 5),
+            p256: .randomAlphanumerical(length: 5),
+            p384: .randomAlphanumerical(length: 5),
+            p521: .randomAlphanumerical(length: 5)
+        )
+
         static let defaultsSuiteName = UUID().uuidString
     }
 

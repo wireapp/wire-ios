@@ -104,7 +104,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         // Mock
 
         connectionsRepository.updateConnection_MockMethod = { _ in }
-        oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in return .noAction }
+        oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in .noAction }
         _ = await context.perform { [self] in
             modelHelper.createUser(
                 qualifiedID: Scaffolding.receiverQualifiedID.toDomainModel(),

@@ -157,7 +157,7 @@ class ConversationsAPIV8: ConversationsAPIV7 {
             }
         }
     }
-    
+
     override func getMLSOneToOneConversation(
         userID: String,
         in domain: String
@@ -176,7 +176,7 @@ class ConversationsAPIV8: ConversationsAPIV7 {
             request,
             requiringAccessToken: true
         )
-        
+
         return try ResponseParser()
             .success(code: .ok, type: ConversationWithPublicKeys<ConversationV8>.self) // internal type changed
             .failure(code: .badRequest, label: "mls-not-enabled", error: ConversationsAPIError.mlsNotEnabled)
@@ -187,8 +187,6 @@ class ConversationsAPIV8: ConversationsAPIV7 {
 }
 
 // MARK: - Encodables
-
-
 
 private struct QualifiedConversationListV8: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {

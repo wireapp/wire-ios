@@ -298,8 +298,9 @@ public protocol UserSession: AnyObject {
 
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 
-    func resolveOneOnOneConversation(with userID: WireDataModel.QualifiedID) async throws -> OneOnOneConversationResolution
-    
+    func resolveOneOnOneConversation(with userID: WireDataModel
+        .QualifiedID) async throws -> OneOnOneConversationResolution
+
     func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol?
 
     // MARK: - Dependency Injection

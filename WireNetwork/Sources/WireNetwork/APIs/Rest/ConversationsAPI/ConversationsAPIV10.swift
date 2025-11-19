@@ -73,7 +73,7 @@ class ConversationsAPIV10: ConversationsAPIV9 {
             }
         }
     }
-    
+
     override func getMLSOneToOneConversation(
         userID: String,
         in domain: String
@@ -92,7 +92,7 @@ class ConversationsAPIV10: ConversationsAPIV9 {
             request,
             requiringAccessToken: true
         )
-        
+
         return try ResponseParser()
             .success(code: .ok, type: ConversationWithPublicKeys<ConversationV10>.self) // internal type changed
             .failure(code: .badRequest, label: "mls-not-enabled", error: ConversationsAPIError.mlsNotEnabled)

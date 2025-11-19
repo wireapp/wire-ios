@@ -35,7 +35,7 @@ struct StorableUserClientAddEvent: Equatable, Codable, Sendable {
             mlsPublicKeys: value.client.mlsPublicKeys.map {
                 StorableMLSPublicKeys(
                     ed25519: $0.ed25519,
-                    ed448: $0.ed448,
+                    ed448: nil,
                     p256: $0.p256,
                     p384: $0.p384,
                     p521: $0.p521
@@ -59,7 +59,6 @@ struct StorableUserClientAddEvent: Equatable, Codable, Sendable {
                 mlsPublicKeys: client.mlsPublicKeys.map {
                     WireNetwork.MLSPublicKeys(
                         ed25519: $0.ed25519,
-                        ed448: $0.ed448,
                         p256: $0.p256,
                         p384: $0.p384,
                         p521: $0.p521
@@ -128,6 +127,7 @@ private enum StorableDeviceClass: String, Codable, Sendable {
 private struct StorableMLSPublicKeys: Equatable, Codable, Sendable {
 
     let ed25519: String?
+    /// deprecated this field is not used
     let ed448: String?
     let p256: String?
     let p384: String?

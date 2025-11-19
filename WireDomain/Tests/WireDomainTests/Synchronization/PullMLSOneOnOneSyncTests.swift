@@ -17,14 +17,13 @@
 //
 
 import WireDataModel
+import WireFoundation
 import WireNetworkSupport
 import XCTest
-import WireFoundation
 
 @testable import WireDomain
 @testable import WireDomainSupport
 @testable import WireNetwork
-
 
 final class PullMLSOneOnOneSyncTests: XCTestCase {
 
@@ -55,7 +54,7 @@ final class PullMLSOneOnOneSyncTests: XCTestCase {
         store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
 
         // When
-        let (mlsGroupID, publicKeys)  = try await sut.pull(
+        let (mlsGroupID, publicKeys) = try await sut.pull(
             userID: Scaffolding.userID,
             userDomain: Scaffolding.userDomain
         )
@@ -107,11 +106,12 @@ private enum Scaffolding {
         lastEventTime: nil
     )
 
-    static let mlsPublicKeys = WireNetwork.MLSPublicKeys(ed25519: .randomAlphanumerical(length: 5),
-                                                         ed448: .randomAlphanumerical(length: 5),
-                                                         p256: .randomAlphanumerical(length: 5),
-                                                         p384: .randomAlphanumerical(length: 5),
-                                                         p521: .randomAlphanumerical(length: 5))
+    static let mlsPublicKeys = WireNetwork.MLSPublicKeys(
+        ed25519: .randomAlphanumerical(length: 5),
+        p256: .randomAlphanumerical(length: 5),
+        p384: .randomAlphanumerical(length: 5),
+        p521: .randomAlphanumerical(length: 5)
+    )
     static let mlsGroupID =
         "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
 

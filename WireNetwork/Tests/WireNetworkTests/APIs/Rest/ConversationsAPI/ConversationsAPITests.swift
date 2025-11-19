@@ -595,7 +595,7 @@ final class ConversationsAPITests: XCTestCase {
     }
 
     // MARK: - GetMLSOneToOneConversation
-    
+
     func testGetMLSOneToOneConversation_Success_Response_V10_AndNext_Versions() async throws {
         // Given
 
@@ -677,7 +677,6 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    
     func testGetMLSOneToOneConversation_Success_Response_V5() async throws {
         // Given
 
@@ -1874,7 +1873,7 @@ final class ConversationsAPITests: XCTestCase {
         static let userID = "99db9768-04e3-4b5d-9268-831b6a25c4ab"
         static let domain = "domain.com"
         static let mlsConversationID = UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
-        static let publicKeys = MLSPublicKeys(ed25519: "string", ed448: nil, p256: "string", p384: "string", p521: "string")
+        static let publicKeys = MLSPublicKeys(ed25519: "string", p256: "string", p384: "string", p521: "string")
         static let conversationID = UUID.mockID1
         static let guestLinkV0 = "https://exampleV0.com"
         static let guestLinkV4 = "https://exampleV4.com"

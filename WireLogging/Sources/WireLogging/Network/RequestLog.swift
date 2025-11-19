@@ -80,7 +80,7 @@ struct RequestLog: Codable {
 
 public extension URL {
     var endpointRemoteLogDescription: String {
-        return absoluteString
+        absoluteString
 //        let visibleCharactersCount = 3
 //
 //        var components = URLComponents(string: absoluteString)

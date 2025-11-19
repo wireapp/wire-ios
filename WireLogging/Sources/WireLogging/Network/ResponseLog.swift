@@ -22,7 +22,7 @@ struct ResponseLog: Codable {
     var endpoint: String
     var status: Int
     var failureBody: FailureBody?
-    
+
     init?(_ response: HTTPURLResponse) {
         guard let url = response.url else { return nil }
         self.endpoint = url.endpointRemoteLogDescription

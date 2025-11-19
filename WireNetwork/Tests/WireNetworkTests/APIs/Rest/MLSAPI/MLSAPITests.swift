@@ -76,7 +76,6 @@ final class MLSAPITests: XCTestCase {
                         BackendMLSPublicKeys(
                             removal: .init(
                                 ed25519: "YVAl3Nsu27aNpNbYlPB6fi",
-                                ed448: nil,
                                 p256: "BM036midcNiOMgny9m7N",
                                 p384: "BPSlomkR8K4BcFLGTDOJx",
                                 p521: "BAC3OmJi7rAPFAIXjU"
