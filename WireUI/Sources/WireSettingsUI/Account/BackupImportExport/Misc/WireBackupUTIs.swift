@@ -25,5 +25,10 @@ import UniformTypeIdentifiers
 public let WireBackupUTIs = [
     UTType("com.wire.backup-universal"),
     UTType("com.wire.backup-ios-underscore"),
-    UTType("com.wire.backup-ios-hyphen")
+    UTType("com.wire.backup-ios-hyphen"),
+    // Fallback: UTType instances created from file extensions
+    // This helps when files are in cloud storage where custom UTType identifiers might not be recognized
+    UTType(tag: "wbu", tagClass: .filenameExtension, conformingTo: .data),
+    UTType(tag: "ios_wbu", tagClass: .filenameExtension, conformingTo: .data),
+    UTType(tag: "ios-wbu", tagClass: .filenameExtension, conformingTo: .data)
 ].compactMap(\.self) // in Xcode previews UTType.init returns nil
