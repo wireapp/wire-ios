@@ -722,8 +722,23 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
 
         let cellDescription = section.elements[indexPath.row]
         if let model = cellDescription.conversationCellModel {
-
-            return cellProvider.provideCell(for: model, tableView: tableView, indexPath: indexPath)
+            return cellProvider.provideCell(
+                for: model,
+                tableView: tableView,
+                indexPath: indexPath,
+                onLongPress: { [weak self] cell in
+                    guard let actionController = cellDescription.actionController else { return }
+                    
+                    let messageActionController = MessageActionsViewController.controller(
+                        withActions: MessageAction.allCases,
+                        actionController: actionController
+                    )
+                    
+                    self?.conversationCellDelegate?.conversationMessageCell(
+                        cell,
+                        present: messageActionController
+                    )
+                })
 
         } else {
 
