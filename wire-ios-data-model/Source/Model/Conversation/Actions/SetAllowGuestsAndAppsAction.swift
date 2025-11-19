@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct SetAllowGuestsAndServicesAction: EntityAction {
+public struct SetAllowGuestsAndAppsAction: EntityAction {
 
     public typealias Result = Void
 
@@ -28,19 +28,19 @@ public struct SetAllowGuestsAndServicesAction: EntityAction {
     }
 
     public let allowGuests: Bool
-    public let allowServices: Bool
+    public let allowApps: Bool
     public let conversationID: NSManagedObjectID
 
     public var resultHandler: ResultHandler?
 
     public init(
         allowGuests: Bool,
-        allowServices: Bool,
+        allowApps: Bool,
         conversationID: NSManagedObjectID,
         resultHandler: ResultHandler? = nil
     ) {
         self.allowGuests = allowGuests
-        self.allowServices = allowServices
+        self.allowApps = allowApps
         self.conversationID = conversationID
         self.resultHandler = resultHandler
     }

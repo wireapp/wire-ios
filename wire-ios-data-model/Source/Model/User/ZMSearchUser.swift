@@ -208,7 +208,7 @@ public class ZMSearchUser: NSObject, UserType {
         return user.teamRole
     }
 
-    public var isServiceUser: Bool {
+    public var isApp: Bool {
         providerIdentifier != nil
     }
 
@@ -650,7 +650,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     @objc public var canBeConnected: Bool {
-        guard !isServiceUser else { return false }
+        guard !isApp else { return false }
 
         if let user {
             return user.canBeConnected

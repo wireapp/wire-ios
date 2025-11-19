@@ -21,7 +21,7 @@ import Foundation
 public struct ConversationChannelCreationSettings: Equatable, Hashable {
     public let channelName: String
     public let channelAccess: ConversationChannelAccess
-    public let servicesAllowed: Bool
+    public let appsAllowed: Bool
     public let guestsAllowed: Bool
     public let readReceiptsEnabled: Bool
     public let historyDepth: String?
@@ -30,7 +30,7 @@ public struct ConversationChannelCreationSettings: Equatable, Hashable {
     package init(
         channelName: String,
         channelAccess: ConversationChannelAccess,
-        servicesAllowed: Bool,
+        appsAllowed: Bool,
         guestsAllowed: Bool,
         readReceiptsEnabled: Bool,
         historyDepth: String?,
@@ -39,7 +39,7 @@ public struct ConversationChannelCreationSettings: Equatable, Hashable {
         self.channelName = channelName
             .trimmingCharacters(in: .whitespacesAndNewlines)
         self.channelAccess = channelAccess
-        self.servicesAllowed = servicesAllowed
+        self.appsAllowed = appsAllowed
         self.guestsAllowed = guestsAllowed
         self.readReceiptsEnabled = readReceiptsEnabled
         self.historyDepth = historyDepth
