@@ -43,10 +43,6 @@ class FirstTimePage: PageModel {
         app.buttons[Locators.FirstTimePage.notNowOption.rawValue]
     }
 
-    var validationRuleForUsername: XCUIElement {
-        app.descendants(matching: .staticText)["validation-rules"].firstMatch
-    }
-
     var handler: (XCTestCase, any NSObjectProtocol)?
 
     // Tap OK button on first time using Wire popup

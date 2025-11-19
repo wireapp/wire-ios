@@ -30,7 +30,7 @@ class LogOutPage: PageModel {
     }
 
     var okButton: XCUIElement {
-        app.buttons["OK"]
+        app.buttons[Locators.LogOutPage.ok.rawValue]
     }
 
     @discardableResult

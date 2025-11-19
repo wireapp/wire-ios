@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireLocators
 
 class CreatePersonalAccountFormPage: PageModel {
 
@@ -25,28 +26,32 @@ class CreatePersonalAccountFormPage: PageModel {
     }
 
     var nameTextField: XCUIElement {
-        app.descendants(matching: .textField)["enterNameField"].firstMatch
+        app.descendants(matching: .textField)[Locators.CreatePersonalAccountFormPage.enterNameField.rawValue].firstMatch
     }
 
     var passwordField: XCUIElement {
-        app.descendants(matching: .textField)["enterPasswordField"].firstMatch
+        app.descendants(matching: .textField)[Locators.CreatePersonalAccountFormPage.enterPasswordField.rawValue].firstMatch
     }
 
     var confirmPasswordField: XCUIElement {
-        app.descendants(matching: .textField)["enterConfirmPasswordField"].firstMatch
+        app.descendants(matching: .textField)[Locators.CreatePersonalAccountFormPage.enterConfirmPasswordField.rawValue].firstMatch
     }
 
     var showPasswordIcon: XCUIElement {
-        app.descendants(matching: .button)["Show password"].firstMatch
+        app.descendants(matching: .button)[Locators.CreatePersonalAccountFormPage.enterPasswordField.rawValue].firstMatch
+    }
+    
+    var showConfirmPasswordIcon: XCUIElement {
+        app.descendants(matching: .button)[Locators.CreatePersonalAccountFormPage.enterConfirmPasswordField.rawValue].firstMatch
     }
 
     var continueButton: XCUIElement {
-        app.descendants(matching: .button)["Continue"].firstMatch
+        app.descendants(matching: .button)[Locators.CreatePersonalAccountFormPage.continueButton.rawValue].firstMatch
     }
 
     var acceptButton: XCUIElement {
         let elementsQuery = app.otherElements
-        return elementsQuery.buttons["Accept"]
+        return elementsQuery.buttons[Locators.CreatePersonalAccountFormPage.acceptTermsOfUse.rawValue]
     }
 
     func enterName(_ name: String) throws -> CreatePersonalAccountFormPage {
@@ -62,7 +67,7 @@ class CreatePersonalAccountFormPage: PageModel {
     }
 
     func enterConfirmPassword(_ confirmPassword: String) throws -> CreatePersonalAccountFormPage {
-        showPasswordIcon.tap()
+        showConfirmPasswordIcon.tap()
         try confirmPasswordField.tapIfKeyboardNotFocused()
         confirmPasswordField.typeText(confirmPassword)
         return self

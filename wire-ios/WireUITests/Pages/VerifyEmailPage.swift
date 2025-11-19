@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireLocators
 
 class VerifyEmailPage: PageModel {
 
@@ -25,20 +26,16 @@ class VerifyEmailPage: PageModel {
     }
 
     var verifyEmailPageLabel: XCUIElement {
-        app.staticTexts["Verify email"]
+        app.navigationBars[Locators.VerifyEmailPage.verifyEmailPageLabel.rawValue]
     }
 
-    var backToEmailUpdatePage: XCUIElement {
-        app.buttons["Email"]
-    }
-
-    var backToAccountSetting: XCUIElement {
-        app.buttons["Account"]
+    var backToPreviousPage: XCUIElement {
+        app.navigationBars.buttons.element(boundBy: 0)
     }
 
     func goBacktoAccountSetting() throws -> AccountSettingsPage {
-        backToEmailUpdatePage.tap()
-        backToAccountSetting.tap()
+        backToPreviousPage.tap()
+        backToPreviousPage.tap()
         return try AccountSettingsPage()
     }
 

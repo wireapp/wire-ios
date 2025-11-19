@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireLocators
 
 class WebViewPage: PageModel {
 
@@ -27,7 +28,7 @@ class WebViewPage: PageModel {
     private static let safariApp = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
 
     var webViewLabel: XCUIElement {
-        Self.safariApp.webViews.firstMatch.staticTexts["Reset password"]
+        Self.safariApp.webViews.firstMatch.staticTexts[Locators.WebViewPage.resetPassword.rawValue]
     }
 
     @discardableResult

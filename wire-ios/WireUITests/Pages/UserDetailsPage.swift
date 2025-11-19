@@ -34,23 +34,23 @@ class UserDetailsPage: PageModel {
     }
 
     var closeProfileButton: XCUIElement {
-        app.buttons["close"].firstMatch
+        app.buttons[Locators.UserDetailsPage.close.rawValue].firstMatch
     }
 
     var connectButton: XCUIElement {
-        app.staticTexts["Connect"].firstMatch
+        app.buttons[Locators.UserDetailsPage.connectLeftButton.rawValue]
     }
 
     var moreActionsButton: XCUIElement {
-        app.buttons["right_button"]
+        app.buttons[Locators.UserDetailsPage.moreOptionRightButton.rawValue]
     }
 
     var removeFromConversationButton: XCUIElement {
         app.buttons["Remove From Conversation…"]
     }
 
-    var confirmRemoveUserFromConversation: XCUIElement {
-        app.buttons["Remove From Conversation"]
+    var removeUserFromConversationConfirmation: XCUIElement {
+        app.buttons[Locators.UserDetailsPage.removeUserFromConversationConfirmation.rawValue]
     }
 
     func getUserName() -> String? {
@@ -70,7 +70,7 @@ class UserDetailsPage: PageModel {
     func removeParticipantFromConversation() throws -> ConversationDetailsPage {
         moreActionsButton.tap()
         removeFromConversationButton.tap()
-        let confirmButton = confirmRemoveUserFromConversation
+        let confirmButton = removeUserFromConversationConfirmation
         XCTAssertTrue(
             confirmButton.waitForExistence(timeout: 2),
             "Confirm Remove From Conversation button did not appear in time"

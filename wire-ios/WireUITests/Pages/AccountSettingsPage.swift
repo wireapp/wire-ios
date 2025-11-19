@@ -50,11 +50,11 @@ class AccountSettingsPage: PageModel {
     }
 
     var oKButtonOnDeleteAccountAlert: XCUIElement {
-        app.buttons["OK"]
+        app.buttons[Locators.AccountSettingsPage.ok.rawValue]
     }
-
-    var backToSettingsButton: XCUIElement {
-        app.buttons["Settings"]
+    
+    var backToPreviousPage: XCUIElement {
+        app.navigationBars.buttons.element(boundBy: 0)
     }
 
     var backupOrRestoreButton: XCUIElement {
@@ -82,7 +82,7 @@ class AccountSettingsPage: PageModel {
     }
 
     func backToSettings() throws -> SettingsPage {
-        backToSettingsButton.tap()
+        backToPreviousPage.tap()
         return try SettingsPage()
     }
 
@@ -110,11 +110,12 @@ class AccountSettingsPage: PageModel {
     }
 
     func goBackToSettingsPage() throws -> SettingsPage {
-        backToSettingsButton.tap()
+        backToPreviousPage.tap()
         return try SettingsPage()
     }
 
     func tapOnResetPasswordButton() throws -> WebViewPage {
+        XCTAssertTrue(resetPasswordButton.waitForExistence(timeout: 5))
         resetPasswordButton.tap()
         return try WebViewPage()
     }

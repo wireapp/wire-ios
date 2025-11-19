@@ -37,15 +37,15 @@ class ConversationsPage: PageModel {
     }
 
     var conversationCell: XCUIElement {
-        app.buttons["title"]
+        app.buttons[Locators.ConversationsPage.conversationCell.rawValue]
     }
 
     var blockButtonOnMoreOptions: XCUIElement {
-        app.buttons["Block…"]
+        app.buttons[Locators.ConversationsPage.blockOptionOnContextMenu.rawValue]
     }
 
     var blockButtonOnBottomSheet: XCUIElement {
-        app.buttons["Block"]
+        app.buttons[Locators.ConversationsPage.blockButtonOnBottomSheet.rawValue]
     }
 
     var videoCallButton: XCUIElement {

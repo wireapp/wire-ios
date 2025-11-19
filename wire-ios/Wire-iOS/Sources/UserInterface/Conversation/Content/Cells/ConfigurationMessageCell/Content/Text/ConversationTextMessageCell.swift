@@ -20,6 +20,7 @@ import UIKit
 import WireDesign
 import WireMessagingDomain
 import WireSyncEngine
+import WireLocators
 
 final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
@@ -174,7 +175,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         if object.isObfuscated {
             messageTextView.accessibilityIdentifier = "Obfuscated message"
         } else {
-            messageTextView.accessibilityIdentifier = "Message"
+            messageTextView.accessibilityIdentifier = Locators.ActiveConversationPage.message.rawValue
         }
 
         container?.isBubble = isChatBubbleSimpleEnabled

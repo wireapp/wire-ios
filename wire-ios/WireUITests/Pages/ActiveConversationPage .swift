@@ -46,7 +46,7 @@ class ActiveConversationPage: PageModel {
     }
 
     var messageLabels: XCUIElementQuery {
-        app.textViews.matching(identifier: "Message")
+        app.textViews.matching(identifier: Locators.ActiveConversationPage.message.rawValue)
     }
 
     func getSenderName() -> String? {

@@ -25,10 +25,6 @@ class OptionsOnSettingsPage: PageModel {
         lockWithPasscodeSwitch
     }
 
-//    var optionsMenu: XCUIElement {
-//        app.cells[Locators.SettingsPage.optionsCell.rawValue].firstMatch
-//    }
-
     var lockWithPasscodeSwitch: XCUIElement {
         app.descendants(matching: .any)["Lock With Passcode"].firstMatch
     }

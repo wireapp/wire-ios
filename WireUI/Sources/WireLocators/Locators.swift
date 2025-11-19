@@ -34,6 +34,13 @@ public enum Locators {
         case nextButton
         case createAccountLink
     }
+    
+    public enum LogOutPage: String {
+
+        case ok = "OK"
+    }
+    
+    
 
     public enum FirstTimePage: String {
 
@@ -47,6 +54,9 @@ public enum Locators {
         case bottomBarRecentListButton
         case bottomBarSettingsButton
         case createGroupOrSearchButton
+        case conversationCell
+        case blockOptionOnContextMenu = "Block…"
+        case blockButtonOnBottomSheet
     }
 
     public enum SettingsPage: String {
@@ -65,6 +75,7 @@ public enum Locators {
         case resetPasswordField = "Reset PasswordField"
         case deleteAccountField = "Delete AccountField"
         case logOut = "Log Out"
+        case ok = "OK"
 
     }
 
@@ -77,6 +88,7 @@ public enum Locators {
         case authorName
         case conversationTitleButton
         case conversationDetailsButton
+        case message
     }
 
     public enum BackupOrRestorePage: String {
@@ -125,6 +137,15 @@ public enum Locators {
 
         case groupNameField
         case newGroupNextButton
+    }
+    
+    public enum CreatePersonalAccountFormPage: String {
+        
+        case enterNameField
+        case enterPasswordField
+        case enterConfirmPasswordField
+        case continueButton
+        case acceptTermsOfUse = "Accept"
     }
 
     public enum EmailUpdatePage: String {
@@ -180,6 +201,31 @@ public enum Locators {
         case teamNameTextField
         case continueButton
         case backToWireButton
+    }
+    
+    public enum UserDetailsPage: String {
+
+        case close
+        case connectLeftButton
+        case moreOptionRightButton
+        case removeUserFromConversationConfirmation
+    }
+    
+    public enum VerificationCodePage: String {
+        
+        case verificationCodeTextField
+        case confirmButton
+    }
+    
+    
+    public enum VerifyEmailPage: String {
+        
+        case verifyEmailPageLabel = "Verify email"
+    }
+    
+    public enum WebViewPage: String {
+        
+        case resetPassword = "Reset password"
     }
 
 }

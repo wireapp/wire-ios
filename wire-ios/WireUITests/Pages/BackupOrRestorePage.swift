@@ -33,8 +33,8 @@ class BackupOrRestorePage: PageModel {
         app.descendants(matching: .button)[Locators.BackupOrRestorePage.restoreFromBackupButton.rawValue]
     }
 
-    var backToAccountButton: XCUIElement {
-        app.buttons["Account"]
+    var backToPreviousPage: XCUIElement {
+        app.navigationBars.buttons.element(boundBy: 0)
     }
 
     var browseButtonOnBottom: XCUIElement {
@@ -55,7 +55,7 @@ class BackupOrRestorePage: PageModel {
     }
 
     func goBackToAccountPage() throws -> AccountSettingsPage {
-        backToAccountButton.tap()
+        backToPreviousPage.tap()
         return try AccountSettingsPage()
     }
 }
