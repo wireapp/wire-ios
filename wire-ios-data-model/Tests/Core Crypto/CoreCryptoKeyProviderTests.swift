@@ -142,7 +142,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
     }
 
     // MARK: Migrating key
-    
+
     func test_itAvoidsMigrationToBytes_WhenNotAllowed() async throws {
         // GIVEN
         mockMigrationManager.isMigrationToBytesNeeded = true
@@ -151,11 +151,11 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         await XCTAssertThrowsErrorAsync {
             _ = try await sut.coreCryptoKey(allowCreation: false, path: "")
         }
-        
+
         // THEN
         XCTAssertTrue(mockMigrationManager.markMigrationToBytesAsSkipped_Invocations.isEmpty)
     }
-        
+
     func test_itMarksMigrationToBytesAsSkipped_WhenAllowed_AndThereIsNoKey() async throws {
         // GIVEN
         mockMigrationManager.isMigrationToBytesNeeded = true
@@ -192,19 +192,19 @@ class CoreCryptoKeyProviderTests: XCTestCase {
     func test_itAvoidsScopedKeyMigration_WhenNotAllowed() async throws {
         // GIVEN
         mockMigrationManager.isMigrationToScopedKeyNeeded = true
-        
+
         // create unscoped key
         let unscopedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(unscopedItem, value: unscopedKey)
-        
+
         // WHEN
         _ = try? await sut.coreCryptoKey(allowCreation: false, path: "")
-        
+
         // THEN
         let scopedKey: Data? = try? KeychainManager.fetchItem(scopedItem)
         XCTAssertNil(scopedKey)
     }
-    
+
     func test_itMigratesToScopedKey_WhenAllowed() async throws {
         // GIVEN
         mockMigrationManager.isMigrationToScopedKeyNeeded = true
@@ -260,30 +260,30 @@ class CoreCryptoKeyProviderTests: XCTestCase {
     }
 
     // MARK: Rotating key
-    
+
     func test_itAvoidsRotatingTheDatabaseKey_WhenNotAllowed() async throws {
         // GIVEN
         mockMigrationManager.isKeyRotationNeeded = true
-        
+
         // create scoped key item as current key
         let oldKeyId = uniqueKeyId
         let oldKeyItem = scopedItem!
         let oldKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(oldKeyItem, value: oldKey)
-        
+
         // WHEN
         _ = try? await sut.coreCryptoKey(allowCreation: false, path: "")
-        
+
         // THEN
         // verify it didn't update the key
         XCTAssertTrue(mockMigrationManager.updateKeyPathOldKeyNewKey_Invocations.isEmpty)
- 
+
         // verify the old key is still there
         XCTAssertNotNil(try? KeychainManager.fetchItem(oldKeyItem))
 
         // verify it didn't change the key ID
         XCTAssertEqual(oldKeyId, uniqueKeyId)
-        
+
         // verify it didn't mark the rotation as done
         XCTAssertTrue(mockMigrationManager.markKeyRotationAsDone_Invocations.isEmpty)
     }
@@ -350,14 +350,14 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         // THEN
         XCTAssertEqual(mockMigrationManager.updateKeyPathOldKeyNewKey_Invocations.count, 0)
     }
-    
+
     func test_itMarksKeyRotationAsDone_WhenAllowed_AndNoKeyExists() async throws {
         // GIVEN
         mockMigrationManager.isKeyRotationNeeded = true
-        
+
         // WHEN
         _ = try? await sut.coreCryptoKey(allowCreation: true, path: "")
-        
+
         // THEN
         XCTAssertEqual(mockMigrationManager.markKeyRotationAsDone_Invocations.count, 1)
     }

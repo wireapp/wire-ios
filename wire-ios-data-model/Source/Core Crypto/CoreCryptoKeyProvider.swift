@@ -132,11 +132,11 @@ public class CoreCryptoKeyProvider {
             try await rotateKey(path: path)
         } catch Failure.keyNotFound {
             WireLogger.coreCrypto.info("Aborting key rotation: old key not found", attributes: .safePublic)
-            
+
             // No key found. A new one will be created, so there will be no need to do the rotation.
             // Thus it can be marked as done.
             coreCryptoKeyMigrationManager.markKeyRotationAsDone()
-            
+
             return
         } catch {
             throw Failure.failedToRotateKey(error)
