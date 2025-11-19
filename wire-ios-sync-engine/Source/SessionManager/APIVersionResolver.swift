@@ -186,7 +186,7 @@ public extension APIVersion {
     /// as production ready.
 
     static let productionVersions: Set<Self> = [
-        .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12
+        .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13
     ]
 
     /// API versions currently under development and not suitable for production
