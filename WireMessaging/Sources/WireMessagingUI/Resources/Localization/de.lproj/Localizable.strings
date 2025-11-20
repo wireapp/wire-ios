@@ -20,10 +20,15 @@
 "general.loading" = "Wird geladen…";
 "general.confirm" = "OK";
 "general.failure" = "Ein Fehler ist aufgetreten";
+"general.close" = "Schließen";
+"general.save" = "Speichern";
+"general.cancel" = "Abbrechen";
 "general.error.unknown.title." = "Ein Fehler ist aufgetreten";
 "general.error.unknown.message." = "Bitte versuchen Sie es später erneut.";
 "general.error.noInternet.title." = "Keine Internetverbindung";
 "general.error.noInternet.message." = "Es gibt ein Problem mit Ihrem Netzwerk. Bitte versuchen Sie es später noch einmal.";
+"general.create" = "Erstellen";
+"general.cancel" = "Abbrechen";
 
 // MARK: - Channel Access level
 "channel_access_level.public" = "Öffentlich";
@@ -70,7 +75,7 @@
 
 "conversation.creationForm.options.footer" = "Alle Team-Mitglieder können öffentlichen Channels beitreten. Aber nur Channel-Admins oder -Mitglieder können Personen zu einem privaten Channel hinzufügen. Ein privater Channel kann nicht in einen öffentlichen umgewandelt werden.";
 
-"conversation.creationForm.apps.toggle" = "Dienste zulassen";
+"conversation.creationForm.apps.toggle" = "Apps zulassen";
 "conversation.creationForm.guests.toggle" = "Gäste zulassen";
 "conversation.creationForm.guests.description" = "Öffnen Sie diese Unterhaltung für Personen außerhalb Ihres Teams oder für Dienste.";
 
@@ -112,6 +117,7 @@
 "conversation.wireCells.files.item.menu.open" = "Öffnen";
 "conversation.wireCells.files.item.menu.download" = "Herunterladen";
 "conversation.wireCells.files.item.menu.rename" = "Umbenennen";
+"conversation.wireCells.files.item.menu.addOrRemoveTags" = "Tags hinzufügen oder entfernen";
 "conversation.wireCells.files.item.menu.delete" = "Endgültig löschen";
 "conversation.wireCells.files.item.deleteConfirmation.title" = "Dies wird die Datei %@ für alle Teilnehmer endgültig löschen. Alle verlieren den Zugriff und es gibt keine Möglichkeit, die Datei wiederherzustellen.";
 "conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Endgültig löschen";
@@ -124,7 +130,39 @@
 "conversation.wireCells.files.error.message" = "Ihre Dateien und Ordner konnten nicht geladen werden. Bitte laden Sie sie erneut.";
 "conversation.wireCells.files.error.reload" = "Erneut laden";
 "conversation.wireCells.files.search.title" = "Dateien suchen";
+"conversation.wireCells.files.list.newFolder" = "Neuer Ordner";
+"conversation.wireCells.files.newFolder.title" = "Ordnername";
+"conversation.wireCells.files.newFolder.placeholder" = "Ordnernamen eingeben";
+"conversation.wireCells.files.newFolder.navigationTitle" = "Ordner erstellen";
+"conversation.wireCells.files.newFolder.folderNameTooLongError" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
+"conversation.wireCells.files.newFolder.wrongCharacterError" = "Verwenden Sie einen Namen ohne \"/\"";
+"conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "Ein Ordner mit dem Namen existiert bereits";
+"conversation.wireCells.files.fileName.title" = "Dateiname";
+"conversation.wireCells.files.folderName.title" = "Ordnername";
+"conversation.wireCells.files.renameFile.navigationTitle" = "Datei umbenennen";
+"conversation.wireCells.files.renameFolder.navigationTitle" = "Ordner umbenennen";
+"conversation.wireCells.files.renameFile.filenameTooLongError" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
+"conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Verwenden Sie einen Namen ohne \"/\"";
+"conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "Eine Datei mit diesem Namen existiert bereits";
+"conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "Ein Ordner mit dem Namen existiert bereits";
+"conversation.wireCells.files.renameFile.placeholder" = "Dateinamen eingeben";
+"conversation.wireCells.files.renameFolder.placeholder" = "Ordnernamen eingeben";
+
+// MARK: - File Tags View
+"conversation.wireCells.tags.title" = "Tags hinzufügen oder entfernen";
+"conversation.wireCells.tags.headline" = "Alle Mitglieder Ihres Teams können diese Tags sehen und verwenden.";
+"conversation.wireCells.tags.suggestedTagsSection" = "Vorgeschlagene Tags";
+"conversation.wireCells.tags.suggestedTagsSectionEmpty" = "Noch keine Tags erstellt.";
+"conversation.wireCells.tags.textFieldPlaceholder" = "Tag-Name eingeben";
+"conversation.wireCells.tags.error.nameTooLong" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
+"conversation.wireCells.tags.error.specialCharacters" = "Verwenden Sie ein Tag ohne Sonderzeichen {0}";
+"conversation.wireCells.tags.error.saveFailedTitle" = "Tags können nicht bearbeitet werden";
+"conversation.wireCells.tags.error.saveFailedMessage" = "Due to an error your tags could not be edited.";
+"conversation.wireCells.tags.error.retryButton" = "Erneut versuchen";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "Datei nicht verfügbar";
 "conversation.message.attachment.previewNotAvailable" = "Vorschau kann nicht angezeigt werden";
+"conversation.message.attachment.unableToDownload" = "Datei kann nicht heruntergeladen werden";
+"conversation.message.attachment.loadingContent" = "Inhalt wird geladen";

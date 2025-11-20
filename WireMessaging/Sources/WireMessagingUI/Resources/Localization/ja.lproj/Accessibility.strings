@@ -15,7 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// MARK: - Navigation
 
+"general.loading" = "読み込み中…";
+"general.confirm" = "OK";
+"general.failure" = "何か問題があります";
+"general.save" = "保存";
+"general.cancel" = "キャンセル";
+
+// MARK: Channel History
 "conversation.create.channel.back" = "Go back to new conversation overview";
 "conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";
 
@@ -30,3 +38,7 @@
 "conversation.wireCells.files.error.title" = "Can't load files";
 "conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
 "conversation.wireCells.files.error.reload" = "Reload";
+
+// MARK: - File Tags View
+"conversation.wireCells.tags.removeTag" = "Remove tag {0}";
+"conversation.wireCells.tags.addTag" = "Add tag {0}";
