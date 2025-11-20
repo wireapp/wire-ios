@@ -45,7 +45,7 @@ class ConversationsPage: PageModel {
     }
 
     var blockButtonOnBottomSheet: XCUIElement {
-        app.buttons[Locators.ConversationsPage.blockButtonOnBottomSheet.rawValue]
+        app.buttons[Locators.ConversationsPage.blockButtonOnBottomSheet.rawValue].firstMatch
     }
 
     var videoCallButton: XCUIElement {

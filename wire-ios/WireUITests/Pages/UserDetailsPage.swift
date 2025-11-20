@@ -50,7 +50,7 @@ class UserDetailsPage: PageModel {
     }
 
     var removeUserFromConversationConfirmation: XCUIElement {
-        app.buttons[Locators.UserDetailsPage.removeUserFromConversationConfirmation.rawValue]
+        app.buttons[Locators.UserDetailsPage.removeUserFromConversationConfirmation.rawValue].firstMatch
     }
 
     func getUserName() -> String? {
