@@ -50,15 +50,23 @@ package struct WireCellsRenameNodeUseCase: WireCellsRenameNodeUseCaseProtocol {
     package func invoke(
         nodeID: UUID,
         nodeFilepath: String,
-        newFilename: String
+        newFilename: String,
+        isFolder: Bool
     ) async throws {
         guard let url = URL(string: nodeFilepath) else {
             throw WireCellsRenameNodeError.invalidPath
         }
 
-        let pathExtension = url.pathExtension
-        let directory = url.deletingLastPathComponent()
-        let targetPath = directory.appendingPathComponent("\(newFilename).\(pathExtension)")
+        let targetPath: URL
+
+        if isFolder {
+            let directory = url.deletingLastPathComponent()
+            targetPath = directory.appendingPathComponent("\(newFilename)")
+        } else {
+            let pathExtension = url.pathExtension
+            let directory = url.deletingLastPathComponent()
+            targetPath = directory.appendingPathComponent("\(newFilename).\(pathExtension)")
+        }
 
         // Checks whether the path doesn't already exist.
         let preCheckResult = try await nodesRepository.preCheck(
