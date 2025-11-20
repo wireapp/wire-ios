@@ -19,7 +19,6 @@
 class ConversationsAPIV6: ConversationsAPIV5 {
     override var apiVersion: APIVersion { .v6 }
 
-    // https://nginz-https.anta.wire.link/v12/api/swagger-ui/#/default/get-one-to-one-mls-conversation
     override func getMLSOneToOneConversation(
         userID: String,
         in domain: String
