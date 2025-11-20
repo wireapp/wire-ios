@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -33,6 +34,7 @@ package final class FilesFiltersViewModel: ObservableObject {
 
     private let tagsBatchCount = 7
     private var tags: [TagModel] = []
+    let accentColorProvider: () -> WireAccentColor
 
     var selectedTags: [TagModel] {
         tags.filter(\.isSelected)
@@ -56,11 +58,13 @@ package final class FilesFiltersViewModel: ObservableObject {
 
     init(
         fetchTagsUseCase: any WireCellsGetTagSuggestionsUseCaseProtocol,
-        savedTags: [String]?
+        savedTags: [String]?,
+        accentColorProvider: @escaping () -> WireAccentColor
 
     ) {
         self.fetchTagsUseCase = fetchTagsUseCase
         self.savedTags = savedTags ?? []
+        self.accentColorProvider = accentColorProvider
     }
 
     // MARK: - Actions

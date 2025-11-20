@@ -26,7 +26,6 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 struct FilesFiltersView: View {
     @StateObject package var viewModel: FilesFiltersViewModel
     @Environment(\.dismiss) var dismiss
-    @Environment(\.wireAccentColor) private var wireAccentColor
 
     let id = UUID()
 
@@ -70,7 +69,8 @@ private extension FilesFiltersView {
                 ForEach(viewModel.presentedTags) { tag in
                     TagPill(
                         text: tag.name,
-                        isSelected: tag.isSelected
+                        isSelected: tag.isSelected,
+                        accentColor: viewModel.accentColorProvider()
                     )
                     .onTapGesture {
                         viewModel.selectTag(tag)
@@ -97,12 +97,13 @@ private extension FilesFiltersView {
     private struct TagPill: View {
         let text: String
         let isSelected: Bool
+        let accentColor: WireAccentColor
 
         var body: some View {
             Text(text)
                 .foregroundStyle(
                     isSelected
-                        ? ColorTheme.Base.primary.color
+                        ? ColorTheme.Base.primary(accentColor).color
                         : ColorTheme.Backgrounds.onSurface.color
                 )
                 .font(for: .h4)
@@ -111,7 +112,7 @@ private extension FilesFiltersView {
                 .padding(.vertical, 4)
                 .background(
                     isSelected
-                        ? ColorTheme.Base.primaryVariant.color
+                        ? ColorTheme.Base.primaryVariant(accentColor).color
                         : ColorTheme.Backgrounds.surface.color
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -157,7 +158,7 @@ private extension FilesFiltersView {
         .buttonStyle(.borderedProminent)
         .controlSize(.large)
         .buttonBorderShape(.roundedRectangle(radius: 16))
-        .tint(Color(wireAccentColor))
+        .tint(Color(viewModel.accentColorProvider()))
         .font(for: .buttonBig)
         .padding()
     }

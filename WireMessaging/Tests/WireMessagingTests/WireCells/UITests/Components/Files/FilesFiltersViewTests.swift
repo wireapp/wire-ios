@@ -108,7 +108,8 @@ final class FilesFiltersViewTests: XCTestCase {
 
         let viewModel = FilesFiltersViewModel(
             fetchTagsUseCase: fetchTagsUseCase,
-            savedTags: savedTags
+            savedTags: savedTags,
+            accentColorProvider: { .default }
         )
 
         await viewModel.fetch()

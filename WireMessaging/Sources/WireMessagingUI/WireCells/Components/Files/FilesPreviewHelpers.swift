@@ -67,6 +67,7 @@ extension FilesViewModel {
             fileCache: cache,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
             isFoldersEnabled: isFoldersEnabled,
+            accentColorProvider: { .default }
         )
     }
 
@@ -133,7 +134,8 @@ extension FilesFiltersViewModel {
             WireCellsGetTagSuggestionsUseCase(
                 nodesAPI: nodesAPI
             ),
-            savedTags: nil
+            savedTags: nil,
+            accentColorProvider: { .default }
         )
     }
 

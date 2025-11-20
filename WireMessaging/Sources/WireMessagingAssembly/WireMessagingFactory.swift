@@ -140,7 +140,7 @@ public extension WireMessagingFactory {
     func makeFilesView(
         cellName: String,
         isCellsStatePending: Bool,
-        accentColor: WireAccentColor
+        accentColorProvider: @escaping () -> WireAccentColor
     ) -> UIViewController {
         UIHostingController(
             rootView: FilesViewContainer(
@@ -153,15 +153,15 @@ public extension WireMessagingFactory {
                 nodeCache: nodeCache,
                 nodeRenameNotifier: nodeRenameNotifier,
                 fileCache: fileCache,
-                isFoldersEnabled: isFoldersEnabled
-            )
-            .environment(\.wireAccentColor, accentColor)
+                isFoldersEnabled: isFoldersEnabled,
+                accentColorProvider: accentColorProvider
+            ).environment(\.wireAccentColor, accentColorProvider())
         )
     }
 
     @MainActor
     func makeFilesBrowserView(
-        accentColor: WireAccentColor
+        accentColorProvider: @escaping () -> WireAccentColor
     ) -> UIViewController {
         UIHostingController(
             rootView: FilesBrowserView(
@@ -189,10 +189,10 @@ public extension WireMessagingFactory {
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,
                     fileCache: fileCache,
-                    isFoldersEnabled: false
+                    isFoldersEnabled: false,
+                    accentColorProvider: accentColorProvider
                 )
             )
-            .environment(\.wireAccentColor, accentColor)
         )
     }
 

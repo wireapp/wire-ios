@@ -35,7 +35,8 @@ final class FilesFiltersViewModelTests {
         nodesApi.getAllTags_MockMethod = { mockTags }
         self.sut = FilesFiltersViewModel(
             fetchTagsUseCase: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi),
-            savedTags: [Scaffolding.savedTag]
+            savedTags: [Scaffolding.savedTag],
+            accentColorProvider: { .default }
         )
     }
 
