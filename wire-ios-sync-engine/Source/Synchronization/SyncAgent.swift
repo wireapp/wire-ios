@@ -63,14 +63,14 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
     private let featureConfigRepository: any FeatureConfigRepositoryProtocol
     private let pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol
-
+    private let networkStatePublisher: AnyPublisher<NetworkState, Never>
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private let initialSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
     private var ongoingSyncTask: Task<Void, Never>?
     private let conversationUpdatesGenerator: ConversationUpdatesGeneratorProtocol
 
-    private var subscription: AnyCancellable?
+    private var cancellables: Set<AnyCancellable> = .init()
 
     var syncRunning: Bool {
         ongoingSyncTask != nil || incrementalSyncToken != nil
@@ -96,7 +96,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         featureConfigRepository: any FeatureConfigRepositoryProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol,
-        conversationUpdatesGenerator: any ConversationUpdatesGeneratorProtocol
+        conversationUpdatesGenerator: any ConversationUpdatesGeneratorProtocol,
+        networkStatePublisher: AnyPublisher<NetworkState, Never>
     ) {
         self.journal = journal
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
@@ -108,6 +109,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         self.syncStateSubject = syncStateSubject
         self.pushChannelCoordinator = pushChannelCoordinator
         self.conversationUpdatesGenerator = conversationUpdatesGenerator
+        self.networkStatePublisher = networkStatePublisher
         super.init()
 
         setupBindings()
@@ -317,7 +319,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     }
 
     private func setupBindings() {
-        subscription = syncStateSubject
+        syncStateSubject
             .receive(on: DispatchQueue.main)
             .filter {
                 let liveSyncTerminated = $0 == .liveSyncing(.finished)
@@ -329,7 +331,18 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 // if live sync terminated and we're in foreground
                 // app will try to recover by performing an incremental sync again
                 self?.resume()
-            }
+            }.store(in: &cancellables)
+        
+        var latestNetworkState: NetworkState?
+        networkStatePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newNetworkState in
+                if newNetworkState == .online && latestNetworkState == .offline {
+                    WireLogger.sync.warn("was offline, now back online, resume sync")
+                    self?.resume()
+                }
+                latestNetworkState = newNetworkState
+            }.store(in: &cancellables)
     }
 }
 
