@@ -62,7 +62,8 @@ protocol ConversationCellProviderProtocol {
     func provideCell(
         for model: ConversationCellModel,
         tableView: UITableView,
-        indexPath: IndexPath
+        indexPath: IndexPath,
+        onLongPress: @escaping (UITableViewCell) -> Void
     ) -> UITableViewCell
 
 }
