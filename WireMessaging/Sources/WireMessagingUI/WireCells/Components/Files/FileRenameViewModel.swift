@@ -169,9 +169,9 @@ final class FileRenameViewModel: ObservableObject {
             switch failure {
             case .tooLong:
                 errorMessage = inputTooLongErrorMessage
-            case .slashCharacter:
+            case .slashCharacter, .dotPrefix:
                 errorMessage = Strings.Files.RenameFile.wrongCharacterError
-            default:
+            case .empty:
                 errorMessage = nil
             }
         }
