@@ -35,15 +35,15 @@ class NewConversationPage: PageModel {
     }
 
     var searchByNameOrUsernameSearchBox: XCUIElement {
-        app.descendants(matching: .any)["Search by name or username"].firstMatch
+        app.descendants(matching: .any)[Locators.NewConversationPage.searchByNameOrUsername.rawValue].firstMatch
     }
 
     var cancelButtonOnSearchedUserPage: XCUIElement {
-        app.buttons["Cancel"]
+        app.buttons[Locators.NewConversationPage.cancelUserSearch.rawValue]
     }
 
     var cancelButtonOnNewConversation: XCUIElement {
-        app.buttons["cancel"]
+        app.buttons[Locators.NewConversationPage.cancel.rawValue]
     }
 
     func tapSearchBox() -> NewConversationPage {
@@ -52,7 +52,7 @@ class NewConversationPage: PageModel {
     }
 
     var searchedUserCell: XCUIElement {
-        app.descendants(matching: .any)["user_cell.username"].firstMatch
+        app.descendants(matching: .any)[Locators.NewConversationPage.usernameCell.rawValue].firstMatch
     }
 
     func searchUserByUserHandle(_ handle: String) throws -> NewConversationPage {

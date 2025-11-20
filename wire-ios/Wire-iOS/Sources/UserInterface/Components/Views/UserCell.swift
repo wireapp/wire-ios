@@ -198,7 +198,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
         // subtitleLabel
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        subtitleLabel.accessibilityIdentifier = "user_cell.username"
+        subtitleLabel.accessibilityIdentifier = Locators.NewConversationPage.usernameCell.rawValue
 
         // avatar
         avatarImageView.userSession = ZMUserSession.shared()

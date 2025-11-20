@@ -34,13 +34,11 @@ public enum Locators {
         case nextButton
         case createAccountLink
     }
-    
+
     public enum LogOutPage: String {
 
         case ok = "OK"
     }
-    
-    
 
     public enum FirstTimePage: String {
 
@@ -138,9 +136,9 @@ public enum Locators {
         case groupNameField
         case newGroupNextButton
     }
-    
+
     public enum CreatePersonalAccountFormPage: String {
-        
+
         case enterNameField
         case enterPasswordField
         case enterConfirmPasswordField
@@ -158,7 +156,23 @@ public enum Locators {
     public enum NewConversationPage: String {
 
         case createNewGroupButton
-        case searchByNameOrUsername
+        case searchByNameOrUsername = "Search by name or username"
+        case cancelUserSearch = "Cancel"
+        case cancel
+        case usernameCell
+    }
+
+    public enum OnMyiPhonePage: String {
+
+        case onMyiPhoneLabel = "On My iPhone"
+        case save = "Save"
+        case search = "Search"
+
+    }
+
+    public enum OptionsOnSettingsPage: String {
+
+        case lockWithPasscode = "Lock With Passcode"
     }
 
     public enum SaveBackupFileBottomSheetPage: String {
@@ -173,6 +187,11 @@ public enum Locators {
         case searchByNameOrUsername
     }
 
+    public enum SetCustomBackendPage: String {
+
+        case proceedButton = "Proceed"
+    }
+
     public enum SetPasscodePage: String {
 
         case passcodeField
@@ -185,6 +204,8 @@ public enum Locators {
         case passwordInputField
         case backUpNowButton
         case historyRestoredAlert = "Your history is restored."
+        case continueButton = "Continue"
+        case ok = "OK"
 
     }
 
@@ -202,29 +223,29 @@ public enum Locators {
         case continueButton
         case backToWireButton
     }
-    
+
     public enum UserDetailsPage: String {
 
         case close
         case connectLeftButton
         case moreOptionRightButton
         case removeUserFromConversationConfirmation
+        case removeFromConversation = "Remove From Conversation…"
     }
-    
+
     public enum VerificationCodePage: String {
-        
+
         case verificationCodeTextField
         case confirmButton
     }
-    
-    
+
     public enum VerifyEmailPage: String {
-        
+
         case verifyEmailPageLabel = "Verify email"
     }
-    
+
     public enum WebViewPage: String {
-        
+
         case resetPassword = "Reset password"
     }
 

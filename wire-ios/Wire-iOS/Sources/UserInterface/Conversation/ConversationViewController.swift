@@ -20,8 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireDomain
-import WireLocators
 import WireFoundation
+import WireLocators
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly

@@ -26,7 +26,7 @@ class OptionsOnSettingsPage: PageModel {
     }
 
     var lockWithPasscodeSwitch: XCUIElement {
-        app.descendants(matching: .any)["Lock With Passcode"].firstMatch
+        app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.lockWithPasscode.rawValue].firstMatch
     }
 
     var conversationsButton: XCUIElement {

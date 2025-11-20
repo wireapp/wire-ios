@@ -18,9 +18,9 @@
 
 import UIKit
 import WireDesign
+import WireLocators
 import WireMessagingDomain
 import WireSyncEngine
-import WireLocators
 
 final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 

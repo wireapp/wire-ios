@@ -52,7 +52,7 @@ class AccountSettingsPage: PageModel {
     var oKButtonOnDeleteAccountAlert: XCUIElement {
         app.buttons[Locators.AccountSettingsPage.ok.rawValue]
     }
-    
+
     var backToPreviousPage: XCUIElement {
         app.navigationBars.buttons.element(boundBy: 0)
     }
@@ -62,7 +62,7 @@ class AccountSettingsPage: PageModel {
     }
 
     var resetPasswordButton: XCUIElement {
-        app.descendants(matching: .any)[Locators.AccountSettingsPage.resetPasswordField.rawValue].firstMatch
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.resetPasswordField.rawValue]
     }
 
     func getAccountName() -> String? {
@@ -115,7 +115,6 @@ class AccountSettingsPage: PageModel {
     }
 
     func tapOnResetPasswordButton() throws -> WebViewPage {
-        XCTAssertTrue(resetPasswordButton.waitForExistence(timeout: 5))
         resetPasswordButton.tap()
         return try WebViewPage()
     }

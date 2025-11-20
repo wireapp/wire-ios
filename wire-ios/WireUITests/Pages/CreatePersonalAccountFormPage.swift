@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireLocators
+import XCTest
 
 class CreatePersonalAccountFormPage: PageModel {
 
@@ -30,19 +30,23 @@ class CreatePersonalAccountFormPage: PageModel {
     }
 
     var passwordField: XCUIElement {
-        app.descendants(matching: .textField)[Locators.CreatePersonalAccountFormPage.enterPasswordField.rawValue].firstMatch
+        app.descendants(matching: .textField)[Locators.CreatePersonalAccountFormPage.enterPasswordField.rawValue]
+            .firstMatch
     }
 
     var confirmPasswordField: XCUIElement {
-        app.descendants(matching: .textField)[Locators.CreatePersonalAccountFormPage.enterConfirmPasswordField.rawValue].firstMatch
+        app.descendants(matching: .textField)[Locators.CreatePersonalAccountFormPage.enterConfirmPasswordField.rawValue]
+            .firstMatch
     }
 
     var showPasswordIcon: XCUIElement {
-        app.descendants(matching: .button)[Locators.CreatePersonalAccountFormPage.enterPasswordField.rawValue].firstMatch
+        app.descendants(matching: .button)[Locators.CreatePersonalAccountFormPage.enterPasswordField.rawValue]
+            .firstMatch
     }
-    
+
     var showConfirmPasswordIcon: XCUIElement {
-        app.descendants(matching: .button)[Locators.CreatePersonalAccountFormPage.enterConfirmPasswordField.rawValue].firstMatch
+        app.descendants(matching: .button)[Locators.CreatePersonalAccountFormPage.enterConfirmPasswordField.rawValue]
+            .firstMatch
     }
 
     var continueButton: XCUIElement {

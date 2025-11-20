@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireLocators
+import XCTest
 
 class VerificationCodePage: PageModel {
 
@@ -26,7 +26,8 @@ class VerificationCodePage: PageModel {
     }
 
     var verificationCodeInput: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any).matching(identifier: Locators.VerificationCodePage.verificationCodeTextField.rawValue)
+        let elementsQuery = app.descendants(matching: .any)
+            .matching(identifier: Locators.VerificationCodePage.verificationCodeTextField.rawValue)
         return elementsQuery.firstMatch
     }
 

@@ -34,7 +34,7 @@ class SetPasswordPage: PageModel {
     }
 
     var continueButton: XCUIElement {
-        app.buttons["Continue"]
+        app.buttons[Locators.SetPasswordPage.continueButton.rawValue]
     }
 
     var historyRestoredAlert: XCUIElement {
@@ -42,7 +42,7 @@ class SetPasswordPage: PageModel {
     }
 
     var OKButtonOnAlert: XCUIElement {
-        app.buttons["OK"]
+        app.buttons[Locators.SetPasswordPage.ok.rawValue]
     }
 
     func enterBackupPasswordAndBackup(_ password: String) throws -> CreatingBackupPage {

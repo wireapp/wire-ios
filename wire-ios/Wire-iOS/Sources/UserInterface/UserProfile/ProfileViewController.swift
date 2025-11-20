@@ -19,10 +19,10 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireLogging
 import WireMainNavigationUI
 import WireSyncEngine
-import WireLocators
 
 enum ProfileViewControllerTabBarIndex: Int {
     case details = 0
@@ -484,7 +484,10 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
                 }
             }
         }
-        removeAction.setValue(Locators.UserDetailsPage.removeUserFromConversationConfirmation.rawValue, forKey: "accessibilityIdentifier")
+        removeAction.setValue(
+            Locators.UserDetailsPage.removeUserFromConversationConfirmation.rawValue,
+            forKey: "accessibilityIdentifier"
+        )
 
         controller.addAction(removeAction)
         controller.addAction(.cancel())

@@ -19,8 +19,8 @@
 package import SwiftUI
 import WireDesign
 import WireFoundation
-package import WireMessagingDomain
 import WireLocators
+package import WireMessagingDomain
 
 package struct ConversationTypePicker: View {
     private enum Constants {

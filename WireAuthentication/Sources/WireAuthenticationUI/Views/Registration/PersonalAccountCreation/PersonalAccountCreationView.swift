@@ -18,8 +18,8 @@
 
 import SwiftUI
 import WireDesign
-import WireReusableUIComponents
 import WireLocators
+import WireReusableUIComponents
 
 package struct PersonalAccountCreationView: View {
 

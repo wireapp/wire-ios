@@ -46,7 +46,7 @@ class UserDetailsPage: PageModel {
     }
 
     var removeFromConversationButton: XCUIElement {
-        app.buttons["Remove From Conversation…"]
+        app.buttons[Locators.UserDetailsPage.removeFromConversation.rawValue]
     }
 
     var removeUserFromConversationConfirmation: XCUIElement {

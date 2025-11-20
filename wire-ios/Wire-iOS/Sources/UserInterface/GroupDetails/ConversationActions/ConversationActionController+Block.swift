@@ -40,7 +40,10 @@ enum BlockResult {
     func action(_ handler: @escaping (BlockResult) -> Void) -> UIAlertAction {
         let action = UIAlertAction(title: title, style: style) { _ in handler(self) }
         if case .block = self {
-            action.setValue(Locators.ConversationsPage.blockButtonOnBottomSheet.rawValue, forKey: "accessibilityIdentifier")
+            action.setValue(
+                Locators.ConversationsPage.blockButtonOnBottomSheet.rawValue,
+                forKey: "accessibilityIdentifier"
+            )
         }
         return action
     }
