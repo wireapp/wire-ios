@@ -27,7 +27,7 @@
 "cloud_user_login.input_email.placeholder" = "Введите email";
 "cloud_user_login.input_password.title" = "Пароль";
 "cloud_user_login.input_password.placeholder" = "Введите пароль";
-"cloud_user_login.submit" = "Вперед";
+"cloud_user_login.submit" = "Next";
 "cloud_user_login.forgot_password" = "Забыли пароль?";
 
 "login.sso.title" = "Войти";
@@ -41,7 +41,7 @@
 "logout.alert.message" = "Определитесь, хотите ли вы сохранить историю своих бесед или навсегда удалить ее с этого устройства.";
 "logout.alert.delete_data_button" = "Выйти и удалить историю";
 "logout.alert.keep_data_button" = "Выйти и сохранить историю";
-"logout.alert.cancel" = "Отмена";
+"logout.alert.cancel" = "Cancel";
 
 "create_account_or_team.title" = "У вас нет аккаунта Wire?";
 "create_account_or_team.button" = "Создать аккаунт или команду";
@@ -83,7 +83,7 @@
 "switch_backend_confirmation.website_url" = "URL веб-сайта:";
 "switch_backend_confirmation.countly_url" = "Countly URL:";
 "switch_backend_confirmation.proceed" = "Продолжить";
-"switch_backend_confirmation.cancel" = "Отмена";
+"switch_backend_confirmation.cancel" = "Cancel";
 "switch_backend_confirmation.show_details" = "Подробнее";
 "switch_backend.error.title.logged_in" = "Невозможно переключить серверы";
 "switch_backend.error.message.logged_in" = "Вы уже авторизованы. Чтобы переключиться на этот сервер, выйдите из всех учетных записей и повторите попытку.";
@@ -135,7 +135,7 @@
 "obsolete.alert.update_button" = "Обновить";
 "obsolete.alert.switch_accounts" = "Сменить аккаунт";
 "obsolete.alert.logout" = "Выйти";
-"obsolete.alert.cancel" = "Отмена";
+"obsolete.alert.cancel" = "Cancel";
 "obsolete.alert.ok" = "OK";
 
 "obsolete_backend.alert.title" = "Версия сервера не поддерживается";
@@ -161,7 +161,7 @@
 "create_personal_account.confirmation_alert.message" = "Для продолжения, пожалуйста, примите условия использования.";
 "create_personal_account.confirmation_alert.accept" = "Принять";
 "create_personal_account.confirmation_alert.view" = "Вид";
-"create_personal_account.confirmation_alert.cancel" = "Отмена";
+"create_personal_account.confirmation_alert.cancel" = "Cancel";
 "create_personal_account.verification_code.resend_code" = "Отправить код еще раз";
 "create_personal_account.verification_code.confirm" = "Подтвердить";
 "create_personal_account.verification_code.message" = "Введите код подтверждения, который мы отправили на %@.";
