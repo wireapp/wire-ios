@@ -77,6 +77,10 @@ public class CoreCryptoKeyProvider {
         allowCreation: Bool,
         path: String
     ) async throws -> Data {
+        if !allowCreation, coreCryptoKeyMigrationManager.isAnyMigrationRequired {
+            throw Failure.migrationRequired
+        }
+
         if allowCreation {
             try await performKeyMigrationsIfNeeded(path: path)
         }
@@ -246,6 +250,7 @@ public class CoreCryptoKeyProvider {
 public extension CoreCryptoKeyProvider {
 
     enum Failure: LocalizedError {
+        case migrationRequired
         case keyNotFound
         case failedToScopeKey(Error)
         case failedToRotateKey(Error)
@@ -261,6 +266,8 @@ public extension CoreCryptoKeyProvider {
                 "failed to rotate key (\(String(describing: error))"
             case let .failedToMigrateKeyToBytes(error):
                 "failed to migrate key to bytes (\(String(describing: error)))"
+            case .migrationRequired:
+                "migration required"
             }
         }
     }

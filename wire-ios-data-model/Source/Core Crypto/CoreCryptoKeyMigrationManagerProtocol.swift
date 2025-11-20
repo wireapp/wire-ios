@@ -19,6 +19,10 @@
 // sourcery: AutoMockable
 public protocol CoreCryptoKeyMigrationManagerProtocol {
 
+    /// Wether there's any migration that is required
+
+    var isAnyMigrationRequired: Bool { get }
+
     /// Wether we need to update the database key from String to Data (bytes) format
 
     var isMigrationToBytesNeeded: Bool { get }
