@@ -50,7 +50,7 @@ struct FileRenameView: View {
                     .padding()
                     .submitLabel(.send)
                     .onSubmit {
-                        if !isSaveDisabled() {
+                        if !viewModel.isSaveDisabled {
                             save()
                         }
                     }
@@ -72,10 +72,6 @@ struct FileRenameView: View {
                 dismiss()
             }
         }
-    }
-
-    private func isSaveDisabled() -> Bool {
-        viewModel.errorMessage != nil || viewModel.filenameInput.isEmpty
     }
 
 }
@@ -115,7 +111,7 @@ private extension FileRenameView {
                         Text(L10n.Localizable.General.save)
                     }
                 )
-                .disabled(isSaveDisabled())
+                .disabled(viewModel.isSaveDisabled)
                 .accessibilityLabel(L10n.Accessibility.General.save)
                 .accessibilityIdentifier("save")
             }

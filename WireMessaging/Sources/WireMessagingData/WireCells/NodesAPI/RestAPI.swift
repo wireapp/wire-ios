@@ -90,7 +90,7 @@ final class RestAPI: Sendable {
 
         let parameters = RestActionParameters(
             awaitStatus: .finished,
-            awaitTimeout: "60s",
+            awaitTimeout: "5s",
             copyMoveOptions: RestActionOptionsCopyMove(
                 targetIsParent: false,
                 targetPath: targetPath
