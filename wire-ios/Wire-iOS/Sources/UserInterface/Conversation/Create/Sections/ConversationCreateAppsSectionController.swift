@@ -18,9 +18,9 @@
 
 import UIKit
 
-final class ConversationCreateServicesSectionController: ConversationCreateSectionController {
+final class ConversationCreateAppsSectionController: ConversationCreateSectionController {
 
-    typealias Cell = ConversationCreateServicesCell
+    typealias Cell = ConversationCreateAllowAppsCell
 
     var toggleAction: ((Bool) -> Void)?
 
@@ -29,9 +29,11 @@ final class ConversationCreateServicesSectionController: ConversationCreateSecti
         collectionView.flatMap(Cell.register)
         footerText = L10n.Localizable.Conversation.Create.Apps.subtitle
     }
+
 }
 
-extension ConversationCreateServicesSectionController {
+extension ConversationCreateAppsSectionController {
+
     override func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
@@ -43,4 +45,5 @@ extension ConversationCreateServicesSectionController {
         cell.action = toggleAction
         return cell
     }
+
 }

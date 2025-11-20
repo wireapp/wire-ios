@@ -91,7 +91,7 @@ extension ZMConversation: InputBarConversation {
 protocol GroupDetailsConversation {
     var userDefinedName: String? { get set }
 
-    var sortedServiceUsers: [UserType] { get }
+    var sortedApps: [UserType] { get }
 
     var allowGuests: Bool { get }
     var hasReadReceiptsEnabled: Bool { get }

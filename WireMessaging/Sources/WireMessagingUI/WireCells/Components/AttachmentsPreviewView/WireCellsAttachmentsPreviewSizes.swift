@@ -16,11 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import SwiftUI
 
-@testable import WireConversationListUI
-
-final class PlaceholderTests: XCTestCase {
-
-    func testNothing() {}
+enum WireCellsAttachmentsPreviewSizes {
+    static let smallWidth: CGFloat = 120
+    static let smallHeight: CGFloat = 120
 }
