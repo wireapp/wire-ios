@@ -94,7 +94,7 @@ final class CreateFolderViewModel: ObservableObject {
             .compactMap { [weak self] input in
                 self?.filenameValidator.validate(input)
             }
-            .flatMap { $0 }
+            .flatMap(\.self)
             .sink { [weak self] result in
                 self?.handleValidationResult(result)
             }.store(in: &subscriptions)
