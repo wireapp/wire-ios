@@ -23,7 +23,7 @@ public enum ColorTheme {
 
     public enum Base {
 
-        public static func primary_(_ accentColor: WireAccentColor) -> UIColor {
+        public static func primary(_ accentColor: WireAccentColor) -> UIColor {
             switch accentColor {
             case .blue:
                 UIColor(light: .blue500Light, dark: .blue500Dark)
@@ -40,15 +40,9 @@ public enum ColorTheme {
             }
         }
 
-        @available(*, deprecated, message: "use primary_")
-        public static let primary = UIColor(light: .blue500Light, dark: .blue500Dark) // TODO: delete
-
         public static let onPrimary = UIColor(light: .white, dark: .black)
 
-        @available(*, deprecated, message: "use primaryVariant_")
-        public static let primaryVariant = UIColor(light: .blue50Light, dark: .blue800Dark) // TODO: delete
-
-        public static func primaryVariant_(_ accentColor: WireAccentColor) -> UIColor {
+        public static func primaryVariant(_ accentColor: WireAccentColor) -> UIColor {
             switch accentColor {
             case .blue:
                 UIColor(light: .blue50Light, dark: .blue800Dark)
