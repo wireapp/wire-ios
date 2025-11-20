@@ -27,6 +27,7 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct TagsEditView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.wireAccentColor) private var wireAccentColor
 
     @StateObject private var viewModel: ViewModel
 
@@ -86,7 +87,7 @@ struct TagsEditView: View {
                     ColorTheme.Backgrounds.background.color
                         .ignoresSafeArea(edges: .all)
                 }
-                .tint(ColorTheme.Base.primary.color)
+                .tint(ColorTheme.Base.primary(wireAccentColor).color)
                 .alert(isPresented: $viewModel.isSaveErrorMessagePresented) {
                     Alert(
                         title: Text(Strings.Tags.Error.saveFailedTitle),
@@ -261,11 +262,11 @@ struct TagsEditView: View {
             .padding(.vertical, 4)
             .padding(.horizontal, 8)
             .background {
-                shape.fill(ColorTheme.Base.primaryVariant.color)
+                shape.fill(ColorTheme.Base.primaryVariant(wireAccentColor).color)
             }
         }
         .accessibilityLabel(Text(Accessibility.Tags.removeTag.replacingOccurrences(of: "{0}", with: tag)))
-        .foregroundStyle(ColorTheme.Base.primary.color)
+        .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
     }
 
     @ViewBuilder

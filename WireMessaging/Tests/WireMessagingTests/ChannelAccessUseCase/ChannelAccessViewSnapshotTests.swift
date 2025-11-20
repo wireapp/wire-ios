@@ -24,9 +24,10 @@ import XCTest
 
 import WireMessagingDomain
 import WireMessagingUI
+
 @testable import WireMessagingDomainSupport
 
-class ChannelAccessViewSnapshotTests: XCTestCase {
+final class ChannelAccessViewSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper = .init()
         .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
@@ -68,4 +69,5 @@ class ChannelAccessViewSnapshotTests: XCTestCase {
         )
         return navVC
     }
+
 }
