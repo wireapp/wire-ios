@@ -145,7 +145,7 @@ class CoreCryptoKeyProviderTests: XCTestCase {
 
     // MARK: Allowing migrations
 
-    func test_itThrowsMigrationPending_WhenMigrationRequired_AndNotAllowed() async throws {
+    func test_itThrowsMigrationRequired_WhenMigrationRequired_AndNotAllowed() async throws {
         // GIVEN
         mockMigrationManager.isAnyMigrationRequired = true
 
