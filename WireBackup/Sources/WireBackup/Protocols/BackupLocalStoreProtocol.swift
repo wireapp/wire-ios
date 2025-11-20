@@ -17,6 +17,7 @@
 //
 
 public import WireFoundation
+public import Foundation
 
 // sourcery: AutoMockable
 public protocol BackupLocalStoreProtocol: Sendable {
@@ -47,7 +48,7 @@ public protocol BackupLocalStoreProtocol: Sendable {
     // MARK: -
 
     /// Returns the IDs of all messages stored in the local database, including deleted ones.
-    func fetchAllMessageIDs() async throws -> Set<String>
+    func fetchAllMessageIDs() async throws -> Set<UUID>
 
     /// Returns all messages stored in the local database, including deleted ones.
     func fetchAllMessages() -> AsyncThrowingStream<MessageBackupModel, any Error>

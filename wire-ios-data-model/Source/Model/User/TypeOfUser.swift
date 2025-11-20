@@ -19,15 +19,15 @@
 @objc(ZMTypeOfUser)
 public enum TypeOfUser: Int16, CaseIterable, Sendable {
 
-    /// (default) for regular users
+    /// Regular users (default)
 
     case regular
 
-    /// apps (new services)
+    /// Apps (new services, only supporting MLS)
 
     case app
 
-    /// old-style bots (services)
+    /// Old-style bots (services for Proteus only)
 
     case bot
 
