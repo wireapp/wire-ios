@@ -17,18 +17,54 @@
 //
 
 import SwiftUI
-import UIKit
-
-// The structure of this type corresponds to the Wire design system.
+import WireFoundation
 
 public enum ColorTheme {
 
     public enum Base {
 
-        public static let primary = UIColor(light: .blue500Light, dark: .blue500Dark)
+        public static func primary_(_ accentColor: WireAccentColor) -> UIColor {
+            switch accentColor {
+            case .blue:
+                UIColor(light: .blue500Light, dark: .blue500Dark)
+            case .green:
+                UIColor(light: .green500Light, dark: .green500Dark)
+            case .red:
+                UIColor(light: .red500Light, dark: .red500Dark)
+            case .amber:
+                UIColor(light: .amber500Light, dark: .amber500Dark)
+            case .turquoise:
+                UIColor(light: .turquoise500Light, dark: .turquoise500Dark)
+            case .purple:
+                UIColor(light: .purple500Light, dark: .purple500Dark)
+            }
+        }
+
+        @available(*, deprecated, message: "use primary_")
+        public static let primary = UIColor(light: .blue500Light, dark: .blue500Dark) // TODO: delete
+
         public static let onPrimary = UIColor(light: .white, dark: .black)
 
-        public static let primaryVariant = UIColor(light: .blue50Light, dark: .blue800Dark)
+        @available(*, deprecated, message: "use primaryVariant_")
+        public static let primaryVariant = UIColor(light: .blue50Light, dark: .blue800Dark) // TODO: delete
+
+        public static func primaryVariant_(_ accentColor: WireAccentColor) -> UIColor {
+            switch accentColor {
+            case .blue:
+                UIColor(light: .blue50Light, dark: .blue800Dark)
+            case .green:
+                UIColor(light: .green50Light, dark: .green800Dark)
+            case .red:
+                UIColor(light: .red50Light, dark: .red800Dark)
+            case .amber:
+                UIColor(light: .amber50Light, dark: .amber800Dark)
+            case .turquoise:
+                UIColor(light: .turquoise50Light, dark: .turquoise800Dark)
+            case .purple:
+                UIColor(light: .purple50Light, dark: .purple800Dark)
+            }
+        }
+
         public static let onPrimaryVariant = UIColor(light: .blue500Light, dark: .blue300Dark)
 
         public static let error = UIColor(light: .red500Light, dark: .red500Dark)
@@ -116,7 +152,7 @@ public enum ColorTheme {
 
             static let enabled = UIColor(light: .white, dark: .gray90)
             public static let onEnabled = UIColor(light: .black, dark: .white)
-            static let enabledOutline = UIColor(light: .gray40, dark: .gray90)
+            static let enabledOutline = UIColor(light: .gray40, dark: .gray100)
 
             static let disabled = UIColor(light: .gray20, dark: .gray95)
             static let onDisabled = UIColor(light: .gray70, dark: .gray50)
