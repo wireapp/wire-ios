@@ -33,11 +33,13 @@ struct WireCellsLargeDocumentPreviewView: View {
     let downloadError: Bool
     let url: URL?
 
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
     var body: some View {
         WireCellsAttachmentPreview(
             progress: progress,
             progressColor: downloadError
-                ? ColorTheme.Base.error.color : ColorTheme.Base.primary.color
+                ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
         ) {
             VStack {
                 WireCellsDocumentHeaderView(
