@@ -43,7 +43,7 @@ package final class FilesFiltersViewModel: ObservableObject {
     }
 
     var navigationTitle: String {
-        let selectedTagsCount = tags.filter(\.isSelected).count
+        let selectedTagsCount = selectedTags.count
         return selectedTagsCount == 0 ? Strings.AllFiles.Filters.navigationTitle : "\(Strings.AllFiles.Filters.navigationTitle) (\(selectedTagsCount))"
     }
 

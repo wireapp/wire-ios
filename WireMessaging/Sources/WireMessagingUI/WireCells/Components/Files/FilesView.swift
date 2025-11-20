@@ -89,7 +89,7 @@ package struct FilesView: FilesViewProtocol {
             .sheet(
                 item: $viewModel.sheetNavigation,
                 onDismiss: {
-                    Task { await viewModel.onDismiss() }
+                    Task { await viewModel.onSheetDismissed() }
                 }, content: { navigationItem in
                     switch navigationItem {
                     case let .editTags(fileItem: fileItem):

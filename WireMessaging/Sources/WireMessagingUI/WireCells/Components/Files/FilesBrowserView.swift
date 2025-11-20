@@ -82,7 +82,7 @@ package struct FilesBrowserView: FilesViewProtocol {
                 actions: { _ in confirmButton }
             )
             .sheet(item: $viewModel.sheetNavigation) {
-                Task { await viewModel.onDismiss() }
+                Task { await viewModel.onSheetDismissed() }
             } content: { navigationItem in
                 switch navigationItem {
                 case let .filters(filtersView):

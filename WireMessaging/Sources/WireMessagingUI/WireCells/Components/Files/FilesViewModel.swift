@@ -173,7 +173,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var sheetNavigation: SheetNavigation?
 
     var shouldReload: Bool = false
-    var selectedTags: [String] = []
+    var filterWithTags: [String] = []
     let title: String?
 
     package init(
@@ -273,14 +273,14 @@ package final class FilesViewModel: ObservableObject {
     func openFilters() {
         let filesFiltersViewModel = FilesFiltersViewModel(
             fetchTagsUseCase: useCases.getTagSuggestions,
-            savedTags: selectedTags
+            savedTags: filterWithTags
         )
 
         filesFiltersViewModel.$savedTags
             .sink { [weak self] tags in
                 guard let self else { return }
-                shouldReload = selectedTags != tags
-                selectedTags = tags
+                shouldReload = filterWithTags != tags
+                filterWithTags = tags
             }.store(in: &subscriptions)
 
         sheetNavigation = .filters(
@@ -320,7 +320,7 @@ package final class FilesViewModel: ObservableObject {
         setNavigation(newPath)
     }
 
-    func onDismiss() async {
+    func onSheetDismissed() async {
         if shouldReload {
             await reload()
             shouldReload = false
@@ -438,7 +438,7 @@ package final class FilesViewModel: ObservableObject {
     ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
         let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
             searchTerm: searchText.isEmpty ? nil : searchText,
-            tags: selectedTags,
+            tags: filterWithTags,
             offset: offset
         )
 
