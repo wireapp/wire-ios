@@ -149,9 +149,14 @@ final class FileRenameViewModel: ObservableObject {
 
     private func bindTextInput() {
         $filenameInput
-            .flatMap(filenameValidator.validate)
-            .sink(receiveValue: handleValidationResult)
-            .store(in: &subscriptions)
+            .compactMap { [weak self] input in
+                self?.filenameValidator.validate(input)
+            }
+            .flatMap { $0 }
+            .sink { [weak self] result in
+                self?.handleValidationResult(result)
+            }.store(in: &subscriptions)
+
     }
 
     private func handleValidationResult(_ result: Result<Void, FilenameValidator.Failure>) {

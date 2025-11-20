@@ -27,7 +27,6 @@ struct FilenameValidator {
     enum Failure: Error {
         case tooLong
         case dotPrefix
-        case singleDot
         case slashCharacter
         case empty
     }
@@ -35,8 +34,6 @@ struct FilenameValidator {
     func validate(_ input: String) -> AnyPublisher<Result<Void, Failure>, Never> {
         let result: Result<Void, Failure> = if input.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             .failure(.empty)
-        } else if input == "." {
-            .failure(.singleDot)
         } else if input.hasPrefix(".") {
             .failure(.dotPrefix)
         } else if input.count > Constants.maxInputLength {
