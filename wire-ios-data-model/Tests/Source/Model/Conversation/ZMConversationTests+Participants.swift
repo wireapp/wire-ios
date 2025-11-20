@@ -34,8 +34,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         let user3 = createUser()
         user3.name = "Beta"
-        user3.providerIdentifier = "dummy ID"
-        user3.serviceIdentifier = "dummy ID"
+        user3.type = .bot
 
         sut.addParticipantsAndUpdateConversationState(users: Set([user1, user2, user3]), role: nil)
 
@@ -49,13 +48,11 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         let user1 = createUser()
         user1.name = "Zeta"
-        user1.providerIdentifier = "dummy ID"
-        user1.serviceIdentifier = "dummy ID"
+        user1.type = .bot
 
         let user2 = createUser()
         user2.name = "Alpha"
-        user2.providerIdentifier = "dummy ID"
-        user2.serviceIdentifier = "dummy ID"
+        user2.type = .bot
 
         let user3 = createUser()
         user3.name = "Beta"

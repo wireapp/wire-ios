@@ -24,7 +24,7 @@ import WireUtilities
 protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
     func conversationMessageCell(
-        _ contentView: any ConversationMessageCell,
+        _ contentView: UIView,
         present viewController: UIViewController
     )
 
