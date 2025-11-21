@@ -112,10 +112,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     @discardableResult
     private func resolveMLSConversation(for user: ZMUser) async throws -> MLSGroupID {
         WireLogger.conversation.debug("Should resolve to mls 1-1 conversation")
-
-        let userID = await context.perform { [user] in
-            user.qualifiedID
-        }
+        let userID = try await context.unpack(user) { $0.qualifiedID }
 
         guard let userID else {
             throw Error.failedToActivateConversation
@@ -173,10 +170,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 userID: userID
             )
         } catch {
-            await context.perform {
-                let userOneOnOneConversation = user.oneOnOneConversation
-                userOneOnOneConversation?.isForcedReadOnly = true
-            }
+            try? await context.unpack(user, { $0.oneOnOneConversation?.isForcedReadOnly = true })
 
             WireLogger.conversation.error(
                 "Failed to setup MLS group with ID", attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
@@ -397,4 +391,21 @@ extension WireNetwork.MLSPublicKeys {
             p521: p521?.base64DecodedData
         )
     }
+}
+
+
+
+
+extension NSManagedObjectContext {
+    
+    func unpack<U:NSManagedObject, T>(_ object: U, _ block: @escaping @Sendable (U) -> T) async throws -> T {
+        let managedObjectID = object.objectID
+        return try await perform {
+            guard let object = try self.existingObject(with: managedObjectID) as? U else {
+                fatal("expected to find \(U.self) in context")
+            }
+            return block(object)
+        }
+    }
+    
 }
