@@ -21,6 +21,7 @@ package import WireMessagingDomain
 package import WireMessagingData
 
 package struct FilesViewContainer: View {
+    @Environment(\.dismiss) private var dismiss
 
     @State private var path: [FilesViewItem] = []
 
@@ -73,9 +74,9 @@ package struct FilesViewContainer: View {
         }
         
         NavigationStack(path: $path) {
-            FilesView(viewModel: makeViewModel(), onOpenRecycleBin: onOpenRecycleBin)
+            FilesView(viewModel: makeViewModel(), onOpenRecycleBin: onOpenRecycleBin, onDismissContainer: { dismiss() })
                 .navigationDestination(for: FilesViewItem.self) { _ in
-                    FilesView(viewModel: makeViewModel(), onOpenRecycleBin: onOpenRecycleBin)
+                    FilesView(viewModel: makeViewModel(), onOpenRecycleBin: onOpenRecycleBin, onDismissContainer: { dismiss() })
                 }
         }
         .fullScreenCover(item: $fullScreenCoverNavigation) { navigationItem in

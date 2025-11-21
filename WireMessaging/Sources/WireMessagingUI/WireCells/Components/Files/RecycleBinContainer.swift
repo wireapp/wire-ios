@@ -21,6 +21,7 @@ package import WireMessagingDomain
 package import WireMessagingData
 
 package struct RecycleBinContainer: View {
+    @Environment(\.dismiss) private var dismiss
 
     @State private var path: [FilesViewItem] = []
 
@@ -61,9 +62,9 @@ package struct RecycleBinContainer: View {
 
     var body: some View {
         NavigationStack(path: $path) {
-            FilesView(viewModel: makeViewModel())
+            FilesView(viewModel: makeViewModel(), onDismissContainer: { dismiss() })
                 .navigationDestination(for: FilesViewItem.self) { _ in
-                    FilesView(viewModel: makeViewModel())
+                    FilesView(viewModel: makeViewModel(), onDismissContainer: { dismiss() })
                 }
         }
     }

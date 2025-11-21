@@ -33,10 +33,12 @@ package struct FilesView: FilesViewProtocol {
     @Environment(\.dismiss) var dismiss
     
     let onOpenRecycleBin: () -> Void
+    let onDismissContainer: () -> Void
 
-    package init(viewModel: @autoclosure @escaping () -> FilesViewModel, onOpenRecycleBin: @escaping () -> Void = {}) {
+    package init(viewModel: @autoclosure @escaping () -> FilesViewModel, onOpenRecycleBin: @escaping () -> Void = {}, onDismissContainer: @escaping () -> Void = {}) {
         self._viewModel = StateObject(wrappedValue: viewModel())
         self.onOpenRecycleBin = onOpenRecycleBin
+        self.onDismissContainer = onDismissContainer
     }
 
     package var body: some View {
@@ -164,7 +166,7 @@ private extension FilesView {
 
     var closeButton: some View {
         Button(
-            action: { dismiss() },
+            action: { onDismissContainer() },
             label: {
                 Image(systemName: "xmark")
             }
