@@ -132,8 +132,6 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         wait(for: [incrementalSyncDidFinish], timeout: 2)
     }
 
-
-
     func testPerformSyncIfNeeded_InitialSync() async throws {
         // Given
         journal[.isSyncV2Enabled] = true
@@ -399,6 +397,5 @@ extension SyncAgentTests: SyncAgentDelegate {
     func syncAgentDidStartLegacyIncrementalSync(_ syncAgent: WireSyncEngine.SyncAgent) {}
 
     func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: WireSyncEngine.SyncAgent, isRecovering: Bool) {}
-
 
 }
