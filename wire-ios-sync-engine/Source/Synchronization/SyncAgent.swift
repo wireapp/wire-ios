@@ -128,9 +128,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         syncStateSubject.send(.idle)
 
         ongoingSyncTask = Task {
-            WireLogger.sync.debug(
-                "resuming sync"
-            )
+            WireLogger.sync.debug("resuming sync")
             do {
                 // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
                 // cancel the task (not keeping any file lock in suspend mode)
@@ -332,12 +330,12 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 // app will try to recover by performing an incremental sync again
                 self?.resume()
             }.store(in: &cancellables)
-        
+
         var latestNetworkState: NetworkState?
         networkStatePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] newNetworkState in
-                if newNetworkState == .online && latestNetworkState == .offline {
+                if newNetworkState == .online, latestNetworkState == .offline {
                     WireLogger.sync.warn("was offline, now back online, resume sync")
                     self?.resume()
                 }

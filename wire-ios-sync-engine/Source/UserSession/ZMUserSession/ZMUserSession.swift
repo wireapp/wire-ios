@@ -272,10 +272,8 @@ public final class ZMUserSession: NSObject {
     // To prevent too eagerly resolving all conversations.
     var didAlreadyResolveAllOneOnOnes = false
 
-    private lazy var networkStateSubject: CurrentValueSubject<NetworkState, Never> = {
-        CurrentValueSubject<NetworkState, Never>(networkState)
-    }()
-    
+    private lazy var networkStateSubject: CurrentValueSubject<NetworkState, Never> = .init(networkState)
+
     public private(set) var networkState: NetworkState = .online {
         didSet {
             if oldValue != networkState {
