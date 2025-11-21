@@ -72,7 +72,10 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
 
         /// A `Configuration` suitable for the conversation file view.
         case conversationFileView(root: WireCellsNodeLocator, isFoldersEnabled: Bool)
-
+        
+        /// A `Configuration` suitable for the recycle bin, where deleted files are stored.
+        case recycleBinView(root: WireCellsNodeLocator, isFoldersEnabled: Bool)
+        
         /// A `Configuration` suitable for the files browser view.
         case filesBrowserView
     }

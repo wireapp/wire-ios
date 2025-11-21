@@ -20,7 +20,7 @@ import SwiftUI
 package import WireMessagingDomain
 package import WireMessagingData
 
-package struct FilesViewContainer: View {
+package struct RecycleBinContainer: View {
 
     @State private var path: [FilesViewItem] = []
 
@@ -34,14 +34,6 @@ package struct FilesViewContainer: View {
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
     private let fileCache: any FileCache
     private let isFoldersEnabled: Bool
-
-    enum FullScreenCoverNavigation: String, Identifiable {
-        case recycleBin
-        
-        var id: String { rawValue }
-    }
-    
-    @State private var fullScreenCoverNavigation: FullScreenCoverNavigation?
     
     package init(
         cellName: String,
@@ -68,32 +60,11 @@ package struct FilesViewContainer: View {
     }
 
     var body: some View {
-        let onOpenRecycleBin: () -> Void = {
-            fullScreenCoverNavigation = .recycleBin
-        }
-        
         NavigationStack(path: $path) {
-            FilesView(viewModel: makeViewModel(), onOpenRecycleBin: onOpenRecycleBin)
+            FilesView(viewModel: makeViewModel())
                 .navigationDestination(for: FilesViewItem.self) { _ in
-                    FilesView(viewModel: makeViewModel(), onOpenRecycleBin: onOpenRecycleBin)
+                    FilesView(viewModel: makeViewModel())
                 }
-        }
-        .fullScreenCover(item: $fullScreenCoverNavigation) { navigationItem in
-            switch navigationItem {
-            case .recycleBin:
-                RecycleBinContainer(
-                    cellName: cellName,
-                    nodesAPI: nodesAPI,
-                    nodesRepository: nodesRepository,
-                    isCellsStatePending: isCellsStatePending,
-                    localAssetStore: localAssetStore,
-                    localAssetRepository: localAssetRepository,
-                    nodeCache: nodeCache,
-                    nodeRenameNotifier: nodeRenameNotifier,
-                    fileCache: fileCache,
-                    isFoldersEnabled: isFoldersEnabled,
-                )
-            }
         }
     }
 
@@ -101,7 +72,7 @@ package struct FilesViewContainer: View {
         FilesViewModel(
             useCases: .init(
                 fetchNodes: WireCellsFetchNodesUseCase(
-                    configuration: .conversationFileView(
+                    configuration: .recycleBinView(
                         root: path.last.map { .id($0.id) } ?? .path(cellName),
                         isFoldersEnabled: isFoldersEnabled
                     ),
@@ -132,7 +103,7 @@ package struct FilesViewContainer: View {
             fileCache: fileCache,
             cellName: cellName,
             isFoldersEnabled: isFoldersEnabled,
-            isRecycleBin: false,
+            isRecycleBin: true,
         )
     }
 }

@@ -366,6 +366,18 @@ private extension WireCellsGetNodesRequest {
                 recursive: isFoldersEnabled ? false : true,
                 root: RestNodeLocator(root)
             )
+        case let .recycleBinView(root: root, isFoldersEnabled):
+            request.filters = RestLookupFilter(
+                status: LookupFilterStatusFilter(
+                    deleted: .only,
+                    isDraft: false
+                ),
+                type: isFoldersEnabled ? .unknown : .leaf // .unknown includes files (leafs) & folders (collections)
+            )
+            request.scope = RestLookupScope(
+                recursive: isFoldersEnabled ? false : true,
+                root: RestNodeLocator(root)
+            )
         case .filesBrowserView:
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
