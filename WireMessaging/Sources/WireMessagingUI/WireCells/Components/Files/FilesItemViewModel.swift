@@ -158,8 +158,7 @@ final class FilesItemViewModel: ObservableObject {
         await onDelete(item)
     }
 
-    static func subtitle( // MARK: Fixme: move somewhere better.
-
+    static func subtitle(
         modifiedAt: Date?,
         ownedBy: String?,
         locale: Locale,
