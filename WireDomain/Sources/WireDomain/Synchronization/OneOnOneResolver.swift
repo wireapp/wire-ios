@@ -170,7 +170,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 userID: userID
             )
         } catch {
-            try? await context.unpack(user, { $0.oneOnOneConversation?.isForcedReadOnly = true })
+            try? await context.unpack(user) { $0.oneOnOneConversation?.isForcedReadOnly = true }
 
             WireLogger.conversation.error(
                 "Failed to setup MLS group with ID", attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
@@ -312,7 +312,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     private func resolveProteusConversation(
         for user: ZMUser
     ) async {
-        await context.perform {
+        try? await context.unpack(user) { user in
             WireLogger.conversation.debug(
                 "Should resolve to Proteus 1-1 conversation",
                 attributes: [.senderUserId: user.remoteIdentifier.safeForLoggingDescription]
@@ -391,21 +391,4 @@ extension WireNetwork.MLSPublicKeys {
             p521: p521?.base64DecodedData
         )
     }
-}
-
-
-
-
-extension NSManagedObjectContext {
-    
-    func unpack<U:NSManagedObject, T>(_ object: U, _ block: @escaping @Sendable (U) -> T) async throws -> T {
-        let managedObjectID = object.objectID
-        return try await perform {
-            guard let object = try self.existingObject(with: managedObjectID) as? U else {
-                fatal("expected to find \(U.self) in context")
-            }
-            return block(object)
-        }
-    }
-    
 }
