@@ -87,8 +87,6 @@ final class ActiveCallRouter<TopOverlayPresenter>
 
     private var isCallQualityShown = false
     private var isCallTopOverlayShown = false
-    private var isUIReadyForCallPresentation = false
-    private var lastUpdateCallPresentationTime: Date?
     private(set) var scheduledPostCallAction: PostCallAction?
     private(set) weak var presentedDegradedAlert: UIAlertController?
 
@@ -102,7 +100,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
         self.topOverlayPresenter = topOverlayPresenter
 
         self.callController = CallController(userSession: userSession)
-        callController.callConversationProvider = userSession as? CallConversationProvider
+        callController.callConversationProvider = ZMUserSession.shared()
 
         self.callQualityController = CallQualityController(
             mainWindow: mainWindow,
@@ -116,56 +114,8 @@ final class ActiveCallRouter<TopOverlayPresenter>
 
     // MARK: - Public Implementation
 
-//    func startObserving() {
-//        callController.startObserving(userSession: userSession)
-//    }
-
     func updateActiveCallPresentationState() {
-        guard isUIReadyForCallPresentation else {
-            // UI not ready - ignore this update
-            return
-        }
-
-        // CRITICAL: Check if flags claim UI is shown but it's actually not visible
-        // Do this BEFORE debouncing or calling controller, so we catch stale state
-        if isActiveCallShown {
-            let actuallyPresented = mainWindow.rootViewController?.presentedViewController != nil
-            if !actuallyPresented {
-                print("⚠️ CRITICAL: Resetting isActiveCallShown - UI not actually visible")
-                isActiveCallShown = false
-                isPresentingActiveCall = false
-                isCallTopOverlayShown = false
-                // Don't return - continue to present
-            }
-        }
-
-        // Debounce rapid consecutive calls (allow maximum one call per 0.15 seconds)
-        // Check isPresentingActiveCall too since isActiveCallShown is set async
-        let now = Date()
-        if let lastTime = lastUpdateCallPresentationTime,
-           now.timeIntervalSince(lastTime) < 0.15,
-           (isActiveCallShown || isPresentingActiveCall || isCallTopOverlayShown) {
-            print("⏱️ Debouncing - called too quickly (shown:\(isActiveCallShown), presenting:\(isPresentingActiveCall))")
-            return
-        }
-        lastUpdateCallPresentationTime = now
-
-        // Reset stale state before presenting
-        if !isActiveCallShown {
-            isPresentingActiveCall = false
-        }
-
         callController.updateActiveCallPresentationState()
-    }
-
-    func markUIReadyForCallPresentation() {
-        print("🟢 markUIReadyForCallPresentation called")
-        if !isActiveCallShown {
-            isPresentingActiveCall = false
-        }
-        isCallTopOverlayShown = false
-        isUIReadyForCallPresentation = true
-
     }
 
 }
@@ -177,16 +127,13 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     // MARK: - ActiveCall
 
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
-        print("🔵 presentActiveCall called - isUIReady: \(isUIReadyForCallPresentation), isPresentingActiveCall: \(isPresentingActiveCall), isActiveCallShown: \(isActiveCallShown)")
         guard
             !isPresentingActiveCall,
             !isActiveCallShown
         else {
-            print("❌ presentActiveCall guard failed")
             return
         }
 
-        print("✅ presentActiveCall proceeding")
         // NOTE: We resign first reponder for the input bar since it will attempt to restore
         // first responder when the call overlay is interactively dismissed but canceled.
         UIResponder.currentFirst?.resignFirstResponder()
@@ -204,24 +151,19 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         )
 
         let existingPresentedVC = mainWindow.rootViewController?.presentedViewController
-        print("📊 Presenting call - existingPresentedVC: \(existingPresentedVC != nil ? String(describing: type(of: existingPresentedVC!)) : "nil")")
 
         if existingPresentedVC != nil {
-            print("📊 Path: dismissPresentedAndPresentActiveCall")
             dismissPresentedAndPresentActiveCall(modalViewController: modalVC, animated: animated)
         } else {
-            print("📊 Path: presentActiveCall directly")
             presentActiveCall(modalViewController: modalVC, animated: animated)
         }
     }
 
     func dismissActiveCall(animated: Bool = true, completion: Completion? = nil) {
-        print("🔴 dismissActiveCall called - isActiveCallShown: \(isActiveCallShown)")
         guard isActiveCallShown else {
             completion?()
             return
         }
-        print("🔴 dismissActiveCall proceeding to dismiss")
         mainWindow.rootViewController?.dismiss(animated: animated) { [weak self] in
             self?.isActiveCallShown = false
             if let action = self?.scheduledPostCallAction {
@@ -236,7 +178,6 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     func minimizeCall(animated: Bool = true, completion: Completion? = nil) {
-        print("🟠 minimizeCall called - isActiveCallShown: \(isActiveCallShown)")
         guard isActiveCallShown else {
             completion?()
             return
@@ -247,15 +188,8 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     // MARK: - CallTopOverlay
 
     func showCallTopOverlay(for conversation: ZMConversation) {
-        print("🟡 showCallTopOverlay called - isUIReady: \(isUIReadyForCallPresentation), isCallTopOverlayShown: \(isCallTopOverlayShown)")
-        guard
-            isUIReadyForCallPresentation,
-            !isCallTopOverlayShown
-        else {
-            print("❌ showCallTopOverlay guard failed")
-            return
-        }
-        print("✅ showCallTopOverlay proceeding")
+        guard !isCallTopOverlayShown else { return }
+
         let callTopOverlayController = CallTopOverlayController(conversation: conversation, userSession: userSession)
         callTopOverlayController.delegate = self
         topOverlayPresenter.presentTopOverlay(callTopOverlayController, animated: true)
@@ -357,24 +291,15 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         modalViewController: ModalPresentationViewController,
         animated: Bool
     ) {
-        print("📌 dismissPresentedAndPresentActiveCall: dismissing existing")
         mainWindow.rootViewController?.presentedViewController?.dismiss(animated: true) { [weak self] in
-            print("📌 Dismiss completed, now presenting call")
             self?.presentActiveCall(modalViewController: modalViewController, animated: animated)
         }
     }
 
     private func presentActiveCall(modalViewController: ModalPresentationViewController, animated: Bool) {
-        print("📌 presentActiveCall: starting presentation, setting isPresentingActiveCall = true")
-        print("📌 mainWindow: \(mainWindow), rootVC: \(String(describing: mainWindow.rootViewController))")
-        print("📌 mainWindow.isKeyWindow: \(mainWindow.isKeyWindow), mainWindow.isHidden: \(mainWindow.isHidden)")
         isPresentingActiveCall = true
         mainWindow.rootViewController?.present(modalViewController, animated: animated) { [weak self] in
             guard let self = self else { return }
-            print("📌 Present COMPLETED, setting isActiveCallShown = true")
-            print("📌 Modal view.window: \(String(describing: modalViewController.view.window))")
-            print("📌 Modal isBeingPresented: \(modalViewController.isBeingPresented)")
-            print("📌 RootVC.presentedViewController: \(String(describing: self.mainWindow.rootViewController?.presentedViewController))")
             self.isActiveCallShown = true
         }
     }

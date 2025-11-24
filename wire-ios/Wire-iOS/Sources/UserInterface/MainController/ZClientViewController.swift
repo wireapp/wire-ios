@@ -348,13 +348,6 @@ final class ZClientViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        // Check for active call that needs to be presented after account switch
-        if router?.shouldCheckForActiveCallOnAppear == true {
-            router?.shouldCheckForActiveCallOnAppear = false
-            router?.markUIReadyForCallPresentation()
-            router?.updateActiveCallPresentationState()
-        }
-
         migrateAnalytics()
         firstTimeRequestToEnableAnalytics()
         view.backgroundColor = ColorTheme.Backgrounds.surface
@@ -546,19 +539,7 @@ final class ZClientViewController: UIViewController {
     // MARK: - Animated conversation switch
 
     func dismissAllModalControllers() async {
-        // Check for ANY active call (ringing or ongoing), not just ringing
-        // During account switching, ringingCallConversation may be stale
-        var hasActiveCall = userSession.ringingCallConversation != nil
-
-        // Also check for non-idle calls if we can access callCenter
-        if let zmUserSession = userSession as? ZMUserSession,
-           let callCenter = zmUserSession.callCenter {
-            let nonIdleCalls = callCenter.nonIdleCallConversations(in: zmUserSession)
-            hasActiveCall = hasActiveCall || !nonIdleCalls.isEmpty
-        }
-
-        if hasActiveCall {
-            // Don't minimize if there's an active call
+        if userSession.ringingCallConversation != nil {
             await mainCoordinator.dismissPresentedViewController()
         } else {
             await withCheckedContinuation { continuation in

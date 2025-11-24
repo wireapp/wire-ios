@@ -79,29 +79,18 @@ final class CallTopOverlayController: UIViewController {
 
     // MARK: - Init
 
-    init(conversation: ZMConversation, userSession: UserSession) {
+    init(conversation: ZMConversation) {
         self.conversation = conversation
         callDurationFormatter.allowedUnits = [.minute, .second]
         callDurationFormatter.zeroFormattingBehavior = DateComponentsFormatter.ZeroFormattingBehavior(rawValue: 0)
         super.init(nibName: nil, bundle: nil)
-//
-//                if let userSession = ZMUserSession.shared() {
-//                    observerTokens.append(WireCallCenterV3.addCallStateObserver(
-//                        observer: self,
-//                        contextProvider: userSession.contextProvider
-//                    ))
-//                    observerTokens.append(WireCallCenterV3.addMuteStateObserver(observer: self, userSession: userSession))
-//                }
-        observerTokens.append(WireCallCenterV3.addCallStateObserver(
-            observer: self,
-            contextProvider: userSession.contextProvider
-        ))
 
-        if let zmUserSession = userSession as? ZMUserSession {
-            observerTokens.append(WireCallCenterV3.addMuteStateObserver(
+        if let userSession = ZMUserSession.shared() {
+            observerTokens.append(WireCallCenterV3.addCallStateObserver(
                 observer: self,
-                userSession: zmUserSession
+                contextProvider: userSession.contextProvider
             ))
+            observerTokens.append(WireCallCenterV3.addMuteStateObserver(observer: self, userSession: userSession))
         }
 
     }
