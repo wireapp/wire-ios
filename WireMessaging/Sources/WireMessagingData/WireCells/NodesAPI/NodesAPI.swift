@@ -22,6 +22,7 @@ package import WireMessagingDomain
 
 package enum NodesAPIError: Error {
     case failedToCreateWriteStream
+    case moveFailed
 }
 
 package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol {
@@ -79,7 +80,13 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
     }
 
     package func renameNode(nodeID: UUID, targetPath: String) async throws -> Bool {
-        try await restAPI.renameNode(nodeID: nodeID, targetPath: targetPath)
+        try await restAPI.renameNode(nodeID: nodeID, targetPath: targetPath, targetIsParent: false)
+    }
+
+    package func moveNode(nodeID: UUID, newContainerPath: String) async throws {
+        guard try await restAPI.renameNode(nodeID: nodeID, targetPath: newContainerPath, targetIsParent: true) else {
+            throw NodesAPIError.moveFailed
+        }
     }
 
     package func publishDraft(nodeID: UUID, versionID: UUID) async throws {
