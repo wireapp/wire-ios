@@ -81,6 +81,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
     private let userSession: UserSession
     private let topOverlayPresenter: TopOverlayPresenter
     private let mainWindow: UIWindow
+    private var presentingViewController: UIViewController?
     private let callController: CallController
     private let callQualityController: CallQualityController
     private var transitioningDelegate: CallQualityAnimator
@@ -114,7 +115,8 @@ final class ActiveCallRouter<TopOverlayPresenter>
 
     // MARK: - Public Implementation
 
-    func updateActiveCallPresentationState() {
+    func updateActiveCallPresentationState(from presentingViewController: UIViewController?) {
+        self.presentingViewController = presentingViewController
         callController.updateActiveCallPresentationState()
     }
 }
@@ -149,9 +151,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
             enableDismissOnPan: !CallingConfiguration.config.paginationEnabled
         )
 
-        let existingPresentedVC = mainWindow.rootViewController?.presentedViewController
-
-        if existingPresentedVC != nil {
+        if mainWindow.rootViewController?.presentedViewController != nil {
             dismissPresentedAndPresentActiveCall(modalViewController: modalVC, animated: animated)
         } else {
             presentActiveCall(modalViewController: modalVC, animated: animated)
@@ -188,7 +188,6 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     func showCallTopOverlay(for conversation: ZMConversation) {
         guard !isCallTopOverlayShown else { return }
-
         let callTopOverlayController = CallTopOverlayController(conversation: conversation)
         callTopOverlayController.delegate = self
         topOverlayPresenter.presentTopOverlay(callTopOverlayController, animated: true)
@@ -297,7 +296,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     private func presentActiveCall(modalViewController: ModalPresentationViewController, animated: Bool) {
         isPresentingActiveCall = true
-        mainWindow.rootViewController?.present(modalViewController, animated: animated) { [weak self] in
+        presentingViewController?.present(modalViewController, animated: animated) { [weak self] in
             self?.isActiveCallShown = true
         }
     }

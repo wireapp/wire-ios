@@ -167,7 +167,7 @@ final class AuthenticatedRouter {
 extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 
     func updateActiveCallPresentationState() {
-        activeCallRouter.updateActiveCallPresentationState()
+        activeCallRouter.updateActiveCallPresentationState(from: _zClientViewController)
     }
 
     func minimizeCallOverlay(animated: Bool, completion: Completion?) {
