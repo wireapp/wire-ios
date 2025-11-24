@@ -28,32 +28,45 @@ import WireMessagingDomainSupport
 extension FilesViewModel {
 
     /// A stubbed instance of `FilesViewModel` for SwiftUI previews.
-    static func preview() -> FilesViewModel {
+    static func preview(isFoldersEnabled: Bool = false) -> FilesViewModel {
         let cache = fileCache()
         let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
 
         return FilesViewModel(
+            useCases: .init(
+                fetchNodes: WireCellsFetchNodesUseCase(
+                    configuration: .conversationFileView(root: .path("root"), isFoldersEnabled: true),
+                    repository: previewNodesRepository()
+                ),
+                deleteNodes: WireCellsDeleteNodesUseCase(
+                    repository: previewNodesRepository(),
+                    fileCache: cache,
+                    localAssetStore: localAssetStore
+                ),
+                renameNode: WireCellsRenameNodeUseCase(
+                    nodesRepository: previewNodesRepository(),
+                    localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                    nodeCache: MockWireCellsNodeCacheProtocol(),
+                    nodeRenameNotifier: WireCellsNodeRenameNotifier()
+                ),
+                updateTags: WireCellsUpdateTagsUseCase(
+                    nodesAPI: previewTagsApi()
+                ),
+                getTagSuggestions: WireCellsGetTagSuggestionsUseCase(
+                    nodesAPI: previewTagsApi()
+                ),
+                createFolder: WireCellsCreateFolderUseCase(
+                    nodesRepository: previewNodesRepository()
+                ),
+            ),
             setNavigation: { _ in },
-            fetchNodesUseCase: WireCellsFetchNodesUseCase(
-                configuration: .conversationFileView(root: .path("root"), isFoldersEnabled: true),
-                repository: previewNodesRepository()
-            ),
-            deleteNodesUseCase: WireCellsDeleteNodesUseCase(
-                repository: previewNodesRepository(),
-                fileCache: cache,
-                localAssetStore: localAssetStore
-            ),
-            renameNodeUseCase: WireCellsRenameNodeUseCase(
-                nodesRepository: previewNodesRepository(),
-                localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
-                nodeCache: MockWireCellsNodeCacheProtocol(),
-                nodeRenameNotifier: WireCellsNodeRenameNotifier()
-            ),
             isCellsStatePending: false,
             localAssetRepository: PreviewLocalAssetRepository(),
-            fileCache: cache
+            fileCache: cache,
+            cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
+            isFoldersEnabled: isFoldersEnabled,
         )
     }
 
@@ -61,8 +74,7 @@ extension FilesViewModel {
 
 extension FileRenameViewModel {
     /// A stubbed instance of `FileRenameViewModel` for SwiftUI previews.
-    static func preview() -> FileRenameViewModel {
-        let cache = fileCache()
+    static func preview(kind: FilesViewItem.Kind) -> FileRenameViewModel {
         let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
@@ -74,11 +86,12 @@ extension FileRenameViewModel {
                 nodeCache: MockWireCellsNodeCacheProtocol(),
                 nodeRenameNotifier: WireCellsNodeRenameNotifier()
             ),
-            fileRenameModel: FileRenameModel(
+            model: Model(
                 nodeID: .init(),
                 filename: "foo.jpg",
                 filepath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image PNG-TEST3.png"
-            )
+            ),
+            kind: kind
         )
     }
 }
@@ -86,7 +99,7 @@ extension FileRenameViewModel {
 extension FilesItemViewModel {
 
     /// A stubbed instance of `FilesItemViewModel` for SwiftUI previews.
-    static func preview() -> FilesItemViewModel {
+    static func preview(tags: [String] = []) -> FilesItemViewModel {
         FilesItemViewModel(
             item: FilesViewItem(
                 id: UUID(),
@@ -95,12 +108,14 @@ extension FilesItemViewModel {
                 filePath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image foo.jpg",
                 ownedBy: "Viola",
                 modifiedAt: Date(),
-                icon: .image
+                icon: .image,
+                tags: tags
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
             onOpen: { _ in },
             onDelete: { _ in },
-            onRename: { _ in }
+            onRename: { _ in },
+            onEditTagsSelected: { _ in }
         )
     }
 
@@ -128,6 +143,15 @@ private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
         return (page, nextOffset)
     }
     return repository
+}
+
+private func previewTagsApi() -> some NodesAPIProtocol {
+    let mock = MockNodesAPIProtocol()
+    mock.getAllTags_MockMethod = {
+        ["suggested tag 1", "lorem", "ipsum"]
+    }
+    mock.updateTagsNodeIDTags_MockMethod = { _, _ in }
+    return mock
 }
 
 private func fileCache() -> any FileCache {
@@ -207,4 +231,16 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
 
     func cancelDownload(nodeID: UUID) {}
 
+}
+
+extension CreateFolderViewModel {
+    /// A stubbed instance of `CreateFolderViewModel` for SwiftUI previews.
+    static func preview() -> CreateFolderViewModel {
+        let createFolderUseCase = MockWireCellsCreateFolderUseCaseProtocol()
+
+        return CreateFolderViewModel(
+            createFolderUseCase: createFolderUseCase,
+            folderPath: "Test-1/Test-2"
+        )
+    }
 }

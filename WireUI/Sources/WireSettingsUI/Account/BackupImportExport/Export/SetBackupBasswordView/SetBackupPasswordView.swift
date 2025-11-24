@@ -28,7 +28,6 @@ struct SetBackupPasswordView: View {
     private let isContextMenuAllowed: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
-    @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
 
     private typealias Strings = L10n.Localizable
     private typealias Labels = L10n.Accessibility.ExportBackup
@@ -122,7 +121,7 @@ struct SetBackupPasswordView: View {
                 : BaseColorPalette.Grays.gray40
             }.color
         } else {
-            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
+            Color(wireAccentColor)
         }
     }
 
@@ -135,7 +134,7 @@ struct SetBackupPasswordView: View {
                 : BaseColorPalette.Grays.gray60
             }.color
         } else {
-            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
+            Color(wireAccentColor)
         }
     }
 
@@ -148,7 +147,7 @@ struct SetBackupPasswordView: View {
                 : BaseColorPalette.Grays.gray80
             }.color
         } else {
-            wireAccentColorMapping?.color(for: wireAccentColor) ?? ColorTheme.Base.primary.color
+            Color(wireAccentColor)
         }
     }
 

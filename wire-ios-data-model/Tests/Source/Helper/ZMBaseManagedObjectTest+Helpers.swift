@@ -89,6 +89,7 @@ extension ZMBaseManagedObjectTest {
         let serviceUser = createUser(in: moc)
         serviceUser.serviceIdentifier = UUID.create().transportString()
         serviceUser.providerIdentifier = UUID.create().transportString()
+        serviceUser.type = .bot
         serviceUser.name = named
         return serviceUser
     }

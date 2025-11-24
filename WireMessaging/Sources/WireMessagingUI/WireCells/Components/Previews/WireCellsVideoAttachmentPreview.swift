@@ -26,10 +26,12 @@ struct WireCellsVideoAttachmentPreview: View {
     let isError: Bool
     let canPlay: Bool
 
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
     var body: some View {
         WireCellsAttachmentPreview(
             progress: progress,
-            progressColor: isError ? ColorTheme.Base.error.color : ColorTheme.Base.primary.color
+            progressColor: isError ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
         ) {
             ZStack(alignment: .center) {
                 if let thumbnail {
@@ -46,7 +48,8 @@ struct WireCellsVideoAttachmentPreview: View {
                 }
 
                 if thumbnail != nil, !isError {
-                    PlayIcon(isEnabled: canPlay)
+                    PlayIcon()
+                        .disabled(!canPlay)
                 }
 
                 if isError {
@@ -58,11 +61,11 @@ struct WireCellsVideoAttachmentPreview: View {
     }
 }
 
-private struct PlayIcon: View {
+struct PlayIcon: View {
 
     private typealias Theme = ColorTheme.Buttons.Secondary
 
-    let isEnabled: Bool
+    @Environment(\.isEnabled) private var isEnabled: Bool
 
     var body: some View {
         Image(systemName: "play.circle.fill")

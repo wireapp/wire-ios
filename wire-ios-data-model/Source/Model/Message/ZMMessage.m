@@ -94,11 +94,6 @@ NSString * const ZMMessageNeedsLinkAttachmentsUpdateKey = @"needsLinkAttachments
 NSString * const ZMMessageDiscoveredClientsKey = @"discoveredClients";
 NSString * const ZMMessageButtonStatesKey = @"buttonStates";
 NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
-NSString * const ZMMessageSenderIDKey = @"senderID";
-NSString * const ZMMessageSenderDomainKey = @"senderDomain";
-NSString * const ZMMessageConversationIDKey = @"conversationID";
-NSString * const ZMMessageConversationDomainKey = @"conversationDomain";
-
 
 @interface ZMMessage ()
 
@@ -266,7 +261,11 @@ NSString * const ZMMessageConversationDomainKey = @"conversationDomain";
         self.expirationReasonCode = [NSNumber numberWithInteger:expirationReason];
     }
     [self removeExpirationDate];
-    self.conversation.hasUnreadUnsentMessage = YES;
+
+    if (self.visibleInConversation != nil) {
+        // Only warn for unsent messages if it's actually visible.
+        self.conversation.hasUnreadUnsentMessage = YES;
+    }
 }
 
 + (NSSet *)keyPathsForValuesAffectingDeliveryState;
@@ -617,11 +616,7 @@ NSString * const ZMMessageConversationDomainKey = @"conversationDomain";
                              ZMMessageNeedsLinkAttachmentsUpdateKey,
                              ZMMessageDiscoveredClientsKey,
                              ZMMessageButtonStatesKey,
-                             ZMMessageDecryptionErrorCodeKey,
-                             ZMMessageSenderIDKey,
-                             ZMMessageSenderDomainKey,
-                             ZMMessageConversationIDKey,
-                             ZMMessageConversationDomainKey
+                             ZMMessageDecryptionErrorCodeKey
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });

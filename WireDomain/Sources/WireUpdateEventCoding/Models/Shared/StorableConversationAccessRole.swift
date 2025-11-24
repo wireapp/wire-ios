@@ -23,7 +23,7 @@ enum StorableConversationAccessRole: String, Equatable, Codable, Sendable {
     case teamMember
     case nonTeamMember
     case guest
-    case service
+    case app = "service"
 
     init(_ value: WireNetwork.ConversationAccessRole) {
         switch value {
@@ -33,8 +33,8 @@ enum StorableConversationAccessRole: String, Equatable, Codable, Sendable {
             self = .nonTeamMember
         case .guest:
             self = .guest
-        case .service:
-            self = .service
+        case .app:
+            self = .app
         }
     }
 
@@ -46,8 +46,8 @@ enum StorableConversationAccessRole: String, Equatable, Codable, Sendable {
             .nonTeamMember
         case .guest:
             .guest
-        case .service:
-            .service
+        case .app:
+            .app
         }
     }
 }

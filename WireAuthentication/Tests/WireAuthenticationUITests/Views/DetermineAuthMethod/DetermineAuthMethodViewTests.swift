@@ -50,7 +50,6 @@ final class DetermineAuthMethodViewTests: XCTestCase {
             let view = NavigationStack {
                 DetermineAuthMethodView(factory: factory)
             }
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
             .frame(width: screenBounds.width, height: screenBounds.height)
             snapshotHelper
                 .withUserInterfaceStyle(.light)
@@ -69,7 +68,6 @@ final class DetermineAuthMethodViewTests: XCTestCase {
             DetermineAuthMethodView(factory: FakeDetermineAuthMethodFactory())
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
@@ -88,7 +86,6 @@ final class DetermineAuthMethodViewTests: XCTestCase {
             DetermineAuthMethodView(factory: FakeDetermineAuthMethodFactory(existsAnotherAccount: true))
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         .tint(.primary)
 
         snapshotHelper.verify(matching: view)

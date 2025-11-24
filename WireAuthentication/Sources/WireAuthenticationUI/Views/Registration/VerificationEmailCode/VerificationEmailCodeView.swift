@@ -39,7 +39,7 @@ package struct VerificationEmailCodeView: View {
         ScrollView {
             VStack(spacing: 20) {
                 Text(Strings.VerificationCode.message(viewModel.email))
-                    .wireTextStyle(.body1)
+                    .font(for: .body1)
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
                     .fixedSize(horizontal: false, vertical: true)
@@ -102,7 +102,7 @@ package struct VerificationEmailCodeView: View {
                             )
                     )
                     .multilineTextAlignment(.center)
-                    .font(.textStyle(.h2))
+                    .font(for: .h2)
                     .keyboardType(.numberPad)
                     .foregroundColor(.primary)
                     .focused($focusedIndex, equals: index)

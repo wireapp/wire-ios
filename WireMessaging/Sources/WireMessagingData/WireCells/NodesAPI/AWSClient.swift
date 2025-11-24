@@ -159,7 +159,8 @@ final class AWSClient: Sendable {
         let fileSize = try FileManager.default.attributesOfItem(atPath: path.path)[.size] as! Int64
 
         if fileSize > Constants.maxRegularUploadSize {
-            try await uploadMultipart(path: path, node: node, versionID: versionID, onProgressUpdate: onProgressUpdate)
+            // FIXME: [WPB-18598] Use multipart upload when working
+            try await uploadRegular(path: path, node: node, versionID: versionID, onProgressUpdate: onProgressUpdate)
         } else {
             try await uploadRegular(path: path, node: node, versionID: versionID, onProgressUpdate: onProgressUpdate)
         }
@@ -268,8 +269,8 @@ private extension WireCellsNodeNetworkModel {
     func createDraftNodeMetadata(versionID: UUID) -> [String: String] {
         [
             "Draft-Mode": "true",
-            "Create-Resource-UUID": uuid.uuidString,
-            "Create-Version-ID": versionID.uuidString
+            "Create-Resource-UUID": uuid.transportString(),
+            "Create-Version-ID": versionID.transportString()
         ]
     }
 }

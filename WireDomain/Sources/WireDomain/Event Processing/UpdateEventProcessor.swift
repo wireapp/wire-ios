@@ -29,6 +29,8 @@ struct UpdateEventProcessor: UpdateEventProcessorProtocol {
     let teamEventProcessor: any TeamEventProcessorProtocol
 
     func processEvent(_ event: UpdateEvent) async throws {
+        WireLogger.eventProcessing.info("process event", attributes: [.eventType: event.name], .safePublic)
+
         switch event {
         case let .conversation(event):
             try await conversationEventProcessor.processEvent(event)
