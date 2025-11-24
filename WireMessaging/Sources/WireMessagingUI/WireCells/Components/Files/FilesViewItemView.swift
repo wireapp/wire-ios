@@ -118,8 +118,14 @@ struct FilesViewItemView: View {
                         }
                     }
 
-                    Button(role: .destructive, action: delete) {
-                        Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
+                    if viewModel.isInRecycleBin {
+                        Button(role: .destructive, action: { delete(permanently: true) }) {
+                            Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
+                        }
+                    } else {
+                        Button(role: .destructive, action: { delete(permanently: false) }) {
+                            Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
+                        }
                     }
                 } label: {
                     Image(systemName: "ellipsis")
@@ -129,15 +135,48 @@ struct FilesViewItemView: View {
                 }
                 .tint(nil)
                 .menuOrder(.fixed)
-                .confirmationDialog(
-                    Strings.Files.Item.DeleteConfirmation.title(viewModel.fileName),
-                    isPresented: $viewModel.isShowDeleteConfirmation,
+                .confirmationDialog( // delete file to recycle bin
+                    Strings.Files.Item.DeleteFileConfirmation.title(viewModel.fileName),
+                    isPresented: $viewModel.isPresentingDeleteFileToRecycleBinConfirmation,
                     titleVisibility: .visible
                 ) {
                     Button(
-                        Strings.Files.Item.DeleteConfirmation.deletePermanently,
+                        Strings.Files.Item.DeleteConfirmation.button,
                         role: .destructive,
-                        action: confirmDelete
+                        action: { confirmDelete(permanently: false) }
+                    )
+                }
+                .confirmationDialog( // delete folder to recycle bin
+                    Strings.Files.Item.DeleteFolderConfirmation.title(viewModel.fileName),
+                    isPresented: $viewModel.isPresentingDeleteFolderToRecycleBinConfirmation,
+                    titleVisibility: .visible
+                ) {
+                    Button(
+                        Strings.Files.Item.DeleteConfirmation.button,
+                        role: .destructive,
+                        action: { confirmDelete(permanently: false) }
+                    )
+                }
+                .confirmationDialog( // delete file permanently
+                    Strings.RecycleBin.Item.DeleteFileConfirmation.title(viewModel.fileName),
+                    isPresented: $viewModel.isPresentingDeleteFilePermanentlyConfirmation,
+                    titleVisibility: .visible
+                ) {
+                    Button(
+                        Strings.RecycleBin.Item.DeleteConfirmation.button,
+                        role: .destructive,
+                        action: { confirmDelete(permanently: true) }
+                    )
+                }
+                .confirmationDialog( // delete folder permanently
+                    Strings.RecycleBin.Item.DeleteFolderConfirmation.title(viewModel.fileName),
+                    isPresented: $viewModel.isPresentingDeleteFolderPermanentlyConfirmation,
+                    titleVisibility: .visible
+                ) {
+                    Button(
+                        Strings.RecycleBin.Item.DeleteConfirmation.button,
+                        role: .destructive,
+                        action: { confirmDelete(permanently: true) }
                     )
                 }
             }
@@ -169,12 +208,12 @@ struct FilesViewItemView: View {
         viewModel.onEditTagsSelected()
     }
 
-    private func delete() {
-        viewModel.showDeleteConfirmation()
+    private func delete(permanently: Bool) {
+        viewModel.showDeleteConfirmation(deletePermanently: permanently, itemKind: viewModel.item.kind)
     }
 
-    private func confirmDelete() {
-        Task { await viewModel.confirmDelete() }
+    private func confirmDelete(permanently: Bool) {
+        Task { await viewModel.confirmDelete(permanently: permanently) }
     }
 
     private var progressColor: Color {

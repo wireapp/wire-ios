@@ -113,9 +113,10 @@ extension FilesItemViewModel {
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
             onOpen: { _ in },
-            onDelete: { _ in },
+            onDelete: { _, _ in },
             onRename: { _ in },
-            onEditTagsSelected: { _ in }
+            onEditTagsSelected: { _ in },
+            isInRecycleBin: false,
         )
     }
 

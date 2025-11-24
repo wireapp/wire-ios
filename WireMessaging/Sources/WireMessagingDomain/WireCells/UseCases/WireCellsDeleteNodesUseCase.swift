@@ -39,7 +39,7 @@ package struct WireCellsDeleteNodesUseCase: WireCellsDeleteNodesUseCaseProtocol 
         self.localAssetStore = localAssetStore
     }
 
-    package func invoke(nodeIDs: [UUID]) async throws {
+    package func invoke(nodeIDs: [UUID], deletePermanently: Bool) async throws {
         // First delete local assets as this is less likely to fail then deleting nodes on server and local assets can
         // be re-downloaded if needed.
         for nodeID in nodeIDs {
@@ -55,7 +55,7 @@ package struct WireCellsDeleteNodesUseCase: WireCellsDeleteNodesUseCaseProtocol 
         try await localAssetStore.deleteAssets(nodeIDs: nodeIDs)
 
         // Then delete nodes from server.
-        if try await repository.deleteNodes(nodeIDs: nodeIDs, permanently: true) == false {
+        if try await repository.deleteNodes(nodeIDs: nodeIDs, permanently: deletePermanently) == false {
             throw WireCellsDeleteNodesError.serverFailedToDeleteNodes
         }
     }

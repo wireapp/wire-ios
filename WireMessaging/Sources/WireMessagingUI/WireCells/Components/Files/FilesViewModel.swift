@@ -204,7 +204,7 @@ package final class FilesViewModel: ObservableObject {
             return title
         } else {
             if isRecycleBin {
-                return Strings.Files.RecycleBin.navigationTitle
+                return Strings.RecycleBin.navigationTitle
             } else {
                 return Strings.Files.navigationTitle
             }
@@ -268,8 +268,8 @@ package final class FilesViewModel: ObservableObject {
             onOpen: { [weak self] item in
                 await self?.openItem(item: item)
             },
-            onDelete: { [weak self] item in
-                await self?.deleteItem(item)
+            onDelete: { [weak self] item, permanently in
+                await self?.deleteItem(item, permanently: permanently)
             },
             onRename: { [weak self] item in
                 self?.fileRenameView = self?.makeFileRenameView(item: item)
@@ -277,6 +277,7 @@ package final class FilesViewModel: ObservableObject {
             onEditTagsSelected: { [weak self] item in
                 self?.sheetNavigation = .editTags(fileItem: item)
             },
+            isInRecycleBin: isRecycleBin,
         )
     }
 
@@ -460,7 +461,7 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    private func deleteItem(_ asset: FilesViewItem) async {
+    private func deleteItem(_ asset: FilesViewItem, permanently: Bool) async {
         guard state.isLoaded else {
             WireLogger.wireCells.error("Attempt to delete asset while not visible", attributes: .safePublic)
             return
@@ -471,7 +472,7 @@ package final class FilesViewModel: ObservableObject {
         state = .received(items: Self.processItems(currentItems))
 
         do {
-            try await useCases.deleteNodes.invoke(nodeIDs: [asset.id])
+            try await useCases.deleteNodes.invoke(nodeIDs: [asset.id], deletePermanently: permanently)
         } catch {
             guard state.isLoaded else { return }
 

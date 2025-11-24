@@ -31,18 +31,22 @@ final class FilesItemViewModel: ObservableObject {
     private let nodeID: UUID
     let item: FilesViewItem
     private let onOpen: (FilesViewItem) async -> Void
-    private let onDelete: (FilesViewItem) async -> Void
+    private let onDelete: (FilesViewItem, Bool) async -> Void
     private let onRename: ((FilesViewItem) async -> Void)?
     let onEditTagsSelected: () -> Void
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
 
     @Published private var asset: WireCellsLocalAsset?
-    @Published var isShowDeleteConfirmation = false
+    @Published var isPresentingDeleteFilePermanentlyConfirmation = false
+    @Published var isPresentingDeleteFolderPermanentlyConfirmation = false
+    @Published var isPresentingDeleteFileToRecycleBinConfirmation = false
+    @Published var isPresentingDeleteFolderToRecycleBinConfirmation = false
 
     let fileName: String
     let subtitle: String?
     let icon: FileIcon
+    let isInRecycleBin: Bool
 
     struct TagsInfo {
         let firstTag: String?
@@ -59,12 +63,13 @@ final class FilesItemViewModel: ObservableObject {
         item: FilesViewItem,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         onOpen: @escaping (FilesViewItem) async -> Void,
-        onDelete: @escaping (FilesViewItem) async -> Void,
+        onDelete: @escaping (FilesViewItem, Bool) async -> Void,
         onRename: ((FilesViewItem) async -> Void)? = nil,
         onEditTagsSelected: @escaping (FilesViewItem) -> Void,
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,
-        timeZone: TimeZone = .autoupdatingCurrent
+        timeZone: TimeZone = .autoupdatingCurrent,
+        isInRecycleBin: Bool,
     ) {
         self.nodeID = item.id
         self.item = item
@@ -76,6 +81,7 @@ final class FilesItemViewModel: ObservableObject {
         self.subtitle = Self.subtitle(from: item, locale: locale, calendar: calendar, timeZone: timeZone)
         self.icon = item.icon
         self.localAssetRepository = localAssetRepository
+        self.isInRecycleBin = isInRecycleBin
 
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
             self?.asset = asset
@@ -137,12 +143,21 @@ final class FilesItemViewModel: ObservableObject {
         try? await localAssetRepository.downloadAsset(nodeID: nodeID)
     }
 
-    func showDeleteConfirmation() {
-        isShowDeleteConfirmation = true
+    func showDeleteConfirmation(deletePermanently: Bool, itemKind: FilesViewItem.Kind) {
+        switch (deletePermanently, itemKind) {
+        case (true, .file):
+            isPresentingDeleteFilePermanentlyConfirmation = true
+        case (false, .file):
+            isPresentingDeleteFileToRecycleBinConfirmation = true
+        case (true, .folder):
+            isPresentingDeleteFolderPermanentlyConfirmation = true
+        case (false, .folder):
+            isPresentingDeleteFolderToRecycleBinConfirmation = true
+        }
     }
 
-    func confirmDelete() async {
-        await onDelete(item)
+    func confirmDelete(permanently: Bool) async {
+        await onDelete(item, permanently)
     }
 
     private static func subtitle(
