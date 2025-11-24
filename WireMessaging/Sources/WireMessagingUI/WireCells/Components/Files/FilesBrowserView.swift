@@ -51,7 +51,7 @@ package struct FilesBrowserView: FilesViewProtocol {
                         .progressViewStyle(.circular)
                 case let .received(items):
                     if items.isEmpty {
-                        FilesInfoView(info: .noFilesFound(scope: .allConversations))
+                        FilesInfoView(info: .noFilesFound(scope: viewModel.isRecycleBin ? .recycleBin : .allConversations))
                     } else {
                         filesList
                             .listStyle(.plain)

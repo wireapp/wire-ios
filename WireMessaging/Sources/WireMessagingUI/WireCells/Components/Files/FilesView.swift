@@ -56,7 +56,7 @@ package struct FilesView: FilesViewProtocol {
                     VStack(spacing: 0) {
                         if items.isEmpty {
                             Spacer()
-                            FilesInfoView(info: .noFilesFound(scope: .oneConversation))
+                            FilesInfoView(info: .noFilesFound(scope: viewModel.isRecycleBin ? .recycleBin : .oneConversation))
                             Spacer()
                         } else {
                             filesList
