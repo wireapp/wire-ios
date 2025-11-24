@@ -50,59 +50,6 @@
       }
     },
     {
-      "id" : "235D5CDC-5709-40E4-8022-6E1591FCCB20",
-      "name" : "UITest-regression",
-      "options" : {
-        "environmentVariableEntries" : [
-          {
-            "key" : "INBUCKET_USERNAME",
-            "value" : "$(INBUCKET_USERNAME)"
-          },
-          {
-            "key" : "UITEST_TAGS",
-            "value" : "regression"
-          },
-          {
-            "key" : "BASIC_AUTH",
-            "value" : "$(BASIC_AUTH)"
-          },
-          {
-            "key" : "BACKEND_URL",
-            "value" : "$(BACKEND_URL)"
-          },
-          {
-            "key" : "INBUCKET_URL",
-            "value" : "$(INBUCKET_URL)"
-          },
-          {
-            "key" : "INBUCKET_PASSWORD",
-            "value" : "$(INBUCKET_PASSWORD)"
-          },
-          {
-            "key" : "ANTA_DEEPLINK_URL",
-            "value" : "$(ANTA_DEEPLINK_URL)"
-          },
-          {
-            "key" : "ANTA_INBUCKET_URL",
-            "value" : "$(ANTA_INBUCKET_URL)"
-          },
-          {
-            "key" : "BACKEND_URL_ANTA",
-            "value" : "$(BACKEND_URL_ANTA)"
-          },
-          {
-            "key" : "BASIC_AUTH_ANTA",
-            "value" : "$(BASIC_AUTH_ANTA)"
-          }
-        ],
-        "targetForVariableExpansion" : {
-          "containerPath" : "container:Wire-iOS.xcodeproj",
-          "identifier" : "01DFC4302D7B4C6F00D1962A",
-          "name" : "WireUITests"
-        }
-      }
-    },
-    {
       "id" : "007C3971-CF50-4512-AC3D-3A591FA81B3C",
       "name" : "UITest-critical",
       "options" : {
