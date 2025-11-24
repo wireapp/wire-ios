@@ -117,7 +117,6 @@ final class ActiveCallRouter<TopOverlayPresenter>
     func updateActiveCallPresentationState() {
         callController.updateActiveCallPresentationState()
     }
-
 }
 
 // MARK: - ActiveCallRouterProtocol
@@ -190,7 +189,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     func showCallTopOverlay(for conversation: ZMConversation) {
         guard !isCallTopOverlayShown else { return }
 
-        let callTopOverlayController = CallTopOverlayController(conversation: conversation, userSession: userSession)
+        let callTopOverlayController = CallTopOverlayController(conversation: conversation)
         callTopOverlayController.delegate = self
         topOverlayPresenter.presentTopOverlay(callTopOverlayController, animated: true)
         isCallTopOverlayShown = true
@@ -299,8 +298,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     private func presentActiveCall(modalViewController: ModalPresentationViewController, animated: Bool) {
         isPresentingActiveCall = true
         mainWindow.rootViewController?.present(modalViewController, animated: animated) { [weak self] in
-            guard let self = self else { return }
-            self.isActiveCallShown = true
+            self?.isActiveCallShown = true
         }
     }
 

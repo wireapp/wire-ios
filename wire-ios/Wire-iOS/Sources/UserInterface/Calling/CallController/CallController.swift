@@ -40,24 +40,9 @@ final class CallController: NSObject {
 
     // MARK: - Init
 
-//    init(userSession: UserSession) {
-//        super.init()
-//        // Start with clean state - no minimized calls
-//        minimizedCall = nil
-//        // Don't register observers yet - wait until UI is ready
-//        // This prevents observers from firing before root view controller is set up
-//        // Observers will be registered when startObserving() is called
-//    }
-//
-//    func startObserving(userSession: UserSession) {
-//        guard observerTokens.isEmpty else { return }  // Already observing
-//        addObservers(userSession: userSession)
-//    }
-
     init(userSession: UserSession) {
         super.init()
-        minimizedCall = nil
-        addObservers(userSession: userSession)  // ← Register immediately
+        addObservers(userSession: userSession)
     }
 
     deinit {
@@ -67,13 +52,10 @@ final class CallController: NSObject {
     // MARK: - Public Implementation
 
     func updateActiveCallPresentationState() {
-        print("🔍 updateActiveCallPresentationState - has priorityCallConversation: \(priorityCallConversation != nil)")
         guard let priorityCallConversation else {
-            print("⚠️ No priorityCallConversation - dismissing call")
             dismissCall()
             return
         }
-        print("✅ Has priorityCallConversation - continuing")
         showCallTopOverlay(for: priorityCallConversation)
         presentOrMinimizeActiveCall(for: priorityCallConversation)
     }
@@ -86,12 +68,9 @@ final class CallController: NSObject {
     }
 
     private func presentOrMinimizeActiveCall(for conversation: ZMConversation) {
-        print("🟣 presentOrMinimizeActiveCall - conversation: \(conversation.remoteIdentifier?.uuidString ?? "nil"), minimizedCall: \(minimizedCall?.remoteIdentifier?.uuidString ?? "nil")")
         if conversation == minimizedCall {
-            print("⚠️ Choosing to minimize (conversation == minimizedCall)")
             minimizeCall()
         } else {
-            print("📱 Choosing to present")
             presentCall(in: conversation)
         }
     }
