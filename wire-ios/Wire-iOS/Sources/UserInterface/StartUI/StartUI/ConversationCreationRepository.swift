@@ -29,7 +29,7 @@ struct ConversationCreationRepository: ConversationCreationRepositoryProtocol {
         let context = contextProvider.newBackgroundContext()
         let botCount = try await context.perform {
             let botFetchRequest = ZMUser.fetchRequest()
-            botFetchRequest.predicate = NSPredicate(format: "type == nil")
+            botFetchRequest.predicate = NSPredicate(format: "typeValue == %d", TypeOfUser.bot.rawValue)
             return try context.count(for: botFetchRequest)
         }
         return botCount > 0
