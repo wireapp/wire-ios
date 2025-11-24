@@ -169,7 +169,7 @@ package final class FilesViewModel: ObservableObject {
     var didRenameFile: Bool = false
     let title: String?
     var showSearchBar: Bool {
-        state != .error || state != .pending
+        state != .error && state != .pending
     }
 
     package init(
