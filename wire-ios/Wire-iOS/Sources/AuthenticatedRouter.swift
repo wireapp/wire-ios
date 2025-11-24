@@ -57,6 +57,7 @@ final class AuthenticatedRouter {
     @MainActor var zClientViewController: ZClientViewController {
         let zClientViewController = _zClientViewController ?? zClientControllerBuilder(router: self)
         _zClientViewController = zClientViewController
+        activeCallRouter.setPresentingViewController(from: zClientViewController)
         return zClientViewController
     }
 
@@ -167,7 +168,7 @@ final class AuthenticatedRouter {
 extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 
     func updateActiveCallPresentationState() {
-        activeCallRouter.updateActiveCallPresentationState(from: _zClientViewController)
+        activeCallRouter.updateActiveCallPresentationState()
     }
 
     func minimizeCallOverlay(animated: Bool, completion: Completion?) {

@@ -115,10 +115,14 @@ final class ActiveCallRouter<TopOverlayPresenter>
 
     // MARK: - Public Implementation
 
-    func updateActiveCallPresentationState(from presentingViewController: UIViewController?) {
-        self.presentingViewController = presentingViewController
+    func updateActiveCallPresentationState() {
         callController.updateActiveCallPresentationState()
     }
+
+    func setPresentingViewController(_ presentingViewController: UIViewController?) {
+        self.presentingViewController = presentingViewController
+    }
+
 }
 
 // MARK: - ActiveCallRouterProtocol
@@ -151,7 +155,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
             enableDismissOnPan: !CallingConfiguration.config.paginationEnabled
         )
 
-        if mainWindow.rootViewController?.presentedViewController != nil {
+        if presentingViewController?.presentedViewController != nil {
             dismissPresentedAndPresentActiveCall(modalViewController: modalVC, animated: animated)
         } else {
             presentActiveCall(modalViewController: modalVC, animated: animated)
@@ -289,7 +293,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         modalViewController: ModalPresentationViewController,
         animated: Bool
     ) {
-        mainWindow.rootViewController?.presentedViewController?.dismiss(animated: true) { [weak self] in
+        presentingViewController?.presentedViewController?.dismiss(animated: true) { [weak self] in
             self?.presentActiveCall(modalViewController: modalViewController, animated: animated)
         }
     }
