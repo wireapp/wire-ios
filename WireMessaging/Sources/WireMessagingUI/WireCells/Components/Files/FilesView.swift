@@ -31,6 +31,7 @@ package struct FilesView: FilesViewProtocol {
     package var isBrowsing: Bool { false }
     @StateObject package var viewModel: FilesViewModel
     @Environment(\.dismiss) var dismiss
+    @Environment(\.wireAccentColor) private var wireAccentColor
     
     let onOpenRecycleBin: () -> Void
     let onDismissContainer: () -> Void
@@ -173,7 +174,7 @@ private extension FilesView {
         )
         .accessibilityLabel(Accessibility.Files.close)
         .accessibilityIdentifier("close")
-        .tint(ColorTheme.Base.primary.color)
+        .tint(ColorTheme.Base.primary(wireAccentColor).color)
     }
     
     var moreActionsButton: some View {
@@ -192,7 +193,7 @@ private extension FilesView {
         } label: {
             Image(systemName: "ellipsis.circle")
         }
-        .tint(ColorTheme.Base.primary.color)
+        .tint(ColorTheme.Base.primary(wireAccentColor).color)
     }
 }
 
