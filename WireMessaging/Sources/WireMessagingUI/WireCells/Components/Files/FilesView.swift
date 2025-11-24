@@ -114,18 +114,18 @@ private extension FilesView {
 
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) { closeButton }
-        
+
         if !viewModel.folderMenuOptions.isEmpty {
             ToolbarTitleMenu {
                 toolBarTitleMenuContent()
             }
         }
-        
+
         if viewModel.isFoldersEnabled {
             ToolbarItem(placement: .topBarTrailing) { createFolderButton }
         }
     }
-    
+
     var createFolderButton: some View {
         Button(
             action: { viewModel.onCreateFolder() },
