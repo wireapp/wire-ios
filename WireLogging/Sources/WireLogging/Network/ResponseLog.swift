@@ -21,10 +21,20 @@ import Foundation
 struct ResponseLog: Codable {
     var endpoint: String
     var status: Int
-
-    init?(_ response: HTTPURLResponse) {
+    var failureBody: FailureBody?
+    
+    init?(_ response: HTTPURLResponse, body: Data?) {
         guard let url = response.url else { return nil }
         self.endpoint = url.endpointRemoteLogDescription
         self.status = response.statusCode
+        if let data = body, 400..<500 ~= self.status {
+            self.failureBody = try? JSONDecoder().decode(FailureBody.self, from: data)
+        }
     }
+}
+
+struct FailureBody: Codable {
+    let code: Int
+    let label: String
+    let message: String
 }
