@@ -30,6 +30,8 @@ struct FilesViewItemView: View {
     @StateObject private var viewModel: FilesItemViewModel
     @ScaledMetric private var imageHeight: CGFloat = 28
 
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
     private var canRenameFile: Bool
     private var canEditTags: Bool
 
@@ -55,7 +57,7 @@ struct FilesViewItemView: View {
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(viewModel.fileName)
-                        .wireTextStyle(.body2)
+                        .font(for: .body2)
                         .lineLimit(1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
@@ -64,34 +66,33 @@ struct FilesViewItemView: View {
 
                         if let firstTag = tagsInfo.firstTag {
                             Text(firstTag)
-                                .wireTextStyle(.subline1)
+                                .font(for: .subline1)
                                 .fontWeight(.medium)
                                 .lineLimit(1)
-                                .foregroundStyle(ColorTheme.Base.primary.color)
+                                .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
                                 .padding(.vertical, 2)
                                 .padding(.horizontal, 5)
                                 .background {
                                     RoundedRectangle(cornerRadius: 4)
-                                        .fill(ColorTheme.Base.primaryVariant.color)
+                                        .fill(ColorTheme.Base.primaryVariant(wireAccentColor).color)
                                 }
                         }
 
                         if let additionalTagsIndicator = tagsInfo.additionalTagsIndicator {
                             Text(additionalTagsIndicator)
-                                .wireTextStyle(.subline1)
+                                .font(for: .subline1)
                                 .fontWeight(.medium)
                                 .lineLimit(1)
-                                .foregroundStyle(ColorTheme.Base.primary.color)
+                                .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
                                 .padding(.trailing, 2)
                         }
 
                         Text(viewModel.subtitle ?? "")
-                            .wireTextStyle(.subline1)
+                            .font(for: .subline1)
                             .lineLimit(1)
                             .foregroundStyle(ColorTheme.Base.secondaryText.color)
                     }
-                }.environment(\.wireTextStyleMapping, WireTextStyleMapping())
-
+                }
                 Spacer()
 
                 Menu {
@@ -177,7 +178,7 @@ struct FilesViewItemView: View {
     }
 
     private var progressColor: Color {
-        viewModel.showErrorState ? ColorTheme.Base.error.color : ColorTheme.Base.primary.color
+        viewModel.showErrorState ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
     }
 
 }
@@ -189,5 +190,4 @@ struct FilesViewItemView: View {
         FilesViewItemView(viewModel: .preview(tags: ["urgent"]), canRenameFile: true, canEditTags: true)
         FilesViewItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]))
     }
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

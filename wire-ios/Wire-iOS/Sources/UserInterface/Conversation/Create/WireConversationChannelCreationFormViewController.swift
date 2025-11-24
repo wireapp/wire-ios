@@ -58,10 +58,13 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     init(
         userSession: UserSession
-    ) {
+    ) async {
         self.userSession = userSession
+        let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
+            .isFeatureEnabled(.apps) ?? false
         self.values = ConversationCreationValues(
             isChannel: true,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )
@@ -137,7 +140,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
         values.name = channelCreationSettings.channelName
         values.allowGuests = channelCreationSettings.guestsAllowed
-        values.allowServices = channelCreationSettings.servicesAllowed
+        values.allowApps = channelCreationSettings.appsAllowed
         values.enableReceipts = channelCreationSettings.readReceiptsEnabled
         values.channelHistoryDepth = channelCreationSettings.historyDepth
         values.enableFileManagement = channelCreationSettings.fileManagementEnabled
@@ -213,7 +216,7 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
         let accessMode: [WireNetwork.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
         let accessRoles = ConversationAccessRoleV2.from(
             allowGuests: values.allowGuests,
-            allowServices: values.shouldIncludeServices ? values.allowServices : false
+            allowApps: values.isAppsFeatureEnabled ? values.allowApps : false
         ).compactMap {
             $0.toNetworkModel()
         }

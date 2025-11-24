@@ -36,6 +36,8 @@ public struct PasswordField: View {
     private let title: String
     private let isValidPassword: (String) -> Bool
 
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
     public init(
         password: Binding<String>,
         placeholder: String,
@@ -53,7 +55,7 @@ public struct PasswordField: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .wireTextStyle(.h4)
+                .font(for: .h4)
                 .foregroundColor(titleColor)
 
             HStack {
@@ -61,7 +63,7 @@ public struct PasswordField: View {
                     TextField(placeholder, text: $password)
                         .autocorrectionDisabled()
                         .textContentType(.password)
-                        .wireTextStyle(.body1)
+                        .font(for: .body1)
                         .frame(height: fieldHeight)
                         .focused($isFocused)
                 } else {
@@ -109,7 +111,7 @@ public struct PasswordField: View {
         if password.isEmpty {
             ColorTheme.Base.labelTitle.color
         } else {
-            isValidPassword(password) ? ColorTheme.Base.primary.color : ColorTheme.Base.error.color
+            isValidPassword(password) ? ColorTheme.Base.primary(wireAccentColor).color : ColorTheme.Base.error.color
         }
     }
 
@@ -117,7 +119,7 @@ public struct PasswordField: View {
         if password.isEmpty {
             ColorTheme.Strokes.outline.color
         } else {
-            isValidPassword(password) ? ColorTheme.Base.primary.color : ColorTheme.Base.error.color
+            isValidPassword(password) ? ColorTheme.Base.primary(wireAccentColor).color : ColorTheme.Base.error.color
         }
     }
 

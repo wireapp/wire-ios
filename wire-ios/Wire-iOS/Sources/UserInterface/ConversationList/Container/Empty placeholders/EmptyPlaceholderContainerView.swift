@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireFoundation
 
 final class EmptyPlaceholderContainerView: UIView {
 
@@ -29,6 +30,7 @@ final class EmptyPlaceholderContainerView: UIView {
     // MARK: - Init
 
     init(
+        wireAccentColor: WireAccentColor,
         content: ConversationListViewController.EmptyPlaceholder,
         connectWithPeopleAction: @escaping () -> Void,
         newConversationAction: @escaping () -> Void
@@ -51,7 +53,11 @@ final class EmptyPlaceholderContainerView: UIView {
         let action = UIAction { [weak self] _ in
             self?.connectWithPeopleAction()
         }
-        self.placeholderView = EmptyPlaceholderView(content: content, connectWithPeopleAction: action)
+        self.placeholderView = EmptyPlaceholderView(
+            wireAccentColor: wireAccentColor,
+            content: content,
+            connectWithPeopleAction: action
+        )
 
         backgroundColor = isIPadRegular() ? ColorTheme.Backgrounds.backgroundVariant : ColorTheme.Backgrounds
             .surfaceVariant

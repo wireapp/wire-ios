@@ -365,9 +365,10 @@ final class AddParticipantsViewController: UIViewController {
         if case let .create(values) = viewModel.context {
             let updated = ConversationCreationValues(
                 isChannel: values.isChannel,
+                isAppsFeatureEnabled: values.isAppsFeatureEnabled,
                 name: values.name,
                 participants: userSelection.users,
-                allowGuests: true,
+                allowGuests: values.allowGuests,
                 encryptionProtocol: userSession.defaultProtocol,
                 selfUser: userSession.selfUser
             )

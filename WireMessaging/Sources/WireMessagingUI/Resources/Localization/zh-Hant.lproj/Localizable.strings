@@ -20,10 +20,15 @@
 "general.loading" = "載入中...";
 "general.confirm" = "確認";
 "general.failure" = "出了點問題";
+"general.close" = "關閉";
+"general.save" = "儲存";
+"general.cancel" = "取消";
 "general.error.unknown.title." = "出了點問題";
 "general.error.unknown.message." = "Please retry later.";
 "general.error.noInternet.title." = "No internet connection";
 "general.error.noInternet.message." = "您的網路連線似乎有問題，請稍候再試。";
+"general.create" = "建立";
+"general.cancel" = "取消";
 
 // MARK: - Channel Access level
 "channel_access_level.public" = "Public";
@@ -70,7 +75,7 @@
 
 "conversation.creationForm.options.footer" = "All team members can join public channels. But, only channel admins or members can add people to a private channel. A private channel can not be changed to public later.";
 
-"conversation.creationForm.services.toggle" = "Allow services";
+"conversation.creationForm.apps.toggle" = "Allow apps";
 "conversation.creationForm.guests.toggle" = "允許訪客";
 "conversation.creationForm.guests.description" = "Open this conversation to people outside your team or services.";
 
@@ -112,6 +117,7 @@
 "conversation.wireCells.files.item.menu.open" = "開啟";
 "conversation.wireCells.files.item.menu.download" = "下載";
 "conversation.wireCells.files.item.menu.rename" = "重新命名";
+"conversation.wireCells.files.item.menu.addOrRemoveTags" = "Add or remove tags";
 "conversation.wireCells.files.item.menu.delete" = "Delete Permanently";
 "conversation.wireCells.files.item.deleteConfirmation.title" = "This will permanently delete the file %@ for all participants. Everyone will lose access and there is no way to recover the file.";
 "conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Delete Permanently";
@@ -124,7 +130,39 @@
 "conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
 "conversation.wireCells.files.error.reload" = "Reload";
 "conversation.wireCells.files.search.title" = "Search files";
+"conversation.wireCells.files.list.newFolder" = "New folder";
+"conversation.wireCells.files.newFolder.title" = "資料夾名稱";
+"conversation.wireCells.files.newFolder.placeholder" = "Enter folder name";
+"conversation.wireCells.files.newFolder.navigationTitle" = "Create folder";
+"conversation.wireCells.files.newFolder.folderNameTooLongError" = "Use a shorter folder name (most 64 characters)";
+"conversation.wireCells.files.newFolder.wrongCharacterError" = "Use a name without \"/\"";
+"conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "A folder with that name already exists";
+"conversation.wireCells.files.fileName.title" = "File name";
+"conversation.wireCells.files.folderName.title" = "資料夾名稱";
+"conversation.wireCells.files.renameFile.navigationTitle" = "Rename file";
+"conversation.wireCells.files.renameFolder.navigationTitle" = "Rename folder";
+"conversation.wireCells.files.renameFile.filenameTooLongError" = "Use a shorter file name (most 64 characters)";
+"conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Use a shorter folder name (most 64 characters)";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Use a name without \"/\"";
+"conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "A file with that name already exists";
+"conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "A folder with that name already exists";
+"conversation.wireCells.files.renameFile.placeholder" = "Enter file name";
+"conversation.wireCells.files.renameFolder.placeholder" = "Enter folder name";
+
+// MARK: - File Tags View
+"conversation.wireCells.tags.title" = "Add or remove tags";
+"conversation.wireCells.tags.headline" = "All members of your team can see and use the tags you create.";
+"conversation.wireCells.tags.suggestedTagsSection" = "Suggested tags";
+"conversation.wireCells.tags.suggestedTagsSectionEmpty" = "No tags were created yet.";
+"conversation.wireCells.tags.textFieldPlaceholder" = "Enter tag name";
+"conversation.wireCells.tags.error.nameTooLong" = "Use a shorter tag name (at most 30 characters)";
+"conversation.wireCells.tags.error.specialCharacters" = "Use a tag without special characters {0}";
+"conversation.wireCells.tags.error.saveFailedTitle" = "Unable to edit tags";
+"conversation.wireCells.tags.error.saveFailedMessage" = "Due to an error your tags could not be edited.";
+"conversation.wireCells.tags.error.retryButton" = "Try again";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "File not available";
 "conversation.message.attachment.previewNotAvailable" = "Unable to display preview";
+"conversation.message.attachment.unableToDownload" = "Unable to download file";
+"conversation.message.attachment.loadingContent" = "Loading content";
