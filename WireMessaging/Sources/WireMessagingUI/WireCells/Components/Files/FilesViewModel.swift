@@ -155,7 +155,7 @@ package final class FilesViewModel: ObservableObject {
     private let navigationPath: [FilesViewItem]
     let isFoldersEnabled: Bool
 
-    @Published private(set) var hasMore = true
+    @Published var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
     @Published var searchText = ""
     @Published var alert: AlertModel?
