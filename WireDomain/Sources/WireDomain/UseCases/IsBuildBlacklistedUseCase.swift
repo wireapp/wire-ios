@@ -60,7 +60,7 @@ public struct IsBuildBlacklistedUseCaseImpl: IsBuildBlacklistedUseCase {
         } catch {
             // As per specs, if there is any failure obtaining the blacklist,
             // whether it is missing, can't be decoded, or otherwise, then
-            // consider it empty (i.e all cliets valid).
+            // consider it empty (i.e all clients valid).
             return false
         }
     }
