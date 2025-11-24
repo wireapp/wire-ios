@@ -33,6 +33,7 @@ import WireMessagingUI
 import WireNetwork
 import WireSidebarUI
 import WireSyncEngine
+import WireData
 import WireUtilities
 
 final class ZClientViewController: UIViewController {
@@ -42,6 +43,7 @@ final class ZClientViewController: UIViewController {
     // MARK: - Private Members - Add wire cells factory here somehow
 
     let account: Account
+    let contextProvider: any ManagedObjectContextProvider
     let userSession: UserSession
     let trackingManager: TrackingManager?
     private let selfProfileViewsMonitor: SelfProfileViewsMonitor
@@ -146,7 +148,7 @@ final class ZClientViewController: UIViewController {
         channelConversationFormFactory: channelConversationFormFactory,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
         featureConfigRepository: userSession.clientSessionComponent!.featureConfigRepository,
-        areBotsAvailableUseCase: AreBotsAvailableUseCase(contextProvider: <#T##any ManagedObjectContextProvider#>)
+        conversationCreationRepository: ConversationCreationRepository(contextProvider: contextProvider)
     )
 
     private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(
@@ -202,8 +204,10 @@ final class ZClientViewController: UIViewController {
     )
 
     /// init method for testing allows injecting an Account object and self user
+
     required init(
         account: Account,
+        contextProvider: any ManagedObjectContextProvider,
         selfProfileViewsMonitor: SelfProfileViewsMonitor,
         userSession: UserSession,
         trackingManager: TrackingManager?,
@@ -211,6 +215,7 @@ final class ZClientViewController: UIViewController {
         wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.account = account
+        self.contextProvider = contextProvider
         self.selfProfileViewsMonitor = selfProfileViewsMonitor
         self.userSession = userSession
         self.trackingManager = trackingManager

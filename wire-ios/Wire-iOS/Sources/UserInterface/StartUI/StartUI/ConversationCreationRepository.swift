@@ -17,15 +17,22 @@
 //
 
 import WireData
+import WireDataModel
+import WireMessagingDomain
 
-struct AreBotsAvailableUseCase: AreBotsAvailableUseCaseProtocol { // TODO: delete?
+struct ConversationCreationRepository: ConversationCreationRepositoryProtocol {
 
     var contextProvider: any ManagedObjectContextProvider
 
     @concurrent
-    func invoke() async -> Bool {
+    func areBotsSetUpInTheTeam() async throws -> Bool {
         let context = contextProvider.newBackgroundContext()
-        fatalError()
+        let botCount = try await context.perform {
+            let botFetchRequest = ZMUser.fetchRequest()
+            botFetchRequest.predicate = NSPredicate(format: "type == nil")
+            return try context.count(for: botFetchRequest)
+        }
+        return botCount > 0
     }
 
 }

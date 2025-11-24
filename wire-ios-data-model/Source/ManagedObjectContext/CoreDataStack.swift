@@ -41,7 +41,7 @@ extension CoreDataStackError: LocalizedError {
 }
 
 @objc
-public protocol ContextProvider {
+public protocol ContextProvider: Sendable {
 
     var account: Account { get }
 
@@ -50,6 +50,7 @@ public protocol ContextProvider {
     var syncContext: NSManagedObjectContext { get }
     var searchContext: NSManagedObjectContext { get }
     var eventContext: NSManagedObjectContext { get }
+
 }
 
 extension URL {

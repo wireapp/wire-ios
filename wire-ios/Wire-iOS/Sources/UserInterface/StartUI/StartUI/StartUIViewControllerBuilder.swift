@@ -33,7 +33,7 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     let featureConfigRepository: FeatureConfigRepositoryProtocol
-    let areBotsAvailableUseCase: AreBotsAvailableUseCaseProtocol
+    let conversationCreationRepository: ConversationCreationRepositoryProtocol
 
     weak var delegate: StartUIDelegate?
 
@@ -44,7 +44,7 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
         channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         featureConfigRepository: FeatureConfigRepositoryProtocol,
-        areBotsAvailableUseCase: AreBotsAvailableUseCaseProtocol
+        conversationCreationRepository: ConversationCreationRepositoryProtocol
     ) {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
@@ -52,13 +52,13 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
         self.channelConversationFormFactory = channelConversationFormFactory
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.featureConfigRepository = featureConfigRepository
-        self.areBotsAvailableUseCase = areBotsAvailableUseCase
+        self.conversationCreationRepository = conversationCreationRepository
     }
 
     @MainActor
     func build() async -> UIViewController {
         let isAppsFeatureEnabled = await featureConfigRepository.isFeatureEnabled(.apps)
-        let areLegacyBotsAvailable = await areBotsAvailableUseCase.invoke()
+        let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
         let rootViewController = StartUIViewController(
             areLegacyBotsAvailable: areLegacyBotsAvailable,
             isAppsFeatureEnabled: isAppsFeatureEnabled,

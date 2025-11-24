@@ -64,6 +64,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     func setupSut() {
         sut = StartUIViewController(
+            areLegacyBotsAvailable: true,
             isAppsFeatureEnabled: true,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,

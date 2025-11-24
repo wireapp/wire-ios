@@ -16,10 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A use case which determines if the self user's team currently has any old-style services/bots set up.
+import WireData
+import WireDataModel
 
-public protocol AreBotsAvailableUseCaseProtocol {
+struct DefaultManagedObjectContextProvider: ManagedObjectContextProvider {
 
-    func invoke() async -> Bool
+    let contextProvider: any ContextProvider
+
+    var viewContext: NSManagedObjectContext {
+        contextProvider.viewContext
+    }
+
+    func newBackgroundContext() -> NSManagedObjectContext {
+        contextProvider.newBackgroundContext()
+    }
 
 }
