@@ -18,6 +18,10 @@
 
 import XCTest
 
+enum OptionsOnSettingsPageError: Error {
+    case passcodeFieldOnLockNotFound
+}
+
 class OptionsOnSettingsPage: PageModel {
 
     override var pageMainElement: XCUIElement {
@@ -54,7 +58,14 @@ class OptionsOnSettingsPage: PageModel {
 
     func enterPasscode(_ pass: String) throws -> ConversationsPage {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        try springboard.secureTextFields["Passcode field"].tapIfKeyboardNotFocused().typeText(pass)
+
+        let passcodeField = springboard.secureTextFields.firstMatch
+        guard passcodeField.waitForExistence(timeout: 3.0) else {
+            XCTFail("Passcode secure text field not found on SpringBoard")
+            throw OptionsOnSettingsPageError.passcodeFieldOnLockNotFound
+        }
+        try passcodeField.tapIfKeyboardNotFocused()
+        passcodeField.typeText(pass)
 
         let doneButton = springboard.keyboards.buttons["Done"].firstMatch
         if doneButton.waitForExistence(timeout: 2.0), doneButton.isHittable {
