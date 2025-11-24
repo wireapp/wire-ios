@@ -37,7 +37,7 @@ public  struct Option: Identifiable {
     let text: String
     let actionImage: ActionImage?
     let action: () -> Void
-    let accessibilityIdentifier: String?
+    let accessibilityIdentifier: String
 
     public static func manageTeamOption(action: @escaping () -> Void) -> Option {
         Option(
@@ -70,7 +70,9 @@ public  struct Option: Identifiable {
         self.text = text
         self.actionImage = actionImage
         self.action = action
-        self.accessibilityIdentifier = accessibilityIdentifier
+        // If no identifier is provided, fall back to the text,
+        // so we always have a meaningful non-empty identifier.
+        self.accessibilityIdentifier = accessibilityIdentifier ?? text
     }
 }
 
@@ -106,7 +108,7 @@ struct OptionView: View {
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isButton)
         .accessibilityLabel(option.text)
-        .accessibilityIdentifier(option.accessibilityIdentifier ?? "")
+        .accessibilityIdentifier(option.accessibilityIdentifier)
         .onTapGesture {
             option.action()
         }
