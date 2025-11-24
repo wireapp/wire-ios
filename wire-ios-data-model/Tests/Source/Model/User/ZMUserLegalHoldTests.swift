@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireDataModelSupport
+import XCTest
 
 @preconcurrency @testable import WireDataModel
 
@@ -87,9 +87,9 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
 
     func testThatLegalHoldStatusIsEnabled_AfterAcceptingRequest() async throws {
         // GIVEN
-        
+
         let (legalHoldRequest, selfUser, conversationOID) = await syncMOC.perform { [self, syncMOC] in
-            
+
             let mockProteusService = MockProteusServiceInterface()
             mockProteusService.establishSessionIdFromPrekey_MockMethod = { _, _ in }
             syncMOC.proteusService = mockProteusService
@@ -102,19 +102,19 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
 
             let legalHoldRequest = LegalHoldRequest.mockRequest(for: selfUser)
             selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)
-            
+
             return (legalHoldRequest, selfUser, conversation.objectID)
         }
 
         // WHEN
         _ = await selfUser.addLegalHoldClient(from: legalHoldRequest)
-       
+
         try await syncMOC.perform { [selfUserOID = selfUser.objectID, syncMOC] in
             let selfUser = try syncMOC.existingObject(with: selfUserOID) as! ZMUser
             let conversation = try syncMOC.existingObject(with: conversationOID) as! ZMConversation
-            
+
             selfUser.userDidAcceptLegalHoldRequest(legalHoldRequest)
-        
+
             // THEN
             XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
             XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)

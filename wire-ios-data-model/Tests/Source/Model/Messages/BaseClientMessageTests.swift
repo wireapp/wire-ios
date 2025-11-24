@@ -49,7 +49,7 @@ class BaseZMClientMessageTests: BaseZMMessageTests {
 
             _ = self.createClient(for: syncUser1, onMOC: syncMOC)
             _ = self.createClient(for: syncUser2, onMOC: syncMOC)
-            
+
             self.syncConversation = ZMConversation.insertGroupConversation(
                 moc: self.syncMOC,
                 participants: [self.syncUser1!, self.syncUser2!]
