@@ -165,30 +165,6 @@ private extension FilesView {
     }
 }
 
-private struct CreateFolderCTA: View {
-
-    let onTap: () -> Void
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Divider()
-
-            Button(action: onTap) {
-                HStack(alignment: .center, spacing: 20) {
-                    Image(systemName: "plus")
-
-                    Text(L10n.Localizable.Conversation.WireCells.Files.List.newFolder)
-                        .font(for: .body2)
-                    Spacer()
-                }
-            }
-            .tint(ColorTheme.Backgrounds.onSurface.color)
-            .padding()
-        }
-        .contentShape(Rectangle())
-    }
-}
-
 private extension FilesViewModel.FolderMenuOption {
 
     var title: String {
