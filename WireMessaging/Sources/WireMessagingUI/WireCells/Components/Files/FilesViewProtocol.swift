@@ -66,6 +66,7 @@ extension FilesViewProtocol {
             viewModel: viewModel.itemViewModel(index: index),
             canRenameFile: !isBrowsing, // action not allowed when browsing files
             canEditTags: !isBrowsing, // action not allowed when browsing files
+            canMoveToFolder: !isBrowsing && viewModel.isFoldersEnabled // action not allowed when browsing files
         )
     }
 

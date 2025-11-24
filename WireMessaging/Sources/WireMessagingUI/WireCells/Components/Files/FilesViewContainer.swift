@@ -100,6 +100,7 @@ package struct FilesViewContainer: View {
             },
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
+            nodesRepository: nodesRepository,
             fileCache: fileCache,
             cellName: cellName,
             isFoldersEnabled: isFoldersEnabled

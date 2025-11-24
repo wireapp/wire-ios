@@ -63,6 +63,7 @@ final class FilesViewModelTests {
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
+            nodesRepository: nodesRepository,
             fileCache: fileCache,
             isFoldersEnabled: true,
         )

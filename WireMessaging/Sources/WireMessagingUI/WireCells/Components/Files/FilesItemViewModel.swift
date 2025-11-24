@@ -33,6 +33,7 @@ final class FilesItemViewModel: ObservableObject {
     private let onOpen: (FilesViewItem) async -> Void
     private let onDelete: (FilesViewItem) async -> Void
     private let onRename: ((FilesViewItem) async -> Void)?
+    private let onMoveToFolder: ((FilesViewItem) async -> Void)?
     let onEditTagsSelected: () -> Void
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
@@ -61,6 +62,7 @@ final class FilesItemViewModel: ObservableObject {
         onOpen: @escaping (FilesViewItem) async -> Void,
         onDelete: @escaping (FilesViewItem) async -> Void,
         onRename: ((FilesViewItem) async -> Void)? = nil,
+        onMoveToFolder: ((FilesViewItem) async -> Void)? = nil,
         onEditTagsSelected: @escaping (FilesViewItem) -> Void,
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,
@@ -71,9 +73,16 @@ final class FilesItemViewModel: ObservableObject {
         self.onOpen = onOpen
         self.onDelete = onDelete
         self.onRename = onRename
+        self.onMoveToFolder = onMoveToFolder
         self.onEditTagsSelected = { onEditTagsSelected(item) }
         self.fileName = item.name
-        self.subtitle = Self.subtitle(from: item, locale: locale, calendar: calendar, timeZone: timeZone)
+        self.subtitle = Self.subtitle(
+            modifiedAt: item.modifiedAt,
+            ownedBy: item.ownedBy,
+            locale: locale,
+            calendar: calendar,
+            timeZone: timeZone
+        )
         self.icon = item.icon
         self.localAssetRepository = localAssetRepository
 
@@ -130,6 +139,10 @@ final class FilesItemViewModel: ObservableObject {
         await onRename?(item)
     }
 
+    func moveToFolder() async {
+        await onMoveToFolder?(item)
+    }
+
     func download() async {
         precondition(item.kind == .file)
 
@@ -145,13 +158,15 @@ final class FilesItemViewModel: ObservableObject {
         await onDelete(item)
     }
 
-    private static func subtitle(
-        from item: FilesViewItem,
+    static func subtitle( // MARK: Fixme: move somewhere better.
+
+        modifiedAt: Date?,
+        ownedBy: String?,
         locale: Locale,
         calendar: Calendar,
         timeZone: TimeZone
     ) -> String? {
-        let modifiedAt = item.modifiedAt.map { date in
+        let modifiedAt = modifiedAt.map { date in
             let style = Date.FormatStyle(
                 date: .abbreviated,
                 time: .shortened,
@@ -162,10 +177,10 @@ final class FilesItemViewModel: ObservableObject {
             )
             return date.formatted(style)
         }
-        return if let modifiedAt, let ownedBy = item.ownedBy {
+        return if let modifiedAt, let ownedBy {
             L10n.Localizable.Conversation.WireCells.Files.Item.subtitle(modifiedAt, ownedBy)
         } else {
-            [modifiedAt, item.ownedBy].compactMap(\.self).first
+            [modifiedAt, ownedBy].compactMap(\.self).first
         }
     }
 

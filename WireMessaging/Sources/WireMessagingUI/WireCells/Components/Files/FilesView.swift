@@ -99,6 +99,8 @@ package struct FilesView: FilesViewProtocol {
                             await viewModel.reload()
                         }
                     )
+                case let .moveToFolder(fileItem):
+                    viewModel.moveToFolderView(item: fileItem)
                 }
             }
             .sheet(

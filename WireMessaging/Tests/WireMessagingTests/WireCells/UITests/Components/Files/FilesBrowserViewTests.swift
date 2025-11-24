@@ -168,6 +168,7 @@ final class FilesBrowserViewTests: XCTestCase {
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetsRepository,
+            nodesRepository: nodesRepository,
             fileCache: MockFileCache(),
             isFoldersEnabled: false,
         )

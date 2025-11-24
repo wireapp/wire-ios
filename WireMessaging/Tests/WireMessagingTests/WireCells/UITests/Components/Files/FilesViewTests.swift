@@ -331,6 +331,7 @@ final class FilesViewTests: XCTestCase {
             ),
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            nodesRepository: nodesRepository,
             fileCache: MockFileCache(),
             isFoldersEnabled: true,
         )

@@ -44,7 +44,7 @@ package struct FilesViewItem: Identifiable, Hashable {
     /// The kind of this item - file or folder.
     let kind: Kind
 
-    /// The name of the user who owns (uploaded or created) this item.
+    /// The name of the this item.
     let name: String
 
     /// The filepath of the item.
@@ -77,11 +77,14 @@ package final class FilesViewModel: ObservableObject {
 
     enum SheetNavigation: Identifiable {
         case editTags(fileItem: FilesViewItem)
+        case moveToFolder(fileItem: FilesViewItem)
 
         var id: String {
             switch self {
-            case let .editTags(fileItem: item):
-                "editTags(\(item.id))"
+            case let .editTags(fileItem):
+                "editTags(\(fileItem.id))"
+            case let .moveToFolder(fileItem):
+                "moveToFolder(\(fileItem.id)"
             }
         }
     }
@@ -148,6 +151,7 @@ package final class FilesViewModel: ObservableObject {
 
     private let setNavigation: ([FilesViewItem]) -> Void
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
+    private let nodesRepository: any WireCellsNodesRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
     private let cellName: String? // nil when browsing all files
@@ -176,6 +180,7 @@ package final class FilesViewModel: ObservableObject {
         setNavigation: @escaping ([FilesViewItem]) -> Void = { _ in },
         isCellsStatePending: Bool,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
+        nodesRepository: any WireCellsNodesRepositoryProtocol,
         fileCache: any FileCache,
         cellName: String? = nil,
         isFoldersEnabled: Bool
@@ -185,6 +190,7 @@ package final class FilesViewModel: ObservableObject {
         self.navigationPath = navigationPath
         self.setNavigation = setNavigation
         self.localAssetRepository = localAssetRepository
+        self.nodesRepository = nodesRepository
         self.fileCache = fileCache
         self.cellName = cellName
         self.state = isCellsStatePending ? .pending : .loading
@@ -256,9 +262,32 @@ package final class FilesViewModel: ObservableObject {
             onRename: { [weak self] item in
                 self?.fileRenameView = self?.makeFileRenameView(item: item)
             },
+            onMoveToFolder: { [weak self] item in
+                self?.sheetNavigation = .moveToFolder(fileItem: item)
+            },
             onEditTagsSelected: { [weak self] item in
                 self?.sheetNavigation = .editTags(fileItem: item)
             },
+        )
+    }
+
+    func moveToFolderView(item: FilesViewItem) -> some View {
+        let containerPath = item.filePath.components(separatedBy: "/").dropLast().joined(separator: "/")
+        let nodesRepository = nodesRepository
+        let useCases = useCases
+        return MoveToFolderView(
+            viewModel: MoveToFolderViewModel(
+                containerPath: containerPath,
+                nodeID: item.id,
+                nodeName: item.name,
+                onFinish: { [weak self] in
+                    self?.sheetNavigation = nil
+                    Task { await self?.reload(refreshing: true) }
+                },
+                nodesRepository: nodesRepository,
+                moveNodeUseCase: WireCellsMoveNodeUseCase(nodesRepository: nodesRepository),
+                createFolderUseCase: useCases.createFolder
+            )
         )
     }
 

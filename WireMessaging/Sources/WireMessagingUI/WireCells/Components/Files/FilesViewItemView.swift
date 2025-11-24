@@ -32,17 +32,20 @@ struct FilesViewItemView: View {
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
-    private var canRenameFile: Bool
-    private var canEditTags: Bool
+    private let canRenameFile: Bool
+    private let canEditTags: Bool
+    private let canMoveToFolder: Bool
 
     init(
         viewModel: @autoclosure @escaping () -> FilesItemViewModel,
         canRenameFile: Bool = false,
         canEditTags: Bool = false,
+        canMoveToFolder: Bool = false
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
         self.canRenameFile = canRenameFile
         self.canEditTags = canEditTags
+        self.canMoveToFolder = canMoveToFolder
     }
 
     var body: some View {
@@ -112,6 +115,12 @@ struct FilesViewItemView: View {
                         }
                     }
 
+                    if canMoveToFolder {
+                        Button(action: moveToFolder) {
+                            Label(Strings.Files.Item.Menu.moveToFolder, systemImage: "folder")
+                        }
+                    }
+
                     if canEditTags {
                         Button(action: editTags) {
                             Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
@@ -163,6 +172,10 @@ struct FilesViewItemView: View {
 
     private func rename() {
         Task { await viewModel.rename() }
+    }
+
+    private func moveToFolder() {
+        Task { await viewModel.moveToFolder() }
     }
 
     private func editTags() {
