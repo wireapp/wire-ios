@@ -131,11 +131,12 @@ final class SelfProfileViewController: UIViewController {
             let backendInfoApiVersion = userSession.resolvedBackendMetadata.apiVersion,
             let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
             apiVersion >= .v7 {
-            self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
-                actionCallback: { [weak self] action in
-                    self?.onTeamCreationBannerInteraction(action, apiVersion: apiVersion)
-                }
-            )
+            let accentColor = WireAccentColor(rawValue: selfUser.accentColorValue) ?? .default
+            let upgradeBanner = SelfProfileViewCallToActionBanner { [weak self] in
+                self?.onTeamCreationBannerInteraction(apiVersion: apiVersion)
+            }.environment(\.wireAccentColor, accentColor)
+            self.teamMigrationBanner = UIHostingController(rootView: upgradeBanner)
+            teamMigrationBanner?.view.backgroundColor = .clear
         }
 
         if DeveloperFlag.multibackend.isOn {
@@ -309,27 +310,23 @@ final class SelfProfileViewController: UIViewController {
     // MARK: - Events
 
     private func onTeamCreationBannerInteraction(
-        _ action: SelfProfileViewCallToActionBanner.Action,
         apiVersion: WireNetwork.APIVersion
     ) {
-        switch action {
-        case .createWireTeam:
-            let sessionContextProvider = userSession.contextProvider
-            let user = ZMUser.selfUser(inUserSession: sessionContextProvider)
-            guard let userName = user.normalizedName,
-                  let useCase = SessionManager.shared?.activeUserSession?
-                  .createIndividualToTeamMigrationUseCase() else {
-                return
-            }
-            userDidTapCreateTeam(useCase: useCase, userName: userName)
+        let sessionContextProvider = userSession.contextProvider
+        let user = ZMUser.selfUser(inUserSession: sessionContextProvider)
+        guard let userName = user.normalizedName,
+              let useCase = SessionManager.shared?.activeUserSession?
+              .createIndividualToTeamMigrationUseCase() else {
+            return
         }
+        userDidTapCreateTeam(useCase: useCase, userName: userName)
     }
 
     func triggerCreateTeamFlow() {
         if let backendInfoApiVersion = userSession.resolvedBackendMetadata.apiVersion,
            let apiVersion = APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
            apiVersion >= .v7 {
-            onTeamCreationBannerInteraction(.createWireTeam, apiVersion: apiVersion)
+            onTeamCreationBannerInteraction(apiVersion: apiVersion)
         }
     }
 
