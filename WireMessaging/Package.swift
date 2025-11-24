@@ -14,7 +14,7 @@ let package = Package(
         .library(name: "WireMessagingUI", targets: ["WireMessagingUI"])
     ],
     dependencies: [
-        .package(url: "https://github.com/pydio/cells-sdk-swift.git", from: "0.1.1-alpha15"),
+        .package(url: "https://github.com/pydio/cells-sdk-swift.git", from: "0.1.1-alpha16"),
         .package(url: "https://github.com/awslabs/aws-sdk-swift.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.1.4"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
