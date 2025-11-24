@@ -67,7 +67,7 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder private var teamAccountView: some View {
         let background = RoundedRectangle(cornerRadius: 24, style: .circular)
-            .stroke(ColorTheme.Base.primary.color)
+            .stroke(ColorTheme.Base.primary(.default).color)
         VStack(spacing: 24) {
             teamAccountTitles
             teamAccountFeatures
@@ -172,7 +172,7 @@ private struct TitlesView: View {
         VStack(spacing: 8) {
             Text(title)
                 .font(.callout.bold())
-                .foregroundStyle(ColorTheme.Base.primary.color)
+                .foregroundStyle(ColorTheme.Base.primary(.default).color)
             Text(subtitle)
         }
     }

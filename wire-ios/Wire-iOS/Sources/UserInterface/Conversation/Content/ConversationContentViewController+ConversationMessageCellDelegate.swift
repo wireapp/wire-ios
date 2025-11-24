@@ -48,7 +48,7 @@ extension UIView {
 extension ConversationContentViewController: ConversationMessageCellDelegate {
 
     func conversationMessageCell(
-        _ contentView: any ConversationMessageCell,
+        _ contentView: UIView,
         present viewController: UIViewController
     ) {
         if let popoverPresentationController = viewController.popoverPresentationController {

@@ -302,20 +302,20 @@ class MockConversationCellProviderProtocol: ConversationCellProviderProtocol {
 
     // MARK: - provideCell
 
-    var provideCellForTableViewIndexPath_Invocations: [(model: ConversationCellModel, tableView: UITableView, indexPath: IndexPath)] = []
-    var provideCellForTableViewIndexPath_MockMethod: ((ConversationCellModel, UITableView, IndexPath) -> UITableViewCell)?
-    var provideCellForTableViewIndexPath_MockValue: UITableViewCell?
+    var provideCellForTableViewIndexPathOnLongPress_Invocations: [(model: ConversationCellModel, tableView: UITableView, indexPath: IndexPath, onLongPress: (UITableViewCell) -> Void)] = []
+    var provideCellForTableViewIndexPathOnLongPress_MockMethod: ((ConversationCellModel, UITableView, IndexPath, @escaping (UITableViewCell) -> Void) -> UITableViewCell)?
+    var provideCellForTableViewIndexPathOnLongPress_MockValue: UITableViewCell?
 
     @MainActor
-    func provideCell(for model: ConversationCellModel, tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
-        provideCellForTableViewIndexPath_Invocations.append((model: model, tableView: tableView, indexPath: indexPath))
+    func provideCell(for model: ConversationCellModel, tableView: UITableView, indexPath: IndexPath, onLongPress: @escaping (UITableViewCell) -> Void) -> UITableViewCell {
+        provideCellForTableViewIndexPathOnLongPress_Invocations.append((model: model, tableView: tableView, indexPath: indexPath, onLongPress: onLongPress))
 
-        if let mock = provideCellForTableViewIndexPath_MockMethod {
-            return mock(model, tableView, indexPath)
-        } else if let mock = provideCellForTableViewIndexPath_MockValue {
+        if let mock = provideCellForTableViewIndexPathOnLongPress_MockMethod {
+            return mock(model, tableView, indexPath, onLongPress)
+        } else if let mock = provideCellForTableViewIndexPathOnLongPress_MockValue {
             return mock
         } else {
-            fatalError("no mock for `provideCellForTableViewIndexPath`")
+            fatalError("no mock for `provideCellForTableViewIndexPathOnLongPress`")
         }
     }
 

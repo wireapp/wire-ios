@@ -46,7 +46,7 @@ struct IsBuildBlacklistedUseCaseTest {
         )
 
         // When
-        let isBlacklisted = try await sut.invoke()
+        let isBlacklisted = await sut.invoke()
 
         // Then
         #expect(isBlacklisted == true)
@@ -64,7 +64,24 @@ struct IsBuildBlacklistedUseCaseTest {
         )
 
         // When
-        let isBlacklisted = try await sut.invoke()
+        let isBlacklisted = await sut.invoke()
+
+        // Then
+        #expect(isBlacklisted == false)
+    }
+
+    @Test("Failures are equivalent to empty blacklist")
+    func failuresAreEquivalentToEmptyBlacklist() async throws {
+        // Given
+        let sut = IsBuildBlacklistedUseCaseImpl(
+            currentBuildNumber: "1",
+            api: api
+        )
+
+        api.getBlacklist_MockError = "some error"
+
+        // When
+        let isBlacklisted = await sut.invoke()
 
         // Then
         #expect(isBlacklisted == false)

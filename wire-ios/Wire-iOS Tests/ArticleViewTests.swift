@@ -27,7 +27,7 @@ import XCTest
 final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate {
 
     func conversationMessageCell(
-        _ contentView: any ConversationMessageCell,
+        _ contentView: UIView,
         present viewController: UIViewController
     ) {
         // no-op
