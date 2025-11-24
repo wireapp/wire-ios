@@ -331,16 +331,24 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 self?.resume()
             }.store(in: &cancellables)
 
-        var latestNetworkState: NetworkState?
         networkStatePublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] newNetworkState in
-                if newNetworkState == .online, latestNetworkState == .offline {
+            .scan((
+                previous: NetworkState?.none,
+                current: NetworkState?.none
+            )) { state, newNetworkState -> (
+                previous: NetworkState?,
+                current: NetworkState?
+            ) in
+                (previous: state.current, current: newNetworkState)
+            }
+            .sink { [weak self] state in
+                if state.current == .online, state.previous == .offline {
                     WireLogger.sync.warn("was offline, now back online, resume sync")
                     self?.resume()
                 }
-                latestNetworkState = newNetworkState
-            }.store(in: &cancellables)
+            }
+            .store(in: &cancellables)
     }
 }
 
