@@ -23,7 +23,7 @@ import Foundation
 // because the current UI tests depend on these exact values.
 // We are keeping them as-is for now to avoid breaking existing tests.
 //
-// TODO: Replace these explicit string values with properly camel-cased,
+// TODO: [WPB-21952] Replace these explicit string values with properly camel-cased,
 // non-UI-text-based identifiers (e.g., accessibility identifiers) to have this
 // unform format and reduce test fragility.
 
@@ -73,8 +73,8 @@ public enum Locators {
     }
 
     public enum AccountSettingsPage: String {
-        
-        // TODO: Improve these identifiers later.
+
+        // TODO: [WPB-21952] Improve these identifiers later.
         // We are keeping the current title+field identifiers for now to avoid
         // changing existing references across the app.
         case nameField = "NameField"
