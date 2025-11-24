@@ -36,7 +36,7 @@ extension FilesViewModel {
 
         return FilesViewModel(
             useCases: .init(
-                fetchNodes: WireCellsFetchNodesUseCase(
+                fetchNodes: WireCellsFetchNodesPageUseCase(
                     configuration: .conversationFileView(root: .path("root"), isFoldersEnabled: true),
                     repository: previewNodesRepository()
                 ),

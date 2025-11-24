@@ -42,7 +42,7 @@ final class FilesViewModelTests {
 
         self.sut = FilesViewModel(
             useCases: .init(
-                fetchNodes: WireCellsFetchNodesUseCase(
+                fetchNodes: WireCellsFetchNodesPageUseCase(
                     configuration: .conversationFileView(root: .path("some-cell"), isFoldersEnabled: false),
                     repository: nodesRepository
                 ),

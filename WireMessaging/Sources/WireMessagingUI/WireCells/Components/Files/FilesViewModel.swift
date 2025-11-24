@@ -120,7 +120,7 @@ package final class FilesViewModel: ObservableObject {
 
     package struct UseCases {
         package init(
-            fetchNodes: WireCellsFetchNodesUseCase,
+            fetchNodes: WireCellsFetchNodesPageUseCase,
             deleteNodes: WireCellsDeleteNodesUseCase,
             renameNode: any WireCellsRenameNodeUseCaseProtocol,
             updateTags: any WireCellsUpdateTagsUseCaseProtocol,
@@ -136,7 +136,7 @@ package final class FilesViewModel: ObservableObject {
             self.createFolder = createFolder
         }
 
-        let fetchNodes: WireCellsFetchNodesUseCase
+        let fetchNodes: WireCellsFetchNodesPageUseCase
         let deleteNodes: WireCellsDeleteNodesUseCase
         let renameNode: any WireCellsRenameNodeUseCaseProtocol
         let updateTags: any WireCellsUpdateTagsUseCaseProtocol

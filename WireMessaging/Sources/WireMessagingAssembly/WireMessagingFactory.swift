@@ -165,7 +165,7 @@ public extension WireMessagingFactory {
             rootView: FilesBrowserView(
                 viewModel: FilesViewModel(
                     useCases: .init(
-                        fetchNodes: WireCellsFetchNodesUseCase(
+                        fetchNodes: WireCellsFetchNodesPageUseCase(
                             configuration: .filesBrowserView,
                             repository: nodesAPI
                         ),
@@ -186,6 +186,7 @@ public extension WireMessagingFactory {
                     ),
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,
+                    nodesRepository: nodesAPI,
                     fileCache: fileCache,
                     isFoldersEnabled: false
                 )
