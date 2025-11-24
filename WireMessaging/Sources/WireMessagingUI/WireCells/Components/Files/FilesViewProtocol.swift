@@ -68,17 +68,6 @@ extension FilesViewProtocol {
             EmptyView()
         }
     }
-
-    private var listRowBackground: Color {
-        switch viewModel.state {
-        case .pending:
-            ColorTheme.Backgrounds.background.color
-        case let .received(items) where items.isEmpty:
-            ColorTheme.Backgrounds.background.color
-        default:
-            ColorTheme.Backgrounds.surface.color
-        }
-    }
 }
 
 // MARK: - Rows
