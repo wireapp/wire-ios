@@ -87,6 +87,11 @@ final class StartUIViewController: UIViewController {
     let searchResultsViewController: SearchResultsViewController
 
     let isAppsFeatureEnabled: Bool
+
+    /// The people/apps switch control will only be visible if apps are enabled or the team already has some legacy services/bots added.
+
+    let areLegacyBotsAvailable: Bool
+
     let userSession: UserSession
 
     let mainCoordinator: AnyMainCoordinator
@@ -108,17 +113,7 @@ final class StartUIViewController: UIViewController {
     }
 
     var showsGroupSelector: Bool {
-
-        // restore old behavior until `apps` feature flows are complete
-        #if true
-            return SearchGroup.all.count > 1 &&
-                userSession.selfUser.canSeeServices &&
-                userSession.defaultProtocol != .mls
-        #else
-            // TODO: [WPB-21834] consider adding a client-side feature flag for the new behavior
-            return isAppsFeatureEnabled && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
-        #endif
-
+        areLegacyBotsAvailable || isAppsFeatureEnabled && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
     }
 
     // MARK: - Init
