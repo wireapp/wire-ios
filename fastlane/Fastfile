@@ -111,6 +111,11 @@ platform :ios do
     lane :run_uitests do |options|
         schemes = ["WireUITests"]
         options[:testplan] = "UITests"
+
+        # default is "Configuration 1" (your base config with prerequisites)
+        config_name = options[:configuration] || "Configuration 1"
+        options[:testplan_configuration] = config_name
+
         begin
             run_tests_frameworks(schemes, options)
         rescue => e
@@ -289,15 +294,16 @@ platform :ios do
         write_tests_info_to_summary("🤖 Testing schemas: #{schemas.join(', ')}")
         
         testplan = options[:testplan] || "AllTests" # TODO: [WPB-17497] GermanLocaleTests are not run
+        testplan_config = options[:testplan_configuration]
 
         is_nightly_build = options[:all] == true
         
         schema_errors = {}
         
         schemas.each do |scheme|
-            write_tests_info_to_summary("🤖 Testing scheme #{scheme} with plan #{testplan}")
+            write_tests_info_to_summary("🤖 Testing scheme #{scheme} with plan #{testplan} (config: #{testplan_config || 'default'})")
             begin
-                test_plan(build, scheme, testplan)
+                test_plan(build, scheme, testplan, testplan_config)
                 schema_errors[scheme] = false
             rescue => e
                 write_tests_info_to_summary("❌ Scheme: #{scheme} failed with errors: #{e.to_s}")
@@ -539,7 +545,7 @@ platform :ios do
         end
     end
 
-    def test_plan(build, scheme, testplan)
+    def test_plan(build, scheme, testplan, testplan_configuration = nil)
         if ENV['IOS_SIM_ID'].nil?
             create_simulator_if_needed
         end
@@ -553,6 +559,8 @@ platform :ios do
         run_tests(
             step_name: "🧪 Running tests for scheme: #{scheme}",
             testplan: testplan,
+            # Use only_test_configurations to select a specific configuration in the test plan
+            only_test_configurations: (testplan_configuration ? [testplan_configuration] : nil),
             scheme: scheme,
             skip_detect_devices: true,
             configuration: "Debug",
