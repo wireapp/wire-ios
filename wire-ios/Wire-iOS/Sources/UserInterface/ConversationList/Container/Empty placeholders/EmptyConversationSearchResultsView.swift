@@ -17,8 +17,8 @@
 //
 
 import SwiftUI
-import UIKit
 import WireDesign
+import WireFoundation
 
 final class EmptyConversationSearchResultsView: UIView {
 
@@ -104,6 +104,8 @@ private struct EmptyView: View {
 private struct PhoneEmptyView: View {
     var newConversationAction: () -> Void
 
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
     var body: some View {
         VStack {
             Text(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Subheadline.phone)
@@ -120,11 +122,11 @@ private struct PhoneEmptyView: View {
                         .font(.system(size: 15, weight: .bold))
                         .foregroundColor(.white)
                         .frame(width: 20, height: 20)
-                        .background(Circle().fill(Color(ColorTheme.Base.primary)))
+                        .background(Circle().fill(Color(ColorTheme.Base.primary(wireAccentColor))))
 
                     Text(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Button.phone)
                         .font(for: .body1)
-                        .foregroundStyle(Color(ColorTheme.Base.primary))
+                        .foregroundStyle(Color(ColorTheme.Base.primary(wireAccentColor)))
                         .padding(.leading, 4)
                 }
                 .padding(.horizontal, 14)
@@ -175,6 +177,8 @@ private struct CapsuleButton: View {
     var accessibilityIdentifier: String
     var action: () -> Void
 
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
     var body: some View {
         Button(action: action, label: {
             HStack {
@@ -182,11 +186,11 @@ private struct CapsuleButton: View {
                     .font(.system(size: 15, weight: .bold))
                     .foregroundColor(.white)
                     .frame(width: 20, height: 20)
-                    .background(Circle().fill(Color(ColorTheme.Base.primary)))
+                    .background(Circle().fill(Color(ColorTheme.Base.primary(wireAccentColor))))
 
                 Text(title)
                     .font(for: .body1)
-                    .foregroundStyle(Color(ColorTheme.Base.primary))
+                    .foregroundStyle(Color(ColorTheme.Base.primary(wireAccentColor)))
                     .padding(.leading, 4)
             }
             .padding(.horizontal, 14)

@@ -22,7 +22,7 @@ import WireNetwork
 
 public protocol IsBuildBlacklistedUseCase {
 
-    func invoke() async throws -> Bool
+    func invoke() async -> Bool
 
 }
 
@@ -45,22 +45,24 @@ public struct IsBuildBlacklistedUseCaseImpl: IsBuildBlacklistedUseCase {
         self.api = api
     }
 
-    public func invoke() async throws -> Bool {
-        let blacklist = try await api.getBlacklist()
+    public func invoke() async -> Bool {
+        do {
+            let blacklist = try await api.getBlacklist()
 
-        guard let currentVersion = Int(currentBuildNumber) else {
-            throw IsBuildBlacklistedUseCaseError.decodingFailed(
-                message: "current build number '\(currentBuildNumber)' must be an integer"
-            )
+            guard
+                let currentVersion = Int(currentBuildNumber),
+                let minLegalVersion = Int(blacklist.minimumLegalBuildNumber)
+            else {
+                return false
+            }
+
+            return currentVersion < minLegalVersion || blacklist.illegalBuildNumbers.contains(String(currentVersion))
+        } catch {
+            // As per specs, if there is any failure obtaining the blacklist,
+            // whether it is missing, can't be decoded, or otherwise, then
+            // consider it empty (i.e all clients valid).
+            return false
         }
-
-        guard let minLegalVersion = Int(blacklist.minimumLegalBuildNumber) else {
-            throw IsBuildBlacklistedUseCaseError.decodingFailed(
-                message: "blacklist version '\(blacklist.minimumLegalBuildNumber)' must be an integer"
-            )
-        }
-
-        return currentVersion < minLegalVersion || blacklist.illegalBuildNumbers.contains(String(currentVersion))
     }
 
 }
