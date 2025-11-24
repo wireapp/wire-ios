@@ -44,6 +44,9 @@ extension FilesViewProtocol {
             .listRowSeparator(.hidden)
             .listRowBackground(ColorTheme.Backgrounds.surface.color)
         }
+        .listStyle(.plain)
+        .refreshable { reloadTask(refreshing: true) }
+        .background(listBackgroundView)
         .animation(.default, value: viewModel.state)
     }
 
@@ -52,6 +55,29 @@ extension FilesViewProtocol {
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
                 .onTapGesture { Task { await viewModel.openItem(item: item) } }
+        }
+    }
+    
+    @ViewBuilder
+    private var listBackgroundView: some View {
+        switch viewModel.state {
+        case .received(let items) where items.isEmpty:
+            FilesInfoView(info: .noFilesFound(isBrowsing: isBrowsing))
+        case .pending:
+            FilesInfoView(info: .preparingFiles)
+        default:
+            EmptyView()
+        }
+    }
+    
+    private var listRowBackground: Color {
+        switch viewModel.state {
+        case .pending:
+            ColorTheme.Backgrounds.background.color
+        case .received(let items) where items.isEmpty:
+            ColorTheme.Backgrounds.background.color
+        default:
+            ColorTheme.Backgrounds.surface.color
         }
     }
 }

@@ -26,22 +26,17 @@ struct FilesInfoView: View {
 
     enum Info: Equatable {
         case preparingFiles
-        case noFilesFound(scope: Scope)
+        case noFilesFound(isBrowsing: Bool)
         case error
-
-        enum Scope: Equatable {
-            case allConversations
-            case oneConversation
-        }
 
         var localizedStrings: (title: String, message: String) {
             switch self {
             case .preparingFiles:
                 (Strings.Files.PendingCells.title, Strings.Files.PendingCells.message)
-            case let .noFilesFound(scope):
+            case let .noFilesFound(isBrowsing):
                 (
                     Strings.Files.NoData.title,
-                    scope == .allConversations ? Strings.AllFiles.NoData.message : Strings.Files.NoData.message
+                    isBrowsing ? Strings.AllFiles.NoData.message : Strings.Files.NoData.message
                 )
             case .error:
                 (Strings.Files.Error.title, Strings.Files.Error.message)
@@ -52,10 +47,10 @@ struct FilesInfoView: View {
             switch self {
             case .preparingFiles:
                 (Accessibility.Files.PendingCells.title, Accessibility.Files.PendingCells.message)
-            case let .noFilesFound(scope):
+            case let .noFilesFound(isBrowsing):
                 (
                     Accessibility.Files.NoData.title,
-                    scope == .allConversations ? Accessibility.AllFiles.NoData.message : Accessibility.Files.NoData
+                    isBrowsing ? Accessibility.AllFiles.NoData.message : Accessibility.Files.NoData
                         .message
                 )
             case .error:
@@ -67,10 +62,10 @@ struct FilesInfoView: View {
             switch self {
             case .preparingFiles:
                 ("preparing-files-title", "preparing-files-message")
-            case let .noFilesFound(scope):
+            case let .noFilesFound(isBrowsing):
                 (
                     "no-files-title",
-                    scope == .allConversations ? "no-files-all-conversations-message" : "no-files-message"
+                    isBrowsing ? "no-files-all-conversations-message" : "no-files-message"
                 )
             case .error:
                 ("error-title", "error-message")

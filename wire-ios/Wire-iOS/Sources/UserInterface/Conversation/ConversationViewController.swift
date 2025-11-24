@@ -889,6 +889,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                 accentColor: WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
             )
 
+        filesView.modalPresentationStyle = .fullScreen
         filesView.presentOverAll(animated: true)
     }
 

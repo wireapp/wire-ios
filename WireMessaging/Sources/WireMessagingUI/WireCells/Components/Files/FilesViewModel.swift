@@ -168,6 +168,9 @@ package final class FilesViewModel: ObservableObject {
     var didCreateFolder: Bool = false
     var didRenameFile: Bool = false
     let title: String?
+    var showSearchBar: Bool {
+        state != .error || state != .pending
+    }
 
     package init(
         useCases: UseCases,
@@ -217,13 +220,9 @@ package final class FilesViewModel: ObservableObject {
     /// When `refreshing` is `true`, the current state is preserved since loading is managed by the system.
 
     func reload(refreshing: Bool = false) async {
-        guard state != .pending else {
-            return
-        }
-
         cancelLoad()
         state = refreshing ? state : .loading
-        hasMore = true
+        hasMore = !refreshing
 
         await loadMore(refreshing: refreshing)
     }

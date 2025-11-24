@@ -44,16 +44,8 @@ package struct FilesBrowserView: FilesViewProtocol {
                 case .loading:
                     ProgressView()
                         .progressViewStyle(.circular)
-                case let .received(items):
-                    if items.isEmpty {
-                        FilesInfoView(info: .noFilesFound(scope: .allConversations))
-                    } else {
-                        filesList
-                            .listStyle(.plain)
-                            .refreshable { reloadTask(refreshing: true) }
-                    }
-                case .pending:
-                    FilesInfoView(info: .preparingFiles)
+                case .received, .pending:
+                    filesList
                 case .error:
                     FilesInfoView(info: .error, onReload: {
                         reloadTask()
@@ -65,7 +57,7 @@ package struct FilesBrowserView: FilesViewProtocol {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
-            .if(showSearchBar) { view in
+            .if(viewModel.showSearchBar) { view in
                 view.searchable(
                     text: $viewModel.searchText,
                     placement: .navigationBarDrawer,
@@ -79,17 +71,6 @@ package struct FilesBrowserView: FilesViewProtocol {
                 message: { Text($0.message) },
                 actions: { _ in confirmButton }
             )
-        }
-    }
-
-    private var showSearchBar: Bool {
-        switch viewModel.state {
-        case .loading:
-            true
-        case let .received(items):
-            !items.isEmpty || !viewModel.searchText.isEmpty
-        case .pending, .error:
-            false
         }
     }
 }
