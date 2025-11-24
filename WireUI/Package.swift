@@ -46,7 +46,6 @@ let package = Package(
         .testTarget(name: "WireAccountImageUITests", dependencies: ["WireAccountImageUI", "WireFoundation"]),
 
         .target(name: "WireConversationListUI"),
-        .testTarget(name: "WireConversationListUITests", dependencies: ["WireConversationListUI"]),
 
         .target(name: "WireDesign", dependencies: ["WireFoundation", "WireLocators"]),
         .testTarget(name: "WireDesignTests", dependencies: ["WireDesign"]),
@@ -137,7 +136,7 @@ let package = Package(
 
         .target(
             name: "WireSidebarUI",
-            dependencies: ["WireFoundation", "WireLocators"],
+            dependencies: ["WireDesign", "WireLocators"],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .testTarget(name: "WireSidebarUITests", dependencies: ["WireSidebarUI"])

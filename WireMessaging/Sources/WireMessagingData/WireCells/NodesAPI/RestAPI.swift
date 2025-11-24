@@ -42,7 +42,10 @@ final class RestAPI: Sendable {
     }
 
     func getNode(uuid: UUID) async throws -> WireCellsNodeNetworkModel {
-        let response = try await NodeServiceAPI.getByUuid(uuid: uuid.uuidString, apiConfiguration: makeConfiguration())
+        let response = try await NodeServiceAPI.getByUuid(
+            uuid: uuid.transportString(),
+            apiConfiguration: makeConfiguration()
+        )
         guard let dto = response.toDTO() else {
             throw WireCellsNodesAPIError.failedToDecodeNode
         }
@@ -87,7 +90,7 @@ final class RestAPI: Sendable {
 
         let parameters = RestActionParameters(
             awaitStatus: .finished,
-            awaitTimeout: "60s",
+            awaitTimeout: "5s",
             copyMoveOptions: RestActionOptionsCopyMove(
                 targetIsParent: false,
                 targetPath: targetPath
@@ -115,7 +118,7 @@ final class RestAPI: Sendable {
     ///  - permanently: Whether to permanently delete the nodes or move them to the recycle bin.
     /// - Returns: Whether the deletion was successful.
     func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool {
-        let nodes = nodeIDs.map { RestNodeLocator(uuid: $0.uuidString) }
+        let nodes = nodeIDs.map { RestNodeLocator(uuid: $0.transportString()) }
         let parameters = RestActionParameters(
             awaitStatus: .finished,
             awaitTimeout: "60s",
@@ -138,8 +141,8 @@ final class RestAPI: Sendable {
     func publishDraft(uuid: UUID, versionID: UUID) async throws {
         let parameters = RestPromoteParameters(publish: true)
         _ = try await NodeServiceAPI.promoteVersion(
-            uuid: uuid.uuidString,
-            versionId: versionID.uuidString,
+            uuid: uuid.transportString(),
+            versionId: versionID.transportString(),
             parameters: parameters,
             apiConfiguration: makeConfiguration()
         )
@@ -147,8 +150,29 @@ final class RestAPI: Sendable {
 
     func deleteVersion(uuid: UUID, versionID: UUID) async throws {
         _ = try await NodeServiceAPI.deleteVersion(
-            uuid: uuid.uuidString,
-            versionId: versionID.uuidString,
+            uuid: uuid.transportString(),
+            versionId: versionID.transportString(),
+            apiConfiguration: makeConfiguration()
+        )
+    }
+
+    /// Creates a new folder at the specified path.
+    ///
+    /// - Parameters:
+    ///  - path: The path of the new folder.
+    func createFolder(at path: String) async throws {
+        let request = RestCreateRequest(inputs: [
+            RestIncomingNode(
+                locator: RestNodeLocator(
+                    path: path
+                ),
+                resourceUuid: UUID().transportString(),
+                type: .collection,
+            )
+        ])
+
+        _ = try await NodeServiceAPI.create(
+            body: request,
             apiConfiguration: makeConfiguration()
         )
     }
@@ -158,7 +182,7 @@ final class RestAPI: Sendable {
             findAvailablePath: findAvailablePath,
             inputs: [RestIncomingNode(
                 locator: RestNodeLocator(path: path),
-                type: .leaf
+                type: .unknown
             )]
         )
 
@@ -176,7 +200,7 @@ final class RestAPI: Sendable {
 
     func getPublicLink(uuid: UUID) async throws -> URL {
         let response = try await NodeServiceAPI.getPublicLink(
-            linkUuid: uuid.uuidString,
+            linkUuid: uuid.transportString(),
             apiConfiguration: makeConfiguration()
         )
 
@@ -199,7 +223,7 @@ final class RestAPI: Sendable {
         )
 
         let response = try await NodeServiceAPI.createPublicLink(
-            uuid: uuid.uuidString,
+            uuid: uuid.transportString(),
             publicLinkRequest: request,
             apiConfiguration: makeConfiguration()
         )
@@ -222,7 +246,31 @@ final class RestAPI: Sendable {
     }
 
     func deletePublicLink(uuid: UUID) async throws {
-        _ = try await NodeServiceAPI.deletePublicLink(linkUuid: uuid.uuidString, apiConfiguration: makeConfiguration())
+        _ = try await NodeServiceAPI.deletePublicLink(
+            linkUuid: uuid.transportString(),
+            apiConfiguration: makeConfiguration()
+        )
+    }
+
+    func updateTags(uuid: UUID, tags: [String]) async throws {
+        let update = RestMetaUpdate(
+            operation: .put,
+            userMeta: .init(jsonValue: "\"\(tags.joined(separator: ","))\"", namespace: "usermeta-tags")
+        )
+
+        _ = try await NodeServiceAPI.patchNode(
+            uuid: uuid.uuidString.lowercased(),
+            nodeUpdates: .init(metaUpdates: [update]),
+            apiConfiguration: makeConfiguration()
+        )
+    }
+
+    func getAllTags() async throws -> [String] {
+        let response = try await NodeServiceAPI.listNamespaceValues(
+            namespace: "usermeta-tags",
+            apiConfiguration: makeConfiguration()
+        )
+        return response.values ?? []
     }
 
     private func makeConfiguration() async throws -> CellsSDKAPIConfiguration {
@@ -244,7 +292,7 @@ private extension RestNodeLocator {
         case let .path(path):
             self.init(path: path)
         case let .id(uuid):
-            self.init(uuid: uuid.uuidString.lowercased())
+            self.init(uuid: uuid.transportString())
         }
     }
 

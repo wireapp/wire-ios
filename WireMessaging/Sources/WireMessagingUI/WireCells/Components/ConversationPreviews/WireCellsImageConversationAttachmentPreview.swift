@@ -27,6 +27,8 @@ struct WireCellsImageConversationAttachmentPreview: View {
     let isAssetDownloadError: Bool
     let canShowNoPreviewMessage: Bool
 
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
     init(thumbnailURL: URL?, progress: Double?, isAssetDownloadError: Bool, canShowNoPreviewMessage: Bool) {
         self.thumbnailURL = thumbnailURL
         self.progress = progress
@@ -37,7 +39,8 @@ struct WireCellsImageConversationAttachmentPreview: View {
     var body: some View {
         WireCellsAttachmentPreview(
             progress: progress,
-            progressColor: isAssetDownloadError ? ColorTheme.Base.error.color : ColorTheme.Base.primary.color
+            progressColor: isAssetDownloadError ? ColorTheme.Base.error.color : ColorTheme.Base
+                .primary(wireAccentColor).color
         ) {
             ZStack {
                 if let thumbnailURL {
@@ -77,7 +80,7 @@ struct WireCellsImageConversationAttachmentPreview: View {
     @ViewBuilder private var noPreviewMessageView: some View {
         if canShowNoPreviewMessage {
             Text(L10n.Localizable.Conversation.Message.Attachment.previewNotAvailable)
-                .wireTextStyle(.subline1)
+                .font(for: .subline1)
                 .foregroundColor(ColorTheme.Backgrounds.surface.color)
                 .multilineTextAlignment(.center)
                 .padding()
@@ -97,5 +100,4 @@ struct WireCellsImageConversationAttachmentPreview: View {
         isAssetDownloadError: false,
         canShowNoPreviewMessage: true
     )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

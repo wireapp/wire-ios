@@ -56,12 +56,12 @@ class OptionsOnSettingsPage: PageModel {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         try springboard.secureTextFields["Passcode field"].tapIfKeyboardNotFocused().typeText(pass)
 
-        if springboard.keyboards.buttons["Done"].exists {
-            springboard.keyboards.buttons["Done"].tap()
+        let doneButton = springboard.keyboards.buttons["Done"].firstMatch
+        if doneButton.waitForExistence(timeout: 2.0), doneButton.isHittable {
+            doneButton.tap()
         } else {
             springboard.typeText(XCUIKeyboardKey.return.rawValue)
         }
         return try ConversationsPage()
     }
-
 }

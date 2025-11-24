@@ -117,6 +117,46 @@ final class MessageAPITests: XCTestCase {
 
     }
 
+    func testGroupOutOfSyncFailure() async throws {
+        // Given
+        let sut = MessageAPIV13(httpClient: mockHTTPClient)
+        let userID = QualifiedID.random()
+        let payload: [String: Any] = [
+            "label": "mls-group-out-of-sync",
+            "missing_users": [
+                [
+                    "id": userID.uuid.transportString(),
+                    "domain": userID.domain
+                ]
+            ]
+        ]
+        mockHTTPClient.transportResponse = ZMTransportResponse(
+            payload: payload as ZMTransportData,
+            httpStatus: 409,
+            transportSessionError: nil,
+            apiVersion: 13
+        )
+
+        // When
+        do {
+            _ = try await sut.sendMLSMessage(
+                message: Data(),
+                conversationID: .random(),
+                expirationDate: nil
+            )
+        } catch {
+            let actualError = try XCTUnwrap(
+                error as? SendMLSMessageFailure,
+                "unexpected error: \(error)"
+            )
+            XCTAssertEqual(
+                actualError,
+                SendMLSMessageFailure.groupOutOfSync(missingUsers: [userID])
+            )
+        }
+
+    }
+
     // MARK: - Helpers
 
     private func testSendMLSMessageFailure(

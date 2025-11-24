@@ -152,7 +152,7 @@ public final class ConversationChangeInfo: ObjectChangeInfo {
             changedKeysContain(keys: #keyPath(ZMConversation.accessRoleStringsV2))
     }
 
-    public var allowServicesChanged: Bool {
+    public var allowAppsChanged: Bool {
         changedKeysContain(keys: #keyPath(ZMConversation.accessRoleStringsV2))
     }
 

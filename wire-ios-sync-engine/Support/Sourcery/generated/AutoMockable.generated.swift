@@ -1098,7 +1098,7 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
 
 }
 
-public class MockSetAllowGuestAndServicesUseCaseProtocol: SetAllowGuestAndServicesUseCaseProtocol {
+public class MockSetAllowGuestAndAppsUseCaseProtocol: SetAllowGuestAndAppsUseCaseProtocol {
 
     // MARK: - Life cycle
 
@@ -1107,17 +1107,17 @@ public class MockSetAllowGuestAndServicesUseCaseProtocol: SetAllowGuestAndServic
 
     // MARK: - invoke
 
-    public var invokeConversationAllowGuestsAllowServicesCompletion_Invocations: [(conversation: ZMConversation, allowGuests: Bool, allowServices: Bool, completion: (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void)] = []
-    public var invokeConversationAllowGuestsAllowServicesCompletion_MockMethod: ((ZMConversation, Bool, Bool, @escaping (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void) -> Void)?
+    public var invokeConversationAllowGuestsAllowAppsCompletion_Invocations: [(conversation: ZMConversation, allowGuests: Bool, allowApps: Bool, completion: (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void)] = []
+    public var invokeConversationAllowGuestsAllowAppsCompletion_MockMethod: ((ZMConversation, Bool, Bool, @escaping (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void) -> Void)?
 
-    public func invoke(conversation: ZMConversation, allowGuests: Bool, allowServices: Bool, completion: @escaping (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void) {
-        invokeConversationAllowGuestsAllowServicesCompletion_Invocations.append((conversation: conversation, allowGuests: allowGuests, allowServices: allowServices, completion: completion))
+    public func invoke(conversation: ZMConversation, allowGuests: Bool, allowApps: Bool, completion: @escaping (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void) {
+        invokeConversationAllowGuestsAllowAppsCompletion_Invocations.append((conversation: conversation, allowGuests: allowGuests, allowApps: allowApps, completion: completion))
 
-        guard let mock = invokeConversationAllowGuestsAllowServicesCompletion_MockMethod else {
-            fatalError("no mock for `invokeConversationAllowGuestsAllowServicesCompletion`")
+        guard let mock = invokeConversationAllowGuestsAllowAppsCompletion_MockMethod else {
+            fatalError("no mock for `invokeConversationAllowGuestsAllowAppsCompletion`")
         }
 
-        mock(conversation, allowGuests, allowServices, completion)
+        mock(conversation, allowGuests, allowApps, completion)
     }
 
 }

@@ -44,6 +44,7 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
     public let ownerUserName: String?
     public let conversationID: QualifiedID?
     public let publicLinkID: WireCellsPublicLinkID?
+    public let tags: [String]
 
     /// A pre-signed URL to download the file. Note that this URL will expire so shouldn't be stored long-term.
 
@@ -66,7 +67,8 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
         ownerUserName: String? = nil,
         conversationID: QualifiedID? = nil,
         publicLinkID: WireCellsPublicLinkID? = nil,
-        downloadURL: URL? = nil
+        downloadURL: URL? = nil,
+        tags: [String] = []
     ) {
         self.id = uuid
         self.path = path
@@ -85,5 +87,6 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
         self.conversationID = conversationID
         self.publicLinkID = publicLinkID
         self.downloadURL = downloadURL
+        self.tags = tags
     }
 }

@@ -25,4 +25,9 @@ public protocol ConnectionsLocalStoreProtocol {
     func storeConnection(
         _ connectionInfo: ConnectionInfo
     ) async throws
+
+    /// Set to true the needUpdatedFromBackend attribute of the related conversation
+    /// - Parameter connectionInfo: the connectionInfo of the related conversation
+    func markConversationAsNeedUpdatedFromBackend(_ connectionInfo: ConnectionInfo) async throws
+
 }
