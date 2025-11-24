@@ -34,7 +34,6 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
     let fingerprint = "1234"
 
     override func setUp() {
-        DeveloperFlag.storage = .temporary()
         mockProteusService = MockProteusServiceInterface()
         mockSessionEstablisher = MockSessionEstablisherInterface()
         super.setUp()
@@ -45,7 +44,6 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
         mockProteusService = nil
         mockSessionEstablisher = nil
         super.tearDown()
-        DeveloperFlag.storage = .standard
     }
 
     // MARK: - invoke() establishSession
@@ -60,10 +58,7 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
 
     func internalTestEstablishSession(sessionEstablished: Bool) async {
         // GIVEN
-        // we force the flag on here,
-        // since ProteusProvider is created on the fly when accessed by managedObjectContext
-        // when checking the hasSessionWithSelfClient
-        DeveloperFlag.proteusViaCoreCrypto.enable(true)
+
         syncMOC.performAndWait {
             syncMOC.proteusService = mockProteusService
         }

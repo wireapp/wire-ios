@@ -198,44 +198,6 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         flag.isOn = false
     }
 
-    func testThatItDeletesASession_Legacy() async throws {
-        // Given
-        var selfClient: UserClient!
-        var otherClient: UserClient!
-        var preKeys: [(id: UInt16, prekey: String)] = []
-
-        await syncMOC.performGrouped {
-            selfClient = self.createSelfClient(onMOC: self.syncMOC)
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
-                preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
-            }
-
-            otherClient = UserClient.insertNewObject(in: self.syncMOC)
-            otherClient.remoteIdentifier = UUID.create().transportString()
-            otherClient.user = ZMUser.insertNewObject(in: self.syncMOC)
-            otherClient.user?.remoteIdentifier = UUID.create()
-        }
-
-        guard let preKey = preKeys.first else {
-            XCTFail("could not generate prekeys")
-            return
-        }
-
-        let didEstablishedSession = await selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey)
-        let hasSession = await otherClient.hasSessionWithSelfClient
-
-        XCTAssertTrue(didEstablishedSession)
-        XCTAssertTrue(hasSession)
-
-        // When
-        try await otherClient.deleteSession()
-
-        // Then
-        let hasSessionAfterDeletion = await otherClient.hasSessionWithSelfClient
-        XCTAssertFalse(hasSessionAfterDeletion)
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-    }
-
     func testThatItDeletesASessionWhenDeletingAClient() async {
         // Given
         var flag = DeveloperFlag.proteusViaCoreCrypto
@@ -269,47 +231,6 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         flag.isOn = false
-    }
-
-    func testThatItDeletesASessionWhenDeletingAClient_Legacy() async {
-        // given
-        var preKeys: [(id: UInt16, prekey: String)] = []
-        var selfClient: UserClient!
-        var otherClient: UserClient!
-
-        await syncMOC.performGrouped {
-            selfClient = self.createSelfClient(onMOC: self.syncMOC)
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
-                preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
-            }
-
-            otherClient = UserClient.insertNewObject(in: self.syncMOC)
-            otherClient.remoteIdentifier = UUID.create().transportString()
-            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
-            otherUser.remoteIdentifier = UUID.create()
-            otherClient.user = otherUser
-        }
-
-        guard let preKey = preKeys.first else {
-            XCTFail("could not generate prekeys")
-            return
-        }
-
-        let didEstablishSession = await selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey)
-        let hasSession = await otherClient.hasSessionWithSelfClient
-        XCTAssertTrue(didEstablishSession)
-        XCTAssertTrue(hasSession)
-
-        // when
-        await otherClient.deleteClientAndEndSession()
-
-        // then
-        let hasSessionAfterDeletion = await otherClient.hasSessionWithSelfClient
-        XCTAssertFalse(hasSessionAfterDeletion)
-        await syncMOC.perform {
-            XCTAssertTrue(otherClient.isZombieObject)
-        }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func testThatItUpdatesConversationSecurityLevelWhenDeletingClient() async {
@@ -352,7 +273,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
         // when
         await otherClient2.deleteClientAndEndSession()
-        _ = await syncMOC.perform { self.syncMOC.saveOrRollback() }
+        _ = await syncMOC.perform { [syncMOC] in syncMOC.saveOrRollback() }
 
         // then
         await syncMOC.performGrouped {
