@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLogging
 import WireNetwork
 
 struct ConversationEventProcessor: ConversationEventProcessorProtocol {
@@ -38,6 +39,12 @@ struct ConversationEventProcessor: ConversationEventProcessorProtocol {
     let mlsResetEventProcessor: any ConversationMLSResetEventProcessorProtocol
 
     func processEvent(_ event: ConversationEvent) async throws {
+        WireLogger.eventProcessing.info(
+            "process conversation event: \(event.name)",
+            attributes: [.conversationId: event.conversationID.id.safeForLoggingDescription],
+            .safePublic
+        )
+
         switch event {
         case let .accessUpdate(event):
             await accessUpdateEventProcessor.processEvent(event)

@@ -41,8 +41,8 @@ public enum MockConversationAccessRoleV2: String {
     /// A service pseudo-user, aka a non-human bot.
     case service
 
-    public static func value(forAllowGuests allowGuests: Bool, forAllowServices allowServices: Bool) -> [String] {
-        switch (allowGuests, allowServices) {
+    public static func value(forAllowGuests allowGuests: Bool, forAllowServices allowApps: Bool) -> [String] {
+        switch (allowGuests, allowApps) {
         case (true, true):
             [teamMember.rawValue, nonTeamMember.rawValue, guest.rawValue, service.rawValue]
         case (false, false):

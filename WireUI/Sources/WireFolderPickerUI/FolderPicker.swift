@@ -104,7 +104,7 @@ public struct FolderPicker: View {
             Picker(selection: $selected) {
                 ForEach(options) { option in
                     Text(option.title)
-                        .wireTextStyle(.body1)
+                        .font(for: .body1)
                         .lineLimit(1)
                         .foregroundStyle(option.id == selected?.id ? Color(accentColor) : .primaryText)
                         .tag(option)

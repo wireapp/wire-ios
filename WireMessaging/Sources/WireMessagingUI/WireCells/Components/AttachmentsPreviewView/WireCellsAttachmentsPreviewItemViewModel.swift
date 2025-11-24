@@ -176,6 +176,21 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         previewSize?.width as? Double // Explicit conversion necessary due to compiler bug
     }
 
+    var attachmentDuration: String? {
+        let fileType = attachment.contentType.flatMap { UTType(mimeType: $0) }
+
+        guard fileType == .video || fileType == .audio else {
+            return nil
+        }
+
+        guard let durationInMS = attachment.initialMetadata?.duration else {
+            return nil
+        }
+
+        let duration = Duration.milliseconds(durationInMS)
+        return duration.formatted(.time(pattern: .minuteSecond))
+    }
+
     // MARK: - Private
 
     private var nodeID: UUID {

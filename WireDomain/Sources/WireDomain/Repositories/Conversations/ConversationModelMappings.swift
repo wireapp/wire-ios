@@ -192,7 +192,7 @@ extension WireNetwork.ConversationAccessRole {
             "non_team_member"
         case .guest:
             "guest"
-        case .service:
+        case .app:
             "service"
         }
     }

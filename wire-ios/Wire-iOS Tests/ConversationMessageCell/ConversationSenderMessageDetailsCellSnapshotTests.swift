@@ -107,11 +107,11 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
 
     func test_SenderIsBot_InConversation() {
         // GIVEN
-        mockUser.mockedIsServiceUser = true
+        mockUser.mockedIsApp = true
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
             sender: mockUser,
             indicator: .none,
-            teamRoleIndicator: .service
+            teamRoleIndicator: .app
         )
 
         // WHEN

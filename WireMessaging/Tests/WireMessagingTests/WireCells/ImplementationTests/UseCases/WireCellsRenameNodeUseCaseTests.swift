@@ -61,7 +61,8 @@ final class WireCellsRenameNodeUseCaseTests {
         try await sut.invoke(
             nodeID: nodeID,
             nodeFilepath: nodeFilepath,
-            newFilename: newFilename
+            newFilename: newFilename,
+            isFolder: false
         )
 
         // Then
@@ -93,7 +94,8 @@ final class WireCellsRenameNodeUseCaseTests {
             try await sut.invoke(
                 nodeID: nodeID,
                 nodeFilepath: nodeFilepath,
-                newFilename: newFilename
+                newFilename: newFilename,
+                isFolder: false
             )
         }
     }
@@ -120,7 +122,8 @@ final class WireCellsRenameNodeUseCaseTests {
             try await sut.invoke(
                 nodeID: nodeID,
                 nodeFilepath: nodeFilepath,
-                newFilename: newFilename
+                newFilename: newFilename,
+                isFolder: false
             )
         }
     }
@@ -147,7 +150,8 @@ final class WireCellsRenameNodeUseCaseTests {
             try await sut.invoke(
                 nodeID: nodeID,
                 nodeFilepath: nodeFilepath,
-                newFilename: newFilename
+                newFilename: newFilename,
+                isFolder: false
             )
         }
     }

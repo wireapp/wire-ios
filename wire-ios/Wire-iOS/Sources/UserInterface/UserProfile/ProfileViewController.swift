@@ -139,16 +139,17 @@ final class ProfileViewController: UIViewController {
     // MARK: - Actions
 
     private func bringUpConversationCreationFlow() {
+        Task {
+            let controller = await ConversationCreationController(
+                preSelectedParticipants: viewModel.userSet,
+                userSession: viewModel.userSession
+            )
+            controller.delegate = self
 
-        let controller = ConversationCreationController(
-            preSelectedParticipants: viewModel.userSet,
-            userSession: viewModel.userSession
-        )
-        controller.delegate = self
-
-        let wrappedController = controller.wrapInNavigationController()
-        wrappedController.modalPresentationStyle = .formSheet
-        present(wrappedController, animated: true)
+            let wrappedController = controller.wrapInNavigationController()
+            wrappedController.modalPresentationStyle = .formSheet
+            present(wrappedController, animated: true)
+        }
     }
 
     private func bringUpCancelConnectionRequestSheet(from targetView: UIView) {

@@ -47,13 +47,6 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireConversationListUITests",
-        "name" : "WireConversationListUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
         "identifier" : "WireSidebarUITests",
         "name" : "WireSidebarUITests"
       }

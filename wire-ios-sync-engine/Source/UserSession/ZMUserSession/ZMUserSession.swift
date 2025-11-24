@@ -643,7 +643,8 @@ public final class ZMUserSession: NSObject {
             legacySyncStatus: applicationStatusDirectory.syncStatus,
             featureConfigRepository: clientSessionComponent.featureConfigRepository,
             syncStateSubject: clientSessionComponent.syncStateSubject,
-            pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator
+            pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator,
+            conversationUpdatesGenerator: clientSessionComponent.conversationUpdatesGenerator
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
         self.syncAgent = syncAgent
@@ -670,6 +671,10 @@ public final class ZMUserSession: NSObject {
                 metadata: resolvedBackendMetadata
             )
             syncStrategy?.updateClientContextChangeTrackers()
+        }
+        Task {
+            await clientSessionComponent.workAgent.setAutoStartEnabled(true)
+            await clientSessionComponent.workAgent.start()
         }
     }
 
@@ -705,6 +710,9 @@ public final class ZMUserSession: NSObject {
     public func tearDown() {
         guard !isTornDown else { return }
 
+        Task {
+            await clientSessionComponent?.workAgent.stop()
+        }
         tearDownMLSGroupVerification()
 
         tokens.removeAll()
@@ -950,11 +958,13 @@ public final class ZMUserSession: NSObject {
         } else if resourcesSync {
             await triggerResourcesSync()
         } else if journal[.isConversationSyncRequired] {
-            // as wanted this should not be blocking, see AppVersionMigration_4_1_1
+            // as wanted this should not be blocking, see AppVersionMigration_4_1_1, AppVersionMigration_4_10_0
             Task {
                 let sync = clientSessionComponent?.pullAllConversationsSync
                 try? await sync?.pull()
             }
+            // trigger the sync in this case too, to get the right sync bar state
+            syncAgent?.resume()
         } else {
             syncAgent?.resume()
         }
@@ -1722,7 +1732,8 @@ extension ZMUserSession {
                 journal: journal,
                 sessionManager: sessionManager
             ),
-            AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider)
+            AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider),
+            AppVersionMigration_4_10_0(journal: journal)
         ]
     }
 

@@ -33,11 +33,13 @@ struct WireCellsLargeDocumentPreviewView: View {
     let downloadError: Bool
     let url: URL?
 
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
     var body: some View {
         WireCellsAttachmentPreview(
             progress: progress,
             progressColor: downloadError
-                ? ColorTheme.Base.error.color : ColorTheme.Base.primary.color
+                ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
         ) {
             VStack {
                 WireCellsDocumentHeaderView(
@@ -103,7 +105,7 @@ struct WireCellsLargeDocumentPreviewView: View {
                 ProgressView()
                     .tint(ColorTheme.Backgrounds.onTransparentDark.color)
                 Text(text)
-                    .wireTextStyle(.subline2)
+                    .font(for: .subline2)
                     .foregroundColor(ColorTheme.Backgrounds.onTransparentDark.color)
             }
         }
@@ -114,7 +116,7 @@ struct WireCellsLargeDocumentPreviewView: View {
         ZStack {
             Color(ColorTheme.Backdrop.background)
             Text(text)
-                .wireTextStyle(.subline2)
+                .font(for: .subline2)
                 .foregroundColor(ColorTheme.Backgrounds.onTransparentDark.color)
                 .multilineTextAlignment(.center)
                 .padding()
@@ -134,5 +136,4 @@ struct WireCellsLargeDocumentPreviewView: View {
             "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
         )
     )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

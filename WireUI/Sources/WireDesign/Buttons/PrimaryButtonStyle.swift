@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import WireFoundation
 
 struct PrimaryButtonStyle: SwiftUI.ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
@@ -32,7 +31,7 @@ struct PrimaryButtonStyle: SwiftUI.ButtonStyle {
             .frame(maxWidth: .infinity)
             .background(isEnabled ? PrimaryTheme.enabled.color : PrimaryTheme.disabled.color)
             .foregroundStyle(isEnabled ? PrimaryTheme.onEnabled.color : PrimaryTheme.onDisabled.color)
-            .wireTextStyle(.buttonBig)
+            .font(for: .buttonBig)
             .clipShape(.rect(cornerRadius: 16))
     }
 
