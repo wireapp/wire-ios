@@ -19,7 +19,7 @@
 import Foundation
 
 /// Fetches `WireCellNodes`s for the given parameters.
-package struct WireCellsFetchNodesPageUseCase: Sendable { // FIXME: rename to WireCellsFetchNodesPageUseCase
+package struct WireCellsFetchNodesPageUseCase: Sendable {
 
     private let configuration: WireCellsGetNodesRequest.Configuration
     private let repository: any WireCellsNodesRepositoryProtocol

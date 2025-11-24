@@ -106,6 +106,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
     }
 
     func makeView(path: String) -> some View {
+        // swiftformat:disable:next redundantSelf
         WireMessagingUI.MoveToFolderPage(viewModel: self.makeViewModel(path: path))
     }
 
