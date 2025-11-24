@@ -969,11 +969,13 @@ public final class ZMUserSession: NSObject {
         } else if resourcesSync {
             await triggerResourcesSync()
         } else if journal[.isConversationSyncRequired] {
-            // as wanted this should not be blocking, see AppVersionMigration_4_1_1
+            // as wanted this should not be blocking, see AppVersionMigration_4_1_1, AppVersionMigration_4_10_0
             Task {
                 let sync = clientSessionComponent?.pullAllConversationsSync
                 try? await sync?.pull()
             }
+            // trigger the sync in this case too, to get the right sync bar state
+            syncAgent?.resume()
         } else {
             syncAgent?.resume()
         }

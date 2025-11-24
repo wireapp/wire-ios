@@ -36,10 +36,12 @@ struct WireCellsDocumentAttachmentPreview: View {
     let progress: Double?
     let isError: Bool
 
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
     var body: some View {
         WireCellsAttachmentPreview(
             progress: progress,
-            progressColor: isError ? Constants.errorColor : ColorTheme.Base.primary.color
+            progressColor: isError ? Constants.errorColor : ColorTheme.Base.primary(wireAccentColor).color
         ) {
             WireCellsDocumentHeaderView(
                 headerIcon: headerIcon,

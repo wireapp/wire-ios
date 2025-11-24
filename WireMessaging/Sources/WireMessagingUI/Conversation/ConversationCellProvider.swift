@@ -49,17 +49,22 @@ public final class ConversationCellProvider {
     public func provideCell(
         for model: ConversationCellModel,
         tableView: UITableView,
-        indexPath: IndexPath
+        indexPath: IndexPath,
+        onLongPress: @escaping (UITableViewCell) -> Void
     ) -> UITableViewCell {
         model.registerIfNeeded(in: tableView)
         let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
-        configureCell(cell, with: model)
+        configureCell(cell, with: model, onLongPress: onLongPress)
 
         return cell
     }
 
     @MainActor
-    private func configureCell(_ cell: UITableViewCell, with model: ConversationCellModel) {
+    private func configureCell(
+        _ cell: UITableViewCell,
+        with model: ConversationCellModel,
+        onLongPress: @escaping (UITableViewCell) -> Void
+    ) {
         switch model {
 
         case let .timeDivider(model):
@@ -84,7 +89,8 @@ public final class ConversationCellProvider {
             )
             cell.configure(
                 content: WireCellsAttachmentsPreviewView(viewModel: viewModel),
-                insets: EdgeInsets(top: 0, leading: insets.leading, bottom: 0, trailing: insets.trailing)
+                insets: EdgeInsets(top: 0, leading: insets.leading, bottom: 0, trailing: insets.trailing),
+                onLongPress: onLongPress
             )
         }
     }
