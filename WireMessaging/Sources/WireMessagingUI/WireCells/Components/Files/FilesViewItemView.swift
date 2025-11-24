@@ -135,50 +135,30 @@ struct FilesViewItemView: View {
                 }
                 .tint(nil)
                 .menuOrder(.fixed)
-                .confirmationDialog( // delete file to recycle bin
-                    Strings.Files.Item.DeleteFileConfirmation.title(viewModel.fileName),
+                .deletionConfirmationDialog( // delete file to recycle bin
                     isPresented: $viewModel.isPresentingDeleteFileToRecycleBinConfirmation,
-                    titleVisibility: .visible
-                ) {
-                    Button(
-                        Strings.Files.Item.DeleteConfirmation.button,
-                        role: .destructive,
-                        action: { confirmDelete(permanently: false) }
-                    )
-                }
-                .confirmationDialog( // delete folder to recycle bin
-                    Strings.Files.Item.DeleteFolderConfirmation.title(viewModel.fileName),
+                    title: Strings.Files.Item.DeleteFileConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.Files.Item.DeleteConfirmation.button,
+                    confirm: { confirmDelete(permanently: false) }
+                )
+                .deletionConfirmationDialog( // delete folder to recycle bin
                     isPresented: $viewModel.isPresentingDeleteFolderToRecycleBinConfirmation,
-                    titleVisibility: .visible
-                ) {
-                    Button(
-                        Strings.Files.Item.DeleteConfirmation.button,
-                        role: .destructive,
-                        action: { confirmDelete(permanently: false) }
-                    )
-                }
-                .confirmationDialog( // delete file permanently
-                    Strings.RecycleBin.Item.DeleteFileConfirmation.title(viewModel.fileName),
+                    title: Strings.Files.Item.DeleteFolderConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.Files.Item.DeleteConfirmation.button,
+                    confirm: { confirmDelete(permanently: false) }
+                )
+                .deletionConfirmationDialog( // delete file permanently
                     isPresented: $viewModel.isPresentingDeleteFilePermanentlyConfirmation,
-                    titleVisibility: .visible
-                ) {
-                    Button(
-                        Strings.RecycleBin.Item.DeleteConfirmation.button,
-                        role: .destructive,
-                        action: { confirmDelete(permanently: true) }
-                    )
-                }
-                .confirmationDialog( // delete folder permanently
-                    Strings.RecycleBin.Item.DeleteFolderConfirmation.title(viewModel.fileName),
+                    title: Strings.RecycleBin.Item.DeleteFileConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.RecycleBin.Item.DeleteConfirmation.button,
+                    confirm: { confirmDelete(permanently: true) }
+                )
+                .deletionConfirmationDialog( // delete folder permanently
                     isPresented: $viewModel.isPresentingDeleteFolderPermanentlyConfirmation,
-                    titleVisibility: .visible
-                ) {
-                    Button(
-                        Strings.RecycleBin.Item.DeleteConfirmation.button,
-                        role: .destructive,
-                        action: { confirmDelete(permanently: true) }
-                    )
-                }
+                    title: Strings.RecycleBin.Item.DeleteFolderConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.RecycleBin.Item.DeleteConfirmation.button,
+                    confirm: { confirmDelete(permanently: true) }
+                )
             }
             .padding(.top, 8)
             .padding(.bottom, 5) // Less padding to accommodate progress bar
@@ -220,6 +200,23 @@ struct FilesViewItemView: View {
         viewModel.showErrorState ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
     }
 
+}
+
+private extension View {
+    @ViewBuilder func deletionConfirmationDialog(isPresented: Binding<Bool>, title: String, buttonText: String, confirm: @escaping () -> Void) -> some View {
+        self
+            .confirmationDialog(
+                title,
+                isPresented: isPresented,
+                titleVisibility: .visible
+            ) {
+                Button(
+                    buttonText,
+                    role: .destructive,
+                    action: confirm
+                )
+            }
+    }
 }
 
 #Preview {
