@@ -22,6 +22,7 @@ import WireCommonComponents
 import WireConversationListUI
 import WireDataModel
 import WireDesign
+import WireFoundation
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
@@ -382,6 +383,7 @@ final class ConversationListViewController: UIViewController {
             self?.presentCreateConversationUI()
         }
         emptyPlaceholderView = EmptyPlaceholderContainerView(
+            wireAccentColor: WireAccentColor(rawValue: viewModel.userSession.selfUser.accentColorValue) ?? .default,
             content: emptyPlaceholderForSelectedFilter,
             connectWithPeopleAction: connectWithPeopleAction,
             newConversationAction: createConversation
