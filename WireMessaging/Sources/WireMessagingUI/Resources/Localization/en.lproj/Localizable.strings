@@ -150,6 +150,8 @@
 "conversation.wireCells.files.renameFile.placeholder" = "Enter file name";
 "conversation.wireCells.files.renameFolder.placeholder" = "Enter folder name";
 "conversation.wireCells.files.openRecycleBin" = "Open recycle bin";
+"conversation.wireCells.files.recycleBin.navigationTitle" = "Recycle Bin";
+"conversation.wireCells.files.recycleBin.noData.message" = "You'll find all deleted files and folders here.";
 
 // MARK: - File Tags View
 "conversation.wireCells.tags.title" = "Add or remove tags";

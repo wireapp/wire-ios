@@ -63,6 +63,9 @@ package struct FilesViewItem: Identifiable, Hashable {
     let tags: [String]
 }
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
+
 @MainActor
 /// View model for the `FilesView`.
 package final class FilesViewModel: ObservableObject {
@@ -194,6 +197,18 @@ package final class FilesViewModel: ObservableObject {
         self.isRecycleBin = isRecycleBin
 
         bindSearch()
+    }
+    
+    var navigationTitle: String {
+        if let title {
+            return title
+        } else {
+            if isRecycleBin {
+                return Strings.Files.RecycleBin.navigationTitle
+            } else {
+                return Strings.Files.navigationTitle
+            }
+        }
     }
 
     /// Whether the view model is currently loading items.
