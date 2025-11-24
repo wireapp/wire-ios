@@ -56,7 +56,7 @@ public struct QualifiedID: Codable, Equatable, Hashable, CustomDebugStringConver
 
 extension QualifiedID: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        "\(uuid) - \(domain.redactedAndTruncated(maxVisibleCharacters: 4, length: 7))"
+        "\(uuid.safeForLoggingDescription) - \(domain.redactedAndTruncated(maxVisibleCharacters: 4, length: 7))"
     }
 }
 
