@@ -21,6 +21,7 @@ import WireDomain
 import WireMainNavigationUI
 import WireMessagingAssembly
 import WireSyncEngine
+import WireMessagingDomain
 
 final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
 
@@ -30,6 +31,10 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
     let channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory
 
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+
+    let featureConfigRepository: FeatureConfigRepositoryProtocol
+    let areBotsAvailableUseCase: AreBotsAvailableUseCaseProtocol
+
     weak var delegate: StartUIDelegate?
 
     init(
@@ -38,20 +43,24 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
         channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
-        isAppsFeatureEnabled: Bool = true
+        featureConfigRepository: FeatureConfigRepositoryProtocol,
+        areBotsAvailableUseCase: AreBotsAvailableUseCaseProtocol
     ) {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
         self.channelConversationFormFactory = channelConversationFormFactory
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.featureConfigRepository = featureConfigRepository
+        self.areBotsAvailableUseCase = areBotsAvailableUseCase
     }
 
     @MainActor
     func build() async -> UIViewController {
-        let featureConfigRepository = userSession.clientSessionComponent?.featureConfigRepository
-        let isAppsFeatureEnabled = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
+        let isAppsFeatureEnabled = await featureConfigRepository.isFeatureEnabled(.apps)
+        let areLegacyBotsAvailable = await areBotsAvailableUseCase.invoke()
         let rootViewController = StartUIViewController(
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
             isAppsFeatureEnabled: isAppsFeatureEnabled,
             userSession: userSession,
             mainCoordinator: mainCoordinator,

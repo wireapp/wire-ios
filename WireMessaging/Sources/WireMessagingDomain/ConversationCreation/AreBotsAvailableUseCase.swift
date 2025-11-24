@@ -15,3 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+import WireData
+
+struct AreBotsAvailableUseCase: AreBotsAvailableUseCaseProtocol { // TODO: delete?
+
+    var contextProvider: any ManagedObjectContextProvider
+
+    @concurrent
+    func invoke() async -> Bool {
+        let context = contextProvider.newBackgroundContext()
+        fatalError()
+    }
+
+}

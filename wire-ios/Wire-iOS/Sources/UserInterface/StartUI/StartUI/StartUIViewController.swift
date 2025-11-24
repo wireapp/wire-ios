@@ -123,6 +123,7 @@ final class StartUIViewController: UIViewController {
     }
 
     init(
+        areLegacyBotsAvailable: Bool,
         isAppsFeatureEnabled: Bool,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
@@ -130,6 +131,7 @@ final class StartUIViewController: UIViewController {
         channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
+        self.areLegacyBotsAvailable = areLegacyBotsAvailable
         self.isAppsFeatureEnabled = isAppsFeatureEnabled
         self.isFederationEnabled = userSession.resolvedBackendMetadata.isFederationEnabled
         self.searchResultsViewController = SearchResultsViewController(

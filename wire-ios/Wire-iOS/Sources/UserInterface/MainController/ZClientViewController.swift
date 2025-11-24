@@ -144,7 +144,9 @@ final class ZClientViewController: UIViewController {
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         createGroupConversationUIBuilder: createGroupConversationBuilder,
         channelConversationFormFactory: channelConversationFormFactory,
-        selfProfileUIBuilder: selfProfileViewControllerBuilder
+        selfProfileUIBuilder: selfProfileViewControllerBuilder,
+        featureConfigRepository: userSession.clientSessionComponent!.featureConfigRepository,
+        areBotsAvailableUseCase: AreBotsAvailableUseCase(contextProvider: <#T##any ManagedObjectContextProvider#>)
     )
 
     private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(
