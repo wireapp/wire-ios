@@ -184,7 +184,7 @@ final class UserSessionLoader {
         )
 
         // Check if this build is blacklisted.
-        if try await isBuildBlacklisted(userSession: userSession) {
+        if await isBuildBlacklisted(userSession: userSession) {
             await userSession.close(deleteCookie: false)
             throw Failure.buildIsBlacklisted
         }
@@ -599,13 +599,9 @@ final class UserSessionLoader {
         }
     }
 
-    private func isBuildBlacklisted(userSession: ZMUserSession) async throws -> Bool {
-        do {
-            let useCase = userSession.userSessionComponent.makeIsBuildBlacklistedUseCase()
-            return try await useCase.invoke()
-        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
-            return false
-        }
+    private func isBuildBlacklisted(userSession: ZMUserSession) async -> Bool {
+        let useCase = userSession.userSessionComponent.makeIsBuildBlacklistedUseCase()
+        return await useCase.invoke()
     }
 
     private func performPendingMigrations(

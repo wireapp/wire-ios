@@ -2595,6 +2595,12 @@ internal enum L10n {
           /// Allow apps
           internal static let title = L10n.tr("Localizable", "conversation.create.apps.title", fallback: "Allow apps")
         }
+        internal enum AppsDisabled {
+          /// To improve your workflow with apps, your team needs configuration. Please contact your team admin.
+          internal static let message = L10n.tr("Localizable", "conversation.create.apps_disabled.message", fallback: "To improve your workflow with apps, your team needs configuration. Please contact your team admin.")
+          /// Your team doesn't use apps yet
+          internal static let title = L10n.tr("Localizable", "conversation.create.apps_disabled.title", fallback: "Your team doesn't use apps yet")
+        }
         internal enum Channel {
           /// Back
           internal static let back = L10n.tr("Localizable", "conversation.create.channel.back", fallback: "Back")
