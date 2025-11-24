@@ -118,6 +118,7 @@
 "conversation.wireCells.files.item.menu.open" = "Open";
 "conversation.wireCells.files.item.menu.download" = "Download";
 "conversation.wireCells.files.item.menu.rename" = "Rename";
+"conversation.wireCells.files.item.menu.moveToFolder" = "Move to folder";
 "conversation.wireCells.files.item.menu.addOrRemoveTags" = "Add or remove tags";
 "conversation.wireCells.files.item.menu.delete" = "Delete Permanently";
 "conversation.wireCells.files.item.deleteConfirmation.title" = "This will permanently delete the file %@ for all participants. Everyone will lose access and there is no way to recover the file.";
@@ -161,6 +162,8 @@
 "conversation.wireCells.tags.error.saveFailedTitle" = "Unable to edit tags";
 "conversation.wireCells.tags.error.saveFailedMessage" = "Due to an error your tags could not be edited.";
 "conversation.wireCells.tags.error.retryButton" = "Try again";
+"conversation.wireCells.files.moveToFolder.move" = "Move here";
+"conversation.wireCells.files.moveToFolder.noSubfolders" = "There are no subfolders in this folder.";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "File not available";
