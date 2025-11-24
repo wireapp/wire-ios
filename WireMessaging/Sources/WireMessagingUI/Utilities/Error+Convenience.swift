@@ -22,7 +22,19 @@ extension Error {
 
     /// Returns `true` if self is a URLError(.cancelled) otherwise `false`.
     var isURLErrorCancelled: Bool {
-        (self as? URLError)?.code == .cancelled
+        isURLError(.cancelled)
+    }
+
+    /// Returns `true` if self is a URLError(.notConnectedToInternet) or URLError(.networkConnectionLost) otherwise
+    /// `false`.
+    var isNoInternetError: Bool {
+        isURLError(.notConnectedToInternet, .networkConnectionLost)
+    }
+
+    /// Returns `true` if self is a URLError with one of the given codes, otherwise `false`.
+    func isURLError(_ code: URLError.Code...) -> Bool {
+        guard let urlError = self as? URLError else { return false }
+        return code.contains(urlError.code)
     }
 
 }
