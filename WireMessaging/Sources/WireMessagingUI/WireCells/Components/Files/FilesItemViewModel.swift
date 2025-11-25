@@ -30,14 +30,19 @@ final class FilesItemViewModel: ObservableObject {
 
     private let nodeID: UUID
     let item: FilesViewItem
-    //TODO: group actions into a type
-    private let onOpen: (FilesViewItem) async -> Void
-    private let onDelete: (FilesViewItem, Bool) async -> Void
-    private let onRestore: (FilesViewItem) async -> Void
-    private let onRename: ((FilesViewItem) async -> Void)?
-    let onEditTagsSelected: () -> Void
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
+    
+    enum ItemAction {
+        case open
+        case deleteToRecycleBin
+        case deletePermanently
+        case restore
+        case rename
+        case editTags
+    }
+    
+    let onItemAction: (ItemAction, FilesViewItem) async -> Void
 
     @Published private var asset: WireCellsLocalAsset?
     
@@ -69,11 +74,7 @@ final class FilesItemViewModel: ObservableObject {
     init(
         item: FilesViewItem,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
-        onOpen: @escaping (FilesViewItem) async -> Void,
-        onDelete: @escaping (FilesViewItem, Bool) async -> Void,
-        onRestore: @escaping (FilesViewItem) async -> Void,
-        onRename: ((FilesViewItem) async -> Void)? = nil,
-        onEditTagsSelected: @escaping (FilesViewItem) -> Void,
+        onItemAction: @escaping (ItemAction, FilesViewItem) async -> Void,
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,
         timeZone: TimeZone = .autoupdatingCurrent,
@@ -81,11 +82,7 @@ final class FilesItemViewModel: ObservableObject {
     ) {
         self.nodeID = item.id
         self.item = item
-        self.onOpen = onOpen
-        self.onDelete = onDelete
-        self.onRestore = onRestore
-        self.onRename = onRename
-        self.onEditTagsSelected = { onEditTagsSelected(item) }
+        self.onItemAction = onItemAction
         self.fileName = item.name
         self.subtitle = Self.subtitle(from: item, locale: locale, calendar: calendar, timeZone: timeZone)
         self.icon = item.icon
@@ -142,11 +139,11 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     func open() async {
-        await onOpen(item)
+        await onItemAction(.open, item)
     }
 
     func rename() async {
-        await onRename?(item)
+        await onItemAction(.rename, item)
     }
 
     func download() async {
@@ -184,11 +181,15 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     func confirmDelete(permanently: Bool) async {
-        await onDelete(item, permanently)
+        if permanently {
+            await onItemAction(.deletePermanently, item)
+        } else {
+            await onItemAction(.deleteToRecycleBin, item)
+        }
     }
     
     func confirmRestore() async {
-        await onRestore(item)
+        await onItemAction(.restore, item)
     }
 
     private static func subtitle(

@@ -265,20 +265,21 @@ package final class FilesViewModel: ObservableObject {
         FilesItemViewModel(
             item: state.items[index],
             localAssetRepository: localAssetRepository,
-            onOpen: { [weak self] item in
-                await self?.openItem(item: item)
-            },
-            onDelete: { [weak self] item, permanently in
-                await self?.deleteItem(item, permanently: permanently)
-            },
-            onRestore: { [weak self] item in
-                await self?.restoreItem(item)
-            },
-            onRename: { [weak self] item in
-                self?.fileRenameView = self?.makeFileRenameView(item: item)
-            },
-            onEditTagsSelected: { [weak self] item in
-                self?.sheetNavigation = .editTags(fileItem: item)
+            onItemAction: { [weak self] action, item in
+                switch action {
+                case .open:
+                    await self?.openItem(item: item)
+                case .deleteToRecycleBin:
+                    await self?.deleteItem(item, permanently: false)
+                case .deletePermanently:
+                    await self?.deleteItem(item, permanently: true)
+                case .restore:
+                    await self?.restoreItem(item)
+                case .rename:
+                    self?.fileRenameView = self?.makeFileRenameView(item: item)
+                case .editTags:
+                    self?.sheetNavigation = .editTags(fileItem: item)
+                }
             },
             isInRecycleBin: isRecycleBin,
         )

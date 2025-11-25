@@ -214,7 +214,7 @@ struct FilesViewItemView: View {
     }
 
     private func editTags() {
-        viewModel.onEditTagsSelected()
+        Task { await viewModel.onItemAction(.editTags, viewModel.item) }
     }
     
     private func restore() {
