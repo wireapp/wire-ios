@@ -60,6 +60,9 @@ extension FilesViewModel {
                 createFolder: WireCellsCreateFolderUseCase(
                     nodesRepository: previewNodesRepository()
                 ),
+                getEditingURL: WireCellsGetEditingURLUseCase(
+                    editingURLRepository: previewEditingURLRepository()
+                )
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,
@@ -152,6 +155,12 @@ private func previewTagsApi() -> some NodesAPIProtocol {
         ["suggested tag 1", "lorem", "ipsum"]
     }
     mock.updateTagsNodeIDTags_MockMethod = { _, _ in }
+    return mock
+}
+
+private func previewEditingURLRepository() -> any WireCellsEditingURLRepositoryProtocol {
+    let mock = MockWireCellsEditingURLRepositoryProtocol()
+    mock.getEditorURLId_MockValue = nil
     return mock
 }
 

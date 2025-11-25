@@ -40,6 +40,9 @@ final class FilesViewModelTests {
         nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
 
+        let editingURLRepository = MockWireCellsEditingURLRepositoryProtocol()
+        editingURLRepository.getEditorURLId_MockValue = nil
+
         self.sut = FilesViewModel(
             useCases: .init(
                 fetchNodes: WireCellsFetchNodesPageUseCase(
@@ -60,6 +63,7 @@ final class FilesViewModelTests {
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesApi),
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi),
                 createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesRepository),
+                getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: editingURLRepository)
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,

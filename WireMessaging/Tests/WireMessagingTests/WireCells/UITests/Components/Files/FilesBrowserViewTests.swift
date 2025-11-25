@@ -38,6 +38,7 @@ final class FilesBrowserViewTests: XCTestCase {
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
     private var createFolderUseCase: (any WireCellsCreateFolderUseCaseProtocol)!
+    private var getEditingURLUseCase: WireCellsGetEditingURLUseCase!
     private var localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol!
 
     private let record: Bool? = nil
@@ -73,6 +74,12 @@ final class FilesBrowserViewTests: XCTestCase {
         getTagSuggestionsUseCase = WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi)
         createFolderUseCase = WireCellsCreateFolderUseCase(
             nodesRepository: nodesRepository
+        )
+
+        let editingURLRepository = MockWireCellsEditingURLRepositoryProtocol()
+        editingURLRepository.getEditorURLId_MockValue = nil
+        getEditingURLUseCase = WireCellsGetEditingURLUseCase(
+            editingURLRepository: editingURLRepository
         )
     }
 
@@ -165,6 +172,7 @@ final class FilesBrowserViewTests: XCTestCase {
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
                 createFolder: createFolderUseCase,
+                getEditingURL: getEditingURLUseCase
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetsRepository,

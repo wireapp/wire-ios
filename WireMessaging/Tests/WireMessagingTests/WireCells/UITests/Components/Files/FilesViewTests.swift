@@ -37,6 +37,7 @@ final class FilesViewTests: XCTestCase {
     private var renameNodeUseCase: WireCellsRenameNodeUseCase!
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
+    private var getEditingURLUseCase: WireCellsGetEditingURLUseCase!
 
     private let record: Bool? = nil
 
@@ -68,6 +69,12 @@ final class FilesViewTests: XCTestCase {
         )
         updateTagsUseCase = WireCellsUpdateTagsUseCase(nodesAPI: nodesApi)
         getTagSuggestionsUseCase = WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi)
+
+        let editingURLRepository = MockWireCellsEditingURLRepositoryProtocol()
+        editingURLRepository.getEditorURLId_MockValue = nil
+        getEditingURLUseCase = WireCellsGetEditingURLUseCase(
+            editingURLRepository: editingURLRepository
+        )
     }
 
     @MainActor
@@ -328,6 +335,7 @@ final class FilesViewTests: XCTestCase {
                 createFolder: WireCellsCreateFolderUseCase(
                     nodesRepository: nodesRepository
                 ),
+                getEditingURL: getEditingURLUseCase
             ),
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),

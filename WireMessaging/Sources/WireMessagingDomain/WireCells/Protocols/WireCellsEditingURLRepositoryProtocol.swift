@@ -18,7 +18,8 @@
 
 package import Foundation
 
-package protocol WireCellsEditingURLRepositoryProtocol {
+// sourcery: AutoMockable
+package protocol WireCellsEditingURLRepositoryProtocol: Sendable {
 
     /// Returns a URL to an online editor where the document can be edited.
     func getEditorURL(id: UUID) async throws -> (url: URL, date: Date)?

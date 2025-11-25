@@ -129,6 +129,7 @@ package final class FilesViewModel: ObservableObject {
             updateTags: any WireCellsUpdateTagsUseCaseProtocol,
             getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol,
             createFolder: any WireCellsCreateFolderUseCaseProtocol,
+            getEditingURL: WireCellsGetEditingURLUseCase
         ) {
 
             self.fetchNodes = fetchNodes
@@ -137,6 +138,7 @@ package final class FilesViewModel: ObservableObject {
             self.updateTags = updateTags
             self.getTagSuggestions = getTagSuggestions
             self.createFolder = createFolder
+            self.getEditingURL = getEditingURL
         }
 
         let fetchNodes: WireCellsFetchNodesPageUseCase
@@ -145,6 +147,7 @@ package final class FilesViewModel: ObservableObject {
         let updateTags: any WireCellsUpdateTagsUseCaseProtocol
         let getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
         let createFolder: any WireCellsCreateFolderUseCaseProtocol
+        let getEditingURL: WireCellsGetEditingURLUseCase
     }
 
     let useCases: UseCases
