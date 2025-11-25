@@ -101,6 +101,8 @@ package struct FilesView: FilesViewProtocol {
                     )
                 case let .moveToFolder(fileItem):
                     viewModel.moveToFolderView(item: fileItem)
+                case let .editFile(fileItem):
+                    viewModel.editFileView(item: fileItem)
                 }
             }
             .sheet(

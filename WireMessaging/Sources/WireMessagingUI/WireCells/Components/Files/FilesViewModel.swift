@@ -78,6 +78,7 @@ package final class FilesViewModel: ObservableObject {
     enum SheetNavigation: Identifiable {
         case editTags(fileItem: FilesViewItem)
         case moveToFolder(fileItem: FilesViewItem)
+        case editFile(fileItem: FilesViewItem)
 
         var id: String {
             switch self {
@@ -85,6 +86,8 @@ package final class FilesViewModel: ObservableObject {
                 "editTags(\(fileItem.id))"
             case let .moveToFolder(fileItem):
                 "moveToFolder(\(fileItem.id)"
+            case let .editFile(fileItem):
+                "editFile(\(fileItem.id))"
             }
         }
     }
@@ -269,7 +272,7 @@ package final class FilesViewModel: ObservableObject {
                 self?.sheetNavigation = .moveToFolder(fileItem: item)
             },
             onEdit: { [weak self] item in
-                await self?.editFile(item: item)
+                self?.sheetNavigation = .editFile(fileItem: item)
             },
             onEditTagsSelected: { [weak self] item in
                 self?.sheetNavigation = .editTags(fileItem: item)
@@ -295,6 +298,10 @@ package final class FilesViewModel: ObservableObject {
                 createFolderUseCase: useCases.createFolder
             )
         )
+    }
+
+    func editFileView(item: FilesViewItem) -> some View {
+        EmptyView()
     }
 
     /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary and views it.
@@ -354,10 +361,6 @@ package final class FilesViewModel: ObservableObject {
         } catch {
             alert = .unknownError
         }
-    }
-
-    /// Opens the file in an online editor.
-    private func editFile(item: FilesViewItem) async {
     }
 
     func onCreateFolder() {
