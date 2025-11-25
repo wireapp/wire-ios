@@ -15,28 +15,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
+import CoreData
 import Foundation
-import WireDataModel
-import WireNetwork
+import WireSystem
 
-// sourcery: AutoMockable
-/// An object to fetch an MLS one on one conversation
-/// from remote and store it locally.
-public protocol PullMLSOneOnOneSyncProtocol {
+extension NSManagedObjectContext {
 
-    /// Fetch an MLS one on one conversation from remote
-    /// and store it locally.
-    ///
-    /// - Parameters:
-    ///   - userID: The id of the other user.
-    ///   - userDomain: The domain of the other user.
-    ///
-    /// - Returns: The base-64-encoded MLS group id.
+    private func resolve<IDType: NSManagedObject>(_ id: NSManagedObjectID, as type: IDType.Type) throws -> IDType {
+        guard let obj = try existingObject(with: id) as? IDType else {
+            fatal("expected to find \(type) in context")
+        }
+        return obj
+    }
 
-    func pull(
-        userID: UUID,
-        userDomain: String
-    ) async throws -> (MLSGroupID, MLSPublicKeys?)
-
+    public func unpack<U: NSManagedObject, T>(_ object: U, _ block: @escaping @Sendable (U) -> T) async throws -> T {
+        let managedObjectID = object.objectID
+        return try await perform {
+            let object = try self.resolve(managedObjectID, as: U.self)
+            return block(object)
+        }
+    }
 }
