@@ -31,10 +31,10 @@ extension WireNetwork.SelfUserClient {
             lastActiveDate: lastActiveDate,
             mlsPublicKeys: .init(
                 ed25519: mlsPublicKeys?.ed25519,
-                ed448: mlsPublicKeys?.ed448,
+                ed448: nil,
                 p256: mlsPublicKeys?.p256,
                 p384: mlsPublicKeys?.p384,
-                p512: mlsPublicKeys?.p512
+                p521: mlsPublicKeys?.p521
             ), capabilities: capabilities
         )
     }
