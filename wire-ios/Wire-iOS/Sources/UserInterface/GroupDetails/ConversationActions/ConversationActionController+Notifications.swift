@@ -77,13 +77,6 @@ extension ConversationActionController {
         let title = "\(conversation.displayNameWithFallback) • \(NotificationResult.title)"
         let controller = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         NotificationResult.allCases.map { $0.action(for: conversation, handler: handler) }.forEach(controller.addAction)
-
-        if let sourceView, let superView = sourceView.superview,
-           let popover = controller.popoverPresentationController {
-            currentContext = .sourceView(superView, sourceView.frame)
-            popover.permittedArrowDirections = .left
-        }
-
         present(controller)
     }
 

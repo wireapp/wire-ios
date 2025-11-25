@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireLocators
 
 struct ImportBackupView: View {
 
@@ -86,6 +87,7 @@ struct ImportBackupView: View {
             } message: {
                 Text(viewModel.alertContent.message)
             }
+            .accessibilityIdentifier(Locators.BackupOrRestorePage.restoreFromBackupButton.rawValue)
         }
     }
 }

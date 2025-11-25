@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLocators
 
 protocol GroupDetailsFooterViewDelegate: AnyObject {
     func footerView(_ view: GroupDetailsFooterView, shouldPerformAction action: GroupDetailsFooterView.Action)
@@ -44,9 +45,9 @@ final class GroupDetailsFooterView: ConversationDetailFooterView {
     override func setupButtons() {
         leftIcon = .plus
         leftButton.setTitle(L10n.Localizable.Participants.Footer.addTitle, for: .normal)
-        leftButton.accessibilityIdentifier = "OtherUserMetaControllerLeftButton"
+        leftButton.accessibilityIdentifier = Locators.ConversationDetailsPage.addParticipantsButton.rawValue
         rightIcon = .ellipsis
-        rightButton.accessibilityIdentifier = "OtherUserMetaControllerRightButton"
+        rightButton.accessibilityIdentifier = Locators.ConversationDetailsPage.moreOptionsButton.rawValue
         rightButton.accessibilityLabel = L10n.Accessibility.ConversationDetails.MoreButton.description
     }
 
