@@ -35,17 +35,20 @@ struct FilesViewItemView: View {
     private let canRenameFile: Bool
     private let canEditTags: Bool
     private let canMoveToFolder: Bool
+    private let canEditFile: Bool
 
     init(
         viewModel: @autoclosure @escaping () -> FilesItemViewModel,
         canRenameFile: Bool = false,
         canEditTags: Bool = false,
-        canMoveToFolder: Bool = false
+        canMoveToFolder: Bool = false,
+        canEditFile: Bool = false
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
         self.canRenameFile = canRenameFile
         self.canEditTags = canEditTags
         self.canMoveToFolder = canMoveToFolder
+        self.canEditFile = canEditFile
     }
 
     var body: some View {
@@ -109,6 +112,12 @@ struct FilesViewItemView: View {
                         }.disabled(viewModel.isDownloading)
                     }
 
+                    if canEditFile {
+                        Button(action: editFile) {
+                            Label(Strings.Files.Item.Menu.editFile, systemImage: "square.and.pencil")
+                        }
+                    }
+
                     if canRenameFile {
                         Button(action: rename) {
                             Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
@@ -164,6 +173,10 @@ struct FilesViewItemView: View {
 
     private func open() {
         Task { await viewModel.open() }
+    }
+
+    private func editFile() {
+        Task { await viewModel.edit() }
     }
 
     private func download() {

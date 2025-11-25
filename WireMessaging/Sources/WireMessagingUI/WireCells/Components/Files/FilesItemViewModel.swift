@@ -34,6 +34,7 @@ final class FilesItemViewModel: ObservableObject {
     private let onDelete: (FilesViewItem) async -> Void
     private let onRename: ((FilesViewItem) async -> Void)?
     private let onMoveToFolder: ((FilesViewItem) async -> Void)?
+    private let onEdit: ((FilesViewItem) async -> Void)?
     let onEditTagsSelected: () -> Void
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
@@ -63,6 +64,7 @@ final class FilesItemViewModel: ObservableObject {
         onDelete: @escaping (FilesViewItem) async -> Void,
         onRename: ((FilesViewItem) async -> Void)? = nil,
         onMoveToFolder: ((FilesViewItem) async -> Void)? = nil,
+        onEdit: ((FilesViewItem) async -> Void)? = nil,
         onEditTagsSelected: @escaping (FilesViewItem) -> Void,
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,
@@ -74,6 +76,7 @@ final class FilesItemViewModel: ObservableObject {
         self.onDelete = onDelete
         self.onRename = onRename
         self.onMoveToFolder = onMoveToFolder
+        self.onEdit = onEdit
         self.onEditTagsSelected = { onEditTagsSelected(item) }
         self.fileName = item.name
         self.subtitle = Self.subtitle(
@@ -141,6 +144,10 @@ final class FilesItemViewModel: ObservableObject {
 
     func moveToFolder() async {
         await onMoveToFolder?(item)
+    }
+
+    func edit() async {
+        await onEdit?(item)
     }
 
     func download() async {

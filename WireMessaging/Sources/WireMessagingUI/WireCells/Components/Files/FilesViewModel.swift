@@ -268,6 +268,9 @@ package final class FilesViewModel: ObservableObject {
             onMoveToFolder: { [weak self] item in
                 self?.sheetNavigation = .moveToFolder(fileItem: item)
             },
+            onEdit: { [weak self] item in
+                await self?.editFile(item: item)
+            },
             onEditTagsSelected: { [weak self] item in
                 self?.sheetNavigation = .editTags(fileItem: item)
             },
@@ -351,6 +354,10 @@ package final class FilesViewModel: ObservableObject {
         } catch {
             alert = .unknownError
         }
+    }
+
+    /// Opens the file in an online editor.
+    private func editFile(item: FilesViewItem) async {
     }
 
     func onCreateFolder() {
