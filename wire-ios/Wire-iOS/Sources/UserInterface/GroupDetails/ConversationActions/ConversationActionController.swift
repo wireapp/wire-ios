@@ -59,9 +59,9 @@ final class ConversationActionController {
         actions.map(alertAction).forEach(controller.addAction)
         controller.addAction(.cancel())
 
-        if controller.popoverPresentationController != nil {
+        if let superView = sourceView.superview, controller.popoverPresentationController != nil {
             currentContext = .sourceView(
-                sourceView: sourceView.superview!,
+                sourceView: superView,
                 sourceRect: sourceView.frame
             )
         }

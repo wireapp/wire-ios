@@ -64,6 +64,12 @@ extension ConversationActionController {
             preferredStyle: .actionSheet
         )
         BlockResult.all(isBlocked: user.isBlocked).map { $0.action(handler) }.forEach(controller.addAction)
+
+        if let sourceView, let superView = sourceView.superview,
+           let popover = controller.popoverPresentationController {
+            currentContext = .sourceView(superView, sourceView.frame)
+            popover.permittedArrowDirections = .left
+        }
         present(controller)
     }
 
