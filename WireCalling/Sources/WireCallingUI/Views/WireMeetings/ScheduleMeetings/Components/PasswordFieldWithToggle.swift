@@ -26,18 +26,15 @@ struct PasswordFieldWithToggle: View {
     @Binding var isVisible: Bool
     let errorMessage: String
     let showError: Bool
+    let isContextMenuAllowed: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 if isVisible {
-                    TextField(placeholder, text: $text)
-                        .textContentType(.password)
-                        .autocapitalization(.none)
+                    textField
                 } else {
-                    SecureField(placeholder, text: $text)
-                        .textContentType(.password)
-                        .autocapitalization(.none)
+                    secureField
                 }
 
                 Button {
@@ -55,4 +52,30 @@ struct PasswordFieldWithToggle: View {
             }
         }
     }
+
+    @ViewBuilder private var textField: some View {
+        ContextMenuControllableTextField(
+            text: $text,
+            placeholder: placeholder,
+            isSecureTextEntry: false,
+            placeholderColor: ColorTheme.Base.secondaryText.color,
+            isContextMenuAllowed: isContextMenuAllowed
+        )
+        .textContentType(.password)
+        .autocapitalization(.none)
+        .accessibilityIdentifier("passwordInput")
+    }
+
+    @ViewBuilder private var secureField: some View {
+        ContextMenuControllableTextField(
+            text: $text,
+            placeholder: placeholder,
+            isSecureTextEntry: true,
+            placeholderColor: ColorTheme.Base.secondaryText.color,
+            isContextMenuAllowed: isContextMenuAllowed
+        )
+        .textContentType(.password)
+        .accessibilityIdentifier("confirmPasswordInput")
+    }
+
 }

@@ -94,7 +94,8 @@ struct CreateInstantMeetingView: View {
                 text: $viewModel.password,
                 isVisible: $isPasswordVisible,
                 errorMessage: viewModel.localizedPasswordRules,
-                showError: !viewModel.password.isEmpty && !viewModel.isPasswordValid
+                showError: !viewModel.password.isEmpty && !viewModel.isPasswordValid,
+                isContextMenuAllowed: viewModel.isContextMenuAllowed
             )
         } header: {
             Text(Strings.SetupPassword.header)
@@ -108,7 +109,8 @@ struct CreateInstantMeetingView: View {
                 text: $viewModel.confirmedPassword,
                 isVisible: $isConfirmedPasswordVisible,
                 errorMessage: Strings.ConfirmedPassword.error,
-                showError: !viewModel.confirmedPassword.isEmpty && !viewModel.isConfirmedPasswordValid
+                showError: !viewModel.confirmedPassword.isEmpty && !viewModel.isConfirmedPasswordValid,
+                isContextMenuAllowed: viewModel.isContextMenuAllowed
             )
         }
     }
@@ -119,6 +121,7 @@ struct CreateInstantMeetingView: View {
 
 #Preview {
     CreateInstantMeetingView(viewModel: CreateInstantMeetingViewModel(
-        passwordValidator: MockPasswordValidator()
+        passwordValidator: MockPasswordValidator(),
+        isContextMenuAllowed: true
     ))
 }

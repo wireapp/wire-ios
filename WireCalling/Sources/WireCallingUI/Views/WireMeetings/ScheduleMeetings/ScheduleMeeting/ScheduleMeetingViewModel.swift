@@ -53,11 +53,13 @@ final class ScheduleMeetingViewModel: ObservableObject {
     }
 
     private let passwordValidator: any PasswordValidator
+    private(set) var isContextMenuAllowed: Bool
 
     // MARK: - Initialization
 
-    init(passwordValidator: any PasswordValidator) {
+    init(passwordValidator: any PasswordValidator, isContextMenuAllowed: Bool) {
         self.passwordValidator = passwordValidator
+        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     // MARK: - Public Interface

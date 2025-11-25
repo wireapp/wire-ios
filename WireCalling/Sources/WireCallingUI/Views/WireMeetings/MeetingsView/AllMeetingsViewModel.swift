@@ -33,6 +33,7 @@ package final class AllMeetingsViewModel: ObservableObject {
     @Published var isScheduleMeetingPresented: Bool = false
 
     private let passwordValidator: any PasswordValidator
+    private let isContextMenuAllowed: Bool
 
     package init(
         repository: any MeetingsRepositoryProtocol,
@@ -40,7 +41,8 @@ package final class AllMeetingsViewModel: ObservableObject {
         formatter: MeetingsFormatter = MeetingsFormatter(),
         pastMeetingsUseCase: any FetchPastMeetingsUseCaseProtocol,
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
-        passwordValidator: any PasswordValidator
+        passwordValidator: any PasswordValidator,
+        isContextMenuAllowed: Bool
     ) {
         self.meetingsViewModel = MeetingsViewModel(
             repository: repository,
@@ -50,6 +52,7 @@ package final class AllMeetingsViewModel: ObservableObject {
             upcomingMeetingsUseCase: upcomingMeetingsUseCase
         )
         self.passwordValidator = passwordValidator
+        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     // MARK: - Public Interface
@@ -64,13 +67,15 @@ package final class AllMeetingsViewModel: ObservableObject {
 
     func makeCreateInstantMeetingViewModel() -> CreateInstantMeetingViewModel {
         CreateInstantMeetingViewModel(
-            passwordValidator: passwordValidator
+            passwordValidator: passwordValidator,
+            isContextMenuAllowed: isContextMenuAllowed
         )
     }
 
     func makeScheduleMeetingViewModel() -> ScheduleMeetingViewModel {
         ScheduleMeetingViewModel(
-            passwordValidator: passwordValidator
+            passwordValidator: passwordValidator,
+            isContextMenuAllowed: isContextMenuAllowed
         )
     }
 
