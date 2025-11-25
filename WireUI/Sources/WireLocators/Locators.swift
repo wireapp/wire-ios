@@ -82,7 +82,7 @@ public enum Locators {
         case emailField = "EmailField"
         case domainFieldDisabled = "DomainFieldDisabled"
         case backuporRestoreField = "Back up or RestoreField"
-        case resetPasswordField = "Reset PasswordField"
+        case resetPasswordField = "Reset Password"
         case deleteAccountField = "Delete AccountField"
         case logOut = "Log Out"
         case ok = "OK"

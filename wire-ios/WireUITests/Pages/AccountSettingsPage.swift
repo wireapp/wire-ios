@@ -62,7 +62,7 @@ class AccountSettingsPage: PageModel {
     }
 
     var resetPasswordButton: XCUIElement {
-        app.descendants(matching: .any)[Locators.AccountSettingsPage.resetPasswordField.rawValue]
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.resetPasswordField.rawValue].firstMatch
     }
 
     func getAccountName() -> String? {
