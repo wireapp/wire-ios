@@ -156,8 +156,34 @@ class ConversationsAPIV8: ConversationsAPIV7 {
                 throw error
             }
         }
-
     }
+
+    override func getMLSOneToOneConversation(
+        userID: String,
+        in domain: String
+    ) async throws -> (Conversation, MLSPublicKeys?) {
+        guard !userID.isEmpty, !domain.isEmpty else {
+            throw ConversationsAPIError.userAndDomainShouldNotBeEmpty
+        }
+
+        let path = "\(oneToOneConversationsPath)/\(domain)/\(userID)"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: ConversationWithPublicKeys<ConversationV8>.self) // internal type changed
+            .failure(code: .badRequest, label: "mls-not-enabled", error: ConversationsAPIError.mlsNotEnabled)
+            .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.usersNotConnected)
+            .parse(code: response.statusCode, data: data)
+    }
+
 }
 
 // MARK: - Encodables
@@ -276,7 +302,7 @@ struct CreateGroupConversationParametersV8: Encodable {
 
 // MARK: - Decodables
 
-struct ConversationV8: Decodable, ToAPIModelConvertible {
+struct ConversationV8: Decodable, ToAPIModelConvertible, DecodableConversation {
     enum CodingKeys: String, CodingKey {
         case access
         case accessRoles = "access_role"

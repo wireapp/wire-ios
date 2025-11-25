@@ -3977,29 +3977,6 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
         }
     }
 
-    // MARK: - sendCommitBundle
-
-    var sendCommitBundleIn_Invocations: [(bundle: Data, context: NotificationContext)] = []
-    var sendCommitBundleIn_MockError: Error?
-    var sendCommitBundleIn_MockMethod: ((Data, NotificationContext) async throws -> [ZMUpdateEvent])?
-    var sendCommitBundleIn_MockValue: [ZMUpdateEvent]?
-
-    func sendCommitBundle(_ bundle: Data, in context: NotificationContext) async throws -> [ZMUpdateEvent] {
-        sendCommitBundleIn_Invocations.append((bundle: bundle, context: context))
-
-        if let error = sendCommitBundleIn_MockError {
-            throw error
-        }
-
-        if let mock = sendCommitBundleIn_MockMethod {
-            return try await mock(bundle, context)
-        } else if let mock = sendCommitBundleIn_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `sendCommitBundleIn`")
-        }
-    }
-
     // MARK: - fetchConversationGroupInfo
 
     var fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations: [(conversationId: UUID, domain: String, subgroupType: SubgroupType?, context: NotificationContext)] = []

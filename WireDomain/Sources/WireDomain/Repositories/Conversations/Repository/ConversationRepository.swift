@@ -129,8 +129,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     public func pullMLSOneToOneConversation(
         userID: String,
         userDomain: String
-    ) async throws -> String {
-        let mlsConversation =
+    ) async throws -> (String, MLSPublicKeys?) {
+        let (mlsConversation, mlsPublicKeys) =
             try await conversationsAPI.getMLSOneToOneConversation(
                 userID: userID,
                 in: userDomain
@@ -147,7 +147,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             isMLSEnabled: isMLSEnabled
         )
 
-        return mlsGroupID
+        return (mlsGroupID, mlsPublicKeys)
     }
 
     public func fetchMLSConversation(
