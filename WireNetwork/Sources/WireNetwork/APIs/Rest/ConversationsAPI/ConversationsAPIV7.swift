@@ -19,7 +19,6 @@
 class ConversationsAPIV7: ConversationsAPIV6 {
 
     override var apiVersion: APIVersion { .v7 }
-    // https://nginz-https.anta.wire.link/v12/api/swagger-ui/#/default/get-one-to-one-mls-conversation
     override var oneToOneConversationsPath: String {
         "\(pathPrefix)/one2one-conversations"
     }
