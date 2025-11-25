@@ -200,6 +200,7 @@ private struct DateTimeRow: View {
 
 #Preview {
     ScheduleMeetingView(viewModel: ScheduleMeetingViewModel(
-        passwordValidator: MockPasswordValidator(), isContextMenuAllowed: true)
+        passwordValidator: MockPasswordValidator(), isContextMenuAllowed: true
+    )
     )
 }
