@@ -49,6 +49,20 @@ final class FilesFiltersViewTests: XCTestCase {
     }
 
     @MainActor
+    func testFilterTagsEmptyTags() async {
+        let viewModel = await makeViewModel(tags: [])
+        let view = FilesFiltersView(viewModel: viewModel)
+            .frame(width: 375, height: 667)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
     func testFilterTagsLimitedItems() async {
         let viewModel = await makeViewModel(tags: Array(mockTags.prefix(7)))
         let view = FilesFiltersView(viewModel: viewModel)

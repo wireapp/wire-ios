@@ -41,7 +41,11 @@ struct FilesFiltersView: View {
                 ColorTheme.Backgrounds.background.color
                     .ignoresSafeArea(.all)
 
-                ScrollView { tagsView }
+                ScrollView {
+                    tagsView
+                }.refreshable {
+                    await viewModel.fetch(isRefreshing: true)
+                }
             }
             .toolbar { toolbarContent }
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
@@ -60,10 +64,24 @@ struct FilesFiltersView: View {
 // MARK: - Tags
 
 private extension FilesFiltersView {
+    var tagsViewSpacing: CGFloat {
+        viewModel.presentedTags.isEmpty ? 0 : 20
+    }
+
     var tagsView: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: tagsViewSpacing) {
             Text(Strings.AllFiles.Filters.Tags.sectionTitle)
                 .font(for: .body3)
+
+            if viewModel.presentedTags.isEmpty {
+                Spacer()
+
+                Text(Strings.AllFiles.Filters.Tags.emptyTitle)
+                    .font(for: .h4)
+                    .padding([.top, .bottom])
+
+                Spacer()
+            }
 
             FlowLayout(spacing: 16, alignment: .leading) {
                 ForEach(viewModel.presentedTags) { tag in
@@ -120,7 +138,7 @@ private extension FilesFiltersView {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(
                             isSelected
-                                ? ColorTheme.Base.onPrimaryVariant.color
+                                ? ColorTheme.Base.primary(accentColor).color
                                 : .clear,
                             lineWidth: 1
                         )

@@ -69,9 +69,9 @@ package final class FilesFiltersViewModel: ObservableObject {
 
     // MARK: - Actions
 
-    func fetch() async {
+    func fetch(isRefreshing: Bool = false) async {
         do {
-            isLoading = true
+            if !isRefreshing { isLoading = true }
             defer { isLoading = false }
             let tags = try await fetchTagsUseCase.invoke()
             self.tags = tags
