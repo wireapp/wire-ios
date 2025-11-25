@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDesign
 import WireDomain
 import WireFoundation
+import WireLocators
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
@@ -478,13 +479,16 @@ final class ConversationViewController: UIViewController {
                 )
             )
         }
-        actions.append(UIAction(
+        let conversationDetailsAction = UIAction(
             title: L10n.Localizable.Conversation.Action.conversationDetails,
             image: UIImage(systemName: "info.circle"),
             handler: { [weak self] _ in
                 self?.onConversationDetailsPressed()
             }
-        ))
+        )
+        conversationDetailsAction.accessibilityIdentifier = Locators.ActiveConversationPage.conversationDetailsButton
+            .rawValue
+        actions.append(conversationDetailsAction)
 
         let menu = UIMenu(title: "", children: actions)
 

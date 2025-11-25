@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 
 extension IconButton {
 
@@ -52,7 +53,7 @@ extension IconButton {
 
         return .init(
             icon: .send,
-            accessibilityId: "sendButton",
+            accessibilityId: Locators.ActiveConversationPage.sendButton.rawValue,
             backgroundColor: [
                 UIControl.State.normal.rawValue: UIColor.accent(),
                 UIControl.State.highlighted.rawValue: UIColor.accentDarken,
