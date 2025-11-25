@@ -21,14 +21,58 @@ jobs:
           # PAT from zenkins user
           github-token: ${{ secrets.SUBMODULE_PAT }}
           script: |
+script: |
             const pr = context.payload.pull_request;
+            const botLogin = "zenkins";
 
-            core.info(`Auto-approving PR #${pr.number}: "${pr.title}"`);
-
-            await github.rest.pulls.createReview({
+            // Fetch all reviews first
+            const { data: reviews } = await github.rest.pulls.listReviews({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: pr.number,
-              event: 'APPROVE',
-              body: '✅ Auto-approved cherry-pick PR 🍒.'
             });
+
+            // Map of users -> their latest review state
+            const latestStateByUser = new Map();
+            for (const r of reviews) {
+              latestStateByUser.set(r.user.login, r.state);
+            }
+
+            const botApproved = latestStateByUser.get(botLogin) === "APPROVED";
+            core.info(`Bot approval detected? ${botApproved}`);
+
+            // Only check merge conflicts if bot has NOT yet approved
+            if (!botApproved) {
+              const { data: freshPr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+              });
+
+              const mergeableState = freshPr.mergeable_state;
+              core.info(`mergeable_state = ${mergeableState}`);
+
+              if (mergeableState === "dirty") {
+                core.info(`PR has merge conflicts — requesting changes.`);
+                await github.rest.pulls.createReview({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: pr.number,
+                  event: "REQUEST_CHANGES",
+                  body: "❌ Cannot auto-approve: this PR has merge conflicts. Please resolve them first."
+                });
+                return;
+              }
+
+              // Approve the PR
+              core.info(`Adding approval from bot…`);
+              await github.rest.pulls.createReview({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+                event: "APPROVE",
+                body: "✅ Auto-approved cherry-pick PR 🍒."
+              });
+
+              core.info("Approval added.");              
+            }
