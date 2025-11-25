@@ -30,7 +30,7 @@ class UserAccountPage: PageModel {
     }
 
     var qrCodeButton: XCUIElement {
-        app.descendants(matching: .any)["QR code button"].firstMatch
+        app.buttons["QR code button"]
     }
 
     var createTeamButton: XCUIElement {
