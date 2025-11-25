@@ -27,7 +27,7 @@ class UserProfilePage: PageModel {
     }
 
     var qrCodeButton: XCUIElement {
-        app.descendants(matching: .any)[Locators.UserProfilePage.qrCodeButton.rawValue].firstMatch
+        app.buttons[Locators.UserProfilePage.qrCodeButton.rawValue]
     }
 
     var createTeamButton: XCUIElement {

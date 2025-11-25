@@ -26,15 +26,15 @@ class AccountSettingsPage: PageModel {
     }
 
     var nameField: XCUIElement {
-        app.descendants(matching: .any)[Locators.AccountSettingsPage.nameField.rawValue].firstMatch
+        app.textFields[Locators.AccountSettingsPage.nameField.rawValue]
     }
 
     var usernameField: XCUIElement {
-        app.descendants(matching: .any)[Locators.AccountSettingsPage.usernameField.rawValue].firstMatch
+        app.staticTexts[Locators.AccountSettingsPage.usernameField.rawValue]
     }
 
     var emailField: XCUIElement {
-        app.descendants(matching: .any)[Locators.AccountSettingsPage.emailField.rawValue].firstMatch
+        app.staticTexts[Locators.AccountSettingsPage.emailField.rawValue]
     }
 
     var domainField: XCUIElement {
@@ -66,7 +66,11 @@ class AccountSettingsPage: PageModel {
     }
 
     func getAccountName() -> String? {
-        nameField.value as? String
+        XCTAssertTrue(
+            nameField.waitForExistence(timeout: 5.0),
+            "NameField should exist before reading account name"
+        )
+        return nameField.value as? String
     }
 
     func getUsername() -> String {
