@@ -76,6 +76,19 @@ final class RestAPI: Sendable {
         }
     }
 
+    func getEditorURL(id: UUID) async throws -> (url: URL, date: Date)? {
+        do {
+            let response = try await NodeServiceAPI.getByUuid(
+                uuid: id.transportString(),
+                flags: [.withEditorURLs],
+                apiConfiguration: makeConfiguration()
+            )
+            return response.editorURLs?["collabora"]?.info
+        } catch let error as ErrorResponse {
+            throw error.underlyingError
+        }
+    }
+
     /// Renames a node.
     ///
     /// - Parameters:
@@ -410,5 +423,20 @@ private extension ErrorResponse {
         case let .error(_, _, _, error):
             error
         }
+    }
+}
+
+private extension RestPreSignedURL {
+
+    var info: (url: URL, date: Date)? {
+        guard
+            let urlString = self.url,
+            let url = URL(string: urlString),
+            let expiresAtString = self.expiresAt,
+            let expiresAtTimeInterval = TimeInterval(expiresAtString)
+        else {
+            return nil
+        }
+        return (url: url, date: Date(timeIntervalSinceNow: expiresAtTimeInterval))
     }
 }

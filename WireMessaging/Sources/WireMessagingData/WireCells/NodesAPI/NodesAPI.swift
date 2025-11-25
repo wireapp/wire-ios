@@ -25,7 +25,7 @@ package enum NodesAPIError: Error {
     case moveFailed
 }
 
-package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol {
+package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol, WireCellsEditingURLRepositoryProtocol {
     private let awsClient: AWSClient
     private let restAPI: RestAPI
     private let fileManager: FileManager
@@ -143,6 +143,10 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         } catch {
             throw error
         }
+    }
+
+    package func getEditorURL(id: UUID) async throws -> (url: URL, date: Date)? {
+        try await restAPI.getEditorURL(id: id)
     }
 
     package func createPublicLink(nodeID: UUID, fileName: String) async throws -> WireCellsPublicLink {
