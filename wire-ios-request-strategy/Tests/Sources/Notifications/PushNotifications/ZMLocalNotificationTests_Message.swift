@@ -95,7 +95,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     func testThatItShowsDefaultAlertBodyWhenHidePreviewSettingIsTrue() {
 
         // given
-        syncMOC.performGroupedAndWait { 
+        syncMOC.performGroupedAndWait {
             self.sender.name = "Super User"
             let note1 = self.textNotification(self.oneOnOneConversation, sender: self.sender)
             XCTAssertEqual(note1?.content.title, "Super User")
