@@ -87,7 +87,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     ) -> String {
         let note = textNotification(conversation, sender: sender, text: text, isEphemeral: isEphemeral)
         XCTAssertNotNil(note)
-        return note!.body
+        return note?.body ?? "no body defined"
     }
 
     // MARK: Tests
@@ -95,7 +95,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     func testThatItShowsDefaultAlertBodyWhenHidePreviewSettingIsTrue() {
 
         // given
-        syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait { 
             self.sender.name = "Super User"
             let note1 = self.textNotification(self.oneOnOneConversation, sender: self.sender)
             XCTAssertEqual(note1?.content.title, "Super User")
