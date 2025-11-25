@@ -50,8 +50,8 @@ jobs:
 
               while (true) {
                 const { data: files } = await github.rest.pulls.listFiles({
-                  owner,
-                  repo,
+                  context.repo.owner,
+                  context.repo.repo,
                   pull_number: pr.number,
                   per_page,
                   page,
