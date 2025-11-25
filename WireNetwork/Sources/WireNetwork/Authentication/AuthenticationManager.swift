@@ -112,8 +112,9 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
             currentToken = .cached(newToken)
             return newToken
         } catch {
-            let errorMessage = SafePublicLoggable(String(describing: error))
-            WireLogger.authentication.error("Failed to renew access token with error: \(errorMessage)")
+            WireLogger.authentication.error(
+                "Failed to renew access token with error: \(String(describing: error))", attributes: .safePublic
+            )
 
             currentToken = nil
 
@@ -123,7 +124,9 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
                 case .invalidCredentials:
                     // can't recover, deleting cookies and logging out
                     try await cookieStorage.removeCookies()
-                    WireLogger.authentication.info("Removed cookies (invalidCredentials)")
+                    WireLogger.authentication.info(
+                        "Removed cookies (invalidCredentials)", attributes: .safePublic
+                    )
 
                     onAuthenticationFailure()
                 }

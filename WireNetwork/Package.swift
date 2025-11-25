@@ -21,6 +21,7 @@ let package = Package(
             name: "WireNetwork",
             dependencies: [
                 .product(name: "WireCrypto", package: "WireFoundation"),
+                .product(name: "WireLegacyLogging", package: "WireLogging"),
                 .product(name: "WireFoundation", package: "WireFoundation"),
                 .product(name: "WireLogging", package: "WireLogging")
             ]
