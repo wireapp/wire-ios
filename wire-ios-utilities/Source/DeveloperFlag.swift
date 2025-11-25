@@ -24,7 +24,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
     case createLegacyBackups
     case showCreateMLSGroupToggle
-    case proteusViaCoreCrypto
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
     case skipMLSMessagesDecryption
@@ -50,9 +49,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .showCreateMLSGroupToggle:
             "Turn on to show the MLS toggle when creating a new group."
-
-        case .proteusViaCoreCrypto:
-            "Turn on to use CoreCrypto for proteus messaging."
 
         case .forceDatabaseLoadingFailure:
             "Turn on to force database loading failure in the process of database migration"
@@ -134,8 +130,6 @@ public enum DeveloperFlag: String, CaseIterable {
         switch self {
         case .createLegacyBackups:
             "CreateLegacyBackupsEnabled"
-        case .proteusViaCoreCrypto:
-            "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:

@@ -27,13 +27,10 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
     var sut: CryptoboxMigrationManager!
     var mockFileManager: MockFileManagerInterface!
-    var proteusViaCoreCryptoFlag: DeveloperFlag!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
 
     override func setUp() {
         super.setUp()
-        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
-        proteusViaCoreCryptoFlag = .proteusViaCoreCrypto
 
         mockFileManager = MockFileManagerInterface()
         mockFileManager.cryptoboxDirectoryIn_MockValue = cryptoboxDirectory
@@ -51,9 +48,6 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
             syncMOC.proteusService = nil
         }
 
-        proteusViaCoreCryptoFlag.isOn = false
-        DeveloperFlag.storage = UserDefaults.standard
-
         super.tearDown()
     }
 
@@ -67,10 +61,9 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
     // MARK: - Verifying if migration is needed
 
-    func test_IsMigrationNeeded_FilesExistAndFlagIsOn() {
+    func test_IsMigrationNeeded_FilesExist() {
         // Given
         mockFileManager.fileExistsAtPath_MockValue = true
-        proteusViaCoreCryptoFlag.isOn = true
 
         // When
         let result = sut.isMigrationNeeded(accountDirectory: accountDirectory)
@@ -79,22 +72,9 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(result)
     }
 
-    func test_IsMigrationNeeded_FilesExistAndFlagIsOff() {
-        // Given
-        mockFileManager.fileExistsAtPath_MockValue = true
-        proteusViaCoreCryptoFlag.isOn = false
-
-        // When
-        let result = sut.isMigrationNeeded(accountDirectory: accountDirectory)
-
-        // Then
-        XCTAssertFalse(result)
-    }
-
-    func test_IsMigrationNeeded_FilesDoNotExistAndFlagIsOn() {
+    func test_IsMigrationNeeded_FilesDoNotExist() {
         // Given
         mockFileManager.fileExistsAtPath_MockValue = false
-        proteusViaCoreCryptoFlag.isOn = true
 
         // When
         let result = sut.isMigrationNeeded(accountDirectory: accountDirectory)
@@ -109,7 +89,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         // Given
         let migrated = customExpectation(description: "Cryptobox was migrated")
         mockFileManager.fileExistsAtPath_MockValue = true
-        proteusViaCoreCryptoFlag.isOn = true
+
         mockSafeCoreCrypto.coreCryptoContext.proteusCryptoboxMigratePath_MockMethod = { _ in
             migrated.fulfill()
         }
@@ -125,7 +105,6 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
     func test_itDoesNotPerformMigration_CoreCryptoError() async {
         // Given
         mockFileManager.fileExistsAtPath_MockValue = true
-        proteusViaCoreCryptoFlag.isOn = true
 
         mockSafeCoreCrypto.coreCryptoContext.proteusCryptoboxMigratePath_MockMethod = { _ in
             throw CryptoboxMigrationManager.Failure.failedToMigrateData

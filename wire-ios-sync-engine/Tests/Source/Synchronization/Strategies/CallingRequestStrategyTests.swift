@@ -32,13 +32,6 @@ class CallingRequestStrategyTests: MessagingTest {
     var mockFetchUserClientsUseCase: MockFetchUserClientsUseCase!
     var mockMessageSender: MockMessageSenderInterface!
 
-    override class func setUp() {
-        super.setUp()
-
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = false
-    }
-
     override func setUp() {
         super.setUp()
 

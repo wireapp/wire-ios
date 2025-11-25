@@ -401,13 +401,6 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
             context.accountDirectoryURL = self.accountContainer
             context.applicationContainerURL = self.applicationContainer
 
-            if !DeveloperFlag.proteusViaCoreCrypto.isOn {
-                context.setupUserKeyStore(
-                    accountDirectory: self.accountContainer,
-                    applicationContainer: self.applicationContainer
-                )
-            }
-
             context.undoManager = nil
             context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
 

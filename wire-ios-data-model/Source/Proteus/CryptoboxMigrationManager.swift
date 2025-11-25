@@ -60,7 +60,6 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
     // MARK: - Methods
 
     public func isMigrationNeeded(accountDirectory: URL) -> Bool {
-        guard DeveloperFlag.proteusViaCoreCrypto.isOn else { return false }
         let cryptoboxDirectory = fileManager.cryptoboxDirectory(in: accountDirectory)
         return fileManager.fileExists(atPath: cryptoboxDirectory.path)
     }
