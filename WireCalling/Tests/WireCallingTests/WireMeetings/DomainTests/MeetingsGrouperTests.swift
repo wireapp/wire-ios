@@ -26,11 +26,11 @@ struct MeetingsGrouperTests {
     let grouper = MeetingsGrouper()
     let calendar = Calendar.current
 
-    // MARK: - Grouping by Day Tests
+    // MARK: - Grouping by day
 
     @Test("group meetings by day without hour grouping")
-    func testGroupByDayOnly() {
-        let today = makeDate(day: 15, hour: 10, minute: 0, issueMessage: "Failed to create today date")
+    func testGroupByDayOnly() throws {
+        let today = try makeDate(day: 15, hour: 10, minute: 0, issueMessage: "Failed to create today date")
 
         guard let tomorrow = calendar.date(byAdding: .day, value: 1, to: today) else {
             Issue.record("Failed to create tomorrow date")
@@ -53,10 +53,10 @@ struct MeetingsGrouperTests {
     }
 
     @Test("group meetings by day and hour")
-    func testGroupByDayAndHour() {
-        let date1 = makeDate(day: 15, hour: 10, minute: 0, issueMessage: "Failed to create first date")
-        let date2 = makeDate(day: 15, hour: 10, minute: 30, issueMessage: "Failed to create second date")
-        let date3 = makeDate(day: 15, hour: 14, minute: 0, issueMessage: "Failed to create third date")
+    func testGroupByDayAndHour() throws {
+        let date1 = try makeDate(day: 15, hour: 10, minute: 0, issueMessage: "Failed to create first date")
+        let date2 = try makeDate(day: 15, hour: 10, minute: 30, issueMessage: "Failed to create second date")
+        let date3 = try makeDate(day: 15, hour: 14, minute: 0, issueMessage: "Failed to create third date")
         let meetings = [
             createMeeting(title: "Morning Meeting 1", start: date1),
             createMeeting(title: "Morning Meeting 2", start: date2),
@@ -71,11 +71,11 @@ struct MeetingsGrouperTests {
         #expect(result[0].timeSlots[1].meetings.count == 1)
     }
 
-    // MARK: - Sorting Tests
+    // MARK: - Sorting
 
     @Test("group meetings in ascending order")
-    func testAscendingSort() {
-        let today = makeDate(day: 15, hour: 10, minute: 0, issueMessage: "Failed to create today date")
+    func testAscendingSort() throws {
+        let today = try makeDate(day: 15, hour: 10, minute: 0, issueMessage: "Failed to create today date")
         guard let yesterday = calendar.date(byAdding: .day, value: -1, to: today),
               let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)
         else {
@@ -97,8 +97,8 @@ struct MeetingsGrouperTests {
     }
 
     @Test("group meetings in descending order")
-    func testDescendingSort() {
-        let today = makeDate(day: 15, hour: 10, minute: 0, issueMessage: "Failed to create today date")
+    func testDescendingSort() throws {
+        let today = try makeDate(day: 15, hour: 10, minute: 0, issueMessage: "Failed to create today date")
         guard let yesterday = calendar.date(byAdding: .day, value: -1, to: today),
               let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)
         else {
@@ -119,13 +119,13 @@ struct MeetingsGrouperTests {
         #expect(result[1].day > result[2].day)
     }
 
-    // MARK: - Meeting Sorting Within Groups
+    // MARK: - Sorting within groups
 
     @Test("meetings are sorted by start time within groups")
-    func testMeetingsSortedWithinGroups() {
-        let date1 = makeDate(day: 15, hour: 14, minute: 0, issueMessage: "Failed to create first date")
-        let date2 = makeDate(day: 15, hour: 10, minute: 0, issueMessage: "Failed to create second date")
-        let date3 = makeDate(day: 15, hour: 12, minute: 0, issueMessage: "Failed to create third date")
+    func testMeetingsSortedWithinGroups() throws {
+        let date1 = try makeDate(day: 15, hour: 14, minute: 0, issueMessage: "Failed to create first date")
+        let date2 = try makeDate(day: 15, hour: 10, minute: 0, issueMessage: "Failed to create second date")
+        let date3 = try makeDate(day: 15, hour: 12, minute: 0, issueMessage: "Failed to create third date")
 
         let meetings = [
             createMeeting(title: "Afternoon", start: date1),
@@ -144,8 +144,8 @@ struct MeetingsGrouperTests {
     }
 
     @Test("meetings with same start time are sorted by title")
-    func testMeetingsSortedByTitleWhenSameStartTime() {
-        let sameTime = makeDate(day: 15, hour: 10, minute: 0, issueMessage: "Failed to create date")
+    func testMeetingsSortedByTitleWhenSameStartTime() throws {
+        let sameTime = try makeDate(day: 15, hour: 10, minute: 0, issueMessage: "Failed to create date")
 
         let meetings = [
             createMeeting(title: "Zebra Meeting", start: sameTime),
@@ -163,8 +163,6 @@ struct MeetingsGrouperTests {
         #expect(sortedMeetings[2].title == "Zebra Meeting")
     }
 
-    // MARK: - Edge Cases
-
     @Test("group empty meetings array")
     func testGroupEmptyMeetings() {
         let meetings: [Meeting] = []
@@ -175,8 +173,8 @@ struct MeetingsGrouperTests {
     }
 
     @Test("group single meeting")
-    func testGroupSingleMeeting() {
-        let date = makeDate(day: 15, hour: 10, minute: 0, issueMessage: "Failed to create date")
+    func testGroupSingleMeeting() throws {
+        let date = try makeDate(day: 15, hour: 10, minute: 0, issueMessage: "Failed to create date")
 
         let meetings = [
             createMeeting(title: "Single Meeting", start: date)
@@ -191,11 +189,11 @@ struct MeetingsGrouperTests {
     }
 
     @Test("group meetings across multiple days with hours")
-    func testGroupMultipleDaysWithHours() {
-        let day1Time1 = makeDate(day: 15, hour: 10, minute: 0)
-        let day1Time2 = makeDate(day: 15, hour: 14, minute: 0)
-        let day2Time1 = makeDate(day: 16, hour: 10, minute: 0)
-        let day2Time2 = makeDate(day: 16, hour: 14, minute: 0)
+    func testGroupMultipleDaysWithHours() throws {
+        let day1Time1 = try makeDate(day: 15, hour: 10, minute: 0)
+        let day1Time2 = try makeDate(day: 15, hour: 14, minute: 0)
+        let day2Time1 = try makeDate(day: 16, hour: 10, minute: 0)
+        let day2Time2 = try makeDate(day: 16, hour: 14, minute: 0)
 
         let meetings = [
             createMeeting(title: "Day 1 Morning", start: day1Time1),
@@ -212,9 +210,9 @@ struct MeetingsGrouperTests {
     }
 
     @Test("hour grouping rounds down to hour boundary")
-    func testHourGroupingRoundsToHourBoundary() {
-        let time1 = makeDate(day: 15, hour: 10, minute: 15)
-        let time2 = makeDate(day: 15, hour: 10, minute: 45)
+    func testHourGroupingRoundsToHourBoundary() throws {
+        let time1 = try makeDate(day: 15, hour: 10, minute: 15)
+        let time2 = try makeDate(day: 15, hour: 10, minute: 45)
 
         let meetings = [
             createMeeting(title: "Meeting 1", start: time1),
@@ -251,7 +249,7 @@ struct MeetingsGrouperTests {
         hour: Int,
         minute: Int = 0,
         issueMessage: String = "Failed to create date"
-    ) -> Date {
+    ) throws -> Date {
         var components = DateComponents()
         components.year = year
         components.month = month
@@ -261,10 +259,14 @@ struct MeetingsGrouperTests {
 
         guard let date = calendar.date(from: components) else {
             Issue.record(issueMessage)
-            fatalError(issueMessage)
+            throw TestDateError.invalidDate(issueMessage)
         }
 
         return date
+    }
+
+    enum TestDateError: Error {
+        case invalidDate(String)
     }
 
 }
