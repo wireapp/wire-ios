@@ -33,6 +33,5 @@ public final class ConversationTypePickerFactory {
             availableConversationTypes: availableConversationTypes,
             onConversationTypeSelected: onConversationTypeSelected
         )
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 }

@@ -27,7 +27,7 @@ struct FileRenameView: View, Identifiable {
     @StateObject package var viewModel: FileRenameViewModel
     @Environment(\.dismiss) var dismiss
 
-    var id = UUID()
+    let id = UUID()
 
     init(viewModel: @autoclosure @escaping () -> FileRenameViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
@@ -41,8 +41,8 @@ struct FileRenameView: View, Identifiable {
 
                 VStack {
                     ValidationTextField(
-                        title: Strings.Files.FileName.title,
-                        placeholder: Strings.Files.RenameFile.placeholder,
+                        title: viewModel.title,
+                        placeholder: viewModel.placeholder,
                         textInput: $viewModel.filenameInput,
                         errorMessage: $viewModel.errorMessage,
                         isFocused: $viewModel.isFocused
@@ -50,7 +50,7 @@ struct FileRenameView: View, Identifiable {
                     .padding()
                     .submitLabel(.send)
                     .onSubmit {
-                        if !isSaveDisabled() {
+                        if !viewModel.isSaveDisabled {
                             save()
                         }
                     }
@@ -58,7 +58,7 @@ struct FileRenameView: View, Identifiable {
                     Spacer()
                 }
             }
-            .navigationTitle(Strings.Files.RenameFile.navigationTitle)
+            .navigationTitle(viewModel.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
             .toolbar { toolbarContent }
@@ -72,10 +72,6 @@ struct FileRenameView: View, Identifiable {
                 dismiss()
             }
         }
-    }
-
-    private func isSaveDisabled() -> Bool {
-        viewModel.errorMessage != nil || viewModel.filenameInput.isEmpty
     }
 
 }
@@ -115,7 +111,7 @@ private extension FileRenameView {
                         Text(L10n.Localizable.General.save)
                     }
                 )
-                .disabled(isSaveDisabled())
+                .disabled(viewModel.isSaveDisabled)
                 .accessibilityLabel(L10n.Accessibility.General.save)
                 .accessibilityIdentifier("save")
             }
@@ -124,5 +120,5 @@ private extension FileRenameView {
 }
 
 #Preview {
-    FileRenameView(viewModel: .preview())
+    FileRenameView(viewModel: .preview(kind: .file))
 }

@@ -93,7 +93,7 @@ static id<UserType> mockSelfUser = nil;
     return [[MockUser alloc] initWithJSONObject:@{@"name": @"GitHub",
                                                   @"displayName": @"GitHub",
                                                   @"isSelfUser": @false,
-                                                  @"isServiceUser": @true,
+                                                  @"isApp": @true,
                                                   @"isConnected": @true,
                                                   @"accentColorValue": @1}];
 }
@@ -147,7 +147,7 @@ static id<UserType> mockSelfUser = nil;
 
 #pragma mark - ZMUserConnection
 
-@synthesize isServiceUser;
+@synthesize isApp;
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol
 {

@@ -66,7 +66,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
         // when
         let request = WireSyncEngine.WirelessRequestFactory.setAccessRoles(
             allowGuests: true,
-            allowServices: false,
+            allowApps: false,
             for: conversation,
             apiVersion: .v3,
             localDomain: "wire.com"
@@ -102,7 +102,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
         // when
         let request = WireSyncEngine.WirelessRequestFactory.setAccessRoles(
             allowGuests: true,
-            allowServices: false,
+            allowApps: false,
             for: conversation,
             apiVersion: apiVersion,
             localDomain: "wire.com"

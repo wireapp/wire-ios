@@ -55,12 +55,16 @@ let package = Package(
         .target(
             name: "WireFoundationSupport",
             dependencies: ["WireFoundation"],
-            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
+            ]
         ),
 
         .target(
             name: "WireUtilitiesPackage",
-            dependencies: ["ZIPFoundation"]
+            dependencies: [
+                .product(name: "ZIPFoundation", package: "ZIPFoundation")
+            ]
         ),
         .testTarget(
             name: "WireUtilitiesPackageTests",
@@ -76,7 +80,9 @@ let package = Package(
         .target(
             name: "WireUtilitiesPackageSupport",
             dependencies: ["WireUtilitiesPackage"],
-            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
+            ]
         ),
 
         .target(

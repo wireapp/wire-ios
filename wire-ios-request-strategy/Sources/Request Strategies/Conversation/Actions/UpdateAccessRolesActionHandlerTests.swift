@@ -192,7 +192,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
                 ConversationAccessRoleV2.teamMember,
                 ConversationAccessRoleV2.nonTeamMember,
                 ConversationAccessRoleV2.guest,
-                ConversationAccessRoleV2.service
+                ConversationAccessRoleV2.app
             ])
 
             sut.handleResponse(response, action: action)

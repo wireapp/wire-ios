@@ -36,9 +36,4 @@ protocol WorkItem: Sendable {
     /// Start the work for this item.
 
     func start() async throws
-
-    /// Cancel the work item.
-
-    func cancel() async
-
 }

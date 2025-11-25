@@ -196,14 +196,17 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     private func mapBackupMessages(
         fromPage page: KotlinArray<BackupMessage>,
-        storedMessageIDs: Set<String>
+        storedMessageIDs: Set<UUID>
     ) -> [MessageBackupModel] {
         var backupMessages: [MessageBackupModel] = []
 
         for current in 0 ..< page.size {
-            guard let backupMessage = page.get(index: current) else { continue }
+            guard
+                let backupMessage = page.get(index: current),
+                let backupMessageID = UUID(uuidString: backupMessage.id)
+            else { continue }
 
-            if !storedMessageIDs.contains(backupMessage.id),
+            if !storedMessageIDs.contains(backupMessageID),
                let message = MessageBackupModel(backupMessage) {
                 backupMessages.append(message)
             }

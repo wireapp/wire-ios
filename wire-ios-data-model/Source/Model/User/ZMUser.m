@@ -63,6 +63,7 @@ static NSString *const ReactionsKey = @"reactions";
 static NSString *const AddressBookEntryKey = @"addressBookEntry";
 static NSString *const MembershipKey = @"membership";
 static NSString *const CreatedTeamsKey = @"createdTeams";
+static NSString *const TypeKey = @"typeValue";
 static NSString *const ServiceIdentifierKey = @"serviceIdentifier";
 static NSString *const ProviderIdentifierKey = @"providerIdentifier";
 NSString *const AvailabilityKey = @"availability";
@@ -157,14 +158,9 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 @implementation ZMUser
 
-- (BOOL)isServiceUser
++ (NSSet<NSString *> *)keyPathsForValuesAffectingIsApp
 {
-    return self.serviceIdentifier != nil && self.providerIdentifier != nil;
-}
-
-+ (NSSet<NSString *> *)keyPathsForValuesAffectingIsServiceUser
-{
-    return [NSSet setWithObjects:ServiceIdentifierKey, ProviderIdentifierKey, nil];
+    return [NSSet setWithObjects:TypeKey, nil];
 }
 
 - (BOOL)isSelfUser
@@ -243,7 +239,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 - (BOOL)canBeConnected;
 {
-    if (self.isServiceUser || self.isWirelessUser) {
+    if (self.isApp || self.isWirelessUser) {
         return NO;
     }
     return ! self.isConnected && ! self.isPendingApprovalByOtherUser;

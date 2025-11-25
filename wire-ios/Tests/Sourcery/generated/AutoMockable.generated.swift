@@ -31,6 +31,7 @@ import WireSyncEngine
 import WireAccountImageUI
 import WireMessagingDomain
 import WireMessagingUI
+import WireFoundation
 
 @testable import Wire
 @testable import WireCommonComponents
@@ -301,20 +302,20 @@ class MockConversationCellProviderProtocol: ConversationCellProviderProtocol {
 
     // MARK: - provideCell
 
-    var provideCellForTableViewIndexPath_Invocations: [(model: ConversationCellModel, tableView: UITableView, indexPath: IndexPath)] = []
-    var provideCellForTableViewIndexPath_MockMethod: ((ConversationCellModel, UITableView, IndexPath) -> UITableViewCell)?
-    var provideCellForTableViewIndexPath_MockValue: UITableViewCell?
+    var provideCellForTableViewIndexPathOnLongPress_Invocations: [(model: ConversationCellModel, tableView: UITableView, indexPath: IndexPath, onLongPress: (UITableViewCell) -> Void)] = []
+    var provideCellForTableViewIndexPathOnLongPress_MockMethod: ((ConversationCellModel, UITableView, IndexPath, @escaping (UITableViewCell) -> Void) -> UITableViewCell)?
+    var provideCellForTableViewIndexPathOnLongPress_MockValue: UITableViewCell?
 
     @MainActor
-    func provideCell(for model: ConversationCellModel, tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
-        provideCellForTableViewIndexPath_Invocations.append((model: model, tableView: tableView, indexPath: indexPath))
+    func provideCell(for model: ConversationCellModel, tableView: UITableView, indexPath: IndexPath, onLongPress: @escaping (UITableViewCell) -> Void) -> UITableViewCell {
+        provideCellForTableViewIndexPathOnLongPress_Invocations.append((model: model, tableView: tableView, indexPath: indexPath, onLongPress: onLongPress))
 
-        if let mock = provideCellForTableViewIndexPath_MockMethod {
-            return mock(model, tableView, indexPath)
-        } else if let mock = provideCellForTableViewIndexPath_MockValue {
+        if let mock = provideCellForTableViewIndexPathOnLongPress_MockMethod {
+            return mock(model, tableView, indexPath, onLongPress)
+        } else if let mock = provideCellForTableViewIndexPathOnLongPress_MockValue {
             return mock
         } else {
-            fatalError("no mock for `provideCellForTableViewIndexPath`")
+            fatalError("no mock for `provideCellForTableViewIndexPathOnLongPress`")
         }
     }
 
@@ -483,15 +484,15 @@ class MockCreateGroupConversationViewControllerBuilderProtocol: CreateGroupConve
     // MARK: - build
 
     var build_Invocations: [Void] = []
-    var build_MockMethod: (() -> UIViewController)?
+    var build_MockMethod: (() async -> UIViewController)?
     var build_MockValue: UIViewController?
 
     @MainActor
-    func build() -> UIViewController {
+    func build() async -> UIViewController {
         build_Invocations.append(())
 
         if let mock = build_MockMethod {
-            return mock()
+            return await mock()
         } else if let mock = build_MockValue {
             return mock
         } else {
@@ -1858,20 +1859,20 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
 
     // MARK: - makeFilesView
 
-    var makeFilesViewCellNameIsCellsStatePending_Invocations: [(cellName: String, isCellsStatePending: Bool)] = []
-    var makeFilesViewCellNameIsCellsStatePending_MockMethod: ((String, Bool) -> UIViewController)?
-    var makeFilesViewCellNameIsCellsStatePending_MockValue: UIViewController?
+    var makeFilesViewCellNameIsCellsStatePendingAccentColor_Invocations: [(cellName: String, isCellsStatePending: Bool, accentColor: WireAccentColor)] = []
+    var makeFilesViewCellNameIsCellsStatePendingAccentColor_MockMethod: ((String, Bool, WireAccentColor) -> UIViewController)?
+    var makeFilesViewCellNameIsCellsStatePendingAccentColor_MockValue: UIViewController?
 
     @MainActor
-    func makeFilesView(cellName: String, isCellsStatePending: Bool) -> UIViewController {
-        makeFilesViewCellNameIsCellsStatePending_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending))
+    func makeFilesView(cellName: String, isCellsStatePending: Bool, accentColor: WireAccentColor) -> UIViewController {
+        makeFilesViewCellNameIsCellsStatePendingAccentColor_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending, accentColor: accentColor))
 
-        if let mock = makeFilesViewCellNameIsCellsStatePending_MockMethod {
-            return mock(cellName, isCellsStatePending)
-        } else if let mock = makeFilesViewCellNameIsCellsStatePending_MockValue {
+        if let mock = makeFilesViewCellNameIsCellsStatePendingAccentColor_MockMethod {
+            return mock(cellName, isCellsStatePending, accentColor)
+        } else if let mock = makeFilesViewCellNameIsCellsStatePendingAccentColor_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeFilesViewCellNameIsCellsStatePending`")
+            fatalError("no mock for `makeFilesViewCellNameIsCellsStatePendingAccentColor`")
         }
     }
 

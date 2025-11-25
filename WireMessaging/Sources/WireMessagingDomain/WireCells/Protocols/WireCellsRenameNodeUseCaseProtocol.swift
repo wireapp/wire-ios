@@ -24,7 +24,8 @@ public protocol WireCellsRenameNodeUseCaseProtocol: Sendable {
     func invoke(
         nodeID: UUID,
         nodeFilepath: String,
-        newFilename: String
+        newFilename: String,
+        isFolder: Bool
     ) async throws
 
 }

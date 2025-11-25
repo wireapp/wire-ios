@@ -27,11 +27,7 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 @MainActor
 final class FileRenameViewModel: ObservableObject {
 
-    private enum Constants {
-        static let maxInputLength = 64
-    }
-
-    struct FileRenameModel {
+    struct Model {
         let nodeID: UUID
         let filename: String
         let filepath: String
@@ -43,17 +39,71 @@ final class FileRenameViewModel: ObservableObject {
     @Published var isFocused: Bool = true
     @Published var didRename: Bool = false
 
+    var isSaveDisabled: Bool {
+        errorMessage != nil || !isInputValid
+    }
+
     private let renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol
-    private let fileRenameModel: FileRenameModel
+    private let model: Model
+    private let kind: FilesViewItem.Kind
     private var subscriptions = Set<AnyCancellable>()
+    private let filenameValidator = FilenameValidator()
+    private var isInputValid = true
+
+    var title: String {
+        switch kind {
+        case .folder:
+            Strings.Files.FolderName.title
+        case .file:
+            Strings.Files.FileName.title
+        }
+    }
+
+    var placeholder: String {
+        switch kind {
+        case .folder:
+            Strings.Files.RenameFolder.placeholder
+        case .file:
+            Strings.Files.RenameFile.placeholder
+        }
+    }
+
+    var navigationTitle: String {
+        switch kind {
+        case .folder:
+            Strings.Files.RenameFolder.navigationTitle
+        case .file:
+            Strings.Files.RenameFile.navigationTitle
+        }
+    }
+
+    private var inputTooLongErrorMessage: String {
+        switch kind {
+        case .folder:
+            Strings.Files.RenameFolder.folderNameTooLongError
+        case .file:
+            Strings.Files.RenameFile.filenameTooLongError
+        }
+    }
+
+    private var alreadyExistsErrorMessage: String {
+        switch kind {
+        case .folder:
+            Strings.Files.RenameFolder.folderAlreadyExistsError
+        case .file:
+            Strings.Files.RenameFile.fileAlreadyExistsError
+        }
+    }
 
     init(
         renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol,
-        fileRenameModel: FileRenameModel
+        model: Model,
+        kind: FilesViewItem.Kind
     ) {
         self.renameNodeUseCase = renameNodeUseCase
-        self.filenameInput = Self.removeFileExtension(from: fileRenameModel.filename)
-        self.fileRenameModel = fileRenameModel
+        self.filenameInput = kind == .folder ? model.filename : Self.removeFileExtension(from: model.filename)
+        self.model = model
+        self.kind = kind
 
         bindTextInput()
     }
@@ -63,13 +113,14 @@ final class FileRenameViewModel: ObservableObject {
 
         do {
             isLoading = true
-            let nodeID = fileRenameModel.nodeID
-            let nodeFilePath = fileRenameModel.filepath
+            let nodeID = model.nodeID
+            let nodeFilePath = model.filepath
 
             try await renameNodeUseCase.invoke(
                 nodeID: nodeID,
                 nodeFilepath: nodeFilePath,
-                newFilename: filenameInput
+                newFilename: filenameInput,
+                isFolder: kind == .folder
             )
 
             didRename = true
@@ -82,12 +133,13 @@ final class FileRenameViewModel: ObservableObject {
             case .serverFailedToRenameNode, .invalidPath:
                 errorMessage = L10n.Localizable.General.failure
             case .fileAlreadyExists:
-                errorMessage = Strings.Files.RenameFile.fileAlreadyExistsError
+                errorMessage = alreadyExistsErrorMessage
             }
 
             return false
         } catch {
             isLoading = false
+            errorMessage = L10n.Localizable.General.failure
             WireLogger.wireCells.error("Renaming file failed: \(error)")
             return false
         }
@@ -97,18 +149,31 @@ final class FileRenameViewModel: ObservableObject {
 
     private func bindTextInput() {
         $filenameInput
-            .sink { [weak self] input in
-                self?.validateTextInput(input)
+            .compactMap { [weak self] input in
+                self?.filenameValidator.validate(input)
+            }
+            .flatMap(\.self)
+            .sink { [weak self] result in
+                self?.handleValidationResult(result)
             }.store(in: &subscriptions)
+
     }
 
-    private func validateTextInput(_ textInput: String) {
-        if textInput.count > Constants.maxInputLength {
-            errorMessage = Strings.Files.RenameFile.filenameTooLongError
-        } else if textInput.contains("/") {
-            errorMessage = Strings.Files.RenameFile.wrongCharacterError
-        } else {
+    private func handleValidationResult(_ result: Result<Void, FilenameValidator.Failure>) {
+        switch result {
+        case .success:
+            isInputValid = true
             errorMessage = nil
+        case let .failure(failure):
+            isInputValid = false
+            switch failure {
+            case .tooLong:
+                errorMessage = inputTooLongErrorMessage
+            case .slashCharacter, .dotPrefix:
+                errorMessage = Strings.Files.RenameFile.wrongCharacterError
+            case .empty:
+                errorMessage = nil
+            }
         }
     }
 

@@ -20,10 +20,15 @@
 "general.loading" = "Загрузка…";
 "general.confirm" = "OK";
 "general.failure" = "Что-то пошло не так";
+"general.close" = "Закрыть";
+"general.save" = "Сохранить";
+"general.cancel" = "Отмена";
 "general.error.unknown.title." = "Что-то пошло не так";
 "general.error.unknown.message." = "Повторите попытку позже.";
 "general.error.noInternet.title." = "Отсутствует подключение к интернету";
 "general.error.noInternet.message." = "Похоже, возникла проблема с вашей сетью. Пожалуйста, попробуйте позже.";
+"general.create" = "Создать";
+"general.cancel" = "Отмена";
 
 // MARK: - Channel Access level
 "channel_access_level.public" = "Публичный";
@@ -42,7 +47,7 @@
 "channel_access_level.change_level_alert.title" = "Изменить доступ с публичного на приватный?";
 "channel_access_level.change_level_alert.message" = "Это означает, что члены команды не смогут присоединиться к этому каналу самостоятельно.\\В зависимости от вашего выбора, добавлять новых участников могут только администраторы канала или как администраторы, так и участники.Вы не сможете отменить этот шаг. Канал останется закрытым.";
 "channel_access_level.change_level_alert.button.change" = "Изменить на приватный";
-"channel_access_level.change_level_alert.button.cancel" = "Отмена";
+"channel_access_level.change_level_alert.button.cancel" = "Cancel";
 
 
 "conversation.create.channel.title" = "Новый канал";
@@ -51,7 +56,7 @@
 
 // MARK: - Navigation
 "conversation.create.channel.back" = "Назад";
-"conversation.create.channel.next" = "Вперед";
+"conversation.create.channel.next" = "Next";
 
 // MARK: - Channel name
 "conversation.creationForm.channelName.sectionTitle" = "Название канала";
@@ -70,7 +75,7 @@
 
 "conversation.creationForm.options.footer" = "Все члены команды могут присоединяться к публичным каналам. Но только администраторы или участники канала могут добавлять людей в приватный канал. Приватный канал не может быть позже изменен на публичный.";
 
-"conversation.creationForm.services.toggle" = "Разрешить сервисы";
+"conversation.creationForm.apps.toggle" = "Разрешить приложения";
 "conversation.creationForm.guests.toggle" = "Разрешить гостей";
 "conversation.creationForm.guests.description" = "Открыть эту беседу для пользователей, не входящих в вашу команду или сервис.";
 
@@ -112,6 +117,7 @@
 "conversation.wireCells.files.item.menu.open" = "Открыть";
 "conversation.wireCells.files.item.menu.download" = "Скачать";
 "conversation.wireCells.files.item.menu.rename" = "Переименовать";
+"conversation.wireCells.files.item.menu.addOrRemoveTags" = "Добавить или удалить теги";
 "conversation.wireCells.files.item.menu.delete" = "Удалить навсегда";
 "conversation.wireCells.files.item.deleteConfirmation.title" = "Это приведет к необратимому удалению файла %@ для всех участников. Все потеряют доступ и восстановить файл будет невозможно.";
 "conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Удалить навсегда";
@@ -124,7 +130,39 @@
 "conversation.wireCells.files.error.message" = "Не удалось загрузить ваши файлы и папки. Пожалуйста, попробуйте еще раз.";
 "conversation.wireCells.files.error.reload" = "Перезагрузить";
 "conversation.wireCells.files.search.title" = "Поиск файлов";
+"conversation.wireCells.files.list.newFolder" = "Новая папка";
+"conversation.wireCells.files.newFolder.title" = "Название папки";
+"conversation.wireCells.files.newFolder.placeholder" = "Введите название папки";
+"conversation.wireCells.files.newFolder.navigationTitle" = "Создать папку";
+"conversation.wireCells.files.newFolder.folderNameTooLongError" = "Используйте более короткое название папки (максимум 64 символа)";
+"conversation.wireCells.files.newFolder.wrongCharacterError" = "Используйте название без \"/\"";
+"conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "Папка с таким названием уже существует";
+"conversation.wireCells.files.fileName.title" = "Имя файла";
+"conversation.wireCells.files.folderName.title" = "Название папки";
+"conversation.wireCells.files.renameFile.navigationTitle" = "Переименовать файл";
+"conversation.wireCells.files.renameFolder.navigationTitle" = "Переименовать папку";
+"conversation.wireCells.files.renameFile.filenameTooLongError" = "Используйте более короткое название файла (максимум 64 символа)";
+"conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Используйте более короткое название папки (максимум 64 символа)";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Используйте название без \"/\"";
+"conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "Файл с таким названием уже существует";
+"conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "Папка с таким названием уже существует";
+"conversation.wireCells.files.renameFile.placeholder" = "Введите название файла";
+"conversation.wireCells.files.renameFolder.placeholder" = "Введите название папки";
+
+// MARK: - File Tags View
+"conversation.wireCells.tags.title" = "Добавить или удалить теги";
+"conversation.wireCells.tags.headline" = "Все члены вашей команды могут видеть и использовать теги, которые вы создаете.";
+"conversation.wireCells.tags.suggestedTagsSection" = "Предлагаемые теги";
+"conversation.wireCells.tags.suggestedTagsSectionEmpty" = "Теги еще не созданы.";
+"conversation.wireCells.tags.textFieldPlaceholder" = "Введите название тега";
+"conversation.wireCells.tags.error.nameTooLong" = "Используйте более короткое название тега (не более 30 символов)";
+"conversation.wireCells.tags.error.specialCharacters" = "Использовать тег без специальных символов {0}";
+"conversation.wireCells.tags.error.saveFailedTitle" = "Не удается изменить теги";
+"conversation.wireCells.tags.error.saveFailedMessage" = "Из-за ошибки ваши теги не удалось отредактировать.";
+"conversation.wireCells.tags.error.retryButton" = "Повторить";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "Файл недоступен";
 "conversation.message.attachment.previewNotAvailable" = "Не удается отобразить предпросмотр";
+"conversation.message.attachment.unableToDownload" = "Не удается загрузить файл";
+"conversation.message.attachment.loadingContent" = "Загрузка контента";
