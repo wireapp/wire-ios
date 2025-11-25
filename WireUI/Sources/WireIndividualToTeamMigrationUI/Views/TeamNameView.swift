@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireReusableUIComponents
 
 struct TeamNameView: View {
@@ -47,6 +48,7 @@ struct TeamNameView: View {
                 title: .localized(key: "individualToTeam.teamName.field.title", bundle: .module),
                 string: $teamName
             )
+            .accessibilityIdentifier(Locators.TeamSetupStepsPage.teamNameTextField.rawValue)
 
             Spacer()
 
@@ -54,6 +56,7 @@ struct TeamNameView: View {
                 action: { actionCallback(.continue(teamName: validTeamName)) },
                 label: { Text(String.localized(key: "individualToTeam.button.continue", bundle: .module)) }
             )
+            .accessibilityIdentifier(Locators.TeamSetupStepsPage.continueButton.rawValue)
             .wireButtonStyle(.primary)
             .disabled(validTeamName.isEmpty)
         }

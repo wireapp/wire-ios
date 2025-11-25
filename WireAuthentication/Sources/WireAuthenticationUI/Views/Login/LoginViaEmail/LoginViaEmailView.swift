@@ -209,6 +209,7 @@ package struct LoginViaEmailView: View {
                     .cornerRadius(12)
             }
         }
+        .accessibilityIdentifier(String(describing: Locators.LoginPage.createAccountLink.rawValue))
     }
 
     @ViewBuilder private var proxyCredentials: some View {

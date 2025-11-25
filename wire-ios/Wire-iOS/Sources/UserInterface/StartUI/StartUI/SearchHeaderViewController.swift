@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 
 protocol SearchHeaderViewControllerDelegate: AnyObject {
     func searchHeaderViewController(
@@ -71,7 +72,7 @@ final class SearchHeaderViewController: UIViewController {
         clearButton.isHidden = true
         clearButton.setIconColor(SemanticColors.SearchBar.backgroundButton, for: .normal)
 
-        tokenField.textView.accessibilityIdentifier = "textViewSearch"
+        tokenField.textView.accessibilityIdentifier = Locators.SelectParticipantsPage.searchByNameOrUsername.rawValue
         tokenField.tokenTitleColor = SemanticColors.SearchBar.textInputView.resolvedColor(with: traitCollection)
         tokenField.textView.placeholder = L10n.Localizable.Peoplepicker.searchPlaceholder
         tokenField.textView.keyboardAppearance = .default

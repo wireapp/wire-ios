@@ -16,44 +16,41 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 /// User Account/profile page
-class UserAccountPage: PageModel {
+class UserProfilePage: PageModel {
 
     override var pageMainElement: XCUIElement {
         qrCodeButton
     }
 
-    var profileButton: XCUIElement {
-        app.descendants(matching: .any)["account_profile_image_view"].firstMatch
-    }
-
     var qrCodeButton: XCUIElement {
-        app.buttons["QR code button"]
+        app.buttons[Locators.UserProfilePage.qrCodeButton.rawValue]
     }
 
     var createTeamButton: XCUIElement {
-        app.otherElements.buttons["Create Wire Team"].firstMatch
+        app.otherElements.buttons[Locators.UserProfilePage.createWireTeamButton.rawValue].firstMatch
     }
 
     var teamNameOnAccountPage: XCUIElement {
-        app.staticTexts["team name"].firstMatch
+        app.descendants(matching: .any)[Locators.UserProfilePage.teamName.rawValue].firstMatch
     }
 
     var manageTeamButton: XCUIElement {
-        app.staticTexts["Manage Team & Billing"].firstMatch
+        app.buttons[Locators.UserProfilePage.addAcccountOrTeamButton.rawValue].firstMatch
     }
 
     var closeButton: XCUIElement {
-        app.descendants(matching: .any)["close"].firstMatch
+        app.descendants(matching: .any)[Locators.ConversationDetailsPage.close.rawValue].firstMatch
     }
 
     var addAccountOrTeamButton: XCUIElement {
-        app.descendants(matching: .any)["Add Account or Team"].firstMatch
+        app.descendants(matching: .button)[Locators.UserProfilePage.addAcccountOrTeamButton.rawValue].firstMatch
     }
 
-    func tapCreateTeamButtonAndContinue() throws -> TeamSetupStepsPage {
+    func tapCreateTeamButton() throws -> TeamSetupStepsPage {
         createTeamButton.tap()
         return try TeamSetupStepsPage()
     }

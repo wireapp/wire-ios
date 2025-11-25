@@ -16,28 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
-
-enum OptionsOnSettingsPageError: Error {
-    case passcodeFieldOnLockNotFound
-}
 
 class OptionsOnSettingsPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        optionsLabel
-    }
-
-    var optionsLabel: XCUIElement {
-        app.staticTexts["Options"]
+        lockWithPasscodeSwitch
     }
 
     var lockWithPasscodeSwitch: XCUIElement {
-        app.descendants(matching: .any)["Lock With Passcode"].firstMatch
+        app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.lockWithPasscode.rawValue].firstMatch
     }
 
-    var conversationsPageLabel: XCUIElement {
-        app.staticTexts["Conversations"]
+    var conversationsButton: XCUIElement {
+        app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
     }
 
     func enableLockWithPasscode() throws -> SetPasscodePage {
@@ -58,14 +51,7 @@ class OptionsOnSettingsPage: PageModel {
 
     func enterPasscode(_ pass: String) throws -> ConversationsPage {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-
-        let passcodeField = springboard.secureTextFields.firstMatch
-        guard passcodeField.waitForExistence(timeout: 3.0) else {
-            XCTFail("Passcode secure text field not found on SpringBoard")
-            throw OptionsOnSettingsPageError.passcodeFieldOnLockNotFound
-        }
-        try passcodeField.tapIfKeyboardNotFocused()
-        passcodeField.typeText(pass)
+        try springboard.secureTextFields["Passcode field"].tapIfKeyboardNotFocused().typeText(pass)
 
         let doneButton = springboard.keyboards.buttons["Done"].firstMatch
         if doneButton.waitForExistence(timeout: 2.0), doneButton.isHittable {

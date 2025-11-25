@@ -58,12 +58,9 @@ extension ConversationActionController {
     func requestClearContentResult(for conversation: ZMConversation, handler: @escaping (ClearContentResult) -> Void) {
         let controller = UIAlertController(title: ClearContentResult.title, message: nil, preferredStyle: .actionSheet)
         ClearContentResult.options(for: conversation).map { $0.action(handler) }.forEach(controller.addAction)
-        if let sourceView, let superView = sourceView.superview,
-           let popover = controller.popoverPresentationController {
-            currentContext = .sourceView(superView, sourceView.frame)
-            popover.permittedArrowDirections = .left
+        if let sourceView, controller.popoverPresentationController != nil {
+            currentContext = .sourceView(sourceView.superview!, sourceView.frame)
         }
-
         present(controller)
     }
 
