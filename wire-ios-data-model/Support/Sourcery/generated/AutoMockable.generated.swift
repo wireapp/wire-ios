@@ -1811,6 +1811,15 @@ public class MockCoreCryptoKeyMigrationManagerProtocol: CoreCryptoKeyMigrationMa
 
     public init() {}
 
+    // MARK: - isAnyMigrationRequired
+
+    public var isAnyMigrationRequired: Bool {
+        get { return underlyingIsAnyMigrationRequired }
+        set(value) { underlyingIsAnyMigrationRequired = value }
+    }
+
+    public var underlyingIsAnyMigrationRequired: Bool!
+
     // MARK: - isMigrationToBytesNeeded
 
     public var isMigrationToBytesNeeded: Bool {
