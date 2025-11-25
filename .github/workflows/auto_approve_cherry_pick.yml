@@ -82,13 +82,19 @@ jobs:
 
               if (hasConflictMarkers) {
                 core.info("Committed conflict markers found — requesting changes.");
-                await github.rest.pulls.createReview({
-                  owner,
-                  repo,
-                  pull_number: pr.number,
-                  event: "REQUEST_CHANGES",
-                  body: "❌ Cannot auto-approve: conflict markers (e.g. `<<<<<<<`, `>>>>>>>`) were found in the changes. Please resolve them before merging."
-                });
+                // Only request changes if the bot hasn't already done so
+                const botRequestedChanges = latestStateByUser.get(botLogin) === "CHANGES_REQUESTED";
+                if (!botRequestedChanges) {
+                  await github.rest.pulls.createReview({
+                    owner,
+                    repo,
+                    pull_number: pr.number,
+                    event: "REQUEST_CHANGES",
+                    body: "❌ Cannot auto-approve: conflict markers (e.g. `<<<<<<<`, `>>>>>>>`) were found in the changes. Please resolve them before merging."
+                  });
+                } else {
+                  core.info("Bot has already requested changes — skipping duplicate review.");
+                }
                 return;
               }
             
