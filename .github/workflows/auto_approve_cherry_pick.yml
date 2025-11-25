@@ -41,29 +41,58 @@ script: |
             const botApproved = latestStateByUser.get(botLogin) === "APPROVED";
             core.info(`Bot approval detected? ${botApproved}`);
 
-            // Only check merge conflicts if bot has NOT yet approved
+           let hasConflictMarkers = false;
+
             if (!botApproved) {
-              const { data: freshPr } = await github.rest.pulls.get({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: pr.number,
-              });
+              core.info("Bot has not approved yet — scanning files for conflict markers…");
 
-              const mergeableState = freshPr.mergeable_state;
-              core.info(`mergeable_state = ${mergeableState}`);
+              let page = 1;
+              const per_page = 100;
 
-              if (mergeableState === "dirty") {
-                core.info(`PR has merge conflicts — requesting changes.`);
+              while (true) {
+                const { data: files } = await github.rest.pulls.listFiles({
+                  owner,
+                  repo,
+                  pull_number: pr.number,
+                  per_page,
+                  page,
+                });
+
+                if (!files.length) break;
+
+                for (const file of files) {
+                  // We can use the patch (unified diff) to detect markers first.
+                  // Markers like "<<<<<<< HEAD" or ">>>>>>>" will show up there.
+                  if (!file.patch) continue;
+
+                  const patch = file.patch;
+
+                  if (patch.includes("<<<<<<< ") || patch.includes(">>>>>>> ")) {
+                    hasConflictMarkers = true;
+                    core.info(`Conflict markers detected in file: ${file.filename}`);
+                    break;
+                  }
+                }
+
+                if (hasConflictMarkers || files.length < per_page) {
+                  break;
+                }
+
+                page += 1;
+              }
+
+              if (hasConflictMarkers) {
+                core.info("Committed conflict markers found — requesting changes.");
                 await github.rest.pulls.createReview({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
+                  owner,
+                  repo,
                   pull_number: pr.number,
                   event: "REQUEST_CHANGES",
-                  body: "❌ Cannot auto-approve: this PR has merge conflicts. Please resolve them first."
+                  body: "❌ Cannot auto-approve: conflict markers (e.g. `<<<<<<<`, `>>>>>>>`) were found in the changes. Please resolve them before merging."
                 });
                 return;
               }
-
+            
               // Approve the PR
               core.info(`Adding approval from bot…`);
               await github.rest.pulls.createReview({
