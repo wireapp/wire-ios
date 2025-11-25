@@ -2,12 +2,12 @@ name: Auto-approve 🍒 cherry-pick PRs
 
 on:
   pull_request_target:
-    types: [opened, reopened, edited, synchronize]
+    types: [opened, reopened, edited, synchronize, labeled]
 
 jobs:
   auto-approve:
-    # Only run if the title contains the 🍒 emoji
-    if: contains(github.event.pull_request.title, '🍒')
+    # Only run if the PR has the 'cherry-pick' label (added by the cherry-pick action)
+    if: contains(github.event.pull_request.labels.*.name, 'cherry-pick')
     runs-on: ubuntu-latest
 
     # Needed to create a review
