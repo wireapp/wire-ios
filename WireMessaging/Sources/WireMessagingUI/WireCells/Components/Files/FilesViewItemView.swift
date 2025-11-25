@@ -120,11 +120,17 @@ struct FilesViewItemView: View {
                             Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
                         }
                     }
+                    
+                    if viewModel.isInRecycleBin {
+                        Button(action: restore) {
+                            Label(Strings.RecycleBin.Item.Menu.restore, systemImage: "arrow.uturn.backward")
+                        }
+                    }
 
                     if canDeleteFiles {
                         if viewModel.isInRecycleBin {
                             Button(role: .destructive, action: { delete(permanently: true) }) {
-                                Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
+                                Label(Strings.RecycleBin.Item.Menu.delete, systemImage: "trash.fill")
                             }
                         } else {
                             Button(role: .destructive, action: { delete(permanently: false) }) {
@@ -164,6 +170,24 @@ struct FilesViewItemView: View {
                     buttonText: Strings.RecycleBin.Item.DeleteConfirmation.button,
                     confirm: { confirmDelete(permanently: true) }
                 )
+                .restorationConfirmationDialog( // restore file
+                    isPresented: $viewModel.isPresentingRestoreFileConfirmation,
+                    title: Strings.RecycleBin.Item.RestoreFileConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.RecycleBin.Item.RestoreFileConfirmation.button,
+                    confirm: { confirmRestore() }
+                )
+                .restorationConfirmationDialog( // restore folder
+                    isPresented: $viewModel.isPresentingRestoreFolderConfirmation,
+                    title: Strings.RecycleBin.Item.RestoreFolderConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.RecycleBin.Item.RestoreFolderConfirmation.button,
+                    confirm: { confirmRestore() }
+                )
+                .restorationConfirmationDialog( // restore parent folder (topmost folder in recycle bin)
+                    isPresented: $viewModel.isPresentingRestoreParentConfirmation,
+                    title: Strings.RecycleBin.Item.RestoreParentConfirmation.title(viewModel.nameOfTopmostFolderInRecycleBin),
+                    buttonText: Strings.RecycleBin.Item.RestoreParentConfirmation.button,
+                    confirm: { confirmRestore() }
+                )
             }
             .padding(.top, 8)
             .padding(.bottom, 5) // Less padding to accommodate progress bar
@@ -192,13 +216,21 @@ struct FilesViewItemView: View {
     private func editTags() {
         viewModel.onEditTagsSelected()
     }
+    
+    private func restore() {
+        viewModel.showRestoreConfirmation()
+    }
 
     private func delete(permanently: Bool) {
-        viewModel.showDeleteConfirmation(deletePermanently: permanently, itemKind: viewModel.item.kind)
+        viewModel.showDeleteConfirmation(deletePermanently: permanently)
     }
 
     private func confirmDelete(permanently: Bool) {
         Task { await viewModel.confirmDelete(permanently: permanently) }
+    }
+    
+    private func confirmRestore() {
+        Task { await viewModel.confirmRestore() }
     }
 
     private var progressColor: Color {
@@ -212,14 +244,29 @@ private extension View {
         self.confirmationDialog(
             title,
             isPresented: isPresented,
-            titleVisibility: .visible
-        ) {
-            Button(
-                buttonText,
-                role: .destructive,
-                action: confirm
-            )
-        }
+            titleVisibility: .visible,
+            actions: {
+                Button(
+                    buttonText,
+                    role: .destructive,
+                    action: confirm
+                )
+            }
+        )
+    }
+    
+    @ViewBuilder func restorationConfirmationDialog(isPresented: Binding<Bool>, title: String, buttonText: String, confirm: @escaping () -> Void) -> some View {
+        self.confirmationDialog(
+            title,
+            isPresented: isPresented,
+            titleVisibility: .visible,
+            actions: {
+                Button(
+                    buttonText,
+                    action: confirm
+                )
+            }
+        )
     }
 }
 

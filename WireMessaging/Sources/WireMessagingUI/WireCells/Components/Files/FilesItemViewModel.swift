@@ -30,18 +30,25 @@ final class FilesItemViewModel: ObservableObject {
 
     private let nodeID: UUID
     let item: FilesViewItem
+    //TODO: group actions into a type
     private let onOpen: (FilesViewItem) async -> Void
     private let onDelete: (FilesViewItem, Bool) async -> Void
+    private let onRestore: (FilesViewItem) async -> Void
     private let onRename: ((FilesViewItem) async -> Void)?
     let onEditTagsSelected: () -> Void
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
 
     @Published private var asset: WireCellsLocalAsset?
+    
     @Published var isPresentingDeleteFilePermanentlyConfirmation = false
     @Published var isPresentingDeleteFolderPermanentlyConfirmation = false
     @Published var isPresentingDeleteFileToRecycleBinConfirmation = false
     @Published var isPresentingDeleteFolderToRecycleBinConfirmation = false
+
+    @Published var isPresentingRestoreFileConfirmation = false
+    @Published var isPresentingRestoreFolderConfirmation = false
+    @Published var isPresentingRestoreParentConfirmation = false
 
     let fileName: String
     let subtitle: String?
@@ -64,6 +71,7 @@ final class FilesItemViewModel: ObservableObject {
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         onOpen: @escaping (FilesViewItem) async -> Void,
         onDelete: @escaping (FilesViewItem, Bool) async -> Void,
+        onRestore: @escaping (FilesViewItem) async -> Void,
         onRename: ((FilesViewItem) async -> Void)? = nil,
         onEditTagsSelected: @escaping (FilesViewItem) -> Void,
         locale: Locale = .autoupdatingCurrent,
@@ -75,6 +83,7 @@ final class FilesItemViewModel: ObservableObject {
         self.item = item
         self.onOpen = onOpen
         self.onDelete = onDelete
+        self.onRestore = onRestore
         self.onRename = onRename
         self.onEditTagsSelected = { onEditTagsSelected(item) }
         self.fileName = item.name
@@ -86,6 +95,10 @@ final class FilesItemViewModel: ObservableObject {
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
             self?.asset = asset
         }.store(in: &cancellables)
+    }
+    
+    var nameOfTopmostFolderInRecycleBin: String {
+        item.filePath.split(separator: "/").dropFirst(2).first.flatMap { String($0) } ?? ""
     }
 
     var isDownloadOptionAvailable: Bool {
@@ -143,8 +156,8 @@ final class FilesItemViewModel: ObservableObject {
         try? await localAssetRepository.downloadAsset(nodeID: nodeID)
     }
 
-    func showDeleteConfirmation(deletePermanently: Bool, itemKind: FilesViewItem.Kind) {
-        switch (deletePermanently, itemKind) {
+    func showDeleteConfirmation(deletePermanently: Bool) {
+        switch (deletePermanently, item.kind) {
         case (true, .file):
             isPresentingDeleteFilePermanentlyConfirmation = true
         case (false, .file):
@@ -155,9 +168,27 @@ final class FilesItemViewModel: ObservableObject {
             isPresentingDeleteFolderToRecycleBinConfirmation = true
         }
     }
+    
+    func showRestoreConfirmation() {
+        let isInRecycleBinRoot = item.filePath.split(separator: "/").count <= 3
+        if isInRecycleBinRoot {
+            switch item.kind {
+            case .file:
+                isPresentingRestoreFileConfirmation = true
+            case .folder:
+                isPresentingRestoreFolderConfirmation = true
+            }
+        } else {
+            isPresentingRestoreParentConfirmation = true
+        }
+    }
 
     func confirmDelete(permanently: Bool) async {
         await onDelete(item, permanently)
+    }
+    
+    func confirmRestore() async {
+        await onRestore(item)
     }
 
     private static func subtitle(

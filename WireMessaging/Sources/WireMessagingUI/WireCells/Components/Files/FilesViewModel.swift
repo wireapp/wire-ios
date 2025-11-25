@@ -271,6 +271,9 @@ package final class FilesViewModel: ObservableObject {
             onDelete: { [weak self] item, permanently in
                 await self?.deleteItem(item, permanently: permanently)
             },
+            onRestore: { [weak self] item in
+                await self?.restoreItem(item)
+            },
             onRename: { [weak self] item in
                 self?.fileRenameView = self?.makeFileRenameView(item: item)
             },
@@ -480,6 +483,10 @@ package final class FilesViewModel: ObservableObject {
             currentItems.append(asset)
             state = .received(items: Self.processItems(currentItems))
         }
+    }
+    
+    private func restoreItem(_ asset: FilesViewItem) async {
+        //TODO: ...
     }
 
     /// Removes items with duplicate IDs keeping the latest modified if known, otherwise the first.
