@@ -29,8 +29,9 @@ final class CreateGroupConversationViewControllerBuilder: CreateGroupConversatio
         self.userSession = userSession
     }
 
-    func build() -> UIViewController {
-        let viewController = ConversationCreationController(
+    @MainActor
+    func build() async -> UIViewController {
+        let viewController = await ConversationCreationController(
             preSelectedParticipants: nil,
             userSession: userSession
         )

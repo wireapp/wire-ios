@@ -44,7 +44,6 @@ final class PrimaryButtonStyleUITests: XCTestCase {
             label: { Text("Label") }
         )
         .wireButtonStyle(.primary)
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         .frame(width: screenBounds.width, height: screenBounds.height)
     }
 

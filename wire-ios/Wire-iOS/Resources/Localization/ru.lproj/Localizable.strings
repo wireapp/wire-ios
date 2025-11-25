@@ -18,7 +18,7 @@
 // General strings
 
 "general.ok" = "OK";
-"general.next" = "Вперед";
+"general.next" = "Next";
 "general.cancel" = "Отмена";
 "general.close" = "Закрыть";
 "general.back" = "Назад";
@@ -111,7 +111,7 @@
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "Новый канал";
 "conversation.create.channel.back" = "Назад";
-"conversation.create.channel.next" = "Вперед";
+"conversation.create.channel.next" = "Next";
 
 // Contacts UI
 "contacts_ui.search_placeholder" = "Поиск по имени";
@@ -359,7 +359,7 @@
 "conversation.create.mls.title" = "Протокол";
 "conversation.create.mls.subtitle" = "Выберите MLS для создания группы с использованием протокола Messaging Layer Security.";
 "conversation.create.mls.picker_title" = "Выбрать протокол";
-"conversation.create.mls.cancel" = "Отмена";
+"conversation.create.mls.cancel" = "Cancel";
 "conversation.create.non_federating_domains_error.title" = "Беседа не может быть создана";
 "conversation.create.non_federating_domains_error.message" = "Пользователи бэкендов %@ не могут присоединиться к одной беседе.\nДля создания беседы удалите затронутых участников.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Изменить список участников";
@@ -418,7 +418,7 @@
 "conversation.input_bar.message_preview.accessibility.message_from" = "%@ от %@";
 
 "image_confirmer.confirm" = "OK";
-"image_confirmer.cancel" = "Отмена";
+"image_confirmer.cancel" = "Cancel";
 "image.add_sketch" = "Добавить скетч";
 "image.add_emoji" = "Добавить смайлик";
 "image.edit_image" = "Редактировать изображение";
@@ -684,7 +684,7 @@
 "content.file.take_video" = "Записать видео";
 "content.file.browse" = "Обзор";
 
-"content.file.save_video" = "Сохранить";
+"content.file.save_video" = "Save";
 "content.file.save_audio" = "Сохранить";
 "content.image.save_image" = "Сохранить";
 
@@ -1006,7 +1006,7 @@
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "Отменить запрос?";
 "profile.cancel_connection_request_dialog.message" = "Удалить запрос на добавление %@.";
-"profile.cancel_connection_request_dialog.button_cancel" = "Отмена";
+"profile.cancel_connection_request_dialog.button_cancel" = "Cancel";
 "profile.cancel_connection_request_dialog.button_yes" = "Да";
 
 // Unblock button

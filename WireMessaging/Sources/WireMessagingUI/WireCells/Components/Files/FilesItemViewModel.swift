@@ -29,10 +29,11 @@ import WireMessagingDomain
 final class FilesItemViewModel: ObservableObject {
 
     private let nodeID: UUID
-    private let item: FilesViewItem
+    let item: FilesViewItem
     private let onOpen: (FilesViewItem) async -> Void
     private let onDelete: (FilesViewItem) async -> Void
     private let onRename: ((FilesViewItem) async -> Void)?
+    let onEditTagsSelected: () -> Void
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
 
@@ -43,12 +44,24 @@ final class FilesItemViewModel: ObservableObject {
     let subtitle: String?
     let icon: FileIcon
 
+    struct TagsInfo {
+        let firstTag: String?
+        let additionalTagsIndicator: String?
+    }
+
+    private let additionalTagNumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.positivePrefix = formatter.plusSign
+        return formatter
+    }()
+
     init(
         item: FilesViewItem,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         onOpen: @escaping (FilesViewItem) async -> Void,
         onDelete: @escaping (FilesViewItem) async -> Void,
         onRename: ((FilesViewItem) async -> Void)? = nil,
+        onEditTagsSelected: @escaping (FilesViewItem) -> Void,
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,
         timeZone: TimeZone = .autoupdatingCurrent
@@ -58,6 +71,7 @@ final class FilesItemViewModel: ObservableObject {
         self.onOpen = onOpen
         self.onDelete = onDelete
         self.onRename = onRename
+        self.onEditTagsSelected = { onEditTagsSelected(item) }
         self.fileName = item.name
         self.subtitle = Self.subtitle(from: item, locale: locale, calendar: calendar, timeZone: timeZone)
         self.icon = item.icon
@@ -155,4 +169,24 @@ final class FilesItemViewModel: ObservableObject {
         }
     }
 
+    var tagsInfo: TagsInfo {
+        let additionalTags = item.tags.count - 1
+        let formattedNumber: String? = if additionalTags > 0 {
+            additionalTagNumberFormatter.string(for: additionalTags) ?? "+\(additionalTags)"
+        } else {
+            nil
+        }
+        return .init(
+            firstTag: item.tags.sortedAlphabetically.first,
+            additionalTagsIndicator: formattedNumber
+        )
+    }
+}
+
+private extension [String] {
+    var sortedAlphabetically: [String] {
+        sorted { left, right in
+            left.localizedCaseInsensitiveCompare(right) == .orderedAscending
+        }
+    }
 }

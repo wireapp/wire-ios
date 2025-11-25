@@ -42,6 +42,7 @@ extension RemoveClientsViewController {
                 })
         }
 
+        @MainActor
         func removeUserClient(_ userClient: UserClient, password: String?) async throws {
             let clientId = await userClient.managedObjectContext?.perform {
                 userClient.remoteIdentifier

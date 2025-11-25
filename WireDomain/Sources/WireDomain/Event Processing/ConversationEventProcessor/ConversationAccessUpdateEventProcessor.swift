@@ -34,7 +34,7 @@ struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProc
         let accessRoles = if let legacyAccessRole = event.legacyAccessRole {
             getAccessRoles(from: legacyAccessRole)
         } else {
-            event.accessRoles ?? [.teamMember, .nonTeamMember, .service]
+            event.accessRoles ?? [.teamMember, .nonTeamMember, .app]
         }
 
         await localStore.updateAccesses(
@@ -53,7 +53,7 @@ struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProc
         case .activated:
             [.teamMember, .nonTeamMember, .guest]
         case .nonActivated:
-            [.teamMember, .nonTeamMember, .guest, .service]
+            [.teamMember, .nonTeamMember, .guest, .app]
         case .private:
             []
         }
@@ -85,7 +85,7 @@ private extension WireNetwork.ConversationAccessRole {
             "non_team_member"
         case .guest:
             "guest"
-        case .service:
+        case .app:
             "service"
         }
     }

@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import UIKit
 import WireDesign
 import WireFoundation
 import WireReusableUIComponents
@@ -30,6 +29,8 @@ public struct SelfProfileViewCallToActionBanner: View {
 
     let actionCallback: @Sendable (Action) -> Void
 
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
     public init(actionCallback: @escaping @Sendable (Action) -> Void) {
         self.actionCallback = actionCallback
     }
@@ -37,8 +38,7 @@ public struct SelfProfileViewCallToActionBanner: View {
     public var body: some View {
         contentView(actionCallback: actionCallback)
             .padding(8)
-            .bannerBackground()
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+            .bannerBackground(wireAccentColor)
     }
 }
 
@@ -50,12 +50,12 @@ private func contentView(
     VStack(alignment: .leading, spacing: 12) {
         Label(title: {
             Text(String.localized(key: "individualToTeam.banner.title", bundle: .module))
-                .wireTextStyle(.h5)
+                .font(for: .h5)
         }, icon: {
             Image.infoCircle
         })
         Text(String.localized(key: "individualToTeam.banner.body", bundle: .module))
-            .wireTextStyle(.body1)
+            .font(for: .body1)
             .lineLimit(nil)
 
         Button(
@@ -69,16 +69,16 @@ private func contentView(
 }
 
 private extension View {
-    func bannerBackground() -> some View {
+    func bannerBackground(_ wireAccentColor: WireAccentColor) -> some View {
         background {
             if #available(iOS 17.0, *) {
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(ColorTheme.Banners.border.color, lineWidth: 1)
-                    .fill(ColorTheme.Banners.background.color)
+                    .stroke(ColorTheme.Banners.border(wireAccentColor).color, lineWidth: 1)
+                    .fill(ColorTheme.Banners.background(wireAccentColor).color)
             } else {
-                ColorTheme.Banners.background.color
+                ColorTheme.Banners.background(wireAccentColor).color
                     .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .border(ColorTheme.Banners.border.color, width: 1)
+                    .border(ColorTheme.Banners.border(wireAccentColor).color, width: 1)
             }
         }
     }

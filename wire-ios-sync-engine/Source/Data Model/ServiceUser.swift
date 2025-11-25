@@ -235,7 +235,7 @@ public extension ServiceUser {
             name: nil,
             users: [],
             allowGuests: true,
-            allowServices: true,
+            allowApps: true,
             enableReceipts: false,
             messageProtocol: .proteus
         ) {

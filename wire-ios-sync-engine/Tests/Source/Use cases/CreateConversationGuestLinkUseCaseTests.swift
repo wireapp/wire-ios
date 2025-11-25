@@ -32,7 +32,7 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
     private var mockConversation: ZMConversation!
     private var mockSelfUser: ZMUser!
     private var sut: CreateConversationGuestLinkUseCaseProtocol!
-    private var setAllowGuestAndServicesUseCase: MockSetAllowGuestAndServicesUseCaseProtocol!
+    private var setAllowGuestAndAppsUseCase: MockSetAllowGuestAndAppsUseCaseProtocol!
 
     private var syncContext: NSManagedObjectContext {
         stack.syncContext
@@ -44,12 +44,12 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
         await syncContext.perform { [self] in
-            setAllowGuestAndServicesUseCase = .init()
-            setAllowGuestAndServicesUseCase
-                .invokeConversationAllowGuestsAllowServicesCompletion_MockMethod = { _, _, _, completion in
+            setAllowGuestAndAppsUseCase = .init()
+            setAllowGuestAndAppsUseCase
+                .invokeConversationAllowGuestsAllowAppsCompletion_MockMethod = { _, _, _, completion in
                     completion(.success(()))
                 }
-            sut = CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: setAllowGuestAndServicesUseCase)
+            sut = CreateConversationGuestLinkUseCase(setGuestsAndAppsUseCase: setAllowGuestAndAppsUseCase)
             mockSelfUser = modelHelper.createSelfUser(in: syncContext)
             mockConversation = modelHelper.createGroupConversation(in: syncContext)
             mockConversation.teamRemoteIdentifier = UUID()
@@ -63,7 +63,7 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
         sut = nil
         mockSelfUser = nil
         mockConversation = nil
-        setAllowGuestAndServicesUseCase = nil
+        setAllowGuestAndAppsUseCase = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
     }
@@ -123,7 +123,7 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
                 result: .success("www.test.com"),
                 context: syncContext.notificationContext
             )
-            let setGuestAndServicesMockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(
+            let setGuestAndAppsMockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
                 result: .success(()),
                 context: syncContext.notificationContext
             )

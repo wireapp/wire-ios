@@ -60,9 +60,6 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 /// whether this is the self user
 @property (nonatomic, readonly) BOOL isSelfUser;
 
-/// return true if this user is a serviceUser
-@property (nonatomic, readonly) BOOL isServiceUser;
-
 @property (nonatomic, readonly, nullable) NSString *smallProfileImageCacheKey;
 @property (nonatomic, readonly, nullable) NSString *mediumProfileImageCacheKey;
 

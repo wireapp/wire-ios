@@ -90,7 +90,7 @@ final class RestAPI: Sendable {
 
         let parameters = RestActionParameters(
             awaitStatus: .finished,
-            awaitTimeout: "60s",
+            awaitTimeout: "5s",
             copyMoveOptions: RestActionOptionsCopyMove(
                 targetIsParent: false,
                 targetPath: targetPath
@@ -156,12 +156,33 @@ final class RestAPI: Sendable {
         )
     }
 
+    /// Creates a new folder at the specified path.
+    ///
+    /// - Parameters:
+    ///  - path: The path of the new folder.
+    func createFolder(at path: String) async throws {
+        let request = RestCreateRequest(inputs: [
+            RestIncomingNode(
+                locator: RestNodeLocator(
+                    path: path
+                ),
+                resourceUuid: UUID().transportString(),
+                type: .collection,
+            )
+        ])
+
+        _ = try await NodeServiceAPI.create(
+            body: request,
+            apiConfiguration: makeConfiguration()
+        )
+    }
+
     func preCheck(path: String, findAvailablePath: Bool = true) async throws -> WireCellsPreCheckResultDTO {
         let request = RestCreateCheckRequest(
             findAvailablePath: findAvailablePath,
             inputs: [RestIncomingNode(
                 locator: RestNodeLocator(path: path),
-                type: .leaf
+                type: .unknown
             )]
         )
 
@@ -229,6 +250,27 @@ final class RestAPI: Sendable {
             linkUuid: uuid.transportString(),
             apiConfiguration: makeConfiguration()
         )
+    }
+
+    func updateTags(uuid: UUID, tags: [String]) async throws {
+        let update = RestMetaUpdate(
+            operation: .put,
+            userMeta: .init(jsonValue: "\"\(tags.joined(separator: ","))\"", namespace: "usermeta-tags")
+        )
+
+        _ = try await NodeServiceAPI.patchNode(
+            uuid: uuid.uuidString.lowercased(),
+            nodeUpdates: .init(metaUpdates: [update]),
+            apiConfiguration: makeConfiguration()
+        )
+    }
+
+    func getAllTags() async throws -> [String] {
+        let response = try await NodeServiceAPI.listNamespaceValues(
+            namespace: "usermeta-tags",
+            apiConfiguration: makeConfiguration()
+        )
+        return response.values ?? []
     }
 
     private func makeConfiguration() async throws -> CellsSDKAPIConfiguration {
