@@ -81,7 +81,7 @@ private extension FilesFiltersView {
             if viewModel.hasMore {
                 Button {
                     withAnimation {
-                        viewModel.loadMore()
+                        viewModel.showMore()
                     }
                 } label: {
                     Text(Strings.AllFiles.Filters.Tags.loadMore)

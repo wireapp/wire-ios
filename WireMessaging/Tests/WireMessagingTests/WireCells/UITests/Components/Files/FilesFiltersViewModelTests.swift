@@ -55,7 +55,7 @@ final class FilesFiltersViewModelTests {
         await sut.fetch()
 
         // when
-        sut.loadMore()
+        sut.showMore()
 
         // then
         #expect(sut.presentedTags.map(\.name) == Scaffolding.expectedTagsSecondBatch)

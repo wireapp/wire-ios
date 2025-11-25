@@ -89,7 +89,7 @@ final class FilesFiltersViewTests: XCTestCase {
         let view = FilesFiltersView(viewModel: viewModel)
             .frame(width: 375, height: 667)
 
-        viewModel.loadMore()
+        viewModel.showMore()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)

@@ -78,7 +78,7 @@ package final class FilesFiltersViewModel: ObservableObject {
                 .filter { !$0.isEmpty }
                 .map { .init(name: $0, isSelected: savedTags.contains($0)) }
                 .sorted { $0.isSelected && !$1.isSelected }
-            loadMore()
+            showMore()
         } catch {
             showError = true
         }
@@ -90,7 +90,7 @@ package final class FilesFiltersViewModel: ObservableObject {
         presentedTags[tagIndex].isSelected.toggle()
     }
 
-    func loadMore() {
+    func showMore() {
         presentedTags += Array(tags[presentedTags.count...].prefix(tagsBatchCount))
     }
 
