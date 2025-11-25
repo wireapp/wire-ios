@@ -141,7 +141,7 @@ public extension WireLogger {
         encoder.outputFormatting = .sortedKeys
         return encoder
     }
-    
+
     func log(_ request: URLRequest) {
         log(request: request as NSURLRequest)
     }

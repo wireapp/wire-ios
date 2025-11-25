@@ -23,6 +23,7 @@ extension WireLoggerObjC {
     static func logRequest(_ request: NSURLRequest) {
         WireLogger.network.log(request: request)
     }
+
     @objc(logHTTPResponse:body:)
     static func logHTTPResponse(_ response: HTTPURLResponse, body: Data?) {
         WireLogger.network.log(response: response, body: body)
