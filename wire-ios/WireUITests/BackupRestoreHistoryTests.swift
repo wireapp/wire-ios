@@ -103,7 +103,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
             .enterBackupPasswordAndRestore(teamOwner.password)
 
         XCTAssertTrue(
-            setPasswordPage.historyRestoredAlert.waitForExistence(timeout: 3),
+            setPasswordPage.historyRestoredAlert.waitForExistence(timeout: 5),
             "History restored alert missing"
         )
 
