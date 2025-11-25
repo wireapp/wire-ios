@@ -31,13 +31,8 @@ package struct FilesBrowserView: FilesViewProtocol {
     @StateObject package var viewModel: FilesViewModel
     package var isBrowsing: Bool { true }
     
-    let onOpenRecycleBin: () -> Void //TODO: use this somewhere
-    let onDismissContainer: () -> Void //TODO: use this somewhere
-
     package init(viewModel: @autoclosure @escaping () -> FilesViewModel, onOpenRecycleBin: @escaping () -> Void = {}, onDismissContainer: @escaping () -> Void = {}) {
         self._viewModel = StateObject(wrappedValue: viewModel())
-        self.onOpenRecycleBin = onOpenRecycleBin
-        self.onDismissContainer = onDismissContainer
     }
 
     package var body: some View {

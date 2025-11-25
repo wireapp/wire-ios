@@ -34,15 +34,18 @@ struct FilesViewItemView: View {
 
     private var canRenameFile: Bool
     private var canEditTags: Bool
+    private var canDeleteFiles: Bool
 
     init(
         viewModel: @autoclosure @escaping () -> FilesItemViewModel,
         canRenameFile: Bool = false,
         canEditTags: Bool = false,
+        canDeleteFiles: Bool = false,
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
         self.canRenameFile = canRenameFile
         self.canEditTags = canEditTags
+        self.canDeleteFiles = canDeleteFiles
     }
 
     var body: some View {
@@ -118,13 +121,15 @@ struct FilesViewItemView: View {
                         }
                     }
 
-                    if viewModel.isInRecycleBin {
-                        Button(role: .destructive, action: { delete(permanently: true) }) {
-                            Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
-                        }
-                    } else {
-                        Button(role: .destructive, action: { delete(permanently: false) }) {
-                            Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
+                    if canDeleteFiles {
+                        if viewModel.isInRecycleBin {
+                            Button(role: .destructive, action: { delete(permanently: true) }) {
+                                Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
+                            }
+                        } else {
+                            Button(role: .destructive, action: { delete(permanently: false) }) {
+                                Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
+                            }
                         }
                     }
                 } label: {
@@ -221,8 +226,8 @@ private extension View {
 #Preview {
     VStack(spacing: 0) {
         FilesViewItemView(viewModel: .preview())
-        FilesViewItemView(viewModel: .preview(), canRenameFile: true, canEditTags: true)
+        FilesViewItemView(viewModel: .preview(), canRenameFile: true, canEditTags: true, canDeleteFiles: true)
         FilesViewItemView(viewModel: .preview(tags: ["urgent"]), canRenameFile: true, canEditTags: true)
-        FilesViewItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]))
+        FilesViewItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]), canDeleteFiles: true)
     }
 }
