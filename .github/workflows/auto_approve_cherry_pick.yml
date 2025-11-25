@@ -21,7 +21,6 @@ jobs:
           # PAT from zenkins user
           github-token: ${{ secrets.SUBMODULE_PAT }}
           script: |
-script: |
             const pr = context.payload.pull_request;
             const botLogin = "zenkins";
 
@@ -41,7 +40,7 @@ script: |
             const botApproved = latestStateByUser.get(botLogin) === "APPROVED";
             core.info(`Bot approval detected? ${botApproved}`);
 
-           let hasConflictMarkers = false;
+            let hasConflictMarkers = false;
 
             if (!botApproved) {
               core.info("Bot has not approved yet — scanning files for conflict markers…");
