@@ -91,7 +91,7 @@ jobs:
                 });
                 return;
               }
-            
+
               // Approve the PR
               core.info(`Adding approval from bot…`);
               await github.rest.pulls.createReview({
@@ -102,5 +102,5 @@ jobs:
                 body: "✅ Auto-approved cherry-pick PR 🍒."
               });
 
-              core.info("Approval added.");              
+              core.info("Approval added.");
             }
