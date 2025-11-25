@@ -204,18 +204,17 @@ struct FilesViewItemView: View {
 
 private extension View {
     @ViewBuilder func deletionConfirmationDialog(isPresented: Binding<Bool>, title: String, buttonText: String, confirm: @escaping () -> Void) -> some View {
-        self
-            .confirmationDialog(
-                title,
-                isPresented: isPresented,
-                titleVisibility: .visible
-            ) {
-                Button(
-                    buttonText,
-                    role: .destructive,
-                    action: confirm
-                )
-            }
+        self.confirmationDialog(
+            title,
+            isPresented: isPresented,
+            titleVisibility: .visible
+        ) {
+            Button(
+                buttonText,
+                role: .destructive,
+                action: confirm
+            )
+        }
     }
 }
 
