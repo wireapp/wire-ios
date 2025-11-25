@@ -86,40 +86,31 @@ package struct FilesView: FilesViewProtocol {
                 message: { Text($0.message) },
                 actions: { _ in confirmButton }
             )
-            .sheet(item: $viewModel.sheetNavigation) { navigationItem in
-                switch navigationItem {
-                case let .editTags(fileItem: fileItem):
-                    TagsEditView(
-                        fileItem: fileItem,
-                        useCases: .init(
-                            updateTags: viewModel.useCases.updateTags,
-                            getSuggestions: viewModel.useCases.getTagSuggestions
-                        ),
-                        postSaveAction: {
-                            await viewModel.reload()
-                        }
-                    )
+            .sheet(
+                item: $viewModel.sheetNavigation,
+                onDismiss: {
+                    Task { await viewModel.onSheetDismissed() }
+                }, content: { navigationItem in
+                    switch navigationItem {
+                    case let .editTags(fileItem: fileItem):
+                        TagsEditView(
+                            fileItem: fileItem,
+                            useCases: .init(
+                                updateTags: viewModel.useCases.updateTags,
+                                getSuggestions: viewModel.useCases.getTagSuggestions
+                            ),
+                            postSaveAction: {
+                                await viewModel.reload()
+                            }
+                        )
+                    case let .renameFile(fileRenameView):
+                        fileRenameView
+                    case let .createFolder(folderView):
+                        folderView
+                    default:
+                        EmptyView()
+                    }
                 }
-            }
-            .sheet(
-                item: $viewModel.fileRenameView,
-                onDismiss: {
-                    if viewModel.didRenameFile {
-                        reloadTask()
-                        viewModel.didRenameFile = false
-                    }
-                },
-                content: { $0 }
-            )
-            .sheet(
-                item: $viewModel.createFolderView,
-                onDismiss: {
-                    if viewModel.didCreateFolder {
-                        reloadTask()
-                        viewModel.didCreateFolder = false
-                    }
-                },
-                content: { $0 }
             )
         }
     }
