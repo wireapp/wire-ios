@@ -147,7 +147,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             throw Failure.mainAppRequired(message: "cryptobox migration required")
         }
 
-        guard coreCryptoKeyMigrationManager.isAnyMigrationRequired else {
+        guard !coreCryptoKeyMigrationManager.isAnyMigrationRequired else {
             throw Failure.mainAppRequired(message: "core crypto key migration required")
         }
 
