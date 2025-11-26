@@ -34,6 +34,10 @@ class OnMyDevicePage: PageModel {
         app.buttons[Locators.OnMyiPhonePage.save.rawValue]
     }
 
+    var searchField: XCUIElement {
+        app.searchFields[Locators.OnMyiPhonePage.search.rawValue]
+    }
+
     var backupFile: (String) -> XCUIElement {
         { name in
             let predicate = NSPredicate(format: "identifier CONTAINS %@", name)

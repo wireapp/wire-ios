@@ -69,8 +69,7 @@ class ConversationsPage: PageModel {
         settingsButton.tap()
         return try SettingsPage()
     }
-
-
+    
     func openUserAccountPageForUser(with input: String) throws -> UserProfilePage {
         app.iPadOnly {
             if self.sideBarPanel.exists {

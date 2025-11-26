@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 
 extension Notification.Name {
     static let conversationListItemDidScroll = Notification.Name("ConversationListItemDidScroll")
@@ -172,7 +173,7 @@ final class ConversationListItemView: UIView {
         labelsStack.distribution = UIStackView.Distribution.fill
         labelsStack.isAccessibilityElement = true
         labelsStack.accessibilityTraits = .button
-        labelsStack.accessibilityIdentifier = "title"
+        labelsStack.accessibilityIdentifier = Locators.ConversationsPage.conversationCell.rawValue
     }
 
     private func setupContentStack() {

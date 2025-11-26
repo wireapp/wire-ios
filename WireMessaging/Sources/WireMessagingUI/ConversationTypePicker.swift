@@ -19,9 +19,13 @@
 package import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 package import WireMessagingDomain
 
 package struct ConversationTypePicker: View {
+
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
     private enum Constants {
         static let verticalSpacing: CGFloat = 12
         static let maxIconWidth: CGFloat = 27
@@ -126,13 +130,14 @@ package struct ConversationTypePicker: View {
                 chevronView()
             }
         })
+        .accessibilityIdentifier(Locators.NewConversationPage.createNewGroupButton.rawValue)
     }
 
     func iconView(for imageName: String) -> some View {
         Image(imageName, bundle: .resources)
             .renderingMode(.template)
             .aspectRatio(contentMode: .fit)
-            .foregroundStyle(ColorTheme.Base.primary.color)
+            .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
             .frame(width: Constants.maxIconWidth)
     }
 

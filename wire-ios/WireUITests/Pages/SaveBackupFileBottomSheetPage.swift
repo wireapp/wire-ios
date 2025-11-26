@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class SaveBackupFileBottomSheetPage: PageModel {
@@ -25,7 +26,7 @@ class SaveBackupFileBottomSheetPage: PageModel {
     }
 
     var saveToFilesOption: XCUIElement {
-        app.cells["Save to Files"]
+        app.cells[Locators.SaveBackupFileBottomSheetPage.saveToFiles.rawValue]
     }
 
     func getBackupFileName() -> String? {

@@ -23,7 +23,7 @@ import WireReusableUIComponents
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-struct CreateFolderView: View, Identifiable {
+struct CreateFolderView: View {
     @StateObject package var viewModel: CreateFolderViewModel
     @Environment(\.dismiss) var dismiss
 
@@ -50,7 +50,7 @@ struct CreateFolderView: View, Identifiable {
                     .padding()
                     .submitLabel(.send)
                     .onSubmit {
-                        if !isCreateDisabled() {
+                        if !viewModel.isCreateDisabled {
                             create()
                         }
                     }
@@ -72,10 +72,6 @@ struct CreateFolderView: View, Identifiable {
                 dismiss()
             }
         }
-    }
-
-    private func isCreateDisabled() -> Bool {
-        viewModel.errorMessage != nil || viewModel.folderNameInput.isEmpty
     }
 
 }
@@ -113,7 +109,7 @@ private extension CreateFolderView {
                     Text(L10n.Localizable.General.create)
                 }
             )
-            .disabled(isCreateDisabled())
+            .disabled(viewModel.isCreateDisabled)
             .accessibilityIdentifier("createButton")
         }
     }

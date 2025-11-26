@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class EmailUpdatePage: PageModel {
@@ -25,11 +26,11 @@ class EmailUpdatePage: PageModel {
     }
 
     var emailField: XCUIElement {
-        app.descendants(matching: .any)["EmailField"].firstMatch
+        app.descendants(matching: .any)[Locators.EmailUpdatePage.emailField.rawValue].firstMatch
     }
 
     var saveButton: XCUIElement {
-        app.buttons["Save"]
+        app.buttons[Locators.EmailUpdatePage.save.rawValue]
     }
 
     func clearTextField(_ textfield: XCUIElement) {

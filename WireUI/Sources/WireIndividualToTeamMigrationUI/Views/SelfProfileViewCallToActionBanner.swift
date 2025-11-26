@@ -17,9 +17,9 @@
 //
 
 import SwiftUI
-import UIKit
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireReusableUIComponents
 
 public struct SelfProfileViewCallToActionBanner: View {
@@ -30,6 +30,8 @@ public struct SelfProfileViewCallToActionBanner: View {
 
     let actionCallback: @Sendable (Action) -> Void
 
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
     public init(actionCallback: @escaping @Sendable (Action) -> Void) {
         self.actionCallback = actionCallback
     }
@@ -37,7 +39,7 @@ public struct SelfProfileViewCallToActionBanner: View {
     public var body: some View {
         contentView(actionCallback: actionCallback)
             .padding(8)
-            .bannerBackground()
+            .bannerBackground(wireAccentColor)
     }
 }
 
@@ -64,20 +66,21 @@ private func contentView(
             }
         )
         .wireButtonStyle(.tertiary)
+        .accessibilityIdentifier(Locators.UserProfilePage.createWireTeamButton.rawValue)
     }
 }
 
 private extension View {
-    func bannerBackground() -> some View {
+    func bannerBackground(_ wireAccentColor: WireAccentColor) -> some View {
         background {
             if #available(iOS 17.0, *) {
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(ColorTheme.Banners.border.color, lineWidth: 1)
-                    .fill(ColorTheme.Banners.background.color)
+                    .stroke(ColorTheme.Banners.border(wireAccentColor).color, lineWidth: 1)
+                    .fill(ColorTheme.Banners.background(wireAccentColor).color)
             } else {
-                ColorTheme.Banners.background.color
+                ColorTheme.Banners.background(wireAccentColor).color
                     .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .border(ColorTheme.Banners.border.color, width: 1)
+                    .border(ColorTheme.Banners.border(wireAccentColor).color, width: 1)
             }
         }
     }

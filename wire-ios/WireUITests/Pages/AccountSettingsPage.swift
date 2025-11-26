@@ -114,7 +114,6 @@ class AccountSettingsPage: PageModel {
     }
 
     func goBackToSettingsPage() throws -> SettingsPage {
-
         if app.iPadOnly() {
             return try SettingsPage()
         }

@@ -23,7 +23,7 @@ import WireReusableUIComponents
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-struct FileRenameView: View, Identifiable {
+struct FileRenameView: View {
     @StateObject package var viewModel: FileRenameViewModel
     @Environment(\.dismiss) var dismiss
 
@@ -50,7 +50,7 @@ struct FileRenameView: View, Identifiable {
                     .padding()
                     .submitLabel(.send)
                     .onSubmit {
-                        if !isSaveDisabled() {
+                        if !viewModel.isSaveDisabled {
                             save()
                         }
                     }
@@ -72,10 +72,6 @@ struct FileRenameView: View, Identifiable {
                 dismiss()
             }
         }
-    }
-
-    private func isSaveDisabled() -> Bool {
-        viewModel.errorMessage != nil || viewModel.filenameInput.isEmpty
     }
 
 }
@@ -115,7 +111,7 @@ private extension FileRenameView {
                         Text(L10n.Localizable.General.save)
                     }
                 )
-                .disabled(isSaveDisabled())
+                .disabled(viewModel.isSaveDisabled)
                 .accessibilityLabel(L10n.Accessibility.General.save)
                 .accessibilityIdentifier("save")
             }

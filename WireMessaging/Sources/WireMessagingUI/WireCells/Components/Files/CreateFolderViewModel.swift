@@ -26,15 +26,22 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 @MainActor
 final class CreateFolderViewModel: ObservableObject {
+
     @Published var folderNameInput: String = ""
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     @Published var isFocused: Bool = true
     @Published var didCreate: Bool = false
 
+    var isCreateDisabled: Bool {
+        errorMessage != nil || !isInputValid
+    }
+
     private let createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol
     private let folderPath: String
     private var subscriptions = Set<AnyCancellable>()
+    private let filenameValidator = FilenameValidator()
+    private var isInputValid = true
 
     init(
         createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol,
@@ -74,6 +81,7 @@ final class CreateFolderViewModel: ObservableObject {
             return false
         } catch {
             isLoading = false
+            errorMessage = L10n.Localizable.General.failure
             WireLogger.wireCells.error("Creating folder failed: \(error)")
             return false
         }
@@ -83,18 +91,30 @@ final class CreateFolderViewModel: ObservableObject {
 
     private func bindTextInput() {
         $folderNameInput
-            .sink { [weak self] input in
-                self?.validateTextInput(input)
+            .compactMap { [weak self] input in
+                self?.filenameValidator.validate(input)
+            }
+            .flatMap(\.self)
+            .sink { [weak self] result in
+                self?.handleValidationResult(result)
             }.store(in: &subscriptions)
     }
 
-    private func validateTextInput(_ textInput: String) {
-        if textInput.count > 64 {
-            errorMessage = Strings.Files.NewFolder.folderNameTooLongError
-        } else if textInput.contains("/") {
-            errorMessage = Strings.Files.NewFolder.wrongCharacterError
-        } else {
+    private func handleValidationResult(_ result: Result<Void, FilenameValidator.Failure>) {
+        switch result {
+        case .success:
+            isInputValid = true
             errorMessage = nil
+        case let .failure(failure):
+            isInputValid = false
+            switch failure {
+            case .tooLong:
+                errorMessage = Strings.Files.NewFolder.folderNameTooLongError
+            case .slashCharacter, .dotPrefix:
+                errorMessage = Strings.Files.RenameFile.wrongCharacterError
+            case .empty:
+                errorMessage = nil
+            }
         }
     }
 

@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLocators
 
 enum BlockResult {
     case block(isBlocked: Bool)
@@ -37,7 +38,14 @@ enum BlockResult {
     }
 
     func action(_ handler: @escaping (BlockResult) -> Void) -> UIAlertAction {
-        .init(title: title, style: style) { _ in handler(self) }
+        let action = UIAlertAction(title: title, style: style) { _ in handler(self) }
+        if case .block = self {
+            action.setValue(
+                Locators.ConversationsPage.blockButtonOnBottomSheet.rawValue,
+                forKey: "accessibilityIdentifier"
+            )
+        }
+        return action
     }
 
     static func title(for user: UserType) -> String? {
