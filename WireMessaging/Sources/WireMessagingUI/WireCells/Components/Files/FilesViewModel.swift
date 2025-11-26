@@ -522,6 +522,8 @@ package final class FilesViewModel: ObservableObject {
 
         do {
             try await useCases.restoreNodes.invoke(nodeIDs: [nodeIdToRestore])
+            
+            setNavigation([])
         } catch {
             guard state.isLoaded else { return }
 
