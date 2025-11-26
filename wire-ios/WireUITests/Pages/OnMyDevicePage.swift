@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class OnMyDevicePage: PageModel {
@@ -30,7 +31,7 @@ class OnMyDevicePage: PageModel {
     }
 
     var saveButton: XCUIElement {
-        app.buttons["Save"]
+        app.buttons[Locators.OnMyiPhonePage.save.rawValue]
     }
 
     var backupFile: (String) -> XCUIElement {

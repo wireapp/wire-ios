@@ -29,27 +29,27 @@ class ConversationsPage: PageModel {
     }
 
     var plusButtonToCreateGroupOrSearch: XCUIElement {
-        app.descendants(matching: .any)["create_group_or_search_button"].firstMatch
+        app.descendants(matching: .any)[Locators.ConversationsPage.createGroupOrSearchButton.rawValue].firstMatch
     }
 
     var conversationCell: XCUIElement {
-        app.buttons["title"]
+        app.buttons[Locators.ConversationsPage.conversationCell.rawValue]
     }
 
     var blockButtonOnMoreOptions: XCUIElement {
-        app.buttons["Block…"]
+        app.buttons[Locators.ConversationsPage.blockOptionOnContextMenu.rawValue]
     }
 
     var blockButtonOnBottomSheet: XCUIElement {
-        app.buttons["Block"]
+        app.buttons[Locators.ConversationsPage.blockButtonOnBottomSheet.rawValue].firstMatch
     }
 
     var videoCallButton: XCUIElement {
-        app.descendants(matching: .any)["videoCallBarButton"].firstMatch
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoCallBarButton.rawValue].firstMatch
     }
 
     var acceptRequestButton: XCUIElement {
-        app.buttons["accept"]
+        app.buttons[Locators.ConnectionRequestsPage.connectRequestButton.rawValue]
     }
 
     var sidePanel: XCUIElement {
@@ -70,7 +70,8 @@ class ConversationsPage: PageModel {
         return try SettingsPage()
     }
 
-    func openUserAccountPageForUser(with input: String) throws -> UserAccountPage {
+
+    func openUserAccountPageForUser(with input: String) throws -> UserProfilePage {
         app.iPadOnly {
             if self.sideBarPanel.exists {
                 self.sideBarPanel.tap()
@@ -81,7 +82,7 @@ class ConversationsPage: PageModel {
         if button.waitForExistence(timeout: 2), button.isHittable {
             button.tap()
         }
-        return try UserAccountPage()
+        return try UserProfilePage()
     }
 
     func tapPlusButtonToCreateGroup() throws -> NewConversationPage {

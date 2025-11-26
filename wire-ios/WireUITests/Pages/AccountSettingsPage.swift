@@ -16,60 +16,61 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class AccountSettingsPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        accountSettingsPageHeader
-    }
-
-    var accountSettingsPageHeader: XCUIElement {
-        app.staticTexts["Account"]
+        nameField
     }
 
     var nameField: XCUIElement {
-        app.descendants(matching: .any)["NameField"].firstMatch
+        app.textFields[Locators.AccountSettingsPage.nameField.rawValue]
     }
 
     var usernameField: XCUIElement {
-        app.descendants(matching: .any)["UsernameField"].firstMatch
+        app.staticTexts[Locators.AccountSettingsPage.usernameField.rawValue]
     }
 
     var emailField: XCUIElement {
-        app.descendants(matching: .any)["EmailField"].firstMatch
+        app.staticTexts[Locators.AccountSettingsPage.emailField.rawValue]
     }
 
     var domainField: XCUIElement {
-        app.descendants(matching: .any)["DomainFieldDisabled"].firstMatch
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.domainFieldDisabled.rawValue].firstMatch
     }
 
     var logoutButton: XCUIElement {
-        app.staticTexts["Log Out"]
+        app.staticTexts[Locators.AccountSettingsPage.logOut.rawValue]
     }
 
     var deleteAccountButtonOnAccount: XCUIElement {
-        app.descendants(matching: .any)["Delete AccountField"].firstMatch
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.deleteAccountField.rawValue].firstMatch
     }
 
     var oKButtonOnDeleteAccountAlert: XCUIElement {
-        app.buttons["OK"]
+        app.buttons[Locators.AccountSettingsPage.ok.rawValue]
     }
 
-    var backToSettingsButton: XCUIElement {
-        app.buttons["Settings"]
+    var backToPreviousPage: XCUIElement {
+        app.navigationBars.buttons.element(boundBy: 0)
     }
 
     var backupOrRestoreButton: XCUIElement {
-        app.descendants(matching: .any)["Back up or RestoreField"].firstMatch
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.backuporRestoreField.rawValue].firstMatch
     }
 
     var resetPasswordButton: XCUIElement {
-        app.descendants(matching: .any)["Reset Password"].firstMatch
+        app.descendants(matching: .any)[Locators.AccountSettingsPage.resetPasswordField.rawValue].firstMatch
     }
 
     func getAccountName() -> String? {
-        nameField.value as? String
+        XCTAssertTrue(
+            nameField.waitForExistence(timeout: 5.0),
+            "NameField should exist before reading account name"
+        )
+        return nameField.value as? String
     }
 
     func getUsername() -> String {
@@ -85,9 +86,7 @@ class AccountSettingsPage: PageModel {
     }
 
     func backToSettings() throws -> SettingsPage {
-        if backToSettingsButton.exists {
-            backToSettingsButton.tap()
-        }
+        backToPreviousPage.tap()
         return try SettingsPage()
     }
 
@@ -115,10 +114,11 @@ class AccountSettingsPage: PageModel {
     }
 
     func goBackToSettingsPage() throws -> SettingsPage {
+
         if app.iPadOnly() {
             return try SettingsPage()
         }
-        backToSettingsButton.tap()
+        backToPreviousPage.tap()
         return try SettingsPage()
     }
 
@@ -126,4 +126,5 @@ class AccountSettingsPage: PageModel {
         resetPasswordButton.tap()
         return try WebViewPage()
     }
+
 }
