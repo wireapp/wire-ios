@@ -558,7 +558,7 @@ platform :ios do
             configuration: "Debug",
             sdk:"iphonesimulator",
             destination: "platform=iOS Simulator,id=#{ENV['IOS_SIM_ID']},OS=#{ios_version}",
-            # code_coverage: true,
+            code_coverage: true,
             derived_data_path: "DerivedData",
             buildlog_path: build.build_path,
             result_bundle: true,

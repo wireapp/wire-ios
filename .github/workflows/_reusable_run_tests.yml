@@ -316,3 +316,4 @@ jobs:
           DATADOG_SITE: datadoghq.eu
         run: |
           find . -name "*.junit" -type f | tr '\n' ' ' | xargs -L 1 datadog-ci junit upload --service wire-ios-mono .
+          datadog-ci coverage upload .
