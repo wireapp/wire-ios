@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class ConnectionRequestsPage: PageModel {
@@ -25,11 +26,11 @@ class ConnectionRequestsPage: PageModel {
     }
 
     var acceptRequestButton: XCUIElement {
-        app.buttons["accept"]
+        app.buttons[Locators.ConnectionRequestsPage.connectRequestButton.rawValue]
     }
 
     var userNameInfo: XCUIElement {
-        app.staticTexts["username"].firstMatch
+        app.staticTexts[Locators.ConnectionRequestsPage.username.rawValue].firstMatch
     }
 
     func acceptConnectionRequest() throws -> ActiveConversationPage {

@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireNetwork
 
 // sourcery: AutoMockable
 /// An object to fetch an MLS one on one conversation
@@ -36,6 +37,6 @@ public protocol PullMLSOneOnOneSyncProtocol {
     func pull(
         userID: UUID,
         userDomain: String
-    ) async throws -> MLSGroupID
+    ) async throws -> (MLSGroupID, MLSPublicKeys?)
 
 }

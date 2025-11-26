@@ -26,28 +26,21 @@ final class TeamManageTests: WireUITestCase {
         let user = try await userHelper.createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
-        var userAccountPage = try  firstTimePage.acceptPopup(with: self)
+        var userProfilePage = try  firstTimePage.acceptPopup(with: self)
             .openUserAccountPageForUser(with: user.name)
 
-        var conversationPage = try userAccountPage
-            .tapCreateTeamButtonAndContinue()
+        let conversationPage = try userProfilePage
+            .tapCreateTeamButton()
             .tapContinue()
             .typeTeamNameAndContinue(user.teamName)
             .acceptTheConfirmationAndContinue()
             .tapBackToWireButton()
 
-        userAccountPage = try conversationPage.openUserAccountPageForUser(with: user.name)
+        userProfilePage = try conversationPage.openUserAccountPageForUser(with: user.name)
 
-        let teamName = try XCTUnwrap(userAccountPage.getTeamName())
+        let teamName = try XCTUnwrap(userProfilePage.getTeamName())
         XCTAssertEqual(teamName, user.teamName, "Team name didn't match expected value \(user.teamName)")
-        XCTAssertTrue(userAccountPage.manageTeamButton.exists, "Manage Team button is not visible")
-
-        conversationPage = try userAccountPage.closeAccountPage()
-        let settingsPage = try conversationPage.openSettings()
-
-        try settingsPage.openAccountSettings()
-            .logout()
-            .enterPassword(user.password)
+        XCTAssertTrue(userProfilePage.manageTeamButton.exists, "Manage Team button is not visible")
     }
 
     @MainActor
@@ -71,14 +64,14 @@ final class TeamManageTests: WireUITestCase {
         try await BackendClient.registerTeamMember(memberUser, invitationCode: code)
 
         let firstTimePage = try app.loginUser(email: memberUser.email, password: memberUser.password)
-        let userAccountPage = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)
+        let userProfilePage = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(memberUser.username)
             .openUserAccountPageForUser(with: memberUser.username)
 
-        let teamName = try XCTUnwrap(userAccountPage.getTeamName())
+        let teamName = try XCTUnwrap(userProfilePage.getTeamName())
         XCTAssertEqual(teamName, owner.teamName, "Team name didn't match expected value \(owner.teamName)")
 
-        let conversationPage = try userAccountPage.closeAccountPage()
+        let conversationPage = try userProfilePage.closeAccountPage()
         _ = try conversationPage.openSettings()
             .openAccountSettings()
             .logout()

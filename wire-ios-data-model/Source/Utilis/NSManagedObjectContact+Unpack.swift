@@ -15,28 +15,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+import CoreData
+import Foundation
+import WireSystem
 
-import WireLocators
-import XCTest
+extension NSManagedObjectContext {
 
-class VerifyEmailPage: PageModel {
-
-    override var pageMainElement: XCUIElement {
-        verifyEmailPageLabel
+    private func resolve<IDType: NSManagedObject>(_ id: NSManagedObjectID, as type: IDType.Type) throws -> IDType {
+        guard let obj = try existingObject(with: id) as? IDType else {
+            fatal("expected to find \(type) in context")
+        }
+        return obj
     }
 
-    var verifyEmailPageLabel: XCUIElement {
-        app.navigationBars[Locators.VerifyEmailPage.verifyEmailPageLabel.rawValue]
+    public func unpack<U: NSManagedObject, T>(_ object: U, _ block: @escaping @Sendable (U) -> T) async throws -> T {
+        let managedObjectID = object.objectID
+        return try await perform {
+            let object = try self.resolve(managedObjectID, as: U.self)
+            return block(object)
+        }
     }
-
-    var backToPreviousPage: XCUIElement {
-        app.navigationBars.buttons.element(boundBy: 0)
-    }
-
-    func goBacktoAccountSetting() throws -> AccountSettingsPage {
-        backToPreviousPage.tap()
-        backToPreviousPage.tap()
-        return try AccountSettingsPage()
-    }
-
 }

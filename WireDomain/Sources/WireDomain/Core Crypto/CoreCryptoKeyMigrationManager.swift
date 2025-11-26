@@ -30,6 +30,10 @@ public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtoco
 
     // MARK: Journal updates
 
+    public var isAnyMigrationRequired: Bool {
+        isKeyRotationNeeded || isMigrationToBytesNeeded || isMigrationToScopedKeyNeeded
+    }
+
     public var isMigrationToBytesNeeded: Bool {
         journal[.isCoreCryptoKeyMigrationToBytesRequired]
     }

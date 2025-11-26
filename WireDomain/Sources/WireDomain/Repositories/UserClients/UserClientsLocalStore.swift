@@ -146,10 +146,10 @@ public struct UserClientsLocalStore: UserClientsLocalStoreProtocol {
             if !localClient.isSelfClient() {
                 localClient.mlsPublicKeys = .init(
                     ed25519: userClientInfo.mlsPublicKeys?.ed25519,
-                    ed448: userClientInfo.mlsPublicKeys?.ed448,
+                    ed448: nil, // not used
                     p256: userClientInfo.mlsPublicKeys?.p256,
                     p384: userClientInfo.mlsPublicKeys?.p384,
-                    p521: userClientInfo.mlsPublicKeys?.p512
+                    p521: userClientInfo.mlsPublicKeys?.p521
                 )
             }
 
