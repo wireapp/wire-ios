@@ -40,6 +40,10 @@ package struct FilesViewItem: Identifiable, Hashable {
 
     /// Identifier of this item on the wire cells backend.
     package let id: UUID
+    
+    /// The id of the topmost folder in the recycle bin, if the item is not at the root of the recycle bin.
+    /// Needed to restore items which are in folders rather than directly at the root of the recycle bin.
+    var recycleBinTopFolderId: UUID?
 
     /// The kind of this item - file or folder.
     let kind: Kind
@@ -325,8 +329,23 @@ package final class FilesViewModel: ObservableObject {
     /// Navigates to the folder represented by the given item.
     private func openFolder(item: FilesViewItem) {
         precondition(item.kind == .folder)
+        
+        var targetItem = item
+        
+        if isRecycleBin {
+            let pathComponents = targetItem.filePath.split(separator: "/").map { String($0) }
+            if pathComponents.count == 3 {
+                // remember the id of the top folder in the recycle bin for later when an item in a subfolder will be restored
+                targetItem.recycleBinTopFolderId = targetItem.id
+            } else if pathComponents.count > 3 {
+                // for the next subfolder, just assign the id of the same top folder
+                if let previousItem = navigationPath.last, let recycleBinTopFolderId = previousItem.recycleBinTopFolderId {
+                    targetItem.recycleBinTopFolderId = recycleBinTopFolderId
+                }
+            }
+        }
 
-        setNavigation(navigationPath + [item])
+        setNavigation(navigationPath + [targetItem])
     }
 
     /// Downloads if necessary and views the asset represented by the given item.
@@ -498,9 +517,11 @@ package final class FilesViewModel: ObservableObject {
         var currentItems = state.items
         currentItems.removeAll { $0.id == asset.id }
         state = .received(items: Self.processItems(currentItems))
+        
+        let nodeIdToRestore = navigationPath.last?.recycleBinTopFolderId ?? asset.id
 
         do {
-            try await useCases.restoreNodes.invoke(nodeIDs: [asset.id])
+            try await useCases.restoreNodes.invoke(nodeIDs: [nodeIdToRestore])
         } catch {
             guard state.isLoaded else { return }
 
