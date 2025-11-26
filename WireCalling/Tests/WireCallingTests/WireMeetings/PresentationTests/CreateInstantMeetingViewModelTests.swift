@@ -31,7 +31,8 @@ struct CreateInstantMeetingViewModelTests {
     init() {
         self.mockPasswordValidator = MockPasswordValidator()
         self.viewModel = CreateInstantMeetingViewModel(
-            passwordValidator: mockPasswordValidator
+            passwordValidator: mockPasswordValidator,
+            isContextMenuAllowed: true
         )
     }
 
@@ -219,24 +220,6 @@ struct CreateInstantMeetingViewModelTests {
 
         // Then
         #expect(viewModel.isNextButtonEnabled == true)
-    }
-
-}
-
-// MARK: - Mock Password Validator
-
-final class MockPasswordValidator: PasswordValidator {
-
-    var isPasswordValid_MockValue: Bool = true
-    var isPasswordValid_Invocations: [String] = []
-
-    func isPasswordValid(_ password: String) -> Bool {
-        isPasswordValid_Invocations.append(password)
-        return isPasswordValid_MockValue
-    }
-
-    var localizedRulesDescription: String? {
-        "localizedRulesDescription"
     }
 
 }

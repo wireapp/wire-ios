@@ -272,6 +272,8 @@ public final class ZMUserSession: NSObject {
     // To prevent too eagerly resolving all conversations.
     var didAlreadyResolveAllOneOnOnes = false
 
+    private lazy var networkStateSubject: CurrentValueSubject<NetworkState, Never> = .init(networkState)
+
     public private(set) var networkState: NetworkState = .online {
         didSet {
             if oldValue != networkState {
@@ -280,6 +282,7 @@ public final class ZMUserSession: NSObject {
                     notificationContext: managedObjectContext.notificationContext
                 )
             }
+            networkStateSubject.send(networkState)
         }
     }
 
@@ -651,7 +654,8 @@ public final class ZMUserSession: NSObject {
             featureConfigRepository: clientSessionComponent.featureConfigRepository,
             syncStateSubject: clientSessionComponent.syncStateSubject,
             pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator,
-            conversationUpdatesGenerator: clientSessionComponent.conversationUpdatesGenerator
+            conversationUpdatesGenerator: clientSessionComponent.conversationUpdatesGenerator,
+            networkStatePublisher: networkStateSubject.eraseToAnyPublisher()
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
         self.syncAgent = syncAgent
@@ -965,11 +969,13 @@ public final class ZMUserSession: NSObject {
         } else if resourcesSync {
             await triggerResourcesSync()
         } else if journal[.isConversationSyncRequired] {
-            // as wanted this should not be blocking, see AppVersionMigration_4_1_1
+            // as wanted this should not be blocking, see AppVersionMigration_4_1_1, AppVersionMigration_4_10_0
             Task {
                 let sync = clientSessionComponent?.pullAllConversationsSync
                 try? await sync?.pull()
             }
+            // trigger the sync in this case too, to get the right sync bar state
+            syncAgent?.resume()
         } else {
             syncAgent?.resume()
         }
@@ -1410,6 +1416,15 @@ extension ZMUserSession: SyncAgentDelegate {
         } catch {
             WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
         }
+    }
+
+    public func resolveOneOnOneConversation(with userID: WireDataModel
+        .QualifiedID) async throws -> OneOnOneConversationResolution {
+        guard let clientSessionComponent else {
+            return .noAction
+        }
+
+        return try await clientSessionComponent.oneOnOneResolver.resolveOneOnOneConversation(with: userID)
     }
 
     private func performPostQuickSyncE2EIActions() {

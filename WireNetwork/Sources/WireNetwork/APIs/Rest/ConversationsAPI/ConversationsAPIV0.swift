@@ -110,7 +110,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     func getMLSOneToOneConversation(
         userID: String,
         in domain: String
-    ) async throws -> Conversation {
+    ) async throws -> (Conversation, MLSPublicKeys?) {
         throw ConversationsAPIError.unsupportedEndpointForAPIVersion
     }
 
