@@ -250,14 +250,14 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         // THEN
         XCTAssertEqual(mockMigrationManager.markMigrationToScopedKeyDone_Invocations.count, 1)
     }
-    
+
     func test_itMarksScopedKeyMigrationAsDone_WhenAllowed_AndThereIsNoUnscopedKey() async throws {
         // GIVEN
         mockMigrationManager.isMigrationToScopedKeyNeeded = true
-        
+
         // WHEN
         _ = try? await sut.coreCryptoKey(allowCreation: true, path: "")
-        
+
         // THEN
         XCTAssertEqual(mockMigrationManager.markMigrationToScopedKeyDone_Invocations.count, 1)
     }
