@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class SetUsernamePage: PageModel {
@@ -25,11 +26,11 @@ class SetUsernamePage: PageModel {
     }
 
     var usernameField: XCUIElement {
-        app.descendants(matching: .textField)["UsernameField"].firstMatch
+        app.descendants(matching: .textField)[Locators.SetUsernamePage.usernameTextField.rawValue].firstMatch
     }
 
     var confirmUsernameButton: XCUIElement {
-        app.descendants(matching: .button)["ConfirmButton"].firstMatch
+        app.descendants(matching: .button)[Locators.SetUsernamePage.confirmUsernameButton.rawValue].firstMatch
     }
 
     func setUsername(_ username: String) throws -> ConversationsPage {

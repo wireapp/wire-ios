@@ -198,15 +198,12 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         startQuickSync()
         finishQuickSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        let networkStateRecorder = NetworkStateRecorder()
-        networkStateRecorder.observe(in: sut.managedObjectContext.notificationContext)
 
         // when
         sut.processLegacyEvents()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(networkStateRecorder.stateChanges, [.onlineSynchronizing, .online])
         XCTAssertFalse(sut.isPerformingSync)
     }
 

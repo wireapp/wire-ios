@@ -21,7 +21,7 @@ import WireNetwork
 extension MLSPublicKeys {
 
     func hasValidKey() -> Bool {
-        [ed25519, ed448, p256, p384, p512].contains { key in
+        [ed25519, p256, p384, p521].contains { key in
             guard let key else { return false }
             return !key.isEmpty
         }
