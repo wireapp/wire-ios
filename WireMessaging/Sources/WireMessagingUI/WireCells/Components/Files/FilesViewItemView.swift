@@ -109,13 +109,13 @@ struct FilesViewItemView: View {
                         }.disabled(viewModel.isDownloading)
                     }
 
-                    if canRenameFile {
+                    if canRenameFile && !viewModel.isInRecycleBin {
                         Button(action: rename) {
                             Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
                         }
                     }
 
-                    if canEditTags {
+                    if canEditTags && !viewModel.isInRecycleBin {
                         Button(action: editTags) {
                             Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
                         }

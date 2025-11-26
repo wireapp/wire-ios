@@ -84,6 +84,11 @@ package struct RecycleBinContainer: View {
                     fileCache: fileCache,
                     localAssetStore: localAssetStore
                 ),
+                restoreNodes: WireCellsRestoreNodesUseCase(
+                    repository: nodesRepository,
+                    fileCache: fileCache,
+                    localAssetStore: localAssetStore
+                ),
                 renameNode: WireCellsRenameNodeUseCase(
                     nodesRepository: nodesRepository,
                     localAssetsRepository: localAssetRepository,

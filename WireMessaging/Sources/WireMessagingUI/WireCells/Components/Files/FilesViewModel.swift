@@ -125,6 +125,7 @@ package final class FilesViewModel: ObservableObject {
         package init(
             fetchNodes: WireCellsFetchNodesUseCase,
             deleteNodes: WireCellsDeleteNodesUseCase,
+            restoreNodes: WireCellsRestoreNodesUseCase,
             renameNode: any WireCellsRenameNodeUseCaseProtocol,
             updateTags: any WireCellsUpdateTagsUseCaseProtocol,
             getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol,
@@ -133,6 +134,7 @@ package final class FilesViewModel: ObservableObject {
 
             self.fetchNodes = fetchNodes
             self.deleteNodes = deleteNodes
+            self.restoreNodes = restoreNodes
             self.renameNode = renameNode
             self.updateTags = updateTags
             self.getTagSuggestions = getTagSuggestions
@@ -141,6 +143,7 @@ package final class FilesViewModel: ObservableObject {
 
         let fetchNodes: WireCellsFetchNodesUseCase
         let deleteNodes: WireCellsDeleteNodesUseCase
+        let restoreNodes: WireCellsRestoreNodesUseCase
         let renameNode: any WireCellsRenameNodeUseCaseProtocol
         let updateTags: any WireCellsUpdateTagsUseCaseProtocol
         let getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
@@ -487,7 +490,24 @@ package final class FilesViewModel: ObservableObject {
     }
     
     private func restoreItem(_ asset: FilesViewItem) async {
-        //TODO: ...
+        guard state.isLoaded else {
+            WireLogger.wireCells.error("Attempt to restore asset while not visible", attributes: .safePublic)
+            return
+        }
+
+        var currentItems = state.items
+        currentItems.removeAll { $0.id == asset.id }
+        state = .received(items: Self.processItems(currentItems))
+
+        do {
+            try await useCases.restoreNodes.invoke(nodeIDs: [asset.id])
+        } catch {
+            guard state.isLoaded else { return }
+
+            var currentItems = state.items
+            currentItems.append(asset)
+            state = .received(items: Self.processItems(currentItems))
+        }
     }
 
     /// Removes items with duplicate IDs keeping the latest modified if known, otherwise the first.

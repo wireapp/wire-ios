@@ -45,6 +45,11 @@ extension FilesViewModel {
                     fileCache: cache,
                     localAssetStore: localAssetStore
                 ),
+                restoreNodes: WireCellsRestoreNodesUseCase(
+                    repository: previewNodesRepository(),
+                    fileCache: cache,
+                    localAssetStore: localAssetStore
+                ),
                 renameNode: WireCellsRenameNodeUseCase(
                     nodesRepository: previewNodesRepository(),
                     localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),

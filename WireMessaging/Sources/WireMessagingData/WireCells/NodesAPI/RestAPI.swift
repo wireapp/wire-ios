@@ -30,6 +30,7 @@ final class RestAPI: Sendable {
 
     private enum Constants {
         static let deleteBackgroundActionName = "delete"
+        static let restoreBackgroundActionName = "restore"
         static let renameBackgroundActionName = "move"
     }
 
@@ -136,6 +137,27 @@ final class RestAPI: Sendable {
             return false
         }
         return deleteAction.status == .finished
+    }
+    
+    /// Restores nodes from the recycle bin by their `UUID`s.
+    func restoreNodes(nodeIDs: [UUID]) async throws -> Bool {
+        let nodes = nodeIDs.map { RestNodeLocator(uuid: $0.transportString()) }
+        let parameters = RestActionParameters(
+            awaitStatus: .finished,
+            awaitTimeout: "60s",
+            nodes: nodes
+        )
+        let response = try await NodeServiceAPI.performAction(
+            name: .restore,
+            parameters: parameters,
+            apiConfiguration: makeConfiguration()
+        )
+        guard
+            let actions = response.backgroundActions,
+            let restoreAction = actions.first(where: { $0.name == Constants.restoreBackgroundActionName }) else {
+            return false
+        }
+        return restoreAction.status == .finished
     }
 
     func publishDraft(uuid: UUID, versionID: UUID) async throws {
