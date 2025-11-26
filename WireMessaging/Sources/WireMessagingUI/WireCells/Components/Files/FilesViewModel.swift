@@ -172,6 +172,10 @@ package final class FilesViewModel: ObservableObject {
         state != .error && state != .pending
     }
 
+    var showCloseButton: Bool {
+        navigationPath.isEmpty
+    }
+
     package init(
         useCases: UseCases,
         title: String? = nil,

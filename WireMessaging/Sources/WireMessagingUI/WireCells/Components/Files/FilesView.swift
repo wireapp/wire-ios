@@ -113,7 +113,9 @@ package struct FilesView: FilesViewProtocol {
 private extension FilesView {
 
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) { closeButton }
+        if viewModel.showCloseButton {
+            ToolbarItem(placement: .topBarLeading) { closeButton }
+        }
 
         if !viewModel.folderMenuOptions.isEmpty {
             ToolbarTitleMenu {
@@ -122,19 +124,33 @@ private extension FilesView {
         }
 
         if viewModel.isFoldersEnabled {
-            ToolbarItem(placement: .topBarTrailing) { createFolderButton }
+            ToolbarItem(placement: .topBarTrailing) {
+                menuButton
+            }
+        }
+    }
+
+    var menuButton: some View {
+        Menu {
+            createFolderButton
+        } label: {
+            Image(systemName: "plus.circle.fill")
+                .foregroundStyle(accentColor)
+                .frame(width: 44, height: 44, alignment: .trailing)
         }
     }
 
     var createFolderButton: some View {
-        Button(
-            action: { viewModel.onCreateFolder() },
-            label: {
-                Image(systemName: "plus.circle.fill")
-                    .foregroundStyle(accentColor)
-                    .frame(width: 44, height: 44, alignment: .trailing)
+        HStack {
+            Button {
+                viewModel.onCreateFolder()
+            } label: {
+                HStack {
+                    Text(Strings.Files.List.newFolder)
+                    Image(systemName: "folder")
+                }
             }
-        )
+        }
     }
 
     func toolBarTitleMenuContent() -> some View {
