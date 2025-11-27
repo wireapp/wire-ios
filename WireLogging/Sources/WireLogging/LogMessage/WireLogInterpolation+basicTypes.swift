@@ -16,21 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension WireLogInterpolation {
+public extension WireLogInterpolation {
 
     // MARK: String
 
-    public mutating func appendInterpolation(safePublic string: String) {
+    mutating func appendInterpolation(safePublic string: String) {
         writeText(string)
     }
 
     // MARK: Int
 
-    public mutating func appendInterpolation(safePublic number: Int) {
+    mutating func appendInterpolation(safePublic number: Int) {
         writeText("\(number)")
     }
 
-    public mutating func appendInterpolation(safePublic number: Int32) {
+    mutating func appendInterpolation(safePublic number: Int32) {
         writeText("\(number)")
     }
 

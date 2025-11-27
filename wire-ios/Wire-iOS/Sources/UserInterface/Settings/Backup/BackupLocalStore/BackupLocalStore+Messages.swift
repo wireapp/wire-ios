@@ -23,7 +23,7 @@ import WireFoundation
 import WireLogging
 import WireNetwork
 
-private let importBackupLogger = WireLogging.WireLogger.importBackup
+private var importBackupLogger: WireTaggedLogger { WireLogging.WireLogger.importBackup }
 
 // MARK: - Interface
 
@@ -99,18 +99,27 @@ extension BackupLocalStore {
 
         // Validate and collect import data
         let (importData, validationResult) = validateAndCollectMessagesImportData(from: backupMessages)
-        importBackupLogger.info("Validation: \(safePublic: validationResult.successCount) valid, \(safePublic: validationResult.failureCount) invalid")
+        importBackupLogger
+            .info(
+                "Validation: \(safePublic: validationResult.successCount) valid, \(safePublic: validationResult.failureCount) invalid"
+            )
 
         // Fetch relationships
         let (sendersByID, conversationsByID) = try await fetchRelationships(from: importData)
-        importBackupLogger.info("Fetched \(safePublic: sendersByID.count) senders, \(safePublic: conversationsByID.count) conversations")
+        importBackupLogger
+            .info(
+                "Fetched \(safePublic: sendersByID.count) senders, \(safePublic: conversationsByID.count) conversations"
+            )
 
         // Insert messages
         let (insertedIDs, insertionResult) = await batchInsertMessages(
             clientMessagesAttributes: importData.clientMessagesAttributes,
             assetMessagesAttributes: importData.assetMessagesAttributes
         )
-        importBackupLogger.info("Insertion: \(safePublic: insertionResult.successCount) succeeded, \(safePublic: insertionResult.failureCount) failed")
+        importBackupLogger
+            .info(
+                "Insertion: \(safePublic: insertionResult.successCount) succeeded, \(safePublic: insertionResult.failureCount) failed"
+            )
 
         // Rehydrate messages (set relationships and generic message)
         let rehydrationResult = try await rehydrateAllMessages(
@@ -119,7 +128,10 @@ extension BackupLocalStore {
             conversationsByID: conversationsByID,
             rehydrationDataByNonce: importData.rehydrationDataByNonce
         )
-        importBackupLogger.info("Rehydration: \(safePublic: rehydrationResult.successCount) succeeded, \(safePublic: rehydrationResult.failureCount) failed")
+        importBackupLogger
+            .info(
+                "Rehydration: \(safePublic: rehydrationResult.successCount) succeeded, \(safePublic: rehydrationResult.failureCount) failed"
+            )
 
         try await backupContext.perform {
             // Save context

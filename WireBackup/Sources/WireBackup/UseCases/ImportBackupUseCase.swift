@@ -89,7 +89,6 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     var current = 0
                     let total = usersPager.totalPages + messagesPager.totalPages
 
-
                     // users
                     logger.info("Starting importing users, page count: \(safePublic: usersPager.totalPages)")
                     let storedUserIDs = try await backupLocalStore.fetchAllUserIDs()
@@ -140,8 +139,8 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                             totalFailureCount += failureCount
 
                             let progress =
-                            "Page (\(current)/\(total)): " +
-                            "Imported \(successCount) messages, \(failureCount) failed to import"
+                                "Page (\(current)/\(total)): " +
+                                "Imported \(successCount) messages, \(failureCount) failed to import"
                             logger.info("\(safePublic: progress)")
 
                         } catch {
@@ -155,7 +154,10 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         reportProgress(current, Int(exactly: total) ?? 1)
                     }
 
-                    logger.info("Imported \(safePublic: totalSuccessCount) messages, \(safePublic: totalFailureCount) failed to import")
+                    logger
+                        .info(
+                            "Imported \(safePublic: totalSuccessCount) messages, \(safePublic: totalFailureCount) failed to import"
+                        )
 
                     try await backupLocalStore.refreshViewContext()
 

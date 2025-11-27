@@ -20,6 +20,55 @@ import Foundation
 
 public enum WireLogger {
 
+    public static let analytics = WireTaggedLogger("analytics")
+    public static let apiMigration = WireTaggedLogger("api-migration")
+    public static let appVersionMigration = WireTaggedLogger("api-version-migration")
+    public static let appState = WireTaggedLogger("AppState")
+    public static let appDelegate = WireTaggedLogger("AppDelegate")
+    public static let appLock = WireTaggedLogger("AppLock")
+    public static let assets = WireTaggedLogger("assets")
+    public static let authentication = WireTaggedLogger("authentication") // TODO: move?
+    public static let backend = WireTaggedLogger("backend")
+    public static let backgroundActivity = WireTaggedLogger("background-activity")
+    public static let badgeCount = WireTaggedLogger("badge-count")
+    public static let calling = WireTaggedLogger("calling")
+    public static let conversation = WireTaggedLogger("conversation")
+    public static let coreCrypto = WireTaggedLogger("core-crypto")
+    public static let e2ei = WireTaggedLogger("end-to-end-identity")
+    public static let ear = WireTaggedLogger("encryption-at-rest")
+    public static let environment = WireTaggedLogger("environment")
+    public static let featureConfigs = WireTaggedLogger("feature-configurations")
+    public static let individualToTeamMigration = WireTaggedLogger("individual-to-team-migration")
+    public static let keychain = WireTaggedLogger("keychain")
+    public static let localStorage = WireTaggedLogger("local-storage")
+    public static let mainCoordinator = WireTaggedLogger("main-coordinator")
+    public static let messaging = WireTaggedLogger("messaging")
+    public static let mls = WireTaggedLogger("mls")
+    public static let notifications = WireTaggedLogger("notifications")
+    public static let performance = WireTaggedLogger("performance")
+    public static let push = WireTaggedLogger("push")
+    public static let pushChannel = WireTaggedLogger("push-channel")
+    public static let webSocket = WireTaggedLogger("websocket")
+    public static let proteus = WireTaggedLogger("proteus")
+    public static let session = WireTaggedLogger("session")
+    public static let sessionManager = WireTaggedLogger("SessionManager")
+    public static let shareExtension = WireTaggedLogger("share-extension")
+    public static let sync = WireTaggedLogger("sync")
+    public static let system = WireTaggedLogger("system")
+    public static let timePoint = WireTaggedLogger("timePoint")
+    public static let ui = WireTaggedLogger("UI")
+    public static let updateEvent = WireTaggedLogger("update-event")
+    public static let userClient = WireTaggedLogger("user-client")
+    public static let network = WireTaggedLogger("network")
+    public static let eventProcessing = WireTaggedLogger("event-processing")
+    public static let messageProcessing = WireTaggedLogger("message-processing")
+    public static let avs = WireTaggedLogger("avs")
+    public static let supportedProtocols = WireTaggedLogger("supported-protocols")
+    public static let search = WireTaggedLogger("search")
+    public static let wireCells = WireTaggedLogger("wire-cells")
+
+    // MARK: - Setup
+
     /// This method must be called very early on app start, before any other interaction with ``WireLogger``.
 
     public static func setup(_ logHandler: any WireLogHandlerProtocol) {
@@ -32,54 +81,10 @@ public enum WireLogger {
 
     public private(set) nonisolated(unsafe) static var logHandler: (any WireLogHandlerProtocol)!
 
-    public static let analytics = WireTaggedLogger(tag: "analytics", handler: logHandler)
-    public static let apiMigration = WireTaggedLogger(tag: "api-migration", handler: logHandler)
-    public static let appVersionMigration = WireTaggedLogger(tag: "api-version-migration", handler: logHandler)
-    public static let appState = WireTaggedLogger(tag: "AppState", handler: logHandler)
-    public static let appDelegate = WireTaggedLogger(tag: "AppDelegate", handler: logHandler)
-    public static let appLock = WireTaggedLogger(tag: "AppLock", handler: logHandler)
-    public static let assets = WireTaggedLogger(tag: "assets", handler: logHandler)
-    public static let authentication = WireTaggedLogger(tag: "authentication", handler: logHandler) // TODO: move?
-    public static let backend = WireTaggedLogger(tag: "backend", handler: logHandler)
-    public static let backgroundActivity = WireTaggedLogger(tag: "background-activity", handler: logHandler)
-    public static let badgeCount = WireTaggedLogger(tag: "badge-count", handler: logHandler)
-    public static let calling = WireTaggedLogger(tag: "calling", handler: logHandler)
-    public static let conversation = WireTaggedLogger(tag: "conversation", handler: logHandler)
-    public static let coreCrypto = WireTaggedLogger(tag: "core-crypto", handler: logHandler)
-    public static let e2ei = WireTaggedLogger(tag: "end-to-end-identity", handler: logHandler)
-    public static let ear = WireTaggedLogger(tag: "encryption-at-rest", handler: logHandler)
-    public static let environment = WireTaggedLogger(tag: "environment", handler: logHandler)
-    public static let featureConfigs = WireTaggedLogger(tag: "feature-configurations", handler: logHandler)
-    public static let individualToTeamMigration = WireTaggedLogger(
-        tag: "individual-to-team-migration",
-        handler: logHandler
-    )
-    public static let keychain = WireTaggedLogger(tag: "keychain", handler: logHandler)
-    public static let localStorage = WireTaggedLogger(tag: "local-storage", handler: logHandler)
-    public static let mainCoordinator = WireTaggedLogger(tag: "main-coordinator", handler: logHandler)
-    public static let messaging = WireTaggedLogger(tag: "messaging", handler: logHandler)
-    public static let mls = WireTaggedLogger(tag: "mls", handler: logHandler)
-    public static let notifications = WireTaggedLogger(tag: "notifications", handler: logHandler)
-    public static let performance = WireTaggedLogger(tag: "performance", handler: logHandler)
-    public static let push = WireTaggedLogger(tag: "push", handler: logHandler)
-    public static let pushChannel = WireTaggedLogger(tag: "push-channel", handler: logHandler)
-    public static let webSocket = WireTaggedLogger(tag: "websocket", handler: logHandler)
-    public static let proteus = WireTaggedLogger(tag: "proteus", handler: logHandler)
-    public static let session = WireTaggedLogger(tag: "session", handler: logHandler)
-    public static let sessionManager = WireTaggedLogger(tag: "SessionManager", handler: logHandler)
-    public static let shareExtension = WireTaggedLogger(tag: "share-extension", handler: logHandler)
-    public static let sync = WireTaggedLogger(tag: "sync", handler: logHandler)
-    public static let system = WireTaggedLogger(tag: "system", handler: logHandler)
-    public static let timePoint = WireTaggedLogger(tag: "timePoint", handler: logHandler)
-    public static let ui = WireTaggedLogger(tag: "UI", handler: logHandler)
-    public static let updateEvent = WireTaggedLogger(tag: "update-event", handler: logHandler)
-    public static let userClient = WireTaggedLogger(tag: "user-client", handler: logHandler)
-    public static let network = WireTaggedLogger(tag: "network", handler: logHandler)
-    public static let eventProcessing = WireTaggedLogger(tag: "event-processing", handler: logHandler)
-    public static let messageProcessing = WireTaggedLogger(tag: "message-processing", handler: logHandler)
-    public static let avs = WireTaggedLogger(tag: "avs", handler: logHandler)
-    public static let supportedProtocols = WireTaggedLogger(tag: "supported-protocols", handler: logHandler)
-    public static let search = WireTaggedLogger(tag: "search", handler: logHandler)
-    public static let wireCells = WireTaggedLogger(tag: "wire-cells", handler: logHandler)
+    // MARK: Helper
+
+    private static func WireTaggedLogger(_ tag: WireLogTag) -> WireTaggedLogger {
+        .init(tag: tag, handler: logHandler)
+    }
 
 }

@@ -140,7 +140,7 @@ final class WireLogInterpolationAnyErrorTests: XCTestCase {
     //        XCTAssertTrue(content.contains("SomeType"))
     //        XCTAssertTrue(content.contains("Lorem Ipsum"))
     //    }
-    //     
+    //
 }
 
 private enum CustomError: Error {
