@@ -16,24 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct WireLogAttribute: Sendable {
+public import Foundation
 
-    public var key: String
-    public var value: String
+public extension WireLogAttribute {
 
-    public init(
-        key: String,
-        value: String
-    ) {
-        self.key = key
-        self.value = value
-    }
+    static var processID: WireLogAttribute { .init("process_id", "\(ProcessInfo.processInfo.processIdentifier)") }
+    static var processName: WireLogAttribute { .init("process_name", ProcessInfo.processInfo.processName) }
 
-    public init(
-        _ key: String,
-        _ value: String
-    ) {
-        self.init(key: key, value: value)
-    }
+    static func selfUserID(_ value: UUID) -> WireLogAttribute { .init("self_user_id", value.uuidString) }
 
 }
