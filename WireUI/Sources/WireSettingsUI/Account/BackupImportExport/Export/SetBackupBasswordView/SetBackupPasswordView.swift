@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 
 struct SetBackupPasswordView: View {
 
@@ -72,7 +73,7 @@ struct SetBackupPasswordView: View {
                 .disabled(!viewModel.isPasswordValid)
                 .wireButtonStyle(.primary)
                 .padding()
-                .accessibilityIdentifier("back up now")
+                .accessibilityIdentifier(Locators.SetPasswordPage.backUpNowButton.rawValue)
         }
     }
 

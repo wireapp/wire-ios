@@ -335,6 +335,7 @@ final class FilesViewTests: XCTestCase {
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
             fileCache: MockFileCache(),
             isFoldersEnabled: true,
+            accentColorProvider: { .default }
         )
 
         filesViewModel.state = state

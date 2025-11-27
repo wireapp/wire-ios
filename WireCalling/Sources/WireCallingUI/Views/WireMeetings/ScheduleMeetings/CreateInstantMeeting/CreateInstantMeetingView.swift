@@ -94,7 +94,8 @@ struct CreateInstantMeetingView: View {
                 text: $viewModel.password,
                 isVisible: $isPasswordVisible,
                 errorMessage: viewModel.localizedPasswordRules,
-                showError: !viewModel.password.isEmpty && !viewModel.isPasswordValid
+                showError: !viewModel.password.isEmpty && !viewModel.isPasswordValid,
+                isContextMenuAllowed: viewModel.isContextMenuAllowed
             )
         } header: {
             Text(Strings.SetupPassword.header)
@@ -108,66 +109,19 @@ struct CreateInstantMeetingView: View {
                 text: $viewModel.confirmedPassword,
                 isVisible: $isConfirmedPasswordVisible,
                 errorMessage: Strings.ConfirmedPassword.error,
-                showError: !viewModel.confirmedPassword.isEmpty && !viewModel.isConfirmedPasswordValid
+                showError: !viewModel.confirmedPassword.isEmpty && !viewModel.isConfirmedPasswordValid,
+                isContextMenuAllowed: viewModel.isContextMenuAllowed
             )
         }
     }
 
 }
 
-// MARK: - Password Field Component
-
-private struct PasswordFieldWithToggle: View {
-    let placeholder: String
-    @Binding var text: String
-    @Binding var isVisible: Bool
-    let errorMessage: String
-    let showError: Bool
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                if isVisible {
-                    TextField(placeholder, text: $text)
-                        .textContentType(.password)
-                        .autocapitalization(.none)
-                } else {
-                    SecureField(placeholder, text: $text)
-                        .textContentType(.password)
-                        .autocapitalization(.none)
-                }
-
-                Button {
-                    isVisible.toggle()
-                } label: {
-                    Image(systemName: isVisible ? "eye.slash" : "eye")
-                        .foregroundColor(ColorTheme.Backgrounds.onSurface.color)
-                }
-            }
-
-            if showError {
-                Text(errorMessage)
-                    .font(.caption)
-                    .foregroundColor(ColorTheme.Base.error.color)
-            }
-        }
-    }
-}
-
 // MARK: - Preview
 
 #Preview {
     CreateInstantMeetingView(viewModel: CreateInstantMeetingViewModel(
-        passwordValidator: MockPasswordValidator()
+        passwordValidator: MockPasswordValidator(),
+        isContextMenuAllowed: true
     ))
-}
-
-private struct MockPasswordValidator: PasswordValidator {
-    func isPasswordValid(_ password: String) -> Bool {
-        password.count >= 8
-    }
-
-    var localizedRulesDescription: String? {
-        "Password must be at least 8 characters"
-    }
 }

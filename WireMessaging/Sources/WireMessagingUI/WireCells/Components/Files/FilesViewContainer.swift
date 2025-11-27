@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+package import WireFoundation
 package import WireMessagingDomain
 package import WireMessagingData
 
@@ -35,6 +36,7 @@ package struct FilesViewContainer: View {
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
     private let fileCache: any FileCache
     private let isFoldersEnabled: Bool
+    private let accentColorProvider: () -> WireAccentColor
 
     enum FullScreenCoverNavigation: String, Identifiable {
         case recycleBin
@@ -55,6 +57,7 @@ package struct FilesViewContainer: View {
         nodeRenameNotifier: WireCellsNodeRenameNotifier,
         fileCache: any FileCache,
         isFoldersEnabled: Bool,
+        accentColorProvider: @escaping () -> WireAccentColor
     ) {
         self.cellName = cellName
         self.nodesAPI = nodesAPI
@@ -66,6 +69,7 @@ package struct FilesViewContainer: View {
         self.nodeRenameNotifier = nodeRenameNotifier
         self.fileCache = fileCache
         self.isFoldersEnabled = isFoldersEnabled
+        self.accentColorProvider = accentColorProvider
     }
 
     var body: some View {
@@ -93,6 +97,7 @@ package struct FilesViewContainer: View {
                     nodeRenameNotifier: nodeRenameNotifier,
                     fileCache: fileCache,
                     isFoldersEnabled: isFoldersEnabled,
+                    accentColorProvider: accentColorProvider
                 )
             }
         }
@@ -139,6 +144,7 @@ package struct FilesViewContainer: View {
             cellName: cellName,
             isFoldersEnabled: isFoldersEnabled,
             isRecycleBin: false,
+            accentColorProvider: accentColorProvider
         )
     }
 }

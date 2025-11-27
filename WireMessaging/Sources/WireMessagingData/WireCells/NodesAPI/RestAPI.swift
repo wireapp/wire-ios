@@ -402,7 +402,10 @@ private extension WireCellsGetNodesRequest {
             )
         case .filesBrowserView:
             request.filters = RestLookupFilter(
-                status: LookupFilterStatusFilter(
+                metadata: tags.isEmpty ? [] : [LookupFilterMetaFilter(
+                    namespace: "usermeta-tags",
+                    term: tags.joined(separator: ",")
+                )], status: LookupFilterStatusFilter(
                     deleted: .not,
                     isDraft: false
                 ),

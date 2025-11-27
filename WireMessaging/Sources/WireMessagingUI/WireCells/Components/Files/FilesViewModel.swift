@@ -20,7 +20,7 @@ import Combine
 package import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
-import WireFoundation
+package import WireFoundation
 import WireLogging
 package import WireMessagingDomain
 import WireMessagingDomainSupport
@@ -84,11 +84,20 @@ package final class FilesViewModel: ObservableObject {
 
     enum SheetNavigation: Identifiable {
         case editTags(fileItem: FilesViewItem)
+        case renameFile(view: FileRenameView)
+        case createFolder(view: CreateFolderView)
+        case filters(view: FilesFiltersView)
 
         var id: String {
             switch self {
             case let .editTags(fileItem: item):
                 "editTags(\(item.id))"
+            case let .createFolder(view):
+                "createFolder(\(view.id))"
+            case let .renameFile(view):
+                "renameFile(\(view.id))"
+            case let .filters(view):
+                "filters(\(view.id))"
             }
         }
     }
@@ -163,6 +172,7 @@ package final class FilesViewModel: ObservableObject {
     private let cellName: String? // nil when browsing all files
     private var subscriptions = Set<AnyCancellable>()
     private let navigationPath: [FilesViewItem]
+    private let accentColorProvider: () -> WireAccentColor
     let isFoldersEnabled: Bool
     let isRecycleBin: Bool
 
@@ -173,11 +183,9 @@ package final class FilesViewModel: ObservableObject {
     @Published var viewingURL: URL?
     @Published var state: State
     @Published var sheetNavigation: SheetNavigation?
-    @Published var createFolderView: CreateFolderView?
-    @Published var fileRenameView: FileRenameView?
 
-    var didCreateFolder: Bool = false
-    var didRenameFile: Bool = false
+    var shouldReload: Bool = false
+    var filterWithTags: [String] = []
     let title: String?
 
     package init(
@@ -191,6 +199,7 @@ package final class FilesViewModel: ObservableObject {
         cellName: String? = nil,
         isFoldersEnabled: Bool,
         isRecycleBin: Bool = false,
+        accentColorProvider: @escaping () -> WireAccentColor
     ) {
         self.useCases = useCases
         self.title = title
@@ -202,6 +211,7 @@ package final class FilesViewModel: ObservableObject {
         self.state = isCellsStatePending ? .pending : .loading
         self.isFoldersEnabled = isFoldersEnabled
         self.isRecycleBin = isRecycleBin
+        self.accentColorProvider = accentColorProvider
 
         bindSearch()
     }
@@ -273,22 +283,42 @@ package final class FilesViewModel: ObservableObject {
             item: state.items[index],
             localAssetRepository: localAssetRepository,
             onItemAction: { [weak self] action, item in
+                guard let self else { return }
                 switch action {
                 case .open:
-                    await self?.openItem(item: item)
+                    await openItem(item: item)
                 case .deleteToRecycleBin:
-                    await self?.deleteItem(item, permanently: false)
+                    await deleteItem(item, permanently: false)
                 case .deletePermanently:
-                    await self?.deleteItem(item, permanently: true)
+                    await deleteItem(item, permanently: true)
                 case .restore:
-                    await self?.restoreItem(item)
+                    await restoreItem(item)
                 case .rename:
-                    self?.fileRenameView = self?.makeFileRenameView(item: item)
+                    sheetNavigation = .renameFile(view: makeFileRenameView(item: item))
                 case .editTags:
-                    self?.sheetNavigation = .editTags(fileItem: item)
+                    sheetNavigation = .editTags(fileItem: item)
                 }
             },
             isInRecycleBin: isRecycleBin,
+        )
+    }
+
+    func openFilters() {
+        let filesFiltersViewModel = FilesFiltersViewModel(
+            fetchTagsUseCase: useCases.getTagSuggestions,
+            savedTags: filterWithTags,
+            accentColorProvider: accentColorProvider
+        )
+
+        filesFiltersViewModel.$savedTags
+            .sink { [weak self] tags in
+                guard let self else { return }
+                shouldReload = filterWithTags != tags
+                filterWithTags = tags
+            }.store(in: &subscriptions)
+
+        sheetNavigation = .filters(
+            view: FilesFiltersView(viewModel: filesFiltersViewModel)
         )
     }
 
@@ -322,6 +352,13 @@ package final class FilesViewModel: ObservableObject {
         }
 
         setNavigation(newPath)
+    }
+
+    func onSheetDismissed() async {
+        if shouldReload {
+            await reload()
+            shouldReload = false
+        }
     }
 
     // MARK: - Private
@@ -379,13 +416,16 @@ package final class FilesViewModel: ObservableObject {
 
         // to know whether we need to reload nodes.
         viewModel.$didCreate
+            .filter(\.self)
             .sink { [weak self] didCreate in
-                self?.didCreateFolder = didCreate
+                self?.shouldReload = didCreate
             }.store(in: &subscriptions)
 
-        createFolderView = CreateFolderView(
+        let createFolderView = CreateFolderView(
             viewModel: viewModel
         )
+
+        sheetNavigation = .createFolder(view: createFolderView)
     }
 
     // MARK: - Private
@@ -447,6 +487,7 @@ package final class FilesViewModel: ObservableObject {
     ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
         let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
             searchTerm: searchText.isEmpty ? nil : searchText,
+            tags: filterWithTags,
             offset: offset
         )
 
@@ -572,7 +613,7 @@ package final class FilesViewModel: ObservableObject {
         // to know whether we need to reload items.
         viewModel.$didRename
             .sink { [weak self] didRename in
-                self?.didRenameFile = didRename
+                self?.shouldReload = didRename
             }.store(in: &subscriptions)
 
         return FileRenameView(viewModel: viewModel)

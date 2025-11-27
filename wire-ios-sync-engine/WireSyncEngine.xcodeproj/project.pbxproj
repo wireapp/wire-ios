@@ -51,7 +51,6 @@
 		1602B4611F3B04150061C135 /* ZMBlacklistVerificator.h in Headers */ = {isa = PBXBuildFile; fileRef = F9FD798B19EE9B9A00D70FCD /* ZMBlacklistVerificator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		16030DC921B01B7500F8032E /* Conversation+ReadReceiptMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16030DC821B01B7500F8032E /* Conversation+ReadReceiptMode.swift */; };
 		16085B331F71811A000B9F22 /* UserChangeInfo+UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16085B321F71811A000B9F22 /* UserChangeInfo+UserSession.swift */; };
-		16085B351F719E6D000B9F22 /* NetworkStateRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16085B341F719E6D000B9F22 /* NetworkStateRecorder.swift */; };
 		160C31271E6434500012E4BC /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160C31261E6434500012E4BC /* OperationStatus.swift */; };
 		160C31411E6DDFC30012E4BC /* VoiceChannelV3Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160C31401E6DDFC30012E4BC /* VoiceChannelV3Tests.swift */; };
 		160C31441E8049320012E4BC /* ApplicationStatusDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160C31431E8049320012E4BC /* ApplicationStatusDirectory.swift */; };
@@ -642,7 +641,6 @@
 		160195601E30C9CF00ACBFAC /* LocalNotificationDispatcherCallingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalNotificationDispatcherCallingTests.swift; sourceTree = "<group>"; };
 		16030DC821B01B7500F8032E /* Conversation+ReadReceiptMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conversation+ReadReceiptMode.swift"; sourceTree = "<group>"; };
 		16085B321F71811A000B9F22 /* UserChangeInfo+UserSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserChangeInfo+UserSession.swift"; sourceTree = "<group>"; };
-		16085B341F719E6D000B9F22 /* NetworkStateRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkStateRecorder.swift; sourceTree = "<group>"; };
 		160C31261E6434500012E4BC /* OperationStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperationStatus.swift; sourceTree = "<group>"; };
 		160C31401E6DDFC30012E4BC /* VoiceChannelV3Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceChannelV3Tests.swift; sourceTree = "<group>"; };
 		160C31431E8049320012E4BC /* ApplicationStatusDirectory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationStatusDirectory.swift; sourceTree = "<group>"; };
@@ -1781,7 +1779,6 @@
 				8766853A1F2A1A860031081B /* UnauthenticatedSessionTests.swift */,
 				1662B0F823D9CE8F00B8C7C5 /* UnauthenticatedSessionTests+DomainLookup.swift */,
 				167F383C23E04A93006B6AA9 /* UnauthenticatedSessionTests+SSO.swift */,
-				16085B341F719E6D000B9F22 /* NetworkStateRecorder.swift */,
 				168CF42E2007BCD9009FCB89 /* TeamInvitationStatusTests.swift */,
 				D55272E92062732100F542BE /* AssetDeletionStatusTests.swift */,
 				874A16932052C64B001C6760 /* UserExpirationObserverTests.swift */,
@@ -2828,7 +2825,6 @@
 				16D0A119234B999600A83F87 /* LabelUpstreamRequestStrategyTests.swift in Sources */,
 				169BA23D25EF6E2A00374343 /* MockRegistrationStatusDelegate.swift in Sources */,
 				7CE017152317D07E00144905 /* ZMAuthenticationStatusTests.swift in Sources */,
-				16085B351F719E6D000B9F22 /* NetworkStateRecorder.swift in Sources */,
 				EE1DEBB323D5A6930087EE1F /* TypingTests.swift in Sources */,
 				63CD5959296442D800385037 /* AccessTokenMigrationTests.swift in Sources */,
 				09BA924C1BD55FA5000DC962 /* UserClientRequestStrategyTests.swift in Sources */,

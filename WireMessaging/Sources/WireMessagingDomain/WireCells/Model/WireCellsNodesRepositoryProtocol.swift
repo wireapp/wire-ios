@@ -89,6 +89,9 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
     /// An optional search term to filter nodes by name.
     package let searchTerm: String?
 
+    /// Filter nodes by tags names.
+    package let tags: [String]
+
     /// The maximum number of nodes to return.
     package let limit: Int
 
@@ -98,8 +101,9 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
     /// The configuration for the request.
     package let configuration: Configuration
 
-    package init(searchTerm: String?, limit: Int, offset: Int, configuration: Configuration) {
+    package init(searchTerm: String?, tags: [String] = [], limit: Int, offset: Int, configuration: Configuration) {
         self.searchTerm = searchTerm
+        self.tags = tags
         self.limit = limit
         self.offset = offset
         self.configuration = configuration

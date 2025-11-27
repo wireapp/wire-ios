@@ -92,7 +92,7 @@ public final class NetworkService: NSObject, NetworkServiceProtocol {
         guard let httpURLResponse = response as? HTTPURLResponse else {
             throw NetworkServiceError.notAHTTPURLResponse
         }
-        WireLogger.network.log(response: httpURLResponse)
+        WireLogger.network.log(response: httpURLResponse, body: data)
 
         return (data, httpURLResponse)
     }
