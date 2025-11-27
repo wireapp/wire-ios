@@ -34,7 +34,7 @@ class WelcomePage: PageModel {
     }
 
     var setBackendLabel: XCUIElement {
-        app.descendants(matching: .any)["onPremInfoButton"]
+        app.descendants(matching: .any)[Locators.WelcomePage.onPremInfoButton.rawValue]
     }
 
     func enterEmailOrSSO(_ input: String) throws -> LoginPage {

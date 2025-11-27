@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
@@ -192,12 +193,12 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
         // titleLabel
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.accessibilityIdentifier = "user_cell.name"
+        titleLabel.accessibilityIdentifier = Locators.ConversationDetailsPage.userCellName.rawValue
         titleLabel.lineBreakMode = .byTruncatingMiddle
 
         // subtitleLabel
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        subtitleLabel.accessibilityIdentifier = "user_cell.username"
+        subtitleLabel.accessibilityIdentifier = Locators.NewConversationPage.usernameCell.rawValue
 
         // avatar
         avatarImageView.userSession = ZMUserSession.shared()

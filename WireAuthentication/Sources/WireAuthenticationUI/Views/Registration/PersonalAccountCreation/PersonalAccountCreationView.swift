@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 import WireReusableUIComponents
 
 package struct PersonalAccountCreationView: View {
@@ -108,7 +109,7 @@ package struct PersonalAccountCreationView: View {
         .autocapitalization(.words)
         .autocorrectionDisabled()
         .textContentType(.name)
-        .accessibilityIdentifier("enterNameField")
+        .accessibilityIdentifier(Locators.CreatePersonalAccountFormPage.enterNameField.rawValue)
     }
 
     @ViewBuilder private var emailField: some View {
@@ -131,7 +132,7 @@ package struct PersonalAccountCreationView: View {
             passwordRules: viewModel.localizedPasswordRules,
             isValidPassword: { _ in viewModel.isPasswordValid }
         )
-        .accessibilityIdentifier("enterPasswordField")
+        .accessibilityIdentifier(Locators.CreatePersonalAccountFormPage.enterPasswordField.rawValue)
     }
 
     @ViewBuilder private var confirmPasswordField: some View {
@@ -142,7 +143,7 @@ package struct PersonalAccountCreationView: View {
             passwordRules: Strings.InputConfirmPassword.error,
             isValidPassword: { _ in viewModel.isPasswordMatchConfirmedPassword }
         )
-        .accessibilityIdentifier("enterConfirmPasswordField")
+        .accessibilityIdentifier(Locators.CreatePersonalAccountFormPage.enterConfirmPasswordField.rawValue)
     }
 
     @ViewBuilder private var dataUsageAgreementView: some View {
@@ -164,6 +165,7 @@ package struct PersonalAccountCreationView: View {
                 .lineLimit(nil)
         })
         .wireButtonStyle(.primary)
+        .accessibilityIdentifier(Locators.CreatePersonalAccountFormPage.continueButton.rawValue)
         .bold()
         .disabled(!viewModel.canRequestVerificationCode)
     }

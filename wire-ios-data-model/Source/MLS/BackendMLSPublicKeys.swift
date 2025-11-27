@@ -47,6 +47,7 @@ public struct BackendMLSPublicKeys: Equatable {
     public struct MLSPublicKeys: Equatable {
 
         let ed25519: Data?
+        /// deprecated: this field is not returned by backend
         let ed448: Data?
         let p256: Data?
         let p384: Data?
