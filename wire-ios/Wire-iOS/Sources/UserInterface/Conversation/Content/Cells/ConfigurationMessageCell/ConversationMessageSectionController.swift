@@ -107,7 +107,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private let userSession: UserSession
     private let privateDefaults: PrivateUserDefaults<CollapseKey>
-    private let isChatBubbleSimpleEnabled: Bool
 
     /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
@@ -124,8 +123,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         userSession: UserSession,
         useInvertedIndices: Bool,
         contentWidth: CGFloat,
-        userDefaults: UserDefaultsProtocol = UserDefaults.standard,
-        isChatBubbleSimpleEnabled: Bool
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard
     ) {
         self.message = message
         self.context = context
@@ -139,10 +137,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             storage: userDefaults
         )
 
-        // We need to provide isChatBubbleEnabled as Bool on init() because can't use
-        // UserSession.isChatBubbleSimpleEnabled here.It will crash because we are on the background thread.
-        self.isChatBubbleSimpleEnabled = isChatBubbleSimpleEnabled
-
         super.init()
 
         self.isCollapsed = isCollapsedInitialValue()
@@ -155,9 +149,14 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             startObservingChanges(for: quotedMessage)
         }
     }
-
+    
     private var collapseOwnMessagesEnabled: Bool {
-        privateDefaults.bool(forKey: .collapseOwnMessages) && !isChatBubbleSimpleEnabled
+        false
+        // Temporarily disabling collapsing own messages,
+        // because it conflicts with chat bubbles.
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+        //
+        // privateDefaults.bool(forKey: .collapseOwnMessages)
     }
 
     private func isCollapsedInitialValue() -> Bool {
@@ -255,10 +254,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return addCollapsedCell()
         }
 
-        let attachments = message.multipartMessageData?.attachments ?? []
         let multipartMessageCellDescription = ConversationMultipartMessageCellDescription(
             multipartMessage: message.multipartMessageData!,
-            isSimpleChatBubblesEnabled: isChatBubbleSimpleEnabled,
             isSentBySelfUser: message.isSentBySelfUser
         )
         return [AnyConversationMessageCellDescription(multipartMessageCellDescription)]
@@ -320,8 +317,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if shouldCollapseCell() {
             return addCollapsedCell()
         }
-
-        let attachments = message.multipartMessageData?.attachments ?? []
 
         return ConversationTextMessageCellDescription
             .cells(
@@ -389,7 +384,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         var cells: [AnyConversationMessageCellDescription] = []
 
-        let attachments = message.multipartMessageData?.attachments ?? []
         compositeMessage.compositeMessageData?.items.forEach { item in
             switch item {
 
@@ -492,13 +486,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             }
         }
 
-        if isChatBubbleSimpleEnabled {
-            addReactions()
-            addToolbox()
-        } else {
-            addToolbox()
-            addReactions()
-        }
+        addReactions()
+        addToolbox()
 
         if isFailedRecipientsVisible(in: context) {
             let description = ConversationMessageFailedRecipientsCellDescription(

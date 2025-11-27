@@ -324,11 +324,7 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
     }
 
     private func configureConstraints() {
-        let margins = conversationHorizontalMargins
-        let insets: UIEdgeInsets = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
-            ? .zero
-            : UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
-        container.fitIn(view: self, insets: insets)
+        container.fitIn(view: self, insets: .zero)
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -353,7 +349,7 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
 
     let supportsActions = false
     let containsHighlightableContent: Bool = true
-    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    let shouldAlignMessageContentForBubbles: Bool = true
 
     weak var message: ZMConversationMessage? {
         didSet {

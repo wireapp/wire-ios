@@ -42,7 +42,9 @@ extension SettingsCellDescriptorFactory {
             popularDemandDarkThemeSection,
             isAppLockAvailable ? appLockSection : nil,
             SecurityFlags.generateLinkPreviews.isEnabled ? linkPreviewSection : nil,
-            !isSimpleChatBubbleEnabled ? collapseSelfMessageSection : nil
+            // temporarily hiding this section because it conflicts with chat bubbles.
+            // https://wearezeta.atlassian.net/browse/WPB-18939
+//            collapseSelfMessageSection
         ].compactMap(\.self)
 
         return SettingsGroupCellDescriptor(
