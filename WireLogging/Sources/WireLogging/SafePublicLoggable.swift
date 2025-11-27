@@ -28,6 +28,8 @@ public struct SafePublicLoggable {
 
 }
 
+// MARK: - WireLogInterpolation
+
 public extension WireLogInterpolation {
 
     mutating func appendInterpolation(_ safePublicLoggable: SafePublicLoggable) {
@@ -35,14 +37,3 @@ public extension WireLogInterpolation {
     }
 
 }
-
-// MARK: -
-
-// The following extension ensures no WireLogging consuming code needs to be changed for now.
-
-//public extension WireLogInterpolation {
-//
-//    mutating func appendInterpolation(_ value: String) {
-//        writeText(value)
-//    }
-//}

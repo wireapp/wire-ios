@@ -16,14 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+extension WireLogInterpolation {
 
-public extension WireLogInterpolation {
+    // MARK: String
 
-    mutating func appendInterpolation(_ error: some Error) {
-        let typeName = String(describing: type(of: error))
-        let nsError = error as NSError
-        writeText("\(typeName)(domain: \(nsError.domain) code: \(nsError.code))")
+    public mutating func appendInterpolation(safePublic string: String) {
+        writeText(string)
+    }
+
+    // MARK: Int
+
+    public mutating func appendInterpolation(safePublic number: Int) {
+        writeText("\(number)")
+    }
+
+    public mutating func appendInterpolation(safePublic number: Int32) {
+        writeText("\(number)")
     }
 
 }

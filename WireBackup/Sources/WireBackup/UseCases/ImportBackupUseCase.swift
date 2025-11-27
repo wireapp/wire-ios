@@ -65,7 +65,8 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     let reportProgress: (Int, Int) -> Void = { current, total in
                         let progress = BackupProgress(current, total)
                         logger.debug("reporting overall process: \(progress)")
-                        continuation.yield(.progress(progress))
+                        // continuation.yield(.progress(progress))
+                        // TODO: fix
                     }
 
                     reportProgress(0, 0)
@@ -88,15 +89,12 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     var current = 0
                     let total = usersPager.totalPages + messagesPager.totalPages
 
-                    logger.info(
-                        "Starting importing users from backup... Pages: \(usersPager.totalPages)",
-                        attributes: .safePublic
-                    )
 
                     // users
+                    logger.info("Starting importing users, page count: \(safePublic: usersPager.totalPages)")
                     let storedUserIDs = try await backupLocalStore.fetchAllUserIDs()
                     while usersPager.hasMorePages() {
-                        logger.info("Importing users page \(current)/\(total)", attributes: .safePublic)
+                        logger.info("Importing users page \(safePublic: current)/\(safePublic: total)")
                         let backupUsers = usersPager.nextPage()
                         for current in 0 ..< backupUsers.size {
                             guard
@@ -118,17 +116,14 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     // Any conversation that has been left or deleted will not be restored from the backup in the first
                     // version. All other conversations where the self-user is participant will already be available.
 
-                    logger.info(
-                        "Starting importing messages from backup... Pages: \(messagesPager.totalPages)",
-                        attributes: .safePublic
-                    )
+                    logger.info("Starting importing messages, page count: \(safePublic: messagesPager.totalPages)")
 
                     // messages
                     var totalSuccessCount = 0
                     var totalFailureCount = 0
                     let storedMessageIDs = try await backupLocalStore.fetchAllMessageIDs()
                     while messagesPager.hasMorePages() {
-                        logger.info("Importing messages page \(current)/\(total)", attributes: .safePublic)
+                        logger.info("Importing messages page \(safePublic: current)/\(safePublic: total)")
 
                         // Map messages from kotlin array to swift array,
                         // filtering out messages that already exist in DB
@@ -144,18 +139,15 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                             totalSuccessCount += successCount
                             totalFailureCount += failureCount
 
-                            logger.info(
-                                "Page (\(current)/\(total)): Imported \(successCount) messages, \(failureCount) failed to import",
-                                attributes: .safePublic
-                            )
+                            let progress =
+                            "Page (\(current)/\(total)): " +
+                            "Imported \(successCount) messages, \(failureCount) failed to import"
+                            logger.info("\(safePublic: progress)")
 
                         } catch {
                             // Catch and log the error but don't stop execution, as we should
                             // still be able to continue importing the other pages
-                            logger.warn(
-                                "Page (\(current)/\(total)) import error: \(String(describing: error))",
-                                attributes: .safePublic
-                            )
+                            logger.warn("Page (\(safePublic: current)/\(safePublic: total)) import error: \(error)")
                         }
 
                         try Task.checkCancellation()
@@ -163,10 +155,7 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         reportProgress(current, Int(exactly: total) ?? 1)
                     }
 
-                    logger.info(
-                        "Imported total of \(totalSuccessCount) messages, \(totalFailureCount) failed to import",
-                        attributes: .safePublic
-                    )
+                    logger.info("Imported \(safePublic: totalSuccessCount) messages, \(safePublic: totalFailureCount) failed to import")
 
                     try await backupLocalStore.refreshViewContext()
 
@@ -174,7 +163,7 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         syncTrigger()
                     }
 
-                    logger.info("Completed backup import", attributes: .safePublic)
+                    logger.info("Completed backup import")
 
                     continuation.yield(.done)
                     continuation.finish()

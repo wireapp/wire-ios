@@ -20,7 +20,7 @@ import WireLogging
 
 extension WireLogAttribute {
 
-    /// legacy pushChannel (Starscream)
+    /// Legacy pushChannel (Starscream)
 
     static var pushChannelV0: WireLogAttribute { .init("push_channel", "v0") }
 
