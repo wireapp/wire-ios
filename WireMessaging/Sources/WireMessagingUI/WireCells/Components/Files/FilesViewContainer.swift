@@ -34,6 +34,7 @@ package struct FilesViewContainer: View {
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
     private let fileCache: any FileCache
     private let isFoldersEnabled: Bool
+    private let isCollaboraEnabled: Bool
 
     package init(
         cellName: String,
@@ -45,7 +46,8 @@ package struct FilesViewContainer: View {
         nodeCache: any WireCellsNodeCacheProtocol,
         nodeRenameNotifier: WireCellsNodeRenameNotifier,
         fileCache: any FileCache,
-        isFoldersEnabled: Bool
+        isFoldersEnabled: Bool,
+        isCollaboraEnabled: Bool
     ) {
         self.cellName = cellName
         self.nodesAPI = nodesAPI
@@ -57,6 +59,7 @@ package struct FilesViewContainer: View {
         self.nodeRenameNotifier = nodeRenameNotifier
         self.fileCache = fileCache
         self.isFoldersEnabled = isFoldersEnabled
+        self.isCollaboraEnabled = isCollaboraEnabled
     }
 
     var body: some View {
@@ -104,7 +107,8 @@ package struct FilesViewContainer: View {
             nodesRepository: nodesRepository,
             fileCache: fileCache,
             cellName: cellName,
-            isFoldersEnabled: isFoldersEnabled
+            isFoldersEnabled: isFoldersEnabled,
+            isCollaboraEnabled: isCollaboraEnabled
         )
     }
 }

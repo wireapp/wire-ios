@@ -134,6 +134,15 @@ final class FilesItemViewModel: ObservableObject {
         }
     }
 
+    var isEditable: Bool {
+        guard onEdit != nil else { return false }
+
+        let allowedExtensions = ["odf", "docx", "xlsx", "pptx"]
+        let fileExtension = (fileName as NSString).pathExtension.lowercased()
+
+        return allowedExtensions.contains(fileExtension)
+    }
+
     func open() async {
         await onOpen(item)
     }

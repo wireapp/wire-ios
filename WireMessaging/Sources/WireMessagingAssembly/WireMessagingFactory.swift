@@ -37,6 +37,7 @@ public struct WireMessagingFactory {
     private let lastOpenRequest: WireCellsLastOpenRequest
     private let nodeCache = WireCellsNodeCache()
     private let isFoldersEnabled: Bool
+    private let isCollaboraEnabled: Bool
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
 
     @MainActor var lastOpenRequestNodeID: UUID?
@@ -47,7 +48,8 @@ public struct WireMessagingFactory {
         accessToken: any AccessTokenProvider,
         fileCache: any FileCache,
         contextProvider: any ManagedObjectContextProvider,
-        isFoldersEnabled: Bool
+        isFoldersEnabled: Bool,
+        isCollaboraEnabled: Bool
     ) {
         // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
         let serverURL = switch serverURL.host {
@@ -75,6 +77,7 @@ public struct WireMessagingFactory {
         )
         self.lastOpenRequest = WireCellsLastOpenRequest()
         self.isFoldersEnabled = isFoldersEnabled
+        self.isCollaboraEnabled = isCollaboraEnabled
         self.nodeRenameNotifier = WireCellsNodeRenameNotifier()
     }
 
@@ -153,7 +156,8 @@ public extension WireMessagingFactory {
                 nodeCache: nodeCache,
                 nodeRenameNotifier: nodeRenameNotifier,
                 fileCache: fileCache,
-                isFoldersEnabled: isFoldersEnabled
+                isFoldersEnabled: isFoldersEnabled,
+                isCollaboraEnabled: isCollaboraEnabled
             )
             .environment(\.wireAccentColor, accentColor)
         )
@@ -189,7 +193,8 @@ public extension WireMessagingFactory {
                     localAssetRepository: localAssetRepository,
                     nodesRepository: nodesAPI,
                     fileCache: fileCache,
-                    isFoldersEnabled: false
+                    isFoldersEnabled: false,
+                    isCollaboraEnabled: isCollaboraEnabled
                 )
             )
         )

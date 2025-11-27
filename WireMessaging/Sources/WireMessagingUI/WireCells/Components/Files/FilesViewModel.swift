@@ -161,6 +161,7 @@ package final class FilesViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
     private let navigationPath: [FilesViewItem]
     let isFoldersEnabled: Bool
+    let isCollaboraEnabled: Bool
 
     @Published private(set) var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
@@ -187,7 +188,8 @@ package final class FilesViewModel: ObservableObject {
         nodesRepository: any WireCellsNodesRepositoryProtocol,
         fileCache: any FileCache,
         cellName: String? = nil,
-        isFoldersEnabled: Bool
+        isFoldersEnabled: Bool,
+        isCollaboraEnabled: Bool
     ) {
         self.useCases = useCases
         self.title = title
@@ -199,6 +201,7 @@ package final class FilesViewModel: ObservableObject {
         self.cellName = cellName
         self.state = isCellsStatePending ? .pending : .loading
         self.isFoldersEnabled = isFoldersEnabled
+        self.isCollaboraEnabled = isCollaboraEnabled
 
         bindSearch()
     }
@@ -269,9 +272,9 @@ package final class FilesViewModel: ObservableObject {
             onMoveToFolder: { [weak self] item in
                 self?.sheetNavigation = .moveToFolder(fileItem: item)
             },
-            onEdit: { [weak self] item in
+            onEdit: isCollaboraEnabled ? { [weak self] item in
                 self?.editing = item
-            },
+            } : nil,
             onEditTagsSelected: { [weak self] item in
                 self?.sheetNavigation = .editTags(fileItem: item)
             },

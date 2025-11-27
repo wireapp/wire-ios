@@ -70,6 +70,7 @@ final class FilesViewModelTests {
             nodesRepository: nodesRepository,
             fileCache: fileCache,
             isFoldersEnabled: true,
+            isCollaboraEnabled: false
         )
 
         sut.$state.dropFirst().sink { [weak self] state in

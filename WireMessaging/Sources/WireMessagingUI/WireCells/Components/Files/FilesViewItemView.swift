@@ -112,7 +112,7 @@ struct FilesViewItemView: View {
                         }.disabled(viewModel.isDownloading)
                     }
 
-                    if canEditFile {
+                    if canEditFile && viewModel.isEditable {
                         Button(action: editFile) {
                             Label(Strings.Files.Item.Menu.editFile, systemImage: "square.and.pencil")
                         }

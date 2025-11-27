@@ -131,6 +131,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         do {
             for try await node in fetchNodeUseCase.invoke(nodeID: nodeID) {
                 self.node = node
+                print("Refreshed node with ID: \(nodeID), etag: \(node?.eTag)")
 
                 if let node {
                     isDeleted = node.isRecycled

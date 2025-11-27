@@ -179,6 +179,7 @@ final class FilesBrowserViewTests: XCTestCase {
             nodesRepository: nodesRepository,
             fileCache: MockFileCache(),
             isFoldersEnabled: false,
+            isCollaboraEnabled: false
         )
 
         filesViewModel.state = state
