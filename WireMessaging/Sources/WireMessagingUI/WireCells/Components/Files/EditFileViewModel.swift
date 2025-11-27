@@ -23,8 +23,7 @@ import WireMessagingDomain
 
 @MainActor
 protocol EditFileViewModelProtocol: ObservableObject {
-    var isLoading: Bool { get }
-    var editorURL: URL? { get }
+    var state: EditFileViewModel.State { get }
 
     func load() async
 }
@@ -34,11 +33,16 @@ protocol EditFileViewModelProtocol: ObservableObject {
 @MainActor
 final class EditFileViewModel: EditFileViewModelProtocol {
 
+    enum State {
+        case idle
+        case loading
+        case loaded(URL)
+    }
+
     private let nodeID: UUID
     private let getEditingURLUseCase: WireCellsGetEditingURLUseCase
 
-    @Published private(set) var isLoading: Bool = false
-    @Published private(set) var editorURL: URL?
+    @Published private(set) var state: State = .idle
 
     init(
         nodeID: UUID,
@@ -49,9 +53,10 @@ final class EditFileViewModel: EditFileViewModelProtocol {
     }
 
     func load() async {
-        isLoading = true
-        defer { isLoading = false }
+        state = .loading
 
-        editorURL = try? await getEditingURLUseCase.invoke(nodeID: nodeID)
+        if let url = try? await getEditingURLUseCase.invoke(nodeID: nodeID) {
+            state = .loaded(url)
+        }
     }
 }

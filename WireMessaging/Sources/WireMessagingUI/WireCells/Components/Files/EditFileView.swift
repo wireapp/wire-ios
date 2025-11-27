@@ -33,12 +33,13 @@ struct EditFileView<ViewModel>: View where ViewModel: EditFileViewModelProtocol 
     var body: some View {
         NavigationStack {
             VStack {
-                if viewModel.isLoading {
-                    ProgressView()
-                } else if let url = viewModel.editorURL {
-                    WebView(url: url)
-                } else {
+                switch viewModel.state {
+                case .idle:
                     EmptyView()
+                case .loading:
+                    ProgressView()
+                case .loaded(let url):
+                    WebView(url: url)
                 }
             }
             .onAppear(perform: {
