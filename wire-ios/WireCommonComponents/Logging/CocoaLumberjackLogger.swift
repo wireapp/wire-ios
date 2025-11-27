@@ -21,7 +21,7 @@ import Foundation
 import WireLogging
 import WireSystem
 
-struct NewCocoaLumberjackLogger: WireLogHandlerProtocol {
+struct NewCocoaLumberjackLogger: WireLogHandlerProtocol { // TODO: merge old and new cocoa lumberjack logger
 
     var logger: CocoaLumberjackLogger
 
@@ -50,7 +50,8 @@ struct NewCocoaLumberjackLogger: WireLogHandlerProtocol {
 }
 
 /// Logger to write logs to fileSystem via CocoaLumberjack
-final class CocoaLumberjackLogger: LoggerProtocol {
+
+final class CocoaLumberjackLogger: LoggerProtocol, @unchecked Sendable {
 
     private let fileLogger: DDFileLogger
     private var tags = [LogAttributesKey: String]()

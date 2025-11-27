@@ -49,22 +49,7 @@ public enum WireAnalytics {
         let datadogLogger = NewWireDatadogLogger(logger: WireAnalytics.Datadog.shared)
         let multiplexLogHandler = MultiplexLogHandler(osLogHandler, cocoaLumberjackLogger, datadogLogger)
         WireLogger.setup(multiplexLogHandler)
-//        WireLogger.setup { tag in
-//            var datadogLogger = NewWireDatadogLogger(tag: tag, logger: WireAnalytics.Datadog.shared)
-//            if tag == WireLogger.system.tag {
-//                datadogLogger.additionalAttributes = [ // TODO: migrate
-//                    .processId: "\(ProcessInfo.processInfo.processIdentifier)",
-//                    .processName: ProcessInfo.processInfo.processName
-//                ]
-//            }
-//            return [
-//                OSLogLoggingProvider(tag: tag, subsystem: subsystem),
-//                NewCocoaLumberjackLogger(tag: tag, logger: cocoaLumberjackLogger),
-//                datadogLogger
-//            ]
-//        }
 
-        // TODO: clean up
         LegacyLogger.initialize {
             #if DEBUG
                 SystemLogger()
@@ -156,7 +141,12 @@ private struct MultiplexLogHandler: WireLogHandlerProtocol {
         message: WireLogMessage,
         additionalAttributes: [WireLogAttribute]
     ) {
-        osLogHandler.log(tag: tag, type: type, message: message, additionalAttributes: additionalAttributes)
+        osLogHandler.log(
+            tag: tag,
+            type: type,
+            message: message,
+            additionalAttributes: additionalAttributes
+        )
     }
 
 }

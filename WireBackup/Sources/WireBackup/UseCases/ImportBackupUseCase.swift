@@ -65,8 +65,7 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     let reportProgress: (Int, Int) -> Void = { current, total in
                         let progress = BackupProgress(current, total)
                         logger.debug("reporting overall process: \(progress)")
-                        // continuation.yield(.progress(progress))
-                        // TODO: fix
+                        continuation.yield(.progress(progress))
                     }
 
                     reportProgress(0, 0)
