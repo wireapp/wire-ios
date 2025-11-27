@@ -41,6 +41,9 @@ package struct FilesViewItem: Identifiable, Hashable {
     /// Identifier of this item on the wire cells backend.
     package let id: UUID
 
+    /// The ETag of this item.
+    let eTag: String
+
     /// The kind of this item - file or folder.
     let kind: Kind
 
@@ -129,7 +132,8 @@ package final class FilesViewModel: ObservableObject {
             updateTags: any WireCellsUpdateTagsUseCaseProtocol,
             getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol,
             createFolder: any WireCellsCreateFolderUseCaseProtocol,
-            getEditingURL: WireCellsGetEditingURLUseCase
+            getEditingURL: WireCellsGetEditingURLUseCase,
+            getAssetUseCase: WireCellsGetAssetUseCase
         ) {
 
             self.fetchNodes = fetchNodes
@@ -139,6 +143,7 @@ package final class FilesViewModel: ObservableObject {
             self.getTagSuggestions = getTagSuggestions
             self.createFolder = createFolder
             self.getEditingURL = getEditingURL
+            self.getAssetUseCase = getAssetUseCase
         }
 
         let fetchNodes: WireCellsFetchNodesPageUseCase
@@ -148,6 +153,7 @@ package final class FilesViewModel: ObservableObject {
         let getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
         let createFolder: any WireCellsCreateFolderUseCaseProtocol
         let getEditingURL: WireCellsGetEditingURLUseCase
+        let getAssetUseCase: WireCellsGetAssetUseCase
     }
 
     let useCases: UseCases
@@ -360,7 +366,8 @@ package final class FilesViewModel: ObservableObject {
         lastSelectedItem = item
 
         do {
-            if let url = try await localURL(for: item), item == lastSelectedItem {
+            let url = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
+            if item == lastSelectedItem {
                 viewingURL = url
             }
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
@@ -393,25 +400,6 @@ package final class FilesViewModel: ObservableObject {
     }
 
     // MARK: - Private
-
-    private func localURL(for item: FilesViewItem) async throws -> URL? {
-        // If the file is already downloaded, return the local URL.
-        if
-            let cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey,
-            let url = fileCache.fileURL(forKey: cacheKey) {
-            return url
-        }
-
-        let cacheKey: String?
-        do {
-            try await localAssetRepository.downloadAsset(nodeID: item.id)
-            cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey
-        } catch WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress {
-            try await awaitDownload(item: item)
-            cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey
-        }
-        return cacheKey.flatMap { fileCache.fileURL(forKey: $0) }
-    }
 
     private func cancelLoad() {
         loadMoreTask?.cancel()
@@ -454,11 +442,14 @@ package final class FilesViewModel: ObservableObject {
             offset: offset
         )
 
-        let items = nodes.map { node in
+        let items: [FilesViewItem] = nodes.compactMap { node in
+            guard let eTag = node.eTag else { return nil }
+
             let url = URL(string: node.path)
             let kind: FilesViewItem.Kind = node.type == .collection ? .folder : .file
             return FilesViewItem(
                 id: node.id,
+                eTag: eTag,
                 kind: kind,
                 name: url?.lastPathComponent ?? node.path,
                 filePath: node.path,
@@ -474,21 +465,6 @@ package final class FilesViewModel: ObservableObject {
 
         try Task.checkCancellation()
         return (items, isLastPage)
-    }
-
-    private func awaitDownload(item: FilesViewItem) async throws {
-        for await item in localAssetRepository.observeAsset(nodeID: item.id).values {
-            try Task.checkCancellation()
-
-            switch item?.downloadState {
-            case .downloaded:
-                return
-            case let .failed(error):
-                throw error
-            default:
-                break
-            }
-        }
     }
 
     private func deleteItem(_ asset: FilesViewItem) async {

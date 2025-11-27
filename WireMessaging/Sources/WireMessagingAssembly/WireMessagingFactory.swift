@@ -187,7 +187,11 @@ public extension WireMessagingFactory {
                         updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
                         getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
                         createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
-                        getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: nodesAPI)
+                        getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: nodesAPI),
+                        getAssetUseCase: WireCellsGetAssetUseCase(
+                            localAssetRepository: localAssetRepository,
+                            fileCache: fileCache
+                        )
                     ),
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,

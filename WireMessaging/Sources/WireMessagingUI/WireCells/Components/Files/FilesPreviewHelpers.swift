@@ -33,6 +33,7 @@ extension FilesViewModel {
         let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
+        let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
 
         return FilesViewModel(
             useCases: .init(
@@ -47,7 +48,7 @@ extension FilesViewModel {
                 ),
                 renameNode: WireCellsRenameNodeUseCase(
                     nodesRepository: previewNodesRepository(),
-                    localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                    localAssetsRepository: localAssetRepository,
                     nodeCache: MockWireCellsNodeCacheProtocol(),
                     nodeRenameNotifier: WireCellsNodeRenameNotifier()
                 ),
@@ -62,7 +63,9 @@ extension FilesViewModel {
                 ),
                 getEditingURL: WireCellsGetEditingURLUseCase(
                     editingURLRepository: previewEditingURLRepository()
-                )
+                ),
+                getAssetUseCase: WireCellsGetAssetUseCase(
+                    localAssetRepository: localAssetRepository, fileCache: cache)
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,
@@ -108,6 +111,7 @@ extension FilesItemViewModel {
         FilesItemViewModel(
             item: FilesViewItem(
                 id: UUID(),
+                eTag: "eTag",
                 kind: .file,
                 name: "foo.jpg",
                 filePath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image foo.jpg",

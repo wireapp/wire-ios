@@ -303,6 +303,7 @@ struct TagsEditView: View {
 #Preview {
     let item = FilesViewItem(
         id: UUID(),
+        eTag: "etag",
         kind: .file,
         name: "some_file.pdf",
         filePath: "some/path",
