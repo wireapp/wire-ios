@@ -177,16 +177,3 @@ final class ExportBackupViewModel: ObservableObject {
     }
 
 }
-
-private extension WireLogInterpolation {
-
-    mutating func appendInterpolation(
-        _ error: any Error
-    ) {
-        // just log the type of error for now, we can still refine it,
-        // e.g. treat DecodingError, URLError etc. similar everywhere
-        let type = type(of: error)
-        writeText("\(type)")
-    }
-
-}
