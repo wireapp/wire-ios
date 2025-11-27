@@ -37,6 +37,7 @@ final class EditFileViewModel: EditFileViewModelProtocol {
         case idle
         case loading
         case loaded(URL)
+        case error(title: String?, message: String)
     }
 
     private let nodeID: UUID
@@ -55,8 +56,22 @@ final class EditFileViewModel: EditFileViewModelProtocol {
     func load() async {
         state = .loading
 
-        if let url = try? await getEditingURLUseCase.invoke(nodeID: nodeID) {
-            state = .loaded(url)
+        do {
+            if let url = try await getEditingURLUseCase.invoke(nodeID: nodeID) {
+                state = .loaded(url)
+            } else {
+                state = Self.errorState(for: .unknownError)
+            }
+        } catch where error.isNoInternetError {
+            state = Self.errorState(for: .noInternet)
+        } catch {
+            state = Self.errorState(for: .unknownError)
         }
+    }
+
+    // MARK: - Private helpers
+
+    private static func errorState(for alert: AlertModel) -> State {
+        .error(title: alert.title, message: alert.message)
     }
 }

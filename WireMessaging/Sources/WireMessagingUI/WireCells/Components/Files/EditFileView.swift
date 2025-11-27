@@ -40,6 +40,17 @@ struct EditFileView<ViewModel>: View where ViewModel: EditFileViewModelProtocol 
                     ProgressView()
                 case .loaded(let url):
                     WebView(url: url)
+                case .error(let title, let message):
+                    MoveToFolderEmptyStateView(
+                        title: title,
+                        message: message,
+                        onReload: {
+                            Task {
+                                await viewModel.load()
+                            }
+                        }
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
             .onAppear(perform: {
