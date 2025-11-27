@@ -20,10 +20,27 @@ import Foundation
 import WireSystem
 import WireUtilities
 
-extension UUID: SafeForLoggingStringConvertible {
+//extension UUID: SafeForLoggingStringConvertible {
+//
+//    // to remove?
+//    public var safeForLoggingDescription: String {
+//        transportString().redactedAndTruncated()
+//    }
+//
+//}
 
+extension ZMConversation.ConversationID: @retroactive SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        transportString().redactedAndTruncated()
+        transportString()
     }
+}
 
+public extension ZMUser {
+    typealias UserID = UUID
+}
+
+extension ZMUser.UserID: @retroactive SafeForLoggingStringConvertible {
+    public var safeForLoggingDescription: String {
+        transportString()
+    }
 }
