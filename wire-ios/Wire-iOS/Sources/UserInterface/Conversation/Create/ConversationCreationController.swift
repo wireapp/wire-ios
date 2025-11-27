@@ -22,6 +22,7 @@ import WireDataModel
 import WireDesign
 import WireDomain
 import WireFoundation
+import WireLocators
 import WireLogging
 import WireNetwork
 import WireSyncEngine
@@ -263,7 +264,7 @@ final class ConversationCreationController: UIViewController {
             }
         )
 
-        nextButtonItem.accessibilityIdentifier = "button.newgroup.next"
+        nextButtonItem.accessibilityIdentifier = Locators.CreateGroupPage.newGroupNextButton.rawValue
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = isGroupNameValid()
         navigationItem.rightBarButtonItem = nextButtonItem

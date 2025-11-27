@@ -47,7 +47,7 @@ final class AccountManagementTests: WireUITestCase {
             .backgroundAndResume(app: app, forDelay: 2)
 
         XCTAssertFalse(
-            page.conversationsPageLabel.exists,
+            page.conversationsButton.exists,
             "App incorrectly showing conversations page without app passcode"
         )
 
