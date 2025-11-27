@@ -21,7 +21,9 @@ import Foundation
 import WireLogging
 import WireSystem
 
-struct NewCocoaLumberjackLogger: WireLogHandlerProtocol { // TODO: merge old and new cocoa lumberjack logger
+// TODO: the new implementation currently just wraps the old one, rewrite!
+
+struct NewCocoaLumberjackLogger: WireLogHandlerProtocol {
 
     var logger: CocoaLumberjackLogger
 

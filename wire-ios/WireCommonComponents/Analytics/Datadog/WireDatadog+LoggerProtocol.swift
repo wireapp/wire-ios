@@ -21,6 +21,8 @@ import WireDatadog
 import WireLogging
 import WireSystem
 
+// TODO: the new implementation currently just wraps the old one, rewrite!
+
 struct NewWireDatadogLogger: WireLogHandlerProtocol {
 
     let additionalAttributes = LogAttributes()
@@ -62,6 +64,7 @@ struct NewWireDatadogLogger: WireLogHandlerProtocol {
 }
 
 extension WireDatadog: LoggerProtocol {
+
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(
             level: .debug,

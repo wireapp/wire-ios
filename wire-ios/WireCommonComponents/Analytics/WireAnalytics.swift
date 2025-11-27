@@ -45,9 +45,10 @@ public enum WireAnalytics {
         migrateLogFilesToNewLocation(target: target)
 
         let cocoaLumberjackLogger = CocoaLumberjackLogger(logsDirectory: logsDirectory(for: target))
+        let newCocoaLumberjackLogger = NewCocoaLumberjackLogger(logger: cocoaLumberjackLogger)
         let osLogHandler = OSLogHandler(subsystem: Bundle.main.bundleIdentifier!)
         let datadogLogger = NewWireDatadogLogger(logger: WireAnalytics.Datadog.shared)
-        let multiplexLogHandler = MultiplexLogHandler(osLogHandler, cocoaLumberjackLogger, datadogLogger)
+        let multiplexLogHandler = MultiplexLogHandler(osLogHandler, newCocoaLumberjackLogger, datadogLogger)
         WireLogger.setup(multiplexLogHandler)
 
         LegacyLogger.initialize {
@@ -122,12 +123,12 @@ public enum WireAnalytics {
 private struct MultiplexLogHandler: WireLogHandlerProtocol {
 
     let osLogHandler: OSLogHandler
-    let cocoaLumberjackLogger: CocoaLumberjackLogger
+    let cocoaLumberjackLogger: NewCocoaLumberjackLogger
     let datadogLogger: NewWireDatadogLogger
 
     init(
         _ osLogHandler: OSLogHandler,
-        _ cocoaLumberjackLogger: CocoaLumberjackLogger,
+        _ cocoaLumberjackLogger: NewCocoaLumberjackLogger,
         _ datadogLogger: NewWireDatadogLogger
     ) {
         self.osLogHandler = osLogHandler
@@ -141,12 +142,30 @@ private struct MultiplexLogHandler: WireLogHandlerProtocol {
         message: WireLogMessage,
         additionalAttributes: [WireLogAttribute]
     ) {
+
+#if DEBUG
         osLogHandler.log(
             tag: tag,
             type: type,
             message: message,
             additionalAttributes: additionalAttributes
         )
+        #endif
+
+        cocoaLumberjackLogger.log(
+            tag: tag,
+            type: type,
+            message: message,
+            additionalAttributes: additionalAttributes
+        )
+
+        datadogLogger.log(
+            tag: tag,
+            type: type,
+            message: message,
+            additionalAttributes: additionalAttributes
+        )
+
     }
 
 }
