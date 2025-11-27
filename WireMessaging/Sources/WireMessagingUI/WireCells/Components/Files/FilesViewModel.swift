@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
+package import Combine
 package import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
@@ -175,6 +175,7 @@ package final class FilesViewModel: ObservableObject {
     private let accentColorProvider: () -> WireAccentColor
     let isFoldersEnabled: Bool
     let isRecycleBin: Bool
+    let triggerReload: PassthroughSubject<Void, Never>
 
     @Published private(set) var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
@@ -199,6 +200,7 @@ package final class FilesViewModel: ObservableObject {
         cellName: String? = nil,
         isFoldersEnabled: Bool,
         isRecycleBin: Bool = false,
+        triggerReload: PassthroughSubject<Void, Never> = .init(),
         accentColorProvider: @escaping () -> WireAccentColor
     ) {
         self.useCases = useCases
@@ -211,6 +213,7 @@ package final class FilesViewModel: ObservableObject {
         self.state = isCellsStatePending ? .pending : .loading
         self.isFoldersEnabled = isFoldersEnabled
         self.isRecycleBin = isRecycleBin
+        self.triggerReload = triggerReload
         self.accentColorProvider = accentColorProvider
 
         bindSearch()

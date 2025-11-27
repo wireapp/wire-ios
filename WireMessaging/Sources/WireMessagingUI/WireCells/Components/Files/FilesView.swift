@@ -86,6 +86,11 @@ package struct FilesView: FilesViewProtocol {
             .interactiveDismissDisabled()
             .toolbar { toolbarContent }
             .onAppear { reloadTask() }
+            .onReceive(viewModel.triggerReload) { _ in
+                Task {
+                    await viewModel.reload()
+                }
+            }
             .alert(
                 item: $viewModel.alert,
                 title: { Text($0.title) },
