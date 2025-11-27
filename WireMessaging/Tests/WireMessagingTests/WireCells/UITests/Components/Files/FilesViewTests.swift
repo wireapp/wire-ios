@@ -61,6 +61,11 @@ final class FilesViewTests: XCTestCase {
             fileCache: MockFileCache(),
             localAssetStore: MockWireCellsLocalAssetStoreProtocol()
         )
+        restoreNodeUseCase = WireCellsRestoreNodesUseCase(
+            repository: nodesRepository,
+            fileCache: MockFileCache(),
+            localAssetStore: MockWireCellsLocalAssetStoreProtocol()
+        )
         renameNodeUseCase = WireCellsRenameNodeUseCase(
             nodesRepository: nodesRepository,
             localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
