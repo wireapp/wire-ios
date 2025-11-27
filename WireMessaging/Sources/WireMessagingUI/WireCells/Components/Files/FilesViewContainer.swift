@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 package import WireFoundation
 package import WireMessagingDomain
 package import WireMessagingData
@@ -38,17 +38,17 @@ package struct FilesViewContainer: View {
     private let fileCache: any FileCache
     private let isFoldersEnabled: Bool
     private let accentColorProvider: () -> WireAccentColor
-    
+
     private let triggerReloadFiles: PassthroughSubject<Void, Never> = .init()
 
     enum FullScreenCoverNavigation: String, Identifiable {
         case recycleBin
-        
+
         var id: String { rawValue }
     }
-    
+
     @State private var fullScreenCoverNavigation: FullScreenCoverNavigation?
-    
+
     package init(
         cellName: String,
         nodesAPI: NodesAPI,
@@ -79,11 +79,15 @@ package struct FilesViewContainer: View {
         let onOpenRecycleBin: () -> Void = {
             fullScreenCoverNavigation = .recycleBin
         }
-        
+
         NavigationStack(path: $path) {
             FilesView(viewModel: makeViewModel(), onOpenRecycleBin: onOpenRecycleBin, onDismissContainer: { dismiss() })
                 .navigationDestination(for: FilesViewItem.self) { _ in
-                    FilesView(viewModel: makeViewModel(), onOpenRecycleBin: onOpenRecycleBin, onDismissContainer: { dismiss() })
+                    FilesView(
+                        viewModel: makeViewModel(),
+                        onOpenRecycleBin: onOpenRecycleBin,
+                        onDismissContainer: { dismiss() }
+                    )
                 }
         }
         .fullScreenCover(

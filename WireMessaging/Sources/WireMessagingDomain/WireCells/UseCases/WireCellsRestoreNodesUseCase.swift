@@ -23,7 +23,8 @@ package enum WireCellsRestoreNodesError: Error {
 }
 
 /// Restores `WireCellNodes`s on the server and deletes locally cached data.
-/// Restoration means moving from the recycle bin back to where the node was originally before it was moved to the recycle bin.
+/// Restoration means moving from the recycle bin back to where the node was originally before it was moved to the
+/// recycle bin.
 package struct WireCellsRestoreNodesUseCase: WireCellsRestoreNodesUseCaseProtocol {
 
     private let repository: any WireCellsNodesRepositoryProtocol
@@ -41,12 +42,13 @@ package struct WireCellsRestoreNodesUseCase: WireCellsRestoreNodesUseCaseProtoco
     }
 
     package func invoke(nodeIDs: [UUID]) async throws {
-        // First delete local assets (from the recycle bin) as this is less likely to fail then deleting nodes on server and local assets can
-        // be re-downloaded if needed.
+        // First delete local assets (from the recycle bin) as this is less likely to fail then deleting nodes on server
+        // and local assets can be re-downloaded if needed.
         for nodeID in nodeIDs {
             guard let localAsset = try await localAssetStore.asset(nodeID: nodeID) else { continue }
 
-            // The file is just moved from the recycle bin but the download cache still needs to be cleared because the cache key changes.
+            // The file is just moved from the recycle bin but the download cache still needs to be cleared because the
+            // cache key changes.
             switch localAsset.downloadState {
             case let .downloaded(cacheKey):
                 try await fileCache.deleteFile(forKey: cacheKey)

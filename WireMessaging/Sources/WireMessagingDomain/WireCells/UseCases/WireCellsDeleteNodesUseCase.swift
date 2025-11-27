@@ -45,7 +45,8 @@ package struct WireCellsDeleteNodesUseCase: WireCellsDeleteNodesUseCaseProtocol 
         for nodeID in nodeIDs {
             guard let localAsset = try await localAssetStore.asset(nodeID: nodeID) else { continue }
 
-            // If the file is just moved to the recycle bin, the download cache still needs to be cleared because the cache key changes.
+            // If the file is just moved to the recycle bin, the download cache still needs to be cleared because the
+            // cache key changes.
             switch localAsset.downloadState {
             case let .downloaded(cacheKey):
                 try await fileCache.deleteFile(forKey: cacheKey)

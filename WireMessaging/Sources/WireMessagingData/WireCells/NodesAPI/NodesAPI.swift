@@ -77,7 +77,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
     package func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool {
         try await restAPI.deleteNodes(nodeIDs: nodeIDs, permanently: permanently)
     }
-    
+
     package func restoreNodes(nodeIDs: [UUID]) async throws -> Bool {
         try await restAPI.restoreNodes(nodeIDs: nodeIDs)
     }

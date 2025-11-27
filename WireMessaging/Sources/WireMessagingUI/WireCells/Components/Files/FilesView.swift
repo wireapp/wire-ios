@@ -32,11 +32,15 @@ package struct FilesView: FilesViewProtocol {
     @StateObject package var viewModel: FilesViewModel
     @Environment(\.dismiss) var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
-    
+
     let onOpenRecycleBin: () -> Void
     let onDismissContainer: () -> Void
 
-    package init(viewModel: @autoclosure @escaping () -> FilesViewModel, onOpenRecycleBin: @escaping () -> Void = {}, onDismissContainer: @escaping () -> Void = {}) {
+    package init(
+        viewModel: @autoclosure @escaping () -> FilesViewModel,
+        onOpenRecycleBin: @escaping () -> Void = {},
+        onDismissContainer: @escaping () -> Void = {}
+    ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
         self.onOpenRecycleBin = onOpenRecycleBin
         self.onDismissContainer = onDismissContainer
@@ -56,7 +60,11 @@ package struct FilesView: FilesViewProtocol {
                     VStack(spacing: 0) {
                         if items.isEmpty {
                             Spacer()
-                            FilesInfoView(info: .noFilesFound(scope: viewModel.isRecycleBin ? .recycleBin : .oneConversation))
+                            FilesInfoView(
+                                info: .noFilesFound(
+                                    scope: viewModel.isRecycleBin ? .recycleBin : .oneConversation
+                                )
+                            )
                             Spacer()
                         } else {
                             filesList
@@ -64,7 +72,7 @@ package struct FilesView: FilesViewProtocol {
                                 .refreshable { reloadTask(refreshing: true) }
                         }
 
-                        if viewModel.isFoldersEnabled && !viewModel.isRecycleBin {
+                        if viewModel.isFoldersEnabled, !viewModel.isRecycleBin {
                             CreateFolderCTA {
                                 viewModel.onCreateFolder()
                             }
@@ -138,7 +146,7 @@ private extension FilesView {
                 toolBarTitleMenuContent()
             }
         }
-        
+
         if !viewModel.isRecycleBin {
             ToolbarItem(placement: .navigationBarTrailing) {
                 moreActionsButton
@@ -172,7 +180,7 @@ private extension FilesView {
         .accessibilityIdentifier("close")
         .tint(ColorTheme.Base.primary(wireAccentColor).color)
     }
-    
+
     var moreActionsButton: some View {
         Menu {
             Button {

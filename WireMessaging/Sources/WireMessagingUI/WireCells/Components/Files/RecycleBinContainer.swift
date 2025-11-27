@@ -37,7 +37,7 @@ package struct RecycleBinContainer: View {
     private let fileCache: any FileCache
     private let isFoldersEnabled: Bool
     private let accentColorProvider: () -> WireAccentColor
-    
+
     package init(
         cellName: String,
         nodesAPI: NodesAPI,

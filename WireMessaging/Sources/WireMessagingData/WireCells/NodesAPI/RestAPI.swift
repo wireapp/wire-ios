@@ -138,7 +138,7 @@ final class RestAPI: Sendable {
         }
         return deleteAction.status == .finished
     }
-    
+
     /// Restores nodes from the recycle bin by their `UUID`s.
     func restoreNodes(nodeIDs: [UUID]) async throws -> Bool {
         let nodes = nodeIDs.map { RestNodeLocator(uuid: $0.transportString()) }

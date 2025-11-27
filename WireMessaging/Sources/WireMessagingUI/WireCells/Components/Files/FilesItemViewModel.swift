@@ -32,7 +32,7 @@ final class FilesItemViewModel: ObservableObject {
     let item: FilesViewItem
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
-    
+
     enum ItemAction {
         case open
         case deleteToRecycleBin
@@ -41,11 +41,11 @@ final class FilesItemViewModel: ObservableObject {
         case rename
         case editTags
     }
-    
+
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
 
     @Published private var asset: WireCellsLocalAsset?
-    
+
     @Published var isPresentingDeleteFilePermanentlyConfirmation = false
     @Published var isPresentingDeleteFolderPermanentlyConfirmation = false
     @Published var isPresentingDeleteFileToRecycleBinConfirmation = false
@@ -93,7 +93,7 @@ final class FilesItemViewModel: ObservableObject {
             self?.asset = asset
         }.store(in: &cancellables)
     }
-    
+
     var nameOfTopmostFolderInRecycleBin: String {
         item.filePath.split(separator: "/").dropFirst(2).first.flatMap { String($0) } ?? ""
     }
@@ -165,7 +165,7 @@ final class FilesItemViewModel: ObservableObject {
             isPresentingDeleteFolderToRecycleBinConfirmation = true
         }
     }
-    
+
     func showRestoreConfirmation() {
         let isInRecycleBinRoot = item.filePath.split(separator: "/").count <= 3
         if isInRecycleBinRoot {
@@ -187,7 +187,7 @@ final class FilesItemViewModel: ObservableObject {
             await onItemAction(.deleteToRecycleBin, item)
         }
     }
-    
+
     func confirmRestore() async {
         await onItemAction(.restore, item)
     }

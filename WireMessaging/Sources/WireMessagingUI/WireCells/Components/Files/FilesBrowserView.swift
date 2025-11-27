@@ -30,8 +30,12 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 package struct FilesBrowserView: FilesViewProtocol {
     @StateObject package var viewModel: FilesViewModel
     package var isBrowsing: Bool { true }
-    
-    package init(viewModel: @autoclosure @escaping () -> FilesViewModel, onOpenRecycleBin: @escaping () -> Void = {}, onDismissContainer: @escaping () -> Void = {}) {
+
+    package init(
+        viewModel: @autoclosure @escaping () -> FilesViewModel,
+        onOpenRecycleBin: @escaping () -> Void = {},
+        onDismissContainer: @escaping () -> Void = {}
+    ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
     }
 
@@ -46,7 +50,11 @@ package struct FilesBrowserView: FilesViewProtocol {
                         .progressViewStyle(.circular)
                 case let .received(items):
                     if items.isEmpty {
-                        FilesInfoView(info: .noFilesFound(scope: viewModel.isRecycleBin ? .recycleBin : .allConversations))
+                        FilesInfoView(
+                            info: .noFilesFound(
+                                scope: viewModel.isRecycleBin ? .recycleBin : .allConversations
+                            )
+                        )
                     } else {
                         filesList
                             .listStyle(.plain)

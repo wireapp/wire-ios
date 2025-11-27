@@ -34,7 +34,7 @@ struct FilesInfoView: View {
             case oneConversation
             case recycleBin
         }
-        
+
         func textForScope(_ scope: Scope) -> String {
             switch scope {
             case .allConversations: Strings.AllFiles.NoData.message
@@ -42,7 +42,7 @@ struct FilesInfoView: View {
             case .recycleBin: Strings.RecycleBin.NoData.message
             }
         }
-        
+
         func accessibilityTextForScope(_ scope: Scope) -> String {
             switch scope {
             case .allConversations: Accessibility.AllFiles.NoData.message

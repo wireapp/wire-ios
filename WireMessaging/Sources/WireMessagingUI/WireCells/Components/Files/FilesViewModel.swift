@@ -40,7 +40,7 @@ package struct FilesViewItem: Identifiable, Hashable {
 
     /// Identifier of this item on the wire cells backend.
     package let id: UUID
-    
+
     /// The id of the topmost folder in the recycle bin, if the item is not at the root of the recycle bin.
     /// Needed to restore items which are in folders rather than directly at the root of the recycle bin.
     var recycleBinTopFolderId: UUID?
@@ -101,7 +101,7 @@ package final class FilesViewModel: ObservableObject {
             }
         }
     }
-    
+
     /// An navigation option displayed in the navigation folder menu.
     enum FolderMenuOption: Hashable {
         case folder(nodeID: UUID, title: String)
@@ -218,15 +218,15 @@ package final class FilesViewModel: ObservableObject {
 
         bindSearch()
     }
-    
+
     var navigationTitle: String {
         if let title {
-            return title
+            title
         } else {
             if isRecycleBin {
-                return Strings.RecycleBin.navigationTitle
+                Strings.RecycleBin.navigationTitle
             } else {
-                return Strings.Files.navigationTitle
+                Strings.Files.navigationTitle
             }
         }
     }
@@ -369,17 +369,19 @@ package final class FilesViewModel: ObservableObject {
     /// Navigates to the folder represented by the given item.
     private func openFolder(item: FilesViewItem) {
         precondition(item.kind == .folder)
-        
+
         var targetItem = item
-        
+
         if isRecycleBin {
             let pathComponents = targetItem.filePath.split(separator: "/").map { String($0) }
             if pathComponents.count == 3 {
-                // remember the id of the top folder in the recycle bin for later when an item in a subfolder will be restored
+                // remember the id of the top folder in the recycle bin for later when an item in a subfolder will be
+                // restored
                 targetItem.recycleBinTopFolderId = targetItem.id
             } else if pathComponents.count > 3 {
                 // for the next subfolder, just assign the id of the same top folder
-                if let previousItem = navigationPath.last, let recycleBinTopFolderId = previousItem.recycleBinTopFolderId {
+                if let previousItem = navigationPath.last,
+                   let recycleBinTopFolderId = previousItem.recycleBinTopFolderId {
                     targetItem.recycleBinTopFolderId = recycleBinTopFolderId
                 }
             }
@@ -551,7 +553,7 @@ package final class FilesViewModel: ObservableObject {
             state = .received(items: Self.processItems(currentItems))
         }
     }
-    
+
     private func restoreItem(_ asset: FilesViewItem) async {
         guard state.isLoaded else {
             WireLogger.wireCells.error("Attempt to restore asset while not visible", attributes: .safePublic)
@@ -561,12 +563,12 @@ package final class FilesViewModel: ObservableObject {
         var currentItems = state.items
         currentItems.removeAll { $0.id == asset.id }
         state = .received(items: Self.processItems(currentItems))
-        
+
         let nodeIdToRestore = navigationPath.last?.recycleBinTopFolderId ?? asset.id
 
         do {
             try await useCases.restoreNodes.invoke(nodeIDs: [nodeIdToRestore])
-            
+
             setNavigation([])
         } catch {
             guard state.isLoaded else { return }
