@@ -101,8 +101,6 @@ package struct FilesView: FilesViewProtocol {
                     )
                 case let .moveToFolder(fileItem):
                     viewModel.moveToFolderView(item: fileItem)
-                case let .editFile(fileItem):
-                    viewModel.editFileView(item: fileItem)
                 }
             }
             .sheet(
@@ -125,6 +123,9 @@ package struct FilesView: FilesViewProtocol {
                 },
                 content: { $0 }
             )
+            .fullScreenCover(item: $viewModel.editing) { item in
+                viewModel.editFileView(item: item)
+            }
         }
     }
 

@@ -78,7 +78,6 @@ package final class FilesViewModel: ObservableObject {
     enum SheetNavigation: Identifiable {
         case editTags(fileItem: FilesViewItem)
         case moveToFolder(fileItem: FilesViewItem)
-        case editFile(fileItem: FilesViewItem)
 
         var id: String {
             switch self {
@@ -86,8 +85,6 @@ package final class FilesViewModel: ObservableObject {
                 "editTags(\(fileItem.id))"
             case let .moveToFolder(fileItem):
                 "moveToFolder(\(fileItem.id)"
-            case let .editFile(fileItem):
-                "editFile(\(fileItem.id))"
             }
         }
     }
@@ -174,6 +171,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var sheetNavigation: SheetNavigation?
     @Published var createFolderView: CreateFolderView?
     @Published var fileRenameView: FileRenameView?
+    @Published var editing: FilesViewItem?
 
     var didCreateFolder: Bool = false
     var didRenameFile: Bool = false
@@ -272,7 +270,7 @@ package final class FilesViewModel: ObservableObject {
                 self?.sheetNavigation = .moveToFolder(fileItem: item)
             },
             onEdit: { [weak self] item in
-                self?.sheetNavigation = .editFile(fileItem: item)
+                self?.editing = item
             },
             onEditTagsSelected: { [weak self] item in
                 self?.sheetNavigation = .editTags(fileItem: item)
@@ -301,7 +299,13 @@ package final class FilesViewModel: ObservableObject {
     }
 
     func editFileView(item: FilesViewItem) -> some View {
-        EmptyView()
+        let getEditingURLUseCase = useCases.getEditingURL
+        return EditFileView(
+            viewModel: EditFileViewModel(
+                nodeID: item.id,
+                getEditingURLUseCase: getEditingURLUseCase
+            )
+        )
     }
 
     /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary and views it.
