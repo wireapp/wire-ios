@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 final class UserConnectionView: UIView, Copyable {
@@ -86,7 +87,7 @@ final class UserConnectionView: UIView, Copyable {
     private func updateFirstLabel() {
         if let handleText = handleLabelText {
             firstLabel.attributedText = handleText
-            firstLabel.accessibilityIdentifier = "username"
+            firstLabel.accessibilityIdentifier = Locators.ConnectionRequestsPage.username.rawValue
         } else {
             firstLabel.attributedText = correlationLabelText
             firstLabel.accessibilityIdentifier = "correlation"

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class LogOutPage: PageModel {
@@ -29,7 +30,7 @@ class LogOutPage: PageModel {
     }
 
     var okButton: XCUIElement {
-        app.buttons["OK"]
+        app.buttons[Locators.LogOutPage.ok.rawValue]
     }
 
     @discardableResult

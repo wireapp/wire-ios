@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireLogging
 import WireMainNavigationUI
 import WireSyncEngine
@@ -484,6 +485,10 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
                 }
             }
         }
+        removeAction.setValue(
+            Locators.UserDetailsPage.removeUserFromConversationConfirmation.rawValue,
+            forKey: "accessibilityIdentifier"
+        )
 
         controller.addAction(removeAction)
         controller.addAction(.cancel())

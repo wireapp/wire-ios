@@ -1783,10 +1783,10 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol,
 
     public var pullMLSOneToOneConversationUserIDUserDomain_Invocations: [(userID: String, userDomain: String)] = []
     public var pullMLSOneToOneConversationUserIDUserDomain_MockError: Error?
-    public var pullMLSOneToOneConversationUserIDUserDomain_MockMethod: ((String, String) async throws -> String)?
-    public var pullMLSOneToOneConversationUserIDUserDomain_MockValue: String?
+    public var pullMLSOneToOneConversationUserIDUserDomain_MockMethod: ((String, String) async throws -> (String, MLSPublicKeys?))?
+    public var pullMLSOneToOneConversationUserIDUserDomain_MockValue: (String, MLSPublicKeys?)?
 
-    public func pullMLSOneToOneConversation(userID: String, userDomain: String) async throws -> String {
+    public func pullMLSOneToOneConversation(userID: String, userDomain: String) async throws -> (String, MLSPublicKeys?) {
         pullMLSOneToOneConversationUserIDUserDomain_Invocations.append((userID: userID, userDomain: userDomain))
 
         if let error = pullMLSOneToOneConversationUserIDUserDomain_MockError {
@@ -2935,20 +2935,23 @@ public class MockOneOnOneResolverProtocol: OneOnOneResolverProtocol {
 
     public var resolveOneOnOneConversationWith_Invocations: [WireDataModel.QualifiedID] = []
     public var resolveOneOnOneConversationWith_MockError: Error?
-    public var resolveOneOnOneConversationWith_MockMethod: ((WireDataModel.QualifiedID) async throws -> Void)?
+    public var resolveOneOnOneConversationWith_MockMethod: ((WireDataModel.QualifiedID) async throws -> OneOnOneConversationResolution)?
+    public var resolveOneOnOneConversationWith_MockValue: OneOnOneConversationResolution?
 
-    public func resolveOneOnOneConversation(with userID: WireDataModel.QualifiedID) async throws {
+    public func resolveOneOnOneConversation(with userID: WireDataModel.QualifiedID) async throws -> OneOnOneConversationResolution {
         resolveOneOnOneConversationWith_Invocations.append(userID)
 
         if let error = resolveOneOnOneConversationWith_MockError {
             throw error
         }
 
-        guard let mock = resolveOneOnOneConversationWith_MockMethod else {
+        if let mock = resolveOneOnOneConversationWith_MockMethod {
+            return try await mock(userID)
+        } else if let mock = resolveOneOnOneConversationWith_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `resolveOneOnOneConversationWith`")
         }
-
-        try await mock(userID)
     }
 
     // MARK: - resolveAllOneOnOneConversations
@@ -3220,10 +3223,10 @@ public class MockPullMLSOneOnOneSyncProtocol: PullMLSOneOnOneSyncProtocol {
 
     public var pullUserIDUserDomain_Invocations: [(userID: UUID, userDomain: String)] = []
     public var pullUserIDUserDomain_MockError: Error?
-    public var pullUserIDUserDomain_MockMethod: ((UUID, String) async throws -> MLSGroupID)?
-    public var pullUserIDUserDomain_MockValue: MLSGroupID?
+    public var pullUserIDUserDomain_MockMethod: ((UUID, String) async throws -> (MLSGroupID, MLSPublicKeys?))?
+    public var pullUserIDUserDomain_MockValue: (MLSGroupID, MLSPublicKeys?)?
 
-    public func pull(userID: UUID, userDomain: String) async throws -> MLSGroupID {
+    public func pull(userID: UUID, userDomain: String) async throws -> (MLSGroupID, MLSPublicKeys?) {
         pullUserIDUserDomain_Invocations.append((userID: userID, userDomain: userDomain))
 
         if let error = pullUserIDUserDomain_MockError {

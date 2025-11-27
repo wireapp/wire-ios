@@ -252,7 +252,10 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
 }
 
 public class MockUserSession: UserSession {
-
+    public func resolveOneOnOneConversation(with userID: WireDataModel.QualifiedID) async throws -> WireDataModel.OneOnOneConversationResolution {
+        return .noAction
+    }
+    
     public var isBuildBlacklisted = false
     public var resolvedBackendMetadata = BackendMetadataProvider(
         apiVersionOverride: .v0,

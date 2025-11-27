@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCommonComponents
+import WireLocators
 import WireSyncEngine
 
 final class IncomingConnectionView: UIView {
@@ -83,10 +84,12 @@ final class IncomingConnectionView: UIView {
 
     private func setup() {
         acceptButton.accessibilityLabel = "accept"
+        acceptButton.accessibilityIdentifier = Locators.ConnectionRequestsPage.connectRequestButton.rawValue
         acceptButton.setTitle(ConnectionRequest.connectButtonTitle, for: .normal)
         acceptButton.addTarget(self, action: #selector(onAcceptButton), for: .touchUpInside)
 
         ignoreButton.accessibilityLabel = "ignore"
+        ignoreButton.accessibilityIdentifier = Locators.ConnectionRequestsPage.ignoreRequestButton.rawValue
         ignoreButton.setTitle(ConnectionRequest.ignoreButtonTitle, for: .normal)
         ignoreButton.addTarget(self, action: #selector(onIgnoreButton), for: .touchUpInside)
 
