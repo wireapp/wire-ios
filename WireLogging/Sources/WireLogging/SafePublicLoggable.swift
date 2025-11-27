@@ -18,7 +18,7 @@
 
 /// A wrapper which allows for all types of string interpolations to be logged without obfuscation.
 
-public struct SafePublicLoggable {
+public struct SafePublicLoggable { // TODO: consider deleting
 
     fileprivate let value: String
 

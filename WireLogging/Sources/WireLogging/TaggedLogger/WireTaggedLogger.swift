@@ -18,15 +18,22 @@
 
 public struct WireTaggedLogger {
 
-    public var tag: WireLogTag
-    public var handler: any WireLogHandlerProtocol
+    public let tag: WireLogTag
+    public let handler: any WireLogHandlerProtocol
+
+    /// Additional attributes defined here have the least priority.
+    /// Any attribute with the same key defined in a message or passed as argument to `log(_:_:_:)` will overwrite these.
+
+    public let additionalAttributes: [WireLogAttribute]
 
     public init(
         tag: WireLogTag,
-        handler: any WireLogHandlerProtocol
+        handler: any WireLogHandlerProtocol,
+        additionalAttributes: [WireLogAttribute] = []
     ) {
         self.tag = tag
         self.handler = handler
+        self.additionalAttributes = additionalAttributes
     }
 
     private func log(
