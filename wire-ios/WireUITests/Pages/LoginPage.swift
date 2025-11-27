@@ -27,7 +27,7 @@ class LoginPage: PageModel {
 
     var createPersonalAccountLink: XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Create account"]
+        return elementsQuery.buttons[Locators.LoginPage.createAccountLink.rawValue]
     }
 
     var nextButton: XCUIElement {

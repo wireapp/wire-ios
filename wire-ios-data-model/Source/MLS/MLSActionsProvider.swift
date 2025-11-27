@@ -45,11 +45,6 @@ protocol MLSActionsProviderProtocol {
         in context: NotificationContext
     ) async throws -> [WireDataModel.KeyPackage]
 
-    func sendCommitBundle(
-        _ bundle: Data,
-        in context: NotificationContext
-    ) async throws -> [ZMUpdateEvent]
-
     func fetchConversationGroupInfo(
         conversationId: UUID,
         domain: String,
@@ -145,15 +140,6 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
             excludedSelfClientId: excludedSelfClientID
         )
 
-        return try await action.perform(in: context)
-    }
-
-    func sendCommitBundle(
-        _ bundle: Data,
-        in context: NotificationContext
-    )
-        async throws -> [ZMUpdateEvent] {
-        var action = SendCommitBundleAction(commitBundle: bundle)
         return try await action.perform(in: context)
     }
 

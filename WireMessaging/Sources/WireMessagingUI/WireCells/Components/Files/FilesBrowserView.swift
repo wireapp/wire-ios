@@ -65,6 +65,7 @@ package struct FilesBrowserView: FilesViewProtocol {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
+            .toolbar { toolbarContent }
             .if(showSearchBar) { view in
                 view.searchable(
                     text: $viewModel.searchText,
@@ -79,6 +80,16 @@ package struct FilesBrowserView: FilesViewProtocol {
                 message: { Text($0.message) },
                 actions: { _ in confirmButton }
             )
+            .sheet(item: $viewModel.sheetNavigation) {
+                Task { await viewModel.onSheetDismissed() }
+            } content: { navigationItem in
+                switch navigationItem {
+                case let .filters(filtersView):
+                    filtersView
+                default:
+                    EmptyView()
+                }
+            }
         }
     }
 
@@ -92,6 +103,23 @@ package struct FilesBrowserView: FilesViewProtocol {
             false
         }
     }
+}
+
+// MARK: - Toolbar
+
+private extension FilesBrowserView {
+
+    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button {
+                viewModel.openFilters()
+            } label: {
+                Image(systemName: "line.3.horizontal.decrease.circle")
+            }
+
+        }
+    }
+
 }
 
 // MARK: - Helper

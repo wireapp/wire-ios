@@ -19,6 +19,7 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
+import WireLocators
 import WireReusableUIComponents
 
 package struct VerificationEmailCodeView: View {
@@ -58,6 +59,7 @@ package struct VerificationEmailCodeView: View {
                         Text(Strings.VerificationCode.confirm)
                     }
                 })
+                .accessibilityIdentifier(Locators.VerificationCodePage.confirmButton.rawValue)
                 .wireButtonStyle(.primary)
                 .padding(.horizontal)
                 .disabled(viewModel.isConfirmButtonDisabled)
@@ -106,7 +108,7 @@ package struct VerificationEmailCodeView: View {
                     .keyboardType(.numberPad)
                     .foregroundColor(.primary)
                     .focused($focusedIndex, equals: index)
-                    .accessibilityIdentifier("VerificationCode")
+                    .accessibilityIdentifier(Locators.VerificationCodePage.verificationCodeTextField.rawValue)
                     .onChange(of: viewModel.code[index]) { newValue in
                         focusedIndex = viewModel.handleInputReturningFocus(newValue, at: index)
                     }
