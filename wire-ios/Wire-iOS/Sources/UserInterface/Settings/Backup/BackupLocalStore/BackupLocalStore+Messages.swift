@@ -23,6 +23,8 @@ import WireFoundation
 import WireLogging
 import WireNetwork
 
+private let importBackupLogger = WireLogging.WireLogger.importBackup
+
 // MARK: - Interface
 
 extension BackupLocalStore {
@@ -93,22 +95,22 @@ extension BackupLocalStore {
     }
 
     func addMessages(_ backupMessages: [MessageBackupModel]) async throws -> BackupMessagesImportResult {
-        logPublic("Starting import of \(backupMessages.count) messages")
+        importBackupLogger.info("Starting import of \(safePublic: backupMessages.count) messages")
 
         // Validate and collect import data
         let (importData, validationResult) = validateAndCollectMessagesImportData(from: backupMessages)
-        logPublic("Validation: \(validationResult.successCount) valid, \(validationResult.failureCount) invalid")
+        importBackupLogger.info("Validation: \(safePublic: validationResult.successCount) valid, \(safePublic: validationResult.failureCount) invalid")
 
         // Fetch relationships
         let (sendersByID, conversationsByID) = try await fetchRelationships(from: importData)
-        logPublic("Fetched \(sendersByID.count) senders, \(conversationsByID.count) conversations")
+        importBackupLogger.info("Fetched \(safePublic: sendersByID.count) senders, \(safePublic: conversationsByID.count) conversations")
 
         // Insert messages
         let (insertedIDs, insertionResult) = await batchInsertMessages(
             clientMessagesAttributes: importData.clientMessagesAttributes,
             assetMessagesAttributes: importData.assetMessagesAttributes
         )
-        logPublic("Insertion: \(insertionResult.successCount) succeeded, \(insertionResult.failureCount) failed")
+        importBackupLogger.info("Insertion: \(safePublic: insertionResult.successCount) succeeded, \(safePublic: insertionResult.failureCount) failed")
 
         // Rehydrate messages (set relationships and generic message)
         let rehydrationResult = try await rehydrateAllMessages(
@@ -117,7 +119,7 @@ extension BackupLocalStore {
             conversationsByID: conversationsByID,
             rehydrationDataByNonce: importData.rehydrationDataByNonce
         )
-        logPublic("Rehydration: \(rehydrationResult.successCount) succeeded, \(rehydrationResult.failureCount) failed")
+        importBackupLogger.info("Rehydration: \(safePublic: rehydrationResult.successCount) succeeded, \(safePublic: rehydrationResult.failureCount) failed")
 
         try await backupContext.perform {
             // Save context
@@ -126,19 +128,12 @@ extension BackupLocalStore {
             backupContext.reset()
         }
 
-        logPublic("Import completed")
+        importBackupLogger.info("Import completed")
 
         return ImportResult(
             validationCount: validationResult,
             insertionCount: insertionResult,
             rehydrationCount: rehydrationResult
-        )
-    }
-
-    private func logPublic(_ message: String) {
-        WireLogger.backupImport.info(
-            "\(message)",
-            attributes: .safePublic
         )
     }
 
@@ -298,7 +293,7 @@ extension BackupLocalStore {
                 })
             }
         } catch {
-            WireLogger.backupImport.warn("Failed to fetch qualified objects: \(String(describing: error))")
+            importBackupLogger.warn("Failed to fetch qualified objects: \(error)")
             throw BackupMessagesImportFailure.failedToFetchRelationships
         }
     }
@@ -326,7 +321,7 @@ extension BackupLocalStore {
                 context: backupContext
             )
         } catch {
-            WireLogger.backupImport.warn("Failed to insert client messages batch: \(String(describing: error))")
+            importBackupLogger.warn("Failed to insert client messages batch: \(error)")
         }
 
         do {
@@ -336,7 +331,7 @@ extension BackupLocalStore {
                 context: backupContext
             )
         } catch {
-            WireLogger.backupImport.warn("Failed to insert asset messages batch: \(String(describing: error))")
+            importBackupLogger.warn("Failed to insert asset messages batch: \(error)")
         }
 
         let toInsertCount = assetMessagesAttributes.count + clientMessagesAttributes.count
@@ -431,7 +426,7 @@ extension BackupLocalStore {
                         )
                         restoredCount += 1
                     } catch {
-                        WireLogger.backupImport.warn("failed to rehydrate message: \(String(describing: error))")
+                        importBackupLogger.warn("failed to rehydrate message: \(error)")
                         failedObjectIDs.append(objectID)
                         failedCount += 1
                     }
@@ -444,7 +439,7 @@ extension BackupLocalStore {
                     let deleteRequest = NSBatchDeleteRequest(objectIDs: failedObjectIDs)
                     try backupContext.execute(deleteRequest)
                 } catch {
-                    WireLogger.backupImport.warn("Failed to delete invalid messages \(String(describing: error))")
+                    importBackupLogger.warn("Failed to delete invalid messages \(error)")
                 }
             }
         }

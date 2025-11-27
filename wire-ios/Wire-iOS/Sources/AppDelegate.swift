@@ -135,8 +135,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             attributes: .safePublic
         )
 
-        WireLogger.appDelegate.error("TEST-ERROR", attributes: [.tag: "test_error"], [.syncPhase: "test_sync_phase"])
-
         return true
     }
 

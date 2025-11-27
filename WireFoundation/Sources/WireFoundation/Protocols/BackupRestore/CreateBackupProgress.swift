@@ -30,6 +30,10 @@ public enum CreateBackupProgress: Equatable, Sendable {
 public extension CreateBackupProgress {
 
     static func progress(_ current: Int, _ total: Int) -> Self {
+        .progress(current: current, total: total)
+    }
+
+    static func progress(current: Int, total: Int) -> Self {
         .progress(BackupProgress(current: current, total: total))
     }
 
