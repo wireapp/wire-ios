@@ -131,7 +131,6 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         do {
             for try await node in fetchNodeUseCase.invoke(nodeID: nodeID) {
                 self.node = node
-                print("Refreshed node with ID: \(nodeID), etag: \(node?.eTag)")
 
                 if let node {
                     isDeleted = node.isRecycled
@@ -150,7 +149,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         lastOpenRequest.nodeID = nodeID
 
         do {
-            let url = try await getAssetUseCase.invoke(nodeID: nodeID)
+            let url = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
             if lastOpenRequest.nodeID == nodeID {
                 viewingURL = url
             }
@@ -196,6 +195,10 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     private var nodeID: UUID {
         node?.id ?? attachment.nodeID
+    }
+
+    private var eTag: String? {
+        node?.eTag
     }
 
     private var pathURL: URL? {
