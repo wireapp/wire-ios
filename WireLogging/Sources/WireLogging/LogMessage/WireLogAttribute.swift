@@ -58,8 +58,8 @@ public extension WireLogAttribute {
     // static func multipleEvents(_ value: String) -> WireLogAttribute { .init("ack_multiple_events", value) }
     // static func nonce(_ value: String) -> WireLogAttribute { .init("message_nonce", value) }
     // static func nse(_ value: String) -> WireLogAttribute { .init("NSE", value) }
-    static func processID(_ value: String) -> WireLogAttribute { .init("process_id", value) }
-    static func processName(_ value: String) -> WireLogAttribute { .init("process_name", value) }
+    static var processID: WireLogAttribute { .init("process_id", "\(ProcessInfo.processInfo.processIdentifier)") }
+    static var processName: WireLogAttribute { .init("process_name", ProcessInfo.processInfo.processName) }
     // static func pushChannelVersion(_ value: String) -> WireLogAttribute { .init("push_channel", value) }
     // static func recipientID(_ value: String) -> WireLogAttribute { .init("recipient_id", value) }
     // static func selfClientID(_ value: String) -> WireLogAttribute { .init("self_client_id", value) }

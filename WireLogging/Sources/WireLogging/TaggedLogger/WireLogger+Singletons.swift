@@ -59,10 +59,7 @@ public enum WireLogger {
     public static let shareExtension = WireTaggedLogger("share-extension")
     public static let supportedProtocols = WireTaggedLogger("supported-protocols")
     public static let sync = WireTaggedLogger("sync")
-    public static let system = WireTaggedLogger("system", additionalAttributes: [
-        .processID("\(ProcessInfo.processInfo.processIdentifier)"),
-        .processName(ProcessInfo.processInfo.processName)
-    ])
+    public static let system = WireTaggedLogger("system", additionalAttributes: [.processID, .processName])
     public static let timePoint = WireTaggedLogger("timePoint")
     public static let ui = WireTaggedLogger("UI")
     public static let updateEvent = WireTaggedLogger("update-event")
