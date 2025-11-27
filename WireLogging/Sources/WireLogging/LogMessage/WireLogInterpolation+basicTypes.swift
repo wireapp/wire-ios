@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// Add support for typical/basic interpolations but requiring an `safePublic` argument label to be specified explicitly.
+
 public extension WireLogInterpolation {
 
     // MARK: String

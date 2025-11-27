@@ -16,139 +16,55 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+import Testing
 import WireLoggingSupport
-import XCTest
 
 @testable import WireLogging
 
-final class WireLogInterpolationAnyErrorTests: XCTestCase {
+struct WireLogInterpolationAnyErrorTests {
 
-    //    private var mockLogger: WireTaggedLoggerProtocolMock!
-    //
-    //    override func setUp() {
-    //        mockLogger = .init()
-    //        mockLogger.errorMessageWireLogMessageVoidClosure = { _ in }
-    //    }
-    //
-    //    override func tearDown() {
-    //        mockLogger = nil
-    //    }
-    //
-    //    func testSimpleErrorIsLoggedWithObfuscation() {
-    //        // Given
-    //        let error = CustomError.simple
-    //
-    //        // When
-    //        // TODO: fix
-    //        fatalError("TODO")
-    // //        WireLogInterpolation.isObfuscationRequired = true
-    // //        mockLogger.error("caught error: \(error)")
-    // //        WireLogInterpolation.isObfuscationRequired = false
-    //
-    //        // Then
-    //        XCTAssertEqual(mockLogger.errorMessageWireLogMessageVoidCallsCount, 1)
-    //        XCTAssertEqual(
-    //            mockLogger.errorMessageWireLogMessageVoidReceivedInvocations.first?.content,
-    //            "caught error: CustomError"
-    //        )
-    //    }
-    //
-    //    func testSimpleErrorIsLoggedWithoutObfuscation() {
-    //        // Given
-    //        let error = CustomError.simple
-    //
-    //        // When
-    //        mockLogger.error("caught error: \(error)")
-    //
-    //        // Then
-    //        XCTAssertEqual(mockLogger.errorMessageWireLogMessageVoidCallsCount, 1)
-    //        XCTAssert(
-    //            mockLogger.errorMessageWireLogMessageVoidReceivedInvocations.first?.content
-    //                .contains("CustomError.simple") == true
-    //        )
-    //    }
-    //
-    //    func testSimpleErrorIsLoggedWithSkippedObfuscation() {
-    //        // Given
-    //        let error = CustomError.simple
-    //
-    //        // When
-    //        mockLogger.error("caught error: \(error, skipObfuscation: true)")
-    //
-    //        // Then
-    //        XCTAssertEqual(mockLogger.errorMessageWireLogMessageVoidCallsCount, 1)
-    //        XCTAssert(
-    //            mockLogger.errorMessageWireLogMessageVoidReceivedInvocations.first?.content
-    //                .contains("CustomError.simple") == true
-    //        )
-    //    }
-    //
-    //    func testWrappingErrorIsLoggedWithObfuscation() {
-    //        // Given
-    //        let error = CustomError.wrapping(NSFileProviderError(.directoryNotEmpty))
-    //
-    //        // When
-    //        WireLogInterpolation.isObfuscationRequired = true
-    //        mockLogger.error("caught error: \(error)")
-    //        WireLogInterpolation.isObfuscationRequired = false
-    //
-    //        // Then
-    //        XCTAssertEqual(mockLogger.error_Invocations.count, 1)
-    //        XCTAssertEqual(mockLogger.errorMessageWireLogMessageVoidReceivedInvocations.first?.content, "caught error:
-    // CustomError")
-    //    }
-    //
-    //    func testWrappingErrorIsLoggedWithSkippedObfuscation() {
-    //        // Given
-    //        let error = CustomError.wrapping(NSFileProviderError(.directoryNotEmpty))
-    //
-    //        // When
-    //        mockLogger.error("caught error: \(error, skipObfuscation: true)")
-    //
-    //        // Then
-    //        XCTAssertEqual(mockLogger.error_Invocations.count, 1)
-    //        XCTAssert(mockLogger.errorMessageWireLogMessageVoidReceivedInvocations.first?.content
-    //            .contains("CustomError.wrapping(Error Domain=NSFileProviderErrorDomain Code=-1007") == true)
-    //    }
-    //
-    //    func testContainerErrorIsLoggedWithObfuscation() {
-    //        // Given
-    //        let error = CustomError.container(.init(sensibleInformation: "Lorem Ipsum"))
-    //
-    //        // When
-    //        WireLogInterpolation.isObfuscationRequired = true
-    //        mockLogger.error("caught error: \(error)")
-    //        WireLogInterpolation.isObfuscationRequired = false
-    //
-    //        // Then
-    //        XCTAssertEqual(mockLogger.errorMessageWireLogMessageVoidCallsCount, 1)
-    //        XCTAssertEqual(mockLogger.errorMessageWireLogMessageVoidReceivedInvocations.first?.content, "caught error:
-    // CustomError")
-    //    }
-    //
-    //    func testContainerErrorIsLoggedWithSkippedObfuscation() throws {
-    //        // Given
-    //        let error = CustomError.container(.init(sensibleInformation: "Lorem Ipsum"))
-    //
-    //        // When
-    //        mockLogger.error("caught error: \(error, skipObfuscation: true)")
-    //
-    //        // Then
-    //        XCTAssertEqual(mockLogger.errorMessageWireLogMessageVoidCallsCount, 1)
-    //        let content = try XCTUnwrap(mockLogger.errorMessageWireLogMessageVoidReceivedInvocations.first?.content)
-    //        XCTAssertTrue(content.contains("CustomError.container"))
-    //        XCTAssertTrue(content.contains("SomeType"))
-    //        XCTAssertTrue(content.contains("Lorem Ipsum"))
-    //    }
-    //
+    @Test
+    private func `logging URLError logs type name, domain and code`() {
+
+        // Given
+        let error = URLError(.notConnectedToInternet)
+
+        // When
+        let logMessage: WireLogMessage = "error: \(error)"
+
+        // Then
+        #expect(logMessage.content == "error: URLError(domain: NSURLErrorDomain code: -1009)")
+
+    }
+
+    @Test(arguments: [CustomError.simple, .wrapping(URLError(.notConnectedToInternet)), .container("secret")])
+    private func `logging a custom error logs only its name`(error: CustomError) {
+        // Given
+        let error = CustomError.simple
+
+        // When
+        let logMessage: WireLogMessage = "error: \(error)"
+
+        // Then
+        #expect(logMessage.content.contains("CustomError"))
+        #expect(!logMessage.content.contains("secret"))
+        #expect(!logMessage.content.contains("URLError"))
+    }
+
 }
 
 private enum CustomError: Error {
+
     case simple
     case wrapping(any Error)
     case container(SomeType)
-}
 
-private struct SomeType {
-    var sensibleInformation: String
+    struct SomeType: ExpressibleByStringLiteral {
+        var sensibleInformation: String
+        init(stringLiteral value: StringLiteralType) {
+            sensibleInformation = value
+        }
+    }
+
 }

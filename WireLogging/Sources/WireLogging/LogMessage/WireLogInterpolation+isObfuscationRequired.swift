@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// This file allows for conditionally disabling obfuscation.
+// Wherever needed (in WireLogInterpolation extensions) consult the computed property `WireLogInterpolation.isObfuscationRequired` to know if obfuscation can be skipped.
+
 public extension WireLogInterpolation {
 
     #if DEBUG
@@ -24,4 +27,5 @@ public extension WireLogInterpolation {
     #else
         var isObfuscationRequired: Bool { true }
     #endif
+
 }

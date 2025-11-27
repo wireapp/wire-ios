@@ -18,6 +18,8 @@
 
 import Foundation
 
+// Different error types can be treated individually.
+
 public extension WireLogInterpolation {
 
     mutating func appendInterpolation(_ error: some Error) {
