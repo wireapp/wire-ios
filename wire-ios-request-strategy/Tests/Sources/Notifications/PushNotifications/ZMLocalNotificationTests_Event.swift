@@ -458,7 +458,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
                 conversationID: self.groupConversationWithoutName.remoteIdentifier!,
                 senderID: self.otherUser1.remoteIdentifier!,
                 timer: 0,
-                timestamp: Date()
+                timestamp: Date().addingTimeInterval(.oneSecond)
             )
 
             // when
