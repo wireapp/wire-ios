@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireLocators
 import WireReusableUIComponents
 import WireSettingsUI
 import WireSyncEngine
@@ -78,6 +79,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         )
 
         saveButtonItem.tintColor = UIColor.accent()
+        saveButtonItem.accessibilityIdentifier = Locators.EmailUpdatePage.save.rawValue
         navigationItem.rightBarButtonItem = saveButtonItem
         setupNavigationBarTitle(EmailAccountSection.Change.title)
 
@@ -104,7 +106,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         emailCell.textField.showConfirmButton = false
         emailCell.textField.backgroundColor = .clear
         emailCell.textField.textColor = SemanticColors.Label.textDefault
-        emailCell.textField.accessibilityIdentifier = "EmailField"
+        emailCell.textField.accessibilityIdentifier = Locators.EmailUpdatePage.emailField.rawValue
         emailCell.textField.textFieldValidationDelegate = self
         emailCell.textField.addTarget(self, action: #selector(emailTextFieldEditingChanged), for: .editingChanged)
 

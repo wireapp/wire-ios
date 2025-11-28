@@ -227,7 +227,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         let configuration = try await provider.createInitialConfiguration(
             sharedContainerURL: sharedContainerURL,
             userID: selfUserID,
-            createKeyIfNeeded: allowCreation
+            allowKeyCreation: allowCreation
         )
 
         let coreCrypto = try await SafeCoreCrypto(
