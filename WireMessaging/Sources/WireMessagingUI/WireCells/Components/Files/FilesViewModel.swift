@@ -178,7 +178,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var sheetNavigation: SheetNavigation?
     @Published var createFolderView: CreateFolderView?
     @Published var fileRenameView: FileRenameView?
-    @Published var editing: FilesViewItem?
+    @Published var isEditing: FilesViewItem?
 
     var didCreateFolder: Bool = false
     var didRenameFile: Bool = false
@@ -279,7 +279,7 @@ package final class FilesViewModel: ObservableObject {
                 self?.sheetNavigation = .moveToFolder(fileItem: item)
             },
             onEdit: isCollaboraEnabled ? { [weak self] item in
-                self?.editing = item
+                self?.isEditing = item
             } : nil,
             onEditTagsSelected: { [weak self] item in
                 self?.sheetNavigation = .editTags(fileItem: item)

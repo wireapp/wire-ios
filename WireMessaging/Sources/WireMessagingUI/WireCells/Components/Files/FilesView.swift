@@ -124,7 +124,7 @@ package struct FilesView: FilesViewProtocol {
                 content: { $0 }
             )
             .fullScreenCover(
-                item: $viewModel.editing,
+                item: $viewModel.isEditing,
                 onDismiss: {
                     Task { await viewModel.reload() }
                 },
