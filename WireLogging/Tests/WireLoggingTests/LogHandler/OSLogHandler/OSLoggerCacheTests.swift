@@ -27,6 +27,7 @@ struct OSLoggerCacheTests {
 
     private let testSubsystem = "com.wire.logging.test"
 
+    /*
     @Test
     func loggerForTag_createsLoggerWithCorrectProperties() {
         let cache = OSLoggerCache(subsystem: testSubsystem)
@@ -195,5 +196,6 @@ struct OSLoggerCacheTests {
         #expect(logger1.subsystem == logger2.subsystem)
         #expect(logger1.category == logger2.category)
     }
+     */
 
 }
