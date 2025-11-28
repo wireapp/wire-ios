@@ -386,6 +386,7 @@
 		882B85752E83ED7E008A50CA /* StaleCoreCryptoKeysTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B85742E83ED7A008A50CA /* StaleCoreCryptoKeysTrackerTests.swift */; };
 		882B86BC2E843D0C008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B86BB2E843D05008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift */; };
 		882B86BE2E8441AA008A50CA /* RemoveCoreCryptoKeysUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B86BD2E84419A008A50CA /* RemoveCoreCryptoKeysUseCase.swift */; };
+		8838CFA42EC4CB1B00495012 /* NSManagedObjectContext+AccountDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8838CFA32EC4CB0D00495012 /* NSManagedObjectContext+AccountDirectory.swift */; };
 		884371662EB8E9F3003DA083 /* store2-132-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 884371652EB8E9F3003DA083 /* store2-132-0.wiredatabase */; };
 		88B81BD62EC232C600248D7A /* store2-133-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 88B81BD52EC232C600248D7A /* store2-133-0.wiredatabase */; };
 		A90676E7238EAE8B006417AC /* ParticipantRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E6238EAE8B006417AC /* ParticipantRole.swift */; };
@@ -503,7 +504,6 @@
 		E9C7DD9B27B533D000FB9AE8 /* AccessRoleMappingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C7DD9A27B533D000FB9AE8 /* AccessRoleMappingTests.swift */; };
 		EE002F222878345C0027D63A /* store2-104-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EE002F212878345C0027D63A /* store2-104-0.wiredatabase */; };
 		EE032B3129A62CA600E1DDF3 /* ProteusSessionID.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE032B2F29A62CA600E1DDF3 /* ProteusSessionID.swift */; };
-		EE032B3229A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE032B3029A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift */; };
 		EE032B3629A62CD600E1DDF3 /* ProteusServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE032B3529A62CD600E1DDF3 /* ProteusServiceTests.swift */; };
 		EE04084E28CA85B2009E4B8D /* Date+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE04084D28CA85B2009E4B8D /* Date+Helpers.swift */; };
 		EE0DE5042A24D2A10029746C /* DeleteSubgroupAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0DE5032A24D2A10029746C /* DeleteSubgroupAction.swift */; };
@@ -661,7 +661,6 @@
 		F9A706B41CAEE01D00C2F5FE /* ObjectChangeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A706391CAEE01D00C2F5FE /* ObjectChangeInfo.swift */; };
 		F9A706B61CAEE01D00C2F5FE /* UserClientChangeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A7063B1CAEE01D00C2F5FE /* UserClientChangeInfo.swift */; };
 		F9A706B71CAEE01D00C2F5FE /* UserChangeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A7063C1CAEE01D00C2F5FE /* UserChangeInfo.swift */; };
-		F9A706BD1CAEE01D00C2F5FE /* CryptoBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A706431CAEE01D00C2F5FE /* CryptoBox.swift */; };
 		F9A706C31CAEE01D00C2F5FE /* UserImageLocalCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A706491CAEE01D00C2F5FE /* UserImageLocalCache.swift */; };
 		F9A706C51CAEE01D00C2F5FE /* ZMFetchRequestBatch.h in Headers */ = {isa = PBXBuildFile; fileRef = F9A7064B1CAEE01D00C2F5FE /* ZMFetchRequestBatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9A706C61CAEE01D00C2F5FE /* ZMFetchRequestBatch.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A7064C1CAEE01D00C2F5FE /* ZMFetchRequestBatch.m */; };
@@ -1129,6 +1128,7 @@
 		882B85742E83ED7A008A50CA /* StaleCoreCryptoKeysTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaleCoreCryptoKeysTrackerTests.swift; sourceTree = "<group>"; };
 		882B86BB2E843D05008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveCoreCryptoKeysUseCaseTests.swift; sourceTree = "<group>"; };
 		882B86BD2E84419A008A50CA /* RemoveCoreCryptoKeysUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveCoreCryptoKeysUseCase.swift; sourceTree = "<group>"; };
+		8838CFA32EC4CB0D00495012 /* NSManagedObjectContext+AccountDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+AccountDirectory.swift"; sourceTree = "<group>"; };
 		884371652EB8E9F3003DA083 /* store2-132-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-132-0.wiredatabase"; sourceTree = "<group>"; };
 		88B81BD52EC232C600248D7A /* store2-133-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-133-0.wiredatabase"; sourceTree = "<group>"; };
 		A90676E6238EAE8B006417AC /* ParticipantRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantRole.swift; sourceTree = "<group>"; };
@@ -1243,7 +1243,6 @@
 		E9C7DD9A27B533D000FB9AE8 /* AccessRoleMappingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessRoleMappingTests.swift; sourceTree = "<group>"; };
 		EE002F212878345C0027D63A /* store2-104-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-104-0.wiredatabase"; sourceTree = "<group>"; };
 		EE032B2F29A62CA600E1DDF3 /* ProteusSessionID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProteusSessionID.swift; sourceTree = "<group>"; };
-		EE032B3029A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ProteusSessionID+Mapping.swift"; sourceTree = "<group>"; };
 		EE032B3529A62CD600E1DDF3 /* ProteusServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProteusServiceTests.swift; sourceTree = "<group>"; };
 		EE04084D28CA85B2009E4B8D /* Date+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Helpers.swift"; sourceTree = "<group>"; };
 		EE0DE5032A24D2A10029746C /* DeleteSubgroupAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteSubgroupAction.swift; sourceTree = "<group>"; };
@@ -1407,7 +1406,6 @@
 		F9A706391CAEE01D00C2F5FE /* ObjectChangeInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjectChangeInfo.swift; sourceTree = "<group>"; };
 		F9A7063B1CAEE01D00C2F5FE /* UserClientChangeInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserClientChangeInfo.swift; sourceTree = "<group>"; };
 		F9A7063C1CAEE01D00C2F5FE /* UserChangeInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserChangeInfo.swift; sourceTree = "<group>"; };
-		F9A706431CAEE01D00C2F5FE /* CryptoBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoBox.swift; sourceTree = "<group>"; };
 		F9A706491CAEE01D00C2F5FE /* UserImageLocalCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserImageLocalCache.swift; sourceTree = "<group>"; };
 		F9A7064B1CAEE01D00C2F5FE /* ZMFetchRequestBatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMFetchRequestBatch.h; sourceTree = "<group>"; };
 		F9A7064C1CAEE01D00C2F5FE /* ZMFetchRequestBatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMFetchRequestBatch.m; sourceTree = "<group>"; };
@@ -1910,7 +1908,6 @@
 				63B1333729A503D000009D84 /* ProteusServiceInterface.swift */,
 				63B1333829A503D000009D84 /* ProteusService.swift */,
 				EE032B2F29A62CA600E1DDF3 /* ProteusSessionID.swift */,
-				EE032B3029A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift */,
 				EE79699529D4684C00075E38 /* CryptoboxMigrationManager.swift */,
 			);
 			path = Proteus;
@@ -2297,6 +2294,7 @@
 				F9A705CC1CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging.h */,
 				F9A705CD1CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging.m */,
 				0179629B2B83FCA800D6C7B6 /* NSManagedObjectContext+Migration.swift */,
+				8838CFA32EC4CB0D00495012 /* NSManagedObjectContext+AccountDirectory.swift */,
 				017B55782CFFB560005FFBD4 /* NSManagedObjectContext+SyncResources.swift */,
 				54FB03AE1E41FC86000E13DC /* NSManagedObjectContext+Patches.swift */,
 				347FA5FF2E70131700F34C6A /* NSManagedObjectContext+BackendMetadata.swift */,
@@ -2534,7 +2532,6 @@
 				F9331C811CB4191B00139ECC /* NSPredicate+ZMSearch.h */,
 				D5FA30CE2063F8EC00716618 /* Version.swift */,
 				F9331C821CB4191B00139ECC /* NSPredicate+ZMSearch.m */,
-				F9A706431CAEE01D00C2F5FE /* CryptoBox.swift */,
 				F9A706491CAEE01D00C2F5FE /* UserImageLocalCache.swift */,
 				014DD8D22B6D1FE9007ECFD1 /* UUID+SafeLogging.swift */,
 				F9A7064B1CAEE01D00C2F5FE /* ZMFetchRequestBatch.h */,
@@ -3593,7 +3590,6 @@
 				F9331C841CB4191B00139ECC /* NSPredicate+ZMSearch.m in Sources */,
 				BFCD502D21511D58008CD845 /* DraftMessage.swift in Sources */,
 				63B1336B29A503D100009D84 /* MLSGroupStatus.swift in Sources */,
-				F9A706BD1CAEE01D00C2F5FE /* CryptoBox.swift in Sources */,
 				EE3EFE9725305A84009499E5 /* ModifiedObjects+Mergeable.swift in Sources */,
 				EE42938A252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift in Sources */,
 				16AD86BA1F75426C00E4C797 /* NSManagedObjectContext+NotificationContext.swift in Sources */,
@@ -3767,6 +3763,7 @@
 				F99C5B8A1ED460E20049CCD7 /* TeamChangeInfo.swift in Sources */,
 				165124D221886EDB006A3C75 /* ZMOTRMessage+Quotes.swift in Sources */,
 				6308F8A42A273C680072A177 /* FetchMLSSubconversationGroupInfoAction.swift in Sources */,
+				8838CFA42EC4CB1B00495012 /* NSManagedObjectContext+AccountDirectory.swift in Sources */,
 				87D9CCE91F27606200AA4388 /* NSManagedObjectContext+TearDown.swift in Sources */,
 				F963E9711D9ADD5A00098AD3 /* ZMImageAssetEncryptionKeys.m in Sources */,
 				0604F7C8265184B70016A71E /* ZMSystemMessage+ParticipantsRemovedReason.swift in Sources */,
@@ -3782,7 +3779,6 @@
 				F9A706B71CAEE01D00C2F5FE /* UserChangeInfo.swift in Sources */,
 				EE68EEC9252DC4450013B242 /* ChangeDetector.swift in Sources */,
 				63B1335629A503D100009D84 /* MLSGroup.swift in Sources */,
-				EE032B3229A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift in Sources */,
 				F9AB00271F0CE5520037B437 /* FileManager+FileLocations.swift in Sources */,
 				F9A7067F1CAEE01D00C2F5FE /* ZMImageMessage.m in Sources */,
 				63D41E7124597E420076826F /* GenericMessage+Flags.swift in Sources */,
