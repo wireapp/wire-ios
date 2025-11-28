@@ -41,5 +41,11 @@ extension ConversationViewController {
         isAppearing = false
 
         syncCellsState()
+        // Post notification that conversation is now visible
+        NotificationCenter.default.post(
+            name: .conversationDidBecomeVisible,
+            object: conversation
+        )
+
     }
 }

@@ -57,7 +57,7 @@ final class AuthenticatedRouter {
     @MainActor var zClientViewController: ZClientViewController {
         let zClientViewController = _zClientViewController ?? zClientControllerBuilder(router: self)
         _zClientViewController = zClientViewController
-        activeCallRouter.setPresentingViewController(zClientViewController)
+//        activeCallRouter.setPresentingViewController(zClientViewController)
         return zClientViewController
     }
 

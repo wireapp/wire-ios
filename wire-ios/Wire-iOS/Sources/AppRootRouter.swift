@@ -510,7 +510,6 @@ extension AppRootRouter {
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
         case .authenticated:
             // This is needed to display an ongoing call when coming from the background.
-            authenticatedRouter?.updateActiveCallPresentationState()
             urlActionRouter.authenticatedRouter = authenticatedRouter
             ZClientViewController.shared?.legalHoldDisclosureController?.discloseCurrentState(cause: .appOpen)
             sessionManager.processPendingURLActionRequiresAuthentication()
