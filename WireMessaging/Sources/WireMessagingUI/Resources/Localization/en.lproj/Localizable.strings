@@ -116,6 +116,7 @@
 "conversation.wireCells.files.item.subtitle" = "%@ by %@";
 "conversation.wireCells.files.loadMore.title" = "Load more";
 "conversation.wireCells.files.item.menu.open" = "Open";
+"conversation.wireCells.files.item.menu.shareLink" = "Share";
 "conversation.wireCells.files.item.menu.download" = "Download";
 "conversation.wireCells.files.item.menu.rename" = "Rename";
 "conversation.wireCells.files.item.menu.addOrRemoveTags" = "Add or remove tags";

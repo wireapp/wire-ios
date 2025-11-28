@@ -99,6 +99,10 @@ struct FilesViewItemView: View {
                     Button(action: open) {
                         Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
                     }.disabled(viewModel.isDownloading)
+                    
+                    Button(action: shareLink) {
+                        Label(Strings.Files.Item.Menu.shareLink, systemImage: "square.and.arrow.up")
+                    }
 
                     if viewModel.isDownloadOptionAvailable {
                         Button(action: download) {
@@ -155,6 +159,10 @@ struct FilesViewItemView: View {
 
     private func open() {
         Task { await viewModel.open() }
+    }
+    
+    private func shareLink() {
+        //TODO: ...
     }
 
     private func download() {
