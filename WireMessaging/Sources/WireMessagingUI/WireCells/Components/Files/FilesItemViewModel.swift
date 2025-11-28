@@ -34,6 +34,7 @@ final class FilesItemViewModel: ObservableObject {
     private let onDelete: (FilesViewItem) async -> Void
     private let onRename: ((FilesViewItem) async -> Void)?
     let onEditTagsSelected: () -> Void
+    private let onVersionHistory: (FilesViewItem) -> Void
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
 
@@ -62,6 +63,7 @@ final class FilesItemViewModel: ObservableObject {
         onDelete: @escaping (FilesViewItem) async -> Void,
         onRename: ((FilesViewItem) async -> Void)? = nil,
         onEditTagsSelected: @escaping (FilesViewItem) -> Void,
+        onVersionHistory: @escaping (FilesViewItem) -> Void,
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,
         timeZone: TimeZone = .autoupdatingCurrent
@@ -72,6 +74,7 @@ final class FilesItemViewModel: ObservableObject {
         self.onDelete = onDelete
         self.onRename = onRename
         self.onEditTagsSelected = { onEditTagsSelected(item) }
+        self.onVersionHistory = onVersionHistory
         self.fileName = item.name
         self.subtitle = Self.subtitle(from: item, locale: locale, calendar: calendar, timeZone: timeZone)
         self.icon = item.icon
@@ -143,6 +146,10 @@ final class FilesItemViewModel: ObservableObject {
 
     func confirmDelete() async {
         await onDelete(item)
+    }
+
+    func showVersionHistory() {
+        onVersionHistory(item)
     }
 
     private static func subtitle(

@@ -328,6 +328,7 @@ final class FilesViewTests: XCTestCase {
                 createFolder: WireCellsCreateFolderUseCase(
                     nodesRepository: nodesRepository
                 ),
+                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesRepository),
             ),
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),

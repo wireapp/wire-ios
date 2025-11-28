@@ -38,6 +38,7 @@ final class FilesBrowserViewTests: XCTestCase {
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
     private var createFolderUseCase: (any WireCellsCreateFolderUseCaseProtocol)!
+    private var fetchNodeVersionsUseCase: WireCellsFetchNodeVersionsUseCase!
     private var localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol!
 
     private let record: Bool? = nil
@@ -74,6 +75,7 @@ final class FilesBrowserViewTests: XCTestCase {
         createFolderUseCase = WireCellsCreateFolderUseCase(
             nodesRepository: nodesRepository
         )
+        fetchNodeVersionsUseCase = WireCellsFetchNodeVersionsUseCase(repository: nodesRepository)
     }
 
     @MainActor
@@ -82,6 +84,12 @@ final class FilesBrowserViewTests: XCTestCase {
         nodesRepository = nil
         fetchNodesUseCase = nil
         localAssetsRepository = nil
+        fetchNodeVersionsUseCase = nil
+        createFolderUseCase = nil
+        getTagSuggestionsUseCase = nil
+        updateTagsUseCase = nil
+        renameNodeUseCase = nil
+        deleteNodeUseCase = nil
     }
 
     @MainActor
@@ -165,6 +173,7 @@ final class FilesBrowserViewTests: XCTestCase {
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
                 createFolder: createFolderUseCase,
+                fetchNodeVersions: fetchNodeVersionsUseCase
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetsRepository,

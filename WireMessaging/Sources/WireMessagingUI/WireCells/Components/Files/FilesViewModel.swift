@@ -80,6 +80,7 @@ package final class FilesViewModel: ObservableObject {
         case renameFile(view: FileRenameView)
         case createFolder(view: CreateFolderView)
         case filters(view: FilesFiltersView)
+        case versionHistory(view: FileVersioningView)
 
         var id: String {
             switch self {
@@ -91,6 +92,8 @@ package final class FilesViewModel: ObservableObject {
                 "renameFile(\(view.id))"
             case let .filters(view):
                 "filters(\(view.id))"
+            case let .versionHistory(view):
+                "versionHistory(\(view.id))"
             }
         }
     }
@@ -135,6 +138,7 @@ package final class FilesViewModel: ObservableObject {
             updateTags: any WireCellsUpdateTagsUseCaseProtocol,
             getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol,
             createFolder: any WireCellsCreateFolderUseCaseProtocol,
+            fetchNodeVersions: any WireCellsFetchNodeVersionsUseCaseProtocol
         ) {
 
             self.fetchNodes = fetchNodes
@@ -143,6 +147,8 @@ package final class FilesViewModel: ObservableObject {
             self.updateTags = updateTags
             self.getTagSuggestions = getTagSuggestions
             self.createFolder = createFolder
+            self.fetchNodeVersions = fetchNodeVersions
+
         }
 
         let fetchNodes: WireCellsFetchNodesUseCase
@@ -151,6 +157,7 @@ package final class FilesViewModel: ObservableObject {
         let updateTags: any WireCellsUpdateTagsUseCaseProtocol
         let getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
         let createFolder: any WireCellsCreateFolderUseCaseProtocol
+        let fetchNodeVersions: any WireCellsFetchNodeVersionsUseCaseProtocol
     }
 
     let useCases: UseCases
@@ -270,6 +277,10 @@ package final class FilesViewModel: ObservableObject {
             onEditTagsSelected: { [weak self] item in
                 self?.sheetNavigation = .editTags(fileItem: item)
             },
+            onVersionHistory: { [weak self] item in
+                guard let self else { return }
+                sheetNavigation = .versionHistory(view: makeFileVersioningView(item: item))
+            }
         )
     }
 
@@ -547,6 +558,18 @@ package final class FilesViewModel: ObservableObject {
             }.store(in: &subscriptions)
 
         return FileRenameView(viewModel: viewModel)
+    }
+
+    private func makeFileVersioningView(
+        item: FilesViewItem
+    ) -> FileVersioningView {
+        let viewModel = FileVersioningViewModel(
+            nodeID: item.id,
+            fetchNodeVersionsUseCase: useCases.fetchNodeVersions,
+            accentColorProvider: accentColorProvider
+        )
+
+        return FileVersioningView(viewModel: viewModel)
     }
 
 }

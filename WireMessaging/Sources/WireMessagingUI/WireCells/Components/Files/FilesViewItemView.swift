@@ -103,7 +103,14 @@ struct FilesViewItemView: View {
                     if viewModel.isDownloadOptionAvailable {
                         Button(action: download) {
                             Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
-                        }.disabled(viewModel.isDownloading)
+                        }
+                    }
+
+                    Button(action: showVersionHistory) {
+                        Label(
+                            Strings.Files.Item.Menu.versionHistory,
+                            systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90"
+                        )
                     }
 
                     if canRenameFile {
@@ -159,6 +166,10 @@ struct FilesViewItemView: View {
 
     private func download() {
         Task { await viewModel.download() }
+    }
+
+    private func showVersionHistory() {
+        viewModel.showVersionHistory()
     }
 
     private func rename() {

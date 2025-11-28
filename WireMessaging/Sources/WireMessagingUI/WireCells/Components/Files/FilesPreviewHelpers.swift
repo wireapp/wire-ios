@@ -60,6 +60,9 @@ extension FilesViewModel {
                 createFolder: WireCellsCreateFolderUseCase(
                     nodesRepository: previewNodesRepository()
                 ),
+                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(
+                    repository: previewNodesRepository()
+                )
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,
@@ -116,7 +119,8 @@ extension FilesItemViewModel {
             onOpen: { _ in },
             onDelete: { _ in },
             onRename: { _ in },
-            onEditTagsSelected: { _ in }
+            onEditTagsSelected: { _ in },
+            onVersionHistory: { _ in }
         )
     }
 
@@ -141,6 +145,23 @@ extension FilesFiltersViewModel {
 
 }
 
+extension FileVersioningViewModel {
+
+    /// A stubbed instance of `FileVersioningViewModel` for SwiftUI previews.
+    static func preview() -> FileVersioningViewModel {
+        let repository = MockWireCellsNodesRepositoryProtocol()
+        repository.getVersionsNodeID_MockValue = WireCellsNodeVersion.mock
+
+        let useCase = WireCellsFetchNodeVersionsUseCase(repository: repository)
+
+        return FileVersioningViewModel(
+            nodeID: UUID(),
+            fetchNodeVersionsUseCase: useCase,
+            accentColorProvider: { .default }
+        )
+    }
+}
+
 // MARK: - Dependencies
 
 private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
@@ -154,6 +175,7 @@ private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
             ownerUserName: "Person \(index)",
         )
     }
+    repository.getVersionsNodeID_MockValue = WireCellsNodeVersion.mock
     repository.getNodes_MockMethod = { request in
         try await Task.sleep(nanoseconds: 1_000_000_000) // Simulate network delay
 
@@ -263,6 +285,81 @@ extension CreateFolderViewModel {
             folderPath: "Test-1/Test-2"
         )
     }
+}
+
+extension WireCellsNodeVersion {
+    static let mock: [WireCellsNodeVersion] = [
+        .init(
+            id: UUID(),
+            ownerName: "foo",
+            modified: Date.now,
+            size: 2_158_877,
+            downloadURL: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo1",
+            modified: .init(timeIntervalSince1970: 1_759_311_973),
+            size: 2_158_877,
+            downloadURL: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo2",
+            modified: .init(timeIntervalSince1970: 1_759_311_973),
+            size: 172_493,
+            downloadURL: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo3",
+            modified: .init(timeIntervalSince1970: 1_761_663_940),
+            size: 2_216_387,
+            downloadURL: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo4",
+            modified: .init(timeIntervalSince1970: 1_761_663_393),
+            size: 2_216_387,
+            downloadURL: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo5",
+            modified: .init(timeIntervalSince1970: 1_759_241_119),
+            size: 27_808,
+            downloadURL: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo6",
+            modified: .init(timeIntervalSince1970: 1_759_369_815),
+            size: 27_808,
+            downloadURL: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo7",
+            modified: .init(timeIntervalSince1970: 1_759_401_599),
+            size: 27_808,
+            downloadURL: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo8",
+            modified: .init(timeIntervalSince1970: 1_761_681_900),
+            size: 27_808,
+            downloadURL: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo9",
+            modified: .init(timeIntervalSince1970: 1_761_628_800),
+            size: 27_808,
+            downloadURL: URL(string: "https://wire.com")
+        )
+    ]
 }
 
 let mockTags = [

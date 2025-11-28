@@ -60,6 +60,7 @@ final class FilesViewModelTests {
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesApi),
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi),
                 createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesRepository),
+                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesRepository)
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,

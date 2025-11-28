@@ -96,6 +96,7 @@ package struct FilesViewContainer: View {
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
                 createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
+                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesAPI)
             ),
             title: path.last?.name,
             navigationPath: path,
