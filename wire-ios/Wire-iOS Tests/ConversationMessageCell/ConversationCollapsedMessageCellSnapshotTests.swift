@@ -52,7 +52,6 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
             "audio": MockMessageFactory.audioMessage()!,
             "video": MockMessageFactory.videoMessage(),
             "image": MockMessageFactory.imageMessage(),
-            "location": MockMessageFactory.locationMessage(),
             "text": MockMessageFactory
                 .textMessage(
                     withText:
