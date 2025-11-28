@@ -222,20 +222,20 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     private func setupBindings() {
         nodeRenameNotifier.publisher
-            .sink { [self] nodeID in
-                guard nodeID == attachment.nodeID else {
+            .sink { [weak self] nodeID in
+                guard nodeID == self?.attachment.nodeID else {
                     return
                 }
 
                 Task {
                     // this node has been renamed, refresh
-                    await self.refresh()
+                    await self?.refresh()
                 }
             }.store(in: &cancellables)
 
         localAssetRepository.observeAsset(nodeID: attachment.nodeID)
-            .sink { [self] asset in
-                self.asset = asset
+            .sink { [weak self] asset in
+                self?.asset = asset
             }.store(in: &cancellables)
     }
 
