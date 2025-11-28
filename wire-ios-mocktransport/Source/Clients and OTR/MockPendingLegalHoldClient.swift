@@ -83,7 +83,7 @@ public extension MockUser {
             forEntityName: "PreKey",
             into: managedObjectContext
         ) as! MockPreKey
-        mockLastPrekey.identifier = Int(CBOX_LAST_PREKEY_ID)
+        mockLastPrekey.identifier = Int(UInt16.max)
         mockLastPrekey.value = lastPrekey
 
         pendingClient.lastPrekey = mockLastPrekey

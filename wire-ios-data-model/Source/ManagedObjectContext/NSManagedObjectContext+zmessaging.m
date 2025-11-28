@@ -17,7 +17,6 @@
 //
 
 @import UIKit;
-@import WireCryptobox;
 @import WireUtilities;
 
 #import "NSManagedObjectContext+zmessaging-Internal.h"

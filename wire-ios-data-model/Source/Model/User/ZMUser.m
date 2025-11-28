@@ -18,7 +18,6 @@
 
 @import WireImages;
 @import WireUtilities;
-@import WireCryptobox;
 @import WireTransport;
 @import Foundation;
 

@@ -18,7 +18,6 @@
 
 @import WireTransport;
 @import WireUtilities;
-@import WireCryptobox;
 
 #import "MockConversation.h"
 #import "MockEvent.h"

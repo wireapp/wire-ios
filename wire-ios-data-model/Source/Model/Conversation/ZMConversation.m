@@ -20,7 +20,6 @@
 @import WireImages;
 @import WireUtilities;
 @import WireTransport;
-@import WireCryptobox;
 @import MobileCoreServices;
 @import WireImages;
 

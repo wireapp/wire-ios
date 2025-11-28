@@ -16,7 +16,6 @@ class Framework
             "WireUI",
             "wire-ios",
             "wire-ios-canvas",
-            "wire-ios-cryptobox",
             "wire-ios-data-model",
             "wire-ios-images",
             "wire-ios-link-preview",
@@ -65,7 +64,6 @@ class Framework
         frameworks["wire-ios-request-strategy"].add_dependency(frameworks["WireNetwork"])
         frameworks["wire-ios-request-strategy"].add_dependency(frameworks["WireLogging"])
         
-        frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-cryptobox"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-images"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-link-preview"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-transport"])
@@ -75,9 +73,6 @@ class Framework
         frameworks["wire-ios-data-model"].add_dependency(frameworks["WireLogging"])
         
         frameworks["wire-ios-mocktransport"].add_dependency(frameworks["wire-ios-testing"])
-        frameworks["wire-ios-mocktransport"].add_dependency(frameworks["wire-ios-cryptobox"])
-
-        frameworks["wire-ios-cryptobox"].add_dependency(frameworks["wire-ios-utilities"])
 
         frameworks["wire-ios-transport"].add_dependency(frameworks["wire-ios-utilities"])
         frameworks["wire-ios-transport"].add_dependency(frameworks["wire-ios-testing"]) # included in WireTransportTests
