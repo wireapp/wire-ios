@@ -59,7 +59,7 @@ struct EditFileView<ViewModel>: View where ViewModel: EditFileViewModelProtocol 
 
                 }
             })
-            .navigationTitle(Text(verbatim: "Edit File"))
+            .navigationTitle(viewModel.fileName)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {

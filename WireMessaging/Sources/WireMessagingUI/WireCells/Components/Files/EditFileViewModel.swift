@@ -24,6 +24,7 @@ import WireMessagingDomain
 @MainActor
 protocol EditFileViewModelProtocol: ObservableObject {
     var state: EditFileViewModel.State { get }
+    var fileName: String { get }
 
     func load() async
 }
@@ -43,13 +44,17 @@ final class EditFileViewModel: EditFileViewModelProtocol {
     private let nodeID: UUID
     private let getEditingURLUseCase: WireCellsGetEditingURLUseCase
 
+    let fileName: String
+
     @Published private(set) var state: State = .idle
 
     init(
         nodeID: UUID,
+        fileName: String,
         getEditingURLUseCase: WireCellsGetEditingURLUseCase
     ) {
         self.nodeID = nodeID
+        self.fileName = fileName
         self.getEditingURLUseCase = getEditingURLUseCase
     }
 

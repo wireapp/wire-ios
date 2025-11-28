@@ -312,6 +312,7 @@ package final class FilesViewModel: ObservableObject {
         return EditFileView(
             viewModel: EditFileViewModel(
                 nodeID: item.id,
+                fileName: item.name,
                 getEditingURLUseCase: getEditingURLUseCase
             )
         )
