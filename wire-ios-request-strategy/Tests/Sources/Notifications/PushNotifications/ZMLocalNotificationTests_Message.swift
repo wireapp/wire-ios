@@ -159,24 +159,24 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
         }
     }
 
-    func testItCreatesMessageNotificationsCorrectly() throws {
+    func testItCreatesMessageNotificationsCorrectly() {
 
         //    "push.notification.add.message.oneonone" = "%1$@";
         //    "push.notification.add.message.group" = "%1$@: %2$@";
         //    "push.notification.add.message.group.noconversationname" = "%1$@ in a conversation: %2$@";
-        try syncMOC.performGroupedAndWait {
-            XCTAssertEqual(try bodyForNote(oneOnOneConversation, sender: sender), "Hello Hello!")
-            XCTAssertEqual(try bodyForNote(groupConversation, sender: sender), "Super User: Hello Hello!")
+        syncMOC.performGroupedAndWait {
+            XCTAssertEqual(bodyForNote(oneOnOneConversation, sender: sender), "Hello Hello!")
+            XCTAssertEqual(bodyForNote(groupConversation, sender: sender), "Super User: Hello Hello!")
             XCTAssertEqual(
-                try bodyForNote(groupConversationWithoutUserDefinedName, sender: sender),
+                bodyForNote(groupConversationWithoutUserDefinedName, sender: sender),
                 "Super User: Hello Hello!"
             )
             XCTAssertEqual(
-                try bodyForNote(groupConversationWithoutName, sender: sender),
+                bodyForNote(groupConversationWithoutName, sender: sender),
                 "Super User in a conversation: Hello Hello!"
             )
             XCTAssertEqual(
-                try bodyForNote(invalidConversation, sender: sender),
+                bodyForNote(invalidConversation, sender: sender),
                 "Super User in a conversation: Hello Hello!"
             )
         }
