@@ -117,7 +117,6 @@ final class ActiveCallRouter<TopOverlayPresenter>
     func updateActiveCallPresentationState() {
         callController.updateActiveCallPresentationState()
     }
-
 }
 
 // MARK: - ActiveCallRouterProtocol
