@@ -30,6 +30,7 @@ import os
 final class OSLoggerCache: @unchecked Sendable {
 
     private let subsystem: String
+    private let loggerFactory: (String, String) -> any OSLoggerProtocol
     private var dictionary: [WireLogTag: CacheEntry] = [:]
     private let queue = DispatchQueue(label: "com.wire.logging.oslogger.cache")
     private var lastEvictionTime: Date = Date()
@@ -39,11 +40,12 @@ final class OSLoggerCache: @unchecked Sendable {
     /// Minimum time between eviction checks (30 seconds) to avoid excessive cleanup
     private static let evictionCheckInterval: TimeInterval = 30
 
-    init(subsystem: String) {
+    init(subsystem: String, loggerFactory: @escaping (String, String) -> any OSLoggerProtocol = { OSLoggerWrapper(subsystem: $0, category: $1) }) {
         self.subsystem = subsystem
+        self.loggerFactory = loggerFactory
     }
 
-    func logger(for tag: WireLogTag) -> Logger {
+    func logger(for tag: WireLogTag) -> any OSLoggerProtocol {
         queue.sync {
             let now = Date()
 
@@ -59,7 +61,7 @@ final class OSLoggerCache: @unchecked Sendable {
             }
 
             // Create new logger and cache it
-            let logger = Logger(subsystem: subsystem, category: tag.rawValue)
+            let logger = loggerFactory(subsystem, tag.rawValue)
             dictionary[tag] = CacheEntry(logger: logger, lastAccessTime: now)
 
             // Throttle eviction checks to avoid excessive cleanup
@@ -93,7 +95,7 @@ final class OSLoggerCache: @unchecked Sendable {
 
     /// Cache entry containing a logger and its last access time.
     private struct CacheEntry {
-        let logger: Logger
+        let logger: any OSLoggerProtocol
         var lastAccessTime: Date
     }
 

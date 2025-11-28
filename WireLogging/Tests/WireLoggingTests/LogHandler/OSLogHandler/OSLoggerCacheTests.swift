@@ -26,15 +26,15 @@ struct OSLoggerCacheTests {
 
     private let testSubsystem = "com.wire.wirelogging.test"
 
-    @Test func loggerForTag_createsLogger() {
+    @Test func loggerForTag_createsLoggerWithCorrectProperties() {
         let cache = OSLoggerCache(subsystem: testSubsystem)
         let tag: WireLogTag = "test-tag-1"
         
         let logger = cache.logger(for: tag)
         
-        // Verify logger is created and can be used
-        logger.debug("test message")
-        // If we get here without crashing, the logger was created successfully
+        // Now we can verify the properties!
+        #expect(logger.subsystem == testSubsystem)
+        #expect(logger.category == tag.rawValue)
     }
 
     @Test func loggerForSameTag_returnsCachedInstance() {
@@ -44,11 +44,14 @@ struct OSLoggerCacheTests {
         let logger1 = cache.logger(for: tag)
         let logger2 = cache.logger(for: tag)
         
-        // Verify both calls return valid loggers
-        // Note: os.Logger doesn't conform to Equatable, so we can't directly compare instances
-        // but we can verify the cache is working by ensuring both loggers are functional
-        logger1.debug("test from logger1")
-        logger2.info("test from logger2")
+        // Verify caching works - same subsystem and category
+        #expect(logger1.subsystem == logger2.subsystem)
+        #expect(logger1.category == logger2.category)
+        #expect(logger1.category == tag.rawValue)
+        
+        // Verify both loggers are functional
+        logger1.log(level: .debug, "test from logger1")
+        logger2.log(level: .info, "test from logger2")
     }
 
     @Test func loggerForDifferentTags_createsDifferentLoggers() {
@@ -59,16 +62,29 @@ struct OSLoggerCacheTests {
         let logger1 = cache.logger(for: tag1)
         let logger2 = cache.logger(for: tag2)
         
-        // Verify both loggers are created and functional
-        logger1.debug("test from tag1")
-        logger2.debug("test from tag2")
+        // Verify different categories
+        #expect(logger1.category == tag1.rawValue)
+        #expect(logger2.category == tag2.rawValue)
+        #expect(logger1.category != logger2.category)
+        #expect(logger1.subsystem == logger2.subsystem)
+    }
+
+    @Test func loggerUsesCorrectSubsystem() {
+        let customSubsystem = "com.wire.custom"
+        let cache = OSLoggerCache(subsystem: customSubsystem)
+        let tag: WireLogTag = "test-tag-5"
+        
+        let logger = cache.logger(for: tag)
+        
+        #expect(logger.subsystem == customSubsystem)
+        #expect(logger.category == tag.rawValue)
     }
 
     @Test func multipleTags_canBeCached() {
         let cache = OSLoggerCache(subsystem: testSubsystem)
         let tags: [WireLogTag] = ["tag-a", "tag-b", "tag-c", "tag-d", "tag-e"]
         
-        var loggers: [Logger] = []
+        var loggers: [any OSLoggerProtocol] = []
         for tag in tags {
             loggers.append(cache.logger(for: tag))
         }
@@ -76,14 +92,16 @@ struct OSLoggerCacheTests {
         // Verify all loggers are created
         #expect(loggers.count == tags.count)
         
-        // Verify all loggers are functional
-        for logger in loggers {
-            logger.debug("test message")
+        // Verify all loggers have correct properties
+        for (index, tag) in tags.enumerated() {
+            #expect(loggers[index].subsystem == testSubsystem)
+            #expect(loggers[index].category == tag.rawValue)
         }
         
         // Verify cache still works after multiple entries
         let cachedLogger = cache.logger(for: tags[0])
-        cachedLogger.info("retrieved from cache")
+        #expect(cachedLogger.subsystem == testSubsystem)
+        #expect(cachedLogger.category == tags[0].rawValue)
     }
 
     @Test func concurrentAccess_isThreadSafe() async {
@@ -94,14 +112,17 @@ struct OSLoggerCacheTests {
             for tag in tags {
                 group.addTask {
                     let logger = cache.logger(for: tag)
-                    logger.debug("concurrent test")
+                    #expect(logger.subsystem == testSubsystem)
+                    #expect(logger.category == tag.rawValue)
+                    logger.log(level: .debug, "concurrent test")
                 }
             }
         }
         
         // Verify cache still works after concurrent access
         let logger = cache.logger(for: tags[0])
-        logger.info("post-concurrent access")
+        #expect(logger.subsystem == testSubsystem)
+        #expect(logger.category == tags[0].rawValue)
     }
 
     @Test func cacheHandlesManyTags() {
@@ -111,13 +132,13 @@ struct OSLoggerCacheTests {
         // Create loggers for many tags
         for tag in tags {
             let logger = cache.logger(for: tag)
-            logger.trace("creating logger for \(tag.rawValue)")
+            #expect(logger.category == tag.rawValue)
         }
         
         // Verify we can still retrieve cached loggers
         for tag in tags.prefix(10) {
             let logger = cache.logger(for: tag)
-            logger.debug("retrieved cached logger")
+            #expect(logger.category == tag.rawValue)
         }
     }
 
@@ -131,9 +152,52 @@ struct OSLoggerCacheTests {
         let logger1 = cache1.logger(for: tag)
         let logger2 = cache2.logger(for: tag)
         
-        // Both should work independently
-        logger1.debug("from cache1")
-        logger2.debug("from cache2")
+        // Verify different subsystems
+        #expect(logger1.subsystem == subsystem1)
+        #expect(logger2.subsystem == subsystem2)
+        #expect(logger1.subsystem != logger2.subsystem)
+        #expect(logger1.category == logger2.category) // Same category
     }
 
+    @Test func cacheCanUseMockLogger() {
+        // Create a mock logger factory
+        var createdLoggers: [(subsystem: String, category: String)] = []
+        let mockFactory: (String, String) -> any OSLoggerProtocol = { subsystem, category in
+            createdLoggers.append((subsystem, category))
+            return MockLogger(subsystem: subsystem, category: category)
+        }
+        
+        let cache = OSLoggerCache(subsystem: testSubsystem, loggerFactory: mockFactory)
+        let tag: WireLogTag = "mock-tag"
+        
+        // First call should create a logger
+        let logger1 = cache.logger(for: tag)
+        #expect(createdLoggers.count == 1)
+        #expect(createdLoggers[0].subsystem == testSubsystem)
+        #expect(createdLoggers[0].category == tag.rawValue)
+        
+        // Second call should use cached logger (no new creation)
+        let logger2 = cache.logger(for: tag)
+        #expect(createdLoggers.count == 1) // Still only one creation
+        #expect(logger1.subsystem == logger2.subsystem)
+        #expect(logger1.category == logger2.category)
+    }
+
+}
+
+// MARK: - Mock Logger for Testing
+
+private struct MockLogger: OSLoggerProtocol, Equatable {
+    let subsystem: String
+    let category: String
+    var loggedMessages: [(level: OSLogType, message: String)] = []
+    
+    func log(level: OSLogType, _ message: String) {
+        // In a real mock, you might want to store this for verification
+        // For now, we just verify it can be called
+    }
+    
+    static func == (lhs: MockLogger, rhs: MockLogger) -> Bool {
+        lhs.subsystem == rhs.subsystem && lhs.category == rhs.category
+    }
 }

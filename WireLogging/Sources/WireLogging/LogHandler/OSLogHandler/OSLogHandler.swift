@@ -59,7 +59,7 @@ public struct OSLogHandler: WireLogHandlerProtocol {
         let logger = cache.logger(for: tag)
         logger.log(
             level: type.mappedToOSLogType(),
-            "\(finalMessage, privacy: .public)"
+            finalMessage
         )
     }
 
