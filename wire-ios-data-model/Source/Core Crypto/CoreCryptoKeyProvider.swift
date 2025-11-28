@@ -102,10 +102,13 @@ public class CoreCryptoKeyProvider {
 
     private func migrateToScopedDatabaseKey(path: String) throws {
 
-        guard
-            coreCryptoKeyMigrationManager.isMigrationToScopedKeyNeeded,
-            let unscopedKey = try fetchCoreCryptoKey(scoped: false)
-        else { return }
+        guard coreCryptoKeyMigrationManager.isMigrationToScopedKeyNeeded else { return }
+
+        guard let unscopedKey = try fetchCoreCryptoKey(scoped: false) else {
+            // No unscoped key was found, we can mark this as done
+            coreCryptoKeyMigrationManager.markMigrationToScopedKeyDone()
+            return
+        }
 
         if (try fetchCoreCryptoKey(scoped: true)) != nil {
             coreCryptoKeyMigrationManager.markMigrationToScopedKeyDone()
