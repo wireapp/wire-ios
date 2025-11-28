@@ -81,7 +81,6 @@ final class ActiveCallRouter<TopOverlayPresenter>
     private let userSession: UserSession
     private let topOverlayPresenter: TopOverlayPresenter
     private let mainWindow: UIWindow
-    //private var presentingViewController: UIViewController?
     private let callController: CallController
     private let callQualityController: CallQualityController
     private var transitioningDelegate: CallQualityAnimator
@@ -119,10 +118,6 @@ final class ActiveCallRouter<TopOverlayPresenter>
         callController.updateActiveCallPresentationState()
     }
 
-//    func setPresentingViewController(_ presentingViewController: UIViewController?) {
-//        self.presentingViewController = presentingViewController
-//    }
-
 }
 
 // MARK: - ActiveCallRouterProtocol
@@ -156,7 +151,6 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         )
 
         if mainWindow.rootViewController?.presentedViewController != nil {
-//        if presentingViewController?.presentedViewController != nil {
             dismissPresentedAndPresentActiveCall(modalViewController: modalVC, animated: animated)
         } else {
             presentActiveCall(modalViewController: modalVC, animated: animated)

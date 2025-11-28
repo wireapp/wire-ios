@@ -119,7 +119,7 @@ extension SessionManager: UNUserNotificationCenterDelegate {
                     queue: .main
                 ) { [weak self] _ in
                     // Remove observer immediately (one-time only)
-                    if let observer = observer {
+                    if let observer {
                         NotificationCenter.default.removeObserver(observer)
                     }
                     self?.presentationDelegate?.updateActiveCallPresentationStateIfNeeded()
@@ -166,7 +166,6 @@ public extension SessionManager {
     }
 }
 
-
 public extension Notification.Name {
-      static let conversationDidBecomeVisible = Notification.Name("ConversationDidBecomeVisible")
-  }
+    static let conversationDidBecomeVisible = Notification.Name("ConversationDidBecomeVisible")
+}
