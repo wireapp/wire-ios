@@ -38,6 +38,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
+    private var refreshTask: Task<Void, Never>?
 
     let alignment: HorizontalAlignment
     let displayStyle: DisplayStyle
@@ -141,6 +142,22 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         } catch {
             WireLogger.wireCells.info("Failed to refresh node with ID: \(nodeID), error: \(error)")
         }
+    }
+
+    func startRefreshing() {
+        refreshTask?.cancel()
+        refreshTask = Task { [weak self] in
+            while !Task.isCancelled {
+                await self?.refresh()
+
+                try? await Task.sleep(for: .seconds(30))
+            }
+        }
+    }
+
+    func stopRefreshing() {
+        refreshTask?.cancel()
+        refreshTask = nil
     }
 
     func open() async {

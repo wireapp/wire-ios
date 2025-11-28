@@ -113,7 +113,8 @@ struct WireCellsAttachmentsPreviewItemView: View {
             }
         }
         .contentShape(Rectangle()) // Constrains the tappable content area of the view.
-        .onAppear(perform: refresh)
+        .onAppear(perform: viewModel.startRefreshing)
+        .onDisappear(perform: viewModel.stopRefreshing)
         .onTapGesture(perform: open)
         .quickLookPreview($viewModel.viewingURL)
     }
