@@ -684,22 +684,9 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         sut = createSUT(apiVersion: apiVersion)
         var payload: ZMTransportData!
         let remoteIdentifier = "aabbccdd0011"
-        var sessionIdentifier: ProteusSessionID!
         syncMOC.performGroupedAndWait {
-            sessionIdentifier = ProteusSessionID(
-                userID: self.otherUser!.remoteIdentifier.uuidString,
-                clientID: remoteIdentifier
-            )
             self.otherUser.fetchUserClients()
             payload = [["id": remoteIdentifier, "class": "phone"]] as NSArray
-            // swiftlint:disable:next todo_requires_jira_link
-//            // TODO: [John] use flag here
-//            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform {
-//                try! $0.createClientSession(
-//                    sessionIdentifier,
-//                    base64PreKeyString: self.syncMOC.zm_cryptKeyStore.lastPreKey()
-//                ) // just a bogus key is OK
-//            }
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         let response = ZMTransportResponse(
