@@ -150,12 +150,10 @@ extension IntegrationTest {
         MockJailbreakDetector()
     }
 
-
     @objc
     func _setUp() {
 
         PrekeyGenerator._test_overrideNumberOfKeys = 1
-
 
         sharedContainerDirectory = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
         deleteSharedContainerContent()

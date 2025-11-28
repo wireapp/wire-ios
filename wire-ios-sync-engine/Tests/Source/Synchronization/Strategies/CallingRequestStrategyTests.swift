@@ -543,7 +543,7 @@ class CallingRequestStrategyTests: MessagingTest {
             let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
             return (conversationAVSID, user1, client1, user2, client2, targets)
         }
-        
+
         var sentMessage: GenericMessageEntity?
         mockMessageSender.sendMessageMessage_MockMethod = { message in
             sentMessage = message as? GenericMessageEntity
