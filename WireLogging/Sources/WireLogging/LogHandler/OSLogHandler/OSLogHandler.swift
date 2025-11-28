@@ -37,7 +37,7 @@ public struct OSLogHandler: WireLogHandlerProtocol {
     ) {
         var attributes = [String: String]()
         attributes.reserveCapacity(message.interpolation.attributes.count + additionalAttributes.count)
-        
+
         // Add message attributes first
         for attribute in message.interpolation.attributes {
             attributes[attribute.key] = attribute.value
@@ -52,7 +52,7 @@ public struct OSLogHandler: WireLogHandlerProtocol {
             "[\(key)=\(attributes[key] ?? "")]"
         }.joined()
 
-        let finalMessage = attributesString.isEmpty 
+        let finalMessage = attributesString.isEmpty
             ? message.interpolation.content
             : "\(attributesString) \(message.interpolation.content)"
 

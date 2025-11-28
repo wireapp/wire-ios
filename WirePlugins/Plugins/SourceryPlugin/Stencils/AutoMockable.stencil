@@ -37,6 +37,10 @@ public import {{ import }}
 @testable import {{ import }}
 {% endfor %}
 
+{% for import in argument.autoMockableTestablePublicImports %}
+@testable public import {{ import }}
+{% endfor %}
+
 {% macro cleanString string %}{{ string | replace:"(","_" | replace:")","" | replace:":","_" | replace:"`","" | replace:" ","_" | replace:"?","_" | replace:"!","_" | replace:",","_" | replace:"->","_" | replace:"@","_" | replace:".","_" | replace:"[","" | replace:"]","" | replace:"<","" | replace:">","" | replace:"&","" | snakeToCamelCase }}{% endmacro %}
 {%- macro swiftifyMethodName method -%}
     {%- set cleanMethodName %}{% call cleanString method.name %}{% endset %}

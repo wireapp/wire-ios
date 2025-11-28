@@ -5,5 +5,5 @@ templates:
 output:
   ${DERIVED_SOURCES_DIR}
 args:
-  autoMockablePublicImports: ["WireLogging"]
-  autoMockableImports: ["Foundation"]
+  autoMockableTestablePublicImports: ["WireLogging"]
+  autoMockableImports: ["Foundation", "os"]

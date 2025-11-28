@@ -19,32 +19,30 @@
 import Foundation
 import os
 
+// sourcery: AutoMockable
 /// Protocol abstraction over `os.Logger` to enable testing and mocking.
 protocol OSLoggerProtocol: Sendable {
     var subsystem: String { get }
     var category: String { get }
-    
+
     func log(level: OSLogType, _ message: String)
 }
 
 /// Concrete implementation wrapping `os.Logger`.
-struct OSLoggerWrapper: OSLoggerProtocol, Equatable {
+struct OSLoggerWrapper: OSLoggerProtocol {
+
     let subsystem: String
     let category: String
     private let logger: Logger
-    
+
     init(subsystem: String, category: String) {
         self.subsystem = subsystem
         self.category = category
         self.logger = Logger(subsystem: subsystem, category: category)
     }
-    
+
     func log(level: OSLogType, _ message: String) {
         logger.log(level: level, "\(message, privacy: .public)")
     }
-    
-    static func == (lhs: OSLoggerWrapper, rhs: OSLoggerWrapper) -> Bool {
-        lhs.subsystem == rhs.subsystem && lhs.category == rhs.category
-    }
-}
 
+}
