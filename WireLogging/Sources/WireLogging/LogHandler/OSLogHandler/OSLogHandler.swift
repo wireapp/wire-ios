@@ -35,25 +35,32 @@ public struct OSLogHandler: WireLogHandlerProtocol {
         message: WireLogMessage,
         additionalAttributes: [WireLogAttribute]
     ) {
-
-        var attributes = [String: String]() // additionalAttributes overwrite message attributes
-        for attribute in message.interpolation.attributes + additionalAttributes {
+        var attributes = [String: String]()
+        attributes.reserveCapacity(message.interpolation.attributes.count + additionalAttributes.count)
+        
+        // Add message attributes first
+        for attribute in message.interpolation.attributes {
+            attributes[attribute.key] = attribute.value
+        }
+        // Overwrite with additional attributes
+        for attribute in additionalAttributes {
             attributes[attribute.key] = attribute.value
         }
 
-        var attributesString = ""
-        for attributesKey in attributes.keys.sorted() {
-            attributesString += "[\(attributesKey)=\(attributes[attributesKey]!)]"
-        }
+        // Build attributes string efficiently using joined()
+        let attributesString = attributes.keys.sorted().map { key in
+            "[\(key)=\(attributes[key] ?? "")]"
+        }.joined()
 
-        let message = "\(attributesString) \(message.interpolation.content)"
+        let finalMessage = attributesString.isEmpty 
+            ? message.interpolation.content
+            : "\(attributesString) \(message.interpolation.content)"
 
         let logger = cache.logger(for: tag)
         logger.log(
             level: type.mappedToOSLogType(),
-            "\(message, privacy: .public)"
+            "\(finalMessage, privacy: .public)"
         )
-
     }
 
     // MARK: - Logger Caching
@@ -76,50 +83,62 @@ public struct OSLogHandler: WireLogHandlerProtocol {
         private let subsystem: String
         private var dictionary: [WireLogTag: CacheEntry] = [:]
         private let queue = DispatchQueue(label: "com.wire.logging.oslogger.cache")
-
+        private var lastEvictionTime: Date = Date()
+        
         /// Time interval after which unused loggers are evicted (5 minutes).
         private static let evictionTimeout: TimeInterval = 5 * 60
+        /// Minimum time between eviction checks (30 seconds) to avoid excessive cleanup
+        private static let evictionCheckInterval: TimeInterval = 30
 
         init(subsystem: String) {
             self.subsystem = subsystem
         }
 
         func logger(for tag: WireLogTag) -> Logger {
-            // Synchronously get or create logger and update access time
-            let logger = queue.sync {
+            queue.sync {
                 let now = Date()
 
-                // Check if we have a cached entry
+                // Check if we have a cached entry (fast path - most common case)
                 if var entry = dictionary[tag] {
-                    // Always update access time if entry exists (even if it was stale)
-                    entry.lastAccessTime = now
-                    dictionary[tag] = entry
+                    // Only update access time if significant time has passed to reduce writes
+                    let timeSinceAccess = now.timeIntervalSince(entry.lastAccessTime)
+                    if timeSinceAccess > 1.0 {
+                        entry.lastAccessTime = now
+                        dictionary[tag] = entry
+                    }
                     return entry.logger
                 }
 
                 // Create new logger and cache it
                 let logger = Logger(subsystem: subsystem, category: tag.rawValue)
                 dictionary[tag] = CacheEntry(logger: logger, lastAccessTime: now)
+                
+                // Throttle eviction checks to avoid excessive cleanup
+                let timeSinceLastEviction = now.timeIntervalSince(lastEvictionTime)
+                if timeSinceLastEviction > Self.evictionCheckInterval {
+                    lastEvictionTime = now
+                    // Trigger async eviction only when needed
+                    queue.async {
+                        self.evictStaleEntries(now: now)
+                    }
+                }
+                
                 return logger
             }
-
-            // Asynchronously clean up stale entries (non-blocking)
-            queue.async {
-                self.evictStaleEntries()
-            }
-
-            return logger
         }
 
-        private func evictStaleEntries() {
-            let cutoffTime = Date().addingTimeInterval(-Self.evictionTimeout)
-            var keysToRemove: [WireLogTag] = []
-
-            for (tag, entry) in dictionary where entry.lastAccessTime < cutoffTime {
-                keysToRemove.append(tag)
-            }
-            for key in keysToRemove {
-                dictionary.removeValue(forKey: key)
+        private func evictStaleEntries(now: Date) {
+            queue.sync {
+                let cutoffTime = now.addingTimeInterval(-Self.evictionTimeout)
+                var keysToRemove: [WireLogTag] = []
+                for (tag, entry) in dictionary where entry.lastAccessTime < cutoffTime {
+                    keysToRemove.append(tag)
+                }
+                if !keysToRemove.isEmpty {
+                    for key in keysToRemove {
+                        dictionary.removeValue(forKey: key)
+                    }
+                }
             }
         }
     }
