@@ -27,7 +27,7 @@ import os
 /// Since each log tag maps to a different category, we need a separate `Logger` instance per tag.
 /// This cache stores `Logger` instances keyed by tag to avoid recreating them on every log call.
 
-final class LoggerCache: @unchecked Sendable {
+final class OSLoggerCache: @unchecked Sendable {
 
     private let subsystem: String
     private var dictionary: [WireLogTag: CacheEntry] = [:]

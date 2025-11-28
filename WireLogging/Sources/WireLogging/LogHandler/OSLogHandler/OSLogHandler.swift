@@ -22,11 +22,11 @@ import os
 public struct OSLogHandler: WireLogHandlerProtocol {
 
     var subsystem: String
-    private let cache: LoggerCache
+    private let cache: OSLoggerCache
 
     public init(subsystem: String) {
         self.subsystem = subsystem
-        self.cache = LoggerCache(subsystem: subsystem)
+        self.cache = OSLoggerCache(subsystem: subsystem)
     }
 
     public func log(
