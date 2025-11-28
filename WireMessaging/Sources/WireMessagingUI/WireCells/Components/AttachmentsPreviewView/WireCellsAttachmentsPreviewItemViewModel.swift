@@ -38,7 +38,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
-    private var refreshTask: Task<Void, Never>?
+    private var pollingTask: Task<Void, Never>?
 
     let alignment: HorizontalAlignment
     let displayStyle: DisplayStyle
@@ -144,9 +144,9 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         }
     }
 
-    func startRefreshing() {
-        refreshTask?.cancel()
-        refreshTask = Task { [weak self] in
+    func startPolling() {
+        pollingTask?.cancel()
+        pollingTask = Task { [weak self] in
             while !Task.isCancelled {
                 await self?.refresh()
 
@@ -155,9 +155,9 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         }
     }
 
-    func stopRefreshing() {
-        refreshTask?.cancel()
-        refreshTask = nil
+    func stopPolling() {
+        pollingTask?.cancel()
+        pollingTask = nil
     }
 
     func open() async {
