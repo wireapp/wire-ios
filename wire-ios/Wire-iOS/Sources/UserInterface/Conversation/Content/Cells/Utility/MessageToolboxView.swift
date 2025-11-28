@@ -235,12 +235,12 @@ final class MessageToolboxView: UIView {
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
             contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
             contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
-            
+
             messageFailureView.topAnchor.constraint(equalTo: topAnchor),
             messageFailureView.bottomAnchor.constraint(equalTo: bottomAnchor),
             messageFailureView.leadingAnchor.constraint(equalTo: leadingAnchor),
             messageFailureView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            
+
             countdownView.widthAnchor.constraint(equalToConstant: 10),
             countdownView.heightAnchor.constraint(equalToConstant: 10),
             countdownView.leadingAnchor.constraint(equalTo: countdownContainer.leadingAnchor),

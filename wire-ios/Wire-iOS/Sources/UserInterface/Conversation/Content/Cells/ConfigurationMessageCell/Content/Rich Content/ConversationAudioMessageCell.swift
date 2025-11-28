@@ -78,7 +78,7 @@ final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
             containerView.topAnchor.constraint(equalTo: topAnchor),
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
     }
 

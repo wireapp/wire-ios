@@ -219,7 +219,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Skipping test because collapsing own messages feature is
         // temporarily disabled due to conflicts with chat bubbles
         // https://wearezeta.atlassian.net/browse/WPB-18939
-        
+
         throw XCTSkip()
 
 //        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
@@ -241,7 +241,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Skipping test because collapsing own messages feature is
         // temporarily disabled due to conflicts with chat bubbles
         // https://wearezeta.atlassian.net/browse/WPB-18939
-        
+
         throw XCTSkip()
 
 //        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
@@ -261,7 +261,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Skipping test because collapsing own messages feature is
         // temporarily disabled due to conflicts with chat bubbles
         // https://wearezeta.atlassian.net/browse/WPB-18939
-        
+
         throw XCTSkip()
 
 //        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
@@ -281,7 +281,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Skipping test because collapsing own messages feature is
         // temporarily disabled due to conflicts with chat bubbles
         // https://wearezeta.atlassian.net/browse/WPB-18939
-        
+
         throw XCTSkip()
 
 //        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
@@ -302,9 +302,9 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Skipping test because collapsing own messages feature is
         // temporarily disabled due to conflicts with chat bubbles
         // https://wearezeta.atlassian.net/browse/WPB-18939
-        
+
         throw XCTSkip()
-        
+
 //        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
 //        let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
 //        message.senderUser = MockUserType.createDefaultOtherUser()
@@ -316,9 +316,9 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Skipping test because collapsing own messages feature is
         // temporarily disabled due to conflicts with chat bubbles
         // https://wearezeta.atlassian.net/browse/WPB-18939
-        
+
         throw XCTSkip()
-        
+
 //        // Given
 //        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
 //        let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
@@ -344,9 +344,9 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Skipping test because collapsing own messages feature is
         // temporarily disabled due to conflicts with chat bubbles
         // https://wearezeta.atlassian.net/browse/WPB-18939
-        
+
         throw XCTSkip()
-        
+
 //        // Given already saved that was uncollapsed
 //        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
 //        let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
@@ -375,9 +375,9 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Skipping test because collapsing own messages feature is
         // temporarily disabled due to conflicts with chat bubbles
         // https://wearezeta.atlassian.net/browse/WPB-18939
-        
+
         throw XCTSkip()
-        
+
 //        // Given
 //        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
 //        let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
@@ -394,9 +394,9 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Skipping test because collapsing own messages feature is
         // temporarily disabled due to conflicts with chat bubbles
         // https://wearezeta.atlassian.net/browse/WPB-18939
-        
+
         throw XCTSkip()
-        
+
 //        // Given
 //        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
 //        let longText = """
@@ -430,9 +430,9 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Skipping test because collapsing own messages feature is
         // temporarily disabled due to conflicts with chat bubbles
         // https://wearezeta.atlassian.net/browse/WPB-18939
-        
+
         throw XCTSkip()
-        
+
 //        // Given
 //        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
 //        let message = try XCTUnwrap(
@@ -459,9 +459,9 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Skipping test because collapsing own messages feature is
         // temporarily disabled due to conflicts with chat bubbles
         // https://wearezeta.atlassian.net/browse/WPB-18939
-        
+
         throw XCTSkip()
-        
+
 //        // Given
 //        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
 //        let message = try XCTUnwrap(
@@ -478,9 +478,9 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Skipping test because collapsing own messages feature is
         // temporarily disabled due to conflicts with chat bubbles
         // https://wearezeta.atlassian.net/browse/WPB-18939
-        
+
         throw XCTSkip()
-        
+
 //        // Given
 //        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
 //        let message = MockMessageFactory.textMessage(withText: "www.example.com")
@@ -508,9 +508,9 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Skipping test because collapsing own messages feature is
         // temporarily disabled due to conflicts with chat bubbles
         // https://wearezeta.atlassian.net/browse/WPB-18939
-        
+
         throw XCTSkip()
-        
+
 //        // Given
 //        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
 //        let message = MockMessageFactory.textMessage(withText: "www.example.com")
@@ -536,9 +536,9 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Skipping test because collapsing own messages feature is
         // temporarily disabled due to conflicts with chat bubbles
         // https://wearezeta.atlassian.net/browse/WPB-18939
-        
+
         throw XCTSkip()
-        
+
 //        // Given
 //        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
 //        let message = MockMessageFactory.textMessage(withText: "www.example.com")
@@ -567,7 +567,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Skipping test because collapsing own messages feature is
         // temporarily disabled due to conflicts with chat bubbles
         // https://wearezeta.atlassian.net/browse/WPB-18939
-        
+
         throw XCTSkip()
 
 //        // Given

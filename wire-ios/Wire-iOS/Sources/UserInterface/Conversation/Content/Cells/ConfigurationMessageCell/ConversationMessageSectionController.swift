@@ -149,7 +149,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             startObservingChanges(for: quotedMessage)
         }
     }
-    
+
     private var collapseOwnMessagesEnabled: Bool {
         false
         // Temporarily disabling collapsing own messages,

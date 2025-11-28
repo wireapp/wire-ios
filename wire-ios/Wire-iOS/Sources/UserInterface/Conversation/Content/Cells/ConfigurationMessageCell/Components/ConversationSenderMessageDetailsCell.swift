@@ -165,7 +165,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             avatar.heightAnchor.constraint(equalToConstant: CGFloat(avatar.size.rawValue)),
             avatar.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -1.5),
             avatar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20.0),
-            
+
             avatarEqualToTopAnchorConstraint,
             avatarGreaterThanOrEqualToTopAnchorConstraint,
             avatarEqualToBottomAnchorConstraint,
