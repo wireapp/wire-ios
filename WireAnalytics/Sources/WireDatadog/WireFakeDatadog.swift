@@ -41,7 +41,7 @@ public final class WireDatadog {
     }
 
     public func log(
-        level: WireLogLevel,
+        level: WireLogType,
         message: String,
         error: (any Error)? = nil,
         attributes: [String: any Encodable]

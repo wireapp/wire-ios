@@ -22,6 +22,7 @@ import WireLogging
 import WireSystem
 
 extension WireDatadog: LoggerProtocol {
+
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(
             level: .debug,
@@ -81,7 +82,7 @@ extension WireDatadog: LoggerProtocol {
     // MARK: Helpers
 
     private func log(
-        level: WireLogLevel,
+        level: WireLogType,
         message: any LogConvertible,
         error: Error? = nil,
         attributes: [LogAttributes] = []
