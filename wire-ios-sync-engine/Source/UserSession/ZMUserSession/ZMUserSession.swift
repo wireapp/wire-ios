@@ -271,6 +271,8 @@ public final class ZMUserSession: NSObject {
     // To prevent too eagerly resolving all conversations.
     var didAlreadyResolveAllOneOnOnes = false
 
+    private lazy var networkStateSubject: CurrentValueSubject<NetworkState, Never> = .init(networkState)
+
     public private(set) var networkState: NetworkState = .online {
         didSet {
             if oldValue != networkState {
@@ -279,6 +281,7 @@ public final class ZMUserSession: NSObject {
                     notificationContext: managedObjectContext.notificationContext
                 )
             }
+            networkStateSubject.send(networkState)
         }
     }
 
@@ -644,7 +647,8 @@ public final class ZMUserSession: NSObject {
             featureConfigRepository: clientSessionComponent.featureConfigRepository,
             syncStateSubject: clientSessionComponent.syncStateSubject,
             pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator,
-            conversationUpdatesGenerator: clientSessionComponent.conversationUpdatesGenerator
+            conversationUpdatesGenerator: clientSessionComponent.conversationUpdatesGenerator,
+            networkStatePublisher: networkStateSubject.eraseToAnyPublisher()
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
         self.syncAgent = syncAgent
@@ -1405,6 +1409,15 @@ extension ZMUserSession: SyncAgentDelegate {
         } catch {
             WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
         }
+    }
+
+    public func resolveOneOnOneConversation(with userID: WireDataModel
+        .QualifiedID) async throws -> OneOnOneConversationResolution {
+        guard let clientSessionComponent else {
+            return .noAction
+        }
+
+        return try await clientSessionComponent.oneOnOneResolver.resolveOneOnOneConversation(with: userID)
     }
 
     private func performPostQuickSyncE2EIActions() {

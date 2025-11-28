@@ -32,19 +32,15 @@ class FirstTimePage: PageModel {
     }
 
     var okButton: XCUIElement {
-        app.buttons[Locators.FirstTimePage.okButton.rawValue]
+        app.buttons[Locators.FirstTimePage.okButton.rawValue].firstMatch
     }
 
     var savePasswordSheet: XCUIElement {
-        app.staticTexts["Save Password?"]
+        app.staticTexts[Locators.FirstTimePage.savePasswordSheet.rawValue]
     }
 
     var notNowOptionOnSavePasswordSheet: XCUIElement {
-        app.buttons["Not Now"]
-    }
-
-    var validationRuleForUsername: XCUIElement {
-        app.descendants(matching: .staticText)["validation-rules"].firstMatch
+        app.buttons[Locators.FirstTimePage.notNowOption.rawValue]
     }
 
     var handler: (XCTestCase, any NSObjectProtocol)?

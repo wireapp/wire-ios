@@ -41,15 +41,19 @@ package struct WireCellsFetchNodesUseCase: Sendable {
     ///
     /// - Parameters:
     ///   - searchTerm: An optional search term to filter nodes by their name.
+    ///   - tags: The set of tags a node must match to be included in the results. Pass an empty array to disable tag
+    /// filtering.
     ///   - token: An optional pagination token. If `nil`, the first page of results will be fetched.
     /// - Returns: An array of `WireCellsNode` values and an optional pagination token for the next page of results. If
     /// `nil`, there are no more pages to fetch.
     package func invoke(
         searchTerm: String?,
+        tags: [String],
         offset: Int
     ) async throws -> (nodes: [WireCellsNode], isLastPage: Bool) {
         let request = WireCellsGetNodesRequest(
             searchTerm: searchTerm,
+            tags: tags,
             limit: 30,
             offset: offset,
             configuration: configuration

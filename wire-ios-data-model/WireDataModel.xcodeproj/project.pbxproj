@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		010093B32D4BA2F400429015 /* ZMConversationTests_SystemMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010093B22D4BA2DB00429015 /* ZMConversationTests_SystemMessages.swift */; };
+		010347222ED4566D000676DE /* NSManagedObjectContact+Unpack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010347212ED4566D000676DE /* NSManagedObjectContact+Unpack.swift */; };
 		0129E7F929A520870065E6DB /* SafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */; };
 		0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */; };
 		013887A22B9A5C6000323DD0 /* CleanupModels107PreAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013887A12B9A5C6000323DD0 /* CleanupModels107PreAction.swift */; };
@@ -768,6 +769,7 @@
 
 /* Begin PBXFileReference section */
 		010093B22D4BA2DB00429015 /* ZMConversationTests_SystemMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMConversationTests_SystemMessages.swift; sourceTree = "<group>"; };
+		010347212ED4566D000676DE /* NSManagedObjectContact+Unpack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContact+Unpack.swift"; sourceTree = "<group>"; };
 		0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafeCoreCrypto.swift; sourceTree = "<group>"; };
 		0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeFileContext.swift; sourceTree = "<group>"; };
 		013887A12B9A5C6000323DD0 /* CleanupModels107PreAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CleanupModels107PreAction.swift; sourceTree = "<group>"; };
@@ -2557,6 +2559,7 @@
 				0614E96C2A863EED007BB1F6 /* NSPredicate+BaseCompounds.swift */,
 				1657FA9B2D9C432200A7B337 /* CoreCryptoContextProtocolExt.swift */,
 				E66029D12BDA43E10033C524 /* SearchUsersCache.swift */,
+				010347212ED4566D000676DE /* NSManagedObjectContact+Unpack.swift */,
 			);
 			path = Utilis;
 			sourceTree = "<group>";
@@ -3808,6 +3811,7 @@
 				063D292A24212AFD00FA6FEE /* ZMClientMessage.swift in Sources */,
 				CB1BF6FC2C8AF6A5001EC670 /* ExpirationReason+Description.swift in Sources */,
 				EE9B9F5929964F6A00A257BC /* NSManagedObjectContext+CoreCrypto.swift in Sources */,
+				010347222ED4566D000676DE /* NSManagedObjectContact+Unpack.swift in Sources */,
 				599EA3D52C246955009319D4 /* MutableConversationContainer.swift in Sources */,
 				017B55792CFFB560005FFBD4 /* NSManagedObjectContext+SyncResources.swift in Sources */,
 				5986A08F2C6B744300299181 /* TextMessage.swift in Sources */,

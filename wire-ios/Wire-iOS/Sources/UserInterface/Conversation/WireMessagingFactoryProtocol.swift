@@ -38,11 +38,14 @@ protocol WireMessagingFactoryProtocol {
     func makeFilesView(
         cellName: String,
         isCellsStatePending: Bool,
-        accentColor: WireAccentColor
+        accentColorProvider: @escaping () -> WireAccentColor
     ) -> UIViewController
 
     @MainActor
-    func makeFilesBrowserView() -> UIViewController
+    func makeFilesBrowserView(
+        accentColorProvider: @escaping () -> WireAccentColor
+    ) -> UIViewController
+
     @MainActor
     func makeAttachmentsPreviewView(
         attachments: [WireCellsMessageAttachment],

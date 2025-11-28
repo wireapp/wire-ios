@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class SetPasswordPage: PageModel {
@@ -25,23 +26,23 @@ class SetPasswordPage: PageModel {
     }
 
     var passwordField: XCUIElement {
-        app.secureTextFields["password input"]
+        app.secureTextFields[Locators.SetPasswordPage.passwordInputField.rawValue]
     }
 
     var backupNowButton: XCUIElement {
-        app.descendants(matching: .any)["back up now"]
+        app.descendants(matching: .button)[Locators.SetPasswordPage.backUpNowButton.rawValue]
     }
 
     var continueButton: XCUIElement {
-        app.buttons["Continue"]
+        app.buttons[Locators.SetPasswordPage.continueButton.rawValue]
     }
 
     var historyRestoredAlert: XCUIElement {
-        app.alerts["Your history is restored."]
+        app.alerts[Locators.SetPasswordPage.historyRestoredAlert.rawValue]
     }
 
     var OKButtonOnAlert: XCUIElement {
-        app.buttons["OK"]
+        app.buttons[Locators.SetPasswordPage.ok.rawValue]
     }
 
     func enterBackupPasswordAndBackup(_ password: String) throws -> CreatingBackupPage {
