@@ -18,15 +18,75 @@
 
 import Foundation
 import SwiftUI
+import WireCallingDomain
+import WireReusableUIComponents
 
 final class ScheduleMeetingViewModel: ObservableObject {
 
     @Published var meetingTitle: String = ""
 
+    // TODO: [WPB-21335] Implement Wire users and emails
+    @Published var participants: String = ""
+    @Published var allowGuests: Bool = false
+    @Published var password: String = ""
+    @Published var confirmedPassword: String = ""
+    @Published var startDate: Date = .init()
+    @Published var endDate: Date = .init().addingTimeInterval(1800)
+    @Published var repeatOption: RepeatOption = .never
+
     var isNextButtonEnabled: Bool {
-        true
+        let hasValidTitle = !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let hasValidPassword = password.isEmpty || (isPasswordValid && isConfirmedPasswordValid)
+        return hasValidTitle && hasValidPassword
     }
 
+    var isPasswordValid: Bool {
+        password.isEmpty || passwordValidator.isPasswordValid(password)
+    }
+
+    var isConfirmedPasswordValid: Bool {
+        confirmedPassword.isEmpty || password == confirmedPassword
+    }
+
+    var localizedPasswordRules: String {
+        passwordValidator.localizedRulesDescription ?? ""
+    }
+
+    private let passwordValidator: any PasswordValidator
+    private(set) var isContextMenuAllowed: Bool
+
+    // MARK: - Initialization
+
+    init(passwordValidator: any PasswordValidator, isContextMenuAllowed: Bool) {
+        self.passwordValidator = passwordValidator
+        self.isContextMenuAllowed = isContextMenuAllowed
+    }
+
+    // MARK: - Public Interface
+
     func scheduleMeeting() {}
+
+}
+
+extension RepeatOption {
+
+    typealias Strings = L10n.Localizable.WireMeetings.Schedule.Time
+
+    var title: String {
+        switch self {
+        case .never:
+            Strings.never
+        case .daily:
+            Strings.daily
+        case .weekly:
+            Strings.weekly
+        case .every2Weeks:
+            Strings.everyTwoWeeks
+        case .monthly:
+            Strings.monthly
+        case .yearly:
+            Strings.yearly
+        }
+    }
 
 }

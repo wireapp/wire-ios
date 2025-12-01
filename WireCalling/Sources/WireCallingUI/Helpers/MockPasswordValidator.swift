@@ -17,26 +17,25 @@
 //
 
 import Foundation
-import WireDataModel
-import WireNetwork
+import WireCallingDomain
+import WireReusableUIComponents
 
-// sourcery: AutoMockable
-/// An object to fetch an MLS one on one conversation
-/// from remote and store it locally.
-public protocol PullMLSOneOnOneSyncProtocol {
+/// Mock implementation of PasswordValidator for testing and previews
+package final class MockPasswordValidator: PasswordValidator {
 
-    /// Fetch an MLS one on one conversation from remote
-    /// and store it locally.
-    ///
-    /// - Parameters:
-    ///   - userID: The id of the other user.
-    ///   - userDomain: The domain of the other user.
-    ///
-    /// - Returns: The base-64-encoded MLS group id.
+    var isPasswordValid_MockValue: Bool
+    var isPasswordValid_Invocations: [String] = []
 
-    func pull(
-        userID: UUID,
-        userDomain: String
-    ) async throws -> (MLSGroupID, MLSPublicKeys?)
+    init(isPasswordValid: Bool = true) {
+        self.isPasswordValid_MockValue = isPasswordValid
+    }
 
+    func isPasswordValid(_ password: String) -> Bool {
+        isPasswordValid_Invocations.append(password)
+        return isPasswordValid_MockValue
+    }
+
+    var localizedRulesDescription: String? {
+        "Password must be at least 8 characters"
+    }
 }

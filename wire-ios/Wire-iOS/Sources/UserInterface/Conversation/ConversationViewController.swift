@@ -570,27 +570,22 @@ final class ConversationViewController: UIViewController {
         }
 
         guard
+            let conversationID = conversation.remoteIdentifier,
             let otherUser = conversation.localParticipants.first(where: { !$0.isSelfUser }),
             let otherUserID = otherUser.qualifiedID,
             let viewContext = conversation.managedObjectContext,
             let syncContext = viewContext.zm_sync
         else {
-            WireLogger.conversation.warn("missing expected value to resolve 1-1 conversation!")
+            WireLogger.conversation.warn(
+                "missing expected value to resolve 1-1 conversation!",
+                attributes: [.conversationId: conversation.remoteIdentifier ?? "<nil>"]
+            )
             return
         }
 
         Task {
             do {
-                guard let mlsService = await syncContext.perform({ syncContext.mlsService }) else {
-                    assertionFailure("mlsService is missing")
-                    return
-                }
-                let mlsFeature = await userSession.makeGetMLSFeatureUseCase().invoke()
-                let resolver = LegacyOneOnOneResolver(
-                    migrator: OneOnOneMigrator(mlsService: mlsService),
-                    isMLSEnabled: mlsFeature.isEnabled
-                )
-                let resolvedState = try await resolver.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
+                let resolvedState = try await userSession.resolveOneOnOneConversation(with: otherUserID)
 
                 if case let .migratedToMLSGroup(identifier) = resolvedState {
                     await navigateToNewMLSConversation(mlsGroupIdentifier: identifier, in: viewContext)
@@ -598,7 +593,7 @@ final class ConversationViewController: UIViewController {
             } catch {
                 WireLogger.conversation.warn(
                     "resolution of proteus 1-1 conversation failed: \(error)",
-                    attributes: [.senderUserId: otherUserID.safeForLoggingDescription]
+                    attributes: [.senderUserId: otherUserID.safeForLoggingDescription, .conversationId: conversationID]
                 )
             }
         }
@@ -894,6 +889,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                 WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
             }
 
+        filesView.modalPresentationStyle = .fullScreen
         filesView.presentOverAll(animated: true)
     }
 

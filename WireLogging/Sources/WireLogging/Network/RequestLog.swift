@@ -135,6 +135,13 @@ public extension String {
 }
 
 public extension WireLogger {
+
+    static var defaultEncoder: JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        return encoder
+    }
+
     func log(_ request: URLRequest) {
         log(request: request as NSURLRequest)
     }
@@ -143,7 +150,7 @@ public extension WireLogger {
         let info = RequestLog(request)
 
         do {
-            let data = try JSONEncoder().encode(info)
+            let data = try Self.defaultEncoder.encode(info)
             let jsonString = String(decoding: data, as: UTF8.self)
             let message = "REQUEST: \(jsonString)"
             self.info(message, attributes: .safePublic)
@@ -153,11 +160,11 @@ public extension WireLogger {
         }
     }
 
-    func log(response: HTTPURLResponse) {
-        guard let info = ResponseLog(response) else { return }
+    func log(response: HTTPURLResponse, body: Data? = nil) {
+        guard let info = ResponseLog(response, body: body) else { return }
 
         do {
-            let data = try JSONEncoder().encode(info)
+            let data = try Self.defaultEncoder.encode(info)
             let jsonString = String(decoding: data, as: UTF8.self)
             let message = "RESPONSE: \(jsonString)"
             self.info(message, attributes: .safePublic)

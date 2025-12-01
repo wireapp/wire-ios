@@ -776,7 +776,7 @@ public final class ClientSessionComponent {
         userLocalStore: userLocalStore
     )
 
-    private lazy var oneOnOneResolver = OneOnOneResolver(
+    public private(set) lazy var oneOnOneResolver = OneOnOneResolver(
         context: syncContext,
         userLocalStore: userLocalStore,
         conversationLocalStore: conversationLocalStore,

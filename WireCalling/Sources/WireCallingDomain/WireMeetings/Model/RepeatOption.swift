@@ -17,26 +17,14 @@
 //
 
 import Foundation
-import WireDataModel
-import WireNetwork
 
-// sourcery: AutoMockable
-/// An object to fetch an MLS one on one conversation
-/// from remote and store it locally.
-public protocol PullMLSOneOnOneSyncProtocol {
+public enum RepeatOption: CaseIterable, Sendable {
 
-    /// Fetch an MLS one on one conversation from remote
-    /// and store it locally.
-    ///
-    /// - Parameters:
-    ///   - userID: The id of the other user.
-    ///   - userDomain: The domain of the other user.
-    ///
-    /// - Returns: The base-64-encoded MLS group id.
-
-    func pull(
-        userID: UUID,
-        userDomain: String
-    ) async throws -> (MLSGroupID, MLSPublicKeys?)
+    case never
+    case daily
+    case weekly
+    case every2Weeks
+    case monthly
+    case yearly
 
 }
