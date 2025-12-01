@@ -51,6 +51,10 @@ struct ShareLinkView: View {
                         Text("TODO: Expiration view")
                     }
                 }
+                .background {
+                    ColorTheme.Backgrounds.background.color
+                        .ignoresSafeArea(edges: .all)
+                }
                 .tint(ColorTheme.Base.primary(wireAccentColor).color)
         }
     }
@@ -72,6 +76,7 @@ struct ShareLinkView: View {
                 }
                 .buttonStyle(.borderedProminent)
             }
+            .frame(maxWidth: .infinity)
             .padding()
         }
     }

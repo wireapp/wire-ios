@@ -73,29 +73,63 @@ struct ShareLinkPasswordView: View {
                     },
                     message: { Text(Strings.NoAccessToExisting.message) }
                 )
+                .background {
+                    ColorTheme.Backgrounds.background.color
+                        .ignoresSafeArea(edges: .all)
+                }
                 .tint(ColorTheme.Base.primary(wireAccentColor).color)
         }
     }
     
     @ViewBuilder private func content() -> some View {
         ScrollView {
-            VStack {
-                Button {
-                    viewModel.isPresentingRemovePasswordConfirmation = true
-                } label: {
-                    Text("show \"remove password\" confirmation alert")
-                }
-                .buttonStyle(.borderedProminent)
+            VStack(spacing: 16) {
+                descriptionArea()
                 
-                Button {
-                    viewModel.isPresentingNoAccessToExistingPasswordConfirmation = true
-                } label: {
-                    Text("show \"no access to existing password\" alert")
-                }
-                .buttonStyle(.borderedProminent)
+                setPasswortToggleArea()
+                
+                alertTestButtons()
             }
+            .frame(maxWidth: .infinity)
             .padding()
         }
+    }
+    
+    @ViewBuilder private func descriptionArea() -> some View {
+        Text(Strings.description)
+            .font(for: .subline1)
+            .multilineTextAlignment(.leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+    }
+    
+    @ViewBuilder private func setPasswortToggleArea() -> some View {
+        Toggle(isOn: .constant(true)) {
+            Text(Strings.setPasswordToggle)
+                .font(for: .body1)
+        }
+        .padding(.vertical, 6)
+        .padding(.horizontal)
+        .background {
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundStyle(ColorTheme.Backgrounds.backgroundVariant.color)
+        }
+    }
+    
+    @ViewBuilder private func alertTestButtons() -> some View {
+        Button {
+            viewModel.isPresentingRemovePasswordConfirmation = true
+        } label: {
+            Text("show\n\"remove password\"\nconfirmation alert")
+        }
+        .buttonStyle(.borderedProminent)
+        
+        Button {
+            viewModel.isPresentingNoAccessToExistingPasswordConfirmation = true
+        } label: {
+            Text("show\n\"no access to existing password\"\nalert")
+        }
+        .buttonStyle(.borderedProminent)
     }
     
     @ToolbarContentBuilder private func toolbarContent() -> some ToolbarContent {
