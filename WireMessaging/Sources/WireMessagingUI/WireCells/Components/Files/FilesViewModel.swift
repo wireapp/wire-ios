@@ -168,7 +168,7 @@ package final class FilesViewModel: ObservableObject {
     private let accentColorProvider: () -> WireAccentColor
     let isFoldersEnabled: Bool
 
-    @Published private(set) var hasMore = true
+    @Published var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
     @Published var searchText = ""
     @Published var alert: AlertModel?
@@ -179,6 +179,13 @@ package final class FilesViewModel: ObservableObject {
     var shouldReload: Bool = false
     var filterWithTags: [String] = []
     let title: String?
+    var showSearchBar: Bool {
+        state != .error && state != .pending
+    }
+
+    var showCloseButton: Bool {
+        navigationPath.isEmpty
+    }
 
     package init(
         useCases: UseCases,
@@ -230,13 +237,9 @@ package final class FilesViewModel: ObservableObject {
     /// When `refreshing` is `true`, the current state is preserved since loading is managed by the system.
 
     func reload(refreshing: Bool = false) async {
-        guard state != .pending else {
-            return
-        }
-
         cancelLoad()
         state = refreshing ? state : .loading
-        hasMore = true
+        hasMore = !refreshing
 
         await loadMore(refreshing: refreshing)
     }
