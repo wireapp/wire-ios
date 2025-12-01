@@ -61,7 +61,7 @@ extension FilesViewProtocol {
     @ViewBuilder private var listBackgroundView: some View {
         switch viewModel.state {
         case let .received(items) where items.isEmpty:
-            FilesInfoView(info: .noFilesFound(isBrowsing: isBrowsing))
+            FilesInfoView(info: .noFilesFound(scope: isBrowsing ? .allConversations : .oneConversation))
         case .pending:
             FilesInfoView(info: .preparingFiles)
         default:
