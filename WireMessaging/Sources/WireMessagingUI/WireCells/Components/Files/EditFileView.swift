@@ -38,9 +38,9 @@ struct EditFileView<ViewModel>: View where ViewModel: EditFileViewModelProtocol 
                     EmptyView()
                 case .loading:
                     ProgressView()
-                case .loaded(let url):
+                case let .loaded(url):
                     WebView(url: url)
-                case .error(let title, let message):
+                case let .error(title, message):
                     MoveToFolderEmptyStateView(
                         title: title,
                         message: message,

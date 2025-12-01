@@ -39,7 +39,7 @@ final class EditFileViewModelTests {
     private var cancellable: AnyCancellable?
 
     init() {
-        cancellable = sut.$state.sink { [weak self] state in
+        self.cancellable = sut.$state.sink { [weak self] state in
             self?.capturedStates.append(state)
         }
     }

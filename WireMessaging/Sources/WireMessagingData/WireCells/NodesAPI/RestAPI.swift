@@ -430,9 +430,9 @@ private extension RestPreSignedURL {
 
     var info: (url: URL, date: Date)? {
         guard
-            let urlString = self.url,
+            let urlString = url,
             let url = URL(string: urlString),
-            let expiresAtString = self.expiresAt,
+            let expiresAtString = expiresAt,
             let expiresAtTimeInterval = TimeInterval(expiresAtString)
         else {
             return nil

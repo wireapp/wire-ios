@@ -65,7 +65,8 @@ extension FilesViewModel {
                     editingURLRepository: previewEditingURLRepository()
                 ),
                 getAssetUseCase: WireCellsGetAssetUseCase(
-                    localAssetRepository: localAssetRepository, fileCache: cache)
+                    localAssetRepository: localAssetRepository, fileCache: cache
+                )
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,

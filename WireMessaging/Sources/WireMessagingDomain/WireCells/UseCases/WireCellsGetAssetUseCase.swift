@@ -63,12 +63,12 @@ package struct WireCellsGetAssetUseCase {
             let eTag,
             let asset = try await localAssetRepository.asset(nodeID: nodeID),
             eTag == asset.eTag,
-            let cacheKey = asset.downloadState.cacheKey
-        {
+            let cacheKey = asset.downloadState.cacheKey {
             return fileCache.fileURL(forKey: cacheKey)
         }
 
-        if let cacheKey = try await localAssetRepository.refreshAssetMetadata(nodeID: nodeID).asset.downloadState.cacheKey {
+        if let cacheKey = try await localAssetRepository.refreshAssetMetadata(nodeID: nodeID).asset.downloadState
+            .cacheKey {
             return fileCache.fileURL(forKey: cacheKey)
         }
 
