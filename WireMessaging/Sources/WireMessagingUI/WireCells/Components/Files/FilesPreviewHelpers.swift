@@ -116,7 +116,8 @@ extension FilesItemViewModel {
             onOpen: { _ in },
             onDelete: { _ in },
             onRename: { _ in },
-            onEditTagsSelected: { _ in }
+            onEditTagsSelected: { _ in },
+            onShareLinkSelected: { _ in }
         )
     }
 

@@ -103,11 +103,13 @@ package struct FilesView: FilesViewProtocol {
                                 await viewModel.reload()
                             }
                         )
+                    case let .shareLink(fileItem: fileItem):
+                        ShareLinkView(fileItem: fileItem)
                     case let .renameFile(fileRenameView):
                         fileRenameView
                     case let .createFolder(folderView):
                         folderView
-                    default:
+                    case .filters(view: _):
                         EmptyView()
                     }
                 }

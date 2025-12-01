@@ -77,6 +77,7 @@ package final class FilesViewModel: ObservableObject {
 
     enum SheetNavigation: Identifiable {
         case editTags(fileItem: FilesViewItem)
+        case shareLink(fileItem: FilesViewItem)
         case renameFile(view: FileRenameView)
         case createFolder(view: CreateFolderView)
         case filters(view: FilesFiltersView)
@@ -85,6 +86,8 @@ package final class FilesViewModel: ObservableObject {
             switch self {
             case let .editTags(fileItem: item):
                 "editTags(\(item.id))"
+            case let .shareLink(fileItem: item):
+                "shareLink(\(item.id))"
             case let .createFolder(view):
                 "createFolder(\(view.id))"
             case let .renameFile(view):
@@ -270,6 +273,9 @@ package final class FilesViewModel: ObservableObject {
             onEditTagsSelected: { [weak self] item in
                 self?.sheetNavigation = .editTags(fileItem: item)
             },
+            onShareLinkSelected: { [weak self] item in
+                self?.sheetNavigation = .shareLink(fileItem: item)
+            }
         )
     }
 
