@@ -24,7 +24,7 @@ public protocol OneOnOneResolverProtocol {
 
     func resolveOneOnOneConversation(
         with userID: WireDataModel.QualifiedID
-    ) async throws
+    ) async throws -> OneOnOneConversationResolution
 
     func resolveAllOneOnOneConversations() async throws
 }

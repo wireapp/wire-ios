@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 // MARK: - Update left navigator bar item when size class changes
@@ -38,7 +39,7 @@ extension ConversationViewController {
         button.setImage(UIImage(resource: .videoCall), for: .normal)
         button.tintColor = IconColors.foregroundDefault.resolvedColor(with: traitCollection)
 
-        button.accessibilityIdentifier = "videoCallBarButton"
+        button.accessibilityIdentifier = Locators.ActiveConversationPage.videoCallBarButton.rawValue
         button.accessibilityTraits.insert(.startsMediaSession)
         button.accessibilityLabel = CallActions.Label.makeAudioCall
 
@@ -108,7 +109,7 @@ extension ConversationViewController {
         let action = #selector(ConversationViewController.onBackButtonPressed(_:))
 
         let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: action)
-        button.accessibilityIdentifier = "ConversationBackButton"
+        button.accessibilityIdentifier = Locators.ActiveConversationPage.conversationBackButton.rawValue
         button.accessibilityLabel = L10n.Accessibility.Conversation.BackButton.description
         button.tintColor = hasUnread ? UIColor.accent() : nil
         button.accessibilityValue = hasUnread ? UnreadMessages.hint : nil

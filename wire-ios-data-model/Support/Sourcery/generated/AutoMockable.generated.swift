@@ -1811,6 +1811,15 @@ public class MockCoreCryptoKeyMigrationManagerProtocol: CoreCryptoKeyMigrationMa
 
     public init() {}
 
+    // MARK: - isAnyMigrationRequired
+
+    public var isAnyMigrationRequired: Bool {
+        get { return underlyingIsAnyMigrationRequired }
+        set(value) { underlyingIsAnyMigrationRequired = value }
+    }
+
+    public var underlyingIsAnyMigrationRequired: Bool!
+
     // MARK: - isMigrationToBytesNeeded
 
     public var isMigrationToBytesNeeded: Bool {
@@ -3965,29 +3974,6 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
             return mock
         } else {
             fatalError("no mock for `claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn`")
-        }
-    }
-
-    // MARK: - sendCommitBundle
-
-    var sendCommitBundleIn_Invocations: [(bundle: Data, context: NotificationContext)] = []
-    var sendCommitBundleIn_MockError: Error?
-    var sendCommitBundleIn_MockMethod: ((Data, NotificationContext) async throws -> [ZMUpdateEvent])?
-    var sendCommitBundleIn_MockValue: [ZMUpdateEvent]?
-
-    func sendCommitBundle(_ bundle: Data, in context: NotificationContext) async throws -> [ZMUpdateEvent] {
-        sendCommitBundleIn_Invocations.append((bundle: bundle, context: context))
-
-        if let error = sendCommitBundleIn_MockError {
-            throw error
-        }
-
-        if let mock = sendCommitBundleIn_MockMethod {
-            return try await mock(bundle, context)
-        } else if let mock = sendCommitBundleIn_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `sendCommitBundleIn`")
         }
     }
 

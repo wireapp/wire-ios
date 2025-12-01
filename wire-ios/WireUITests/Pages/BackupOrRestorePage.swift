@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class BackupOrRestorePage: PageModel {
@@ -25,19 +26,19 @@ class BackupOrRestorePage: PageModel {
     }
 
     var backupNowButton: XCUIElement {
-        app.descendants(matching: .any)["Back Up Now"]
+        app.descendants(matching: .button)[Locators.BackupOrRestorePage.backUpNow.rawValue]
     }
 
     var restoreFromBackupButton: XCUIElement {
-        app.descendants(matching: .any)["Restore from Backup"]
+        app.descendants(matching: .button)[Locators.BackupOrRestorePage.restoreFromBackupButton.rawValue]
     }
 
-    var backToAccountButton: XCUIElement {
-        app.buttons["Account"]
+    var backToPreviousPage: XCUIElement {
+        app.navigationBars.buttons.element(boundBy: 0)
     }
 
     var browseButtonOnBottom: XCUIElement {
-        app.tabBars.buttons["Browse"].firstMatch
+        app.tabBars.buttons[Locators.BackupOrRestorePage.browse.rawValue].firstMatch
     }
 
     func tapBackupNow() throws -> SetPasswordPage {
@@ -54,7 +55,7 @@ class BackupOrRestorePage: PageModel {
     }
 
     func goBackToAccountPage() throws -> AccountSettingsPage {
-        backToAccountButton.tap()
+        backToPreviousPage.tap()
         return try AccountSettingsPage()
     }
 }

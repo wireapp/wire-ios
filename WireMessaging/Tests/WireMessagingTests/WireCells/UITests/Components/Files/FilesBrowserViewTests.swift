@@ -170,6 +170,7 @@ final class FilesBrowserViewTests: XCTestCase {
             localAssetRepository: localAssetsRepository,
             fileCache: MockFileCache(),
             isFoldersEnabled: false,
+            accentColorProvider: { .default }
         )
 
         filesViewModel.state = state
