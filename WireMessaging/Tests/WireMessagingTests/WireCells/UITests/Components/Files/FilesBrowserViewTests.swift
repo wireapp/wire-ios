@@ -174,6 +174,7 @@ final class FilesBrowserViewTests: XCTestCase {
         )
 
         filesViewModel.state = state
+        filesViewModel.hasMore = false
 
         let filesBrowserView = FilesBrowserView(viewModel: filesViewModel)
 
