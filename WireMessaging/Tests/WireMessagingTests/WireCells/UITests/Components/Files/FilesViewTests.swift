@@ -344,6 +344,7 @@ final class FilesViewTests: XCTestCase {
         )
 
         filesViewModel.state = state
+        filesViewModel.hasMore = false
 
         return NavigationStack {
             FilesView(viewModel: filesViewModel)

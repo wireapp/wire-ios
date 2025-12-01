@@ -31,7 +31,7 @@ package struct FilesView: FilesViewProtocol {
     package var isBrowsing: Bool { false }
     @StateObject package var viewModel: FilesViewModel
     @Environment(\.dismiss) var dismiss
-    @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.wireAccentColor) private var accentColor
 
     let onOpenRecycleBin: () -> Void
     let onDismissContainer: () -> Void
@@ -56,30 +56,8 @@ package struct FilesView: FilesViewProtocol {
                 case .loading:
                     ProgressView()
                         .progressViewStyle(.circular)
-                case let .received(items):
-                    VStack(spacing: 0) {
-                        if items.isEmpty {
-                            Spacer()
-                            FilesInfoView(
-                                info: .noFilesFound(
-                                    scope: viewModel.isRecycleBin ? .recycleBin : .oneConversation
-                                )
-                            )
-                            Spacer()
-                        } else {
-                            filesList
-                                .listStyle(.plain)
-                                .refreshable { reloadTask(refreshing: true) }
-                        }
-
-                        if viewModel.isFoldersEnabled, !viewModel.isRecycleBin {
-                            CreateFolderCTA {
-                                viewModel.onCreateFolder()
-                            }
-                        }
-                    }
-                case .pending:
-                    FilesInfoView(info: .preparingFiles)
+                case .received, .pending:
+                    filesList
                 case .error:
                     FilesInfoView(info: .error, onReload: {
                         reloadTask()
@@ -91,7 +69,6 @@ package struct FilesView: FilesViewProtocol {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
-            .interactiveDismissDisabled()
             .toolbar { toolbarContent }
             .onAppear { reloadTask() }
             .onReceive(viewModel.triggerReload) { _ in
@@ -178,11 +155,22 @@ private extension FilesView {
         )
         .accessibilityLabel(Accessibility.Files.close)
         .accessibilityIdentifier("close")
-        .tint(ColorTheme.Base.primary(wireAccentColor).color)
+        .tint(ColorTheme.Base.primary(accentColor).color)
     }
 
     var moreActionsButton: some View {
         Menu {
+            Button {
+                viewModel.onCreateFolder()
+            } label: {
+                Label {
+                    Text(Strings.Files.List.newFolder)
+                } icon: {
+                    Image(systemName: "folder")
+                        .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                }
+            }
+
             Button {
                 onOpenRecycleBin()
             } label: {
@@ -193,11 +181,10 @@ private extension FilesView {
                         .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
                 }
             }
-
         } label: {
             Image(systemName: "ellipsis.circle")
         }
-        .tint(ColorTheme.Base.primary(wireAccentColor).color)
+        .tint(ColorTheme.Base.primary(accentColor).color)
     }
 }
 
