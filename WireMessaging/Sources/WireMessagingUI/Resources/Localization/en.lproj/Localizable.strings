@@ -29,6 +29,7 @@
 "general.error.noInternet.message." = "There seems to be a problem with your network. Please try again later.";
 "general.create" = "Create";
 "general.cancel" = "Cancel";
+"general.done" = "Done";
 
 // MARK: - Channel Access level
 "channel_access_level.public" = "Public";
@@ -168,6 +169,11 @@
 "conversation.wireCells.tags.error.saveFailedTitle" = "Unable to edit tags";
 "conversation.wireCells.tags.error.saveFailedMessage" = "Due to an error your tags could not be edited.";
 "conversation.wireCells.tags.error.retryButton" = "Try again";
+
+// MARK: - Share Link View
+"conversation.wireCells.shareLink.title" = "Share via link";
+"conversation.wireCells.shareLink.password.title" = "Password";
+"conversation.wireCells.shareLink.expiration.title" = "Expiration";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "File not available";

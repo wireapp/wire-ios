@@ -22,6 +22,9 @@ import WireFoundation
 import WireMessagingDomain
 import WireMessagingDomainSupport
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
+
 struct ShareLinkView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
@@ -35,6 +38,11 @@ struct ShareLinkView: View {
     var body: some View {
         NavigationStack {
             content()
+                .navigationTitle(Text(Strings.ShareLink.title))
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    toolbarContent()
+                }
                 .sheet(item: $viewModel.sheetNavigation) { navigationItem in
                     switch navigationItem {
                     case .password:
@@ -65,6 +73,25 @@ struct ShareLinkView: View {
                 .buttonStyle(.borderedProminent)
             }
             .padding()
+        }
+    }
+    
+    @ToolbarContentBuilder private func toolbarContent() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                dismiss()
+            } label: {
+                Text(L10n.Localizable.General.cancel)
+            }
+        }
+        
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                //TODO: ...
+            } label: {
+                Text(L10n.Localizable.General.done)
+                    .bold()
+            }
         }
     }
 }
