@@ -17,6 +17,7 @@
 //
 
 import WireCallingAssembly
+import WireCommonComponents
 import WireData
 @preconcurrency import WireDataModel
 import WireMessagingAssembly
@@ -67,7 +68,10 @@ struct ZClientControllerBuilder {
 
     @MainActor
     private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
-        WireMeetingsFactory(passwordValidator: AuthenticationPasswordValidator())
+        WireMeetingsFactory(
+            passwordValidator: AuthenticationPasswordValidator(),
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
     }
 
 }

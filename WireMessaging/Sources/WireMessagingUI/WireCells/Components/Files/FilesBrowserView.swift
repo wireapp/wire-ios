@@ -44,16 +44,8 @@ package struct FilesBrowserView: FilesViewProtocol {
                 case .loading:
                     ProgressView()
                         .progressViewStyle(.circular)
-                case let .received(items):
-                    if items.isEmpty {
-                        FilesInfoView(info: .noFilesFound(scope: .allConversations))
-                    } else {
-                        filesList
-                            .listStyle(.plain)
-                            .refreshable { reloadTask(refreshing: true) }
-                    }
-                case .pending:
-                    FilesInfoView(info: .preparingFiles)
+                case .received, .pending:
+                    filesList
                 case .error:
                     FilesInfoView(info: .error, onReload: {
                         reloadTask()
@@ -65,7 +57,8 @@ package struct FilesBrowserView: FilesViewProtocol {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
-            .if(showSearchBar) { view in
+            .toolbar { toolbarContent }
+            .if(viewModel.showSearchBar) { view in
                 view.searchable(
                     text: $viewModel.searchText,
                     placement: .navigationBarDrawer,
@@ -79,19 +72,35 @@ package struct FilesBrowserView: FilesViewProtocol {
                 message: { Text($0.message) },
                 actions: { _ in confirmButton }
             )
+            .sheet(item: $viewModel.sheetNavigation) {
+                Task { await viewModel.onSheetDismissed() }
+            } content: { navigationItem in
+                switch navigationItem {
+                case let .filters(filtersView):
+                    filtersView
+                default:
+                    EmptyView()
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Toolbar
+
+private extension FilesBrowserView {
+
+    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button {
+                viewModel.openFilters()
+            } label: {
+                Image(systemName: "line.3.horizontal.decrease.circle")
+            }
+
         }
     }
 
-    private var showSearchBar: Bool {
-        switch viewModel.state {
-        case .loading:
-            true
-        case let .received(items):
-            !items.isEmpty || !viewModel.searchText.isEmpty
-        case .pending, .error:
-            false
-        }
-    }
 }
 
 // MARK: - Helper

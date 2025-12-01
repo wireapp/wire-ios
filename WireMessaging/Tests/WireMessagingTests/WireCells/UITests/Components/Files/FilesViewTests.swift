@@ -333,9 +333,11 @@ final class FilesViewTests: XCTestCase {
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
             fileCache: MockFileCache(),
             isFoldersEnabled: true,
+            accentColorProvider: { .default }
         )
 
         filesViewModel.state = state
+        filesViewModel.hasMore = false
 
         return NavigationStack {
             FilesView(viewModel: filesViewModel)

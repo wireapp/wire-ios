@@ -65,6 +65,7 @@ final class FilesViewModelTests {
             localAssetRepository: localAssetRepository,
             fileCache: fileCache,
             isFoldersEnabled: true,
+            accentColorProvider: { .default }
         )
 
         sut.$state.dropFirst().sink { [weak self] state in

@@ -31,6 +31,7 @@ package struct FilesView: FilesViewProtocol {
     package var isBrowsing: Bool { false }
     @StateObject package var viewModel: FilesViewModel
     @Environment(\.dismiss) var dismiss
+    @Environment(\.wireAccentColor) var accentColor
 
     package init(viewModel: @autoclosure @escaping () -> FilesViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
@@ -46,26 +47,8 @@ package struct FilesView: FilesViewProtocol {
                 case .loading:
                     ProgressView()
                         .progressViewStyle(.circular)
-                case let .received(items):
-                    VStack(spacing: 0) {
-                        if items.isEmpty {
-                            Spacer()
-                            FilesInfoView(info: .noFilesFound(scope: .oneConversation))
-                            Spacer()
-                        } else {
-                            filesList
-                                .listStyle(.plain)
-                                .refreshable { reloadTask(refreshing: true) }
-                        }
-
-                        if viewModel.isFoldersEnabled {
-                            CreateFolderCTA {
-                                viewModel.onCreateFolder()
-                            }
-                        }
-                    }
-                case .pending:
-                    FilesInfoView(info: .preparingFiles)
+                case .received, .pending:
+                    filesList
                 case .error:
                     FilesInfoView(info: .error, onReload: {
                         reloadTask()
@@ -77,7 +60,6 @@ package struct FilesView: FilesViewProtocol {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
-            .interactiveDismissDisabled()
             .toolbar { toolbarContent }
             .onAppear { reloadTask() }
             .alert(
@@ -86,40 +68,31 @@ package struct FilesView: FilesViewProtocol {
                 message: { Text($0.message) },
                 actions: { _ in confirmButton }
             )
-            .sheet(item: $viewModel.sheetNavigation) { navigationItem in
-                switch navigationItem {
-                case let .editTags(fileItem: fileItem):
-                    TagsEditView(
-                        fileItem: fileItem,
-                        useCases: .init(
-                            updateTags: viewModel.useCases.updateTags,
-                            getSuggestions: viewModel.useCases.getTagSuggestions
-                        ),
-                        postSaveAction: {
-                            await viewModel.reload()
-                        }
-                    )
+            .sheet(
+                item: $viewModel.sheetNavigation,
+                onDismiss: {
+                    Task { await viewModel.onSheetDismissed() }
+                }, content: { navigationItem in
+                    switch navigationItem {
+                    case let .editTags(fileItem: fileItem):
+                        TagsEditView(
+                            fileItem: fileItem,
+                            useCases: .init(
+                                updateTags: viewModel.useCases.updateTags,
+                                getSuggestions: viewModel.useCases.getTagSuggestions
+                            ),
+                            postSaveAction: {
+                                await viewModel.reload()
+                            }
+                        )
+                    case let .renameFile(fileRenameView):
+                        fileRenameView
+                    case let .createFolder(folderView):
+                        folderView
+                    default:
+                        EmptyView()
+                    }
                 }
-            }
-            .sheet(
-                item: $viewModel.fileRenameView,
-                onDismiss: {
-                    if viewModel.didRenameFile {
-                        reloadTask()
-                        viewModel.didRenameFile = false
-                    }
-                },
-                content: { $0 }
-            )
-            .sheet(
-                item: $viewModel.createFolderView,
-                onDismiss: {
-                    if viewModel.didCreateFolder {
-                        reloadTask()
-                        viewModel.didCreateFolder = false
-                    }
-                },
-                content: { $0 }
             )
         }
     }
@@ -131,13 +104,44 @@ package struct FilesView: FilesViewProtocol {
 private extension FilesView {
 
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        if viewModel.showCloseButton {
+            ToolbarItem(placement: .topBarLeading) { closeButton }
+        }
+
         if !viewModel.folderMenuOptions.isEmpty {
             ToolbarTitleMenu {
                 toolBarTitleMenuContent()
             }
         }
 
-        ToolbarItem(placement: .navigationBarTrailing) { closeButton }
+        if viewModel.isFoldersEnabled {
+            ToolbarItem(placement: .topBarTrailing) {
+                menuButton
+            }
+        }
+    }
+
+    var menuButton: some View {
+        Menu {
+            createFolderButton
+        } label: {
+            Image(systemName: "plus.circle.fill")
+                .foregroundStyle(accentColor)
+                .frame(width: 44, height: 44, alignment: .trailing)
+        }
+    }
+
+    var createFolderButton: some View {
+        HStack {
+            Button {
+                viewModel.onCreateFolder()
+            } label: {
+                HStack {
+                    Text(Strings.Files.List.newFolder)
+                    Image(systemName: "folder")
+                }
+            }
+        }
     }
 
     func toolBarTitleMenuContent() -> some View {
@@ -155,8 +159,8 @@ private extension FilesView {
         Button(
             action: { dismiss() },
             label: {
-                Image(.close)
-                    .foregroundStyle(SemanticColors.Icon.foregroundDefaultBlack.color)
+                Text(L10n.Localizable.General.close)
+                    .foregroundStyle(accentColor)
                     .frame(width: 44, height: 44, alignment: .trailing)
             }
         )
@@ -203,5 +207,7 @@ private extension FilesViewModel.FolderMenuOption {
 }
 
 #Preview {
-    FilesView(viewModel: .preview(isFoldersEnabled: true))
+    NavigationStack {
+        FilesView(viewModel: .preview(isFoldersEnabled: true))
+    }
 }

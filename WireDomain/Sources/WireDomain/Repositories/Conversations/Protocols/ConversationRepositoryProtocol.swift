@@ -77,7 +77,7 @@ public protocol ConversationRepositoryProtocol: Sendable {
     func pullMLSOneToOneConversation(
         userID: String,
         userDomain: String
-    ) async throws -> String
+    ) async throws -> (String, MLSPublicKeys?)
 
     /// Fetches a MLS conversation locally.
     ///

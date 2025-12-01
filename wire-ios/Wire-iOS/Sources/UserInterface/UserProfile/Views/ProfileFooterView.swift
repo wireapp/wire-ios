@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireLocators
 
 protocol ProfileFooterViewDelegate: AnyObject {
 
@@ -44,8 +45,8 @@ final class ProfileFooterView: ConversationDetailFooterView {
     // MARK: - Configuration
 
     override func setupButtons() {
-        leftButton.accessibilityIdentifier = "left_button"
-        rightButton.accessibilityIdentifier = "right_button"
+        leftButton.accessibilityIdentifier = Locators.UserDetailsPage.connectLeftButton.rawValue
+        rightButton.accessibilityIdentifier = Locators.UserDetailsPage.moreOptionRightButton.rawValue
         rightButton.accessibilityLabel = L10n.Localizable.Meta.Menu.accessibilityMoreOptionsButton
     }
 

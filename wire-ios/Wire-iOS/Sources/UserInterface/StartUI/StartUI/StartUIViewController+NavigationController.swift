@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireLocators
 
 extension StartUIViewController {
 
@@ -31,7 +32,7 @@ extension StartUIViewController {
             }
         )
         cancelButton.accessibilityLabel = L10n.Accessibility.ContactsList.CancelButton.description
-        cancelButton.accessibilityIdentifier = "cancel"
+        cancelButton.accessibilityIdentifier = Locators.NewConversationPage.cancel.rawValue
         navigationItem.rightBarButtonItem = cancelButton
     }
 }
