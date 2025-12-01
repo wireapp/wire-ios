@@ -22,6 +22,19 @@ import Combine
 extension ShareLinkPasswordView {
     @MainActor
     final class ViewModel: ObservableObject {
+        @Published var isPresentingRemovePasswordConfirmation = false
+        @Published var isPresentingNoAccessToExistingPasswordConfirmation = false
+
+        var canSave: Bool {
+            true //TODO: ...
+        }
         
+        func removePassword() {
+            //TODO: ...
+        }
+        
+        func changePassword() {
+            //TODO: ...
+        }
     }
 }

@@ -172,7 +172,24 @@
 
 // MARK: - Share Link View
 "conversation.wireCells.shareLink.title" = "Share via link";
+
+// MARK: - Share Link Password View
 "conversation.wireCells.shareLink.password.title" = "Password";
+"conversation.wireCells.shareLink.password.description" = "People who want to access content via the link need to enter this password first.";
+"conversation.wireCells.shareLink.password.setPasswordToggle" = "Set password";
+"conversation.wireCells.shareLink.password.generatePassword" = "Generate Password";
+"conversation.wireCells.shareLink.password.textfieldTitle" = "Password";
+"conversation.wireCells.shareLink.password.textfieldPrompt" = "Enter password";
+"conversation.wireCells.shareLink.password.copyPassword" = "Copy Password";
+"conversation.wireCells.shareLink.password.changePassword" = "Change Password";
+"conversation.wireCells.shareLink.password.removeConfirmation.title" = "Remove password?";
+"conversation.wireCells.shareLink.password.removeConfirmation.message" = "Anyone with the link can open the file and view its contents.";
+"conversation.wireCells.shareLink.password.removeConfirmation.button" = "Remove";
+"conversation.wireCells.shareLink.password.noAccessToExisting.title" = "No access to existing password";
+"conversation.wireCells.shareLink.password.noAccessToExisting.message" = "After reinstalling Wire, you can't copy the set password. Yet, it is still valid.\n\nIf you didn't save the password, change it and reshare the updated link.";
+"conversation.wireCells.shareLink.password.noAccessToExisting.button" = "Change password";
+
+// MARK: - Share Link Expiration View
 "conversation.wireCells.shareLink.expiration.title" = "Expiration";
 
 // MARK: - Conversation

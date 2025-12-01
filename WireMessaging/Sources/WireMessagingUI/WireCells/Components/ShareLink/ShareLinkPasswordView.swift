@@ -22,7 +22,7 @@ import WireFoundation
 import WireMessagingDomain
 import WireMessagingDomainSupport
 
-private typealias Strings = L10n.Localizable.Conversation.WireCells
+private typealias Strings = L10n.Localizable.Conversation.WireCells.ShareLink.Password
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct ShareLinkPasswordView: View {
@@ -34,11 +34,45 @@ struct ShareLinkPasswordView: View {
     var body: some View {
         NavigationStack {
             content()
-                .navigationTitle(Text(Strings.ShareLink.Password.title))
+                .navigationTitle(Text(Strings.title))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     toolbarContent()
                 }
+                .alert(
+                    Strings.RemoveConfirmation.title,
+                    isPresented: $viewModel.isPresentingRemovePasswordConfirmation,
+                    actions: {
+                        Button(
+                            Strings.RemoveConfirmation.button,
+                            action: { viewModel.removePassword() }
+                        )
+                        
+                        Button(
+                            L10n.Localizable.General.cancel,
+                            role: .cancel,
+                            action: {}
+                        )
+                    },
+                    message: { Text(Strings.RemoveConfirmation.message) }
+                )
+                .alert(
+                    Strings.NoAccessToExisting.title,
+                    isPresented: $viewModel.isPresentingNoAccessToExistingPasswordConfirmation,
+                    actions: {
+                        Button(
+                            Strings.NoAccessToExisting.button,
+                            action: { viewModel.changePassword() }
+                        )
+                        
+                        Button(
+                            L10n.Localizable.General.cancel,
+                            role: .cancel,
+                            action: {}
+                        )
+                    },
+                    message: { Text(Strings.NoAccessToExisting.message) }
+                )
                 .tint(ColorTheme.Base.primary(wireAccentColor).color)
         }
     }
@@ -46,7 +80,19 @@ struct ShareLinkPasswordView: View {
     @ViewBuilder private func content() -> some View {
         ScrollView {
             VStack {
-                Text("TODO: Password")
+                Button {
+                    viewModel.isPresentingRemovePasswordConfirmation = true
+                } label: {
+                    Text("show \"remove password\" confirmation alert")
+                }
+                .buttonStyle(.borderedProminent)
+                
+                Button {
+                    viewModel.isPresentingNoAccessToExistingPasswordConfirmation = true
+                } label: {
+                    Text("show \"no access to existing password\" alert")
+                }
+                .buttonStyle(.borderedProminent)
             }
             .padding()
         }
@@ -54,7 +100,7 @@ struct ShareLinkPasswordView: View {
     
     @ToolbarContentBuilder private func toolbarContent() -> some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            Button {
+            Button(role: .cancel) {
                 dismiss()
             } label: {
                 Text(L10n.Localizable.General.cancel)
@@ -68,6 +114,7 @@ struct ShareLinkPasswordView: View {
                 Text(L10n.Localizable.General.save)
                     .bold()
             }
+            .disabled(!viewModel.canSave)
         }
     }
 }
