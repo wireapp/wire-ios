@@ -22,27 +22,15 @@ import WireFoundation
 import WireMessagingDomain
 import WireMessagingDomainSupport
 
-struct ShareLinkView: View {
+struct ShareLinkPasswordView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
 
-    @StateObject private var viewModel: ViewModel
-    
-    init(fileItem: FilesViewItem) {
-        _viewModel = .init(wrappedValue: .init(fileItem: fileItem))
-    }
+    @StateObject private var viewModel: ViewModel = .init()
     
     var body: some View {
         NavigationStack {
             content()
-                .sheet(item: $viewModel.sheetNavigation) { navigationItem in
-                    switch navigationItem {
-                    case .password:
-                        ShareLinkPasswordView()
-                    case .expiration:
-                        Text("TODO: Expiration view")
-                    }
-                }
                 .tint(ColorTheme.Base.primary(wireAccentColor).color)
         }
     }
@@ -50,19 +38,7 @@ struct ShareLinkView: View {
     @ViewBuilder private func content() -> some View {
         ScrollView {
             VStack {
-                Button {
-                    viewModel.sheetNavigation = .password
-                } label: {
-                    Text("Password (dummy)")
-                }
-                .buttonStyle(.borderedProminent)
-
-                Button {
-                    viewModel.sheetNavigation = .expiration
-                } label: {
-                    Text("Expiration (dummy)")
-                }
-                .buttonStyle(.borderedProminent)
+                Text("TODO: Password")
             }
             .padding()
         }
@@ -70,16 +46,5 @@ struct ShareLinkView: View {
 }
 
 #Preview {
-    let item = FilesViewItem(
-        id: UUID(),
-        kind: .file,
-        name: "some_file.pdf",
-        filePath: "some/path",
-        ownedBy: nil,
-        modifiedAt: nil,
-        icon: .document,
-        tags: []
-    )
-    
-    ShareLinkView(fileItem: item)
+    ShareLinkPasswordView()
 }

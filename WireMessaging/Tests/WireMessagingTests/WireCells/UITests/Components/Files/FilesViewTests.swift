@@ -365,6 +365,7 @@ private extension FilesItemViewModel {
             onOpen: { _ in },
             onDelete: { _ in },
             onEditTagsSelected: { _ in },
+            onShareLinkSelected: { _ in },
             locale: Locale(identifier: "en_US_POSIX"),
             calendar: Calendar(identifier: .gregorian),
             timeZone: .gmt
