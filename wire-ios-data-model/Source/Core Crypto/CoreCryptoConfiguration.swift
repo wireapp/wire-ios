@@ -46,7 +46,7 @@ public class CoreCryptoConfigProvider {
     public func createInitialConfiguration(
         sharedContainerURL: URL,
         userID: UUID,
-        createKeyIfNeeded: Bool
+        allowKeyCreation: Bool
     ) async throws -> (path: String, key: Data) {
 
         let accountDirectory = CoreDataStack.accountDataFolder(
@@ -59,7 +59,7 @@ public class CoreCryptoConfigProvider {
 
         do {
             let key = try await coreCryptoKeyProvider.coreCryptoKey(
-                createIfNeeded: createKeyIfNeeded,
+                allowCreation: allowKeyCreation,
                 path: coreCryptoDirectory.path
             )
             return (

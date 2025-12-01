@@ -33,7 +33,7 @@ class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
 
     var coreCryptoKeyMock: CoreCryptoKeyMock?
 
-    override func coreCryptoKey(createIfNeeded: Bool, path: String) async throws -> Data {
+    override func coreCryptoKey(allowCreation: Bool, path: String) async throws -> Data {
         guard let mock = coreCryptoKeyMock else { throw MockError.unmockedMethodCalled }
         return try mock()
     }
@@ -82,7 +82,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
         let configuration = try await sut.createInitialConfiguration(
             sharedContainerURL: OtrBaseTest.sharedContainerURL,
             userID: selfUserID,
-            createKeyIfNeeded: true
+            allowKeyCreation: true
         )
 
         // THEN
@@ -109,7 +109,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
             _ = try await sut.createInitialConfiguration(
                 sharedContainerURL: OtrBaseTest.sharedContainerURL,
                 userID: selfUserID,
-                createKeyIfNeeded: true
+                allowKeyCreation: true
             )
         }
     }
