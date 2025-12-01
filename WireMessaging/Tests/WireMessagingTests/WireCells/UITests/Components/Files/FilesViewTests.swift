@@ -91,6 +91,7 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_withShortStrings() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "image.jpg",
             filePath: "",
@@ -115,6 +116,7 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_withLongStrings() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "some random file with a long name.excel",
             filePath: "",
@@ -139,6 +141,7 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_withOneTag() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "image.jpg",
             filePath: "",
@@ -163,6 +166,7 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_withThreeTags() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "image.jpg",
             filePath: "",
@@ -187,6 +191,7 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_dynamicTypeVariants() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "some random file with a long name.excel",
             filePath: "",
@@ -213,6 +218,7 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_whenDownloading() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "image.jpg",
             filePath: "",
@@ -245,6 +251,7 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_whenDownloadFailed() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "image.jpg",
             filePath: "",
@@ -335,7 +342,11 @@ final class FilesViewTests: XCTestCase {
                 createFolder: WireCellsCreateFolderUseCase(
                     nodesRepository: nodesRepository
                 ),
-                getEditingURL: getEditingURLUseCase
+                getEditingURL: getEditingURLUseCase,
+                getAssetUseCase: WireCellsGetAssetUseCase(
+                    localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                    fileCache: MockFileCache()
+                )
             ),
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),

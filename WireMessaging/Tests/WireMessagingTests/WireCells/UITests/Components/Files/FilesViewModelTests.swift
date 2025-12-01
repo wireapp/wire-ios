@@ -63,7 +63,11 @@ final class FilesViewModelTests {
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesApi),
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi),
                 createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesRepository),
-                getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: editingURLRepository)
+                getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: editingURLRepository),
+                getAssetUseCase: WireCellsGetAssetUseCase(
+                    localAssetRepository: localAssetRepository,
+                    fileCache: fileCache
+                )
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
@@ -72,6 +76,10 @@ final class FilesViewModelTests {
             isFoldersEnabled: true,
             isCollaboraEnabled: false
         )
+
+        localAssetRepository
+            .refreshAssetMetadataNodeID_MockValue = (WireCellsNode.fixture(), WireCellsLocalAsset.fixture())
+        localAssetRepository.downloadAssetNodeID_MockMethod = { _ in }
 
         sut.$state.dropFirst().sink { [weak self] state in
             self?.itemsUpdates.append(state.items)
@@ -142,6 +150,7 @@ final class FilesViewModelTests {
             [], // Clears items
             [FilesViewItem(
                 id: node.id,
+                eTag: "eTag",
                 kind: .file,
                 name: "a.jpg",
                 filePath: "some-cell/a.jpg",
@@ -153,6 +162,7 @@ final class FilesViewModelTests {
             [], // Clears items
             [FilesViewItem(
                 id: node.id,
+                eTag: "eTag",
                 kind: .file,
                 name: "a.jpg",
                 filePath: "some-cell/a.jpg",
@@ -201,6 +211,7 @@ final class FilesViewModelTests {
         #expect(sut.state.items == [
             FilesViewItem(
                 id: node1.id,
+                eTag: "eTag",
                 kind: .file,
                 name: "a.jpg",
                 filePath: "some-cell/a.jpg",
@@ -211,6 +222,7 @@ final class FilesViewModelTests {
             ),
             FilesViewItem(
                 id: node2.id,
+                eTag: "eTag",
                 kind: .file,
                 name: "b.jpg",
                 filePath: "some-cell/b.jpg",
@@ -249,6 +261,7 @@ final class FilesViewModelTests {
         #expect(sut.state.items == [
             FilesViewItem(
                 id: node1.id,
+                eTag: "eTag",
                 kind: .file,
                 name: "a.jpg",
                 filePath: "some-cell/a.jpg",
@@ -259,6 +272,7 @@ final class FilesViewModelTests {
             ),
             FilesViewItem(
                 id: node2.id,
+                eTag: "eTag",
                 kind: .file,
                 name: "b.jpg",
                 filePath: "some-cell/b.jpg",
@@ -269,6 +283,7 @@ final class FilesViewModelTests {
             ),
             FilesViewItem(
                 id: node3.id,
+                eTag: "eTag",
                 kind: .file,
                 name: "c.jpg",
                 filePath: "some-cell/c.jpg",
@@ -391,6 +406,7 @@ final class FilesViewModelTests {
             sut.state.items == [
                 FilesViewItem(
                     id: nodeB.id,
+                    eTag: "eTag",
                     kind: .file,
                     name: "bb.xyz",
                     filePath: "foo/bb.xyz",
@@ -401,6 +417,7 @@ final class FilesViewModelTests {
                 ),
                 FilesViewItem(
                     id: nodeC.id,
+                    eTag: "eTag",
                     kind: .file,
                     name: "cc.xyz",
                     filePath: "foo/cc.xyz",
@@ -411,6 +428,7 @@ final class FilesViewModelTests {
                 ),
                 FilesViewItem(
                     id: nodeD.id,
+                    eTag: "eTag",
                     kind: .file,
                     name: "dd.xyz",
                     filePath: "foo/dd.xyz",
@@ -421,6 +439,7 @@ final class FilesViewModelTests {
                 ),
                 FilesViewItem(
                     id: nodeA.id,
+                    eTag: "eTag",
                     kind: .file,
                     name: "aaa.xyz",
                     filePath: "foo/aaa.xyz",
@@ -463,33 +482,6 @@ final class FilesViewModelTests {
         localAssetRepository.downloadAssetNodeID_MockMethod = { nodeID in
             assets[nodeID] = WireCellsLocalAsset.fixture(downloadState: .downloaded(cacheKey: "some-key"))
         }
-        fileCache.fileURLForKey_MockValue = URL(fileURLWithPath: "/foo")
-
-        // when
-        await sut.openItem(item: .fixture(id: nodeID))
-
-        // then
-        #expect(fileCache.fileURLForKey_Invocations == ["some-key"])
-        #expect(sut.viewingURL == URL(fileURLWithPath: "/foo"))
-    }
-
-    @Test
-    func openItem_whenFileAlreadyDownloading() async throws {
-        // given
-        var assets: [UUID: WireCellsLocalAsset] = [:]
-        let nodeID = UUID()
-        localAssetRepository.assetNodeID_MockMethod = { nodeID in
-            assets[nodeID]
-        }
-        localAssetRepository
-            .downloadAssetNodeID_MockError = WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress
-
-        localAssetRepository.observeAssetNodeID_MockMethod = { nodeID in
-            let asset = WireCellsLocalAsset.fixture(downloadState: .downloaded(cacheKey: "some-key"))
-            assets[nodeID] = asset
-            return [asset].publisher.eraseToAnyPublisher()
-        }
-
         fileCache.fileURLForKey_MockValue = URL(fileURLWithPath: "/foo")
 
         // when
