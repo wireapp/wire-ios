@@ -17,6 +17,10 @@
 //
 
 import SwiftUI
+import WireDesign
+import WireFoundation
+import WireMessagingDomain
+import WireMessagingDomainSupport
 
 struct ShareLinkView: View {
     @Environment(\.dismiss) private var dismiss
@@ -39,6 +43,7 @@ struct ShareLinkView: View {
                         Text("TODO: Expiration view")
                     }
                 }
+                .tint(ColorTheme.Base.primary(wireAccentColor).color)
         }
     }
     
