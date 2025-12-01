@@ -34,7 +34,7 @@ protocol EditFileViewModelProtocol: ObservableObject {
 @MainActor
 final class EditFileViewModel: EditFileViewModelProtocol {
 
-    enum State {
+    enum State: Equatable {
         case idle
         case loading
         case loaded(URL)
