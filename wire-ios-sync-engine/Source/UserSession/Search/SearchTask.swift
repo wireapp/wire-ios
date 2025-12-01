@@ -694,6 +694,7 @@ extension SearchTask {
                     self?.tasksRemaining -= 1
                 }
 
+                print(response.payload?.asTransportData()) // TODO: delete
                 guard
                     let contextProvider = self?.contextProvider,
                     let payload = response.payload?.asDictionary(),
