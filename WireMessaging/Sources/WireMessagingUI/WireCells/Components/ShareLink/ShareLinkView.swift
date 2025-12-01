@@ -31,6 +31,14 @@ struct ShareLinkView: View {
     var body: some View {
         NavigationStack {
             content()
+                .sheet(item: $viewModel.sheetNavigation) { navigationItem in
+                    switch navigationItem {
+                    case .password:
+                        Text("TODO: Password view")
+                    case .expiration:
+                        Text("TODO: Expiration view")
+                    }
+                }
         }
     }
     
@@ -38,14 +46,14 @@ struct ShareLinkView: View {
         ScrollView {
             VStack {
                 Button {
-                    
+                    viewModel.sheetNavigation = .password
                 } label: {
                     Text("Password (dummy)")
                 }
                 .buttonStyle(.borderedProminent)
 
                 Button {
-                    
+                    viewModel.sheetNavigation = .expiration
                 } label: {
                     Text("Expiration (dummy)")
                 }

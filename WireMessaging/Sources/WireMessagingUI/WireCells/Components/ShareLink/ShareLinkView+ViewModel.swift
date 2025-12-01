@@ -24,6 +24,15 @@ extension ShareLinkView {
     final class ViewModel: ObservableObject {
         private let fileItem: FilesViewItem
         
+        enum SheetNavigation: String, Identifiable {
+            case password
+            case expiration
+            
+            var id: String { rawValue }
+        }
+        
+        @Published var sheetNavigation: SheetNavigation?
+        
         init(fileItem: FilesViewItem) {
             self.fileItem = fileItem
         }
