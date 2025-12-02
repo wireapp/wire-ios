@@ -148,7 +148,9 @@ final class ZClientViewController: UIViewController {
         channelConversationFormFactory: channelConversationFormFactory,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
         featureConfigRepository: userSession.clientSessionComponent!.featureConfigRepository,
-        conversationCreationRepository: ConversationCreationRepository(contextProvider: contextProvider)
+        conversationCreationRepository: ConversationCreationRepository(
+            searchUsersUseCase: { [weak userSession] in userSession?.makeSearchUsersUseCase() }
+        )
     )
 
     private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(

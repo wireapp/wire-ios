@@ -16,23 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireData
-import WireDataModel
 import WireMessagingDomain
+import WireSyncEngine
 
 struct ConversationCreationRepository: ConversationCreationRepositoryProtocol {
 
-    var contextProvider: any ManagedObjectContextProvider
+    let searchUsersUseCase: () -> (any SearchUsersUseCaseProtocol)?
 
     @concurrent
     func areBotsSetUpInTheTeam() async throws -> Bool {
-        let context = contextProvider.newBackgroundContext()
-        let botCount = try await context.perform {
-            let botFetchRequest = ZMUser.fetchRequest()
-            botFetchRequest.predicate = NSPredicate(format: "typeValue == %d", TypeOfUser.bot.rawValue)
-            return try context.count(for: botFetchRequest)
+
+        guard let searchUsersUseCase = searchUsersUseCase() else { return false }
+
+        // search for any old-style services/bots whitelisted in the team
+        let result = try await searchUsersUseCase.invoke( // TODO: skip for mls?
+            query: "",
+            options: .services,
+            messageProtocol: .proteus
+        )
+
+        return await searchUsersUseCase.context.perform {
+            !result.services.isEmpty
         }
-        return botCount > 0
+
     }
 
 }
