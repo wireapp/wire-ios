@@ -65,7 +65,7 @@ struct MoveToFolderPage<ViewModel>: View where ViewModel: MoveToFolderPageViewMo
                 ).frame(maxWidth: .infinity, maxHeight: .infinity)
             }
 
-            CreateFolderCTA(onTap: viewModel.createFolder)
+            CreateFolderCTA(action: viewModel.createFolder)
                 .disabled(!viewModel.isNewFolderEnabled)
         }
         .navigationTitle(viewModel.title)
