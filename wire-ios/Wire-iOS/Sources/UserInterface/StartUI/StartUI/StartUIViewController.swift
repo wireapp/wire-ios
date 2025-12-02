@@ -108,17 +108,13 @@ final class StartUIViewController: UIViewController {
     }
 
     var showsGroupSelector: Bool {
-
-        // restore old behavior until `apps` feature flows are complete
-        #if true
+        guard DeveloperFlag.considerAppsFeatureFlag.isOn else {
             return SearchGroup.all.count > 1 &&
                 userSession.selfUser.canSeeServices &&
                 userSession.defaultProtocol != .mls
-        #else
-            // TODO: [WPB-21834] consider adding a client-side feature flag for the new behavior
-            return isAppsFeatureEnabled && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
-        #endif
+        }
 
+        return isAppsFeatureEnabled && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
     }
 
     // MARK: - Init
