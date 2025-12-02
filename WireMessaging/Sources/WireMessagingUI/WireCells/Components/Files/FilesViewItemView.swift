@@ -153,7 +153,7 @@ struct FilesViewItemView: View {
 
             ProgressView(value: viewModel.progress, total: 1)
                 .opacity(viewModel.progress == nil ? 0 : 1)
-                .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
+                .progressViewStyle(AssetProgressStyle(variant: .linear, fillColor: progressColor))
 
             Divider()
         }

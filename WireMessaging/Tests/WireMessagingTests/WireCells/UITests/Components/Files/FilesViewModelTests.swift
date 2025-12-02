@@ -60,11 +60,12 @@ final class FilesViewModelTests {
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesApi),
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi),
                 createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesRepository),
-                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesRepository)
+                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesRepository),
+                getAsset: WireCellsGetAssetUseCase(localAssetRepository: localAssetRepository, fileCache: fileCache),
+                restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(repository: nodesRepository)
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
-            fileCache: fileCache,
             isFoldersEnabled: true,
             accentColorProvider: { .default }
         )

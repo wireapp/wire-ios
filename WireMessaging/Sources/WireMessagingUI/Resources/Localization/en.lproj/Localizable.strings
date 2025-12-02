@@ -185,4 +185,5 @@
 "conversation.wireCells.filesVersioning.restoreFailureAlertMessage" = "Something went wrong while restoring a version. Please retry.";
 "conversation.wireCells.filesVersioning.downloadVersion" = "Download version";
 "conversation.wireCells.filesVersioning.retry" = "Retry";
-"conversation.wireCells.filesVersioning.restoringVersion" = "Restoring version";
+"conversation.wireCells.filesVersioning.restoringVersion" = "Restoring version...";
+"conversation.wireCells.filesVersioning.downloadingVersion" = "Downloading file version";

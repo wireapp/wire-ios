@@ -19,7 +19,8 @@
 package import Foundation
 
 /// Returns the URL to a locally cached file for a given node ID, and downloads it first if not already cached.
-package struct WireCellsGetAssetUseCase {
+@MainActor
+package class WireCellsGetAssetUseCase {
 
     package enum Failure: Error {
         case invalidDownloadState
@@ -40,13 +41,22 @@ package struct WireCellsGetAssetUseCase {
     package func invoke(nodeID: UUID) async throws -> URL {
         // If the file is already downloaded, return the local URL.
         if
-            let cacheKey = try await localAssetRepository.asset(nodeID: nodeID)?.downloadState.cacheKey,
+            let cacheKey = try localAssetRepository.asset(nodeID: nodeID)?.downloadState.cacheKey,
             let url = fileCache.fileURL(forKey: cacheKey) {
             return url
         }
 
-        try await localAssetRepository.downloadAsset(nodeID: nodeID)
-        guard let cacheKey = try await localAssetRepository.asset(nodeID: nodeID)?.downloadState.cacheKey else {
+        let cacheKey: String?
+
+        do {
+            try await localAssetRepository.downloadAsset(nodeID: nodeID)
+            cacheKey = try localAssetRepository.asset(nodeID: nodeID)?.downloadState.cacheKey
+        } catch WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress {
+            try await awaitDownload(id: nodeID)
+            cacheKey = try localAssetRepository.asset(nodeID: nodeID)?.downloadState.cacheKey
+        }
+
+        guard let cacheKey else {
             throw Failure.invalidDownloadState
         }
 
@@ -55,6 +65,21 @@ package struct WireCellsGetAssetUseCase {
         }
 
         return fileURL
+    }
+
+    private func awaitDownload(id: UUID) async throws {
+        for await item in localAssetRepository.observeAsset(nodeID: id).values {
+            try Task.checkCancellation()
+
+            switch item?.downloadState {
+            case .downloaded:
+                return
+            case let .failed(error):
+                throw error
+            default:
+                break
+            }
+        }
     }
 
 }

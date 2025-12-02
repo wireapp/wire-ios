@@ -44,7 +44,7 @@ struct WireCellsAttachmentPreview<Content: View>: View {
                     Spacer()
                     ProgressView(value: progress, total: 1)
                         .tint(Color.blue)
-                        .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
+                        .progressViewStyle(AssetProgressStyle(variant: .linear, fillColor: progressColor))
                         .padding(.bottom, Constants.borderWidth / 2)
                         .opacity(progress == nil ? 0 : 1)
 

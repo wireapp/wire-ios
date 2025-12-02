@@ -24,6 +24,7 @@ package struct WireCellsNodeVersionsNetworkModel: Equatable, Hashable, Sendable 
     package let versions: [Version]
 
     package struct Version: Equatable, Hashable, Sendable {
+        package let contentUrl: URL?
         package let contentHash: String?
         package let description: String?
         package let isDraft: Bool
@@ -34,18 +35,19 @@ package struct WireCellsNodeVersionsNetworkModel: Equatable, Hashable, Sendable 
         package let ownerUuid: String?
         package let size: UInt64?
         package let versionId: UUID
+        package let downloadUrl: URL?
     }
 }
 
 extension WireCellsNodeVersionsNetworkModel {
-    func toDomainModel(downloadURL: URL?) -> [WireCellsNodeVersion] {
+    func toDomainModel() -> [WireCellsNodeVersion] {
         versions.map {
             WireCellsNodeVersion(
                 id: $0.versionId,
                 ownerName: $0.ownerName,
                 modified: $0.mTime.map { Date(timeIntervalSince1970: Double($0)) },
                 size: $0.size,
-                downloadURL: downloadURL
+                downloadUrl: $0.downloadUrl
             )
         }
     }
@@ -59,6 +61,7 @@ package extension RestVersionCollection {
             guard let id = UUID(uuidString: value.versionId) else { return nil }
 
             return WireCellsNodeVersionsNetworkModel.Version(
+                contentUrl: value.preSignedGET?.url.flatMap(URL.init(string:)),
                 contentHash: value.contentHash,
                 description: value.description,
                 isDraft: value.draft ?? false,
@@ -68,7 +71,8 @@ package extension RestVersionCollection {
                 ownerName: value.ownerName,
                 ownerUuid: value.ownerUuid,
                 size: value.size.flatMap(UInt64.init),
-                versionId: id
+                versionId: id,
+                downloadUrl: value.preSignedGET?.url.flatMap(URL.init(string:))
             )
         }
 

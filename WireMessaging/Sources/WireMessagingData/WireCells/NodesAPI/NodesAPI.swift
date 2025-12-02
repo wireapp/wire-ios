@@ -92,9 +92,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
 
     package func getVersions(nodeID: UUID) async throws -> [WireCellsNodeVersion] {
         let versionsDTO = try await restAPI.getVersions(uuid: nodeID)
-        let downloadURL = try await getNode(nodeID: nodeID).downloadURL
-
-        return versionsDTO.toDomainModel(downloadURL: downloadURL)
+        return versionsDTO.toDomainModel()
     }
 
     package func restoreVersion(nodeID: UUID, versionID: UUID) async throws {

@@ -25,19 +25,59 @@ struct AssetProgressStyle: ProgressViewStyle {
         static let height: Double = 3
     }
 
+    enum Variant {
+        case linear
+        case circular
+    }
+
+    let variant: Variant
     let fillColor: Color
 
     func makeBody(configuration: Configuration) -> some View {
-        GeometryReader { geometry in
-            let totalWidth = geometry.size.width
-            let progress = Double(configuration.fractionCompleted ?? 0)
-            let barWidth = totalWidth * progress
+        switch variant {
+        case .linear:
+            GeometryReader { geometry in
+                let totalWidth = geometry.size.width
+                let progress = Double(configuration.fractionCompleted ?? 0)
+                let barWidth = totalWidth * progress
 
-            let cornerRadius = progress < 1 ? Constants.height / 2 : 0
-            UnevenRoundedRectangle(bottomTrailingRadius: cornerRadius, topTrailingRadius: cornerRadius)
-                .fill(fillColor)
-                .frame(width: barWidth, height: Constants.height)
+                let cornerRadius = progress < 1 ? Constants.height / 2 : 0
+                UnevenRoundedRectangle(bottomTrailingRadius: cornerRadius, topTrailingRadius: cornerRadius)
+                    .fill(fillColor)
+                    .frame(width: barWidth, height: Constants.height)
+            }
+            .frame(height: Constants.height)
+        case .circular:
+            let progress = Double(configuration.fractionCompleted ?? 0)
+            CircularProgressView(progress: progress, color: fillColor)
+                .frame(width: 20, height: 20)
         }
-        .frame(height: Constants.height)
+    }
+
+    private struct CircularProgressView: View {
+        let progress: Double
+        let color: Color
+
+        var body: some View {
+            ZStack {
+                Circle()
+                    .stroke(
+                        color.opacity(0.5),
+                        lineWidth: 2
+                    )
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(
+                        color,
+                        style: StrokeStyle(
+                            lineWidth: 2,
+                            lineCap: .round
+                        )
+                    )
+                    .rotationEffect(.degrees(-90))
+                    .animation(.easeOut, value: progress)
+
+            }
+        }
     }
 }

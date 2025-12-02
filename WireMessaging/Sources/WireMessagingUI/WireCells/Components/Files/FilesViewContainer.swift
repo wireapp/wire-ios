@@ -96,7 +96,14 @@ package struct FilesViewContainer: View {
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
                 createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
-                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesAPI)
+                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesAPI),
+                getAsset: WireCellsGetAssetUseCase(
+                    localAssetRepository: localAssetRepository,
+                    fileCache: fileCache
+                ),
+                restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                    repository: nodesAPI
+                )
             ),
             title: path.last?.name,
             navigationPath: path,
@@ -105,7 +112,6 @@ package struct FilesViewContainer: View {
             },
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
-            fileCache: fileCache,
             cellName: cellName,
             isFoldersEnabled: isFoldersEnabled,
             accentColorProvider: accentColorProvider

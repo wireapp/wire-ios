@@ -185,11 +185,17 @@ public extension WireMessagingFactory {
                         updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
                         getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
                         createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
-                        fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesAPI)
+                        fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesAPI),
+                        getAsset: WireCellsGetAssetUseCase(
+                            localAssetRepository: localAssetRepository,
+                            fileCache: fileCache
+                        ),
+                        restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                            repository: nodesAPI
+                        ),
                     ),
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,
-                    fileCache: fileCache,
                     isFoldersEnabled: false,
                     accentColorProvider: accentColorProvider
                 )
@@ -224,6 +230,7 @@ public extension WireMessagingFactory {
         return viewController
     }
 
+    @MainActor
     func makeConversationCellProvider(
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProvider {

@@ -329,10 +329,16 @@ final class FilesViewTests: XCTestCase {
                     nodesRepository: nodesRepository
                 ),
                 fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesRepository),
+                getAsset: WireCellsGetAssetUseCase(
+                    localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                    fileCache: MockFileCache()
+                ),
+                restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                    repository: nodesRepository
+                )
             ),
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
-            fileCache: MockFileCache(),
             isFoldersEnabled: true,
             accentColorProvider: { .default }
         )
@@ -365,6 +371,7 @@ private extension FilesItemViewModel {
             onOpen: { _ in },
             onDelete: { _ in },
             onEditTagsSelected: { _ in },
+            onVersionHistory: { _ in },
             locale: Locale(identifier: "en_US_POSIX"),
             calendar: Calendar(identifier: .gregorian),
             timeZone: .gmt

@@ -39,6 +39,7 @@ final class FilesBrowserViewTests: XCTestCase {
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
     private var createFolderUseCase: (any WireCellsCreateFolderUseCaseProtocol)!
     private var fetchNodeVersionsUseCase: WireCellsFetchNodeVersionsUseCase!
+    private var restoreNodeVersionUseCase: WireCellsRestoreNodeVersionUseCase!
     private var localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol!
 
     private let record: Bool? = nil
@@ -76,6 +77,7 @@ final class FilesBrowserViewTests: XCTestCase {
             nodesRepository: nodesRepository
         )
         fetchNodeVersionsUseCase = WireCellsFetchNodeVersionsUseCase(repository: nodesRepository)
+        restoreNodeVersionUseCase = WireCellsRestoreNodeVersionUseCase(repository: nodesRepository)
     }
 
     @MainActor
@@ -90,6 +92,7 @@ final class FilesBrowserViewTests: XCTestCase {
         updateTagsUseCase = nil
         renameNodeUseCase = nil
         deleteNodeUseCase = nil
+        restoreNodeVersionUseCase = nil
     }
 
     @MainActor
@@ -173,11 +176,15 @@ final class FilesBrowserViewTests: XCTestCase {
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
                 createFolder: createFolderUseCase,
-                fetchNodeVersions: fetchNodeVersionsUseCase
+                fetchNodeVersions: fetchNodeVersionsUseCase,
+                getAsset: WireCellsGetAssetUseCase(
+                    localAssetRepository: localAssetsRepository,
+                    fileCache: MockFileCache()
+                ),
+                restoreNodeVersion: restoreNodeVersionUseCase
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetsRepository,
-            fileCache: MockFileCache(),
             isFoldersEnabled: false,
             accentColorProvider: { .default }
         )

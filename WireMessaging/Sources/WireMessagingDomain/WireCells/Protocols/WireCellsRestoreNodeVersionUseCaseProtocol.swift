@@ -18,25 +18,6 @@
 
 public import Foundation
 
-public struct WireCellsNodeVersion: Equatable, Identifiable, Sendable {
-
-    public init(
-        id: UUID,
-        ownerName: String?,
-        modified: Date?,
-        size: UInt64?,
-        downloadUrl: URL?
-    ) {
-        self.id = id
-        self.ownerName = ownerName
-        self.modified = modified
-        self.size = size
-        self.downloadUrl = downloadUrl
-    }
-
-    public let id: UUID
-    public let ownerName: String?
-    public let modified: Date?
-    public let size: UInt64?
-    public let downloadUrl: URL?
+public protocol WireCellsRestoreNodeVersionUseCaseProtocol: Sendable {
+    func invoke(nodeID: UUID, versionID: UUID) async throws
 }
