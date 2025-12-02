@@ -38,6 +38,8 @@
 "conversation.wireCells.files.error.title" = "Can't load files";
 "conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
 "conversation.wireCells.files.error.reload" = "Reload";
+"conversation.wireCells.files.moreActionsButton" = "More";
+"conversation.wireCells.recycleBin.noData.message" = "You'll find all deleted files and folders here.";
 "conversation.wireCells.files.moveToFolder.move" = "Move here";
 
 // MARK: - File Tags View

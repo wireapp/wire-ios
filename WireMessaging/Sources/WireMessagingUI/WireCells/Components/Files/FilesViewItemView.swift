@@ -32,20 +32,23 @@ struct FilesViewItemView: View {
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
-    private let canRenameFile: Bool
-    private let canEditTags: Bool
+    private var canRenameFile: Bool
+    private var canEditTags: Bool
     private let canMoveToFolder: Bool
+    private var canDeleteFiles: Bool
 
     init(
         viewModel: @autoclosure @escaping () -> FilesItemViewModel,
         canRenameFile: Bool = false,
         canEditTags: Bool = false,
-        canMoveToFolder: Bool = false
+        canMoveToFolder: Bool = false,
+        canDeleteFiles: Bool = false
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
         self.canRenameFile = canRenameFile
         self.canEditTags = canEditTags
         self.canMoveToFolder = canMoveToFolder
+        self.canDeleteFiles = canDeleteFiles
     }
 
     var body: some View {
@@ -109,7 +112,7 @@ struct FilesViewItemView: View {
                         }.disabled(viewModel.isDownloading)
                     }
 
-                    if canRenameFile {
+                    if canRenameFile, !viewModel.isInRecycleBin {
                         Button(action: rename) {
                             Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
                         }
@@ -121,14 +124,32 @@ struct FilesViewItemView: View {
                         }
                     }
 
-                    if canEditTags {
+                    if canEditTags, !viewModel.isInRecycleBin {
                         Button(action: editTags) {
                             Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
                         }
                     }
 
-                    Button(role: .destructive, action: delete) {
-                        Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
+                    if viewModel.isInRecycleBin {
+                        Button(action: restore) {
+                            Label(Strings.RecycleBin.Item.Menu.restore, systemImage: "arrow.uturn.backward")
+                        }
+                    }
+
+                    if canDeleteFiles {
+                        if viewModel.isInRecycleBin {
+                            Button(
+                                role: .destructive,
+                                action: { delete(permanently: true) },
+                                label: { Label(Strings.RecycleBin.Item.Menu.delete, systemImage: "trash.fill") }
+                            )
+                        } else {
+                            Button(
+                                role: .destructive,
+                                action: { delete(permanently: false) },
+                                label: { Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill") }
+                            )
+                        }
                     }
                 } label: {
                     Image(systemName: "ellipsis")
@@ -138,17 +159,49 @@ struct FilesViewItemView: View {
                 }
                 .tint(nil)
                 .menuOrder(.fixed)
-                .confirmationDialog(
-                    Strings.Files.Item.DeleteConfirmation.title(viewModel.fileName),
-                    isPresented: $viewModel.isShowDeleteConfirmation,
-                    titleVisibility: .visible
-                ) {
-                    Button(
-                        Strings.Files.Item.DeleteConfirmation.deletePermanently,
-                        role: .destructive,
-                        action: confirmDelete
-                    )
-                }
+                .deletionConfirmationDialog( // delete file to recycle bin
+                    isPresented: $viewModel.isPresentingDeleteFileToRecycleBinConfirmation,
+                    title: Strings.Files.Item.DeleteFileConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.Files.Item.DeleteConfirmation.button,
+                    confirm: { confirmDelete(permanently: false) }
+                )
+                .deletionConfirmationDialog( // delete folder to recycle bin
+                    isPresented: $viewModel.isPresentingDeleteFolderToRecycleBinConfirmation,
+                    title: Strings.Files.Item.DeleteFolderConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.Files.Item.DeleteConfirmation.button,
+                    confirm: { confirmDelete(permanently: false) }
+                )
+                .deletionConfirmationDialog( // delete file permanently
+                    isPresented: $viewModel.isPresentingDeleteFilePermanentlyConfirmation,
+                    title: Strings.RecycleBin.Item.DeleteFileConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.RecycleBin.Item.DeleteConfirmation.button,
+                    confirm: { confirmDelete(permanently: true) }
+                )
+                .deletionConfirmationDialog( // delete folder permanently
+                    isPresented: $viewModel.isPresentingDeleteFolderPermanentlyConfirmation,
+                    title: Strings.RecycleBin.Item.DeleteFolderConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.RecycleBin.Item.DeleteConfirmation.button,
+                    confirm: { confirmDelete(permanently: true) }
+                )
+                .restorationConfirmationDialog( // restore file
+                    isPresented: $viewModel.isPresentingRestoreFileConfirmation,
+                    title: Strings.RecycleBin.Item.RestoreFileConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.RecycleBin.Item.RestoreFileConfirmation.button,
+                    confirm: { confirmRestore() }
+                )
+                .restorationConfirmationDialog( // restore folder
+                    isPresented: $viewModel.isPresentingRestoreFolderConfirmation,
+                    title: Strings.RecycleBin.Item.RestoreFolderConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.RecycleBin.Item.RestoreFolderConfirmation.button,
+                    confirm: { confirmRestore() }
+                )
+                .restorationConfirmationDialog( // restore parent folder (topmost folder in recycle bin)
+                    isPresented: $viewModel.isPresentingRestoreParentConfirmation,
+                    title: Strings.RecycleBin.Item.RestoreParentConfirmation
+                        .title(viewModel.nameOfTopmostFolderInRecycleBin),
+                    buttonText: Strings.RecycleBin.Item.RestoreParentConfirmation.button,
+                    confirm: { confirmRestore() }
+                )
             }
             .padding(.top, 8)
             .padding(.bottom, 5) // Less padding to accommodate progress bar
@@ -179,15 +232,23 @@ struct FilesViewItemView: View {
     }
 
     private func editTags() {
-        viewModel.onEditTagsSelected()
+        Task { await viewModel.onItemAction(.editTags, viewModel.item) }
     }
 
-    private func delete() {
-        viewModel.showDeleteConfirmation()
+    private func restore() {
+        viewModel.showRestoreConfirmation()
     }
 
-    private func confirmDelete() {
-        Task { await viewModel.confirmDelete() }
+    private func delete(permanently: Bool) {
+        viewModel.showDeleteConfirmation(deletePermanently: permanently)
+    }
+
+    private func confirmDelete(permanently: Bool) {
+        Task { await viewModel.confirmDelete(permanently: permanently) }
+    }
+
+    private func confirmRestore() {
+        Task { await viewModel.confirmRestore() }
     }
 
     private var progressColor: Color {
@@ -196,11 +257,54 @@ struct FilesViewItemView: View {
 
 }
 
+private extension View {
+    @ViewBuilder
+    func deletionConfirmationDialog(
+        isPresented: Binding<Bool>,
+        title: String,
+        buttonText: String,
+        confirm: @escaping () -> Void
+    ) -> some View {
+        confirmationDialog(
+            title,
+            isPresented: isPresented,
+            titleVisibility: .visible,
+            actions: {
+                Button(
+                    buttonText,
+                    role: .destructive,
+                    action: confirm
+                )
+            }
+        )
+    }
+
+    @ViewBuilder
+    func restorationConfirmationDialog(
+        isPresented: Binding<Bool>,
+        title: String,
+        buttonText: String,
+        confirm: @escaping () -> Void
+    ) -> some View {
+        confirmationDialog(
+            title,
+            isPresented: isPresented,
+            titleVisibility: .visible,
+            actions: {
+                Button(
+                    buttonText,
+                    action: confirm
+                )
+            }
+        )
+    }
+}
+
 #Preview {
     VStack(spacing: 0) {
         FilesViewItemView(viewModel: .preview())
-        FilesViewItemView(viewModel: .preview(), canRenameFile: true, canEditTags: true)
+        FilesViewItemView(viewModel: .preview(), canRenameFile: true, canEditTags: true, canDeleteFiles: true)
         FilesViewItemView(viewModel: .preview(tags: ["urgent"]), canRenameFile: true, canEditTags: true)
-        FilesViewItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]))
+        FilesViewItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]), canDeleteFiles: true)
     }
 }

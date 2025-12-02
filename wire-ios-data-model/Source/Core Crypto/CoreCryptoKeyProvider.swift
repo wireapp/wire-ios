@@ -74,14 +74,20 @@ public class CoreCryptoKeyProvider {
     }
 
     public func coreCryptoKey(
-        createIfNeeded: Bool,
+        allowCreation: Bool,
         path: String
     ) async throws -> Data {
-        try await performKeyMigrationsIfNeeded(path: path)
+        if !allowCreation, coreCryptoKeyMigrationManager.isAnyMigrationRequired {
+            throw Failure.migrationRequired
+        }
+
+        if allowCreation {
+            try await performKeyMigrationsIfNeeded(path: path)
+        }
 
         if let key = try fetchCoreCryptoKey(scoped: true) {
             return key
-        } else if createIfNeeded {
+        } else if allowCreation {
             return try createCoreCryptoKey()
         } else {
             throw Failure.keyNotFound
@@ -96,10 +102,13 @@ public class CoreCryptoKeyProvider {
 
     private func migrateToScopedDatabaseKey(path: String) throws {
 
-        guard
-            coreCryptoKeyMigrationManager.isMigrationToScopedKeyNeeded,
-            let unscopedKey = try fetchCoreCryptoKey(scoped: false)
-        else { return }
+        guard coreCryptoKeyMigrationManager.isMigrationToScopedKeyNeeded else { return }
+
+        guard let unscopedKey = try fetchCoreCryptoKey(scoped: false) else {
+            // No unscoped key was found, we can mark this as done
+            coreCryptoKeyMigrationManager.markMigrationToScopedKeyDone()
+            return
+        }
 
         if (try fetchCoreCryptoKey(scoped: true)) != nil {
             coreCryptoKeyMigrationManager.markMigrationToScopedKeyDone()
@@ -130,6 +139,11 @@ public class CoreCryptoKeyProvider {
             try await rotateKey(path: path)
         } catch Failure.keyNotFound {
             WireLogger.coreCrypto.info("Aborting key rotation: old key not found", attributes: .safePublic)
+
+            // No key found. A new one will be created, so there will be no need to do the rotation.
+            // Thus it can be marked as done.
+            coreCryptoKeyMigrationManager.markKeyRotationAsDone()
+
             return
         } catch {
             throw Failure.failedToRotateKey(error)
@@ -239,6 +253,7 @@ public class CoreCryptoKeyProvider {
 public extension CoreCryptoKeyProvider {
 
     enum Failure: LocalizedError {
+        case migrationRequired
         case keyNotFound
         case failedToScopeKey(Error)
         case failedToRotateKey(Error)
@@ -254,6 +269,8 @@ public extension CoreCryptoKeyProvider {
                 "failed to rotate key (\(String(describing: error))"
             case let .failedToMigrateKeyToBytes(error):
                 "failed to migrate key to bytes (\(String(describing: error)))"
+            case .migrationRequired:
+                "migration required"
             }
         }
     }

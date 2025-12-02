@@ -51,6 +51,11 @@ final class FilesViewModelTests {
                     fileCache: fileCache,
                     localAssetStore: localAssetStore
                 ),
+                restoreNodes: WireCellsRestoreNodesUseCase(
+                    repository: nodesRepository,
+                    fileCache: fileCache,
+                    localAssetStore: localAssetStore
+                ),
                 renameNode: WireCellsRenameNodeUseCase(
                     nodesRepository: MockWireCellsNodesRepositoryProtocol(),
                     localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
@@ -66,6 +71,7 @@ final class FilesViewModelTests {
             nodesRepository: nodesRepository,
             fileCache: fileCache,
             isFoldersEnabled: true,
+            accentColorProvider: { .default }
         )
 
         sut.$state.dropFirst().sink { [weak self] state in

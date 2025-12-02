@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import SwiftUI
+package import WireFoundation
 package import WireMessagingDomain
 package import WireMessagingData
 
 package struct FilesViewContainer: View {
+    @Environment(\.dismiss) private var dismiss
 
     @State private var path: [FilesViewItem] = []
 
@@ -34,6 +37,17 @@ package struct FilesViewContainer: View {
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
     private let fileCache: any FileCache
     private let isFoldersEnabled: Bool
+    private let accentColorProvider: () -> WireAccentColor
+
+    private let triggerReloadFiles: PassthroughSubject<Void, Never> = .init()
+
+    enum FullScreenCoverNavigation: String, Identifiable {
+        case recycleBin
+
+        var id: String { rawValue }
+    }
+
+    @State private var fullScreenCoverNavigation: FullScreenCoverNavigation?
 
     package init(
         cellName: String,
@@ -45,7 +59,8 @@ package struct FilesViewContainer: View {
         nodeCache: any WireCellsNodeCacheProtocol,
         nodeRenameNotifier: WireCellsNodeRenameNotifier,
         fileCache: any FileCache,
-        isFoldersEnabled: Bool
+        isFoldersEnabled: Bool,
+        accentColorProvider: @escaping () -> WireAccentColor
     ) {
         self.cellName = cellName
         self.nodesAPI = nodesAPI
@@ -57,15 +72,46 @@ package struct FilesViewContainer: View {
         self.nodeRenameNotifier = nodeRenameNotifier
         self.fileCache = fileCache
         self.isFoldersEnabled = isFoldersEnabled
+        self.accentColorProvider = accentColorProvider
     }
 
     var body: some View {
+        let onOpenRecycleBin: () -> Void = {
+            fullScreenCoverNavigation = .recycleBin
+        }
+
         NavigationStack(path: $path) {
-            FilesView(viewModel: makeViewModel())
+            FilesView(viewModel: makeViewModel(), onOpenRecycleBin: onOpenRecycleBin, onDismissContainer: { dismiss() })
                 .navigationDestination(for: FilesViewItem.self) { _ in
-                    FilesView(viewModel: makeViewModel())
+                    FilesView(
+                        viewModel: makeViewModel(),
+                        onOpenRecycleBin: onOpenRecycleBin,
+                        onDismissContainer: { dismiss() }
+                    )
                 }
         }
+        .fullScreenCover(
+            item: $fullScreenCoverNavigation,
+            onDismiss: { triggerReloadFiles.send() },
+            content: { navigationItem in
+                switch navigationItem {
+                case .recycleBin:
+                    RecycleBinContainer(
+                        cellName: cellName,
+                        nodesAPI: nodesAPI,
+                        nodesRepository: nodesRepository,
+                        isCellsStatePending: isCellsStatePending,
+                        localAssetStore: localAssetStore,
+                        localAssetRepository: localAssetRepository,
+                        nodeCache: nodeCache,
+                        nodeRenameNotifier: nodeRenameNotifier,
+                        fileCache: fileCache,
+                        isFoldersEnabled: isFoldersEnabled,
+                        accentColorProvider: accentColorProvider
+                    )
+                }
+            }
+        )
     }
 
     private func makeViewModel() -> FilesViewModel {
@@ -79,6 +125,11 @@ package struct FilesViewContainer: View {
                     repository: nodesRepository
                 ),
                 deleteNodes: WireCellsDeleteNodesUseCase(
+                    repository: nodesRepository,
+                    fileCache: fileCache,
+                    localAssetStore: localAssetStore
+                ),
+                restoreNodes: WireCellsRestoreNodesUseCase(
                     repository: nodesRepository,
                     fileCache: fileCache,
                     localAssetStore: localAssetStore
@@ -103,7 +154,10 @@ package struct FilesViewContainer: View {
             nodesRepository: nodesRepository,
             fileCache: fileCache,
             cellName: cellName,
-            isFoldersEnabled: isFoldersEnabled
+            isFoldersEnabled: isFoldersEnabled,
+            isRecycleBin: false,
+            triggerReload: triggerReloadFiles,
+            accentColorProvider: accentColorProvider
         )
     }
 }

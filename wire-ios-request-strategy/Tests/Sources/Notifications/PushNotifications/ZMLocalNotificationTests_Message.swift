@@ -87,7 +87,7 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     ) -> String {
         let note = textNotification(conversation, sender: sender, text: text, isEphemeral: isEphemeral)
         XCTAssertNotNil(note)
-        return note!.body
+        return note?.body ?? "no body defined"
     }
 
     // MARK: Tests

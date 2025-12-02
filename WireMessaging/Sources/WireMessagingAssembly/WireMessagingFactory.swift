@@ -140,7 +140,7 @@ public extension WireMessagingFactory {
     func makeFilesView(
         cellName: String,
         isCellsStatePending: Bool,
-        accentColor: WireAccentColor
+        accentColorProvider: @escaping () -> WireAccentColor
     ) -> UIViewController {
         UIHostingController(
             rootView: FilesViewContainer(
@@ -153,14 +153,16 @@ public extension WireMessagingFactory {
                 nodeCache: nodeCache,
                 nodeRenameNotifier: nodeRenameNotifier,
                 fileCache: fileCache,
-                isFoldersEnabled: isFoldersEnabled
-            )
-            .environment(\.wireAccentColor, accentColor)
+                isFoldersEnabled: isFoldersEnabled,
+                accentColorProvider: accentColorProvider
+            ).environment(\.wireAccentColor, accentColorProvider())
         )
     }
 
     @MainActor
-    func makeFilesBrowserView() -> UIViewController {
+    func makeFilesBrowserView(
+        accentColorProvider: @escaping () -> WireAccentColor
+    ) -> UIViewController {
         UIHostingController(
             rootView: FilesBrowserView(
                 viewModel: FilesViewModel(
@@ -170,6 +172,11 @@ public extension WireMessagingFactory {
                             repository: nodesAPI
                         ),
                         deleteNodes: WireCellsDeleteNodesUseCase(
+                            repository: nodesAPI,
+                            fileCache: fileCache,
+                            localAssetStore: localAssetStore
+                        ),
+                        restoreNodes: WireCellsRestoreNodesUseCase(
                             repository: nodesAPI,
                             fileCache: fileCache,
                             localAssetStore: localAssetStore
@@ -188,7 +195,8 @@ public extension WireMessagingFactory {
                     localAssetRepository: localAssetRepository,
                     nodesRepository: nodesAPI,
                     fileCache: fileCache,
-                    isFoldersEnabled: false
+                    isFoldersEnabled: false,
+                    accentColorProvider: accentColorProvider
                 )
             )
         )

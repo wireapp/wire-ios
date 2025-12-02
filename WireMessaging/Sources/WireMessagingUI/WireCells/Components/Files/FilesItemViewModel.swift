@@ -30,20 +30,36 @@ final class FilesItemViewModel: ObservableObject {
 
     private let nodeID: UUID
     let item: FilesViewItem
-    private let onOpen: (FilesViewItem) async -> Void
-    private let onDelete: (FilesViewItem) async -> Void
-    private let onRename: ((FilesViewItem) async -> Void)?
-    private let onMoveToFolder: ((FilesViewItem) async -> Void)?
-    let onEditTagsSelected: () -> Void
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
 
+    enum ItemAction {
+        case open
+        case deleteToRecycleBin
+        case deletePermanently
+        case restore
+        case rename
+        case editTags
+        case moveToFolder
+    }
+
+    let onItemAction: (ItemAction, FilesViewItem) async -> Void
+
     @Published private var asset: WireCellsLocalAsset?
-    @Published var isShowDeleteConfirmation = false
+
+    @Published var isPresentingDeleteFilePermanentlyConfirmation = false
+    @Published var isPresentingDeleteFolderPermanentlyConfirmation = false
+    @Published var isPresentingDeleteFileToRecycleBinConfirmation = false
+    @Published var isPresentingDeleteFolderToRecycleBinConfirmation = false
+
+    @Published var isPresentingRestoreFileConfirmation = false
+    @Published var isPresentingRestoreFolderConfirmation = false
+    @Published var isPresentingRestoreParentConfirmation = false
 
     let fileName: String
     let subtitle: String?
     let icon: FileIcon
+    let isInRecycleBin: Bool
 
     struct TagsInfo {
         let firstTag: String?
@@ -59,22 +75,15 @@ final class FilesItemViewModel: ObservableObject {
     init(
         item: FilesViewItem,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
-        onOpen: @escaping (FilesViewItem) async -> Void,
-        onDelete: @escaping (FilesViewItem) async -> Void,
-        onRename: ((FilesViewItem) async -> Void)? = nil,
-        onMoveToFolder: ((FilesViewItem) async -> Void)? = nil,
-        onEditTagsSelected: @escaping (FilesViewItem) -> Void,
+        onItemAction: @escaping (ItemAction, FilesViewItem) async -> Void,
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,
-        timeZone: TimeZone = .autoupdatingCurrent
+        timeZone: TimeZone = .autoupdatingCurrent,
+        isInRecycleBin: Bool,
     ) {
         self.nodeID = item.id
         self.item = item
-        self.onOpen = onOpen
-        self.onDelete = onDelete
-        self.onRename = onRename
-        self.onMoveToFolder = onMoveToFolder
-        self.onEditTagsSelected = { onEditTagsSelected(item) }
+        self.onItemAction = onItemAction
         self.fileName = item.name
         self.subtitle = Self.subtitle(
             modifiedAt: item.modifiedAt,
@@ -85,10 +94,15 @@ final class FilesItemViewModel: ObservableObject {
         )
         self.icon = item.icon
         self.localAssetRepository = localAssetRepository
+        self.isInRecycleBin = isInRecycleBin
 
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
             self?.asset = asset
         }.store(in: &cancellables)
+    }
+
+    var nameOfTopmostFolderInRecycleBin: String {
+        item.filePath.split(separator: "/").dropFirst(2).first.flatMap { String($0) } ?? ""
     }
 
     var isDownloadOptionAvailable: Bool {
@@ -132,15 +146,15 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     func open() async {
-        await onOpen(item)
+        await onItemAction(.open, item)
     }
 
     func rename() async {
-        await onRename?(item)
+        await onItemAction(.rename, item)
     }
 
     func moveToFolder() async {
-        await onMoveToFolder?(item)
+        await onItemAction(.moveToFolder, item)
     }
 
     func download() async {
@@ -150,12 +164,43 @@ final class FilesItemViewModel: ObservableObject {
         try? await localAssetRepository.downloadAsset(nodeID: nodeID)
     }
 
-    func showDeleteConfirmation() {
-        isShowDeleteConfirmation = true
+    func showDeleteConfirmation(deletePermanently: Bool) {
+        switch (deletePermanently, item.kind) {
+        case (true, .file):
+            isPresentingDeleteFilePermanentlyConfirmation = true
+        case (false, .file):
+            isPresentingDeleteFileToRecycleBinConfirmation = true
+        case (true, .folder):
+            isPresentingDeleteFolderPermanentlyConfirmation = true
+        case (false, .folder):
+            isPresentingDeleteFolderToRecycleBinConfirmation = true
+        }
     }
 
-    func confirmDelete() async {
-        await onDelete(item)
+    func showRestoreConfirmation() {
+        let isInRecycleBinRoot = item.filePath.split(separator: "/").count <= 3
+        if isInRecycleBinRoot {
+            switch item.kind {
+            case .file:
+                isPresentingRestoreFileConfirmation = true
+            case .folder:
+                isPresentingRestoreFolderConfirmation = true
+            }
+        } else {
+            isPresentingRestoreParentConfirmation = true
+        }
+    }
+
+    func confirmDelete(permanently: Bool) async {
+        if permanently {
+            await onItemAction(.deletePermanently, item)
+        } else {
+            await onItemAction(.deleteToRecycleBin, item)
+        }
+    }
+
+    func confirmRestore() async {
+        await onItemAction(.restore, item)
     }
 
     static func subtitle(

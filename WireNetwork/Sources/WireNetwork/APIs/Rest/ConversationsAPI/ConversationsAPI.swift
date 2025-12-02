@@ -32,14 +32,15 @@ public protocol ConversationsAPI {
     func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList
 
     /// Fetches a user MLS one to one conversation.
-    /// - parameters:
-    ///     - userID: The user ID to fetch the MLS one to one conversation for.
-    ///     - domain: The domain of the one to one conversation.
+    /// - Parameters:
+    ///   - userID: The user ID to fetch the MLS one to one conversation for.
+    ///   - domain: The domain of the one to one conversation.
+    /// - Returns: The 1:1 mls conversation and it's mls public keys (from ``APIVersion`` v6)
 
     func getMLSOneToOneConversation(
         userID: String,
         in domain: String
-    ) async throws -> Conversation
+    ) async throws -> (Conversation, MLSPublicKeys?)
 
     /// Fetches the guest link for a given conversation.
     /// - parameter conversationID: The conversation identifier.

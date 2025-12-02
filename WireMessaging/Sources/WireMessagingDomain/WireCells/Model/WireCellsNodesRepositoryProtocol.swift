@@ -41,6 +41,12 @@ package protocol WireCellsNodesRepositoryProtocol: Sendable {
     ///  - permanently: A boolean indicating whether to delete the nodes permanently or move them to the recycle bin.
     func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool
 
+    /// Restores nodes with the specified IDs from the recycle bin.
+    ///
+    /// - Parameters:
+    ///  - nodeIDs: An array of UUIDs representing the IDs of the nodes to restore.
+    func restoreNodes(nodeIDs: [UUID]) async throws -> Bool
+
     /// Creates a folder at the specified path.
     ///
     /// - Parameters:
@@ -80,6 +86,9 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
         /// A `Configuration` suitable for the conversation file view.
         case conversationFileView(root: WireCellsNodeLocator, isFoldersEnabled: Bool)
 
+        /// A `Configuration` suitable for the recycle bin, where deleted files are stored.
+        case recycleBinView(root: WireCellsNodeLocator, isFoldersEnabled: Bool)
+
         /// A `Configuration` suitable for the files browser view.
         case filesBrowserView
 
@@ -90,6 +99,9 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
     /// An optional search term to filter nodes by name.
     package let searchTerm: String?
 
+    /// Filter nodes by tags names.
+    package let tags: [String]
+
     /// The maximum number of nodes to return.
     package let limit: Int
 
@@ -99,8 +111,9 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
     /// The configuration for the request.
     package let configuration: Configuration
 
-    package init(searchTerm: String?, limit: Int, offset: Int, configuration: Configuration) {
+    package init(searchTerm: String?, tags: [String] = [], limit: Int, offset: Int, configuration: Configuration) {
         self.searchTerm = searchTerm
+        self.tags = tags
         self.limit = limit
         self.offset = offset
         self.configuration = configuration

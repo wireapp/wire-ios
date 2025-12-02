@@ -187,7 +187,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             Task {
                 let deleteNodesUseCase = wireMessagingFactory.makeDeleteNodesUseCase()
                 do {
-                    try await deleteNodesUseCase.invoke(nodeIDs: attachments.map(\.nodeID))
+                    try await deleteNodesUseCase.invoke(nodeIDs: attachments.map(\.nodeID), deletePermanently: false)
                     WireLogger.conversation.info(
                         "Deleted files for message",
                         attributes: [.nonce: message.nonce?.uuidString]
