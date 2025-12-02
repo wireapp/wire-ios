@@ -18,6 +18,7 @@
 
 public import SwiftUI
 
+import WireLocators
 import WireReusableUIComponents
 
 public struct SelfProfileViewCallToActionBanner: View {
@@ -34,6 +35,7 @@ public struct SelfProfileViewCallToActionBanner: View {
             message: .init(localized: "individualToTeam.banner.body", bundle: .module),
             button: .init(
                 title: .init(localized: "individualToTeam.banner.button", bundle: .module),
+                accessibilityIdentifier: Locators.UserProfilePage.createWireTeamButton.rawValue,
                 action: buttonAction
             )
         )
