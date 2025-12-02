@@ -104,7 +104,6 @@ struct ImportProgressView: View {
     ImportProgressPreview(isLoadingFile: true)
 }
 
-
 #Preview("Loading conversations") {
     ImportProgressPreview(isLoadingFile: false)
 }

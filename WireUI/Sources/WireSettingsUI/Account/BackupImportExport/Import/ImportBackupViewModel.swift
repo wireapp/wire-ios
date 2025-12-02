@@ -79,7 +79,7 @@ final class ImportBackupViewModel: ObservableObject {
             Task { [self] in
                 do {
                     state = .loadingFile
-                    let localURL = try await self.materializeURL(url)
+                    let localURL = try await materializeURL(url)
                     let gotAccess = localURL.startAccessingSecurityScopedResource()
                     // let the file manager throw the error in case `gotAccess` is `false`.
 
