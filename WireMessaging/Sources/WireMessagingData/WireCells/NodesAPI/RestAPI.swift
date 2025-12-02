@@ -397,7 +397,7 @@ private extension WireCellsGetNodesRequest {
                 type: isFoldersEnabled ? .unknown : .leaf // .unknown includes files (leafs) & folders (collections)
             )
             request.scope = RestLookupScope(
-                recursive: isFoldersEnabled ? false : true,
+                recursive: !isFoldersEnabled,
                 root: RestNodeLocator(root)
             )
         case .filesBrowserView:
