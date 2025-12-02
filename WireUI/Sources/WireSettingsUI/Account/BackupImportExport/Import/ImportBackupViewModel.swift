@@ -199,6 +199,14 @@ final class ImportBackupViewModel: ObservableObject {
                 }
 
                 // we should consider using LocalizedError instead of this mapping:
+            } catch ImportBackupError.invalidFileExtension {
+                logger.warn("restore failed due to invalid file extension")
+                alertContent = .init(
+                    title: Strings.Alert.InvalidFileError.title,
+                    message: Strings.Alert.InvalidFileError.message,
+                    action: Strings.Alert.ok
+                )
+                state = .restoreFailed
             } catch ImportLegacyBackupError.passwordRequired, ImportBackupError.passwordRequired {
                 logger.debug("password is required to open backup file")
                 state = .requestingPassword(url: url, isPasswordIncorrect: false)
