@@ -27,7 +27,11 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 package protocol FilesViewProtocol: View {
     var viewModel: FilesViewModel { get }
     var isBrowsing: Bool { get }
-    init(viewModel: @autoclosure @escaping () -> FilesViewModel)
+    init(
+        viewModel: @autoclosure @escaping () -> FilesViewModel,
+        onOpenRecycleBin: @escaping () -> Void,
+        onDismissContainer: @escaping () -> Void
+    )
 }
 
 // MARK: - List
@@ -80,6 +84,7 @@ extension FilesViewProtocol {
             viewModel: viewModel.itemViewModel(index: index),
             canRenameFile: !isBrowsing, // action not allowed when browsing files
             canEditTags: !isBrowsing, // action not allowed when browsing files
+            canDeleteFiles: !isBrowsing, // action not allowed when browsing files
         )
     }
 

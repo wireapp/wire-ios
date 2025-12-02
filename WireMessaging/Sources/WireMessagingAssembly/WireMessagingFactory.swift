@@ -176,6 +176,11 @@ public extension WireMessagingFactory {
                             fileCache: fileCache,
                             localAssetStore: localAssetStore
                         ),
+                        restoreNodes: WireCellsRestoreNodesUseCase(
+                            repository: nodesAPI,
+                            fileCache: fileCache,
+                            localAssetStore: localAssetStore
+                        ),
                         renameNode: WireCellsRenameNodeUseCase(
                             nodesRepository: nodesAPI,
                             localAssetsRepository: localAssetRepository,
