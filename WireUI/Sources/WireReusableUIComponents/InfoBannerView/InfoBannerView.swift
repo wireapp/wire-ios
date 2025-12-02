@@ -61,6 +61,7 @@ public struct InfoBannerView: View {
                         .lineLimit(.none)
                 }
                 .wireButtonStyle(.tertiary)
+                .accessibilityIdentifier(button.accessibilityIdentifier)
             }
         }
         .padding(8)
@@ -80,9 +81,15 @@ public struct InfoBannerView: View {
 
     public struct InfoBannerButton {
         public var title: String
+        public var accessibilityIdentifier: String
         public var action: () -> Void
-        public init(title: String, action: @escaping () -> Void) {
+        public init(
+            title: String,
+            accessibilityIdentifier: String,
+            action: @escaping () -> Void
+        ) {
             self.title = title
+            self.accessibilityIdentifier = accessibilityIdentifier
             self.action = action
         }
     }
@@ -107,6 +114,7 @@ public struct InfoBannerView: View {
         title: "Enjoy benefits of a team",
         button: .init(
             title: "Call to action",
+            accessibilityIdentifier: "",
             action: {}
         )
     )
@@ -119,6 +127,7 @@ public struct InfoBannerView: View {
         message: "Explore extra features for free with the same level of security.",
         button: .init(
             title: "Call to action",
+            accessibilityIdentifier: "",
             action: {}
         )
     )
