@@ -56,6 +56,7 @@ struct ImportBackupView: View {
             .sheet(isPresented: $viewModel.isImportProgressPresented) {
 
                 ImportProgressView(
+                    isLoadingFile: viewModel.isLoadingFile,
                     progressValues: viewModel.importProgress,
                     cancelAction: viewModel.reset
                 )

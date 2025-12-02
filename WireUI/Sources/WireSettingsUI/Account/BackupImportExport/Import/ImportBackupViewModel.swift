@@ -76,39 +76,29 @@ final class ImportBackupViewModel: ObservableObject {
             onFailure(error)
             return
         case let .success(url):
-            Task.detached { [self] in
-                let localURL: URL
+            Task { [self] in
                 do {
-                    localURL = try await self.materializeURL(url)
-                } catch {
-                    await MainActor.run {
-                        onFailure(error)
-                    }
-                    return
-                }
-
-                await MainActor.run {
+                    state = .loadingFile
+                    let localURL = try await self.materializeURL(url)
                     let gotAccess = localURL.startAccessingSecurityScopedResource()
                     // let the file manager throw the error in case `gotAccess` is `false`.
 
-                    do {
-                        let tmpDirectory = try fileManager.url(
-                            for: .itemReplacementDirectory,
-                            in: .userDomainMask,
-                            appropriateFor: localURL,
-                            create: true
-                        )
-                        let copy = tmpDirectory.appendingPathComponent(localURL.lastPathComponent)
-                        try fileManager.copyItem(at: localURL, to: copy)
-                        if gotAccess {
-                            localURL.stopAccessingSecurityScopedResource()
-                        }
-
-                        hasDestructiveImportBeenConfirmed = false
-                        importBackup(from: copy, password: "")
-                    } catch {
-                        onFailure(error)
+                    let tmpDirectory = try fileManager.url(
+                        for: .itemReplacementDirectory,
+                        in: .userDomainMask,
+                        appropriateFor: localURL,
+                        create: true
+                    )
+                    let copy = tmpDirectory.appendingPathComponent(localURL.lastPathComponent)
+                    try fileManager.copyItem(at: localURL, to: copy)
+                    if gotAccess {
+                        localURL.stopAccessingSecurityScopedResource()
                     }
+
+                    hasDestructiveImportBeenConfirmed = false
+                    importBackup(from: copy, password: "")
+                } catch {
+                    onFailure(error)
                 }
             }
         }
@@ -119,9 +109,8 @@ final class ImportBackupViewModel: ObservableObject {
     // but this may not be the case for other file providers such
     // as Google Drive.
     private func materializeURL(_ url: URL) async throws -> URL {
-        isLoadingFile = true
-        do {
-            let localURL = try await withCheckedThrowingContinuation { continuation in
+        let task = Task.detached {
+            try await withCheckedThrowingContinuation { continuation in
                 let coordinator = NSFileCoordinator()
                 var error: NSError?
 
@@ -139,12 +128,9 @@ final class ImportBackupViewModel: ObservableObject {
                     continuation.resume(throwing: error)
                 }
             }
-            isLoadingFile = false
-            return localURL
-        } catch {
-            isLoadingFile = false
-            throw error
         }
+
+        return try await task.value
     }
 
     func confirmOverwrite() {
@@ -267,7 +253,7 @@ final class ImportBackupViewModel: ObservableObject {
         }
 
         let isImportProgressPresented = switch state {
-        case .requestConfirmation, .importingBackup, .requestingPassword:
+        case .loadingFile, .requestConfirmation, .importingBackup, .requestingPassword:
             true
         default:
             false
@@ -287,6 +273,13 @@ final class ImportBackupViewModel: ObservableObject {
 
         let isAlertPresented = switch state {
         case .success, .restoreFailed:
+            true
+        default:
+            false
+        }
+
+        let isLoadingFile = switch state {
+        case .loadingFile:
             true
         default:
             false
@@ -329,6 +322,7 @@ final class ImportBackupViewModel: ObservableObject {
             }
         }
 
+        self.isLoadingFile = isLoadingFile
         self.isImportProgressPresented = isImportProgressPresented
         self.isImportConfirmationPresented = isImportConfirmationPresented
         self.isEnterBackupPasswordPresented = isEnterBackupPasswordPresented

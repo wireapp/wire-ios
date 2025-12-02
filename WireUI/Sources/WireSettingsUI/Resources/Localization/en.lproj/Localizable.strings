@@ -65,4 +65,5 @@
 "importBackup.enterPassword.button.title" = "Continue";
 
 "importBackup.restoringHistory.title" = "Restoring history…";
+"importBackup.loadingBackup.message" = "Loading backup…";
 "importBackup.restoringHistory.message" = "Loading conversations…";
