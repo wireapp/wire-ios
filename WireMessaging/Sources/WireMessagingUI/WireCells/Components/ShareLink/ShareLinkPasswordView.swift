@@ -87,6 +87,9 @@ struct ShareLinkPasswordView: View {
                 descriptionArea()
                 
                 setPasswordToggleArea()
+                    .padding(.bottom, 18)
+                
+                generatePasswordButton()
                 
                 alertTestButtons()
             }
@@ -112,8 +115,34 @@ struct ShareLinkPasswordView: View {
         .padding(.horizontal)
         .background {
             RoundedRectangle(cornerRadius: 10)
-                .foregroundStyle(ColorTheme.Backgrounds.backgroundVariant.color)
+                .foregroundStyle(ColorTheme.Buttons.Secondary.enabled.color)
         }
+    }
+    
+    @ViewBuilder private func generatePasswordButton() -> some View {
+        Button {
+            //TODO: ...
+        } label: {
+            Label {
+                Text(Strings.generatePassword)
+            } icon: {
+                Image(systemName: "shield.righthalf.filled")
+            }
+            .font(for: .body2)
+            .padding(.vertical, 6)
+            .padding(.horizontal, 10)
+            .background {
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke()
+                    .foregroundStyle(ColorTheme.Buttons.Secondary.enabledOutline.color)
+            }
+            .background {
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundStyle(ColorTheme.Buttons.Secondary.enabled.color)
+            }
+        }
+        .tint(.primaryText)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
     
     @ViewBuilder private func alertTestButtons() -> some View {
