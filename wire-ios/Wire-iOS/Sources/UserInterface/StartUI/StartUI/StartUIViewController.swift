@@ -113,7 +113,14 @@ final class StartUIViewController: UIViewController {
     }
 
     var showsGroupSelector: Bool {
-        areLegacyBotsAvailable || isAppsFeatureEnabled && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
+        guard DeveloperFlag.considerAppsFeatureFlag.isOn else {
+            return SearchGroup.all.count > 1 &&
+            userSession.selfUser.canSeeServices &&
+            userSession.defaultProtocol != .mls
+        }
+
+        return areLegacyBotsAvailable ||
+        isAppsFeatureEnabled && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
     }
 
     // MARK: - Init
