@@ -118,6 +118,8 @@ struct FilesViewItemView: View {
                         }
                     }
 
+                    Divider()
+
                     if canRenameFile {
                         Button(action: rename) {
                             Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
