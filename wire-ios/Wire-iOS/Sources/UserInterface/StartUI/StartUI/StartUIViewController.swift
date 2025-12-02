@@ -115,8 +115,8 @@ final class StartUIViewController: UIViewController {
     var showsGroupSelector: Bool {
         guard DeveloperFlag.considerAppsFeatureFlag.isOn else {
             return SearchGroup.all.count > 1 &&
-            userSession.selfUser.canSeeServices &&
-            userSession.defaultProtocol != .mls
+                userSession.selfUser.canSeeServices &&
+                userSession.defaultProtocol != .mls
         }
 
         return areLegacyBotsAvailable ||

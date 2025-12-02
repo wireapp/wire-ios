@@ -47,9 +47,9 @@ public enum DeveloperFlag: String, CaseIterable {
     public var description: String {
         switch self {
         case .considerAppsFeatureFlag:
-            "Apps are not fully supported by the backend (e.g. no search endpoint available yet). However, some " +
-            "customers already have the apps feature flag enabled as a workaround for another issue." +
-            "If this toggle is off, the apps feature flag is ignored. Toggle it on for development."
+            "Apps are not fully supported by the backend yet (e.g. no search endpoint available yet). However, some " +
+                "customers already have the apps feature flag enabled as a workaround for another issue." +
+                "If this toggle is off, the apps feature flag is ignored. Toggle it on for development."
 
         case .createLegacyBackups:
             "Don't use the cross-platform library when creating backups."
