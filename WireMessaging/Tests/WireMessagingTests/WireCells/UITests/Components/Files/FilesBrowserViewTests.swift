@@ -34,6 +34,7 @@ final class FilesBrowserViewTests: XCTestCase {
     private var nodesRepository: MockWireCellsNodesRepositoryProtocol!
     private var fetchNodesUseCase: WireCellsFetchNodesUseCase!
     private var deleteNodeUseCase: WireCellsDeleteNodesUseCase!
+    private var restoreNodeUseCase: WireCellsRestoreNodesUseCase!
     private var renameNodeUseCase: WireCellsRenameNodeUseCase!
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
@@ -59,6 +60,11 @@ final class FilesBrowserViewTests: XCTestCase {
             repository: nodesRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
+            repository: nodesRepository,
+            fileCache: MockFileCache(),
+            localAssetStore: MockWireCellsLocalAssetStoreProtocol()
+        )
+        restoreNodeUseCase = WireCellsRestoreNodesUseCase(
             repository: nodesRepository,
             fileCache: MockFileCache(),
             localAssetStore: MockWireCellsLocalAssetStoreProtocol()
@@ -161,6 +167,7 @@ final class FilesBrowserViewTests: XCTestCase {
             useCases: .init(
                 fetchNodes: fetchNodesUseCase,
                 deleteNodes: deleteNodeUseCase,
+                restoreNodes: restoreNodeUseCase,
                 renameNode: renameNodeUseCase,
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
