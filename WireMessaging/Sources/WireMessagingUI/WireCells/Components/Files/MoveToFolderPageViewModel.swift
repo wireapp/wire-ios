@@ -30,7 +30,7 @@ protocol MoveToFolderPageViewModelProtocol: ObservableObject {
     associatedtype CreateFolderView: View
 
     var title: String { get }
-    var content: MoveToFolderContent { get }
+    var content: MoveToFolderPageViewModel.ContentState { get }
     var moveButtonState: MoveButtonState { get }
     var isNewFolderEnabled: Bool { get }
     var navigationMenuOptions: [NavigationMenuOption] { get }
@@ -73,19 +73,19 @@ enum MoveButtonState {
 
 }
 
-/// The main content to be displayed in the Move to Folder page
-enum MoveToFolderContent: Hashable, Sendable {
-
-    case initialLoad
-    case loaded(items: [MoveToFolderItem], hasMore: Bool, isLoading: Bool)
-    case empty(title: String?, message: String, showsReload: Bool)
-
-}
-
 // MARK: - MoveToFolderPageViewModel
 
 @MainActor
 final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
+
+    /// The main content to be displayed in the Move to Folder page
+    enum ContentState: Hashable, Sendable {
+
+        case initialLoad
+        case loaded(items: [MoveToFolderItem], hasMore: Bool, isLoading: Bool)
+        case empty(title: String?, message: String, showsReload: Bool)
+
+    }
 
     enum SheetNavigation: Identifiable {
         case createFolder
@@ -183,7 +183,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
         navigationMenuOptions.isEmpty
     }
 
-    var content: MoveToFolderContent {
+    var content: ContentState {
         switch (isLoadingContent, nodes.isEmpty) {
         case (true, true):
             return .initialLoad
@@ -338,7 +338,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
 final class MockMoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
 
     let title: String
-    let content: MoveToFolderContent
+    let content: MoveToFolderPageViewModel.ContentState
     let moveButtonState: MoveButtonState
     let isNewFolderEnabled: Bool
     let navigationMenuOptions: [NavigationMenuOption]
@@ -348,7 +348,7 @@ final class MockMoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
 
     init(
         title: String = "Files",
-        content: MoveToFolderContent = .initialLoad,
+        content: MoveToFolderPageViewModel.ContentState = .initialLoad,
         moveButtonState: MoveButtonState = .disabled,
         isNewFolderEnabled: Bool = false,
         navigationMenuOptions: [NavigationMenuOption] = [],
