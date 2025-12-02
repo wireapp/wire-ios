@@ -64,6 +64,9 @@ package struct FilesViewItem: Identifiable, Hashable {
 
     /// The tags that users have added for that file.
     let tags: [String]
+
+    /// Whether the item can be edited.
+    let isEditable: Bool
 }
 
 @MainActor
@@ -460,7 +463,8 @@ package final class FilesViewModel: ObservableObject {
                     type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
                     fileExtension: url?.pathExtension
                 ),
-                tags: node.tags
+                tags: node.tags,
+                isEditable: node.isEditable
             )
         }
 

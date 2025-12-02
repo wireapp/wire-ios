@@ -119,7 +119,8 @@ extension FilesItemViewModel {
                 ownedBy: "Viola",
                 modifiedAt: Date(),
                 icon: .image,
-                tags: tags
+                tags: tags,
+                isEditable: false
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
             onOpen: { _ in },

@@ -98,7 +98,8 @@ final class FilesViewTests: XCTestCase {
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image,
-            tags: []
+            tags: [],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -123,7 +124,8 @@ final class FilesViewTests: XCTestCase {
             ownedBy: "Liana Margaret Smith-Jones",
             modifiedAt: modifiedAt,
             icon: .spreadsheet,
-            tags: []
+            tags: [],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -148,7 +150,8 @@ final class FilesViewTests: XCTestCase {
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image,
-            tags: ["important"]
+            tags: ["important"],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -173,7 +176,8 @@ final class FilesViewTests: XCTestCase {
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image,
-            tags: ["tag1", "tag2", "abcdef"]
+            tags: ["tag1", "tag2", "abcdef"],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -198,7 +202,8 @@ final class FilesViewTests: XCTestCase {
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .spreadsheet,
-            tags: []
+            tags: [],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -225,7 +230,8 @@ final class FilesViewTests: XCTestCase {
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image,
-            tags: []
+            tags: [],
+            isEditable: false
         )
         let asset = WireCellsLocalAsset(
             nodeID: item.id,
@@ -258,7 +264,8 @@ final class FilesViewTests: XCTestCase {
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image,
-            tags: []
+            tags: [],
+            isEditable: false
         )
         let asset = WireCellsLocalAsset(
             nodeID: item.id,

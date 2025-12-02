@@ -157,7 +157,8 @@ final class FilesViewModelTests {
                 ownedBy: nil,
                 modifiedAt: nil,
                 icon: .other,
-                tags: []
+                tags: [],
+                isEditable: false
             )],
             [], // Clears items
             [FilesViewItem(
@@ -169,7 +170,8 @@ final class FilesViewModelTests {
                 ownedBy: nil,
                 modifiedAt: nil,
                 icon: .other,
-                tags: []
+                tags: [],
+                isEditable: false
             )]
         ])
     }
@@ -218,7 +220,8 @@ final class FilesViewModelTests {
                 ownedBy: "Emel",
                 modifiedAt: now,
                 icon: .image,
-                tags: []
+                tags: [],
+                isEditable: false
             ),
             FilesViewItem(
                 id: node2.id,
@@ -229,7 +232,8 @@ final class FilesViewModelTests {
                 ownedBy: nil,
                 modifiedAt: nil,
                 icon: .other,
-                tags: []
+                tags: [],
+                isEditable: false
             )
         ])
     }
@@ -268,7 +272,8 @@ final class FilesViewModelTests {
                 ownedBy: "Emel",
                 modifiedAt: now,
                 icon: .other,
-                tags: []
+                tags: [],
+                isEditable: false
             ),
             FilesViewItem(
                 id: node2.id,
@@ -279,7 +284,8 @@ final class FilesViewModelTests {
                 ownedBy: nil,
                 modifiedAt: now - 60,
                 icon: .other,
-                tags: []
+                tags: [],
+                isEditable: false
             ),
             FilesViewItem(
                 id: node3.id,
@@ -290,7 +296,8 @@ final class FilesViewModelTests {
                 ownedBy: nil,
                 modifiedAt: nil,
                 icon: .other,
-                tags: []
+                tags: [],
+                isEditable: false
             )
         ])
     }
@@ -413,7 +420,8 @@ final class FilesViewModelTests {
                     ownedBy: nil,
                     modifiedAt: nil,
                     icon: .other,
-                    tags: []
+                    tags: [],
+                    isEditable: false
                 ),
                 FilesViewItem(
                     id: nodeC.id,
@@ -424,7 +432,8 @@ final class FilesViewModelTests {
                     ownedBy: nil,
                     modifiedAt: nil,
                     icon: .other,
-                    tags: []
+                    tags: [],
+                    isEditable: false
                 ),
                 FilesViewItem(
                     id: nodeD.id,
@@ -435,7 +444,8 @@ final class FilesViewModelTests {
                     ownedBy: nil,
                     modifiedAt: nil,
                     icon: .other,
-                    tags: []
+                    tags: [],
+                    isEditable: false
                 ),
                 FilesViewItem(
                     id: nodeA.id,
@@ -446,7 +456,8 @@ final class FilesViewModelTests {
                     ownedBy: nil,
                     modifiedAt: now,
                     icon: .other,
-                    tags: []
+                    tags: [],
+                    isEditable: false
                 )
             ]
         )

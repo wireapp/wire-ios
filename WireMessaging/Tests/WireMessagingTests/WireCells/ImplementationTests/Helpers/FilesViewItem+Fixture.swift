@@ -31,7 +31,8 @@ extension FilesViewItem {
         ownedBy: String? = nil,
         modifiedAt: Date? = nil,
         icon: FileIcon = .image,
-        tags: [String] = []
+        tags: [String] = [],
+        isEditable: Bool = false
     ) -> FilesViewItem {
         FilesViewItem(
             id: id,
@@ -42,7 +43,8 @@ extension FilesViewItem {
             ownedBy: ownedBy,
             modifiedAt: modifiedAt,
             icon: icon,
-            tags: tags
+            tags: tags,
+            isEditable: isEditable
         )
     }
 
