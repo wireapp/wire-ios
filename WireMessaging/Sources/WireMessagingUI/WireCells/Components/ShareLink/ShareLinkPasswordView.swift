@@ -86,7 +86,7 @@ struct ShareLinkPasswordView: View {
             VStack(spacing: 16) {
                 descriptionArea()
                 
-                setPasswortToggleArea()
+                setPasswordToggleArea()
                 
                 alertTestButtons()
             }
@@ -103,7 +103,7 @@ struct ShareLinkPasswordView: View {
             .foregroundStyle(ColorTheme.Base.secondaryText.color)
     }
     
-    @ViewBuilder private func setPasswortToggleArea() -> some View {
+    @ViewBuilder private func setPasswordToggleArea() -> some View {
         Toggle(isOn: .constant(true)) {
             Text(Strings.setPasswordToggle)
                 .font(for: .body1)
@@ -122,14 +122,16 @@ struct ShareLinkPasswordView: View {
         } label: {
             Text("show\n\"remove password\"\nconfirmation alert")
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.bordered)
+        .font(for: .subline1)
         
         Button {
             viewModel.isPresentingNoAccessToExistingPasswordConfirmation = true
         } label: {
             Text("show\n\"no access to existing password\"\nalert")
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.bordered)
+        .font(for: .subline1)
     }
     
     @ToolbarContentBuilder private func toolbarContent() -> some ToolbarContent {
@@ -143,7 +145,7 @@ struct ShareLinkPasswordView: View {
         
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                //TODO: ...
+                viewModel.save()
             } label: {
                 Text(L10n.Localizable.General.save)
                     .bold()

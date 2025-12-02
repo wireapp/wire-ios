@@ -36,5 +36,9 @@ extension ShareLinkPasswordView {
         func changePassword() {
             //TODO: ...
         }
+        
+        func save() {
+            //TODO: ...
+        }
     }
 }
