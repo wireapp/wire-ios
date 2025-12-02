@@ -80,7 +80,6 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
         var decryptedEvents = [UpdateEvent]()
         var brokenMLSGroupIDs = Set<String>()
-        var shouldCommitPendingProposals = false
 
         for event in eventEnvelope.events {
             logAttributes[.messageType] = event.name
@@ -120,7 +119,6 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     "decrypting MLS add message event...",
                     attributes: logAttributes
                 )
-                shouldCommitPendingProposals = true
 
                 do {
                     let decryptedEventData = try await mlsMessageDecryptor.decryptedMessageAddEventData(
@@ -167,14 +165,6 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             default:
                 // No decryption needed.
                 decryptedEvents.append(event)
-            }
-        }
-
-        if shouldCommitPendingProposals {
-            Task.detached {
-                // we don't need to wait for this, as it can take a while to finish
-                // it should not block decryption
-                await commitPendingProposalsIfNeeded()
             }
         }
 

@@ -1302,6 +1302,16 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+
+    public func execute(
+        identifier: MLSGroupID,
+        block: @Sendable (ZMConversation, NSManagedObjectContext) -> Void
+    ) async {
+        await context.perform { [context] in
+            let conversation = ZMConversation.fetch(with: identifier, in: context)
+            block(conversation, context)
+        }
+    }
 }
 
 // MARK: - Private helpers

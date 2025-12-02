@@ -69,7 +69,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private var incrementalSyncToken: IncrementalSync.Token?
     private var ongoingSyncTask: Task<Void, Never>?
     private let conversationUpdatesGenerator: ConversationUpdatesGeneratorProtocol
-
+    private let commitPendingProposalsGenerator: CommitPendingProposalsGeneratorProtocol
     private var cancellables: Set<AnyCancellable> = .init()
 
     var syncRunning: Bool {
@@ -97,6 +97,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol,
         conversationUpdatesGenerator: any ConversationUpdatesGeneratorProtocol,
+        commitPendingProposalsGenerator: any CommitPendingProposalsGeneratorProtocol,
         networkStatePublisher: AnyPublisher<NetworkState, Never>
     ) {
         self.journal = journal
@@ -109,6 +110,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         self.syncStateSubject = syncStateSubject
         self.pushChannelCoordinator = pushChannelCoordinator
         self.conversationUpdatesGenerator = conversationUpdatesGenerator
+        self.commitPendingProposalsGenerator = commitPendingProposalsGenerator
         self.networkStatePublisher = networkStatePublisher
         super.init()
 
@@ -157,6 +159,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         WireLogger.sync.debug(
             "suspending sync \(backgroundActivity != nil ? "in a background task" : "")"
         )
+        commitPendingProposalsGenerator.stop()
         conversationUpdatesGenerator.stop()
         ongoingSyncTask?.cancel()
         ongoingSyncTask = nil
@@ -246,6 +249,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                             delegate?.syncAgentDidStartIncrementalSync(self)
                             incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
                                 .perform()
+                            // incrementalSync over, liveSyncing is ongoing
+                            await commitPendingProposalsGenerator.start()
                             delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
                         }
                     } catch IncrementalSyncV2.Failure.mainAppPushChannelAlreadyOpened {
@@ -356,6 +361,10 @@ extension SyncAgent: LiveSyncDelegate {
 
     func isUpToDate(sync: IncrementalSyncV2) {
         delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
+        Task {
+            // incrementalSync over, liveSyncing is ongoing
+            await commitPendingProposalsGenerator.start()
+        }
     }
 
     func didMissedEvents(sync: IncrementalSyncV2) async {

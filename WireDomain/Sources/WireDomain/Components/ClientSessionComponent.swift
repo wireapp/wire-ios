@@ -816,5 +816,13 @@ public final class ClientSessionComponent {
             self?.workAgent.submitItem(workItem)
         }
     )
-
+    
+    public lazy var commitPendingProposalsGenerator: CommitPendingProposalsGeneratorProtocol = CommitPendingProposalsGenerator(
+        repository: conversationRepository,
+        mlsService: mlsService,
+        context: syncContext,
+        onCommitPendingProposals: { [weak self] workItem in
+            
+            self?.workAgent.submitItem(workItem)
+        })
 }

@@ -639,6 +639,7 @@ public final class ZMUserSession: NSObject {
             syncStateSubject: clientSessionComponent.syncStateSubject,
             pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator,
             conversationUpdatesGenerator: clientSessionComponent.conversationUpdatesGenerator,
+            commitPendingProposalsGenerator: clientSessionComponent.commitPendingProposalsGenerator,
             networkStatePublisher: networkStateSubject.eraseToAnyPublisher()
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
@@ -1305,13 +1306,6 @@ extension ZMUserSession: SyncAgentDelegate {
                 )
             } else {
                 WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
-            }
-
-            if !isRecovering, mlsFeature.isEnabled {
-                Task.detached { [mlsService] in
-                    // we don't need to wait for this, as it can take a while to finish
-                    await mlsService.commitPendingProposalsIfNeeded()
-                }
             }
 
             await calculateSelfSupportedProtocolsIfNeeded()

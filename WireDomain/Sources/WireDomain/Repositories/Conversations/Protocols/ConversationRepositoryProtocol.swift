@@ -192,4 +192,10 @@ public protocol ConversationRepositoryProtocol: Sendable {
         conversationID: String
     ) async throws -> String?
 
+    /// Checks if selfUser is still in a given conversation
+    /// - Parameter groupID: mlsGroupID of the conversation
+    /// - Returns: true if selfUser belongs to the conversation, false otherwise
+    func isSelfAnActiveMember(
+        in groupID: WireDataModel.MLSGroupID
+    ) async -> Bool
 }
