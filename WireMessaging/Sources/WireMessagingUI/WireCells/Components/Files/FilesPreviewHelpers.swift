@@ -29,7 +29,7 @@ extension FilesViewModel {
 
     /// A stubbed instance of `FilesViewModel` for SwiftUI previews.
     static func preview(isFoldersEnabled: Bool = false) -> FilesViewModel {
-        let cache = fileCache()
+        let cache = mockFileCache()
         let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
@@ -41,6 +41,11 @@ extension FilesViewModel {
                     repository: previewNodesRepository()
                 ),
                 deleteNodes: WireCellsDeleteNodesUseCase(
+                    repository: previewNodesRepository(),
+                    fileCache: cache,
+                    localAssetStore: localAssetStore
+                ),
+                restoreNodes: WireCellsRestoreNodesUseCase(
                     repository: previewNodesRepository(),
                     fileCache: cache,
                     localAssetStore: localAssetStore
@@ -113,11 +118,8 @@ extension FilesItemViewModel {
                 tags: tags
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
-            onOpen: { _ in },
-            onDelete: { _ in },
-            onRename: { _ in },
-            onEditTagsSelected: { _ in },
-            onShareLinkSelected: { _ in }
+            onItemAction: { _, _ in },
+            isInRecycleBin: false,
         )
     }
 
@@ -175,7 +177,7 @@ private func previewTagsApi() -> some NodesAPIProtocol {
     return mock
 }
 
-private func fileCache() -> any FileCache {
+private func mockFileCache() -> any FileCache {
     let fileURL = URL.temporaryDirectory.appendingPathComponent("mock-file.txt")
     let file = Data("Some text file content".utf8)
     try? file.write(to: fileURL)

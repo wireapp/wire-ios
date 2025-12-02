@@ -34,6 +34,7 @@ final class FilesViewTests: XCTestCase {
     private var nodesRepository: MockWireCellsNodesRepositoryProtocol!
     private var fetchNodesUseCase: WireCellsFetchNodesUseCase!
     private var deleteNodeUseCase: WireCellsDeleteNodesUseCase!
+    private var restoreNodeUseCase: WireCellsRestoreNodesUseCase!
     private var renameNodeUseCase: WireCellsRenameNodeUseCase!
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
@@ -56,6 +57,11 @@ final class FilesViewTests: XCTestCase {
             repository: nodesRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
+            repository: nodesRepository,
+            fileCache: MockFileCache(),
+            localAssetStore: MockWireCellsLocalAssetStoreProtocol()
+        )
+        restoreNodeUseCase = WireCellsRestoreNodesUseCase(
             repository: nodesRepository,
             fileCache: MockFileCache(),
             localAssetStore: MockWireCellsLocalAssetStoreProtocol()
@@ -322,6 +328,7 @@ final class FilesViewTests: XCTestCase {
             useCases: .init(
                 fetchNodes: fetchNodesUseCase,
                 deleteNodes: deleteNodeUseCase,
+                restoreNodes: restoreNodeUseCase,
                 renameNode: renameNodeUseCase,
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
@@ -362,13 +369,11 @@ private extension FilesItemViewModel {
         return FilesItemViewModel(
             item: item,
             localAssetRepository: localAssetRepository,
-            onOpen: { _ in },
-            onDelete: { _ in },
-            onEditTagsSelected: { _ in },
-            onShareLinkSelected: { _ in },
+            onItemAction: { _, _ in },
             locale: Locale(identifier: "en_US_POSIX"),
             calendar: Calendar(identifier: .gregorian),
-            timeZone: .gmt
+            timeZone: .gmt,
+            isInRecycleBin: false
         )
     }
 
