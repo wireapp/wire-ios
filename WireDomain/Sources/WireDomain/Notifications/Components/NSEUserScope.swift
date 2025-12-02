@@ -52,7 +52,6 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         case failedToLoadPersistenceStack(any Error)
         case failedToFetchCookies(any Error)
         case userNotAuthenticated
-        case failedToCheckBuildBlacklist(any Error)
         case buildIsBlacklisted(buildNumber: String)
 
     }
@@ -82,6 +81,12 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
                 cookieEncryptionKey: dependency.cookieEncryptionKey,
                 keychain: Keychain()
             )
+        }
+    }
+
+    private var coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager {
+        shared {
+            CoreCryptoKeyMigrationManager(journal: journal)
         }
     }
 
@@ -126,7 +131,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         )
 
         // Return early if needed.
-        guard try await !isBuildBlacklisted(networkService: networkServices.blacklist) else {
+        guard await !isBuildBlacklisted(networkService: networkServices.blacklist) else {
             throw Failure.buildIsBlacklisted(buildNumber: dependency.currentBuildNumber)
         }
 
@@ -142,10 +147,15 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             throw Failure.mainAppRequired(message: "cryptobox migration required")
         }
 
+        guard !coreCryptoKeyMigrationManager.isAnyMigrationRequired else {
+            throw Failure.mainAppRequired(message: "core crypto key migration required")
+        }
+
         // TODO: [WPB-19778] guard no app version migration needed.
 
-        guard let clientID = await coreDataStack.syncContext.perform({
-            let selfUser = ZMUser.selfUser(in: coreDataStack.syncContext)
+        let context = coreDataStack.syncContext
+        guard let clientID = await context.perform({ [context] in
+            let selfUser = ZMUser.selfUser(in: context)
             return selfUser.selfClient()?.remoteIdentifier
         }) else {
             throw Failure.mainAppRequired(message: "no self client id")
@@ -232,18 +242,14 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         return newMetadata
     }
 
-    private func isBuildBlacklisted(networkService: NetworkService) async throws -> Bool {
+    private func isBuildBlacklisted(networkService: NetworkService) async -> Bool {
         let api = BlacklistAPIBuilder(networkService: networkService).makeAPI()
         let useCase = IsBuildBlacklistedUseCaseImpl(
             currentBuildNumber: dependency.currentBuildNumber,
             api: api
         )
 
-        do {
-            return try await useCase.invoke()
-        } catch {
-            throw Failure.failedToCheckBuildBlacklist(error)
-        }
+        return await useCase.invoke()
     }
 
     // TODO: [WPB-19777] deduplicate

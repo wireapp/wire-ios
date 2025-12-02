@@ -26,10 +26,6 @@ public struct MLSPublicKeys: Equatable, Sendable {
 
     public let ed25519: String?
 
-    /// The ed448 signature key.
-
-    public let ed448: String?
-
     /// The p256 signature key.
 
     public let p256: String?
@@ -38,62 +34,56 @@ public struct MLSPublicKeys: Equatable, Sendable {
 
     public let p384: String?
 
-    /// The p512 signature key.
+    /// The p521 signature key.
 
-    public let p512: String?
+    public let p521: String?
 
     /// Whether at least one non-empty key exists.
 
     public var isValid: Bool {
-        let allKeys = [ed25519, ed448, p256, p384, p512].compactMap(\.self)
+        let allKeys = [ed25519, p256, p384, p521].compactMap(\.self)
         return allKeys.contains { !$0.isEmpty }
     }
 
     public init(
         ed25519: String? = nil,
-        ed448: String? = nil,
         p256: String? = nil,
         p384: String? = nil,
-        p512: String? = nil
+        p521: String? = nil
     ) {
         self.ed25519 = ed25519
-        self.ed448 = ed448
         self.p256 = p256
         self.p384 = p384
-        self.p512 = p512
+        self.p521 = p521
     }
 }
 
 struct MLSPublicKeysV0: Equatable, Sendable, Codable {
 
     let ed25519: String?
-    let ed448: String?
     let p256: String?
     let p384: String?
-    let p512: String?
+    let p521: String?
 
     enum CodingKeys: String, CodingKey {
 
         case ed25519
-        case ed448
         case p256 = "ecdsa_secp256r1_sha256"
         case p384 = "ecdsa_secp384r1_sha384"
-        case p512 = "ecdsa_secp521r1_sha512"
+        case p521 = "ecdsa_secp521r1_sha512"
 
     }
 
     init(
         ed25519: String? = nil,
-        ed448: String? = nil,
         p256: String? = nil,
         p384: String? = nil,
-        p512: String? = nil
+        p521: String? = nil
     ) {
         self.ed25519 = ed25519
-        self.ed448 = ed448
         self.p256 = p256
         self.p384 = p384
-        self.p512 = p512
+        self.p521 = p521
     }
 }
 
@@ -102,10 +92,9 @@ extension MLSPublicKeysV0: ToAPIModelConvertible {
     func toAPIModel() -> MLSPublicKeys {
         MLSPublicKeys(
             ed25519: ed25519,
-            ed448: ed448,
             p256: p256,
             p384: p384,
-            p512: p512
+            p521: p521
         )
     }
 }
@@ -115,10 +104,9 @@ extension MLSPublicKeys: ToNetworkConvertible {
     func toNetworkModel() -> MLSPublicKeysV0 {
         MLSPublicKeysV0(
             ed25519: ed25519,
-            ed448: ed448,
             p256: p256,
             p384: p384,
-            p512: p512
+            p521: p521
         )
     }
 }
