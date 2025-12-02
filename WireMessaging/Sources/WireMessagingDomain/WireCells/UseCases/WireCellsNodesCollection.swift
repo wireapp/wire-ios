@@ -16,25 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@preconcurrency package import Combine
 
-extension Error {
+/// A collection of wire cells nodes that can be observed for changes and mutated by various use cases.
+@MainActor
+package final class WireCellsNodesCollection {
 
-    /// Returns `true` if self is a URLError(.cancelled) otherwise `false`.
-    var isURLErrorCancelled: Bool {
-        isURLError(.cancelled)
+    private let nodesPublisher = PassthroughSubject<[WireCellsNode], Never>()
+
+    private(set) var nodes: [WireCellsNode] = [] {
+        didSet {
+            nodesPublisher.send(nodes)
+        }
     }
 
-    /// Returns `true` if self is a URLError(.notConnectedToInternet) or URLError(.networkConnectionLost) otherwise
-    /// `false`.
-    var isNoInternetError: Bool {
-        isURLError(.notConnectedToInternet, .networkConnectionLost)
+    package init() {}
+
+    func setNodes(_ nodes: [WireCellsNode]) {
+        self.nodes = nodes
     }
 
-    /// Returns `true` if self is a URLError with one of the given codes, otherwise `false`.
-    func isURLError(_ code: URLError.Code...) -> Bool {
-        guard let urlError = self as? URLError else { return false }
-        return code.contains(urlError.code)
+    package func observeNodes() -> AnyPublisher<[WireCellsNode], Never> {
+        nodesPublisher.prepend(nodes).eraseToAnyPublisher()
     }
 
 }

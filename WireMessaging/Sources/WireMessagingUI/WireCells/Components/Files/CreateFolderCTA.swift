@@ -16,25 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
+import WireDesign
 
-extension Error {
+struct CreateFolderCTA: View {
 
-    /// Returns `true` if self is a URLError(.cancelled) otherwise `false`.
-    var isURLErrorCancelled: Bool {
-        isURLError(.cancelled)
+    let action: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Divider()
+
+            Button(action: action) {
+                HStack(alignment: .center, spacing: 20) {
+                    Image(systemName: "plus")
+
+                    Text(L10n.Localizable.Conversation.WireCells.Files.List.newFolder)
+                        .font(for: .body2)
+                    Spacer()
+                }
+            }
+            .tint(ColorTheme.Backgrounds.onSurface.color)
+            .padding()
+        }
+        .contentShape(Rectangle())
     }
-
-    /// Returns `true` if self is a URLError(.notConnectedToInternet) or URLError(.networkConnectionLost) otherwise
-    /// `false`.
-    var isNoInternetError: Bool {
-        isURLError(.notConnectedToInternet, .networkConnectionLost)
-    }
-
-    /// Returns `true` if self is a URLError with one of the given codes, otherwise `false`.
-    func isURLError(_ code: URLError.Code...) -> Bool {
-        guard let urlError = self as? URLError else { return false }
-        return code.contains(urlError.code)
-    }
-
 }
