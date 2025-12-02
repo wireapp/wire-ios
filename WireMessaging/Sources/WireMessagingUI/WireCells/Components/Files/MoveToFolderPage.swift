@@ -242,7 +242,7 @@ private struct MoveToFolderItemView: View {
 private func makePreview(
     title: String,
     content: MoveToFolderPageViewModel.ContentState,
-    moveButtonState: MoveButtonState,
+    moveButtonState: MoveToFolderPageViewModel.MoveButtonState,
     isNewFolderEnabled: Bool,
     navigationMenuOptions: [NavigationMenuOption],
 ) -> some View {

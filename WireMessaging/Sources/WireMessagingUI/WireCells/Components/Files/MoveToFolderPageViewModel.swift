@@ -31,7 +31,7 @@ protocol MoveToFolderPageViewModelProtocol: ObservableObject {
 
     var title: String { get }
     var content: MoveToFolderPageViewModel.ContentState { get }
-    var moveButtonState: MoveButtonState { get }
+    var moveButtonState: MoveToFolderPageViewModel.MoveButtonState { get }
     var isNewFolderEnabled: Bool { get }
     var navigationMenuOptions: [NavigationMenuOption] { get }
     var showCancelButton: Bool { get }
@@ -64,15 +64,6 @@ struct MoveToFolderItem: Identifiable, Hashable, Sendable {
 
 }
 
-/// The state of the move button
-enum MoveButtonState {
-
-    case enabled
-    case disabled
-    case loading
-
-}
-
 // MARK: - MoveToFolderPageViewModel
 
 @MainActor
@@ -84,6 +75,15 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
         case initialLoad
         case loaded(items: [MoveToFolderItem], hasMore: Bool, isLoading: Bool)
         case empty(title: String?, message: String, showsReload: Bool)
+
+    }
+
+    /// The state of the move button
+    enum MoveButtonState {
+
+        case enabled
+        case disabled
+        case loading
 
     }
 
@@ -339,7 +339,7 @@ final class MockMoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
 
     let title: String
     let content: MoveToFolderPageViewModel.ContentState
-    let moveButtonState: MoveButtonState
+    let moveButtonState: MoveToFolderPageViewModel.MoveButtonState
     let isNewFolderEnabled: Bool
     let navigationMenuOptions: [NavigationMenuOption]
     let showCancelButton: Bool
@@ -349,7 +349,7 @@ final class MockMoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
     init(
         title: String = "Files",
         content: MoveToFolderPageViewModel.ContentState = .initialLoad,
-        moveButtonState: MoveButtonState = .disabled,
+        moveButtonState: MoveToFolderPageViewModel.MoveButtonState = .disabled,
         isNewFolderEnabled: Bool = false,
         navigationMenuOptions: [NavigationMenuOption] = [],
         showCancelButton: Bool = false,
