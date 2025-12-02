@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
+package import Combine
 package import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
@@ -41,6 +41,10 @@ package struct FilesViewItem: Identifiable, Hashable {
     /// Identifier of this item on the wire cells backend.
     package let id: UUID
 
+    /// The id of the topmost folder in the recycle bin, if the item is not at the root of the recycle bin.
+    /// Needed to restore items which are in folders rather than directly at the root of the recycle bin.
+    var recycleBinTopFolderId: UUID?
+
     /// The kind of this item - file or folder.
     let kind: Kind
 
@@ -62,6 +66,9 @@ package struct FilesViewItem: Identifiable, Hashable {
     /// The tags that users have added for that file.
     let tags: [String]
 }
+
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 @MainActor
 /// View model for the `FilesView`.
@@ -131,6 +138,7 @@ package final class FilesViewModel: ObservableObject {
         package init(
             fetchNodes: WireCellsFetchNodesUseCase,
             deleteNodes: WireCellsDeleteNodesUseCase,
+            restoreNodes: WireCellsRestoreNodesUseCase,
             renameNode: any WireCellsRenameNodeUseCaseProtocol,
             updateTags: any WireCellsUpdateTagsUseCaseProtocol,
             getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol,
@@ -139,6 +147,7 @@ package final class FilesViewModel: ObservableObject {
 
             self.fetchNodes = fetchNodes
             self.deleteNodes = deleteNodes
+            self.restoreNodes = restoreNodes
             self.renameNode = renameNode
             self.updateTags = updateTags
             self.getTagSuggestions = getTagSuggestions
@@ -147,6 +156,7 @@ package final class FilesViewModel: ObservableObject {
 
         let fetchNodes: WireCellsFetchNodesUseCase
         let deleteNodes: WireCellsDeleteNodesUseCase
+        let restoreNodes: WireCellsRestoreNodesUseCase
         let renameNode: any WireCellsRenameNodeUseCaseProtocol
         let updateTags: any WireCellsUpdateTagsUseCaseProtocol
         let getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
@@ -164,6 +174,8 @@ package final class FilesViewModel: ObservableObject {
     private let navigationPath: [FilesViewItem]
     private let accentColorProvider: () -> WireAccentColor
     let isFoldersEnabled: Bool
+    let isRecycleBin: Bool
+    let triggerReload: PassthroughSubject<Void, Never>
 
     @Published var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
@@ -180,10 +192,6 @@ package final class FilesViewModel: ObservableObject {
         state != .error && state != .pending
     }
 
-    var showCloseButton: Bool {
-        navigationPath.isEmpty
-    }
-
     package init(
         useCases: UseCases,
         title: String? = nil,
@@ -194,6 +202,8 @@ package final class FilesViewModel: ObservableObject {
         fileCache: any FileCache,
         cellName: String? = nil,
         isFoldersEnabled: Bool,
+        isRecycleBin: Bool = false,
+        triggerReload: PassthroughSubject<Void, Never> = .init(),
         accentColorProvider: @escaping () -> WireAccentColor
     ) {
         self.useCases = useCases
@@ -205,9 +215,23 @@ package final class FilesViewModel: ObservableObject {
         self.cellName = cellName
         self.state = isCellsStatePending ? .pending : .loading
         self.isFoldersEnabled = isFoldersEnabled
+        self.isRecycleBin = isRecycleBin
+        self.triggerReload = triggerReload
         self.accentColorProvider = accentColorProvider
 
         bindSearch()
+    }
+
+    var navigationTitle: String {
+        if let title {
+            title
+        } else {
+            if isRecycleBin {
+                Strings.RecycleBin.navigationTitle
+            } else {
+                Strings.Files.navigationTitle
+            }
+        }
     }
 
     /// Whether the view model is currently loading items.
@@ -260,19 +284,24 @@ package final class FilesViewModel: ObservableObject {
         FilesItemViewModel(
             item: state.items[index],
             localAssetRepository: localAssetRepository,
-            onOpen: { [weak self] item in
-                await self?.openItem(item: item)
-            },
-            onDelete: { [weak self] item in
-                await self?.deleteItem(item)
-            },
-            onRename: { [weak self] item in
+            onItemAction: { [weak self] action, item in
                 guard let self else { return }
-                sheetNavigation = .renameFile(view: makeFileRenameView(item: item))
+                switch action {
+                case .open:
+                    await openItem(item: item)
+                case .deleteToRecycleBin:
+                    await deleteItem(item, permanently: false)
+                case .deletePermanently:
+                    await deleteItem(item, permanently: true)
+                case .restore:
+                    await restoreItem(item)
+                case .rename:
+                    sheetNavigation = .renameFile(view: makeFileRenameView(item: item))
+                case .editTags:
+                    sheetNavigation = .editTags(fileItem: item)
+                }
             },
-            onEditTagsSelected: { [weak self] item in
-                self?.sheetNavigation = .editTags(fileItem: item)
-            },
+            isInRecycleBin: isRecycleBin,
         )
     }
 
@@ -340,7 +369,24 @@ package final class FilesViewModel: ObservableObject {
     private func openFolder(item: FilesViewItem) {
         precondition(item.kind == .folder)
 
-        setNavigation(navigationPath + [item])
+        var targetItem = item
+
+        if isRecycleBin {
+            let pathComponents = targetItem.filePath.split(separator: "/").map { String($0) }
+            if pathComponents.count == 3 {
+                // remember the id of the top folder in the recycle bin for later when an item in a subfolder will be
+                // restored
+                targetItem.recycleBinTopFolderId = targetItem.id
+            } else if pathComponents.count > 3 {
+                // for the next subfolder, just assign the id of the same top folder
+                if let previousItem = navigationPath.last,
+                   let recycleBinTopFolderId = previousItem.recycleBinTopFolderId {
+                    targetItem.recycleBinTopFolderId = recycleBinTopFolderId
+                }
+            }
+        }
+
+        setNavigation(navigationPath + [targetItem])
     }
 
     /// Downloads if necessary and views the asset represented by the given item.
@@ -486,7 +532,7 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    private func deleteItem(_ asset: FilesViewItem) async {
+    private func deleteItem(_ asset: FilesViewItem, permanently: Bool) async {
         guard state.isLoaded else {
             WireLogger.wireCells.error("Attempt to delete asset while not visible", attributes: .safePublic)
             return
@@ -497,7 +543,32 @@ package final class FilesViewModel: ObservableObject {
         state = .received(items: Self.processItems(currentItems))
 
         do {
-            try await useCases.deleteNodes.invoke(nodeIDs: [asset.id])
+            try await useCases.deleteNodes.invoke(nodeIDs: [asset.id], deletePermanently: permanently)
+        } catch {
+            guard state.isLoaded else { return }
+
+            var currentItems = state.items
+            currentItems.append(asset)
+            state = .received(items: Self.processItems(currentItems))
+        }
+    }
+
+    private func restoreItem(_ asset: FilesViewItem) async {
+        guard state.isLoaded else {
+            WireLogger.wireCells.error("Attempt to restore asset while not visible", attributes: .safePublic)
+            return
+        }
+
+        var currentItems = state.items
+        currentItems.removeAll { $0.id == asset.id }
+        state = .received(items: Self.processItems(currentItems))
+
+        let nodeIdToRestore = navigationPath.last?.recycleBinTopFolderId ?? asset.id
+
+        do {
+            try await useCases.restoreNodes.invoke(nodeIDs: [nodeIdToRestore])
+
+            setNavigation([])
         } catch {
             guard state.isLoaded else { return }
 
