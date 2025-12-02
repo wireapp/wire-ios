@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<<< HEAD:wire-ios/Wire-iOS/Sources/UserInterface/MainController/DefaultManagedObjectContextProvider.swift
 import WireData
 import WireDataModel
 
@@ -31,12 +30,4 @@ struct DefaultManagedObjectContextProvider: ManagedObjectContextProvider {
     func newBackgroundContext() -> NSManagedObjectContext {
         contextProvider.newBackgroundContext()
     }
-========
-public import Foundation
-
-public protocol WireCellsRestoreNodesUseCaseProtocol: Sendable {
-
-    func invoke(nodeIDs: [UUID]) async throws
->>>>>>>> feat/hint-banner-for-disabled-apps-WPB-21441-cherry-pick:WireMessaging/Sources/WireMessagingDomain/WireCells/Protocols/WireCellsRestoreNodesUseCaseProtocol.swift
-
 }
