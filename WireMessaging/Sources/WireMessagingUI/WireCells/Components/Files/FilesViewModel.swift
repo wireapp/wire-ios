@@ -48,7 +48,7 @@ package struct FilesViewItem: Identifiable, Hashable {
     /// The kind of this item - file or folder.
     let kind: Kind
 
-    /// The name of the user who owns (uploaded or created) this item.
+    /// The name of the this item.
     let name: String
 
     /// The filepath of the item.
@@ -84,6 +84,7 @@ package final class FilesViewModel: ObservableObject {
 
     enum SheetNavigation: Identifiable {
         case editTags(fileItem: FilesViewItem)
+        case moveToFolder(fileItem: FilesViewItem)
         case renameFile(view: FileRenameView)
         case createFolder(view: CreateFolderView)
         case filters(view: FilesFiltersView)
@@ -92,6 +93,8 @@ package final class FilesViewModel: ObservableObject {
             switch self {
             case let .editTags(fileItem: item):
                 "editTags(\(item.id))"
+            case let .moveToFolder(fileItem):
+                "moveToFolder(\(fileItem.id)"
             case let .createFolder(view):
                 "createFolder(\(view.id))"
             case let .renameFile(view):
@@ -136,7 +139,7 @@ package final class FilesViewModel: ObservableObject {
 
     package struct UseCases {
         package init(
-            fetchNodes: WireCellsFetchNodesUseCase,
+            fetchNodes: WireCellsFetchNodesPageUseCase,
             deleteNodes: WireCellsDeleteNodesUseCase,
             restoreNodes: WireCellsRestoreNodesUseCase,
             renameNode: any WireCellsRenameNodeUseCaseProtocol,
@@ -154,7 +157,7 @@ package final class FilesViewModel: ObservableObject {
             self.createFolder = createFolder
         }
 
-        let fetchNodes: WireCellsFetchNodesUseCase
+        let fetchNodes: WireCellsFetchNodesPageUseCase
         let deleteNodes: WireCellsDeleteNodesUseCase
         let restoreNodes: WireCellsRestoreNodesUseCase
         let renameNode: any WireCellsRenameNodeUseCaseProtocol
@@ -167,6 +170,7 @@ package final class FilesViewModel: ObservableObject {
 
     private let setNavigation: ([FilesViewItem]) -> Void
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
+    private let nodesRepository: any WireCellsNodesRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
     private let cellName: String? // nil when browsing all files
@@ -199,6 +203,7 @@ package final class FilesViewModel: ObservableObject {
         setNavigation: @escaping ([FilesViewItem]) -> Void = { _ in },
         isCellsStatePending: Bool,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
+        nodesRepository: any WireCellsNodesRepositoryProtocol,
         fileCache: any FileCache,
         cellName: String? = nil,
         isFoldersEnabled: Bool,
@@ -211,6 +216,7 @@ package final class FilesViewModel: ObservableObject {
         self.navigationPath = navigationPath
         self.setNavigation = setNavigation
         self.localAssetRepository = localAssetRepository
+        self.nodesRepository = nodesRepository
         self.fileCache = fileCache
         self.cellName = cellName
         self.state = isCellsStatePending ? .pending : .loading
@@ -299,6 +305,8 @@ package final class FilesViewModel: ObservableObject {
                     sheetNavigation = .renameFile(view: makeFileRenameView(item: item))
                 case .editTags:
                     sheetNavigation = .editTags(fileItem: item)
+                case .moveToFolder:
+                    sheetNavigation = .moveToFolder(fileItem: item)
                 }
             },
             isInRecycleBin: isRecycleBin,
@@ -321,6 +329,26 @@ package final class FilesViewModel: ObservableObject {
 
         sheetNavigation = .filters(
             view: FilesFiltersView(viewModel: filesFiltersViewModel)
+        )
+    }
+
+    func moveToFolderView(item: FilesViewItem) -> some View {
+        let containerPath = item.filePath.components(separatedBy: "/").dropLast().joined(separator: "/")
+        let nodesRepository = nodesRepository
+        let useCases = useCases
+        return MoveToFolderView(
+            viewModel: MoveToFolderViewModel(
+                containerPath: containerPath,
+                nodeID: item.id,
+                nodeName: item.name,
+                onFinish: { [weak self] in
+                    self?.sheetNavigation = nil
+                    Task { await self?.reload(refreshing: true) }
+                },
+                nodesRepository: nodesRepository,
+                moveNodeUseCase: WireCellsMoveNodeUseCase(nodesRepository: nodesRepository),
+                createFolderUseCase: useCases.createFolder
+            )
         )
     }
 
