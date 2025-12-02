@@ -119,11 +119,11 @@ extension SessionManager: UNUserNotificationCenterDelegate {
                 ) { [weak self] _ in
                     guard let self else { return }
 
-                    if let observer = self.conversationVisibleObserver {
+                    if let observer = conversationVisibleObserver {
                         NotificationCenter.default.removeObserver(observer)
-                        self.conversationVisibleObserver = nil
+                        conversationVisibleObserver = nil
                     }
-                    self.presentationDelegate?.updateActiveCallPresentationStateIfNeeded()
+                    presentationDelegate?.updateActiveCallPresentationStateIfNeeded()
                 }
 
                 self.select(account, completion: { _ in
