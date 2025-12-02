@@ -479,7 +479,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
     NSError *transportError = [NSError transportErrorFromURLTask:task expired:expired payloadLabel:label];
     ZMTransportResponse *response = [self transportResponseFromURLResponse:httpResponse data:data error:transportError apiVersion:request.apiVersion];
-    [WireLoggerObjC logHTTPResponse:httpResponse];
+    [WireLoggerObjC logHTTPResponse:httpResponse body: data];
 
     ZMLogDebug(@"ConnectionProxyDictionary: %@,", session.configuration.connectionProxyDictionary);
     if (response.result == ZMTransportResponseStatusExpired) {

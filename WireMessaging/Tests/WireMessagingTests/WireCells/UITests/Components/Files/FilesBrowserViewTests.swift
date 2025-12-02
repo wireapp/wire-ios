@@ -34,6 +34,7 @@ final class FilesBrowserViewTests: XCTestCase {
     private var nodesRepository: MockWireCellsNodesRepositoryProtocol!
     private var fetchNodesUseCase: WireCellsFetchNodesPageUseCase!
     private var deleteNodeUseCase: WireCellsDeleteNodesUseCase!
+    private var restoreNodeUseCase: WireCellsRestoreNodesUseCase!
     private var renameNodeUseCase: WireCellsRenameNodeUseCase!
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
@@ -61,6 +62,11 @@ final class FilesBrowserViewTests: XCTestCase {
             repository: nodesRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
+            repository: nodesRepository,
+            fileCache: MockFileCache(),
+            localAssetStore: MockWireCellsLocalAssetStoreProtocol()
+        )
+        restoreNodeUseCase = WireCellsRestoreNodesUseCase(
             repository: nodesRepository,
             fileCache: MockFileCache(),
             localAssetStore: MockWireCellsLocalAssetStoreProtocol()
@@ -174,6 +180,7 @@ final class FilesBrowserViewTests: XCTestCase {
             useCases: .init(
                 fetchNodes: fetchNodesUseCase,
                 deleteNodes: deleteNodeUseCase,
+                restoreNodes: restoreNodeUseCase,
                 renameNode: renameNodeUseCase,
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
@@ -186,10 +193,12 @@ final class FilesBrowserViewTests: XCTestCase {
             nodesRepository: nodesRepository,
             fileCache: MockFileCache(),
             isFoldersEnabled: false,
-            isCollaboraEnabled: false
+            isCollaboraEnabled: false,
+            accentColorProvider: { .default }
         )
 
         filesViewModel.state = state
+        filesViewModel.hasMore = false
 
         let filesBrowserView = FilesBrowserView(viewModel: filesViewModel)
 

@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 
 public struct CloseButton: View {
 
@@ -42,7 +43,7 @@ public struct CloseButton: View {
         .buttonStyle(.plain)
         .foregroundColor(Color(uiColor: foregroundColor))
         .accessibilityLabel(Text(accessibilityLabel))
-        .accessibilityIdentifier("close")
+        .accessibilityIdentifier(Locators.UserDetailsPage.close.rawValue)
     }
 }
 

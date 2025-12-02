@@ -31,9 +31,19 @@ package struct FilesView: FilesViewProtocol {
     package var isBrowsing: Bool { false }
     @StateObject package var viewModel: FilesViewModel
     @Environment(\.dismiss) var dismiss
+    @Environment(\.wireAccentColor) private var accentColor
 
-    package init(viewModel: @autoclosure @escaping () -> FilesViewModel) {
+    let onOpenRecycleBin: () -> Void
+    let onDismissContainer: () -> Void
+
+    package init(
+        viewModel: @autoclosure @escaping () -> FilesViewModel,
+        onOpenRecycleBin: @escaping () -> Void = {},
+        onDismissContainer: @escaping () -> Void = {}
+    ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
+        self.onOpenRecycleBin = onOpenRecycleBin
+        self.onDismissContainer = onDismissContainer
     }
 
     package var body: some View {
@@ -46,26 +56,8 @@ package struct FilesView: FilesViewProtocol {
                 case .loading:
                     ProgressView()
                         .progressViewStyle(.circular)
-                case let .received(items):
-                    VStack(spacing: 0) {
-                        if items.isEmpty {
-                            Spacer()
-                            FilesInfoView(info: .noFilesFound(scope: .oneConversation))
-                            Spacer()
-                        } else {
-                            filesList
-                                .listStyle(.plain)
-                                .refreshable { reloadTask(refreshing: true) }
-                        }
-
-                        if viewModel.isFoldersEnabled {
-                            CreateFolderCTA {
-                                viewModel.onCreateFolder()
-                            }
-                        }
-                    }
-                case .pending:
-                    FilesInfoView(info: .preparingFiles)
+                case .received, .pending:
+                    filesList
                 case .error:
                     FilesInfoView(info: .error, onReload: {
                         reloadTask()
@@ -73,55 +65,50 @@ package struct FilesView: FilesViewProtocol {
                 }
             }
             .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
-            .navigationTitle(viewModel.title ?? Strings.Files.navigationTitle)
+            .navigationTitle(viewModel.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
-            .interactiveDismissDisabled()
             .toolbar { toolbarContent }
             .onAppear { reloadTask() }
+            .onReceive(viewModel.triggerReload) { _ in
+                Task {
+                    await viewModel.reload()
+                }
+            }
             .alert(
                 item: $viewModel.alert,
                 title: { Text($0.title) },
                 message: { Text($0.message) },
                 actions: { _ in confirmButton }
             )
-            .sheet(item: $viewModel.sheetNavigation) { navigationItem in
-                switch navigationItem {
-                case let .editTags(fileItem: fileItem):
-                    TagsEditView(
-                        fileItem: fileItem,
-                        useCases: .init(
-                            updateTags: viewModel.useCases.updateTags,
-                            getSuggestions: viewModel.useCases.getTagSuggestions
-                        ),
-                        postSaveAction: {
-                            await viewModel.reload()
-                        }
-                    )
-                case let .moveToFolder(fileItem):
-                    viewModel.moveToFolderView(item: fileItem)
+            .sheet(
+                item: $viewModel.sheetNavigation,
+                onDismiss: {
+                    Task { await viewModel.onSheetDismissed() }
+                }, content: { navigationItem in
+                    switch navigationItem {
+                    case let .editTags(fileItem: fileItem):
+                        TagsEditView(
+                            fileItem: fileItem,
+                            useCases: .init(
+                                updateTags: viewModel.useCases.updateTags,
+                                getSuggestions: viewModel.useCases.getTagSuggestions
+                            ),
+                            postSaveAction: {
+                                await viewModel.reload()
+                            }
+                        )
+                    case let .renameFile(fileRenameView):
+                        fileRenameView
+                    case let .createFolder(folderView):
+                        folderView
+                    case let .moveToFolder(fileItem):
+                        viewModel.moveToFolderView(item: fileItem)
+                    default:
+                        EmptyView()
+                    }
                 }
-            }
-            .sheet(
-                item: $viewModel.fileRenameView,
-                onDismiss: {
-                    if viewModel.didRenameFile {
-                        reloadTask()
-                        viewModel.didRenameFile = false
-                    }
-                },
-                content: { $0 }
-            )
-            .sheet(
-                item: $viewModel.createFolderView,
-                onDismiss: {
-                    if viewModel.didCreateFolder {
-                        reloadTask()
-                        viewModel.didCreateFolder = false
-                    }
-                },
-                content: { $0 }
             )
             .fullScreenCover(
                 item: $viewModel.isEditing,
@@ -148,7 +135,15 @@ private extension FilesView {
             }
         }
 
-        ToolbarItem(placement: .navigationBarTrailing) { closeButton }
+        if !viewModel.isRecycleBin {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                moreActionsButton
+            }
+        }
+
+        ToolbarItem(placement: .navigationBarTrailing) {
+            closeButton
+        }
     }
 
     func toolBarTitleMenuContent() -> some View {
@@ -164,15 +159,43 @@ private extension FilesView {
 
     var closeButton: some View {
         Button(
-            action: { dismiss() },
+            action: { onDismissContainer() },
             label: {
-                Image(.close)
-                    .foregroundStyle(SemanticColors.Icon.foregroundDefaultBlack.color)
-                    .frame(width: 44, height: 44, alignment: .trailing)
+                Image(systemName: "xmark")
             }
         )
         .accessibilityLabel(Accessibility.Files.close)
         .accessibilityIdentifier("close")
+        .tint(ColorTheme.Base.primary(accentColor).color)
+    }
+
+    var moreActionsButton: some View {
+        Menu {
+            Button {
+                viewModel.onCreateFolder()
+            } label: {
+                Label {
+                    Text(Strings.Files.List.newFolder)
+                } icon: {
+                    Image(systemName: "folder")
+                        .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                }
+            }
+
+            Button {
+                onOpenRecycleBin()
+            } label: {
+                Label {
+                    Text(Strings.Files.openRecycleBin)
+                } icon: {
+                    Image(systemName: "trash")
+                        .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                }
+            }
+        } label: {
+            Image(systemName: "ellipsis.circle")
+        }
+        .tint(ColorTheme.Base.primary(accentColor).color)
     }
 }
 
@@ -190,5 +213,7 @@ private extension FilesViewModel.FolderMenuOption {
 }
 
 #Preview {
-    FilesView(viewModel: .preview(isFoldersEnabled: true))
+    NavigationStack {
+        FilesView(viewModel: .preview(isFoldersEnabled: true))
+    }
 }

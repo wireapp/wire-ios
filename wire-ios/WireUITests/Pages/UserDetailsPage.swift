@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class UserDetailsPage: PageModel {
@@ -25,31 +26,31 @@ class UserDetailsPage: PageModel {
     }
 
     var nameInfo: XCUIElement {
-        app.descendants(matching: .any).matching(identifier: "name").firstMatch
+        app.descendants(matching: .any)[Locators.UserProfilePage.name.rawValue].firstMatch
     }
 
     var userNameInfo: XCUIElement {
-        app.descendants(matching: .any).matching(identifier: "username").firstMatch
+        app.descendants(matching: .any).matching(identifier: Locators.UserProfilePage.username.rawValue).firstMatch
     }
 
     var closeProfileButton: XCUIElement {
-        app.buttons["close"].firstMatch
+        app.buttons[Locators.UserDetailsPage.close.rawValue].firstMatch
     }
 
     var connectButton: XCUIElement {
-        app.staticTexts["Connect"].firstMatch
+        app.buttons[Locators.UserDetailsPage.connectLeftButton.rawValue]
     }
 
     var moreActionsButton: XCUIElement {
-        app.buttons["right_button"]
+        app.buttons[Locators.UserDetailsPage.moreOptionRightButton.rawValue]
     }
 
     var removeFromConversationButton: XCUIElement {
-        app.buttons["Remove From Conversation…"]
+        app.buttons[Locators.UserDetailsPage.removeFromConversation.rawValue]
     }
 
-    var confirmRemoveUserFromConversation: XCUIElement {
-        app.buttons["Remove From Conversation"]
+    var removeUserFromConversationConfirmation: XCUIElement {
+        app.buttons[Locators.UserDetailsPage.removeUserFromConversationConfirmation.rawValue].firstMatch
     }
 
     func getUserName() -> String? {
@@ -69,7 +70,7 @@ class UserDetailsPage: PageModel {
     func removeParticipantFromConversation() throws -> ConversationDetailsPage {
         moreActionsButton.tap()
         removeFromConversationButton.tap()
-        let confirmButton = confirmRemoveUserFromConversation
+        let confirmButton = removeUserFromConversationConfirmation
         XCTAssertTrue(
             confirmButton.waitForExistence(timeout: 2),
             "Confirm Remove From Conversation button did not appear in time"

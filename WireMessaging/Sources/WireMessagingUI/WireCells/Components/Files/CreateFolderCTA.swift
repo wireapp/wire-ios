@@ -21,13 +21,13 @@ import WireDesign
 
 struct CreateFolderCTA: View {
 
-    let onTap: () -> Void
+    let action: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
             Divider()
 
-            Button(action: onTap) {
+            Button(action: action) {
                 HStack(alignment: .center, spacing: 20) {
                     Image(systemName: "plus")
 

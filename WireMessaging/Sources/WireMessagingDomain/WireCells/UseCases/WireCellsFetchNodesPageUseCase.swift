@@ -45,10 +45,12 @@ package struct WireCellsFetchNodesPageUseCase: Sendable {
     /// `nil`, there are no more pages to fetch.
     package func invoke(
         searchTerm: String?,
+        tags: [String],
         offset: Int
     ) async throws -> (nodes: [WireCellsNode], isLastPage: Bool) {
         let request = WireCellsGetNodesRequest(
             searchTerm: searchTerm,
+            tags: tags,
             limit: 30,
             offset: offset,
             configuration: configuration

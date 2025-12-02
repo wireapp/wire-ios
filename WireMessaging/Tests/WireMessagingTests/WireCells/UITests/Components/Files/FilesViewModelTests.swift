@@ -54,6 +54,11 @@ final class FilesViewModelTests {
                     fileCache: fileCache,
                     localAssetStore: localAssetStore
                 ),
+                restoreNodes: WireCellsRestoreNodesUseCase(
+                    repository: nodesRepository,
+                    fileCache: fileCache,
+                    localAssetStore: localAssetStore
+                ),
                 renameNode: WireCellsRenameNodeUseCase(
                     nodesRepository: MockWireCellsNodesRepositoryProtocol(),
                     localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
@@ -74,7 +79,8 @@ final class FilesViewModelTests {
             nodesRepository: nodesRepository,
             fileCache: fileCache,
             isFoldersEnabled: true,
-            isCollaboraEnabled: false
+            isCollaboraEnabled: false,
+            accentColorProvider: { .default }
         )
 
         localAssetRepository

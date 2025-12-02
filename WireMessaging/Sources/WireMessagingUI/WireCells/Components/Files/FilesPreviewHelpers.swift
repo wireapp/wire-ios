@@ -29,7 +29,7 @@ extension FilesViewModel {
 
     /// A stubbed instance of `FilesViewModel` for SwiftUI previews.
     static func preview(isFoldersEnabled: Bool = false) -> FilesViewModel {
-        let cache = fileCache()
+        let cache = mockFileCache()
         let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
@@ -42,6 +42,11 @@ extension FilesViewModel {
                     repository: previewNodesRepository()
                 ),
                 deleteNodes: WireCellsDeleteNodesUseCase(
+                    repository: previewNodesRepository(),
+                    fileCache: cache,
+                    localAssetStore: localAssetStore
+                ),
+                restoreNodes: WireCellsRestoreNodesUseCase(
                     repository: previewNodesRepository(),
                     fileCache: cache,
                     localAssetStore: localAssetStore
@@ -75,7 +80,8 @@ extension FilesViewModel {
             fileCache: cache,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
             isFoldersEnabled: isFoldersEnabled,
-            isCollaboraEnabled: false
+            isCollaboraEnabled: false,
+            accentColorProvider: { .default }
         )
     }
 
@@ -123,10 +129,27 @@ extension FilesItemViewModel {
                 isEditable: false
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
-            onOpen: { _ in },
-            onDelete: { _ in },
-            onRename: { _ in },
-            onEditTagsSelected: { _ in }
+            onItemAction: { _, _ in },
+            isInRecycleBin: false,
+        )
+    }
+
+}
+
+extension FilesFiltersViewModel {
+
+    /// A stubbed instance of `FilesFiltersViewModel` for SwiftUI previews.
+    static func preview() -> FilesFiltersViewModel {
+        let nodesAPI = MockNodesAPIProtocol()
+        nodesAPI.getAllTags_MockValue = mockTags
+
+        return FilesFiltersViewModel(
+            fetchTagsUseCase:
+            WireCellsGetTagSuggestionsUseCase(
+                nodesAPI: nodesAPI
+            ),
+            savedTags: nil,
+            accentColorProvider: { .default }
         )
     }
 
@@ -159,7 +182,7 @@ private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
 private func previewTagsApi() -> some NodesAPIProtocol {
     let mock = MockNodesAPIProtocol()
     mock.getAllTags_MockMethod = {
-        ["suggested tag 1", "lorem", "ipsum"]
+        mockTags
     }
     mock.updateTagsNodeIDTags_MockMethod = { _, _ in }
     return mock
@@ -171,7 +194,7 @@ private func previewEditingURLRepository() -> any WireCellsEditingURLRepositoryP
     return mock
 }
 
-private func fileCache() -> any FileCache {
+private func mockFileCache() -> any FileCache {
     let fileURL = URL.temporaryDirectory.appendingPathComponent("mock-file.txt")
     let file = Data("Some text file content".utf8)
     try? file.write(to: fileURL)
@@ -261,3 +284,65 @@ extension CreateFolderViewModel {
         )
     }
 }
+
+let mockTags = [
+    "Urgent",
+    "Marketing",
+    "screenshot",
+    "",
+    "charles-files-are-no-fun",
+    "accessibility",
+    "product",
+    "autumn",
+    "happy",
+    "Technical Docs",
+    "Lorem Ipsum",
+    "Android",
+    "some tag",
+    "Some Tag ",
+    "Some Tag",
+    "tag some... ",
+    "Pictures",
+    "Test",
+    "Test ",
+    "QA Review",
+    "Done",
+    "In Progress",
+    "To Do",
+    "Pending Ticket",
+    "jira",
+    "Urgent ",
+    "Android ",
+    "ttaagg",
+    "ttaagg2",
+    "confirmation email investigations",
+    "Testing Data",
+    "play",
+    "jira ",
+    "tag1",
+    "tag12",
+    "cute",
+    "cute ",
+    " cute",
+    "conference",
+    "food",
+    "Never",
+    "gonna",
+    "give",
+    "you",
+    "up",
+    "screenshot ",
+    "nothing",
+    "QM",
+    "Marketing ",
+    "nothing ",
+    "Sam",
+    "cells",
+    "roadmap",
+    "apps",
+    "troubleshooting",
+    "network",
+    "merkblatt",
+    "charles-files-are-no-fun ",
+    "🐝 "
+]

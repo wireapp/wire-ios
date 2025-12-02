@@ -65,7 +65,7 @@ struct MoveToFolderPage<ViewModel>: View where ViewModel: MoveToFolderPageViewMo
                 ).frame(maxWidth: .infinity, maxHeight: .infinity)
             }
 
-            CreateFolderCTA(onTap: viewModel.createFolder)
+            CreateFolderCTA(action: viewModel.createFolder)
                 .disabled(!viewModel.isNewFolderEnabled)
         }
         .navigationTitle(viewModel.title)
@@ -241,8 +241,8 @@ private struct MoveToFolderItemView: View {
 @MainActor
 private func makePreview(
     title: String,
-    content: MoveToFolderContent,
-    moveButtonState: MoveButtonState,
+    content: MoveToFolderPageViewModel.ContentState,
+    moveButtonState: MoveToFolderPageViewModel.MoveButtonState,
     isNewFolderEnabled: Bool,
     navigationMenuOptions: [NavigationMenuOption],
 ) -> some View {
