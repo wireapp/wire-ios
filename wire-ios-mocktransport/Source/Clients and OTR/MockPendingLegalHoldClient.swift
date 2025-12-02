@@ -58,33 +58,21 @@ public extension MockUser {
         let identifier = String.randomClientIdentifier()
         pendingClient.identifier = identifier
 
-        // Generate the prekeys
-        let encryptionContext = MockUserClient.encryptionContext(for: self, clientId: identifier)
+        // Generate mock prekey strings
+        let prekeysStrings = (0..<5).map { _ in UUID().uuidString }
 
-        var generatedPrekeys: [[String: Any]]?
-        var generatedLastPrekey: String?
-
-        encryptionContext.perform { session in
-            generatedPrekeys = try? session.generatePrekeys(NSRange(location: 0, length: 5))
-            generatedLastPrekey = try? session.generateLastPrekey()
-        }
-
-        guard let prekeys = generatedPrekeys, !prekeys.isEmpty, let lastPrekey = generatedLastPrekey else {
-            return false
-        }
-
-        let mockPrekey = MockPreKey.insertNewKeys(
-            withPayload: prekeys.map { $0["prekey"] as! String },
+        let prekeys = MockPreKey.insertNewKeys(
+            withPayload: prekeysStrings,
             context: managedObjectContext
         )
-        pendingClient.prekeys = Set(mockPrekey)
+        pendingClient.prekeys = Set(prekeys)
 
         let mockLastPrekey = NSEntityDescription.insertNewObject(
             forEntityName: "PreKey",
             into: managedObjectContext
         ) as! MockPreKey
         mockLastPrekey.identifier = Int(UInt16.max)
-        mockLastPrekey.value = lastPrekey
+        mockLastPrekey.value = UUID().uuidString
 
         pendingClient.lastPrekey = mockLastPrekey
         return true
