@@ -78,6 +78,8 @@ package struct FilesBrowserView: FilesViewProtocol {
                 switch navigationItem {
                 case let .filters(filtersView):
                     filtersView
+                case let .shareLink(fileItem: fileItem):
+                    ShareLinkView(fileItem: fileItem)
                 default:
                     EmptyView()
                 }
