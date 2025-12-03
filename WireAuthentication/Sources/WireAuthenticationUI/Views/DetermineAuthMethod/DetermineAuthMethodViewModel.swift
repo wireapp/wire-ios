@@ -56,7 +56,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     private let bridge: WireAuthenticationBridge
     package let environment: BackendEnvironment2
     private var cancellable: AnyCancellable?
-    private let isMultibackendEnabled: Bool
 
     // MARK: - Life cycle
 
@@ -68,7 +67,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         emailOrSSOCode: String = "",
         existsAnotherAccount: Bool,
         isLoading: Bool = false,
-        isMultibackendEnabled: Bool
     ) {
         self.factory = factory
         self.router = router
@@ -77,7 +75,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.emailOrSSOCode = emailOrSSOCode
         self.existsAnotherAccount = existsAnotherAccount
         self.isLoading = isLoading
-        self.isMultibackendEnabled = isMultibackendEnabled
 
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
@@ -206,7 +203,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         email: String?,
         backendConfigURL: URL
     ) async {
-        guard isMultibackendEnabled || !existsAnotherAccount else {
+        guard !existsAnotherAccount else { // double check this
             alert = .switchBackendFailed
             return
         }

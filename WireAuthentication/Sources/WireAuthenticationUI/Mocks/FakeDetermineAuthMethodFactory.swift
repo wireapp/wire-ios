@@ -39,8 +39,7 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
             router: FakeRootFactory().viewModel,
             bridge: WireAuthenticationBridge(),
             environment: mockDependencies.backendEnvironment,
-            existsAnotherAccount: existsAnotherAccount,
-            isMultibackendEnabled: false
+            existsAnotherAccount: existsAnotherAccount
         )
         viewModel.emailOrSSOCode = emailOrSSOCode
         return viewModel
