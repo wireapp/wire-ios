@@ -213,11 +213,11 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var isBot: Bool {
-        fatalError("not implemented")
+        providerIdentifier != nil
     }
 
     public var isAppOrBot: Bool {
-        fatalError("not implemented")
+        isBot || isApp_
     }
 
     public var usesCompanyLogin: Bool {
