@@ -119,7 +119,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             // which may no longer make sense after such as delay, we will
             // expire it so the user can retry.
             WireLogger.messaging.info(
-                "expiring statle client message",
+                "expiring stale client message",
                 attributes: [.nonce: object.nonce?.safeForLoggingDescription ?? "<nil>"],
                 .safePublic
             )

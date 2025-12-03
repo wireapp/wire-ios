@@ -20,6 +20,6 @@ import Foundation
 
 public extension UserClient {
     var safeRemoteIdentifier: SafeValueForLogging<String> {
-        SafeValueForLogging(remoteIdentifier?.redactedAndTruncated() ?? "nil")
+        SafeValueForLogging(remoteIdentifier?.lowercased() ?? "nil")
     }
 }

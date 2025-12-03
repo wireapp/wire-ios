@@ -37,7 +37,6 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
         isFederationEnabled: Bool
     ) {
         self.entitySync = EntityActionSync(actionHandlers: [
-            SendCommitBundleActionHandler(context: managedObjectContext),
             CountSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
             UploadSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
             ClaimMLSKeyPackageActionHandler(context: managedObjectContext, localDomain: localDomain),
