@@ -49,7 +49,7 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
     // Skipping the tests because collapsing own messages feature is
     // temporarily disabled due to conflicts with chat bubbles
     // https://wearezeta.atlassian.net/browse/WPB-18939
-    
+
     func disabled_testUploadedCell_fromThisDevice() {
         let messages: [String: MockMessage] = [
             "file": message,
