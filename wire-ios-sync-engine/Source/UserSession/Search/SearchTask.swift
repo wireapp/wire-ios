@@ -136,11 +136,11 @@ public class SearchTask {
     public func cancel() {
         resultHandlers.removeAll()
 
-        teamMembershipTaskIdentifier.flatMap(transportSession.cancelTask)
-        userLookupTaskIdentifier.flatMap(transportSession.cancelTask)
-        directoryTaskIdentifier.flatMap(transportSession.cancelTask)
-        servicesTaskIdentifier.flatMap(transportSession.cancelTask)
-        handleTaskIdentifier.flatMap(transportSession.cancelTask)
+        teamMembershipTaskIdentifier.map(transportSession.cancelTask)
+        userLookupTaskIdentifier.map(transportSession.cancelTask)
+        directoryTaskIdentifier.map(transportSession.cancelTask)
+        servicesTaskIdentifier.map(transportSession.cancelTask)
+        handleTaskIdentifier.map(transportSession.cancelTask)
 
         tasksRemaining = 0
     }
