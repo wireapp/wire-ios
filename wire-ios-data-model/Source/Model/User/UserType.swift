@@ -72,9 +72,15 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// The role (and permissions) e.g. partner, member, admin, owner
     var teamRole: TeamRole { get }
 
-    /// Whether this is an app/bot/service user.
+    /// Whether this is an app (new-style MLS service).
 
-    var isApp: Bool { get }
+    var isApp_: Bool { get }
+
+    /// Whether this is an bot (old-style service).
+
+    var isBot: Bool { get }
+
+    var isAppOrBot: Bool { get }
 
     /// Whether this uses uses SSO.
     var usesCompanyLogin: Bool { get }

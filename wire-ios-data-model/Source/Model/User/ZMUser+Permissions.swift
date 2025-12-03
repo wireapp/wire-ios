@@ -257,7 +257,7 @@ public extension ZMUser {
                 return false
             }
 
-            return !isApp // Bots are never guests
+            return !isAppOrBot // Apps or bots are never guests
                 && !isFederated // Federated users are never guests
                 && ZMUser.selfUser(in: context).hasTeam // There can't be guests in a team that doesn't exist
                 && conversation.localParticipantsContain(user: self)

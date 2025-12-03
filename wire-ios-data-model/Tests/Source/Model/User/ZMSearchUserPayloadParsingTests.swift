@@ -63,7 +63,7 @@ final class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(user.domain, domain)
         XCTAssertEqual(user.remoteIdentifier, uuid)
         XCTAssertEqual(user.zmAccentColor?.rawValue, 5)
-        XCTAssertFalse(user.isApp)
+        XCTAssertFalse(user.isAppOrBot)
         XCTAssertTrue(user.canBeConnected)
     }
 
@@ -88,7 +88,7 @@ final class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         )!
 
         // then
-        XCTAssertTrue(user.isApp)
+        XCTAssertTrue(user.isAppOrBot)
         XCTAssertEqual(user.summary, "Short summary")
         XCTAssertEqual(user.providerIdentifier, provider.transportString())
         XCTAssertEqual(user.serviceIdentifier, uuid.transportString())
