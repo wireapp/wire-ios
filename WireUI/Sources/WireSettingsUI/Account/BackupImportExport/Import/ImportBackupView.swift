@@ -47,7 +47,7 @@ struct ImportBackupView: View {
                 // Workaround: Google Drive doesn't recognize Wire backup
                 // UTIs so if we only allow them, the user won't be able
                 // to select Wire backups stored in Google Drive.
-                // Intesad, we allow any file and then we'll validate the
+                // Instead, we allow any file and then we'll validate the
                 // file type afterwards.
                 allowedContentTypes: [.data],
                 onCompletion: viewModel.pickedBackupFile
