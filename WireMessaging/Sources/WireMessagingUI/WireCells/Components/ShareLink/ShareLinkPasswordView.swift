@@ -23,7 +23,7 @@ import WireMessagingDomain
 import WireMessagingDomainSupport
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells.ShareLink.Password
-private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells.ShareLink
 
 struct ShareLinkPasswordView: View {
     @Environment(\.dismiss) private var dismiss
@@ -89,15 +89,19 @@ struct ShareLinkPasswordView: View {
                 setPasswordToggleArea()
                     .padding(.bottom, 18)
                 
-                generatePasswordButton()
-                
-                passwordInputArea()
-                
-                copyPasswordButton()
-                
-                changePasswordButton()
-                    .padding(.top, 24)
-                
+                Group {
+                    generatePasswordButton()
+                    
+                    passwordInputArea()
+                    
+                    copyPasswordButton()
+                    
+                    changePasswordButton()
+                        .padding(.top, 24)
+                }
+                .disabled(!viewModel.isPasswordEnabed)
+                .opacity(viewModel.isPasswordEnabed ? 1 : 0.7)
+                    
                 alertTestButtons()
                     .padding(.top, 30)
             }
@@ -115,7 +119,7 @@ struct ShareLinkPasswordView: View {
     }
     
     @ViewBuilder private func setPasswordToggleArea() -> some View {
-        Toggle(isOn: .constant(true)) {
+        Toggle(isOn: $viewModel.isPasswordEnabed) {
             Text(Strings.setPasswordToggle)
                 .font(for: .body1)
         }
@@ -161,21 +165,7 @@ struct ShareLinkPasswordView: View {
 
             HStack {
                 passwordInputField()
-                
-                Button {
-                    viewModel.isPasswordInputSecured.toggle()
-                } label: {
-                    ZStack {
-                        Image(systemName: "eye.fill")
-                            .opacity(viewModel.isPasswordInputSecured ? 0 : 1)
-                            
-                        Image(systemName: "eye.slash.fill")
-                            .opacity(viewModel.isPasswordInputSecured ? 1 : 0)
-                    }
-                    .padding(.vertical, 2)
-                }
-                .tint(.primaryText)
-                //TODO: apply accessibility label "hide password"/"show password"
+                passwordInputShowHideButton()
             }
             .padding(.vertical, 14)
             .padding(.horizontal, 16)
@@ -207,9 +197,28 @@ struct ShareLinkPasswordView: View {
         .autocorrectionDisabled()
     }
     
+    @ViewBuilder private func passwordInputShowHideButton() -> some View {
+        Button {
+            viewModel.isPasswordInputSecured.toggle()
+        } label: {
+            ZStack {
+                Image(systemName: "eye.fill")
+                    .opacity(viewModel.isPasswordInputSecured ? 0 : 1)
+                
+                Image(systemName: "eye.slash.fill")
+                    .opacity(viewModel.isPasswordInputSecured ? 1 : 0)
+            }
+            .padding(.vertical, 2)
+        }
+        .tint(.primaryText)
+        .accessibilityLabel(
+            Text(viewModel.isPasswordInputSecured ? Accessibility.showPassword : Accessibility.hidePassword)
+        )
+    }
+
     @ViewBuilder private func copyPasswordButton() -> some View {
         Button {
-            //TODO: ...
+            viewModel.copyPasswordToPasteboard()
         } label: {
             Label {
                 Text(Strings.copyPassword)

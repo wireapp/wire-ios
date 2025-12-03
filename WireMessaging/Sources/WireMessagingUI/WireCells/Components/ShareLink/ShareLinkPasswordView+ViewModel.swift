@@ -18,14 +18,17 @@
 
 import Foundation
 import Combine
+import UIKit
 
 extension ShareLinkPasswordView {
     @MainActor
     final class ViewModel: ObservableObject {
-        @Published var isPresentingRemovePasswordConfirmation = false
-        @Published var isPresentingNoAccessToExistingPasswordConfirmation = false
+        @Published var isPasswordEnabed = true
         @Published var passwordInput = ""
         @Published var isPasswordInputSecured = true
+        
+        @Published var isPresentingRemovePasswordConfirmation = false
+        @Published var isPresentingNoAccessToExistingPasswordConfirmation = false
 
         var canSave: Bool {
             true //TODO: ...
@@ -37,6 +40,10 @@ extension ShareLinkPasswordView {
         
         func changePassword() {
             //TODO: ...
+        }
+        
+        func copyPasswordToPasteboard() {
+            UIPasteboard().string = passwordInput
         }
         
         func save() {
