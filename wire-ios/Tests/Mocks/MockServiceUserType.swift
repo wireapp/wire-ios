@@ -22,7 +22,7 @@ final class MockServiceUserType: MockUserType, ServiceUser {
 
     var serviceIdentifier: String?
 
-    override var isApp_: Bool {
+    override var isApp: Bool {
         true
     }
 

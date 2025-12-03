@@ -208,7 +208,7 @@ public class ZMSearchUser: NSObject, UserType {
         return user.teamRole
     }
 
-    public var isApp_: Bool {
+    public var isApp: Bool {
         fatalError("not implemented")
     }
 
@@ -658,7 +658,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     @objc public var canBeConnected: Bool {
-        guard !isApp_ else { return false }
+        guard !isApp else { return false }
 
         if let user {
             return user.canBeConnected

@@ -74,7 +74,7 @@ public protocol UserType: NSObjectProtocol, UserConnections {
 
     /// Whether this is an app (new-style MLS service).
 
-    var isApp_: Bool { get }
+    var isApp: Bool { get }
 
     /// Whether this is an bot (old-style service).
 
