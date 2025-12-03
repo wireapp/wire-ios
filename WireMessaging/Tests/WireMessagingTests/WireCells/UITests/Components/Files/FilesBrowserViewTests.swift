@@ -59,7 +59,7 @@ final class FilesBrowserViewTests: XCTestCase {
         fetchNodesUseCase = WireCellsFetchNodesUseCase(
             configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
             repository: nodesRepository,
-            localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol()
+            localAssetRepository: localAssetsRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
             repository: nodesRepository,
@@ -68,7 +68,7 @@ final class FilesBrowserViewTests: XCTestCase {
         )
         renameNodeUseCase = WireCellsRenameNodeUseCase(
             nodesRepository: MockWireCellsNodesRepositoryProtocol(),
-            localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            localAssetsRepository: localAssetsRepository,
             nodeCache: MockWireCellsNodeCacheProtocol(),
             nodeRenameNotifier: WireCellsNodeRenameNotifier()
         )
@@ -193,6 +193,8 @@ final class FilesBrowserViewTests: XCTestCase {
             isFoldersEnabled: false,
             accentColorProvider: { .default }
         )
+
+        localAssetsRepository.deleteAssetsNodeIDs_MockMethod = { _ in }
 
         filesViewModel.state = state
 

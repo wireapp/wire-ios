@@ -21,9 +21,11 @@ import Testing
 @testable import WireMessagingDomain
 @testable import WireMessagingDomainSupport
 
+@MainActor
 struct WireCellsFetchNodesUseCaseTests {
 
     private let repository = MockWireCellsNodesRepositoryProtocol()
+    private let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
     private let sut: WireCellsFetchNodesUseCase
 
     init() {
@@ -33,6 +35,8 @@ struct WireCellsFetchNodesUseCaseTests {
             localAssetRepository: localAssetRepository
         )
         repository.getNodes_MockValue = (nodes: [WireCellsNode.fixture()], nextOffset: 30)
+        localAssetRepository.assetNodeID_MockValue = WireCellsLocalAsset.fixture()
+        localAssetRepository.deleteAssetsNodeIDs_MockMethod = { _ in }
     }
 
     @Test

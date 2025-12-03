@@ -257,7 +257,7 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
     func asset(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAsset? {
         publishers[nodeID]?.value
     }
-    
+
     func deleteAssets(nodeIDs: [UUID]) async throws {}
 
     func refreshAssetMetadata(

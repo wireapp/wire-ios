@@ -21,7 +21,7 @@ import Foundation
 
 /// Fetches `WireCellNodes`s for the given parameters.
 @MainActor
-package struct WireCellsFetchNodesUseCase: Sendable {
+package struct WireCellsFetchNodesUseCase {
 
     private let configuration: WireCellsGetNodesRequest.Configuration
     private let repository: any WireCellsNodesRepositoryProtocol
@@ -63,18 +63,18 @@ package struct WireCellsFetchNodesUseCase: Sendable {
             configuration: configuration
         )
         let (nodes, nextOffset) = try await repository.getNodes(request)
-        
+
         // Retrieve assets that have been updated and deleting them.
         let nodesAssetToDelete = try nodes.compactMap {
             if let localAsset = try localAssetRepository.asset(nodeID: $0.id), localAsset.eTag != $0.eTag {
-                return $0
+                $0
             } else {
-                return nil
+                nil
             }
         }.map(\.id)
-        
+
         try await localAssetRepository.deleteAssets(nodeIDs: nodesAssetToDelete)
-        
+
         return (nodes, nextOffset == nil)
     }
 

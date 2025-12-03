@@ -58,7 +58,7 @@ final class FileVersionItemViewModel: ObservableObject {
         case let .downloading(progress):
             progress
         case .failed:
-            1 // We show a full red progress bar on failure
+            1
         default:
             nil
         }
@@ -98,6 +98,8 @@ final class FileVersionItemViewModel: ObservableObject {
     }
 
     func download() async {
-        try? await localAssetRepository.downloadAsset(source: .nodeVersion(node: nodeID, version: item.id))
+        try? await localAssetRepository.downloadAsset(
+            source: .nodeVersion(node: nodeID, version: item.id)
+        )
     }
 }

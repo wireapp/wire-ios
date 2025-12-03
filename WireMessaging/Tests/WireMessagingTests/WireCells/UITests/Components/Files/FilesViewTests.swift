@@ -51,10 +51,13 @@ final class FilesViewTests: XCTestCase {
         nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
 
+        let localAssetsRepository = MockWireCellsLocalAssetRepositoryProtocol()
+        localAssetsRepository.deleteAssetsNodeIDs_MockMethod = { _ in }
+
         fetchNodesUseCase = WireCellsFetchNodesUseCase(
             configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
             repository: nodesRepository,
-            localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol()
+            localAssetRepository: localAssetsRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
             repository: nodesRepository,
@@ -63,7 +66,7 @@ final class FilesViewTests: XCTestCase {
         )
         renameNodeUseCase = WireCellsRenameNodeUseCase(
             nodesRepository: nodesRepository,
-            localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            localAssetsRepository: localAssetsRepository,
             nodeCache: MockWireCellsNodeCacheProtocol(),
             nodeRenameNotifier: WireCellsNodeRenameNotifier()
         )

@@ -92,54 +92,13 @@ final class FileVersioningViewModel: ObservableObject {
         self.accentColorProvider = accentColorProvider
         self.state = .loading
     }
-    
+
     func startPolling() {
         Timer.publish(every: .tenSeconds, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 Task { await self?.fetch() }
             }.store(in: &subscriptions)
-    }
-
-    func fetch() async {
-        do {
-            let response = try await fetchNodeVersionsUseCase.invoke(
-                nodeID: nodeID
-            )
-
-            state = .received(makeVersionModels(from: response))
-
-        } catch {
-            alert = .unknownError
-        }
-    }
-
-    func restore(item: FileVersionItem) async {
-        state = .restoringVersion
-
-        // Keep the view visible for at least 1 second to avoid a quick glitch.
-        try? await Task.sleep(nanoseconds: 1_000_000_000)
-
-        do {
-            try await restoreNodeVersionUseCase.invoke(
-                nodeID: nodeID,
-                versionID: item.id
-            )
-
-            await fetch()
-
-        } catch {
-            alert = AlertModel(
-                title: Strings.FilesVersioning.restoreFailureAlertTitle,
-                message: Strings.FilesVersioning.restoreFailureAlertMessage,
-                actionsButtons: [
-                    .init(title: Strings.FilesVersioning.retry, role: .cancel) { [weak self] in
-                        await self?.restore(item: item)
-                    },
-                    .init(title: L10n.Localizable.General.cancel, role: .none) { [weak self] in await self?.fetch() }
-                ]
-            )
-        }
     }
 
     func itemViewModel(sectionIndex: Int, itemIndex: Int) -> FileVersionItemViewModel {
@@ -170,6 +129,50 @@ final class FileVersioningViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Private
+
+    private func fetch() async {
+        do {
+            let response = try await fetchNodeVersionsUseCase.invoke(
+                nodeID: nodeID
+            )
+
+            state = .received(makeVersionModels(from: response))
+
+        } catch {
+            state = .received([])
+            alert = .unknownError
+        }
+    }
+
+    private func restore(item: FileVersionItem) async {
+        state = .restoringVersion
+
+        // Keep the view visible for a couple of seconds to avoid a quick glitch.
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
+
+        do {
+            try await restoreNodeVersionUseCase.invoke(
+                nodeID: nodeID,
+                versionID: item.id
+            )
+
+            await fetch()
+
+        } catch {
+            alert = AlertModel(
+                title: Strings.FilesVersioning.restoreFailureAlertTitle,
+                message: Strings.FilesVersioning.restoreFailureAlertMessage,
+                actionsButtons: [
+                    .init(title: Strings.FilesVersioning.retry, role: .cancel) { [weak self] in
+                        await self?.restore(item: item)
+                    },
+                    .init(title: L10n.Localizable.General.cancel, role: .none) { [weak self] in await self?.fetch() }
+                ]
+            )
+        }
+    }
+
     private func makeVersionModels(from versions: [WireCellsNodeVersion]) -> [VersionModel] {
         let groupedVersions = groupedVersionsByDay(versions)
             .sorted(by: { $0.key > $1.key })
@@ -186,6 +189,7 @@ final class FileVersioningViewModel: ObservableObject {
 
         }
 
+        // first item from the first section is the most recent file
         guard var firstSection = sections.first,
               var firstItem = firstSection.items.first else { return sections }
 

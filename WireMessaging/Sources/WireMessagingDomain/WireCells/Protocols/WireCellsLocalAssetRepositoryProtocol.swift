@@ -19,15 +19,17 @@
 package import Foundation
 package import Combine
 
+/// The source the asset is coming from.
+/// Either from the node itself (most recent asset) or from a previous version of that node (older asset)
 package enum AssetSource {
     case node(UUID)
     case nodeVersion(node: UUID, version: UUID)
-    
+
     package var id: UUID {
         switch self {
-        case .node(let id):
+        case let .node(id):
             id
-        case .nodeVersion(_, let nodeVersionID):
+        case let .nodeVersion(_, nodeVersionID):
             nodeVersionID
         }
     }
@@ -64,7 +66,7 @@ package protocol WireCellsLocalAssetRepositoryProtocol: Sendable {
     /// Cancels the asset download for a given `nodeID`.
     @MainActor
     func cancelDownload(nodeID: UUID)
-    
+
     /// Deletes the assets for given `nodeIDs`.
     @MainActor
     func deleteAssets(nodeIDs: [UUID]) async throws

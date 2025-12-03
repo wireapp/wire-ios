@@ -535,7 +535,7 @@ package final class FilesViewModel: ObservableObject {
     ) -> FileVersioningView {
         // always reload this view when file versioning is dismissed
         shouldReload = true
-        
+
         let viewModel = FileVersioningViewModel(
             nodeID: item.id,
             name: item.name,

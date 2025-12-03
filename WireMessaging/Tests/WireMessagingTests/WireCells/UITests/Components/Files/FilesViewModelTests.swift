@@ -75,6 +75,9 @@ final class FilesViewModelTests {
             accentColorProvider: { .default }
         )
 
+        localAssetRepository.deleteAssetsNodeIDs_MockMethod = { _ in }
+        localAssetRepository.assetNodeID_MockValue = .fixture()
+
         sut.$state.dropFirst().sink { [weak self] state in
             self?.itemsUpdates.append(state.items)
         }.store(in: &cancellables)
@@ -462,8 +465,8 @@ final class FilesViewModelTests {
         localAssetRepository.assetNodeID_MockMethod = { nodeID in
             assets[nodeID]
         }
-        localAssetRepository.downloadAssetNodeID_MockMethod = { nodeID in
-            assets[nodeID] = WireCellsLocalAsset.fixture(downloadState: .downloaded(cacheKey: "some-key"))
+        localAssetRepository.downloadAssetSource_MockMethod = { source in
+            assets[source.id] = WireCellsLocalAsset.fixture(downloadState: .downloaded(cacheKey: "some-key"))
         }
         fileCache.fileURLForKey_MockValue = URL(fileURLWithPath: "/foo")
 
@@ -484,7 +487,7 @@ final class FilesViewModelTests {
             assets[nodeID]
         }
         localAssetRepository
-            .downloadAssetNodeID_MockError = WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress
+            .downloadAssetSource_MockError = WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress
 
         localAssetRepository.observeAssetNodeID_MockMethod = { nodeID in
             let asset = WireCellsLocalAsset.fixture(downloadState: .downloaded(cacheKey: "some-key"))
