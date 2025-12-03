@@ -32,8 +32,9 @@ final class FilesViewTests: XCTestCase {
     private let modifiedAt = try! Date("2023-10-01T12:00:00Z", strategy: .iso8601)
     private var snapshotHelper: SnapshotHelper!
     private var nodesRepository: MockWireCellsNodesRepositoryProtocol!
-    private var fetchNodesUseCase: WireCellsFetchNodesUseCase!
+    private var fetchNodesUseCase: WireCellsFetchNodesPageUseCase!
     private var deleteNodeUseCase: WireCellsDeleteNodesUseCase!
+    private var restoreNodeUseCase: WireCellsRestoreNodesUseCase!
     private var renameNodeUseCase: WireCellsRenameNodeUseCase!
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
@@ -54,12 +55,17 @@ final class FilesViewTests: XCTestCase {
         let localAssetsRepository = MockWireCellsLocalAssetRepositoryProtocol()
         localAssetsRepository.deleteAssetsNodeIDs_MockMethod = { _ in }
 
-        fetchNodesUseCase = WireCellsFetchNodesUseCase(
+        fetchNodesUseCase = WireCellsFetchNodesPageUseCase(
             configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
             repository: nodesRepository,
             localAssetRepository: localAssetsRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
+            repository: nodesRepository,
+            fileCache: MockFileCache(),
+            localAssetStore: MockWireCellsLocalAssetStoreProtocol()
+        )
+        restoreNodeUseCase = WireCellsRestoreNodesUseCase(
             repository: nodesRepository,
             fileCache: MockFileCache(),
             localAssetStore: MockWireCellsLocalAssetStoreProtocol()
@@ -326,6 +332,7 @@ final class FilesViewTests: XCTestCase {
             useCases: .init(
                 fetchNodes: fetchNodesUseCase,
                 deleteNodes: deleteNodeUseCase,
+                restoreNodes: restoreNodeUseCase,
                 renameNode: renameNodeUseCase,
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
@@ -345,11 +352,14 @@ final class FilesViewTests: XCTestCase {
             ),
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            nodesRepository: nodesRepository,
+            fileCache: MockFileCache(),
             isFoldersEnabled: true,
             accentColorProvider: { .default }
         )
 
         filesViewModel.state = state
+        filesViewModel.hasMore = false
 
         return NavigationStack {
             FilesView(viewModel: filesViewModel)
@@ -374,13 +384,11 @@ private extension FilesItemViewModel {
         return FilesItemViewModel(
             item: item,
             localAssetRepository: localAssetRepository,
-            onOpen: { _ in },
-            onDelete: { _ in },
-            onEditTagsSelected: { _ in },
-            onVersionHistory: { _ in },
+            onItemAction: { _, _ in },
             locale: Locale(identifier: "en_US_POSIX"),
             calendar: Calendar(identifier: .gregorian),
-            timeZone: .gmt
+            timeZone: .gmt,
+            isInRecycleBin: false
         )
     }
 

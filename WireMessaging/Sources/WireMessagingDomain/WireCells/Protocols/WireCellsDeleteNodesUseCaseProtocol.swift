@@ -20,6 +20,6 @@ public import Foundation
 
 public protocol WireCellsDeleteNodesUseCaseProtocol: Sendable {
 
-    func invoke(nodeIDs: [UUID]) async throws
+    func invoke(nodeIDs: [UUID], deletePermanently: Bool) async throws
 
 }

@@ -15,3 +15,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+@preconcurrency package import Combine
+
+/// A collection of wire cells nodes that can be observed for changes and mutated by various use cases.
+@MainActor
+package final class WireCellsNodesCollection {
+
+    private let nodesPublisher = PassthroughSubject<[WireCellsNode], Never>()
+
+    private(set) var nodes: [WireCellsNode] = [] {
+        didSet {
+            nodesPublisher.send(nodes)
+        }
+    }
+
+    package init() {}
+
+    func setNodes(_ nodes: [WireCellsNode]) {
+        self.nodes = nodes
+    }
+
+    package func observeNodes() -> AnyPublisher<[WireCellsNode], Never> {
+        nodesPublisher.prepend(nodes).eraseToAnyPublisher()
+    }
+
+}
