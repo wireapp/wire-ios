@@ -314,29 +314,8 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 unauthenticatedSession.continueAfterBackupImportStep()
 
             case let .completeWireAuthenticationLogin((result, trackingConsent)):
-                if !DeveloperFlag.multibackend.isOn {
-                    // Make sure we use the same backend from the authentication flow.
-                    let backendEnvironment = BackendEnvironment(result.backendEnvironment)
-
-                    BackendEnvironment.shared = backendEnvironment
-                    SessionManager.shared?.switchBackendWithoutResolving(to: backendEnvironment)
-
-                    // Make sure we persist and backend info gathered during authentication.
-                    let backendMetadata = result.backendMetadata
-                    BackendInfo.apiVersion = APIVersion(rawValue: Int32(backendMetadata.apiVersion.rawValue))
-                    BackendInfo.domain = backendMetadata.domain
-                    BackendInfo.isFederationEnabled = backendMetadata.isFederationEnabled
-
-                    if let proxyCredentials = result.proxyCredentials {
-                        sessionManager.saveProxyCredentials(
-                            username: proxyCredentials.username,
-                            password: proxyCredentials.password
-                        )
-                    }
-                } else {
-                    // Don't store the env here... pass it along when upgrading
-                    // to an authenticated session.
-                }
+                // Don't store the env here... pass it along when upgrading
+                // to an authenticated session.
 
                 if let emailCredentials = result.emailCredentials {
                     // Set credentials so we can register a new client via registration status.
@@ -372,20 +351,16 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     break
                 }
 
-                if DeveloperFlag.multibackend.isOn {
-                    let newEnvironment = NewEnvironment(
-                        backendEnvironment: result.backendEnvironment,
-                        metadata: result.backendMetadata,
-                        cookies: result.cookies,
-                        proxyCredentials: result.proxyCredentials
-                    )
-                    unauthenticatedSession.upgradeToAuthenticatedSession(
-                        with: userInfo,
-                        newEnvironment: newEnvironment
-                    )
-                } else {
-                    unauthenticatedSession.upgradeToAuthenticatedSession(with: userInfo)
-                }
+                let newEnvironment = NewEnvironment(
+                    backendEnvironment: result.backendEnvironment,
+                    metadata: result.backendMetadata,
+                    cookies: result.cookies,
+                    proxyCredentials: result.proxyCredentials
+                )
+                unauthenticatedSession.upgradeToAuthenticatedSession(
+                    with: userInfo,
+                    newEnvironment: newEnvironment
+                )
 
             case let .executeFeedbackAction(action):
                 currentViewController?.executeErrorFeedbackAction(action)
