@@ -36,7 +36,6 @@ public class Feature: ZMManagedObject {
         case assetAuditLog
         case cells
         case channels
-        case chatBubblesSimple
         case classifiedDomains
         case conferenceCalling
         case consumableNotifications
@@ -232,7 +231,6 @@ public class Feature: ZMManagedObject {
              .assetAuditLog,
              .cells,
              .channels,
-             .chatBubblesSimple,
              .classifiedDomains,
              .conferenceCalling,
              .consumableNotifications,

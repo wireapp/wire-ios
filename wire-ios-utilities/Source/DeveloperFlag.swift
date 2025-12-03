@@ -38,7 +38,6 @@ public enum DeveloperFlag: String, CaseIterable {
     case showUnreadConversationsFilter
     case channelsHistory
     case chatBubbles
-    case chatBubblesSimple
     case consumableNotifications
     case wireMeetings
     case wireCellsFolders
@@ -92,9 +91,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .chatBubbles:
             "Show conversation messages as chat bubbles"
-
-        case .chatBubblesSimple:
-            "Turn on the simplified version of chat bubbles"
 
         case .consumableNotifications:
             "Turn on to enable consumable notifications"
