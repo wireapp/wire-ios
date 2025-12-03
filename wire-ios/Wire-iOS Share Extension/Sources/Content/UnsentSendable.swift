@@ -196,14 +196,13 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
 
                     error?.log(message: "Unable to load image from attachment")
 
-                    let image: UIImage?
-                    switch item {
+                    let image: UIImage? = switch item {
                     case let data as Data:
-                        image = UIImage(data: data)
+                        UIImage(data: data)
                     case let uiImage as UIImage:
-                        image = uiImage
+                        uiImage
                     default:
-                        image = nil
+                        nil
                     }
 
                     if let image {
