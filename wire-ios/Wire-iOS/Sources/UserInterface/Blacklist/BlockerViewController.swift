@@ -64,14 +64,12 @@ final class BlockerViewController: LaunchImageViewController {
 
     func showAlert() {
         switch context {
-        case .blacklist where DeveloperFlag.multibackend.isOn:
-            showClientObsoleteMessage()
+        case .blacklist:
+            showClientObsoleteMessage() // why client obsolete instead of showBlacklistMessage?
         case .backendObsolete:
             showBackendObsoleteMessage()
         case .clientObsolete:
             showClientObsoleteMessage()
-        case .blacklist:
-            showBlacklistMessage()
         case .jailbroken:
             showJailbrokenMessage()
         case .databaseFailure:
@@ -174,54 +172,32 @@ final class BlockerViewController: LaunchImageViewController {
     }
 
     private func showBackendObsoleteMessage() {
-        if DeveloperFlag.multibackend.isOn {
-            let alert = MultibackendAlertMainApp.obsoleteServer(
-                switchAccountAction: switchAccountAction,
-                logoutAction: handleLogout
-            )
+        let alert = MultibackendAlertMainApp.obsoleteServer(
+            switchAccountAction: switchAccountAction,
+            logoutAction: handleLogout
+        )
 
-            present(alert, animated: true)
-        } else {
-            typealias BackendNotSupported = L10n.Localizable.BackendNotSupported.Alert
-
-            presentOKAlert(
-                title: BackendNotSupported.title,
-                message: BackendNotSupported.message
-            )
-        }
+        present(alert, animated: true)
     }
 
     private func showClientObsoleteMessage() {
-        if DeveloperFlag.multibackend.isOn {
-            let alert = MultibackendAlertMainApp.obsoleteClient(
-                updateAction: { UIApplication.shared.open(WireURLs.shared.appOnItunes) },
-                switchAccountAction: switchAccountAction,
-                logoutAction: handleLogout
-            )
+        let alert = MultibackendAlertMainApp.obsoleteClient(
+            updateAction: { UIApplication.shared.open(WireURLs.shared.appOnItunes) },
+            switchAccountAction: switchAccountAction,
+            logoutAction: handleLogout
+        )
 
-            present(alert, animated: true)
-        } else {
-            showBlacklistMessage()
-        }
+        present(alert, animated: true)
     }
 
     private func showBlacklistMessage() {
-        if DeveloperFlag.multibackend.isOn {
-            let alert = MultibackendAlertMainApp.obsoleteClient(
-                updateAction: { UIApplication.shared.open(WireURLs.shared.appOnItunes) },
-                switchAccountAction: switchAccountAction,
-                logoutAction: handleLogout
-            )
+        let alert = MultibackendAlertMainApp.obsoleteClient(
+            updateAction: { UIApplication.shared.open(WireURLs.shared.appOnItunes) },
+            switchAccountAction: switchAccountAction,
+            logoutAction: handleLogout
+        )
 
-            present(alert, animated: true)
-        } else {
-            presentOKAlert(
-                title: L10n.Localizable.Force.Update.title,
-                message: L10n.Localizable.Force.Update.message
-            ) { _ in
-                UIApplication.shared.open(WireURLs.shared.appOnItunes)
-            }
-        }
+        present(alert, animated: true)
     }
 
     private func showJailbrokenMessage() {
