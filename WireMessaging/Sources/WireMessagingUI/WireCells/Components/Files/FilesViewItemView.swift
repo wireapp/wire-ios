@@ -231,7 +231,7 @@ struct FilesViewItemView: View {
     }
 
     private func showVersionHistory() {
-        viewModel.showVersionHistory()
+        Task { await viewModel.showVersionHistory() }
     }
 
     private func rename() {

@@ -192,8 +192,8 @@ final class FilesItemViewModel: ObservableObject {
         }
     }
 
-    func showVersionHistory() {
-        onItemAction(.onVersionHistory, item)
+    func showVersionHistory() async {
+        await onItemAction(.onVersionHistory, item)
     }
 
     func confirmDelete(permanently: Bool) async {

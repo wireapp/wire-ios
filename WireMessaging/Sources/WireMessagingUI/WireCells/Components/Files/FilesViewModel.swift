@@ -349,6 +349,7 @@ package final class FilesViewModel: ObservableObject {
     func moveToFolderView(item: FilesViewItem) -> some View {
         let containerPath = item.filePath.components(separatedBy: "/").dropLast().joined(separator: "/")
         let nodesRepository = nodesRepository
+        let assetRepository = localAssetRepository
         let useCases = useCases
         return MoveToFolderView(
             viewModel: MoveToFolderViewModel(
@@ -360,6 +361,7 @@ package final class FilesViewModel: ObservableObject {
                     Task { await self?.reload(refreshing: true) }
                 },
                 nodesRepository: nodesRepository,
+                localAssetRepository: assetRepository,
                 moveNodeUseCase: WireCellsMoveNodeUseCase(nodesRepository: nodesRepository),
                 createFolderUseCase: useCases.createFolder
             )

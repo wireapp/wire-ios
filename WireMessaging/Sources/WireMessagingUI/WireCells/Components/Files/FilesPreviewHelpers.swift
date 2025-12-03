@@ -195,7 +195,7 @@ extension FileVersioningViewModel {
             fetchNodeVersionsUseCase: useCase,
             getAssetUseCase: WireCellsGetAssetUseCase(
                 localAssetRepository: localAssetsRepository,
-                fileCache: fileCache()
+                fileCache: mockFileCache()
             ),
             restoreNodeVersionUseCase: WireCellsRestoreNodeVersionUseCase(
                 repository: repository,

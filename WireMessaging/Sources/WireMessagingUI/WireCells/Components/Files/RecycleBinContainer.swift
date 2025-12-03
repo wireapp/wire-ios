@@ -81,7 +81,8 @@ package struct RecycleBinContainer: View {
                         root: path.last.map { .id($0.id) } ?? .path(cellName),
                         isFoldersEnabled: isFoldersEnabled
                     ),
-                    repository: nodesRepository
+                    repository: nodesRepository,
+                    localAssetRepository: localAssetRepository
                 ),
                 deleteNodes: WireCellsDeleteNodesUseCase(
                     repository: nodesRepository,
@@ -102,6 +103,13 @@ package struct RecycleBinContainer: View {
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
                 createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
+                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesRepository),
+                getAsset: WireCellsGetAssetUseCase(localAssetRepository: localAssetRepository, fileCache: fileCache),
+                restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                    repository: nodesRepository,
+                    localAssetsRepository: localAssetRepository,
+                    nodeCache: nodeCache
+                )
             ),
             title: path.last?.name,
             navigationPath: path,
