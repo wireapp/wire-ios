@@ -128,10 +128,8 @@ final class FileVersioningViewModel: ObservableObject {
             alert = .unknownError
         }
     }
-
-    // MARK: - Private
-
-    private func fetch() async {
+    
+    func fetch() async {
         do {
             let response = try await fetchNodeVersionsUseCase.invoke(
                 nodeID: nodeID
@@ -144,6 +142,8 @@ final class FileVersioningViewModel: ObservableObject {
             alert = .unknownError
         }
     }
+
+    // MARK: - Private
 
     private func restore(item: FileVersionItem) async {
         state = .restoringVersion
@@ -266,16 +266,9 @@ final class FileVersioningViewModel: ObservableObject {
     }
 
     func formattedFileSize(size: UInt64) -> String {
-        let bytes = Double(size)
-
-        if bytes < 1024 {
-            return String(format: "%.0f B", bytes)
-        } else if bytes < 1_048_576 {
-            return String(format: "%.1f KB", bytes / 1024)
-        } else if bytes < 1_073_741_824 {
-            return String(format: "%.2f MB", bytes / 1_048_576)
-        } else {
-            return String(format: "%.2f GB", bytes / 1_073_741_824)
-        }
+        let formatter = ByteCountFormatter()
+        formatter.allowedUnits = [.useKB, .useMB, .useGB]
+        formatter.countStyle = .file
+        return formatter.string(fromByteCount: Int64(size))
     }
 }
