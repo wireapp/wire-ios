@@ -23,6 +23,7 @@ private let log = ZMSLog(tag: "APIVersion")
 extension SessionManager: APIVersionResolverDelegate {
 
     public func resolveAPIVersion(completion: @escaping (Error?) -> Void = { _ in }) {
+        // TODO: remove this part is a complete PR
         guard !DeveloperFlag.multibackend.isOn else {
             completion(nil) // we don't need to resolve apiversion here
             return
