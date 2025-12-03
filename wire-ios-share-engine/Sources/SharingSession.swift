@@ -446,11 +446,7 @@ public final class SharingSession {
             keychain: Keychain()
         )
 
-        let isMLSEnabled = if DeveloperFlag.multibackend.isOn {
-            journal[.isBackendMLSEnabled]
-        } else {
-            BackendInfo.isMLSEnabled
-        }
+        let isMLSEnabled = journal[.isBackendMLSEnabled]
 
         let userSessionComponent = UserSessionComponent(
             currentBuildNumber: currentBuildNumber,

@@ -208,34 +208,18 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             return
         }
 
-        if DeveloperFlag.multibackend.isOn {
-            let appContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
+        let appContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
 
-            let loader = try SharingSessionLoader(
-                account: account,
-                appContainerURL: appContainerURL,
-                appGroupID: appGroupID,
-                buildNumber: buildNumber,
-                sharedUserDefaults: .applicationGroup,
-                minTLSVersion: SecurityFlags.minTLSVersion.stringValue
-            )
-            sharingSession = try await loader.load()
-        } else {
-            let legacyConfig = AppLockController.LegacyConfig.fromBundle()
-
-            sharingSession = try await SharingSession(
-                applicationGroupIdentifier: appGroupID,
-                accountIdentifier: account.userIdentifier,
-                hostBundleIdentifier: hostBundleID,
-                environment: BackendEnvironment.shared,
-                appLockConfig: legacyConfig,
-                sharedUserDefaults: .applicationGroup,
-                minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
-                currentBuildNumber: buildNumber,
-                localDomain: BackendInfo.domain,
-                isFederationEnabled: BackendInfo.isFederationEnabled
-            )
-        }
+        let loader = try SharingSessionLoader(
+            account: account,
+            appContainerURL: appContainerURL,
+            appGroupID: appGroupID,
+            buildNumber: buildNumber,
+            sharedUserDefaults: .applicationGroup,
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+        )
+        sharingSession = try await loader.load()
+        // TODO: check can we delete AppLockController.LegacyConfig.fromBundle()
     }
 
     override func configurationItems() -> [Any]! {
