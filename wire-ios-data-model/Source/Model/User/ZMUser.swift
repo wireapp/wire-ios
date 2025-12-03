@@ -63,8 +63,12 @@ extension ZMUser: UserType {
         _isGuest(in: conversation)
     }
 
-    @objc public var isApp: Bool { // TODO: separate isApp/isBot?
-        type == .app || type == .bot
+    @objc public var isApp_: Bool {
+        type == .app
+    }
+
+    @objc public var isBot: Bool {
+        type == .bot
     }
 
     public var teamName: String? {
