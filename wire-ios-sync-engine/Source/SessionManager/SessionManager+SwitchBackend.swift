@@ -28,7 +28,7 @@ public extension SessionManager {
     typealias CompletedSwitch = (Result<BackendEnvironment, Error>) -> Void
 
     func canSwitchBackend() -> SwitchBackendError? {
-        guard DeveloperFlag.multibackend.isOn || !accountManager.hasAccounts else {
+        guard !accountManager.hasAccounts else {
             return .loggedInAccounts
         }
 
