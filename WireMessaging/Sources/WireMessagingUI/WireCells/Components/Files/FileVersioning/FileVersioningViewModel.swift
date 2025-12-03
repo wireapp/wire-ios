@@ -128,7 +128,7 @@ final class FileVersioningViewModel: ObservableObject {
             alert = .unknownError
         }
     }
-    
+
     func fetch() async {
         do {
             let response = try await fetchNodeVersionsUseCase.invoke(
