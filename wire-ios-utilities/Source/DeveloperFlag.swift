@@ -24,8 +24,11 @@ public enum DeveloperFlag: String, CaseIterable {
 
     case channelsHistory
     case chatBubbles
+<<<<<<< HEAD
     case chatBubblesSimple
     case considerAppsFeatureFlag
+=======
+>>>>>>> f3da394686 (chore: remove chat bubbles simple feature flag - WPB-22019 (#3953))
     case consumableNotifications
     case createLegacyBackups
     case debugDuplicateObjects
@@ -98,9 +101,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .chatBubbles:
             "Show conversation messages as chat bubbles"
-
-        case .chatBubblesSimple:
-            "Turn on the simplified version of chat bubbles"
 
         case .consumableNotifications:
             "Turn on to enable consumable notifications"
