@@ -91,7 +91,15 @@ struct ShareLinkPasswordView: View {
                 
                 generatePasswordButton()
                 
+                passwordInputArea()
+                
+                copyPasswordButton()
+                
+                changePasswordButton()
+                    .padding(.top, 24)
+                
                 alertTestButtons()
+                    .padding(.top, 30)
             }
             .frame(maxWidth: .infinity)
             .padding()
@@ -145,19 +153,75 @@ struct ShareLinkPasswordView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     
-    @ViewBuilder private func alertTestButtons() -> some View {
+    @ViewBuilder private func passwordInputArea() -> some View {
+        Text("(password input area)")
+    }
+    
+    @ViewBuilder private func copyPasswordButton() -> some View {
         Button {
-            viewModel.isPresentingRemovePasswordConfirmation = true
+            //TODO: ...
         } label: {
-            Text("show\n\"remove password\"\nconfirmation alert")
+            Label {
+                Text(Strings.copyPassword)
+            } icon: {
+                Image(systemName: "document.on.document")
+            }
+            .font(for: .body2)
+            .padding(.vertical, 12)
+            .padding(.horizontal, 10)
+            .frame(maxWidth: .infinity)
+            .background {
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke()
+                    .foregroundStyle(ColorTheme.Buttons.Secondary.enabledOutline.color)
+            }
+            .background {
+                RoundedRectangle(cornerRadius: 14)
+                    .foregroundStyle(ColorTheme.Buttons.Secondary.enabled.color)
+            }
         }
-        .buttonStyle(.bordered)
-        .font(for: .subline1)
-        
+        .tint(.primaryText)
+    }
+    
+    @ViewBuilder private func changePasswordButton() -> some View {
         Button {
-            viewModel.isPresentingNoAccessToExistingPasswordConfirmation = true
+            //TODO: ...
         } label: {
-            Text("show\n\"no access to existing password\"\nalert")
+            Label {
+                Text(Strings.changePassword)
+            } icon: {
+                Image(systemName: "arrow.counterclockwise")
+            }
+            .font(for: .body2)
+            .padding(.vertical, 14)
+            .padding(.horizontal, 10)
+            .frame(maxWidth: .infinity)
+            .background {
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke()
+                    .foregroundStyle(ColorTheme.Buttons.Secondary.enabledOutline.color)
+            }
+            .background {
+                RoundedRectangle(cornerRadius: 14)
+                    .foregroundStyle(ColorTheme.Buttons.Secondary.enabled.color)
+            }
+        }
+        .tint(.primaryText)
+    }
+    
+    @ViewBuilder private func alertTestButtons() -> some View {
+        VStack {
+            Button {
+                viewModel.isPresentingRemovePasswordConfirmation = true
+            } label: {
+                Text("show\n\"remove password\"\nconfirmation alert")
+            }
+            
+            Button {
+                viewModel.isPresentingNoAccessToExistingPasswordConfirmation = true
+            } label: {
+                Text("show\n\"no access to existing password\"\nalert")
+            }
         }
         .buttonStyle(.bordered)
         .font(for: .subline1)
