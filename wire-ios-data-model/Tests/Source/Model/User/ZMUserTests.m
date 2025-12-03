@@ -1927,7 +1927,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     user.name = @"User Name";
     [user setValue:@(ZMTypeOfUserBot) forKey:@"typeValue"];
 
-    XCTAssertTrue(user.isApp);
+    XCTAssertTrue(user.isAppOrBot);
     XCTAssertEqualObjects(user.name, @"User Name");
 }
 

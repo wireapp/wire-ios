@@ -63,7 +63,7 @@ public extension ZMConversation {
         let selfUser = ZMUser.selfUser(in: managedObjectContext!)
         let otherUsers = participants.subtracting([selfUser])
 
-        if otherUsers.count == 1, otherUsers.first!.isApp {
+        if otherUsers.count == 1, otherUsers.first!.isApp_ {
             return []
         }
 
@@ -75,7 +75,7 @@ public extension ZMConversation {
         for user in otherUsers {
             if canDisplayGuests, user.isFederated {
                 state.insert(.visibleRemotes)
-            } else if user.isApp {
+            } else if user.isAppOrBot {
                 state.insert(.visibleApps)
             } else if canDisplayExternals, user.isExternalPartner {
                 state.insert(.visibleExternals)
@@ -98,7 +98,7 @@ public extension ZMConversation {
     /// Returns whether apps are present, regardless of the display rules.
 
     var areAppsPresent: Bool {
-        localParticipants.any(\.isApp)
+        localParticipants.any(\.isAppOrBot)
     }
 
     /// Returns whether guests are present, regardless of the display rules.

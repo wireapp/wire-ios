@@ -71,6 +71,10 @@ extension ZMUser: UserType {
         type == .bot
     }
 
+    @objc public var isAppOrBot: Bool {
+        isApp_ || isBot
+    }
+
     public var teamName: String? {
         team?.name
     }

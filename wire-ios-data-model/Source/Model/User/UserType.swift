@@ -80,6 +80,8 @@ public protocol UserType: NSObjectProtocol, UserConnections {
 
     var isBot: Bool { get }
 
+    var isAppOrBot: Bool { get }
+
     /// Whether this uses uses SSO.
     var usesCompanyLogin: Bool { get }
 
