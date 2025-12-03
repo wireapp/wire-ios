@@ -24,6 +24,8 @@ extension ShareLinkPasswordView {
     final class ViewModel: ObservableObject {
         @Published var isPresentingRemovePasswordConfirmation = false
         @Published var isPresentingNoAccessToExistingPasswordConfirmation = false
+        @Published var passwordInput = ""
+        @Published var isPasswordInputSecured = true
 
         var canSave: Bool {
             true //TODO: ...

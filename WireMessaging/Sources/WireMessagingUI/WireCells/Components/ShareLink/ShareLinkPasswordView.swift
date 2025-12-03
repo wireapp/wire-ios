@@ -154,7 +154,57 @@ struct ShareLinkPasswordView: View {
     }
     
     @ViewBuilder private func passwordInputArea() -> some View {
-        Text("(password input area)")
+        VStack(spacing: 4) {
+            Text(Strings.textfieldTitle)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .font(for: .body1)
+
+            HStack {
+                passwordInputField()
+                
+                Button {
+                    viewModel.isPasswordInputSecured.toggle()
+                } label: {
+                    ZStack {
+                        Image(systemName: "eye.fill")
+                            .opacity(viewModel.isPasswordInputSecured ? 0 : 1)
+                            
+                        Image(systemName: "eye.slash.fill")
+                            .opacity(viewModel.isPasswordInputSecured ? 1 : 0)
+                    }
+                    .padding(.vertical, 2)
+                }
+                .tint(.primaryText)
+                //TODO: apply accessibility label "hide password"/"show password"
+            }
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            .background {
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke()
+                    .foregroundStyle(ColorTheme.Buttons.Secondary.enabledOutline.color)
+            }
+            .background {
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundStyle(ColorTheme.Buttons.Secondary.enabled.color)
+            }
+        }
+    }
+    
+    @ViewBuilder private func passwordInputField() -> some View {
+        let prompt = Text(Strings.textfieldPrompt)
+        
+        Group {
+            if viewModel.isPasswordInputSecured {
+                SecureField(text: $viewModel.passwordInput, prompt: prompt, label: { EmptyView() })
+            } else {
+                TextField(text: $viewModel.passwordInput, prompt: prompt, label: { EmptyView() })
+                    .padding(.bottom, 0.5) //adjustment so that the text of the both fields align perfectly.
+            }
+        }
+        .textContentType(.password)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled()
     }
     
     @ViewBuilder private func copyPasswordButton() -> some View {
@@ -167,7 +217,7 @@ struct ShareLinkPasswordView: View {
                 Image(systemName: "document.on.document")
             }
             .font(for: .body2)
-            .padding(.vertical, 12)
+            .padding(.vertical, 14)
             .padding(.horizontal, 10)
             .frame(maxWidth: .infinity)
             .background {
@@ -193,7 +243,7 @@ struct ShareLinkPasswordView: View {
                 Image(systemName: "arrow.counterclockwise")
             }
             .font(for: .body2)
-            .padding(.vertical, 14)
+            .padding(.vertical, 16)
             .padding(.horizontal, 10)
             .frame(maxWidth: .infinity)
             .background {
