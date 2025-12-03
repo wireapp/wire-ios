@@ -43,7 +43,6 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: UserRight.self,
             settingsCoordinator: settingsCoordinator,
-            isSimpleChatBubbleEnabled: userSession.isChatBubbleSimpleEnabled,
             localDomain: userSession.resolvedBackendMetadata.domain,
             isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
         )
