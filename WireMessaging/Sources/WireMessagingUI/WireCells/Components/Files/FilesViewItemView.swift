@@ -34,17 +34,20 @@ struct FilesViewItemView: View {
 
     private var canRenameFile: Bool
     private var canEditTags: Bool
+    private let canMoveToFolder: Bool
     private var canDeleteFiles: Bool
 
     init(
         viewModel: @autoclosure @escaping () -> FilesItemViewModel,
         canRenameFile: Bool = false,
         canEditTags: Bool = false,
-        canDeleteFiles: Bool = false,
+        canMoveToFolder: Bool = false,
+        canDeleteFiles: Bool = false
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
         self.canRenameFile = canRenameFile
         self.canEditTags = canEditTags
+        self.canMoveToFolder = canMoveToFolder
         self.canDeleteFiles = canDeleteFiles
     }
 
@@ -112,6 +115,12 @@ struct FilesViewItemView: View {
                     if canRenameFile, !viewModel.isInRecycleBin {
                         Button(action: rename) {
                             Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
+                        }
+                    }
+
+                    if canMoveToFolder {
+                        Button(action: moveToFolder) {
+                            Label(Strings.Files.Item.Menu.moveToFolder, systemImage: "folder")
                         }
                     }
 
@@ -216,6 +225,10 @@ struct FilesViewItemView: View {
 
     private func rename() {
         Task { await viewModel.rename() }
+    }
+
+    private func moveToFolder() {
+        Task { await viewModel.moveToFolder() }
     }
 
     private func editTags() {

@@ -103,6 +103,8 @@ package struct FilesView: FilesViewProtocol {
                         fileRenameView
                     case let .createFolder(folderView):
                         folderView
+                    case let .moveToFolder(fileItem):
+                        viewModel.moveToFolderView(item: fileItem)
                     default:
                         EmptyView()
                     }
@@ -185,30 +187,6 @@ private extension FilesView {
             Image(systemName: "ellipsis.circle")
         }
         .tint(ColorTheme.Base.primary(accentColor).color)
-    }
-}
-
-private struct CreateFolderCTA: View {
-
-    let onTap: () -> Void
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Divider()
-
-            Button(action: onTap) {
-                HStack(alignment: .center, spacing: 20) {
-                    Image(systemName: "plus")
-
-                    Text(L10n.Localizable.Conversation.WireCells.Files.List.newFolder)
-                        .font(for: .body2)
-                    Spacer()
-                }
-            }
-            .tint(ColorTheme.Backgrounds.onSurface.color)
-            .padding()
-        }
-        .contentShape(Rectangle())
     }
 }
 

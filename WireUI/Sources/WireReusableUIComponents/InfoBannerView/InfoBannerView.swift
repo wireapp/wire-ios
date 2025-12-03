@@ -60,8 +60,8 @@ public struct InfoBannerView: View {
                     Text(button.title)
                         .lineLimit(.none)
                 }
-                .wireButtonStyle(.tertiary)
                 .accessibilityIdentifier(button.accessibilityIdentifier)
+                .wireButtonStyle(.tertiary)
             }
         }
         .padding(8)
@@ -74,7 +74,6 @@ public struct InfoBannerView: View {
                 .stroke(Color(ColorTheme.Base.primary(wireAccentColor)))
         )
         .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Nested Components
