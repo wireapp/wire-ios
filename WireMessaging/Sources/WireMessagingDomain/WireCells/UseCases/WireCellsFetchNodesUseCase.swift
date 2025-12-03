@@ -73,7 +73,7 @@ package final class WireCellsFetchNodesUseCase: Sendable {
 
         let task = loadMoreTask()
         let (newNodes, nextOffset) = try await task.value
-        
+
         // Retrieve assets that have been updated and deleting them locally.
         let nodesAssetToDelete = try newNodes.compactMap {
             if let localAsset = try localAssetRepository.asset(nodeID: $0.id), localAsset.eTag != $0.eTag {
@@ -82,9 +82,9 @@ package final class WireCellsFetchNodesUseCase: Sendable {
                 nil
             }
         }.map(\.id)
-        
+
         try await localAssetRepository.deleteAssets(nodeIDs: nodesAssetToDelete)
-        
+
         let allNodes = appendNodes(newNodes)
 
         return (allNodes, nextOffset != nil)
