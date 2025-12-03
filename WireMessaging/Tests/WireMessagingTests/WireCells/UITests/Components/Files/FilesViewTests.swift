@@ -32,7 +32,7 @@ final class FilesViewTests: XCTestCase {
     private let modifiedAt = try! Date("2023-10-01T12:00:00Z", strategy: .iso8601)
     private var snapshotHelper: SnapshotHelper!
     private var nodesRepository: MockWireCellsNodesRepositoryProtocol!
-    private var fetchNodesUseCase: WireCellsFetchNodesUseCase!
+    private var fetchNodesUseCase: WireCellsFetchNodesPageUseCase!
     private var deleteNodeUseCase: WireCellsDeleteNodesUseCase!
     private var restoreNodeUseCase: WireCellsRestoreNodesUseCase!
     private var renameNodeUseCase: WireCellsRenameNodeUseCase!
@@ -52,7 +52,7 @@ final class FilesViewTests: XCTestCase {
         nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
 
-        fetchNodesUseCase = WireCellsFetchNodesUseCase(
+        fetchNodesUseCase = WireCellsFetchNodesPageUseCase(
             configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
             repository: nodesRepository
         )
@@ -338,6 +338,7 @@ final class FilesViewTests: XCTestCase {
             ),
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            nodesRepository: nodesRepository,
             fileCache: MockFileCache(),
             isFoldersEnabled: true,
             accentColorProvider: { .default }
