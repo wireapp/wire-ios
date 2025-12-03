@@ -76,7 +76,7 @@ struct FileVersioningView: View, Identifiable {
                     }
                 }
             )
-        }.task { await viewModel.fetch() }
+        }.task { viewModel.startPolling() }
     }
 
 }

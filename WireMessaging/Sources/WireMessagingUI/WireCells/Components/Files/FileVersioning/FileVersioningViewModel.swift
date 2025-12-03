@@ -92,6 +92,14 @@ final class FileVersioningViewModel: ObservableObject {
         self.accentColorProvider = accentColorProvider
         self.state = .loading
     }
+    
+    func startPolling() {
+        Timer.publish(every: .tenSeconds, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] _ in
+                Task { await self?.fetch() }
+            }.store(in: &subscriptions)
+    }
 
     func fetch() async {
         do {
@@ -136,6 +144,7 @@ final class FileVersioningViewModel: ObservableObject {
 
     func itemViewModel(sectionIndex: Int, itemIndex: Int) -> FileVersionItemViewModel {
         FileVersionItemViewModel(
+            nodeID: nodeID,
             item: state.versions[sectionIndex].items[itemIndex],
             accentColor: accentColor,
             localAssetRepository: localAssetRepository,
@@ -149,7 +158,7 @@ final class FileVersioningViewModel: ObservableObject {
         lastSelectedItem = item
 
         do {
-            let url = try await getAssetUseCase.invoke(nodeID: item.id)
+            let url = try await getAssetUseCase.invoke(source: .nodeVersion(node: nodeID, version: item.id))
 
             if item == lastSelectedItem {
                 viewingURL = url

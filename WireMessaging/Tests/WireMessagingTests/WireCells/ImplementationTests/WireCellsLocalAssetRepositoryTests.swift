@@ -205,7 +205,7 @@ final class WireCellsLocalAssetRepositoryTests {
         }
 
         // when
-        try await sut.downloadAsset(nodeID: nodeID)
+        try await sut.downloadAsset(source: .node(nodeID))
 
         // then
         #expect(
@@ -288,7 +288,7 @@ final class WireCellsLocalAssetRepositoryTests {
         ) { [nodeID, sut, store] taskGroup in
             for _ in 1 ... 3 {
                 taskGroup.addTask {
-                    try await sut.downloadAsset(nodeID: nodeID)
+                    try await sut.downloadAsset(source: .node(nodeID))
                     return try await store.asset(nodeID: nodeID)
                 }
             }

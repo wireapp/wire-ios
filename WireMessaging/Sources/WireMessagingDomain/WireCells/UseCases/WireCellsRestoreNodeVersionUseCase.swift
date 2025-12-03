@@ -26,16 +26,26 @@ package struct WireCellsRestoreNodeVersionUseCase: WireCellsRestoreNodeVersionUs
     }
 
     private let repository: any WireCellsNodesRepositoryProtocol
+    private let localAssetsRepository: any WireCellsLocalAssetRepositoryProtocol
+    private let nodeCache: any WireCellsNodeCacheProtocol
 
     package init(
-        repository: any WireCellsNodesRepositoryProtocol
+        repository: any WireCellsNodesRepositoryProtocol,
+        localAssetsRepository: any WireCellsLocalAssetRepositoryProtocol,
+        nodeCache: any WireCellsNodeCacheProtocol
     ) {
         self.repository = repository
+        self.localAssetsRepository = localAssetsRepository
+        self.nodeCache = nodeCache
     }
 
     package func invoke(nodeID: UUID, versionID: UUID) async throws {
         do {
-            return try await repository.restoreVersion(nodeID: nodeID, versionID: versionID)
+            try await repository.restoreVersion(nodeID: nodeID, versionID: versionID)
+            let (node, _) = try await localAssetsRepository.refreshAssetMetadata(
+                nodeID: nodeID
+            )
+            await nodeCache.setItem(.init(node: node), for: nodeID)
         } catch {
             WireLogger.wireCells.error("Unable to restore node version: \(error)")
             throw Failure.unableToRestoreNodeVersion

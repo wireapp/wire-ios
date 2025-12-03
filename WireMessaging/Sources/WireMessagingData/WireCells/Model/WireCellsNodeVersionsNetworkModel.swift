@@ -46,6 +46,7 @@ extension WireCellsNodeVersionsNetworkModel {
                 id: $0.versionId,
                 ownerName: $0.ownerName,
                 modified: $0.mTime.map { Date(timeIntervalSince1970: Double($0)) },
+                eTag: $0.eTag,
                 size: $0.size,
                 downloadUrl: $0.downloadUrl
             )

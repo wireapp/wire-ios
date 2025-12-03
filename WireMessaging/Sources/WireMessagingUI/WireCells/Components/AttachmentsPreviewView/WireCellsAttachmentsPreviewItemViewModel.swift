@@ -149,7 +149,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         lastOpenRequest.nodeID = nodeID
 
         do {
-            let url = try await getAssetUseCase.invoke(nodeID: nodeID)
+            let url = try await getAssetUseCase.invoke(source: .node(nodeID))
             if lastOpenRequest.nodeID == nodeID {
                 viewingURL = url
             }

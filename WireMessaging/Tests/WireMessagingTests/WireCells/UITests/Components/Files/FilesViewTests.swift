@@ -53,7 +53,8 @@ final class FilesViewTests: XCTestCase {
 
         fetchNodesUseCase = WireCellsFetchNodesUseCase(
             configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
-            repository: nodesRepository
+            repository: nodesRepository,
+            localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol()
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
             repository: nodesRepository,
@@ -334,7 +335,9 @@ final class FilesViewTests: XCTestCase {
                     fileCache: MockFileCache()
                 ),
                 restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
-                    repository: nodesRepository
+                    repository: nodesRepository,
+                    localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                    nodeCache: MockWireCellsNodeCacheProtocol()
                 )
             ),
             isCellsStatePending: false,

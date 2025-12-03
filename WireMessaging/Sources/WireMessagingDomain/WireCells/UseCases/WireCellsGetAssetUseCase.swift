@@ -38,10 +38,10 @@ package class WireCellsGetAssetUseCase {
         self.fileCache = fileCache
     }
 
-    package func invoke(nodeID: UUID) async throws -> URL {
+    package func invoke(source: AssetSource) async throws -> URL {
         // If the file is already downloaded, return the local URL.
         if
-            let cacheKey = try localAssetRepository.asset(nodeID: nodeID)?.downloadState.cacheKey,
+            let cacheKey = try localAssetRepository.asset(nodeID: source.id)?.downloadState.cacheKey,
             let url = fileCache.fileURL(forKey: cacheKey) {
             return url
         }
@@ -49,11 +49,11 @@ package class WireCellsGetAssetUseCase {
         let cacheKey: String?
 
         do {
-            try await localAssetRepository.downloadAsset(nodeID: nodeID)
-            cacheKey = try localAssetRepository.asset(nodeID: nodeID)?.downloadState.cacheKey
+            try await localAssetRepository.downloadAsset(source: source)
+            cacheKey = try localAssetRepository.asset(nodeID: source.id)?.downloadState.cacheKey
         } catch WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress {
-            try await awaitDownload(id: nodeID)
-            cacheKey = try localAssetRepository.asset(nodeID: nodeID)?.downloadState.cacheKey
+            try await awaitDownload(id: source.id)
+            cacheKey = try localAssetRepository.asset(nodeID: source.id)?.downloadState.cacheKey
         }
 
         guard let cacheKey else {

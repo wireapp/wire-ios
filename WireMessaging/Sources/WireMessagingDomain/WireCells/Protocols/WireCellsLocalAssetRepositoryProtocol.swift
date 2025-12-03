@@ -19,6 +19,20 @@
 package import Foundation
 package import Combine
 
+package enum AssetSource {
+    case node(UUID)
+    case nodeVersion(node: UUID, version: UUID)
+    
+    package var id: UUID {
+        switch self {
+        case .node(let id):
+            id
+        case .nodeVersion(_, let nodeVersionID):
+            nodeVersionID
+        }
+    }
+}
+
 // sourcery: AutoMockable
 /// Repository for accessing & updating `WireCellsLocalAsset`s.
 package protocol WireCellsLocalAssetRepositoryProtocol: Sendable {
@@ -41,7 +55,7 @@ package protocol WireCellsLocalAssetRepositoryProtocol: Sendable {
     /// This method first refreshes the assets metadata - see `refreshMetadata(nodeID:)`.
     /// The download can be observed via the `observeAsset(nodeID:)` method.
     @MainActor
-    func downloadAsset(nodeID: UUID) async throws
+    func downloadAsset(source: AssetSource) async throws
 
     /// Observes the asset for the given `nodeID`. A value of `nil` is emitted if the asset has never been fetched.
     @MainActor
@@ -50,5 +64,9 @@ package protocol WireCellsLocalAssetRepositoryProtocol: Sendable {
     /// Cancels the asset download for a given `nodeID`.
     @MainActor
     func cancelDownload(nodeID: UUID)
+    
+    /// Deletes the assets for given `nodeIDs`.
+    @MainActor
+    func deleteAssets(nodeIDs: [UUID]) async throws
 
 }

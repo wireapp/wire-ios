@@ -169,7 +169,8 @@ public extension WireMessagingFactory {
                     useCases: .init(
                         fetchNodes: WireCellsFetchNodesUseCase(
                             configuration: .filesBrowserView,
-                            repository: nodesAPI
+                            repository: nodesAPI,
+                            localAssetRepository: localAssetRepository
                         ),
                         deleteNodes: WireCellsDeleteNodesUseCase(
                             repository: nodesAPI,
@@ -191,7 +192,9 @@ public extension WireMessagingFactory {
                             fileCache: fileCache
                         ),
                         restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
-                            repository: nodesAPI
+                            repository: nodesAPI,
+                            localAssetsRepository: localAssetRepository,
+                            nodeCache: nodeCache
                         ),
                     ),
                     isCellsStatePending: false,

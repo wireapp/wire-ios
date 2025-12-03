@@ -44,7 +44,8 @@ final class FilesViewModelTests {
             useCases: .init(
                 fetchNodes: WireCellsFetchNodesUseCase(
                     configuration: .conversationFileView(root: .path("some-cell"), isFoldersEnabled: false),
-                    repository: nodesRepository
+                    repository: nodesRepository,
+                    localAssetRepository: localAssetRepository
                 ),
                 deleteNodes: WireCellsDeleteNodesUseCase(
                     repository: nodesRepository,
@@ -62,7 +63,11 @@ final class FilesViewModelTests {
                 createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesRepository),
                 fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesRepository),
                 getAsset: WireCellsGetAssetUseCase(localAssetRepository: localAssetRepository, fileCache: fileCache),
-                restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(repository: nodesRepository)
+                restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                    repository: nodesRepository,
+                    localAssetsRepository: localAssetRepository,
+                    nodeCache: MockWireCellsNodeCacheProtocol()
+                )
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,

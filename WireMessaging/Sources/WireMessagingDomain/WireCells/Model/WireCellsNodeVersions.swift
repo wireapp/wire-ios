@@ -24,12 +24,14 @@ public struct WireCellsNodeVersion: Equatable, Identifiable, Sendable {
         id: UUID,
         ownerName: String?,
         modified: Date?,
+        eTag: String?,
         size: UInt64?,
         downloadUrl: URL?
     ) {
         self.id = id
         self.ownerName = ownerName
         self.modified = modified
+        self.eTag = eTag
         self.size = size
         self.downloadUrl = downloadUrl
     }
@@ -38,5 +40,6 @@ public struct WireCellsNodeVersion: Equatable, Identifiable, Sendable {
     public let ownerName: String?
     public let modified: Date?
     public let size: UInt64?
+    public let eTag: String?
     public let downloadUrl: URL?
 }

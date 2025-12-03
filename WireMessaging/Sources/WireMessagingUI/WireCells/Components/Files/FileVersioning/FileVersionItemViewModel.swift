@@ -24,6 +24,7 @@ import WireMessagingDomain
 @MainActor
 final class FileVersionItemViewModel: ObservableObject {
 
+    private let nodeID: UUID
     private let versionID: UUID
     private let onRestore: (FileVersionItem) async -> Void
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
@@ -73,11 +74,13 @@ final class FileVersionItemViewModel: ObservableObject {
     }
 
     init(
+        nodeID: UUID,
         item: FileVersionItem,
         accentColor: WireAccentColor,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         onRestore: @escaping (FileVersionItem) async -> Void
     ) {
+        self.nodeID = nodeID
         self.versionID = item.id
         self.item = item
         self.accentColor = accentColor
@@ -95,6 +98,6 @@ final class FileVersionItemViewModel: ObservableObject {
     }
 
     func download() async {
-        try? await localAssetRepository.downloadAsset(nodeID: item.id)
+        try? await localAssetRepository.downloadAsset(source: .nodeVersion(node: nodeID, version: item.id))
     }
 }

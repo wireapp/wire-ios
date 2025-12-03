@@ -160,6 +160,7 @@ final class RestAPI: Sendable {
     func getVersions(uuid: UUID) async throws -> WireCellsNodeVersionsNetworkModel {
         let query = RestNodeVersionsFilter(
             filterBy: .versionsAll,
+            flags: [.withPreSignedURLs],
             limit: nil,
             offset: nil,
             sortDirDesc: true,
@@ -381,7 +382,7 @@ private extension WireCellsGetNodesRequest {
 
     var lookupRequest: RestLookupRequest {
         var request = RestLookupRequest(
-            flags: [.withPreSignedURLs],
+            flags: [.withPreSignedURLs, .withEditorURLs],
             limit: "\(limit)",
             offset: "\(offset)",
         )

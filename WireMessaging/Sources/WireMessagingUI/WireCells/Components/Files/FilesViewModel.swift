@@ -361,7 +361,7 @@ package final class FilesViewModel: ObservableObject {
         lastSelectedItem = item
 
         do {
-            let url = try await useCases.getAsset.invoke(nodeID: item.id)
+            let url = try await useCases.getAsset.invoke(source: .node(item.id))
 
             if item == lastSelectedItem {
                 viewingURL = url
@@ -533,6 +533,9 @@ package final class FilesViewModel: ObservableObject {
     private func makeFileVersioningView(
         item: FilesViewItem
     ) -> FileVersioningView {
+        // always reload this view when file versioning is dismissed
+        shouldReload = true
+        
         let viewModel = FileVersioningViewModel(
             nodeID: item.id,
             name: item.name,

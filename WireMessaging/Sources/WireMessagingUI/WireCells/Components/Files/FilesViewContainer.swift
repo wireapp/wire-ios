@@ -80,7 +80,8 @@ package struct FilesViewContainer: View {
                         root: path.last.map { .id($0.id) } ?? .path(cellName),
                         isFoldersEnabled: isFoldersEnabled
                     ),
-                    repository: nodesRepository
+                    repository: nodesRepository,
+                    localAssetRepository: localAssetRepository
                 ),
                 deleteNodes: WireCellsDeleteNodesUseCase(
                     repository: nodesRepository,
@@ -102,7 +103,9 @@ package struct FilesViewContainer: View {
                     fileCache: fileCache
                 ),
                 restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
-                    repository: nodesAPI
+                    repository: nodesAPI,
+                    localAssetsRepository: localAssetRepository,
+                    nodeCache: nodeCache
                 )
             ),
             title: path.last?.name,

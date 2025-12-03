@@ -33,13 +33,14 @@ extension FilesViewModel {
         let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
-        let localAssetsRepository = PreviewLocalAssetRepository()
+        let localAssetRepository = PreviewLocalAssetRepository()
 
         return FilesViewModel(
             useCases: .init(
                 fetchNodes: WireCellsFetchNodesUseCase(
                     configuration: .conversationFileView(root: .path("root"), isFoldersEnabled: true),
-                    repository: previewNodesRepository()
+                    repository: previewNodesRepository(),
+                    localAssetRepository: localAssetRepository
                 ),
                 deleteNodes: WireCellsDeleteNodesUseCase(
                     repository: previewNodesRepository(),
@@ -65,16 +66,18 @@ extension FilesViewModel {
                     repository: previewNodesRepository()
                 ),
                 getAsset: WireCellsGetAssetUseCase(
-                    localAssetRepository: localAssetsRepository,
+                    localAssetRepository: localAssetRepository,
                     fileCache: cache
                 ),
                 restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
-                    repository: previewNodesRepository()
+                    repository: previewNodesRepository(),
+                    localAssetsRepository: localAssetRepository,
+                    nodeCache: MockWireCellsNodeCacheProtocol()
                 )
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,
-            localAssetRepository: localAssetsRepository,
+            localAssetRepository: localAssetRepository,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
             isFoldersEnabled: isFoldersEnabled,
             accentColorProvider: { .default }
@@ -139,6 +142,7 @@ extension FileVersionItemViewModel {
         let localAssetsRepository = PreviewLocalAssetRepository()
 
         return FileVersionItemViewModel(
+            nodeID: UUID(),
             item: .init(
                 id: UUID(),
                 title: "5:46AM",
@@ -190,7 +194,9 @@ extension FileVersioningViewModel {
                 fileCache: fileCache()
             ),
             restoreNodeVersionUseCase: WireCellsRestoreNodeVersionUseCase(
-                repository: repository
+                repository: repository,
+                localAssetsRepository: localAssetsRepository,
+                nodeCache: MockWireCellsNodeCacheProtocol()
             ),
             localAssetRepository: localAssetsRepository,
             accentColorProvider: { .default }
@@ -251,6 +257,8 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
     func asset(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAsset? {
         publishers[nodeID]?.value
     }
+    
+    func deleteAssets(nodeIDs: [UUID]) async throws {}
 
     func refreshAssetMetadata(
         nodeID: UUID
@@ -269,7 +277,7 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
         return (node, localAsset)
     }
 
-    func downloadAsset(nodeID: UUID) async throws {
+    func downloadAsset(source: AssetSource) async throws {
         failIndex += 1
         // Fail every 3rd download
         let shouldFail = failIndex % 3 == 0
@@ -285,7 +293,7 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
 
             try await Task.sleep(for: .milliseconds(200))
             let update = WireCellsLocalAsset(
-                nodeID: nodeID,
+                nodeID: source.id,
                 eTag: "something",
                 path: "some/path.jpg",
                 contentType: nil,
@@ -293,7 +301,7 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
                 downloadState: downloadState
             )
 
-            publishers[nodeID]?.send(update)
+            publishers[source.id]?.send(update)
 
             if shouldFail, progress > 0.1 {
                 break
@@ -329,6 +337,7 @@ extension WireCellsNodeVersion {
             id: UUID(),
             ownerName: "foo",
             modified: Date.now,
+            eTag: "something",
             size: 2_158_877,
             downloadUrl: URL(string: "https://wire.com")
         ),
@@ -336,6 +345,7 @@ extension WireCellsNodeVersion {
             id: UUID(),
             ownerName: "foo1",
             modified: .init(timeIntervalSince1970: 1_759_311_973),
+            eTag: "something",
             size: 2_158_877,
             downloadUrl: URL(string: "https://wire.com")
         ),
@@ -343,6 +353,7 @@ extension WireCellsNodeVersion {
             id: UUID(),
             ownerName: "foo2",
             modified: .init(timeIntervalSince1970: 1_759_311_973),
+            eTag: "something",
             size: 172_493,
             downloadUrl: URL(string: "https://wire.com")
         ),
@@ -350,6 +361,7 @@ extension WireCellsNodeVersion {
             id: UUID(),
             ownerName: "foo3",
             modified: .init(timeIntervalSince1970: 1_761_663_940),
+            eTag: "something",
             size: 2_216_387,
             downloadUrl: URL(string: "https://wire.com")
         ),
@@ -357,6 +369,7 @@ extension WireCellsNodeVersion {
             id: UUID(),
             ownerName: "foo4",
             modified: .init(timeIntervalSince1970: 1_761_663_393),
+            eTag: "something",
             size: 2_216_387,
             downloadUrl: URL(string: "https://wire.com")
         ),
@@ -364,6 +377,7 @@ extension WireCellsNodeVersion {
             id: UUID(),
             ownerName: "foo5",
             modified: .init(timeIntervalSince1970: 1_759_241_119),
+            eTag: "something",
             size: 27_808,
             downloadUrl: URL(string: "https://wire.com")
         ),
@@ -371,6 +385,7 @@ extension WireCellsNodeVersion {
             id: UUID(),
             ownerName: "foo6",
             modified: .init(timeIntervalSince1970: 1_759_369_815),
+            eTag: "something",
             size: 27_808,
             downloadUrl: URL(string: "https://wire.com")
         ),
@@ -378,6 +393,7 @@ extension WireCellsNodeVersion {
             id: UUID(),
             ownerName: "foo7",
             modified: .init(timeIntervalSince1970: 1_759_401_599),
+            eTag: "something",
             size: 27_808,
             downloadUrl: URL(string: "https://wire.com")
         ),
@@ -385,6 +401,7 @@ extension WireCellsNodeVersion {
             id: UUID(),
             ownerName: "foo8",
             modified: .init(timeIntervalSince1970: 1_761_681_900),
+            eTag: "something",
             size: 27_808,
             downloadUrl: URL(string: "https://wire.com")
         ),
@@ -392,6 +409,7 @@ extension WireCellsNodeVersion {
             id: UUID(),
             ownerName: "foo9",
             modified: .init(timeIntervalSince1970: 1_761_628_800),
+            eTag: "something",
             size: 27_808,
             downloadUrl: URL(string: "https://wire.com")
         )
