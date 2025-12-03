@@ -38,7 +38,6 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
 
     override func setUp() async throws {
         try await super.setUp()
-        DeveloperFlag.multibackend.enable(false)
         snapshotHelper = .init()
         coreDataFixture = try await CoreDataFixture()
 
@@ -95,7 +94,6 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
 
     @MainActor
     func testAccountSwitcher() {
-        DeveloperFlag.multibackend.enable(true)
         createSut(userName: "Tarja Turunen", teamMember: true, canManageTeam: true)
         snapshotHelper.verify(matching: sut.view)
     }
