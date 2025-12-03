@@ -39,6 +39,7 @@ final class ImportBackupViewModel: ObservableObject {
     @Published var isImportConfirmationPresented = false
     @Published var isAlertPresented = false
 
+    @Published var isLoadingFile = false
     @Published private(set) var importProgress = (current: 0, total: 0)
 
     private var importTask: Task<Void, Never>?
@@ -65,35 +66,71 @@ final class ImportBackupViewModel: ObservableObject {
     }
 
     func pickedBackupFile(result: Result<URL, any Error>) {
-        do {
-            switch result {
-
-            case let .failure(error):
-                throw error
-
-            case let .success(url):
-                let gotAccess = url.startAccessingSecurityScopedResource()
-                // let the file manager throw the error in case `gotAccess` is `false`.
-
-                let tmpDirectory = try fileManager.url(
-                    for: .itemReplacementDirectory,
-                    in: .userDomainMask,
-                    appropriateFor: url,
-                    create: true
-                )
-                let copy = tmpDirectory.appendingPathComponent(url.lastPathComponent)
-                try fileManager.copyItem(at: url, to: copy)
-                if gotAccess {
-                    url.stopAccessingSecurityScopedResource()
-                }
-
-                hasDestructiveImportBeenConfirmed = false
-                importBackup(from: copy, password: "")
-            }
-        } catch {
+        func onFailure(_ error: any Error) {
             logger.error("failed to pick backup file to restore: " + String(reflecting: error))
             state = .restoreFailed
         }
+
+        switch result {
+        case let .failure(error):
+            onFailure(error)
+            return
+        case let .success(url):
+            Task { [self] in
+                do {
+                    state = .loadingFile
+                    let localURL = try await materializeURL(url)
+                    let gotAccess = localURL.startAccessingSecurityScopedResource()
+                    // let the file manager throw the error in case `gotAccess` is `false`.
+
+                    let tmpDirectory = try fileManager.url(
+                        for: .itemReplacementDirectory,
+                        in: .userDomainMask,
+                        appropriateFor: localURL,
+                        create: true
+                    )
+                    let copy = tmpDirectory.appendingPathComponent(localURL.lastPathComponent)
+                    try fileManager.copyItem(at: localURL, to: copy)
+                    if gotAccess {
+                        localURL.stopAccessingSecurityScopedResource()
+                    }
+
+                    hasDestructiveImportBeenConfirmed = false
+                    importBackup(from: copy, password: "")
+                } catch {
+                    onFailure(error)
+                }
+            }
+        }
+    }
+
+    // Materialize the url if needed. If we picked from iCloud
+    // then it should already be downloaded and available locally,
+    // but this may not be the case for other file providers such
+    // as Google Drive.
+    private func materializeURL(_ url: URL) async throws -> URL {
+        let task = Task.detached {
+            try await withCheckedThrowingContinuation { continuation in
+                let coordinator = NSFileCoordinator()
+                var error: NSError?
+
+                coordinator.coordinate(
+                    readingItemAt: url,
+                    options: [],
+                    error: &error
+                ) {
+                    continuation.resume(returning: $0)
+                }
+
+                // The completion is not called if there's an error, so we need
+                // to check it here.
+                if let error {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+
+        return try await task.value
     }
 
     func confirmOverwrite() {
@@ -148,6 +185,14 @@ final class ImportBackupViewModel: ObservableObject {
                 }
 
                 // we should consider using LocalizedError instead of this mapping:
+            } catch ImportBackupError.invalidFileExtension {
+                logger.warn("restore failed due to invalid file extension")
+                alertContent = .init(
+                    title: Strings.Alert.InvalidFileError.title,
+                    message: Strings.Alert.InvalidFileError.message,
+                    action: Strings.Alert.ok
+                )
+                state = .restoreFailed
             } catch ImportLegacyBackupError.passwordRequired, ImportBackupError.passwordRequired {
                 logger.debug("password is required to open backup file")
                 state = .requestingPassword(url: url, isPasswordIncorrect: false)
@@ -208,7 +253,7 @@ final class ImportBackupViewModel: ObservableObject {
         }
 
         let isImportProgressPresented = switch state {
-        case .requestConfirmation, .importingBackup, .requestingPassword:
+        case .loadingFile, .requestConfirmation, .importingBackup, .requestingPassword:
             true
         default:
             false
@@ -228,6 +273,13 @@ final class ImportBackupViewModel: ObservableObject {
 
         let isAlertPresented = switch state {
         case .success, .restoreFailed:
+            true
+        default:
+            false
+        }
+
+        let isLoadingFile = switch state {
+        case .loadingFile:
             true
         default:
             false
@@ -270,6 +322,7 @@ final class ImportBackupViewModel: ObservableObject {
             }
         }
 
+        self.isLoadingFile = isLoadingFile
         self.isImportProgressPresented = isImportProgressPresented
         self.isImportConfirmationPresented = isImportConfirmationPresented
         self.isEnterBackupPasswordPresented = isEnterBackupPasswordPresented
