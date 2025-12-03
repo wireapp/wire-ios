@@ -17,6 +17,7 @@
 //
 
 @import Foundation;
+@import WireUtilities;
 
 @protocol ZMApplication;
 @protocol FlowManagerType;
