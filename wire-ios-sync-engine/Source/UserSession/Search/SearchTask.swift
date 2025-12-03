@@ -50,11 +50,23 @@ public class SearchTask {
         searchUsersCache: nil
     )
 
-    private var tasksRemaining = 0 {
-        didSet {
+    private let tasksRemainingLock = NSRecursiveLock()
+    private var _tasksRemaining = 0
+    private var tasksRemaining: Int {
+        get {
+            tasksRemainingLock.withLock {
+                _tasksRemaining
+            }
+        }
+        set {
+            let oldValue = tasksRemainingLock.withLock {
+                let oldValue = _tasksRemaining
+                _tasksRemaining = newValue
+                return oldValue
+            }
             // only trigger handles if decrement to 0
-            if oldValue > tasksRemaining {
-                let isCompleted = tasksRemaining == 0
+            if oldValue > newValue {
+                let isCompleted = newValue == 0
                 resultHandlers.forEach { $0(result, isCompleted) }
 
                 if isCompleted {
@@ -694,7 +706,6 @@ extension SearchTask {
                     self?.tasksRemaining -= 1
                 }
 
-                print(response.payload?.asTransportData()) // TODO: delete
                 guard
                     let contextProvider = self?.contextProvider,
                     let payload = response.payload?.asDictionary(),

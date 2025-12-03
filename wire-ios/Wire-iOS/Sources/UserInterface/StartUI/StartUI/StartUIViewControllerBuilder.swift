@@ -20,8 +20,8 @@ import UIKit
 import WireDomain
 import WireMainNavigationUI
 import WireMessagingAssembly
-import WireSyncEngine
 import WireMessagingDomain
+import WireSyncEngine
 
 final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
 

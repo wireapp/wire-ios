@@ -23,6 +23,7 @@ import UIKit
 import WireAccountImageUI
 import WireCallingAssembly
 import WireCommonComponents
+import WireData
 import WireDesign
 import WireFoundation
 import WireLogging
@@ -33,7 +34,6 @@ import WireMessagingUI
 import WireNetwork
 import WireSidebarUI
 import WireSyncEngine
-import WireData
 import WireUtilities
 
 final class ZClientViewController: UIViewController {

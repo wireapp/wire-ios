@@ -88,7 +88,8 @@ final class StartUIViewController: UIViewController {
 
     let isAppsFeatureEnabled: Bool
 
-    /// The people/apps switch control will only be visible if apps are enabled or the team already has some legacy services/bots added.
+    /// The people/apps switch control will only be visible if apps are enabled or the team already has some legacy
+    /// services/bots added.
 
     let areLegacyBotsAvailable: Bool
 
@@ -120,7 +121,7 @@ final class StartUIViewController: UIViewController {
         }
 
         return areLegacyBotsAvailable ||
-        isAppsFeatureEnabled && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
+            isAppsFeatureEnabled && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
     }
 
     // MARK: - Init
