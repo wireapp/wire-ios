@@ -63,7 +63,7 @@ extension ZMUser: UserType {
         _isGuest(in: conversation)
     }
 
-    @objc public var isApp_: Bool {
+    @objc public var isApp_: Bool { // TODO: remove underscore
         type == .app
     }
 

@@ -16,16 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 final class MockServiceUserType: MockUserType, ServiceUser {
 
     var providerIdentifier: String?
 
     var serviceIdentifier: String?
 
-    override var isApp: Bool {
+    override var isApp_: Bool {
         true
+    }
+
+    override var isBot: Bool {
+        false
     }
 
 }

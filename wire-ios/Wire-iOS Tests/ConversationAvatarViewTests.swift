@@ -85,7 +85,7 @@ final class ConversationAvatarViewTests: XCTestCase {
         otherUser.serviceIdentifier = "serviceIdentifier"
         otherUser.providerIdentifier = "providerIdentifier"
         otherUser.isConnected = true
-        XCTAssert(otherUser.isApp)
+        XCTAssert(otherUser.isApp_)
 
         otherUser.zmAccentColor = .green
         let otherUserConversation = MockStableRandomParticipantsConversation()
