@@ -20,7 +20,7 @@ import Foundation
 
 /// Fetches `WireCellNodes`s for the given parameters.
 @MainActor
-package struct WireCellsFetchNodesPageUseCase: Sendable {
+package struct WireCellsFetchNodesPageUseCase {
 
     private let configuration: WireCellsGetNodesRequest.Configuration
     private let repository: any WireCellsNodesRepositoryProtocol

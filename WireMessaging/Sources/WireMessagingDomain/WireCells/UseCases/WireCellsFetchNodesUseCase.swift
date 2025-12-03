@@ -20,7 +20,7 @@ import Foundation
 
 @MainActor
 /// Fetches nodes for a particular configuration, and mutating the injected WireCellsNodesCollection.
-package final class WireCellsFetchNodesUseCase: Sendable {
+package final class WireCellsFetchNodesUseCase {
 
     /// The type of request.
     package enum Request {
