@@ -257,11 +257,6 @@
     return selfClient;
 }
 
-- (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSelfUser
-{
-    return [self createClientForUser:user createSessionWithSelfUser:createSessionWithSelfUser onMOC:self.uiMOC];
-}
-
 @end
 
 

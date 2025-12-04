@@ -406,7 +406,7 @@
 		F18401F12073C26C00E9F4CC /* AssetV3DownloadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401812073BE0800E9F4CC /* AssetV3DownloadRequestStrategyTests.swift */; };
 		F18401F32073C26C00E9F4CC /* AssetClientMessageRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401832073BE0800E9F4CC /* AssetClientMessageRequestStrategyTests.swift */; };
 		F18401F42073C27200E9F4CC /* LinkPreviewPreprocessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401892073BE0800E9F4CC /* LinkPreviewPreprocessorTests.swift */; };
-		F18401FE2073C2EA00E9F4CC /* MessagingTest+Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401F82073C2E600E9F4CC /* MessagingTest+Encryption.swift */; };
+		F18401FE2073C2EA00E9F4CC /* ProteusClientSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401F82073C2E600E9F4CC /* ProteusClientSimulator.swift */; };
 		F18401FF2073C2EA00E9F4CC /* MessagingTestBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401F62073C2E500E9F4CC /* MessagingTestBase.swift */; };
 		F18402002073C2EA00E9F4CC /* MockObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401F92073C2E600E9F4CC /* MockObjects.swift */; };
 		F18402012073C2EA00E9F4CC /* RequestStrategyTestBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401F72073C2E600E9F4CC /* RequestStrategyTestBase.swift */; };
@@ -920,7 +920,7 @@
 		F18401992073BE0800E9F4CC /* EncryptionSessionDirectory+UpdateEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EncryptionSessionDirectory+UpdateEvents.swift"; sourceTree = "<group>"; };
 		F18401F62073C2E500E9F4CC /* MessagingTestBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessagingTestBase.swift; sourceTree = "<group>"; };
 		F18401F72073C2E600E9F4CC /* RequestStrategyTestBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestStrategyTestBase.swift; sourceTree = "<group>"; };
-		F18401F82073C2E600E9F4CC /* MessagingTest+Encryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MessagingTest+Encryption.swift"; sourceTree = "<group>"; };
+		F18401F82073C2E600E9F4CC /* ProteusClientSimulator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProteusClientSimulator.swift; sourceTree = "<group>"; };
 		F18401F92073C2E600E9F4CC /* MockObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockObjects.swift; sourceTree = "<group>"; };
 		F18402022073C2FF00E9F4CC /* animated.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = animated.gif; sourceTree = "<group>"; };
 		F18402032073C2FF00E9F4CC /* video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = video.mp4; sourceTree = "<group>"; };
@@ -1219,7 +1219,7 @@
 			isa = PBXGroup;
 			children = (
 				A90C56EB2685C23400F1007B /* ZMImagePreprocessingTrackerTests.h */,
-				F18401F82073C2E600E9F4CC /* MessagingTest+Encryption.swift */,
+				F18401F82073C2E600E9F4CC /* ProteusClientSimulator.swift */,
 				168D7BBB26F330DE00789960 /* MessagingTest+Payloads.swift */,
 				F18401F62073C2E500E9F4CC /* MessagingTestBase.swift */,
 				F18401F92073C2E600E9F4CC /* MockObjects.swift */,
@@ -2701,7 +2701,7 @@
 				0693115624F7B17300D14DF5 /* ZMLocalNotificationTests_SystemMessage.swift in Sources */,
 				63DA33A8286F27DD00818C3C /* MLSEventProcessorTests.swift in Sources */,
 				EE3246042823196100F2A84A /* VoIPPushHelperTests.swift in Sources */,
-				F18401FE2073C2EA00E9F4CC /* MessagingTest+Encryption.swift in Sources */,
+				F18401FE2073C2EA00E9F4CC /* ProteusClientSimulator.swift in Sources */,
 				6308F8AE2A273FBB0072A177 /* BaseFetchMLSGroupInfoActionHandlerTests.swift in Sources */,
 				EE7F022B2A8391C500FE5695 /* ConversationServiceTests.swift in Sources */,
 				7AEBB679285A16400090B524 /* CountSelfMLSKeyPackagesActionHandlerTests.swift in Sources */,
