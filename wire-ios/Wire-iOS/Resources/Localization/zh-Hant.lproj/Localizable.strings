@@ -354,6 +354,8 @@
 "conversation.create.guests.subtitle" = "開放這個對話與團隊以外的訪客。";
 "conversation.create.apps.title" = "Allow apps";
 "conversation.create.apps.subtitle" = "Open this conversation to apps.";
+"conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
+"conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
 "conversation.create.receipts.title" = "讀取回條";
 "conversation.create.receipts.subtitle" = "當這啓用時，參與者可以看到他們在此對話中的消息何時已閱讀。";
 "conversation.create.mls.title" = "Protocol";
