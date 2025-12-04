@@ -121,7 +121,7 @@ final class StartUIViewController: UIViewController {
         }
 
         return areLegacyBotsAvailable ||
-            isAppsFeatureEnabled && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
+            (isAppsFeatureEnabled && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices)
     }
 
     // MARK: - Init
