@@ -147,7 +147,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var isEditable: Bool {
-        return item.isEditable && !isInRecycleBin
+        item.isEditable && !isInRecycleBin
     }
 
     func open() async {
