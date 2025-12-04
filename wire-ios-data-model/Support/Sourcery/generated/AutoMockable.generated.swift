@@ -2086,7 +2086,7 @@ class MockCoreDataMessagingMigratorProtocol: CoreDataMessagingMigratorProtocol {
 
 }
 
-public class MockCoreDataStackProtocol: CoreDataStackProtocol, @unchecked Sendable {
+public class MockCoreDataStackProtocol: CoreDataStackProtocol {
 
     // MARK: - Life cycle
 

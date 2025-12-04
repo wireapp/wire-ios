@@ -90,7 +90,6 @@ final class StartUIViewController: UIViewController {
 
     /// The people/apps switch control will only be visible if apps are enabled or the team already has some legacy
     /// services/bots added.
-
     let areLegacyBotsAvailable: Bool
 
     let userSession: UserSession

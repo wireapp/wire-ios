@@ -30,4 +30,5 @@ struct DefaultManagedObjectContextProvider: ManagedObjectContextProvider {
     func newBackgroundContext() -> NSManagedObjectContext {
         contextProvider.newBackgroundContext()
     }
+
 }

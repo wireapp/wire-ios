@@ -869,7 +869,7 @@ final class ZClientViewController: UIViewController {
             let useCase = GetUserAccountImageSourceUseCase()
             cachedAccountImage = try await useCase.invoke(
                 user: userSession.selfUser,
-                userContext: userSession.contextProvider.viewContext,
+                userContext: contextProvider.viewContext,
                 account: account
             ).mapToAccountImageSource()
         } catch {
