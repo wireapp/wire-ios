@@ -277,11 +277,6 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                     status: .enabled
                 )
             ),
-            .chatBubblesSimple(
-                .init(
-                    status: .enabled
-                )
-            ),
             .cells(
                 .init(status: .enabled)
             )
