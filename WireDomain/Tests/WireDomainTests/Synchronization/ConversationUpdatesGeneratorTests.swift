@@ -121,7 +121,7 @@ class ConversationUpdatesGeneratorTests {
         await sut.start()
 
         // WHEN
-        await sut.stop()
+        sut.stop()
 
         // THEN
         var updateConversationItems = [UpdateConversationItem]()
@@ -129,7 +129,6 @@ class ConversationUpdatesGeneratorTests {
         try await confirmation("generator delivers an update for a new conversation") { confirm in
             self.updateConversationItemClosure = {  item in
                 updateConversationItems.append(item)
-                confirm()
             }
 
             await coreDataStack.syncContext.perform { [modelHelper, context = coreDataStack.syncContext] in
@@ -141,6 +140,7 @@ class ConversationUpdatesGeneratorTests {
                 conversation.needsToBeUpdatedFromBackend = true
             }
             try await Task.sleep(for: .seconds(0.1))
+            confirm()
         }
 
         #expect(updateConversationItems.isEmpty)
