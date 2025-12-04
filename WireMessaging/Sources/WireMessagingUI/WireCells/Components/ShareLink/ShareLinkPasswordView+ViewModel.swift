@@ -23,19 +23,48 @@ import UIKit
 extension ShareLinkPasswordView {
     @MainActor
     final class ViewModel: ObservableObject {
-        @Published var isPasswordEnabed = true
+        let existingPassword: String?
+        
+        @Published var isPasswordEnabled: Bool
         @Published var passwordInput = ""
         @Published var isPasswordInputSecured = true
         
         @Published var isPresentingRemovePasswordConfirmation = false
         @Published var isPresentingNoAccessToExistingPasswordConfirmation = false
+        
+        init(password: String?) {
+            existingPassword = password
+            isPasswordEnabled = password != nil
+        }
+        
+        var currentPassword: String? {
+            isPasswordEnabled ? passwordInput : nil
+        }
+        
+        var hasChanges: Bool {
+            existingPassword != currentPassword
+        }
+        
+        var isCurrentPasswordValid: Bool {
+            guard let currentPassword else { return false }
+            return !currentPassword.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
 
         var canSave: Bool {
-            true //TODO: ...
+            if isPasswordEnabled {
+                hasChanges && isCurrentPasswordValid
+            } else {
+                hasChanges
+            }
         }
         
         func removePassword() {
             //TODO: ...
+        }
+        
+        func generatePassword() {
+            //TODO: ...
+            passwordInput = "TODO: randomly generated password"
         }
         
         func changePassword() {
@@ -44,10 +73,6 @@ extension ShareLinkPasswordView {
         
         func copyPasswordToPasteboard() {
             UIPasteboard().string = passwordInput
-        }
-        
-        func save() {
-            //TODO: ...
         }
     }
 }

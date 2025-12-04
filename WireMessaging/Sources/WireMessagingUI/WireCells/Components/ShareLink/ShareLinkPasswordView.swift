@@ -29,7 +29,14 @@ struct ShareLinkPasswordView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
 
-    @StateObject private var viewModel: ViewModel = .init()
+    @StateObject private var viewModel: ViewModel
+    
+    let onSave: (String?) -> Void
+    
+    init(password: String?, onSave: @escaping (String?) -> Void) {
+        _viewModel = .init(wrappedValue: .init(password: password))
+        self.onSave = onSave
+    }
     
     var body: some View {
         NavigationStack {
@@ -99,8 +106,8 @@ struct ShareLinkPasswordView: View {
                     changePasswordButton()
                         .padding(.top, 24)
                 }
-                .disabled(!viewModel.isPasswordEnabed)
-                .opacity(viewModel.isPasswordEnabed ? 1 : 0.7)
+                .disabled(!viewModel.isPasswordEnabled)
+                .opacity(viewModel.isPasswordEnabled ? 1 : 0.7)
                     
                 alertTestButtons()
                     .padding(.top, 30)
@@ -119,7 +126,7 @@ struct ShareLinkPasswordView: View {
     }
     
     @ViewBuilder private func setPasswordToggleArea() -> some View {
-        Toggle(isOn: $viewModel.isPasswordEnabed) {
+        Toggle(isOn: $viewModel.isPasswordEnabled) {
             Text(Strings.setPasswordToggle)
                 .font(for: .body1)
         }
@@ -133,7 +140,7 @@ struct ShareLinkPasswordView: View {
     
     @ViewBuilder private func generatePasswordButton() -> some View {
         Button {
-            //TODO: ...
+            viewModel.generatePassword()
         } label: {
             Label {
                 Text(Strings.generatePassword)
@@ -297,7 +304,8 @@ struct ShareLinkPasswordView: View {
         
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                viewModel.save()
+                onSave(viewModel.currentPassword)
+                dismiss()
             } label: {
                 Text(L10n.Localizable.General.save)
                     .bold()
@@ -308,5 +316,8 @@ struct ShareLinkPasswordView: View {
 }
 
 #Preview {
-    ShareLinkPasswordView()
+    ShareLinkPasswordView(
+        password: "r1ckr0ll",
+        onSave: { _ in },
+    )
 }

@@ -46,7 +46,12 @@ struct ShareLinkView: View {
                 .sheet(item: $viewModel.sheetNavigation) { navigationItem in
                     switch navigationItem {
                     case .password:
-                        ShareLinkPasswordView()
+                        ShareLinkPasswordView(
+                            password: "The password, if it exists. Otherwise nil",
+                            onSave: { password in
+                                //TODO: apply the new password. If it is nil, then the password was disabled.
+                            }
+                        )
                     case .expiration:
                         Text("TODO: Expiration view")
                     }
