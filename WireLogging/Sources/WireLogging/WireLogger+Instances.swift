@@ -31,6 +31,7 @@ public extension WireLogger {
     static let backgroundActivity = WireLogger(tag: "background-activity")
     static let badgeCount = WireLogger(tag: "badge-count")
     static let calling = WireLogger(tag: "calling")
+    static let callkit = WireLogger(tag: "call-kit")
     static let conversation = WireLogger(tag: "conversation")
     static let coreCrypto = WireLogger(tag: "core-crypto")
     static let e2ei = WireLogger(tag: "end-to-end-identity")

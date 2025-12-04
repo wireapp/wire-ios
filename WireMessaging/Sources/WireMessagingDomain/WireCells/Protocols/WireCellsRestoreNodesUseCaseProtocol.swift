@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngine
+public import Foundation
 
-extension ZMUserSession {
-    static var isChatBubbleEnabled: Bool {
-        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
-    }
+public protocol WireCellsRestoreNodesUseCaseProtocol: Sendable {
+
+    func invoke(nodeIDs: [UUID]) async throws
+
 }

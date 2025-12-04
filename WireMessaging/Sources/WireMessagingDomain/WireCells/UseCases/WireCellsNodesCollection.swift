@@ -16,20 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@preconcurrency package import Combine
 
-public final class SendCommitBundleAction: EntityAction {
-    public typealias Result = [ZMUpdateEvent]
-    public typealias Failure = SendMLSMessageFailure
+/// A collection of wire cells nodes that can be observed for changes and mutated by various use cases.
+@MainActor
+package final class WireCellsNodesCollection {
 
-    public var resultHandler: ResultHandler?
-    public var commitBundle: Data
+    private let nodesPublisher = PassthroughSubject<[WireCellsNode], Never>()
 
-    public init(
-        commitBundle: Data,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.commitBundle = commitBundle
-        self.resultHandler = resultHandler
+    private(set) var nodes: [WireCellsNode] = [] {
+        didSet {
+            nodesPublisher.send(nodes)
+        }
     }
+
+    package init() {}
+
+    func setNodes(_ nodes: [WireCellsNode]) {
+        self.nodes = nodes
+    }
+
+    package func observeNodes() -> AnyPublisher<[WireCellsNode], Never> {
+        nodesPublisher.prepend(nodes).eraseToAnyPublisher()
+    }
+
 }

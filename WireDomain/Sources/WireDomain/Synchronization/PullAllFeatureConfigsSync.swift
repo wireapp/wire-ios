@@ -137,12 +137,6 @@ extension FeatureConfigLocalStoreProtocol {
                 isEnabled: config.status == .enabled,
                 config: nil
             )
-        case let .chatBubblesSimple(config):
-            await storeFeature(
-                name: .chatBubblesSimple,
-                isEnabled: config.status == .enabled,
-                config: nil
-            )
         case let .cells(config):
             await storeFeature(
                 name: .cells,
