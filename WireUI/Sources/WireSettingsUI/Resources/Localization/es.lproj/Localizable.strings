@@ -54,6 +54,8 @@
 "importBackup.alert.incompatibleBackupError.message" = "Esta copia de seguridad fue creada por una versión más reciente o obsoleta de Wire y no puede ser restaurada aquí.";
 "importBackup.alert.wrongFileError.title" = "Copia de seguridad incorrecta";
 "importBackup.alert.wrongFileError.message" = "No se puede restaurar el historial de una cuenta diferente.";
+"importBackup.alert.invalidFileError.title" = "Invalid file type";
+"importBackup.alert.invalidFileError.message" = "Select a Wire backup file (.wbu, .ios_wbu, or .ios-wbu)";
 
 "importBackup.enterPassword.title" = "Introduzca la contraseña";
 "importBackup.enterPassword.description" = "Esta copia de seguridad está protegida por contraseña.";
@@ -63,4 +65,5 @@
 "importBackup.enterPassword.button.title" = "Continuar";
 
 "importBackup.restoringHistory.title" = "Restaurando historial…";
+"importBackup.loadingBackup.message" = "Loading backup…";
 "importBackup.restoringHistory.message" = "Cargando conversaciones…";
