@@ -29,10 +29,10 @@ struct ConversationCreationRepository: ConversationCreationRepositoryProtocol {
         guard let searchUsersUseCase = searchUsersUseCase() else { return false }
 
         // search for any old-style services/bots whitelisted in the team
-        let result = try await searchUsersUseCase.invoke( // TODO: skip for mls?
+        let result = try await searchUsersUseCase.invoke(
             query: "",
             options: .services,
-            messageProtocol: .proteus
+            messageProtocol: nil // TODO: what needs to be passed? (federation, MLS enabled, other domain search)
         )
 
         return await searchUsersUseCase.context.perform {

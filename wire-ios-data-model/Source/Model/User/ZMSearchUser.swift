@@ -481,7 +481,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     @objc
-    public init(
+    public required init(
         contextProvider: ContextProvider,
         name: String,
         handle: String?,
