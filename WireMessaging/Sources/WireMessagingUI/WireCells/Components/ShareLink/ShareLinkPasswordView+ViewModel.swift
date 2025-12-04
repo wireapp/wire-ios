@@ -18,7 +18,7 @@
 
 import Foundation
 import Combine
-import UIKit
+import UIKit //only required for UIPasteboard
 
 extension ShareLinkPasswordView {
     @MainActor
@@ -60,18 +60,22 @@ extension ShareLinkPasswordView {
         
         func removePassword() {
             //TODO: ...
+            // maybe the new figma design will make this obsolete
         }
         
         func generatePassword() {
             //TODO: ...
+            // There should be a random password generator somewhere in the code base that we could repurpose for this feature.
             passwordInput = "TODO: randomly generated password"
         }
         
         func changePassword() {
             //TODO: ...
+            // maybe the new figma design will make this obsolete
         }
         
         func copyPasswordToPasteboard() {
+            // maybe the new figma design will make this obsolete
             UIPasteboard().string = passwordInput
         }
     }
