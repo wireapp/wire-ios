@@ -103,8 +103,8 @@
 "conversation.channelHistory.share.sectionFootnote" = "Sie können den Gesprächsverlauf mit neuen Channel-Mitgliedern teilen. Damit können auch sie ältere Nachrichten und Dateien sehen. Wenn Sie diese Option ausschalten, sehen Channel-Mitglieder keinen Gesprächsverlauf.";
 "conversation.channelHistory.navigationTitle" = "Gesprächsverlauf";
 "conversation.creationForm.channelHistory.sectionFootnote" = "Wählen Sie einen Zeitraum. Wenn Teilnehmer diesem Channel beitreten, können sie den Verlauf für diese Zeitspanne verfolgen.";
-"conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "An error occured while fetching channel history depth options.";
-"conversation.channelHistory.updateHistoryDepth.error" = "An error occured while updating channel history depth.";
+"conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "An error occurred while fetching channel history depth options.";
+"conversation.channelHistory.updateHistoryDepth.error" = "An error occurred while updating channel history depth.";
 "conversation.file.preview.open" = "Vorschau öffnen";
 "conversation.draft.attachmentMenu.retry" = "Wiederholen";
 "conversation.draft.attachmentMenu.remove" = "Datei löschen";
@@ -117,10 +117,12 @@
 "conversation.wireCells.files.item.menu.open" = "Öffnen";
 "conversation.wireCells.files.item.menu.download" = "Herunterladen";
 "conversation.wireCells.files.item.menu.rename" = "Umbenennen";
+"conversation.wireCells.files.item.menu.moveToFolder" = "In Ordner verschieben";
 "conversation.wireCells.files.item.menu.addOrRemoveTags" = "Tags hinzufügen oder entfernen";
-"conversation.wireCells.files.item.menu.delete" = "Endgültig löschen";
-"conversation.wireCells.files.item.deleteConfirmation.title" = "Dies wird die Datei %@ für alle Teilnehmer endgültig löschen. Alle verlieren den Zugriff und es gibt keine Möglichkeit, die Datei wiederherzustellen.";
-"conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Endgültig löschen";
+"conversation.wireCells.files.item.menu.delete" = "Löschen";
+"conversation.wireCells.files.item.deleteFileConfirmation.title" = "Die Datei \"%@\" wird in den Papierkorb dieser Unterhaltung verschoben.";
+"conversation.wireCells.files.item.deleteFolderConfirmation.title" = "Der Ordner \"%@\" wird in den Papierkorb dieser Unterhaltung verschoben.";
+"conversation.wireCells.files.item.deleteConfirmation.button" = "Löschen";
 "conversation.wireCells.files.noData.title" = "Es gibt noch keine Dateien oder Ordner";
 "conversation.wireCells.files.noData.message" = "Hier finden Sie alle Dateien und Ordner, die in dieser Unterhaltung geteilt wurden.";
 "conversation.wireCells.allFiles.noData.message" = "Hier finden Sie alle Dateien und Ordner, die Sie in Ihren Unterhaltungen gemeinsam nutzen.";
@@ -143,11 +145,31 @@
 "conversation.wireCells.files.renameFolder.navigationTitle" = "Ordner umbenennen";
 "conversation.wireCells.files.renameFile.filenameTooLongError" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
 "conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
-"conversation.wireCells.files.renameFile.wrongCharacterError" = "Verwenden Sie einen Namen ohne \"/\"";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Use a name without \"/\" or \".\"";
 "conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "Eine Datei mit diesem Namen existiert bereits";
 "conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "Ein Ordner mit dem Namen existiert bereits";
 "conversation.wireCells.files.renameFile.placeholder" = "Dateinamen eingeben";
 "conversation.wireCells.files.renameFolder.placeholder" = "Ordnernamen eingeben";
+"conversation.wireCells.files.openRecycleBin" = "Papierkorb öffnen";
+"conversation.wireCells.recycleBin.navigationTitle" = "Papierkorb";
+"conversation.wireCells.recycleBin.noData.message" = "Hier finden Sie alle gelöschten Dateien und Ordner.";
+"conversation.wireCells.recycleBin.item.menu.delete" = "Endgültig löschen";
+"conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Endgültig löschen";
+"conversation.wireCells.recycleBin.item.deleteFileConfirmation.title" = "Dies wird die Datei \"%@\" für alle Teilnehmer endgültig löschen. Alle verlieren den Zugriff und es gibt keine Möglichkeit, die Datei wiederherzustellen.";
+"conversation.wireCells.recycleBin.item.deleteFolderConfirmation.title" = "Dies wird den Ordner \"%@\" mit allen Dateien und Unterordnern endgültig löschen.";
+"conversation.wireCells.recycleBin.item.menu.restore" = "Wiederherstellen";
+"conversation.wireCells.recycleBin.item.restoreFileConfirmation.button" = "Datei wiederherstellen";
+"conversation.wireCells.recycleBin.item.restoreFileConfirmation.title" = "Diese Datei \"%@\" wird wiederhergestellt und ist für alle Teilnehmer dieser Unterhaltung wieder verfügbar.";
+"conversation.wireCells.recycleBin.item.restoreFolderConfirmation.button" = "Ordner wiederherstellen";
+"conversation.wireCells.recycleBin.item.restoreFolderConfirmation.title" = "Der Ordner \"%@\" mit all seinen Dateien und Unterordnern wird wiederhergestellt und allen in dieser Unterhaltung zur Verfügung gestellt.";
+"conversation.wireCells.recycleBin.item.restoreParentConfirmation.button" = "Übergeordneten Ordner wiederherstellen";
+"conversation.wireCells.recycleBin.item.restoreParentConfirmation.title" = "Sie können keine Ordner oder Dateien aus einem gelöschten Ordner wiederherstellen. Um das gewünschte Objekt wiederzuverwenden, müssen Sie den übergeordneten Ordner wiederherstellen.\n\nDer Ordner \"%@\" mit allen Dateien und Unterordnern wird wiederhergestellt und steht allen Teilnehmern dieser Unterhaltung zur Verfügung.";
+"conversation.wireCells.allFiles.filters.clearAll" = "Alle löschen";
+"conversation.wireCells.allFiles.filters.apply" = "Anwenden";
+"conversation.wireCells.allFiles.filters.tags.sectionTitle" = "Tags";
+"conversation.wireCells.allFiles.filters.tags.loadMore" = "Weitere Objekte laden";
+"conversation.wireCells.allFiles.filters.navigationTitle" = "Filter";
+"conversation.wireCells.allFiles.filters.tags.emptyTitle" = "Noch keine Tags erstellt.";
 
 // MARK: - File Tags View
 "conversation.wireCells.tags.title" = "Tags hinzufügen oder entfernen";
@@ -160,6 +182,8 @@
 "conversation.wireCells.tags.error.saveFailedTitle" = "Tags können nicht bearbeitet werden";
 "conversation.wireCells.tags.error.saveFailedMessage" = "Due to an error your tags could not be edited.";
 "conversation.wireCells.tags.error.retryButton" = "Erneut versuchen";
+"conversation.wireCells.files.moveToFolder.move" = "Hierhin verschieben";
+"conversation.wireCells.files.moveToFolder.noSubfolders" = "Es gibt keine Unterordner in diesem Ordner.";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "Datei nicht verfügbar";
