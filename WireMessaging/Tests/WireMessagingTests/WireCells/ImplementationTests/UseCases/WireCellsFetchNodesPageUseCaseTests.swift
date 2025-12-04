@@ -21,13 +21,13 @@ import Testing
 @testable import WireMessagingDomain
 @testable import WireMessagingDomainSupport
 
-struct WireCellsFetchNodesUseCaseTests {
+struct WireCellsFetchNodesPageUseCaseTests {
 
     private let repository = MockWireCellsNodesRepositoryProtocol()
-    private let sut: WireCellsFetchNodesUseCase
+    private let sut: WireCellsFetchNodesPageUseCase
 
     init() {
-        self.sut = WireCellsFetchNodesUseCase(
+        self.sut = WireCellsFetchNodesPageUseCase(
             configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path"), isFoldersEnabled: false),
             repository: repository
         )
@@ -37,7 +37,7 @@ struct WireCellsFetchNodesUseCaseTests {
     @Test
     func testInvoke_withConversationFileViewConfiguration() async throws {
         // Given
-        let sut = WireCellsFetchNodesUseCase(
+        let sut = WireCellsFetchNodesPageUseCase(
             configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path"), isFoldersEnabled: false),
             repository: repository
         )

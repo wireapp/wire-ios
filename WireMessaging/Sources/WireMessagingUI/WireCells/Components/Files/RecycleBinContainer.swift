@@ -76,7 +76,7 @@ package struct RecycleBinContainer: View {
     private func makeViewModel() -> FilesViewModel {
         FilesViewModel(
             useCases: .init(
-                fetchNodes: WireCellsFetchNodesUseCase(
+                fetchNodes: WireCellsFetchNodesPageUseCase(
                     configuration: .recycleBinView(
                         root: path.last.map { .id($0.id) } ?? .path(cellName),
                         isFoldersEnabled: isFoldersEnabled
@@ -110,6 +110,7 @@ package struct RecycleBinContainer: View {
             },
             isCellsStatePending: isCellsStatePending,
             localAssetRepository: localAssetRepository,
+            nodesRepository: nodesRepository,
             fileCache: fileCache,
             cellName: cellName,
             isFoldersEnabled: isFoldersEnabled,

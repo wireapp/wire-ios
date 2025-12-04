@@ -41,6 +41,7 @@ final class FilesItemViewModel: ObservableObject {
         case rename
         case editTags
         case shareLink
+        case moveToFolder
     }
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
@@ -85,7 +86,13 @@ final class FilesItemViewModel: ObservableObject {
         self.item = item
         self.onItemAction = onItemAction
         self.fileName = item.name
-        self.subtitle = Self.subtitle(from: item, locale: locale, calendar: calendar, timeZone: timeZone)
+        self.subtitle = Self.subtitle(
+            modifiedAt: item.modifiedAt,
+            ownedBy: item.ownedBy,
+            locale: locale,
+            calendar: calendar,
+            timeZone: timeZone
+        )
         self.icon = item.icon
         self.localAssetRepository = localAssetRepository
         self.isInRecycleBin = isInRecycleBin
@@ -147,6 +154,10 @@ final class FilesItemViewModel: ObservableObject {
         await onItemAction(.rename, item)
     }
 
+    func moveToFolder() async {
+        await onItemAction(.moveToFolder, item)
+    }
+
     func download() async {
         precondition(item.kind == .file)
 
@@ -193,13 +204,14 @@ final class FilesItemViewModel: ObservableObject {
         await onItemAction(.restore, item)
     }
 
-    private static func subtitle(
-        from item: FilesViewItem,
+    static func subtitle(
+        modifiedAt: Date?,
+        ownedBy: String?,
         locale: Locale,
         calendar: Calendar,
         timeZone: TimeZone
     ) -> String? {
-        let modifiedAt = item.modifiedAt.map { date in
+        let modifiedAt = modifiedAt.map { date in
             let style = Date.FormatStyle(
                 date: .abbreviated,
                 time: .shortened,
@@ -210,10 +222,10 @@ final class FilesItemViewModel: ObservableObject {
             )
             return date.formatted(style)
         }
-        return if let modifiedAt, let ownedBy = item.ownedBy {
+        return if let modifiedAt, let ownedBy {
             L10n.Localizable.Conversation.WireCells.Files.Item.subtitle(modifiedAt, ownedBy)
         } else {
-            [modifiedAt, item.ownedBy].compactMap(\.self).first
+            [modifiedAt, ownedBy].compactMap(\.self).first
         }
     }
 

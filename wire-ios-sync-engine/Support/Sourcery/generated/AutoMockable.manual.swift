@@ -510,12 +510,8 @@ public class MockUserSession: UserSession {
 
     public var underlyingMlsFeature: Feature.MLS!
 
-    // MARK: - chatBubblesSimpleFeature
-    
-    public var isChatBubbleSimpleEnabled: Bool = false
-    
     public var isWireCellsEnabled: Bool = false
-    
+
     public var isEnterpriseUser: Bool = false
     
     // MARK: - mlsGroupVerification

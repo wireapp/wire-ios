@@ -71,11 +71,9 @@ final class RestAPI: Sendable {
                 if let urlError = error as? URLError, urlError.code == .cancelled {
                     throw CancellationError()
                 } else {
-                    throw sdkError
+                    throw sdkError.underlyingError
                 }
             }
-        } catch {
-            throw error
         }
     }
 
@@ -84,32 +82,38 @@ final class RestAPI: Sendable {
     /// - Parameters:
     ///  - nodeID: The `UUID`s of the node to rename.
     ///  - targetPath: The new path for the node.
+    ///  - targetIsParent: Whether the `targetPath` is the parent folder of the node.
     /// - Returns: Whether the renaming was successful.
 
-    func renameNode(nodeID: UUID, targetPath: String) async throws -> Bool {
+    func renameNode(nodeID: UUID, targetPath: String, targetIsParent: Bool) async throws -> Bool {
         let node = RestNodeLocator(uuid: nodeID.uuidString)
 
         let parameters = RestActionParameters(
             awaitStatus: .finished,
             awaitTimeout: "5s",
             copyMoveOptions: RestActionOptionsCopyMove(
-                targetIsParent: false,
+                targetIsParent: targetIsParent,
                 targetPath: targetPath
             ),
             nodes: [node],
         )
 
-        let response = try await NodeServiceAPI.performAction(
-            name: .move,
-            parameters: parameters,
-            apiConfiguration: makeConfiguration()
-        )
-        guard
-            let actions = response.backgroundActions,
-            let renameAction = actions.first(where: { $0.name == Constants.renameBackgroundActionName }) else {
-            return false
+        do {
+            let response = try await NodeServiceAPI.performAction(
+                name: .move,
+                parameters: parameters,
+                apiConfiguration: makeConfiguration()
+            )
+
+            guard
+                let actions = response.backgroundActions,
+                let renameAction = actions.first(where: { $0.name == Constants.renameBackgroundActionName }) else {
+                return false
+            }
+            return renameAction.status == .finished
+        } catch let error as ErrorResponse {
+            throw error.underlyingError
         }
-        return renameAction.status == .finished
     }
 
     /// Deletes nodes by their `UUID`s.
@@ -418,8 +422,30 @@ private extension WireCellsGetNodesRequest {
             )
             request.sortDirDesc = true
             request.sortField = "mtime"
+        case let .moveToFolder(root):
+            request.filters = RestLookupFilter(
+                status: LookupFilterStatusFilter(
+                    deleted: .not,
+                    isDraft: false
+                ),
+                type: .collection
+            )
+            request.scope = RestLookupScope(
+                recursive: false,
+                root: RestNodeLocator(path: root)
+            )
         }
         return request
     }
 
+}
+
+private extension ErrorResponse {
+
+    var underlyingError: any Error {
+        switch self {
+        case let .error(_, _, _, error):
+            error
+        }
+    }
 }

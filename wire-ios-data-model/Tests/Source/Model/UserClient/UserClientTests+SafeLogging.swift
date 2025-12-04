@@ -21,12 +21,12 @@ import XCTest
 @testable import WireDataModel
 
 class UserClientTestsSafeLogging: ZMBaseManagedObjectTest {
-    func testThatSafeRemoteIdentifierReturnsReadableHashOfRemoteIdentifier() {
+    func testThatSafeRemoteIdentifierReturnsReadableRemoteIdentifier() {
         let uuid = UUID.create().transportString()
         syncMOC.performGroupedAndWait {
             let client = UserClient.insertNewObject(in: self.syncMOC)
             client.remoteIdentifier = uuid
-            XCTAssertEqual(uuid.redactedAndTruncated(), client.safeRemoteIdentifier.safeForLoggingDescription)
+            XCTAssertEqual(uuid, client.safeRemoteIdentifier.safeForLoggingDescription)
 
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

@@ -16,20 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireMessagingDomain
 
-/// A configuration for the *Chat Bubbles Simple* feature.
+extension WireCellsNode {
 
-public struct ChatBubblesSimpleFeatureConfig: Equatable, Sendable {
-
-    /// The feature's status.
-
-    public let status: FeatureConfigStatus
-
-    public init(
-        status: FeatureConfigStatus
-    ) {
-        self.status = status
+    var name: String {
+        path.components(separatedBy: "/").last ?? ""
     }
-
 }
