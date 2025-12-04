@@ -354,6 +354,8 @@
 "conversation.create.guests.subtitle" = "开放这个对话与团队以外的访客。";
 "conversation.create.apps.title" = "允许应用";
 "conversation.create.apps.subtitle" = "开启与应用的对话。";
+"conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
+"conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
 "conversation.create.receipts.title" = "已读回执";
 "conversation.create.receipts.subtitle" = "当这启用时，参与者可以看到他们在此对话中的消息何时已阅读。";
 "conversation.create.mls.title" = "协议";

@@ -42,6 +42,7 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
         guard case let .connectBot(serviceUserData) = urlAction else { return }
 
+        let providerIdentifier = serviceUserData.provider.transportString()
         let serviceUser = ZMSearchUser(
             contextProvider: contextProvider,
             name: "",
@@ -51,9 +52,9 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
             teamIdentifier: nil,
             user: nil,
             searchUsersCache: searchUsersCache,
-            type: .bot // TODO: this is wrong!
+            type: providerIdentifier.isEmpty ? .regular : .bot // TODO: apps? different stack?
         )
-        serviceUser.providerIdentifier = serviceUserData.provider.transportString()
+        serviceUser.providerIdentifier = providerIdentifier
         serviceUser.createConversation(
             transportSession: transportSession,
             eventProcessor: eventProcessor,

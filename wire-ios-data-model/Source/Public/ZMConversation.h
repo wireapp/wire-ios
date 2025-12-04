@@ -97,7 +97,7 @@ typedef NS_ENUM(int16_t, ZMConversationListIndicator) {
 - (void)markAsUnread;
 
 /// If that conversation exists, it is returned, @c nil otherwise.
-+ (nullable instancetype)existingOneOnOneConversationWithUser:(nonnull ZMUser *)otherUser inUserSession:(nonnull id<ContextProvider> )session;
++ (nullable instancetype)existingOneOnOneConversationWithUser:(nonnull ZMUser *)otherUser inUserSession:(nonnull id<ZMContextProvider> )session;
 
 @end
 

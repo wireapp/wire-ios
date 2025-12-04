@@ -117,10 +117,12 @@
 "conversation.wireCells.files.item.menu.open" = "Открыть";
 "conversation.wireCells.files.item.menu.download" = "Скачать";
 "conversation.wireCells.files.item.menu.rename" = "Переименовать";
+"conversation.wireCells.files.item.menu.moveToFolder" = "Переместить в папку";
 "conversation.wireCells.files.item.menu.addOrRemoveTags" = "Добавить или удалить теги";
-"conversation.wireCells.files.item.menu.delete" = "Удалить навсегда";
-"conversation.wireCells.files.item.deleteConfirmation.title" = "Это приведет к необратимому удалению файла %@ для всех участников. Все потеряют доступ и восстановить файл будет невозможно.";
-"conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Удалить навсегда";
+"conversation.wireCells.files.item.menu.delete" = "Удалить";
+"conversation.wireCells.files.item.deleteFileConfirmation.title" = "Файл \"%@\"  будет перемещен в корзину этой беседы.";
+"conversation.wireCells.files.item.deleteFolderConfirmation.title" = "Папка \"%@\"  будет перемещена в корзину этой беседы.";
+"conversation.wireCells.files.item.deleteConfirmation.button" = "Удалить";
 "conversation.wireCells.files.noData.title" = "Файлов и папок пока нет";
 "conversation.wireCells.files.noData.message" = "Здесь вы найдете все файлы и папки, которыми поделились в этой беседе.";
 "conversation.wireCells.allFiles.noData.message" = "Здесь вы найдете все файлы и папки, которыми поделились в ваших беседах.";
@@ -143,11 +145,31 @@
 "conversation.wireCells.files.renameFolder.navigationTitle" = "Переименовать папку";
 "conversation.wireCells.files.renameFile.filenameTooLongError" = "Используйте более короткое название файла (максимум 64 символа)";
 "conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Используйте более короткое название папки (максимум 64 символа)";
-"conversation.wireCells.files.renameFile.wrongCharacterError" = "Используйте название без \"/\"";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Используйте название без \"/\" или \".\"";
 "conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "Файл с таким названием уже существует";
 "conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "Папка с таким названием уже существует";
 "conversation.wireCells.files.renameFile.placeholder" = "Введите название файла";
 "conversation.wireCells.files.renameFolder.placeholder" = "Введите название папки";
+"conversation.wireCells.files.openRecycleBin" = "Открыть корзину";
+"conversation.wireCells.recycleBin.navigationTitle" = "Корзина";
+"conversation.wireCells.recycleBin.noData.message" = "Здесь вы найдете все удаленные файлы и папки.";
+"conversation.wireCells.recycleBin.item.menu.delete" = "Удалить навсегда";
+"conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Удалить навсегда";
+"conversation.wireCells.recycleBin.item.deleteFileConfirmation.title" = "Это приведет к необратимому удалению файла \"%@\"  для всех участников. Все потеряют доступ и восстановить файл будет невозможно.";
+"conversation.wireCells.recycleBin.item.deleteFolderConfirmation.title" = "Это приведет к необратимому удалению папки \"%@\" со всеми файлами и подпапками.";
+"conversation.wireCells.recycleBin.item.menu.restore" = "Восстановить";
+"conversation.wireCells.recycleBin.item.restoreFileConfirmation.button" = "Восстановить файл";
+"conversation.wireCells.recycleBin.item.restoreFileConfirmation.title" = "Файл \"%@\" будет восстановлен и снова доступен для всех в этой беседе.";
+"conversation.wireCells.recycleBin.item.restoreFolderConfirmation.button" = "Восстановить папку";
+"conversation.wireCells.recycleBin.item.restoreFolderConfirmation.title" = "Эта папка \"%@\" будет восстановлена со всеми файлами и подпапками и снова станет доступной для всех участников этой беседы.";
+"conversation.wireCells.recycleBin.item.restoreParentConfirmation.button" = "Восстановить родительскую папку";
+"conversation.wireCells.recycleBin.item.restoreParentConfirmation.title" = "Вы не можете восстановить папки или файлы из удаленной папки. Чтобы восстановить нужный элемент, вы должны восстановить его родительскую папку.\n\n Папка \"%@\" будет восстановлена со всеми файлами и подпапками и станет доступной всем участникам этой беседы.";
+"conversation.wireCells.allFiles.filters.clearAll" = "Очистить все";
+"conversation.wireCells.allFiles.filters.apply" = "Применить";
+"conversation.wireCells.allFiles.filters.tags.sectionTitle" = "Теги";
+"conversation.wireCells.allFiles.filters.tags.loadMore" = "Загрузить еще";
+"conversation.wireCells.allFiles.filters.navigationTitle" = "Фильтры";
+"conversation.wireCells.allFiles.filters.tags.emptyTitle" = "Теги еще не созданы.";
 
 // MARK: - File Tags View
 "conversation.wireCells.tags.title" = "Добавить или удалить теги";
@@ -160,6 +182,8 @@
 "conversation.wireCells.tags.error.saveFailedTitle" = "Не удается изменить теги";
 "conversation.wireCells.tags.error.saveFailedMessage" = "Из-за ошибки ваши теги не удалось отредактировать.";
 "conversation.wireCells.tags.error.retryButton" = "Повторить";
+"conversation.wireCells.files.moveToFolder.move" = "Переместить сюда";
+"conversation.wireCells.files.moveToFolder.noSubfolders" = "В этой папке нет подпапок.";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "Файл недоступен";

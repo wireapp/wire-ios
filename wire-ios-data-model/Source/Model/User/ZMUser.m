@@ -720,7 +720,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 @implementation ZMUser (Utilities)
 
-+ (ZMUser<ZMEditableUserType> *)selfUserInUserSession:(id<ContextProvider>)session
++ (ZMUser<ZMEditableUserType> *)selfUserInUserSession:(id<ZMContextProvider>)session
 {
     VerifyReturnNil(session != nil);
     return [self selfUserInContext:session.viewContext];

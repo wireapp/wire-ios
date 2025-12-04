@@ -176,8 +176,7 @@ final class SearchUserObserverCenterTests: ModelObjectsTests {
             accentColor: accentColor,
             remoteIdentifier: remoteIdentifier,
             user: user,
-            searchUsersCache: nil,
-            type: .regular
+            searchUsersCache: nil
         )
     }
 }
