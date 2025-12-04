@@ -77,7 +77,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     weak var message: ZMConversationMessage? {
         didSet {
-            guard let message, isChatBubbleSimpleEnabled else { return }
+            guard let message else { return }
             let isOwnMessage = message.isSentBySelfUser
             let userColor = message.senderUser?.accentColor ?? .clear
             container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
@@ -120,18 +120,11 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     private func configureConstraints() {
-        let insets: UIEdgeInsets
-        if isChatBubbleSimpleEnabled {
-            insets = ConversationMessageContainerView.bubbleEdgeInsets
-        } else {
-            let margins = conversationHorizontalMargins
-            insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
-        }
+        let insets = ConversationMessageContainerView.bubbleEdgeInsets
         messageTextView.fitIn(view: self, insets: insets)
     }
 
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
-        guard isChatBubbleSimpleEnabled else { return }
         let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
         let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
 
@@ -155,22 +148,18 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        if isChatBubbleSimpleEnabled {
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.firstLineHeadIndent = 0
-            paragraphStyle.lineSpacing = 3
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.firstLineHeadIndent = 0
+        paragraphStyle.lineSpacing = 3
 
-            let attributes: [NSAttributedString.Key: AnyObject] = [
-                .paragraphStyle: paragraphStyle
-            ]
+        let attributes: [NSAttributedString.Key: AnyObject] = [
+            .paragraphStyle: paragraphStyle
+        ]
 
-            messageTextView.attributedText = object.attributedText.addAttributes(
-                attributes,
-                toSubstring: object.attributedText.string
-            )
-        } else {
-            messageTextView.attributedText = object.attributedText
-        }
+        messageTextView.attributedText = object.attributedText.addAttributes(
+            attributes,
+            toSubstring: object.attributedText.string
+        )
 
         if object.isObfuscated {
             messageTextView.accessibilityIdentifier = "Obfuscated message"
@@ -178,7 +167,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             messageTextView.accessibilityIdentifier = Locators.ActiveConversationPage.message.rawValue
         }
 
-        container?.isBubble = isChatBubbleSimpleEnabled
+        container?.isBubble = true
         updateContainerStyle()
         configureTextColor(forOwnMessage: message?.isSentBySelfUser ?? false)
         addAccentColorChangeObserver(userSession: object.userSession)
@@ -194,7 +183,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     }
 
     private func updateContainerStyle() {
-        guard let message, isChatBubbleSimpleEnabled else { return }
+        guard let message else { return }
         let isOwnMessage = message.isSentBySelfUser
         let userColor = message.senderUser?.accentColor ?? .clear
         container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
@@ -243,11 +232,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         container?.accessibilityLabel = accessibilityLabel
         container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
     }
-
-    private var isChatBubbleSimpleEnabled: Bool {
-        // the additional DeveloperFlag check is needed for the snapshot test
-        ZMUserSession.isChatBubbleEnabled || DeveloperFlag.chatBubblesSimple.isOn
-    }
 }
 
 // MARK: - Description
@@ -264,7 +248,7 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
-    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.isChatBubbleEnabled
+    let shouldAlignMessageContentForBubbles: Bool = true
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil

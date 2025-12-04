@@ -131,12 +131,6 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     resetMLSConversations: config.resetMLSConversations
                 )
             )
-        case let .chatBubblesSimple(config):
-            .chatBubblesSimple(
-                StorableBasicFeatureConfig(
-                    status: StorableFeatureConfigStatus(config.status)
-                )
-            )
         case let .consumableNotifications(config):
             .consumableNotifications(
                 StorableBasicFeatureConfig(
@@ -267,12 +261,6 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     status: config.status.toAPIModel()
                 )
             )
-        case let .chatBubblesSimple(config):
-            .chatBubblesSimple(
-                .init(
-                    status: config.status.toAPIModel()
-                )
-            )
         case let .cells(config):
             .cells(
                 .init(status: config.status.toAPIModel())
@@ -308,7 +296,6 @@ enum StorableFeatureConfig: Equatable, Codable, Sendable {
     case channels(StorableChannelsFeatureConfig)
     case allowedGlobalOperations(StorableAllowedGlobalOperationsFeatureConfig)
     case consumableNotifications(StorableBasicFeatureConfig)
-    case chatBubblesSimple(StorableBasicFeatureConfig)
     case cells(StorableBasicFeatureConfig)
     case unknown(featureName: String)
 
