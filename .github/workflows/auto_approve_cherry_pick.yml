@@ -15,6 +15,14 @@ jobs:
       pull-requests: write
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
       - name: Approve PR as bot user
         uses: actions/github-script@v7
         with:
@@ -50,8 +58,8 @@ jobs:
 
               while (true) {
                 const { data: files } = await github.rest.pulls.listFiles({
-                  context.repo.owner,
-                  context.repo.repo,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
                   pull_number: pr.number,
                   per_page,
                   page,
@@ -86,8 +94,8 @@ jobs:
                 const botRequestedChanges = latestStateByUser.get(botLogin) === "CHANGES_REQUESTED";
                 if (!botRequestedChanges) {
                   await github.rest.pulls.createReview({
-                    context.repo.owner,
-                    context.repo.repo,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
                     pull_number: pr.number,
                     event: "REQUEST_CHANGES",
                     body: "❌ Cannot auto-approve: conflict markers (e.g. `<<<<<<<`, `>>>>>>>`) were found in the changes. Please resolve them before merging."
