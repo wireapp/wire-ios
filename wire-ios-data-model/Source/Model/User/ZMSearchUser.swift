@@ -214,7 +214,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var isBot: Bool {
-        providerIdentifier?.isEmpty != false
+        providerIdentifier?.isEmpty == false
     }
 
     public var isAppOrBot: Bool { isBot }
