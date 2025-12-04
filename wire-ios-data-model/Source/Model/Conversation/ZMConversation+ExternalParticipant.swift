@@ -48,6 +48,7 @@ public extension ZMConversation {
     internal class func keyPathsForValuesAffectingExternalParticipantsState() -> Set<String> {
         [
             "participantRoles.user.isApp",
+            "participantRoles.user.isBot",
             "participantRoles.user.hasTeam",
             "participantRoles.user.isExternalPartner"
         ]
@@ -63,7 +64,7 @@ public extension ZMConversation {
         let selfUser = ZMUser.selfUser(in: managedObjectContext!)
         let otherUsers = participants.subtracting([selfUser])
 
-        if otherUsers.count == 1, otherUsers.first!.isApp_ {
+        if otherUsers.count == 1, otherUsers.first!.isAppOrBot {
             return []
         }
 

@@ -93,7 +93,8 @@ extension ZMSearchUser: SearchServiceUser {
 
 @objc
 public class ZMSearchUser: NSObject, UserType {
-    public var providerIdentifier: String?
+    public var type: TypeOfUser
+    public var providerIdentifier: String? // TODO: consider deleting
     public var summary: String?
     public var assetKeys: SearchUserAssetKeys?
     public var remoteIdentifier: UUID!
@@ -208,16 +209,16 @@ public class ZMSearchUser: NSObject, UserType {
         return user.teamRole
     }
 
-    public var isApp_: Bool {
-        fatalError("not implemented")
+    public var isApp: Bool {
+        type == .app
     }
 
     public var isBot: Bool {
-        fatalError("not implemented")
+        type == .bot
     }
 
     public var isAppOrBot: Bool {
-        fatalError("not implemented")
+        isBot || isApp
     }
 
     public var usesCompanyLogin: Bool {
@@ -491,7 +492,8 @@ public class ZMSearchUser: NSObject, UserType {
         domain: String? = nil,
         teamIdentifier: UUID? = nil,
         user existingUser: ZMUser? = nil,
-        searchUsersCache: SearchUsersCache?
+        searchUsersCache: SearchUsersCache?,
+        type: TypeOfUser
     ) {
 
         let personName = PersonName.person(withName: name, schemeTagger: nil)
@@ -510,6 +512,7 @@ public class ZMSearchUser: NSObject, UserType {
         let selfUser = ZMUser.selfUser(inUserSession: contextProvider)
         self.internalIsTeamMember = teamIdentifier != nil && selfUser.teamIdentifier == teamIdentifier
         self.internalIsConnected = internalIsTeamMember
+        self.type = existingUser?.type ?? type
 
         super.init()
 
@@ -533,7 +536,8 @@ public class ZMSearchUser: NSObject, UserType {
             domain: user.domain,
             teamIdentifier: user.teamIdentifier,
             user: user,
-            searchUsersCache: searchUsersCache
+            searchUsersCache: searchUsersCache,
+            type: user.type
         )
     }
 
@@ -556,6 +560,8 @@ public class ZMSearchUser: NSObject, UserType {
         let domain = qualifiedID?["domain"] as? String
         let accentColorRawValue = (payload["accent_id"] as? NSNumber)?.int16Value ?? 0
 
+        print(payload) // TODO: delete
+
         self.init(
             contextProvider: contextProvider,
             name: name,
@@ -565,7 +571,8 @@ public class ZMSearchUser: NSObject, UserType {
             domain: domain,
             teamIdentifier: teamIdentifier,
             user: user,
-            searchUsersCache: searchUsersCache
+            searchUsersCache: searchUsersCache,
+            type: .bot // TODO: this is wrong, check if the actual value can be retrieved
         )
 
         self.providerIdentifier = payload["provider"] as? String
@@ -658,7 +665,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     @objc public var canBeConnected: Bool {
-        guard !isApp_ else { return false }
+        guard !isAppOrBot else { return false }
 
         if let user {
             return user.canBeConnected

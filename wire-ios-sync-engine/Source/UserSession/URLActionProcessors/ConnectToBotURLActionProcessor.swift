@@ -50,7 +50,8 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
             remoteIdentifier: serviceUserData.service,
             teamIdentifier: nil,
             user: nil,
-            searchUsersCache: searchUsersCache
+            searchUsersCache: searchUsersCache,
+            type: .bot // TODO: this is wrong!
         )
         serviceUser.providerIdentifier = serviceUserData.provider.transportString()
         serviceUser.createConversation(

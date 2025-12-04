@@ -103,7 +103,8 @@ final class UserTypeTests_Materialize: ModelObjectsTests {
             accentColor: .amber,
             remoteIdentifier: remoteIdentifier,
             teamIdentifier: teamIdentifier,
-            searchUsersCache: nil
+            searchUsersCache: nil,
+            type: .regular
         )
     }
 

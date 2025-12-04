@@ -143,7 +143,8 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
             accentColor: .amber,
             remoteIdentifier: remoteIdentifier,
             user: user,
-            searchUsersCache: nil
+            searchUsersCache: nil,
+            type: .regular
         )
     }
 }
