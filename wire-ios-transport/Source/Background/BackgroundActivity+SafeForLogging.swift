@@ -22,7 +22,7 @@ import WireUtilities
 
 extension BackgroundActivity: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        "<BackgroundActivity [\(index)]: \(name.readableHash)>"
+        "<BackgroundActivity [\(index)]: \(name)>"
     }
 }
 
