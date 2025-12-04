@@ -54,6 +54,8 @@
 "importBackup.alert.incompatibleBackupError.message" = "此备份由较新或过时的 Wire 版本创建，无法在此处恢复。";
 "importBackup.alert.wrongFileError.title" = "错误的备份文件";
 "importBackup.alert.wrongFileError.message" = "您无法从其他账户恢复历史记录。";
+"importBackup.alert.invalidFileError.title" = "Invalid file type";
+"importBackup.alert.invalidFileError.message" = "Select a Wire backup file (.wbu, .ios_wbu, or .ios-wbu)";
 
 "importBackup.enterPassword.title" = "键入密码";
 "importBackup.enterPassword.description" = "此备份受密码保护。";
@@ -63,4 +65,5 @@
 "importBackup.enterPassword.button.title" = "继续";
 
 "importBackup.restoringHistory.title" = "恢复历史记录中…";
+"importBackup.loadingBackup.message" = "Loading backup…";
 "importBackup.restoringHistory.message" = "加载对话中…";

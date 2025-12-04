@@ -80,33 +80,7 @@ struct RequestLog: Codable {
 
 public extension URL {
     var endpointRemoteLogDescription: String {
-        let visibleCharactersCount = 3
-
-        var components = URLComponents(string: absoluteString)
-        let path = components?.path ?? ""
-        let pathComponents = path.components(separatedBy: "/").map { $0.truncated(visibleCharactersCount) }
-
-        var queryComponents = components?.queryItems ?? []
-        queryComponents.enumerated().forEach { item in
-            var redactedItem = item.element
-            // truncates to 8 digits max for ids
-            let value = redactedItem.value?.redactedAndTruncated(
-                maxVisibleCharacters: visibleCharactersCount,
-                length: 8
-            ) ?? ""
-            redactedItem.value = value
-            queryComponents[item.offset] = redactedItem
-        }
-
-        components?.path = pathComponents.joined(separator: "/")
-        components?.queryItems = queryComponents
-
-        var endpoint = [components?.host, components?.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))]
-            .compactMap(\.self)
-            .filter { !$0.isEmpty }
-            .joined(separator: "/")
-        endpoint.append(components?.query?.isEmpty == false ? "?\(components!.query!)" : "")
-        return endpoint
+        absoluteString
     }
 }
 
