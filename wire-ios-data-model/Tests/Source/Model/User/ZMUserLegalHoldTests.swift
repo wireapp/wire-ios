@@ -16,9 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import XCTest
-@testable import WireDataModel
 
+@preconcurrency @testable import WireDataModel
+
+@preconcurrency
 class ZMUserLegalHoldTests: ModelObjectsTests {
 
     override func setUp() {
@@ -82,29 +85,37 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
     }
 
-    func testThatLegalHoldStatusIsEnabled_AfterAcceptingRequest() async {
+    func testThatLegalHoldStatusIsEnabled_AfterAcceptingRequest() async throws {
         // GIVEN
-        var legalHoldRequest: LegalHoldRequest!
-        var selfUser: ZMUser!
-        var conversation: ZMConversation!
 
-        await syncMOC.perform { [self] in
-            selfUser = ZMUser.selfUser(in: syncMOC)
+        let (legalHoldRequest, selfUser, conversationOID) = await syncMOC.perform { [self, syncMOC] in
+
+            let mockProteusService = MockProteusServiceInterface()
+            mockProteusService.establishSessionIdFromPrekey_MockMethod = { _, _ in }
+            syncMOC.proteusService = mockProteusService
+
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             createSelfClient(onMOC: syncMOC)
 
-            conversation = createConversation(in: syncMOC)
+            let conversation = createConversation(in: syncMOC)
             conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
 
-            legalHoldRequest = LegalHoldRequest.mockRequest(for: selfUser)
+            let legalHoldRequest = LegalHoldRequest.mockRequest(for: selfUser)
             selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)
+
+            return (legalHoldRequest, selfUser, conversation.objectID)
         }
 
         // WHEN
         _ = await selfUser.addLegalHoldClient(from: legalHoldRequest)
-        await syncMOC.perform { selfUser.userDidAcceptLegalHoldRequest(legalHoldRequest) }
 
-        // THEN
-        await syncMOC.perform {
+        try await syncMOC.perform { [selfUserOID = selfUser.objectID, syncMOC] in
+            let selfUser = try syncMOC.existingObject(with: selfUserOID) as! ZMUser
+            let conversation = try syncMOC.existingObject(with: conversationOID) as! ZMConversation
+
+            selfUser.userDidAcceptLegalHoldRequest(legalHoldRequest)
+
+            // THEN
             XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
             XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
             XCTAssertTrue(

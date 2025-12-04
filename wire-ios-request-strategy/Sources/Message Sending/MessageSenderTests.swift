@@ -1024,6 +1024,7 @@ final class MessageSenderTests: MessagingTestBase {
                     // success dumb data
                     ["test": Data()]
                 }
+                proteusService.sessionExistsId_MockValue = true
             }
             return self
         }
