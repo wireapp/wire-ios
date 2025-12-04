@@ -562,6 +562,7 @@ public class ZMSearchUser: NSObject, UserType {
 
         print(payload) // TODO: delete
 
+        let providerIdentifier = payload["provider"] as? String
         self.init(
             contextProvider: contextProvider,
             name: name,
@@ -572,10 +573,11 @@ public class ZMSearchUser: NSObject, UserType {
             teamIdentifier: teamIdentifier,
             user: user,
             searchUsersCache: searchUsersCache,
-            type: .bot // TODO: this is wrong, check if the actual value can be retrieved
+            type: providerIdentifier?.isEmpty != false ? .regular : .bot
         )
 
-        self.providerIdentifier = payload["provider"] as? String
+        self.providerIdentifier = providerIdentifier
+        print("providerIdentifier: \(providerIdentifier, default: "nil")") // TODO: delete
         self.summary = payload["summary"] as? String
         self.assetKeys = SearchUserAssetKeys(payload: payload)
         self.internalIsAccountDeleted = payload["deleted"] as? Bool
