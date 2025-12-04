@@ -140,7 +140,7 @@ public enum Locators {
         case username
         case createWireTeamButton
         case manageTeamButton
-        case addAcccountOrTeamButton
+        case addAccountOrTeamButton
     }
 
     public enum CreateGroupPage: String {

@@ -167,11 +167,16 @@ public extension WireMessagingFactory {
             rootView: FilesBrowserView(
                 viewModel: FilesViewModel(
                     useCases: .init(
-                        fetchNodes: WireCellsFetchNodesUseCase(
+                        fetchNodes: WireCellsFetchNodesPageUseCase(
                             configuration: .filesBrowserView,
                             repository: nodesAPI
                         ),
                         deleteNodes: WireCellsDeleteNodesUseCase(
+                            repository: nodesAPI,
+                            fileCache: fileCache,
+                            localAssetStore: localAssetStore
+                        ),
+                        restoreNodes: WireCellsRestoreNodesUseCase(
                             repository: nodesAPI,
                             fileCache: fileCache,
                             localAssetStore: localAssetStore
@@ -188,6 +193,7 @@ public extension WireMessagingFactory {
                     ),
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,
+                    nodesRepository: nodesAPI,
                     fileCache: fileCache,
                     isFoldersEnabled: false,
                     accentColorProvider: accentColorProvider

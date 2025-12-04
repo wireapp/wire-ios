@@ -130,6 +130,7 @@ extension ConversationCreateSectionController {
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForFooterInSection section: Int
     ) -> CGSize {
+        guard !footerText.isEmpty else { return .zero }
         footer.titleLabel.text = footerText
         footer.size(fittingWidth: collectionView.bounds.width)
         return footer.bounds.size
