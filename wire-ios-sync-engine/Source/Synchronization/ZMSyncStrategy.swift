@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 extension ZMSyncStrategy {
+
     var callingRequestStrategy: CallingRequestStrategy? {
-        strategyDirectory?.requestStrategies.first(where: { requestStrategy in
-            requestStrategy is CallingRequestStrategy
-        }) as? CallingRequestStrategy
+        strategyDirectory?.requestStrategies
+            .compactMap { $0 as? CallingRequestStrategy }
+            .first
     }
+
 }
