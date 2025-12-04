@@ -168,15 +168,6 @@ public final class ZMUserSession: NSObject {
         return featureRepository.fetchChannels()
     }
 
-    public var chatBubbleSimpleFeature: Feature.ChatBubblesSimple {
-        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
-        return featureRepository.fetchChatBubblesSimple()
-    }
-
-    public var isChatBubbleSimpleEnabled: Bool {
-        chatBubbleSimpleFeature.status == .enabled || DeveloperFlag.chatBubblesSimple.isOn
-    }
-
     public var wireCellsFeature: Feature.Cells {
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchCells()

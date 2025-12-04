@@ -134,9 +134,7 @@ final class SpinnerButton: LegacyButton {
     // MARK: - factory method
 
     static func alarmButton() -> SpinnerButton {
-        let cornerRadius: CGFloat = ZMUserSession.isChatBubbleEnabled ?
-            ConversationMessageContainerView.bubbleCornerRadius : 6
-
+        let cornerRadius: CGFloat = ConversationMessageContainerView.bubbleCornerRadius
         return SpinnerButton(legacyStyle: .empty, cornerRadius: cornerRadius, fontSpec: .smallSemiboldFont)
     }
 
