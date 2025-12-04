@@ -183,8 +183,7 @@ final class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
             accentColor: .amber,
             remoteIdentifier: UUID(),
             user: user,
-            searchUsersCache: nil,
-            type: .regular
+            searchUsersCache: nil
         )
     }
 

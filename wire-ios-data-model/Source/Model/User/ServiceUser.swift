@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 @objc
 public protocol ServiceUser: AnyObject, UserType {
     var providerIdentifier: String? { get }

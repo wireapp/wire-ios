@@ -231,8 +231,7 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
             accentColor: accentColor,
             remoteIdentifier: remoteIdentifier,
             user: user,
-            searchUsersCache: nil,
-            type: .regular
+            searchUsersCache: nil
         )
     }
 }
