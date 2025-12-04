@@ -1822,7 +1822,7 @@ public final class MLSService: MLSServiceInterface {
         )
     }
 
-    func subConferenceConversation(parentGroupID: MLSGroupID) async -> MLSGroupID? {
+    public func subConferenceConversation(parentGroupID: MLSGroupID) async -> MLSGroupID? {
        return await subconversationGroupIDRepository.fetchSubconversationGroupID(forType: .conference, parentGroupID: parentGroupID)
     }
     

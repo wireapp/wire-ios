@@ -17,24 +17,26 @@
 //
 import Combine
 
-/// sourcery: AutoMockable
+// sourcery: AutoMockable
 public protocol GeneratorProtocol {
     func start() async
     func stop()
 }
 
-// can generate items during pulling pending events from backend
+/// Starts generating items during pulling pending events from backend
+// sourcery: AutoMockable
 public protocol IncrementalGeneratorProtocol: GeneratorProtocol {}
 
-// can generate items once the app is up to date (livesyncing)
+/// Starts generating items once the app is up to date (livesyncing)
+// sourcery: AutoMockable
 public protocol LiveGeneratorProtocol: GeneratorProtocol {}
 
 /// Object that holds on all generators of WorkItem for WorkAgent
 
 public final class GeneratorsDirectory {
     
-    let generators: [any GeneratorProtocol]
-    let syncStatePublisher: AnyPublisher<SyncState, Never>
+    private let generators: [any GeneratorProtocol]
+    private let syncStatePublisher: AnyPublisher<SyncState, Never>
     private var cancellables: Set<AnyCancellable> = []
     
     public init(generators: [any GeneratorProtocol], syncStatePublisher: AnyPublisher<SyncState, Never>) {
@@ -65,7 +67,7 @@ public final class GeneratorsDirectory {
     }
 
     private func startIncrementalGenerators() {
-        for generator in generators where generator is LiveGeneratorProtocol {
+        for generator in generators where generator is IncrementalGeneratorProtocol {
             Task {
               await generator.start()
             }
