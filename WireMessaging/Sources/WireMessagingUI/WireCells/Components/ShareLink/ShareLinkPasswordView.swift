@@ -29,10 +29,13 @@ struct ShareLinkPasswordView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
 
-    @ObservedObject var viewModel: ShareLinkViewModel
+    @StateObject private var viewModel: ViewModel
     
-    init(viewModel: ShareLinkViewModel) {
-        self.viewModel = viewModel
+    let onSave: (String?) -> Void
+    
+    init(password: String?, onSave: @escaping (String?) -> Void) {
+        _viewModel = .init(wrappedValue: .init(password: password))
+        self.onSave = onSave
     }
     
     var body: some View {
@@ -301,30 +304,20 @@ struct ShareLinkPasswordView: View {
         
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                viewModel.pendingChangePassword = viewModel.currentPassword
+                onSave(viewModel.currentPassword)
                 dismiss()
             } label: {
                 Text(L10n.Localizable.General.save)
                     .bold()
             }
-            .disabled(!viewModel.canSavePassword)
+            .disabled(!viewModel.canSave)
         }
     }
 }
 
 #Preview {
-    let item = FilesViewItem(
-        id: UUID(),
-        kind: .file,
-        name: "some_file.pdf",
-        filePath: "some/path",
-        ownedBy: nil,
-        modifiedAt: nil,
-        icon: .document,
-        tags: []
-    )
-    
     ShareLinkPasswordView(
-        viewModel: .init(fileItem: item)
+        password: "r1ckr0ll",
+        onSave: { _ in },
     )
 }

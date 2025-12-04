@@ -29,7 +29,7 @@ struct ShareLinkView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
 
-    @StateObject private var viewModel: ShareLinkViewModel
+    @StateObject private var viewModel: ViewModel
     
     init(fileItem: FilesViewItem) {
         _viewModel = .init(wrappedValue: .init(fileItem: fileItem))
@@ -46,7 +46,12 @@ struct ShareLinkView: View {
                 .sheet(item: $viewModel.sheetNavigation) { navigationItem in
                     switch navigationItem {
                     case .password:
-                        ShareLinkPasswordView(viewModel: viewModel)
+                        ShareLinkPasswordView(
+                            password: "The password, if it exists. Otherwise nil",
+                            onSave: { password in
+                                //TODO: apply the new password. If it is nil, then the password was disabled.
+                            }
+                        )
                     case .expiration:
                         Text("TODO: Expiration view")
                     }
@@ -63,14 +68,6 @@ struct ShareLinkView: View {
         ScrollView {
             VStack {
                 Button {
-                    if let password = viewModel.existingPassword {
-                        viewModel.passwordInput = password
-                        viewModel.isPasswordEnabled = true
-                    } else {
-                        viewModel.passwordInput = ""
-                        viewModel.isPasswordEnabled = false
-                    }
-                    
                     viewModel.sheetNavigation = .password
                 } label: {
                     Text("Password (dummy)")
