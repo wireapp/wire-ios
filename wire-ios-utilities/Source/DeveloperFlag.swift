@@ -22,30 +22,36 @@ public enum DeveloperFlag: String, CaseIterable {
 
     public static var storage = UserDefaults.standard
 
-    case createLegacyBackups
-    case showCreateMLSGroupToggle
-    case proteusViaCoreCrypto
-    case forceDatabaseLoadingFailure
-    case ignoreIncomingEvents
-    case skipMLSMessagesDecryption
-    case debugDuplicateObjects
-    case decryptAndStoreEventsSleep
-    case forceCRLExpiryAfterOneMinute
-    case useWireAuthentication
-    case disablePushChannelBatching
-    case multibackend
-    case newRegistration
-    case showUnreadConversationsFilter
     case channelsHistory
     case chatBubbles
     case chatBubblesSimple
+    case considerAppsFeatureFlag
     case consumableNotifications
-    case wireMeetings
+    case createLegacyBackups
+    case debugDuplicateObjects
+    case decryptAndStoreEventsSleep
+    case disablePushChannelBatching
+    case forceCRLExpiryAfterOneMinute
+    case forceDatabaseLoadingFailure
+    case ignoreIncomingEvents
+    case multibackend
+    case newRegistration
+    case proteusViaCoreCrypto
+    case showCreateMLSGroupToggle
+    case showUnreadConversationsFilter
+    case skipMLSMessagesDecryption
+    case useWireAuthentication
     case wireCellsFolders
+    case wireMeetings
     case wireCellsCollabora
 
     public var description: String {
         switch self {
+        case .considerAppsFeatureFlag:
+            "Apps are not fully supported by the backend yet (e.g. no search endpoint available yet). However, some " +
+                "customers already have the apps feature flag enabled as a workaround for another issue." +
+                "If this toggle is off, the apps feature flag is ignored. Toggle it on for development."
+
         case .createLegacyBackups:
             "Don't use the cross-platform library when creating backups."
 

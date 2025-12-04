@@ -39,7 +39,7 @@ class UserProfilePage: PageModel {
     }
 
     var manageTeamButton: XCUIElement {
-        app.buttons[Locators.UserProfilePage.addAcccountOrTeamButton.rawValue].firstMatch
+        app.buttons[Locators.UserProfilePage.addAccountOrTeamButton.rawValue].firstMatch
     }
 
     var closeButton: XCUIElement {
@@ -47,7 +47,7 @@ class UserProfilePage: PageModel {
     }
 
     var addAccountOrTeamButton: XCUIElement {
-        app.descendants(matching: .button)[Locators.UserProfilePage.addAcccountOrTeamButton.rawValue].firstMatch
+        app.descendants(matching: .button)[Locators.UserProfilePage.addAccountOrTeamButton.rawValue].firstMatch
     }
 
     func tapCreateTeamButton() throws -> TeamSetupStepsPage {

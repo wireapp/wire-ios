@@ -67,9 +67,9 @@ final class MessageLogAttributesBuilderTests: XCTestCase {
         let attributes = await builder.logAttributes(clientMessage)
 
         // then
-        XCTAssertEqual(attributes[.nonce] as? String, "9cb5d6f***")
+        XCTAssertEqual(attributes[.nonce] as? String, "9cb5d6fa-875e-406b-aa66-6a93f031ff5f")
         XCTAssertEqual(attributes[.messageType] as? String, "text")
-        XCTAssertEqual(attributes[.conversationId] as? String, "f4d0b09*** - wire***")
+        XCTAssertEqual(attributes[.conversationId] as? String, "f4d0b090-53fd-491e-b4c8-815f840096a6 - wire.com")
         XCTAssertEqual(attributes[.public] as? Bool, true)
     }
 
