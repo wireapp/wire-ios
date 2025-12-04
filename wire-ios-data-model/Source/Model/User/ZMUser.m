@@ -249,7 +249,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 - (BOOL)canBeConnected;
 {
-    if (self.isApp || self.isWirelessUser) {
+    if (self.isAppOrBot || self.isWirelessUser) {
         return NO;
     }
     return ! self.isConnected && ! self.isPendingApprovalByOtherUser;
