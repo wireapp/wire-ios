@@ -54,6 +54,8 @@
 "importBackup.alert.incompatibleBackupError.message" = "This backup was created by a newer or outdated version of Wire and cannot be restored here.";
 "importBackup.alert.wrongFileError.title" = "Wrong backup file";
 "importBackup.alert.wrongFileError.message" = "You can't restore history from a different account.";
+"importBackup.alert.invalidFileError.title" = "Invalid file type";
+"importBackup.alert.invalidFileError.message" = "Select a Wire backup file (.wbu, .ios_wbu, or .ios-wbu)";
 
 "importBackup.enterPassword.title" = "Enter password";
 "importBackup.enterPassword.description" = "This backup is password protected.";
@@ -63,4 +65,5 @@
 "importBackup.enterPassword.button.title" = "Nadaljuj";
 
 "importBackup.restoringHistory.title" = "Restoring history…";
+"importBackup.loadingBackup.message" = "Loading backup…";
 "importBackup.restoringHistory.message" = "Loading conversations…";
