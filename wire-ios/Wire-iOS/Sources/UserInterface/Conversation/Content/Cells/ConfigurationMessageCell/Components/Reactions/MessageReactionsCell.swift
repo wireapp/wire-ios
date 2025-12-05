@@ -50,14 +50,10 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     private lazy var insets = UIEdgeInsets(
         top: 2,
-        left: isChatBubbleSimpleEnabled ? 0 : conversationHorizontalMargins.left,
+        left: 0,
         bottom: 0,
-        right: isChatBubbleSimpleEnabled ? 0 : conversationHorizontalMargins.right
+        right: 0
     )
-
-    private var isChatBubbleSimpleEnabled: Bool {
-        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
-    }
 
     // MARK: - Life cycle
 
@@ -118,7 +114,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
         verticalFittingPriority: UILayoutPriority
     ) -> CGSize {
         let insetsWidth = conversationHorizontalMargins.left + conversationHorizontalMargins
-            .right + (isChatBubbleSimpleEnabled ? 48 : 0)
+            .right + 48
         reactionsView.widthForCalculations = targetSize.width - insetsWidth
         reactionsView.setNeedsLayout()
         reactionsView.layoutIfNeeded()

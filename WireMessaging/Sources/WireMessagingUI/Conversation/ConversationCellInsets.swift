@@ -28,16 +28,13 @@ public struct ConversationCellInsets {
         }
     }
 
-    let legacy: HorizontalInsets
     let leadingBubble: HorizontalInsets
     let trailingBubble: HorizontalInsets
 
     public init(
-        legacy: HorizontalInsets,
         leadingBubble: HorizontalInsets,
         trailingBubble: HorizontalInsets
     ) {
-        self.legacy = legacy
         self.leadingBubble = leadingBubble
         self.trailingBubble = trailingBubble
     }

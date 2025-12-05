@@ -217,12 +217,6 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 isEnabled: config.status == .enabled
             )
 
-        case let .chatBubblesSimple(chatBubblesSimpleFeatureConfig):
-            return FeatureState(
-                name: .chatBubblesSimple,
-                isEnabled: chatBubblesSimpleFeatureConfig.status == .enabled
-            )
-
         case let .cells(cellsConfig):
             return FeatureState(
                 name: .cells,
