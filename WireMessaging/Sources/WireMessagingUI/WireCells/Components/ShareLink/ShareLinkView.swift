@@ -115,7 +115,8 @@ struct ShareLinkView: View {
         ownedBy: nil,
         modifiedAt: nil,
         icon: .document,
-        tags: []
+        tags: [],
+        publicLinkId: nil
     )
     
     ShareLinkView(fileItem: item)

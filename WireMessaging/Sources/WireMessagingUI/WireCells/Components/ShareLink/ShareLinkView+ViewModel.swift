@@ -22,7 +22,7 @@ import Combine
 extension ShareLinkView {
     @MainActor
     final class ViewModel: ObservableObject {
-        private let fileItem: FilesViewItem
+        let fileItem: FilesViewItem
         
         enum SheetNavigation: String, Identifiable {
             case password

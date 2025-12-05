@@ -65,6 +65,8 @@ package struct FilesViewItem: Identifiable, Hashable {
 
     /// The tags that users have added for that file.
     let tags: [String]
+    
+    let publicLinkId: String?
 }
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -542,7 +544,8 @@ package final class FilesViewModel: ObservableObject {
                     type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
                     fileExtension: url?.pathExtension
                 ),
-                tags: node.tags
+                tags: node.tags,
+                publicLinkId: node.publicLinkID?.string
             )
         }
 
