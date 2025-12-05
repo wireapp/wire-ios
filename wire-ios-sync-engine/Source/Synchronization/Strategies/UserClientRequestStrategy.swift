@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireCryptobox
 import WireDataModel
 import WireLogging
 import WireSystem
@@ -62,12 +61,12 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         clientRegistrationStatus: ZMClientRegistrationStatus,
         clientUpdateStatus: ClientUpdateStatus,
         context: NSManagedObjectContext,
-        proteusProvider: ProteusProviding
+        proteusService: ProteusServiceInterface
     ) {
         self.clientRegistrationStatus = clientRegistrationStatus
         self.clientUpdateStatus = clientUpdateStatus
         self.requestsFactory = UserClientRequestFactory()
-        self.prekeyGenerator = PrekeyGenerator(proteusProvider: proteusProvider)
+        self.prekeyGenerator = PrekeyGenerator(proteusService: proteusService)
 
         super.init(managedObjectContext: context)
 
