@@ -50,8 +50,8 @@ jobs:
 
               while (true) {
                 const { data: files } = await github.rest.pulls.listFiles({
-                  context.repo.owner,
-                  context.repo.repo,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
                   pull_number: pr.number,
                   per_page,
                   page,
@@ -86,8 +86,8 @@ jobs:
                 const botRequestedChanges = latestStateByUser.get(botLogin) === "CHANGES_REQUESTED";
                 if (!botRequestedChanges) {
                   await github.rest.pulls.createReview({
-                    context.repo.owner,
-                    context.repo.repo,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
                     pull_number: pr.number,
                     event: "REQUEST_CHANGES",
                     body: "❌ Cannot auto-approve: conflict markers (e.g. `<<<<<<<`, `>>>>>>>`) were found in the changes. Please resolve them before merging."
