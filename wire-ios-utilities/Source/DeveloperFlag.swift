@@ -35,7 +35,6 @@ public enum DeveloperFlag: String, CaseIterable {
     case ignoreIncomingEvents
     case multibackend
     case newRegistration
-    case proteusViaCoreCrypto
     case showCreateMLSGroupToggle
     case showUnreadConversationsFilter
     case skipMLSMessagesDecryption
