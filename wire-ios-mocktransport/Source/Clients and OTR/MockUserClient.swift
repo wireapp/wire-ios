@@ -162,7 +162,7 @@ public extension MockUserClient {
         newClient.time = Date()
 
         // Generate mock prekey strings (no encryption needed for mock transport)
-        let mockPrekeys = (0..<5).map { _ in UUID().uuidString }
+        let mockPrekeys = (0 ..< 5).map { _ in UUID().uuidString }
         let mockLastPrekey = UUID().uuidString
 
         let prekeys = MockPreKey.insertNewKeys(

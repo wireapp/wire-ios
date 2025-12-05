@@ -251,7 +251,6 @@ final class APIMigrationManagerTests: MessagingTest {
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
         mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
 
-
         let cookieStorage = ZMPersistentCookieStorage(
             forServerName: "test.example.com",
             userIdentifier: .create(),

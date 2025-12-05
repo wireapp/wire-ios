@@ -97,7 +97,6 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
         switch systemMessage.systemMessageType {
         case .decryptionFailed:
             components = [messageString]
-
         case .decryptionFailedResolved:
             components = [
                 messageString,

@@ -45,7 +45,7 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
     private var sut: CoreCryptoConfigProvider!
     private var mockCoreCryptoKeyMigrationManager = MockCoreCryptoKeyMigrationManagerProtocol()
     private var sharedContainerURL: URL!
-    
+
     override func setUp() {
         super.setUp()
 
