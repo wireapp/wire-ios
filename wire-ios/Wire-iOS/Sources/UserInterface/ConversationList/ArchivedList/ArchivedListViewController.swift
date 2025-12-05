@@ -155,7 +155,6 @@ extension ArchivedListViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let conversation = viewModel[indexPath.row]
-        viewModel.unarchiveConversation(at: indexPath.row)
         delegate?.archivedListViewController(self, didSelectConversation: conversation)
     }
 }
