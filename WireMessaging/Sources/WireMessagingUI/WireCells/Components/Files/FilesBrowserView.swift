@@ -83,7 +83,12 @@ package struct FilesBrowserView: FilesViewProtocol {
                 case let .filters(filtersView):
                     filtersView
                 case let .shareLink(fileItem: fileItem):
-                    ShareLinkView(fileItem: fileItem)
+                    ShareLinkView(
+                        fileItem: fileItem,
+                        useCases: .init(
+                            getLinkData: viewModel.useCases.getPublicLinkData
+                        )
+                    )
                 default:
                     EmptyView()
                 }

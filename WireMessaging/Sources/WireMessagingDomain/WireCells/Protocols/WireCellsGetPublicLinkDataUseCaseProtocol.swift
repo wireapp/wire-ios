@@ -18,16 +18,6 @@
 
 public import Foundation
 
-public struct WireCellsPublicLink: Equatable, Hashable, Sendable {
-    public let uuid: UUID
-    public let url: URL
-    public let password: String?
-    public let expirationDate: String? //TODO: maybe change it to Date?
-
-    package init(uuid: UUID, url: URL, password: String?, expirationDate: String?) {
-        self.uuid = uuid
-        self.url = url
-        self.password = password
-        self.expirationDate = expirationDate
-    }
+public protocol WireCellsGetPublicLinkDataUseCaseProtocol: Sendable {
+    func invoke(linkId: UUID) async throws -> WireCellsPublicLink
 }

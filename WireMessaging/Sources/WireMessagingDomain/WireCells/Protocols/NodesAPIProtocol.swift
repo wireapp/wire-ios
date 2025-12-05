@@ -42,7 +42,7 @@ package protocol NodesAPIProtocol: Sendable {
 
     func createPublicLink(nodeID: UUID, fileName: String) async throws -> WireCellsPublicLink
 
-    func getPublicLink(linkUUID: UUID) async throws -> URL
+    func getPublicLink(linkUUID: UUID) async throws -> WireCellsPublicLink
 
     func deletePublicLink(linkUUID: UUID) async throws
 

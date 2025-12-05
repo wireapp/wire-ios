@@ -65,6 +65,9 @@ extension FilesViewModel {
                 createFolder: WireCellsCreateFolderUseCase(
                     nodesRepository: previewNodesRepository()
                 ),
+                getPublicLinkData: WireCellsGetPublicLinkDataUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                ),
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,
@@ -176,6 +179,19 @@ private func previewTagsApi() -> some NodesAPIProtocol {
         mockTags
     }
     mock.updateTagsNodeIDTags_MockMethod = { _, _ in }
+    return mock
+}
+
+private func previewPublicLinkApi() -> some NodesAPIProtocol {
+    let mock = MockNodesAPIProtocol()
+    mock.getPublicLinkLinkUUID_MockMethod = { _ in
+        WireCellsPublicLink(
+            uuid: UUID(),
+            url: URL(string: "https://example.com")!,
+            password: "r1ckr0ll",
+            expirationDate: "1234567890",
+        )
+    }
     return mock
 }
 

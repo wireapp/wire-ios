@@ -224,7 +224,7 @@ final class RestAPI: Sendable {
         }
     }
 
-    func getPublicLink(uuid: UUID) async throws -> URL {
+    func getPublicLink(uuid: UUID) async throws -> WireCellsPublicLink {
         let response = try await NodeServiceAPI.getPublicLink(
             linkUuid: uuid.transportString(),
             apiConfiguration: makeConfiguration()
@@ -236,8 +236,11 @@ final class RestAPI: Sendable {
         guard let url = URL(string: urlString) else {
             throw WireCellsNodesAPIError.missingData("Link URL is invalid")
         }
+        
+        let password: String? = nil //TODO: get it from response
+        let expirationDate: String? = nil //TODO: get it from response
 
-        return url
+        return WireCellsPublicLink(uuid: uuid, url: url, password: password, expirationDate: expirationDate)
     }
 
     func createPublicLink(uuid: UUID, fileName: String) async throws -> WireCellsPublicLink {
@@ -267,8 +270,11 @@ final class RestAPI: Sendable {
         guard let url = URL(string: urlString) else {
             throw WireCellsNodesAPIError.missingData("Link URL is invalid")
         }
+        
+        let password: String? = nil //TODO: get it from response
+        let expirationDate: String? = nil //TODO: get it from response
 
-        return WireCellsPublicLink(uuid: id, url: url)
+        return WireCellsPublicLink(uuid: id, url: url, password: password, expirationDate: expirationDate)
     }
 
     func deletePublicLink(uuid: UUID) async throws {

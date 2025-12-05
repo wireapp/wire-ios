@@ -31,8 +31,10 @@ struct ShareLinkView: View {
 
     @StateObject private var viewModel: ViewModel
     
-    init(fileItem: FilesViewItem) {
-        _viewModel = .init(wrappedValue: .init(fileItem: fileItem))
+    @State private var testLinkData: String = "?"
+    
+    init(fileItem: FilesViewItem, useCases: ViewModel.UseCases) {
+        _viewModel = .init(wrappedValue: .init(fileItem: fileItem, useCases: useCases))
     }
     
     var body: some View {
@@ -61,12 +63,22 @@ struct ShareLinkView: View {
                         .ignoresSafeArea(edges: .all)
                 }
                 .tint(ColorTheme.Base.primary(wireAccentColor).color)
+                .task {
+                    if let linkIdString = viewModel.fileItem.publicLinkId, let linkId = UUID(uuidString: linkIdString) {
+                        let linkData = try? await viewModel.useCases.getLinkData.invoke(linkId: linkId)
+                        testLinkData = linkData?.url.absoluteString ?? "-"
+                    }
+                }
         }
     }
     
     @ViewBuilder private func content() -> some View {
         ScrollView {
             VStack {
+                Text("link id: \(viewModel.fileItem.publicLinkId ?? "-")")
+                
+                Text("url: \(testLinkData)")
+                
                 Button {
                     viewModel.sheetNavigation = .password
                 } label: {
@@ -116,8 +128,28 @@ struct ShareLinkView: View {
         modifiedAt: nil,
         icon: .document,
         tags: [],
-        publicLinkId: nil
+        publicLinkId: UUID().uuidString,
     )
     
-    ShareLinkView(fileItem: item)
+    let mockAPI = {
+        let mockAPI = MockNodesAPIProtocol()
+        mockAPI.getPublicLinkLinkUUID_MockMethod = { _ in
+            WireCellsPublicLink(
+                uuid: UUID(),
+                url: URL(string: "https://example.com")!,
+                password: "r1ckr0ll",
+                expirationDate: "1234567890",
+            )
+        }
+        return mockAPI
+    }()
+    
+    let useCases: ShareLinkView.ViewModel.UseCases = .init(
+        getLinkData: WireCellsGetPublicLinkDataUseCase(nodesAPI: mockAPI),
+    )
+    
+    ShareLinkView(
+        fileItem: item,
+        useCases: useCases,
+    )
 }

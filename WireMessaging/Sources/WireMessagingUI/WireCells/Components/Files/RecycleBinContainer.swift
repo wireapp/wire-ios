@@ -102,6 +102,7 @@ package struct RecycleBinContainer: View {
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
                 createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
+                getPublicLinkData: WireCellsGetPublicLinkDataUseCase(nodesAPI: nodesAPI),
             ),
             title: path.last?.name,
             navigationPath: path,

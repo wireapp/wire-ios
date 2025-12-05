@@ -153,7 +153,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         try await restAPI.createPublicLink(uuid: nodeID, fileName: fileName)
     }
 
-    package func getPublicLink(linkUUID: UUID) async throws -> URL {
+    package func getPublicLink(linkUUID: UUID) async throws -> WireCellsPublicLink {
         try await restAPI.getPublicLink(uuid: linkUUID)
     }
 

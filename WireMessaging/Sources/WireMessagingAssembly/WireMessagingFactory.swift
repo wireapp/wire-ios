@@ -190,6 +190,7 @@ public extension WireMessagingFactory {
                         updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
                         getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
                         createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
+                        getPublicLinkData: WireCellsGetPublicLinkDataUseCase(nodesAPI: nodesAPI),
                     ),
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,

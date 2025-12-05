@@ -100,7 +100,12 @@ package struct FilesView: FilesViewProtocol {
                             }
                         )
                     case let .shareLink(fileItem: fileItem):
-                        ShareLinkView(fileItem: fileItem)
+                        ShareLinkView(
+                            fileItem: fileItem,
+                            useCases: .init(
+                                getLinkData: viewModel.useCases.getPublicLinkData,
+                            )
+                        )
                     case let .renameFile(fileRenameView):
                         fileRenameView
                     case let .createFolder(folderView):

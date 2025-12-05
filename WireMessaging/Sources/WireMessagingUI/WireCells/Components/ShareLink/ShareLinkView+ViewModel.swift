@@ -18,11 +18,17 @@
 
 import Foundation
 import Combine
+import WireMessagingDomain
 
 extension ShareLinkView {
     @MainActor
     final class ViewModel: ObservableObject {
+        struct UseCases {
+            let getLinkData: any WireCellsGetPublicLinkDataUseCaseProtocol
+        }
+        
         let fileItem: FilesViewItem
+        let useCases: UseCases
         
         enum SheetNavigation: String, Identifiable {
             case password
@@ -33,8 +39,9 @@ extension ShareLinkView {
         
         @Published var sheetNavigation: SheetNavigation?
         
-        init(fileItem: FilesViewItem) {
+        init(fileItem: FilesViewItem, useCases: UseCases) {
             self.fileItem = fileItem
+            self.useCases = useCases
         }
     }
 }
