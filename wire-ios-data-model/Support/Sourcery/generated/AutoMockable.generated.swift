@@ -4575,6 +4575,24 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
     }
 
+    // MARK: - subConferenceConversation
+
+    public var subConferenceConversationParentGroupID_Invocations: [MLSGroupID] = []
+    public var subConferenceConversationParentGroupID_MockMethod: ((MLSGroupID) async -> MLSGroupID?)?
+    public var subConferenceConversationParentGroupID_MockValue: MLSGroupID??
+
+    public func subConferenceConversation(parentGroupID: MLSGroupID) async -> MLSGroupID? {
+        subConferenceConversationParentGroupID_Invocations.append(parentGroupID)
+
+        if let mock = subConferenceConversationParentGroupID_MockMethod {
+            return await mock(parentGroupID)
+        } else if let mock = subConferenceConversationParentGroupID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `subConferenceConversationParentGroupID`")
+        }
+    }
+
     // MARK: - leaveSubconversation
 
     public var leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_Invocations: [(parentQualifiedID: QualifiedID, parentGroupID: MLSGroupID, subconversationType: SubgroupType)] = []
@@ -4656,21 +4674,6 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         } else {
             fatalError("no mock for `subconversationMembersFor`")
         }
-    }
-
-    // MARK: - commitPendingProposalsIfNeeded
-
-    public var commitPendingProposalsIfNeeded_Invocations: [Void] = []
-    public var commitPendingProposalsIfNeeded_MockMethod: (() async -> Void)?
-
-    public func commitPendingProposalsIfNeeded() async {
-        commitPendingProposalsIfNeeded_Invocations.append(())
-
-        guard let mock = commitPendingProposalsIfNeeded_MockMethod else {
-            fatalError("no mock for `commitPendingProposalsIfNeeded`")
-        }
-
-        await mock()
     }
 
     // MARK: - commitPendingProposals
