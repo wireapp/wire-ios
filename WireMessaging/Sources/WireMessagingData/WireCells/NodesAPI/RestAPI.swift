@@ -237,7 +237,7 @@ final class RestAPI: Sendable {
             throw WireCellsNodesAPIError.missingData("Link URL is invalid")
         }
         
-        let password: String? = nil //TODO: get it from response
+        let password: String? = nil //TODO: I realized we can't get this from the response because it's not stored as cleartext. We can't ask the backend what the actual password is.
         let expirationDate: String? = nil //TODO: get it from response
 
         return WireCellsPublicLink(uuid: uuid, url: url, password: password, expirationDate: expirationDate)
