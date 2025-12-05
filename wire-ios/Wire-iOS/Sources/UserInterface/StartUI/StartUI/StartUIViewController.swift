@@ -88,8 +88,7 @@ final class StartUIViewController: UIViewController {
 
     let isAppsFeatureEnabled: Bool
 
-    /// The people/apps switch control will only be visible if apps are enabled or the team already has some legacy
-    /// services/bots added.
+    /// Teams cannot add old-style services (bots) anymore, but teams which have been using bots in the past, they should still be able to start 1:1 conversations with bots. (only if the team's default protocol is Proteus)
     let areLegacyBotsAvailable: Bool
 
     let userSession: UserSession
@@ -112,6 +111,12 @@ final class StartUIViewController: UIViewController {
         searchResultsViewController
     }
 
+    /// Whether there is a switch control for either listing/searching for users/people or apps/bots.
+    ///
+    /// The people/apps switch control will only be visible if
+    /// - apps/bots are not disabled for this build (restricted clients),
+    /// - the team's default protocol is Proteus the team has been using bots
+    /// - the team's default protocol is MLS and the `apps` feature flag is enabled.
     var showsGroupSelector: Bool {
         guard DeveloperFlag.considerAppsFeatureFlag.isOn else {
             return SearchGroup.all.count > 1 &&
@@ -119,8 +124,16 @@ final class StartUIViewController: UIViewController {
                 userSession.defaultProtocol != .mls
         }
 
-        return areLegacyBotsAvailable ||
-            (isAppsFeatureEnabled && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices)
+        guard SearchGroup.all.count > 1, userSession.selfUser.canSeeServices else { return false }
+
+        switch userSession.defaultProtocol {
+        case .mls:
+            return isAppsFeatureEnabled
+        case .proteus:
+            return areLegacyBotsAvailable
+        case .mixed:
+            return false
+        }
     }
 
     // MARK: - Init
