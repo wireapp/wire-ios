@@ -681,7 +681,7 @@ extension SearchTask {
 extension SearchTask {
 
     func performRemoteSearchForServices() {
-        let teamIdentifier = searchContext.performAndWait({ ZMUser.selfUser(in: searchContext).team?.remoteIdentifier })
+        let teamIdentifier = searchContext.performAndWait { ZMUser.selfUser(in: searchContext).team?.remoteIdentifier }
         guard
             let apiVersion,
             let teamIdentifier,
