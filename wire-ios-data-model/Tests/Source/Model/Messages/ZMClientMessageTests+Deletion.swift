@@ -565,11 +565,10 @@ extension ZMClientMessageTests_Deletion {
             ).users.keys
 
             // then all users receive delete message
-            XCTAssertEqual(4, recipients.count)
+            XCTAssertEqual(3, recipients.count)
             XCTAssertTrue(recipients.contains(self.syncSelfUser))
             XCTAssertTrue(recipients.contains(self.syncUser1))
             XCTAssertTrue(recipients.contains(self.syncUser2))
-            XCTAssertTrue(recipients.contains(self.syncUser3))
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

@@ -25,20 +25,6 @@ final class SimpleChatBubblesSnapshotTests: ConversationMessageSnapshotTestCase 
 
     private let record: Bool? = nil
 
-    // MARK: - setUp
-
-    override func setUp() {
-        super.setUp()
-        DeveloperFlag.chatBubblesSimple.enable(true, storage: .temporary())
-    }
-
-    // MARK: - tearDown
-
-    override func tearDown() {
-        DeveloperFlag.chatBubblesSimple.enable(false, storage: .temporary())
-        super.tearDown()
-    }
-
     // MARK: - Snapshot Tests
 
     func testSelfMessageDefaultColor() {

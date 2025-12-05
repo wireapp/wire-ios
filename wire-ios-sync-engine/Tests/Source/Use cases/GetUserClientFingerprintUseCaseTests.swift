@@ -24,17 +24,16 @@ import XCTest
 
 @testable import WireSyncEngine
 
+@preconcurrency
 final class GetUserClientFingerprintUseCaseTests: MessagingTest {
     var sut: GetUserClientFingerprintUseCase!
 
     var mockProteusService: MockProteusServiceInterface!
-    var mockProteusProvider: MockProteusProvider!
     var mockSessionEstablisher: MockSessionEstablisherInterface!
 
     let fingerprint = "1234"
 
     override func setUp() {
-        DeveloperFlag.storage = .temporary()
         mockProteusService = MockProteusServiceInterface()
         mockSessionEstablisher = MockSessionEstablisherInterface()
         super.setUp()
@@ -43,10 +42,8 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
     override func tearDown() {
         sut = nil
         mockProteusService = nil
-        mockProteusProvider = nil
         mockSessionEstablisher = nil
         super.tearDown()
-        DeveloperFlag.storage = .standard
     }
 
     // MARK: - invoke() establishSession
@@ -61,20 +58,18 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
 
     func internalTestEstablishSession(sessionEstablished: Bool) async {
         // GIVEN
-        // we force the flag on here,
-        // since ProteusProvider is created on the fly when accessed by managedObjectContext
-        // when checking the hasSessionWithSelfClient
-        DeveloperFlag.proteusViaCoreCrypto.enable(true)
+
         syncMOC.performAndWait {
             syncMOC.proteusService = mockProteusService
         }
-        sut = createSut(proteusEnabled: true)
+        sut = createSut()
 
         mockProteusService.sessionExistsId_MockValue = sessionEstablished
-        var userClient: UserClient!
-        await syncMOC.perform {
-            userClient = self.createSelfClient()
+
+        let userClient = await syncMOC.perform {
+            let userClient = self.createSelfClient()
             userClient.user?.domain = "example.com"
+            return userClient
         }
 
         let expectation = XCTestExpectation(description: "should call establishSession")
@@ -92,36 +87,18 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
 
     // MARK: - fetchRemoteFingerprint
 
-    func test_fetchRemoteFingerprint_with_Cryptobox() async {
+    func test_fetchRemoteFingerprint() async {
         // GIVEN
-        sut = createSut(proteusEnabled: false)
+        sut = createSut()
 
-        var userClient: UserClient!
-        await syncMOC.perform {
-            userClient = self.createSelfClient()
-        }
-
-        // WHEN
-        _ = await sut.fetchRemoteFingerprint(for: userClient)
-
-        // THEN
-        XCTAssertEqual(mockProteusProvider.mockKeyStore.accessEncryptionContextCount, 1)
-    }
-
-    func test_fetchRemoteFingerprint_ProteusViaCoreCryptoFlagEnabled() async {
-        // GIVEN
-        sut = createSut(proteusEnabled: true)
-
-        var userClient: UserClient!
-        await syncMOC.perform {
-            userClient = self.createSelfClient()
+        let userClient = await syncMOC.perform {
+            self.createSelfClient()
         }
 
         // WHEN
         let result = await sut.fetchRemoteFingerprint(for: userClient)
 
         // THEN
-        XCTAssertEqual(mockProteusProvider.mockKeyStore.accessEncryptionContextCount, 0)
         XCTAssertEqual(result, fingerprint.data(using: .utf8))
     }
 
@@ -130,7 +107,7 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
     func test_itLoadsLocalFingerprint_ProteusViaCoreCryptoFlagEnabled() async {
 
         // GIVEN
-        sut = createSut(proteusEnabled: true)
+        sut = createSut()
 
         await syncMOC.perform {
             _ = self.createSelfClient()
@@ -146,33 +123,19 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
         XCTAssertEqual(String(decoding: result, as: UTF8.self), fingerprint)
     }
 
-    func test_itLoadsLocalFingerprint_ProteusViaCoreCryptoFlagDisabled() async {
-        // GIVEN
-        sut = createSut(proteusEnabled: false)
-
-        // WHEN
-        _ = await sut.localFingerprint()
-
-        // THEN
-        XCTAssertEqual(mockProteusProvider.mockKeyStore.accessEncryptionContextCount, 1)
-    }
-
     // MARK: - Helpers
 
-    private func createSut(proteusEnabled: Bool) -> GetUserClientFingerprintUseCase {
-        mockProteusProvider = MockProteusProvider(
-            mockProteusService: mockProteusService,
-            useProteusService: proteusEnabled
-        )
-        mockProteusProvider.mockProteusService.localFingerprint_MockMethod = {
+    private func createSut() -> GetUserClientFingerprintUseCase {
+
+        mockProteusService.localFingerprint_MockMethod = {
             self.fingerprint
         }
-        mockProteusProvider.mockProteusService.remoteFingerprintForSession_MockMethod = { _ in
+        mockProteusService.remoteFingerprintForSession_MockMethod = { _ in
             self.fingerprint
         }
 
         return GetUserClientFingerprintUseCase(
-            proteusProvider: mockProteusProvider,
+            proteusService: mockProteusService,
             sessionEstablisher: mockSessionEstablisher,
             managedObjectContext: syncMOC,
             metadata: .mock()
