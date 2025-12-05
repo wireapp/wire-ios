@@ -264,7 +264,7 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
-    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.isChatBubbleEnabled
+    lazy var shouldAlignMessageContentForBubbles: Bool = true
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
