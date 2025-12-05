@@ -187,7 +187,6 @@ extension SyncEventsStep {
             accountDirectory: accountContainer,
             sharedUserDefaults: sharedUserDefaults,
             syncContext: dependency.coreData.syncContext,
-            cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
             localDomain: BackendInfo.domain

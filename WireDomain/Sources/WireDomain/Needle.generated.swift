@@ -319,9 +319,6 @@ private class NSEClientScopeDependencyfc368141c1425b82ae14Provider: NSEClientSco
     var cookieStorage: CookieStorage {
         return nSEUserScope.cookieStorage
     }
-    var cryptoboxMigrationManager: CryptoboxMigrationManager {
-        return nSEUserScope.cryptoboxMigrationManager
-    }
     private let nSEFlow: NSEFlow
     private let nSEUserScope: NSEUserScope
     init(nSEFlow: NSEFlow, nSEUserScope: NSEUserScope) {
@@ -350,7 +347,6 @@ extension NSEUserScope: NeedleFoundation.Registration {
         localTable["userAccountDataURL-URL"] = { [unowned self] in self.userAccountDataURL as Any }
         localTable["journal-Journal"] = { [unowned self] in self.journal as Any }
         localTable["cookieStorage-CookieStorage"] = { [unowned self] in self.cookieStorage as Any }
-        localTable["cryptoboxMigrationManager-CryptoboxMigrationManager"] = { [unowned self] in self.cryptoboxMigrationManager as Any }
     }
 }
 extension ShowNotificationStep: NeedleFoundation.Registration {
@@ -443,7 +439,6 @@ extension NSEClientScope: NeedleFoundation.Registration {
         keyPathToName[\NSEClientScopeDependency.journal] = "journal-Journal"
         keyPathToName[\NSEClientScopeDependency.sharedUserDefaults] = "sharedUserDefaults-UserDefaults"
         keyPathToName[\NSEClientScopeDependency.cookieStorage] = "cookieStorage-CookieStorage"
-        keyPathToName[\NSEClientScopeDependency.cryptoboxMigrationManager] = "cryptoboxMigrationManager-CryptoboxMigrationManager"
     }
 }
 extension NSEFlow: NeedleFoundation.Registration {

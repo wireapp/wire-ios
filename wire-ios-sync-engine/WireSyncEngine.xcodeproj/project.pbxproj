@@ -147,7 +147,6 @@
 		16D0A11D234C8CD700A83F87 /* LabelUpstreamRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D0A11C234C8CD700A83F87 /* LabelUpstreamRequestStrategy.swift */; };
 		16D3FCDF1E365ABC0052A535 /* CallStateObserverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D3FCDE1E365ABC0052A535 /* CallStateObserverTests.swift */; };
 		16D3FD021E3A5C0D0052A535 /* ZMConversationVoiceChannelRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D3FD011E3A5C0D0052A535 /* ZMConversationVoiceChannelRouterTests.swift */; };
-		16D66D6A2B0789F500CB237D /* MockCryptoboxMigrationManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0BA28F29D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */; };
 		16D9E8BA22BCD39200FA463F /* LegalHoldRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D9E8B922BCD39200FA463F /* LegalHoldRequestStrategy.swift */; };
 		16DABFAE1DCF98D3001973E3 /* CallingRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DABFAD1DCF98D3001973E3 /* CallingRequestStrategy.swift */; };
 		16DCB91C213449620002E910 /* ZMOperationLoop+PushChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DCB91B213449620002E910 /* ZMOperationLoop+PushChannel.swift */; };
@@ -1048,7 +1047,6 @@
 		EBD7B55754FDA4E74F1006FD /* ZMOperationLoopTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMOperationLoopTests.h; sourceTree = "<group>"; };
 		EE01E0361F90DABC001AA33C /* audio.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = audio.m4a; sourceTree = "<group>"; };
 		EE01E0381F90FEC1001AA33C /* ZMLocalNotificationTests_ExpiredMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLocalNotificationTests_ExpiredMessage.swift; sourceTree = "<group>"; };
-		EE0BA28F29D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCryptoboxMigrationManagerInterface.swift; sourceTree = "<group>"; };
 		EE0CAEAE2AAF2E8E00BD2DB7 /* URLSession+MinTLSVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSession+MinTLSVersion.swift"; sourceTree = "<group>"; };
 		EE1108F823D1F945005DC663 /* TypingUsersTimeout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingUsersTimeout.swift; sourceTree = "<group>"; };
 		EE1108FA23D2087F005DC663 /* Typing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typing.swift; sourceTree = "<group>"; };
@@ -2235,14 +2233,6 @@
 			path = Dependencies;
 			sourceTree = "<group>";
 		};
-		E6A55E2B2B762ED80020818D /* Mocks */ = {
-			isa = PBXGroup;
-			children = (
-				EE0BA28F29D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */,
-			);
-			path = Mocks;
-			sourceTree = "<group>";
-		};
 		E6C983EF2B986B2900D55177 /* ZMUserSession */ = {
 			isa = PBXGroup;
 			children = (
@@ -2314,7 +2304,6 @@
 		F159F4121F1E310C001B7D80 /* SessionManager */ = {
 			isa = PBXGroup;
 			children = (
-				E6A55E2B2B762ED80020818D /* Mocks */,
 				63CD59542964332B00385037 /* AccessTokenMigrationTests.swift */,
 				636826FB2954550900D904C2 /* APIMigrationManagerTests.swift */,
 				EE9CDE9127DA05D100C4DAC8 /* APIVersionResolverTests.swift */,
@@ -2797,7 +2786,6 @@
 				7635D6932D031F0600E13F57 /* MockAPIService.swift in Sources */,
 				54A170691B300717001B41A5 /* ProxiedRequestStrategyTests.swift in Sources */,
 				1660AA111ECE3C1C0056D403 /* SearchTaskTests.swift in Sources */,
-				16D66D6A2B0789F500CB237D /* MockCryptoboxMigrationManagerInterface.swift in Sources */,
 				873B893E20445F4400FBE254 /* ZMConversationAccessModeTests.swift in Sources */,
 				543ED0011D79E0EE00A9CDF3 /* ApplicationMock.swift in Sources */,
 				160C314A1E82AC170012E4BC /* OperationStatusTests.swift in Sources */,

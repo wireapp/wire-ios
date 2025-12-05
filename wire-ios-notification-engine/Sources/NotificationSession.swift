@@ -80,7 +80,6 @@ public final class NotificationSession {
     public enum InitializationError: Error {
 
         case noAccount
-        case pendingCryptoboxMigration
         case coreDataMissingSharedContainer
         case coreDataMigrationRequired
 
@@ -123,7 +122,6 @@ public final class NotificationSession {
         operationLoop: RequestGeneratingOperationLoop,
         accountIdentifier: UUID,
         pushNotificationStrategy: PushNotificationStrategy,
-        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         earService: EARServiceInterface,
         proteusService: ProteusServiceInterface,
         mlsDecryptionService: MLSDecryptionServiceInterface,
@@ -148,9 +146,7 @@ public final class NotificationSession {
         pushNotificationStrategy.delegate = self
 
         let accountDirectory = coreDataStack.accountContainer
-        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
-            throw InitializationError.pendingCryptoboxMigration
-        }
+
         coreDataStack.syncContext.performAndWait {
             if coreDataStack.syncContext.proteusService == nil {
                 coreDataStack.syncContext.proteusService = proteusService

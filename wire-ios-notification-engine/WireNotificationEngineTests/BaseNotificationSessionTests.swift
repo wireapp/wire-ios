@@ -42,7 +42,6 @@ class BaseTest: ZMTBaseTest {
     var operationLoop: RequestGeneratingOperationLoop!
     var pushNotificationStatus: PushNotificationStatus!
     var pushNotificationStrategy: PushNotificationStrategy!
-    var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
     var mockEARService: MockEARServiceInterface!
     var mockProteusService: MockProteusServiceInterface!
     var mockMLSDecryptionService: MLSDecryptionServiceInterface!
@@ -122,9 +121,6 @@ class BaseTest: ZMTBaseTest {
 
         await createSelfUserAndClient()
 
-        mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
-        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
-
         mockEARService = MockEARServiceInterface()
         mockProteusService = MockProteusServiceInterface()
         mockMLSDecryptionService = MockMLSDecryptionServiceInterface()
@@ -158,7 +154,6 @@ class BaseTest: ZMTBaseTest {
         transportSession = nil
         pushNotificationStatus = nil
         pushNotificationStrategy = nil
-        mockCryptoboxMigrationManager = nil
         lastEventIDRepository = nil
         super.tearDown()
     }
@@ -174,7 +169,6 @@ class BaseTest: ZMTBaseTest {
             operationLoop: operationLoop,
             accountIdentifier: accountIdentifier,
             pushNotificationStrategy: pushNotificationStrategy,
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             earService: mockEARService,
             proteusService: mockProteusService,
             mlsDecryptionService: mockMLSDecryptionService,

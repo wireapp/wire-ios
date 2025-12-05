@@ -251,7 +251,6 @@ final class APIMigrationManagerTests: MessagingTest {
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
         mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
 
-        let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
 
         let cookieStorage = ZMPersistentCookieStorage(
             forServerName: "test.example.com",
@@ -314,7 +313,6 @@ final class APIMigrationManagerTests: MessagingTest {
             currentAppVersion: "3.120.0",
             currentBuildNumber: "999",
             application: application,
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: coreDataStack,
             coreCryptoProvider: mockCoreCryptoProvider,
             configuration: configuration,

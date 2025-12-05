@@ -313,14 +313,6 @@ public struct LegacyNotificationSessionLoader {
             requestGeneratorStore: requestGeneratorStore,
             transportSession: transportSession
         )
-        let cryptoboxMigrationManager = CryptoboxMigrationManager()
-        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: userAccountDataURL) else {
-            // we need to call tearDown before these objects are deallocated
-            legacyEnvironment.reachability.tearDown()
-            transportSession.tearDown()
-
-            throw Failure.mainAppRequired(message: "cryptobox migration required")
-        }
         let earService = EARService(
             accountID: accountID,
             sharedUserDefaults: sharedUserDefaults,
@@ -332,7 +324,6 @@ public struct LegacyNotificationSessionLoader {
             accountDirectory: userAccountDataURL,
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
             localDomain: backendMetadata.domain
@@ -356,7 +347,6 @@ public struct LegacyNotificationSessionLoader {
             operationLoop: operationLoop,
             accountIdentifier: accountID,
             pushNotificationStrategy: pushNotificationStrategy,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             earService: earService,
             proteusService: proteusService,
             mlsDecryptionService: mlsDecryptionService,

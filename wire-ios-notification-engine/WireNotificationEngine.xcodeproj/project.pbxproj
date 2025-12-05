@@ -23,7 +23,6 @@
 		59537D8D2CFF9FB300920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D8C2CFF9FB300920B59 /* WireLogging */; };
 		630A582D29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630A582C29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift */; };
 		CBC41A352EB50F42000769CE /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */; };
-		EE0BA28A29D59B1D004E93B5 /* NotificationSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0BA28929D59B1D004E93B5 /* NotificationSessionTests.swift */; };
 		EE3245FE28229E8600F2A84A /* ApplicationStatusDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */; };
 		EE32460028229F6B00F2A84A /* ClientRegistrationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */; };
 		EE32460228229FDF00F2A84A /* AuthenticationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */; };
@@ -85,7 +84,6 @@
 		3431F0862E795487007BA692 /* LegacyNotificationSessionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyNotificationSessionLoader.swift; sourceTree = "<group>"; };
 		59B170E52BCE70E200575995 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		630A582C29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseNotificationSessionTests.swift; sourceTree = "<group>"; };
-		EE0BA28929D59B1D004E93B5 /* NotificationSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSessionTests.swift; sourceTree = "<group>"; };
 		EE3245FD28229E8600F2A84A /* ApplicationStatusDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationStatusDirectory.swift; sourceTree = "<group>"; };
 		EE3245FF28229F6B00F2A84A /* ClientRegistrationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientRegistrationStatus.swift; sourceTree = "<group>"; };
 		EE32460128229FDF00F2A84A /* AuthenticationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStatus.swift; sourceTree = "<group>"; };
@@ -271,7 +269,6 @@
 		EE761670299E614B005DB75F /* WireNotificationEngineTests */ = {
 			isa = PBXGroup;
 			children = (
-				EE0BA28929D59B1D004E93B5 /* NotificationSessionTests.swift */,
 				630A582C29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift */,
 			);
 			path = WireNotificationEngineTests;
@@ -454,7 +451,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE0BA28A29D59B1D004E93B5 /* NotificationSessionTests.swift in Sources */,
 				630A582D29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
