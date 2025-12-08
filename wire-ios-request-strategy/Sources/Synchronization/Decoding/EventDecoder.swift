@@ -18,7 +18,6 @@
 
 import Foundation
 import GenericMessageProtocol
-import WireCryptobox
 import WireDataModel
 import WireLogging
 import WireUtilities
@@ -76,14 +75,6 @@ public final class EventDecoder: NSObject, EventDecoderProtocol {
         super.init()
     }
 
-    /// Guarantee to get proteusProvider from correct context
-    /// - Note: to be replaced when proteusProvider is not attached to context 🤞
-    private var proteusProvider: ProteusProviding {
-        syncMOC.performAndWait {
-            syncMOC.proteusProvider
-        }
-    }
-
     private let lastEventIDRepository: LastEventIDRepositoryInterface
 }
 
@@ -102,33 +93,21 @@ extension EventDecoder {
         _ events: [ZMUpdateEvent],
         publicKeys: EARPublicKeys? = nil
     ) async throws -> [ZMUpdateEvent] {
-        let lastIndex = await eventMOC.perform {
+        let lastIndex = await eventMOC.perform { [eventMOC] in
             // Get the highest index of events in the DB
-            StoredUpdateEvent.highestIndex(self.eventMOC)
+            StoredUpdateEvent.highestIndex(eventMOC)
         }
 
-        guard proteusProvider.canPerform else {
-            WireLogger.proteus.warn("ignore decrypting events because it is not safe")
+        guard let proteusService = await syncMOC.perform({ [syncMOC] in syncMOC.proteusService }) else {
+            WireLogger.proteus.warn("ignore decrypting events because proteus service is not available")
             return []
         }
 
-        let decryptedEvents: [ZMUpdateEvent] = try await proteusProvider.performAsync(
-            withProteusService: { proteusService in
-                try await self.decryptAndStoreEvents(
-                    events,
-                    startingAtIndex: lastIndex,
-                    publicKeys: publicKeys,
-                    proteusService: proteusService
-                )
-            },
-            withKeyStore: { keyStore in
-                await self.legacyDecryptAndStoreEvents(
-                    events,
-                    startingAtIndex: lastIndex,
-                    publicKeys: publicKeys,
-                    keyStore: keyStore
-                )
-            }
+        let decryptedEvents: [ZMUpdateEvent] = try await decryptAndStoreEvents(
+            events,
+            startingAtIndex: lastIndex,
+            publicKeys: publicKeys,
+            proteusService: proteusService
         )
 
         if !events.isEmpty {
@@ -278,60 +257,6 @@ extension EventDecoder {
         default:
             return [event]
         }
-    }
-
-    private func legacyDecryptAndStoreEvents(
-        _ events: [ZMUpdateEvent],
-        startingAtIndex startIndex: Int64,
-        publicKeys: EARPublicKeys?,
-        keyStore: UserClientKeysStore
-    ) async -> [ZMUpdateEvent] {
-        var decryptedEvents = [ZMUpdateEvent]()
-
-        await keyStore.encryptionContext.performAsync { [weak self] sessionsDirectory in
-            guard let self else { return }
-
-            for event in events {
-                switch event.type {
-                case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                    let proteusEvent = await decryptProteusEventAndAddClient(
-                        event,
-                        in: syncMOC
-                    ) { sessionID, encryptedData in
-                        try sessionsDirectory.decryptData(
-                            encryptedData,
-                            for: sessionID.mapToEncryptionSessionID()
-                        )
-                    }
-                    if let proteusEvent {
-                        decryptedEvents.append(proteusEvent)
-                    }
-
-                case .conversationMLSWelcome:
-                    await processWelcomeMessage(from: event, context: syncMOC)
-                    decryptedEvents.append(event)
-
-                case .conversationMLSMessageAdd:
-                    let events = try? await decryptMlsMessage(from: event, context: syncMOC)
-                    decryptedEvents.append(contentsOf: events ?? [])
-
-                default:
-                    decryptedEvents.append(event)
-                }
-            }
-
-            // This call has to be synchronous to ensure that we close the
-            // encryption context only if we stored all events in the database.
-            await eventMOC.perform {
-                self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
-            }
-        }
-
-        if let lastEventID = decryptedEvents.last(where: { !$0.isTransient })?.uuid {
-            lastEventIDRepository.storeLastEventID(lastEventID)
-        }
-
-        return decryptedEvents
     }
 
     // Insert the decrypted events in the event database using a `storeIndex`

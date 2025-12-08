@@ -746,7 +746,7 @@ extension WireCallCenterV3 {
 extension AVSIdentifier: @retroactive SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
-        "\(identifier.safeForLoggingDescription) - \(String(describing: domain?.readableHash))"
+        "\(identifier) - \(String(describing: domain ?? "<nil>"))"
     }
 
 }

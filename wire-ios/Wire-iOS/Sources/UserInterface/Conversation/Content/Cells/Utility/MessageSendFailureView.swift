@@ -42,16 +42,13 @@ final class MessageSendFailureView: UIView {
         insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
     )
 
-    private var isChatBubbleSimpleEnabled: Bool
     private var bottomConstraint: NSLayoutConstraint?
 
     // MARK: - initialization
 
-    init(
+    override init(
         frame: CGRect = .zero,
-        ischatBubbleSimpleEnabled: Bool = false
     ) {
-        self.isChatBubbleSimpleEnabled = ischatBubbleSimpleEnabled
         super.init(frame: CGRect.zero)
 
         setupViews()
@@ -66,21 +63,14 @@ final class MessageSendFailureView: UIView {
 
     func setTitle(_ errorMessage: String) {
         titleLabel.attributedText = .markdown(from: errorMessage, style: .errorLabelStyle)
-        if isChatBubbleSimpleEnabled {
-            titleLabel.textAlignment = .right
-        }
+        titleLabel.textAlignment = .right
     }
 
     private func setupViews() {
         addSubview(stackView)
 
-        if isChatBubbleSimpleEnabled {
-            stackView.spacing = 8
-            stackView.alignment = .trailing
-        } else {
-            stackView.spacing = 15
-            stackView.alignment = .leading
-        }
+        stackView.spacing = 8
+        stackView.alignment = .trailing
 
         retryButton.translatesAutoresizingMaskIntoConstraints = false
         [titleLabel, retryButton].forEach(stackView.addArrangedSubview)
@@ -99,21 +89,13 @@ final class MessageSendFailureView: UIView {
     private func setupConstraints() {
         stackView.translatesAutoresizingMaskIntoConstraints = false
 
-        if isChatBubbleSimpleEnabled {
-            NSLayoutConstraint.activate([
-                stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10.0),
-                stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10.0),
-                stackView.topAnchor.constraint(equalTo: topAnchor)
-            ])
-            bottomConstraint = stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8.0)
-        } else {
-            NSLayoutConstraint.activate([
-                stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                stackView.topAnchor.constraint(equalTo: topAnchor)
-            ])
-            bottomConstraint = stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        }
+        NSLayoutConstraint.activate([
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10.0),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10.0),
+            stackView.topAnchor.constraint(equalTo: topAnchor)
+        ])
+
+        bottomConstraint = stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8.0)
         bottomConstraint?.isActive = true
     }
 

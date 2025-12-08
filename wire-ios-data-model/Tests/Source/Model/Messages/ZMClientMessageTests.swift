@@ -933,7 +933,7 @@ extension ClientMessageTests {
             self.createSelfClient(onMOC: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
-            let firstClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
+            let firstClient = self.createClient(for: otherUser, onMOC: self.syncMOC)
 
             let messageEvent = self.encryptedExternalMessageFixtureWithBlob(from: firstClient)
             let base64SHA = "kKSSlbMxXEdd+7fekxB8Qr67/mpjjboBsr2wLcW7wzE="

@@ -51,7 +51,6 @@ final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: UserRight.self,
             settingsCoordinator: settingsCoordinator,
-            isSimpleChatBubbleEnabled: SessionManager.shared?.activeUserSession?.isChatBubbleSimpleEnabled ?? false,
             localDomain: "wire.com",
             isFederationEnabled: false
         )

@@ -132,7 +132,7 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
         }
 
         mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
-            throw SendCommitBundleAction.Failure.unreachableDomains(unreachableDomains)
+            throw SendMLSMessageFailure.unreachableDomains(unreachableDomains)
         }
 
         // THEN
@@ -150,7 +150,7 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
         }
 
         mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
-            throw SendCommitBundleAction.Failure.nonFederatingDomains(unreachableDomains)
+            throw SendMLSMessageFailure.nonFederatingDomains(unreachableDomains)
         }
 
         // THEN
