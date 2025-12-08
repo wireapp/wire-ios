@@ -19,13 +19,7 @@ import Foundation
 import WireDataModel
 import WireLogging
 
-/// sourcery: AutoMockable
-public protocol CommitPendingProposalsGeneratorProtocol {
-    func start() async
-    func stop()
-}
-
-public final class CommitPendingProposalsGenerator: NSObject, CommitPendingProposalsGeneratorProtocol {
+public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProtocol {
 
     private let context: NSManagedObjectContext
     private let fetchedResultsController: NSFetchedResultsController<ZMConversation>
@@ -75,7 +69,17 @@ public final class CommitPendingProposalsGenerator: NSObject, CommitPendingPropo
     private func commitPendingProposalItem(for conversation: ZMConversation) {
         if let id = conversation.qualifiedID,
            let timestamp = conversation.commitPendingProposalDate,
-           let mlsGroupID = conversation.mlsGroupID {
+           let mlsGroupID = conversation.mlsGroupID,
+            conversation.isSelfAnActiveMember {
+            // TODO: review skipping brokenGroupIDs
+            // there are 2 sources of brokenGroup the journal backed one (currently filled by mls reset groups when FF is disabled
+            Task {
+                await generateItemForSubconversation(parentID: mlsGroupID,
+                                                     timestamp: timestamp,
+                                                     conversationID: id)
+            }
+            
+            WireLogger.workAgent.debug("generate commit pending proposal work-item", attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription])
             onCommitPendingProposals(
                 CommitPendingProposalItem(
                     repository: repository,
@@ -88,53 +92,25 @@ public final class CommitPendingProposalsGenerator: NSObject, CommitPendingPropo
         }
     }
 
-    // private func sortedGroupsWithPendingCommits() async -> [(MLSGroupID, Date)] {
-    //    guard let context else {
-    //        return []
-    //    }
-    //
-    //    var result: [(MLSGroupID, Date)] = []
-    //
-    //    let groupIDsAndProposalDatesArray: [(MLSGroupID, Date)] = await context.perform {
-    //        ZMConversation.fetchConversationsWithPendingProposals(
-    //            in: context
-    //        ).filter(
-    //            \.isSelfAnActiveMember
-    //        ).compactMap {
-    //            guard
-    //                let groupID = $0.mlsGroupID,
-    //                let proposalDate = $0.commitPendingProposalDate
-    //            else {
-    //                return nil
-    //            }
-    //            return (groupID, proposalDate)
-    //        }
-    //    }
-    //
-    //    for (groupID, timestamp) in groupIDsAndProposalDatesArray {
-    //        // The pending proposal will always fail and cause
-    //        // recovery too many recovery syncs.
-    //        guard !brokenGroupIDs.contains(groupID) else {
-    //            continue
-    //        }
-    //
-    //        result.append((groupID, timestamp))
-    //
-    //        // The pending proposal might be for the subconversation,
-    //        // so include it just in case.
-    //        if let subgroupID = await subconversationGroupIDRepository.fetchSubconversationGroupID(
-    //            forType: .conference,
-    //            parentGroupID: groupID
-    //        ) {
-    //            result.append((subgroupID, timestamp))
-    //        }
-    //    }
-    //
-    //    return result.sorted { lhs, rhs in
-    //        let (lhsCommitDate, rhsCommitDate) = (lhs.1, rhs.1)
-    //        return lhsCommitDate <= rhsCommitDate
-    //    }
-    // }
+    func generateItemForSubconversation(parentID: MLSGroupID,
+                                      timestamp: Date,
+                                      conversationID: QualifiedID) async {
+        
+        if let subgroupID = await mlsService.subConferenceConversation(
+            parentGroupID: parentID
+        ) {
+            WireLogger.workAgent.debug("generate subconversation commit pending proposal work-item for \(parentID.safeForLoggingDescription)", attributes: [.mlsGroupID: subgroupID.safeForLoggingDescription])
+            onCommitPendingProposals(
+                CommitPendingProposalItem(
+                    repository: repository,
+                    conversationID: conversationID,
+                    groupID: subgroupID,
+                    timestamp: timestamp,
+                    mlsService: mlsService
+                )
+            )
+        }
+    }
     
     public func stop() {
         fetchedResultsController.delegate = nil

@@ -20,9 +20,9 @@ import Foundation
 
 extension ZMConversation {
 
-    public class sortCommitPendingProsalsByDateAscending: NSSortDescriptor {
+    public class func sortCommitPendingProsalsByDateAscending() -> NSSortDescriptor {
         NSSortDescriptor(
-            keyPath: \.commitPendingProposalDate,
+            key: commitPendingProposalDateKey,
             ascending: true
         )
     }

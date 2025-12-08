@@ -19,13 +19,7 @@ import Foundation
 import WireDataModel
 import WireLogging
 
-/// sourcery: AutoMockable
-public protocol ConversationUpdatesGeneratorProtocol {
-    func start() async
-    func stop()
-}
-
-public final class ConversationUpdatesGenerator: NSObject, ConversationUpdatesGeneratorProtocol {
+public final class ConversationUpdatesGenerator: NSObject, IncrementalGeneratorProtocol {
 
     private let context: NSManagedObjectContext
     private var fetchedResultsController: NSFetchedResultsController<ZMConversation>?

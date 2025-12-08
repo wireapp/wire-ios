@@ -638,8 +638,6 @@ public final class ZMUserSession: NSObject {
             featureConfigRepository: clientSessionComponent.featureConfigRepository,
             syncStateSubject: clientSessionComponent.syncStateSubject,
             pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator,
-            conversationUpdatesGenerator: clientSessionComponent.conversationUpdatesGenerator,
-            commitPendingProposalsGenerator: clientSessionComponent.commitPendingProposalsGenerator,
             networkStatePublisher: networkStateSubject.eraseToAnyPublisher()
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
@@ -671,6 +669,7 @@ public final class ZMUserSession: NSObject {
         Task {
             await clientSessionComponent.workAgent.setAutoStartEnabled(true)
             await clientSessionComponent.workAgent.start()
+            clientSessionComponent.generatorsDirectory.observeSyncState()
         }
     }
 

@@ -22,7 +22,7 @@ import WireDataModel
 import WireLogging
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
-
+    
     enum Error: Swift.Error {
         case noBackendConversationID
     }
@@ -1302,10 +1302,9 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-
     public func execute(
         identifier: MLSGroupID,
-        block: @Sendable (ZMConversation, NSManagedObjectContext) -> Void
+        block: @escaping @Sendable (ZMConversation?, NSManagedObjectContext) -> Void
     ) async {
         await context.perform { [context] in
             let conversation = ZMConversation.fetch(with: identifier, in: context)

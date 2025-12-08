@@ -47,7 +47,7 @@ public protocol MLSServiceDelegate: AnyObject {
 ///
 /// It uses the CoreCrypto framework to perform cryptographic operations, and interacts with core data and the backend
 
-public final class MLSService: MLSServiceInterface {
+public final class MLSService: MLSServiceInterface {    
 
     // MARK: - Properties
 
@@ -1822,6 +1822,10 @@ public final class MLSService: MLSServiceInterface {
         )
     }
 
+    func subConferenceConversation(parentGroupID: MLSGroupID) async -> MLSGroupID? {
+       return await subconversationGroupIDRepository.fetchSubconversationGroupID(forType: .conference, parentGroupID: parentGroupID)
+    }
+    
     private func leaveSubconversation(
         subconversationGroupID: MLSGroupID,
         parentQualifiedID: QualifiedID,

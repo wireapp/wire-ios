@@ -171,12 +171,6 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         return EventDecryptorResult(events: decryptedEvents, brokenMLSGroupIDs: brokenMLSGroupIDs)
     }
 
-    private func commitPendingProposalsIfNeeded() async {
-        // MLSService will be nil when called from push notification service.
-        // As we don't need to commit pending proposals in that case.
-        await mlsService?.commitPendingProposalsIfNeeded()
-    }
-
     private func appendFailedToDecryptProteusMessage(
         eventData: ConversationProteusMessageAddEvent,
         error: ProteusError
