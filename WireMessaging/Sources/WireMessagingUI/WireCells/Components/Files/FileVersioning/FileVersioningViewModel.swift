@@ -94,7 +94,7 @@ final class FileVersioningViewModel: ObservableObject {
     }
 
     func startPolling() {
-        Timer.publish(every: .tenSeconds, on: .main, in: .common)
+        Timer.publish(every: .thirtySeconds, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 Task { await self?.fetch() }
