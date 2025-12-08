@@ -76,7 +76,7 @@ public protocol UserType: NSObjectProtocol, UserConnections {
 
     var isApp: Bool { get }
 
-    /// Whether this is an bot (old-style service).
+    /// Whether this is a bot (old-style service).
 
     var isBot: Bool { get }
 
