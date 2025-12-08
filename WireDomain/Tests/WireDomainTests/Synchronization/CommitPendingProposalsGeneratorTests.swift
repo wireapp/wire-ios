@@ -31,11 +31,11 @@ class CommitPendingProposalsGeneratorTests {
     let coreDataStack: CoreDataStack
     var commitPendingProposalItemClosure: ((CommitPendingProposalItem) -> Void)?
     var mockMLSService: MockMLSServiceInterface!
-    
+
     init() async throws {
         self.repository = MockConversationRepositoryProtocol()
         self.mockMLSService = MockMLSServiceInterface()
-        self.mockMLSService.subConferenceConversationParentGroupID_MockMethod = { _ in return nil }
+        mockMLSService.subConferenceConversationParentGroupID_MockMethod = { _ in nil }
         self.coreDataStack = try await coreDataStackHelper.createStack()
 
         self.sut = CommitPendingProposalsGenerator(

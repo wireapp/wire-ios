@@ -247,12 +247,12 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
         parentQualifiedID: QualifiedID,
         parentID: MLSGroupID
     ) async throws -> MLSGroupID
-    
+
     /// Fetches subConversation of type conference
     /// - Parameter parentGroupID: MLSGroupID of the parent conversation
     /// - Returns: MLSGroupID of the subconversation
     func subConferenceConversation(parentGroupID: MLSGroupID) async -> MLSGroupID?
-    
+
     /// Leaves the subgroup associated with the given parent conversation
     ///
     /// - Parameters:

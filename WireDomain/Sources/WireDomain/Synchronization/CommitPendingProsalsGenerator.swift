@@ -55,7 +55,8 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
         do {
             try fetchedResultsController.performFetch()
         } catch {
-            WireLogger.conversation.error("error fetching conversations with pending commit proposals: \(String(describing: error))")
+            WireLogger.conversation
+                .error("error fetching conversations with pending commit proposals: \(String(describing: error))")
         }
 
         let conversations = fetchedResultsController.fetchedObjects ?? []
@@ -70,16 +71,22 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
         if let id = conversation.qualifiedID,
            let timestamp = conversation.commitPendingProposalDate,
            let mlsGroupID = conversation.mlsGroupID,
-            conversation.isSelfAnActiveMember {
+           conversation.isSelfAnActiveMember {
             // TODO: review skipping brokenGroupIDs
-            // there are 2 sources of brokenGroup the journal backed one (currently filled by mls reset groups when FF is disabled
+            // there are 2 sources of brokenGroup the journal backed one (currently filled by mls reset groups when FF
+            // is disabled
             Task {
-                await generateItemForSubconversation(parentID: mlsGroupID,
-                                                     timestamp: timestamp,
-                                                     conversationID: id)
+                await generateItemForSubconversation(
+                    parentID: mlsGroupID,
+                    timestamp: timestamp,
+                    conversationID: id
+                )
             }
-            
-            WireLogger.workAgent.debug("generate commit pending proposal work-item", attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription])
+
+            WireLogger.workAgent.debug(
+                "generate commit pending proposal work-item",
+                attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
+            )
             onCommitPendingProposals(
                 CommitPendingProposalItem(
                     repository: repository,
@@ -92,14 +99,19 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
         }
     }
 
-    func generateItemForSubconversation(parentID: MLSGroupID,
-                                      timestamp: Date,
-                                      conversationID: QualifiedID) async {
-        
+    func generateItemForSubconversation(
+        parentID: MLSGroupID,
+        timestamp: Date,
+        conversationID: QualifiedID
+    ) async {
+
         if let subgroupID = await mlsService.subConferenceConversation(
             parentGroupID: parentID
         ) {
-            WireLogger.workAgent.debug("generate subconversation commit pending proposal work-item for \(parentID.safeForLoggingDescription)", attributes: [.mlsGroupID: subgroupID.safeForLoggingDescription])
+            WireLogger.workAgent.debug(
+                "generate subconversation commit pending proposal work-item for \(parentID.safeForLoggingDescription)",
+                attributes: [.mlsGroupID: subgroupID.safeForLoggingDescription]
+            )
             onCommitPendingProposals(
                 CommitPendingProposalItem(
                     repository: repository,
@@ -111,7 +123,7 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
             )
         }
     }
-    
+
     public func stop() {
         fetchedResultsController.delegate = nil
     }

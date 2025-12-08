@@ -16,19 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
-import Testing
 import Combine
+import Testing
 
-@testable import WireDomain
 import WireDomainSupport
+@testable import WireDomain
 
 @Suite("GeneratorsDirectory")
 struct GeneratorsDirectoryTests {
 
     // MARK: - Helpers
 
-    /// Awaits the first time `block` is executed (used to reliably observe async `.start()` calls triggered from a `Task { }`).
+    /// Awaits the first time `block` is executed (used to reliably observe async `.start()` calls triggered from a
+    /// `Task { }`).
     private func waitForCall(_ installHandler: (@escaping () -> Void) -> Void) async {
         await withCheckedContinuation { (c: CheckedContinuation<Void, Never>) in
             installHandler { c.resume() }
@@ -39,7 +39,7 @@ struct GeneratorsDirectoryTests {
     let base = MockGeneratorProtocol()
     let live = MockLiveGeneratorProtocol()
     let incremental = MockIncrementalGeneratorProtocol()
-    
+
     init() {
         base.start_MockMethod = {}
         base.stop_MockMethod = {}
@@ -48,14 +48,14 @@ struct GeneratorsDirectoryTests {
         incremental.start_MockMethod = {}
         incremental.stop_MockMethod = {}
     }
-    
+
     // MARK: - Tests
 
     @Test("idle / initialSyncing stops all generators", arguments: [
         SyncState.idle, .initialSyncing(.pullLastEventID),
-                                                                    .initialSyncing(.pullResources),
-                                                                    .initialSyncing(.pushSupportedProtocols),
-                                                                    .initialSyncing(.resolveOneOnOneConversations)
+        .initialSyncing(.pullResources),
+        .initialSyncing(.pushSupportedProtocols),
+        .initialSyncing(.resolveOneOnOneConversations)
     ])
     func idleStopsAllGenerators(state: SyncState) async {
         // GIVEN
@@ -81,13 +81,13 @@ struct GeneratorsDirectoryTests {
             generators: [live, incremental],
             syncStatePublisher: subject.eraseToAnyPublisher()
         )
-        
+
         sut.observeSyncState()
 
         async let incrementalStarted: Void = waitForCall { resume in
             incremental.start_MockMethod = { resume() }
         }
-        
+
         // Ensure live does NOT start on this state
         live.start_MockMethod = {
             Issue.record("Live generator should not start during incrementalSyncing(.createPushChannel)")
@@ -99,7 +99,7 @@ struct GeneratorsDirectoryTests {
 
         // THEN
         #expect(incremental.start_Invocations.count == 1)
-        #expect(live.start_Invocations.count == 0)
+        #expect(live.start_Invocations.isEmpty)
     }
 
     @Test("liveSyncing(.ongoing) starts live generators (and not incremental ones)")
@@ -125,10 +125,13 @@ struct GeneratorsDirectoryTests {
 
         // THEN
         #expect(live.start_Invocations.count == 1)
-        #expect(incremental.start_Invocations.count == 0)
+        #expect(incremental.start_Invocations.isEmpty)
     }
 
-    @Test("suspended / liveSyncing(.finished) stops all generators", arguments: [SyncState.suspended, .liveSyncing(.finished)])
+    @Test(
+        "suspended / liveSyncing(.finished) stops all generators",
+        arguments: [SyncState.suspended, .liveSyncing(.finished)]
+    )
     func suspendedAndFinishedStopAllGenerators(state: SyncState) async {
         // GIVEN
         let sut = GeneratorsDirectory(

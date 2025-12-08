@@ -34,32 +34,32 @@ public protocol LiveGeneratorProtocol: GeneratorProtocol {}
 /// Object that holds on all generators of WorkItem for WorkAgent
 
 public final class GeneratorsDirectory {
-    
+
     private let generators: [any GeneratorProtocol]
     private let syncStatePublisher: AnyPublisher<SyncState, Never>
     private var cancellables: Set<AnyCancellable> = []
-    
+
     public init(generators: [any GeneratorProtocol], syncStatePublisher: AnyPublisher<SyncState, Never>) {
         self.generators = generators
         self.syncStatePublisher = syncStatePublisher
     }
-    
+
     public func observeSyncState() {
         syncStatePublisher.sink { [weak self] state in
             switch state {
             case .idle, .initialSyncing:
                 // make sure no generators are working here
                 self?.stopGenerators()
-                
+
             case .incrementalSyncing(.createPushChannel):
                 self?.startIncrementalGenerators()
-                
-            case .incrementalSyncing(_):
+
+            case .incrementalSyncing:
                 break // sync is ongoing, do nothing
 
             case .liveSyncing(.ongoing):
                 self?.startLiveGenerators()
-                
+
             case .suspended, .liveSyncing(.finished):
                 self?.stopGenerators()
             }
@@ -69,19 +69,19 @@ public final class GeneratorsDirectory {
     private func startIncrementalGenerators() {
         for generator in generators where generator is IncrementalGeneratorProtocol {
             Task {
-              await generator.start()
+                await generator.start()
             }
         }
     }
-    
+
     private func startLiveGenerators() {
         for generator in generators where generator is LiveGeneratorProtocol {
             Task {
-              await generator.start()
+                await generator.start()
             }
         }
     }
-    
+
     private func stopGenerators() {
         for generator in generators {
             generator.stop()
