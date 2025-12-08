@@ -126,7 +126,7 @@ private extension FilesView {
             }
         }
 
-        if !viewModel.isRecycleBin {
+        if !viewModel.isRecycleBin && viewModel.isFoldersEnabled {
             ToolbarItem(placement: .navigationBarTrailing) {
                 moreActionsButton
             }
