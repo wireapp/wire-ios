@@ -138,8 +138,14 @@ jobs:
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
         run: |
-          bundle exec fastlane run_uitests
-          ./scripts/zip_app_group.sh "com.wearezeta.zclient.alpha" "group.com.wearezeta.zclient.alpha" "wire-appgroup.zip"
+            set +e
+            bundle exec fastlane run_uitests
+            status=$?
+            set -e
+
+            ./scripts/zip_app_group.sh "com.wearezeta.zclient.alpha" "group.com.wearezeta.zclient.alpha" "wire-appgroup.zip"
+
+            exit $status
 
       - name: "Test all selected frameworks"
         if: ${{ inputs.test_dependencies || inputs.all }}
