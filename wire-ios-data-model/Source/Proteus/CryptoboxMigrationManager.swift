@@ -61,7 +61,7 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
 
     public func isMigrationNeeded(accountDirectory: URL) -> Bool {
         // disabling migration. This will be removed completely in https://wearezeta.atlassian.net/browse/WPB-22227
-        return false
+        false
     }
 
     public func performMigration(
