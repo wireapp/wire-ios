@@ -73,8 +73,9 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
            let mlsGroupID = conversation.mlsGroupID,
            conversation.isSelfAnActiveMember {
             // TODO: review skipping brokenGroupIDs
-            // there are 2 sources of brokenGroup the journal backed one (currently filled by mls reset groups when FF
-            // is disabled
+            // there are 2 sources of brokenGroup the journal backed one (currently
+            // 1. filled by mls reset groups when FF is disabled
+            // 2. repair out of sync conversation
             Task {
                 await generateItemForSubconversation(
                     parentID: mlsGroupID,

@@ -17,13 +17,17 @@
 //
 
 import Foundation
-import WireDataModel
+@preconcurrency import WireDataModel
 import WireLogging
 import WireNetwork
 
 struct CommitPendingProposalItem: WorkItem {
     private let repository: ConversationRepositoryProtocol
     private let mlsService: MLSServiceInterface
+
+    var description: String {
+        "CommitPendingProposalItem: \(id), mlsGroupID: \(groupID), conversationID: \(conversationID)"
+    }
 
     let id = UUID()
     var priority: WorkItemPriority {
