@@ -26,6 +26,7 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
     private let repository: ConversationRepositoryProtocol
     private let mlsService: MLSServiceInterface
     private var onCommitPendingProposals: (CommitPendingProposalItem) -> Void
+    
 
     init(
         repository: ConversationRepositoryProtocol,

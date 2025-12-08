@@ -91,4 +91,11 @@ class CommitPendingProposalItemTests {
         // Then
         #expect(mlsService.commitPendingProposalsIn_Invocations.isEmpty)
     }
+    
+    
+    @Test("It logs properly")
+    func loggingDescription() {
+        sut = makeProposalItem(timestamp: Date())
+        #expect("\(sut!)" == sut.description)
+    }
 }

@@ -21,7 +21,7 @@ import Foundation
 import WireLogging
 import WireNetwork
 
-struct CommitPendingProposalItem: WorkItem {
+struct CommitPendingProposalItem: WorkItem, CustomStringConvertible {
     private let repository: ConversationRepositoryProtocol
     private let mlsService: MLSServiceInterface
 
