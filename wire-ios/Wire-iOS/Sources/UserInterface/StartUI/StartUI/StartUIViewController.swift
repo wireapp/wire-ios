@@ -118,12 +118,6 @@ final class StartUIViewController: UIViewController {
     /// - the team's default protocol is Proteus the team has been using bots
     /// - the team's default protocol is MLS and the `apps` feature flag is enabled.
     var showsGroupSelector: Bool {
-        guard DeveloperFlag.considerAppsFeatureFlag.isOn else {
-            return SearchGroup.all.count > 1 &&
-                userSession.selfUser.canSeeServices &&
-                userSession.defaultProtocol != .mls
-        }
-
         guard SearchGroup.all.count > 1, userSession.selfUser.canSeeServices else { return false }
 
         switch userSession.defaultProtocol {
