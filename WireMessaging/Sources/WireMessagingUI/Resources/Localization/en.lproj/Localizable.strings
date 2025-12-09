@@ -209,6 +209,9 @@
 
 // MARK: - Share Link Expiration View
 "conversation.wireCells.shareLink.expiration.title" = "Expiration";
+"conversation.wireCells.shareLink.expiration.addExpirationToggle" = "Add expiration";
+"conversation.wireCells.shareLink.expiration.description" = "The link expires automatically after the set date and time. People can't access the content anymore.";
+"conversation.wireCells.shareLink.expiration.datePickerTitle" = "Expires";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "File not available";

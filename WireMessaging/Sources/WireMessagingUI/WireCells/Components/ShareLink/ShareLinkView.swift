@@ -55,7 +55,12 @@ struct ShareLinkView: View {
                             }
                         )
                     case .expiration:
-                        Text("TODO: Expiration view")
+                        ExpirationDatePickerView(
+                            expirationDate: nil, // TODO: Use expirationDate if exist, nil otherwise.
+                            onSave: { expirationDate in
+                                //TODO: apply the new expirationDate. If it is nil, then the expirationDate was disabled.
+                            }
+                        )
                     }
                 }
                 .background {
