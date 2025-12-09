@@ -1245,21 +1245,6 @@ extension ZMUserSession: SyncAgentDelegate {
                 context: notificationContext
             ).post()
         }
-
-        syncContext.perform { [weak self] in
-            guard let self else { return }
-            let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
-
-            if selfClient?.hasRegisteredMLSClient == true {
-                Task {
-                    do {
-                        try await self.mlsService.repairOutOfSyncConversations()
-                    } catch {
-                        WireLogger.mls.error("Repairing out of sync conversations failed: \(error)")
-                    }
-                }
-            }
-        }
     }
 
     func didStartIncrementalSync() {
