@@ -224,8 +224,6 @@ public protocol UserSession: AnyObject {
 
     var channelsFeature: Feature.Channels { get }
 
-    var isChatBubbleSimpleEnabled: Bool { get }
-
     var isWireCellsEnabled: Bool { get }
 
     var isEnterpriseUser: Bool { get }

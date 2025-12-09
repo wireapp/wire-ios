@@ -83,7 +83,6 @@ public final class ZMUserSession: NSObject {
     private(set) var userId: UUID
     let proteusService: ProteusServiceInterface
     private(set) var mlsService: MLSServiceInterface
-    private(set) var proteusProvider: ProteusProviding!
     let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     public lazy var featureRepository = LegacyFeatureRepository(context: syncContext)
@@ -167,15 +166,6 @@ public final class ZMUserSession: NSObject {
     public var channelsFeature: Feature.Channels {
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchChannels()
-    }
-
-    public var chatBubbleSimpleFeature: Feature.ChatBubblesSimple {
-        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
-        return featureRepository.fetchChatBubblesSimple()
-    }
-
-    public var isChatBubbleSimpleEnabled: Bool {
-        chatBubbleSimpleFeature.status == .enabled || DeveloperFlag.chatBubblesSimple.isOn
     }
 
     public var wireCellsFeature: Feature.Cells {
@@ -311,7 +301,7 @@ public final class ZMUserSession: NSObject {
         GetUserClientFingerprintUseCase(
             syncContext: coreDataStack.syncContext,
             transportSession: transportSession,
-            proteusProvider: proteusProvider,
+            proteusService: proteusService,
             metadata: resolvedBackendMetadata
         )
     }
@@ -561,12 +551,6 @@ public final class ZMUserSession: NSObject {
             localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
             configureTransportSession()
 
-            // need to be before we create strategies since it is passed
-            proteusProvider = ProteusProvider(
-                proteusService: proteusService,
-                keyStore: syncManagedObjectContext.zm_cryptKeyStore
-            )
-
             self.strategyDirectory = strategyDirectory ?? createStrategyDirectory()
             legacyUpdateEventProcessor = eventProcessor ?? createUpdateEventProcessor()
             self.syncStrategy = syncStrategy ?? createSyncStrategy()
@@ -779,7 +763,7 @@ public final class ZMUserSession: NSObject {
             localNotificationDispatcher: localNotificationDispatcher!,
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
-            proteusProvider: proteusProvider,
+            proteusService: proteusService,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
             pullSelfUserClientsFactory: { [weak self] context in

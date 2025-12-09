@@ -20,7 +20,7 @@ import Foundation
 
 public extension UserClient {
     override var description: String {
-        "Client: \(String(describing: sessionIdentifier?.rawValue)), user name: \(String(describing: user?.name)) email: \(String(describing: user?.emailAddress)) platform: \(String(describing: deviceClass)), label: \(String(describing: label)), model: \(String(describing: model))"
+        "Client: \(String(describing: proteusSessionID?.rawValue)), user name: \(String(describing: user?.name)) email: \(String(describing: user?.emailAddress)) platform: \(String(describing: deviceClass)), label: \(String(describing: label)), model: \(String(describing: model))"
     }
 
 }

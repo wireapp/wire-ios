@@ -31,7 +31,8 @@ final class EventProcessorTests: MessagingTest {
     var mockStrategyDirectory: MockStrategyDirectory!
     var mockEventsConsumers: [MockEventConsumer]!
     var mockEventAsyncConsumers: [MockEventAsyncConsumer]!
-    var earService: MockEARServiceInterface!
+    var mockEarService: MockEARServiceInterface!
+    var mockEventDecoder: MockEventDecoderProtocol!
 
     override func setUp() {
         super.setUp()
@@ -48,18 +49,19 @@ final class EventProcessorTests: MessagingTest {
 
         eventProcessingTracker = EventProcessingTracker()
 
-        earService = MockEARServiceInterface()
-        earService.fetchPublicKeys_MockError = MockError()
-        earService.fetchPrivateKeysIncludingPrimary_MockError = MockError()
+        mockEarService = MockEARServiceInterface()
+        mockEarService.fetchPublicKeys_MockError = MockError()
+        mockEarService.fetchPrivateKeysIncludingPrimary_MockError = MockError()
+
+        mockEventDecoder = MockEventDecoderProtocol()
 
         sut = EventProcessor(
             storeProvider: coreDataStack,
+            eventDecoder: mockEventDecoder,
             eventProcessingTracker: eventProcessingTracker,
-            earService: earService,
-            lastEventIDRepository: lastEventIDRepository,
+            earService: mockEarService,
             strategyDirectory: mockStrategyDirectory,
             additionalEventConsumers: [],
-            isFederationEnabled: false
         )
     }
 
@@ -68,7 +70,7 @@ final class EventProcessorTests: MessagingTest {
         mockEventsConsumers = nil
         mockEventAsyncConsumers = nil
         eventProcessingTracker = nil
-        earService = nil
+        mockEarService = nil
         sut = nil
 
         super.tearDown()
@@ -113,6 +115,10 @@ final class EventProcessorTests: MessagingTest {
     func testThatEventsAreForwardedToAllEventConsumers_WhenProcessed() async throws {
         // given
         let events = createSampleEvents()
+        mockEventDecoder.decryptAndStoreEventsPublicKeys_MockValue = events
+        mockEventDecoder.processStoredEventsWithCallEventsOnly_MockMethod = { _, _, processBlock in
+            await processBlock(events)
+        }
 
         // when
         try await sut.processEvents(events)
@@ -159,12 +165,14 @@ final class EventProcessorTests: MessagingTest {
             authenticationContext: MockAuthenticationContextProtocol()
         )
         earService.setInitialEARFlagValue(true)
-        try syncMOC.performAndWait {
+
+        try await syncMOC.perform { [syncMOC] in
             try earService.enableEncryptionAtRest(
                 context: syncMOC,
                 skipMigration: true
             )
         }
+
         earService.lockDatabase()
 
         let events = createSampleEvents()
@@ -185,6 +193,10 @@ final class EventProcessorTests: MessagingTest {
         let events = createSampleEvents()
         await sut.bufferEvents(events)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        mockEventDecoder.decryptAndStoreEventsPublicKeys_MockValue = events
+        mockEventDecoder.processStoredEventsWithCallEventsOnly_MockMethod = { _, _, processBlock in
+            await processBlock(events)
+        }
 
         // when
         try await sut.processBufferedEvents()
@@ -223,23 +235,13 @@ final class EventProcessorTests: MessagingTest {
     func testItProcessesEventsOnlyOnce() async throws {
         // Given
         let events = createSampleEvents()
-        let eventDecoder = MockEventDecoderProtocol()
 
         // Simulate trying to process same events multiple times.
-        eventDecoder.processStoredEventsWithCallEventsOnly_MockMethod = { _, _, processBlock in
+        mockEventDecoder.processStoredEventsWithCallEventsOnly_MockMethod = { _, _, processBlock in
             await processBlock(events)
             await processBlock(events)
             await processBlock(events)
         }
-
-        sut = EventProcessor(
-            storeProvider: coreDataStack,
-            eventDecoder: eventDecoder,
-            eventProcessingTracker: eventProcessingTracker,
-            earService: earService,
-            strategyDirectory: mockStrategyDirectory,
-            additionalEventConsumers: []
-        )
 
         // When
         await sut.processStoredUpdateEvents()

@@ -3796,39 +3796,6 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         mock(consumableNotifications)
     }
 
-    // MARK: - fetchChatBubblesSimple
-
-    public var fetchChatBubblesSimple_Invocations: [Void] = []
-    public var fetchChatBubblesSimple_MockMethod: (() -> Feature.ChatBubblesSimple)?
-    public var fetchChatBubblesSimple_MockValue: Feature.ChatBubblesSimple?
-
-    public func fetchChatBubblesSimple() -> Feature.ChatBubblesSimple {
-        fetchChatBubblesSimple_Invocations.append(())
-
-        if let mock = fetchChatBubblesSimple_MockMethod {
-            return mock()
-        } else if let mock = fetchChatBubblesSimple_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchChatBubblesSimple`")
-        }
-    }
-
-    // MARK: - storeChatBubblesSimple
-
-    public var storeChatBubblesSimple_Invocations: [Feature.ChatBubblesSimple] = []
-    public var storeChatBubblesSimple_MockMethod: ((Feature.ChatBubblesSimple) -> Void)?
-
-    public func storeChatBubblesSimple(_ chatBubblesSimple: Feature.ChatBubblesSimple) {
-        storeChatBubblesSimple_Invocations.append(chatBubblesSimple)
-
-        guard let mock = storeChatBubblesSimple_MockMethod else {
-            fatalError("no mock for `storeChatBubblesSimple`")
-        }
-
-        mock(chatBubblesSimple)
-    }
-
     // MARK: - fetchCells
 
     public var fetchCells_Invocations: [Void] = []
