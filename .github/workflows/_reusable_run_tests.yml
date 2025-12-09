@@ -138,14 +138,7 @@ jobs:
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
         run: |
-            set +e
-            bundle exec fastlane run_uitests
-            status=$?
-            set -e
-
-            ./scripts/zip_app_group.sh "com.wearezeta.zclient.alpha" "group.com.wearezeta.zclient.alpha" "wire-appgroup.zip"
-
-            exit $status
+          bundle exec fastlane run_uitests
 
       - name: "Test all selected frameworks"
         if: ${{ inputs.test_dependencies || inputs.all }}
@@ -200,7 +193,6 @@ jobs:
           path: |
             build/reports/*.junit
             artifacts/**/*.junit
-            wire-appgroup.zip
 
       - name: Prepare visual representation of test results
         uses: EnricoMi/publish-unit-test-result-action/macos@v2
