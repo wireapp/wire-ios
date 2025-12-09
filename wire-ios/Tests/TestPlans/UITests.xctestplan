@@ -61,8 +61,6 @@
   "testTargets" : [
     {
       "skippedTests" : [
-        "BackupRestoreHistoryTests\/test_CreateBackupAndRestoreHistory()",
-        "TeamManageTests\/test_GroupAdmin_RemoveAndAddParticipantFromGroup()",
         "WireUITestCase"
       ],
       "target" : {
