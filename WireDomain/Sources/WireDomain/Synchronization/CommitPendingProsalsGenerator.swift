@@ -25,13 +25,14 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
     private let fetchedResultsController: NSFetchedResultsController<ZMConversation>
     private let repository: ConversationRepositoryProtocol
     private let mlsService: MLSServiceInterface
+    private let isMLSGroupBroken: (MLSGroupID) -> Bool
     private var onCommitPendingProposals: (CommitPendingProposalItem) -> Void
-    
 
     init(
         repository: ConversationRepositoryProtocol,
         mlsService: MLSServiceInterface,
         context: NSManagedObjectContext,
+        isMLSGroupBroken: @escaping (MLSGroupID) -> Bool,
         onCommitPendingProposals: @escaping (CommitPendingProposalItem) -> Void
     ) {
         let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
@@ -47,6 +48,7 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
         self.onCommitPendingProposals = onCommitPendingProposals
         self.repository = repository
         self.mlsService = mlsService
+        self.isMLSGroupBroken = isMLSGroupBroken
         super.init()
     }
 
@@ -72,11 +74,9 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
         if let id = conversation.qualifiedID,
            let timestamp = conversation.commitPendingProposalDate,
            let mlsGroupID = conversation.mlsGroupID,
-           conversation.isSelfAnActiveMember {
-            // TODO: review skipping brokenGroupIDs
-            // there are 2 sources of brokenGroup the journal backed one (currently
-            // 1. filled by mls reset groups when FF is disabled
-            // 2. repair out of sync conversation
+           conversation.isSelfAnActiveMember,
+           !isMLSGroupBroken(mlsGroupID) {
+
             Task {
                 await generateItemForSubconversation(
                     parentID: mlsGroupID,

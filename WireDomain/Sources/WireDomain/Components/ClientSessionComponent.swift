@@ -821,6 +821,9 @@ public final class ClientSessionComponent {
         repository: conversationRepository,
         mlsService: mlsService,
         context: syncContext,
+        isMLSGroupBroken: { [weak self] groupID in
+            self?.isMLSGroupBroken(groupID: groupID) == true
+        },
         onCommitPendingProposals: { [weak self] workItem in
 
             self?.workAgent.submitItem(workItem)
@@ -834,4 +837,9 @@ public final class ClientSessionComponent {
         ],
         syncStatePublisher: syncStateSubject.eraseToAnyPublisher()
     )
+
+    private func isMLSGroupBroken(groupID: MLSGroupID) -> Bool {
+        let brokenGroupIds = journal[.brokenMLSGroupIDs]
+        return brokenGroupIds.contains(groupID.description)
+    }
 }

@@ -31,6 +31,7 @@ class CommitPendingProposalsGeneratorTests {
     let coreDataStack: CoreDataStack
     var commitPendingProposalItemClosure: ((CommitPendingProposalItem) -> Void)?
     var mockMLSService: MockMLSServiceInterface!
+    var isMLSGroupBroken: (MLSGroupID) -> Bool = { _ in false }
 
     init() async throws {
         self.repository = MockConversationRepositoryProtocol()
@@ -42,6 +43,9 @@ class CommitPendingProposalsGeneratorTests {
             repository: repository,
             mlsService: mockMLSService,
             context: coreDataStack.syncContext,
+            isMLSGroupBroken: {
+                self.isMLSGroupBroken($0)
+            },
             onCommitPendingProposals: { item in
                 self.commitPendingProposalItemClosure?(item)
             }
@@ -52,17 +56,11 @@ class CommitPendingProposalsGeneratorTests {
     func startGeneratesItem() async throws {
         // GIVEN
         let conversationID = QualifiedID.random()
-        await coreDataStack.syncContext.perform { [modelHelper, context = coreDataStack.syncContext] in
-            let selfUser = ZMUser.selfUser(in: context)
-            let conversation = modelHelper.createMLSConversation(
-                id: conversationID.uuid,
-                domain: conversationID.domain,
-                mlsGroupID: .random(),
-                with: [selfUser],
-                in: context
-            )
-            conversation.commitPendingProposalDate = Date()
-        }
+        await createPendingMLSConversation(
+            id: conversationID,
+            proposalDate: Date()
+        )
+
         var items = [CommitPendingProposalItem]()
         commitPendingProposalItemClosure = { item in
             items.append(item)
@@ -82,16 +80,12 @@ class CommitPendingProposalsGeneratorTests {
                 confirm()
             }
 
-            await coreDataStack.syncContext.perform { [modelHelper, context = coreDataStack.syncContext] in
-                let conversation = modelHelper.createMLSConversation(
-                    id: newConversationID.uuid,
-                    domain: newConversationID.domain,
-                    in: context
-                )
-                conversation.commitPendingProposalDate = Date()
-                context.saveOrRollback()
-            }
-            try await Task.sleep(for: .seconds(1))
+            await self.createPendingMLSConversation(
+                id: newConversationID,
+                proposalDate: Date()
+            )
+
+            try await Task.sleep(for: .seconds(2))
         }
 
         // THEN
@@ -120,5 +114,44 @@ class CommitPendingProposalsGeneratorTests {
 
         // THEN
         #expect(items.isEmpty)
+    }
+
+    @Test("It does not generate an item when mls group is broken")
+    func startDoesNotGenerateItemWhenBrokenMLSGroup() async throws {
+        // GIVEN
+        var items = [CommitPendingProposalItem]()
+        commitPendingProposalItemClosure = { item in
+            items.append(item)
+        }
+        isMLSGroupBroken = { _ in
+
+            true
+        }
+
+        let conversationID = QualifiedID.random()
+        await createPendingMLSConversation(
+            id: conversationID,
+            proposalDate: Date()
+        )
+
+        // WHEN
+        await sut.start()
+
+        // THEN
+        #expect(items.isEmpty)
+    }
+
+    private func createPendingMLSConversation(id: QualifiedID, proposalDate: Date) async {
+        _ = await coreDataStack.syncContext.perform { [context = coreDataStack.syncContext, modelHelper] in
+            let selfUser = ZMUser.selfUser(in: context)
+            let conversation = modelHelper.createMLSConversation(
+                id: id.uuid,
+                domain: id.domain,
+                mlsGroupID: .random(),
+                with: [selfUser],
+                in: context
+            )
+            conversation.commitPendingProposalDate = Date()
+        }
     }
 }
