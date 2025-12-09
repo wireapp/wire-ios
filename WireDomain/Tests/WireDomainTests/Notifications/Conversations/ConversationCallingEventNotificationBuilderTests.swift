@@ -690,7 +690,6 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
         defaults.set(true, forKey: "isAVSReady")
         defaults.set(true, forKey: "isCallKitAvailable")
-        defaults.set([Scaffolding.accountID.uuidString], forKey: "loadedUserSessions")
 
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)

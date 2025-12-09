@@ -354,10 +354,8 @@ extension NotificationSession: PushNotificationStrategyDelegate {
             return nil
         }
 
-        guard VoIPPushHelper.isUserSessionLoaded(accountID: accountIdentifier) else {
-            WireLogger.calling.warn("should not handle call event: user session is not loaded", attributes: .legacyNSE)
-            return nil
-        }
+        // Note: We don't check if the user session is loaded because sessions are loaded on-demand when needed.
+        // This allows CallKit notifications to work for inactive accounts in multi-account scenarios.
 
         let handle = "\(accountIdentifier.transportString())+\(conversationID.transportString())"
         let wasCallHandleReported = VoIPPushHelper.knownCallHandles.contains(handle)
