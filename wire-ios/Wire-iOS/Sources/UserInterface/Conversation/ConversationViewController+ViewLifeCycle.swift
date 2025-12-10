@@ -48,7 +48,7 @@ extension ConversationViewController {
     private func notifyConversationDidBecomeVisible() {
         NotificationCenter.default.post(
             name: .conversationDidBecomeVisible,
-            object: conversation
+            object: nil
         )
     }
 
