@@ -266,6 +266,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
         let callingTestUsecases = getCallingTestUseCases()
+        defaults.set(false, forKey: "isCallKitAvailable")
 
         for callingTestUsecase in callingTestUsecases {
             var calling = Calling()
@@ -309,6 +310,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
         let callingTestUsecases = getCallingTestUseCases()
+        defaults.set(false, forKey: "isCallKitAvailable")
 
         for callingTestUsecase in callingTestUsecases {
             var calling = Calling()
@@ -353,6 +355,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
         let callingTestUsecases = getCallingTestUseCases()
+        defaults.set(false, forKey: "isCallKitAvailable")
 
         for callingTestUsecase in callingTestUsecases {
             var calling = Calling()
