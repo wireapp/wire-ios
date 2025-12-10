@@ -19,21 +19,32 @@
 import UIKit
 import WireMainNavigationUI
 import WireSyncEngine
+import WireMessagingDomain
 
 final class CreateGroupConversationViewControllerBuilder: CreateGroupConversationViewControllerBuilderProtocol {
 
     let userSession: UserSession
+    let conversationCreationRepository: ConversationCreationRepositoryProtocol
     weak var delegate: ConversationCreationControllerDelegate?
 
-    init(userSession: UserSession) {
+    init(
+        userSession: UserSession,
+        conversationCreationRepository: ConversationCreationRepositoryProtocol
+    ) {
         self.userSession = userSession
+        self.conversationCreationRepository = conversationCreationRepository
     }
 
     @MainActor
     func build() async -> UIViewController {
-        let viewController = await ConversationCreationController(
+        let featureConfigRepository = userSession.clientSessionComponent?.featureConfigRepository
+        let isAppsFeatureEnabled = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
+        let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+        let viewController = ConversationCreationController(
             preSelectedParticipants: nil,
-            userSession: userSession
+            userSession: userSession,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable
         )
         viewController.delegate = delegate
         return viewController

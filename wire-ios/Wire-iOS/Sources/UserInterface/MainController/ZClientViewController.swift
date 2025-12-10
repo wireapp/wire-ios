@@ -148,13 +148,12 @@ final class ZClientViewController: UIViewController {
         channelConversationFormFactory: channelConversationFormFactory,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
         featureConfigRepository: userSession.clientSessionComponent!.featureConfigRepository,
-        conversationCreationRepository: ConversationCreationRepository(
-            searchUsersUseCase: { [weak userSession] in userSession?.makeSearchUsersUseCase() }
-        )
+        conversationCreationRepository: conversationCreationRepository
     )
 
     private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(
-        userSession: userSession
+        userSession: userSession,
+        conversationCreationRepository: conversationCreationRepository
     )
 
     private lazy var folderPickerViewControllerBuilder = FolderPickerViewControllerBuilder(
@@ -162,6 +161,10 @@ final class ZClientViewController: UIViewController {
         conversationFilter: { [weak self] in
             self?.conversationFilter()
         }
+    )
+
+    private(set) lazy var conversationCreationRepository = ConversationCreationRepository(
+        searchUsersUseCase: { [weak userSession] in userSession?.makeSearchUsersUseCase() }
     )
 
     private(set) lazy var conversationListViewController = ConversationListViewController(
@@ -789,7 +792,8 @@ final class ZClientViewController: UIViewController {
                 context: .deviceList,
                 userSession: userSession,
                 mainCoordinator: .init(mainCoordinator: mainCoordinator),
-                selfProfileUIBuilder: selfProfileViewControllerBuilder
+                selfProfileUIBuilder: selfProfileViewControllerBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
 
             if let conversationViewController = (conversationRootViewController as? ConversationRootViewController)?

@@ -22,6 +22,7 @@ import WireDesign
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
+import WireMessagingDomain
 
 final class SearchUserViewController: UIViewController {
 
@@ -34,6 +35,7 @@ final class SearchUserViewController: UIViewController {
     private let userSession: UserSession
     private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
@@ -47,13 +49,15 @@ final class SearchUserViewController: UIViewController {
         profileViewControllerDelegate: ProfileViewControllerDelegate?,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.qualifiedID = qualifiedID
         self.profileViewControllerDelegate = profileViewControllerDelegate
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
 
         super.init(nibName: nil, bundle: nil)
 
@@ -126,7 +130,8 @@ final class SearchUserViewController: UIViewController {
                 context: .profileViewer,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             profileViewController.delegate = profileViewControllerDelegate
 

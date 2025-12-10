@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 import WireMainNavigationUI
 import WireSyncEngine
+import WireMessagingDomain
 
 final class ProfilePresenter: NSObject {
 
@@ -28,6 +29,7 @@ final class ProfilePresenter: NSObject {
 
     let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    private let conversationCreationRepository: ConversationCreationRepositoryProtocol
     private var presentedFrame: CGRect = .zero
     private weak var viewToPresentOn: UIView?
     private weak var controllerToPresentOn: UIViewController?
@@ -35,10 +37,12 @@ final class ProfilePresenter: NSObject {
 
     init(
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: any SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
         super.init()
 
         NotificationCenter.default.addObserver(
@@ -93,7 +97,8 @@ final class ProfilePresenter: NSObject {
             context: .search,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         profileViewController.delegate = self
         let navigationController = profileViewController.wrapInNavigationController()

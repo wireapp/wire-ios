@@ -31,9 +31,9 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
     let channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory
 
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
 
     let featureConfigRepository: FeatureConfigRepositoryProtocol
-    let conversationCreationRepository: ConversationCreationRepositoryProtocol
 
     weak var delegate: StartUIDelegate?
 
@@ -66,7 +66,8 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
             mainCoordinator: mainCoordinator,
             createGroupConversationUIBuilder: createGroupConversationUIBuilder,
             channelConversationFormFactory: channelConversationFormFactory,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         rootViewController.delegate = delegate
         return rootViewController

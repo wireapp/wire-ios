@@ -21,6 +21,7 @@ import WireDataModel
 import WireDesign
 import WireMainNavigationUI
 import WireSyncEngine
+import WireMessagingDomain
 
 /// A view controller wrapping the message details.
 
@@ -92,14 +93,16 @@ final class MessageDetailsViewController: UIViewController {
         message: ZMConversationMessage,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.init(
             message: message,
             preferredDisplayMode: .receipts,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 
@@ -117,7 +120,8 @@ final class MessageDetailsViewController: UIViewController {
         preferredDisplayMode: MessageDetailsDisplayMode,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.message = message
         self.dataSource = MessageDetailsDataSource(message: message)
@@ -131,14 +135,16 @@ final class MessageDetailsViewController: UIViewController {
                 conversation: dataSource.conversation,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             let reactionsViewController = MessageDetailsContentViewController(
                 contentType: .reactions,
                 conversation: dataSource.conversation,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             self.viewControllers = .combinedView(
                 readReceipts: readReceiptsViewController,
@@ -151,7 +157,8 @@ final class MessageDetailsViewController: UIViewController {
                 conversation: dataSource.conversation,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             self.viewControllers = .singleView(reactionsViewController)
 
@@ -161,7 +168,8 @@ final class MessageDetailsViewController: UIViewController {
                 conversation: dataSource.conversation,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             self.viewControllers = .singleView(readReceiptsViewController)
         }

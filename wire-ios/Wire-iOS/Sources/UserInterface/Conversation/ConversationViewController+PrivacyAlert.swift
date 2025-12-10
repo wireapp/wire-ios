@@ -173,7 +173,8 @@ extension ConversationViewController {
                 context: .deviceList,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             profileViewController.delegate = self
             let navigationController = profileViewController.wrapInNavigationController()

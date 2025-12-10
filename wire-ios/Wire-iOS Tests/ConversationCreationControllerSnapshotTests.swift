@@ -98,9 +98,10 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
             )
         )
 
-        sut = await ConversationCreationController(
+        sut = ConversationCreationController(
             preSelectedParticipants: nil,
-            userSession: mockUserSession
+            userSession: mockUserSession,
+            isAppsFeatureEnabled: false
         )
     }
 }
