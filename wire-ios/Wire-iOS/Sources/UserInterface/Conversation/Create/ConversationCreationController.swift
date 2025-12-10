@@ -68,9 +68,10 @@ final class ConversationCreationController: UIViewController {
     private lazy var errorSection = ConversationCreateErrorSectionController()
 
     private var optionsSections: [ConversationCreateSectionController] {
+        print("values.encryptionProtocol", values.encryptionProtocol)
         let sections = [
             guestsSection,
-            areLegacyBotsAvailable ? appsSection : nil,
+            (values.encryptionProtocol == .mls || areLegacyBotsAvailable) ? appsSection : nil,
             // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
             values.encryptionProtocol != .mls ? receiptsSection : nil,
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil,

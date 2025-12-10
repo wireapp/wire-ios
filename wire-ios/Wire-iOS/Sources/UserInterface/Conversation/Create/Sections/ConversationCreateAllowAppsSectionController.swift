@@ -34,12 +34,11 @@ final class ConversationCreateAllowAppsSectionController: ConversationCreateSect
         footerText = values.isAppsFeatureEnabled ? L10n.Localizable.Conversation.Create.Apps.subtitle : ""
     }
 
-}
-
-extension ConversationCreateAllowAppsSectionController {
-
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        values.isAppsFeatureEnabled ? 1 : 2
+
+        return values.isAppsFeatureEnabled ? 1 : 2
+        fatalError()
+        // TODO: check if default protocol is proteus and the team has whitelisted bots
     }
 
     override func collectionView(
