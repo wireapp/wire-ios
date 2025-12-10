@@ -107,6 +107,7 @@ final class ZClientViewController: UIViewController {
     private lazy var conversationViewControllerBuilder = ConversationViewControllerBuilder(
         userSession: userSession,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
+        conversationCreationRepository: conversationCreationRepository,
         mediaPlaybackManager: mediaPlaybackManager,
         wireMessagingFactory: wireMessagingFactory
     )
@@ -176,6 +177,7 @@ final class ZClientViewController: UIViewController {
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
         connectViewControllerBuilder: connectBuilder,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+        conversationCreationRepository: conversationCreationRepository,
         createGroupConversationViewControllerBuilder: createGroupConversationBuilder,
         folderPickerViewControllerBuilder: folderPickerViewControllerBuilder,
         getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
@@ -544,6 +546,7 @@ final class ZClientViewController: UIViewController {
             userSession: userSession,
             mainCoordinator: .init(mainCoordinator: mainCoordinator),
             selfProfileUIBuilder: selfProfileViewControllerBuilder,
+            conversationCreationRepository: conversationCreationRepository,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navController = UINavigationController(rootViewController: controller)

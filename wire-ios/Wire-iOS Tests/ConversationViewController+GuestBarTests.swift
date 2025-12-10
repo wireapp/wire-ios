@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
 
@@ -40,6 +41,7 @@ final class ConversationViewControllerGuestBarTests: XCTestCase, CoreDataFixture
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             mediaPlaybackManager: nil,
             classificationProvider: nil,
             networkStatusObservable: MockNetworkStatusObservable(),

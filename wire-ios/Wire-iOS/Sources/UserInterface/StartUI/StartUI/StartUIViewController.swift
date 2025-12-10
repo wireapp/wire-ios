@@ -88,7 +88,8 @@ final class StartUIViewController: UIViewController {
 
     let isAppsFeatureEnabled: Bool
 
-    /// Teams cannot add old-style services (bots) anymore, but teams which have been using bots in the past, they should still be able to start 1:1 conversations with bots. (only if the team's default protocol is Proteus)
+    /// Teams cannot add old-style services (bots) anymore, but teams which have been using bots in the past, they
+    /// should still be able to start 1:1 conversations with bots. (only if the team's default protocol is Proteus)
     let areLegacyBotsAvailable: Bool
 
     let userSession: UserSession

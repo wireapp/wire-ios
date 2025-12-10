@@ -182,6 +182,7 @@ final class ConversationViewController: UIViewController {
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository,
                 wireMessagingFactory: wireMessagingFactory
             )
         }
@@ -861,7 +862,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                 conversation: conversation,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             collections.delegate = self
 

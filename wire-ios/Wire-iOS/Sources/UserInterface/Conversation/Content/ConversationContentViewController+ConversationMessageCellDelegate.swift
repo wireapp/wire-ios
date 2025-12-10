@@ -100,7 +100,8 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
             preferredDisplayMode: preferredDisplayMode,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         let navigationController = UINavigationController(rootViewController: messageDetailsViewController)
         navigationController.modalPresentationStyle = .formSheet

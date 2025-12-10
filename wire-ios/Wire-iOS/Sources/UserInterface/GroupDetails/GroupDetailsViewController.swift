@@ -398,7 +398,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
 
         detailsViewController.delegate = self

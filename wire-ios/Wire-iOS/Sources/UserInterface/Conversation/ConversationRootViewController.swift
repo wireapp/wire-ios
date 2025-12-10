@@ -19,9 +19,9 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireMessagingDomain
 import WireMainNavigationUI
 import WireMessagingAssembly
+import WireMessagingDomain
 import WireSyncEngine
 
 final class ConversationRootViewController: UIViewController {

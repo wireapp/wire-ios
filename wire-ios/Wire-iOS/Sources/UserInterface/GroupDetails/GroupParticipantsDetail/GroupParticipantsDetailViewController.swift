@@ -19,8 +19,8 @@
 import UIKit
 import WireDataModel
 import WireDesign
-import WireMessagingDomain
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 final class GroupParticipantsDetailViewController: UIViewController {

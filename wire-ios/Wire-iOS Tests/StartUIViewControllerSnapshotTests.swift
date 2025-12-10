@@ -18,6 +18,7 @@
 
 import WireDesign
 import WireMessagingAssembly
+import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
 
@@ -70,7 +71,8 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
             mainCoordinator: mockMainCoordinator,
             createGroupConversationUIBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),
             channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory(),
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
 

@@ -19,8 +19,8 @@
 import UIKit
 import WireDataModel
 import WireMainNavigationUI
-import WireSyncEngine
 import WireMessagingDomain
+import WireSyncEngine
 
 final class ProfilePresenter: NSObject {
 

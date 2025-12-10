@@ -18,8 +18,8 @@
 
 import UIKit
 import WireMainNavigationUI
-import WireSyncEngine
 import WireMessagingDomain
+import WireSyncEngine
 
 final class CreateGroupConversationViewControllerBuilder: CreateGroupConversationViewControllerBuilderProtocol {
 

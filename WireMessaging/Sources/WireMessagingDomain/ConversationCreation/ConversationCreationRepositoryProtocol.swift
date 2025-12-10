@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// sourcery: AutoMockable
 public protocol ConversationCreationRepositoryProtocol {
 
     /// Legacy services (bots) are deprecated and cannot be set up any more. However, teams who have bots already set up

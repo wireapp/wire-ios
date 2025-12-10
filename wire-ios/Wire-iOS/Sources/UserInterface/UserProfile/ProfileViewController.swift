@@ -22,8 +22,8 @@ import WireDesign
 import WireLocators
 import WireLogging
 import WireMainNavigationUI
-import WireSyncEngine
 import WireMessagingDomain
+import WireSyncEngine
 
 enum ProfileViewControllerTabBarIndex: Int {
     case details = 0
@@ -433,7 +433,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             user: user,
             userSession: viewModel.userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 

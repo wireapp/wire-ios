@@ -20,8 +20,8 @@ import UIKit
 import WireDataModel
 import WireDesign
 import WireMainNavigationUI
-import WireSyncEngine
 import WireMessagingDomain
+import WireSyncEngine
 
 /// A view controller wrapping the message details.
 

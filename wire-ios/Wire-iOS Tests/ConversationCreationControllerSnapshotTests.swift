@@ -101,7 +101,8 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
         sut = ConversationCreationController(
             preSelectedParticipants: nil,
             userSession: mockUserSession,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            areLegacyBotsAvailable: false
         )
     }
 }
