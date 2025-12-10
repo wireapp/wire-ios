@@ -145,4 +145,28 @@ class ConversationUpdatesGeneratorTests {
 
         #expect(updateConversationItems.isEmpty)
     }
+
+    @Test("It does not generate an item when a conversation is deleted")
+    func deletedConversation() async throws {
+        // GIVEN
+        let conversationID = QualifiedID.random()
+        await coreDataStack.syncContext.perform { [modelHelper, context = coreDataStack.syncContext] in
+            let conversation = modelHelper.createGroupConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain,
+                in: context
+            )
+            conversation.needsToBeUpdatedFromBackend = true
+            conversation.isDeletedRemotely = true
+        }
+        var updateConversationItems = [UpdateConversationItem]()
+        updateConversationItemClosure = { item in
+            updateConversationItems.append(item)
+        }
+        // WHEN
+        await sut.start()
+
+        // THEN
+        #expect(updateConversationItems.isEmpty)
+    }
 }

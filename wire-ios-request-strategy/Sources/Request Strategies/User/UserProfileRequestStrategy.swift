@@ -174,7 +174,7 @@ extension UserProfileRequestStrategy: ZMContextChangeTracker {
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        ZMUser.sortedFetchRequest(with: ZMUser.predicateForNeedingToBeUpdatedFromBackend()!)
+        ZMUser.sortedFetchRequest(with: ZMUser.predicateForNeedingToBeUpdatedFromBackend())
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
