@@ -20,13 +20,13 @@ import WireFoundation
 import XCTest
 
 final class AccountManagementTests: WireUITestCase {
-    
+
     var teamMember: UserInfo!
-    
+
     @MainActor
     func test_Account_Management_Lock_With_Passcode() async throws {
         let passcode = UserGenerator.generateAppPasscode()
-        
+
         do {
             let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
             let ownerAccessToken = try await userHelper.fetchAccessToken(
@@ -34,7 +34,7 @@ final class AccountManagementTests: WireUITestCase {
                 password: teamOwner.password
             )
             let teamID = try XCTUnwrap(teamOwner.teamID)
-            
+
             let (_, userInfo) = try await userHelper.registerUsersAsTeamMember(
                 ownerAccessToken: ownerAccessToken,
                 teamID: teamID
@@ -43,7 +43,7 @@ final class AccountManagementTests: WireUITestCase {
         } catch {
             throw XCTSkip("error in setup of test: \(error)")
         }
-        
+
         let page = try await app.loginUser(email: teamMember.email, password: teamMember.password)
             .acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(teamMember.username)
@@ -72,7 +72,7 @@ final class AccountManagementTests: WireUITestCase {
                 password: teamOwner.password
             )
             let teamID = try XCTUnwrap(teamOwner.teamID)
-            
+
             let (_, userInfo) = try await userHelper.registerUsersAsTeamMember(
                 ownerAccessToken: ownerAccessToken,
                 teamID: teamID
@@ -81,7 +81,7 @@ final class AccountManagementTests: WireUITestCase {
         } catch {
             throw XCTSkip("error in setup of test: \(error)")
         }
-        
+
         let verifyEmailPage = try app.loginUser(email: teamMember.email, password: teamMember.password)
             .acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(teamMember.username)
