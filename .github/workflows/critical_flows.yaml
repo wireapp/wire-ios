@@ -3,8 +3,9 @@ name: Critical Flows
 on:
   workflow_dispatch:
   push:
-    - 'develop'
-    - 'release/cycle-*'
+    branches:
+      - 'develop'
+      - 'release/cycle-*'
   
 # This is what will cancel the workflow
 concurrency:
