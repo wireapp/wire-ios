@@ -16,25 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDataModel
-import WireMessagingDomain
+public import Foundation
 
-extension ConversationContentViewController {
-    func createReplyComposingView(
-        for message: ZMConversationMessage,
-        fetchNodeUseCase: (any WireCellsFetchNodeUseCaseProtocol)? = nil
-    ) -> ReplyComposingView {
-        let replyComposingView = ReplyComposingView(
-            message: message,
-            fetchNodeUseCase: fetchNodeUseCase
-        )
-        replyComposingView.translatesAutoresizingMaskIntoConstraints = false
-
-        bottomContainer.addSubview(replyComposingView)
-        replyComposingView.fitIn(view: bottomContainer)
-
-        return replyComposingView
-    }
-
+// sourcery: AutoMockable
+public protocol WireCellsFetchNodeUseCaseProtocol: Sendable {
+    func invoke(nodeID: UUID) -> AsyncThrowingStream<WireCellsNode?, any Error>
 }

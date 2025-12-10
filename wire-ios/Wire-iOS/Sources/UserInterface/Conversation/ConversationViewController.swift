@@ -291,7 +291,7 @@ final class ConversationViewController: UIViewController {
         updateInputBarVisibility()
 
         if let quote = conversation.draftMessage?.quote, !quote.hasBeenDeleted, let contentViewController {
-            inputBarController.addReplyComposingView(contentViewController.createReplyComposingView(for: quote))
+            inputBarController.addReplyComposingView(contentViewController.createReplyComposingView(for: quote, fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()))
         }
 
         resolveConversationIfOneOnOne()

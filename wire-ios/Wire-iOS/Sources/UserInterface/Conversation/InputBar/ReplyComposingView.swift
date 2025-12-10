@@ -19,6 +19,7 @@
 import UIKit
 import WireDesign
 import WireSyncEngine
+import WireMessagingDomain
 
 private typealias ConversationInputBarMessagePreview = L10n.Localizable.Conversation.InputBar.MessagePreview
 
@@ -74,14 +75,16 @@ final class ReplyComposingView: UIView {
     private var previewView: UIView!
     weak var delegate: ReplyComposingViewDelegate?
     private var observerToken: Any?
+    private let fetchNodeUseCase: (any WireCellsFetchNodeUseCaseProtocol)?
 
     // MARK: - Init
 
-    init(message: ZMConversationMessage) {
+    init(message: ZMConversationMessage, fetchNodeUseCase: (any WireCellsFetchNodeUseCaseProtocol)? = nil) {
         require(message.canBeQuoted)
         require(message.conversationLike != nil)
 
         self.message = message
+        self.fetchNodeUseCase = fetchNodeUseCase
         super.init(frame: .zero)
 
         setupMessageObserver()
@@ -107,7 +110,7 @@ final class ReplyComposingView: UIView {
     private func setupSubviews() {
         backgroundColor = SemanticColors.SearchBar.backgroundInputView
 
-        previewView = message.replyPreview()!
+        previewView = message.replyPreview(fetchNodeUseCase: fetchNodeUseCase)!
         previewView.isUserInteractionEnabled = false
         previewView.accessibilityIdentifier = "replyView"
         previewView.accessibilityLabel = buildAccessibilityLabel()
