@@ -1,11 +1,26 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Combine
 import UIKit
 import WireDataModel
-import WireMessagingDomain
-import WireMessagingUI
-import UniformTypeIdentifiers
-import WireFoundation
 import WireDesign
-import Combine
+import WireMessagingDomain
 
 /// A lightweight view that renders a preview for one or more message attachments.
 /// It supports:
@@ -13,172 +28,111 @@ import Combine
 ///  - Generic file previews with icons
 ///  - Automatic preview loading and caching
 final class MessageReplyAttachmentsView: UIView {
-    
+
     // MARK: - Properties
-    
-    private let attachments: [MultipartMessageData.Attachment]
-    private let fetchNodeUseCase: any WireCellsFetchNodeUseCaseProtocol
-    
-    private var task: Task<Void, Never>?
-    private var subscriptions = Set<AnyCancellable>()
-    
+
+    private let viewModel: MessageReplyAttachmentsViewModel
     private var previewImageView: UIImageView?
-    
-    // MARK: - Init
-    
+    private var subscriptions = Set<AnyCancellable>()
+
+    // MARK: - Object lifecycle
+
     init(
         attachments: [MultipartMessageData.Attachment],
         fetchNodeUseCase: any WireCellsFetchNodeUseCaseProtocol
     ) {
-        self.attachments = attachments
-        self.fetchNodeUseCase = fetchNodeUseCase
+        self.viewModel = .init(fetchNodeUseCase: fetchNodeUseCase)
         super.init(frame: .zero)
-        setupAttachmentUI()
+        
+        setup(attachments: attachments)
     }
-    
+
+    @available(*, unavailable)
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    deinit {
-        cancelPreviewDownload()
-    }
-    
+
     // MARK: - Public
-    
+
     func cancelPreviewDownload() {
-        task?.cancel()
-        task = nil
-        subscriptions.removeAll()
+        viewModel.cancel()
+        subscriptions = .init()
     }
-    
-    // MARK: - Setup
-    
-    private func setupAttachmentUI() {
+
+    // MARK: - Private
+
+    private func setup(attachments: [MultipartMessageData.Attachment]) {
         if attachments.count == 1 {
             setupSingleAttachment(attachments[0])
         } else {
-            setupMultipleAttachments()
+            setupMultipleAttachments(attachments)
         }
     }
-    
+
     private func setupSingleAttachment(_ attachment: MultipartMessageData.Attachment) {
         switch attachment.initialMetadata {
         case .image, .video:
-            setupAttachmentPreview(for: attachment)
+            setupImagePreview(for: attachment)
         default:
             let (icon, filename) = attachment.filePreviewInfo
-            setupAttachmentView(icon: icon, text: filename)
+            setupGenericView(icon: icon, text: filename)
         }
     }
-    
-    private func setupMultipleAttachments() {
+
+    private func setupMultipleAttachments(_ attachments: [MultipartMessageData.Attachment]) {
         let image = UIImage(systemName: "folder.fill")!
         let text = L10n.Localizable.Content.Message.Reply.Files.count("\(attachments.count)")
-        setupAttachmentView(icon: image, text: text)
+        setupGenericView(icon: image, text: text)
     }
-    
-    // MARK: - Preview Setup
-    
-    private func setupAttachmentPreview(
+
+    private func setupImagePreview(
         for attachment: MultipartMessageData.Attachment
     ) {
+        viewModel.loadPreviewImage(for: attachment)
+        
+        viewModel.$previewImageInfo
+            .compactMap { $0 }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] previewImageInfo in
+                self?.applyPreviewImage(
+                    previewImageInfo.image,
+                    isVideo: previewImageInfo.isVideo
+                )
+            }.store(in: &subscriptions)
+        
         let imageView = makeRoundedImageView()
         previewImageView = imageView
-        
+
         let loadingView = makeLoadingOverlay()
         imageView.addSubview(loadingView)
         loadingView.fitIn(view: imageView)
-        
-        loadPreviewImage(for: attachment)
     }
-    
-    private func loadPreviewImage(
-        for attachment: MultipartMessageData.Attachment
-    ) {
-        task = Task { [weak self] in
-            guard let self else { return }
-            
-            guard let node = try? await fetchNodeUseCase
-                .invoke(nodeID: attachment.nodeID)
-                .compactMap({ $0 })
-                .first(where: { $0.id == attachment.nodeID })
-            else { return }
-            
-            setupPreviewImage(from: node, isVideo: attachment.isVideo)
-        }
-    }
-    
-    private func setupPreviewImage(
-        from node: WireCellsNode,
-        isVideo: Bool
-    ) {
-        guard let smallPreview = node.previews.min(by: {
-            $0.dimension < $1.dimension
-        }) else { return }
-        
-        let cache = UIImage.defaultUserImageCache.cache
-        let cacheKey: NSString = {
-            if let eTag = node.eTag {
-                return "\(node.id.uuidString)-\(eTag)" as NSString
-            }
-            return node.id.uuidString as NSString
-        }()
-        
-        if let cachedImage = cache.object(forKey: cacheKey) {
-            applyPreviewImage(cachedImage, isVideo: isVideo)
-            return
-        }
-        
-        downloadPreviewImage(
-            from: smallPreview.url,
-            isVideo: isVideo,
-            cacheKey: cacheKey,
-            cache: cache
-        )
-    }
-    
-    private func downloadPreviewImage(
-        from url: URL,
-        isVideo: Bool,
-        cacheKey: NSString,
-        cache: NSCache<NSString, UIImage>
-    ) {
-        guard task?.isCancelled == false else { return }
-        
-        URLSession.shared.dataTaskPublisher(for: url)
-            .map(\.data)
-            .compactMap(UIImage.init(data:))
-            .receive(on: DispatchQueue.main)
-            .sink { _ in } receiveValue: { [weak self] image in
-                guard let self else { return }
-                cache.setObject(image, forKey: cacheKey)
-                self.applyPreviewImage(image, isVideo: isVideo)
-            }.store(in: &subscriptions)
-    }
-    
-    private func setupAttachmentView(
+
+    private func setupGenericView(
         icon: UIImage,
         text: String
     ) {
         let stack = UIStackView(axis: .horizontal)
         stack.spacing = 4
-        
+
         let iconView = UIImageView(image: icon)
         iconView.tintColor = ColorTheme.Backgrounds.onBackground
-        iconView.setSize(15)
-        
+        NSLayoutConstraint.activate([
+            iconView.heightAnchor.constraint(equalToConstant: 15),
+            iconView.widthAnchor.constraint(equalToConstant: 15)
+        ])
+
         let label = UILabel()
         label.font = .smallRegularFont
         label.textColor = ColorTheme.Base.secondaryText
         label.text = text
-        
+
         [iconView, label].forEach(stack.addArrangedSubview)
-        
+
         addSubview(stack)
         stack.fitIn(view: self)
     }
-    
+
     private func applyPreviewImage(
         _ image: UIImage,
         isVideo: Bool
@@ -193,17 +147,17 @@ final class MessageReplyAttachmentsView: UIView {
             playIcon.fitIn(view: previewImageView, insets: insets)
         }
     }
-    
-    // MARK: - Views
-    
+
+    // MARK: - Helpers
+
     private func makeRoundedImageView() -> UIImageView {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
-        
+
         addSubview(imageView)
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         NSLayoutConstraint.activate([
             imageView.heightAnchor.constraint(equalToConstant: 60),
             imageView.widthAnchor.constraint(equalToConstant: 60),
@@ -211,25 +165,25 @@ final class MessageReplyAttachmentsView: UIView {
             imageView.topAnchor.constraint(equalTo: topAnchor),
             imageView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
-        
+
         return imageView
     }
-    
+
     private func makeLoadingOverlay() -> UIView {
         let overlay = UIView()
         overlay.backgroundColor = ColorTheme.Backdrop.background
-        
+
         let indicator = UIActivityIndicatorView(style: .medium)
         indicator.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         indicator.color = ColorTheme.Backgrounds.surface
         indicator.startAnimating()
-        
+
         overlay.addSubview(indicator)
         indicator.fitIn(view: overlay)
-        
+
         return overlay
     }
-    
+
     private func makePlayIconOverlay() -> UIImageView {
         typealias Theme = ColorTheme.Buttons.Secondary
         let config = UIImage.SymbolConfiguration(
@@ -247,45 +201,8 @@ final class MessageReplyAttachmentsView: UIView {
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFit
         imageView.frame = CGRect(x: 0, y: 0, width: 25, height: 25)
-        
+
         return imageView
     }
 }
 
-// MARK: - Helpers
-
-private extension UIImageView {
-    func setSize(_ size: CGFloat) {
-        NSLayoutConstraint.activate([
-            heightAnchor.constraint(equalToConstant: size),
-            widthAnchor.constraint(equalToConstant: size)
-        ])
-    }
-}
-
-private extension MultipartMessageData.Attachment {
-    var filePreviewInfo: (UIImage, String) {
-        let fileType = contentType.flatMap { UTType(mimeType: $0) }
-        let fileURL = initialName.flatMap(URL.init(string:))
-        
-        let icon = FileIcon.make(
-            type: fileType,
-            fileExtension: fileURL?.pathExtension
-        ).image
-        
-        let filename = fileURL?
-            .deletingPathExtension()
-            .lastPathComponent ?? ""
-        
-        return (icon, filename)
-    }
-    
-    var isVideo: Bool {
-        switch initialMetadata {
-        case .video:
-            true
-        default:
-            false
-        }
-    }
-}

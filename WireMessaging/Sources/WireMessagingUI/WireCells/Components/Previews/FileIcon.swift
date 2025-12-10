@@ -126,7 +126,7 @@ extension FileIcon {
             .fileIconFolder
         }
     }
-    
+
     public var image: UIImage {
         UIImage(resource: resource)
     }

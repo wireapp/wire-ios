@@ -22,8 +22,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireFoundation
-import WireSyncEngine
 import WireMessagingDomain
+import WireSyncEngine
 
 final class ConversationReplyContentView: UIView {
     typealias FileSharingRestrictions = L10n.Localizable.FeatureConfig.FileSharingRestrictions
@@ -129,7 +129,7 @@ final class ConversationReplyContentView: UIView {
                 }
                 let attachments = message.multipartMessageData?.attachments ?? []
                 return .multipart(text: text, attachments: attachments)
-                
+
             case let message? where message.isText:
                 let data = message.textMessageData!
                 return .text(
@@ -213,7 +213,7 @@ final class ConversationReplyContentView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
-    
+
     func onPrepareForReuse() {
         messageReplyAttachmentView?.cancelPreviewDownload()
         contentAttachmentsView.removeSubviews()
@@ -261,7 +261,7 @@ final class ConversationReplyContentView: UIView {
         timestampLabel.textColor = SemanticColors.Label.textCollectionSecondary
         timestampLabel.numberOfLines = 1
         timestampLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-        
+
         stackView.addArrangedSubview(contentAttachmentsView)
         stackView.addArrangedSubview(timestampLabel)
     }
@@ -317,12 +317,12 @@ final class ConversationReplyContentView: UIView {
             contentAttachmentsView.isHidden = true
         case let .multipart(text, attachments):
             contentAttachmentsView.isHidden = false
-            contentTextView.isHidden = text == nil 
+            contentTextView.isHidden = text == nil
             contentTextView.accessibilityIdentifier = object.contentType
             contentTextView.isAccessibilityElement = true
             assetThumbnail.isHidden = true
             assetThumbnail.isAccessibilityElement = false
-            
+
             if let text {
                 let mutableAttributedContent = NSMutableAttributedString(attributedString: text)
                 // Trim the string to first four lines to prevent last line narrower spacing issue
@@ -330,18 +330,18 @@ final class ConversationReplyContentView: UIView {
                 contentTextView.attributedText = mutableAttributedContent
                     .trimmedToNumberOfLines(numberOfLinesLimit: numberOfLinesLimit)
             }
-            
+
             guard let fetchNodeUseCase = object.fetchNodeUseCase else {
                 return
             }
-            
-             messageReplyAttachmentView = MessageReplyAttachmentsView(
-                 attachments: attachments,
-                 fetchNodeUseCase: fetchNodeUseCase
-             )
-             
-             contentAttachmentsView.addSubview(messageReplyAttachmentView!)
-             messageReplyAttachmentView!.fitIn(view: contentAttachmentsView)
+
+            messageReplyAttachmentView = MessageReplyAttachmentsView(
+                attachments: attachments,
+                fetchNodeUseCase: fetchNodeUseCase
+            )
+
+            contentAttachmentsView.addSubview(messageReplyAttachmentView!)
+            messageReplyAttachmentView!.fitIn(view: contentAttachmentsView)
         }
     }
 
@@ -386,7 +386,7 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
     func configure(with object: Configuration, animated: Bool) {
         contentView.configure(with: object)
     }
-    
+
     func prepareForReuse() {
         contentView.onPrepareForReuse()
     }

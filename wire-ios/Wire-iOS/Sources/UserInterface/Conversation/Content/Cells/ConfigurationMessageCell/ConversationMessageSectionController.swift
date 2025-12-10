@@ -392,7 +392,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             switch item {
 
             case let .text(data):
-                
+
                 cells += ConversationTextMessageCellDescription.cells(
                     textMessageData: data,
                     message: message,

@@ -18,8 +18,8 @@
 
 import UIKit
 import WireDesign
-import WireSyncEngine
 import WireMessagingDomain
+import WireSyncEngine
 
 private typealias ConversationInputBarMessagePreview = L10n.Localizable.Conversation.InputBar.MessagePreview
 

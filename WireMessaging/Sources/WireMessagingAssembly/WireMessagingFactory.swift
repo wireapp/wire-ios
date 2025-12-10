@@ -132,7 +132,7 @@ public struct WireMessagingFactory {
     public func makeUpdateTagsUseCase() -> some WireCellsUpdateTagsUseCaseProtocol {
         WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI)
     }
-    
+
     public func makeFetchNodeUseCase() -> any WireCellsFetchNodeUseCaseProtocol {
         WireCellsFetchNodeUseCase(
             repository: nodesAPI,

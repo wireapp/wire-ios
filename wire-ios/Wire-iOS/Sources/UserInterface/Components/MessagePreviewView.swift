@@ -20,8 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-import WireSyncEngine
 import WireMessagingDomain
+import WireSyncEngine
 
 extension ZMConversationMessage {
     func replyPreview(fetchNodeUseCase: (any WireCellsFetchNodeUseCaseProtocol)? = nil) -> UIView? {
@@ -31,7 +31,10 @@ extension ZMConversationMessage {
         return preparePreviewView(fetchNodeUseCase: fetchNodeUseCase)
     }
 
-    func preparePreviewView(shouldDisplaySender: Bool = true, fetchNodeUseCase: (any WireCellsFetchNodeUseCaseProtocol)? = nil) -> UIView {
+    func preparePreviewView(
+        shouldDisplaySender: Bool = true,
+        fetchNodeUseCase: (any WireCellsFetchNodeUseCaseProtocol)? = nil
+    ) -> UIView {
         if isImage || isVideo {
             MessageThumbnailPreviewView(message: self, displaySender: shouldDisplaySender)
         } else {
@@ -236,17 +239,21 @@ final class MessagePreviewView: UIView {
     private let iconColor = SemanticColors.Icon.foregroundDefault
 
     let message: ZMConversationMessage
-    
+
     private let contentAttachmentsView = UIView()
     private let fetchNodeUseCase: (any WireCellsFetchNodeUseCaseProtocol)?
 
-    init(message: ZMConversationMessage, displaySender: Bool = true, fetchNodeUseCase: (any WireCellsFetchNodeUseCaseProtocol)?) {
+    init(
+        message: ZMConversationMessage,
+        displaySender: Bool = true,
+        fetchNodeUseCase: (any WireCellsFetchNodeUseCaseProtocol)?
+    ) {
         require(message.canBeQuoted || !displaySender)
         require(message.conversationLike != nil)
         self.message = message
         self.displaySender = displaySender
         self.fetchNodeUseCase = fetchNodeUseCase
-        
+
         super.init(frame: .zero)
         setupSubviews()
         setupConstraints()
@@ -274,11 +281,11 @@ final class MessagePreviewView: UIView {
             senderLabel.isAccessibilityElement = true
             senderLabel.accessibilityIdentifier = "SenderLabel_ReplyPreview"
         }
-        
+
         if message.isMultipart {
             allViews.append(contentAttachmentsView)
         }
-        
+
         allViews.forEach { view in
             view.translatesAutoresizingMaskIntoConstraints = false
             addSubview(view)
@@ -305,7 +312,7 @@ final class MessagePreviewView: UIView {
         }
 
         if message.isMultipart {
-            let topConstraint = if (message.text?.isEmpty == true) {
+            let topConstraint = if message.text?.isEmpty == true {
                 displaySender ? senderLabel.bottomAnchor : topAnchor
             } else {
                 contentTextView.bottomAnchor
@@ -375,16 +382,16 @@ final class MessagePreviewView: UIView {
                 (fileData.filename ?? L10n.Localizable.Conversation.InputBar.MessagePreview.file).localizedUppercase
             contentTextView.attributedText = initialString && attributes
         }
-        
+
         if message.isMultipart,
            let attachments = message.multipartMessageData?.attachments,
-            let fetchNodeUseCase {
-            
+           let fetchNodeUseCase {
+
             let messageReplyAttachmentView = MessageReplyAttachmentsView(
                 attachments: attachments,
                 fetchNodeUseCase: fetchNodeUseCase
             )
-            
+
             contentAttachmentsView.addSubview(messageReplyAttachmentView)
             messageReplyAttachmentView.fitIn(view: contentAttachmentsView)
         }
