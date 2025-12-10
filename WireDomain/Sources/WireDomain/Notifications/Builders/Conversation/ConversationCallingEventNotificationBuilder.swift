@@ -386,7 +386,6 @@ extension ConversationCallingEventNotificationBuilder {
         ///
         /// Note: Account authentication is validated earlier in the notification flow by `VerifyUserSessionUseCase`.
         /// We don't check if the user session is loaded because sessions are loaded on-demand when needed.
-        /// This allows CallKit notifications to work for inactive accounts in multi-account scenarios.
         func validateCallKitNotification(
             conversationID: ConversationID,
             senderID: UserID,
