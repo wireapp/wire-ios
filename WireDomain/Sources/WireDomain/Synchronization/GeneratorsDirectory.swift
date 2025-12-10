@@ -23,12 +23,12 @@ public protocol GeneratorProtocol {
     func stop()
 }
 
-/// Starts generating items during pulling pending events from backend
 // sourcery: AutoMockable
+/// Starts generating items during pulling pending events from backend
 public protocol IncrementalGeneratorProtocol: GeneratorProtocol {}
 
-/// Starts generating items once the app is up to date (livesyncing)
 // sourcery: AutoMockable
+/// Starts generating items once the app is up to date (livesyncing)/
 public protocol LiveGeneratorProtocol: GeneratorProtocol {}
 
 /// Object that holds on all generators of WorkItem for WorkAgent
