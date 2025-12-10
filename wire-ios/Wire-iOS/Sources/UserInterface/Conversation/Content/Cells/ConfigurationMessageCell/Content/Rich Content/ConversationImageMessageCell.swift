@@ -75,11 +75,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     }
 
     private func configureView() {
-        containerView.layer.cornerRadius = if isChatBubbleSimpleEnabled {
-            ConversationMessageContainerView.bubbleCornerRadius
-        } else {
-            12
-        }
+        containerView.layer.cornerRadius = ConversationMessageContainerView.bubbleCornerRadius
         containerView.layer.borderWidth = 1
         containerView.layer.masksToBounds = true
         containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
@@ -95,21 +91,6 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
         let top = containerView.topAnchor.constraint(equalTo: topAnchor)
         let bottom = bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
 
-        let existingConstraints = [
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
-            containerView.trailingAnchor.constraint(
-                lessThanOrEqualTo: trailingAnchor,
-                constant: -margins.right
-            )
-        ]
-
-        let chatBubbleConstraints = [
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            containerView.trailingAnchor.constraint(
-                equalTo: trailingAnchor
-            )
-        ]
-
         widthConstraint = containerView.widthAnchor.constraint(equalToConstant: 0)
         heightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
         widthConstraint?.priority = .defaultHigh
@@ -119,13 +100,12 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
             top,
             bottom,
             widthConstraint!,
-            heightConstraint!
+            heightConstraint!,
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.trailingAnchor.constraint(
+                equalTo: trailingAnchor
+            )
         ])
-        if isChatBubbleSimpleEnabled {
-            NSLayoutConstraint.activate(chatBubbleConstraints)
-        } else {
-            NSLayoutConstraint.activate(existingConstraints)
-        }
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -188,9 +168,6 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
         }
     }
 
-    private var isChatBubbleSimpleEnabled: Bool {
-        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
-    }
 }
 
 final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
@@ -215,7 +192,7 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
-    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    let shouldAlignMessageContentForBubbles: Bool = true
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"

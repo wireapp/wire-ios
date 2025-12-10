@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireMessagingDomain
 
-public extension NSManagedObjectContext {
+extension WireCellsNode {
 
-    var proteusProvider: ProteusProviding {
-        precondition(zm_isSyncContext, "ProteusProvider should only be accessed on the sync context")
-        return ProteusProvider(context: self)
+    var name: String {
+        path.components(separatedBy: "/").last ?? ""
     }
 }

@@ -24,11 +24,6 @@ public extension NSManagedObjectContext {
 
     @objc
     func tearDownCryptoStack() {
-        proteusProvider.perform(
-            withProteusService: { _ in },
-            withKeyStore: { keyStore in keyStore.deleteAndCreateNewBox() }
-        )
-
         proteusService = nil
         mlsService = nil
         do {

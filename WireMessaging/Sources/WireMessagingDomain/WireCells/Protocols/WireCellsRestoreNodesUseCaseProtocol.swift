@@ -16,20 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-/// A configuration for the *Chat Bubbles Simple* feature.
+public protocol WireCellsRestoreNodesUseCaseProtocol: Sendable {
 
-public struct ChatBubblesSimpleFeatureConfig: Equatable, Sendable {
-
-    /// The feature's status.
-
-    public let status: FeatureConfigStatus
-
-    public init(
-        status: FeatureConfigStatus
-    ) {
-        self.status = status
-    }
+    func invoke(nodeIDs: [UUID]) async throws
 
 }

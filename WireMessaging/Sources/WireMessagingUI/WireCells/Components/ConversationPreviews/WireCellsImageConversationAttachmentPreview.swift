@@ -39,8 +39,9 @@ struct WireCellsImageConversationAttachmentPreview: View {
     var body: some View {
         WireCellsAttachmentPreview(
             progress: progress,
-            progressColor: isAssetDownloadError ? ColorTheme.Base.error.color : ColorTheme.Base
-                .primary(wireAccentColor).color
+            progressColor: isAssetDownloadError
+                ? ColorTheme.Base.error.color
+                : ColorTheme.Base.primary(wireAccentColor).color
         ) {
             ZStack {
                 if let thumbnailURL {

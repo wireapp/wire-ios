@@ -31,10 +31,19 @@ package struct FilesView: FilesViewProtocol {
     package var isBrowsing: Bool { false }
     @StateObject package var viewModel: FilesViewModel
     @Environment(\.dismiss) var dismiss
-    @Environment(\.wireAccentColor) var accentColor
+    @Environment(\.wireAccentColor) private var accentColor
 
-    package init(viewModel: @autoclosure @escaping () -> FilesViewModel) {
+    let onOpenRecycleBin: () -> Void
+    let onDismissContainer: () -> Void
+
+    package init(
+        viewModel: @autoclosure @escaping () -> FilesViewModel,
+        onOpenRecycleBin: @escaping () -> Void = {},
+        onDismissContainer: @escaping () -> Void = {}
+    ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
+        self.onOpenRecycleBin = onOpenRecycleBin
+        self.onDismissContainer = onDismissContainer
     }
 
     package var body: some View {
@@ -56,12 +65,17 @@ package struct FilesView: FilesViewProtocol {
                 }
             }
             .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
-            .navigationTitle(viewModel.title ?? Strings.Files.navigationTitle)
+            .navigationTitle(viewModel.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
             .toolbar { toolbarContent }
             .onAppear { reloadTask() }
+            .onReceive(viewModel.triggerReload) { _ in
+                Task {
+                    await viewModel.reload()
+                }
+            }
             .alert(
                 item: $viewModel.alert,
                 title: { Text($0.title) },
@@ -89,6 +103,8 @@ package struct FilesView: FilesViewProtocol {
                         fileRenameView
                     case let .createFolder(folderView):
                         folderView
+                    case let .moveToFolder(fileItem):
+                        viewModel.moveToFolderView(item: fileItem)
                     default:
                         EmptyView()
                     }
@@ -104,43 +120,20 @@ package struct FilesView: FilesViewProtocol {
 private extension FilesView {
 
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
-        if viewModel.showCloseButton {
-            ToolbarItem(placement: .topBarLeading) { closeButton }
-        }
-
         if !viewModel.folderMenuOptions.isEmpty {
             ToolbarTitleMenu {
                 toolBarTitleMenuContent()
             }
         }
 
-        if viewModel.isFoldersEnabled {
-            ToolbarItem(placement: .topBarTrailing) {
-                menuButton
+        if !viewModel.isRecycleBin {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                moreActionsButton
             }
         }
-    }
 
-    var menuButton: some View {
-        Menu {
-            createFolderButton
-        } label: {
-            Image(systemName: "plus.circle.fill")
-                .foregroundStyle(accentColor)
-                .frame(width: 44, height: 44, alignment: .trailing)
-        }
-    }
-
-    var createFolderButton: some View {
-        HStack {
-            Button {
-                viewModel.onCreateFolder()
-            } label: {
-                HStack {
-                    Text(Strings.Files.List.newFolder)
-                    Image(systemName: "folder")
-                }
-            }
+        ToolbarItem(placement: .navigationBarTrailing) {
+            closeButton
         }
     }
 
@@ -157,39 +150,43 @@ private extension FilesView {
 
     var closeButton: some View {
         Button(
-            action: { dismiss() },
+            action: { onDismissContainer() },
             label: {
-                Text(L10n.Localizable.General.close)
-                    .foregroundStyle(accentColor)
-                    .frame(width: 44, height: 44, alignment: .trailing)
+                Image(systemName: "xmark")
             }
         )
         .accessibilityLabel(Accessibility.Files.close)
         .accessibilityIdentifier("close")
+        .tint(ColorTheme.Base.primary(accentColor).color)
     }
-}
 
-private struct CreateFolderCTA: View {
-
-    let onTap: () -> Void
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Divider()
-
-            Button(action: onTap) {
-                HStack(alignment: .center, spacing: 20) {
-                    Image(systemName: "plus")
-
-                    Text(L10n.Localizable.Conversation.WireCells.Files.List.newFolder)
-                        .font(for: .body2)
-                    Spacer()
+    var moreActionsButton: some View {
+        Menu {
+            Button {
+                viewModel.onCreateFolder()
+            } label: {
+                Label {
+                    Text(Strings.Files.List.newFolder)
+                } icon: {
+                    Image(systemName: "folder")
+                        .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
                 }
             }
-            .tint(ColorTheme.Backgrounds.onSurface.color)
-            .padding()
+
+            Button {
+                onOpenRecycleBin()
+            } label: {
+                Label {
+                    Text(Strings.Files.openRecycleBin)
+                } icon: {
+                    Image(systemName: "trash")
+                        .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                }
+            }
+        } label: {
+            Image(systemName: "ellipsis.circle")
         }
-        .contentShape(Rectangle())
+        .tint(ColorTheme.Base.primary(accentColor).color)
     }
 }
 
