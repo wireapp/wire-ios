@@ -39,7 +39,7 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
 
 @implementation ZMManagedObject
 
-+ (NSManagedObjectID *)objectIDForURIRepresentation:(NSURL *)url inUserSession:(id<ContextProvider>)userSession
++ (NSManagedObjectID *)objectIDForURIRepresentation:(NSURL *)url inUserSession:(id<ZMContextProvider>)userSession
 {
     VerifyReturnNil(url != nil);
     VerifyReturnNil(userSession != nil);
@@ -56,7 +56,7 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
     return [psc managedObjectIDForURIRepresentation:url];
 }
 
-+ (instancetype)existingObjectWithID:(NSManagedObjectID *)identifier inUserSession:(id<ContextProvider>)userSession;
++ (instancetype)existingObjectWithID:(NSManagedObjectID *)identifier inUserSession:(id<ZMContextProvider>)userSession;
 {
     VerifyReturnNil(identifier);
     VerifyReturnNil(userSession);

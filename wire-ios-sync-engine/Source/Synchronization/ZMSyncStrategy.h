@@ -35,7 +35,7 @@
 
 @interface ZMSyncStrategy : NSObject <TearDownCapable, RequestStrategy>
 
-- (instancetype _Nonnull )initWithContextProvider:(id<ContextProvider> _Nonnull)contextProvider
+- (instancetype _Nonnull )initWithContextProvider:(id<ZMContextProvider> _Nonnull)contextProvider
                           notificationsDispatcher:(NotificationDispatcher * _Nonnull)notificationsDispatcher
                                   operationStatus:(OperationStatus * _Nonnull)operationStatus
                                       application:(id<ZMApplication> _Nonnull)application

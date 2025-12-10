@@ -105,8 +105,8 @@ final class ParticipantsCellViewModel {
         guard let users = Array(messageData.userTypes) as? [UserType] else { return false }
 
         let selfAddedToServiceConversation = users.any(\.isSelfUser) && conversation.areAppsPresent
-        let appAdded = users.any(\.isApp)
-        return selfAddedToServiceConversation || appAdded
+        let appOrBotAdded = users.any(\.isAppOrBot)
+        return selfAddedToServiceConversation || appOrBotAdded
     }
 
     /// Users displayed in the system message, up to 17 when not collapsed
