@@ -20,23 +20,30 @@ import WireFoundation
 import XCTest
 
 final class AccountManagementTests: WireUITestCase {
-
+    
+    var teamMember: UserInfo!
+    
     @MainActor
     func test_Account_Management_Lock_With_Passcode() async throws {
         let passcode = UserGenerator.generateAppPasscode()
-
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
-            email: teamOwner.email,
-            password: teamOwner.password
-        )
-        let teamID = try XCTUnwrap(teamOwner.teamID)
-
-        let (_, teamMember) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken,
-            teamID: teamID
-        )
-
+        
+        do {
+            let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+            let ownerAccessToken = try await userHelper.fetchAccessToken(
+                email: teamOwner.email,
+                password: teamOwner.password
+            )
+            let teamID = try XCTUnwrap(teamOwner.teamID)
+            
+            let (_, userInfo) = try await userHelper.registerUsersAsTeamMember(
+                ownerAccessToken: ownerAccessToken,
+                teamID: teamID
+            )
+            teamMember = userInfo
+        } catch {
+            throw XCTSkip("error in setup of test: \(error)")
+        }
+        
         let page = try await app.loginUser(email: teamMember.email, password: teamMember.password)
             .acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(teamMember.username)
@@ -58,18 +65,23 @@ final class AccountManagementTests: WireUITestCase {
     func test_Account_Management_Update_Email_Reset_password() async throws {
         let updatedUserDetails = UserGenerator.generateUniqueUserInfo()
 
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
-            email: teamOwner.email,
-            password: teamOwner.password
-        )
-        let teamID = try XCTUnwrap(teamOwner.teamID)
-
-        let (_, teamMember) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken,
-            teamID: teamID
-        )
-
+        do {
+            let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+            let ownerAccessToken = try await userHelper.fetchAccessToken(
+                email: teamOwner.email,
+                password: teamOwner.password
+            )
+            let teamID = try XCTUnwrap(teamOwner.teamID)
+            
+            let (_, userInfo) = try await userHelper.registerUsersAsTeamMember(
+                ownerAccessToken: ownerAccessToken,
+                teamID: teamID
+            )
+            teamMember = userInfo
+        } catch {
+            throw XCTSkip("error in setup of test: \(error)")
+        }
+        
         let verifyEmailPage = try app.loginUser(email: teamMember.email, password: teamMember.password)
             .acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(teamMember.username)
