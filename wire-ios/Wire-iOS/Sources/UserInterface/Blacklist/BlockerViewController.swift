@@ -65,7 +65,7 @@ final class BlockerViewController: LaunchImageViewController {
     func showAlert() {
         switch context {
         case .blacklist:
-            showClientObsoleteMessage() // why client obsolete instead of showBlacklistMessage?
+            showClientObsoleteMessage()
         case .backendObsolete:
             showBackendObsoleteMessage()
         case .clientObsolete:
@@ -181,16 +181,6 @@ final class BlockerViewController: LaunchImageViewController {
     }
 
     private func showClientObsoleteMessage() {
-        let alert = MultibackendAlertMainApp.obsoleteClient(
-            updateAction: { UIApplication.shared.open(WireURLs.shared.appOnItunes) },
-            switchAccountAction: switchAccountAction,
-            logoutAction: handleLogout
-        )
-
-        present(alert, animated: true)
-    }
-
-    private func showBlacklistMessage() {
         let alert = MultibackendAlertMainApp.obsoleteClient(
             updateAction: { UIApplication.shared.open(WireURLs.shared.appOnItunes) },
             switchAccountAction: switchAccountAction,
