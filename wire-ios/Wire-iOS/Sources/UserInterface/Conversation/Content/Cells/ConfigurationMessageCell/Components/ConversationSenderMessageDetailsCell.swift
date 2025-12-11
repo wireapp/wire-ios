@@ -33,7 +33,7 @@ enum TeamRoleIndicator {
     case guest
     case externalPartner
     case federated
-    case app
+    case appOrBot
 }
 
 // MARK: - ConversationSenderMessageDetailsCell
@@ -180,7 +180,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
     private func configureAuthorLabel(object: Configuration) {
         let sender = object.sender
-        let textColor: UIColor = sender.isApp ? SemanticColors.Label.textDefault : sender.accentColor
+        let textColor: UIColor = sender.isAppOrBot ? SemanticColors.Label.textDefault : sender.accentColor
         let attributedString = NSMutableAttributedString(
             string: sender.name ?? L10n.Localizable.Profile.Details.Title.unavailable,
             attributes: [
@@ -220,7 +220,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
                 attributedString.append(attachment)
             }
 
-        case .app:
+        case .appOrBot:
             accessibilityIdentifier = "img.serviceUser"
             if let attachment = attachment(from: .bot, size: 14) {
                 attributedString.append(attachment)
@@ -361,8 +361,8 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 private extension UserType {
 
     func teamRoleIndicator(selfUser: any UserType) -> TeamRoleIndicator? {
-        if isApp {
-            .app
+        if isAppOrBot {
+            .appOrBot
 
         } else if isExternalPartner {
             .externalPartner

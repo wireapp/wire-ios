@@ -20,7 +20,6 @@
 #import <WireSyncEngine/NSError+ZMUserSession.h>
 
 // PRIVATE
-#import <WireSyncEngine/ZMBlacklistVerificator.h>
 #import <WireSyncEngine/ZMAuthenticationStatus.h>
 #import <WireSyncEngine/NSError+ZMUserSessionInternal.h>
 #import <WireSyncEngine/ZMOperationLoop.h>

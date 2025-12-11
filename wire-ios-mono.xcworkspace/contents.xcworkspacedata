@@ -88,6 +88,9 @@
       <FileRef
          location = "group:test_pr_changes.yml">
       </FileRef>
+      <FileRef
+         location = "group:critical_flows.yaml">
+      </FileRef>
    </Group>
    <FileRef
       location = "group:Gemfile">
