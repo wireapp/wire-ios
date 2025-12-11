@@ -441,7 +441,7 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
 
 @implementation ZMManagedObject (PersistentChangeTracking)
 
-+ (NSPredicate *)predicateForNeedingToBeUpdatedFromBackend;
++ (NSPredicate * _Nonnull)predicateForNeedingToBeUpdatedFromBackend;
 {
     return [NSPredicate predicateWithFormat:@"%K != 0", NeedsToBeUpdatedFromBackendKey];
 }

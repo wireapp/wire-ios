@@ -167,7 +167,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        UserClient.sortedFetchRequest(with: UserClient.predicateForNeedingToBeUpdatedFromBackend()!)
+        UserClient.sortedFetchRequest(with: UserClient.predicateForNeedingToBeUpdatedFromBackend())
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
