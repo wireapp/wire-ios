@@ -62,7 +62,8 @@ struct ZClientControllerBuilder {
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
             contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
-            isFoldersEnabled: DeveloperFlag.wireCellsFolders.isOn
+            isFoldersEnabled: DeveloperFlag.wireCellsFolders.isOn,
+            isCollaboraEnabled: DeveloperFlag.wireCellsCollabora.isOn
         )
     }
 
