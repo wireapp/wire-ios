@@ -126,7 +126,7 @@ private extension FilesView {
             }
         }
 
-        if !viewModel.isRecycleBin, viewModel.isFoldersEnabled {
+        if !viewModel.isRecycleBin {
             ToolbarItem(placement: .navigationBarTrailing) {
                 moreActionsButton
             }
@@ -162,14 +162,16 @@ private extension FilesView {
 
     var moreActionsButton: some View {
         Menu {
-            Button {
-                viewModel.onCreateFolder()
-            } label: {
-                Label {
-                    Text(Strings.Files.List.newFolder)
-                } icon: {
-                    Image(systemName: "folder")
-                        .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+            if viewModel.isFoldersEnabled {
+                Button {
+                    viewModel.onCreateFolder()
+                } label: {
+                    Label {
+                        Text(Strings.Files.List.newFolder)
+                    } icon: {
+                        Image(systemName: "folder")
+                            .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                    }
                 }
             }
 
