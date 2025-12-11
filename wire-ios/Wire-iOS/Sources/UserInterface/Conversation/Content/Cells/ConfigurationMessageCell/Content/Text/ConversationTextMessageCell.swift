@@ -334,10 +334,13 @@ extension ConversationTextMessageCellDescription {
 
         // Quote
         if let quotedMessage = textMessageData.quoteMessage {
+            let viewModel = MessageReplyAttachmentsViewModel(fetchNodeUseCase: wireMessagingFactory
+                .makeFetchNodeUseCase())
+
             let quoteCell = ConversationReplyCellDescription(
                 quotedMessage: quotedMessage,
                 accentColor: (selfUser.zmAccentColor ?? .default).accentColor,
-                fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
+                messageReplyAttachmentsViewModel: viewModel
             )
             cells.append(AnyConversationMessageCellDescription(quoteCell))
         }

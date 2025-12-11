@@ -39,7 +39,7 @@ final class ConversationReplyContentView: UIView {
 
         var quotedMessage: ZMConversationMessage?
         let accentColor: AccentColor
-        let fetchNodeUseCase: (any WireCellsFetchNodeUseCaseProtocol)?
+        let messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel?
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.accentColor == rhs.accentColor &&
@@ -331,13 +331,13 @@ final class ConversationReplyContentView: UIView {
                     .trimmedToNumberOfLines(numberOfLinesLimit: numberOfLinesLimit)
             }
 
-            guard let fetchNodeUseCase = object.fetchNodeUseCase else {
+            guard let viewModel = object.messageReplyAttachmentsViewModel else {
                 return
             }
 
             messageReplyAttachmentView = MessageReplyAttachmentsView(
                 attachments: attachments,
-                fetchNodeUseCase: fetchNodeUseCase
+                viewModel: viewModel
             )
 
             contentAttachmentsView.addSubview(messageReplyAttachmentView!)
@@ -428,13 +428,13 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
     init(
         quotedMessage: ZMConversationMessage?,
         accentColor: AccentColor,
-        fetchNodeUseCase: (any WireCellsFetchNodeUseCaseProtocol)? = nil
+        messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil
     ) {
         self.configuration = View
             .Configuration(
                 quotedMessage: quotedMessage,
                 accentColor: accentColor,
-                fetchNodeUseCase: fetchNodeUseCase
+                messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
             )
     }
 }

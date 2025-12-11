@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMessagingDomain
-import WireDataModel
 import Combine
 import UniformTypeIdentifiers
+import WireDataModel
+import WireMessagingDomain
 import WireMessagingUI
 
 final class MessageReplyAttachmentsViewModel {
@@ -27,20 +27,20 @@ final class MessageReplyAttachmentsViewModel {
     private var task: Task<Void, Never>?
     private var subscriptions = Set<AnyCancellable>()
     private let cache = UIImage.defaultUserImageCache.cache
-    
+
     struct PreviewImageInfo {
         let image: UIImage
         let isVideo: Bool
     }
-    
+
     @Published var previewImageInfo: PreviewImageInfo?
-    
+
     init(fetchNodeUseCase: any WireCellsFetchNodeUseCaseProtocol) {
         self.fetchNodeUseCase = fetchNodeUseCase
     }
-    
+
     // MARK: - Public
-    
+
     func loadPreviewImage(
         for attachment: MultipartMessageData.Attachment
     ) {
@@ -56,13 +56,13 @@ final class MessageReplyAttachmentsViewModel {
             setPreviewImage(from: node, isVideo: attachment.isVideo)
         }
     }
-    
+
     func cancel() {
         task?.cancel()
         task = nil
         subscriptions.removeAll()
     }
-    
+
     // MARK: - Private
 
     private func setPreviewImage(
@@ -122,6 +122,15 @@ extension MultipartMessageData.Attachment {
     var isVideo: Bool {
         switch initialMetadata {
         case .video:
+            true
+        default:
+            false
+        }
+    }
+
+    var isImage: Bool {
+        switch initialMetadata {
+        case .image:
             true
         default:
             false

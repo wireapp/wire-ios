@@ -735,6 +735,7 @@
 				MessageDetails/MessageDetailsViewControllerTests.swift,
 				MessageDetails/MockReadReceipt.swift,
 				MessagePresenterTests.swift,
+				MessageReplyAttachmentsViewSnapshotTests.swift,
 				MessageReplyPreviewViewTests.swift,
 				MessageTests.swift,
 				MockPhotoPermissionsController.swift,

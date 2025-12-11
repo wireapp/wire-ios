@@ -24,21 +24,25 @@ import WireMessagingDomain
 import WireSyncEngine
 
 extension ZMConversationMessage {
-    func replyPreview(fetchNodeUseCase: (any WireCellsFetchNodeUseCaseProtocol)? = nil) -> UIView? {
+    func replyPreview(messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil) -> UIView? {
         guard canBeQuoted else {
             return nil
         }
-        return preparePreviewView(fetchNodeUseCase: fetchNodeUseCase)
+        return preparePreviewView(messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel)
     }
 
     func preparePreviewView(
         shouldDisplaySender: Bool = true,
-        fetchNodeUseCase: (any WireCellsFetchNodeUseCaseProtocol)? = nil
+        messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil
     ) -> UIView {
         if isImage || isVideo {
             MessageThumbnailPreviewView(message: self, displaySender: shouldDisplaySender)
         } else {
-            MessagePreviewView(message: self, displaySender: shouldDisplaySender, fetchNodeUseCase: fetchNodeUseCase)
+            MessagePreviewView(
+                message: self,
+                displaySender: shouldDisplaySender,
+                messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
+            )
         }
     }
 }
@@ -241,18 +245,18 @@ final class MessagePreviewView: UIView {
     let message: ZMConversationMessage
 
     private let contentAttachmentsView = UIView()
-    private let fetchNodeUseCase: (any WireCellsFetchNodeUseCaseProtocol)?
+    private let messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel?
 
     init(
         message: ZMConversationMessage,
         displaySender: Bool = true,
-        fetchNodeUseCase: (any WireCellsFetchNodeUseCaseProtocol)?
+        messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel?
     ) {
         require(message.canBeQuoted || !displaySender)
         require(message.conversationLike != nil)
         self.message = message
         self.displaySender = displaySender
-        self.fetchNodeUseCase = fetchNodeUseCase
+        self.messageReplyAttachmentsViewModel = messageReplyAttachmentsViewModel
 
         super.init(frame: .zero)
         setupSubviews()
@@ -385,11 +389,11 @@ final class MessagePreviewView: UIView {
 
         if message.isMultipart,
            let attachments = message.multipartMessageData?.attachments,
-           let fetchNodeUseCase {
+           let messageReplyAttachmentsViewModel {
 
             let messageReplyAttachmentView = MessageReplyAttachmentsView(
                 attachments: attachments,
-                fetchNodeUseCase: fetchNodeUseCase
+                viewModel: messageReplyAttachmentsViewModel
             )
 
             contentAttachmentsView.addSubview(messageReplyAttachmentView)

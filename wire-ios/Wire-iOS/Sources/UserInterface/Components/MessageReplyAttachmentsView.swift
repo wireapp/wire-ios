@@ -39,11 +39,11 @@ final class MessageReplyAttachmentsView: UIView {
 
     init(
         attachments: [MultipartMessageData.Attachment],
-        fetchNodeUseCase: any WireCellsFetchNodeUseCaseProtocol
+        viewModel: MessageReplyAttachmentsViewModel
     ) {
-        self.viewModel = .init(fetchNodeUseCase: fetchNodeUseCase)
+        self.viewModel = viewModel
         super.init(frame: .zero)
-        
+
         setup(attachments: attachments)
     }
 
@@ -62,36 +62,26 @@ final class MessageReplyAttachmentsView: UIView {
     // MARK: - Private
 
     private func setup(attachments: [MultipartMessageData.Attachment]) {
-        if attachments.count == 1 {
-            setupSingleAttachment(attachments[0])
-        } else {
-            setupMultipleAttachments(attachments)
-        }
-    }
-
-    private func setupSingleAttachment(_ attachment: MultipartMessageData.Attachment) {
-        switch attachment.initialMetadata {
-        case .image, .video:
-            setupImagePreview(for: attachment)
-        default:
-            let (icon, filename) = attachment.filePreviewInfo
+        switch attachments.count {
+        case 1 where attachments[0].isVideo || attachments[0].isImage:
+            setupImagePreview(for: attachments[0])
+        case 1:
+            let (icon, filename) = attachments[0].filePreviewInfo
             setupGenericView(icon: icon, text: filename)
+        default:
+            let image = UIImage(named: "WireCellsFilesIcon")!
+                .withRenderingMode(.alwaysTemplate)
+                .withTintColor(ColorTheme.Backgrounds.onBackground)
+            let text = L10n.Localizable.Content.Message.Reply.Files.count("\(attachments.count)")
+            setupGenericView(icon: image, text: text)
         }
-    }
-
-    private func setupMultipleAttachments(_ attachments: [MultipartMessageData.Attachment]) {
-        let image = UIImage(systemName: "folder.fill")!
-        let text = L10n.Localizable.Content.Message.Reply.Files.count("\(attachments.count)")
-        setupGenericView(icon: image, text: text)
     }
 
     private func setupImagePreview(
         for attachment: MultipartMessageData.Attachment
     ) {
-        viewModel.loadPreviewImage(for: attachment)
-        
         viewModel.$previewImageInfo
-            .compactMap { $0 }
+            .compactMap(\.self)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] previewImageInfo in
                 self?.applyPreviewImage(
@@ -99,7 +89,9 @@ final class MessageReplyAttachmentsView: UIView {
                     isVideo: previewImageInfo.isVideo
                 )
             }.store(in: &subscriptions)
-        
+
+        viewModel.loadPreviewImage(for: attachment)
+
         let imageView = makeRoundedImageView()
         previewImageView = imageView
 
@@ -205,4 +197,3 @@ final class MessageReplyAttachmentsView: UIView {
         return imageView
     }
 }
-

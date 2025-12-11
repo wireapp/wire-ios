@@ -291,9 +291,12 @@ final class ConversationViewController: UIViewController {
         updateInputBarVisibility()
 
         if let quote = conversation.draftMessage?.quote, !quote.hasBeenDeleted, let contentViewController {
+            let messageReplyAttachmentsViewModel = MessageReplyAttachmentsViewModel(
+                fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
+            )
             inputBarController.addReplyComposingView(contentViewController.createReplyComposingView(
                 for: quote,
-                fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
+                messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
             ))
         }
 

@@ -23,11 +23,11 @@ import WireMessagingDomain
 extension ConversationContentViewController {
     func createReplyComposingView(
         for message: ZMConversationMessage,
-        fetchNodeUseCase: (any WireCellsFetchNodeUseCaseProtocol)? = nil
+        messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil
     ) -> ReplyComposingView {
         let replyComposingView = ReplyComposingView(
             message: message,
-            fetchNodeUseCase: fetchNodeUseCase
+            messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
         )
         replyComposingView.translatesAutoresizingMaskIntoConstraints = false
 
