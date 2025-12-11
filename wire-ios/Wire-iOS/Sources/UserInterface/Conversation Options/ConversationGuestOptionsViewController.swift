@@ -43,10 +43,15 @@ final class ConversationGuestOptionsViewController: UIViewController,
         wr_supportedInterfaceOrientations
     }
 
-    convenience init(conversation: ZMConversation, userSession: ZMUserSession) {
+    convenience init(
+        conversation: ZMConversation,
+        userSession: ZMUserSession,
+        isAppsFeatureEnabled: Bool
+    ) {
         let configuration = ZMConversation.OptionsConfigurationContainer(
             conversation: conversation,
-            userSession: userSession
+            userSession: userSession,
+            isAppsFeatureEnabled: isAppsFeatureEnabled
         )
         self.init(
             viewModel: .init(

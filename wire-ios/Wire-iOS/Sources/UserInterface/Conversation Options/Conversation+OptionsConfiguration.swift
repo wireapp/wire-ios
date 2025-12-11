@@ -31,13 +31,19 @@ extension ZMConversation {
         private var conversation: ZMConversation
         private var token: NSObjectProtocol?
         private let userSession: ZMUserSession
+        let isAppsFeatureEnabled: Bool
         var allowGuestsChangedHandler: ((Bool) -> Void)?
         var allowAppsChangedHandler: ((Bool) -> Void)?
         var guestLinkFeatureStatusChangedHandler: ((GuestLinkFeatureStatus) -> Void)?
 
-        init(conversation: ZMConversation, userSession: ZMUserSession) {
+        init(
+            conversation: ZMConversation,
+            userSession: ZMUserSession,
+            isAppsFeatureEnabled: Bool
+        ) {
             self.conversation = conversation
             self.userSession = userSession
+            self.isAppsFeatureEnabled = isAppsFeatureEnabled
             super.init()
             self.token = ConversationChangeInfo.add(observer: self, for: conversation)
 

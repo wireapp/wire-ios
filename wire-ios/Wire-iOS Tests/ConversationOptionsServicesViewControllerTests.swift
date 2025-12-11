@@ -25,6 +25,7 @@ final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptio
     // MARK: Properties
 
     typealias SetHandler = (Bool, (Result<Void, Error>) -> Void) -> Void
+    var isAppsFeatureEnabled = true
     var allowApps: Bool
     var allowAppsChangedHandler: ((Bool) -> Void)?
     var areAppsPresent = true
@@ -40,6 +41,7 @@ final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptio
     func setAllowApps(_ allowApps: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
         setAllowApps?(allowApps, completion)
     }
+
 }
 
 final class ConversationServicesOptionsViewControllerTests: XCTestCase {

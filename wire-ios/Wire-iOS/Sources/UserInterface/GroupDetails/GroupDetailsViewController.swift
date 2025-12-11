@@ -547,15 +547,29 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
     func presentGuestOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
         guard let userSession = ZMUserSession.shared() else { return }
-        let menu = ConversationGuestOptionsViewController(conversation: conversation, userSession: userSession)
-        navigationController?.pushViewController(menu, animated: animated)
+        Task { @MainActor in
+            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository.isFeatureEnabled(.apps) ?? false
+            let menu = ConversationGuestOptionsViewController(
+                conversation: conversation,
+                userSession: userSession,
+                isAppsFeatureEnabled: isAppsFeatureEnabled
+            )
+            navigationController?.pushViewController(menu, animated: animated)
+        }
     }
 
     func presentServicesOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
         guard let userSession = ZMUserSession.shared() else { return }
-        let menu = ConversationServicesOptionsViewController(conversation: conversation, userSession: userSession)
-        navigationController?.pushViewController(menu, animated: animated)
+        Task { @MainActor in
+            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository.isFeatureEnabled(.apps) ?? false
+            let menu = ConversationServicesOptionsViewController(
+                conversation: conversation,
+                userSession: userSession,
+                isAppsFeatureEnabled: isAppsFeatureEnabled
+            )
+            navigationController?.pushViewController(menu, animated: animated)
+        }
     }
 
     func presentTimeoutOptions(animated: Bool) {
@@ -642,4 +656,5 @@ extension ZMConversation {
             user.refreshData()
         }
     }
+
 }

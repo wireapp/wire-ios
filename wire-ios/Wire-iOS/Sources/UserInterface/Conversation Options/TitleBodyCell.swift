@@ -16,51 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCommonComponents
+import SwiftUI
 import WireDesign
 
 /// Bold headline and normal body text.
 
 final class TitleBodyCell: UITableViewCell, CellConfigurationConfigurable {
 
-    private let container = UIView()
-    private let label = CopyableLabel()
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-
-        contentView.addSubview(container)
-        container.addSubview(label)
-        label.font = FontSpec(.normal, .light).font
-        label.lineBreakMode = .byClipping
-        label.numberOfLines = 0
-        [container, label].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-        NSLayoutConstraint.activate([
-            container.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            container.topAnchor.constraint(equalTo: contentView.topAnchor),
-            container.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            container.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
-            label.topAnchor.constraint(equalTo: container.topAnchor, constant: 16),
-            label.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
-            label.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
-            label.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -16)
-        ])
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     func configure(with configuration: CellConfiguration) {
         guard case let .titleAndBody(title, body) = configuration else { preconditionFailure() }
-        label.attributedText = title && .lineSpacing(8)
-        // TODO: body
 
-        label.textColor = SemanticColors.Label.textDefault
-        container.backgroundColor = SemanticColors.View.backgroundDefault
+        contentConfiguration = UIHostingConfiguration {
+            VStack(alignment: .leading, spacing: 24) {
+                Text(title)
+                    .bold()
+                Text(body)
+            }
+        }
+
         backgroundColor = SemanticColors.View.backgroundDefault
 
     }
+}
+
+@available(iOS 17, *)
+#Preview {
+    TitleBodyCellPreview()
 }

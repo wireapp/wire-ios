@@ -20,10 +20,20 @@ import UIKit
 import WireUtilities
 
 protocol ConversationServicesOptionsViewModelConfiguration: AnyObject {
+
+    /// `true` if the team is able to use apps (feature flag enabled), `false` for individual users or free teams.
+
+    var isAppsFeatureEnabled: Bool { get }
+
+    /// `true` if apps can be participants of the conversation, `false` otherwise.
+
     var allowApps: Bool { get }
+
     var areAppsPresent: Bool { get }
     var allowAppsChangedHandler: ((Bool) -> Void)? { get set }
+
     func setAllowApps(_ allowApps: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+
 }
 
 protocol ConversationServicesOptionsViewModelDelegate: AnyObject {
@@ -72,17 +82,17 @@ final class ConversationServicesOptionsViewModel {
     }
 
     private func updateRows() {
-        if false { // TODO: fix
+        if configuration.isAppsFeatureEnabled {
              state.rows = [.allowAppsToggle(
                  get: { [unowned self] in return configuration.allowApps },
                  set: { [unowned self] in setAllowApps($0, sender: $1) }
              )]
          } else {
-             // TODO: localization
-             let title = "Your team doesn't use apps yet"
-             let body = "To improve your workflow with apps, your team needs configuration. Please contact your team admin."
              state.rows = [
-                .titleAndBody(title: title, body: body)
+                .titleAndBody(
+                    title: L10n.Localizable.Conversation.Create.AppsDisabled.title,
+                    body: L10n.Localizable.Conversation.Create.AppsDisabled.message
+                )
              ]
          }
     }
