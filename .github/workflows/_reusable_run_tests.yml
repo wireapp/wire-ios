@@ -193,6 +193,8 @@ jobs:
           path: |
             build/reports/*.junit
             artifacts/**/*.junit
+            app-group.zip
+            fastlane/app-group.zip
 
       - name: Prepare visual representation of test results
         uses: EnricoMi/publish-unit-test-result-action/macos@v2
