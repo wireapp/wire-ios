@@ -185,6 +185,7 @@ final class ConversationCreationController: UIViewController {
         self.values = ConversationCreationValues(
             isChannel: false,
             isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )

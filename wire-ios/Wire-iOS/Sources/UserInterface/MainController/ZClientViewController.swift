@@ -112,7 +112,9 @@ final class ZClientViewController: UIViewController {
         wireMessagingFactory: wireMessagingFactory
     )
 
-    private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory()
+    private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory(
+        conversationCreationRepository: conversationCreationRepository
+    )
 
     private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(
         userSession: userSession,

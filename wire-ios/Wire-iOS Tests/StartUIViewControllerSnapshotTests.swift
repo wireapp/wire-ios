@@ -70,7 +70,9 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
             createGroupConversationUIBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),
-            channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory(),
+            channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory(
+                conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+            ),
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )

@@ -57,14 +57,17 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
     }
 
     init(
-        userSession: UserSession
+        userSession: UserSession,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) async {
         self.userSession = userSession
         let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
             .isFeatureEnabled(.apps) ?? false
+        let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
         self.values = ConversationCreationValues(
             isChannel: true,
             isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )

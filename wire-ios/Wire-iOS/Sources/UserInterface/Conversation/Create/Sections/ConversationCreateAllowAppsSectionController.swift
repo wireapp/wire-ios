@@ -34,11 +34,19 @@ final class ConversationCreateAllowAppsSectionController: ConversationCreateSect
         footerText = values.isAppsFeatureEnabled ? L10n.Localizable.Conversation.Create.Apps.subtitle : ""
     }
 
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    /// Returns `1` for showing the toggle only and `2` for showing the disabled toggle with an info banner below.
 
-        return values.isAppsFeatureEnabled ? 1 : 2
-        fatalError()
-        // TODO: check if default protocol is proteus and the team has whitelisted bots
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if values.areLegacyBotsAvailable, values.encryptionProtocol == .proteus {
+            // Whenever the team was using old-style services (bots) we show the toggle but don't depend on the apps feature flag. Hence we don't show the banner.
+            1
+        } else if values.isAppsFeatureEnabled {
+            // no need to show a banner
+            1
+        } else {
+            // disable toggle and show info banner
+            2
+        }
     }
 
     override func collectionView(
