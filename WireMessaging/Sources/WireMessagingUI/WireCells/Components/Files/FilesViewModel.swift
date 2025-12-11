@@ -330,6 +330,7 @@ package final class FilesViewModel: ObservableObject {
                 }
             },
             isInRecycleBin: isRecycleBin,
+            isFoldersEnabled: isFoldersEnabled,
         )
     }
 
