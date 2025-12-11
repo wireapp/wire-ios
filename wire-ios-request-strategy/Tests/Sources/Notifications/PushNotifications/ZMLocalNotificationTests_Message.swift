@@ -165,18 +165,18 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
         //    "push.notification.add.message.group" = "%1$@: %2$@";
         //    "push.notification.add.message.group.noconversationname" = "%1$@ in a conversation: %2$@";
         syncMOC.performGroupedAndWait {
-            XCTAssertEqual(self.bodyForNote(self.oneOnOneConversation, sender: self.sender), "Hello Hello!")
-            XCTAssertEqual(self.bodyForNote(self.groupConversation, sender: self.sender), "Super User: Hello Hello!")
+            XCTAssertEqual(bodyForNote(oneOnOneConversation, sender: sender), "Hello Hello!")
+            XCTAssertEqual(bodyForNote(groupConversation, sender: sender), "Super User: Hello Hello!")
             XCTAssertEqual(
-                self.bodyForNote(self.groupConversationWithoutUserDefinedName, sender: self.sender),
+                bodyForNote(groupConversationWithoutUserDefinedName, sender: sender),
                 "Super User: Hello Hello!"
             )
             XCTAssertEqual(
-                self.bodyForNote(self.groupConversationWithoutName, sender: self.sender),
+                bodyForNote(groupConversationWithoutName, sender: sender),
                 "Super User in a conversation: Hello Hello!"
             )
             XCTAssertEqual(
-                self.bodyForNote(self.invalidConversation, sender: self.sender),
+                bodyForNote(invalidConversation, sender: sender),
                 "Super User in a conversation: Hello Hello!"
             )
         }
@@ -198,10 +198,10 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
         }
     }
 
-    func testThatItDoesNotDuplicatePercentageSignsInTextAndConversationName() {
-        syncMOC.performGroupedAndWait {
+    func testThatItDoesNotDuplicatePercentageSignsInTextAndConversationName() throws {
+        try syncMOC.performGroupedAndWait {
             XCTAssertEqual(
-                self.bodyForNote(self.groupConversation, sender: self.sender, text: "Today we grew by 100%"),
+                try bodyForNote(groupConversation, sender: sender, text: "Today we grew by 100%"),
                 "Super User: Today we grew by 100%"
             )
         }

@@ -107,6 +107,11 @@ package struct RecycleBinContainer: View {
                     repository: nodesRepository,
                     localAssetsRepository: localAssetRepository,
                     nodeCache: nodeCache
+                ),
+                getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: nodesAPI),
+                getAssetUseCase: WireCellsGetAssetUseCase(
+                    localAssetRepository: localAssetRepository,
+                    fileCache: fileCache
                 )
             ),
             title: path.last?.name,
@@ -120,6 +125,7 @@ package struct RecycleBinContainer: View {
             fileCache: fileCache,
             cellName: cellName,
             isFoldersEnabled: isFoldersEnabled,
+            isCollaboraEnabled: false,
             isRecycleBin: true,
             accentColorProvider: accentColorProvider
         )

@@ -33,7 +33,7 @@ extension FilesViewModel {
         let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
-        let localAssetRepository = PreviewLocalAssetRepository()
+        let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
 
         return FilesViewModel(
             useCases: .init(
@@ -53,7 +53,7 @@ extension FilesViewModel {
                 ),
                 renameNode: WireCellsRenameNodeUseCase(
                     nodesRepository: previewNodesRepository(),
-                    localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                    localAssetsRepository: localAssetRepository,
                     nodeCache: MockWireCellsNodeCacheProtocol(),
                     nodeRenameNotifier: WireCellsNodeRenameNotifier()
                 ),
@@ -73,6 +73,12 @@ extension FilesViewModel {
                     repository: previewNodesRepository(),
                     localAssetsRepository: localAssetRepository,
                     nodeCache: MockWireCellsNodeCacheProtocol()
+                ),
+                getEditingURL: WireCellsGetEditingURLUseCase(
+                    editingURLRepository: previewEditingURLRepository()
+                ),
+                getAssetUseCase: WireCellsGetAssetUseCase(
+                    localAssetRepository: localAssetRepository, fileCache: cache
                 )
             ),
             setNavigation: { _ in },
@@ -82,6 +88,7 @@ extension FilesViewModel {
             fileCache: cache,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
             isFoldersEnabled: isFoldersEnabled,
+            isCollaboraEnabled: false,
             accentColorProvider: { .default }
         )
     }
@@ -119,13 +126,15 @@ extension FilesItemViewModel {
         FilesItemViewModel(
             item: FilesViewItem(
                 id: UUID(),
+                eTag: "eTag",
                 kind: .file,
                 name: "foo.jpg",
                 filePath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image foo.jpg",
                 ownedBy: "Viola",
                 modifiedAt: Date(),
                 icon: .image,
-                tags: tags
+                tags: tags,
+                isEditable: false
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
             onItemAction: { _, _ in },
@@ -228,6 +237,12 @@ private func previewTagsApi() -> some NodesAPIProtocol {
         mockTags
     }
     mock.updateTagsNodeIDTags_MockMethod = { _, _ in }
+    return mock
+}
+
+private func previewEditingURLRepository() -> any WireCellsEditingURLRepositoryProtocol {
+    let mock = MockWireCellsEditingURLRepositoryProtocol()
+    mock.getEditorURLId_MockValue = nil
     return mock
 }
 

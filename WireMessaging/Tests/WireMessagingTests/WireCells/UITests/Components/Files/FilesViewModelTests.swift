@@ -40,6 +40,9 @@ final class FilesViewModelTests {
         nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
 
+        let editingURLRepository = MockWireCellsEditingURLRepositoryProtocol()
+        editingURLRepository.getEditorURLId_MockValue = nil
+
         self.sut = FilesViewModel(
             useCases: .init(
                 fetchNodes: WireCellsFetchNodesPageUseCase(
@@ -70,6 +73,11 @@ final class FilesViewModelTests {
                     repository: nodesRepository,
                     localAssetsRepository: localAssetRepository,
                     nodeCache: MockWireCellsNodeCacheProtocol()
+                ),
+                getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: editingURLRepository),
+                getAssetUseCase: WireCellsGetAssetUseCase(
+                    localAssetRepository: localAssetRepository,
+                    fileCache: fileCache
                 )
             ),
             isCellsStatePending: false,
@@ -77,10 +85,14 @@ final class FilesViewModelTests {
             nodesRepository: nodesRepository,
             fileCache: fileCache,
             isFoldersEnabled: true,
+            isCollaboraEnabled: false,
             accentColorProvider: { .default }
         )
 
         localAssetRepository.assetNodeID_MockValue = .fixture()
+        localAssetRepository
+            .refreshAssetMetadataNodeID_MockValue = (WireCellsNode.fixture(), WireCellsLocalAsset.fixture())
+        localAssetRepository.downloadAssetNodeID_MockMethod = { _ in }
 
         sut.$state.dropFirst().sink { [weak self] state in
             self?.itemsUpdates.append(state.items)
@@ -151,24 +163,28 @@ final class FilesViewModelTests {
             [], // Clears items
             [FilesViewItem(
                 id: node.id,
+                eTag: "eTag",
                 kind: .file,
                 name: "a.jpg",
                 filePath: "some-cell/a.jpg",
                 ownedBy: nil,
                 modifiedAt: nil,
                 icon: .other,
-                tags: []
+                tags: [],
+                isEditable: false
             )],
             [], // Clears items
             [FilesViewItem(
                 id: node.id,
+                eTag: "eTag",
                 kind: .file,
                 name: "a.jpg",
                 filePath: "some-cell/a.jpg",
                 ownedBy: nil,
                 modifiedAt: nil,
                 icon: .other,
-                tags: []
+                tags: [],
+                isEditable: false
             )]
         ])
     }
@@ -210,23 +226,27 @@ final class FilesViewModelTests {
         #expect(sut.state.items == [
             FilesViewItem(
                 id: node1.id,
+                eTag: "eTag",
                 kind: .file,
                 name: "a.jpg",
                 filePath: "some-cell/a.jpg",
                 ownedBy: "Emel",
                 modifiedAt: now,
                 icon: .image,
-                tags: []
+                tags: [],
+                isEditable: false
             ),
             FilesViewItem(
                 id: node2.id,
+                eTag: "eTag",
                 kind: .file,
                 name: "b.jpg",
                 filePath: "some-cell/b.jpg",
                 ownedBy: nil,
                 modifiedAt: nil,
                 icon: .other,
-                tags: []
+                tags: [],
+                isEditable: false
             )
         ])
     }
@@ -258,33 +278,39 @@ final class FilesViewModelTests {
         #expect(sut.state.items == [
             FilesViewItem(
                 id: node1.id,
+                eTag: "eTag",
                 kind: .file,
                 name: "a.jpg",
                 filePath: "some-cell/a.jpg",
                 ownedBy: "Emel",
                 modifiedAt: now,
                 icon: .other,
-                tags: []
+                tags: [],
+                isEditable: false
             ),
             FilesViewItem(
                 id: node2.id,
+                eTag: "eTag",
                 kind: .file,
                 name: "b.jpg",
                 filePath: "some-cell/b.jpg",
                 ownedBy: nil,
                 modifiedAt: now - 60,
                 icon: .other,
-                tags: []
+                tags: [],
+                isEditable: false
             ),
             FilesViewItem(
                 id: node3.id,
+                eTag: "eTag",
                 kind: .file,
                 name: "c.jpg",
                 filePath: "some-cell/c.jpg",
                 ownedBy: nil,
                 modifiedAt: nil,
                 icon: .other,
-                tags: []
+                tags: [],
+                isEditable: false
             )
         ])
     }
@@ -400,43 +426,51 @@ final class FilesViewModelTests {
             sut.state.items == [
                 FilesViewItem(
                     id: nodeB.id,
+                    eTag: "eTag",
                     kind: .file,
                     name: "bb.xyz",
                     filePath: "foo/bb.xyz",
                     ownedBy: nil,
                     modifiedAt: nil,
                     icon: .other,
-                    tags: []
+                    tags: [],
+                    isEditable: false
                 ),
                 FilesViewItem(
                     id: nodeC.id,
+                    eTag: "eTag",
                     kind: .file,
                     name: "cc.xyz",
                     filePath: "foo/cc.xyz",
                     ownedBy: nil,
                     modifiedAt: nil,
                     icon: .other,
-                    tags: []
+                    tags: [],
+                    isEditable: false
                 ),
                 FilesViewItem(
                     id: nodeD.id,
+                    eTag: "eTag",
                     kind: .file,
                     name: "dd.xyz",
                     filePath: "foo/dd.xyz",
                     ownedBy: nil,
                     modifiedAt: nil,
                     icon: .other,
-                    tags: []
+                    tags: [],
+                    isEditable: false
                 ),
                 FilesViewItem(
                     id: nodeA.id,
+                    eTag: "eTag",
                     kind: .file,
                     name: "aaa.xyz",
                     filePath: "foo/aaa.xyz",
                     ownedBy: nil,
                     modifiedAt: now,
                     icon: .other,
-                    tags: []
+                    tags: [],
+                    isEditable: false
                 )
             ]
         )
@@ -472,33 +506,6 @@ final class FilesViewModelTests {
         localAssetRepository.downloadAssetNodeID_MockMethod = { nodeID in
             assets[nodeID] = WireCellsLocalAsset.fixture(downloadState: .downloaded(cacheKey: "some-key"))
         }
-        fileCache.fileURLForKey_MockValue = URL(fileURLWithPath: "/foo")
-
-        // when
-        await sut.openItem(item: .fixture(id: nodeID))
-
-        // then
-        #expect(fileCache.fileURLForKey_Invocations == ["some-key"])
-        #expect(sut.viewingURL == URL(fileURLWithPath: "/foo"))
-    }
-
-    @Test
-    func openItem_whenFileAlreadyDownloading() async throws {
-        // given
-        var assets: [UUID: WireCellsLocalAsset] = [:]
-        let nodeID = UUID()
-        localAssetRepository.assetNodeID_MockMethod = { nodeID in
-            assets[nodeID]
-        }
-        localAssetRepository
-            .downloadAssetNodeID_MockError = WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress
-
-        localAssetRepository.observeAssetNodeID_MockMethod = { nodeID in
-            let asset = WireCellsLocalAsset.fixture(downloadState: .downloaded(cacheKey: "some-key"))
-            assets[nodeID] = asset
-            return [asset].publisher.eraseToAnyPublisher()
-        }
-
         fileCache.fileURLForKey_MockValue = URL(fileURLWithPath: "/foo")
 
         // when

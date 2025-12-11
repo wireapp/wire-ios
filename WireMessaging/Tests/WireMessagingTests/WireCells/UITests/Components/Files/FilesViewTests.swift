@@ -38,6 +38,7 @@ final class FilesViewTests: XCTestCase {
     private var renameNodeUseCase: WireCellsRenameNodeUseCase!
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
+    private var getEditingURLUseCase: WireCellsGetEditingURLUseCase!
 
     private let record: Bool? = nil
 
@@ -76,6 +77,12 @@ final class FilesViewTests: XCTestCase {
         )
         updateTagsUseCase = WireCellsUpdateTagsUseCase(nodesAPI: nodesApi)
         getTagSuggestionsUseCase = WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi)
+
+        let editingURLRepository = MockWireCellsEditingURLRepositoryProtocol()
+        editingURLRepository.getEditorURLId_MockValue = nil
+        getEditingURLUseCase = WireCellsGetEditingURLUseCase(
+            editingURLRepository: editingURLRepository
+        )
     }
 
     @MainActor
@@ -92,13 +99,15 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_withShortStrings() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "image.jpg",
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image,
-            tags: []
+            tags: [],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -116,13 +125,15 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_withLongStrings() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "some random file with a long name.excel",
             filePath: "",
             ownedBy: "Liana Margaret Smith-Jones",
             modifiedAt: modifiedAt,
             icon: .spreadsheet,
-            tags: []
+            tags: [],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -140,13 +151,15 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_withOneTag() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "image.jpg",
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image,
-            tags: ["important"]
+            tags: ["important"],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -164,13 +177,15 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_withThreeTags() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "image.jpg",
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image,
-            tags: ["tag1", "tag2", "abcdef"]
+            tags: ["tag1", "tag2", "abcdef"],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -188,13 +203,15 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_dynamicTypeVariants() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "some random file with a long name.excel",
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .spreadsheet,
-            tags: []
+            tags: [],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -214,13 +231,15 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_whenDownloading() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "image.jpg",
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image,
-            tags: []
+            tags: [],
+            isEditable: false
         )
         let asset = WireCellsLocalAsset(
             nodeID: item.id,
@@ -246,13 +265,15 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_whenDownloadFailed() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "image.jpg",
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image,
-            tags: []
+            tags: [],
+            isEditable: false
         )
         let asset = WireCellsLocalAsset(
             nodeID: item.id,
@@ -342,6 +363,11 @@ final class FilesViewTests: XCTestCase {
                     repository: nodesRepository,
                     localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
                     nodeCache: MockWireCellsNodeCacheProtocol()
+                ),
+                getEditingURL: getEditingURLUseCase,
+                getAssetUseCase: WireCellsGetAssetUseCase(
+                    localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                    fileCache: MockFileCache()
                 )
             ),
             isCellsStatePending: false,
@@ -349,6 +375,7 @@ final class FilesViewTests: XCTestCase {
             nodesRepository: nodesRepository,
             fileCache: MockFileCache(),
             isFoldersEnabled: true,
+            isCollaboraEnabled: false,
             accentColorProvider: { .default }
         )
 

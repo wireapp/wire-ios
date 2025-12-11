@@ -41,6 +41,8 @@ final class FilesBrowserViewTests: XCTestCase {
     private var createFolderUseCase: (any WireCellsCreateFolderUseCaseProtocol)!
     private var fetchNodeVersionsUseCase: WireCellsFetchNodeVersionsUseCase!
     private var restoreNodeVersionUseCase: WireCellsRestoreNodeVersionUseCase!
+    private var getEditingURLUseCase: WireCellsGetEditingURLUseCase!
+    private var getAssetUseCase: WireCellsGetAssetUseCase!
     private var localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol!
 
     private let record: Bool? = nil
@@ -79,14 +81,27 @@ final class FilesBrowserViewTests: XCTestCase {
         )
         updateTagsUseCase = WireCellsUpdateTagsUseCase(nodesAPI: nodesApi)
         getTagSuggestionsUseCase = WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi)
+        getAssetUseCase = WireCellsGetAssetUseCase(
+            localAssetRepository: localAssetsRepository,
+            fileCache: MockFileCache()
+        )
+
         createFolderUseCase = WireCellsCreateFolderUseCase(
             nodesRepository: nodesRepository
         )
+
         fetchNodeVersionsUseCase = WireCellsFetchNodeVersionsUseCase(repository: nodesRepository)
         restoreNodeVersionUseCase = WireCellsRestoreNodeVersionUseCase(
             repository: nodesRepository,
             localAssetsRepository: localAssetsRepository,
             nodeCache: MockWireCellsNodeCacheProtocol()
+        )
+
+
+        let editingURLRepository = MockWireCellsEditingURLRepositoryProtocol()
+        editingURLRepository.getEditorURLId_MockValue = nil
+        getEditingURLUseCase = WireCellsGetEditingURLUseCase(
+            editingURLRepository: editingURLRepository
         )
     }
 
@@ -188,13 +203,16 @@ final class FilesBrowserViewTests: XCTestCase {
                 getTagSuggestions: getTagSuggestionsUseCase,
                 createFolder: createFolderUseCase,
                 fetchNodeVersions: fetchNodeVersionsUseCase,
-                restoreNodeVersion: restoreNodeVersionUseCase
+                restoreNodeVersion: restoreNodeVersionUseCase,
+                getEditingURL: getEditingURLUseCase,
+                getAssetUseCase: getAssetUseCase
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetsRepository,
             nodesRepository: nodesRepository,
             fileCache: MockFileCache(),
             isFoldersEnabled: false,
+            isCollaboraEnabled: false,
             accentColorProvider: { .default }
         )
 

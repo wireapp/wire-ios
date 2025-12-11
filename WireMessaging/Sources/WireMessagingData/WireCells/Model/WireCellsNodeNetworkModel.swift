@@ -31,6 +31,7 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
     package let type: String?
     package let isRecycled: Bool
     package let isDraft: Bool
+    package let isEditable: Bool
     package let contentUrl: URL?
     package let contentHash: String?
     package let mimeType: String?
@@ -51,6 +52,7 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
         type: String? = nil,
         isRecycled: Bool = false,
         isDraft: Bool = false,
+        isEditable: Bool = false,
         contentUrl: URL? = nil,
         contentHash: String? = nil,
         mimeType: String? = nil,
@@ -70,6 +72,7 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
         self.type = type
         self.isRecycled = isRecycled
         self.isDraft = isDraft
+        self.isEditable = isEditable
         self.contentUrl = contentUrl
         self.contentHash = contentHash
         self.mimeType = mimeType
@@ -94,6 +97,7 @@ package extension WireCellsNodeNetworkModel {
             type: type.flatMap { WireCellsNodeType(rawValue: $0) },
             isRecycled: isRecycled,
             isDraft: isDraft,
+            isEditable: isEditable,
             contentUrl: contentUrl,
             contentHash: contentHash,
             mimeType: mimeType,
@@ -145,6 +149,7 @@ package extension RestNode {
             type: type?.rawValue ?? "",
             isRecycled: isRecycled ?? false,
             isDraft: isDraft ?? false,
+            isEditable: editorURLsKeys?.contains("collabora") ?? false,
             contentUrl: preSignedGET?.url.flatMap(URL.init(string:)),
             contentHash: contentHash,
             mimeType: contentType,

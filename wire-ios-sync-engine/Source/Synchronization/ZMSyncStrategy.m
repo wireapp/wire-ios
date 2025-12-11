@@ -58,7 +58,7 @@
 ZM_EMPTY_ASSERTING_INIT()
 
 
-- (instancetype)initWithContextProvider:(id<ContextProvider>)contextProvider
+- (instancetype)initWithContextProvider:(id<ZMContextProvider>)contextProvider
                 notificationsDispatcher:(NotificationDispatcher *)notificationsDispatcher
                         operationStatus:(OperationStatus *)operationStatus
                             application:(id<ZMApplication>)application

@@ -41,6 +41,9 @@ package struct FilesViewItem: Identifiable, Hashable {
     /// Identifier of this item on the wire cells backend.
     package let id: UUID
 
+    /// The ETag of this item.
+    let eTag: String
+
     /// The id of the topmost folder in the recycle bin, if the item is not at the root of the recycle bin.
     /// Needed to restore items which are in folders rather than directly at the root of the recycle bin.
     var recycleBinTopFolderId: UUID?
@@ -65,6 +68,9 @@ package struct FilesViewItem: Identifiable, Hashable {
 
     /// The tags that users have added for that file.
     let tags: [String]
+
+    /// Whether the item can be edited.
+    let isEditable: Bool
 }
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -150,7 +156,9 @@ package final class FilesViewModel: ObservableObject {
             getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol,
             createFolder: any WireCellsCreateFolderUseCaseProtocol,
             fetchNodeVersions: any WireCellsFetchNodeVersionsUseCaseProtocol,
-            restoreNodeVersion: any WireCellsRestoreNodeVersionUseCaseProtocol
+            restoreNodeVersion: any WireCellsRestoreNodeVersionUseCaseProtocol,
+            getEditingURL: WireCellsGetEditingURLUseCase,
+            getAssetUseCase: WireCellsGetAssetUseCase
         ) {
 
             self.fetchNodes = fetchNodes
@@ -162,6 +170,8 @@ package final class FilesViewModel: ObservableObject {
             self.createFolder = createFolder
             self.fetchNodeVersions = fetchNodeVersions
             self.restoreNodeVersion = restoreNodeVersion
+            self.getEditingURL = getEditingURL
+            self.getAssetUseCase = getAssetUseCase
         }
 
         let fetchNodes: WireCellsFetchNodesPageUseCase
@@ -173,6 +183,8 @@ package final class FilesViewModel: ObservableObject {
         let createFolder: any WireCellsCreateFolderUseCaseProtocol
         let fetchNodeVersions: any WireCellsFetchNodeVersionsUseCaseProtocol
         let restoreNodeVersion: any WireCellsRestoreNodeVersionUseCaseProtocol
+        let getEditingURL: WireCellsGetEditingURLUseCase
+        let getAssetUseCase: WireCellsGetAssetUseCase
     }
 
     let useCases: UseCases
@@ -187,6 +199,7 @@ package final class FilesViewModel: ObservableObject {
     private let navigationPath: [FilesViewItem]
     private let accentColorProvider: () -> WireAccentColor
     let isFoldersEnabled: Bool
+    let isCollaboraEnabled: Bool
     let isRecycleBin: Bool
     let triggerReload: PassthroughSubject<Void, Never>
 
@@ -197,6 +210,9 @@ package final class FilesViewModel: ObservableObject {
     @Published var viewingURL: URL?
     @Published var state: State
     @Published var sheetNavigation: SheetNavigation?
+    @Published var createFolderView: CreateFolderView?
+    @Published var fileRenameView: FileRenameView?
+    @Published var isEditing: FilesViewItem?
 
     var shouldReload: Bool = false
     var filterWithTags: [String] = []
@@ -216,6 +232,7 @@ package final class FilesViewModel: ObservableObject {
         fileCache: any FileCache,
         cellName: String? = nil,
         isFoldersEnabled: Bool,
+        isCollaboraEnabled: Bool,
         isRecycleBin: Bool = false,
         triggerReload: PassthroughSubject<Void, Never> = .init(),
         accentColorProvider: @escaping () -> WireAccentColor
@@ -230,6 +247,7 @@ package final class FilesViewModel: ObservableObject {
         self.cellName = cellName
         self.state = isCellsStatePending ? .pending : .loading
         self.isFoldersEnabled = isFoldersEnabled
+        self.isCollaboraEnabled = isCollaboraEnabled
         self.isRecycleBin = isRecycleBin
         self.triggerReload = triggerReload
         self.accentColorProvider = accentColorProvider
@@ -318,6 +336,8 @@ package final class FilesViewModel: ObservableObject {
                     sheetNavigation = .moveToFolder(fileItem: item)
                 case .onVersionHistory:
                     sheetNavigation = .versionHistory(view: makeFileVersioningView(item: item))
+                case .edit:
+                    isEditing = item
                 }
             },
             isInRecycleBin: isRecycleBin
@@ -361,6 +381,17 @@ package final class FilesViewModel: ObservableObject {
                 localAssetRepository: assetRepository,
                 moveNodeUseCase: WireCellsMoveNodeUseCase(nodesRepository: nodesRepository),
                 createFolderUseCase: useCases.createFolder
+            )
+        )
+    }
+
+    func editFileView(item: FilesViewItem) -> some View {
+        let getEditingURLUseCase = useCases.getEditingURL
+        return EditFileView(
+            viewModel: EditFileViewModel(
+                nodeID: item.id,
+                fileName: item.name,
+                getEditingURLUseCase: getEditingURLUseCase
             )
         )
     }
@@ -438,7 +469,8 @@ package final class FilesViewModel: ObservableObject {
         lastSelectedItem = item
 
         do {
-            if let url = try await localURL(for: item), item == lastSelectedItem {
+            let url = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
+            if item == lastSelectedItem {
                 viewingURL = url
             }
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
@@ -474,25 +506,6 @@ package final class FilesViewModel: ObservableObject {
     }
 
     // MARK: - Private
-
-    private func localURL(for item: FilesViewItem) async throws -> URL? {
-        // If the file is already downloaded, return the local URL.
-        if
-            let cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey,
-            let url = fileCache.fileURL(forKey: cacheKey) {
-            return url
-        }
-
-        let cacheKey: String?
-        do {
-            try await localAssetRepository.downloadAsset(nodeID: item.id)
-            cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey
-        } catch WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress {
-            try await awaitDownload(item: item)
-            cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey
-        }
-        return cacheKey.flatMap { fileCache.fileURL(forKey: $0) }
-    }
 
     private func cancelLoad() {
         loadMoreTask?.cancel()
@@ -536,11 +549,14 @@ package final class FilesViewModel: ObservableObject {
             offset: offset
         )
 
-        let items = nodes.map { node in
+        let items: [FilesViewItem] = nodes.compactMap { node in
+            guard let eTag = node.eTag else { return nil }
+
             let url = URL(string: node.path)
             let kind: FilesViewItem.Kind = node.type == .collection ? .folder : .file
             return FilesViewItem(
                 id: node.id,
+                eTag: eTag,
                 kind: kind,
                 name: url?.lastPathComponent ?? node.path,
                 filePath: node.path,
@@ -550,27 +566,13 @@ package final class FilesViewModel: ObservableObject {
                     type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
                     fileExtension: url?.pathExtension
                 ),
-                tags: node.tags
+                tags: node.tags,
+                isEditable: node.isEditable
             )
         }
 
         try Task.checkCancellation()
         return (items, isLastPage)
-    }
-
-    private func awaitDownload(item: FilesViewItem) async throws {
-        for await item in localAssetRepository.observeAsset(nodeID: item.id).values {
-            try Task.checkCancellation()
-
-            switch item?.downloadState {
-            case .downloaded:
-                return
-            case let .failed(error):
-                throw error
-            default:
-                break
-            }
-        }
     }
 
     private func deleteItem(_ asset: FilesViewItem, permanently: Bool) async {

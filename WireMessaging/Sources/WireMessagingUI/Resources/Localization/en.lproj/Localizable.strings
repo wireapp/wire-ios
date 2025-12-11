@@ -117,6 +117,7 @@
 "conversation.wireCells.files.loadMore.title" = "Load more";
 "conversation.wireCells.files.item.menu.open" = "Open";
 "conversation.wireCells.files.item.menu.download" = "Download";
+"conversation.wireCells.files.item.menu.editFile" = "Edit file";
 "conversation.wireCells.files.item.menu.rename" = "Rename";
 "conversation.wireCells.files.item.menu.moveToFolder" = "Move to folder";
 "conversation.wireCells.files.item.menu.addOrRemoveTags" = "Add or remove tags";

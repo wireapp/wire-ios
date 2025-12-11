@@ -112,6 +112,15 @@ package struct FilesView: FilesViewProtocol {
                     }
                 }
             )
+            .fullScreenCover(
+                item: $viewModel.isEditing,
+                onDismiss: {
+                    Task { await viewModel.reload() }
+                },
+                content: { item in
+                    viewModel.editFileView(item: item)
+                }
+            )
         }
     }
 
@@ -128,7 +137,7 @@ private extension FilesView {
             }
         }
 
-        if !viewModel.isRecycleBin {
+        if !viewModel.isRecycleBin, viewModel.isFoldersEnabled {
             ToolbarItem(placement: .navigationBarTrailing) {
                 moreActionsButton
             }

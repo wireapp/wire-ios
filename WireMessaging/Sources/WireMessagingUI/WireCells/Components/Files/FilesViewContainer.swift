@@ -37,6 +37,7 @@ package struct FilesViewContainer: View {
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
     private let fileCache: any FileCache
     private let isFoldersEnabled: Bool
+    private let isCollaboraEnabled: Bool
     private let accentColorProvider: () -> WireAccentColor
 
     private let triggerReloadFiles: PassthroughSubject<Void, Never> = .init()
@@ -60,6 +61,7 @@ package struct FilesViewContainer: View {
         nodeRenameNotifier: WireCellsNodeRenameNotifier,
         fileCache: any FileCache,
         isFoldersEnabled: Bool,
+        isCollaboraEnabled: Bool,
         accentColorProvider: @escaping () -> WireAccentColor
     ) {
         self.cellName = cellName
@@ -72,6 +74,7 @@ package struct FilesViewContainer: View {
         self.nodeRenameNotifier = nodeRenameNotifier
         self.fileCache = fileCache
         self.isFoldersEnabled = isFoldersEnabled
+        self.isCollaboraEnabled = isCollaboraEnabled
         self.accentColorProvider = accentColorProvider
     }
 
@@ -148,6 +151,11 @@ package struct FilesViewContainer: View {
                     repository: nodesAPI,
                     localAssetsRepository: localAssetRepository,
                     nodeCache: nodeCache
+                ),
+                getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: nodesAPI),
+                getAssetUseCase: WireCellsGetAssetUseCase(
+                    localAssetRepository: localAssetRepository,
+                    fileCache: fileCache
                 )
             ),
             title: path.last?.name,
@@ -161,6 +169,7 @@ package struct FilesViewContainer: View {
             fileCache: fileCache,
             cellName: cellName,
             isFoldersEnabled: isFoldersEnabled,
+            isCollaboraEnabled: isCollaboraEnabled,
             isRecycleBin: false,
             triggerReload: triggerReloadFiles,
             accentColorProvider: accentColorProvider

@@ -42,6 +42,7 @@ final class FilesItemViewModel: ObservableObject {
         case editTags
         case moveToFolder
         case onVersionHistory
+        case edit
     }
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
@@ -146,6 +147,10 @@ final class FilesItemViewModel: ObservableObject {
         }
     }
 
+    var isEditable: Bool {
+        item.isEditable && !isInRecycleBin
+    }
+
     func open() async {
         await onItemAction(.open, item)
     }
@@ -156,6 +161,10 @@ final class FilesItemViewModel: ObservableObject {
 
     func moveToFolder() async {
         await onItemAction(.moveToFolder, item)
+    }
+
+    func edit() async {
+        await onItemAction(.edit, item)
     }
 
     func download() async {
