@@ -24,12 +24,11 @@ import Testing
 
 struct WireCellsNodeCacheTests {
 
-    @MainActor
-    private let sut: WireCellsNodeCache
+    @MainActor private let sut: WireCellsNodeCache
 
     @MainActor
     init() {
-        sut = WireCellsNodeCache()
+        self.sut = WireCellsNodeCache()
     }
 
     @Test @MainActor
