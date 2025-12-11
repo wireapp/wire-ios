@@ -45,13 +45,18 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             by user: UserType
         ) -> Bool {
             switch self {
-            case .channelAccess: user.canModifyChannelAccessLevelSettings(in: conversation)
-            case .notifications: user.canModifyNotificationSettings(in: conversation)
-            case .fileCollaboration: conversation.isCellsEnabled
-            case .guests:        user.canModifyGuestsAccessControlSettings(in: conversation)
-            case .services:      user.canModifyGuestsAccessControlSettings(in: conversation) && conversation
-                .botCanBeAdded
-            case .timeout:       user.canModifyEphemeralSettings(in: conversation) && !conversation.isCellsEnabled
+            case .channelAccess:
+                user.canModifyChannelAccessLevelSettings(in: conversation)
+            case .notifications:
+                user.canModifyNotificationSettings(in: conversation)
+            case .fileCollaboration:
+                conversation.isCellsEnabled
+            case .guests:
+                user.canModifyGuestsAccessControlSettings(in: conversation)
+            case .services:
+                user.canModifyGuestsAccessControlSettings(in: conversation) && conversation.botCanBeAdded
+            case .timeout:
+                user.canModifyEphemeralSettings(in: conversation) && !conversation.isCellsEnabled
             case .channelHistoryDepth:
                 if DeveloperFlag.channelsHistory.isOn {
                     user.canModifyChannelHistoryDepthSettings(in: conversation)
@@ -97,7 +102,6 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         self.conversation = conversation
         self.syncCompleted = syncCompleted
         self.options = Option.allCases.filter { $0.accessible(in: conversation, by: user) }
-
     }
 
     // MARK: - Collection View
