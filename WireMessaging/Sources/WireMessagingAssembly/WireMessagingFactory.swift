@@ -225,6 +225,7 @@ public extension WireMessagingFactory {
                 localAssetRepository: localAssetRepository,
                 fileCache: fileCache
             ),
+            nodeCache: nodeCache,
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
             nodeRenameNotifier: nodeRenameNotifier,

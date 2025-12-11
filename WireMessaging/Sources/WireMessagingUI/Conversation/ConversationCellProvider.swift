@@ -24,6 +24,7 @@ public final class ConversationCellProvider {
 
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
+    private let nodeCache: any WireCellsNodeCacheProtocol
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let lastOpenRequest: WireCellsLastOpenRequest
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
@@ -32,6 +33,7 @@ public final class ConversationCellProvider {
     package init(
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
+        nodeCache: any WireCellsNodeCacheProtocol,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         lastOpenRequest: WireCellsLastOpenRequest,
         nodeRenameNotifier: WireCellsNodeRenameNotifier,
@@ -39,6 +41,7 @@ public final class ConversationCellProvider {
     ) {
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
+        self.nodeCache = nodeCache
         self.localAssetRepository = localAssetRepository
         self.lastOpenRequest = lastOpenRequest
         self.insetsProvider = insetsProvider
@@ -82,6 +85,7 @@ public final class ConversationCellProvider {
                 alignment: model.isSentBySelfUser ? .trailing : .leading,
                 fetchNodeUseCase: fetchNodeUseCase,
                 getAssetUseCase: getAssetUseCase,
+                nodeCache: nodeCache,
                 localAssetRepository: localAssetRepository,
                 lastOpenRequest: lastOpenRequest,
                 nodeRenameNotifier: nodeRenameNotifier

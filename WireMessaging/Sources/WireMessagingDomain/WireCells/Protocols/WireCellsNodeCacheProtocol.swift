@@ -24,7 +24,7 @@ package import Foundation
 /// different from the value never having been added to the cache.
 package struct WireCellsNodeCacheItem {
 
-    let node: WireCellsNode?
+    package let node: WireCellsNode?
 
 }
 

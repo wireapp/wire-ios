@@ -34,6 +34,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     private let attachment: WireCellsMessageAttachment
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
+    private let nodeCache: any WireCellsNodeCacheProtocol
     private let lastOpenRequest: WireCellsLastOpenRequest
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
@@ -53,6 +54,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         alignment: HorizontalAlignment,
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
+        nodeCache: any WireCellsNodeCacheProtocol,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         lastOpenRequest: WireCellsLastOpenRequest,
         nodeRenameNotifier: WireCellsNodeRenameNotifier,
@@ -62,6 +64,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         self.alignment = alignment
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
+        self.nodeCache = nodeCache
         self.lastOpenRequest = lastOpenRequest
         self.nodeRenameNotifier = nodeRenameNotifier
         self.localAssetRepository = localAssetRepository
@@ -69,6 +72,10 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         self.isDeleted = false
 
         setupBindings()
+
+        if let cacheInfo = nodeCache.item(for: attachment.nodeID) {
+            updateNode(cacheInfo.node)
+        }
     }
 
     var fileCategory: WireCellsFileCategory {
@@ -131,13 +138,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     func refresh() async {
         do {
             for try await node in fetchNodeUseCase.invoke(nodeID: nodeID) {
-                self.node = node
-
-                if let node {
-                    isDeleted = node.isRecycled
-                } else {
-                    isDeleted = true
-                }
+                self.updateNode(node)
             }
         } catch {
             WireLogger.wireCells.info("Failed to refresh node with ID: \(nodeID), error: \(error)")
@@ -209,6 +210,15 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     }
 
     // MARK: - Private
+
+    private func updateNode(_ node: WireCellsNode?) {
+        self.node = node
+        if let node {
+            isDeleted = node.isRecycled
+        } else {
+            isDeleted = true
+        }
+    }
 
     private var nodeID: UUID {
         node?.id ?? attachment.nodeID
