@@ -303,13 +303,15 @@ struct TagsEditView: View {
 #Preview {
     let item = FilesViewItem(
         id: UUID(),
+        eTag: "etag",
         kind: .file,
         name: "some_file.pdf",
         filePath: "some/path",
         ownedBy: nil,
         modifiedAt: nil,
         icon: .document,
-        tags: ["Lorem", "Ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"]
+        tags: ["Lorem", "Ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"],
+        isEditable: false
     )
 
     let mockAPI = {
