@@ -36,6 +36,7 @@ package protocol WireCellsNodeCacheProtocol: Sendable {
     func setItem(_ value: WireCellsNodeCacheItem, for nodeID: UUID) async
 
     /// Returns a `WireCellsNodeCacheItem` for a given `nodeID`, or `nil` if no value is cached.
-    func item(for nodeID: UUID) async -> WireCellsNodeCacheItem?
+    @MainActor
+    func item(for nodeID: UUID) -> WireCellsNodeCacheItem?
 
 }

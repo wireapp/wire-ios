@@ -24,9 +24,15 @@ import Testing
 
 struct WireCellsNodeCacheTests {
 
-    private let sut = WireCellsNodeCache()
+    @MainActor
+    private let sut: WireCellsNodeCache
 
-    @Test
+    @MainActor
+    init() {
+        sut = WireCellsNodeCache()
+    }
+
+    @Test @MainActor
     func settingAndGetting() async {
         // Given
         let nodeIDA = UUID()
@@ -34,8 +40,8 @@ struct WireCellsNodeCacheTests {
         let nodeIDB = UUID()
 
         // When
-        await sut.setItem(WireCellsNodeCacheItem(node: nodeA), for: nodeIDA)
-        await sut.setItem(WireCellsNodeCacheItem(node: nil), for: nodeIDB)
+        sut.setItem(WireCellsNodeCacheItem(node: nodeA), for: nodeIDA)
+        sut.setItem(WireCellsNodeCacheItem(node: nil), for: nodeIDB)
 
         // Then
         #expect(await sut.item(for: nodeIDA)?.node == nodeA)

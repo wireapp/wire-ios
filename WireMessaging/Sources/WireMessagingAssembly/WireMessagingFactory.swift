@@ -35,7 +35,7 @@ public struct WireMessagingFactory {
     private let localAssetRepository: WireCellsLocalAssetRepository
     private let filenameGenerator = FilenameGenerator()
     private let lastOpenRequest: WireCellsLastOpenRequest
-    private let nodeCache = WireCellsNodeCache()
+    private let nodeCache: WireCellsNodeCache
     private let isFoldersEnabled: Bool
     private let isCollaboraEnabled: Bool
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
@@ -65,6 +65,7 @@ public struct WireMessagingFactory {
             serverURL
         }
 
+        self.nodeCache = WireCellsNodeCache()
         self.nodesAPI = NodesAPI(serverURL: serverURL, accessToken: accessToken)
         self.uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
         self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
