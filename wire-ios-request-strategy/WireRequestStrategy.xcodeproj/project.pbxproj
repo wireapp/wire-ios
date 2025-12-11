@@ -13,7 +13,6 @@
 		0106AC952C9CA4F30022E2CF /* ProteusMessagePayloadBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC942C9CA4F30022E2CF /* ProteusMessagePayloadBuilderTests.swift */; };
 		0106AC982C9CBCE40022E2CF /* MessageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC962C9CB7F90022E2CF /* MessageInfo.swift */; };
 		01F5AED02CAD892000B01069 /* ProteusMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5AECF2CAD892000B01069 /* ProteusMessageTests.swift */; };
-		06025662248E467B00E060E1 /* NotificationStreamSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06025661248E467B00E060E1 /* NotificationStreamSync.swift */; };
 		06025666248E616C00E060E1 /* ZMSimpleListRequestPaginator.m in Sources */ = {isa = PBXBuildFile; fileRef = 06025665248E616C00E060E1 /* ZMSimpleListRequestPaginator.m */; };
 		0605DB902511622100443219 /* ZMLocalNotificationTests_UnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0605DB8F2511622100443219 /* ZMLocalNotificationTests_UnreadCount.swift */; };
 		060ED6D62499F41000412C4A /* PushNotificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060ED6D52499F41000412C4A /* PushNotificationStatus.swift */; };
@@ -474,7 +473,6 @@
 		0106AC942C9CA4F30022E2CF /* ProteusMessagePayloadBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessagePayloadBuilderTests.swift; sourceTree = "<group>"; };
 		0106AC962C9CB7F90022E2CF /* MessageInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInfo.swift; sourceTree = "<group>"; };
 		01F5AECF2CAD892000B01069 /* ProteusMessageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProteusMessageTests.swift; sourceTree = "<group>"; };
-		06025661248E467B00E060E1 /* NotificationStreamSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationStreamSync.swift; sourceTree = "<group>"; };
 		06025665248E616C00E060E1 /* ZMSimpleListRequestPaginator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMSimpleListRequestPaginator.m; sourceTree = "<group>"; };
 		06025667248E617D00E060E1 /* ZMSimpleListRequestPaginator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMSimpleListRequestPaginator.h; sourceTree = "<group>"; };
 		06025669248E61BF00E060E1 /* ZMSimpleListRequestPaginator+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZMSimpleListRequestPaginator+Internal.h"; sourceTree = "<group>"; };
@@ -1023,7 +1021,6 @@
 				EEAC16D3281AE5F700B7A34D /* CallEventContent.swift */,
 				EEAC16D5281AEB0200B7A34D /* CallEventContentTests.swift */,
 				E6425FE82BD00A33003EC8CF /* E2EINotifications.swift */,
-				06025661248E467B00E060E1 /* NotificationStreamSync.swift */,
 				060ED6D52499F41000412C4A /* PushNotificationStatus.swift */,
 				06474D5C24B30C75002C695D /* PushNotificationStatusTests.swift */,
 				EE3245FB2821D41000F2A84A /* VoIPPushHelper.swift */,
@@ -2529,7 +2526,6 @@
 				639971B42B2779A9009DD5CF /* E2EIKeyPackageRotator.swift in Sources */,
 				5E68F22722452CDC00298376 /* LinkPreprocessor.swift in Sources */,
 				E629E3AB2B47028600D526AD /* Payload+PaginatedQualifiedConversationIDList.swift in Sources */,
-				06025662248E467B00E060E1 /* NotificationStreamSync.swift in Sources */,
 				EE8807A12AC4669D00278E3C /* UserClientPayloadProcessor.swift in Sources */,
 				EE202DAB27F1F4CC00083AB3 /* VoIPPushPayload.swift in Sources */,
 				0649D14924F63C51001DDC78 /* NotificationSound.swift in Sources */,
