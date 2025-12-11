@@ -66,8 +66,6 @@ public extension ZMUserSession {
     func applicationDidEnterBackground(_ note: Notification?) {
         Task { @MainActor [weak self] in
             guard let self else { return }
-
-            // Check for active calls on the main actor (UI context)
             let hasActiveCalls = self.callCenter?.activeCalls.isEmpty == false
 
             if !hasActiveCalls {

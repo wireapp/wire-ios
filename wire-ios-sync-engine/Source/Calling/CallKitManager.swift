@@ -680,7 +680,6 @@ extension CallKitManager: CXProviderDelegate {
                 callRegister.unregisterCall(call)
                 logger.info("success: perform end call action", attributes: .safePublic)
 
-                // Check if all calls have ended
                 if callRegister.allCalls.isEmpty {
                     delegate.didEndAllCalls()
                 }
