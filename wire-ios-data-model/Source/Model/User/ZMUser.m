@@ -163,6 +163,16 @@ static NSString *const PrimaryKey = @"primaryKey";
     return [NSSet setWithObjects:TypeKey, nil];
 }
 
++ (NSSet<NSString *> *)keyPathsForValuesAffectingIsBot
+{
+    return [NSSet setWithObjects:TypeKey, nil];
+}
+
++ (NSSet<NSString *> *)keyPathsForValuesAffectingIsAppOrBot
+{
+    return [NSSet setWithObjects:TypeKey, nil];
+}
+
 - (BOOL)isSelfUser
 {
     if ([self isZombieObject]) {
@@ -239,7 +249,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 - (BOOL)canBeConnected;
 {
-    if (self.isApp || self.isWirelessUser) {
+    if (self.isAppOrBot || self.isWirelessUser) {
         return NO;
     }
     return ! self.isConnected && ! self.isPendingApprovalByOtherUser;
@@ -710,7 +720,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 @implementation ZMUser (Utilities)
 
-+ (ZMUser<ZMEditableUserType> *)selfUserInUserSession:(id<ContextProvider>)session
++ (ZMUser<ZMEditableUserType> *)selfUserInUserSession:(id<ZMContextProvider>)session
 {
     VerifyReturnNil(session != nil);
     return [self selfUserInContext:session.viewContext];
