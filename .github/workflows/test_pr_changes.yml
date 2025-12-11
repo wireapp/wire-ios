@@ -81,8 +81,6 @@ jobs:
               - 'wire-ios-link-preview/**'
             wire-ios-mocktransport:
               - 'wire-ios-mocktransport/**'
-            wire-ios-notification-engine:
-              - 'wire-ios-notification-engine/**'
             wire-ios-request-strategy:
               - 'wire-ios-request-strategy/**'
             wire-ios-share-engine:

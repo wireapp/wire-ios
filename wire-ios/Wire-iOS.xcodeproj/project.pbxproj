@@ -50,7 +50,7 @@
 		0619A95C2D3FE78700876BDE /* WireAuthenticationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0619A95B2D3FE78700876BDE /* WireAuthenticationUI */; };
 		061F34192B1E2ED50099CBAB /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 061F34182B1E2ED50099CBAB /* AppAuth */; };
 		061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */ = {isa = PBXBuildFile; productRef = 061F341A2B1E2ED50099CBAB /* AppAuthCore */; };
-		065A5AE5279B07AC002D4D1E /* Wire Notification Service Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		065A5AE5279B07AC002D4D1E /* NSE.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 065A5ADE279B07AC002D4D1E /* NSE.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		065CDA952E9E58B90080799B /* WireCallingAssembly in Frameworks */ = {isa = PBXBuildFile; productRef = 065CDA942E9E58B90080799B /* WireCallingAssembly */; };
 		06EF6B552E8EBEF200A131A7 /* WireCallingUI in Frameworks */ = {isa = PBXBuildFile; productRef = 06EF6B542E8EBEF200A131A7 /* WireCallingUI */; };
 		16EE08AE2D92E861001B372C /* WireCoreCryptoUniffi in Frameworks */ = {isa = PBXBuildFile; productRef = 16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */; };
@@ -136,7 +136,6 @@
 		EE67F741296F0EBC001D7C88 /* WireCanvas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F740296F0EBC001D7C88 /* WireCanvas.framework */; };
 		EE67F742296F0EBC001D7C88 /* WireCanvas.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F740296F0EBC001D7C88 /* WireCanvas.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE7905F627F326EB00FCBF8C /* Wire Share Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		EE9A8586298B0A3B00064A9C /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */; };
 		EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B2729719A730008B894 /* cryptobox.xcframework */; };
 		EEE25B3529719BD30008B894 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3429719BD30008B894 /* WireCryptobox.framework */; };
 		EEE25B3629719BD30008B894 /* WireCryptobox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3429719BD30008B894 /* WireCryptobox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -225,7 +224,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				EE7905F627F326EB00FCBF8C /* Wire Share Extension.appex in Embed App Extensions */,
-				065A5AE5279B07AC002D4D1E /* Wire Notification Service Extension.appex in Embed App Extensions */,
+				065A5AE5279B07AC002D4D1E /* NSE.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -399,7 +398,7 @@
 		01B71B922D6D2DAB002C5A38 /* emoticons.min.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = emoticons.min.json; sourceTree = "<group>"; };
 		01B71B932D6D2DAB002C5A38 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		01DFC4312D7B4C6F00D1962A /* WireUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Wire Notification Service Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		065A5ADE279B07AC002D4D1E /* NSE.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NSE.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Wire Share Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		597D9BEE2DA7DA7B000031DE /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -499,7 +498,6 @@
 		015DB1642D68DB7F004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				LegacyNotificationService.swift,
 				Logger.swift,
 			);
 			target = BACB88501AF7C48900DDCDB0 /* Wire-iOS-Tests */;
@@ -929,7 +927,6 @@
 				591B6E212C8B096C009F8A7B /* WireCommonComponents.framework in Frameworks */,
 				3431F08B2E795BD0007BA692 /* WireNetwork in Frameworks */,
 				59537D912CFFA0BA00920B59 /* WireLogging in Frameworks */,
-				EE9A8586298B0A3B00064A9C /* WireNotificationEngine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1260,7 +1257,7 @@
 				BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */,
 				168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */,
 				F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */,
-				065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */,
+				065A5ADE279B07AC002D4D1E /* NSE.appex */,
 				E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */,
 				01DFC4312D7B4C6F00D1962A /* WireUITests.xctest */,
 			);
@@ -1314,7 +1311,7 @@
 			);
 			name = "Wire Notification Service Extension";
 			productName = "Wire Notification Service Extension";
-			productReference = 065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */;
+			productReference = 065A5ADE279B07AC002D4D1E /* NSE.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		168A16A81D9597C2005CFA6C /* Wire Share Extension */ = {
@@ -2291,7 +2288,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = "$(PRODUCT_NAME)";
+				PRODUCT_NAME = NSE;
 				PROVISIONING_PROFILE_SPECIFIER = "$(PROVISIONING_PROFILE_SPECIFIER)";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
@@ -2370,7 +2367,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = "$(PRODUCT_NAME)";
+				PRODUCT_NAME = NSE;
 				PROVISIONING_PROFILE_SPECIFIER = "$(PROVISIONING_PROFILE_SPECIFIER)";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
