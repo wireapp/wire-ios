@@ -16,18 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 @objc
-public protocol ServiceUser: AnyObject, UserType {
+public protocol Bot: AnyObject, UserType {
     var providerIdentifier: String? { get }
     var serviceIdentifier: String? { get }
 }
 
 @objc
-public protocol SearchServiceUser: ServiceUser {
+public protocol BotSearchResult: Bot {
     var summary: String? { get }
 }
+
+public typealias ServiceUser = Bot
+public typealias SearchServiceUser = BotSearchResult
 
 extension ZMUser {
     static let servicesMustBeMentioned = false
