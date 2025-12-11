@@ -354,6 +354,8 @@
 "conversation.create.guests.subtitle" = "Open dit gesprek voor mensen buiten jouw team.";
 "conversation.create.apps.title" = "Allow apps";
 "conversation.create.apps.subtitle" = "Open this conversation to apps.";
+"conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
+"conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
 "conversation.create.receipts.title" = "Leesbevestigingen";
 "conversation.create.receipts.subtitle" = "Wanneer dit aanstaat, kunnen mensen zien wanneer je hun berichten gelezen hebt.";
 "conversation.create.mls.title" = "Protocol";

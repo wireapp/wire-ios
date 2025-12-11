@@ -75,6 +75,7 @@ final class UserConnectionView: UIView, Copyable {
 
         [labelContainer, userImageView, guestIndicator, guestWarningView].forEach(addSubview)
         [firstLabel, secondLabel].forEach(labelContainer.addArrangedSubview)
+        guestIndicator.isHidden = true
         updateLabels()
         updateGuestAccountViews()
     }
@@ -147,11 +148,16 @@ final class UserConnectionView: UIView, Copyable {
 
     private func updateGuestAccountViews() {
         if let viewer = SelfUser.provider?.providedSelfUser {
-            let isGuest = !viewer.isTeamMember || !viewer.canAccessCompanyInformation(of: user)
-            guestIndicator.isHidden = !isGuest
-        } else {
-            // show guest indicator
-            guestIndicator.isHidden = false
+            if viewer.hasTeam {
+                if user.hasTeam {
+                    let isSameTeam = user.isOnSameTeam(otherUser: viewer)
+                    guestIndicator.isHidden = isSameTeam
+                } else {
+                    guestIndicator.isHidden = false
+                }
+            } else {
+                guestIndicator.isHidden = true
+            }
         }
     }
 }

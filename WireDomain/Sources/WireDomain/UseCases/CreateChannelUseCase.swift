@@ -352,7 +352,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 conversation: conversation
             )
 
-        } catch let SendCommitBundleAction.Failure.nonFederatingDomains(domains: domains) {
+        } catch let SendMLSMessageFailure.nonFederatingDomains(domains: domains) {
 
             try await handleNonFederatingDomains(
                 domains,
@@ -360,7 +360,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 conversation: conversation
             )
 
-        } catch let SendCommitBundleAction.Failure.unreachableDomains(domains: domains) {
+        } catch let SendMLSMessageFailure.unreachableDomains(domains: domains) {
 
             try await handleUnreachableDomains(
                 domains,

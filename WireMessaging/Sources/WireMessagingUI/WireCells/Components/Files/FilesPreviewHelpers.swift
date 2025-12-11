@@ -29,14 +29,15 @@ extension FilesViewModel {
 
     /// A stubbed instance of `FilesViewModel` for SwiftUI previews.
     static func preview(isFoldersEnabled: Bool = false) -> FilesViewModel {
-        let cache = fileCache()
+        let cache = mockFileCache()
         let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
+        let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
 
         return FilesViewModel(
             useCases: .init(
-                fetchNodes: WireCellsFetchNodesUseCase(
+                fetchNodes: WireCellsFetchNodesPageUseCase(
                     configuration: .conversationFileView(root: .path("root"), isFoldersEnabled: true),
                     repository: previewNodesRepository()
                 ),
@@ -45,9 +46,14 @@ extension FilesViewModel {
                     fileCache: cache,
                     localAssetStore: localAssetStore
                 ),
+                restoreNodes: WireCellsRestoreNodesUseCase(
+                    repository: previewNodesRepository(),
+                    fileCache: cache,
+                    localAssetStore: localAssetStore
+                ),
                 renameNode: WireCellsRenameNodeUseCase(
                     nodesRepository: previewNodesRepository(),
-                    localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                    localAssetsRepository: localAssetRepository,
                     nodeCache: MockWireCellsNodeCacheProtocol(),
                     nodeRenameNotifier: WireCellsNodeRenameNotifier()
                 ),
@@ -60,13 +66,21 @@ extension FilesViewModel {
                 createFolder: WireCellsCreateFolderUseCase(
                     nodesRepository: previewNodesRepository()
                 ),
+                getEditingURL: WireCellsGetEditingURLUseCase(
+                    editingURLRepository: previewEditingURLRepository()
+                ),
+                getAssetUseCase: WireCellsGetAssetUseCase(
+                    localAssetRepository: localAssetRepository, fileCache: cache
+                )
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,
             localAssetRepository: PreviewLocalAssetRepository(),
+            nodesRepository: previewNodesRepository(),
             fileCache: cache,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
             isFoldersEnabled: isFoldersEnabled,
+            isCollaboraEnabled: false,
             accentColorProvider: { .default }
         )
     }
@@ -104,19 +118,19 @@ extension FilesItemViewModel {
         FilesItemViewModel(
             item: FilesViewItem(
                 id: UUID(),
+                eTag: "eTag",
                 kind: .file,
                 name: "foo.jpg",
                 filePath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image foo.jpg",
                 ownedBy: "Viola",
                 modifiedAt: Date(),
                 icon: .image,
-                tags: tags
+                tags: tags,
+                isEditable: false
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
-            onOpen: { _ in },
-            onDelete: { _ in },
-            onRename: { _ in },
-            onEditTagsSelected: { _ in }
+            onItemAction: { _, _ in },
+            isInRecycleBin: false,
         )
     }
 
@@ -174,7 +188,13 @@ private func previewTagsApi() -> some NodesAPIProtocol {
     return mock
 }
 
-private func fileCache() -> any FileCache {
+private func previewEditingURLRepository() -> any WireCellsEditingURLRepositoryProtocol {
+    let mock = MockWireCellsEditingURLRepositoryProtocol()
+    mock.getEditorURLId_MockValue = nil
+    return mock
+}
+
+private func mockFileCache() -> any FileCache {
     let fileURL = URL.temporaryDirectory.appendingPathComponent("mock-file.txt")
     let file = Data("Some text file content".utf8)
     try? file.write(to: fileURL)

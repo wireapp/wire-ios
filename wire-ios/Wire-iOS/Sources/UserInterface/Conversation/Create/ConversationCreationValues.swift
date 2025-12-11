@@ -52,8 +52,8 @@ final class ConversationCreationValues {
             }
 
             if !allowApps {
-                let noApps = result.filter { !$0.isApp }
-                result = UserSet(noApps)
+                let noAppsOrBots = result.filter { !$0.isAppOrBot }
+                result = UserSet(noAppsOrBots)
             }
 
             return result

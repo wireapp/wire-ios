@@ -19,6 +19,7 @@
 import Foundation
 
 enum ImportBackupState {
+    case loadingFile
     case requestConfirmation(url: URL)
     case importingBackup(current: Int, total: Int)
     case requestingPassword(url: URL, isPasswordIncorrect: Bool)
