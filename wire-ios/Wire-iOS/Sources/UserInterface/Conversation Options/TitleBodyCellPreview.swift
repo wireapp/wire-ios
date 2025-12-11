@@ -43,14 +43,14 @@ final class TitleBodyCellPreview: UITableViewController {
     }
 
     private func setupDataSource() {
-        dataSource = UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, itemIdentifier in
+        dataSource = UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, _ in
             let cell = tableView.dequeueReusableCell(withIdentifier: "TitleBodyCell", for: indexPath)
             if let cell = cell as? TitleBodyCell {
                 cell.configure(
                     with: .titleAndBody(
-                    title: "Your team doesn't use apps yet",
-                    body: "To improve your workflow with apps, your team needs configuration. Please contact your team admin."
-                )
+                        title: "Your team doesn't use apps yet",
+                        body: "To improve your workflow with apps, your team needs configuration. Please contact your team admin."
+                    )
                 )
             }
             return cell

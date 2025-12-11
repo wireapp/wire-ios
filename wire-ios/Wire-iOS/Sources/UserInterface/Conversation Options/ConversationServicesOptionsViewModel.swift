@@ -83,18 +83,18 @@ final class ConversationServicesOptionsViewModel {
 
     private func updateRows() {
         if configuration.isAppsFeatureEnabled {
-             state.rows = [.allowAppsToggle(
-                 get: { [unowned self] in return configuration.allowApps },
-                 set: { [unowned self] in setAllowApps($0, sender: $1) }
-             )]
-         } else {
-             state.rows = [
+            state.rows = [.allowAppsToggle(
+                get: { [unowned self] in return configuration.allowApps },
+                set: { [unowned self] in setAllowApps($0, sender: $1) }
+            )]
+        } else {
+            state.rows = [
                 .titleAndBody(
                     title: L10n.Localizable.Conversation.Create.AppsDisabled.title,
                     body: L10n.Localizable.Conversation.Create.AppsDisabled.message
                 )
-             ]
-         }
+            ]
+        }
     }
 
     /// set conversation option AllowApps

@@ -38,7 +38,8 @@ final class ConversationCreateAllowAppsSectionController: ConversationCreateSect
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if values.areLegacyBotsAvailable, values.encryptionProtocol == .proteus {
-            // Whenever the team was using old-style services (bots) we show the toggle but don't depend on the apps feature flag. Hence we don't show the banner.
+            // Whenever the team was using old-style services (bots) we show the toggle but don't depend on the apps
+            // feature flag. Hence we don't show the banner.
             1
         } else if values.isAppsFeatureEnabled {
             // no need to show a banner

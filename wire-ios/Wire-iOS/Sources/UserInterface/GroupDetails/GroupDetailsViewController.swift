@@ -548,7 +548,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         guard let conversation = conversation as? ZMConversation else { return }
         guard let userSession = ZMUserSession.shared() else { return }
         Task { @MainActor in
-            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository.isFeatureEnabled(.apps) ?? false
+            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
+                .isFeatureEnabled(.apps) ?? false
             let menu = ConversationGuestOptionsViewController(
                 conversation: conversation,
                 userSession: userSession,
@@ -562,7 +563,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         guard let conversation = conversation as? ZMConversation else { return }
         guard let userSession = ZMUserSession.shared() else { return }
         Task { @MainActor in
-            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository.isFeatureEnabled(.apps) ?? false
+            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
+                .isFeatureEnabled(.apps) ?? false
             let menu = ConversationServicesOptionsViewController(
                 conversation: conversation,
                 userSession: userSession,
