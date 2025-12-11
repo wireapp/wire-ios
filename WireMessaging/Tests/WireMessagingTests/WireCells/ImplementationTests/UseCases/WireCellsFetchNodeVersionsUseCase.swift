@@ -34,6 +34,7 @@ final class WireCellsFetchNodeVersionsUseCaseTests {
         )
     }
 
+    @Test
     func `It returns a collection of WireCellsNodeVersion`() async throws {
         // given
         repository.getVersionsNodeID_MockValue = WireCellsNodeVersion.mock
@@ -45,6 +46,7 @@ final class WireCellsFetchNodeVersionsUseCaseTests {
         #expect(result == WireCellsNodeVersion.mock)
     }
 
+    @Test
     func `It fails retrieving node versions`() async throws {
         // given
         repository.getVersionsNodeID_MockError = NSError(domain: "any", code: 0)
