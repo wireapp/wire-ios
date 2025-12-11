@@ -31,8 +31,6 @@
 @class PushNotificationStatus;
 @class ZMSyncStrategy;
 
-extern NSString * const ZMPushChannelIsOpenKey;
-
 @interface ZMOperationLoop : NSObject <TearDownCapable>
 
 @property (nonatomic, readonly) id<ZMApplication> application;

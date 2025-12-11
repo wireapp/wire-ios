@@ -27,14 +27,6 @@ extension ZMOperationLoop: OperationStatusDelegate {
         } else {
             transportSession.enterBackground()
         }
-
-        if isSyncV2Enabled {
-            // The new sync also includes a new push channel, so we don't
-            // what to open the legacy one.
-            transportSession.pushChannel.keepOpen = false
-        } else {
-            transportSession.pushChannel.keepOpen = state == .foreground || state == .backgroundCall
-        }
     }
 
 }
