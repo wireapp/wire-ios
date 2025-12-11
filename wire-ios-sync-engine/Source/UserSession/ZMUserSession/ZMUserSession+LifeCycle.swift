@@ -64,9 +64,17 @@ public extension ZMUserSession {
 
     @objc
     func applicationDidEnterBackground(_ note: Notification?) {
-        Task {
-            await syncAgent?.suspend()
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+
+            // Check for active calls on the main actor (UI context)
+            let hasActiveCalls = self.callCenter?.activeCalls.isEmpty == false
+
+            if !hasActiveCalls {
+                await self.syncAgent?.suspend()
+            }
         }
+
         stopEphemeralTimers()
         lockDatabase()
         recalculateUnreadMessages()

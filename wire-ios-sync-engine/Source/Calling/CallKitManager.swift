@@ -41,6 +41,10 @@ protocol CallKitManagerDelegate: AnyObject {
 
     func endAllCalls()
 
+    /// Called when all calls have ended
+
+    func didEndAllCalls()
+
 }
 
 @objc
@@ -675,6 +679,11 @@ extension CallKitManager: CXProviderDelegate {
                 action.fulfill()
                 callRegister.unregisterCall(call)
                 logger.info("success: perform end call action", attributes: .safePublic)
+
+                // Check if all calls have ended
+                if callRegister.allCalls.isEmpty {
+                    delegate.didEndAllCalls()
+                }
 
             case let .failure(error):
                 logger.error(
