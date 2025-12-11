@@ -19,12 +19,10 @@
 import Foundation
 
 /// Fetches `WireCellNodes`s for the given parameters.
-@MainActor
-package struct WireCellsFetchNodesPageUseCase {
+package struct WireCellsFetchNodesPageUseCase: Sendable {
 
     private let configuration: WireCellsGetNodesRequest.Configuration
     private let repository: any WireCellsNodesRepositoryProtocol
-    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
 
     /// Initializes the use case with the required parameters.
     /// - Parameters:
@@ -32,12 +30,10 @@ package struct WireCellsFetchNodesPageUseCase {
     ///   - repository: The repository to use for fetching nodes.
     package init(
         configuration: WireCellsGetNodesRequest.Configuration,
-        repository: any WireCellsNodesRepositoryProtocol,
-        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
+        repository: any WireCellsNodesRepositoryProtocol
     ) {
         self.configuration = configuration
         self.repository = repository
-        self.localAssetRepository = localAssetRepository
     }
 
     /// Fetches nodes based on the provided search term and pagination token.
@@ -60,17 +56,6 @@ package struct WireCellsFetchNodesPageUseCase {
             configuration: configuration
         )
         let (nodes, nextOffset) = try await repository.getNodes(request)
-
-        // Retrieve assets that have been updated and deleting them locally.
-        let nodesAssetToDelete = try nodes.compactMap {
-            if let localAsset = try localAssetRepository.asset(nodeID: $0.id), localAsset.eTag != $0.eTag {
-                $0
-            } else {
-                nil
-            }
-        }.map(\.id)
-
-        try await localAssetRepository.deleteAssets(nodeIDs: nodesAssetToDelete)
 
         return (nodes, nextOffset == nil)
     }

@@ -92,13 +92,6 @@ final class FileVersioningViewTests: XCTestCase {
 
         let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
 
-        localAssetRepository.observeAssetNodeID_MockValue = Just(nil).eraseToAnyPublisher()
-
-        let getAssetUseCase = WireCellsGetAssetUseCase(
-            localAssetRepository: localAssetRepository,
-            fileCache: MockFileCache()
-        )
-
         let restoreNodeVersionUseCase = WireCellsRestoreNodeVersionUseCase(
             repository: repository,
             localAssetsRepository: localAssetRepository,
@@ -109,9 +102,7 @@ final class FileVersioningViewTests: XCTestCase {
             nodeID: .mockID1,
             name: "foo.jpg",
             fetchNodeVersionsUseCase: fetchNodeVersionUseCase,
-            getAssetUseCase: getAssetUseCase,
             restoreNodeVersionUseCase: restoreNodeVersionUseCase,
-            localAssetRepository: localAssetRepository,
             accentColorProvider: { .default }
         )
 

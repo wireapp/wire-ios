@@ -18,9 +18,8 @@
 
 import Foundation
 
-@MainActor
 /// Fetches nodes for a particular configuration, and mutating the injected WireCellsNodesCollection.
-package final class WireCellsFetchNodesUseCase {
+package final class WireCellsFetchNodesUseCase: Sendable {
 
     /// The type of request.
     package enum Request {
@@ -36,7 +35,6 @@ package final class WireCellsFetchNodesUseCase {
     private let configuration: WireCellsGetNodesRequest.Configuration
     private let repository: any WireCellsNodesRepositoryProtocol
     private let state: WireCellsNodesCollection
-    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
 
     @MainActor private var searchTerm: String?
 
@@ -49,13 +47,11 @@ package final class WireCellsFetchNodesUseCase {
     package init(
         state: WireCellsNodesCollection,
         configuration: WireCellsGetNodesRequest.Configuration,
-        repository: any WireCellsNodesRepositoryProtocol,
-        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
+        repository: any WireCellsNodesRepositoryProtocol
     ) {
         self.state = state
         self.configuration = configuration
         self.repository = repository
-        self.localAssetRepository = localAssetRepository
     }
 
     /// Invokes the use case with the given `request` mutating the injected WireCellsNodesCollection.
@@ -64,28 +60,16 @@ package final class WireCellsFetchNodesUseCase {
     ) async throws -> (nodes: [WireCellsNode], hasMore: Bool) {
         switch request {
         case let .reload(searchTerm):
-            setSearchTerm(searchTerm)
-            cancelCurrentTask()
-            state.setNodes([])
+            await setSearchTerm(searchTerm)
+            await cancelCurrentTask()
+            await state.setNodes([])
         case .loadMore:
             break
         }
 
-        let task = loadMoreTask()
+        let task = await loadMoreTask()
         let (newNodes, nextOffset) = try await task.value
-
-        // Retrieve assets that have been updated and deleting them locally.
-        let nodesAssetToDelete = try newNodes.compactMap {
-            if let localAsset = try localAssetRepository.asset(nodeID: $0.id), localAsset.eTag != $0.eTag {
-                $0
-            } else {
-                nil
-            }
-        }.map(\.id)
-
-        try await localAssetRepository.deleteAssets(nodeIDs: nodesAssetToDelete)
-
-        let allNodes = appendNodes(newNodes)
+        let allNodes = await appendNodes(newNodes)
 
         return (allNodes, nextOffset != nil)
     }

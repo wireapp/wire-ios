@@ -169,8 +169,7 @@ public extension WireMessagingFactory {
                     useCases: .init(
                         fetchNodes: WireCellsFetchNodesPageUseCase(
                             configuration: .filesBrowserView,
-                            repository: nodesAPI,
-                            localAssetRepository: localAssetRepository
+                            repository: nodesAPI
                         ),
                         deleteNodes: WireCellsDeleteNodesUseCase(
                             repository: nodesAPI,
@@ -192,10 +191,6 @@ public extension WireMessagingFactory {
                         getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
                         createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
                         fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesAPI),
-                        getAsset: WireCellsGetAssetUseCase(
-                            localAssetRepository: localAssetRepository,
-                            fileCache: fileCache
-                        ),
                         restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
                             repository: nodesAPI,
                             localAssetsRepository: localAssetRepository,

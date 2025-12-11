@@ -130,8 +130,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
             fetchNodesUseCase: WireCellsFetchNodesUseCase(
                 state: nodesCollection,
                 configuration: .moveToFolder(root: path),
-                repository: nodesRepository,
-                localAssetRepository: localAssetRepository
+                repository: nodesRepository
             ),
             moveNodeUseCase: moveNodeUseCase,
             createFolderUseCase: createFolderUseCase

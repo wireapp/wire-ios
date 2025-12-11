@@ -162,7 +162,7 @@ final class FilesItemViewModel: ObservableObject {
         precondition(item.kind == .file)
 
         // Ignore errors as these will be reported via the `asset` publisher.
-        try? await localAssetRepository.downloadAsset(source: .node(nodeID))
+        try? await localAssetRepository.downloadAsset(nodeID: nodeID)
     }
 
     func showDeleteConfirmation(deletePermanently: Bool) {

@@ -145,19 +145,20 @@ private extension FileVersioningView {
 extension FileVersioningView {
 
     var sections: some View {
-        ForEach(Array(viewModel.state.versions.enumerated()), id: \.element) { sectionIndex, version in
-            Section(version.header) {
-                ForEach(Array(version.items.enumerated()), id: \.element) { itemIndex, item in
-                    itemRow(
-                        sectionIndex: sectionIndex,
-                        itemIndex: itemIndex
-                    )
-                    .onTapGesture {
-                        Task {
-                            await viewModel.openItem(item)
-                        }
-                    }
-                }
+        ForEach(
+            Array(viewModel.state.versions.enumerated()),
+            id: \.element,
+            content: section
+        )
+    }
+
+    func section(index: Int, version: FileVersioningViewModel.VersionModel) -> some View {
+        Section(version.header) {
+            ForEach(Array(version.items.enumerated()), id: \.element) { itemIndex, _ in
+                itemRow(
+                    sectionIndex: index,
+                    itemIndex: itemIndex
+                )
             }
         }
     }

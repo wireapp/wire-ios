@@ -44,11 +44,8 @@ final class FileVersioningViewModel: ObservableObject {
 
     private let nodeID: UUID
     private let fetchNodeVersionsUseCase: any WireCellsFetchNodeVersionsUseCaseProtocol
-    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let restoreNodeVersionUseCase: any WireCellsRestoreNodeVersionUseCaseProtocol
-    private let getAssetUseCase: WireCellsGetAssetUseCase
     private let accentColorProvider: () -> WireAccentColor
-    private var lastSelectedItem: FileVersionItem?
     private var subscriptions = Set<AnyCancellable>()
 
     var accentColor: WireAccentColor {
@@ -78,17 +75,13 @@ final class FileVersioningViewModel: ObservableObject {
         nodeID: UUID,
         name: String,
         fetchNodeVersionsUseCase: any WireCellsFetchNodeVersionsUseCaseProtocol,
-        getAssetUseCase: WireCellsGetAssetUseCase,
         restoreNodeVersionUseCase: any WireCellsRestoreNodeVersionUseCaseProtocol,
-        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         accentColorProvider: @escaping () -> WireAccentColor
     ) {
         self.nodeID = nodeID
         self.name = name
         self.fetchNodeVersionsUseCase = fetchNodeVersionsUseCase
-        self.getAssetUseCase = getAssetUseCase
         self.restoreNodeVersionUseCase = restoreNodeVersionUseCase
-        self.localAssetRepository = localAssetRepository
         self.accentColorProvider = accentColorProvider
         self.state = .loading
     }
@@ -96,6 +89,9 @@ final class FileVersioningViewModel: ObservableObject {
     func startPolling() {
         Timer.publish(every: .thirtySeconds, on: .main, in: .common)
             .autoconnect()
+            .handleEvents(receiveSubscription: { [weak self] _ in
+                Task { await self?.fetch() }
+            })
             .sink { [weak self] _ in
                 Task { await self?.fetch() }
             }.store(in: &subscriptions)
@@ -106,27 +102,10 @@ final class FileVersioningViewModel: ObservableObject {
             nodeID: nodeID,
             item: state.versions[sectionIndex].items[itemIndex],
             accentColor: accentColor,
-            localAssetRepository: localAssetRepository,
             onRestore: { [weak self] item in
                 Task { await self?.restore(item: item) }
             }
         )
-    }
-
-    func openItem(_ item: FileVersionItem) async {
-        lastSelectedItem = item
-
-        do {
-            let url = try await getAssetUseCase.invoke(source: .nodeVersion(node: nodeID, version: item.id))
-
-            if item == lastSelectedItem {
-                viewingURL = url
-            }
-        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
-            alert = .noInternet
-        } catch {
-            alert = .unknownError
-        }
     }
 
     func fetch() async {

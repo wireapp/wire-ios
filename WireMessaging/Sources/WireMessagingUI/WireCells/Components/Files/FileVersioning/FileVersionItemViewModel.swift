@@ -27,57 +27,14 @@ final class FileVersionItemViewModel: ObservableObject {
     private let nodeID: UUID
     private let versionID: UUID
     private let onRestore: (FileVersionItem) async -> Void
-    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
-    private var subscriptions = Set<AnyCancellable>()
 
     let item: FileVersionItem
     let accentColor: WireAccentColor
-
-    @Published private var asset: WireCellsLocalAsset?
-
-    var isDownloadOptionAvailable: Bool {
-        switch asset?.downloadState {
-        case .downloaded:
-            false
-        default:
-            true
-        }
-    }
-
-    var isDownloading: Bool {
-        switch asset?.downloadState {
-        case .downloading:
-            true
-        default:
-            false
-        }
-    }
-
-    var progress: Double? {
-        switch asset?.downloadState {
-        case let .downloading(progress):
-            progress
-        case .failed:
-            1
-        default:
-            nil
-        }
-    }
-
-    var showErrorState: Bool {
-        switch asset?.downloadState {
-        case .failed:
-            true
-        default:
-            false
-        }
-    }
 
     init(
         nodeID: UUID,
         item: FileVersionItem,
         accentColor: WireAccentColor,
-        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         onRestore: @escaping (FileVersionItem) async -> Void
     ) {
         self.nodeID = nodeID
@@ -85,21 +42,9 @@ final class FileVersionItemViewModel: ObservableObject {
         self.item = item
         self.accentColor = accentColor
         self.onRestore = onRestore
-        self.localAssetRepository = localAssetRepository
-
-        localAssetRepository.observeAsset(nodeID: item.id)
-            .sink { [weak self] asset in
-                self?.asset = asset
-            }.store(in: &subscriptions)
     }
 
     func restore() async {
         await onRestore(item)
-    }
-
-    func download() async {
-        try? await localAssetRepository.downloadAsset(
-            source: .nodeVersion(node: nodeID, version: item.id)
-        )
     }
 }

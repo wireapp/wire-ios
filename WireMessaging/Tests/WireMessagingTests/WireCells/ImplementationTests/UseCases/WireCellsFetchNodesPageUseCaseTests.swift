@@ -31,12 +31,10 @@ struct WireCellsFetchNodesPageUseCaseTests {
     init() {
         self.sut = WireCellsFetchNodesPageUseCase(
             configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path"), isFoldersEnabled: false),
-            repository: repository,
-            localAssetRepository: localAssetRepository
+            repository: repository
         )
         repository.getNodes_MockValue = (nodes: [WireCellsNode.fixture()], nextOffset: 30)
         localAssetRepository.assetNodeID_MockValue = WireCellsLocalAsset.fixture()
-        localAssetRepository.deleteAssetsNodeIDs_MockMethod = { _ in }
     }
 
     @Test
@@ -44,8 +42,7 @@ struct WireCellsFetchNodesPageUseCaseTests {
         // Given
         let sut = WireCellsFetchNodesPageUseCase(
             configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path"), isFoldersEnabled: false),
-            repository: repository,
-            localAssetRepository: localAssetRepository
+            repository: repository
         )
 
         let someNode = WireCellsNode.fixture()

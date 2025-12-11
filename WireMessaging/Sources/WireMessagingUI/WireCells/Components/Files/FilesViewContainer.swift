@@ -122,8 +122,7 @@ package struct FilesViewContainer: View {
                         root: path.last.map { .id($0.id) } ?? .path(cellName),
                         isFoldersEnabled: isFoldersEnabled
                     ),
-                    repository: nodesRepository,
-                    localAssetRepository: localAssetRepository
+                    repository: nodesRepository
                 ),
                 deleteNodes: WireCellsDeleteNodesUseCase(
                     repository: nodesRepository,
@@ -145,10 +144,6 @@ package struct FilesViewContainer: View {
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
                 createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
                 fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesAPI),
-                getAsset: WireCellsGetAssetUseCase(
-                    localAssetRepository: localAssetRepository,
-                    fileCache: fileCache
-                ),
                 restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
                     repository: nodesAPI,
                     localAssetsRepository: localAssetRepository,

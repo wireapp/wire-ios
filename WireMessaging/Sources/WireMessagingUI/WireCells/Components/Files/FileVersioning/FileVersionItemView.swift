@@ -56,13 +56,8 @@ struct FileVersionItemView: View {
 
                 Spacer()
 
-                ProgressView(value: viewModel.progress, total: 1)
-                    .opacity(viewModel.progress == nil ? 0 : 1)
-                    .progressViewStyle(AssetProgressStyle(variant: .circular, fillColor: progressColor))
-
                 Menu {
                     restoreButton
-                    if viewModel.isDownloadOptionAvailable { downloadButton }
                 } label: {
                     Image(systemName: "ellipsis")
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
@@ -81,26 +76,6 @@ struct FileVersionItemView: View {
             Text(Strings.FilesVersioning.restoreAlertMessage)
         }
         .contentShape(Rectangle())
-    }
-
-    private var progressColor: Color {
-        viewModel.showErrorState ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
-    }
-
-    private var downloadButton: some View {
-        Button(
-            action: {
-                Task { await viewModel.download() }
-            }, label: {
-                HStack {
-                    Text(Strings.FilesVersioning.downloadVersion)
-
-                    Image(systemName: "square.and.arrow.down")
-                        .foregroundStyle(SemanticColors.Icon.foregroundDefaultBlack.color)
-                }
-
-            }
-        )
     }
 
     private var restoreButton: some View {

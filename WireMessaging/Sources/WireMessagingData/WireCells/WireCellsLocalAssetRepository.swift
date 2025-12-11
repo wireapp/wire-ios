@@ -25,12 +25,7 @@ package import WireMessagingDomain
 /// This repository acts on the `@MainActor` to allow for non async main thread access of assets from the UI.
 package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol {
 
-    enum Failure: Error {
-        case nodeVersionNotFound
-    }
-
     private typealias GetNodeTask = Task<WireCellsNode, any Error>
-    private typealias GetNodeVersionTask = Task<[WireCellsNodeVersion], any Error>
     typealias NodeID = UUID
 
     private let nodesAPI: any NodesAPIProtocol
@@ -39,7 +34,7 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
     private let store: any WireCellsLocalAssetStoreProtocol
 
     @MainActor private var getNodeTasks: [NodeID: GetNodeTask] = [:]
-    @MainActor private var getNodeVersionTasks: [NodeID: GetNodeVersionTask] = [:]
+
     @MainActor private var downloadTasks: [NodeID: Task<Void, any Error>] = [:]
 
     package convenience init(
@@ -75,34 +70,25 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
     /// metadata from the server, updates local metadata if it has changed and deletes any cached file if it's
     /// `eTag` has changed.
     @MainActor
-    package func refreshAssetMetadata(
-        nodeID: UUID
-    ) async throws -> (node: WireCellsNode, asset: WireCellsLocalAsset) {
+    package func refreshAssetMetadata(nodeID: UUID) async throws -> (node: WireCellsNode, asset: WireCellsLocalAsset) {
         try await _refreshAssetMetadata(nodeID: nodeID)
     }
 
     /// Downloads the asset for the given `nodeID`.
-    /// - Parameters
-    ///     - source: The source the asset is coming from, whether from a `node` itself or a `nodeVersion` of that node.
     ///
     /// This method first refreshes the assets metadata - see `refreshMetadata(nodeID:)`.
     /// The download can be observed via the `observeAsset(nodeID:)` method.
     @MainActor
-    package func downloadAsset(source: AssetSource) async throws {
-        if let existingTask = downloadTasks[source.id] {
+    package func downloadAsset(nodeID: UUID) async throws {
+        if let existingTask = downloadTasks[nodeID] {
             try await existingTask.value
         } else {
-            defer { downloadTasks[source.id] = nil }
+            defer { downloadTasks[nodeID] = nil }
 
-            let task = Task { try await _downloadAsset(source: source) }
-            downloadTasks[source.id] = task
+            let task = Task { try await _downloadAsset(nodeID: nodeID) }
+            downloadTasks[nodeID] = task
             try await task.value
         }
-    }
-
-    @MainActor
-    package func deleteAssets(nodeIDs: [UUID]) async throws {
-        try await store.deleteAssets(nodeIDs: nodeIDs)
     }
 
     /// Observes the asset for the given `nodeID`. A value of `nil` is emitted if the asset has never been fetched.
@@ -120,73 +106,40 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
     // MARK: - Private
 
     @MainActor
-    private func _downloadAsset(source: AssetSource) async throws {
+    private func _downloadAsset(nodeID: UUID) async throws {
         do {
-
-            let (downloadURL, eTag): (URL, String)
-            let id: UUID
-            let path: String
-            let mimeType: String?
-            let size: UInt64?
-
-            switch source {
-            case let .node(nodeID):
-                let node = try await getNode(nodeID: nodeID)
-                (downloadURL, eTag) = try node.downloadInfo
-                id = nodeID
-                path = node.path
-                mimeType = node.mimeType
-                size = node.size
-            case let .nodeVersion(nodeID, versionID):
-                let nodeVersions = try await getNodeVersions(nodeID: nodeID, versionID: versionID)
-                guard let nodeVersion = nodeVersions.first(where: { $0.id == versionID }) else {
-                    throw Failure.nodeVersionNotFound
-                }
-                (downloadURL, eTag) = try nodeVersion.downloadInfo
-                id = versionID
-
-                // API response doesn't provide a path, set it manually to get a valid cache key and a readable asset.
-                // See `WireCellsLocalAsset+CacheKey`
-                if let url = URL(string: downloadURL.absoluteString),
-                   let range = url.path.range(of: "/data/") {
-                    let result = String(url.path[range.upperBound...])
-                    path = result
-                } else {
-                    path = ""
-                }
-                mimeType = nil
-                size = nodeVersion.size
-            }
+            let node = try await getNode(nodeID: nodeID)
+            let (downloadURL, eTag) = try node.downloadInfo
 
             try store.upsertAsset(
                 WireCellsLocalAsset(
-                    nodeID: id,
+                    nodeID: nodeID,
                     eTag: eTag,
-                    path: path,
-                    contentType: mimeType,
-                    size: size,
+                    path: node.path,
+                    contentType: node.mimeType,
+                    size: node.size,
                     downloadState: .pending
                 )
             )
 
             let (progress, download) = fileDownloader.download(from: downloadURL)
             for await progress in progress {
-                var asset = try verifyAsset(nodeID: source.id, eTag: eTag)
+                var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
                 asset.downloadState = .downloading(progress: progress)
                 try store.upsertAsset(asset)
             }
 
             let (tempURL, _) = try await download.value
 
-            var asset = try verifyAsset(nodeID: source.id, eTag: eTag)
+            var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
             try await fileCache.saveFile(at: tempURL, key: asset.cacheKey)
 
-            asset = try verifyAsset(nodeID: source.id, eTag: eTag)
+            asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
             asset.downloadState = .downloaded(cacheKey: asset.cacheKey)
             try store.upsertAsset(asset)
         } catch {
             // We don't care about the eTag when setting download state to failed.
-            if var asset = try store.asset(nodeID: source.id) {
+            if var asset = try store.asset(nodeID: nodeID) {
                 asset.downloadState = .failed(error: error)
                 try store.upsertAsset(asset)
             }
@@ -253,19 +206,6 @@ package final class WireCellsLocalAssetRepository: WireCellsLocalAssetRepository
         }
     }
 
-    @MainActor
-    private func getNodeVersions(nodeID: UUID, versionID: UUID) async throws -> [WireCellsNodeVersion] {
-        if let task = getNodeVersionTasks[versionID] {
-            return try await task.value
-        } else {
-            defer { getNodeVersionTasks[versionID] = nil }
-
-            let task = Task { try await nodesAPI.getVersions(nodeID: nodeID) }
-            getNodeVersionTasks[versionID] = task
-            return try await task.value
-        }
-    }
-
 }
 
 // MARK: - Helpers
@@ -281,17 +221,6 @@ private extension WireCellsNode {
         }
     }
 
-}
-
-private extension WireCellsNodeVersion {
-    var downloadInfo: (URL: URL, eTag: String) {
-        get throws {
-            typealias Error = WireCellsLocalAssetRepositoryError
-            guard let downloadUrl else { throw Error.missingDownloadURL }
-            guard let eTag else { throw Error.missingETag }
-            return (downloadUrl, eTag)
-        }
-    }
 }
 
 private extension WireCellsLocalAsset {

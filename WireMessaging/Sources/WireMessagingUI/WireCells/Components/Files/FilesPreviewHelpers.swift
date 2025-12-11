@@ -39,8 +39,7 @@ extension FilesViewModel {
             useCases: .init(
                 fetchNodes: WireCellsFetchNodesPageUseCase(
                     configuration: .conversationFileView(root: .path("root"), isFoldersEnabled: true),
-                    repository: previewNodesRepository(),
-                    localAssetRepository: localAssetRepository
+                    repository: previewNodesRepository()
                 ),
                 deleteNodes: WireCellsDeleteNodesUseCase(
                     repository: previewNodesRepository(),
@@ -69,10 +68,6 @@ extension FilesViewModel {
                 ),
                 fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(
                     repository: previewNodesRepository()
-                ),
-                getAsset: WireCellsGetAssetUseCase(
-                    localAssetRepository: localAssetRepository,
-                    fileCache: cache
                 ),
                 restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
                     repository: previewNodesRepository(),
@@ -153,7 +148,6 @@ extension FileVersionItemViewModel {
                 subtitle: "Deniz Agha · 13MB"
             ),
             accentColor: .default,
-            localAssetRepository: localAssetsRepository,
             onRestore: { _ in }
         )
     }
@@ -193,16 +187,11 @@ extension FileVersioningViewModel {
             nodeID: UUID(),
             name: "foo.jpg",
             fetchNodeVersionsUseCase: useCase,
-            getAssetUseCase: WireCellsGetAssetUseCase(
-                localAssetRepository: localAssetsRepository,
-                fileCache: mockFileCache()
-            ),
             restoreNodeVersionUseCase: WireCellsRestoreNodeVersionUseCase(
                 repository: repository,
                 localAssetsRepository: localAssetsRepository,
                 nodeCache: MockWireCellsNodeCacheProtocol()
             ),
-            localAssetRepository: localAssetsRepository,
             accentColorProvider: { .default }
         )
     }
@@ -262,8 +251,6 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
         publishers[nodeID]?.value
     }
 
-    func deleteAssets(nodeIDs: [UUID]) async throws {}
-
     func refreshAssetMetadata(
         nodeID: UUID
     ) async throws -> (node: WireCellsNode, asset: WireCellsLocalAsset) {
@@ -281,7 +268,7 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
         return (node, localAsset)
     }
 
-    func downloadAsset(source: AssetSource) async throws {
+    func downloadAsset(nodeID: UUID) async throws {
         failIndex += 1
         // Fail every 3rd download
         let shouldFail = failIndex % 3 == 0
@@ -297,7 +284,7 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
 
             try await Task.sleep(for: .milliseconds(200))
             let update = WireCellsLocalAsset(
-                nodeID: source.id,
+                nodeID: nodeID,
                 eTag: "something",
                 path: "some/path.jpg",
                 contentType: nil,
@@ -305,7 +292,7 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
                 downloadState: downloadState
             )
 
-            publishers[source.id]?.send(update)
+            publishers[nodeID]?.send(update)
 
             if shouldFail, progress > 0.1 {
                 break

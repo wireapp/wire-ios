@@ -44,8 +44,7 @@ final class FilesViewModelTests {
             useCases: .init(
                 fetchNodes: WireCellsFetchNodesPageUseCase(
                     configuration: .conversationFileView(root: .path("some-cell"), isFoldersEnabled: false),
-                    repository: nodesRepository,
-                    localAssetRepository: localAssetRepository
+                    repository: nodesRepository
                 ),
                 deleteNodes: WireCellsDeleteNodesUseCase(
                     repository: nodesRepository,
@@ -67,7 +66,6 @@ final class FilesViewModelTests {
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi),
                 createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesRepository),
                 fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesRepository),
-                getAsset: WireCellsGetAssetUseCase(localAssetRepository: localAssetRepository, fileCache: fileCache),
                 restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
                     repository: nodesRepository,
                     localAssetsRepository: localAssetRepository,
@@ -82,7 +80,6 @@ final class FilesViewModelTests {
             accentColorProvider: { .default }
         )
 
-        localAssetRepository.deleteAssetsNodeIDs_MockMethod = { _ in }
         localAssetRepository.assetNodeID_MockValue = .fixture()
 
         sut.$state.dropFirst().sink { [weak self] state in
@@ -472,8 +469,8 @@ final class FilesViewModelTests {
         localAssetRepository.assetNodeID_MockMethod = { nodeID in
             assets[nodeID]
         }
-        localAssetRepository.downloadAssetSource_MockMethod = { source in
-            assets[source.id] = WireCellsLocalAsset.fixture(downloadState: .downloaded(cacheKey: "some-key"))
+        localAssetRepository.downloadAssetNodeID_MockMethod = { nodeID in
+            assets[nodeID] = WireCellsLocalAsset.fixture(downloadState: .downloaded(cacheKey: "some-key"))
         }
         fileCache.fileURLForKey_MockValue = URL(fileURLWithPath: "/foo")
 
@@ -494,7 +491,7 @@ final class FilesViewModelTests {
             assets[nodeID]
         }
         localAssetRepository
-            .downloadAssetSource_MockError = WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress
+            .downloadAssetNodeID_MockError = WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress
 
         localAssetRepository.observeAssetNodeID_MockMethod = { nodeID in
             let asset = WireCellsLocalAsset.fixture(downloadState: .downloaded(cacheKey: "some-key"))

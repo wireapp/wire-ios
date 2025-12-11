@@ -150,7 +150,6 @@ package final class FilesViewModel: ObservableObject {
             getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol,
             createFolder: any WireCellsCreateFolderUseCaseProtocol,
             fetchNodeVersions: any WireCellsFetchNodeVersionsUseCaseProtocol,
-            getAsset: WireCellsGetAssetUseCase,
             restoreNodeVersion: any WireCellsRestoreNodeVersionUseCaseProtocol
         ) {
 
@@ -162,7 +161,6 @@ package final class FilesViewModel: ObservableObject {
             self.getTagSuggestions = getTagSuggestions
             self.createFolder = createFolder
             self.fetchNodeVersions = fetchNodeVersions
-            self.getAsset = getAsset
             self.restoreNodeVersion = restoreNodeVersion
         }
 
@@ -174,7 +172,6 @@ package final class FilesViewModel: ObservableObject {
         let getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
         let createFolder: any WireCellsCreateFolderUseCaseProtocol
         let fetchNodeVersions: any WireCellsFetchNodeVersionsUseCaseProtocol
-        let getAsset: WireCellsGetAssetUseCase
         let restoreNodeVersion: any WireCellsRestoreNodeVersionUseCaseProtocol
     }
 
@@ -441,9 +438,7 @@ package final class FilesViewModel: ObservableObject {
         lastSelectedItem = item
 
         do {
-            let url = try await useCases.getAsset.invoke(source: .node(item.id))
-
-            if item == lastSelectedItem {
+            if let url = try await localURL(for: item), item == lastSelectedItem {
                 viewingURL = url
             }
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
@@ -479,6 +474,25 @@ package final class FilesViewModel: ObservableObject {
     }
 
     // MARK: - Private
+
+    private func localURL(for item: FilesViewItem) async throws -> URL? {
+        // If the file is already downloaded, return the local URL.
+        if
+            let cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey,
+            let url = fileCache.fileURL(forKey: cacheKey) {
+            return url
+        }
+
+        let cacheKey: String?
+        do {
+            try await localAssetRepository.downloadAsset(nodeID: item.id)
+            cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey
+        } catch WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress {
+            try await awaitDownload(item: item)
+            cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey
+        }
+        return cacheKey.flatMap { fileCache.fileURL(forKey: $0) }
+    }
 
     private func cancelLoad() {
         loadMoreTask?.cancel()
@@ -542,6 +556,21 @@ package final class FilesViewModel: ObservableObject {
 
         try Task.checkCancellation()
         return (items, isLastPage)
+    }
+
+    private func awaitDownload(item: FilesViewItem) async throws {
+        for await item in localAssetRepository.observeAsset(nodeID: item.id).values {
+            try Task.checkCancellation()
+
+            switch item?.downloadState {
+            case .downloaded:
+                return
+            case let .failed(error):
+                throw error
+            default:
+                break
+            }
+        }
     }
 
     private func deleteItem(_ asset: FilesViewItem, permanently: Bool) async {
@@ -645,9 +674,7 @@ package final class FilesViewModel: ObservableObject {
             nodeID: item.id,
             name: item.name,
             fetchNodeVersionsUseCase: useCases.fetchNodeVersions,
-            getAssetUseCase: useCases.getAsset,
             restoreNodeVersionUseCase: useCases.restoreNodeVersion,
-            localAssetRepository: localAssetRepository,
             accentColorProvider: accentColorProvider
         )
 
