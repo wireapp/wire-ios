@@ -57,7 +57,7 @@ public final class ConversationCellProvider {
     ) -> UITableViewCell {
         model.registerIfNeeded(in: tableView)
         let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
-        configureCell(cell, with: model, onLongPress: onLongPress)
+        configureCell(cell, tableView: tableView, with: model, onLongPress: onLongPress)
 
         return cell
     }
@@ -65,6 +65,7 @@ public final class ConversationCellProvider {
     @MainActor
     private func configureCell(
         _ cell: UITableViewCell,
+        tableView: UITableView,
         with model: ConversationCellModel,
         onLongPress: @escaping (UITableViewCell) -> Void
     ) {
@@ -93,7 +94,11 @@ public final class ConversationCellProvider {
             cell.configure(
                 content: WireCellsAttachmentsPreviewView(viewModel: viewModel),
                 insets: EdgeInsets(top: 0, leading: insets.leading, bottom: 0, trailing: insets.trailing),
-                onLongPress: onLongPress
+                onLongPress: onLongPress,
+                onSizeChange: { [weak tableView] in
+                    tableView?.beginUpdates()
+                    tableView?.endUpdates()
+                }
             )
         }
     }
