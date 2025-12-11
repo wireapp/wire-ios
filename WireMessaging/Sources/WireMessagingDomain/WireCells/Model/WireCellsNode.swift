@@ -36,6 +36,7 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
     public let type: WireCellsNodeType?
     public let isRecycled: Bool
     public let isDraft: Bool
+    public let isEditable: Bool
     public let contentUrl: URL?
     public let contentHash: String?
     public let mimeType: String?
@@ -59,6 +60,7 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
         type: WireCellsNodeType? = nil,
         isRecycled: Bool = false,
         isDraft: Bool = false,
+        isEditable: Bool = false,
         contentUrl: URL? = nil,
         contentHash: String? = nil,
         mimeType: String? = nil,
@@ -78,6 +80,7 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
         self.type = type
         self.isRecycled = isRecycled
         self.isDraft = isDraft
+        self.isEditable = isEditable
         self.contentUrl = contentUrl
         self.contentHash = contentHash
         self.mimeType = mimeType

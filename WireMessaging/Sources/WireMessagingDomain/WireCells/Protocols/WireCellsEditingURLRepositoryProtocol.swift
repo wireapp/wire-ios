@@ -16,24 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// An error specific to the `WireCellsLocalAssetRepository`
+package import Foundation
 
-public enum WireCellsLocalAssetRepositoryError: Error, Equatable {
+// sourcery: AutoMockable
+package protocol WireCellsEditingURLRepositoryProtocol: Sendable {
 
-    /// The wire cells node contains no download URL for the asset.
-
-    case missingDownloadURL
-
-    /// The wire cells node contains no eTag for the asset.
-
-    case missingETag
-
-    /// The requested asset is unknown to the repository.
-
-    case unknownAsset
-
-    /// The asset has changed on the server compared to the in progress / downloaded asset.
-
-    case assetHasChanged
+    /// Returns a URL to an online editor where the document can be edited.
+    func getEditorURL(id: UUID) async throws -> (url: URL, date: Date)?
 
 }
