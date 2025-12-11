@@ -75,7 +75,11 @@ public final class ConversationUpdatesGenerator: NSObject, ConversationUpdatesGe
 
     private func createFetchRequestController() -> NSFetchedResultsController<ZMConversation> {
         let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
-        request.predicate = ZMConversation.predicateForNeedingToBeUpdatedFromBackend()
+        request.predicate = NSPredicate.all(of: [
+            ZMConversation.predicateForNeedingToBeUpdatedFromBackend(),
+            NSPredicate(format: "%K == NO", #keyPath(ZMConversation.isDeletedRemotely))
+        ])
+
         request.sortDescriptors = [NSSortDescriptor(key: ZMConversationLastServerTimeStampKey, ascending: true)]
         return NSFetchedResultsController(
             fetchRequest: request,
