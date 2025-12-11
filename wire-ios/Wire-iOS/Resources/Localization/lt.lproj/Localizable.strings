@@ -354,6 +354,8 @@
 "conversation.create.guests.subtitle" = "Leiskite matyti šį susirašinėjimą žmonėms nesantiems komandoje.";
 "conversation.create.apps.title" = "Allow apps";
 "conversation.create.apps.subtitle" = "Open this conversation to apps.";
+"conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
+"conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
 "conversation.create.receipts.title" = "Perskaitymo patvirtinimai";
 "conversation.create.receipts.subtitle" = "Įjungus, žmonės gali matyti ar jų žinutės buvo perskaitytos.";
 "conversation.create.mls.title" = "Protocol";

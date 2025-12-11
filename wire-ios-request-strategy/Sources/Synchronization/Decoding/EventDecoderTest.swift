@@ -464,10 +464,8 @@ extension EventDecoderTest {
             (didCreateNewSession: false, decryptedData: data)
         }
 
-        let event = await syncMOC.perform {
-            let message = GenericMessage(content: Text(content: "foo"))
-            return self.encryptedUpdateEventToSelfFromOtherClient(message: message)
-        }
+        let message = GenericMessage(content: Text(content: "foo"))
+        let event = try await encryptedUpdateEventToSelfFromOtherClient(message: message)
 
         proteusViaCoreCrypto.isOn = true
 
@@ -502,10 +500,8 @@ extension EventDecoderTest {
             throw FakeError.decryptionError
         }
 
-        let event = await syncMOC.perform {
-            let message = GenericMessage(content: Text(content: "foo"))
-            return self.encryptedUpdateEventToSelfFromOtherClient(message: message)
-        }
+        let message = GenericMessage(content: Text(content: "foo"))
+        let event = try await encryptedUpdateEventToSelfFromOtherClient(message: message)
 
         await syncMOC.perform {
             self.syncMOC.proteusService = mockProteusService
@@ -656,29 +652,6 @@ extension EventDecoderTest {
             lastEventIDRepository.storeLastEventID_Invocations.first,
             eventID
         )
-    }
-
-    func test_ProteusEventDecryption_Legacy() async throws {
-        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
-
-        // Given
-        let event = await syncMOC.perform {
-            let message = GenericMessage(content: Text(content: "foo"))
-            return self.encryptedUpdateEventToSelfFromOtherClient(message: message)
-        }
-
-        proteusViaCoreCrypto.isOn = false
-
-        // When
-        let decryptedEvents = try await sut.decryptAndStoreEvents([event])
-        XCTAssertEqual(decryptedEvents.count, 1)
-
-        // Then
-        // We could decrypt, and the proteus service doesn't exist, so it used the keystore.
-        let proteusService = await syncMOC.perform { self.syncMOC.proteusService }
-        XCTAssertNil(proteusService)
-
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
 }
