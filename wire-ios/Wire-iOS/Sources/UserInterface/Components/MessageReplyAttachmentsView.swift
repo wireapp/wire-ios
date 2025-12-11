@@ -109,9 +109,14 @@ final class MessageReplyAttachmentsView: UIView {
 
         let iconView = UIImageView(image: icon)
         iconView.tintColor = ColorTheme.Backgrounds.onBackground
+        iconView.contentMode = .scaleAspectFit
+
+        let baseHeight: CGFloat = 16
+        let scaledHeight = UIFontMetrics.default.scaledValue(for: baseHeight)
+
         NSLayoutConstraint.activate([
-            iconView.heightAnchor.constraint(equalToConstant: 15),
-            iconView.widthAnchor.constraint(equalToConstant: 15)
+            iconView.heightAnchor.constraint(equalToConstant: scaledHeight),
+            iconView.widthAnchor.constraint(equalToConstant: scaledHeight)
         ])
 
         let label = UILabel()

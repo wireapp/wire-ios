@@ -53,15 +53,7 @@ final class MessageReplyAttachmentsViewSnapshotTests: XCTestCase {
 
     override func tearDown() {
         snapshotHelper = nil
-        invalidateStyle()
         super.tearDown()
-    }
-
-    // MARK: - Helper methods
-
-    func invalidateStyle() {
-        NSAttributedString.invalidateMarkdownStyle()
-        NSAttributedString.invalidateParagraphStyle()
     }
 
     // MARK: - Snapshot Tests
@@ -76,20 +68,14 @@ final class MessageReplyAttachmentsViewSnapshotTests: XCTestCase {
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
-                named: "LightTheme",
-                file: #filePath,
-                testName: #function,
-                line: #line
+                named: "LightTheme"
             )
 
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
-                named: "DarkTheme",
-                file: #filePath,
-                testName: #function,
-                line: #line
+                named: "DarkTheme"
             )
     }
 
@@ -103,20 +89,14 @@ final class MessageReplyAttachmentsViewSnapshotTests: XCTestCase {
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
-                named: "LightTheme",
-                file: #filePath,
-                testName: #function,
-                line: #line
+                named: "LightTheme"
             )
 
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
-                named: "DarkTheme",
-                file: #filePath,
-                testName: #function,
-                line: #line
+                named: "DarkTheme"
             )
     }
 
@@ -130,20 +110,14 @@ final class MessageReplyAttachmentsViewSnapshotTests: XCTestCase {
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
-                named: "LightTheme",
-                file: #filePath,
-                testName: #function,
-                line: #line
+                named: "LightTheme"
             )
 
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
-                named: "DarkTheme",
-                file: #filePath,
-                testName: #function,
-                line: #line
+                named: "DarkTheme"
             )
     }
 
@@ -156,20 +130,35 @@ final class MessageReplyAttachmentsViewSnapshotTests: XCTestCase {
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
-                named: "LightTheme",
-                file: #filePath,
-                testName: #function,
-                line: #line
+                named: "LightTheme"
             )
 
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
-                named: "DarkTheme",
-                file: #filePath,
-                testName: #function,
-                line: #line
+                named: "DarkTheme"
+            )
+    }
+
+    func testThatItRendersMultipartMessagePreviewWithSingleAttachmentAndVeryLongFilename() {
+        let sut = makeView(
+            testCase: .singleFileAttachment,
+            filename: "Lorem-ipsum-dolor-sit-amet-consectetuer-adipiscing-elit.pdf"
+        )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: sut,
+                named: "LightTheme"
+            )
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: sut,
+                named: "DarkTheme"
             )
     }
 
@@ -179,7 +168,11 @@ final class MessageReplyAttachmentsViewSnapshotTests: XCTestCase {
         case multipleAttachments
     }
 
-    private func makeView(testCase: TestCase, text: String = "") -> UIView {
+    private func makeView(
+        testCase: TestCase,
+        text: String = "",
+        filename: String = "test.pdf"
+    ) -> UIView {
         let nodeID = UUID.mockID1
 
         let attachments: [Attachment] = switch testCase {
@@ -188,7 +181,7 @@ final class MessageReplyAttachmentsViewSnapshotTests: XCTestCase {
                 Attachment.with {
                     $0.content = .cellAsset(.with {
                         $0.contentType = "application/pdf"
-                        $0.initialName = "test.pdf"
+                        $0.initialName = filename
                         $0.uuid = nodeID.uuidString
                     })
 
