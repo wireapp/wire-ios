@@ -137,7 +137,7 @@ struct FilesViewItemView: View {
                     }
 
                     if canDeleteFiles {
-                        if viewModel.isInRecycleBin {
+                        if viewModel.isInRecycleBin || !viewModel.isFoldersEnabled {
                             Button(
                                 role: .destructive,
                                 action: { delete(permanently: true) },
