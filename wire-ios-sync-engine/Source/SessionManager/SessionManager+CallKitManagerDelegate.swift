@@ -90,7 +90,7 @@ extension SessionManager: CallKitManagerDelegate {
     }
 
     func didEndAllCalls() {
-        WireLogger.calling.info("all calls ended, suspending background tasks")
+        WireLogger.calling.info("all calls ended, suspending background tasks", attributes: .safePublic)
         Task {
             for userSession in backgroundUserSessions.values {
                 await userSession.syncAgent?.suspend()
