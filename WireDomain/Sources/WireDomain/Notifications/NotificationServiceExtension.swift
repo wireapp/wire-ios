@@ -94,39 +94,25 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
                 return notificationContentHandler(.emptyNotification)
             }
 
-            if DeveloperFlag.multibackend.isOn {
-                do {
-                    let nseFlow = try NSEFlow(
-                        currentAppVersion: currentAppVersion,
-                        currentBuildNumber: currentBuildNumber,
-                        appContainerURL: appContainerURL,
-                        sharedUserDefaults: sharedUserDefaults,
-                        cookieEncryptionKey: cookieEncryptionKey,
-                        minTLSVersion: minTLSVersion,
-                        preferredAPIVersion: preferredAPIVersion
-                    )
+            do {
+                let nseFlow = try NSEFlow(
+                    currentAppVersion: currentAppVersion,
+                    currentBuildNumber: currentBuildNumber,
+                    appContainerURL: appContainerURL,
+                    sharedUserDefaults: sharedUserDefaults,
+                    cookieEncryptionKey: cookieEncryptionKey,
+                    minTLSVersion: minTLSVersion,
+                    preferredAPIVersion: preferredAPIVersion
+                )
 
-                    try await nseFlow.start(
-                        request: request,
-                        contentHandler: notificationContentHandler
-                    )
-                } catch {
-                    // TODO: [WPB-19762] show errors
-                    logError(error)
-                    notificationContentHandler(.emptyNotification)
-                }
-            } else {
-                do {
-                    let rootComponent = try NotificationServiceExtensionFlow(
-                        contentHandler: notificationContentHandler
-                    )
-
-                    try await rootComponent.start(request: request)
-
-                } catch {
-                    logError(error)
-                    notificationContentHandler(.emptyNotification)
-                }
+                try await nseFlow.start(
+                    request: request,
+                    contentHandler: notificationContentHandler
+                )
+            } catch {
+                // TODO: [WPB-19762] show errors
+                logError(error)
+                notificationContentHandler(.emptyNotification)
             }
         }
     }
@@ -146,14 +132,12 @@ extension NotificationServiceExtension {
             logVerifyUserSessionUseCaseError(verifyUserSessionUseCaseError)
         case let pullEventsUseCaseError as PullEventsUseCase.Failure:
             logPullEventsUseCaseError(pullEventsUseCaseError)
-        case let notificationServiceError as NotificationServiceExtensionFlow.Failure:
-            logNotificationServiceError(notificationServiceError)
-        case let verifyUserStepError as VerifyUserStep.Failure:
-            logVerifyUserStepError(verifyUserStepError)
-        case let pullEventsStepError as PullEventsStep.Failure:
-            logPullEventsStepError(pullEventsStepError)
-        case let syncEventsStepError as SyncEventsStep.Failure:
-            logSyncEventsStepError(syncEventsStepError)
+        case let nseFlowError as NSEFlow.Failure:
+            logFlowError(nseFlowError)
+        case let nseUserError as NSEUserScope.Failure:
+            logUserError(nseUserError)
+        case let pullEventsStepError as NSEClientScope.Failure:
+            logClientError(pullEventsStepError)
         default:
             logDefaultError(error)
         }
@@ -199,72 +183,72 @@ extension NotificationServiceExtension {
         }
     }
 
-    private func logNotificationServiceError(_ error: NotificationServiceExtensionFlow.Failure) {
+    private func logUserError(_ error: NSEUserScope.Failure) {
         switch error {
-        case .missingCurrentAppVersion:
+        case let .mainAppRequired(message):
             logger.error(
-                "Missing current app version",
+                "Main app required, need to open main app: \(String(describing: error))",
                 attributes: .newNSE, .safePublic
             )
-        case .missingAppGroupID:
+        case let .failedToFetchBackendEnvironment(error):
             logger.error(
-                "Missing app group ID",
+                "Failed to fetch backend environment: \(String(describing: error))",
+                attributes: .newNSE, .safePublic
+            )
+        case let .failedToFetchProxyCredentials(error):
+            logger.error(
+                "Failed to fetch proxy credentials: \(String(describing: error))",
+                attributes: .newNSE, .safePublic
+            )
+        case let .failedToStoreMetadata(error):
+            logger.error(
+                "Failed to store metadata: \(String(describing: error))",
+                attributes: .newNSE, .safePublic
+            )
+        case .persistenceStoresNotFound:
+            logger.error(
+                "Persistence stores not found",
+                attributes: .newNSE, .safePublic
+            )
+        case let .failedToLoadPersistenceStack(error):
+            logger.error(
+                "Failed to load persistence stack: \(String(describing: error))",
+                attributes: .newNSE, .safePublic
+            )
+        case let .failedToFetchCookies(error):
+            logger.error(
+                "Failed to fetch cookies: \(String(describing: error))",
+                attributes: .newNSE, .safePublic
+            )
+        case .userNotAuthenticated:
+            logger.error(
+                "Use not authenticated",
+                attributes: .newNSE, .safePublic
+            )
+        case let .buildIsBlacklisted(buildNumber):
+            logger.error(
+                "Build is blacklisted: \(buildNumber)",
                 attributes: .newNSE, .safePublic
             )
         }
     }
 
-    private func logVerifyUserStepError(_ error: VerifyUserStep.Failure) {
+    private func logFlowError(_ error: NSEFlow.Failure) {
         switch error {
-        case .noAccountFound:
+        case let .accountNotFound(accountID):
             logger.error(
-                "No selected account found",
+                "Account not found, id: \(accountID)",
                 attributes: .newNSE, .safePublic
-            )
-        case .missingSelfClientID:
-            logger.error(
-                "Self client ID is missing",
-                attributes: .newNSE, .safePublic
-            )
-        case .mainAppPushChannelOpened:
-            logger.error(
-                "Main app is running in foreground with push channel open",
-                attributes: .newNSE
             )
         }
     }
 
-    private func logSyncEventsStepError(_ error: SyncEventsStep.Failure) {
+    private func logClientError(_ error: NSEClientScope.Failure) {
         switch error {
         case .pushChannelAlreadyOpened:
             logger.error(
                 "Main app is running in foreground with push channel open",
                 attributes: .newNSE
-            )
-        case .missingProxyCredentials:
-            logger.error(
-                "Proxy needs authentication but credentials are missing",
-                attributes: .newNSE, .safePublic
-            )
-        case .apiVersionNotFound:
-            logger.error(
-                "API version not found",
-                attributes: .newNSE, .safePublic
-            )
-        }
-    }
-
-    private func logPullEventsStepError(_ error: PullEventsStep.Failure) {
-        switch error {
-        case .missingProxyCredentials:
-            logger.error(
-                "Proxy needs authentication but credentials are missing",
-                attributes: .newNSE, .safePublic
-            )
-        case .apiVersionNotFound:
-            logger.error(
-                "API version not found",
-                attributes: .newNSE, .safePublic
             )
         }
     }
