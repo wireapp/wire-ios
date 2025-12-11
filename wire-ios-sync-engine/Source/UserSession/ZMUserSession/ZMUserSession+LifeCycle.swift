@@ -66,10 +66,10 @@ public extension ZMUserSession {
     func applicationDidEnterBackground(_ note: Notification?) {
         Task { @MainActor [weak self] in
             guard let self else { return }
-            let hasActiveCalls = self.callCenter?.activeCalls.isEmpty == false
+            let hasActiveCalls = callCenter?.activeCalls.isEmpty == false
 
             if !hasActiveCalls {
-                await self.syncAgent?.suspend()
+                await syncAgent?.suspend()
             }
         }
 
