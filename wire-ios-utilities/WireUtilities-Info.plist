@@ -4,8 +4,6 @@
 <dict>
 	<key>MultibackendEnabled</key>
 	<string>$(MULTIBACKEND_ENABLED)</string>
-	<key>ProteusByCoreCryptoEnabled</key>
-	<string>$(PROTEUS_BY_CORECRYPTO_ENABLED)</string>
 	<key>WireAuthenticationEnabled</key>
 	<string>$(WIRE_AUTHENTICATION_ENABLED)</string>
 	<key>CreateLegacyBackupsEnabled</key>
