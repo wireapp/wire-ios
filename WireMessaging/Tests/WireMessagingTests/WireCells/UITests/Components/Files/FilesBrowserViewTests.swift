@@ -97,7 +97,6 @@ final class FilesBrowserViewTests: XCTestCase {
             nodeCache: MockWireCellsNodeCacheProtocol()
         )
 
-
         let editingURLRepository = MockWireCellsEditingURLRepositoryProtocol()
         editingURLRepository.getEditorURLId_MockValue = nil
         getEditingURLUseCase = WireCellsGetEditingURLUseCase(
