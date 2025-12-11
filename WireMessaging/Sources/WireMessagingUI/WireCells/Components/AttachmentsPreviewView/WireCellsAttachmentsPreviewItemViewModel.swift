@@ -38,11 +38,11 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     private let lastOpenRequest: WireCellsLastOpenRequest
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
+    private let _displayStyle: DisplayStyle
     private var cancellables = Set<AnyCancellable>()
     private var pollingTask: Task<Void, Never>?
 
     let alignment: HorizontalAlignment
-    let displayStyle: DisplayStyle
 
     @Published var viewingURL: URL?
     @Published private var asset: WireCellsLocalAsset?
@@ -68,7 +68,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         self.lastOpenRequest = lastOpenRequest
         self.nodeRenameNotifier = nodeRenameNotifier
         self.localAssetRepository = localAssetRepository
-        self.displayStyle = displayStyle
+        self._displayStyle = displayStyle
         self.isDeleted = false
 
         setupBindings()
@@ -78,7 +78,15 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         }
     }
 
+    var displayStyle: DisplayStyle {
+        isDeleted ? .small : _displayStyle
+    }
+
     var fileCategory: WireCellsFileCategory {
+        if isDeleted {
+            return .document
+        }
+
         let fileType = contentType.flatMap { UTType(mimeType: $0) }
         return WireCellsFileCategory(fileType)
     }
