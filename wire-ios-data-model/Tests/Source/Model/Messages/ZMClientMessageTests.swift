@@ -23,18 +23,6 @@ import XCTest
 
 final class ClientMessageTests: BaseZMClientMessageTests {
 
-    override static func setUp() {
-        super.setUp()
-        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = false
-    }
-
-    override static func tearDown() {
-        super.tearDown()
-        DeveloperFlag.storage = UserDefaults.standard
-    }
-
     func testThatItDoesNotCreateTextMessagesFromUpdateEventIfThereIsAlreadyAClientMessageWithTheSameNonce() {
         // given
         let nonce = UUID.create()
