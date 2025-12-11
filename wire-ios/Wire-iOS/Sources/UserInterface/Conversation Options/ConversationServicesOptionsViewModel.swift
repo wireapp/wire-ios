@@ -71,23 +71,10 @@ final class ConversationServicesOptionsViewModel {
     }
 
     private func updateRows() {
-        if false {
-            state.rows = [.allowAppsToggle(
-                get: { [unowned self] in return configuration.allowApps },
-                set: { [unowned self] in setAllowApps($0, sender: $1) }
-            )]
-        } else {
-            // TODO: localization
-            let title = "Your team doesn't use apps yet"
-            let description = "To improve your workflow with apps, your team needs configuration. Please contact your team admin."
-            let text = "**\(title)**\n\n\n\n\(description)"
-
-            lazy var fallback = NSAttributedString(string: "\(title)\n\n\n\n\(description)")
-            let attributedString = (try? NSAttributedString(markdown: Data(text.utf8))) ?? fallback
-            state.rows = [
-                .attributedText(attributedString)
-            ]
-        }
+        state.rows = [.allowAppsToggle(
+            get: { [unowned self] in return configuration.allowApps },
+            set: { [unowned self] in setAllowApps($0, sender: $1) }
+        )]
     }
 
     /// set conversation option AllowApps
