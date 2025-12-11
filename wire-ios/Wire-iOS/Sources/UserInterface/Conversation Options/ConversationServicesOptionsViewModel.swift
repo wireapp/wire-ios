@@ -43,6 +43,7 @@ protocol ConversationServicesOptionsViewModelDelegate: AnyObject {
         fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration,
         confirmRemovingServices completion: @escaping (Bool) -> Void
     ) -> UIAlertController?
+
 }
 
 final class ConversationServicesOptionsViewModel {
@@ -71,10 +72,19 @@ final class ConversationServicesOptionsViewModel {
     }
 
     private func updateRows() {
-        state.rows = [.allowAppsToggle(
-            get: { [unowned self] in return configuration.allowApps },
-            set: { [unowned self] in setAllowApps($0, sender: $1) }
-        )]
+        if false { // TODO: fix
+             state.rows = [.allowAppsToggle(
+                 get: { [unowned self] in return configuration.allowApps },
+                 set: { [unowned self] in setAllowApps($0, sender: $1) }
+             )]
+         } else {
+             // TODO: localization
+             let title = "Your team doesn't use apps yet"
+             let body = "To improve your workflow with apps, your team needs configuration. Please contact your team admin."
+             state.rows = [
+                .titleAndBody(title: title, body: body)
+             ]
+         }
     }
 
     /// set conversation option AllowApps
