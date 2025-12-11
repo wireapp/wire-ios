@@ -1895,25 +1895,6 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
         }
     }
 
-    // MARK: - makeAttachmentsPreviewView
-
-    var makeAttachmentsPreviewViewAttachmentsAlignment_Invocations: [(attachments: [WireCellsMessageAttachment], alignment: HorizontalAlignment)] = []
-    var makeAttachmentsPreviewViewAttachmentsAlignment_MockMethod: (([WireCellsMessageAttachment], HorizontalAlignment) -> UIViewController)?
-    var makeAttachmentsPreviewViewAttachmentsAlignment_MockValue: UIViewController?
-
-    @MainActor
-    func makeAttachmentsPreviewView(attachments: [WireCellsMessageAttachment], alignment: HorizontalAlignment) -> UIViewController {
-        makeAttachmentsPreviewViewAttachmentsAlignment_Invocations.append((attachments: attachments, alignment: alignment))
-
-        if let mock = makeAttachmentsPreviewViewAttachmentsAlignment_MockMethod {
-            return mock(attachments, alignment)
-        } else if let mock = makeAttachmentsPreviewViewAttachmentsAlignment_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `makeAttachmentsPreviewViewAttachmentsAlignment`")
-        }
-    }
-
     // MARK: - makeConversationCellProvider
 
     var makeConversationCellProviderInsetsProvider_Invocations: [() -> ConversationCellInsets] = []

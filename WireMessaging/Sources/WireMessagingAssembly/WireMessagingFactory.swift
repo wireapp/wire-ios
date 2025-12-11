@@ -212,33 +212,6 @@ public extension WireMessagingFactory {
         )
     }
 
-    @MainActor
-    func makeAttachmentsPreviewView(
-        attachments: [WireCellsMessageAttachment],
-        alignment: HorizontalAlignment
-    ) -> UIViewController {
-        let viewController = UIHostingController(
-            rootView: WireCellsAttachmentsPreviewView(
-                viewModel: WireCellsAttachmentsPreviewViewModel(
-                    attachments: attachments,
-                    alignment: alignment,
-                    fetchNodeUseCase: WireCellsFetchNodeUseCase(
-                        repository: nodesAPI,
-                        cache: nodeCache
-                    ),
-                    getAssetUseCase: WireCellsGetAssetUseCase(
-                        localAssetRepository: localAssetRepository,
-                        fileCache: fileCache
-                    ),
-                    localAssetRepository: localAssetRepository,
-                    lastOpenRequest: lastOpenRequest,
-                    nodeRenameNotifier: nodeRenameNotifier
-                )
-            ))
-        viewController.view.backgroundColor = .clear
-        return viewController
-    }
-
     func makeConversationCellProvider(
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProvider {
