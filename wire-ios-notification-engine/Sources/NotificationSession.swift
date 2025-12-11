@@ -152,7 +152,7 @@ public final class NotificationSession {
             throw InitializationError.pendingCryptoboxMigration
         }
         coreDataStack.syncContext.performAndWait {
-            if DeveloperFlag.proteusViaCoreCrypto.isOn, coreDataStack.syncContext.proteusService == nil {
+            if coreDataStack.syncContext.proteusService == nil {
                 coreDataStack.syncContext.proteusService = proteusService
             }
 

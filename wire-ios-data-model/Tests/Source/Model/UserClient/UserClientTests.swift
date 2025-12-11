@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCryptobox
 import WireUtilities
 import XCTest
 
@@ -24,18 +23,6 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class UserClientTests: ZMBaseManagedObjectTest {
-
-    override static func setUp() {
-        super.setUp()
-        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = false
-    }
-
-    override static func tearDown() {
-        super.tearDown()
-        DeveloperFlag.storage = UserDefaults.standard
-    }
 
     func clientWithTrustedClientCount(
         _ trustedCount: UInt,
@@ -169,8 +156,6 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
     func testThatItDeletesASession() async throws {
         // Given
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = true
         var otherClient: UserClient!
         let mockProteusService = MockProteusServiceInterface()
         mockProteusService.deleteSessionId_MockMethod = { _ in
@@ -195,13 +180,10 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        flag.isOn = false
     }
 
     func testThatItDeletesASessionWhenDeletingAClient() async {
         // Given
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = true
         var otherClient: UserClient!
         var otherClientSessionID: ProteusSessionID!
         let mockProteusService = MockProteusServiceInterface()
@@ -230,7 +212,6 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        flag.isOn = false
     }
 
     func testThatItUpdatesConversationSecurityLevelWhenDeletingClient() async {

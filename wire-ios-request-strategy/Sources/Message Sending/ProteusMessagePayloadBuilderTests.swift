@@ -29,7 +29,6 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
 
     override func setUpWithError() throws {
         try super.setUpWithError()
-        DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
         proteusService = MockProteusServiceInterface()
     }
 
