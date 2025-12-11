@@ -102,13 +102,11 @@ struct FilesViewItemView: View {
                 Spacer()
 
                 Menu {
-                    if !viewModel.isInRecycleBin {
-                        Button(action: open) {
-                            Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
-                        }.disabled(viewModel.isDownloading)
-                    }
+                    Button(action: open) {
+                        Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
+                    }.disabled(viewModel.isDownloading)
 
-                    if viewModel.isDownloadOptionAvailable, !viewModel.isInRecycleBin  {
+                    if viewModel.isDownloadOptionAvailable {
                         Button(action: download) {
                             Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
                         }.disabled(viewModel.isDownloading)
@@ -120,7 +118,7 @@ struct FilesViewItemView: View {
                         }
                     }
 
-                    if canMoveToFolder, !viewModel.isInRecycleBin {
+                    if canMoveToFolder {
                         Button(action: moveToFolder) {
                             Label(Strings.Files.Item.Menu.moveToFolder, systemImage: "folder")
                         }
