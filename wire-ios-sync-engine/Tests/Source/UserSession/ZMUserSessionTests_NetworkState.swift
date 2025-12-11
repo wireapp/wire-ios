@@ -32,13 +32,12 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         // given
         let userId = NSUUID.create()!
 
-        mockPushChannel = MockPushChannel()
         cookieStorage = ZMPersistentCookieStorage(
             forServerName: "usersessiontest.example.com",
             userIdentifier: userId,
             useCache: true
         )
-        let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
+        let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage)
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
         let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
@@ -102,10 +101,6 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
         // then
         XCTAssertTrue(self.transportSession.didCallSetNetworkStateDelegate)
-        XCTAssertEqual(mockPushChannel.keepOpen, true)
-        coreDataStack.syncContext.performAndWait {
-            XCTAssertEqual(mockPushChannel.clientID, selfClient.remoteIdentifier)
-        }
         testSession.tearDown()
     }
 }

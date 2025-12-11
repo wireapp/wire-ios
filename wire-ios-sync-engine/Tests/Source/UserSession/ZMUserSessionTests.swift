@@ -103,28 +103,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertNil(mocUI?.zm_sync)
     }
 
-    func testThatItNotfiesTheTransportSessionWhenSelfUserClientIsRegistered() {
-        // GIVEN
-        let userClient = syncMOC.performAndWait {
-            self.createSelfClient()
-        }
-
-        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
-        mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
-
-        // WHEN
-        syncMOC.performGroupedBlock { [self] in
-            sut.didRegisterSelfUserClient(userClient)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        syncMOC.performAndWait {
-            XCTAssertEqual(mockPushChannel.clientID, userClient.remoteIdentifier)
-        }
-    }
-
     func testItSlowSyncsAfterRegisteringClient() async throws {
         // GIVEN
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
