@@ -65,7 +65,7 @@ package struct FilesViewItem: Identifiable, Hashable {
 
     /// The tags that users have added for that file.
     let tags: [String]
-    
+
     let publicLinkId: String?
 }
 

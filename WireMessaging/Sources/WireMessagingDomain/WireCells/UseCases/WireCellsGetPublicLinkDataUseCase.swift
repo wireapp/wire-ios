@@ -18,7 +18,6 @@
 
 package import Foundation
 
-///TODO: add doc comment
 package struct WireCellsGetPublicLinkDataUseCase<NodesAPI: NodesAPIProtocol>: WireCellsGetPublicLinkDataUseCaseProtocol {
     private let nodesAPI: NodesAPI
 

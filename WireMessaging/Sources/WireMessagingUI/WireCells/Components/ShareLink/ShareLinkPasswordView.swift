@@ -30,14 +30,14 @@ struct ShareLinkPasswordView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     @StateObject private var viewModel: ViewModel
-    
+
     let onSave: (String?) -> Void
-    
+
     init(password: String?, onSave: @escaping (String?) -> Void) {
         _viewModel = .init(wrappedValue: .init(password: password))
         self.onSave = onSave
     }
-    
+
     var body: some View {
         NavigationStack {
             content()
@@ -54,7 +54,7 @@ struct ShareLinkPasswordView: View {
                             Strings.RemoveConfirmation.button,
                             action: { viewModel.removePassword() }
                         )
-                        
+
                         Button(
                             L10n.Localizable.General.cancel,
                             role: .cancel,
@@ -71,7 +71,7 @@ struct ShareLinkPasswordView: View {
                             Strings.NoAccessToExisting.button,
                             action: { viewModel.changePassword() }
                         )
-                        
+
                         Button(
                             L10n.Localizable.General.cancel,
                             role: .cancel,
@@ -87,28 +87,29 @@ struct ShareLinkPasswordView: View {
                 .tint(ColorTheme.Base.primary(wireAccentColor).color)
         }
     }
-    
-    @ViewBuilder private func content() -> some View {
+
+    @ViewBuilder
+    private func content() -> some View {
         ScrollView {
             VStack(spacing: 16) {
                 descriptionArea()
-                
+
                 setPasswordToggleArea()
                     .padding(.bottom, 18)
-                
+
                 Group {
                     generatePasswordButton()
-                    
+
                     passwordInputArea()
-                    
+
                     copyPasswordButton()
-                    
+
                     changePasswordButton()
                         .padding(.top, 24)
                 }
                 .disabled(!viewModel.isPasswordEnabled)
                 .opacity(viewModel.isPasswordEnabled ? 1 : 0.7)
-                    
+
                 alertTestButtons()
                     .padding(.top, 30)
             }
@@ -116,16 +117,18 @@ struct ShareLinkPasswordView: View {
             .padding()
         }
     }
-    
-    @ViewBuilder private func descriptionArea() -> some View {
+
+    @ViewBuilder
+    private func descriptionArea() -> some View {
         Text(Strings.description)
             .font(for: .subline1)
             .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
             .foregroundStyle(ColorTheme.Base.secondaryText.color)
     }
-    
-    @ViewBuilder private func setPasswordToggleArea() -> some View {
+
+    @ViewBuilder
+    private func setPasswordToggleArea() -> some View {
         Toggle(isOn: $viewModel.isPasswordEnabled) {
             Text(Strings.setPasswordToggle)
                 .font(for: .body1)
@@ -137,8 +140,9 @@ struct ShareLinkPasswordView: View {
                 .foregroundStyle(ColorTheme.Buttons.Secondary.enabled.color)
         }
     }
-    
-    @ViewBuilder private func generatePasswordButton() -> some View {
+
+    @ViewBuilder
+    private func generatePasswordButton() -> some View {
         Button {
             viewModel.generatePassword()
         } label: {
@@ -163,8 +167,9 @@ struct ShareLinkPasswordView: View {
         .tint(.primaryText)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    
-    @ViewBuilder private func passwordInputArea() -> some View {
+
+    @ViewBuilder
+    private func passwordInputArea() -> some View {
         VStack(spacing: 4) {
             Text(Strings.textfieldTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -187,31 +192,33 @@ struct ShareLinkPasswordView: View {
             }
         }
     }
-    
-    @ViewBuilder private func passwordInputField() -> some View {
+
+    @ViewBuilder
+    private func passwordInputField() -> some View {
         let prompt = Text(Strings.textfieldPrompt)
-        
+
         Group {
             if viewModel.isPasswordInputSecured {
                 SecureField(text: $viewModel.passwordInput, prompt: prompt, label: { EmptyView() })
             } else {
                 TextField(text: $viewModel.passwordInput, prompt: prompt, label: { EmptyView() })
-                    .padding(.bottom, 0.5) //adjustment so that the text of the both fields align perfectly.
+                    .padding(.bottom, 0.5) // adjustment so that the text of the both fields align perfectly.
             }
         }
         .textContentType(.password)
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()
     }
-    
-    @ViewBuilder private func passwordInputShowHideButton() -> some View {
+
+    @ViewBuilder
+    private func passwordInputShowHideButton() -> some View {
         Button {
             viewModel.isPasswordInputSecured.toggle()
         } label: {
             ZStack {
                 Image(systemName: "eye.fill")
                     .opacity(viewModel.isPasswordInputSecured ? 0 : 1)
-                
+
                 Image(systemName: "eye.slash.fill")
                     .opacity(viewModel.isPasswordInputSecured ? 1 : 0)
             }
@@ -223,7 +230,8 @@ struct ShareLinkPasswordView: View {
         )
     }
 
-    @ViewBuilder private func copyPasswordButton() -> some View {
+    @ViewBuilder
+    private func copyPasswordButton() -> some View {
         Button {
             viewModel.copyPasswordToPasteboard()
         } label: {
@@ -248,10 +256,11 @@ struct ShareLinkPasswordView: View {
         }
         .tint(.primaryText)
     }
-    
-    @ViewBuilder private func changePasswordButton() -> some View {
+
+    @ViewBuilder
+    private func changePasswordButton() -> some View {
         Button {
-            //TODO: ...
+            // TODO: ...
         } label: {
             Label {
                 Text(Strings.changePassword)
@@ -274,15 +283,16 @@ struct ShareLinkPasswordView: View {
         }
         .tint(.primaryText)
     }
-    
-    @ViewBuilder private func alertTestButtons() -> some View {
+
+    @ViewBuilder
+    private func alertTestButtons() -> some View {
         VStack {
             Button {
                 viewModel.isPresentingRemovePasswordConfirmation = true
             } label: {
                 Text("show\n\"remove password\"\nconfirmation alert")
             }
-            
+
             Button {
                 viewModel.isPresentingNoAccessToExistingPasswordConfirmation = true
             } label: {
@@ -292,8 +302,9 @@ struct ShareLinkPasswordView: View {
         .buttonStyle(.bordered)
         .font(for: .subline1)
     }
-    
-    @ToolbarContentBuilder private func toolbarContent() -> some ToolbarContent {
+
+    @ToolbarContentBuilder
+    private func toolbarContent() -> some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button(role: .cancel) {
                 dismiss()
@@ -301,7 +312,7 @@ struct ShareLinkPasswordView: View {
                 Text(L10n.Localizable.General.cancel)
             }
         }
-        
+
         ToolbarItem(placement: .topBarTrailing) {
             Button {
                 onSave(viewModel.currentPassword)

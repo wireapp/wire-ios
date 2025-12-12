@@ -112,7 +112,7 @@ package struct FilesView: FilesViewProtocol {
                         folderView
                     case let .moveToFolder(fileItem):
                         viewModel.moveToFolderView(item: fileItem)
-                    case .filters(view: _):
+                    case .filters:
                         EmptyView()
                     }
                 }

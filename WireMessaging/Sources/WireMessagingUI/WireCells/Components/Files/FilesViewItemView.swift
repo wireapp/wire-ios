@@ -105,8 +105,8 @@ struct FilesViewItemView: View {
                     Button(action: open) {
                         Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
                     }.disabled(viewModel.isDownloading)
-                    
-                    //TODO: hide for recycle bin, when the PR is merged
+
+                    // TODO: hide for recycle bin, when the PR is merged
                     Button(action: shareLink) {
                         Label(Strings.Files.Item.Menu.shareLink, systemImage: "square.and.arrow.up")
                     }
@@ -223,7 +223,7 @@ struct FilesViewItemView: View {
     private func open() {
         Task { await viewModel.open() }
     }
-    
+
     private func shareLink() {
         Task { await viewModel.onItemAction(.shareLink, viewModel.item) }
     }
