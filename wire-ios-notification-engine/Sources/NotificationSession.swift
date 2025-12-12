@@ -354,11 +354,6 @@ extension NotificationSession: PushNotificationStrategyDelegate {
             return nil
         }
 
-        guard VoIPPushHelper.isUserSessionLoaded(accountID: accountIdentifier) else {
-            WireLogger.calling.warn("should not handle call event: user session is not loaded", attributes: .legacyNSE)
-            return nil
-        }
-
         let handle = "\(accountIdentifier.transportString())+\(conversationID.transportString())"
         let wasCallHandleReported = VoIPPushHelper.knownCallHandles.contains(handle)
 
