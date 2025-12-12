@@ -31,9 +31,7 @@ public final class SearchUsersUseCase: SearchUsersUseCaseProtocol {
     private let isMLSEnabled: Bool
 
     deinit {
-        DispatchQueue.main.async { [searchDirectory] in
-            searchDirectory.tearDown()
-        }
+        searchDirectory.tearDown()
     }
 
     // MARK: - Initialization
