@@ -22,11 +22,13 @@ import WireLogging
 public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProtocol {
 
     private let context: NSManagedObjectContext
-    private let fetchedResultsController: NSFetchedResultsController<ZMConversation>
+    private var fetchedResultsController: NSFetchedResultsController<ZMConversation>?
     private let repository: ConversationRepositoryProtocol
     private let mlsService: MLSServiceInterface
     private let isMLSGroupBroken: (MLSGroupID) -> Bool
     private var onCommitPendingProposals: (CommitPendingProposalItem) -> Void
+
+    private var scheduledTasks: [QualifiedID: Task<Void, Never>] = [:]
 
     init(
         repository: ConversationRepositoryProtocol,
@@ -35,15 +37,6 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
         isMLSGroupBroken: @escaping (MLSGroupID) -> Bool,
         onCommitPendingProposals: @escaping (CommitPendingProposalItem) -> Void
     ) {
-        let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
-        request.predicate = ZMConversation.commitPendingProposalDatePredicate()
-        request.sortDescriptors = [ZMConversation.sortCommitPendingProsalsByDateAscending()]
-        self.fetchedResultsController = NSFetchedResultsController(
-            fetchRequest: request,
-            managedObjectContext: context,
-            sectionNameKeyPath: nil,
-            cacheName: nil
-        )
         self.context = context
         self.onCommitPendingProposals = onCommitPendingProposals
         self.repository = repository
@@ -52,82 +45,107 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
         super.init()
     }
 
-    /// Starts monitoring and triggers work for any conversations with commitPendingProposalDate not nil.
     public func start() async {
-        fetchedResultsController.delegate = self
-        do {
-            try fetchedResultsController.performFetch()
-        } catch {
-            WireLogger.conversation
-                .error("error fetching conversations with pending commit proposals: \(String(describing: error))")
+        if fetchedResultsController == nil {
+            fetchedResultsController = createFetchRequestController()
+            fetchedResultsController?.delegate = self
         }
 
-        let conversations = fetchedResultsController.fetchedObjects ?? []
-        for conversation in conversations {
-            await context.perform {
-                self.commitPendingProposalItem(for: conversation)
-            }
-        }
-    }
-
-    private func commitPendingProposalItem(for conversation: ZMConversation) {
-        if let id = conversation.qualifiedID,
-           let timestamp = conversation.commitPendingProposalDate,
-           let mlsGroupID = conversation.mlsGroupID,
-           conversation.isSelfAnActiveMember,
-           !isMLSGroupBroken(mlsGroupID) {
-
-            Task {
-                await generateItemForSubconversation(
-                    parentID: mlsGroupID,
-                    timestamp: timestamp,
-                    conversationID: id
-                )
+        await context.perform {
+            do {
+                try self.fetchedResultsController?.performFetch()
+            } catch {
+                WireLogger.conversation.error("error fetching conversations: \(String(describing: error))")
             }
 
-            WireLogger.workAgent.debug(
-                "generate commit pending proposal work-item",
-                attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
-            )
-            onCommitPendingProposals(
-                CommitPendingProposalItem(
-                    repository: repository,
-                    conversationID: id,
-                    groupID: mlsGroupID,
-                    timestamp: timestamp,
-                    mlsService: mlsService
-                )
-            )
-        }
-    }
-
-    func generateItemForSubconversation(
-        parentID: MLSGroupID,
-        timestamp: Date,
-        conversationID: QualifiedID
-    ) async {
-
-        if let subgroupID = await mlsService.subConferenceConversation(
-            parentGroupID: parentID
-        ) {
-            WireLogger.workAgent.debug(
-                "generate subconversation commit pending proposal work-item for \(parentID.safeForLoggingDescription)",
-                attributes: [.mlsGroupID: subgroupID.safeForLoggingDescription]
-            )
-            onCommitPendingProposals(
-                CommitPendingProposalItem(
-                    repository: repository,
-                    conversationID: conversationID,
-                    groupID: subgroupID,
-                    timestamp: timestamp,
-                    mlsService: mlsService
-                )
-            )
+            let conversations = self.fetchedResultsController?.fetchedObjects ?? []
+            for conversation in conversations {
+                self.scheduleCommitIfNeeded(for: conversation)
+            }
         }
     }
 
     public func stop() {
-        fetchedResultsController.delegate = nil
+        fetchedResultsController = nil
+
+        // Cancel all scheduled commits
+        for (_, task) in scheduledTasks {
+            task.cancel()
+        }
+        scheduledTasks.removeAll()
+    }
+
+    private func createFetchRequestController() -> NSFetchedResultsController<ZMConversation> {
+        let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+        request.predicate = ZMConversation.commitPendingProposalDatePredicate()
+        request.sortDescriptors = [ZMConversation.sortCommitPendingProsalsByDateAscending()]
+        return NSFetchedResultsController(
+            fetchRequest: request,
+            managedObjectContext: context,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
+    }
+
+    private func scheduleCommitIfNeeded(for conversation: ZMConversation) {
+        guard
+            let conversationID = conversation.qualifiedID,
+            let timestamp = conversation.commitPendingProposalDate,
+            let mlsGroupID = conversation.mlsGroupID,
+            conversation.isSelfAnActiveMember,
+            !isMLSGroupBroken(mlsGroupID)
+        else {
+            // If the conversation no longer qualifies, cancel any existing schedule.
+            if let id = conversation.qualifiedID {
+                scheduledTasks[id]?.cancel()
+                scheduledTasks[id] = nil
+            }
+            return
+        }
+
+        // Reschedule (cancel previous if any)
+        scheduledTasks[conversationID]?.cancel()
+
+        let task = Task { [repository, mlsService, onCommitPendingProposals] in
+
+            let delay = timestamp.timeIntervalSinceNow
+            if delay > 0 {
+                do { try await Task.sleep(for: .seconds(delay)) } catch { return } // cancelled
+            }
+
+            // Re-check membership right before enqueuing the actual work item
+            let stillMember = await repository.isSelfAnActiveMember(in: mlsGroupID)
+            guard stillMember else { return }
+
+            // Enqueue parent group item
+            onCommitPendingProposals(
+                CommitPendingProposalItem(
+                    repository: repository,
+                    conversationID: conversationID,
+                    groupID: mlsGroupID,
+                    mlsService: mlsService
+                )
+            )
+
+            // Enqueue subconversation item if any
+            if let subgroupID = await mlsService.subConferenceConversation(parentGroupID: mlsGroupID) {
+                onCommitPendingProposals(
+                    CommitPendingProposalItem(
+                        repository: repository,
+                        conversationID: conversationID,
+                        groupID: subgroupID,
+                        mlsService: mlsService
+                    )
+                )
+            }
+        }
+
+        scheduledTasks[conversationID] = task
+
+        WireLogger.workAgent.debug(
+            "scheduled commit pending proposal work-item",
+            attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
+        )
     }
 }
 
@@ -147,14 +165,20 @@ extension CommitPendingProposalsGenerator: NSFetchedResultsControllerDelegate {
         }
 
         switch type {
-        case .insert:
-            commitPendingProposalItem(for: conversation)
-
-        case .update:
-            break
+        case .insert, .update:
+            // run on the context queue to safely read properties
+            Task { [context] in
+                await context.perform {
+                    self.scheduleCommitIfNeeded(for: conversation)
+                }
+            }
 
         case .move, .delete:
-            break
+            // Best effort cancel if we can identify it
+            if let id = conversation.qualifiedID {
+                scheduledTasks[id]?.cancel()
+                scheduledTasks[id] = nil
+            }
 
         @unknown default:
             break

@@ -35,8 +35,11 @@ class CommitPendingProposalsGeneratorTests {
 
     init() async throws {
         self.repository = MockConversationRepositoryProtocol()
+        repository.isSelfAnActiveMemberIn_MockValue = true
+
         self.mockMLSService = MockMLSServiceInterface()
         mockMLSService.subConferenceConversationParentGroupID_MockMethod = { _ in nil }
+
         self.coreDataStack = try await coreDataStackHelper.createStack()
 
         self.sut = CommitPendingProposalsGenerator(
@@ -52,13 +55,16 @@ class CommitPendingProposalsGeneratorTests {
         )
     }
 
-    @Test("It generates an item when a conversation with commitPendingProposalDate set is found")
-    func startGeneratesItem() async throws {
+    @Test(
+        "It generates an item when a conversation with commitPendingProposalDate set is found",
+        arguments: [Date(), Date().addingTimeInterval(0.5)]
+    )
+    func startGeneratesItem(date: Date) async throws {
         // GIVEN
         let conversationID = QualifiedID.random()
         await createPendingMLSConversation(
             id: conversationID,
-            proposalDate: Date()
+            proposalDate: date
         )
 
         var items = [CommitPendingProposalItem]()
@@ -82,10 +88,10 @@ class CommitPendingProposalsGeneratorTests {
 
             await self.createPendingMLSConversation(
                 id: newConversationID,
-                proposalDate: Date()
+                proposalDate: date
             )
 
-            try await Task.sleep(for: .seconds(2))
+            try await Task.sleep(for: .seconds(0.5))
         }
 
         // THEN

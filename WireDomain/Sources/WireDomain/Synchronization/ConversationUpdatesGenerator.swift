@@ -77,7 +77,6 @@ public final class ConversationUpdatesGenerator: NSObject, IncrementalGeneratorP
             sectionNameKeyPath: nil,
             cacheName: nil
         )
-
     }
 }
 

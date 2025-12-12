@@ -39,37 +39,22 @@ class CommitPendingProposalItemTests {
         self.mlsGroupID = .random()
         self.mlsService = .init()
         mlsService.commitPendingProposalsIn_MockMethod = { _ in }
+        repository.isSelfAnActiveMemberIn_MockValue = true
     }
 
-    private func makeProposalItem(timestamp: Date) -> CommitPendingProposalItem {
+    private func makeProposalItem() -> CommitPendingProposalItem {
         CommitPendingProposalItem(
             repository: repository,
             conversationID: conversationID,
             groupID: mlsGroupID,
-            timestamp: timestamp,
             mlsService: mlsService
         )
     }
 
-    @Test("It calls commitPendingProposal when timestamp is in past")
-    func startCallsCommitPendingProposalPast() async throws {
+    @Test("It calls commitPendingProposal")
+    func startCallsCommitPendingProposal() async throws {
         // Given
-        let date = Date().addingTimeInterval(-60)
-        sut = makeProposalItem(timestamp: date)
-        // When
-        try await sut.start()
-
-        // Then
-        #expect(mlsService.commitPendingProposalsIn_Invocations.count == 1)
-    }
-
-    @Test("It calls commitPendingProposal when timestamp is in future")
-    func startCallsCommitPendingProposalFuture() async throws {
-        // Given
-        let date = Date().addingTimeInterval(1)
-        sut = makeProposalItem(timestamp: date)
-        repository.isSelfAnActiveMemberIn_MockValue = true
-
+        sut = makeProposalItem()
         // When
         try await sut.start()
 
@@ -80,10 +65,9 @@ class CommitPendingProposalItemTests {
     @Test("It does not call commitPendingProposal when selfUser is not part of the group")
     func startDoesNotCallCommitPendingProposalFuture() async throws {
         // Given
-        let date = Date().addingTimeInterval(2)
         repository.isSelfAnActiveMemberIn_MockValue = false
 
-        sut = makeProposalItem(timestamp: date)
+        sut = makeProposalItem()
 
         // When
         try await sut.start()
@@ -94,7 +78,10 @@ class CommitPendingProposalItemTests {
 
     @Test("It logs properly")
     func loggingDescription() {
-        sut = makeProposalItem(timestamp: Date())
+        // Given
+        sut = makeProposalItem()
+
+        // WHEN / THEN
         #expect(sut.description == "\(sut!)")
     }
 }
