@@ -16,19 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package import Foundation
 
-@objcMembers
-public class Blacklist: NSObject {
-    public let minVersion: String
-    public let excludedVersions: [String]
+// sourcery: AutoMockable
+package protocol WireCellsEditingURLRepositoryProtocol: Sendable {
 
-    public init?(json: [AnyHashable: Any]) {
-        guard let minVersion = json["min_version"] as? String,
-              let excludedVersions = json["exclude"] as? [String] else {
-            return nil
-        }
-        self.minVersion = minVersion
-        self.excludedVersions = excludedVersions
-    }
+    /// Returns a URL to an online editor where the document can be edited.
+    func getEditorURL(id: UUID) async throws -> (url: URL, date: Date)?
+
 }

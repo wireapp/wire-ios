@@ -103,7 +103,6 @@
         ZM_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self performSelector:selector]);
     }
 
-    [self setupKeyStore];
     [self setupTimers];
     [self setupCaches];
 
@@ -116,16 +115,6 @@
         [self.syncMOC zm_createMessageObfuscationTimer];
     }];
     [self.uiMOC zm_createMessageDeletionTimer];
-}
-
-- (void)setupKeyStore
-{
-    [self performPretendingUiMocIsSyncMoc:^{
-        NSURL *url = [CoreDataStack accountDataFolderWithAccountIdentifier:self.userIdentifier
-                                                  applicationContainer:self.storageDirectory];
-        [self.uiMOC setupUserKeyStoreInAccountDirectory:url
-                                   applicationContainer:self.storageDirectory];
-    }];
 }
 
 - (void)tearDown;

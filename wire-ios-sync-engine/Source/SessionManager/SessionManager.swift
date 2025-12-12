@@ -314,7 +314,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     let application: ZMApplication
     var deleteAccountToken: Any?
     var callCenterObserverToken: Any?
-    var blacklistVerificator: ZMBlacklistVerificator?
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
     let apiMigrationManager: APIMigrationManager
@@ -475,8 +474,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             countlyProvider: countlyProvider,
             logFilesProvider: logFilesProvider
         )
-
-        configureBlacklistDownload()
 
         self.memoryWarningObserver = NotificationCenter.default.addObserver(
             forName: UIApplication.didReceiveMemoryWarningNotification,
@@ -661,38 +658,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    private func configureBlacklistDownload() {
-        guard !DeveloperFlag.multibackend.isOn else {
-            return
-        }
-        if configuration.blacklistDownloadInterval > 0 {
-            blacklistVerificator?.tearDown()
-            blacklistVerificator = ZMBlacklistVerificator(
-                checkInterval: configuration.blacklistDownloadInterval,
-                version: currentBuildNumber,
-                environment: environment,
-                proxyUsername: proxyCredentials?.username,
-                proxyPassword: proxyCredentials?.password,
-                readyForRequests: isUnauthenticatedTransportSessionReady,
-                working: nil,
-                application: application,
-                minTLSVersion: minTLSVersion,
-                blacklistCallback: { [weak self] blacklisted in
-                    guard let self, !self.isAppVersionBlacklisted else { return }
-
-                    if blacklisted {
-                        isAppVersionBlacklisted = true
-                        delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
-                        // When the application version is blacklisted we don't want have a
-                        // transition to any other state in the UI, so we won't inform it
-                        // anymore by setting the delegate to nil.
-                        delegate = nil
-                    }
-                }
-            )
-        }
-    }
-
     public func removeProxyCredentials() {
         guard let proxy = environment.proxy else { return }
         _ = ProxyCredentials.destroy(for: proxy)
@@ -722,9 +687,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         isUnauthenticatedTransportSessionReady = ready
         apiVersionResolver = createAPIVersionResolver()
 
-        if blacklistVerificator != nil {
-            configureBlacklistDownload()
-        }
         // force creation of unauthenticatedSession
         unauthenticatedSessionFactory.readyForRequests = ready
     }
@@ -1391,11 +1353,10 @@ public final class SessionManager: NSObject, SessionManagerType {
     deinit {
         DispatchQueue
             .main
-            .async { [backgroundUserSessions, blacklistVerificator, unauthenticatedSession, reachability] in
+            .async { [backgroundUserSessions, unauthenticatedSession, reachability] in
                 backgroundUserSessions.values.forEach { session in
                     session.tearDown()
                 }
-                blacklistVerificator?.tearDown()
                 unauthenticatedSession?.tearDown()
                 reachability.tearDown()
             }

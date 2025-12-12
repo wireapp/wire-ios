@@ -60,9 +60,8 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
     // MARK: - Methods
 
     public func isMigrationNeeded(accountDirectory: URL) -> Bool {
-        guard DeveloperFlag.proteusViaCoreCrypto.isOn else { return false }
-        let cryptoboxDirectory = fileManager.cryptoboxDirectory(in: accountDirectory)
-        return fileManager.fileExists(atPath: cryptoboxDirectory.path)
+        // disabling migration. This will be removed completely in https://wearezeta.atlassian.net/browse/WPB-22227
+        false
     }
 
     public func performMigration(
@@ -108,11 +107,21 @@ protocol FileManagerInterface {
 
 extension FileManager: FileManagerInterface {
 
+    private static let keyStoreFolderPrefix = "otr"
+
     func cryptoboxDirectory(in accountDirectory: URL) -> URL {
-        FileManager.keyStoreURL(
+        keyStoreURL(
             accountDirectory: accountDirectory,
             createParentIfNeeded: false
         )
+    }
+
+    /// Returns the URL for the keyStore
+    private func keyStoreURL(accountDirectory: URL, createParentIfNeeded: Bool) -> URL {
+        if createParentIfNeeded {
+            try! FileManager.default.createAndProtectDirectory(at: accountDirectory)
+        }
+        return accountDirectory.appendingPathComponent(FileManager.keyStoreFolderPrefix)
     }
 
 }

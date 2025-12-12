@@ -106,19 +106,19 @@ class UserImageView: AvatarImageView, UserObserving {
 
     /// Returns the appropriate border width for the user.
     private func borderWidth(for user: UserType) -> CGFloat {
-        user.isApp ? 0.5 : 0
+        user.isAppOrBot ? 0.5 : 0
     }
 
     /// Returns the appropriate border color for the user.
     private func borderColor(for user: UserType) -> CGColor? {
-        user.isApp ? UIColor.black.withAlphaComponent(0.08).cgColor : nil
+        user.isAppOrBot ? UIColor.black.withAlphaComponent(0.08).cgColor : nil
     }
 
     /// Returns the placeholder background color for the user.
     private func containerBackgroundColor(for user: UserType) -> UIColor {
         switch avatar {
         case .image:
-            user.isApp ? .white : .clear
+            user.isAppOrBot ? .white : .clear
         case .text:
             if user.isConnected || user.isSelfUser || user.isTeamMember || user.isWirelessUser {
                 user.accentColor
@@ -130,7 +130,7 @@ class UserImageView: AvatarImageView, UserObserving {
 
     /// Returns the appropriate avatar shape for the user.
     private func shape(for user: UserType) -> AvatarImageView.Shape {
-        user.isApp ? .relative : .circle
+        user.isAppOrBot ? .relative : .circle
     }
 
     // MARK: - Changing the Content
@@ -169,7 +169,7 @@ class UserImageView: AvatarImageView, UserObserving {
 
         var desaturate = false
         if shouldDesaturate {
-            desaturate = !user.isConnected && !user.isSelfUser && !user.isTeamMember && !user.isApp
+            desaturate = !user.isConnected && !user.isSelfUser && !user.isTeamMember && !user.isAppOrBot
         }
 
         user.fetchProfileImage(

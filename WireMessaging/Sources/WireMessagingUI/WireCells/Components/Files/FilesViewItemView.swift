@@ -35,6 +35,7 @@ struct FilesViewItemView: View {
     private var canRenameFile: Bool
     private var canEditTags: Bool
     private let canMoveToFolder: Bool
+    private let canEditFile: Bool
     private var canDeleteFiles: Bool
 
     init(
@@ -42,12 +43,14 @@ struct FilesViewItemView: View {
         canRenameFile: Bool = false,
         canEditTags: Bool = false,
         canMoveToFolder: Bool = false,
+        canEditFile: Bool = false,
         canDeleteFiles: Bool = false
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
         self.canRenameFile = canRenameFile
         self.canEditTags = canEditTags
         self.canMoveToFolder = canMoveToFolder
+        self.canEditFile = canEditFile
         self.canDeleteFiles = canDeleteFiles
     }
 
@@ -112,6 +115,14 @@ struct FilesViewItemView: View {
                         }.disabled(viewModel.isDownloading)
                     }
 
+                    if canEditFile, viewModel.isEditable {
+                        Button(action: editFile) {
+                            Label(Strings.Files.Item.Menu.editFile, systemImage: "square.and.pencil")
+                        }
+                    }
+
+                    Divider()
+
                     if canRenameFile, !viewModel.isInRecycleBin {
                         Button(action: rename) {
                             Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
@@ -137,7 +148,7 @@ struct FilesViewItemView: View {
                     }
 
                     if canDeleteFiles {
-                        if viewModel.isInRecycleBin {
+                        if viewModel.isInRecycleBin || !viewModel.isFoldersEnabled {
                             Button(
                                 role: .destructive,
                                 action: { delete(permanently: true) },
@@ -217,6 +228,10 @@ struct FilesViewItemView: View {
 
     private func open() {
         Task { await viewModel.open() }
+    }
+
+    private func editFile() {
+        Task { await viewModel.edit() }
     }
 
     private func download() {
