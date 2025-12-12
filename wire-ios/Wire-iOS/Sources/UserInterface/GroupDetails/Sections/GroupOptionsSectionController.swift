@@ -97,7 +97,6 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         self.conversation = conversation
         self.syncCompleted = syncCompleted
         self.options = Option.allCases.filter { $0.accessible(in: conversation, by: user) }
-
     }
 
     // MARK: - Collection View

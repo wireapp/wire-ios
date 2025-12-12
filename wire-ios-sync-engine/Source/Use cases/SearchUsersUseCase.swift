@@ -16,30 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CoreData
 import WireUtilities
 
-// sourcery: AutoMockable
-public protocol SearchUsersUseCaseProtocol {
-    func invoke(
-        query: String,
-        options: SearchOptions,
-        messageProtocol: WireDataModel.MessageProtocol?
-    ) async throws -> SearchResult
-}
-
-public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
+public final class SearchUsersUseCase: SearchUsersUseCaseProtocol {
 
     // MARK: - Properties
 
-    private let context: NSManagedObjectContext
+    public let context: NSManagedObjectContext
+
     private let searchDirectory: SearchDirectory
     private let isFederationUsageAllowed: Bool
     private var activeSearchTask: SearchTask?
     private let isMLSEnabled: Bool
 
     deinit {
-        searchDirectory.tearDown()
+        DispatchQueue.main.async { [searchDirectory] in
+            searchDirectory.tearDown()
+        }
     }
 
     // MARK: - Initialization
@@ -68,8 +62,8 @@ public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
 
         await searchDirectory.updateIncompleteMetadataIfNeeded()
 
-        let (selfDomain, team) = await context.perform {
-            let selfUser = ZMUser.selfUser(in: self.context)
+        let (selfDomain, team) = await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
             return (selfUser.domain, selfUser.membership?.team)
         }
 

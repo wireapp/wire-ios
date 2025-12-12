@@ -16,12 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension ZMSyncStrategy {
+public import WireDataModel
+public import CoreData
 
-    var callingRequestStrategy: CallingRequestStrategy? {
-        strategyDirectory?.requestStrategies
-            .compactMap { $0 as? CallingRequestStrategy }
-            .first
-    }
+// sourcery: AutoMockable
+public protocol SearchUsersUseCaseProtocol {
+
+    /// The managed object context the objects in the search result must be accessed on.
+
+    var context: NSManagedObjectContext { get }
+
+    func invoke(
+        query: String,
+        options: SearchOptions,
+        messageProtocol: WireDataModel.MessageProtocol?
+    ) async throws -> SearchResult
 
 }
