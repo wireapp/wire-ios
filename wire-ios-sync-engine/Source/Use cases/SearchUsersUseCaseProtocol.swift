@@ -17,14 +17,9 @@
 //
 
 public import WireDataModel
-public import CoreData
 
 // sourcery: AutoMockable
 public protocol SearchUsersUseCaseProtocol {
-
-    /// The managed object context the objects in the search result must be accessed on.
-
-    var context: NSManagedObjectContext { get }
 
     func invoke(
         query: String,
