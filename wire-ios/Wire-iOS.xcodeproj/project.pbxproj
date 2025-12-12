@@ -746,7 +746,6 @@
 				NetworkStatusView/NetworkStatusViewControllerTests.swift,
 				NetworkStatusView/NetworkStatusViewSnapshotTests.swift,
 				NetworkStatusView/NetworkStatusViewTests.swift,
-				"Notification Service Extension/LegacyNotificationServiceTest.swift",
 				"NSAttributedString+DownTests.swift",
 				NSAttributedStringHighlightTests.swift,
 				OtherUserDeviceDetailsViewTests.swift,
