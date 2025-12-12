@@ -23,17 +23,14 @@ public final class SearchUsersUseCase: SearchUsersUseCaseProtocol {
 
     // MARK: - Properties
 
-    public let context: NSManagedObjectContext
-
+    private let context: NSManagedObjectContext
     private let searchDirectory: SearchDirectory
     private let isFederationUsageAllowed: Bool
     private var activeSearchTask: SearchTask?
     private let isMLSEnabled: Bool
 
     deinit {
-        DispatchQueue.main.async { [searchDirectory] in
-            searchDirectory.tearDown()
-        }
+        searchDirectory.tearDown()
     }
 
     // MARK: - Initialization

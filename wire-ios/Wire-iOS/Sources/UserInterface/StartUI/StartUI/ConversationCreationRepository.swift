@@ -35,7 +35,7 @@ struct ConversationCreationRepository: ConversationCreationRepositoryProtocol {
             messageProtocol: .proteus
         )
 
-        return await searchUsersUseCase.context.perform {
+        return await result.context.perform {
             !result.services.isEmpty
         }
 
