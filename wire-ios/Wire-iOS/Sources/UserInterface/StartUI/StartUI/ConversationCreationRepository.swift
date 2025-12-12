@@ -32,7 +32,7 @@ struct ConversationCreationRepository: ConversationCreationRepositoryProtocol {
         let result = try await searchUsersUseCase.invoke(
             query: "",
             options: .services,
-            messageProtocol: nil // TODO: what needs to be passed? (federation, MLS enabled, other domain search)
+            messageProtocol: .proteus
         )
 
         return await searchUsersUseCase.context.perform {
