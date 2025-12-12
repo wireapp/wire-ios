@@ -59,7 +59,7 @@ public extension MockUser {
         pendingClient.identifier = identifier
 
         // Generate mock prekey strings
-        let prekeysStrings = (0..<5).map { _ in UUID().uuidString }
+        let prekeysStrings = (0 ..< 5).map { _ in UUID().uuidString }
 
         let prekeys = MockPreKey.insertNewKeys(
             withPayload: prekeysStrings,
