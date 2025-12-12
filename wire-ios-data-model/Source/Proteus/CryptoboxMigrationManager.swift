@@ -107,11 +107,21 @@ protocol FileManagerInterface {
 
 extension FileManager: FileManagerInterface {
 
+    private static let keyStoreFolderPrefix = "otr"
+
     func cryptoboxDirectory(in accountDirectory: URL) -> URL {
-        FileManager.keyStoreURL(
+        keyStoreURL(
             accountDirectory: accountDirectory,
             createParentIfNeeded: false
         )
+    }
+
+    /// Returns the URL for the keyStore
+    private func keyStoreURL(accountDirectory: URL, createParentIfNeeded: Bool) -> URL {
+        if createParentIfNeeded {
+            try! FileManager.default.createAndProtectDirectory(at: accountDirectory)
+        }
+        return accountDirectory.appendingPathComponent(FileManager.keyStoreFolderPrefix)
     }
 
 }
