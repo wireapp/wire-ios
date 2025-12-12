@@ -53,7 +53,15 @@ extension ExpirationDatePickerView {
         }
 
         var canSave: Bool {
-            hasChanges
+            guard hasChanges else { return false }
+
+            // If an expiration date is set, it must be in the future
+            if let date = expirationDate {
+                return date > Date()
+            }
+
+            // If expirationDate is nil (i.e. disabling expiration), allow save
+            return true
         }
     }
 }

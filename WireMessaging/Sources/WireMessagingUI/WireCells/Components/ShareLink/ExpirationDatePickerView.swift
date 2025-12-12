@@ -115,27 +115,42 @@ struct ExpirationDatePickerView: View {
 
 /// A separate view to handle the "Expires" label, the segmented date/time controls, and the DatePicker.
 struct ExpirationPickerContent: View {
-    @Binding var expirationDate: Date
+    @Environment(\.wireAccentColor) private var wireAccentColor
 
-    let dateRange = Date().addingTimeInterval(3600)...
+    @Binding var expirationDate: Date
+    @State private var dateInThePast: Bool = false
 
     var body: some View {
-        HStack {
-            Text(Strings.datePickerTitle)
-                .font(for: .body1)
-                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+        VStack(alignment: .leading) {
+            HStack {
+                Text(Strings.datePickerTitle)
+                    .font(for: .body1)
+                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
-            Spacer()
+                Spacer()
 
-            DatePicker("", selection: $expirationDate, in: dateRange, displayedComponents: [.date, .hourAndMinute])
-                .datePickerStyle(.automatic)
-                .labelsHidden()
-        }
-        .padding(.vertical, 6)
-        .padding(.horizontal)
-        .background {
-            RoundedRectangle(cornerRadius: 10)
-                .foregroundStyle(ColorTheme.Backgrounds.surface.color)
+                DatePicker("", selection: $expirationDate, displayedComponents: [.date, .hourAndMinute])
+                    .datePickerStyle(.automatic)
+                    .labelsHidden()
+                    .colorInvert()
+                    .colorMultiply(dateInThePast ? ColorTheme.Base.error.color : .primaryText)
+            }
+            .padding(.vertical, 6)
+            .padding(.horizontal)
+            .background {
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundStyle(ColorTheme.Backgrounds.surface.color)
+            }
+
+            if $expirationDate.wrappedValue < Date() {
+                Text(Strings.dateNotSupported)
+                    .font(for: .subline1)
+                    .foregroundStyle(ColorTheme.Base.error.color)
+                    .padding(.leading, 4)
+                    .onAppear {
+                        dateInThePast.toggle()
+                    }
+            }
         }
     }
 }
@@ -172,6 +187,14 @@ struct DateSegmentButton: View {
 #Preview("With initial date") {
     ExpirationDatePickerView(
         expirationDate: Calendar.current.date(byAdding: .hour, value: 2, to: Date()),
+        onSave: { _ in }
+    )
+    .colorScheme(.light)
+}
+
+#Preview("Date in the past") {
+    ExpirationDatePickerView(
+        expirationDate: Calendar.current.startOfDay(for: Date()),
         onSave: { _ in }
     )
     .colorScheme(.light)
