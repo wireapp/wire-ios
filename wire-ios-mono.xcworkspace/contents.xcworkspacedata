@@ -23,6 +23,9 @@
          location = "group:_reusable_run_tests.yml">
       </FileRef>
       <FileRef
+         location = "group:auto_approve_cherry_pick.yml">
+      </FileRef>
+      <FileRef
          location = "group:beta_app_release.yml">
       </FileRef>
       <FileRef
@@ -84,6 +87,9 @@
       </FileRef>
       <FileRef
          location = "group:test_pr_changes.yml">
+      </FileRef>
+      <FileRef
+         location = "group:critical_flows.yaml">
       </FileRef>
    </Group>
    <FileRef

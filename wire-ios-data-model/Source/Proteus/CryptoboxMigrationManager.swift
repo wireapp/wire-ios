@@ -60,8 +60,8 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
     // MARK: - Methods
 
     public func isMigrationNeeded(accountDirectory: URL) -> Bool {
-        let cryptoboxDirectory = fileManager.cryptoboxDirectory(in: accountDirectory)
-        return fileManager.fileExists(atPath: cryptoboxDirectory.path)
+        // disabling migration. This will be removed completely in https://wearezeta.atlassian.net/browse/WPB-22227
+        false
     }
 
     public func performMigration(

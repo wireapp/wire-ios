@@ -55,7 +55,7 @@ public  struct Option: Identifiable {
             text: L10n.Localizable.AddAccount.title,
             actionImage: nil,
             action: action,
-            accessibilityIdentifier: Locators.UserProfilePage.addAcccountOrTeamButton.rawValue
+            accessibilityIdentifier: Locators.UserProfilePage.addAccountOrTeamButton.rawValue
         )
     }
 

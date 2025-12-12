@@ -97,7 +97,7 @@ public extension ZMConversation {
            team == selfUserTeam {
 
             let members = selfUserTeam.members.compactMap(\.user)
-            let guests = users.filter { !$0.isApp && $0.membership == nil }
+            let guests = users.filter { !$0.isAppOrBot && $0.membership == nil }
 
             systemMessage.allTeamUsersAdded = users.isSuperset(of: members)
             systemMessage.numberOfGuestsAdded = Int16(guests.count)

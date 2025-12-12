@@ -75,13 +75,6 @@ public final class EventDecoder: NSObject, EventDecoderProtocol {
         super.init()
     }
 
-    /// Guarantee to get proteusService from correct context
-    private var proteusService: ProteusServiceInterface? {
-        syncMOC.performAndWait {
-            syncMOC.proteusService
-        }
-    }
-
     private let lastEventIDRepository: LastEventIDRepositoryInterface
 }
 
@@ -105,7 +98,7 @@ extension EventDecoder {
             StoredUpdateEvent.highestIndex(eventMOC)
         }
 
-        guard let proteusService else {
+        guard let proteusService = await syncMOC.perform({ [syncMOC] in syncMOC.proteusService }) else {
             WireLogger.proteus.warn("ignore decrypting events because proteus service is not available")
             return []
         }

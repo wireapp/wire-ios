@@ -38,6 +38,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
+    private var pollingTask: Task<Void, Never>?
 
     let alignment: HorizontalAlignment
     let displayStyle: DisplayStyle
@@ -143,13 +144,29 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         }
     }
 
+    func startPolling() {
+        pollingTask?.cancel()
+        pollingTask = Task { [weak self] in
+            while !Task.isCancelled {
+                await self?.refresh()
+
+                try? await Task.sleep(for: .seconds(30))
+            }
+        }
+    }
+
+    func stopPolling() {
+        pollingTask?.cancel()
+        pollingTask = nil
+    }
+
     func open() async {
         guard !isDeleted, !isDownloading else { return }
 
         lastOpenRequest.nodeID = nodeID
 
         do {
-            let url = try await getAssetUseCase.invoke(nodeID: nodeID)
+            let url = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
             if lastOpenRequest.nodeID == nodeID {
                 viewingURL = url
             }
@@ -197,6 +214,10 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         node?.id ?? attachment.nodeID
     }
 
+    private var eTag: String? {
+        node?.eTag
+    }
+
     private var pathURL: URL? {
         let path = node?.path ?? attachment.initialName
         return path.flatMap { URL(string: $0) }
@@ -218,20 +239,20 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     private func setupBindings() {
         nodeRenameNotifier.publisher
-            .sink { [self] nodeID in
-                guard nodeID == attachment.nodeID else {
+            .sink { [weak self] nodeID in
+                guard nodeID == self?.attachment.nodeID else {
                     return
                 }
 
                 Task {
                     // this node has been renamed, refresh
-                    await self.refresh()
+                    await self?.refresh()
                 }
             }.store(in: &cancellables)
 
         localAssetRepository.observeAsset(nodeID: attachment.nodeID)
-            .sink { [self] asset in
-                self.asset = asset
+            .sink { [weak self] asset in
+                self?.asset = asset
             }.store(in: &cancellables)
     }
 

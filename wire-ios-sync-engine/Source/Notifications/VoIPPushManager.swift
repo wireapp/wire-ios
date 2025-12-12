@@ -96,7 +96,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         for type: PKPushType,
         completion: @escaping () -> Void
     ) {
-        Self.logger.debug("did receive incoming push")
+        Self.logger.debug("did receive incoming push: \(payload.safeForLoggingDescription)")
 
         // We're only interested in voIP tokens.
         guard type == .voIP else { return completion() }
@@ -111,8 +111,6 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         payload: [AnyHashable: Any],
         completion: @escaping () -> Void
     ) {
-        Self.logger.debug("process NSE push, payload: \(payload)")
-
         guard
             let accountIDString = payload["accountID"] as? String,
             let accountID = UUID(uuidString: accountIDString),
@@ -122,7 +120,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             let callerName = payload["callerName"] as? String,
             let hasVideo = payload["hasVideo"] as? Bool
         else {
-            Self.logger.critical("error: processing NSE push: invalid payload")
+            Self.logger.critical("error: processing NSE push: invalid payload - \(payload)")
             completion()
             return
         }

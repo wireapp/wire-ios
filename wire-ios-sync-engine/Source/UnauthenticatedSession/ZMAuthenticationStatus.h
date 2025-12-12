@@ -29,6 +29,7 @@
 @class ZMTransportResponse;
 @protocol UserInfoParser;
 @protocol NotificationContext;
+@protocol ZMSGroupQueue;
 
 FOUNDATION_EXPORT NSTimeInterval DebugLoginFailureTimerOverride;
 

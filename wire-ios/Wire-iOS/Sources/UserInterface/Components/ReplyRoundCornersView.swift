@@ -47,11 +47,7 @@ final class ReplyRoundCornersView: UIControl {
     // MARK: Setup Subviews and Constraints
 
     private func setupSubviews() {
-        layer.cornerRadius = if ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false {
-            ConversationMessageContainerView.bubbleCornerRadius
-        } else {
-            8
-        }
+        layer.cornerRadius = ConversationMessageContainerView.bubbleCornerRadius
         layer.borderWidth = 1
         layer.borderColor = ViewColors.backgroundSeparatorCell.cgColor
         layer.masksToBounds = true

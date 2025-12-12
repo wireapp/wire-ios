@@ -553,7 +553,7 @@ final class ConversationViewController: UIViewController {
             return L10n.Localizable.Profile.Details.partner.uppercased()
         } else if user.isFederated {
             return L10n.Localizable.Profile.Details.federated.uppercased()
-        } else if !user.isTeamMember {
+        } else if user.isGuest(in: conversation) {
             return L10n.Localizable.Profile.Details.guest.uppercased()
         }
         return nil
@@ -889,6 +889,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                 WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
             }
 
+        filesView.modalPresentationStyle = .fullScreen
         filesView.presentOverAll(animated: true)
     }
 

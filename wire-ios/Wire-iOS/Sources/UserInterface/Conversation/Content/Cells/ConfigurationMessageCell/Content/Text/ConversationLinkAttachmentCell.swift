@@ -77,31 +77,16 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     }
 
     private func configureConstraints() {
-
         let widthConstraint = attachmentView.widthAnchor.constraint(equalToConstant: 414)
         widthConstraint.priority = .defaultHigh
 
-        let margins = conversationHorizontalMargins
-        let existingConstraints = [
-            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
-            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -margins.right)
-        ]
-        let chatBubbleConstraints = [
-            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
-        ]
-
         NSLayoutConstraint.activate([
             attachmentView.topAnchor.constraint(equalTo: topAnchor),
+            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
             bottomAnchor.constraint(equalTo: attachmentView.bottomAnchor),
             widthConstraint
         ])
-
-        if ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false {
-            NSLayoutConstraint.activate(chatBubbleConstraints)
-        } else {
-            NSLayoutConstraint.activate(existingConstraints)
-        }
     }
 
     private func updateAspectRatio(_ heightRatio: CGFloat) {
@@ -181,7 +166,7 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDe
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
-    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    let shouldAlignMessageContentForBubbles: Bool = true
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil

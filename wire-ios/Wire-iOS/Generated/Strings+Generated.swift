@@ -1347,14 +1347,6 @@ internal enum L10n {
         }
       }
     }
-    internal enum BackendNotSupported {
-      internal enum Alert {
-        /// The server version is not supported by this app. Please contact your system administrator.
-        internal static let message = L10n.tr("Localizable", "backend_not_supported.alert.message", fallback: "The server version is not supported by this app. Please contact your system administrator.")
-        /// Server version not supported
-        internal static let title = L10n.tr("Localizable", "backend_not_supported.alert.title", fallback: "Server version not supported")
-      }
-    }
     internal enum ButtonMessageCell {
       /// Your answer can't be sent, please retry.
       internal static let genericError = L10n.tr("Localizable", "button_message_cell.generic_error", fallback: "Your answer can't be sent, please retry.")
@@ -2592,6 +2584,12 @@ internal enum L10n {
           internal static let subtitle = L10n.tr("Localizable", "conversation.create.apps.subtitle", fallback: "Open this conversation to apps.")
           /// Allow apps
           internal static let title = L10n.tr("Localizable", "conversation.create.apps.title", fallback: "Allow apps")
+        }
+        internal enum AppsDisabled {
+          /// To improve your workflow with apps, your team needs configuration. Please contact your team admin.
+          internal static let message = L10n.tr("Localizable", "conversation.create.apps_disabled.message", fallback: "To improve your workflow with apps, your team needs configuration. Please contact your team admin.")
+          /// Your team doesn't use apps yet
+          internal static let title = L10n.tr("Localizable", "conversation.create.apps_disabled.title", fallback: "Your team doesn't use apps yet")
         }
         internal enum Channel {
           /// Back

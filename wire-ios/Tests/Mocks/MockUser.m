@@ -94,6 +94,7 @@ static id<UserType> mockSelfUser = nil;
                                                   @"displayName": @"GitHub",
                                                   @"isSelfUser": @false,
                                                   @"isApp": @true,
+                                                  @"isBot": @false,
                                                   @"isConnected": @true,
                                                   @"accentColorValue": @1}];
 }

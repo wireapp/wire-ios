@@ -122,9 +122,6 @@ public enum FeatureConfig: Equatable, Sendable {
 
     case allowedGlobalOperations(AllowedGlobalOperationsFeatureConfig)
 
-    /// Enable or Disable chat bubbles
-    case chatBubblesSimple(ChatBubblesSimpleFeatureConfig)
-
     /// Config for "Asset Audit Log" feature.
     ///
     /// When this feature is enabled, additional metadata is provided
