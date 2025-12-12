@@ -71,8 +71,6 @@ jobs:
               - 'scripts/**'
             wire-ios:
               - 'wire-ios/**'
-            wire-ios-cryptobox:
-              - 'wire-ios-cryptobox/**'
             wire-ios-data-model:
               - 'wire-ios-data-model/**'
             wire-ios-images:
