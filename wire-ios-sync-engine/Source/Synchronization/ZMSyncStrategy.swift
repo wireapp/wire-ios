@@ -19,10 +19,9 @@
 extension ZMSyncStrategy {
 
     var callingRequestStrategy: CallingRequestStrategy? {
-        strategyDirectory?.requestStrategies
-            .lazy
-            .compactMap { $0 as? CallingRequestStrategy }
-            .first
+        strategyDirectory?.requestStrategies.first(where: { requestStrategy in
+            requestStrategy is CallingRequestStrategy
+        }) as? CallingRequestStrategy
     }
 
 }
