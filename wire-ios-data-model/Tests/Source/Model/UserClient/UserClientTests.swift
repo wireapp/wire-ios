@@ -495,7 +495,7 @@ extension UserClientTests {
         XCTAssertNotNil(newClient)
         XCTAssertNotNil(newClient.user)
         XCTAssertEqual(newClient.user, ZMUser.selfUser(in: uiMOC))
-        XCTAssertNotNil(newClient.sessionIdentifier)
+        XCTAssertNotNil(newClient.proteusSessionID)
         XCTAssertEqual(newClient.mlsPublicKeys.ed25519, "some key")
         XCTAssertEqual(newClient.isConsumableNotificationsCapable, false)
     }
@@ -540,7 +540,7 @@ extension UserClientTests {
         XCTAssertNotNil(newClient)
         XCTAssertNotNil(newClient.user)
         XCTAssertEqual(newClient.user, ZMUser.selfUser(in: uiMOC))
-        XCTAssertNil(newClient.sessionIdentifier)
+        XCTAssertNil(newClient.proteusSessionID)
     }
 
     func testThatItSetsNeedsSessionMigration_WhenInsertingANewSelfUserClientAndDomainIsNil() {
