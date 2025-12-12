@@ -18,6 +18,7 @@
 
 import WireDataModelSupport
 import WireDesign
+import WireMessagingDomainSupport
 import WireSyncEngineSupport
 import WireTestingPackage
 import XCTest
@@ -87,6 +88,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
             connectViewControllerBuilder: MockConnectViewControllerBuilderProtocol(),
             selfProfileViewControllerBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             createGroupConversationViewControllerBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),
             folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder(
                 conversationDirectory: userSession.conversationDirectory,

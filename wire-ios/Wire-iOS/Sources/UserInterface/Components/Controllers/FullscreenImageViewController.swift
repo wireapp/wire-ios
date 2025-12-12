@@ -20,6 +20,7 @@ import FLAnimatedImage
 import UIKit
 import WireDesign
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
@@ -84,6 +85,7 @@ final class FullscreenImageViewController: UIViewController {
     let userSession: UserSession
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
 
     private var messageObserverToken: NSObjectProtocol?
 
@@ -98,12 +100,14 @@ final class FullscreenImageViewController: UIViewController {
         message: ZMConversationMessage,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.message = message
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
 
         super.init(nibName: nil, bundle: nil)
 
@@ -789,7 +793,8 @@ extension FullscreenImageViewController: MessageActionResponder {
                 message: message,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             let navigationController = UINavigationController(rootViewController: detailsViewController)
             navigationController.modalPresentationStyle = .formSheet

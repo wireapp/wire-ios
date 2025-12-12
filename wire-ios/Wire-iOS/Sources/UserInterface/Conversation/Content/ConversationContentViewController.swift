@@ -23,6 +23,7 @@ import WireDesign
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireMessagingUI
 import WireRequestStrategy
 import WireReusableUIComponents
@@ -116,6 +117,7 @@ final class ConversationContentViewController: UIViewController {
     let userSession: UserSession
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
     var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
     var userClientToken: Any?
@@ -142,6 +144,7 @@ final class ConversationContentViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         userDefaults: UserDefaultsProtocol = UserDefaults.standard,
         wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
@@ -149,6 +152,7 @@ final class ConversationContentViewController: UIViewController {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
         self.conversation = conversation
         self.messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
         self.logger = .conversation
