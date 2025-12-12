@@ -75,12 +75,11 @@ public final class ConversationCellProvider {
             guard let cell = cell as? MultipartAttachmentsConversationCell else { break }
 
             let insets = insetsProvider().insets(
-                isChatBubblesEnabled: model.isChatBubblesEnabled,
                 isSentBySelfUser: model.isSentBySelfUser
             )
             let viewModel = WireCellsAttachmentsPreviewViewModel(
                 attachments: model.attachments,
-                alignment: model.isChatBubblesEnabled && model.isSentBySelfUser ? .trailing : .leading,
+                alignment: model.isSentBySelfUser ? .trailing : .leading,
                 fetchNodeUseCase: fetchNodeUseCase,
                 getAssetUseCase: getAssetUseCase,
                 localAssetRepository: localAssetRepository,
@@ -99,12 +98,8 @@ public final class ConversationCellProvider {
 
 private extension ConversationCellInsets {
 
-    func insets(isChatBubblesEnabled: Bool, isSentBySelfUser: Bool) -> HorizontalInsets {
-        if isChatBubblesEnabled {
-            isSentBySelfUser ? trailingBubble : leadingBubble
-        } else {
-            legacy
-        }
+    func insets(isSentBySelfUser: Bool) -> HorizontalInsets {
+        isSentBySelfUser ? trailingBubble : leadingBubble
     }
 
 }

@@ -17,47 +17,24 @@
 //
 
 import Foundation
-import WireCryptobox
 
 class PrekeyGenerator {
 
-    // This is needed to save ~3 seconds for every unit test run
-    // as generating 100 keys is an expensive operation
-    static var _test_overrideNumberOfKeys: UInt16?
+    let proteusService: ProteusServiceInterface
+    let keyCount: UInt16 = 100
 
-    let proteusProvider: ProteusProviding
-    let keyCount: UInt16 = _test_overrideNumberOfKeys ?? 100
-
-    init(proteusProvider: ProteusProviding) {
-        self.proteusProvider = proteusProvider
+    init(proteusService: ProteusServiceInterface) {
+        self.proteusService = proteusService
     }
 
     func generatePrekeys(startIndex: UInt16 = 0) async throws -> [IdPrekeyTuple] {
-        try await proteusProvider.performAsync(
-            withProteusService: { proteusService in
-                try await proteusService.generatePrekeys(start: startIndex, count: keyCount)
-            },
-            withKeyStore: { keyStore in
-                try keyStore.generateMoreKeys(keyCount, start: startIndex)
-            }
-        )
+        try await proteusService.generatePrekeys(start: startIndex, count: keyCount)
     }
 
     func generateLastResortPrekey() async throws -> IdPrekeyTuple {
-        try await proteusProvider.performAsync(
-            withProteusService: { proteusService in
-                (
-                    id: await proteusService.lastPrekeyID,
-                    prekey: try await proteusService.lastPrekey()
-
-                )
-            },
-            withKeyStore: { keyStore in
-                (
-                    id: CBOX_LAST_PREKEY_ID,
-                    prekey: try keyStore.lastPreKey()
-                )
-            }
+        (
+            id: await proteusService.lastPrekeyID,
+            prekey: try await proteusService.lastPrekey()
         )
     }
 }

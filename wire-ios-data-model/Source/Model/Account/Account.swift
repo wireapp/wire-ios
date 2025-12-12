@@ -117,7 +117,7 @@ public final class Account: NSObject, Codable {
 extension Account: SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
-        userIdentifier.safeForLoggingDescription
+        userIdentifier.uuidString
     }
 
 }

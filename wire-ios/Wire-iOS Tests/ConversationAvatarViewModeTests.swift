@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import Wire
 
 final class ConversationConnectAvatarViewModeTests: XCTestCase {
@@ -46,7 +47,7 @@ final class ConversationConnectAvatarViewModeTests: XCTestCase {
         let mockServiceUser = MockServiceUserType()
         mockServiceUser.serviceIdentifier = "serviceIdentifier"
         mockServiceUser.providerIdentifier = "providerIdentifier"
-        XCTAssert(mockServiceUser.isApp)
+        XCTAssert(mockServiceUser.isAppOrBot)
 
         users = [mockServiceUser]
 

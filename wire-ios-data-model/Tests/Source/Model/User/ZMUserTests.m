@@ -1209,19 +1209,19 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
         ZMUser *user = [ZMUser selfUserInContext:self.syncMOC];
         UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         
-        UserClient *trustedClient1 = [self createClientForUser:user createSessionWithSelfUser:NO onMOC:self.syncMOC];
+        UserClient *trustedClient1 = [self createClientForUser:user onMOC:self.syncMOC];
         [selfClient trustClient:trustedClient1];
         trustedClient1.needsToNotifyUser = YES;
         
-        UserClient *trustedClient2 = [self createClientForUser:user createSessionWithSelfUser:NO onMOC:self.syncMOC];
+        UserClient *trustedClient2 = [self createClientForUser:user onMOC:self.syncMOC];
         [selfClient trustClient:trustedClient2];
         trustedClient2.needsToNotifyUser = NO;
         
-        UserClient *ignoredClient1 = [self createClientForUser:user createSessionWithSelfUser:NO onMOC:self.syncMOC];
+        UserClient *ignoredClient1 = [self createClientForUser:user onMOC:self.syncMOC];
         [selfClient ignoreClient:ignoredClient1];
         ignoredClient1.needsToNotifyUser = YES;
         
-        UserClient *ignoredClient2 = [self createClientForUser:user createSessionWithSelfUser:NO onMOC:self.syncMOC];
+        UserClient *ignoredClient2 = [self createClientForUser:user onMOC:self.syncMOC];
         [selfClient ignoreClient:ignoredClient2];
         ignoredClient2.needsToNotifyUser = NO;
         
@@ -1927,7 +1927,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     user.name = @"User Name";
     [user setValue:@(ZMTypeOfUserBot) forKey:@"typeValue"];
 
-    XCTAssertTrue(user.isApp);
+    XCTAssertTrue(user.isAppOrBot);
     XCTAssertEqualObjects(user.name, @"User Name");
 }
 

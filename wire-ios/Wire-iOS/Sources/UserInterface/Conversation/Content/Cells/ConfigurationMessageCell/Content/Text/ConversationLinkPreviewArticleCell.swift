@@ -69,11 +69,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
     }
 
     private func configureConstraints() {
-        let margins = conversationHorizontalMargins
-        let insets: UIEdgeInsets = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
-            ? .zero
-            : UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
-        articleView.fitIn(view: self, insets: insets)
+        articleView.fitIn(view: self, insets: .zero)
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -129,7 +125,7 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
-    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    let shouldAlignMessageContentForBubbles: Bool = true
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : "LinkPreviewCell"

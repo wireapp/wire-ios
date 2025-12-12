@@ -129,7 +129,7 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
             equalTo: trailingAnchor
         )
 
-        if ZMUserSession.isChatBubbleEnabled, shouldRemoveInnerPaddingForBubbles {
+        if shouldRemoveInnerPaddingForBubbles {
             containerWidthConstraint = imageContainer.widthAnchor
                 .constraint(equalToConstant: 32.0)
             imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(
@@ -196,7 +196,7 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         topContentViewTrailingConstraint.constant = trailingTextMargin
-        if ZMUserSession.isChatBubbleEnabled, shouldRemoveInnerPaddingForBubbles {
+        if shouldRemoveInnerPaddingForBubbles {
             containerWidthConstraint.constant = 32.0
             textLabelTrailingConstraint.constant = 0
         } else {

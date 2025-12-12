@@ -784,23 +784,6 @@ extension ZMAssetClientMessageTests {
     }
 }
 
-// MARK: Helpers
-
-extension ZMAssetClientMessageTests {
-
-    func createOtherClientAndConversation() -> (UserClient, ZMConversation) {
-        let otherUser = ZMUser.insertNewObject(in: syncMOC)
-        otherUser.remoteIdentifier = .create()
-        let otherClient = createClient(for: otherUser, createSessionWithSelfUser: true)
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.conversationType = .group
-        conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
-        XCTAssertTrue(syncMOC.saveOrRollback())
-
-        return (otherClient, conversation)
-    }
-}
-
 // MARK: - Associated Task Identifier
 
 extension ZMAssetClientMessageTests {

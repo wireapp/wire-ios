@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCryptobox
 import WireUtilities
 import XCTest
 
@@ -24,18 +23,6 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class UserClientTests: ZMBaseManagedObjectTest {
-
-    override static func setUp() {
-        super.setUp()
-        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = false
-    }
-
-    override static func tearDown() {
-        super.tearDown()
-        DeveloperFlag.storage = UserDefaults.standard
-    }
 
     func clientWithTrustedClientCount(
         _ trustedCount: UInt,
@@ -169,8 +156,6 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
     func testThatItDeletesASession() async throws {
         // Given
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = true
         var otherClient: UserClient!
         let mockProteusService = MockProteusServiceInterface()
         mockProteusService.deleteSessionId_MockMethod = { _ in
@@ -195,51 +180,10 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        flag.isOn = false
-    }
-
-    func testThatItDeletesASession_Legacy() async throws {
-        // Given
-        var selfClient: UserClient!
-        var otherClient: UserClient!
-        var preKeys: [(id: UInt16, prekey: String)] = []
-
-        await syncMOC.performGrouped {
-            selfClient = self.createSelfClient(onMOC: self.syncMOC)
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
-                preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
-            }
-
-            otherClient = UserClient.insertNewObject(in: self.syncMOC)
-            otherClient.remoteIdentifier = UUID.create().transportString()
-            otherClient.user = ZMUser.insertNewObject(in: self.syncMOC)
-            otherClient.user?.remoteIdentifier = UUID.create()
-        }
-
-        guard let preKey = preKeys.first else {
-            XCTFail("could not generate prekeys")
-            return
-        }
-
-        let didEstablishedSession = await selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey)
-        let hasSession = await otherClient.hasSessionWithSelfClient
-
-        XCTAssertTrue(didEstablishedSession)
-        XCTAssertTrue(hasSession)
-
-        // When
-        try await otherClient.deleteSession()
-
-        // Then
-        let hasSessionAfterDeletion = await otherClient.hasSessionWithSelfClient
-        XCTAssertFalse(hasSessionAfterDeletion)
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func testThatItDeletesASessionWhenDeletingAClient() async {
         // Given
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = true
         var otherClient: UserClient!
         var otherClientSessionID: ProteusSessionID!
         let mockProteusService = MockProteusServiceInterface()
@@ -267,48 +211,6 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             XCTAssertTrue(otherClient.isZombieObject)
         }
 
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        flag.isOn = false
-    }
-
-    func testThatItDeletesASessionWhenDeletingAClient_Legacy() async {
-        // given
-        var preKeys: [(id: UInt16, prekey: String)] = []
-        var selfClient: UserClient!
-        var otherClient: UserClient!
-
-        await syncMOC.performGrouped {
-            selfClient = self.createSelfClient(onMOC: self.syncMOC)
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
-                preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
-            }
-
-            otherClient = UserClient.insertNewObject(in: self.syncMOC)
-            otherClient.remoteIdentifier = UUID.create().transportString()
-            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
-            otherUser.remoteIdentifier = UUID.create()
-            otherClient.user = otherUser
-        }
-
-        guard let preKey = preKeys.first else {
-            XCTFail("could not generate prekeys")
-            return
-        }
-
-        let didEstablishSession = await selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey)
-        let hasSession = await otherClient.hasSessionWithSelfClient
-        XCTAssertTrue(didEstablishSession)
-        XCTAssertTrue(hasSession)
-
-        // when
-        await otherClient.deleteClientAndEndSession()
-
-        // then
-        let hasSessionAfterDeletion = await otherClient.hasSessionWithSelfClient
-        XCTAssertFalse(hasSessionAfterDeletion)
-        await syncMOC.perform {
-            XCTAssertTrue(otherClient.isZombieObject)
-        }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
@@ -352,7 +254,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
         // when
         await otherClient2.deleteClientAndEndSession()
-        _ = await syncMOC.perform { self.syncMOC.saveOrRollback() }
+        _ = await syncMOC.perform { [syncMOC] in syncMOC.saveOrRollback() }
 
         // then
         await syncMOC.performGrouped {
@@ -593,7 +495,7 @@ extension UserClientTests {
         XCTAssertNotNil(newClient)
         XCTAssertNotNil(newClient.user)
         XCTAssertEqual(newClient.user, ZMUser.selfUser(in: uiMOC))
-        XCTAssertNotNil(newClient.sessionIdentifier)
+        XCTAssertNotNil(newClient.proteusSessionID)
         XCTAssertEqual(newClient.mlsPublicKeys.ed25519, "some key")
         XCTAssertEqual(newClient.isConsumableNotificationsCapable, false)
     }
@@ -638,7 +540,7 @@ extension UserClientTests {
         XCTAssertNotNil(newClient)
         XCTAssertNotNil(newClient.user)
         XCTAssertEqual(newClient.user, ZMUser.selfUser(in: uiMOC))
-        XCTAssertNil(newClient.sessionIdentifier)
+        XCTAssertNil(newClient.proteusSessionID)
     }
 
     func testThatItSetsNeedsSessionMigration_WhenInsertingANewSelfUserClientAndDomainIsNil() {
@@ -855,13 +757,13 @@ extension UserClientTests {
         client.needsSessionMigration = true
 
         let userID = client.user!.remoteIdentifier.uuidString
-        let expectedSessionIdentifier = EncryptionSessionIdentifier(
-            userId: userID,
-            clientId: clientID
+        let expectedSessionIdentifier = ProteusSessionID(
+            userID: userID,
+            clientID: clientID
         )
 
         // when
-        let sessionIdentifier = client.sessionIdentifier
+        let sessionIdentifier = client.proteusSessionID
 
         // then
         XCTAssertEqual(sessionIdentifier, expectedSessionIdentifier)
@@ -880,14 +782,14 @@ extension UserClientTests {
         client.needsSessionMigration = false
 
         let userID = client.user!.remoteIdentifier.uuidString
-        let expectedSessionIdentifier = EncryptionSessionIdentifier(
+        let expectedSessionIdentifier = ProteusSessionID(
             domain: domain,
-            userId: userID,
-            clientId: clientID
+            userID: userID,
+            clientID: clientID
         )
 
         // when
-        let sessionIdentifier = client.sessionIdentifier
+        let sessionIdentifier = client.proteusSessionID
 
         // then
         XCTAssertEqual(sessionIdentifier, expectedSessionIdentifier)
@@ -927,53 +829,6 @@ extension UserClientTests {
 
         // Then
         XCTAssertNil(client.modifiedKeys)
-    }
-
-}
-
-// MARK: - Proteus
-
-extension UserClientTests {
-
-    func test_GivenDeveloperFlagProteusViaCoreCryptoEnabled_ItUsesCoreKrypto() async {
-        // GIVEN
-        let context = syncMOC
-        var mockMethodCalled = false
-        let prekey = "test".utf8Data!.base64String()
-        var resultOfMethod = false
-
-        let mockProteusService = MockProteusServiceInterface()
-        mockProteusService.establishSessionIdFromPrekey_MockMethod = { _, _ in
-            mockMethodCalled = true
-        }
-        mockProteusService.remoteFingerprintForSession_MockMethod = { _ in
-            "test"
-        }
-
-        let mock = MockProteusProvider(mockProteusService: mockProteusService)
-        mock.useProteusService = true
-
-        var sut: UserClient!
-        var clientB: UserClient!
-        var sessionId: EncryptionSessionIdentifier!
-
-        await context.performGrouped {
-            sut = self.createSelfClient(onMOC: context)
-            let userB = self.createUser(in: context)
-            clientB = self.createClient(for: userB, createSessionWithSelfUser: false, onMOC: context)
-            sessionId = clientB.sessionIdentifier
-        }
-
-        // WHEN
-        resultOfMethod = await sut.establishSessionWithClient(
-            sessionId: sessionId,
-            usingPreKey: prekey,
-            proteusProviding: mock
-        )
-
-        // THEN
-        XCTAssertTrue(mockMethodCalled)
-        XCTAssertTrue(resultOfMethod)
     }
 
 }
