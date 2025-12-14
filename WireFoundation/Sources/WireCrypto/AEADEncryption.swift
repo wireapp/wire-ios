@@ -17,9 +17,7 @@
 //
 
 import Clibsodium
-import Foundation
-import WireCrypto
-import WireUtilities
+public import Foundation
 
 public extension ChaCha20Poly1305 {
 
@@ -152,11 +150,11 @@ public extension ChaCha20Poly1305 {
 
         // MARK: - Verification
 
-        private static func verifyKey(bytes: [Byte]) throws {
+        private static func verifyKey(bytes: [UInt8]) throws {
             guard bytes.count == keyLength else { throw EncryptionError.malformedKey }
         }
 
-        private static func verifyNonce(bytes: [Byte]) throws {
+        private static func verifyNonce(bytes: [UInt8]) throws {
             guard bytes.count == nonceLength else { throw EncryptionError.malformedNonce }
         }
 
@@ -182,14 +180,14 @@ public extension ChaCha20Poly1305 {
 
         // MARK: - Buffer creation
 
-        static func generateRandomNonceBytes() -> [Byte] {
+        static func generateRandomNonceBytes() -> [UInt8] {
             var nonce = createByteArray(length: nonceLength)
             randombytes_buf(&nonce, nonce.count)
             return nonce
         }
 
-        private static func createByteArray(length: Int) -> [Byte] {
-            [Byte](repeating: 0, count: length)
+        private static func createByteArray(length: Int) -> [UInt8] {
+            [UInt8](repeating: 0, count: length)
         }
 
     }

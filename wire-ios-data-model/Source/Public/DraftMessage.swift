@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireCryptobox
 
 /// This object holds information about a message draft that has not yet been sent
 /// by the user but was put into the input field.

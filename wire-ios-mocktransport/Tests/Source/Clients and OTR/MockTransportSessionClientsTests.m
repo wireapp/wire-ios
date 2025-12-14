@@ -711,23 +711,4 @@
     XCTAssertEqual(self.sut.generatedPushEvents.count, 0u);
 }
 
-- (void)testThatEncryptEncryptDataBetweenTwoClients;
-{
-    __block MockUserClient *selfClient;
-    __block MockUserClient *destClient;
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        
-        MockUser *selfUser = [session insertSelfUserWithName:@"Brigite Sorço"];
-        selfClient = [session registerClientForUser:selfUser label:@"moi" type:@"permanent" deviceClass:@"phone"];
-        destClient = [session registerClientForUser:selfUser label:@"autre" type:@"permanent" deviceClass:@"phone"];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    NSData *clearData = [@"Please, encrypt me!" dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *encryptedData = [MockUserClient encryptedWithData:clearData from:destClient to:selfClient];
-    
-    XCTAssertNotNil(encryptedData);
-    XCTAssertNotEqualObjects(clearData, encryptedData);
-}
-
 @end

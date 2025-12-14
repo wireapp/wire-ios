@@ -58,36 +58,3 @@ final class SettingsShareDatabaseCellDescriptor: SettingsButtonCellDescriptor {
     }
 
 }
-
-final class SettingsShareCryptoboxCellDescriptor: SettingsButtonCellDescriptor {
-
-    let documentDelegate: DocumentDelegate
-
-    init() {
-        let documentDelegate = DocumentDelegate()
-        self.documentDelegate = documentDelegate
-
-        super.init(title: "Share Cryptobox", isDestructive: false) { _ in
-            guard let userSession = ZMUserSession.shared() else { return }
-            let fileURL = userSession.managedObjectContext.zm_storeURL!
-                .deletingLastPathComponent()
-                .deletingLastPathComponent()
-                .appending(path: "otr", directoryHint: .isDirectory)
-            let archiveURL = fileURL.appendingPathExtension("zip")
-
-            try? FileManager.default.removeItem(at: archiveURL)
-            try? FileManager.default.zipItem(
-                at: fileURL,
-                to: archiveURL,
-                shouldKeepParent: false,
-                compressionMethod: .deflate
-            )
-
-            let shareDatabaseDocumentController = UIDocumentInteractionController(url: archiveURL)
-            shareDatabaseDocumentController.delegate = documentDelegate
-            shareDatabaseDocumentController.presentPreview(animated: true)
-        }
-
-    }
-
-}
