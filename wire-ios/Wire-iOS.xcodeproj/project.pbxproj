@@ -232,7 +232,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				5996E8A72C19D090007A52F0 /* WireSyncEngine.framework in Embed Frameworks */,
-				591B6E182C8B095B009F8A7B /* WireNotificationEngine.framework in Embed Frameworks */,
 				EE33C48E296485FA00C058D1 /* WireShareEngine.framework in Embed Frameworks */,
 				EE67F73F296F0E7D001D7C88 /* Ziphy.framework in Embed Frameworks */,
 				EEE25B4229719C750008B894 /* WireRequestStrategy.framework in Embed Frameworks */,
