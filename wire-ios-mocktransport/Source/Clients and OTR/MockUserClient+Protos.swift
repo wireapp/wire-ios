@@ -72,7 +72,7 @@ extension MockUserClient {
                 }
                 return Proteus_ClientEntry.with {
                     $0.client = clientId
-                    $0.text = MockUserClient.encrypted(data: plainText, from: self, to: client)
+                    $0.text = plainText
                 }
             }
 

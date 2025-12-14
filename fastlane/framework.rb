@@ -70,7 +70,6 @@ class Framework
         
         frameworks["wire-ios-mocktransport"].add_dependency(frameworks["wire-ios-testing"])
 
-
         frameworks["wire-ios-transport"].add_dependency(frameworks["wire-ios-utilities"])
         frameworks["wire-ios-transport"].add_dependency(frameworks["wire-ios-testing"]) # included in WireTransportTests
         frameworks["wire-ios-transport"].add_dependency(frameworks["WireLogging"])

@@ -535,7 +535,6 @@
 		EE7A90F02B21E29E00B58E84 /* OneOnOneMigratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7A90EF2B21E29E00B58E84 /* OneOnOneMigratorTests.swift */; };
 		EE84227028EC353900B80FE5 /* MLSActionExecutorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE84226F28EC353900B80FE5 /* MLSActionExecutorTests.swift */; };
 		EE85C8B22B557C3D00D3182D /* DatabaseMigrationTests+OneOnOneConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE85C8B12B557C3D00D3182D /* DatabaseMigrationTests+OneOnOneConversation.swift */; };
-		EE8DA9672954A02B00F58B79 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA9662954A02B00F58B79 /* WireCryptobox.framework */; };
 		EE8DA96A2954A03100F58B79 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA9692954A03100F58B79 /* WireTransport.framework */; };
 		EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA96C2954A03800F58B79 /* WireLinkPreview.framework */; };
 		EE8DA9702954A03E00F58B79 /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA96F2954A03E00F58B79 /* WireImages.framework */; };
@@ -1572,7 +1571,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				34DC44B52E01C210004D5DD5 /* WireNetwork in Frameworks */,
-				EE8DA9672954A02B00F58B79 /* WireCryptobox.framework in Frameworks */,
 				CBD35F2C2D09EBB20080DA37 /* WireCrypto in Frameworks */,
 				1657FA9A2D9C2EB800A7B337 /* WireCoreCryptoUniffi in Frameworks */,
 				591B6E4C2C8B09C6009F8A7B /* CoreData.framework in Frameworks */,

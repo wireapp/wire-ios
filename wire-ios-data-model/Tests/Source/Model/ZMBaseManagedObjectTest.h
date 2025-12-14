@@ -31,7 +31,6 @@
 @protocol ZMObjectStrategyDirectory;
 @class ZMAssetClientMessage;
 
-@import WireCryptobox;
 @import WireImages;
 @class UserClient;
 

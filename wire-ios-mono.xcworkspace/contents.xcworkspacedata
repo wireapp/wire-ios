@@ -177,9 +177,6 @@
       location = "group:WirePreviewApps/WirePreviewApps.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:wire-ios-cryptobox/WireCryptobox.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:wire-ios-transport/WireTransport.xcodeproj">
    </FileRef>
    <FileRef
