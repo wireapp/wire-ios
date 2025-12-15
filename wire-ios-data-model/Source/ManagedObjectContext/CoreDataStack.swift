@@ -40,7 +40,7 @@ extension CoreDataStackError: LocalizedError {
     }
 }
 
-@objc
+@objc(ZMContextProvider)
 public protocol ContextProvider {
 
     var account: Account { get }
@@ -114,8 +114,8 @@ public protocol CoreDataStackProtocol: ContextProvider {
 
 }
 
-@objcMembers
-public class CoreDataStack: NSObject, CoreDataStackProtocol {
+@objc @objcMembers
+public class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvider {
 
     public let account: Account
 

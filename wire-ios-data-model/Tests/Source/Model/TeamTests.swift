@@ -83,7 +83,7 @@ final class TeamTests: ZMConversationTestsBase {
         let guest = ZMUser.insertNewObject(in: uiMOC)
         let bot = ZMUser.insertNewObject(in: uiMOC)
         bot.type = .bot
-        XCTAssert(bot.isApp)
+        XCTAssert(bot.isAppOrBot)
         guard let conversation = ZMConversation.insertGroupConversation(
             moc: uiMOC,
             participants: [guest, bot],

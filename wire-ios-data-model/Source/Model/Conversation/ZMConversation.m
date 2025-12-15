@@ -392,7 +392,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return [NSSet setWithObjects:ZMConversationConversationTypeKey, ZMConversationParticipantRolesKey, ZMConversationIsForcedReadOnlyKey, nil];
 }
 
-+ (instancetype)existingOneOnOneConversationWithUser:(ZMUser *)otherUser inUserSession:(id<ContextProvider>)session;
++ (instancetype)existingOneOnOneConversationWithUser:(ZMUser *)otherUser inUserSession:(id<ZMContextProvider>)session;
 {
     NOT_USED(session);
     return otherUser.oneOnOneConversation;

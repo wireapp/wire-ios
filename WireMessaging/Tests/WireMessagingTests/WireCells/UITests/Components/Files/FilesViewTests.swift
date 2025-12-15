@@ -32,11 +32,13 @@ final class FilesViewTests: XCTestCase {
     private let modifiedAt = try! Date("2023-10-01T12:00:00Z", strategy: .iso8601)
     private var snapshotHelper: SnapshotHelper!
     private var nodesRepository: MockWireCellsNodesRepositoryProtocol!
-    private var fetchNodesUseCase: WireCellsFetchNodesUseCase!
+    private var fetchNodesUseCase: WireCellsFetchNodesPageUseCase!
     private var deleteNodeUseCase: WireCellsDeleteNodesUseCase!
+    private var restoreNodeUseCase: WireCellsRestoreNodesUseCase!
     private var renameNodeUseCase: WireCellsRenameNodeUseCase!
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
+    private var getEditingURLUseCase: WireCellsGetEditingURLUseCase!
 
     private let record: Bool? = nil
 
@@ -51,11 +53,16 @@ final class FilesViewTests: XCTestCase {
         nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
 
-        fetchNodesUseCase = WireCellsFetchNodesUseCase(
+        fetchNodesUseCase = WireCellsFetchNodesPageUseCase(
             configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
             repository: nodesRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
+            repository: nodesRepository,
+            fileCache: MockFileCache(),
+            localAssetStore: MockWireCellsLocalAssetStoreProtocol()
+        )
+        restoreNodeUseCase = WireCellsRestoreNodesUseCase(
             repository: nodesRepository,
             fileCache: MockFileCache(),
             localAssetStore: MockWireCellsLocalAssetStoreProtocol()
@@ -68,6 +75,12 @@ final class FilesViewTests: XCTestCase {
         )
         updateTagsUseCase = WireCellsUpdateTagsUseCase(nodesAPI: nodesApi)
         getTagSuggestionsUseCase = WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi)
+
+        let editingURLRepository = MockWireCellsEditingURLRepositoryProtocol()
+        editingURLRepository.getEditorURLId_MockValue = nil
+        getEditingURLUseCase = WireCellsGetEditingURLUseCase(
+            editingURLRepository: editingURLRepository
+        )
     }
 
     @MainActor
@@ -84,13 +97,15 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_withShortStrings() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "image.jpg",
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image,
-            tags: []
+            tags: [],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -108,13 +123,15 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_withLongStrings() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "some random file with a long name.excel",
             filePath: "",
             ownedBy: "Liana Margaret Smith-Jones",
             modifiedAt: modifiedAt,
             icon: .spreadsheet,
-            tags: []
+            tags: [],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -132,13 +149,15 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_withOneTag() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "image.jpg",
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image,
-            tags: ["important"]
+            tags: ["important"],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -156,13 +175,15 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_withThreeTags() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "image.jpg",
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image,
-            tags: ["tag1", "tag2", "abcdef"]
+            tags: ["tag1", "tag2", "abcdef"],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -180,13 +201,15 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_dynamicTypeVariants() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "some random file with a long name.excel",
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .spreadsheet,
-            tags: []
+            tags: [],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -206,13 +229,15 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_whenDownloading() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "image.jpg",
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image,
-            tags: []
+            tags: [],
+            isEditable: false
         )
         let asset = WireCellsLocalAsset(
             nodeID: item.id,
@@ -238,13 +263,15 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_whenDownloadFailed() {
         let item = FilesViewItem(
             id: UUID(),
+            eTag: "eTag",
             kind: .file,
             name: "image.jpg",
             filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
             icon: .image,
-            tags: []
+            tags: [],
+            isEditable: false
         )
         let asset = WireCellsLocalAsset(
             nodeID: item.id,
@@ -322,21 +349,30 @@ final class FilesViewTests: XCTestCase {
             useCases: .init(
                 fetchNodes: fetchNodesUseCase,
                 deleteNodes: deleteNodeUseCase,
+                restoreNodes: restoreNodeUseCase,
                 renameNode: renameNodeUseCase,
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
                 createFolder: WireCellsCreateFolderUseCase(
                     nodesRepository: nodesRepository
                 ),
+                getEditingURL: getEditingURLUseCase,
+                getAssetUseCase: WireCellsGetAssetUseCase(
+                    localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                    fileCache: MockFileCache()
+                )
             ),
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            nodesRepository: nodesRepository,
             fileCache: MockFileCache(),
             isFoldersEnabled: true,
+            isCollaboraEnabled: false,
             accentColorProvider: { .default }
         )
 
         filesViewModel.state = state
+        filesViewModel.hasMore = false
 
         return NavigationStack {
             FilesView(viewModel: filesViewModel)
@@ -361,12 +397,12 @@ private extension FilesItemViewModel {
         return FilesItemViewModel(
             item: item,
             localAssetRepository: localAssetRepository,
-            onOpen: { _ in },
-            onDelete: { _ in },
-            onEditTagsSelected: { _ in },
+            onItemAction: { _, _ in },
             locale: Locale(identifier: "en_US_POSIX"),
             calendar: Calendar(identifier: .gregorian),
-            timeZone: .gmt
+            timeZone: .gmt,
+            isInRecycleBin: false,
+            isFoldersEnabled: false
         )
     }
 

@@ -141,7 +141,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             throw Failure.userNotAuthenticated
         }
 
-        guard coreCryptoKeyMigrationManager.isAnyMigrationRequired else {
+        guard !coreCryptoKeyMigrationManager.isAnyMigrationRequired else {
             throw Failure.mainAppRequired(message: "core crypto key migration required")
         }
 

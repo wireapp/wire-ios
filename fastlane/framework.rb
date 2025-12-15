@@ -20,7 +20,6 @@ class Framework
             "wire-ios-images",
             "wire-ios-link-preview",
             "wire-ios-mocktransport",
-            "wire-ios-notification-engine",
             "wire-ios-request-strategy",
             "wire-ios-share-engine",
             "wire-ios-sync-engine",
@@ -36,7 +35,6 @@ class Framework
             hash
         end
 
-        frameworks["wire-ios"].add_dependency(frameworks["wire-ios-notification-engine"])
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-share-engine"])
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-sync-engine"])
         frameworks["wire-ios"].add_dependency(frameworks["WireBackup"])
@@ -48,8 +46,6 @@ class Framework
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-testing"]) # included in WireiOSTests
         frameworks["wire-ios"].add_dependency(frameworks["WireLogging"])
 
-        frameworks["wire-ios-notification-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
-        frameworks["wire-ios-notification-engine"].add_dependency(frameworks["WireLogging"])
 
         frameworks["wire-ios-sync-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
         frameworks["wire-ios-sync-engine"].add_dependency(frameworks["WireNetwork"])

@@ -53,3 +53,12 @@
 "wireMeetings.schedule.password.placeholder" = "Enter password";
 "wireMeetings.schedule.confirmedPassword.placeholder" = "Confirm password";
 "wireMeetings.schedule.confirmedPassword.error" = "Passwords don't match";
+"wireMeetings.schedule.time.starts" = "Starts";
+"wireMeetings.schedule.time.ends" = "Ends";
+"wireMeetings.schedule.time.repeats" = "Repeats";
+"wireMeetings.schedule.time.never" = "Never";
+"wireMeetings.schedule.time.daily" = "Daily";
+"wireMeetings.schedule.time.weekly" = "Weekly";
+"wireMeetings.schedule.time.everyTwoWeeks" = "Every 2 weeks";
+"wireMeetings.schedule.time.monthly" = "Monthly";
+"wireMeetings.schedule.time.yearly" = "Yearly";

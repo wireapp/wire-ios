@@ -22,16 +22,13 @@ public struct MultipartAttachmentsModel: Hashable, Sendable {
 
     let attachments: [WireCellsMessageAttachment]
     let isSentBySelfUser: Bool
-    let isChatBubblesEnabled: Bool
 
     public init(
         attachments: [WireCellsMessageAttachment],
         isSentBySelfUser: Bool,
-        isChatBubblesEnabled: Bool
     ) {
         self.attachments = attachments
         self.isSentBySelfUser = isSentBySelfUser
-        self.isChatBubblesEnabled = isChatBubblesEnabled
     }
 
 }

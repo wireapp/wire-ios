@@ -22,9 +22,11 @@ package import WireMessagingDomain
 
 package enum NodesAPIError: Error {
     case failedToCreateWriteStream
+    case moveFailed
 }
 
-package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol {
+package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol,
+    WireCellsEditingURLRepositoryProtocol {
     private let awsClient: AWSClient
     private let restAPI: RestAPI
     private let fileManager: FileManager
@@ -78,8 +80,18 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         try await restAPI.deleteNodes(nodeIDs: nodeIDs, permanently: permanently)
     }
 
+    package func restoreNodes(nodeIDs: [UUID]) async throws -> Bool {
+        try await restAPI.restoreNodes(nodeIDs: nodeIDs)
+    }
+
     package func renameNode(nodeID: UUID, targetPath: String) async throws -> Bool {
-        try await restAPI.renameNode(nodeID: nodeID, targetPath: targetPath)
+        try await restAPI.renameNode(nodeID: nodeID, targetPath: targetPath, targetIsParent: false)
+    }
+
+    package func moveNode(nodeID: UUID, newContainerPath: String) async throws {
+        guard try await restAPI.renameNode(nodeID: nodeID, targetPath: newContainerPath, targetIsParent: true) else {
+            throw NodesAPIError.moveFailed
+        }
     }
 
     package func publishDraft(nodeID: UUID, versionID: UUID) async throws {
@@ -136,6 +148,10 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         } catch {
             throw error
         }
+    }
+
+    package func getEditorURL(id: UUID) async throws -> (url: URL, date: Date)? {
+        try await restAPI.getEditorURL(id: id)
     }
 
     package func createPublicLink(nodeID: UUID, fileName: String) async throws -> WireCellsPublicLink {

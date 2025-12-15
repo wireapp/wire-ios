@@ -482,7 +482,6 @@ extension EventDecoderTest {
     }
 
     func test_ProteusEventDecryptionDoesStoreLastEventIdIfFails() async throws {
-        defer {}
 
         let mockProteusService = MockProteusServiceInterface()
         enum FakeError: Error {
@@ -513,7 +512,6 @@ extension EventDecoderTest {
     func test_MLSEventDecryptionDoesNotStoreLastEventIdIfFails() async throws {
 
         // Given
-        defer {}
         let mockProteusService = MockProteusServiceInterface()
         let decryptionErrorReason = DummyError()
 
@@ -550,7 +548,6 @@ extension EventDecoderTest {
     func test_MLSEventDecryptionStoresLastEventIdIfDecryptionSuccessWithEmptyResults() async throws {
 
         // Given
-        defer {}
         let mockProteusService = MockProteusServiceInterface()
 
         mockProteusService.decryptDataForSessionContext_MockMethod = { data, _, _ in
@@ -596,7 +593,6 @@ extension EventDecoderTest {
     func test_MLSEventDecryptionStoresLastEventIdIfDecryptionSuccessWithProposalResult() async throws {
 
         // Given
-        defer {}
         let mockProteusService = MockProteusServiceInterface()
 
         mockProteusService.decryptDataForSessionContext_MockMethod = { data, _, _ in

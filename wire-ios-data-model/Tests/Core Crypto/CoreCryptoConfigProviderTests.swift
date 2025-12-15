@@ -46,10 +46,10 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
     private var mockCoreCryptoKeyMigrationManager = MockCoreCryptoKeyMigrationManagerProtocol()
     private var sharedContainerURL: URL!
 
-    override func setUp() {
-        super.setUp()
+    override func setUpWithError() throws {
+        try super.setUpWithError()
 
-        sharedContainerURL = try! FileManager.default.url(
+        sharedContainerURL = try FileManager.default.url(
             for: .applicationSupportDirectory,
             in: .userDomainMask,
             appropriateFor: nil,

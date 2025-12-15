@@ -60,4 +60,15 @@ final class ImportProgressViewSnapshotTests: XCTestCase {
         }
     }
 
+    func testLoadingFile() {
+        let screenBounds = UIScreen.main.bounds
+        let sut = ImportProgressView(
+            isLoadingFile: true,
+            progressValues: (current: 0, total: 0)
+        ) {}
+            .frame(width: screenBounds.width, height: screenBounds.height)
+
+        snapshotHelper.verify(matching: sut)
+    }
+
 }

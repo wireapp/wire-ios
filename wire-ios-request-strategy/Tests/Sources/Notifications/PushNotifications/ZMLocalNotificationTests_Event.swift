@@ -453,12 +453,18 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages_NoConversationName_Off() {
         // given
         syncMOC.performGroupedAndWait {
+            // Setting timestamp one minute after the conversation's last read timestamp
+            // because it needs to be set after in order for the notification to be created
+            // and if both use Date() it can be flaky
+            let timestamp = groupConversationWithoutName.lastReadServerTimeStamp?
+                .addingTimeInterval(.oneMinute) ?? Date()
+
             let event = self.createMessageTimerUpdateEvent(
                 self.otherUser1.remoteIdentifier,
                 conversationID: self.groupConversationWithoutName.remoteIdentifier!,
                 senderID: self.otherUser1.remoteIdentifier!,
                 timer: 0,
-                timestamp: Date().addingTimeInterval(.oneSecond)
+                timestamp: timestamp
             )
 
             // when
