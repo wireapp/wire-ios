@@ -180,11 +180,6 @@ extension ConversationContentViewController {
             navigationController.modalPresentationStyle = .formSheet
 
             parent?.present(navigationController, animated: true)
-        case .resetSession:
-            guard let client = message.systemMessageData?.clients.first as? UserClient else { return }
-            activityIndicator.start()
-            userClientToken = UserClientChangeInfo.add(observer: self, for: client)
-            client.resetSession()
         case let .react(reaction):
             userSession.perform {
                 let useCase = self.userSession.makeToggleMessageReactionUseCase()
@@ -217,18 +212,6 @@ extension ConversationContentViewController {
         let cancelAction = UIAlertAction(title: L10n.Localizable.General.close, style: .default)
         alertController.addAction(cancelAction)
         present(alertController, animated: true)
-    }
-}
-
-// MARK: - UserClientObserver
-
-extension ConversationContentViewController: UserClientObserver {
-
-    func userClientDidChange(_ changeInfo: UserClientChangeInfo) {
-        if changeInfo.sessionHasBeenReset {
-            userClientToken = nil
-            activityIndicator.stop()
-        }
     }
 }
 

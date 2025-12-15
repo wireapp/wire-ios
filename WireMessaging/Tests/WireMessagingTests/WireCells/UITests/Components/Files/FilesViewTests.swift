@@ -409,7 +409,8 @@ private extension FilesItemViewModel {
             locale: Locale(identifier: "en_US_POSIX"),
             calendar: Calendar(identifier: .gregorian),
             timeZone: .gmt,
-            isInRecycleBin: false
+            isInRecycleBin: false,
+            isFoldersEnabled: false
         )
     }
 

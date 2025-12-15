@@ -139,6 +139,7 @@ extension FilesItemViewModel {
             localAssetRepository: PreviewLocalAssetRepository(),
             onItemAction: { _, _ in },
             isInRecycleBin: false,
+            isFoldersEnabled: false,
         )
     }
 

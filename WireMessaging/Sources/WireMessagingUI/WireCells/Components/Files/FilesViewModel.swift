@@ -340,7 +340,8 @@ package final class FilesViewModel: ObservableObject {
                     isEditing = item
                 }
             },
-            isInRecycleBin: isRecycleBin
+            isInRecycleBin: isRecycleBin,
+            isFoldersEnabled: isFoldersEnabled,
         )
     }
 
