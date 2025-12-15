@@ -42,7 +42,6 @@ public final class SharingSession {
         case needsMigration
         case loggedOut
         case missingSharedContainer
-        case pendingCryptoboxMigration
     }
 
     /// The `NSManagedObjectContext` used to retrieve the conversations
@@ -259,7 +258,6 @@ public final class SharingSession {
         operationLoop: RequestGeneratingOperationLoop,
         strategyFactory: StrategyFactory,
         appLockConfig: AppLockController.LegacyConfig?,
-        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         earService: EARServiceInterface,
         contextStorage: LAContextStorable,
         proteusService: ProteusServiceInterface,
@@ -289,11 +287,6 @@ public final class SharingSession {
 
         guard applicationStatusDirectory.authenticationStatus.state == .authenticated
         else { throw InitializationError.loggedOut }
-
-        let accountDirectory = coreDataStack.accountContainer
-        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
-            throw InitializationError.pendingCryptoboxMigration
-        }
 
         coreDataStack.syncContext.performAndWait {
             if coreDataStack.syncContext.proteusService == nil {
@@ -373,7 +366,6 @@ public final class SharingSession {
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
         let analyticsEventPersistence = ShareExtensionAnalyticsPersistence(accountContainer: accountContainer)
 
-        let cryptoboxMigrationManager = CryptoboxMigrationManager()
         let journal = Journal(
             userID: accountIdentifier,
             storage: sharedUserDefaults
@@ -384,7 +376,6 @@ public final class SharingSession {
             accountDirectory: coreDataStack.accountContainer,
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
             localDomain: localDomain
@@ -497,7 +488,6 @@ public final class SharingSession {
             operationLoop: operationLoop,
             strategyFactory: strategyFactory,
             appLockConfig: appLockConfig,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             earService: earService,
             contextStorage: contextStorage,
             proteusService: proteusService,

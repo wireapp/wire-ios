@@ -71,7 +71,6 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
         builder.withAllDependencies(
             appVersion: appVersion,
             application: application,
-            cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreDataStack: coreDataStack,
             configuration: configuration,
             contextStorage: mockContextStorage,

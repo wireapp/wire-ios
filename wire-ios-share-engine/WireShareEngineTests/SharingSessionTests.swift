@@ -69,19 +69,4 @@ final class SharingSessionTests: BaseSharingSessionTests {
 
     // MARK: - Init
 
-    func test_ItDoesNotInit_WhenCryptoboxMigrationIsPending() async throws {
-        do {
-            // Given
-            mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = true
-
-            // When
-            _ = try await createSharingSession()
-            XCTFail("unexpected success")
-        } catch SharingSession.InitializationError.pendingCryptoboxMigration {
-            // Then
-        } catch {
-            XCTFail("unexpected error: \(error.localizedDescription)")
-        }
-    }
-
 }
