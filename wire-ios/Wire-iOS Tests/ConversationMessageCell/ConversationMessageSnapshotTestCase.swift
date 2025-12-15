@@ -178,7 +178,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
         width: CGFloat
     ) -> UIStackView {
         let context = (context ?? ConversationMessageContext.defaultContext)!
-        
+
         let factory = MockWireMessagingFactoryProtocol()
         factory.makeFetchNodeUseCase_MockValue = MockWireCellsFetchNodeUseCaseProtocol()
 
