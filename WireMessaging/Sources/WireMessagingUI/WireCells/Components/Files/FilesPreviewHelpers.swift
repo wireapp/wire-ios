@@ -342,14 +342,6 @@ extension WireCellsNodeVersion {
     static let mock: [WireCellsNodeVersion] = [
         .init(
             id: UUID(),
-            ownerName: "foo",
-            modified: Date.now,
-            eTag: "something",
-            size: 2_158_877,
-            downloadUrl: URL(string: "https://wire.com")
-        ),
-        .init(
-            id: UUID(),
             ownerName: "foo1",
             modified: .init(timeIntervalSince1970: 1_759_311_973),
             eTag: "something",
