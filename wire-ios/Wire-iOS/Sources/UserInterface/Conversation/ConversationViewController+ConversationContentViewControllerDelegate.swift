@@ -65,7 +65,8 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         profileViewController.preferredContentSize = CGSize.IPadPopover.preferredContentSize
 
@@ -150,6 +151,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navigationController = UINavigationController(rootViewController: groupDetailsViewController)

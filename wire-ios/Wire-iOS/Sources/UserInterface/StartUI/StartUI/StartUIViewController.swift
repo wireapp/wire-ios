@@ -129,7 +129,8 @@ final class StartUIViewController: UIViewController {
         mainCoordinator: AnyMainCoordinator,
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
         channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.isAppsFeatureEnabled = isAppsFeatureEnabled
         self.isFederationEnabled = userSession.resolvedBackendMetadata.isFederationEnabled
@@ -147,7 +148,8 @@ final class StartUIViewController: UIViewController {
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.profilePresenter = .init(
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         super.init(nibName: nil, bundle: nil)
 
