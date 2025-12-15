@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 final class GroupParticipantsDetailViewController: UIViewController {
@@ -32,6 +33,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
 
     private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
     let viewModel: GroupParticipantsDetailViewModel
     private let collectionViewController: SectionCollectionViewController
 
@@ -68,10 +70,12 @@ final class GroupParticipantsDetailViewController: UIViewController {
         conversation: GroupParticipantsDetailConversation,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
 
         self.viewModel = GroupParticipantsDetailViewModel(
             selectedParticipants: selectedParticipants,
@@ -256,7 +260,8 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
             profileViewControllerDelegate: self,
             userSession: viewModel.userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
 
         navigationController?.pushViewController(viewController, animated: true)
@@ -272,7 +277,8 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
             conversation: viewModel.conversation,
             userSession: viewModel.userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
 
         detailsViewController.delegate = self

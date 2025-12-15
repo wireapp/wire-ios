@@ -20,10 +20,16 @@ import UIKit
 import WireUtilities
 
 protocol ConversationServicesOptionsViewModelConfiguration: AnyObject {
+
+    /// `true` if apps can be participants of the conversation, `false` otherwise.
+
     var allowApps: Bool { get }
+
     var areAppsPresent: Bool { get }
     var allowAppsChangedHandler: ((Bool) -> Void)? { get set }
+
     func setAllowApps(_ allowApps: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+
 }
 
 protocol ConversationServicesOptionsViewModelDelegate: AnyObject {
@@ -43,6 +49,7 @@ protocol ConversationServicesOptionsViewModelDelegate: AnyObject {
         fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration,
         confirmRemovingServices completion: @escaping (Bool) -> Void
     ) -> UIAlertController?
+
 }
 
 final class ConversationServicesOptionsViewModel {

@@ -123,16 +123,26 @@ public class SearchDirectory: NSObject {
 }
 
 extension SearchDirectory: TearDownCapable {
+
     /// Tear down the SearchDirectory.
     ///
     /// NOTE: this must be called before releasing the instance
+
     public func tearDown() {
-        // Evict all cached search users
-        searchUsersCache?.removeAllObjects()
+        let tearDown = { [self] in
+            // Evict all cached search users
+            searchUsersCache?.removeAllObjects()
 
-        // Reset search user observer center to remove unnecessarily observed search users
-        contextProvider.viewContext.searchUserObserverCenter.reset()
+            // Reset search user observer center to remove unnecessarily observed search users
+            contextProvider.viewContext.searchUserObserverCenter.reset()
 
-        isTornDown = true
+            isTornDown = true
+        }
+        if Thread.isMainThread {
+            tearDown()
+        } else {
+            DispatchQueue.main.async(execute: tearDown)
+        }
     }
+
 }
