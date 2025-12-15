@@ -18,7 +18,6 @@
 
 import CoreLocation
 import Foundation
-import WireCryptobox
 import WireLogging
 import WireUtilities
 
@@ -752,59 +751,6 @@ public extension UserClient {
         selfClient.setLocallyModifiedKeys([ZMUserClientNeedsToUpdateCapabilitiesKey])
 
         context.enqueueDelayedSave()
-    }
-
-}
-
-// MARK: - Session identifier
-
-extension UserClient {
-
-    /// Session identifier of the local cryptobox session with this client.
-
-    public var sessionIdentifier: EncryptionSessionIdentifier? {
-        if needsSessionMigration {
-            sessionIdentifier_V2
-        } else {
-            sessionIdentifier_V3
-        }
-    }
-
-    /// Previous session identifiers.
-
-    private var sessionIdentifier_V1: String? {
-        remoteIdentifier
-    }
-
-    private var sessionIdentifier_V2: EncryptionSessionIdentifier? {
-        guard
-            let userIdentifier = user?.remoteIdentifier,
-            let clientIdentifier = remoteIdentifier
-        else {
-            return nil
-        }
-
-        return EncryptionSessionIdentifier(
-            userId: userIdentifier.uuidString,
-            clientId: clientIdentifier
-        )
-    }
-
-    private var sessionIdentifier_V3: EncryptionSessionIdentifier? {
-        guard
-            let user,
-            let domain = user.domain ?? managedObjectContext?.localDomain,
-            let userIdentifier = user.remoteIdentifier,
-            let clientIdentifier = remoteIdentifier
-        else {
-            return nil
-        }
-
-        return EncryptionSessionIdentifier(
-            domain: domain,
-            userId: userIdentifier.uuidString,
-            clientId: clientIdentifier
-        )
     }
 
 }

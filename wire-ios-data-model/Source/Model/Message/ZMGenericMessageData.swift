@@ -18,7 +18,6 @@
 
 import Foundation
 import GenericMessageProtocol
-import WireCryptobox
 import WireLogging
 
 @objc(ZMGenericMessageData)

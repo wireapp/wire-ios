@@ -19,7 +19,6 @@
 @import WireUtilities;
 @import WireSystem;
 @import WireTransport;
-@import WireCryptobox;
 @import WireDataModel;
 
 #import "ZMOperationLoop+Private.h"

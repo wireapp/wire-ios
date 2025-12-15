@@ -18,7 +18,6 @@
 
 import Foundation
 import GenericMessageProtocol
-import WireCryptobox
 
 extension ZMConversation {
     static func appendHideMessageToSelfConversation(_ message: ZMMessage) throws {
