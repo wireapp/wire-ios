@@ -490,30 +490,6 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         XCTAssertEqual(lastMessage.systemMessageType, ZMSystemMessageType.decryptionFailed_RemoteIdentityChanged)
     }
 
-    func testThatItAppendsASystemMessageOfGeneralTypeForCBErrorCodeInvalidMessage() {
-        // given
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.conversationType = .group
-        let user = ZMUser.insertNewObject(in: uiMOC)
-        user.name = "Fancy One"
-        let decryptionError = CBOX_INVALID_MESSAGE
-
-        // when
-        conversation.appendDecryptionFailedSystemMessage(
-            at: Date(),
-            sender: user,
-            client: nil,
-            error: .Other(UInt16(decryptionError.rawValue))
-        )
-
-        // then
-        guard let lastMessage = conversation.lastMessage as? ZMSystemMessage else {
-            return XCTFail()
-        }
-        XCTAssertEqual(lastMessage.systemMessageType, ZMSystemMessageType.decryptionFailed)
-        XCTAssertEqual(lastMessage.decryptionErrorCode?.intValue, Int(decryptionError.rawValue))
-    }
-
     func testThatAConversationIsNotTrustedIfItHasNoOtherParticipants() {
         // GIVEN
         let conversation = ZMConversation.insertNewObject(in: uiMOC)

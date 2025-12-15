@@ -2156,8 +2156,6 @@ internal enum L10n {
           internal static func other(_ p1: Any) -> String {
             return L10n.tr("Localizable", "content.system.cannot_decrypt.other", String(describing: p1), fallback: "A message from %@ could not be decrypted.")
           }
-          /// Fix future messages
-          internal static let resetSession = L10n.tr("Localizable", "content.system.cannot_decrypt.reset_session", fallback: "Fix future messages")
           /// A message from you could not be decrypted.
           internal static let `self` = L10n.tr("Localizable", "content.system.cannot_decrypt.self", fallback: "A message from you could not be decrypted.")
         }

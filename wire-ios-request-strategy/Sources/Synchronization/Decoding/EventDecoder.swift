@@ -83,7 +83,7 @@ public final class EventDecoder: NSObject, EventDecoderProtocol {
 extension EventDecoder {
 
     /// Decrypts passed in events and stores them in chronological order in a persisted database,
-    /// it then saves the database and cryptobox
+    /// it then saves the database
     ///
     /// - Parameters:
     ///   - events: Encrypted events
