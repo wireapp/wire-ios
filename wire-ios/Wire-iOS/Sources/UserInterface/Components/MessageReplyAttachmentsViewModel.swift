@@ -86,7 +86,7 @@ final class MessageReplyAttachmentsViewModel {
         }
 
         guard task?.isCancelled == false else { return }
-        
+
         let (data, _) = try await URLSession.shared.data(from: smallPreview.url)
         guard let image = UIImage(data: data) else { return }
         cache.setObject(image, forKey: cacheKey)
