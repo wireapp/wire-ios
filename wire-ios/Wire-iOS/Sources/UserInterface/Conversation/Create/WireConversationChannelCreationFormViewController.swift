@@ -57,7 +57,8 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
     }
 
     init(
-        userSession: UserSession
+        userSession: UserSession,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) async {
         self.userSession = userSession
         let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository

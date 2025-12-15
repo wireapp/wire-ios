@@ -20,6 +20,7 @@ import UIKit
 import WireDomain
 import WireMainNavigationUI
 import WireMessagingAssembly
+import WireMessagingDomain
 import WireSyncEngine
 
 final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
@@ -30,6 +31,8 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
     let channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory
 
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
+
     weak var delegate: StartUIDelegate?
 
     init(
@@ -38,13 +41,15 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
         channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
-        isAppsFeatureEnabled: Bool = true
+        featureConfigRepository: FeatureConfigRepositoryProtocol,
+        conversationCreationRepository: ConversationCreationRepositoryProtocol
     ) {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
         self.channelConversationFormFactory = channelConversationFormFactory
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
     }
 
     @MainActor
@@ -57,7 +62,8 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
             mainCoordinator: mainCoordinator,
             createGroupConversationUIBuilder: createGroupConversationUIBuilder,
             channelConversationFormFactory: channelConversationFormFactory,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         rootViewController.delegate = delegate
         return rootViewController

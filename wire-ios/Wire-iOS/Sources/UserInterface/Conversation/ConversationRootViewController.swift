@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDesign
 import WireMainNavigationUI
 import WireMessagingAssembly
+import WireMessagingDomain
 import WireSyncEngine
 
 final class ConversationRootViewController: UIViewController {
@@ -47,6 +48,7 @@ final class ConversationRootViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         mediaPlaybackManager: MediaPlaybackManager?,
         wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
@@ -58,6 +60,7 @@ final class ConversationRootViewController: UIViewController {
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository,
             mediaPlaybackManager: mediaPlaybackManager,
             classificationProvider: ZMUserSession.shared(),
             networkStatusObservable: NetworkStatus.shared,

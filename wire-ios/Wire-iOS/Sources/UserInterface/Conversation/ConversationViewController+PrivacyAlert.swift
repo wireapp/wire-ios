@@ -173,7 +173,8 @@ extension ConversationViewController {
                 context: .deviceList,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             profileViewController.delegate = self
             let navigationController = profileViewController.wrapInNavigationController()
@@ -185,7 +186,8 @@ extension ConversationViewController {
                 conversation: conversation,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             let navigationController = UINavigationController(rootViewController: participantsViewController)
             navigationController.modalPresentationStyle = .formSheet
@@ -199,7 +201,8 @@ extension ConversationViewController {
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 
