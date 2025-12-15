@@ -23,7 +23,7 @@ import WireSyncEngine
 
 extension MessagePresenter {
 
-    /// return a view controller for viewing image messge
+    /// return a view controller for viewing image message
     ///
     /// - Parameters:
     ///   - message: a message with image data
