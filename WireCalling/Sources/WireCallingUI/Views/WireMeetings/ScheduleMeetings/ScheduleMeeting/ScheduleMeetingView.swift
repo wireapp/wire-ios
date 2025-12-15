@@ -199,8 +199,10 @@ private struct DateTimeRow: View {
 // MARK: - Preview
 
 #Preview {
-    ScheduleMeetingView(viewModel: ScheduleMeetingViewModel(
-        passwordValidator: MockPasswordValidator(), isContextMenuAllowed: true
-    )
+    ScheduleMeetingView(
+        viewModel: ScheduleMeetingViewModel(
+            passwordValidator: MockPasswordValidator(),
+            isContextMenuAllowed: true
+        )
     )
 }

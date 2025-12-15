@@ -16,12 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension ZMSyncStrategy {
+public import WireDataModel
 
-    var callingRequestStrategy: CallingRequestStrategy? {
-        strategyDirectory?.requestStrategies.first(where: { requestStrategy in
-            requestStrategy is CallingRequestStrategy
-        }) as? CallingRequestStrategy
-    }
+// sourcery: AutoMockable
+public protocol SearchUsersUseCaseProtocol {
+
+    func invoke(
+        query: String,
+        options: SearchOptions,
+        messageProtocol: WireDataModel.MessageProtocol?
+    ) async throws -> SearchResult
 
 }

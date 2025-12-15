@@ -50,6 +50,7 @@ public protocol ContextProvider {
     var syncContext: NSManagedObjectContext { get }
     var searchContext: NSManagedObjectContext { get }
     var eventContext: NSManagedObjectContext { get }
+
 }
 
 extension URL {
@@ -115,7 +116,7 @@ public protocol CoreDataStackProtocol: ContextProvider {
 }
 
 @objc @objcMembers
-public class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvider {
+public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvider {
 
     public let account: Account
 
