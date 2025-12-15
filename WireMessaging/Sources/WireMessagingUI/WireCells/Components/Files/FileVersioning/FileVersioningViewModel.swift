@@ -215,7 +215,9 @@ final class FileVersioningViewModel: ObservableObject {
 
     private func makeVersionItem(version: WireCellsNodeVersion) -> FileVersionItem {
         let title = version.modified.map(formattedItemDate) ?? ""
-        let subtitle = (version.ownerName ?? "") + " · " + (version.size.map(formattedFileSize) ?? "")
+        let subtitle = [version.ownerName, version.size.map(formattedFileSize)]
+            .compactMap(\.self)
+            .joined(separator: " · ")
 
         return FileVersionItem(
             id: version.id,

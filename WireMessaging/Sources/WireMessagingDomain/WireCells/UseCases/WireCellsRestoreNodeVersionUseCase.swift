@@ -47,7 +47,6 @@ package struct WireCellsRestoreNodeVersionUseCase: WireCellsRestoreNodeVersionUs
             )
             await nodeCache.setItem(.init(node: node), for: nodeID)
         } catch {
-            WireLogger.wireCells.error("Unable to restore node version: \(error)")
             throw Failure.unableToRestoreNodeVersion
         }
     }

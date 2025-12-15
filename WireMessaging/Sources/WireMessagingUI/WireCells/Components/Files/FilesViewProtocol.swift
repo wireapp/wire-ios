@@ -86,7 +86,7 @@ extension FilesViewProtocol {
             canRenameFile: !isBrowsing,
             canEditTags: !isBrowsing,
             canMoveToFolder: !isBrowsing && viewModel.isFoldersEnabled,
-            canOpenVersionHistory: !isBrowsing,
+            canOpenVersionHistory: !isBrowsing && viewModel.isCollaboraEnabled,
             canEditFile: !isBrowsing,
             canDeleteFiles: !isBrowsing
         )

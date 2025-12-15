@@ -118,7 +118,7 @@ struct FilesViewItemView: View {
                         }
                     }
 
-                    if canOpenVersionHistory {
+                    if canOpenVersionHistory, !viewModel.isInRecycleBin {
                         Button(action: showVersionHistory) {
                             Label(
                                 Strings.Files.Item.Menu.versionHistory,
