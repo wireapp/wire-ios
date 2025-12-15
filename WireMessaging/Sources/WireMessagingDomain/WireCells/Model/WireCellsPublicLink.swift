@@ -22,9 +22,9 @@ public struct WireCellsPublicLink: Equatable, Hashable, Sendable {
     public let uuid: UUID
     public let url: URL
     public let password: String?
-    public let expirationDate: String? //TODO: maybe change it to Date?
+    public let expirationDate: Date?
 
-    package init(uuid: UUID, url: URL, password: String?, expirationDate: String?) {
+    package init(uuid: UUID, url: URL, password: String?, expirationDate: Date?) {
         self.uuid = uuid
         self.url = url
         self.password = password

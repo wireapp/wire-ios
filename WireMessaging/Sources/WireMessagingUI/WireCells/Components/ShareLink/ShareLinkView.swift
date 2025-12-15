@@ -30,80 +30,184 @@ struct ShareLinkView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     @StateObject private var viewModel: ViewModel
-    
-    @State private var testLinkData: String = "?"
-    
+
     init(fileItem: FilesViewItem, useCases: ViewModel.UseCases) {
         _viewModel = .init(wrappedValue: .init(fileItem: fileItem, useCases: useCases))
     }
-    
+
     var body: some View {
         NavigationStack {
-            content()
-                .navigationTitle(Text(Strings.ShareLink.title))
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    toolbarContent()
-                }
-                .sheet(item: $viewModel.sheetNavigation) { navigationItem in
-                    switch navigationItem {
-                    case .password:
-                        ShareLinkPasswordView(
-                            password: "The password, if it exists. Otherwise nil",
-                            onSave: { password in
-                                //TODO: apply the new password. If it is nil, then the password was disabled.
-                            }
-                        )
-                    case .expiration:
-                        ExpirationDatePickerView(
-                            expirationDate: nil, // TODO: Use expirationDate if exist, nil otherwise.
-                            onSave: { expirationDate in
-                                //TODO: apply the new expirationDate. If it is nil, then the expirationDate was disabled.
-                            }
-                        )
-                    }
-                }
-                .background {
-                    ColorTheme.Backgrounds.background.color
-                        .ignoresSafeArea(edges: .all)
-                }
-                .tint(ColorTheme.Base.primary(wireAccentColor).color)
-                .task {
-                    if let linkIdString = viewModel.fileItem.publicLinkId, let linkId = UUID(uuidString: linkIdString) {
-                        let linkData = try? await viewModel.useCases.getLinkData.invoke(linkId: linkId)
-                        testLinkData = linkData?.url.absoluteString ?? "-"
-                    }
-                }
-        }
-    }
-    
-    @ViewBuilder private func content() -> some View {
-        ScrollView {
-            VStack {
-                Text("link id: \(viewModel.fileItem.publicLinkId ?? "-")")
-                
-                Text("url: \(testLinkData)")
-                
-                Button {
-                    viewModel.sheetNavigation = .password
-                } label: {
-                    Text("Password (dummy)")
-                }
-                .buttonStyle(.borderedProminent)
+            ZStack(alignment: .bottom) {
+                ScrollView {
+                    VStack(spacing: 24) {
 
-                Button {
-                    viewModel.sheetNavigation = .expiration
-                } label: {
-                    Text("Expiration (dummy)")
+                        mainToggleSection()
+
+                        if viewModel.isLinkActive {
+                            linkSettingsSection()
+                        }
+
+                        // Just for testing
+                        Text("link id: \(viewModel.fileItem.publicLinkId ?? "-")")
+                        Text("pass: \(viewModel.password ?? "-")")
+                        Text("pass: \(viewModel.expirationDate?.formatted() ?? "-")")
+                    }
+                    .padding()
+                    .padding(.bottom, 80) // Space for the bottom button
                 }
-                .buttonStyle(.borderedProminent)
+
+                shareLinkButton()
             }
-            .frame(maxWidth: .infinity)
-            .padding()
+            .background(ColorTheme.Backgrounds.background.color.ignoresSafeArea())
+            .navigationTitle(Strings.ShareLink.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                toolbarContent()
+            }
+            .sheet(item: $viewModel.sheetNavigation) { navigationItem in
+                switch navigationItem {
+                case .password:
+                    ShareLinkPasswordView(
+                        password: viewModel.password,
+                        onSave: { newPassword in
+                            viewModel.password = newPassword
+                        }
+                    )
+                case .expiration:
+                    ExpirationDatePickerView(
+                        expirationDate: viewModel.expirationDate,
+                        onSave: { newDate in
+                            viewModel.expirationDate = newDate
+                        }
+                    )
+                }
+            }
         }
     }
-    
-    @ToolbarContentBuilder private func toolbarContent() -> some ToolbarContent {
+
+    // MARK: - View Components
+
+    @ViewBuilder
+    private func mainToggleSection() -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text(Strings.ShareLink.description)
+                .font(for: .subline1)
+                .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Toggle(Strings.ShareLink.createLinkToogle, isOn: $viewModel.isLinkActive)
+                .font(for: .body1)
+                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                .padding(.horizontal)
+                .padding(.vertical, 10)
+                .background {
+                    RoundedRectangle(cornerRadius: 10)
+                        .foregroundStyle(ColorTheme.Backgrounds.surface.color)
+                }
+                .tint(wireAccentColor.color)
+        }
+    }
+
+    @ViewBuilder
+    private func linkSettingsSection() -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(Strings.ShareLink.LinkSection.title)
+                .font(for: .subline2)
+                .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                .padding(.leading, 4)
+
+            VStack(alignment: .leading, spacing: 0) {
+                settingsRow(
+                    title: Strings.ShareLink.LinkSection.passwordTitle,
+                    description: Strings.ShareLink.LinkSection.passwordDescription,
+                    status: viewModel.passwordStatusText,
+                    action: { viewModel.sheetNavigation = .password },
+                )
+
+                Spacer().frame(height: 16)
+
+                settingsRow(
+                    title: Strings.ShareLink.LinkSection.expirationTitle,
+                    description: Strings.ShareLink.LinkSection.expirationDescription,
+                    status: viewModel.expirationStatusText,
+                    action: { viewModel.sheetNavigation = .expiration }
+                )
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func settingsRow(
+        title: String,
+        description: String,
+        status: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        VStack(alignment: .leading) {
+            Button(action: action) {
+                HStack {
+                    Text(title)
+                        .font(for: .body1)
+                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+
+                    Spacer()
+
+                    HStack(spacing: 4) {
+                        Text(status)
+                            .font(for: .body1)
+                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 10)
+                .contentShape(Rectangle()) // Makes the whole row tapable
+            }
+            .buttonStyle(.plain)
+            .background {
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundStyle(ColorTheme.Backgrounds.surface.color)
+            }
+
+            Text(description)
+                .font(for: .subline1)
+                .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                .padding(.leading, 4)
+        }
+    }
+
+    @ViewBuilder
+    private func shareLinkButton() -> some View {
+        VStack {
+            Button {
+                viewModel.saveLink()
+            } label: {
+                HStack {
+                    Image(systemName: "square.and.arrow.up")
+                    Text("Share Link")
+                        .fontWeight(.semibold)
+                }
+                .font(for: .body1)
+                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background {
+                    RoundedRectangle(cornerRadius: 16)
+                        .foregroundStyle(ColorTheme.Backgrounds.surface.color)
+                        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 8)
+        }
+        .background(ColorTheme.Backgrounds.background.color.opacity(0.9)) // Slight fade behind button area
+    }
+
+    @ToolbarContentBuilder
+    private func toolbarContent() -> some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button {
                 dismiss()
@@ -111,10 +215,11 @@ struct ShareLinkView: View {
                 Text(L10n.Localizable.General.cancel)
             }
         }
-        
+
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                //TODO: ...
+                viewModel.saveLink()
+                dismiss()
             } label: {
                 Text(L10n.Localizable.General.done)
                     .bold()
@@ -122,6 +227,8 @@ struct ShareLinkView: View {
         }
     }
 }
+
+// MARK: - Preview
 
 #Preview {
     let item = FilesViewItem(
@@ -135,7 +242,7 @@ struct ShareLinkView: View {
         tags: [],
         publicLinkId: UUID().uuidString,
     )
-    
+
     let mockAPI = {
         let mockAPI = MockNodesAPIProtocol()
         mockAPI.getPublicLinkLinkUUID_MockMethod = { _ in
@@ -143,16 +250,16 @@ struct ShareLinkView: View {
                 uuid: UUID(),
                 url: URL(string: "https://example.com")!,
                 password: "r1ckr0ll",
-                expirationDate: "1234567890",
+                expirationDate: Date().addingTimeInterval(3600),
             )
         }
         return mockAPI
     }()
-    
+
     let useCases: ShareLinkView.ViewModel.UseCases = .init(
         getLinkData: WireCellsGetPublicLinkDataUseCase(nodesAPI: mockAPI),
     )
-    
+
     ShareLinkView(
         fileItem: item,
         useCases: useCases,

@@ -190,6 +190,16 @@
 
 // MARK: - Share Link View
 "conversation.wireCells.shareLink.title" = "Share via link";
+"conversation.wireCells.shareLink.description" = "Upload and share your file via a public link. All recipients can view and download it.";
+"conversation.wireCells.shareLink.createLinkToogle" = "Create public link";
+"conversation.wireCells.shareLink.linkSection.title" = "LINK SETTINGS (OPTIONAL)";
+"conversation.wireCells.shareLink.linkSection.passwordTitle" = "Password";
+"conversation.wireCells.shareLink.linkSection.expirationTitle" = "Expiration";
+"conversation.wireCells.shareLink.linkSection.passwordDescription" = "Set a password to restrict access.";
+"conversation.wireCells.shareLink.linkSection.expirationDescription" = "Link expires on a selected day.";
+"conversation.wireCells.shareLink.shareLinkButton" = "Share link";
+"conversation.wireCells.shareLink.off" = "OFF";
+"conversation.wireCells.shareLink.on" = "ON";
 
 // MARK: - Share Link Password View
 "conversation.wireCells.shareLink.password.title" = "Password";

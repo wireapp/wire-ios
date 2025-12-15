@@ -236,19 +236,30 @@ final class RestAPI: Sendable {
         guard let url = URL(string: urlString) else {
             throw WireCellsNodesAPIError.missingData("Link URL is invalid")
         }
-        
-        let password: String? = nil //TODO: I realized we can't get this from the response because it's not stored as cleartext. We can't ask the backend what the actual password is.
-        let expirationDate: String? = nil //TODO: get it from response
+
+        let password: String? =
+            nil // TODO: We can't get this from the response because it's not stored as cleartext. We can't ask the backend what the actual password is.
+        let expirationDate: Date? = nil // TODO: get it from response
 
         return WireCellsPublicLink(uuid: uuid, url: url, password: password, expirationDate: expirationDate)
     }
 
-    func createPublicLink(uuid: UUID, fileName: String) async throws -> WireCellsPublicLink {
+    func createPublicLink(
+        uuid: UUID,
+        fileName: String,
+        password: String?,
+        expirationDate: Date?
+    ) async throws -> WireCellsPublicLink {
+        //let accessEnd = String(format: "%.0f", expirationDate?.timeIntervalSince1970) ?? nil
         let request = RestPublicLinkRequest(
+            createPassword: password, // Probably better to create a new func to updatePublicLink
             link: RestShareLink(
+                accessEnd: "", // Example: 1765580400 -> December 13, 00:00
                 label: fileName,
+                passwordRequired: password != nil,
                 permissions: [.preview, .download]
-            )
+            ),
+            passwordEnabled: password != nil
         )
 
         let response = try await NodeServiceAPI.createPublicLink(
@@ -270,9 +281,12 @@ final class RestAPI: Sendable {
         guard let url = URL(string: urlString) else {
             throw WireCellsNodesAPIError.missingData("Link URL is invalid")
         }
-        
-        let password: String? = nil //TODO: get it from response
-        let expirationDate: String? = nil //TODO: get it from response
+
+        var expirationDate: Date? = nil
+        if let timeInterval = TimeInterval(response.accessEnd ?? "") {
+            let dateFromAPI = Date(timeIntervalSince1970: timeInterval)
+            expirationDate = dateFromAPI
+        }
 
         return WireCellsPublicLink(uuid: id, url: url, password: password, expirationDate: expirationDate)
     }

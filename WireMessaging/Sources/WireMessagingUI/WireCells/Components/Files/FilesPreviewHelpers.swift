@@ -189,7 +189,7 @@ private func previewPublicLinkApi() -> some NodesAPIProtocol {
             uuid: UUID(),
             url: URL(string: "https://example.com")!,
             password: "r1ckr0ll",
-            expirationDate: "1234567890",
+            expirationDate: Date(),
         )
     }
     return mock
