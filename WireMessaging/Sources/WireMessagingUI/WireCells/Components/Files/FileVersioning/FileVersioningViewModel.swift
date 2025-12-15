@@ -127,8 +127,7 @@ final class FileVersioningViewModel: ObservableObject {
     private func restore(item: FileVersionItem) async {
         state = .restoringVersion
 
-        // Keep the view visible for a couple of seconds to avoid a quick glitch.
-        try? await Task.sleep(nanoseconds: 2_000_000_000)
+        try? await Task.sleep(for: .seconds(2))
 
         do {
             try await restoreNodeVersionUseCase.invoke(
@@ -191,8 +190,7 @@ final class FileVersioningViewModel: ObservableObject {
     ) -> [Date: [WireCellsNodeVersion]] {
         Dictionary(grouping: versions) { version in
             let date = version.modified ?? Date.distantPast
-            let components = Calendar.current.dateComponents([.year, .month, .day], from: date)
-            return Calendar.current.date(from: components) ?? .distantPast
+            return Calendar.current.startOfDay(for: date)
         }
     }
 
