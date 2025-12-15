@@ -623,7 +623,6 @@ extension MessagingTestBase {
             accountDirectory: accountDir,
             sharedUserDefaults: UserDefaults.standard,
             syncContext: syncMOC,
-            cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreCryptoKeyMigrationManager: mockKeyMigrationManager,
             allowCreation: true,
             localDomain: owningDomain

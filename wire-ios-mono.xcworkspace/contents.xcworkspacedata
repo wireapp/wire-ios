@@ -156,9 +156,6 @@
       location = "group:wire-ios-ziphy/Ziphy.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:wire-ios-notification-engine/WireNotificationEngine.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:wire-ios-share-engine/WireShareEngine.xcodeproj">
    </FileRef>
    <FileRef
@@ -178,9 +175,6 @@
    </FileRef>
    <FileRef
       location = "group:WirePreviewApps/WirePreviewApps.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:wire-ios-cryptobox/WireCryptobox.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:wire-ios-transport/WireTransport.xcodeproj">

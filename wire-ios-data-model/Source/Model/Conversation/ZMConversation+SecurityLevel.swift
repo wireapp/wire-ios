@@ -19,7 +19,6 @@
 import Foundation
 import GenericMessageProtocol
 import WireCoreCrypto
-import WireCryptobox
 import WireLogging
 
 @objc
