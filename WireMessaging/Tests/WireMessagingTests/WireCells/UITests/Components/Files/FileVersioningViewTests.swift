@@ -108,7 +108,9 @@ final class FileVersioningViewTests: XCTestCase {
 
         switch testCase {
         case .success:
-            repository.getVersionsNodeID_MockValue = WireCellsNodeVersion.mock
+            var mock = WireCellsNodeVersion.mock
+            mock.removeFirst() // this is set to current Date and will fail the snapshot tests
+            repository.getVersionsNodeID_MockValue = mock
             await viewModel.fetch()
         case .restore:
             viewModel.state = .restoringVersion
