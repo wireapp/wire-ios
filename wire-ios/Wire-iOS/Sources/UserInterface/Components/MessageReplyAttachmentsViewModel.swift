@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import UniformTypeIdentifiers
 import WireDataModel
 import WireMessagingDomain
@@ -24,8 +23,7 @@ import WireMessagingUI
 
 final class MessageReplyAttachmentsViewModel {
     private let fetchNodeUseCase: any WireCellsFetchNodeUseCaseProtocol
-    private var task: Task<Void, Never>?
-    private var subscriptions = Set<AnyCancellable>()
+    private var task: Task<Void, Error>?
     private let cache = UIImage.defaultUserImageCache.cache
 
     struct PreviewImageInfo {
@@ -53,22 +51,24 @@ final class MessageReplyAttachmentsViewModel {
                 .first(where: { $0.id == attachment.nodeID })
             else { return }
 
-            setPreviewImage(from: node, isVideo: attachment.isVideo)
+            try await downloadImage(
+                from: node,
+                isVideo: attachment.isVideo
+            )
         }
     }
 
     func cancel() {
         task?.cancel()
         task = nil
-        subscriptions.removeAll()
     }
 
     // MARK: - Private
 
-    private func setPreviewImage(
+    private func downloadImage(
         from node: WireCellsNode,
         isVideo: Bool
-    ) {
+    ) async throws {
         guard let smallPreview = node.previews.min(by: {
             $0.dimension < $1.dimension
         }) else { return }
@@ -86,19 +86,11 @@ final class MessageReplyAttachmentsViewModel {
         }
 
         guard task?.isCancelled == false else { return }
-
-        URLSession.shared.dataTaskPublisher(for: smallPreview.url)
-            .map(\.data)
-            .compactMap(UIImage.init(data:))
-            .handleEvents(receiveOutput: { [weak self] image in
-                guard let self else { return }
-                cache.setObject(image, forKey: cacheKey)
-            })
-            .map { PreviewImageInfo(image: $0, isVideo: isVideo) }
-            .sink { _ in } receiveValue: { [weak self] in
-                guard let self else { return }
-                previewImageInfo = $0
-            }.store(in: &subscriptions)
+        
+        let (data, _) = try await URLSession.shared.data(from: smallPreview.url)
+        guard let image = UIImage(data: data) else { return }
+        cache.setObject(image, forKey: cacheKey)
+        previewImageInfo = PreviewImageInfo(image: image, isVideo: isVideo)
     }
 }
 
