@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 extension MessagePresenter {
@@ -37,7 +38,8 @@ extension MessagePresenter {
         isPreviewing: Bool,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) -> UIViewController {
 
         guard let conversation = message.conversation else {
@@ -61,7 +63,8 @@ extension MessagePresenter {
             inverse: true,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         imagesController.isPreviewing = isPreviewing
 

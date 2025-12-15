@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMessagingDomainSupport
 import XCTest
 
 @testable import Wire
@@ -51,6 +52,7 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
