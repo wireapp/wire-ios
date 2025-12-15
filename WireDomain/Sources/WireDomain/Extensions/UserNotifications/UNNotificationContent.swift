@@ -18,7 +18,7 @@
 
 import UserNotifications
 
-extension UNNotificationContent {
+public extension UNNotificationContent {
     static var emptyNotification: Self {
         Self()
     }

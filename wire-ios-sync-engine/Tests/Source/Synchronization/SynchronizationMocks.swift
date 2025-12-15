@@ -18,7 +18,6 @@
 
 import avs
 import Foundation
-import WireCryptobox
 import WireDataModel
 @testable import WireSyncEngine
 

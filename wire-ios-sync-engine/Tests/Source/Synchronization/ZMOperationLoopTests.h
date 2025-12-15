@@ -17,7 +17,6 @@
 //
 
 @import WireTransport;
-@import WireCryptobox;
 @import WireDataModel;
 @import avs;
 
