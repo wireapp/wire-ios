@@ -18,7 +18,6 @@
 
 import Foundation
 import WireCrypto
-import WireCryptobox
 import WireLogging
 
 extension Sequence where Element: NSManagedObject {
@@ -203,7 +202,7 @@ extension NSManagedObjectContext {
 
         case missingDatabaseKey
         case missingContextData
-        case cryptobox(error: ChaCha20Poly1305.AEADEncryption.EncryptionError)
+        case crypto(error: ChaCha20Poly1305.AEADEncryption.EncryptionError)
 
         var errorDescription: String? {
             switch self {
@@ -213,7 +212,7 @@ extension NSManagedObjectContext {
             case .missingContextData:
                 "Couldn't obtain context data."
 
-            case let .cryptobox(error):
+            case let .crypto(error):
                 error.errorDescription
             }
         }
@@ -247,7 +246,7 @@ extension NSManagedObjectContext {
             )
             return (ciphertext, nonce)
         } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
-            throw EncryptionError.cryptobox(error: error)
+            throw EncryptionError.crypto(error: error)
         }
     }
 
@@ -283,7 +282,7 @@ extension NSManagedObjectContext {
                 key: key._storage
             )
         } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
-            throw EncryptionError.cryptobox(error: error)
+            throw EncryptionError.crypto(error: error)
         }
     }
 

@@ -19,7 +19,6 @@
 import Foundation
 import GenericMessageProtocol
 import WireCoreCrypto
-import WireCryptobox
 import WireDataModel
 import XCTest
 

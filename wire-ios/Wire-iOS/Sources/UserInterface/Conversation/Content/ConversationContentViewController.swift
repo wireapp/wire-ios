@@ -120,7 +120,6 @@ final class ConversationContentViewController: UIViewController {
     let conversationCreationRepository: any ConversationCreationRepositoryProtocol
     var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
-    var userClientToken: Any?
     var isDigitalSignatureVerificationShown: Bool = false
 
     private var mediaPlaybackManager: MediaPlaybackManager?
