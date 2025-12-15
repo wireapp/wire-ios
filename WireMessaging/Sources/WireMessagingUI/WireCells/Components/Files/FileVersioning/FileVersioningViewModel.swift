@@ -204,7 +204,8 @@ final class FileVersioningViewModel: ObservableObject {
     ) -> [Date: [WireCellsNodeVersion]] {
         Dictionary(grouping: versions) { version in
             let date = version.modified ?? Date.distantPast
-            return Calendar.current.startOfDay(for: date)
+            let calendar = context.calendar
+            return calendar.startOfDay(for: date)
         }
     }
 
@@ -212,13 +213,14 @@ final class FileVersioningViewModel: ObservableObject {
         _ arg1: WireCellsNodeVersion,
         _ arg2: WireCellsNodeVersion
     ) -> Bool {
+        let calendar = context.calendar
         let date1 = arg1.modified ?? Date.distantPast
-        let components1 = Calendar.current.dateComponents([.hour, .minute, .second], from: date1)
-        let compared1 = Calendar.current.date(from: components1)
+        let components1 = calendar.dateComponents([.hour, .minute, .second], from: date1)
+        let compared1 = calendar.date(from: components1)
 
         let date2 = arg2.modified ?? Date.distantPast
-        let components2 = Calendar.current.dateComponents([.hour, .minute, .second], from: date2)
-        let compared2 = Calendar.current.date(from: components2)
+        let components2 = calendar.dateComponents([.hour, .minute, .second], from: date2)
+        let compared2 = calendar.date(from: components2)
 
         guard let compared1, let compared2 else { return false }
 
