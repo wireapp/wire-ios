@@ -71,15 +71,29 @@ final class FileVersioningViewModel: ObservableObject {
     @Published var alert: AlertModel?
     @Published var state: State
 
+    typealias DateFormattingContext = (
+        locale: Locale,
+        calendar: Calendar,
+        timeZone: TimeZone
+    )
+
+    let context: DateFormattingContext
+
     init(
         nodeID: UUID,
         name: String,
+        context: DateFormattingContext = (
+            Locale.autoupdatingCurrent,
+            Calendar.autoupdatingCurrent,
+            TimeZone.autoupdatingCurrent
+        ),
         fetchNodeVersionsUseCase: any WireCellsFetchNodeVersionsUseCaseProtocol,
         restoreNodeVersionUseCase: any WireCellsRestoreNodeVersionUseCaseProtocol,
         accentColorProvider: @escaping () -> WireAccentColor
     ) {
         self.nodeID = nodeID
         self.name = name
+        self.context = context
         self.fetchNodeVersionsUseCase = fetchNodeVersionsUseCase
         self.restoreNodeVersionUseCase = restoreNodeVersionUseCase
         self.accentColorProvider = accentColorProvider
@@ -227,19 +241,27 @@ final class FileVersioningViewModel: ObservableObject {
     // MARK: - Formatters
 
     private func formattedHeaderDate(_ date: Date) -> String {
-        let style = Date.FormatStyle()
-            .weekday(.wide)
-            .month(.abbreviated)
-            .day()
-            .year()
+        let style = Date.FormatStyle(
+            locale: context.locale,
+            calendar: context.calendar,
+            timeZone: context.timeZone
+        )
+        .weekday(.wide)
+        .month(.abbreviated)
+        .day()
+        .year()
 
         return date.formatted(style)
     }
 
     private func formattedItemDate(_ date: Date) -> String {
-        let style = Date.FormatStyle()
-            .hour(.defaultDigits(amPM: .abbreviated))
-            .minute()
+        let style = Date.FormatStyle(
+            locale: context.locale,
+            calendar: context.calendar,
+            timeZone: context.timeZone
+        )
+        .hour(.defaultDigits(amPM: .abbreviated))
+        .minute()
 
         return date.formatted(style)
     }

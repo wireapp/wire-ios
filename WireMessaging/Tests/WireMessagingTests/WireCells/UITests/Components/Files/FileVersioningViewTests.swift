@@ -101,6 +101,7 @@ final class FileVersioningViewTests: XCTestCase {
         let viewModel = FileVersioningViewModel(
             nodeID: .mockID1,
             name: "foo.jpg",
+            context: (Locale(identifier: "en_US_POSIX"), Calendar(identifier: .gregorian), TimeZone.gmt),
             fetchNodeVersionsUseCase: fetchNodeVersionUseCase,
             restoreNodeVersionUseCase: restoreNodeVersionUseCase,
             accentColorProvider: { .default }
@@ -108,9 +109,7 @@ final class FileVersioningViewTests: XCTestCase {
 
         switch testCase {
         case .success:
-            var mock = WireCellsNodeVersion.mock
-            mock.removeFirst() // this is set to current Date and will fail the snapshot tests
-            repository.getVersionsNodeID_MockValue = mock
+            repository.getVersionsNodeID_MockValue = WireCellsNodeVersion.mock
             await viewModel.fetch()
         case .restore:
             viewModel.state = .restoringVersion
