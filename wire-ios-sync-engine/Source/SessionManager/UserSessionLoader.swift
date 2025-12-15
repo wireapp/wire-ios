@@ -419,7 +419,6 @@ final class UserSessionLoader {
             isSyncV2Enabled: journal[.isSyncV2Enabled]
         )
 
-        let cryptoboxMigrationManager = CryptoboxMigrationManager()
         let coreCryptoKeyMigrationManager = CoreCryptoKeyMigrationManager(journal: journal)
 
         let coreCryptoProvider = CoreCryptoProvider(
@@ -428,7 +427,6 @@ final class UserSessionLoader {
             accountDirectory: coreDataStack.accountContainer,
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
             localDomain: backendMetadata.domain
         )
@@ -537,7 +535,6 @@ final class UserSessionLoader {
             coreDataStack: coreDataStack,
             earService: earService,
             mlsService: mlsService,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             proteusToMLSMigrationCoordinator: proteusToMLSMigrationCoordinator,
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: sharedContainerURL,
