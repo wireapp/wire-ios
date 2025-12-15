@@ -110,7 +110,13 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         _ contentViewController: ConversationContentViewController,
         didTriggerReplyingTo message: ZMConversationMessage
     ) {
-        let replyComposingView = contentViewController.createReplyComposingView(for: message)
+        let messageReplyAttachmentsViewModel = MessageReplyAttachmentsViewModel(
+            fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
+        )
+        let replyComposingView = contentViewController.createReplyComposingView(
+            for: message,
+            messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
+        )
         inputBarController.reply(to: message, composingView: replyComposingView)
     }
 

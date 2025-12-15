@@ -733,6 +733,8 @@
 
 "content.file.too_big" = "You can send files up to %@";
 
+"content.message.reply.files.count" = "%@ files";
+
 // Reactions
 "content.reactions.title" = "Select reaction";
 "content.reactions.search" = "Search for emoji";
