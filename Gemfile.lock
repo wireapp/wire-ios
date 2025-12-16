@@ -237,6 +237,7 @@ GEM
     nanaimo (0.4.0)
     nap (1.1.0)
     naturally (2.3.0)
+    nkf (0.2.0)
     octokit (10.0.0)
       faraday (>= 1, < 3)
       sawyer (~> 0.9)
@@ -316,6 +317,7 @@ DEPENDENCIES
   git
   httparty
   mutex_m
+  nkf
   rexml (>= 3.3.2)
   xcode-install
 
