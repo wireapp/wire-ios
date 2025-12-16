@@ -19,6 +19,7 @@
 import UIKit
 import WireDesign
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 typealias DismissAction = (_ completion: Completion?) -> Void
@@ -82,6 +83,7 @@ final class ConversationImagesViewController: UIViewController {
     let userSession: UserSession
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
 
     var dismissAction: DismissAction? = .none {
         didSet {
@@ -97,7 +99,8 @@ final class ConversationImagesViewController: UIViewController {
         inverse: Bool = false,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         assert(initialMessage.isImage)
 
@@ -107,6 +110,7 @@ final class ConversationImagesViewController: UIViewController {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
 
         super.init(nibName: .none, bundle: .none)
         let imagesMatch = CategoryMatch(including: .image, excluding: .GIF)
@@ -361,7 +365,8 @@ final class ConversationImagesViewController: UIViewController {
             message: message,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         imageViewController.delegate = self
         imageViewController.swipeToDismiss = swipeToDismiss

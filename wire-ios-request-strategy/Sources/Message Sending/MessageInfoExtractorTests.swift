@@ -32,7 +32,6 @@ final class MessageInfoExtractorTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
-        DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
 
         coreDataStack = CoreDataStack(
             account: .init(userName: "F", userIdentifier: .create()),

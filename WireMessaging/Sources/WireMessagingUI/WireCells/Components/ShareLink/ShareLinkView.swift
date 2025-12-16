@@ -232,6 +232,7 @@ struct ShareLinkView: View {
 #Preview {
     let item = FilesViewItem(
         id: UUID(),
+        eTag: "eTag",
         kind: .file,
         name: "some_file.pdf",
         filePath: "some/path",
@@ -239,6 +240,7 @@ struct ShareLinkView: View {
         modifiedAt: nil,
         icon: .document,
         tags: [],
+        isEditable: false,
         publicLinkId: UUID().uuidString,
     )
 

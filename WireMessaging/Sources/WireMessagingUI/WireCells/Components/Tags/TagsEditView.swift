@@ -303,6 +303,7 @@ struct TagsEditView: View {
 #Preview {
     let item = FilesViewItem(
         id: UUID(),
+        eTag: "etag",
         kind: .file,
         name: "some_file.pdf",
         filePath: "some/path",
@@ -310,6 +311,7 @@ struct TagsEditView: View {
         modifiedAt: nil,
         icon: .document,
         tags: ["Lorem", "Ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"],
+        isEditable: false,
         publicLinkId: nil
     )
 

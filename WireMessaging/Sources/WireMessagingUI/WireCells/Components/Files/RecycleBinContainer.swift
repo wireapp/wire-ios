@@ -102,6 +102,11 @@ package struct RecycleBinContainer: View {
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
                 createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
+                getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: nodesAPI),
+                getAssetUseCase: WireCellsGetAssetUseCase(
+                    localAssetRepository: localAssetRepository,
+                    fileCache: fileCache
+                ),
                 getPublicLinkData: WireCellsGetPublicLinkDataUseCase(nodesAPI: nodesAPI),
                 createPublicLink: WireCellsCreatePublicLinkUseCase(nodesAPI: nodesAPI),
                 deletePublicLink: WireCellsDeletePublicLinkUseCase(nodesAPI: nodesAPI),
@@ -119,6 +124,7 @@ package struct RecycleBinContainer: View {
             fileCache: fileCache,
             cellName: cellName,
             isFoldersEnabled: isFoldersEnabled,
+            isCollaboraEnabled: false,
             isRecycleBin: true,
             accentColorProvider: accentColorProvider
         )

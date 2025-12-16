@@ -18,6 +18,7 @@
 
 import UIKit
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 final class ConversationPreviewViewController: UIViewController {
@@ -33,6 +34,7 @@ final class ConversationPreviewViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.conversation = conversation
@@ -49,6 +51,7 @@ final class ConversationPreviewViewController: UIViewController {
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository,
             wireMessagingFactory: wireMessagingFactory
         )
         DeveloperToolsViewModel.context.currentConversation = conversation

@@ -23,7 +23,6 @@ public enum VoIPPushHelper {
     enum Key: String {
 
         case isCallKitAvailable
-        case loadedUserSessions
         case isAVSReady
         case knownCalls
 
@@ -38,26 +37,6 @@ public enum VoIPPushHelper {
 
         set {
             storage.set(newValue, forKey: Key.isCallKitAvailable.rawValue)
-        }
-    }
-
-    public static func setLoadedUserSessions(accountIDs: [UUID]) {
-        loadedUserSessions = accountIDs.map(\.uuidString)
-    }
-
-    public static func isUserSessionLoaded(accountID: UUID) -> Bool {
-        loadedUserSessions
-            .compactMap(UUID.init(uuidString:))
-            .contains(accountID)
-    }
-
-    private static var loadedUserSessions: [String] {
-        get {
-            storage.object(forKey: Key.loadedUserSessions.rawValue) as? [String] ?? []
-        }
-
-        set {
-            storage.set(newValue, forKey: Key.loadedUserSessions.rawValue)
         }
     }
 

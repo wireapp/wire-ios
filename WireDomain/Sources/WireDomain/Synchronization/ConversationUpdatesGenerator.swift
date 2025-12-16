@@ -49,16 +49,16 @@ public final class ConversationUpdatesGenerator: NSObject, ConversationUpdatesGe
             fetchedResultsController = createFetchRequestController()
             fetchedResultsController?.delegate = self
         }
+        await context.perform {
+            do {
+                try self.fetchedResultsController?.performFetch()
+            } catch {
+                WireLogger.conversation.error("error fetching conversations: \(String(describing: error))")
+            }
 
-        do {
-            try fetchedResultsController?.performFetch()
-        } catch {
-            WireLogger.conversation.error("error fetching conversations: \(String(describing: error))")
-        }
+            let conversations = self.fetchedResultsController?.fetchedObjects ?? []
+            for conversation in conversations {
 
-        let conversations = fetchedResultsController?.fetchedObjects ?? []
-        for conversation in conversations {
-            await context.perform {
                 if let id = conversation.qualifiedID {
                     self.onConversationUpdated(UpdateConversationItem(
                         repository: self.repository,
@@ -75,7 +75,11 @@ public final class ConversationUpdatesGenerator: NSObject, ConversationUpdatesGe
 
     private func createFetchRequestController() -> NSFetchedResultsController<ZMConversation> {
         let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
-        request.predicate = ZMConversation.predicateForNeedingToBeUpdatedFromBackend()
+        request.predicate = NSPredicate.all(of: [
+            ZMConversation.predicateForNeedingToBeUpdatedFromBackend(),
+            NSPredicate(format: "%K == NO", #keyPath(ZMConversation.isDeletedRemotely))
+        ])
+
         request.sortDescriptors = [NSSortDescriptor(key: ZMConversationLastServerTimeStampKey, ascending: true)]
         return NSFetchedResultsController(
             fetchRequest: request,

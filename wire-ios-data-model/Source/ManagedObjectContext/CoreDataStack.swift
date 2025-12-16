@@ -40,7 +40,7 @@ extension CoreDataStackError: LocalizedError {
     }
 }
 
-@objc
+@objc(ZMContextProvider)
 public protocol ContextProvider {
 
     var account: Account { get }
@@ -50,6 +50,7 @@ public protocol ContextProvider {
     var syncContext: NSManagedObjectContext { get }
     var searchContext: NSManagedObjectContext { get }
     var eventContext: NSManagedObjectContext { get }
+
 }
 
 extension URL {
@@ -114,8 +115,8 @@ public protocol CoreDataStackProtocol: ContextProvider {
 
 }
 
-@objcMembers
-public class CoreDataStack: NSObject, CoreDataStackProtocol {
+@objc @objcMembers
+public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvider {
 
     public let account: Account
 
@@ -400,13 +401,6 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
 
             context.accountDirectoryURL = self.accountContainer
             context.applicationContainerURL = self.applicationContainer
-
-            if !DeveloperFlag.proteusViaCoreCrypto.isOn {
-                context.setupUserKeyStore(
-                    accountDirectory: self.accountContainer,
-                    applicationContainer: self.applicationContainer
-                )
-            }
 
             context.undoManager = nil
             context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)

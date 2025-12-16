@@ -47,6 +47,7 @@ extension ZMUser: ObjectInSnapshot {
             #keyPath(ZMUser.readReceiptsEnabledChangedRemotely),
             ZMUserKeys.RichProfile,
             #keyPath(ZMUser.isApp),
+            #keyPath(ZMUser.isBot),
             #keyPath(ZMUser.serviceIdentifier),
             #keyPath(ZMUser.providerIdentifier),
             ZMUserKeys.legalHoldRequest,

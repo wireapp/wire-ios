@@ -513,7 +513,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             user: selfUser,
             userSession: viewModel.userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileViewControllerBuilder
+            selfProfileUIBuilder: selfProfileViewControllerBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 

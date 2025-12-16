@@ -60,7 +60,6 @@ class BaseTest: ZMTBaseTest {
     var applicationStatusDirectory: ApplicationStatusDirectory!
     var operationLoop: RequestGeneratingOperationLoop!
     var strategyFactory: StrategyFactory!
-    var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
     var mockEARService: MockEARServiceInterface!
     var mockProteusService: MockProteusServiceInterface!
     var mockMLSService: MockMLSServiceInterface!
@@ -147,9 +146,6 @@ class BaseTest: ZMTBaseTest {
             context.saveOrRollback()
         }
 
-        mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
-        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
-
         mockEARService = MockEARServiceInterface()
         mockEARService.enableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
         mockEARService.disableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
@@ -173,7 +169,6 @@ class BaseTest: ZMTBaseTest {
         applicationStatusDirectory = nil
         operationLoop = nil
         strategyFactory = nil
-        mockCryptoboxMigrationManager = nil
         mockEARService = nil
         mockProteusService = nil
         mockMLSDecryptionService = nil
@@ -198,7 +193,6 @@ class BaseTest: ZMTBaseTest {
             operationLoop: operationLoop,
             strategyFactory: strategyFactory,
             appLockConfig: AppLockController.LegacyConfig(),
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             earService: earService,
             contextStorage: MockLAContextStorable(),
             proteusService: mockProteusService,

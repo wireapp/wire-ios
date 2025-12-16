@@ -33,7 +33,6 @@
 @class ZMAssetClientMessage;
 @class LastUpdateEventRepository;
 
-@import WireCryptobox;
 @import WireImages;
 @class UserClient;
 

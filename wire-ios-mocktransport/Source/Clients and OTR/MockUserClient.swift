@@ -68,14 +68,6 @@ public class MockUserClient: NSManagedObject {
 
 public extension MockUserClient {
 
-    /// Identifier for the session in Cryptobox
-    var sessionIdentifier: EncryptionSessionIdentifier? {
-        guard let identifier, let userIdentifier = user?.identifier else {
-            return nil
-        }
-        return EncryptionSessionIdentifier(userId: userIdentifier, clientId: identifier)
-    }
-
     /// Returns a fetch request to fetch MockUserClients with the given predicate
     @objc
     static func fetchRequest(predicate: NSPredicate) -> NSFetchRequest<MockUserClient> {
@@ -169,28 +161,20 @@ public extension MockUserClient {
         newClient.deviceClass = deviceClass
         newClient.time = Date()
 
-        var generatedPrekeys: [[String: Any]]?
-        var generatedLastPrekey: String?
-        newClient.encryptionContext.perform { session in
-            generatedPrekeys = try? session.generatePrekeys(NSRange(location: 0, length: 5))
-            generatedLastPrekey = try? session.generateLastPrekey()
-        }
+        // Generate mock prekey strings (no encryption needed for mock transport)
+        let mockPrekeys = (0 ..< 5).map { _ in UUID().uuidString }
+        let mockLastPrekey = UUID().uuidString
 
-        guard let prekeys = generatedPrekeys, !prekeys.isEmpty,
-              let lastPrekey = generatedLastPrekey
-        else {
-            return nil
-        }
-
-        let mockPrekey = MockPreKey.insertNewKeys(
-            withPayload: prekeys.map { $0["prekey"] as! String },
+        let prekeys = MockPreKey.insertNewKeys(
+            withPayload: mockPrekeys,
             context: context
         )
-        newClient.prekeys = Set(mockPrekey)
+        newClient.prekeys = Set(prekeys)
 
-        let mockLastPrekey = MockPreKey.insertNewKey(withPrekey: lastPrekey, for: newClient, in: context)
-        mockLastPrekey.identifier = Int(CBOX_LAST_PREKEY_ID)
-        newClient.lastPrekey = mockLastPrekey
+        let lastPrekey = MockPreKey.insertNewKey(withPrekey: mockLastPrekey, for: newClient, in: context)
+        lastPrekey.identifier = Int(UInt16.max)
+        newClient.lastPrekey = lastPrekey
+
         return newClient
     }
 
@@ -218,82 +202,6 @@ public extension MockUserClient {
             "lon": locationLongitude
         ]
         return data as NSDictionary
-    }
-}
-
-// MARK: - Encryption and sessions
-
-@objc
-public extension MockUserClient {
-
-    static var mockEncryptionSessionDirectory: URL {
-        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-            .appendingPathComponent("mocktransport-encryptionDirectory")
-    }
-
-    internal static func encryptionContext(for user: MockUser?, clientId: String?) -> EncryptionContext {
-        let directory = MockUserClient.mockEncryptionSessionDirectory
-            .appendingPathComponent("mockclient_\(user?.identifier ?? "USER")_\(clientId ?? "IDENTIFIER")")
-        try! FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: [:])
-        return EncryptionContext(path: directory)
-    }
-
-    private var encryptionContext: EncryptionContext {
-        MockUserClient.encryptionContext(for: user, clientId: identifier)
-    }
-
-    /// Make sure that there is a session established between this client and the given client
-    /// If needed, it will use the last prekey to create a session
-    /// - returns: false if it was not possible to establish a session
-    func establishSession(client: MockUserClient) -> Bool {
-        guard let identifier = client.sessionIdentifier else { return false }
-        var hasSession = false
-        encryptionContext.perform { session in
-            if !session.hasSession(for: identifier) {
-                try? session.createClientSession(identifier, base64PreKeyString: client.lastPrekey.value)
-                hasSession = session.hasSession(for: identifier)
-            } else {
-                hasSession = true
-            }
-        }
-        return hasSession
-    }
-
-    /// Encrypt data from a client to a client. If there is no session between the two clients, it will create
-    /// one using the last prekey
-    static func encrypted(data: Data, from: MockUserClient, to: MockUserClient) -> Data {
-        var encryptedData: Data?
-        guard from.establishSession(client: to) else { fatalError() }
-        from.encryptionContext.perform { session in
-            encryptedData = try? session.encrypt(data, for: to.sessionIdentifier!)
-        }
-        return encryptedData!
-    }
-
-    /// Decrypt a message (possibly establishing a session, if there is no session) from a client to a client
-    static func decryptMessage(data: Data, from: MockUserClient, to: MockUserClient) -> Data {
-        var decryptedData: Data?
-        to.encryptionContext.perform { session in
-            if !session.hasSession(for: from.sessionIdentifier!) {
-                decryptedData = try? session.createClientSessionAndReturnPlaintext(
-                    for: from.sessionIdentifier!,
-                    prekeyMessage: data
-                )
-            } else {
-                decryptedData = try? session.decrypt(data, from: from.sessionIdentifier!)
-            }
-        }
-        return decryptedData ?? Data()
-    }
-
-    /// Returns whether there is a encryption session between self and the give client
-    func hasSession(with client: MockUserClient) -> Bool {
-        guard let identifier = client.sessionIdentifier else { return false }
-        var hasSession = false
-        encryptionContext.perform { session in
-            hasSession = session.hasSession(for: identifier)
-        }
-        return hasSession
     }
 }
 

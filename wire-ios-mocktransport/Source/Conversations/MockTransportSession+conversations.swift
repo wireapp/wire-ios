@@ -525,9 +525,9 @@ public extension MockTransportSession {
                 toConversation: conversation,
                 recipients: otrMetaData.recipients,
                 senderClient: senderClient,
-                createEventBlock: { recipient, messageData, decryptedData in
+                createEventBlock: { recipient, messageData in
                     let event = conversation.insertOTRMessage(from: senderClient, to: recipient, data: messageData)
-                    event.decryptedOTRData = decryptedData
+                    event.decryptedOTRData = messageData
                     return event
                 }
             )

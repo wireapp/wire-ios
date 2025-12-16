@@ -34,6 +34,7 @@ protocol WireMessagingFactoryProtocol {
     func makeDeleteDraftUseCase(cellName: String) -> WireCellsDeleteDraftUseCaseProtocol
     func makeRetryUploadDraftUseCase(cellName: String) -> WireCellsRetryUploadDraftUseCaseProtocol
     func makeDeleteNodesUseCase() -> WireCellsDeleteNodesUseCaseProtocol
+    func makeFetchNodeUseCase() -> WireCellsFetchNodeUseCaseProtocol
     @MainActor
     func makeFilesView(
         cellName: String,
@@ -46,11 +47,6 @@ protocol WireMessagingFactoryProtocol {
         accentColorProvider: @escaping () -> WireAccentColor
     ) -> UIViewController
 
-    @MainActor
-    func makeAttachmentsPreviewView(
-        attachments: [WireCellsMessageAttachment],
-        alignment: HorizontalAlignment
-    ) -> UIViewController
     func makeConversationCellProvider(
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProviderProtocol
