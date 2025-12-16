@@ -64,6 +64,7 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
 
         var faultyConversations: [(MLSGroupID, WireNetwork.QualifiedID)] = []
 
+        // Find faulty conversations
         for conversation in allMLSConversations {
             let (groupID, qualifiedID) = await context.perform {
                 (conversation.mlsGroupID, conversation.qualifiedID)
@@ -73,7 +74,17 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
                 continue
             }
 
-            let currentRemovalKey = try await mlsService.externalSenderKey(groupID: groupID)
+            let currentRemovalKey: Data
+            do {
+                currentRemovalKey = try await mlsService.externalSenderKey(groupID: groupID)
+            } catch {
+                WireLogger.mls.error(
+                    "failed to get current removal key for a group, skipping: \(String(describing: error))",
+                    attributes: .safePublic
+                )
+                continue
+            }
+
 
             // The current removal key is faulty.
             if currentRemovalKey == Self.faultyRemovalKey {
@@ -89,18 +100,34 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
             attributes: .safePublic
         )
 
+        // Repair each faulty conversation
         for (groupID, qualifiedID) in faultyConversations {
-            guard let remoteConversation = try? await conversationsAPI
-                .getConversations(
+            let remoteConversation: WireNetwork.Conversation?
+            do {
+                remoteConversation = try await conversationsAPI.getConversations(
                     for: [qualifiedID]
-                ).found.first else {
-                return
+                ).found.first
+            } catch {
+                WireLogger.mls.error(
+                    "failed to epoch for a group, skipping: \(String(describing: error))",
+                    attributes: .safePublic
+                )
+                continue
+            }
+
+            guard let remoteConversation else {
+                WireLogger.mls.error(
+                    "remote conversation for a group not found, skipping",
+                    attributes: .safePublic
+                )
+                continue
             }
 
             WireLogger.mls.debug(
                 "initiating reset for faulty conversation: \(qualifiedID)",
                 attributes: .safePublic
             )
+
             let epoch = UInt64(remoteConversation.epoch ?? 0)
             await initiateResetUseCase.invoke(groupID: groupID, epoch: epoch)
         }
