@@ -16,27 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-
-/// A cached `WireCellsNode`.
-///
-/// A `nil` value indicates that the node was not found on the server, for example it may have been deleted. This is
-/// different from the value never having been added to the cache.
-package struct WireCellsNodeCacheItem {
-
-    package let node: WireCellsNode?
-
-}
+public import Foundation
 
 // sourcery: AutoMockable
-/// Caches `WireCellsNode` values.
-package protocol WireCellsNodeCacheProtocol: Sendable {
-
-    /// Sets a `WireCellsNodeCacheItem` for a given `nodeID`.
-    func setItem(_ value: WireCellsNodeCacheItem, for nodeID: UUID) async
-
-    /// Returns a `WireCellsNodeCacheItem` for a given `nodeID`, or `nil` if no value is cached.
-    @MainActor
-    func item(for nodeID: UUID) -> WireCellsNodeCacheItem?
-
+public protocol WireCellsFetchNodeUseCaseProtocol: Sendable {
+    func invoke(nodeID: UUID) -> AsyncThrowingStream<WireCellsNode?, any Error>
 }
