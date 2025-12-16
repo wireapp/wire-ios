@@ -29,7 +29,8 @@ public protocol RepairRemovalKeysUseCaseProtocol {
 public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
 
     // TODO: Fill in
-    static let faultyRemovalKey = Data(base64Encoded: "BM036midcNiOMgny9m7N5uS3n6hB3JBJRNGUPqT0zNMQzLzOypHL09PSMITiMLJoVF3OZKQtwZf8/mkxrVtt8nU=")!
+    static let faultyRemovalKey =
+        Data(base64Encoded: "BM036midcNiOMgny9m7N5uS3n6hB3JBJRNGUPqT0zNMQzLzOypHL09PSMITiMLJoVF3OZKQtwZf8/mkxrVtt8nU=")!
     static let affectedDomain = "bella.wire.link"
 
     private let context: NSManagedObjectContext
@@ -84,7 +85,6 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
                 )
                 continue
             }
-
 
             // The current removal key is faulty.
             if currentRemovalKey == Self.faultyRemovalKey {
