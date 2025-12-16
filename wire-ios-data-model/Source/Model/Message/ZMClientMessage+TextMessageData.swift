@@ -60,7 +60,18 @@ extension ZMClientMessage: TextMessageData {
         // Quotes are ignored in edits but keep it to mark that the message has quote for us locally
         let editedText = Text(content: text, mentions: mentions, linkPreviews: [], replyingTo: quote as? ZMOTRMessage)
         let editNonce = UUID()
-        let content = MessageEdit(replacingMessageID: nonce, text: editedText)
+        let content = if let multipartAttachments {
+            MessageEdit(
+                replacingMessageID: nonce,
+                multipart: .init(text: editedText, attachments: multipartAttachments)
+            )
+        } else {
+            MessageEdit(
+                replacingMessageID: nonce,
+                text: editedText
+            )
+        }
+        
         let updatedMessage = GenericMessage(content: content, nonce: editNonce)
 
         do {
@@ -78,5 +89,21 @@ extension ZMClientMessage: TextMessageData {
         linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
         linkAttachments = nil
         delivered = false
+    }
+    
+    var multipartAttachments: [GenericMessageProtocol.Attachment]? {
+        switch underlyingMessage?.content {
+        case .multipart(let multipart):
+            multipart.attachments
+        case .edited(let messageEdit):
+            switch messageEdit.content {
+            case .multipart(let data):
+                data.attachments
+            default:
+                nil
+            }
+        default:
+            nil
+        }
     }
 }
