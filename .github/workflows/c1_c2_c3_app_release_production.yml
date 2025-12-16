@@ -26,6 +26,7 @@ jobs:
       is_cloud_build: false
       countly_enabled: false
       skip_security_tests: false
+      notify_secret: WIRE_IOS_BUILD_WEBHOOK
     secrets: inherit
 
 
@@ -37,6 +38,7 @@ jobs:
       is_cloud_build: false
       countly_enabled: false
       skip_security_tests: false
+      notify_secret: WIRE_IOS_BUILD_WEBHOOK
     secrets: inherit
   
   column_3_production:
@@ -47,4 +49,5 @@ jobs:
       is_cloud_build: false
       countly_enabled: false
       skip_security_tests: false
+      notify_secret: WIRE_IOS_BUILD_WEBHOOK
     secrets: inherit

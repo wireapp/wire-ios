@@ -271,12 +271,12 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .withBody(body, contentType: .json)
             .build()
 
-        let (data, response) = try await networkService.executeRequest(request)
+        let (_, response) = try await networkService.executeRequest(request)
 
         try ResponseParser()
             .success(code: .ok)
             .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
-            .parse(code: response.statusCode, data: data)
+            .parse(code: response.statusCode, data: nil)
     }
 
     func requestEmailVerificationCode(for email: String) async throws {
