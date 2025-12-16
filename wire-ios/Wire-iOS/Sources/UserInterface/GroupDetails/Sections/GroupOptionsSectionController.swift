@@ -54,7 +54,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             case .guests:
                 user.canModifyGuestsAccessControlSettings(in: conversation)
             case .services:
-                user.canModifyGuestsAccessControlSettings(in: conversation) && conversation.botCanBeAdded
+                user.canModifyGuestsAccessControlSettings(in: conversation) && conversation.botCanBeAdded // TODO: in a proteus conversation we don't want to show the toggle unless bots are whitelisted
             case .timeout:
                 user.canModifyEphemeralSettings(in: conversation) && !conversation.isCellsEnabled
             case .channelHistoryDepth:
