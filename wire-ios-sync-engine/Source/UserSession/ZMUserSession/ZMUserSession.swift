@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: are feature configs cached? are clients informed about changes?
+
 public import WireFoundation
 
 import Combine

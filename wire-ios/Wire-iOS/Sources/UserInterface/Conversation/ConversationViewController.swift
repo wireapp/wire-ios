@@ -33,7 +33,7 @@ final class ConversationViewController: UIViewController {
 
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
-    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol // TODO: maybe redundant
     private let visibleMessage: ZMConversationMessage?
     private let getParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
     var actionControllerForSelectedEmoji: ConversationMessageActionController?
@@ -114,28 +114,35 @@ final class ConversationViewController: UIViewController {
     var updateLeftNavigationBarItemsTask: Task<Void, Never>?
 
     var participantsController: UIViewController? {
+        get async {
 
-        var viewController: UIViewController?
+            let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository.isFeatureEnabled(.apps) ?? false
 
-        switch conversation.conversationType {
-        case .group:
-            viewController = GroupDetailsViewController(
-                conversation: conversation,
-                userSession: userSession,
-                mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder,
-                conversationCreationRepository: conversationCreationRepository,
-                isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
-            )
-        case .`self`, .oneOnOne, .connection:
-            viewController = createUserDetailViewController()
-        case .invalid:
-            fatal("Trying to open invalid conversation")
-        default:
-            break
+            var viewController: UIViewController?
+
+            switch conversation.conversationType {
+            case .group:
+                viewController = GroupDetailsViewController(
+                    conversation: conversation,
+                    userSession: userSession,
+                    mainCoordinator: mainCoordinator,
+                    selfProfileUIBuilder: selfProfileUIBuilder,
+                    conversationCreationRepository: conversationCreationRepository,
+                    isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+                    areLegacyBotsAvailable: areLegacyBotsAvailable,
+                    isAppsFeatureEnabled: isAppsFeatureEnabled
+                )
+            case .`self`, .oneOnOne, .connection:
+                viewController = createUserDetailViewController()
+            case .invalid:
+                fatal("Trying to open invalid conversation")
+            default:
+                break
+            }
+            guard let viewController else { return nil }
+            return UINavigationController(rootViewController: viewController)
         }
-        guard let viewController else { return nil }
-        return UINavigationController(rootViewController: viewController)
     }
 
     private let individualChangesFactory: MessagesIndividualUpdatesFactory
@@ -855,8 +862,10 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
     @objc
     private func onConversationDetailsPressed() {
-        if let superview = titleView.superview, let participantsController {
-            presentParticipantsViewController(participantsController, from: superview)
+        Task { @MainActor in
+            if let superview = titleView.superview, let participantsController = await participantsController {
+                presentParticipantsViewController(participantsController, from: superview)
+            }
         }
     }
 

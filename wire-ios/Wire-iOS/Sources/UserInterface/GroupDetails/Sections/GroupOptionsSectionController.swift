@@ -105,12 +105,21 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         conversation: GroupDetailsConversationType,
         user: UserType,
         delegate: GroupOptionsSectionControllerDelegate,
-        syncCompleted: Bool
+        syncCompleted: Bool,
+        areLegacyBotsAvailable: Bool,
+        isAppsFeatureEnabled: Bool
     ) {
         self.delegate = delegate
         self.conversation = conversation
         self.syncCompleted = syncCompleted
-        self.options = Option.allCases.filter { $0.accessible(in: conversation, by: user) }
+        self.options = Option.allCases.filter { option in
+            option.accessible(
+                in: conversation,
+                by: user,
+                areLegacyBotsAvailable: areLegacyBotsAvailable,
+                isAppsFeatureEnabled: isAppsFeatureEnabled
+            )
+        }
     }
 
     // MARK: - Collection View

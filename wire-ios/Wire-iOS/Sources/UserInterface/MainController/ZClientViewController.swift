@@ -543,17 +543,23 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter conversation: conversation to open
     func openDetailScreen(for conversation: ZMConversation) {
-        let controller = GroupDetailsViewController(
-            conversation: conversation,
-            userSession: userSession,
-            mainCoordinator: .init(mainCoordinator: mainCoordinator),
-            selfProfileUIBuilder: selfProfileViewControllerBuilder,
-            conversationCreationRepository: conversationCreationRepository,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
-        )
-        let navController = UINavigationController(rootViewController: controller)
-        navController.modalPresentationStyle = .formSheet
-        present(navController, animated: true)
+        Task {
+            let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository.isFeatureEnabled(.apps) ?? false
+            let controller = GroupDetailsViewController(
+                conversation: conversation,
+                userSession: userSession,
+                mainCoordinator: .init(mainCoordinator: mainCoordinator),
+                selfProfileUIBuilder: selfProfileViewControllerBuilder,
+                conversationCreationRepository: conversationCreationRepository,
+                isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+                areLegacyBotsAvailable: areLegacyBotsAvailable,
+                isAppsFeatureEnabled: isAppsFeatureEnabled
+            )
+            let navController = UINavigationController(rootViewController: controller)
+            navController.modalPresentationStyle = .formSheet
+            present(navController, animated: true)
+        }
     }
 
     @objc
