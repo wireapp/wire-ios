@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireMessagingDomain
 import WireReusableUIComponents
 
@@ -136,7 +137,7 @@ private extension FileVersioningView {
             }
         )
         .accessibilityLabel(Accessibility.Files.close)
-        .accessibilityIdentifier("closeButton")
+        .accessibilityIdentifier(Locators.FileVersioningPage.closeButton.rawValue)
     }
 }
 
