@@ -73,6 +73,7 @@ struct ZClientControllerBuilder {
             isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
         )
     }
+
 }
 
 private struct DefaultAccessTokenProvider: AccessTokenProvider {
@@ -94,6 +95,7 @@ private struct DefaultAccessTokenProvider: AccessTokenProvider {
             expirationDate: token.expirationDate
         )
     }
+
 }
 
 extension FileAssetCache: WireMessagingDomain.FileCache, @unchecked @retroactive Sendable {}

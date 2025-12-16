@@ -200,6 +200,11 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
         hasEndedAllCalls = true
     }
 
+    var invokeDidEndAllCalls: Bool = false
+    func didEndAllCalls() {
+        invokeDidEndAllCalls = true
+    }
+
 }
 
 class CallKitManagerTest: DatabaseTest {

@@ -31,6 +31,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
     private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: any SelfProfileViewControllerBuilderProtocol
+    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
     private let collectionViewController: SectionCollectionViewController
     private let conversation: GroupDetailsConversationType
     private let footerView = GroupDetailsFooterView()
@@ -55,12 +56,14 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {
         self.conversation = conversation
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
         self.collectionViewController = SectionCollectionViewController()
         super.init(nibName: nil, bundle: nil)
@@ -395,7 +398,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
 
         detailsViewController.delegate = self
@@ -421,7 +425,8 @@ extension GroupDetailsViewController {
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 
@@ -525,7 +530,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             profileViewControllerDelegate: self,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
 
         navigationController?.pushViewController(viewController, animated: true)
@@ -636,4 +642,5 @@ extension ZMConversation {
             user.refreshData()
         }
     }
+
 }

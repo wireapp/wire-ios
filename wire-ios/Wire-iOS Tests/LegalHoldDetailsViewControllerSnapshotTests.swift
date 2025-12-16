@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
 
@@ -65,7 +66,8 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
                 conversation: conversation,
                 userSession: self.userSession,
                 mainCoordinator: self.mockMainCoordinator,
-                selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+                selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+                conversationCreationRepository: MockConversationCreationRepositoryProtocol()
             )
             return self.sut.wrapInNavigationController()
         }
@@ -116,7 +118,8 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
                 conversation: conversation,
                 userSession: self.userSession,
                 mainCoordinator: self.mockMainCoordinator,
-                selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+                selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+                conversationCreationRepository: MockConversationCreationRepositoryProtocol()
             )
             return self.sut.wrapInNavigationController()
         }

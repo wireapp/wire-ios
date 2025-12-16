@@ -61,6 +61,7 @@ final class FilesItemViewModel: ObservableObject {
     let subtitle: String?
     let icon: FileIcon
     let isInRecycleBin: Bool
+    let isFoldersEnabled: Bool
 
     struct TagsInfo {
         let firstTag: String?
@@ -81,6 +82,8 @@ final class FilesItemViewModel: ObservableObject {
         calendar: Calendar = .autoupdatingCurrent,
         timeZone: TimeZone = .autoupdatingCurrent,
         isInRecycleBin: Bool,
+        isFoldersEnabled: Bool
+
     ) {
         self.nodeID = item.id
         self.item = item
@@ -96,6 +99,7 @@ final class FilesItemViewModel: ObservableObject {
         self.icon = item.icon
         self.localAssetRepository = localAssetRepository
         self.isInRecycleBin = isInRecycleBin
+        self.isFoldersEnabled = isFoldersEnabled
 
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
             self?.asset = asset
