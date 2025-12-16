@@ -297,7 +297,13 @@ final class ConversationViewController: UIViewController {
         updateInputBarVisibility()
 
         if let quote = conversation.draftMessage?.quote, !quote.hasBeenDeleted, let contentViewController {
-            inputBarController.addReplyComposingView(contentViewController.createReplyComposingView(for: quote))
+            let messageReplyAttachmentsViewModel = MessageReplyAttachmentsViewModel(
+                fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
+            )
+            inputBarController.addReplyComposingView(contentViewController.createReplyComposingView(
+                for: quote,
+                messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
+            ))
         }
 
         resolveConversationIfOneOnOne()
