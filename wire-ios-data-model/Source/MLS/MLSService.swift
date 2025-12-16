@@ -1510,7 +1510,6 @@ public final class MLSService: MLSServiceInterface {
                     // otherwise assume that things will sort themselves out through conversation reset.
                     let feature = await featureRepository.fetchAllowedGlobalOperations()
                     if feature.status == .disabled || feature.config.mlsConversationReset == false {
-                        // check if this can be removed
                         brokenGroupIDs.insert(groupID)
                     }
 
@@ -1822,7 +1821,7 @@ public final class MLSService: MLSServiceInterface {
         )
     }
 
-    public func subConferenceConversation(parentGroupID: MLSGroupID) async -> MLSGroupID? {
+    public func conferenceSubconversation(parentGroupID: MLSGroupID) async -> MLSGroupID? {
         await subconversationGroupIDRepository.fetchSubconversationGroupID(
             forType: .conference,
             parentGroupID: parentGroupID

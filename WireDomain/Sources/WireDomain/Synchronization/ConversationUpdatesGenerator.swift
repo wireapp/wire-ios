@@ -40,7 +40,7 @@ public final class ConversationUpdatesGenerator: NSObject, IncrementalGeneratorP
     /// Starts monitoring and triggers pulls for any needingToBeUpdatedFromBackend conversations.
     public func start() async {
         if fetchedResultsController == nil {
-            fetchedResultsController = createFetchRequestController()
+            fetchedResultsController = createFetchedResultsController()
             fetchedResultsController?.delegate = self
         }
 
@@ -67,7 +67,7 @@ public final class ConversationUpdatesGenerator: NSObject, IncrementalGeneratorP
         fetchedResultsController = nil
     }
 
-    private func createFetchRequestController() -> NSFetchedResultsController<ZMConversation> {
+    private func createFetchedResultsController() -> NSFetchedResultsController<ZMConversation> {
         let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
         request.predicate = ZMConversation.predicateForNeedingToBeUpdatedFromBackend()
         request.sortDescriptors = [NSSortDescriptor(key: ZMConversationLastServerTimeStampKey, ascending: true)]

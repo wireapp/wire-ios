@@ -47,7 +47,7 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
 
     public func start() async {
         if fetchedResultsController == nil {
-            fetchedResultsController = createFetchRequestController()
+            fetchedResultsController = createFetchedResultsController()
             fetchedResultsController?.delegate = self
         }
 
@@ -75,7 +75,7 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
         scheduledTasks.removeAll()
     }
 
-    private func createFetchRequestController() -> NSFetchedResultsController<ZMConversation> {
+    private func createFetchedResultsController() -> NSFetchedResultsController<ZMConversation> {
         let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
         request.predicate = ZMConversation.commitPendingProposalDatePredicate()
         request.sortDescriptors = [ZMConversation.sortCommitPendingProsalsByDateAscending()]
@@ -106,6 +106,8 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
         // Reschedule (cancel previous if any)
         scheduledTasks[conversationID]?.cancel()
 
+        // we create a task that will generate a workItem in time because we don't want to block the WorkAgent from
+        // executing other workItems
         let task = Task { [repository, mlsService, onCommitPendingProposals] in
 
             let delay = timestamp.timeIntervalSinceNow
@@ -128,7 +130,7 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
             )
 
             // Enqueue subconversation item if any
-            if let subgroupID = await mlsService.subConferenceConversation(parentGroupID: mlsGroupID) {
+            if let subgroupID = await mlsService.conferenceSubconversation(parentGroupID: mlsGroupID) {
                 onCommitPendingProposals(
                     CommitPendingProposalItem(
                         repository: repository,

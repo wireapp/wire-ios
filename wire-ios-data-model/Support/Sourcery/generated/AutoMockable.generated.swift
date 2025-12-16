@@ -4575,13 +4575,13 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
     }
 
-    // MARK: - subConferenceConversation
+    // MARK: - conferenceSubconversation
 
     public var subConferenceConversationParentGroupID_Invocations: [MLSGroupID] = []
     public var subConferenceConversationParentGroupID_MockMethod: ((MLSGroupID) async -> MLSGroupID?)?
     public var subConferenceConversationParentGroupID_MockValue: MLSGroupID??
 
-    public func subConferenceConversation(parentGroupID: MLSGroupID) async -> MLSGroupID? {
+    public func conferenceSubconversation(parentGroupID: MLSGroupID) async -> MLSGroupID? {
         subConferenceConversationParentGroupID_Invocations.append(parentGroupID)
 
         if let mock = subConferenceConversationParentGroupID_MockMethod {
