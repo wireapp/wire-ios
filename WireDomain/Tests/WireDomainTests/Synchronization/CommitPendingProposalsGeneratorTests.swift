@@ -38,7 +38,7 @@ class CommitPendingProposalsGeneratorTests {
         repository.isSelfAnActiveMemberIn_MockValue = true
 
         self.mockMLSService = MockMLSServiceInterface()
-        mockMLSService.subConferenceConversationParentGroupID_MockMethod = { _ in nil }
+        mockMLSService.conferenceSubconversationParentGroupID_MockMethod = { _ in nil }
 
         self.coreDataStack = try await coreDataStackHelper.createStack()
 

@@ -4577,19 +4577,19 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     // MARK: - conferenceSubconversation
 
-    public var subConferenceConversationParentGroupID_Invocations: [MLSGroupID] = []
-    public var subConferenceConversationParentGroupID_MockMethod: ((MLSGroupID) async -> MLSGroupID?)?
-    public var subConferenceConversationParentGroupID_MockValue: MLSGroupID??
+    public var conferenceSubconversationParentGroupID_Invocations: [MLSGroupID] = []
+    public var conferenceSubconversationParentGroupID_MockMethod: ((MLSGroupID) async -> MLSGroupID?)?
+    public var conferenceSubconversationParentGroupID_MockValue: MLSGroupID??
 
     public func conferenceSubconversation(parentGroupID: MLSGroupID) async -> MLSGroupID? {
-        subConferenceConversationParentGroupID_Invocations.append(parentGroupID)
+        conferenceSubconversationParentGroupID_Invocations.append(parentGroupID)
 
-        if let mock = subConferenceConversationParentGroupID_MockMethod {
+        if let mock = conferenceSubconversationParentGroupID_MockMethod {
             return await mock(parentGroupID)
-        } else if let mock = subConferenceConversationParentGroupID_MockValue {
+        } else if let mock = conferenceSubconversationParentGroupID_MockValue {
             return mock
         } else {
-            fatalError("no mock for `subConferenceConversationParentGroupID`")
+            fatalError("no mock for `conferenceSubconversationParentGroupID`")
         }
     }
 
