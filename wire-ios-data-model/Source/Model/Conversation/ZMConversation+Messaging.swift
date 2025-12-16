@@ -224,8 +224,8 @@ public extension ZMConversation {
         var matchingDomain: NSPredicate?
         if let domain {
             matchingDomain = NSPredicate(
-                format: "%K == \(domain)",
-                argumentArray: [Self.domainKey()]
+                format: "%K == %@",
+                argumentArray: [Self.domainKey(), domain]
             )
         }
 
