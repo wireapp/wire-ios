@@ -26,9 +26,7 @@ import WireLogging
 /// - When a user is marked as `needsToBeUpdatedFromBackend`.
 ///
 public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObjectSyncDelegate {
-
     var isFetchingAllConnectedUsers: Bool = false
-    let syncProgress: SyncProgress
 
     let userProfileByID: IdentifierObjectSync<UserProfileByIDTranscoder>
     let userProfileByQualifiedID: IdentifierObjectSync<UserProfileByQualifiedIDTranscoder>
@@ -38,7 +36,6 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 
     let actionSync: EntityActionSync
 
-    let oneOnOneResolver: any OneOnOneResolverInterface
     private let apiVersion: WireTransport.APIVersion?
     private let localDomain: String?
     private let isFederationEnabled: Bool
@@ -46,12 +43,10 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
     public init(
         managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        oneOnOneResolver: any OneOnOneResolverInterface,
         apiVersion: WireTransport.APIVersion?,
         localDomain: String?,
         isFederationEnabled: Bool
     ) {
-        self.oneOnOneResolver = oneOnOneResolver
         self.userProfileByIDTranscoder = UserProfileByIDTranscoder(
             context: managedObjectContext,
             isFederationEnabled: isFederationEnabled
@@ -110,6 +105,14 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
                 userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
             }
         }
+    }
+
+    public func didFinishSyncingAllObjects() {
+        // do nothing
+    }
+    
+    public func didFailToSyncAllObjects() {
+        // do nothing
     }
 
 }

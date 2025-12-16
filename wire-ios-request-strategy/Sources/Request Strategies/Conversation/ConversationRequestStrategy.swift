@@ -23,21 +23,11 @@ import WireLogging
 public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource,
     ZMContextChangeTrackerSource {
 
-    let syncProgress: SyncProgress
-    let conversationIDsSync: PaginatedSync<Payload.PaginatedConversationIDList>
-    let conversationQualifiedIDsSync: PaginatedSync<Payload.PaginatedQualifiedConversationIDList>
-
     let conversationByIDTranscoder: ConversationByIDTranscoder
     let conversationByIDSync: IdentifierObjectSync<ConversationByIDTranscoder>
 
     let conversationByQualifiedIDTranscoder: ConversationByQualifiedIDTranscoder
     let conversationByQualifiedIDSync: IdentifierObjectSync<ConversationByQualifiedIDTranscoder>
-
-    let conversationByIDListTranscoder: ConversationByIDListTranscoder
-    let conversationByIDListSync: IdentifierObjectSync<ConversationByIDListTranscoder>
-
-    let conversationByQualifiedIDListTranscoder: ConversationByQualifiedIDListTranscoder
-    let conversationByQualifiedIDListSync: IdentifierObjectSync<ConversationByQualifiedIDListTranscoder>
 
     lazy var modifiedSync: ZMUpstreamModifiedObjectSync = .init(
         transcoder: self,
@@ -62,7 +52,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         ZMConversationSilencedChangedTimeStampKey
     ]
 
-    let conversationEventProcessor: ConversationEventProcessor
+    let conversationEventProcessor: ConversationEventProcessor // TO KEEP
 
     let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
     private let apiVersion: WireTransport.APIVersion?
@@ -71,7 +61,6 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        syncProgress: SyncProgress,
         mlsService: MLSServiceInterface,
         removeLocalConversation: RemoveLocalConversationUseCaseProtocol,
         apiVersion: WireTransport.APIVersion?,
@@ -79,41 +68,6 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         isFederationEnabled: Bool
     ) {
         self.removeLocalConversation = removeLocalConversation
-
-        self.syncProgress = syncProgress
-        self.conversationIDsSync = PaginatedSync<Payload.PaginatedConversationIDList>(
-            basePath: "/conversations/ids",
-            pageSize: 32,
-            context: managedObjectContext
-        )
-
-        self.conversationQualifiedIDsSync = PaginatedSync<Payload.PaginatedQualifiedConversationIDList>(
-            basePath: "/conversations/list-ids",
-            pageSize: 500,
-            method: .post,
-            context: managedObjectContext
-        )
-
-        self.conversationByIDListTranscoder = ConversationByIDListTranscoder(
-            context: managedObjectContext,
-            localDomain: localDomain,
-            isFederationEnabled: isFederationEnabled
-        )
-        self.conversationByIDListSync = IdentifierObjectSync(
-            managedObjectContext: managedObjectContext,
-            transcoder: conversationByIDListTranscoder
-        )
-
-        self.conversationByQualifiedIDListTranscoder = ConversationByQualifiedIDListTranscoder(
-            context: managedObjectContext,
-            removeLocalConversationUseCase: removeLocalConversation,
-            localDomain: localDomain,
-            isFederationEnabled: isFederationEnabled
-        )
-        self.conversationByQualifiedIDListSync = IdentifierObjectSync(
-            managedObjectContext: managedObjectContext,
-            transcoder: conversationByQualifiedIDListTranscoder
-        )
 
         self.conversationByIDTranscoder = ConversationByIDTranscoder(
             context: managedObjectContext,
@@ -198,16 +152,9 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             .allowsRequestsDuringQuickSync,
             .allowsRequestsWhileWaitingForWebsocket
         ]
-
-        conversationByIDListSync.delegate = self
-        conversationByQualifiedIDListSync.delegate = self
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        if syncProgress.currentSyncPhase == .fetchingConversations {
-            fetchAllConversations(for: apiVersion)
-        }
-
         return requestGenerators.nextRequest(for: apiVersion)
     }
 
@@ -225,90 +172,18 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             }
         }
     }
-
-    func fetchAllConversations(for apiVersion: APIVersion) {
-        guard !isFetchingAllConversations else { return }
-
-        isFetchingAllConversations = true
-
-        // Mark all existing conversations to be re-fetched since they might have
-        // been deleted. If not the flag will be reset after syncing the conversations
-        // with the BE and no extra work will be done.
-        ZMUser.selfUser(in: managedObjectContext).conversations.forEach {
-            $0.needsToBeUpdatedFromBackend = true
-        }
-
-        switch apiVersion {
-        case .v0:
-            conversationIDsSync.fetch { [weak self] result in
-                switch result {
-                case let .success(conversationIDList):
-                    self?.conversationByIDListSync.sync(identifiers: conversationIDList.conversations)
-                case .failure:
-                    self?.syncProgress.failCurrentSyncPhase(phase: .fetchingConversations)
-                }
-            }
-
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
-            conversationQualifiedIDsSync.fetch { [weak self] result in
-                switch result {
-                case let .success(qualifiedConversationIDList):
-
-                    // here we could use a different sync, or do the switch inside.
-                    self?.conversationByQualifiedIDListSync.sync(identifiers: qualifiedConversationIDList.conversations)
-                case .failure:
-                    self?.syncProgress.failCurrentSyncPhase(phase: .fetchingConversations)
-                }
-            }
-        }
-    }
-
+    
     public var requestGenerators: [ZMRequestGenerator] {
-        if syncProgress.currentSyncPhase == .fetchingConversations {
-            [
-                conversationIDsSync,
-                conversationQualifiedIDsSync,
-                conversationByIDListSync,
-                conversationByQualifiedIDListSync
-            ]
-        } else {
             [
                 conversationByIDSync,
                 conversationByQualifiedIDSync,
                 modifiedSync,
                 actionSync
             ]
-        }
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [modifiedSync]
-    }
-
-}
-
-extension ConversationRequestStrategy: IdentifierObjectSyncDelegate {
-
-    public func didFinishSyncingAllObjects() {
-        guard
-            syncProgress.currentSyncPhase == .fetchingConversations,
-            conversationIDsSync.status == .done,
-            conversationQualifiedIDsSync.status == .done,
-            !conversationByIDListSync.isSyncing,
-            !conversationByQualifiedIDListSync.isSyncing
-        else {
-            return
-        }
-
-        syncProgress.finishCurrentSyncPhase(phase: .fetchingConversations)
-        isFetchingAllConversations = false
-    }
-
-    public func didFailToSyncAllObjects() {
-        if syncProgress.currentSyncPhase == .fetchingConversations {
-            syncProgress.failCurrentSyncPhase(phase: .fetchingConversations)
-            isFetchingAllConversations = false
-        }
     }
 
 }
@@ -381,9 +256,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         }
 
         // There is one case where you end up here:
-        // 1) selfUser edits the conversation name: a save will be enqueue when user is done editing
-        // Note: when another user edited the conversation name, ConversationEventProcessor is called directly as
-        // EventAsyncConsumer and a save will be done in EventProcessor
+        // selfUser edits the conversation name: a save will be enqueue when user is done editing
         conversationEventProcessor.processConversationRenamePayload(payload)
 
         return false

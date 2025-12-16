@@ -56,7 +56,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     weak var delegate: SyncAgentDelegate?
     
     private let journal: Journal
-    private let lastUpdateEventIDRepository: any LastEventIDRepositoryInterface
     private let initialSyncProvider: any InitialSyncProvider
     private let incrementalSyncProvider: any IncrementalSyncProvider
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
@@ -83,7 +82,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     
     init(
         journal: Journal,
-        lastUpdateEventIDRepository: any LastEventIDRepositoryInterface,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         initialSyncProvider: any InitialSyncProvider,
         incrementalSyncProvider: any IncrementalSyncProvider,
@@ -94,7 +92,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         networkStatePublisher: AnyPublisher<NetworkState, Never>
     ) {
         self.journal = journal
-        self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
         self.coreCryptoProvider = coreCryptoProvider
         self.initialSyncProvider = initialSyncProvider
         self.incrementalSyncProvider = incrementalSyncProvider

@@ -73,13 +73,11 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
                            applicationStatus:(id<ZMApplicationStatus>)applicationStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                                  syncStatus:(SyncStatus *)syncStatus
                           upstreamObjectSync:(ZMUpstreamModifiedObjectSync *)upstreamObjectSync
 {
     self = [super initWithManagedObjectContext:moc applicationStatus:applicationStatus];
     if(self) {
         self.clientStatus = clientRegistrationStatus;
-        self.syncStatus = syncStatus;
         self.upstreamObjectSync = upstreamObjectSync;
         NSAssert(self.upstreamObjectSync != nil, @"upstreamObjectSync is nil");
         self.downstreamSelfUserSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self groupQueue:self.managedObjectContext];
@@ -108,16 +106,6 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
     self.syncStatus = nil;
 }
 
-- (SyncPhase)expectedSyncPhase
-{
-    return SyncPhaseFetchingSelfUser;
-}
-
-- (BOOL)isSyncing
-{
-    return self.syncStatus.currentSyncPhase == self.expectedSyncPhase;
-}
-
 - (ZMTransportRequest *)nextRequestIfAllowedForAPIVersion:(APIVersion)apiVersion;
 {
     ZMClientRegistrationStatus *clientStatus = self.clientStatus;
@@ -127,7 +115,7 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
         [self.timedDownstreamSync readyForNextRequestIfNotBusy];
         return [self.timedDownstreamSync nextRequestForAPIVersion:apiVersion];
     }
-    if (clientStatus.currentPhase == ZMClientRegistrationPhaseWaitingForSelfUser || self.isSyncing) {
+    if (clientStatus.currentPhase == ZMClientRegistrationPhaseWaitingForSelfUser) {
         if (! selfUser.needsToBeUpdatedFromBackend) {
             selfUser.needsToBeUpdatedFromBackend = YES;
             [self.managedObjectContext enqueueDelayedSave];
@@ -294,11 +282,6 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
         // Save to ensure self user is update to date when sync finishes
         [self.managedObjectContext saveOrRollback];
         
-        if (self.isSyncing) {
-            [syncStatus finishCurrentSyncPhaseWithPhase:self.expectedSyncPhase];
-        }
-    } else if (response.result == ZMTransportResponseStatusPermanentError && self.isSyncing) {
-        [syncStatus failCurrentSyncPhaseWithPhase:self.expectedSyncPhase];
     }
 }
 

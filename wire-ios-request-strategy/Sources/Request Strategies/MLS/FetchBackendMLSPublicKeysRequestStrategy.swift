@@ -21,18 +21,6 @@ import WireLogging
 
 public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStrategy {
 
-    // MARK: - Properties
-
-    // Slow Sync
-
-    private unowned var syncStatus: SyncProgress
-
-    private let syncPhase: SyncPhase = .fetchingBackendMLSPublicKeys
-
-    private var isSlowSyncing: Bool { syncStatus.currentSyncPhase == syncPhase }
-
-    private var slowSyncTask: Task<Void, Never>?
-
     // Action
 
     private let actionHandler: FetchBackendMLSPublicKeysActionHandler
@@ -40,14 +28,13 @@ public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStra
 
     // MARK: - Life cycle
 
-    public init(
+    public override init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus,
-        syncProgress: SyncProgress
+        applicationStatus: ApplicationStatus
     ) {
+        // TODO: only used on MLSActionsProvider and ZMClientRegistrationStatus
         self.actionHandler = FetchBackendMLSPublicKeysActionHandler(context: managedObjectContext)
         self.actionSync = EntityActionSync(actionHandlers: [actionHandler])
-        self.syncStatus = syncProgress
 
         super.init(
             withManagedObjectContext: managedObjectContext,
@@ -64,46 +51,9 @@ public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStra
         ]
     }
 
-    deinit {
-        slowSyncTask?.cancel()
-    }
-
     // MARK: - Request
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        if isSlowSyncing, slowSyncTask == nil {
-            slowSyncTask = Task { [weak self, syncStatus, syncPhase] in
-                guard let self, !Task.isCancelled else { return }
-
-                WireLogger.mls.info("slow sync start fetch backend MLS public keys!")
-
-                do {
-                    // perform action notifies the registered action handler `FetchBackendMLSPublicKeysActionHandler`.
-                    // the action stay pending until in the operation loop creates and executes the next request.
-                    // Here the task waits for the result and then continues to report to syncStatus.
-
-                    var action = FetchBackendMLSPublicKeysAction()
-                    let backendPublicKeys = try await action.perform(in: managedObjectContext.notificationContext)
-                    let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
-                    BackendInfo.isMLSEnabled = hasValidKeys
-
-                    WireLogger.mls.info("slow sync finished fetch backend MLS public keys!")
-                } catch {
-                    // If we get an error while fetching MLS public keys,
-                    // it shouldn't fail the current phase. This is expected behavior for some customers.
-                    // More details here: https://wearezeta.atlassian.net/browse/WPB-14455
-                    BackendInfo.isMLSEnabled = false
-
-                    WireLogger.mls.info("slow sync can't fetch backend MLS public keys!")
-                }
-                await managedObjectContext.perform {
-                    syncStatus.finishCurrentSyncPhase(phase: syncPhase)
-                }
-
-                slowSyncTask = nil
-            }
-        }
-
         return actionSync.nextRequest(for: apiVersion)
     }
 }

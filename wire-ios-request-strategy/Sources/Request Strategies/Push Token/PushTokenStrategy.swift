@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
+public class PushTokenStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
 
@@ -52,32 +52,5 @@ public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         actionSync.nextRequest(for: apiVersion)
-    }
-
-    // MARK: - ZMEventConsumer
-
-    public func processEvents(
-        _ events: [ZMUpdateEvent],
-        liveEvents: Bool,
-        prefetchResult: ZMFetchRequestBatchResult?
-    ) {
-        guard liveEvents else { return }
-        events.forEach(process(updateEvent:))
-    }
-
-    func process(updateEvent event: ZMUpdateEvent) {
-        guard event.type == .userPushRemove else { return }
-
-        // expected payload:
-        // { "type: "user.push-remove",
-        //   "token":
-        //    { "transport": "APNS",
-        //            "app": "name of the app",
-        //          "token": "the token you get from apple"
-        //    }
-        // }
-
-        // We ignore the payload and remove the local push token
-        PushTokenStorage.pushToken = nil
     }
 }
