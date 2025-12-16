@@ -545,7 +545,8 @@ final class ZClientViewController: UIViewController {
     func openDetailScreen(for conversation: ZMConversation) {
         Task {
             let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
-            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository.isFeatureEnabled(.apps) ?? false
+            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
+                .isFeatureEnabled(.apps) ?? false
             let controller = GroupDetailsViewController(
                 conversation: conversation,
                 userSession: userSession,

@@ -154,7 +154,8 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
 
         Task { @MainActor in
             let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
-            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository.isFeatureEnabled(.apps) ?? false
+            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
+                .isFeatureEnabled(.apps) ?? false
 
             let groupDetailsViewController = GroupDetailsViewController(
                 conversation: conversation,

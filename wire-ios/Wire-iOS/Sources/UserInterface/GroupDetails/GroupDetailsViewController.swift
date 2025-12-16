@@ -42,7 +42,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     let userSession: UserSession
     private var userStatuses = [UUID: UserStatus]()
     private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
-    
+
     private let areLegacyBotsAvailable: Bool
     private let isAppsFeatureEnabled: Bool
 

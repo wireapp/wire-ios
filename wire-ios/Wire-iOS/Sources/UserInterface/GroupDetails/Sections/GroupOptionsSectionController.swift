@@ -56,7 +56,8 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             case .guests:
                 return user.canModifyGuestsAccessControlSettings(in: conversation)
             case .services:
-                guard user.canModifyGuestsAccessControlSettings(in: conversation), conversation.botCanBeAdded else { return false }
+                guard user.canModifyGuestsAccessControlSettings(in: conversation),
+                      conversation.botCanBeAdded else { return false }
                 switch conversation.messageProtocol {
                 case .mls:
                     return isAppsFeatureEnabled
