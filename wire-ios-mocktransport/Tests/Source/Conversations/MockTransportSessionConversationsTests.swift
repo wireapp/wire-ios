@@ -308,8 +308,12 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         let lastEvent = conversation!.events.lastObject as! MockEvent
         XCTAssertNotNil(lastEvent)
         XCTAssertEqual(lastEvent.eventType, ZMUpdateEventType.conversationOtrMessageAdd)
-        XCTAssertNotNil(lastEvent.decryptedOTRData)
-        let decryptedMessage = try! GenericMessage(serializedData: lastEvent.decryptedOTRData!)
+
+        // Extract message data from event (mock transport doesn't decrypt)
+        let eventData = lastEvent.data as! NSDictionary
+        let messageDataBase64 = eventData["text"] as! String
+        let messageBytes = Data(base64Encoded: messageDataBase64)!
+        let decryptedMessage = try! GenericMessage(serializedData: messageBytes)
         XCTAssertEqual(decryptedMessage.text.content, messageText)
     }
 

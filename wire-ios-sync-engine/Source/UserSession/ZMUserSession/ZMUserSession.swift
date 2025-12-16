@@ -78,7 +78,6 @@ public final class ZMUserSession: NSObject {
 
     var recurringActionService: any RecurringActionServiceInterface
 
-    var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     private(set) var coreCryptoProvider: CoreCryptoProviderProtocol
     private(set) var userId: UUID
     let proteusService: ProteusServiceInterface
@@ -447,7 +446,6 @@ public final class ZMUserSession: NSObject {
         coreDataStack: CoreDataStack,
         earService: any EARServiceInterface,
         mlsService: any MLSServiceInterface,
-        cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         proteusToMLSMigrationCoordinator: any ProteusToMLSMigrationCoordinating,
         sharedUserDefaults: UserDefaults,
         sharedContainerURL: URL,
@@ -488,7 +486,6 @@ public final class ZMUserSession: NSObject {
         self.earService = earService
         self.mlsService = mlsService
         self.proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
-        self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService

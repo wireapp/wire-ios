@@ -123,7 +123,6 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     self.cookieStorage = nil;
     self.pushChannelDidOpenCount = 0;
     self.pushChannelDidCloseCount = 0;
-    [NSFileManager.defaultManager removeItemAtURL:[MockUserClient mockEncryptionSessionDirectory] error:nil];
     [super tearDown];
 }
 

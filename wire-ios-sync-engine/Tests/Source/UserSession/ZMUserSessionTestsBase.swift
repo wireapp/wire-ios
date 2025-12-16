@@ -161,9 +161,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
 
-        let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
-        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
-
         let mockContextStorable = MockLAContextStorable()
         mockContextStorable.clear_MockMethod = {}
 
@@ -182,7 +179,6 @@ class ZMUserSessionTestsBase: MessagingTest {
             currentAppVersion: "3.120.0",
             currentBuildNumber: "00000",
             application: application,
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: coreDataStack,
             coreCryptoProvider: mockCoreCryptoProvider,
             configuration: configuration,

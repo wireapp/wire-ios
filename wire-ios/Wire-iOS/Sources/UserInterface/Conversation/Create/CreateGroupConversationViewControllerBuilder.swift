@@ -18,15 +18,21 @@
 
 import UIKit
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 final class CreateGroupConversationViewControllerBuilder: CreateGroupConversationViewControllerBuilderProtocol {
 
     let userSession: UserSession
+    let conversationCreationRepository: ConversationCreationRepositoryProtocol
     weak var delegate: ConversationCreationControllerDelegate?
 
-    init(userSession: UserSession) {
+    init(
+        userSession: UserSession,
+        conversationCreationRepository: ConversationCreationRepositoryProtocol
+    ) {
         self.userSession = userSession
+        self.conversationCreationRepository = conversationCreationRepository
     }
 
     @MainActor

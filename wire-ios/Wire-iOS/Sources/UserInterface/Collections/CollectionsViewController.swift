@@ -19,6 +19,7 @@
 import UIKit
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 protocol CollectionsViewControllerDelegate: AnyObject {
@@ -63,6 +64,7 @@ final class CollectionsViewController: UIViewController {
     let userSession: UserSession
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
 
     private var fetchingDone: Bool = false {
         didSet {
@@ -88,7 +90,8 @@ final class CollectionsViewController: UIViewController {
         conversation: ZMConversation,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         let matchImages = CategoryMatch(including: .image, excluding: .GIF)
         let matchFiles = CategoryMatch(including: .file, excluding: .video)
@@ -104,7 +107,8 @@ final class CollectionsViewController: UIViewController {
             collection: holder,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 
@@ -115,13 +119,15 @@ final class CollectionsViewController: UIViewController {
         fetchingDone: Bool = false,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.collection = collection
         self.sections = sections
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
 
         switch sections {
         case CollectionsSectionSet.images:
@@ -643,7 +649,8 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
                     fetchingDone: fetchingDone,
                     userSession: userSession,
                     mainCoordinator: mainCoordinator,
-                    selfProfileUIBuilder: selfProfileUIBuilder
+                    selfProfileUIBuilder: selfProfileUIBuilder,
+                    conversationCreationRepository: conversationCreationRepository
                 )
                 collectionController.onDismiss = onDismiss
                 collectionController.delegate = delegate
@@ -812,7 +819,8 @@ extension CollectionsViewController: CollectionCellDelegate {
                     initialMessage: message,
                     userSession: userSession,
                     mainCoordinator: mainCoordinator,
-                    selfProfileUIBuilder: selfProfileUIBuilder
+                    selfProfileUIBuilder: selfProfileUIBuilder,
+                    conversationCreationRepository: conversationCreationRepository
                 )
 
                 let backButton = CollectionsView.backButton()
@@ -838,7 +846,8 @@ extension CollectionsViewController: CollectionCellDelegate {
                     actionResponder: self,
                     userSession: userSession,
                     mainCoordinator: mainCoordinator,
-                    selfProfileUIBuilder: selfProfileUIBuilder
+                    selfProfileUIBuilder: selfProfileUIBuilder,
+                    conversationCreationRepository: conversationCreationRepository
                 )
             }
 
@@ -881,7 +890,8 @@ extension CollectionsViewController: CollectionCellDelegate {
                 message: message,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             let navigationController = UINavigationController(rootViewController: detailsViewController)
             navigationController.modalPresentationStyle = .formSheet

@@ -45,7 +45,6 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         coreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         coreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
         coreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
-        let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         let coreDataStack = try await createCoreDataStack()
         let selfClient = coreDataStack.syncContext.performAndWait {
             self.setupSelfClient(inMoc: coreDataStack.syncContext)
@@ -69,7 +68,6 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             currentAppVersion: "3.120.0",
             currentBuildNumber: "00000",
             application: application,
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: coreDataStack,
             coreCryptoProvider: coreCryptoProvider,
             configuration: configuration,

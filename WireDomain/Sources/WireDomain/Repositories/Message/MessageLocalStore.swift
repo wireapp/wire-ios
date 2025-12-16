@@ -18,7 +18,6 @@
 
 import CoreData
 import GenericMessageProtocol
-import WireCryptobox
 import WireDataModel
 import WireLogging
 

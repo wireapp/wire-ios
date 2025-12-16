@@ -32,7 +32,6 @@ protocol NSEClientScopeDependency: Dependency {
     var journal: Journal { get }
     var sharedUserDefaults: UserDefaults { get }
     var cookieStorage: CookieStorage { get }
-    var cryptoboxMigrationManager: CryptoboxMigrationManager { get }
 
 }
 
@@ -253,7 +252,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 accountDirectory: dependency.userAccountDataURL,
                 sharedUserDefaults: dependency.sharedUserDefaults,
                 syncContext: coreDataStack.syncContext,
-                cryptoboxMigrationManager: dependency.cryptoboxMigrationManager,
                 coreCryptoKeyMigrationManager: coreCryptoMigrationManager,
                 allowCreation: false,
                 localDomain: localDomain
