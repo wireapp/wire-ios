@@ -71,7 +71,7 @@ extension ZMClientMessage: TextMessageData {
                 text: editedText
             )
         }
-        
+
         let updatedMessage = GenericMessage(content: content, nonce: editNonce)
 
         do {
@@ -90,14 +90,14 @@ extension ZMClientMessage: TextMessageData {
         linkAttachments = nil
         delivered = false
     }
-    
+
     var multipartAttachments: [GenericMessageProtocol.Attachment]? {
         switch underlyingMessage?.content {
-        case .multipart(let multipart):
+        case let .multipart(multipart):
             multipart.attachments
-        case .edited(let messageEdit):
+        case let .edited(messageEdit):
             switch messageEdit.content {
-            case .multipart(let data):
+            case let .multipart(data):
                 data.attachments
             default:
                 nil

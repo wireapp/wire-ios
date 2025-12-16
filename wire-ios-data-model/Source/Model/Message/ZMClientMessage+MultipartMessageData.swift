@@ -26,7 +26,7 @@ public extension ZMClientMessage {
             MultipartMessageData(multipart: multipart)
         case let .edited(messageEdit):
             switch messageEdit.content {
-            case .multipart(let multipart):
+            case let .multipart(multipart):
                 MultipartMessageData(multipart: multipart)
             default:
                 nil

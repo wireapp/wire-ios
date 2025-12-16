@@ -232,9 +232,9 @@ public extension GenericMessage {
             return data
         case let .edited(messageEdit):
             switch messageEdit.content {
-            case .text(let data):
+            case let .text(data):
                 return data
-            case .multipart(let data) where data.hasText:
+            case let .multipart(data) where data.hasText:
                 return data.text
             default:
                 return nil
@@ -673,7 +673,7 @@ public extension GenericMessageProtocol.MessageEdit {
             $0.text = text
         }
     }
-    
+
     init(replacingMessageID: UUID, multipart: Multipart) {
         self = MessageEdit.with {
             $0.replacingMessageID = replacingMessageID.transportString()

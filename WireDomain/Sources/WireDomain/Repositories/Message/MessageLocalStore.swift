@@ -1058,7 +1058,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 content: newComposite,
                 nonce: messageNonce
             )
-            
+
         case let .multipart(multipart):
             genericMessage = GenericMessage(
                 content: multipart,
