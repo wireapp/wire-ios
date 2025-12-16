@@ -42,26 +42,35 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
 
         func accessible(
             in conversation: GroupDetailsConversationType,
-            by user: UserType
+            by user: UserType,
+            areLegacyBotsAvailable: Bool,
+            isAppsFeatureEnabled: Bool
         ) -> Bool {
             switch self {
             case .channelAccess:
-                user.canModifyChannelAccessLevelSettings(in: conversation)
+                return user.canModifyChannelAccessLevelSettings(in: conversation)
             case .notifications:
-                user.canModifyNotificationSettings(in: conversation)
+                return user.canModifyNotificationSettings(in: conversation)
             case .fileCollaboration:
-                conversation.isCellsEnabled
+                return conversation.isCellsEnabled
             case .guests:
-                user.canModifyGuestsAccessControlSettings(in: conversation)
+                return user.canModifyGuestsAccessControlSettings(in: conversation)
             case .services:
-                user.canModifyGuestsAccessControlSettings(in: conversation) && conversation.botCanBeAdded // TODO: in a proteus conversation we don't want to show the toggle unless bots are whitelisted
+                guard user.canModifyGuestsAccessControlSettings(in: conversation), conversation.botCanBeAdded else { return false }
+                switch conversation.messageProtocol {
+                case .mls:
+                    return isAppsFeatureEnabled
+                case .proteus:
+                    return areLegacyBotsAvailable
+                default: return false
+                }
             case .timeout:
-                user.canModifyEphemeralSettings(in: conversation) && !conversation.isCellsEnabled
+                return user.canModifyEphemeralSettings(in: conversation) && !conversation.isCellsEnabled
             case .channelHistoryDepth:
                 if DeveloperFlag.channelsHistory.isOn {
-                    user.canModifyChannelHistoryDepthSettings(in: conversation)
+                    return user.canModifyChannelHistoryDepthSettings(in: conversation)
                 } else {
-                    false
+                    return false
                 }
             }
         }
