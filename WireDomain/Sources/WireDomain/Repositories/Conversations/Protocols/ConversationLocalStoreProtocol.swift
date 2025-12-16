@@ -469,4 +469,8 @@ public protocol ConversationLocalStoreProtocol {
 
     func fetchServerTimeDelta() async -> TimeInterval
 
+    func execute(
+        identifier: MLSGroupID,
+        block: @escaping @Sendable (ZMConversation?, NSManagedObjectContext) -> Void
+    ) async
 }

@@ -420,7 +420,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             self.sut.featureRepository.storeMLS(mls)
         }
         mockMLSService.performPendingJoins_MockMethod = {}
-        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
@@ -458,7 +457,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
         XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
         XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
-        XCTAssertFalse(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
 
         XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
 
@@ -477,7 +475,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         }
 
         mockMLSService.performPendingJoins_MockMethod = {}
-        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
         mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_MockMethod = { _ in }
