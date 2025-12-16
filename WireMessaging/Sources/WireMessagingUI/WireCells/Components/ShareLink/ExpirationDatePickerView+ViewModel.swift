@@ -97,19 +97,3 @@ extension ExpirationDatePickerView {
         }
     }
 }
-
-public import CellsSDK
-
-extension ErrorResponse: CustomDebugStringConvertible {
-
-    public var debugDescription: String {
-        switch self {
-        case let .error(code, body, response, error):
-            if let body = body, let m = String(data: body, encoding: .utf8) {
-                return "ErrorResponse(code: \(code), body: \(m), response: \(String(describing: response)), error: \(String(describing: error)))"
-            }
-        }
-        return "ErrorResponse(\(self))"
-    }
-
-}

@@ -362,10 +362,6 @@ private struct LoggingIntercepter: OpenAPIInterceptor {
     ) {
         WireLogger.wireCells.log(urlRequest)
 
-        if let body = urlRequest.httpBody, let s = String(data: body, encoding: .utf8) {
-            WireLogger.wireCells.debug(">>>> Request Body: \(s)")
-        }
-
         interceptor.intercept(
             urlRequest: urlRequest,
             urlSession: urlSession,
