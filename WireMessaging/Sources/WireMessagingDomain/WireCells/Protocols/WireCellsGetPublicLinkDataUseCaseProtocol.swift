@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-
 public protocol WireCellsGetPublicLinkDataUseCaseProtocol: Sendable {
-    func invoke(linkId: UUID) async throws -> WireCellsPublicLink
+    func invoke(linkID: String) async throws -> WireCellsPublicLink
 }

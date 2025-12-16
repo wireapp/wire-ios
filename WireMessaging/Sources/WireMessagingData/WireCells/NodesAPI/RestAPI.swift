@@ -24,6 +24,7 @@ import WireMessagingDomain
 enum WireCellsNodesAPIError: Error {
     case failedToDecodeNode
     case missingData(String)
+    case invalidParameters(String)
 }
 
 final class RestAPI: Sendable {
@@ -224,42 +225,18 @@ final class RestAPI: Sendable {
         }
     }
 
-    func getPublicLink(uuid: UUID) async throws -> WireCellsPublicLink {
+    func getPublicLink(linkID: String) async throws -> WireCellsPublicLink {
         let response = try await NodeServiceAPI.getPublicLink(
-            linkUuid: uuid.transportString(),
+            linkUuid: linkID,
             apiConfiguration: makeConfiguration()
         )
 
-        guard let urlString = response.linkUrl else {
-            throw WireCellsNodesAPIError.missingData("Link URL not found")
-        }
-        guard let url = URL(string: urlString) else {
-            throw WireCellsNodesAPIError.missingData("Link URL is invalid")
-        }
-
-        let password: String? =
-            nil // TODO: We can't get this from the response because it's not stored as cleartext. We can't ask the backend what the actual password is.
-        let expirationDate: Date? = nil // TODO: get it from response
-
-        return WireCellsPublicLink(uuid: uuid, url: url, password: password, expirationDate: expirationDate)
+        return try WireCellsPublicLink(response, serverURL: serverURL)
     }
 
-    func createPublicLink(
-        uuid: UUID,
-        fileName: String,
-        password: String?,
-        expirationDate: Date?
-    ) async throws -> WireCellsPublicLink {
-        //let accessEnd = String(format: "%.0f", expirationDate?.timeIntervalSince1970) ?? nil
+    func createPublicLink(uuid: UUID, label: String) async throws -> WireCellsPublicLink {
         let request = RestPublicLinkRequest(
-            createPassword: password, // Probably better to create a new func to updatePublicLink
-            link: RestShareLink(
-                accessEnd: "", // Example: 1765580400 -> December 13, 00:00
-                label: fileName,
-                passwordRequired: password != nil,
-                permissions: [.preview, .download]
-            ),
-            passwordEnabled: password != nil
+            link: RestShareLink(label: label, permissions: [.preview, .download])
         )
 
         let response = try await NodeServiceAPI.createPublicLink(
@@ -268,34 +245,59 @@ final class RestAPI: Sendable {
             apiConfiguration: makeConfiguration()
         )
 
-        guard let idString = response.uuid else {
-            throw WireCellsNodesAPIError.missingData("UUID is null")
-        }
-        guard let id = UUID(uuidString: idString) else {
-            throw WireCellsNodesAPIError.missingData("UUID is invalid")
-        }
-
-        guard let urlString = response.linkUrl else {
-            throw WireCellsNodesAPIError.missingData("Link URL not found")
-        }
-        guard let url = URL(string: urlString) else {
-            throw WireCellsNodesAPIError.missingData("Link URL is invalid")
-        }
-
-        var expirationDate: Date? = nil
-        if let timeInterval = TimeInterval(response.accessEnd ?? "") {
-            let dateFromAPI = Date(timeIntervalSince1970: timeInterval)
-            expirationDate = dateFromAPI
-        }
-
-        return WireCellsPublicLink(uuid: id, url: url, password: password, expirationDate: expirationDate)
+        return try WireCellsPublicLink(response, serverURL: serverURL)
     }
 
-    func deletePublicLink(uuid: UUID) async throws {
+    func deletePublicLink(linkID: String) async throws {
         _ = try await NodeServiceAPI.deletePublicLink(
-            linkUuid: uuid.transportString(),
+            linkUuid: linkID,
             apiConfiguration: makeConfiguration()
         )
+    }
+
+    func updatePublicLinkExpiration(linkID: String, expiration: Date?) async throws -> WireCellsPublicLink {
+        var currentLink = try await NodeServiceAPI.getPublicLink(
+            linkUuid: linkID,
+            apiConfiguration: makeConfiguration()
+        )
+        currentLink.accessEnd = expiration.map { String(Int($0.timeIntervalSince1970)) }
+
+        let updatedLink = try await NodeServiceAPI.updatePublicLink(
+            linkUuid: linkID,
+            publicLinkRequest: RestPublicLinkRequest(
+                link: currentLink,
+                passwordEnabled: currentLink.passwordRequired
+            ),
+            apiConfiguration: makeConfiguration()
+        )
+
+        return try WireCellsPublicLink(updatedLink, serverURL: serverURL)
+    }
+
+    func updatePublicLinkPassword(
+        linkID: String,
+        password: String?
+    ) async throws -> WireCellsPublicLink {
+        var currentLink = try await NodeServiceAPI.getPublicLink(
+            linkUuid: linkID,
+            apiConfiguration: makeConfiguration()
+        )
+
+        let hasExistingPassword = currentLink.passwordRequired == true
+        currentLink.passwordRequired = password != nil
+
+        let updatedLink = try await NodeServiceAPI.updatePublicLink(
+            linkUuid: linkID,
+            publicLinkRequest: RestPublicLinkRequest(
+                createPassword: !hasExistingPassword ? password : nil,
+                link: currentLink,
+                passwordEnabled: password != nil,
+                updatePassword: hasExistingPassword ? password : nil,
+            ),
+            apiConfiguration: makeConfiguration()
+        )
+
+        return try WireCellsPublicLink(updatedLink, serverURL: serverURL)
     }
 
     func updateTags(uuid: UUID, tags: [String]) async throws {
@@ -359,6 +361,10 @@ private struct LoggingIntercepter: OpenAPIInterceptor {
         completion: @escaping (Result<URLRequest, any Error>) -> Void
     ) {
         WireLogger.wireCells.log(urlRequest)
+
+        if let body = urlRequest.httpBody, let s = String(data: body, encoding: .utf8) {
+            WireLogger.wireCells.debug(">>>> Request Body: \(s)")
+        }
 
         interceptor.intercept(
             urlRequest: urlRequest,
@@ -472,4 +478,21 @@ private extension ErrorResponse {
             error
         }
     }
+}
+
+private extension WireCellsPublicLink {
+
+    init(_ value: RestShareLink, serverURL: URL) throws {
+        guard let linkID = value.uuid, let url = value.linkUrl else {
+            throw WireCellsNodesAPIError.missingData("Missing link ID or URL")
+        }
+
+        self.init(
+            linkID: linkID,
+            url: serverURL.appendingPathComponent(url),
+            requiresPassword: value.passwordRequired ?? false,
+            expirationDate: value.accessEnd.flatMap { TimeInterval($0) }.map { Date(timeIntervalSince1970: $0) }
+        )
+    }
+
 }

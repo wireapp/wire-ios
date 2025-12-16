@@ -149,26 +149,39 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         }
     }
 
-    package func createPublicLink(
-        nodeID: UUID,
-        fileName: String,
-        password: String?,
-        expirationDate: Date?
-    ) async throws -> WireCellsPublicLink {
+    package func createPublicLink(nodeID: UUID, label: String) async throws -> WireCellsPublicLink {
         try await restAPI.createPublicLink(
             uuid: nodeID,
-            fileName: fileName,
-            password: password,
-            expirationDate: expirationDate
+            label: label
         )
     }
 
-    package func getPublicLink(linkUUID: UUID) async throws -> WireCellsPublicLink {
-        try await restAPI.getPublicLink(uuid: linkUUID)
+    package func getPublicLink(linkID: String) async throws -> WireCellsPublicLink {
+        try await restAPI.getPublicLink(linkID: linkID)
     }
 
-    package func deletePublicLink(linkUUID: UUID) async throws {
-        try await restAPI.deletePublicLink(uuid: linkUUID)
+    package func deletePublicLink(linkID: String) async throws {
+        try await restAPI.deletePublicLink(linkID: linkID)
+    }
+
+    package func updatePublicLinkExpiration(
+        linkID: String,
+        expiration: Date?
+    ) async throws -> WireCellsPublicLink {
+        try await restAPI.updatePublicLinkExpiration(
+            linkID: linkID,
+            expiration: expiration
+        )
+    }
+
+    package func updatePublicLinkPassword(
+        linkID: String,
+        password: String?
+    ) async throws -> WireCellsPublicLink {
+        try await restAPI.updatePublicLinkPassword(
+            linkID: linkID,
+            password: password
+        )
     }
 
     package func updateTags(nodeID: UUID, tags: [String]) async throws {

@@ -16,14 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package struct WireCellsGetPublicLinkDataUseCase<NodesAPI: NodesAPIProtocol>: WireCellsGetPublicLinkDataUseCaseProtocol {
-    private let nodesAPI: NodesAPI
+package struct WireCellsUpdatePublicLinkPasswordUseCase {
 
-    package init(nodesAPI: NodesAPI) {
+    private let nodesAPI: any NodesAPIProtocol
+
+    package init(nodesAPI: any NodesAPIProtocol) {
         self.nodesAPI = nodesAPI
     }
 
-    package func invoke(linkID: String) async throws -> WireCellsPublicLink {
-        try await nodesAPI.getPublicLink(linkID: linkID)
+    package func invoke(
+        linkID: String,
+        password: String?
+    ) async throws -> WireCellsPublicLink {
+        try await nodesAPI.updatePublicLinkPassword(
+            linkID: linkID,
+            password: password
+        )
     }
+
 }
