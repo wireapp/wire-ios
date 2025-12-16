@@ -19,7 +19,8 @@
 package import Foundation
 package import WireMessagingDomain
 
-package actor WireCellsNodeCache: WireCellsNodeCacheProtocol {
+@MainActor
+package final class WireCellsNodeCache: WireCellsNodeCacheProtocol {
 
     private var storage: [UUID: WireCellsNodeCacheItem] = [:]
 
