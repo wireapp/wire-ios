@@ -590,11 +590,8 @@ class CallingRequestStrategyTests: MessagingTest {
     }
 
     func testThatItDoesNotTargetCallMessagesIfNoTargetClientsAreSpecified() async throws {
-<<<<<<< HEAD
+
         let conversationAVSID = try await syncMOC
-=======
-        let (_, _, _, _, _, _, conversationAVSID) = try await syncMOC
->>>>>>> bc6e03dd7f (fix: schedule commit pending proposals - WPB-22062 (#3963))
             .perform { [self] in
                 // Given
                 let selfClient = createSelfClient()
