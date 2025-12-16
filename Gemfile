@@ -10,7 +10,7 @@ gem 'xcode-install'
 gem 'mutex_m'
 gem 'danger'
 gem 'danger-xcode_summary'
-
+gem "nkf"
 gem 'rexml', '>=3.3.2'
 
 plugins_path = File.join(File.dirname(__FILE__), 'fastlane', 'Pluginfile')
