@@ -34,8 +34,7 @@
 
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
                            applicationStatus:(id<ZMApplicationStatus>)appplicationStatus
-                    clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                                  syncStatus:(SyncStatus *)syncStatus;
+                    clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus;
 
 - (void)tearDown;
 

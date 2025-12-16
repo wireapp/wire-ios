@@ -95,9 +95,6 @@ public final class ZMUserSession: NSObject {
 
     public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
 
-    let lastEventIDRepository: LastEventIDRepositoryInterface
-    var conversationEventProcessor: ConversationEventProcessor!
-
     var syncAgent: SyncAgent?
 
     public var hasCompletedInitialSync: Bool {
@@ -446,7 +443,6 @@ public final class ZMUserSession: NSObject {
         sharedContainerURL: URL,
         appLock: any AppLockType,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
-        lastEventIDRepository: any LastEventIDRepositoryInterface,
         lastE2EIUpdateDateRepository: any LastE2EIdentityUpdateDateRepositoryInterface,
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol,
         applicationStatusDirectory: ApplicationStatusDirectory,
@@ -473,7 +469,6 @@ public final class ZMUserSession: NSObject {
         self.debugCommands = ZMUserSession.initDebugCommands()
         self.appLockController = appLock
         self.coreCryptoProvider = coreCryptoProvider
-        self.lastEventIDRepository = lastEventIDRepository
         self.userId = userId
         self.lastE2EIUpdateDateRepository = lastE2EIUpdateDateRepository
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
@@ -508,12 +503,6 @@ public final class ZMUserSession: NSObject {
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider
-        )
-
-        self.conversationEventProcessor = ConversationEventProcessor(
-            context: coreDataStack.syncContext,
-            localDomain: resolvedBackendMetadata.domain,
-            isFederationEnabled: resolvedBackendMetadata.isFederationEnabled
         )
     }
 
@@ -749,7 +738,6 @@ public final class ZMUserSession: NSObject {
             flowManager: flowManager,
             updateEventProcessor: self,
             localNotificationDispatcher: localNotificationDispatcher!,
-            lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
             proteusService: proteusService,
             mlsService: mlsService,
