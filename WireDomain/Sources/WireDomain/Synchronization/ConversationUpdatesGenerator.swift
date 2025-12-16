@@ -19,13 +19,7 @@ import Foundation
 import WireDataModel
 import WireLogging
 
-/// sourcery: AutoMockable
-public protocol ConversationUpdatesGeneratorProtocol {
-    func start() async
-    func stop()
-}
-
-public final class ConversationUpdatesGenerator: NSObject, ConversationUpdatesGeneratorProtocol {
+public final class ConversationUpdatesGenerator: NSObject, IncrementalGeneratorProtocol {
 
     private let context: NSManagedObjectContext
     private var fetchedResultsController: NSFetchedResultsController<ZMConversation>?
@@ -46,7 +40,7 @@ public final class ConversationUpdatesGenerator: NSObject, ConversationUpdatesGe
     /// Starts monitoring and triggers pulls for any needingToBeUpdatedFromBackend conversations.
     public func start() async {
         if fetchedResultsController == nil {
-            fetchedResultsController = createFetchRequestController()
+            fetchedResultsController = createFetchedResultsController()
             fetchedResultsController?.delegate = self
         }
         await context.perform {
@@ -73,7 +67,7 @@ public final class ConversationUpdatesGenerator: NSObject, ConversationUpdatesGe
         fetchedResultsController = nil
     }
 
-    private func createFetchRequestController() -> NSFetchedResultsController<ZMConversation> {
+    private func createFetchedResultsController() -> NSFetchedResultsController<ZMConversation> {
         let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
         request.predicate = NSPredicate.all(of: [
             ZMConversation.predicateForNeedingToBeUpdatedFromBackend(),
@@ -87,7 +81,6 @@ public final class ConversationUpdatesGenerator: NSObject, ConversationUpdatesGe
             sectionNameKeyPath: nil,
             cacheName: nil
         )
-
     }
 }
 
