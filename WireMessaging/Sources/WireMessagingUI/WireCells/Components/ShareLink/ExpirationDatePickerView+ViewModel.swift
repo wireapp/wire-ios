@@ -21,6 +21,9 @@ import SwiftUI
 import WireMessagingDomain
 
 extension ExpirationDatePickerView {
+
+    // TODO: Check logic in this view modal. Looks like it is working but I have not looked in detail and I've made a
+    // few rushed changes.
     @MainActor
     final class ViewModel: ObservableObject {
         let currentExpirationDate: Date?
@@ -90,7 +93,7 @@ extension ExpirationDatePickerView {
                 )
                 didSave(expirationDate)
             } catch {
-                // Handle error appropriately, e.g., show an alert to the user
+                // TODO: Handle errors here. Probably we need to show an alert.
                 print("Failed to save expiration date: \(error)")
             }
             isSaving = false

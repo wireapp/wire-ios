@@ -178,6 +178,8 @@ struct DateSegmentButton: View {
     }
 }
 
+// TODO: Fix previews - the API has changed
+
 //#Preview("With initial date") {
 //    ExpirationDatePickerView(
 //        expirationDate: Calendar.current.date(byAdding: .hour, value: 2, to: Date()),

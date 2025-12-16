@@ -63,10 +63,13 @@ struct ShareLinkView: View {
             .sheet(item: $viewModel.sheetNavigation) { navigationItem in
                 switch navigationItem {
                 case .password:
+                    // TODO: Probably adjust how this works. I'm not sure if the password should be passed in or it
+                    // should come via the saved password from the use case or something like that. Check how the
+                    // ExpirationDatePickerView is being integrated. Maybe we should follow that pattern.
                     ShareLinkPasswordView(
-                        password: "viewModel.password", // FIXME:
+                        password: "",
                         onSave: { newPassword in
-                            "viewModel.password = newPassword" // FIXME:
+
                         }
                     )
                 case let .expiration(linkID):

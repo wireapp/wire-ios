@@ -101,7 +101,8 @@ package struct FilesView: FilesViewProtocol {
                             }
                         )
                     case let .shareLink(fileItem: fileItem):
-                        // FIXME: Reload files list - otherwise there is a bug
+                        // TODO: Reload files list to ensure the public link id is up to date after dismissing the
+                        // sheet.
                         ShareLinkView(
                             fileItem: fileItem,
                             useCases: .init(
