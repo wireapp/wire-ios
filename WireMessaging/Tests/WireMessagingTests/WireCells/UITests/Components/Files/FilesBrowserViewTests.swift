@@ -42,6 +42,11 @@ final class FilesBrowserViewTests: XCTestCase {
     private var getEditingURLUseCase: WireCellsGetEditingURLUseCase!
     private var getAssetUseCase: WireCellsGetAssetUseCase!
     private var localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol!
+    private var getPublicLinkData: WireCellsGetPublicLinkDataUseCase<MockNodesAPIProtocol>!
+    private var createPublicLink: WireCellsCreatePublicLinkUseCase!
+    private var deletePublicLink: WireCellsDeletePublicLinkUseCase!
+    private var updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase!
+    private var updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase!
 
     private let record: Bool? = nil
 
@@ -93,6 +98,12 @@ final class FilesBrowserViewTests: XCTestCase {
         getEditingURLUseCase = WireCellsGetEditingURLUseCase(
             editingURLRepository: editingURLRepository
         )
+
+        getPublicLinkData = WireCellsGetPublicLinkDataUseCase(nodesAPI: nodesApi)
+        createPublicLink = WireCellsCreatePublicLinkUseCase(nodesAPI: nodesApi)
+        deletePublicLink = WireCellsDeletePublicLinkUseCase(nodesAPI: nodesApi)
+        updatePublicLinkExpiration = WireCellsUpdatePublicLinkExpirationUseCase(nodesAPI: nodesApi)
+        updatePublicLinkPassword = WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesApi)
     }
 
     @MainActor
@@ -186,7 +197,12 @@ final class FilesBrowserViewTests: XCTestCase {
                 getTagSuggestions: getTagSuggestionsUseCase,
                 createFolder: createFolderUseCase,
                 getEditingURL: getEditingURLUseCase,
-                getAssetUseCase: getAssetUseCase
+                getAssetUseCase: getAssetUseCase,
+                getPublicLinkData: getPublicLinkData,
+                createPublicLink: createPublicLink,
+                deletePublicLink: deletePublicLink,
+                updatePublicLinkExpiration: updatePublicLinkExpiration,
+                updatePublicLinkPassword: updatePublicLinkPassword,
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetsRepository,

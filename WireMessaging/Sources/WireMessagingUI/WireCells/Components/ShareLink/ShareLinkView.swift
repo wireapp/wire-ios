@@ -241,7 +241,7 @@ struct ShareLinkView: View {
         icon: .document,
         tags: [],
         isEditable: false,
-        publicLinkId: UUID().uuidString,
+        publicLinkID: UUID().uuidString,
     )
 
     let mockAPI = {

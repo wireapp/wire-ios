@@ -143,7 +143,7 @@ extension FilesItemViewModel {
                 icon: .image,
                 tags: tags,
                 isEditable: false,
-                publicLinkId: nil,
+                publicLinkID: nil,
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
             onItemAction: { _, _ in },

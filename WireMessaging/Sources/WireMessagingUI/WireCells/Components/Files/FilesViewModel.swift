@@ -71,8 +71,9 @@ package struct FilesViewItem: Identifiable, Hashable {
 
     /// Whether the item can be edited.
     let isEditable: Bool
-    
-    let publicLinkId: String?
+
+    /// The public link identifier if the item has a public link.
+    let publicLinkID: String?
 }
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -578,7 +579,7 @@ package final class FilesViewModel: ObservableObject {
                 ),
                 tags: node.tags,
                 isEditable: node.isEditable,
-                publicLinkId: node.publicLinkID?.string
+                publicLinkID: node.publicLinkID?.string
             )
         }
 

@@ -39,6 +39,11 @@ final class FilesViewTests: XCTestCase {
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
     private var getEditingURLUseCase: WireCellsGetEditingURLUseCase!
+    private var getPublicLinkData: WireCellsGetPublicLinkDataUseCase<MockNodesAPIProtocol>!
+    private var createPublicLink: WireCellsCreatePublicLinkUseCase!
+    private var deletePublicLink: WireCellsDeletePublicLinkUseCase!
+    private var updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase!
+    private var updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase!
 
     private let record: Bool? = nil
 
@@ -81,6 +86,12 @@ final class FilesViewTests: XCTestCase {
         getEditingURLUseCase = WireCellsGetEditingURLUseCase(
             editingURLRepository: editingURLRepository
         )
+
+        getPublicLinkData = WireCellsGetPublicLinkDataUseCase(nodesAPI: nodesApi)
+        createPublicLink = WireCellsCreatePublicLinkUseCase(nodesAPI: nodesApi)
+        deletePublicLink = WireCellsDeletePublicLinkUseCase(nodesAPI: nodesApi)
+        updatePublicLinkExpiration = WireCellsUpdatePublicLinkExpirationUseCase(nodesAPI: nodesApi)
+        updatePublicLinkPassword = WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesApi)
     }
 
     @MainActor
@@ -91,6 +102,12 @@ final class FilesViewTests: XCTestCase {
         renameNodeUseCase = nil
         updateTagsUseCase = nil
         getTagSuggestionsUseCase = nil
+        getEditingURLUseCase = nil
+        getPublicLinkData = nil
+        createPublicLink = nil
+        deletePublicLink = nil
+        updatePublicLinkExpiration = nil
+        updatePublicLinkPassword = nil
     }
 
     @MainActor
@@ -105,7 +122,8 @@ final class FilesViewTests: XCTestCase {
             modifiedAt: modifiedAt,
             icon: .image,
             tags: [],
-            isEditable: false
+            isEditable: false,
+            publicLinkID: nil
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -131,7 +149,8 @@ final class FilesViewTests: XCTestCase {
             modifiedAt: modifiedAt,
             icon: .spreadsheet,
             tags: [],
-            isEditable: false
+            isEditable: false,
+            publicLinkID: nil
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -157,7 +176,8 @@ final class FilesViewTests: XCTestCase {
             modifiedAt: modifiedAt,
             icon: .image,
             tags: ["important"],
-            isEditable: false
+            isEditable: false,
+            publicLinkID: nil
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -183,7 +203,8 @@ final class FilesViewTests: XCTestCase {
             modifiedAt: modifiedAt,
             icon: .image,
             tags: ["tag1", "tag2", "abcdef"],
-            isEditable: false
+            isEditable: false,
+            publicLinkID: nil
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -209,7 +230,8 @@ final class FilesViewTests: XCTestCase {
             modifiedAt: modifiedAt,
             icon: .spreadsheet,
             tags: [],
-            isEditable: false
+            isEditable: false,
+            publicLinkID: nil
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
@@ -237,7 +259,8 @@ final class FilesViewTests: XCTestCase {
             modifiedAt: modifiedAt,
             icon: .image,
             tags: [],
-            isEditable: false
+            isEditable: false,
+            publicLinkID: nil
         )
         let asset = WireCellsLocalAsset(
             nodeID: item.id,
@@ -271,7 +294,8 @@ final class FilesViewTests: XCTestCase {
             modifiedAt: modifiedAt,
             icon: .image,
             tags: [],
-            isEditable: false
+            isEditable: false,
+            publicLinkID: nil
         )
         let asset = WireCellsLocalAsset(
             nodeID: item.id,
@@ -360,7 +384,12 @@ final class FilesViewTests: XCTestCase {
                 getAssetUseCase: WireCellsGetAssetUseCase(
                     localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
                     fileCache: MockFileCache()
-                )
+                ),
+                getPublicLinkData: getPublicLinkData,
+                createPublicLink: createPublicLink,
+                deletePublicLink: deletePublicLink,
+                updatePublicLinkExpiration: updatePublicLinkExpiration,
+                updatePublicLinkPassword: updatePublicLinkPassword,
             ),
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),

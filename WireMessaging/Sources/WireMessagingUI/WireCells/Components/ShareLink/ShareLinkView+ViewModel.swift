@@ -63,7 +63,7 @@ extension ShareLinkView {
         init(fileItem: FilesViewItem, useCases: UseCases) {
             self.fileItem = fileItem
             self.useCases = useCases
-            self.publicLinkState = if let linkID = fileItem.publicLinkId {
+            self.publicLinkState = if let linkID = fileItem.publicLinkID {
                 .initial(id: linkID)
             } else {
                 .disabled
