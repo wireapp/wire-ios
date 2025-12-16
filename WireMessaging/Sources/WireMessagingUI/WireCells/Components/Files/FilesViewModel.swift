@@ -152,6 +152,10 @@ package final class FilesViewModel: ObservableObject {
             getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol,
             createFolder: any WireCellsCreateFolderUseCaseProtocol,
             getPublicLinkData: any WireCellsGetPublicLinkDataUseCaseProtocol,
+            createPublicLink: WireCellsCreatePublicLinkUseCase,
+            deletePublicLink: WireCellsDeletePublicLinkUseCase,
+            updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase,
+            updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase
         ) {
 
             self.fetchNodes = fetchNodes
@@ -162,6 +166,10 @@ package final class FilesViewModel: ObservableObject {
             self.getTagSuggestions = getTagSuggestions
             self.createFolder = createFolder
             self.getPublicLinkData = getPublicLinkData
+            self.createPublicLink = createPublicLink
+            self.deletePublicLink = deletePublicLink
+            self.updatePublicLinkExpiration = updatePublicLinkExpiration
+            self.updatePublicLinkPassword = updatePublicLinkPassword
         }
 
         let fetchNodes: WireCellsFetchNodesPageUseCase
@@ -172,6 +180,10 @@ package final class FilesViewModel: ObservableObject {
         let getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
         let createFolder: any WireCellsCreateFolderUseCaseProtocol
         let getPublicLinkData: any WireCellsGetPublicLinkDataUseCaseProtocol
+        let createPublicLink: WireCellsCreatePublicLinkUseCase
+        let deletePublicLink: WireCellsDeletePublicLinkUseCase
+        let updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase
+        let updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase
     }
 
     let useCases: UseCases

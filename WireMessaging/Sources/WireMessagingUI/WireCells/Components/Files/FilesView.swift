@@ -86,7 +86,8 @@ package struct FilesView: FilesViewProtocol {
                 item: $viewModel.sheetNavigation,
                 onDismiss: {
                     Task { await viewModel.onSheetDismissed() }
-                }, content: { navigationItem in
+                },
+                content: { navigationItem in
                     switch navigationItem {
                     case let .editTags(fileItem: fileItem):
                         TagsEditView(
@@ -100,10 +101,15 @@ package struct FilesView: FilesViewProtocol {
                             }
                         )
                     case let .shareLink(fileItem: fileItem):
+                        // FIXME: Reload files list - otherwise there is a bug
                         ShareLinkView(
                             fileItem: fileItem,
                             useCases: .init(
                                 getLinkData: viewModel.useCases.getPublicLinkData,
+                                createPublicLink: viewModel.useCases.createPublicLink,
+                                deletePublicLink: viewModel.useCases.deletePublicLink,
+                                updatePublicLinkExpiration: viewModel.useCases.updatePublicLinkExpiration,
+                                updatePublicLinkPassword: viewModel.useCases.updatePublicLinkPassword
                             )
                         )
                     case let .renameFile(fileRenameView):

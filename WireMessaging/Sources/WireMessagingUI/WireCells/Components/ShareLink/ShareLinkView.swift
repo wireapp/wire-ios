@@ -43,14 +43,9 @@ struct ShareLinkView: View {
 
                         mainToggleSection()
 
-                        if viewModel.isLinkActive {
-                            linkSettingsSection()
+                        if let linkID = viewModel.linkID {
+                            linkSettingsSection(linkID: linkID)
                         }
-
-                        // Just for testing
-                        Text("link id: \(viewModel.fileItem.publicLinkId ?? "-")")
-                        Text("pass: \(viewModel.password ?? "-")")
-                        Text("pass: \(viewModel.expirationDate?.formatted() ?? "-")")
                     }
                     .padding()
                     .padding(.bottom, 80) // Space for the bottom button
@@ -58,6 +53,7 @@ struct ShareLinkView: View {
 
                 shareLinkButton()
             }
+            .onAppear { Task { await viewModel.loadIfNeeded() } }
             .background(ColorTheme.Backgrounds.background.color.ignoresSafeArea())
             .navigationTitle(Strings.ShareLink.title)
             .navigationBarTitleDisplayMode(.inline)
@@ -68,18 +64,13 @@ struct ShareLinkView: View {
                 switch navigationItem {
                 case .password:
                     ShareLinkPasswordView(
-                        password: viewModel.password,
+                        password: "viewModel.password", // FIXME:
                         onSave: { newPassword in
-                            viewModel.password = newPassword
+                            "viewModel.password = newPassword" // FIXME:
                         }
                     )
-                case .expiration:
-                    ExpirationDatePickerView(
-                        expirationDate: viewModel.expirationDate,
-                        onSave: { newDate in
-                            viewModel.expirationDate = newDate
-                        }
-                    )
+                case let .expiration(linkID):
+                    viewModel.makeExpirationDatePickerView(linkID: linkID)
                 }
             }
         }
@@ -95,7 +86,14 @@ struct ShareLinkView: View {
                 .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Toggle(Strings.ShareLink.createLinkToogle, isOn: $viewModel.isLinkActive)
+            Toggle(
+                Strings.ShareLink.createLinkToogle,
+                isOn: Binding(get: {
+                    viewModel.isLinkToggleOn
+                }, set: { isEnabled in
+                    Task { await viewModel.togglePublicLink(isEnabled: isEnabled) }
+                })
+            )
                 .font(for: .body1)
                 .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                 .padding(.horizontal)
@@ -105,11 +103,12 @@ struct ShareLinkView: View {
                         .foregroundStyle(ColorTheme.Backgrounds.surface.color)
                 }
                 .tint(wireAccentColor.color)
+                .disabled(!viewModel.isLinkToggleEnabled)
         }
     }
 
     @ViewBuilder
-    private func linkSettingsSection() -> some View {
+    private func linkSettingsSection(linkID: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(Strings.ShareLink.LinkSection.title)
                 .font(for: .subline2)
@@ -130,7 +129,7 @@ struct ShareLinkView: View {
                     title: Strings.ShareLink.LinkSection.expirationTitle,
                     description: Strings.ShareLink.LinkSection.expirationDescription,
                     status: viewModel.expirationStatusText,
-                    action: { viewModel.sheetNavigation = .expiration }
+                    action: { viewModel.sheetNavigation = .expiration(linkID: linkID) }
                 )
             }
         }
@@ -183,7 +182,7 @@ struct ShareLinkView: View {
     private func shareLinkButton() -> some View {
         VStack {
             Button {
-                viewModel.saveLink()
+                viewModel.copyLink()
             } label: {
                 HStack {
                     Image(systemName: "square.and.arrow.up")
@@ -218,7 +217,7 @@ struct ShareLinkView: View {
 
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                viewModel.saveLink()
+//                viewModel.saveLink()
                 dismiss()
             } label: {
                 Text(L10n.Localizable.General.done)
@@ -245,11 +244,11 @@ struct ShareLinkView: View {
 
     let mockAPI = {
         let mockAPI = MockNodesAPIProtocol()
-        mockAPI.getPublicLinkLinkUUID_MockMethod = { _ in
+        mockAPI.getPublicLinkLinkID_MockMethod = { _ in
             WireCellsPublicLink(
-                uuid: UUID(),
+                linkID: "aaaa",
                 url: URL(string: "https://example.com")!,
-                password: "r1ckr0ll",
+                requiresPassword: true,
                 expirationDate: Date().addingTimeInterval(3600),
             )
         }
@@ -258,6 +257,10 @@ struct ShareLinkView: View {
 
     let useCases: ShareLinkView.ViewModel.UseCases = .init(
         getLinkData: WireCellsGetPublicLinkDataUseCase(nodesAPI: mockAPI),
+        createPublicLink: WireCellsCreatePublicLinkUseCase(nodesAPI: mockAPI),
+        deletePublicLink: WireCellsDeletePublicLinkUseCase(nodesAPI: mockAPI),
+        updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(nodesAPI: mockAPI),
+        updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: mockAPI)
     )
 
     ShareLinkView(

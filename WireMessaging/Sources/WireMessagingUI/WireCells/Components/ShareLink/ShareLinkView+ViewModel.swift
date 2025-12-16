@@ -19,75 +19,192 @@
 import Combine
 import Foundation
 import WireMessagingDomain
+import UIKit
+import SwiftUI
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells.ShareLink
 
 extension ShareLinkView {
     @MainActor
     final class ViewModel: ObservableObject {
+
+        enum PublicLinkState {
+            case initial(id: String)
+            case loading(id: String)
+            case disabled
+            case enabling
+            case enabled(id: String, url: URL, expirationDate: Date?)
+            case disabling(id: String, url: URL, expirationDate: Date?)
+        }
+
         struct UseCases {
             let getLinkData: any WireCellsGetPublicLinkDataUseCaseProtocol
-            // TODO: Add the rest of use case to create/update/delete
+            let createPublicLink: WireCellsCreatePublicLinkUseCase
+            let deletePublicLink: WireCellsDeletePublicLinkUseCase
+            let updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase
+            let updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase
         }
 
         let fileItem: FilesViewItem
         let useCases: UseCases
 
-        enum SheetNavigation: String, Identifiable {
+        enum SheetNavigation: Identifiable, Hashable {
             case password
-            case expiration
+            case expiration(linkID: String)
 
-            var id: String { rawValue }
+            var id: Self { self }
         }
 
         // MARK: - UI State
 
         @Published var sheetNavigation: SheetNavigation?
-        @Published var isLinkActive: Bool = false
-
-        // These hold the configuration to be saved
-        @Published var password: String?
-        @Published var expirationDate: Date?
+        @Published private var publicLinkState: PublicLinkState
 
         init(fileItem: FilesViewItem, useCases: UseCases) {
             self.fileItem = fileItem
             self.useCases = useCases
-
-            self.isLinkActive = fileItem.publicLinkId != nil
-
-            if let publicLinkId = fileItem.publicLinkId {
-                Task { await getLinkData(publicLinkId: publicLinkId) }
+            self.publicLinkState = if let linkID = fileItem.publicLinkId {
+                .initial(id: linkID)
+            } else {
+                .disabled
             }
         }
 
-        private func getLinkData(publicLinkId: String) async {
-            // Call to API to get existing password/date from the link data and parse it here
-            guard let linkId = UUID(uuidString: publicLinkId) else { return }
+        var isLinkToggleOn: Bool {
+            switch publicLinkState {
+            case .enabled, .enabling:
+                return true
+            case .initial, .loading, .disabled, .disabling:
+                return false
+            }
+        }
 
-            do {
-                let linkData = try await useCases.getLinkData.invoke(linkId: linkId)
-                password = linkData.password
-                expirationDate = linkData.expirationDate
-            } catch {
-                print("Failed to fetch link data: \(error)")
+        var isLinkToggleEnabled: Bool {
+            switch publicLinkState {
+            case .initial, .loading, .enabling, .disabling:
+                return false
+            case .enabled, .disabled:
+                return true
+            }
+        }
+
+        var linkID: String? {
+            switch publicLinkState {
+            case let .enabled(id, _, _), let .disabling(id, _, _):
+                return id
+            default:
+                return nil
+            }
+        }
+
+        var isPasswordEnabled: Bool {
+            switch publicLinkState {
+            case let .enabled(_, _, expirationDate), let .disabling(_, _, expirationDate):
+                return false // FIXME:
+            default:
+                return false
             }
         }
 
         // MARK: - Display Helpers
 
         var passwordStatusText: String {
-            password != nil ? Strings.on : Strings.off
+            isPasswordEnabled ? Strings.on : Strings.off
         }
 
         var expirationStatusText: String {
             expirationDate != nil ? Strings.on : Strings.off
         }
 
-        func saveLink() {
-            // TODO: Implement the actual API call to create/update the link
-            print(
-                "Saving link: Active: \(isLinkActive), Pwd: \(String(describing: password)), Exp: \(String(describing: expirationDate))"
+        var expirationDate: Date? {
+            switch publicLinkState {
+            case let .enabled(_, _, expirationDate), let .disabling(_, _, expirationDate):
+                return expirationDate
+            default:
+                return nil
+            }
+        }
+
+        func loadIfNeeded() async {
+            let linkID: String
+            switch publicLinkState {
+            case let .initial(id):
+                linkID = id
+            default:
+                return
+            }
+
+            do {
+                publicLinkState = .loading(id: linkID)
+                let linkData = try await useCases.getLinkData.invoke(linkID: linkID)
+                publicLinkState = .enabled(id: linkID, url: linkData.url, expirationDate: linkData.expirationDate)
+            } catch {
+                publicLinkState = .initial(id: linkID)
+                print("Failed to fetch link data: \(error)")
+            }
+        }
+
+        func copyLink() {
+            guard case let .enabled(_, url, _) = publicLinkState else { return }
+            UIPasteboard.general.string = url.absoluteString
+        }
+
+        func updateExpirationDate(to newDate: Date?) async {
+            guard case let .enabled(id, url, _) = publicLinkState else { return }
+            do {
+                let result = try await useCases.updatePublicLinkExpiration.invoke(
+                    linkID: id,
+                    expiration: newDate
+                )
+                publicLinkState = .enabled(id: id, url: result.url, expirationDate: result.expirationDate)
+            } catch {
+                print("Failed to update expiration date: \(error)")
+            }
+        }
+
+        func makeExpirationDatePickerView(linkID: String) -> some View {
+            ExpirationDatePickerView(
+                viewModel: ExpirationDatePickerView.ViewModel(
+                    linkID: linkID,
+                    expirationDate: self.expirationDate,
+                    isPasswordEnabled: self.isPasswordEnabled,
+                    didSave: { [weak self] newExpirationDate in
+                        guard let self, case let .enabled(id, url, _) = publicLinkState else { return }
+
+                        publicLinkState = .enabled(id: id, url: url, expirationDate: newExpirationDate)
+                        sheetNavigation = nil
+                    },
+                    updatePublicLinkExpiration: self.useCases.updatePublicLinkExpiration
+                )
             )
+        }
+
+        // MARK: - Private
+
+        func togglePublicLink(isEnabled: Bool) async {
+            switch publicLinkState {
+            case .enabling, .disabling, .initial, .loading:
+                assertionFailure("Should not be possible to toggle")
+            case .disabled:
+                publicLinkState = .enabling
+                do {
+                    let result = try await useCases.createPublicLink.invoke(
+                        nodeID: fileItem.id,
+                        fileName: fileItem.name
+                    )
+                    publicLinkState = .enabled(id: result.linkID, url: result.url, expirationDate: result.expirationDate)
+                } catch {
+                    publicLinkState = .disabled
+                }
+            case let .enabled(id, url, expirationDate):
+                publicLinkState = .disabling(id: id, url: url, expirationDate: expirationDate)
+                do {
+                    try await useCases.deletePublicLink.invoke(linkID: id)
+                    publicLinkState = .disabled
+                } catch {
+                    publicLinkState = .enabled(id: id, url: url, expirationDate: expirationDate)
+                }
+            }
         }
     }
 }

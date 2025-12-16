@@ -83,10 +83,15 @@ package struct FilesBrowserView: FilesViewProtocol {
                 case let .filters(filtersView):
                     filtersView
                 case let .shareLink(fileItem: fileItem):
+                    // FIXME: Reload files list - otherwise there is a bug
                     ShareLinkView(
                         fileItem: fileItem,
                         useCases: .init(
-                            getLinkData: viewModel.useCases.getPublicLinkData
+                            getLinkData: viewModel.useCases.getPublicLinkData,
+                            createPublicLink: viewModel.useCases.createPublicLink,
+                            deletePublicLink: viewModel.useCases.deletePublicLink,
+                            updatePublicLinkExpiration: viewModel.useCases.updatePublicLinkExpiration,
+                            updatePublicLinkPassword: viewModel.useCases.updatePublicLinkPassword
                         )
                     )
                 default:

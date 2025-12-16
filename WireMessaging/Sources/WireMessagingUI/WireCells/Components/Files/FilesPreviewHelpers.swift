@@ -68,6 +68,19 @@ extension FilesViewModel {
                 getPublicLinkData: WireCellsGetPublicLinkDataUseCase(
                     nodesAPI: previewPublicLinkApi()
                 ),
+                createPublicLink: WireCellsCreatePublicLinkUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                ),
+                deletePublicLink: WireCellsDeletePublicLinkUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                ),
+                updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                ),
+                updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                )
+
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,
@@ -184,11 +197,11 @@ private func previewTagsApi() -> some NodesAPIProtocol {
 
 private func previewPublicLinkApi() -> some NodesAPIProtocol {
     let mock = MockNodesAPIProtocol()
-    mock.getPublicLinkLinkUUID_MockMethod = { _ in
+    mock.getPublicLinkLinkID_MockMethod = { _ in
         WireCellsPublicLink(
-            uuid: UUID(),
+            linkID: "aaa",
             url: URL(string: "https://example.com")!,
-            password: "r1ckr0ll",
+            requiresPassword: true,
             expirationDate: Date(),
         )
     }

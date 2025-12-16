@@ -18,6 +18,7 @@
 
 import Combine
 import SwiftUI
+import WireMessagingDomain
 
 extension ExpirationDatePickerView {
     @MainActor
@@ -26,14 +27,30 @@ extension ExpirationDatePickerView {
         let defaultExpirationDate: Date = Calendar.current.date(byAdding: .hour, value: 1, to: Date()) ?? Date()
             .addingTimeInterval(3600)
 
+        private let linkID: String
+        private let isPasswordEnabled: Bool
+        private let didSave: (Date?) -> Void
+        private let updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase
+
         @Published var expirationDate: Date?
         @Published var isExpirationEnabled: Bool
+        @Published var isSaving = false
 
-        init(expirationDate: Date?) {
+        init(
+            linkID: String,
+            expirationDate: Date?,
+            isPasswordEnabled: Bool,
+            didSave: @escaping (Date?) -> Void,
+            updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase
+        ) {
             self.currentExpirationDate = expirationDate
             // do not assign a default here; keep nil if none provided
             self.expirationDate = expirationDate
+            self.linkID = linkID
             self.isExpirationEnabled = expirationDate != nil
+            self.didSave = didSave
+            self.isPasswordEnabled = isPasswordEnabled
+            self.updatePublicLinkExpiration = updatePublicLinkExpiration
         }
 
         func enableExpirationDate() {
@@ -63,5 +80,36 @@ extension ExpirationDatePickerView {
             // If expirationDate is nil (i.e. disabling expiration), allow save
             return true
         }
+
+        func save() async {
+            isSaving = true
+            do {
+                _ = try await updatePublicLinkExpiration.invoke(
+                    linkID: linkID,
+                    expiration: expirationDate
+                )
+                didSave(expirationDate)
+            } catch {
+                // Handle error appropriately, e.g., show an alert to the user
+                print("Failed to save expiration date: \(error)")
+            }
+            isSaving = false
+        }
     }
+}
+
+public import CellsSDK
+
+extension ErrorResponse: CustomDebugStringConvertible {
+
+    public var debugDescription: String {
+        switch self {
+        case let .error(code, body, response, error):
+            if let body = body, let m = String(data: body, encoding: .utf8) {
+                return "ErrorResponse(code: \(code), body: \(m), response: \(String(describing: response)), error: \(String(describing: error)))"
+            }
+        }
+        return "ErrorResponse(\(self))"
+    }
+
 }

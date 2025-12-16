@@ -27,11 +27,8 @@ struct ExpirationDatePickerView: View {
 
     @StateObject private var viewModel: ViewModel
 
-    let onSave: (Date?) -> Void
-
-    init(expirationDate: Date?, onSave: @escaping (Date?) -> Void) {
-        _viewModel = .init(wrappedValue: .init(expirationDate: expirationDate))
-        self.onSave = onSave
+    package init(viewModel: @autoclosure @escaping () -> ViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel())
     }
 
     var body: some View {
@@ -79,6 +76,7 @@ struct ExpirationDatePickerView: View {
                         )
                     }
                 }
+                .disabled(viewModel.isSaving)
                 .padding()
             }
             .navigationTitle(Strings.title)
@@ -101,14 +99,12 @@ struct ExpirationDatePickerView: View {
 
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                // send nil when expiration disabled, otherwise the selected expirationDate
-                onSave(viewModel.expirationDate)
-                dismiss()
+                Task { await viewModel.save() }
             } label: {
                 Text(L10n.Localizable.General.save)
                     .bold()
             }
-            .disabled(!viewModel.canSave)
+            .disabled(!viewModel.canSave || viewModel.isSaving)
         }
     }
 }
@@ -129,11 +125,9 @@ struct ExpirationPickerContent: View {
 
                 Spacer()
 
-                DatePicker("", selection: $expirationDate, displayedComponents: [.date, .hourAndMinute])
+                DatePicker("", selection: $expirationDate, in: Date()..., displayedComponents: [.date, .hourAndMinute])
                     .datePickerStyle(.automatic)
                     .labelsHidden()
-                    .colorInvert()
-                    .colorMultiply(dateInThePast ? ColorTheme.Base.error.color : .primaryText)
             }
             .padding(.vertical, 6)
             .padding(.horizontal)
@@ -184,23 +178,23 @@ struct DateSegmentButton: View {
     }
 }
 
-#Preview("With initial date") {
-    ExpirationDatePickerView(
-        expirationDate: Calendar.current.date(byAdding: .hour, value: 2, to: Date()),
-        onSave: { _ in }
-    )
-    .colorScheme(.light)
-}
-
-#Preview("Date in the past") {
-    ExpirationDatePickerView(
-        expirationDate: Calendar.current.startOfDay(for: Date()),
-        onSave: { _ in }
-    )
-    .colorScheme(.light)
-}
-
-#Preview("No initial date") {
-    ExpirationDatePickerView(expirationDate: nil, onSave: { _ in })
-        .colorScheme(.dark)
-}
+//#Preview("With initial date") {
+//    ExpirationDatePickerView(
+//        expirationDate: Calendar.current.date(byAdding: .hour, value: 2, to: Date()),
+//        onSave: { _ in }
+//    )
+//    .colorScheme(.light)
+//}
+//
+//#Preview("Date in the past") {
+//    ExpirationDatePickerView(
+//        expirationDate: Calendar.current.startOfDay(for: Date()),
+//        onSave: { _ in }
+//    )
+//    .colorScheme(.light)
+//}
+//
+//#Preview("No initial date") {
+//    ExpirationDatePickerView(expirationDate: nil, onSave: { _ in })
+//        .colorScheme(.dark)
+//}
