@@ -94,9 +94,7 @@ final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
 
     // MARK: - Team events
 
-
     // MARK: - Members events
-
 
     func testThatItDoesNotSendEventsFromATeamThatYouAreNotAMemberOf() {
         // Given
@@ -116,4 +114,4 @@ final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
         XCTAssertEqual(events.count, 0)
     }
 
- }
+}

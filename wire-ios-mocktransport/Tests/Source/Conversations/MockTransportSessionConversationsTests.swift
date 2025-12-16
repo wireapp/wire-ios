@@ -158,7 +158,6 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         XCTAssertEqual(accessRoleV2, newAccessRoleV2)
     }
 
-
     func testThatItReturnsConversationRolesIfConversationIsNotPartOfATeam() {
         // given
         var conversation: MockConversation!
