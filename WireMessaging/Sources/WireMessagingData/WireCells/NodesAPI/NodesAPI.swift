@@ -34,7 +34,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         self.init(
             awsClient: AWSClient(serverURL: serverURL, accessToken: accessToken),
             restAPI: RestAPI(
-                serverURL: serverURL.appendingPathComponent("/v2"),
+                serverURL: serverURL,
                 accessToken: accessToken
             )
         )

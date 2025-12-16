@@ -319,9 +319,13 @@ final class RestAPI: Sendable {
         return response.values ?? []
     }
 
+    private var apiURL: URL {
+        serverURL.appendingPathComponent("/v2")
+    }
+
     private func makeConfiguration() async throws -> CellsSDKAPIConfiguration {
         let config = CellsSDKAPIConfiguration()
-        config.basePath = serverURL.absoluteString
+        config.basePath = apiURL.absoluteString
         config.customHeaders = ["Authorization": "Bearer \(try await accessTokenProvider.accessToken().token)"]
         config.interceptor = LoggingIntercepter()
 
