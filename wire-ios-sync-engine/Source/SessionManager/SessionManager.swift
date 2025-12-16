@@ -281,13 +281,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    public private(set) var backgroundUserSessions = [UUID: ZMUserSession]() {
-        didSet {
-            VoIPPushHelper.setLoadedUserSessions(
-                accountIDs: Array(backgroundUserSessions.keys)
-            )
-        }
-    }
+    public private(set) var backgroundUserSessions = [UUID: ZMUserSession]()
 
     public internal(set) var unauthenticatedSession: UnauthenticatedSession? {
         willSet {

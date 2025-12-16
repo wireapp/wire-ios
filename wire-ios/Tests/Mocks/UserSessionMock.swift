@@ -470,4 +470,5 @@ extension UserSessionMock: ContextProvider {
     var syncContext: NSManagedObjectContext { contextProvider.syncContext }
     var searchContext: NSManagedObjectContext { contextProvider.searchContext }
     var eventContext: NSManagedObjectContext { contextProvider.eventContext }
+
 }

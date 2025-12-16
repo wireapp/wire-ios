@@ -17,6 +17,7 @@
 //
 
 import WireDataModel
+import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
 
@@ -128,7 +129,8 @@ final class CollectionsViewControllerTests: XCTestCase {
             fetchingDone: true,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
@@ -139,7 +141,8 @@ final class CollectionsViewControllerTests: XCTestCase {
             fetchingDone: false,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         controller.view.layer.speed = 0 // Disable animations so that the spinner would always be in the same phase
         snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
@@ -243,7 +246,8 @@ final class CollectionsViewControllerTests: XCTestCase {
             collection: collection,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         _ = controller.view
         delegate.assetCollectionDidFetch(

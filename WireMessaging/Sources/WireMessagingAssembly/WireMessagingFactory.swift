@@ -35,7 +35,7 @@ public struct WireMessagingFactory {
     private let localAssetRepository: WireCellsLocalAssetRepository
     private let filenameGenerator = FilenameGenerator()
     private let lastOpenRequest: WireCellsLastOpenRequest
-    private let nodeCache = WireCellsNodeCache()
+    private let nodeCache: WireCellsNodeCache
     private let isFoldersEnabled: Bool
     private let isCollaboraEnabled: Bool
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
@@ -65,6 +65,7 @@ public struct WireMessagingFactory {
             serverURL
         }
 
+        self.nodeCache = WireCellsNodeCache()
         self.nodesAPI = NodesAPI(serverURL: serverURL, accessToken: accessToken)
         self.uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
         self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
@@ -134,6 +135,13 @@ public struct WireMessagingFactory {
 
     public func makeUpdateTagsUseCase() -> some WireCellsUpdateTagsUseCaseProtocol {
         WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI)
+    }
+
+    public func makeFetchNodeUseCase() -> any WireCellsFetchNodeUseCaseProtocol {
+        WireCellsFetchNodeUseCase(
+            repository: nodesAPI,
+            cache: nodeCache
+        )
     }
 }
 
@@ -212,33 +220,6 @@ public extension WireMessagingFactory {
         )
     }
 
-    @MainActor
-    func makeAttachmentsPreviewView(
-        attachments: [WireCellsMessageAttachment],
-        alignment: HorizontalAlignment
-    ) -> UIViewController {
-        let viewController = UIHostingController(
-            rootView: WireCellsAttachmentsPreviewView(
-                viewModel: WireCellsAttachmentsPreviewViewModel(
-                    attachments: attachments,
-                    alignment: alignment,
-                    fetchNodeUseCase: WireCellsFetchNodeUseCase(
-                        repository: nodesAPI,
-                        cache: nodeCache
-                    ),
-                    getAssetUseCase: WireCellsGetAssetUseCase(
-                        localAssetRepository: localAssetRepository,
-                        fileCache: fileCache
-                    ),
-                    localAssetRepository: localAssetRepository,
-                    lastOpenRequest: lastOpenRequest,
-                    nodeRenameNotifier: nodeRenameNotifier
-                )
-            ))
-        viewController.view.backgroundColor = .clear
-        return viewController
-    }
-
     func makeConversationCellProvider(
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProvider {
@@ -251,6 +232,7 @@ public extension WireMessagingFactory {
                 localAssetRepository: localAssetRepository,
                 fileCache: fileCache
             ),
+            nodeCache: nodeCache,
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
             nodeRenameNotifier: nodeRenameNotifier,

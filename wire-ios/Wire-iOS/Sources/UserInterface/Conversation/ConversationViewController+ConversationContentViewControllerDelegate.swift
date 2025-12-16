@@ -65,7 +65,8 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         profileViewController.preferredContentSize = CGSize.IPadPopover.preferredContentSize
 
@@ -109,7 +110,13 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         _ contentViewController: ConversationContentViewController,
         didTriggerReplyingTo message: ZMConversationMessage
     ) {
-        let replyComposingView = contentViewController.createReplyComposingView(for: message)
+        let messageReplyAttachmentsViewModel = MessageReplyAttachmentsViewModel(
+            fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
+        )
+        let replyComposingView = contentViewController.createReplyComposingView(
+            for: message,
+            messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
+        )
         inputBarController.reply(to: message, composingView: replyComposingView)
     }
 
@@ -150,6 +157,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navigationController = UINavigationController(rootViewController: groupDetailsViewController)

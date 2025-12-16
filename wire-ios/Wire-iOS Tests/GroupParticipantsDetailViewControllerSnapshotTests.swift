@@ -17,6 +17,7 @@
 //
 
 import WireDesign
+import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
 
@@ -95,7 +96,8 @@ final class GroupParticipantsDetailViewControllerSnapshotTests: XCTestCase {
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         let navigationController = makeNavigationController(for: sut)
@@ -142,7 +144,8 @@ final class GroupParticipantsDetailViewControllerSnapshotTests: XCTestCase {
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         let navigationController = makeNavigationController(for: sut)
@@ -160,7 +163,8 @@ final class GroupParticipantsDetailViewControllerSnapshotTests: XCTestCase {
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         sut.viewModel.admins = []
         sut.viewModel.members = []
