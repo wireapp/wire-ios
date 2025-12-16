@@ -195,7 +195,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         }
 
     }
-    
+
     private func initiateRepairRemovalKeys() {
         guard let userSession else {
             return

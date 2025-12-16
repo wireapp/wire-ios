@@ -27,7 +27,7 @@ public protocol RepairRemovalKeysUseCaseProtocol {
 }
 
 public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
-    
+
     // TODO: Fill in
     static let faultyRemovalKey = Data()
     static let affectedDomain = "wire.com"
@@ -37,7 +37,7 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
     private let conversationsAPI: ConversationsAPI
     private let conversationLocalStore: ConversationLocalStoreProtocol
     private let initiateResetUseCase: InitiateResetMLSConversationUseCase
-    
+
     init(
         context: NSManagedObjectContext,
         mlsService: MLSServiceInterface,
@@ -51,7 +51,7 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
         self.conversationLocalStore = conversationLocalStore
         self.initiateResetUseCase = initiateResetUseCase
     }
-    
+
     public func invoke() async throws {
         WireLogger.mls.debug(
             "initiating repair of faulty removal keys",
@@ -105,5 +105,5 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
             await initiateResetUseCase.invoke(groupID: groupID, epoch: epoch)
         }
     }
-    
+
 }

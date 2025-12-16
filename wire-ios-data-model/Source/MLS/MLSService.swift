@@ -753,9 +753,9 @@ public final class MLSService: MLSServiceInterface {
         case failedToProcessMessage
 
     }
-    
+
     public func externalSenderKey(groupID: MLSGroupID) async throws -> Data {
-        return try await coreCrypto.perform { coreCrypto in
+        try await coreCrypto.perform { coreCrypto in
             try await coreCrypto.getExternalSender(conversationId: groupID.conversationId)
         }.copyBytes()
     }

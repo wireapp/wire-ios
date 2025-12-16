@@ -83,7 +83,7 @@ public protocol ConversationLocalStoreProtocol {
         conversationDomain: String?,
         mlsGroupID: MLSGroupID
     ) async
-    
+
     func fetchAllMLSConversations(domain: String?) async throws -> [ZMConversation]
 
     /// Fetches a MLS conversation locally.
