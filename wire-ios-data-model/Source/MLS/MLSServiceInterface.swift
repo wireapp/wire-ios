@@ -159,6 +159,9 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// - Throws: An error if the group cannot be wiped
 
     func wipeGroup(_ groupID: MLSGroupID) async throws
+    
+    
+    func externalSenderKey(groupID: MLSGroupID) async throws -> Data
 
     /// Checks if the group exists in core crypto's local storage
     ///

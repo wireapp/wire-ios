@@ -792,6 +792,14 @@ public final class ClientSessionComponent {
     private lazy var resetMLSConversationLockRepository = ResetMLSConversationLockRepository(
         userID: selfUserID
     )
+    
+    public lazy var repairFaultyRemovalKeysUsecase = RepairRemovalKeysUseCase(
+        context: syncContext,
+        mlsService: mlsService,
+        conversationsAPI: conversationsAPI,
+        conversationLocalStore: conversationLocalStore,
+        initiateResetUseCase: initiateResetMLSConversationUseCase
+    )
 
     public lazy var initiateResetMLSConversationUseCase = InitiateResetMLSConversationUseCase(
         api: mlsAPI,

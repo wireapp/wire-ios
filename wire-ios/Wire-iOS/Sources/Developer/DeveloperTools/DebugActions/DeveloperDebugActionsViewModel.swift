@@ -87,6 +87,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Invalidate all conversations", action: invalidateAllConversations),
             .init(title: "Set last app version migration", action: requestAppVersionInput),
             .init(title: "Initiate reset of first from top MLS", action: initiateResetBrokenMLSConversation),
+            .init(title: "Repair faulty removal key", action: initiateRepairRemovalKeys),
             .init(title: "Logout", action: logout)
 
         ]
@@ -193,6 +194,21 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             )
         }
 
+    }
+    
+    private func initiateRepairRemovalKeys() {
+        guard let userSession else {
+            return
+        }
+
+        Task { @MainActor in
+            WireLogger.mls.info("Triggering initiate repair removal keys")
+            do {
+                try await userSession.clientSessionComponent?.repairFaultyRemovalKeysUsecase.invoke()
+            } catch {
+                WireLogger.mls.info("repair removal keys failed: \(error)")
+            }
+        }
     }
 
     func logout() {
