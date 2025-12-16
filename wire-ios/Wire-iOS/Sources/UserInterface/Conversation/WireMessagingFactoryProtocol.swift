@@ -47,11 +47,6 @@ protocol WireMessagingFactoryProtocol {
         accentColorProvider: @escaping () -> WireAccentColor
     ) -> UIViewController
 
-    @MainActor
-    func makeAttachmentsPreviewView(
-        attachments: [WireCellsMessageAttachment],
-        alignment: HorizontalAlignment
-    ) -> UIViewController
     func makeConversationCellProvider(
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProviderProtocol
