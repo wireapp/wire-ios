@@ -21,8 +21,8 @@ import Foundation
 @objc(ZMSynchronizationState)
 public enum SynchronizationState: UInt {
     case unauthenticated
-    case slowSyncing
-    case establishingWebsocket
-    case quickSyncing
+    case slowSyncing // TODO: does this still make sense?
+    case establishingWebsocket // TODO: does this still make sense?
+    case quickSyncing // TODO: does this still make sense?
     case online
 }
