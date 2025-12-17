@@ -99,16 +99,16 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
 
             // This will unarchive the conversation when there is an incoming call
             self.updateConversation(conversation, with: callState, timestamp: timestamp)
-            
+
             // CallKit depends on a fetched conversation & and is not used for muted conversations
             let skipCallKit = conversation.needsToBeUpdatedFromBackend || conversation
                 .mutedMessageTypesIncludingAvailability != .none
             let notificationStyle = self.notificationStyleProvider?.callNotificationStyle ?? .callKit
-            
+
             if notificationStyle == .pushNotifications || skipCallKit {
                 self.localNotificationDispatcher.process(callState: callState, in: conversation, caller: caller)
             }
-            
+
             self.updateConversationListIndicator(convObjectID: conversation.objectID, callState: callState)
 
             if let systemMessage = self.systemMessageGenerator.appendSystemMessageIfNeeded(

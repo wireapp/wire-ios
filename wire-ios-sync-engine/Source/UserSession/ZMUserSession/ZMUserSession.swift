@@ -1449,7 +1449,6 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func processPendingCallEvents() async {
-
         if journal[.isSyncV2Enabled] {
             WireLogger.sync.debug(
                 "process pending call events",
