@@ -88,7 +88,7 @@ extension MockTransportSession {
     }
 
     func processPostPushToken(_ payload: ZMTransportData?, apiVersion: APIVersion) -> ZMTransportResponse {
-        let transportType = useLegaclyPushNotifications ? "APNS_VOIP" : "APNS"
+        let transportType = "APNS"
 
         guard
             let payload = payload?.asDictionary() as? [String: String],
