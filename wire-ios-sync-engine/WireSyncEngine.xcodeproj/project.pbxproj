@@ -13,6 +13,7 @@
 		015DE3A92DB29D4000DC34E8 /* MockUserSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015DE3A82DB29D4000DC34E8 /* MockUserSessionDelegate.swift */; };
 		018F17B92B83B70A00E0594D /* AVSConversationType+Conference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018F17B82B83B70A00E0594D /* AVSConversationType+Conference.swift */; };
 		01C774292D9EF01400A2FF07 /* WireAVS in Frameworks */ = {isa = PBXBuildFile; productRef = 01C774282D9EF01400A2FF07 /* WireAVS */; };
+		01D7FA2F2EF2BB2200452764 /* NotificationNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D7FA2E2EF2BB2200452764 /* NotificationNames.swift */; };
 		0601900B2678750D0043F8F8 /* DeepLinkURLActionProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161ACB3E23F6E4C200ABFF33 /* DeepLinkURLActionProcessorTests.swift */; };
 		060C06682B7619E300B484C6 /* SelfClientCertificateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060C06672B7619E300B484C6 /* SelfClientCertificateProvider.swift */; };
 		061F791C2B767B3D00E8827B /* SelfClientCertificateProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061F791A2B767AE100E8827B /* SelfClientCertificateProviderTests.swift */; };
@@ -569,6 +570,7 @@
 		015DE3A62DB29CE000DC34E8 /* SessionManagerEncryptionAtRestMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerEncryptionAtRestMigrationTests.swift; sourceTree = "<group>"; };
 		015DE3A82DB29D4000DC34E8 /* MockUserSessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUserSessionDelegate.swift; sourceTree = "<group>"; };
 		018F17B82B83B70A00E0594D /* AVSConversationType+Conference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVSConversationType+Conference.swift"; sourceTree = "<group>"; };
+		01D7FA2E2EF2BB2200452764 /* NotificationNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationNames.swift; sourceTree = "<group>"; };
 		060C06672B7619E300B484C6 /* SelfClientCertificateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfClientCertificateProvider.swift; sourceTree = "<group>"; };
 		061F791A2B767AE100E8827B /* SelfClientCertificateProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfClientCertificateProviderTests.swift; sourceTree = "<group>"; };
 		06239125274DB73A0065A72D /* StartLoginURLActionProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartLoginURLActionProcessor.swift; sourceTree = "<group>"; };
@@ -2068,6 +2070,7 @@
 			isa = PBXGroup;
 			children = (
 				EE5D9B5F290A7CEE007D78D6 /* VoIPPushManager.swift */,
+				01D7FA2E2EF2BB2200452764 /* NotificationNames.swift */,
 				F928651C19F7A3D30097539C /* Push Notifications */,
 			);
 			path = Notifications;
@@ -3086,6 +3089,7 @@
 				165D3A151E1D3EF30052E654 /* WireCallCenterV3.swift in Sources */,
 				554FEE2122AFF20600B1A8A1 /* ZMUserSession+LegalHold.swift in Sources */,
 				EE5D9B60290A7CEE007D78D6 /* VoIPPushManager.swift in Sources */,
+				01D7FA2F2EF2BB2200452764 /* NotificationNames.swift in Sources */,
 				EE5AAF3A2874E8C70018FA01 /* BackendEnvironmentProvider+Reachability.swift in Sources */,
 				54034F381BB1A6D900F4ED62 /* ZMUserSession+Logs.swift in Sources */,
 				549816471A432BC800A7CE2E /* ZMSyncStrategy.m in Sources */,

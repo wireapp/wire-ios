@@ -35,6 +35,8 @@ protocol UserSessionDelegate: AnyObject, UserSessionAppLockDelegate, UserSession
 
 }
 
+
+
 enum ZMUserSessionError: Error {
     case selfClientNotReady
 }
