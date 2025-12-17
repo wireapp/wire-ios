@@ -53,13 +53,13 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
     }
 
     public func invoke() async throws {
-        WireLogger.mls.debug(
+        WireLogger.mls.info(
             "initiating repair of faulty removal keys",
             attributes: .safePublic
         )
 
         guard !faultyMLSRemovalKeysByDomain.isEmpty else {
-            WireLogger.mls.debug(
+            WireLogger.mls.info(
                 "no faulty removal keys to repair, aborting",
                 attributes: .safePublic
             )
@@ -81,7 +81,7 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
         domain: String,
         faultyKeyHexStrings: [String]
     ) async throws {
-        WireLogger.mls.debug(
+        WireLogger.mls.info(
             "checking domain '\(domain)' for \(faultyKeyHexStrings.count) faulty key(s)",
             attributes: .safePublic
         )
@@ -127,8 +127,8 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
     private func findFaultyConversations(
         in conversations: [ZMConversation],
         faultyKeys: [Data]
-    ) async -> [(MLSGroupID, WireNetwork.QualifiedID)] {
-        var faultyConversations: [(MLSGroupID, WireNetwork.QualifiedID)] = []
+    ) async -> [(MLSGroupID, WireDataModel.QualifiedID)] {
+        var faultyConversations: [(MLSGroupID, WireDataModel.QualifiedID)] = []
 
         for conversation in conversations {
             let (groupID, qualifiedID) = await context.perform {
@@ -154,7 +154,7 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
             if faultyKeys.contains(currentRemovalKey) {
                 faultyConversations.append((
                     groupID,
-                    qualifiedID.toAPIModel()
+                    qualifiedID
                 ))
             }
         }
@@ -164,17 +164,17 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
 
     private func repairConversation(
         groupID: MLSGroupID,
-        qualifiedID: WireNetwork.QualifiedID
+        qualifiedID: WireDataModel.QualifiedID
     ) async {
         let remoteConversation: WireNetwork.Conversation?
         do {
             remoteConversation = try await conversationsAPI.getConversations(
-                for: [qualifiedID]
+                for: [qualifiedID.toAPIModel()]
             ).found.first
         } catch {
             WireLogger.mls.error(
                 "failed to get epoch for a group, skipping: \(String(describing: error))",
-                attributes: .safePublic
+                attributes: .safePublic, [.conversationId: qualifiedID.safeForLoggingDescription]
             )
             return
         }
@@ -182,14 +182,14 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
         guard let remoteConversation else {
             WireLogger.mls.error(
                 "remote conversation for a group not found, skipping",
-                attributes: .safePublic
+                attributes: .safePublic, [.conversationId: qualifiedID.safeForLoggingDescription]
             )
             return
         }
 
-        WireLogger.mls.debug(
+        WireLogger.mls.info(
             "initiating reset for faulty conversation: \(qualifiedID)",
-            attributes: .safePublic
+            attributes: .safePublic, [.conversationId: qualifiedID.safeForLoggingDescription]
         )
 
         let epoch = UInt64(remoteConversation.epoch ?? 0)
