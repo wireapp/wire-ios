@@ -45,17 +45,17 @@ struct RepairRemovalKeysUseCaseTests {
 
     init() async throws {
         let coreDataStackHelper = CoreDataStackHelper(localDomain: affectedDomain)
-        coreDataStack = try await coreDataStackHelper.createStack()
+        self.coreDataStack = try await coreDataStackHelper.createStack()
         let context = coreDataStack.syncContext
         let messageLocalStore = MessageLocalStore(context: context)
-        conversationLocalStore = ConversationLocalStore(
+        self.conversationLocalStore = ConversationLocalStore(
             context: context,
             mlsService: mlsService,
             messageLocalStore: messageLocalStore,
             localDomain: affectedDomain,
             isFederationEnabled: true
         )
-        sut = RepairRemovalKeysUseCase(
+        self.sut = RepairRemovalKeysUseCase(
             faultyRemovalKey: Data([1, 2, 3]).zmHexEncodedString(),
             affectedDomain: affectedDomain,
             context: context,
@@ -138,9 +138,9 @@ struct RepairRemovalKeysUseCaseTests {
         mlsService.externalSenderKeyGroupID_MockMethod = { groupID in
             switch groupID {
             case affectedGroupMLSGroupID, affected1On1MLSGroupID:
-                return faultyKey
+                faultyKey
             default:
-                return validKey
+                validKey
             }
         }
 
@@ -158,8 +158,8 @@ struct RepairRemovalKeysUseCaseTests {
     func itDoesNotResetGroupsWithValidKeys() async throws {
         // Given
         // All groups have valid keys
-        mlsService.externalSenderKeyGroupID_MockMethod = { groupID in
-            return validKey
+        mlsService.externalSenderKeyGroupID_MockMethod = { _ in
+            validKey
         }
 
         // When
@@ -178,9 +178,9 @@ struct RepairRemovalKeysUseCaseTests {
         mlsService.externalSenderKeyGroupID_MockMethod = { groupID in
             switch groupID {
             case nonAffectedGroupMLSGroupID:
-                return faultyKey
+                faultyKey
             default:
-                return validKey
+                validKey
             }
         }
 
@@ -200,9 +200,9 @@ struct RepairRemovalKeysUseCaseTests {
         mlsService.externalSenderKeyGroupID_MockMethod = { groupID in
             switch groupID {
             case otherDomainMLSGroupID:
-                return faultyKey
+                faultyKey
             default:
-                return validKey
+                validKey
             }
         }
 
@@ -224,7 +224,7 @@ final class MockConversationsAPIProtocol: ConversationsAPI {
     func getLegacyConversationIdentifiers() async throws -> WireNetwork.PayloadPager<[UUID]> {
         fatalError("not implemented")
     }
-    
+
     func getConversationIdentifiers() async throws -> WireNetwork.PayloadPager<[WireNetwork.QualifiedID]> {
         fatalError("not implemented")
     }
@@ -235,7 +235,7 @@ final class MockConversationsAPIProtocol: ConversationsAPI {
         let conversation = WireNetwork.Conversation(epoch: 5)
         return .init(found: [conversation], notFound: [], failed: [])
     }
-    
+
     func getMLSOneToOneConversation(
         userID: String,
         in domain: String
@@ -245,19 +245,19 @@ final class MockConversationsAPIProtocol: ConversationsAPI {
     ) {
         fatalError("not implemented")
     }
-    
+
     func getConversationGuestLink(
         conversationID: String
     ) async throws -> String? {
         fatalError("not implemented")
     }
-    
+
     func createGroupConversation(
         parameters: WireNetwork.CreateGroupConversationParameters
     ) async throws -> WireNetwork.Conversation {
         fatalError("not implemented")
     }
-    
+
     func addChannelPermission(
         conversationID: String,
         conversationDomain: String,
