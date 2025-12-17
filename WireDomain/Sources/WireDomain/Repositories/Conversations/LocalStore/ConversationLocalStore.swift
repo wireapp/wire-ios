@@ -201,6 +201,16 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func fetchAllMLSConversations(domain: String?) async throws -> [ZMConversation] {
+        try await context.perform { [context] in
+            try ZMConversation.fetchConversationsWithMLSGroupStatus(
+                mlsGroupStatus: .ready,
+                domain: domain,
+                in: context
+            )
+        }
+    }
+
     public func fetchConversation(
         id: UUID,
         domain: String?
