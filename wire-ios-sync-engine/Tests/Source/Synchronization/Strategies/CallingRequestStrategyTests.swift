@@ -596,7 +596,7 @@ class CallingRequestStrategyTests: MessagingTest {
     }
 
     func testThatItDoesNotTargetCallMessagesIfNoTargetClientsAreSpecified() async throws {
-        let (user1, user2, client1, client2, client3, client4, conversationAVSID) = try await syncMOC
+        let (_, _, _, _, _, _, conversationAVSID) = try await syncMOC
             .perform { [self] in
                 // Given
                 let selfClient = createSelfClient()

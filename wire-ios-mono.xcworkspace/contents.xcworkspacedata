@@ -35,12 +35,6 @@
          location = "group:c1_c2_c3_app_release_restricted.yml">
       </FileRef>
       <FileRef
-         location = "group:c1_c3_app_release_production.yml">
-      </FileRef>
-      <FileRef
-         location = "group:c1_c3_app_release_restricted.yml">
-      </FileRef>
-      <FileRef
          location = "group:changelog.yml">
       </FileRef>
       <FileRef

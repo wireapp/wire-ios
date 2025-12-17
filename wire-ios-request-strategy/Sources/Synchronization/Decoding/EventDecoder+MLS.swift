@@ -142,15 +142,6 @@ extension EventDecoder {
             }
         }
 
-        if let mlsService = await context.perform({ context.mlsService }),
-           updateEvent.source == .webSocket {
-            Task.detached { [mlsService] in
-                // we don't need to wait for this, as it can take a while to finish
-                // it should not block decryption
-                await mlsService.commitPendingProposalsIfNeeded()
-            }
-        }
-
         return events
     }
 

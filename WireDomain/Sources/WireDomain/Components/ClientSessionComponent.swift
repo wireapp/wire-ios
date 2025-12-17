@@ -808,7 +808,7 @@ public final class ClientSessionComponent {
 
     public lazy var workAgent: WorkAgent = .init(scheduler: PriorityOrderWorkItemScheduler())
 
-    public lazy var conversationUpdatesGenerator: ConversationUpdatesGeneratorProtocol = ConversationUpdatesGenerator(
+    public lazy var conversationUpdatesGenerator: IncrementalGeneratorProtocol = ConversationUpdatesGenerator(
         repository: conversationRepository,
         context: syncContext,
         onConversationUpdated: { [weak self] workItem in
@@ -817,4 +817,29 @@ public final class ClientSessionComponent {
         }
     )
 
+    public lazy var commitPendingProposalsGenerator: LiveGeneratorProtocol = CommitPendingProposalsGenerator(
+        repository: conversationRepository,
+        mlsService: mlsService,
+        context: syncContext,
+        isMLSGroupBroken: { [weak self] groupID in
+            self?.isMLSGroupBroken(groupID: groupID) == true
+        },
+        onCommitPendingProposals: { [weak self] workItem in
+
+            self?.workAgent.submitItem(workItem)
+        }
+    )
+
+    public lazy var generatorsDirectory = GeneratorsDirectory(
+        generators: [
+            conversationUpdatesGenerator,
+            commitPendingProposalsGenerator
+        ],
+        syncStatePublisher: syncStateSubject.eraseToAnyPublisher()
+    )
+
+    private func isMLSGroupBroken(groupID: MLSGroupID) -> Bool {
+        let brokenGroupIds = journal[.brokenMLSGroupIDs]
+        return brokenGroupIds.contains(groupID.description)
+    }
 }
