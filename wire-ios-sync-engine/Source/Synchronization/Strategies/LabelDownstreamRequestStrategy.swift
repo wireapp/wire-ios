@@ -71,6 +71,7 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMSingleRe
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard ZMUser.selfUser(in: managedObjectContext)
             .needsToRefetchLabels else { return nil } // TODO: seems never to be set to true can it be deleted ?
+        slowSync.readyForNextRequestIfNotBusy()
 
         return slowSync.nextRequest(for: apiVersion)
     }
