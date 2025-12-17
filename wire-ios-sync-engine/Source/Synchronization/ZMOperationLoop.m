@@ -54,9 +54,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
 
 - (instancetype)initWithTransportSession:(id<TransportSessionType>)transportSession
                          requestStrategy:(id<RequestStrategy>)requestStrategy
-                    updateEventProcessor:(id<UpdateEventProcessor>)updateEventProcessor
               operationStatus:(OperationStatus *)operationStatus
-                              syncStatus:(SyncStatus *)syncStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
                   isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled

@@ -60,6 +60,7 @@ public final class ZMUserSession: NSObject {
     public private(set) var transportSession: TransportSessionType
     let storedDidSaveNotifications: ContextDidSaveNotificationPersistence
     let userExpirationObserver: UserExpirationObserver
+//    private(set) var legacyUpdateEventProcessor: UpdateEventProcessor?
     private(set) var strategyDirectory: StrategyDirectoryProtocol?
     private(set) var syncStrategy: ZMSyncStrategy?
     private(set) var operationLoop: ZMOperationLoop?
@@ -71,7 +72,6 @@ public final class ZMUserSession: NSObject {
     var likeMesssageObserver: ManagedObjectContextChangeObserver?
     private(set) var urlActionProcessors: [URLActionProcessor]?
     let debugCommands: [String: DebugCommand]
-    let eventProcessingTracker: EventProcessingTracker = .init()
 
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
 
@@ -94,6 +94,9 @@ public final class ZMUserSession: NSObject {
     private let contextStorage: LAContextStorable
 
     public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
+
+    let lastEventIDRepository: LastEventIDRepositoryInterface
+    var conversationEventProcessor: ConversationEventProcessor!
 
     var syncAgent: SyncAgent?
 
@@ -609,7 +612,6 @@ public final class ZMUserSession: NSObject {
 
         let syncAgent = SyncAgent(
             journal: journal,
-            lastUpdateEventIDRepository: lastEventIDRepository,
             coreCryptoProvider: coreCryptoProvider,
             initialSyncProvider: clientSessionComponent,
             incrementalSyncProvider: clientSessionComponent,
@@ -618,7 +620,7 @@ public final class ZMUserSession: NSObject {
             pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator,
             networkStatePublisher: networkStateSubject.eraseToAnyPublisher()
         )
-        applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
+
         self.syncAgent = syncAgent
         syncAgent.delegate = self
 
@@ -736,7 +738,6 @@ public final class ZMUserSession: NSObject {
             cookieStorage: transportSession.cookieStorage,
             pushMessageHandler: localNotificationDispatcher!,
             flowManager: flowManager,
-            updateEventProcessor: self,
             localNotificationDispatcher: localNotificationDispatcher!,
             transportSession: transportSession,
             proteusService: proteusService,
@@ -765,9 +766,6 @@ public final class ZMUserSession: NSObject {
 
     private func createURLActionProcessors() -> [URLActionProcessor] {
         [
-            ImportEventsURLActionProcessor(
-                eventProcessor: legacyUpdateEventProcessor!
-            ),
             DeepLinkURLActionProcessor(
                 contextProvider: coreDataStack,
                 transportSession: transportSession,
@@ -790,8 +788,7 @@ public final class ZMUserSession: NSObject {
             notificationsDispatcher: notificationDispatcher,
             operationStatus: applicationStatusDirectory.operationStatus,
             application: application,
-            strategyDirectory: strategyDirectory!,
-            eventProcessingTracker: eventProcessingTracker
+            strategyDirectory: strategyDirectory!
         )
     }
 
@@ -802,9 +799,7 @@ public final class ZMUserSession: NSObject {
         ZMOperationLoop(
             transportSession: transportSession,
             requestStrategy: syncStrategy,
-            updateEventProcessor: legacyUpdateEventProcessor!,
             operationStatus: applicationStatusDirectory.operationStatus,
-            syncStatus: applicationStatusDirectory.syncStatus,
             uiMOC: managedObjectContext,
             syncMOC: syncManagedObjectContext,
             isDeveloperModeEnabled: isDeveloperModeEnabled,
@@ -1090,27 +1085,6 @@ extension ZMUserSession: ZMNetworkStateDelegate {
     }
 }
 
-// MARK: - UpdateEventProcessor
-
-// TODO: [WPB-9089] find another way of providing the event processor to ZMissingEventTranscoder
-extension ZMUserSession: UpdateEventProcessor {
-    public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
-        await legacyUpdateEventProcessor?.bufferEvents(events)
-    }
-
-    public func processEvents(_ events: [WireTransport.ZMUpdateEvent]) async throws {
-        try await legacyUpdateEventProcessor?.processEvents(events)
-    }
-
-    public func processLiveEvents(_ events: [WireTransport.ZMUpdateEvent]) async throws {
-        assertionFailure("should not be used")
-    }
-
-    public func processBufferedEvents() async throws {
-        try await legacyUpdateEventProcessor?.processBufferedEvents()
-    }
-}
-
 // MARK: - SyncAgent delegate
 
 extension ZMUserSession: SyncAgentDelegate {
@@ -1128,25 +1102,6 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func syncAgentDidFinishIncrementalSync(
-        _ syncAgent: SyncAgent,
-        isRecovering: Bool
-    ) {
-        didFinishIncrementalSync(isRecovering: isRecovering)
-    }
-
-    func syncAgentDidStartLegacyInitialSync(_ syncAgent: SyncAgent) {
-        didStartInitialSync()
-    }
-
-    func syncAgentDidFinishLegacyInitialSync(_ syncAgent: SyncAgent) {
-        didFinishInitialSync()
-    }
-
-    func syncAgentDidStartLegacyIncrementalSync(_ syncAgent: SyncAgent) {
-        didStartIncrementalSync()
-    }
-
-    func syncAgentDidFinishLegacyIncrementalSync(
         _ syncAgent: SyncAgent,
         isRecovering: Bool
     ) {
@@ -1412,22 +1367,12 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func processPendingCallEvents() async {
-        if journal[.isSyncV2Enabled] {
-            WireLogger.sync.debug(
-                "process pending call events",
-                attributes: .incrementalSync
-            )
-
-            syncAgent?.resume()
-        } else {
-            WireLogger.updateEvent.info("process pending call events")
-            do {
-                // TODO: [WPB-15391] why not processing only the call events (should be stored here?)
-                try await legacyUpdateEventProcessor!.processBufferedEvents()
-            } catch {
-                WireLogger.updateEvent.error("Failed to process pending call events: \(String(reflecting: error))")
-            }
-        }
+        WireLogger.sync.debug(
+            "process pending call events",
+            attributes: .incrementalSync
+        )
+        
+        syncAgent?.resume()
     }
 
     func notifyAuthenticationInvalidated(_ error: Error) {
