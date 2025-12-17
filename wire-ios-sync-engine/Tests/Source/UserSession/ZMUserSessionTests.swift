@@ -20,12 +20,24 @@ import Foundation
 import WireDataModelSupport
 import WireTesting
 import WireTestingPackage
+import Combine
 
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 
 final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
+    private var cancellables: Set<AnyCancellable>!
+
+    override func setUp() {
+        super.setUp()
+        cancellables = []
+    }
+    override func tearDown() {
+        super.tearDown()
+        cancellables = nil
+    }
+    
     func testThatSyncContextReturnsSelfForLinkedSyncContext() {
         // GIVEN
         XCTAssertNotNil(sut.syncManagedObjectContext)
@@ -118,7 +130,14 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertTrue(self.sut.syncAgent?.syncRunning == true)
+        let expectation = self.expectation(description: "wait for trigger slow")
+        sut.clientSessionComponent?.syncStateSubject.sink { state in
+            if state == .initialSyncing(.pullLastEventID) {
+                expectation.fulfill()
+            }
+        }.store(in: &cancellables)
+
+        wait(for: [expectation])
     }
 
     func test_didRegisterSelfUserClient_withConsumableNotificationsCapabableEnablesSyncV3() async throws {
