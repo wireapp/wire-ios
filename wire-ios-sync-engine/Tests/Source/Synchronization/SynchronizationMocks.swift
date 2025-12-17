@@ -200,30 +200,6 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
 
 class FakeCookieStorage: ZMPersistentCookieStorage {}
 
-public class MockSyncStatus: SyncStatus {
-
-    var didCallFailCurrentSyncPhase = false
-    var didCallFinishCurrentSyncPhase = false
-
-    public var mockPhase: SyncPhase = .done {
-        didSet {
-            currentSyncPhase = mockPhase
-        }
-    }
-
-    public override func failCurrentSyncPhase(phase: SyncPhase) {
-        didCallFailCurrentSyncPhase = true
-
-        super.failCurrentSyncPhase(phase: phase)
-    }
-
-    public override func finishCurrentSyncPhase(phase: SyncPhase) {
-        didCallFinishCurrentSyncPhase = true
-
-        super.finishCurrentSyncPhase(phase: phase)
-    }
-}
-
 @objc
 public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
 
@@ -280,39 +256,6 @@ public class MockPushMessageHandler: NSObject, PushMessageHandler {
 }
 
 @objcMembers
-public class MockEventConsumer: NSObject, ZMEventConsumer {
-
-    public var eventsProcessed: [ZMUpdateEvent] = []
-    public var processEventsCalled: Bool = false
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        processEventsCalled = true
-        eventsProcessed.append(contentsOf: events)
-    }
-
-    public var eventsProcessedWhileInBackground: [ZMUpdateEvent] = []
-    public var processEventsWhileInBackgroundCalled: Bool = false
-    public func processEventsWhileInBackground(_ events: [ZMUpdateEvent]) {
-        processEventsWhileInBackgroundCalled = true
-        eventsProcessedWhileInBackground.append(contentsOf: events)
-    }
-
-    public var messageNoncesToPrefetchCalled: Bool = false
-    public func messageNoncesToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID> {
-        messageNoncesToPrefetchCalled = true
-
-        return Set(events.compactMap(\.messageNonce))
-    }
-
-    public var conversationRemoteIdentifiersToPrefetchCalled: Bool = false
-    public func conversationRemoteIdentifiersToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID> {
-        conversationRemoteIdentifiersToPrefetchCalled = true
-
-        return Set(events.compactMap(\.conversationUUID))
-    }
-
-}
-
-@objcMembers
 public class MockContextChangeTracker: NSObject, ZMContextChangeTracker {
 
     public var objectsDidChangeCalled: Bool = false
@@ -332,17 +275,6 @@ public class MockContextChangeTracker: NSObject, ZMContextChangeTracker {
         addTrackedObjectsCalled = true
     }
 
-}
-
-@objcMembers
-public class MockEventAsyncConsumer: NSObject, ZMEventAsyncConsumer {
-
-    public var eventsProcessed: [ZMUpdateEvent] = []
-    public var processEventsCalled: Bool = false
-    public func processEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
-        processEventsCalled = true
-        eventsProcessed.append(contentsOf: events)
-    }
 }
 
 @objcMembers
