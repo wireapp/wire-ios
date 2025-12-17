@@ -74,7 +74,6 @@ extension SessionManager: CallKitManagerDelegate {
                 return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
             }
 
-            // NEW: Proactively request call config
             await requestCallConfigIfNeeded(for: userSession)
             await userSession.processPendingCallEvents()
 
@@ -90,15 +89,7 @@ extension SessionManager: CallKitManagerDelegate {
         }
 
         WireLogger.calling.info("Proactively requesting call config for background session")
-
-        // Trigger the config request
         callCenter.requestCallConfig()
-
-        // Give it time to complete (the HTTP request happens asynchronously through operation loop)
-        // Typically completes in < 1 second
-//         try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
-
-        WireLogger.calling.info("Proceeded after config request delay")
     }
 
     func endAllCalls() {
