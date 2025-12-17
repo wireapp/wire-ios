@@ -28,24 +28,26 @@ public protocol RepairRemovalKeysUseCaseProtocol {
 
 public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
 
-    // TODO: Fill in
-    static let faultyRemovalKey =
-        Data(base64Encoded: "BM036midcNiOMgny9m7N5uS3n6hB3JBJRNGUPqT0zNMQzLzOypHL09PSMITiMLJoVF3OZKQtwZf8/mkxrVtt8nU=")!
-    static let affectedDomain = "bella.wire.link"
+    let faultyRemovalKey: Data
+    let affectedDomain: String
 
     private let context: NSManagedObjectContext
     private let mlsService: MLSServiceInterface
     private let conversationsAPI: ConversationsAPI
     private let conversationLocalStore: ConversationLocalStoreProtocol
-    private let initiateResetUseCase: InitiateResetMLSConversationUseCase
+    private let initiateResetUseCase: InitiateResetMLSConversationUseCaseProtocol
 
     init(
+        faultyRemovalKey: Data,
+        affectedDomain: String,
         context: NSManagedObjectContext,
         mlsService: MLSServiceInterface,
         conversationsAPI: ConversationsAPI,
         conversationLocalStore: ConversationLocalStoreProtocol,
-        initiateResetUseCase: InitiateResetMLSConversationUseCase
+        initiateResetUseCase: InitiateResetMLSConversationUseCaseProtocol
     ) {
+        self.faultyRemovalKey = faultyRemovalKey
+        self.affectedDomain = affectedDomain
         self.context = context
         self.mlsService = mlsService
         self.conversationsAPI = conversationsAPI
@@ -60,7 +62,7 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
         )
 
         let allMLSConversations = try await conversationLocalStore.fetchAllMLSConversations(
-            domain: Self.affectedDomain
+            domain: affectedDomain
         )
 
         var faultyConversations: [(MLSGroupID, WireNetwork.QualifiedID)] = []
@@ -87,7 +89,7 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
             }
 
             // The current removal key is faulty.
-            if currentRemovalKey == Self.faultyRemovalKey {
+            if currentRemovalKey == faultyRemovalKey {
                 faultyConversations.append((
                     groupID,
                     qualifiedID.toAPIModel()

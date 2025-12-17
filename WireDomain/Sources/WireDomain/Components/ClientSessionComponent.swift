@@ -794,6 +794,8 @@ public final class ClientSessionComponent {
     )
 
     public lazy var repairFaultyRemovalKeysUsecase = RepairRemovalKeysUseCase(
+        faultyRemovalKey: Data(),
+        affectedDomain: "foo.com",
         context: syncContext,
         mlsService: mlsService,
         conversationsAPI: conversationsAPI,
