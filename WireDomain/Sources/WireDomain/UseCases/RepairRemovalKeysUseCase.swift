@@ -115,7 +115,7 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
         await withTaskGroup(of: Void.self) { group in
             for (groupID, qualifiedID) in faultyConversations {
                 group.addTask {
-                    await self.repairConversation(
+                    await repairConversation(
                         groupID: groupID,
                         qualifiedID: qualifiedID
                     )
