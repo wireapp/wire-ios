@@ -46,12 +46,12 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
     }
 
     public func start() async {
-        if fetchedResultsController == nil {
-            fetchedResultsController = createFetchedResultsController()
-            fetchedResultsController?.delegate = self
-        }
-
-        await context.perform {
+        await context.perform { [self] in
+            if fetchedResultsController == nil {
+                fetchedResultsController = createFetchedResultsController()
+                fetchedResultsController?.delegate = self
+            }
+            
             do {
                 try self.fetchedResultsController?.performFetch()
             } catch {
@@ -68,11 +68,15 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
     public func stop() {
         fetchedResultsController = nil
 
-        // Cancel all scheduled commits
-        for (_, task) in scheduledTasks {
-            task.cancel()
+        // Cancel all scheduled commits on the context queue to avoid race conditions
+        Task { [context] in
+            await context.perform {
+                for (_, task) in self.scheduledTasks {
+                    task.cancel()
+                }
+                self.scheduledTasks.removeAll()
+            }
         }
-        scheduledTasks.removeAll()
     }
 
     private func createFetchedResultsController() -> NSFetchedResultsController<ZMConversation> {
@@ -168,12 +172,7 @@ extension CommitPendingProposalsGenerator: NSFetchedResultsControllerDelegate {
 
         switch type {
         case .insert, .update:
-            // run on the context queue to safely read properties
-            Task { [context] in
-                await context.perform {
-                    self.scheduleCommitIfNeeded(for: conversation)
-                }
-            }
+            self.scheduleCommitIfNeeded(for: conversation)
 
         case .move, .delete:
             // Best effort cancel if we can identify it

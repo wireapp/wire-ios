@@ -39,11 +39,12 @@ public final class ConversationUpdatesGenerator: NSObject, IncrementalGeneratorP
 
     /// Starts monitoring and triggers pulls for any needingToBeUpdatedFromBackend conversations.
     public func start() async {
-        if fetchedResultsController == nil {
-            fetchedResultsController = createFetchedResultsController()
-            fetchedResultsController?.delegate = self
-        }
-        await context.perform {
+        await context.perform { [self] in
+            if fetchedResultsController == nil {
+                fetchedResultsController = createFetchedResultsController()
+                fetchedResultsController?.delegate = self
+            }
+            
             do {
                 try self.fetchedResultsController?.performFetch()
             } catch {
