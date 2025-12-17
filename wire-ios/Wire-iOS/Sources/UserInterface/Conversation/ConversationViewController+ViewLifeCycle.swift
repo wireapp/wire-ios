@@ -41,5 +41,15 @@ extension ConversationViewController {
         isAppearing = false
 
         syncCellsState()
+        notifyConversationDidBecomeVisible()
+
     }
+
+    private func notifyConversationDidBecomeVisible() {
+        NotificationCenter.default.post(
+            name: .conversationDidBecomeVisible,
+            object: nil
+        )
+    }
+
 }
