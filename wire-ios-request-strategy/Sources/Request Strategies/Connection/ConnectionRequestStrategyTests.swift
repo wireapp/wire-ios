@@ -26,29 +26,17 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     var sut: ConnectionRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
-    var mockSyncProgress: MockSyncProgress!
-    var mockOneOnOneResolver: MockOneOnOneResolverInterface!
 
     override func setUp() {
         super.setUp()
 
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
-
-        mockSyncProgress = MockSyncProgress()
-        mockSyncProgress.currentSyncPhase = .done
-        mockSyncProgress.finishCurrentSyncPhasePhase_MockMethod = { _ in }
-        mockSyncProgress.failCurrentSyncPhasePhase_MockMethod = { _ in }
-
-        mockOneOnOneResolver = MockOneOnOneResolverInterface()
-        mockOneOnOneResolver.resolveOneOnOneConversationWithIn_MockValue = .noAction
     }
 
     override func tearDown() {
         sut = nil
-        mockSyncProgress = nil
         mockApplicationStatus = nil
-        mockOneOnOneResolver = nil
         super.tearDown()
     }
 
@@ -59,8 +47,6 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
         ConnectionRequestStrategy(
             withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
-            syncProgress: mockSyncProgress,
-            oneOneOneResolver: mockOneOnOneResolver,
             apiVersion: apiVersion,
             localDomain: "wire.com",
             isFederationEnabled: isFederationEnabled
@@ -110,97 +96,6 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(request.path, "/connections/\(self.otherUser.remoteIdentifier!.transportString())")
             XCTAssertEqual(request.method, .get)
         }
-    }
-
-    // MARK: Slow sync
-
-    func testThatRequestToFetchAllConnectionsIsGenerated_DuringFetchingConnectionsSyncPhase_Federated() {
-        syncMOC.performGroupedAndWait {
-            // given
-            let apiVersion = APIVersion.v1
-            self.sut = self.createSUT(apiVersion: apiVersion, isFederationEnabled: true)
-
-            self.mockSyncProgress.currentSyncPhase = .fetchingConnections
-
-            // when
-            let request = self.sut.nextRequest(for: apiVersion)!
-
-            // then
-            XCTAssertEqual(request.path, "/v1/list-connections")
-            XCTAssertEqual(request.method, .post)
-        }
-    }
-
-    func testThatRequestToFetchAllConnectionsIsGenerated_DuringFetchingConnectionsSyncPhase_NonFederated() {
-        syncMOC.performGroupedAndWait {
-            // given
-            let apiVersion = APIVersion.v0
-            self.sut = self.createSUT(apiVersion: apiVersion, isFederationEnabled: false)
-            self.mockSyncProgress.currentSyncPhase = .fetchingConnections
-
-            // when
-            let request = self.sut.nextRequest(for: apiVersion)!
-
-            // then
-            XCTAssertEqual(request.path, "/connections?size=200")
-            XCTAssertEqual(request.method, .get)
-        }
-    }
-
-    func testThatRequestToFetchAllConnectionsIsNotGenerated_WhenFetchIsAlreadyInProgress() {
-        syncMOC.performGroupedAndWait {
-            // given
-            let apiVersion = APIVersion.v1
-            self.sut = self.createSUT(apiVersion: apiVersion, isFederationEnabled: true)
-
-            self.mockSyncProgress.currentSyncPhase = .fetchingConnections
-            XCTAssertNotNil(self.sut.nextRequest(for: apiVersion))
-
-            // then
-            XCTAssertNil(self.sut.nextRequest(for: apiVersion))
-        }
-    }
-
-    func testThatFetchingConnectionsSyncPhaseIsFinished_WhenFetchIsCompleted() {
-        // given
-        let apiVersion = APIVersion.v1
-        sut = createSUT(apiVersion: apiVersion, isFederationEnabled: true)
-
-        startSlowSync()
-
-        // when
-        fetchConnectionsDuringSlowSync(connections: [createConnectionPayload()])
-
-        // then
-        XCTAssertEqual(mockSyncProgress.finishCurrentSyncPhasePhase_Invocations, [.fetchingConnections])
-    }
-
-    func testThatFetchingConnectionsSyncPhaseIsFinished_WhenThereIsNoConnectionsToFetch() {
-        // given
-        let apiVersion = APIVersion.v1
-        sut = createSUT(apiVersion: apiVersion, isFederationEnabled: true)
-
-        startSlowSync()
-
-        // when
-        fetchConnectionsDuringSlowSync(connections: [])
-
-        // then
-        XCTAssertEqual(mockSyncProgress.finishCurrentSyncPhasePhase_Invocations, [.fetchingConnections])
-    }
-
-    func testThatFetchingConnectionsSyncPhaseIsFailed_WhenReceivingAPermanentError() {
-        // given
-        let apiVersion = APIVersion.v1
-        sut = createSUT(apiVersion: apiVersion, isFederationEnabled: true)
-
-        startSlowSync()
-
-        // when
-        fetchConnectionsDuringSlowSyncWithPermanentError()
-
-        // then
-        XCTAssertEqual(mockSyncProgress.failCurrentSyncPhasePhase_Invocations, [.fetchingConnections])
     }
 
     // MARK: Response processing
@@ -276,81 +171,8 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    // MARK: Event processing
-
-    func testThatItProcessConnectionEvents() {
-        syncMOC.performAndWait {
-            // given
-            self.sut = createSUT(apiVersion: .v0, isFederationEnabled: false)
-            let connection = createConnectionPayload(self.oneToOneConnection, status: .blocked)
-            let eventType = ZMUpdateEvent.eventTypeString(for: Payload.Connection.eventType)!
-            let eventPayload = Payload.UserConnectionEvent(connection: connection, type: eventType)
-            let event = updateEvent(from: eventPayload.payloadData()!)
-
-            // when
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // then
-            XCTAssertEqual(self.oneToOneConnection.status, .blocked)
-        }
-    }
-
-    func testOneOnOneResolverInvocationTiming() throws {
-        // GIVEN
-        sut = createSUT(apiVersion: .v0, isFederationEnabled: false)
-        let expectation1 =
-            XCTestExpectation(description: "OneOnOneResolver should not be invoked within the specified timeout")
-        let expectation2 =
-            XCTestExpectation(description: "OneOnOneResolver should be invoked within the specified timeout")
-        expectation1.isInverted = true // We expect this expectation to not be fulfilled within the timeout
-
-        try syncMOC.performAndWait {
-            let connection = createConnectionPayload(self.oneToOneConnection, status: .accepted)
-            let eventType = try XCTUnwrap(
-                ZMUpdateEvent.eventTypeString(for: Payload.Connection.eventType),
-                "eventType is nil"
-            )
-            let eventPayload = Payload.UserConnectionEvent(connection: connection, type: eventType)
-            let payloadData = try XCTUnwrap(eventPayload.payloadData(), "payloadData is nil")
-            let event = updateEvent(from: payloadData)
-
-            mockOneOnOneResolver.resolveOneOnOneConversationWithIn_MockMethod = { _, _ in
-                expectation1.fulfill() // Attempt to fulfill the first expectation
-                expectation2.fulfill() // Fulfill the second expectation
-                return OneOnOneConversationResolution.noAction
-            }
-
-            sut.oneOnOneResolutionDelay = 1
-
-            // WHEN
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-        }
-
-        // THEN
-        // Wait for the first expectation with a timeout of 0.5 seconds, expecting it to fail (not to be fulfilled)
-        wait(for: [expectation1], timeout: 0.5)
-        XCTAssertEqual(
-            mockOneOnOneResolver.resolveOneOnOneConversationWithIn_Invocations.count,
-            0,
-            "Expected no invocation due to the first timeout."
-        )
-
-        // Wait for the second expectation with a timeout of 1 second, expecting it to succeed (to be fulfilled)
-        wait(for: [expectation2], timeout: 1)
-        XCTAssertEqual(
-            mockOneOnOneResolver.resolveOneOnOneConversationWithIn_Invocations.count,
-            1,
-            "Expected one invocation after the second timeout."
-        )
-    }
 
     // MARK: Helpers
-
-    func startSlowSync() {
-        syncMOC.performGroupedAndWait {
-            self.mockSyncProgress.currentSyncPhase = .fetchingConnections
-        }
-    }
 
     func fetchConnection(_ connection: ZMConnection, response: ZMTransportResponse) {
         syncMOC.performGroupedAndWait {
