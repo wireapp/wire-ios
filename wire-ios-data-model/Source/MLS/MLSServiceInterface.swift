@@ -248,6 +248,11 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
         parentID: MLSGroupID
     ) async throws -> MLSGroupID
 
+    /// Fetches subConversation of type conference
+    /// - Parameter parentGroupID: MLSGroupID of the parent conversation
+    /// - Returns: MLSGroupID of the subconversation
+    func conferenceSubconversation(parentGroupID: MLSGroupID) async -> MLSGroupID?
+
     /// Leaves the subgroup associated with the given parent conversation
     ///
     /// - Parameters:
@@ -309,22 +314,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID]
 
     // MARK: - Pending proposals
-
-    /// Finds groups with pending proposals and commits them if any are found.
-    ///
-    /// Starts by getting a list of groups that have pending proposals.
-    /// This is done by fetching conversations that have a ``ZMConversation/commitPendingProposalDate`` set.
-    /// We then compile the ``MLSGroupID`` of each conversation and their subconversation
-    /// (if they exist) associated with the pending proposal date.
-    /// The groups are then sorted by the date of the pending proposal.
-    ///
-    /// We then iterate through each group and check if the pending proposal date has been passed.
-    /// If it has, we commit the pending proposal by calling ``MLSService/commitPendingProposals(in:)``
-    /// Otherwise, we wait until the pending proposal date has passed. Then we commit the pending proposal.
-    ///
-    /// [confluence use case](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/601522340/Use+Case+Committing+pending+proposals+MLS)
-
-    func commitPendingProposalsIfNeeded() async
 
     /// Commits pending proposals for a group.
     ///
