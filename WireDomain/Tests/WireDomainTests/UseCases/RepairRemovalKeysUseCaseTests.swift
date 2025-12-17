@@ -212,6 +212,7 @@ struct RepairRemovalKeysUseCaseTests {
 
 // MARK: - Mock ConversationsAPI
 
+// TODO: [WPB-22478] Remove this mock when we generate it in WireNetwork
 final class MockConversationsAPIProtocol: ConversationsAPI {
 
     func getLegacyConversationIdentifiers() async throws -> WireNetwork.PayloadPager<[UUID]> {
