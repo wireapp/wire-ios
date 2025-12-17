@@ -20,10 +20,9 @@ import Foundation
 import WireSystem
 import WireUtilities
 
-extension UUID: SafeForLoggingStringConvertible {
+extension UUID: @retroactive SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
-        transportString().redactedAndTruncated()
+        transportString()
     }
-
 }

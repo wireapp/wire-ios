@@ -19,10 +19,13 @@
 import SwiftUI
 
 @MainActor @ViewBuilder
-func ImportProgressPreview() -> some View {
+func ImportProgressPreview(isLoadingFile: Bool) -> some View {
     Color(uiColor: .systemBackground)
         .sheet(isPresented: .constant(true)) {
-            ImportProgressView(progressValues: (1, 4)) {}
+            ImportProgressView(
+                isLoadingFile: isLoadingFile,
+                progressValues: (1, 4)
+            ) {}
                 .interactiveDismissDisabled()
                 .presentationDetents([.medium])
         }

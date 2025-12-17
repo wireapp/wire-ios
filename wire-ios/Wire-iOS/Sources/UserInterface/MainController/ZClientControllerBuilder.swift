@@ -61,7 +61,8 @@ struct ZClientControllerBuilder {
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
             contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider),
-            isFoldersEnabled: DeveloperFlag.wireCellsFolders.isOn
+            isFoldersEnabled: DeveloperFlag.wireCellsFolders.isOn,
+            isCollaboraEnabled: DeveloperFlag.wireCellsCollabora.isOn
         )
     }
 
@@ -72,6 +73,7 @@ struct ZClientControllerBuilder {
             isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
         )
     }
+
 }
 
 private struct DefaultAccessTokenProvider: AccessTokenProvider {
@@ -93,6 +95,7 @@ private struct DefaultAccessTokenProvider: AccessTokenProvider {
             expirationDate: token.expirationDate
         )
     }
+
 }
 
 extension FileAssetCache: WireMessagingDomain.FileCache, @unchecked @retroactive Sendable {}

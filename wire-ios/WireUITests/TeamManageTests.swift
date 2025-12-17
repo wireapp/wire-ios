@@ -177,7 +177,7 @@ final class TeamManageTests: WireUITestCase {
             conversationDetailsPage.userCells
                 .matching(NSPredicate(format: "label == %@", teamMembers[0].name))
                 .firstMatch
-                .exists,
+                .waitForExistence(timeout: 5),
             "User \(teamMembers[0].name) is not present in group"
         )
     }

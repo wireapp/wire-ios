@@ -112,20 +112,20 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         }
     }
 
-    func testThatClientsAreNotMarkedAsMissing_WhenMissingClientsAlreadyHaveASession() async {
+    func testThatClientsAreNotMarkedAsMissing_WhenMissingClientsAlreadyHaveASession() async throws {
         // given
         var message: MockOTREntity!
         var payload: Payload.MessageSendingStatus!
+        var userClient: UserClient!
 
         await syncMOC.performGrouped {
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let clientID = UUID().transportString()
-            let userClient = UserClient.fetchUserClient(
+            userClient = UserClient.fetchUserClient(
                 withRemoteId: clientID,
                 forUser: self.otherUser,
                 createIfNeeded: true
             )!
-            self.establishSessionFromSelf(to: userClient)
             let missing: Payload.ClientListByQualifiedUserID =
                 [
                     self.domain:
@@ -140,6 +140,8 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
                 failedToConfirm: [:]
             )
         }
+
+        try await proteusClientSimulator.establishSessionFromSelf(to: userClient)
 
         // when
         await sut.updateClientsChanges(

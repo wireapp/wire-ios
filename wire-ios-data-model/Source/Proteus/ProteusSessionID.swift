@@ -63,7 +63,7 @@ public struct ProteusSessionID: Hashable, Equatable {
 extension ProteusSessionID: SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
-        "<\(domain.readableHash)>_<\(userID.readableHash)>_<\(clientID.readableHash)>"
+        "<\(domain)>_<\(userID)>_<\(clientID)>"
     }
 
 }

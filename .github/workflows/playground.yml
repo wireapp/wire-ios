@@ -19,4 +19,5 @@ jobs:
       datadog_enabled: true
       distribute_externals: ${{ inputs.distribute_externals }}
       fastlane_action: playground
+      notify_secret: WIRE_IOS_BUILD_WEBHOOK
     secrets: inherit

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
 
@@ -85,7 +86,8 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(
             viewModel: mockViewModel,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         // THEN
@@ -104,7 +106,8 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(
             viewModel: mockViewModel,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         // THEN
@@ -119,7 +122,8 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(
             viewModel: mockViewModel,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         let navWrapperController = sut.wrapInNavigationController()
         sut.viewDidAppear(false)
@@ -133,7 +137,8 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(
             viewModel: mockViewModel,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         sut.updateFooterActionsViews([.openOneToOne])
 
@@ -149,7 +154,8 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(
             viewModel: mockViewModel,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         sut.updateFooterActionsViews([.openSelfProfile])
 
@@ -162,7 +168,8 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(
             viewModel: mockViewModel,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         sut.updateFooterActionsViews([.removeFromGroup])
 
@@ -175,7 +182,8 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(
             viewModel: mockViewModel,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         sut.updateFooterActionsViews([.openOneToOne, .block(isBlocked: false)])
 
@@ -195,7 +203,8 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(
             viewModel: mockViewModel,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         // THEN
@@ -215,7 +224,8 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(
             viewModel: mockViewModel,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         // THEN
@@ -235,7 +245,8 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(
             viewModel: mockViewModel,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         // THEN
@@ -257,7 +268,8 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(
             viewModel: mockViewModel,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         sut.updateFooterActionsViews([.connect])
 
@@ -274,7 +286,8 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(
             viewModel: mockViewModel,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         sut.updateFooterActionsViews([.createGroup])
 
@@ -291,7 +304,8 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(
             viewModel: mockViewModel,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         // THEN
@@ -308,7 +322,8 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(
             viewModel: mockViewModel,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         // THEN
@@ -324,7 +339,8 @@ final class ProfileViewControllerTests: XCTestCase {
         sut = ProfileViewController(
             viewModel: mockViewModel,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         // THEN

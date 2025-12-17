@@ -24,7 +24,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
     case channelsHistory
     case chatBubbles
-    case chatBubblesSimple
     case considerAppsFeatureFlag
     case consumableNotifications
     case createLegacyBackups
@@ -36,13 +35,13 @@ public enum DeveloperFlag: String, CaseIterable {
     case ignoreIncomingEvents
     case multibackend
     case newRegistration
-    case proteusViaCoreCrypto
     case showCreateMLSGroupToggle
     case showUnreadConversationsFilter
     case skipMLSMessagesDecryption
     case useWireAuthentication
     case wireCellsFolders
     case wireMeetings
+    case wireCellsCollabora
 
     public var description: String {
         switch self {
@@ -56,9 +55,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .showCreateMLSGroupToggle:
             "Turn on to show the MLS toggle when creating a new group."
-
-        case .proteusViaCoreCrypto:
-            "Turn on to use CoreCrypto for proteus messaging."
 
         case .forceDatabaseLoadingFailure:
             "Turn on to force database loading failure in the process of database migration"
@@ -99,9 +95,6 @@ public enum DeveloperFlag: String, CaseIterable {
         case .chatBubbles:
             "Show conversation messages as chat bubbles"
 
-        case .chatBubblesSimple:
-            "Turn on the simplified version of chat bubbles"
-
         case .consumableNotifications:
             "Turn on to enable consumable notifications"
 
@@ -110,6 +103,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .wireCellsFolders:
             "Turn on to enable Wire Cells folders"
+
+        case .wireCellsCollabora:
+            "Turn on to enable Collabora file editing in Wire Cells"
         }
     }
 
@@ -140,8 +136,6 @@ public enum DeveloperFlag: String, CaseIterable {
         switch self {
         case .createLegacyBackups:
             "CreateLegacyBackupsEnabled"
-        case .proteusViaCoreCrypto:
-            "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:

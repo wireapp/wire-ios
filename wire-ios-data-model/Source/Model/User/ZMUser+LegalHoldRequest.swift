@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireCryptobox
+import WireLogging
 
-private let log = ZMSLog(tag: "UserClient")
+private let log = WireLogger.userClient
 
 public typealias SelfUserLegalHoldable = EditableUserType & SelfLegalHoldSubject & UserType
 
@@ -285,37 +285,25 @@ extension ZMUser: SelfLegalHoldSubject {
 
     public var fingerprint: String? {
         get async {
-            guard let (syncContext, prekey) = await managedObjectContext?.perform({
-                (self.managedObjectContext?.zm_sync, self.legalHoldRequest?.lastPrekey)
-            }), let syncContext, let prekey else { return nil }
+            let syncContext = await managedObjectContext?.perform {  [managedObjectContext] in
+                managedObjectContext?.zm_sync
+            }
 
-            let proteusProvider = await syncContext.perform { syncContext.proteusProvider }
-            return await proteusProvider.performAsync { proteusService in
-                await fetchFingerprint(for: prekey, through: proteusService)
-            } withKeyStore: { keyStore in
-                fetchFingerprint(for: prekey, through: keyStore)
+            guard
+                let syncContext,
+                let prekey = legalHoldRequest?.lastPrekey,
+                let proteusService = await syncContext.perform({ syncContext.proteusService })
+            else {
+                return nil
+            }
+
+            do {
+                return try await proteusService.fingerprint(fromPrekey: prekey.key.base64EncodedString())
+            } catch {
+                log.error("Could not fetch fingerprint for \(self)")
+                return nil
             }
         }
-    }
-
-    private func fetchFingerprint(
-        for prekey: LegalHoldRequest.Prekey,
-        through proteusService: ProteusServiceInterface
-    ) async -> String? {
-        do {
-            return try await proteusService.fingerprint(fromPrekey: prekey.key.base64EncodedString())
-        } catch {
-            log.error("Could not fetch fingerprint for \(self)")
-            return nil
-        }
-    }
-
-    private func fetchFingerprint(
-        for prekey: LegalHoldRequest.Prekey,
-        through keystore: UserClientKeysStore
-    ) -> String? {
-        guard let fingerprintData = EncryptionSessionsDirectory.fingerprint(fromPrekey: prekey.key) else { return nil }
-        return String(decoding: fingerprintData, as: UTF8.self)
     }
 
 }

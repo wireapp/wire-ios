@@ -23,6 +23,7 @@ import WireDesign
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireMessagingUI
 import WireRequestStrategy
 import WireReusableUIComponents
@@ -100,7 +101,6 @@ final class ConversationContentViewController: UIViewController {
             insetsProvider: {
                 let margins = HorizontalMargins.conversationHorizontalMargins()
                 return ConversationCellInsets(
-                    legacy: .init(leading: margins.left, trailing: margins.right),
                     leadingBubble: .init(leading: margins.left, trailing: margins.chatBubbleMinimumTrailing),
                     trailingBubble: .init(leading: margins.chatBubbleMinimumLeading, trailing: margins.right)
                 )
@@ -117,9 +117,9 @@ final class ConversationContentViewController: UIViewController {
     let userSession: UserSession
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
     var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
-    var userClientToken: Any?
     var isDigitalSignatureVerificationShown: Bool = false
 
     private var mediaPlaybackManager: MediaPlaybackManager?
@@ -143,6 +143,7 @@ final class ConversationContentViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         userDefaults: UserDefaultsProtocol = UserDefaults.standard,
         wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
@@ -150,6 +151,7 @@ final class ConversationContentViewController: UIViewController {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
         self.conversation = conversation
         self.messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
         self.logger = .conversation

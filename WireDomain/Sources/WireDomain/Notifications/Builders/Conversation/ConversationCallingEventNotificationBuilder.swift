@@ -375,7 +375,6 @@ extension ConversationCallingEventNotificationBuilder {
         private enum Constants {
             static let isAvsReady = "isAVSReady"
             static let isCallKitAvailable = "isCallKitAvailable"
-            static let loadedUserSessions = "loadedUserSessions"
             static let knownCalls = "knownCalls"
         }
 
@@ -384,6 +383,9 @@ extension ConversationCallingEventNotificationBuilder {
         let userDefaults: UserDefaults
 
         /// In priority, we'll try to validate a CallKit notification to show to the user
+        ///
+        /// Note: Account authentication is validated earlier in the notification flow by `VerifyUserSessionUseCase`.
+        /// We don't check if the user session is loaded because sessions are loaded on-demand when needed.
         func validateCallKitNotification(
             conversationID: ConversationID,
             senderID: UserID,
@@ -403,9 +405,6 @@ extension ConversationCallingEventNotificationBuilder {
             let isConversationForcedReadOnly = await conversationLocalStore.isConversationForcedReadOnly(conversation)
             let isAVSReady = userDefaults.bool(forKey: Constants.isAvsReady)
             let isCallKitReady = userDefaults.bool(forKey: Constants.isCallKitAvailable)
-            let loadedUserSessions = userDefaults.object(forKey: Constants.loadedUserSessions) as? [String] ?? []
-            let loaderUserSessionsIDs = loadedUserSessions.compactMap(UUID.init(uuidString:))
-            let isUserSessionLoaded = loaderUserSessionsIDs.contains(accountID)
 
             let handle = "\(accountID.transportString())+\(conversationID.id.transportString())"
             let knownCallHandles = userDefaults.object(forKey: Constants.knownCalls) as? [String] ?? []
@@ -429,7 +428,6 @@ extension ConversationCallingEventNotificationBuilder {
                 && !isConversationForcedReadOnly
                 && isAVSReady
                 && isCallKitReady
-                && isUserSessionLoaded
                 && !isCallTimeOut
                 && isValidState
         }

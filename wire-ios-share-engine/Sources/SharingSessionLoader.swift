@@ -324,10 +324,6 @@ public struct SharingSessionLoader {
             requestGeneratorStore: requestGeneratorStore,
             transportSession: transportSession
         )
-        let cryptoboxMigrationManager = CryptoboxMigrationManager()
-        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: userAccountDataURL) else {
-            throw Failure.mainAppRequired(message: "cryptobox migration required")
-        }
         let contextStorage = LAContextStorage()
         let earService = EARService(
             accountID: accountID,
@@ -344,7 +340,6 @@ public struct SharingSessionLoader {
             accountDirectory: userAccountDataURL,
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
             localDomain: backendMetadata.domain
@@ -413,7 +408,6 @@ public struct SharingSessionLoader {
             operationLoop: operationLoop,
             strategyFactory: strategyFactory,
             appLockConfig: nil,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             earService: earService,
             contextStorage: contextStorage,
             proteusService: proteusService,
