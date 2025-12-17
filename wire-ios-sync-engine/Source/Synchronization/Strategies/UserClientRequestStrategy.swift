@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireDataModel
+@preconcurrency import WireDataModel
 import WireLogging
 import WireSystem
 import WireTransport

@@ -41,7 +41,6 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         cookieStorage: ZMPersistentCookieStorage,
         requestCancellation: ZMRequestCancellation,
         application: ZMApplication,
-        lastEventIDRepository: LastEventIDRepositoryInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         isSyncV2Enabled: Bool,
         localDomain: String?,
