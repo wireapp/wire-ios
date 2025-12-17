@@ -39,8 +39,7 @@
                           notificationsDispatcher:(NotificationDispatcher * _Nonnull)notificationsDispatcher
                                   operationStatus:(OperationStatus * _Nonnull)operationStatus
                                       application:(id<ZMApplication> _Nonnull)application
-                                strategyDirectory:(id<StrategyDirectoryProtocol> _Nonnull)strategyDirectory
-                           eventProcessingTracker:(id<EventProcessingTrackerProtocol> _Nonnull)eventProcessingTracker;
+                                strategyDirectory:(id<StrategyDirectoryProtocol> _Nonnull)strategyDirectory;
 
 - (void)tearDown;
 - (void)updateStrategyClientContextChangeTrackers;

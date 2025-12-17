@@ -553,7 +553,6 @@ final class UserSessionLoader {
 
         userSession.setup(
             apiVersion: backendMetadata.apiVersion,
-            eventProcessor: nil,
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,

@@ -386,32 +386,3 @@ extension SyncAgent: MLSSyncDelegate {
     }
     
 }
-
-// MARK: - Delegate
-
-// Forward delegate calls from legacy sync status to the
-// sync agent's delegate. We can delete this once we
-// move to the new initial sync.
-
-extension SyncAgent: ZMSyncStateDelegate {
-    
-    func didStartSlowSync() {
-        delegate?.syncAgentDidStartLegacyInitialSync(self)
-    }
-    
-    func didFinishSlowSync() {
-        delegate?.syncAgentDidFinishLegacyInitialSync(self)
-    }
-    
-    func didStartQuickSync() {
-        delegate?.syncAgentDidStartLegacyIncrementalSync(self)
-    }
-    
-    func didFinishQuickSync(isRecovering: Bool) {
-        delegate?.syncAgentDidFinishLegacyIncrementalSync(
-            self,
-            isRecovering: isRecovering
-        )
-    }
-    
-}
