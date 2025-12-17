@@ -83,13 +83,11 @@ extern NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited;
 
 @end
 
-/// This protocol allows the ZMTransportSession to handle both ZMTransportRequest and ZMPushChannel as scheduled items.
+/// This protocol allows the ZMTransportSession to handle ZMTransportRequest as scheduled items.
 @protocol ZMTransportRequestSchedulerItemAsRequest <NSObject>
 
 /// If the receiver is a transport request, returns @c self, @c nil otherwise
 @property (nonatomic, readonly) ZMTransportRequest *transportRequest;
-/// If the receiver is a request to open the push channel
-@property (nonatomic, readonly) BOOL isPushChannelRequest;
 
 @end
 

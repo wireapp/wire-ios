@@ -72,8 +72,3 @@
 
 
 @end
-
-
-@interface MockTransportSessionTests (PushChannel) <ZMPushChannelConsumer>
-@end
-
