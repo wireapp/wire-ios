@@ -39,7 +39,7 @@ struct RepairRemovalKeysUseCaseTests {
     let affectedDomain = "apple.com"
 
     let affectedGroupMLSGroupID = MLSGroupID.random()
-    let affected1On1MLSGroupID = MLSGroupID.random()
+    let affectedOneOnOneMLSGroupID = MLSGroupID.random()
     let nonAffectedGroupMLSGroupID = MLSGroupID.random()
     let otherDomainMLSGroupID = MLSGroupID.random()
 
@@ -100,7 +100,7 @@ struct RepairRemovalKeysUseCaseTests {
             modelHelper.createMLSConversation(
                 id: UUID(),
                 domain: affectedDomain,
-                mlsGroupID: affected1On1MLSGroupID,
+                mlsGroupID: affectedOneOnOneMLSGroupID,
                 mlsStatus: .ready,
                 conversationType: .oneOnOne,
                 epoch: 0,
@@ -130,7 +130,7 @@ struct RepairRemovalKeysUseCaseTests {
         // MLS group and 1-1 have faulty keys
         mlsService.externalSenderKeyGroupID_MockMethod = { groupID in
             switch groupID {
-            case affectedGroupMLSGroupID, affected1On1MLSGroupID:
+            case affectedGroupMLSGroupID, affectedOneOnOneMLSGroupID:
                 faultyKey
             default:
                 validKey
@@ -143,7 +143,7 @@ struct RepairRemovalKeysUseCaseTests {
         // Then
         // The reset is initated for those conversations.
         let invocations = initiateResetUseCase.invokeGroupIDEpoch_Invocations
-        #expect(Set(invocations.map(\.groupID)) == [affectedGroupMLSGroupID, affected1On1MLSGroupID])
+        #expect(Set(invocations.map(\.groupID)) == [affectedGroupMLSGroupID, affectedOneOnOneMLSGroupID])
         #expect(Set(invocations.map(\.epoch)) == [5, 5])
     }
 
