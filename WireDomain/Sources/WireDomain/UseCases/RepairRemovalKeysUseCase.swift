@@ -82,7 +82,7 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
         faultyKeyHexStrings: [String]
     ) async throws {
         WireLogger.mls.info(
-            "checking domain '\(domain)' for \(faultyKeyHexStrings.count) faulty key(s)",
+            "checking domain for \(faultyKeyHexStrings.count) faulty key(s)",
             attributes: .safePublic
         )
 
@@ -90,7 +90,7 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
         let faultyKeyDataList = faultyKeyHexStrings.compactMap(Data.init(hexString:))
         guard faultyKeyDataList.count == faultyKeyHexStrings.count else {
             WireLogger.mls.error(
-                "failed to decode some faulty removal key hex strings for domain '\(domain)'",
+                "failed to decode some faulty removal key hex strings",
                 attributes: .safePublic
             )
             return
@@ -107,7 +107,7 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
         )
 
         WireLogger.mls.info(
-            "detected \(faultyConversations.count)/\(allMLSConversations.count) affected conversations in domain '\(domain)'",
+            "detected \(faultyConversations.count)/\(allMLSConversations.count) affected conversations",
             attributes: .safePublic
         )
 
