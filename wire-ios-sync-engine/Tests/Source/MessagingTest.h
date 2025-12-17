@@ -88,7 +88,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MessagingTest (OTR)
 
 - (UserClient *)setupSelfClientInMoc:(NSManagedObjectContext *)moc;
-- (UserClient *)createSelfClient;
 
 @end
 

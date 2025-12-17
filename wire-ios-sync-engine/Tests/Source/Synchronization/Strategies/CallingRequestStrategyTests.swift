@@ -590,6 +590,7 @@ class CallingRequestStrategyTests: MessagingTest {
     }
 
     func testThatItDoesNotTargetCallMessagesIfNoTargetClientsAreSpecified() async throws {
+
         let conversationAVSID = try await syncMOC
             .perform { [self] in
                 // Given
