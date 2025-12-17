@@ -111,9 +111,16 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
             attributes: .safePublic
         )
 
-        // Repair each faulty conversation
-        for (groupID, qualifiedID) in faultyConversations {
-            await repairConversation(groupID: groupID, qualifiedID: qualifiedID)
+        // Repair each faulty conversation in parallel
+        await withTaskGroup(of: Void.self) { group in
+            for (groupID, qualifiedID) in faultyConversations {
+                group.addTask {
+                    await self.repairConversation(
+                        groupID: groupID,
+                        qualifiedID: qualifiedID
+                    )
+                }
+            }
         }
     }
 
