@@ -60,7 +60,6 @@ public final class ZMUserSession: NSObject {
     public private(set) var transportSession: TransportSessionType
     let storedDidSaveNotifications: ContextDidSaveNotificationPersistence
     let userExpirationObserver: UserExpirationObserver
-    private(set) var legacyUpdateEventProcessor: UpdateEventProcessor?
     private(set) var strategyDirectory: StrategyDirectoryProtocol?
     private(set) var syncStrategy: ZMSyncStrategy?
     private(set) var operationLoop: ZMOperationLoop?
@@ -126,10 +125,6 @@ public final class ZMUserSession: NSObject {
         willSet {
             notificationDispatcher.operationMode = newValue ? .economical : .normal
         }
-    }
-
-    public var syncStatus: SyncStatusProtocol {
-        applicationStatusDirectory.syncStatus
     }
 
     public var fileSharingFeature: Feature.FileSharing {
@@ -528,7 +523,6 @@ public final class ZMUserSession: NSObject {
 
     func setup(
         apiVersion: WireNetwork.APIVersion?,
-        eventProcessor: (any UpdateEventProcessor)?,
         strategyDirectory: (any StrategyDirectoryProtocol)?,
         syncStrategy: ZMSyncStrategy?,
         operationLoop: ZMOperationLoop?,
@@ -549,7 +543,6 @@ public final class ZMUserSession: NSObject {
             configureTransportSession()
 
             self.strategyDirectory = strategyDirectory ?? createStrategyDirectory()
-            legacyUpdateEventProcessor = eventProcessor ?? createUpdateEventProcessor()
             self.syncStrategy = syncStrategy ?? createSyncStrategy()
             self.operationLoop = operationLoop ?? createOperationLoop(
                 apiVersion: apiVersion,
@@ -631,7 +624,6 @@ public final class ZMUserSession: NSObject {
             coreCryptoProvider: coreCryptoProvider,
             initialSyncProvider: clientSessionComponent,
             incrementalSyncProvider: clientSessionComponent,
-            legacySyncStatus: applicationStatusDirectory.syncStatus,
             featureConfigRepository: clientSessionComponent.featureConfigRepository,
             syncStateSubject: clientSessionComponent.syncStateSubject,
             pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator,
@@ -783,18 +775,6 @@ public final class ZMUserSession: NSObject {
         )
     }
 
-    private func createUpdateEventProcessor() -> EventProcessor {
-        EventProcessor(
-            storeProvider: coreDataStack,
-            eventProcessingTracker: eventProcessingTracker,
-            earService: earService,
-            lastEventIDRepository: lastEventIDRepository,
-            strategyDirectory: strategyDirectory!,
-            additionalEventConsumers: [conversationEventProcessor],
-            isFederationEnabled: resolvedBackendMetadata.isFederationEnabled
-        )
-    }
-
     private func createURLActionProcessors() -> [URLActionProcessor] {
         [
             ImportEventsURLActionProcessor(
@@ -837,7 +817,6 @@ public final class ZMUserSession: NSObject {
             updateEventProcessor: legacyUpdateEventProcessor!,
             operationStatus: applicationStatusDirectory.operationStatus,
             syncStatus: applicationStatusDirectory.syncStatus,
-            pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
             uiMOC: managedObjectContext,
             syncMOC: syncManagedObjectContext,
             isDeveloperModeEnabled: isDeveloperModeEnabled,

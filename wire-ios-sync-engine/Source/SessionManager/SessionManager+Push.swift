@@ -84,9 +84,7 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         guard (application as? NotificationSettingsRegistrable)?.shouldRegisterUserNotificationSettings ?? true
         else { return }
         let newSyncNotificationCategories = WireDomain.NotificationCategory.allCategories
-        let legacySyncNotificationCategories = PushNotificationCategory.allCategories
-        let allCategories = newSyncNotificationCategories.union(legacySyncNotificationCategories)
-        notificationCenter.setNotificationCategories(allCategories)
+        notificationCenter.setNotificationCategories(newSyncNotificationCategories)
 
         notificationCenter.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { _, _ in })
         notificationCenter.delegate = self

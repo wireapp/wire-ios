@@ -35,7 +35,6 @@
 @property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
 @property (nonatomic) RecordingMockTransportSession *mockTransportSesssion;
 @property (nonatomic) ApplicationStatusDirectory *applicationStatusDirectory;
-@property (nonatomic) PushNotificationStatus *pushNotificationStatus; // TODO: remove
 @property (nonatomic) SyncStatus *syncStatus;
 @property (nonatomic) OperationStatus *operationStatus;
 @property (nonatomic) MockRequestStrategy *mockRequestStrategy;

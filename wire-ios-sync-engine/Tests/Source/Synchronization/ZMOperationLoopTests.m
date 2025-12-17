@@ -41,7 +41,6 @@
 
     self.operationStatus = [[OperationStatus alloc] init];
     self.syncStatus = [[SyncStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository isSyncV2Enabled:NO];
-    self.pushNotificationStatus = [[PushNotificationStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository];
     self.sut = [[ZMOperationLoop alloc] initWithTransportSession:self.mockTransportSesssion
                                                  requestStrategy:self.mockRequestStrategy
                                             updateEventProcessor:self.mockUpdateEventProcessor
