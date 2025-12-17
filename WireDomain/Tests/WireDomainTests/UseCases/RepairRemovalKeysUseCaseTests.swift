@@ -56,7 +56,7 @@ struct RepairRemovalKeysUseCaseTests {
             isFederationEnabled: true
         )
         sut = RepairRemovalKeysUseCase(
-            faultyRemovalKey: Data([1, 2, 3]),
+            faultyRemovalKey: Data([1, 2, 3]).zmHexEncodedString(),
             affectedDomain: affectedDomain,
             context: context,
             mlsService: mlsService,

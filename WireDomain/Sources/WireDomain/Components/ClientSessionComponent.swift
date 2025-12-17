@@ -65,6 +65,9 @@ public final class ClientSessionComponent {
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
     private let completionHandlers: CompletionHandlers
 
+    private let faultyRemovalKey: String?
+    private let domainAffectedByFaultyRemovalKey: String?
+
     public init(
         selfUserID: UUID,
         selfClientID: String,
@@ -81,7 +84,9 @@ public final class ClientSessionComponent {
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
-        completionHandlers: CompletionHandlers
+        completionHandlers: CompletionHandlers,
+        faultyRemovalKey: String?,
+        domainAffectedByFaultyRemovalKey: String?
     ) {
         self.selfUserID = selfUserID
         self.selfClientID = selfClientID
@@ -99,6 +104,8 @@ public final class ClientSessionComponent {
         self.isMLSEnabled = isMLSEnabled
         self.coreCryptoProvider = coreCryptoProvider
         self.completionHandlers = completionHandlers
+        self.faultyRemovalKey = faultyRemovalKey
+        self.domainAffectedByFaultyRemovalKey = domainAffectedByFaultyRemovalKey
     }
 
     public private(set) lazy var authenticationManager = AuthenticationManager(
@@ -794,8 +801,8 @@ public final class ClientSessionComponent {
     )
 
     public lazy var repairFaultyRemovalKeysUsecase = RepairRemovalKeysUseCase(
-        faultyRemovalKey: Data(),
-        affectedDomain: "foo.com",
+        faultyRemovalKey: faultyRemovalKey,
+        affectedDomain: domainAffectedByFaultyRemovalKey,
         context: syncContext,
         mlsService: mlsService,
         conversationsAPI: conversationsAPI,

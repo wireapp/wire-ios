@@ -28,8 +28,8 @@ public protocol RepairRemovalKeysUseCaseProtocol {
 
 public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
 
-    let faultyRemovalKey: Data
-    let affectedDomain: String
+    let faultyRemovalKey: String?
+    let affectedDomain: String?
 
     private let context: NSManagedObjectContext
     private let mlsService: MLSServiceInterface
@@ -38,8 +38,8 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
     private let initiateResetUseCase: InitiateResetMLSConversationUseCaseProtocol
 
     init(
-        faultyRemovalKey: Data,
-        affectedDomain: String,
+        faultyRemovalKey: String?,
+        affectedDomain: String?,
         context: NSManagedObjectContext,
         mlsService: MLSServiceInterface,
         conversationsAPI: ConversationsAPI,
@@ -60,6 +60,22 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
             "initiating repair of faulty removal keys",
             attributes: .safePublic
         )
+
+        guard let faultyRemovalKey else {
+            WireLogger.mls.debug(
+                "no faulty removal key to repair, aborting",
+                attributes: .safePublic
+            )
+            return
+        }
+
+        guard let faultRemovalKeyData = Data(hexString: faultyRemovalKey) else {
+            WireLogger.mls.error(
+                "failed to decode faulty removal key hex string",
+                attributes: .safePublic
+            )
+            return
+        }
 
         let allMLSConversations = try await conversationLocalStore.fetchAllMLSConversations(
             domain: affectedDomain
@@ -89,7 +105,7 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
             }
 
             // The current removal key is faulty.
-            if currentRemovalKey == faultyRemovalKey {
+            if currentRemovalKey == faultRemovalKeyData {
                 faultyConversations.append((
                     groupID,
                     qualifiedID.toAPIModel()

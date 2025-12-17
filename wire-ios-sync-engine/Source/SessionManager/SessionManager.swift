@@ -1053,7 +1053,9 @@ public final class SessionManager: NSObject, SessionManagerType {
                     mediaManager: authenticatedSessionFactory.mediaManager,
                     flowManager: authenticatedSessionFactory.flowManager,
                     logFilesProvider: logFilesProvider,
-                    isDeveloperModeEnabled: isDeveloperModeEnabled
+                    isDeveloperModeEnabled: isDeveloperModeEnabled,
+                    faultyRemovalKey: configuration.faultyRemovalKey,
+                    domainAffectedByFaultyRemovalKey: configuration.domainAffectedByFaultyRemovalKey
                 )
 
                 let userSession = try await loader.load(newEnvironment: newEnvironment)
@@ -1332,7 +1334,9 @@ public final class SessionManager: NSObject, SessionManagerType {
             sharedUserDefaults: sharedUserDefaults,
             isDeveloperModeEnabled: isDeveloperModeEnabled,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            faultyRemovalKey: configuration.faultyRemovalKey,
+            domainAffectedByFaultyRemovalKey: configuration.domainAffectedByFaultyRemovalKey
         )
     }
 
