@@ -1449,14 +1449,6 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func processPendingCallEvents() async {
-        // Mark that we're processing events from push notification
-        // NSE has already handled notification display for these events
-//        callStateObserver?.beginProcessingPushNotificationEvents()
-
-//        defer {
-//            // Always reset to live event source after processing completes
-//            callStateObserver?.endProcessingPushNotificationEvents()
-//        }
 
         if journal[.isSyncV2Enabled] {
             WireLogger.sync.debug(

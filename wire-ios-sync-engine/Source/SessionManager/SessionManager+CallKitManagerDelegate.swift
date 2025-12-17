@@ -96,7 +96,7 @@ extension SessionManager: CallKitManagerDelegate {
 
          // Give it time to complete (the HTTP request happens asynchronously through operation loop)
          // Typically completes in < 1 second
-         try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+//         try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
 
          WireLogger.calling.info("Proceeded after config request delay")
      }
