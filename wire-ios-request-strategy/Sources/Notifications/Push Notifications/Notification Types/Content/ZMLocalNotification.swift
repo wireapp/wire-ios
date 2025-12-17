@@ -279,8 +279,6 @@ private func convertToUNNotificationSoundName(_ input: String) -> UNNotification
     UNNotificationSoundName(rawValue: input)
 }
 
-
-
 public extension ZMLocalNotification {
 
     static let ZMShouldHideNotificationContentKey = "ZMShouldHideNotificationContentKey"

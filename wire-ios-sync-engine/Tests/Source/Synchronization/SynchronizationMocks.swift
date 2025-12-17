@@ -200,50 +200,6 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
 
 class FakeCookieStorage: ZMPersistentCookieStorage {}
 
-@objc
-public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
-
-    var registeredUserClient: UserClient?
-    var registeredMLSClient: UserClient?
-    @objc public var didCallStartSlowSync = false
-    @objc public var didCallFinishSlowSync = false
-    @objc public var didCallStartQuickSync = false
-    @objc public var didCallFinishQuickSync = false
-    @objc public var didCallFailRegisterUserClient = false
-    @objc public var didCallDeleteUserClient = false
-
-    public func didStartSlowSync() {
-        didCallStartSlowSync = true
-    }
-
-    public func didFinishSlowSync() {
-        didCallFinishSlowSync = true
-    }
-
-    public func didStartQuickSync() {
-        didCallStartQuickSync = true
-    }
-
-    public func didFinishQuickSync(isRecovering: Bool) {
-        didCallFinishQuickSync = true
-    }
-
-    public func didRegisterMLSClient(_ userClient: UserClient) {
-        registeredMLSClient = userClient
-    }
-
-    public func didRegisterSelfUserClient(_ userClient: UserClient) {
-        registeredUserClient = userClient
-    }
-
-    public func didFailToRegisterSelfUserClient(error: Error) {
-        didCallFailRegisterUserClient = true
-    }
-
-    public func didDeleteSelfUserClient(error: Error) {
-        didCallDeleteUserClient = true
-    }
-}
 
 @objc
 public class MockPushMessageHandler: NSObject, PushMessageHandler {
