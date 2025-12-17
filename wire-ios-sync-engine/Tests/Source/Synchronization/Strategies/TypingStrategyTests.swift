@@ -230,105 +230,6 @@ final class TypingStrategyTests: MessagingTest {
         XCTAssertEqual(request!.path.lowercased(), expectedPath.lowercased())
     }
 
-    func testThatItForwardsAStartedTypingEvent() {
-        syncMOC.performAndWait {
-            // given
-            let event = typingEvent(isTyping: true)
-
-            // when
-            sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // then
-            XCTAssertTrue(typing.isUserTyping(user: userA, in: conversationA))
-        }
-    }
-
-    func testThatItForwardsAStoppedTypingEvent() {
-        syncMOC.performAndWait {
-            // given
-            let event = typingEvent(isTyping: false)
-            simulateTyping()
-
-            // when
-            sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // then
-            XCTAssertTrue(typing.didSetTypingUsers)
-            XCTAssertFalse(typing.isUserTyping(user: userA, in: conversationA))
-        }
-    }
-
-    func testThatItDoesNotForwardsAnUnknownTypingEvent() {
-        syncMOC.performAndWait {
-            // given
-            let payload = [
-                "conversation": conversationA.remoteIdentifier!.transportString(),
-                "data": ["status": "foo"],
-                "from": userA.remoteIdentifier!.transportString(),
-                "time": Date().transportString(),
-                "type": "conversation.typing"
-            ] as [String: Any]
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
-
-            // when
-            sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // then
-            XCTAssertFalse(typing.didSetTypingUsers)
-        }
-    }
-
-    func testThatItForwardsOTRMessageAddEventsAndSetsIsTypingToNo() {
-        // given
-
-        // edit message is an allowed type that can fire a otr-message-add notification
-        let message = GenericMessage(content: MessageEdit(replacingMessageID: .create(), text: Text(content: "demo")))
-        let payload = syncMOC.performAndWait { self.payloadForOTRMessageAdd(with: message) as ZMTransportData }
-        let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
-
-        syncMOC.performAndWait {
-            simulateTyping()
-
-            // when
-            sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-        }
-        // then
-        XCTAssertTrue(typing.didSetTypingUsers)
-        XCTAssertFalse(typing.isUserTyping(user: userA, in: conversationA))
-    }
-
-    func testThatDoesntForwardOTRMessageAddEventsForNonTextTypes() {
-        syncMOC.performAndWait {
-            // given
-            // delete-message should not fire an Add Events notification
-            let message = GenericMessage(content: MessageDelete(messageId: UUID.create()))
-            tryToForwardOTRMessageWithoutReply(with: message)
-        }
-    }
-
-    func testThatDoesntForwardOTRMessageAddEventsForConfirmations() {
-        syncMOC.performAndWait {
-            // given
-            // confirmations should not fire an Add Events notification
-            let message = GenericMessage(content: Confirmation(messageId: UUID.create()))
-            tryToForwardOTRMessageWithoutReply(with: message)
-        }
-    }
-
-    func tryToForwardOTRMessageWithoutReply(with message: GenericMessage) {
-        let payload = payloadForOTRMessageAdd(with: message) as ZMTransportData
-        let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
-        syncMOC.performAndWait {
-            simulateTyping()
-
-            // when
-            sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-        }
-        // then
-        XCTAssertFalse(typing.didSetTypingUsers)
-        XCTAssertTrue(typing.isUserTyping(user: userA, in: conversationA)) // user is still typing
-    }
-
     func payloadForOTRMessageAdd(with message: GenericMessage) -> [String: Any] {
         let data = try? message.serializedData().base64String()
         return [
@@ -338,26 +239,6 @@ final class TypingStrategyTests: MessagingTest {
             "time": Date().transportString(),
             "type": "conversation.otr-message-add"
         ] as [String: Any]
-    }
-
-    func testThatItDoesNotForwardOtherEventTypes() {
-        syncMOC.performAndWait {
-            // given
-            let payload = [
-                "conversation": conversationA.remoteIdentifier!.transportString(),
-                "data": [],
-                "from": userA.remoteIdentifier!.transportString(),
-                "time": Date().transportString(),
-                "type": "conversation.rename"
-            ] as [String: Any]
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
-
-            // when
-            sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // then
-            XCTAssertFalse(typing.didSetTypingUsers)
-        }
     }
 
     func testThatItReturnsANextRequestWhenReceivingATypingNotification_Foreground() {
@@ -626,23 +507,6 @@ final class TypingStrategyTests: MessagingTest {
             XCTAssert(waitForCustomExpectations(withTimeout: 0.1))
         }
     }
-
-    func testThatRemovingMemberClearsTypingState() {
-        syncMOC.performAndWait {
-            // given
-            simulateTyping()
-            let event = memberLeaveEvent()
-            XCTAssertTrue(typing.isUserTyping(user: userA, in: conversationA)) // user is still typing
-
-            // when
-            sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
-            // then
-            XCTAssertFalse(typing.isUserTyping(user: userA, in: conversationA)) // user is not typing
-
-        }
-    }
-
 }
 
 // MARK: - Sending multiple requests

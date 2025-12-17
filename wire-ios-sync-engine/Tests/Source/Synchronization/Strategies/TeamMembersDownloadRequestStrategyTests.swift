@@ -23,20 +23,13 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
 
     var sut: TeamMembersDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
-    var mockSyncStatus: MockSyncStatus!
 
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
-        mockSyncStatus = MockSyncStatus(
-            managedObjectContext: syncMOC,
-            lastEventIDRepository: lastEventIDRepository,
-            isSyncV2Enabled: false
-        )
         sut = TeamMembersDownloadRequestStrategy(
             withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
-            syncStatus: mockSyncStatus
         )
 
         syncMOC.performGroupedAndWait {
@@ -47,7 +40,6 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
 
     override func tearDown() {
         mockApplicationStatus = nil
-        mockSyncStatus = nil
         sut = nil
         super.tearDown()
     }
@@ -98,7 +90,6 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
         syncMOC.performGroupedAndWait {
             // given
             self.mockApplicationStatus.mockSynchronizationState = .slowSyncing
-            self.mockSyncStatus.mockPhase = .fetchingTeamMembers
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let teamID = UUID()
             selfUser.teamIdentifier = teamID
@@ -112,58 +103,12 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
         }
     }
 
-    func testThatItFinishSyncStep_IfSelfUserDoesntBelongToTeam() {
-
-        syncMOC.performGroupedAndWait {
-            // given
-            self.mockApplicationStatus.mockSynchronizationState = .slowSyncing
-            self.mockSyncStatus.mockPhase = .fetchingTeamMembers
-
-            // when
-            let request = self.sut.nextRequest(for: .v0)
-
-            // then
-            XCTAssertNil(request)
-            XCTAssertTrue(self.mockSyncStatus.didCallFinishCurrentSyncPhase)
-        }
-    }
-
-    func testThatItFinishSyncStep_OnSuccessfulResponse() {
-
-        syncMOC.performGroupedAndWait {
-            // given
-            self.mockApplicationStatus.mockSynchronizationState = .slowSyncing
-            self.mockSyncStatus.mockPhase = .fetchingTeamMembers
-            _ = self.createTeam()
-
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
-
-            // when
-            let response = ZMTransportResponse(
-                payload: self.sampleResponseForSmallTeam as ZMTransportData,
-                httpStatus: 200,
-                transportSessionError: nil,
-                apiVersion: APIVersion.v0.rawValue
-            )
-            request.complete(with: response)
-        }
-
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-
-        syncMOC.performGroupedAndWait {
-            // then
-            XCTAssertNil(self.sut.nextRequest(for: .v0))
-            XCTAssertTrue(self.mockSyncStatus.didCallFinishCurrentSyncPhase)
-        }
-    }
-
     func testThatItCreatesTeamMembers_WhenHasMoreIsFalse() {
         var team: Team!
 
         syncMOC.performGroupedAndWait {
             // given
             self.mockApplicationStatus.mockSynchronizationState = .slowSyncing
-            self.mockSyncStatus.mockPhase = .fetchingTeamMembers
             team = self.createTeam()
 
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
@@ -192,7 +137,6 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
         syncMOC.performGroupedAndWait {
             // given
             self.mockApplicationStatus.mockSynchronizationState = .slowSyncing
-            self.mockSyncStatus.mockPhase = .fetchingTeamMembers
             team = self.createTeam()
             initialTeamMembersCount = team.members.count
 

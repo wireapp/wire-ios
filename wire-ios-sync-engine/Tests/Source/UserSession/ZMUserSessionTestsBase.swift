@@ -200,7 +200,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         let userSession = builder.build()
         userSession.setup(
             apiVersion: nil,
-            eventProcessor: MockUpdateEventProcessor(),
             strategyDirectory: MockStrategyDirectory(),
             syncStrategy: nil,
             operationLoop: nil,

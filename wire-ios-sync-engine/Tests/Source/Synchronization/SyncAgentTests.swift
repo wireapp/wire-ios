@@ -65,11 +65,9 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
         sut = SyncAgent(
             journal: journal,
-            lastUpdateEventIDRepository: lastUpdateEventIDRepository,
             coreCryptoProvider: coreCryptoProvider,
             initialSyncProvider: self,
             incrementalSyncProvider: self,
-            legacySyncStatus: legacySyncStatus,
             featureConfigRepository: featureConfigRepository,
             syncStateSubject: syncStateSubject,
             pushChannelCoordinator: mainAppPushChannelCoordinator,
@@ -195,21 +193,6 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         XCTAssertEqual(incrementalSync.perform_Invocations.count, 1)
     }
 
-    func testPerformInitialSync_Legacy() async throws {
-        // Given
-        journal[.isSyncV2Enabled] = false
-
-        // Mock
-        legacySyncStatus.forceSlowSync_MockMethod = {}
-        featureConfigRepository.isFeatureEnabled_MockValue = false
-
-        // When
-        try await sut.performInitialSync()
-
-        // Then
-        XCTAssertEqual(legacySyncStatus.forceSlowSync_Invocations.count, 1)
-    }
-
     func testPerformResourceSync() async throws {
         // Given
         journal[.isSyncV2Enabled] = true
@@ -230,21 +213,6 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         // Then
         XCTAssertEqual(initialSync.performSkipPullingLastUpdateEventID_Invocations, [true])
         XCTAssertEqual(incrementalSync.perform_Invocations.count, 1)
-    }
-
-    func testPerformResourceSync_Legacy() async throws {
-        // Given
-        journal[.isSyncV2Enabled] = false
-
-        // Mock
-        legacySyncStatus.resyncResources_MockMethod = {}
-        featureConfigRepository.isFeatureEnabled_MockValue = false
-
-        // When
-        try await sut.performResourceSync()
-
-        // Then
-        XCTAssertEqual(legacySyncStatus.resyncResources_Invocations.count, 1)
     }
 
     func testPerformIncrementalSync() async throws {

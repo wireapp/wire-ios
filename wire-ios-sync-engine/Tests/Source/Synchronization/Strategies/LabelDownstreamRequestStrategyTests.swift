@@ -22,7 +22,6 @@ import Foundation
 class LabelDownstreamRequestStrategyTests: MessagingTest {
 
     var sut: LabelDownstreamRequestStrategy!
-    var mockSyncStatus: MockSyncStatus!
     var mockApplicationStatus: MockApplicationStatus!
 
     var conversation1: ZMConversation!
@@ -30,17 +29,11 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        mockSyncStatus = MockSyncStatus(
-            managedObjectContext: syncMOC,
-            lastEventIDRepository: lastEventIDRepository,
-            isSyncV2Enabled: false
-        )
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
         sut = LabelDownstreamRequestStrategy(
             withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
-            syncStatus: mockSyncStatus
         )
 
         syncMOC.performGroupedAndWait {
@@ -54,7 +47,6 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
 
     override func tearDown() {
         sut = nil
-        mockSyncStatus = nil
         mockApplicationStatus = nil
         conversation1 = nil
         conversation2 = nil
@@ -112,20 +104,6 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
     }
 
-    // MARK: - Slow Sync
-
-    func testThatItRequestsLabels_DuringSlowSync() {
-        syncMOC.performGroupedAndWait {
-            // GIVEN
-            self.mockSyncStatus.mockPhase = .fetchingLabels
-
-            // WHEN
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
-
-            // THEN
-            XCTAssertEqual(request.path, "/properties/labels")
-        }
-    }
 
     func testThatItRequestsLabels_WhenRefetchingIsNecessary() {
         syncMOC.performGroupedAndWait {
@@ -176,79 +154,6 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         // THEN
         syncMOC.performGroupedAndWait {
             XCTAssertFalse(ZMUser.selfUser(in: self.syncMOC).needsToRefetchLabels)
-        }
-    }
-
-    func testThatItFinishSlowSyncPhase_WhenLabelsExist() {
-        syncMOC.performGroupedAndWait {
-            // GIVEN
-            self.mockSyncStatus.mockPhase = .fetchingLabels
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
-
-            // WHEN
-            request.complete(with: self.successfullFolderResponse())
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        syncMOC.performGroupedAndWait {
-            XCTAssertTrue(self.mockSyncStatus.didCallFinishCurrentSyncPhase)
-        }
-    }
-
-    func testThatItFinishSlowSyncPhase_WhenLabelsDontExist() {
-        syncMOC.performGroupedAndWait {
-            // GIVEN
-            self.mockSyncStatus.mockPhase = .fetchingLabels
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
-
-            // WHEN
-            request.complete(with: ZMTransportResponse(
-                payload: nil,
-                httpStatus: 404,
-                transportSessionError: nil,
-                apiVersion: APIVersion.v0.rawValue
-            ))
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        syncMOC.performGroupedAndWait {
-            XCTAssertTrue(self.mockSyncStatus.didCallFinishCurrentSyncPhase)
-        }
-    }
-
-    // MARK: - Event Processing
-
-    func testThatItUpdatesLabels_OnPropertiesUpdateEvent() {
-        var conversation: ZMConversation!
-        let conversationId = UUID()
-
-        var event: ZMUpdateEvent?
-
-        syncMOC.performGroupedAndWait {
-            // GIVEN
-            conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            conversation.remoteIdentifier = conversationId
-            self.syncMOC.saveOrRollback()
-            event = self.updateEvent(with: self.favoriteResponse(favorites: [conversationId]))
-
-        }
-
-        // WHEN
-        guard let event else {
-            XCTFail("missing event")
-            return
-        }
-        syncMOC.performGroupedAndWait {
-            self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        syncMOC.performGroupedAndWait {
-            XCTAssertTrue(conversation.isFavorite)
         }
     }
 

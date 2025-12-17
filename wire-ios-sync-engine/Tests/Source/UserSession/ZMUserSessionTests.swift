@@ -118,11 +118,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        let syncStatus = try await syncMOC.perform {
-            try XCTUnwrap(self.sut.syncStatus as? SyncStatus)
-        }
-
-        XCTAssertTrue(syncStatus.isSlowSyncing)
+        XCTAssertTrue(self.sut.syncAgent?.syncRunning == true)
     }
 
     func test_didRegisterSelfUserClient_withConsumableNotificationsCapabableEnablesSyncV3() async throws {

@@ -89,7 +89,6 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         let testSession = builder.build()
         testSession.setup(
             apiVersion: nil,
-            eventProcessor: nil,
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,

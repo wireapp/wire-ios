@@ -363,10 +363,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                     localNotificationDispatcher: pushMessageHandler,
                     messageSender: messageSender
                 ),
-                DeliveryReceiptRequestStrategy(
-                    managedObjectContext: syncContext,
-                    messageSender: messageSender
-                ),
                 AvailabilityRequestStrategy(
                     context: syncContext,
                     messageSender: messageSender
