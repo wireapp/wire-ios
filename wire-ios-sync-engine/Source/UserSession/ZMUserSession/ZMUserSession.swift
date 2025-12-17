@@ -448,6 +448,7 @@ public final class ZMUserSession: NSObject {
         sharedContainerURL: URL,
         appLock: any AppLockType,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
+        lastEventIDRepository: any LastEventIDRepositoryInterface,
         lastE2EIUpdateDateRepository: any LastE2EIdentityUpdateDateRepositoryInterface,
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol,
         applicationStatusDirectory: ApplicationStatusDirectory,
@@ -474,6 +475,7 @@ public final class ZMUserSession: NSObject {
         self.debugCommands = ZMUserSession.initDebugCommands()
         self.appLockController = appLock
         self.coreCryptoProvider = coreCryptoProvider
+        self.lastEventIDRepository = lastEventIDRepository
         self.userId = userId
         self.lastE2EIUpdateDateRepository = lastE2EIUpdateDateRepository
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
@@ -1336,35 +1338,6 @@ extension ZMUserSession: SyncAgentDelegate {
             BackendInfo.isMLSEnabled = hasValidKeys
         } catch {
             WireLogger.mls.info("Backend doesn't have MLS public keys: \(String(reflecting: error))")
-        }
-    }
-
-    func processLegacyEvents() {
-        guard !journal[.isSyncV2Enabled] else {
-            return
-        }
-
-        managedObjectContext.performGroupedBlock { [weak self] in
-            self?.isPerformingSync = true
-            self?.updateNetworkState()
-        }
-
-        let groups = syncContext.enterAllGroupsExceptSecondary()
-        Task {
-            var processingInterrupted = false
-            do {
-                try await legacyUpdateEventProcessor?.processBufferedEvents()
-            } catch {
-                processingInterrupted = true
-            }
-
-            let isSyncing = await syncContext.perform { self.applicationStatusDirectory.syncStatus.isSyncing }
-
-            await managedObjectContext.perform { [weak self] in
-                self?.isPerformingSync = isSyncing || processingInterrupted
-                self?.updateNetworkState()
-            }
-            self.syncContext.leaveAllGroups(groups)
         }
     }
 

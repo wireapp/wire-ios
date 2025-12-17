@@ -520,3 +520,23 @@ private struct DecryptedProteusMessageEvent: EventData, Codable {
     let recipient: String
 
 }
+
+private extension Payload {
+
+    /// The domain that the self domain has stopped federate with.
+    struct FederationDelete: Codable {
+
+        public let domain: String
+        public let type: String
+
+    }
+
+    /// The list of domains that have terminated federation with each other.
+    struct ConnectionRemoved: Codable {
+
+        public let domains: [String]
+        public let type: String
+
+    }
+
+}

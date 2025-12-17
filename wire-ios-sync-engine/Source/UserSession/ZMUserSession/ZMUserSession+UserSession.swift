@@ -116,8 +116,6 @@ extension ZMUserSession: UserSession {
         try earService.unlockDatabase()
 
         DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: notificationContext)
-
-        processLegacyEvents()
     }
 
     public func deleteAppLockPasscode() throws {

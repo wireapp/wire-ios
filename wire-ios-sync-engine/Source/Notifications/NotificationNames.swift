@@ -27,3 +27,12 @@ extension Notification.Name {
     /// Published after the last event has been processed.
     static let eventProcessorDidFinishProcessingEventsNotification = Self("EventProcessorDidFinishProcessingEvents")
 }
+
+public extension Notification.Name {
+
+    static let initialSync = Notification.Name("ZMInitialSyncCompletedNotification")
+    static let resyncResources = Notification.Name("resyncResourcesNotificationName")
+
+    internal static let triggerQuickSync = Notification.Name("triggerQuickSync")
+
+}
