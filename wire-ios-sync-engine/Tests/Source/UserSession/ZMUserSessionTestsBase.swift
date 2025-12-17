@@ -31,7 +31,6 @@ import WireTransportSupport
 class ZMUserSessionTestsBase: MessagingTest {
 
     var mockSessionManager: MockSessionManager!
-    var mockPushChannel: MockPushChannel!
     var mockEARService: MockEARServiceInterface!
     var mockMLSService: MockMLSServiceInterface!
     var backendEnvironment: WireTransport.BackendEnvironment!
@@ -94,8 +93,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             userIdentifier: .create(),
             useCache: true
         )
-        mockPushChannel = MockPushChannel()
-        transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
+
+        transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage)
         mockSessionManager = MockSessionManager()
         mediaManager = MockMediaManager()
         flowManagerMock = FlowManagerMock()
@@ -147,7 +146,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockFetchBackendMLSPublicKeysActionHandler = nil
         mockCoreCryptoProvider = nil
         sut?.tearDown()
-        mockPushChannel = nil
         super.tearDown()
     }
 
