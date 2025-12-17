@@ -57,7 +57,6 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
                            applicationStatus:(id<ZMApplicationStatus>)applicationStatus
                     clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                                  syncStatus:(SyncStatus *)syncStatus
 {
     NSArray<NSString *> *keysToSync = @[NameKey, AccentColorValueKey, PreviewProfileAssetIdentifierKey, CompleteProfileAssetIdentifierKey];
     
@@ -67,7 +66,10 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
                                                         keysToSync:keysToSync
                                                         managedObjectContext:moc];
     
-    return [self initWithManagedObjectContext:moc applicationStatus:applicationStatus clientRegistrationStatus:clientRegistrationStatus syncStatus: syncStatus upstreamObjectSync:upstreamObjectSync];
+    return [self initWithManagedObjectContext:moc
+                            applicationStatus:applicationStatus
+                     clientRegistrationStatus:clientRegistrationStatus
+                           upstreamObjectSync:upstreamObjectSync];
 }
 
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc

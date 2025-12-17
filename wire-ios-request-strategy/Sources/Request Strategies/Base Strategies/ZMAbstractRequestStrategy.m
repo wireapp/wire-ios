@@ -24,7 +24,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"Request Configuration";
 
 @implementation ZMAbstractRequestStrategy
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext applicationStatus:(id<ZMApplicationStatus>)applicationStatus
+- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
+                           applicationStatus:(id<ZMApplicationStatus>)applicationStatus
 {
     self = [super init];
     

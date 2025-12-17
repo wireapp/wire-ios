@@ -23,8 +23,6 @@ import WireSystem
 import WireTransport
 import WireUtilities
 
-private let zmLog = ZMSLog(tag: "userClientRS")
-
 /// Performs actions on the self clients
 ///
 /// Actions:
@@ -394,7 +392,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                 let payload = response.payload as? [String: AnyObject],
                 let remoteIdentifier = payload["id"] as? String
             else {
-                zmLog.warn("Unexpected backend response for inserted client")
+                WireLogger.userClient.warn("Unexpected backend response for inserted client")
                 return
             }
 

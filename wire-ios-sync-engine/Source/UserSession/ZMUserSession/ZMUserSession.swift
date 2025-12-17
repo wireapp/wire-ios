@@ -511,6 +511,12 @@ public final class ZMUserSession: NSObject {
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider
         )
+        
+        self.conversationEventProcessor = ConversationEventProcessor(
+              context: coreDataStack.syncContext,
+              localDomain: resolvedBackendMetadata.domain,
+              isFederationEnabled: resolvedBackendMetadata.isFederationEnabled
+          )
     }
 
     func trackAppOpenAnalyticEventWhenAppBecomesActive() {
@@ -544,6 +550,7 @@ public final class ZMUserSession: NSObject {
                 apiVersion: apiVersion,
                 isDeveloperModeEnabled: isDeveloperModeEnabled
             )
+
             urlActionProcessors = createURLActionProcessors()
             callStateObserver = CallStateObserver(
                 localNotificationDispatcher: localNotificationDispatcher!,
