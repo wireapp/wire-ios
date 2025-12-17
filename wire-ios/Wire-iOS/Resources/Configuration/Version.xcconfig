@@ -16,5 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+<<<<<<< HEAD
 WIRE_SHORT_VERSION = 4.12.0
+=======
+WIRE_SHORT_VERSION = 4.11.1
+>>>>>>> b083b4ef36 (fix: critical flows activation api - WPB-22450 (#4023))
 MAJOR_VERSION = 4
