@@ -12,6 +12,7 @@
 		0106AC902C9B00A30022E2CF /* MessageInfoExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8F2C9B00A30022E2CF /* MessageInfoExtractorTests.swift */; };
 		0106AC952C9CA4F30022E2CF /* ProteusMessagePayloadBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC942C9CA4F30022E2CF /* ProteusMessagePayloadBuilderTests.swift */; };
 		0106AC982C9CBCE40022E2CF /* MessageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC962C9CB7F90022E2CF /* MessageInfo.swift */; };
+		014F51D32EF347C70037A181 /* ZMLocalNotification+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D19A24F66E9E001DDC78 /* ZMLocalNotification+Events.swift */; };
 		01DF752A2EF220F50071F336 /* EventPayloadDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01DF75282EF220F50071F336 /* EventPayloadDecoder.swift */; };
 		01F5AED02CAD892000B01069 /* ProteusMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5AECF2CAD892000B01069 /* ProteusMessageTests.swift */; };
 		06025666248E616C00E060E1 /* ZMSimpleListRequestPaginator.m in Sources */ = {isa = PBXBuildFile; fileRef = 06025665248E616C00E060E1 /* ZMSimpleListRequestPaginator.m */; };
@@ -2414,6 +2415,7 @@
 				E60E82A62B837C7E00F8DA5C /* FeatureConfigsPayloadProcessor.swift in Sources */,
 				EEFB2DFE2ACD530F0094F877 /* PrekeyPayloadProcessor.swift in Sources */,
 				E6BBCF132C32C55700BD0259 /* HttpClientImpl.swift in Sources */,
+				014F51D32EF347C70037A181 /* ZMLocalNotification+Events.swift in Sources */,
 				E629E3C02B47051D00D526AD /* Payload+UpdateConversationMemberJoin.swift in Sources */,
 				1623F8D32AE66F28004F0319 /* MessageSender.swift in Sources */,
 				F18401D82073BE0800E9F4CC /* ZMConversation+Notifications.swift in Sources */,
@@ -2466,7 +2468,6 @@
 				EE8807952AC40CA600278E3C /* UserProfilePayloadProcessor.swift in Sources */,
 				7AEBB677285A10620090B524 /* CountSelfMLSKeyPackagesActionHandler.swift in Sources */,
 				F18401C32073BE0800E9F4CC /* AssetV3DownloadRequestStrategy.swift in Sources */,
-				0649D19B24F66E9E001DDC78 /* ZMLocalNotification+Events.swift in Sources */,
 				630D41AA2B07793D00633867 /* MLSConversationParticipantsService.swift in Sources */,
 				F18401BF2073BE0800E9F4CC /* AssetClientMessageRequestStrategy.swift in Sources */,
 				16BBA1FE2AFC5E1600CDF38A /* DependentObjects.swift in Sources */,
@@ -2843,11 +2844,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F1E47FE4207E0B72008D4299 /* ios-test-target.xcconfig */;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = Tests/Resources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Resources/Bridging-Header.h";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireRequestStrategyTestHost.app/WireRequestStrategyTestHost";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireRequestStrategyTestHost.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WireRequestStrategyTestHost";
 				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
@@ -2856,11 +2858,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F1E47FE4207E0B72008D4299 /* ios-test-target.xcconfig */;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = Tests/Resources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Resources/Bridging-Header.h";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireRequestStrategyTestHost.app/WireRequestStrategyTestHost";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireRequestStrategyTestHost.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WireRequestStrategyTestHost";
 				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
