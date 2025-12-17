@@ -197,16 +197,26 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     }
 
     private func initiateRepairRemovalKeys() {
-        guard let userSession else {
+        guard let useCase = userSession?.clientSessionComponent?.repairFaultyRemovalKeysUsecase else {
+            WireLogger.mls.warn(
+                "unable to manually trigger to initiate repair removal keys because the usecase is not available",
+                attributes: .safePublic
+            )
             return
         }
 
         Task { @MainActor in
-            WireLogger.mls.info("Triggering initiate repair removal keys")
+            WireLogger.mls.info(
+                "manual trigger to initiate repair removal keys",
+                attributes: .safePublic
+            )
             do {
-                try await userSession.clientSessionComponent?.repairFaultyRemovalKeysUsecase.invoke()
+                try await useCase.invoke()
             } catch {
-                WireLogger.mls.info("repair removal keys failed: \(error)")
+                WireLogger.mls.error(
+                    "manual trigger to repair removal keys failed: \(String(describing: error))",
+                    attributes: .safePublic
+                )
             }
         }
     }
