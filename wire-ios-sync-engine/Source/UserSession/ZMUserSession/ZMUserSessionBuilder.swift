@@ -175,7 +175,6 @@ struct ZMUserSessionBuilder {
             sharedContainerURL: sharedContainerURL,
             appLock: appLock,
             coreCryptoProvider: coreCryptoProvider,
-            lastEventIDRepository: lastEventIDRepository,
             lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository,
             e2eiActivationDateRepository: e2eiActivationDateRepository,
             applicationStatusDirectory: applicationStatusDirectory,
