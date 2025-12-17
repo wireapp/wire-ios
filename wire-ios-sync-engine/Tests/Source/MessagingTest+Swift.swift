@@ -94,6 +94,7 @@ public extension MessagingTest {
     }
 
     @objc
+    @discardableResult
     func createSelfClient() -> UserClient {
         createSelfClient(capabilities: [])
     }
