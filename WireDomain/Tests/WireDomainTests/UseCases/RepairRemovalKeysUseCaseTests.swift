@@ -65,13 +65,7 @@ struct RepairRemovalKeysUseCaseTests {
             initiateResetUseCase: initiateResetUseCase
         )
 
-        await context.perform { [
-            affectedDomain,
-            affectedGroupMLSGroupID,
-            affected1On1MLSGroupID,
-            otherDomainMLSGroupID,
-            nonAffectedGroupMLSGroupID
-        ] in
+        await context.perform { [self] in
             let modelHelper = ModelHelper()
             let selfUser = modelHelper.createSelfUser(
                 id: UUID(),
