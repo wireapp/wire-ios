@@ -48,8 +48,7 @@ final class UserSessionLoader {
     private let accountID: UUID
     private let backendStore: BackendEnvironmentStore
     private let journal: Journal
-    private let faultyRemovalKey: String?
-    private let domainAffectedByFaultyRemovalKey: String?
+    private let faultyMLSRemovalKeysByDomain: [String: [String]]
 
     weak var delegate: UserSessionLoaderDelegate?
 
@@ -68,8 +67,7 @@ final class UserSessionLoader {
         flowManager: FlowManagerType,
         logFilesProvider: LogFilesProviding,
         isDeveloperModeEnabled: Bool,
-        faultyRemovalKey: String?,
-        domainAffectedByFaultyRemovalKey: String?
+        faultyMLSRemovalKeysByDomain: [String: [String]]
     ) throws {
         self.account = account
         self.accountManager = accountManager
@@ -93,8 +91,7 @@ final class UserSessionLoader {
             userID: accountID,
             storage: sharedUserDefaults
         )
-        self.faultyRemovalKey = faultyRemovalKey
-        self.domainAffectedByFaultyRemovalKey = domainAffectedByFaultyRemovalKey
+        self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
     }
 
     @MainActor
@@ -559,8 +556,7 @@ final class UserSessionLoader {
             journal: journal,
             logFilesProvider: logFilesProvider,
             cookieStorage: cookieStorage,
-            faultyRemovalKey: faultyRemovalKey,
-            domainAffectedByFaultyRemovalKey: domainAffectedByFaultyRemovalKey
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
         )
 
         userSession.setup(

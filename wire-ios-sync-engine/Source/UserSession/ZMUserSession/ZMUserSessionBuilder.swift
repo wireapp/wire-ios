@@ -58,8 +58,7 @@ struct ZMUserSessionBuilder {
     private var apiVersion: WireNetwork.APIVersion?
     private var journal: Journal?
     private var logFilesProvider: LogFilesProviding?
-    private var faultyRemovalKey: String?
-    private var domainAffectedByFaultyRemovalKey: String?
+    private var faultyMLSRemovalKeysByDomain: [String: [String]]?
 
     // MARK: - Initialize
 
@@ -190,8 +189,7 @@ struct ZMUserSessionBuilder {
             journal: journal,
             logFilesProvider: logFilesProvider,
             cookieStorage: cookieStorage,
-            faultyRemovalKey: faultyRemovalKey,
-            domainAffectedByFaultyRemovalKey: domainAffectedByFaultyRemovalKey
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain ?? [:]
         )
     }
 
@@ -221,8 +219,7 @@ struct ZMUserSessionBuilder {
         minTLSVersion: String?,
         journal: Journal,
         logFilesProvider: LogFilesProviding,
-        faultyRemovalKey: String?,
-        domainAffectedByFaultyRemovalKey: String?
+        faultyMLSRemovalKeysByDomain: [String: [String]]
     ) {
         // reused dependencies
 
@@ -325,8 +322,7 @@ struct ZMUserSessionBuilder {
         self.wireAPIBackendEnvironment = wireAPIBackendEnvironment
         self.journal = journal
         self.logFilesProvider = logFilesProvider
-        self.faultyRemovalKey = faultyRemovalKey
-        self.domainAffectedByFaultyRemovalKey = domainAffectedByFaultyRemovalKey
+        self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
     }
 
     // MARK: UserSesssionDependencies

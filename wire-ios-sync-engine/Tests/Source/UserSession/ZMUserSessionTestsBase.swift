@@ -202,8 +202,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             minTLSVersion: nil,
             journal: journal,
             logFilesProvider: logFilesProvider,
-            faultyRemovalKey: nil,
-            domainAffectedByFaultyRemovalKey: nil
+            faultyMLSRemovalKeysByDomain: [:]
         )
 
         let userSession = builder.build()

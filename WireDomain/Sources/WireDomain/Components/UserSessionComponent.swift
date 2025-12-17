@@ -43,8 +43,7 @@ public final class UserSessionComponent {
     private let proteusService: any ProteusServiceInterface
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
-    private let faultyRemovalKey: String?
-    private let domainAffectedByFaultyRemovalKey: String?
+    private let faultyMLSRemovalKeysByDomain: [String: [String]]
 
     public init(
         currentBuildNumber: String,
@@ -63,8 +62,7 @@ public final class UserSessionComponent {
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
-        faultyRemovalKey: String?,
-        domainAffectedByFaultyRemovalKey: String?
+        faultyMLSRemovalKeysByDomain: [String: [String]]
     ) {
         self.currentBuildNumber = currentBuildNumber
         self.selfUserID = selfUserID
@@ -82,8 +80,7 @@ public final class UserSessionComponent {
         self.proteusService = proteusService
         self.coreCryptoProvider = coreCryptoProvider
         self.sharedContainerURL = sharedContainerURL
-        self.faultyRemovalKey = faultyRemovalKey
-        self.domainAffectedByFaultyRemovalKey = domainAffectedByFaultyRemovalKey
+        self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
     }
 
     private let cookieStorage: any CookieStorageProtocol
@@ -111,8 +108,7 @@ public final class UserSessionComponent {
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider,
             completionHandlers: completionHandlers,
-            faultyRemovalKey: faultyRemovalKey,
-            domainAffectedByFaultyRemovalKey: domainAffectedByFaultyRemovalKey
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
         )
     }
 

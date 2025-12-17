@@ -77,18 +77,12 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
 
     public var legacyAppLockConfig: AppLockController.LegacyConfig?
 
-    /// A hex encoded MLS removal key that is considered faulty.
+    /// A dictionary mapping domains to hex encoded MLS removal keys that are considered faulty.
     ///
-    /// If this is set, then any groups with this key will be reset.
+    /// If this is set, then any groups belonging to the specified domains with any of the specified keys will be reset.
+    /// Key: domain, Value: array of hex encoded faulty removal keys
 
-    public var faultyRemovalKey: String?
-
-    /// The domain affected by the faulty removal key.
-    ///
-    /// Only groups belonging to this domain who have the faulty
-    /// removal key will be reset.
-
-    public var domainAffectedByFaultyRemovalKey: String?
+    public var faultyMLSRemovalKeysByDomain: [String: [String]]
 
     // MARK: - Init
 
@@ -102,8 +96,7 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
         failedPasswordThresholdBeforeWipe: Int? = nil,
         encryptionAtRestIsEnabledByDefault: Bool = false,
         legacyAppLockConfig: AppLockController.LegacyConfig? = nil,
-        faultyRemovalKey: String? = nil,
-        domainAffectedByFaultyRemovalKey: String? = nil
+        faultyMLSRemovalKeysByDomain: [String: [String]] = [:]
     ) {
         self.wipeOnCookieInvalid = wipeOnCookieInvalid
         self.blacklistDownloadInterval = blacklistDownloadInterval
@@ -114,8 +107,7 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
         self.failedPasswordThresholdBeforeWipe = failedPasswordThresholdBeforeWipe
         self.encryptionAtRestEnabledByDefault = encryptionAtRestIsEnabledByDefault
         self.legacyAppLockConfig = legacyAppLockConfig
-        self.faultyRemovalKey = faultyRemovalKey
-        self.domainAffectedByFaultyRemovalKey = domainAffectedByFaultyRemovalKey
+        self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
     }
 
     public required init(from decoder: Decoder) throws {
@@ -141,14 +133,10 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
             AppLockController.LegacyConfig.self,
             forKey: .legacyAppLockConfig
         )
-        self.faultyRemovalKey = try container.decodeIfPresent(
-            String.self,
-            forKey: .faultyRemovalKey
-        )
-        self.domainAffectedByFaultyRemovalKey = try container.decodeIfPresent(
-            String.self,
-            forKey: .domainAffectedByFaultyRemovalKey
-        )
+        self.faultyMLSRemovalKeysByDomain = try container.decodeIfPresent(
+            [String: [String]].self,
+            forKey: .faultyMLSRemovalKeysByDomain
+        ) ?? [:]
     }
 
     // MARK: - Methods
@@ -164,8 +152,7 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
             failedPasswordThresholdBeforeWipe: failedPasswordThresholdBeforeWipe,
             encryptionAtRestIsEnabledByDefault: encryptionAtRestEnabledByDefault,
             legacyAppLockConfig: legacyAppLockConfig,
-            faultyRemovalKey: faultyRemovalKey,
-            domainAffectedByFaultyRemovalKey: domainAffectedByFaultyRemovalKey
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
         )
     }
 
@@ -197,8 +184,7 @@ extension SessionManagerConfiguration {
         case failedPasswordThresholdBeforeWipe
         case encryptionAtRestEnabledByDefault
         case legacyAppLockConfig
-        case faultyRemovalKey
-        case domainAffectedByFaultyRemovalKey
+        case faultyMLSRemovalKeysByDomain
 
     }
 

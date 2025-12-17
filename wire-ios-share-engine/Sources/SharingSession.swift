@@ -469,8 +469,7 @@ public final class SharingSession {
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider,
-            faultyRemovalKey: nil, // not relevant
-            domainAffectedByFaultyRemovalKey: nil // not relevant
+            faultyMLSRemovalKeysByDomain: [:] // not relevant
 
         )
 

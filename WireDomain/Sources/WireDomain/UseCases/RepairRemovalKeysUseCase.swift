@@ -28,8 +28,7 @@ public protocol RepairRemovalKeysUseCaseProtocol {
 
 public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
 
-    let faultyRemovalKey: String?
-    let affectedDomain: String?
+    let faultyMLSRemovalKeysByDomain: [String: [String]]
 
     private let context: NSManagedObjectContext
     private let mlsService: MLSServiceInterface
@@ -38,16 +37,14 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
     private let initiateResetUseCase: InitiateResetMLSConversationUseCaseProtocol
 
     init(
-        faultyRemovalKey: String?,
-        affectedDomain: String?,
+        faultyMLSRemovalKeysByDomain: [String: [String]],
         context: NSManagedObjectContext,
         mlsService: MLSServiceInterface,
         conversationsAPI: ConversationsAPI,
         conversationLocalStore: ConversationLocalStoreProtocol,
         initiateResetUseCase: InitiateResetMLSConversationUseCaseProtocol
     ) {
-        self.faultyRemovalKey = faultyRemovalKey
-        self.affectedDomain = affectedDomain
+        self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
         self.context = context
         self.mlsService = mlsService
         self.conversationsAPI = conversationsAPI
@@ -61,30 +58,72 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
             attributes: .safePublic
         )
 
-        guard let faultyRemovalKey else {
+        guard !faultyMLSRemovalKeysByDomain.isEmpty else {
             WireLogger.mls.debug(
-                "no faulty removal key to repair, aborting",
+                "no faulty removal keys to repair, aborting",
                 attributes: .safePublic
             )
             return
         }
 
-        guard let faultRemovalKeyData = Data(hexString: faultyRemovalKey) else {
+        // Process each domain
+        for (domain, faultyKeyHexStrings) in faultyMLSRemovalKeysByDomain {
+            try await processDomain(
+                domain: domain,
+                faultyKeyHexStrings: faultyKeyHexStrings
+            )
+        }
+    }
+
+    // MARK: - Private
+
+    private func processDomain(
+        domain: String,
+        faultyKeyHexStrings: [String]
+    ) async throws {
+        WireLogger.mls.debug(
+            "checking domain '\(domain)' for \(faultyKeyHexStrings.count) faulty key(s)",
+            attributes: .safePublic
+        )
+
+        // Convert hex strings to Data
+        let faultyKeyDataList = faultyKeyHexStrings.compactMap(Data.init(hexString:))
+        guard faultyKeyDataList.count == faultyKeyHexStrings.count else {
             WireLogger.mls.error(
-                "failed to decode faulty removal key hex string",
+                "failed to decode some faulty removal key hex strings for domain '\(domain)'",
                 attributes: .safePublic
             )
             return
         }
 
         let allMLSConversations = try await conversationLocalStore.fetchAllMLSConversations(
-            domain: affectedDomain
+            domain: domain
         )
 
+        // Find faulty conversations for this domain
+        let faultyConversations = await findFaultyConversations(
+            in: allMLSConversations,
+            faultyKeys: faultyKeyDataList
+        )
+
+        WireLogger.mls.info(
+            "detected \(faultyConversations.count)/\(allMLSConversations.count) affected conversations in domain '\(domain)'",
+            attributes: .safePublic
+        )
+
+        // Repair each faulty conversation
+        for (groupID, qualifiedID) in faultyConversations {
+            await repairConversation(groupID: groupID, qualifiedID: qualifiedID)
+        }
+    }
+
+    private func findFaultyConversations(
+        in conversations: [ZMConversation],
+        faultyKeys: [Data]
+    ) async -> [(MLSGroupID, WireNetwork.QualifiedID)] {
         var faultyConversations: [(MLSGroupID, WireNetwork.QualifiedID)] = []
 
-        // Find faulty conversations
-        for conversation in allMLSConversations {
+        for conversation in conversations {
             let (groupID, qualifiedID) = await context.perform {
                 (conversation.mlsGroupID, conversation.qualifiedID)
             }
@@ -104,8 +143,8 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
                 continue
             }
 
-            // The current removal key is faulty.
-            if currentRemovalKey == faultRemovalKeyData {
+            // Check if the current removal key matches any of the faulty keys
+            if faultyKeys.contains(currentRemovalKey) {
                 faultyConversations.append((
                     groupID,
                     qualifiedID.toAPIModel()
@@ -113,42 +152,41 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
             }
         }
 
-        WireLogger.mls.info(
-            "detected \(faultyConversations.count)/\(allMLSConversations.count) affected conversations",
+        return faultyConversations
+    }
+
+    private func repairConversation(
+        groupID: MLSGroupID,
+        qualifiedID: WireNetwork.QualifiedID
+    ) async {
+        let remoteConversation: WireNetwork.Conversation?
+        do {
+            remoteConversation = try await conversationsAPI.getConversations(
+                for: [qualifiedID]
+            ).found.first
+        } catch {
+            WireLogger.mls.error(
+                "failed to get epoch for a group, skipping: \(String(describing: error))",
+                attributes: .safePublic
+            )
+            return
+        }
+
+        guard let remoteConversation else {
+            WireLogger.mls.error(
+                "remote conversation for a group not found, skipping",
+                attributes: .safePublic
+            )
+            return
+        }
+
+        WireLogger.mls.debug(
+            "initiating reset for faulty conversation: \(qualifiedID)",
             attributes: .safePublic
         )
 
-        // Repair each faulty conversation
-        for (groupID, qualifiedID) in faultyConversations {
-            let remoteConversation: WireNetwork.Conversation?
-            do {
-                remoteConversation = try await conversationsAPI.getConversations(
-                    for: [qualifiedID]
-                ).found.first
-            } catch {
-                WireLogger.mls.error(
-                    "failed to epoch for a group, skipping: \(String(describing: error))",
-                    attributes: .safePublic
-                )
-                continue
-            }
-
-            guard let remoteConversation else {
-                WireLogger.mls.error(
-                    "remote conversation for a group not found, skipping",
-                    attributes: .safePublic
-                )
-                continue
-            }
-
-            WireLogger.mls.debug(
-                "initiating reset for faulty conversation: \(qualifiedID)",
-                attributes: .safePublic
-            )
-
-            let epoch = UInt64(remoteConversation.epoch ?? 0)
-            await initiateResetUseCase.invoke(groupID: groupID, epoch: epoch)
-        }
+        let epoch = UInt64(remoteConversation.epoch ?? 0)
+        await initiateResetUseCase.invoke(groupID: groupID, epoch: epoch)
     }
 
 }

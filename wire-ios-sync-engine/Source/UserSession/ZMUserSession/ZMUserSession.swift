@@ -464,8 +464,7 @@ public final class ZMUserSession: NSObject {
         journal: Journal,
         logFilesProvider: LogFilesProviding,
         cookieStorage: any CookieStorageProtocol,
-        faultyRemovalKey: String?,
-        domainAffectedByFaultyRemovalKey: String?
+        faultyMLSRemovalKeysByDomain: [String: [String]]
     ) {
         self.application = application
         self.currentAppVersion = currentAppVersion
@@ -519,8 +518,7 @@ public final class ZMUserSession: NSObject {
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider,
-            faultyRemovalKey: faultyRemovalKey,
-            domainAffectedByFaultyRemovalKey: domainAffectedByFaultyRemovalKey
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
         )
 
         self.conversationEventProcessor = ConversationEventProcessor(

@@ -390,8 +390,7 @@ public struct SharingSessionLoader {
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider,
-            faultyRemovalKey: nil, // not relevant
-            domainAffectedByFaultyRemovalKey: nil // not relevant
+            faultyMLSRemovalKeysByDomain: [:] // not relevant
         )
         let completionHandlers = ClientSessionComponent.CompletionHandlers(
             onProcessedCallEvent: { _ in },
