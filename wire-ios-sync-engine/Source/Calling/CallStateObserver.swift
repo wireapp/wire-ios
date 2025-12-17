@@ -33,6 +33,7 @@ public final class CallStateObserver: NSObject {
     fileprivate var callStateToken: Any?
     fileprivate var missedCalltoken: Any?
     fileprivate let systemMessageGenerator = CallSystemMessageGenerator()
+    private var callEventSource: CallEventSource = .liveFromAVS
 
     @objc
     public init(
@@ -66,7 +67,28 @@ public final class CallStateObserver: NSObject {
         }
     }
 
+    /// Call before processing events triggered by NSE via push notification
+    func beginProcessingPushNotificationEvents() {
+        callEventSource = .pushNotification
+    }
+
+    /// Call after processing push notification events completes
+    func endProcessingPushNotificationEvents() {
+        callEventSource = .liveFromAVS
+    }
+
 }
+
+/// Tracks the source of incoming call events to determine notification responsibility.
+  private enum CallEventSource {
+      /// Event received directly from AVS via WebSocket while app is running.
+      /// Main app is responsible for handling notifications.
+      case liveFromAVS
+
+      /// Event triggered by NSE processing a push notification.
+      /// NSE has already handled notification display, main app should not duplicate.
+      case pushNotification
+  }
 
 extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMissedCallObserver {
 
@@ -100,13 +122,30 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
             // This will unarchive the conversation when there is an incoming call
             self.updateConversation(conversation, with: callState, timestamp: timestamp)
 
-            // CallKit depends on a fetched conversation & and is not used for muted conversations
-            let skipCallKit = conversation.needsToBeUpdatedFromBackend || conversation
-                .mutedMessageTypesIncludingAvailability != .none
+//            // CallKit depends on a fetched conversation & and is not used for muted conversations
+//            let skipCallKit = conversation.needsToBeUpdatedFromBackend || conversation
+//                .mutedMessageTypesIncludingAvailability != .none
+//            let notificationStyle = self.notificationStyleProvider?.callNotificationStyle ?? .callKit
+//
+//            if notificationStyle == .pushNotifications || skipCallKit {
+//                self.localNotificationDispatcher.process(callState: callState, in: conversation, caller: caller)
+//            }
+
+            // Check if we should use alternate notification flow instead of normal CallKit.
+            // This includes muted conversations and conversations needing backend sync.
+            let shouldUseAlternateNotificationFlow = conversation.needsToBeUpdatedFromBackend ||
+            conversation.mutedMessageTypesIncludingAvailability != .none
             let notificationStyle = self.notificationStyleProvider?.callNotificationStyle ?? .callKit
 
-            if notificationStyle == .pushNotifications || skipCallKit {
-                self.localNotificationDispatcher.process(callState: callState, in: conversation, caller: caller)
+            let isInBackgroundActivity = BackgroundActivityFactory.shared.isActive
+
+            // Only send notification if this is a live event from AVS (not from push notification).
+            // For push notification events, NSE has already handled the notification display decision.
+//            if self.callEventSource == .liveFromAVS {
+            if !isInBackgroundActivity {
+                if notificationStyle == .pushNotifications || shouldUseAlternateNotificationFlow {
+                    self.localNotificationDispatcher.process(callState: callState, in: conversation, caller: caller)
+                }
             }
 
             self.updateConversationListIndicator(convObjectID: conversation.objectID, callState: callState)
