@@ -146,7 +146,6 @@ open class AuthenticatedSessionFactory {
         let userSession = userSessionBuilder.build()
         userSession.setup(
             apiVersion: nil,
-            eventProcessor: nil,
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
