@@ -44,19 +44,19 @@ public final class ConversationUpdatesGenerator: NSObject, IncrementalGeneratorP
                 fetchedResultsController = createFetchedResultsController()
                 fetchedResultsController?.delegate = self
             }
-            
+
             do {
-                try self.fetchedResultsController?.performFetch()
+                try fetchedResultsController?.performFetch()
             } catch {
                 WireLogger.conversation.error("error fetching conversations: \(String(describing: error))")
             }
 
-            let conversations = self.fetchedResultsController?.fetchedObjects ?? []
+            let conversations = fetchedResultsController?.fetchedObjects ?? []
             for conversation in conversations {
 
                 if let id = conversation.qualifiedID {
-                    self.onConversationUpdated(UpdateConversationItem(
-                        repository: self.repository,
+                    onConversationUpdated(UpdateConversationItem(
+                        repository: repository,
                         conversationID: id.toAPIModel()
                     ))
                 }

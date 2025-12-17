@@ -51,16 +51,16 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
                 fetchedResultsController = createFetchedResultsController()
                 fetchedResultsController?.delegate = self
             }
-            
+
             do {
-                try self.fetchedResultsController?.performFetch()
+                try fetchedResultsController?.performFetch()
             } catch {
                 WireLogger.conversation.error("error fetching conversations: \(String(describing: error))")
             }
 
-            let conversations = self.fetchedResultsController?.fetchedObjects ?? []
+            let conversations = fetchedResultsController?.fetchedObjects ?? []
             for conversation in conversations {
-                self.scheduleCommitIfNeeded(for: conversation)
+                scheduleCommitIfNeeded(for: conversation)
             }
         }
     }
@@ -172,7 +172,7 @@ extension CommitPendingProposalsGenerator: NSFetchedResultsControllerDelegate {
 
         switch type {
         case .insert, .update:
-            self.scheduleCommitIfNeeded(for: conversation)
+            scheduleCommitIfNeeded(for: conversation)
 
         case .move, .delete:
             // Best effort cancel if we can identify it
