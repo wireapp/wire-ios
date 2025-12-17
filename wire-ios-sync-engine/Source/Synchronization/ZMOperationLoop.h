@@ -28,7 +28,6 @@
 @class ZMPersistentCookieStorage;
 @class OperationStatus;
 @class SyncStatus;
-@class PushNotificationStatus;
 @class ZMSyncStrategy;
 
 @interface ZMOperationLoop : NSObject <TearDownCapable>
@@ -46,7 +45,6 @@
                     updateEventProcessor:(id<UpdateEventProcessor>)updateEventProcessor
                          operationStatus:(OperationStatus *)operationStatus
                               syncStatus:(SyncStatus *)syncStatus
-                  pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
                   isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled

@@ -48,36 +48,29 @@ struct LabelPayload: Codable, Equatable {
     var labels: [LabelUpdate]
 }
 
-public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventConsumer, ZMSingleRequestTranscoder {
-
-    fileprivate let syncStatus: SyncStatus
+public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
 
     fileprivate var slowSync: ZMSingleRequestSync!
     fileprivate let jsonDecoder = JSONDecoder()
 
-    public init(
+    public override init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-        applicationStatus: ApplicationStatus,
-        syncStatus: SyncStatus
+        applicationStatus: ApplicationStatus
     ) {
-        self.syncStatus = syncStatus
-
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.configuration = [
-            .allowsRequestsDuringSlowSync,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket,
+//            .allowsRequestsDuringSlowSync,
+//            .allowsRequestsDuringQuickSync,
+//            .allowsRequestsWhileWaitingForWebsocket,
             .allowsRequestsWhileOnline
         ]
         self.slowSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard syncStatus.currentSyncPhase == .fetchingLabels || ZMUser.selfUser(in: managedObjectContext)
+        guard ZMUser.selfUser(in: managedObjectContext)
             .needsToRefetchLabels else { return nil }
-
-        slowSync.readyForNextRequestIfNotBusy()
 
         return slowSync.nextRequest(for: apiVersion)
     }
@@ -136,21 +129,7 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
         managedObjectContext.saveOrRollback()
     }
 
-    // MARK: - ZMEventConsumer
-
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        for event in events {
-            guard event.type == .userPropertiesSet, (event.payload["key"] as? String) == "labels" else { continue }
-
-            guard let value = event.payload["value"],
-                  let data = try? JSONSerialization.data(withJSONObject: value, options: []) else {
-                WireLogger.eventProcessing.error("Skipping label update due to missing value field")
-                continue
-            }
-
-            update(with: data)
-        }
-    }
+   
 
     // MARK: - ZMSingleRequestTranscoder
 
@@ -165,10 +144,6 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
 
         if response.result == .success, let rawData = response.rawData {
             update(with: rawData)
-        }
-
-        if syncStatus.currentSyncPhase == .fetchingLabels {
-            syncStatus.finishCurrentSyncPhase(phase: .fetchingLabels)
         }
 
         ZMUser.selfUser(in: managedObjectContext).needsToRefetchLabels = false

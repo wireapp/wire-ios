@@ -46,7 +46,6 @@
 - (void)updateStrategyClientContextChangeTrackers;
 
 @property (nonatomic, readonly, nonnull) NSManagedObjectContext *syncMOC;
-@property (nonatomic, nullable) id<EventProcessingTrackerProtocol> eventProcessingTracker;
 @property (nonatomic, readonly, nullable) id<StrategyDirectoryProtocol> strategyDirectory;
 @end
 
