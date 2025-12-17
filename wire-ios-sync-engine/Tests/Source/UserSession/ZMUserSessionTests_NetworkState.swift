@@ -87,7 +87,9 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             userId: userId,
             minTLSVersion: nil,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            faultyRemovalKey: nil,
+            domainAffectedByFaultyRemovalKey: nil
         )
         let testSession = builder.build()
         testSession.setup(

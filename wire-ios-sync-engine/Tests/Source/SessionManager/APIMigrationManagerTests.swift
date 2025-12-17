@@ -331,7 +331,9 @@ final class APIMigrationManagerTests: MessagingTest {
             userId: userID,
             minTLSVersion: nil,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            faultyRemovalKey: nil,
+            domainAffectedByFaultyRemovalKey: nil
         )
 
         let userSession = builder.build()

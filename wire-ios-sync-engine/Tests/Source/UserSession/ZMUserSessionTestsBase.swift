@@ -201,7 +201,9 @@ class ZMUserSessionTestsBase: MessagingTest {
             userId: coreDataStack.account.userIdentifier,
             minTLSVersion: nil,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            faultyRemovalKey: nil,
+            domainAffectedByFaultyRemovalKey: nil
         )
 
         let userSession = builder.build()
