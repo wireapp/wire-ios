@@ -47,9 +47,9 @@ class EventDecoderTest: MessagingTestBase {
             lastEventIDRepository: lastEventIDRepository,
             isFederationEnabled: false
         )
-        
+
         lastEventIDRepository.storeLastEventID_MockMethod = { _ in }
-        
+
         syncMOC.performGroupedAndWait {
             self.syncMOC.mlsService = self.mockMLSService
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -68,8 +68,8 @@ class EventDecoderTest: MessagingTestBase {
         sut = nil
         super.tearDown()
     }
-    
-    
+
+
     private func decryptAndStoreEvents(
         _ events: [ZMUpdateEvent],
         publicKeys: EARPublicKeys? = nil
@@ -87,7 +87,7 @@ extension EventDecoderTest {
         // given
         var didCallBlock = false
         let event = await syncMOC.perform {
-            return self.eventStreamEvent()
+            self.eventStreamEvent()
         }
 
         _ = try await decryptAndStoreEvents([event])
