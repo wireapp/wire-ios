@@ -261,4 +261,9 @@ public enum Locators {
         case resetPassword = "Reset password"
     }
 
+    public enum FileVersioningPage: String {
+
+        case closeButton
+    }
+
 }
