@@ -65,16 +65,14 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
         }
     }
 
-    public func stop() {
+    public func stop() async {
         // Cancel all scheduled commits on the context queue to avoid race conditions
-        Task { [context] in
-            await context.perform { [self] in
-                fetchedResultsController = nil
-                for (_, task) in scheduledTasks {
-                    task.cancel()
-                }
-                scheduledTasks.removeAll()
+        await context.perform { [self] in
+            fetchedResultsController = nil
+            for (_, task) in scheduledTasks {
+                task.cancel()
             }
+            scheduledTasks.removeAll()
         }
     }
 

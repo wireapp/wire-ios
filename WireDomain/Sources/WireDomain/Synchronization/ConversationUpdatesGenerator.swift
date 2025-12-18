@@ -64,11 +64,9 @@ public final class ConversationUpdatesGenerator: NSObject, IncrementalGeneratorP
         }
     }
 
-    public func stop() {
-        Task {
-            await context.perform { [self] in
-                fetchedResultsController = nil
-            }
+    public func stop() async {
+        await context.perform { [self] in
+            fetchedResultsController = nil
         }
     }
 
