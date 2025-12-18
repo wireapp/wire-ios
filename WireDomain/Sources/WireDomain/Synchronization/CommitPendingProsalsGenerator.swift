@@ -70,10 +70,10 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
         Task { [context] in
             await context.perform { [self] in
                 fetchedResultsController = nil
-                for (_, task) in self.scheduledTasks {
+                for (_, task) in scheduledTasks {
                     task.cancel()
                 }
-                self.scheduledTasks.removeAll()
+                scheduledTasks.removeAll()
             }
         }
     }
