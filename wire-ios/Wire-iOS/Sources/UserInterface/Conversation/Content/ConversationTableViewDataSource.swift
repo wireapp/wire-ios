@@ -232,7 +232,7 @@ final class ConversationTableViewDataSource: NSObject {
                     }
 
                     // Section model uses nonce for DifferenceKit identity (not cache identifier)
-                    // This ensures the same message is recognized as the same section across delivery state changes
+                    // This ensures the same message is recognized as the same section across delivery state changes.
                     sections.append(ArraySection(
                         model: identifier.nonce,
                         elements: sectionController.tableViewCellDescriptions
