@@ -86,6 +86,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
 
     override func tearDown() {
         sender = nil
+        selfUser = nil
         otherUser1 = nil
         otherUser2 = nil
         userWithNoName = nil
