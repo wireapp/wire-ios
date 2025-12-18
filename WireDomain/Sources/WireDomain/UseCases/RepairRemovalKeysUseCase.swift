@@ -137,24 +137,16 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
             attributes: .safePublic
         )
 
-        // Repair each faulty conversation in parallel
-        let conversationsRepaired = await withTaskGroup(of: Bool.self, returning: Int.self) { group in
-            for (groupID, qualifiedID) in faultyConversations {
-                group.addTask {
-                    await self.repairConversation(
-                        groupID: groupID,
-                        qualifiedID: qualifiedID
-                    )
-                }
+        // Repair each faulty conversation serially
+        var conversationsRepaired = 0
+        for (groupID, qualifiedID) in faultyConversations {
+            let success = await repairConversation(
+                groupID: groupID,
+                qualifiedID: qualifiedID
+            )
+            if success {
+                conversationsRepaired += 1
             }
-
-            var successCount = 0
-            for await success in group {
-                if success {
-                    successCount += 1
-                }
-            }
-            return successCount
         }
 
         return RepairRemovalKeysResult(
