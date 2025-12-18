@@ -690,7 +690,7 @@ package final class FilesViewModel: ObservableObject {
 
         return FileRenameView(viewModel: viewModel)
     }
-    
+
     private func makeShareLinkView(
         item: FilesViewItem
     ) -> ShareLinkView {

@@ -388,13 +388,13 @@ extension ShareLinkPasswordView.ViewModel {
     static func preview(password: String?, requiresPassword: Bool) -> ShareLinkPasswordView.ViewModel {
         let nodesAPI = previewPublicLinkApi()
         let keychain = Keychain()
-        
+
         let useCases = UseCases(
             updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
             storePublicLinkPasswordUseCase: WireCellsStorePublicLinkPasswordUseCase(keychain: keychain),
             deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase(keychain: keychain)
         )
-        
+
         return ShareLinkPasswordView.ViewModel(
             password: password,
             requiresPassword: requiresPassword,

@@ -50,7 +50,11 @@ final class ShareLinkViewTests: XCTestCase {
             deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase(keychain: keychain)
         )
 
-        viewModel = .init(fileItem: .fixture(), useCases: useCases)
+        viewModel = .init(
+            fileItem: .fixture(),
+            context: (Locale(identifier: "en_US_POSIX"), Calendar(identifier: .gregorian), TimeZone.gmt),
+            useCases: useCases
+        )
     }
 
     @MainActor
