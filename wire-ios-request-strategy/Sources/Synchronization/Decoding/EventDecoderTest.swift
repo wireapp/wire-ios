@@ -69,7 +69,6 @@ class EventDecoderTest: MessagingTestBase {
         super.tearDown()
     }
 
-
     private func decryptAndStoreEvents(
         _ events: [ZMUpdateEvent],
         publicKeys: EARPublicKeys? = nil
