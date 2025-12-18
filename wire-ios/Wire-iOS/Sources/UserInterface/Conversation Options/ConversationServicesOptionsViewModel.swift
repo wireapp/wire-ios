@@ -31,7 +31,7 @@ protocol ConversationServicesOptionsViewModelConfiguration: AnyObject {
 
     /// `true` if apps can be participants of the conversation, `false` otherwise.
 
-    var allowApps: Bool { get }
+    var allowApps: Bool { get } // TODO: when disabling, this is not updated until the conversation screen has been left!
 
     var areAppsPresent: Bool { get }
     var allowAppsChangedHandler: ((Bool) -> Void)? { get set }
