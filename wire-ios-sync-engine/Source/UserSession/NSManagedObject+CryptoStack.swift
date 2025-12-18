@@ -26,11 +26,6 @@ public extension NSManagedObjectContext {
     func tearDownCryptoStack() {
         proteusService = nil
         mlsService = nil
-        do {
-            try coreCrypto?.tearDown()
-        } catch {
-            WireLogger.coreCrypto.error("tearing down corecrypto failed with error: \(error)")
-        }
         coreCrypto = nil
     }
 

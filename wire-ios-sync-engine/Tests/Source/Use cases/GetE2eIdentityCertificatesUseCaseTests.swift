@@ -29,16 +29,17 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
 
     private var sut: GetE2eIdentityCertificatesUseCase!
     private var coreCryptoProvider: MockCoreCryptoProviderProtocol!
-    private var safeCoreCrypto: MockSafeCoreCrypto!
+    private var coreCrypto: MockCoreCryptoProtocol!
     private var coreCryptoContext: MockCoreCryptoContextProtocol!
 
     override func setUp() async throws {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
         coreCryptoContext = MockCoreCryptoContextProtocol()
-        safeCoreCrypto = MockSafeCoreCrypto(coreCryptoContext: coreCryptoContext)
+        coreCrypto = MockCoreCryptoProtocol()
+        coreCrypto.mockTransaction(context: coreCryptoContext)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
-        coreCryptoProvider.coreCrypto_MockValue = safeCoreCrypto
+        coreCryptoProvider.coreCrypto_MockValue = coreCrypto
         sut = GetE2eIdentityCertificatesUseCase(
             coreCryptoProvider: coreCryptoProvider,
             syncContext: stack.syncContext
@@ -49,7 +50,7 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
         stack = nil
         sut = nil
         coreCryptoContext = nil
-        safeCoreCrypto = nil
+        coreCrypto = nil
         coreCryptoProvider = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
@@ -72,8 +73,8 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
                 domain: "local.com",
                 certificate: mockCertificate,
                 serialNumber: "00eac2d1d30f517a891231648a4322dfb2",
-                notBefore: 1_709_112_038,
-                notAfter: 1_716_888_038
+                notBefore: Date(timeIntervalSince1970: Double(1_709_112_038)),
+                notAfter: Date(timeIntervalSince1970: Double(1_716_888_038))
             )
         )
     }

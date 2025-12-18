@@ -156,9 +156,8 @@ class ZMUserSessionTestsBase: MessagingTest {
     func createSut(earService: EARServiceInterface) -> ZMUserSession {
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
-        let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
 
         let mockContextStorable = MockLAContextStorable()
         mockContextStorable.clear_MockMethod = {}

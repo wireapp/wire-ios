@@ -18,6 +18,7 @@
 
 import Foundation
 import WireLogging
+import WireCoreCrypto
 
 // sourcery: AutoMockable
 public protocol CertificateRevocationListsChecking {
@@ -36,7 +37,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     private let fetchE2EIFeatureConfig: () -> Feature.E2EI.Config?
     private let context: NSManagedObjectContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var coreCrypto: SafeCoreCryptoProtocol {
+    private var coreCrypto: CoreCryptoProtocol {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }
@@ -130,7 +131,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
                 let crlData = try await crlAPI.getRevocationList(from: crlURL)
 
                 // register the CRL with core crypto
-                let registration = try await coreCrypto.perform {
+                let registration = try await coreCrypto.transaction {
                     try await $0.e2eiRegisterCrl(crlDp: distributionPoint.absoluteString, crlDer: crlData)
                 }
 

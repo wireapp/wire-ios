@@ -30,7 +30,8 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
     private var api: MockUpdateEventsAPI!
     private var store: MockUpdateEventsLocalStoreProtocol!
     private var decryptor: MockUpdateEventDecryptorProtocol!
-    private var coreCrypto: MockSafeCoreCrypto!
+    private var coreCryptoContext: MockCoreCryptoContextProtocol!
+    private var coreCrypto: MockCoreCryptoProtocol!
     private var coreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     override func setUp() async throws {
@@ -41,7 +42,9 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         api = MockUpdateEventsAPI()
         store = MockUpdateEventsLocalStoreProtocol()
         decryptor = MockUpdateEventDecryptorProtocol()
-        coreCrypto = MockSafeCoreCrypto()
+        coreCryptoContext = MockCoreCryptoContextProtocol()
+        coreCrypto = MockCoreCryptoProtocol()
+        coreCrypto.mockTransaction(context: coreCryptoContext)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
         coreCryptoProvider.coreCrypto_MockValue = coreCrypto
 
@@ -56,6 +59,9 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
     }
 
     override func tearDown() async throws {
+        coreCrypto = nil
+        coreCryptoContext = nil
+        coreCryptoProvider = nil
         api = nil
         store = nil
         decryptor = nil

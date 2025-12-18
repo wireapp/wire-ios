@@ -32,7 +32,7 @@ final class ProteusClientSimulator {
     private let storageURL: URL
 
     /// Dictionary to store ProteusService instances for simulated remote clients
-    private var clientServices: [String: (service: ProteusServiceInterface, coreCrypto: SafeCoreCryptoProtocol)] = [:]
+    private var clientServices: [String: (service: ProteusServiceInterface, coreCrypto: CoreCryptoProtocol)] = [:]
 
     init(syncMOC: NSManagedObjectContext, owningDomain: String, storageURL: URL) {
         self.syncMOC = syncMOC
@@ -187,11 +187,6 @@ final class ProteusClientSimulator {
 
     /// Delete all simulated client ProteusService instances and their storage
     func cleanup() {
-        // Tear down all CoreCrypto instances
-        for (_, entry) in clientServices {
-            try? entry.coreCrypto.tearDown()
-        }
-
         clientServices.removeAll()
 
         // Delete storage

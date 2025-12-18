@@ -284,7 +284,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
 
             self.syncMOC.proteusService = MockProteusServiceInterface()
             self.syncMOC.mlsService = MockMLSServiceInterface()
-            self.syncMOC.coreCrypto = MockSafeCoreCrypto(coreCrypto: MockCoreCryptoProtocol())
+            self.syncMOC.coreCrypto = MockCoreCryptoProtocol()
 
             XCTAssertEqual(selfUser.clients.count, 1)
             let payload: [String: Any] = [

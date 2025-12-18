@@ -244,10 +244,9 @@ final class APIMigrationManagerTests: MessagingTest {
     private func stubUserSession() async throws -> ZMUserSession {
         let mockStrategyDirectory = MockStrategyDirectory()
         let mockCoreCrypto = MockCoreCryptoProtocol()
-        let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         let mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
-        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
         mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
 

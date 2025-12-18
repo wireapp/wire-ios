@@ -37,7 +37,8 @@ final class IncrementalSyncV2Tests: XCTestCase {
     var databaseSaver: MockDatabaseSaverProtocol!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
     var liveDelegate: MockLiveSyncDelegate!
-    var coreCrypto: MockSafeCoreCrypto!
+    var coreCryptoContext: MockCoreCryptoContextProtocol!
+    var coreCrypto: MockCoreCryptoProtocol!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
     var pushChannelState: MockPushChannelStateProtocol!
     var mlsGroupRepairAgent: MockMLSGroupRepairAgentProtocol!
@@ -53,7 +54,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
         databaseSaver = MockDatabaseSaverProtocol()
         liveDelegate = MockLiveSyncDelegate()
         syncStateSubject = .init(.idle)
-        coreCrypto = MockSafeCoreCrypto()
+        coreCryptoContext = MockCoreCryptoContextProtocol()
+        coreCrypto = MockCoreCryptoProtocol()
+        coreCrypto.mockTransaction(context: coreCryptoContext)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
         coreCryptoProvider.coreCrypto_MockValue = coreCrypto
         journal = Journal(
@@ -107,6 +110,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         liveDelegate = nil
         coreCrypto = nil
         coreCryptoProvider = nil
+        coreCryptoContext = nil
     }
 
     func testPerform_pendingEventsExist() async throws {

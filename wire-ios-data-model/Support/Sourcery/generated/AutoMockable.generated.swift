@@ -1949,10 +1949,10 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
 
     public var coreCrypto_Invocations: [Void] = []
     public var coreCrypto_MockError: Error?
-    public var coreCrypto_MockMethod: (() async throws -> SafeCoreCryptoProtocol)?
-    public var coreCrypto_MockValue: SafeCoreCryptoProtocol?
+    public var coreCrypto_MockMethod: (() async throws -> CoreCryptoProtocol)?
+    public var coreCrypto_MockValue: CoreCryptoProtocol?
 
-    public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
+    public func coreCrypto() async throws -> CoreCryptoProtocol {
         coreCrypto_Invocations.append(())
 
         if let error = coreCrypto_MockError {

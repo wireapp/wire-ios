@@ -36,7 +36,7 @@ class MessagingTestBase: ZMTBaseTest {
     fileprivate(set) var otherClient: UserClient!
     fileprivate(set) var coreDataStack: CoreDataStack!
     fileprivate(set) var accountIdentifier: UUID!
-    fileprivate(set) var coreCrypto: SafeCoreCrypto!
+    fileprivate(set) var coreCrypto: CoreCrypto!
     fileprivate(set) var proteusService: ProteusServiceInterface!
     fileprivate(set) var proteusClientSimulator: ProteusClientSimulator!
 
@@ -116,7 +116,6 @@ class MessagingTestBase: ZMTBaseTest {
         }
         await stopEphemeralMessageTimers()
         proteusClientSimulator.cleanup()
-        try coreCrypto.tearDown()
 
         proteusService = nil
         coreCrypto = nil
@@ -629,7 +628,7 @@ extension MessagingTestBase {
         )
 
         // Initialize CoreCrypto (this calls proteusInit internally)
-        coreCrypto = try await coreCryptoProvider.coreCrypto() as? SafeCoreCrypto
+        coreCrypto = try await coreCryptoProvider.coreCrypto() as? CoreCrypto
 
         // Create ProteusService with the provider
         proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)

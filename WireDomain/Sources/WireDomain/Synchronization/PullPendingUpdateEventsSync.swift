@@ -92,7 +92,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
             let currentIndex = try await store.indexOfLastEventEnvelope() + 1
 
             // We are decrypting the batch within one core crypto transaction
-            try await coreCryptoProvider.coreCrypto().perform { context in
+            try await coreCryptoProvider.coreCrypto().transaction { context in
 
                 var lastEnvelopeID: UUID?
                 var decryptedEnvelopes: [UpdateEventEnvelope] = []

@@ -36,8 +36,9 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
     var processor: MockUpdateEventProcessorProtocol!
     var databaseSaver: MockDatabaseSaverProtocol!
     var journal: Journal!
+    var coreCryptoContext: MockCoreCryptoContextProtocol!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
-    var coreCrypto: MockSafeCoreCrypto!
+    var coreCrypto: MockCoreCryptoProtocol!
 
     override func setUp() {
         pushChannelAPI = MockPushChannelV2API()
@@ -46,7 +47,9 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         messageLocalStore = MockMessageLocalStoreProtocol()
         processor = MockUpdateEventProcessorProtocol()
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
-        coreCrypto = MockSafeCoreCrypto()
+        coreCryptoContext = MockCoreCryptoContextProtocol()
+        coreCrypto = MockCoreCryptoProtocol()
+        coreCrypto.mockTransaction(context: coreCryptoContext)
 
         journal = Journal(
             userID: UUID(),
@@ -82,6 +85,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         databaseSaver = nil
         coreCryptoProvider = nil
         coreCrypto = nil
+        coreCryptoContext = nil
         journal = nil
     }
 
