@@ -42,6 +42,7 @@ final class FilesItemViewModel: ObservableObject {
         case editTags
         case shareLink
         case moveToFolder
+        case onVersionHistory
         case edit
     }
 
@@ -203,6 +204,10 @@ final class FilesItemViewModel: ObservableObject {
         } else {
             isPresentingRestoreParentConfirmation = true
         }
+    }
+
+    func showVersionHistory() async {
+        await onItemAction(.onVersionHistory, item)
     }
 
     func confirmDelete(permanently: Bool) async {

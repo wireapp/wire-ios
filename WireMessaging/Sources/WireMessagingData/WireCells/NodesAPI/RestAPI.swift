@@ -23,6 +23,7 @@ import WireMessagingDomain
 
 enum WireCellsNodesAPIError: Error {
     case failedToDecodeNode
+    case failedToDecodeNodeVersions
     case missingData(String)
     case invalidParameters(String)
 }
@@ -192,6 +193,39 @@ final class RestAPI: Sendable {
         _ = try await NodeServiceAPI.deleteVersion(
             uuid: uuid.transportString(),
             versionId: versionID.transportString(),
+            apiConfiguration: makeConfiguration()
+        )
+    }
+
+    func getVersions(uuid: UUID) async throws -> WireCellsNodeVersionsNetworkModel {
+        let query = RestNodeVersionsFilter(
+            filterBy: .versionsAll,
+            flags: [.withPreSignedURLs],
+            limit: nil,
+            offset: nil,
+            sortDirDesc: true,
+            sortField: nil
+        )
+
+        let response = try await NodeServiceAPI.nodeVersions(
+            uuid: uuid.transportString(),
+            query: query,
+            apiConfiguration: makeConfiguration()
+        )
+
+        guard let dto = response.toDTO() else {
+            throw WireCellsNodesAPIError.failedToDecodeNodeVersions
+        }
+
+        return dto
+    }
+
+    func restoreVersion(uuid: UUID, versionID: UUID) async throws {
+        let parameters = RestPromoteParameters(publish: false)
+        _ = try await NodeServiceAPI.promoteVersion(
+            uuid: uuid.transportString(),
+            versionId: versionID.transportString(),
+            parameters: parameters,
             apiConfiguration: makeConfiguration()
         )
     }
@@ -413,7 +447,7 @@ private extension WireCellsGetNodesRequest {
 
     var lookupRequest: RestLookupRequest {
         var request = RestLookupRequest(
-            flags: [.withPreSignedURLs],
+            flags: [.withPreSignedURLs, .withEditorURLs],
             limit: "\(limit)",
             offset: "\(offset)",
         )

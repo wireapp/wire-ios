@@ -106,6 +106,8 @@ package struct FilesView: FilesViewProtocol {
                         fileRenameView
                     case let .createFolder(folderView):
                         folderView
+                    case let .versionHistory(versionHistoryView):
+                        versionHistoryView
                     case let .moveToFolder(fileItem):
                         viewModel.moveToFolderView(item: fileItem)
                     case .filters:

@@ -58,6 +58,8 @@ final class FilesViewTests: XCTestCase {
         nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
 
+        let localAssetsRepository = MockWireCellsLocalAssetRepositoryProtocol()
+
         fetchNodesUseCase = WireCellsFetchNodesPageUseCase(
             configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
             repository: nodesRepository
@@ -74,7 +76,7 @@ final class FilesViewTests: XCTestCase {
         )
         renameNodeUseCase = WireCellsRenameNodeUseCase(
             nodesRepository: nodesRepository,
-            localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            localAssetsRepository: localAssetsRepository,
             nodeCache: MockWireCellsNodeCacheProtocol(),
             nodeRenameNotifier: WireCellsNodeRenameNotifier()
         )
@@ -379,6 +381,12 @@ final class FilesViewTests: XCTestCase {
                 getTagSuggestions: getTagSuggestionsUseCase,
                 createFolder: WireCellsCreateFolderUseCase(
                     nodesRepository: nodesRepository
+                ),
+                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesRepository),
+                restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                    repository: nodesRepository,
+                    localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                    nodeCache: MockWireCellsNodeCacheProtocol()
                 ),
                 getEditingURL: getEditingURLUseCase,
                 getAssetUseCase: WireCellsGetAssetUseCase(

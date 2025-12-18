@@ -102,6 +102,12 @@ package struct RecycleBinContainer: View {
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
                 createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
+                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesRepository),
+                restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                    repository: nodesRepository,
+                    localAssetsRepository: localAssetRepository,
+                    nodeCache: nodeCache
+                ),
                 getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: nodesAPI),
                 getAssetUseCase: WireCellsGetAssetUseCase(
                     localAssetRepository: localAssetRepository,

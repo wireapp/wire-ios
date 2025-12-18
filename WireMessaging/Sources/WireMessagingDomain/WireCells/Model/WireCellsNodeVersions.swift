@@ -16,24 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-public extension ZMClientMessage {
+public struct WireCellsNodeVersion: Equatable, Identifiable, Sendable {
 
-    override var multipartMessageData: MultipartMessageData? {
-        switch underlyingMessage?.content {
-        case let .multipart(multipart):
-            MultipartMessageData(multipart: multipart)
-        case let .edited(messageEdit):
-            switch messageEdit.content {
-            case let .multipart(multipart):
-                MultipartMessageData(multipart: multipart)
-            default:
-                nil
-            }
-        default:
-            nil
-        }
+    public init(
+        id: UUID,
+        ownerName: String?,
+        modified: Date?,
+        eTag: String?,
+        size: UInt64?,
+        downloadUrl: URL?
+    ) {
+        self.id = id
+        self.ownerName = ownerName
+        self.modified = modified
+        self.eTag = eTag
+        self.size = size
+        self.downloadUrl = downloadUrl
     }
 
+    public let id: UUID
+    public let ownerName: String?
+    public let modified: Date?
+    public let size: UInt64?
+    public let eTag: String?
+    public let downloadUrl: URL?
 }
