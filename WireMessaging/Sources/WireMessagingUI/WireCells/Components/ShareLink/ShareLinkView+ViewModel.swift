@@ -58,7 +58,7 @@ extension ShareLinkView {
 
         let fileItem: FilesViewItem
         let useCases: UseCases
-        private var password: String?
+        var password: String?
 
         enum SheetNavigation: Identifiable {
             case password(view: ShareLinkPasswordView)
@@ -311,12 +311,6 @@ extension ShareLinkView {
         }
 
         func makeShareLinkPasswordView() async -> ShareLinkPasswordView {
-            var password: String?
-
-            if let linkID {
-                password = await useCases.getPublicLinkPasswordUseCase.invoke(linkID: linkID)
-            }
-
             let viewModel = ShareLinkPasswordView.ViewModel(
                 password: password,
                 requiresPassword: isPasswordEnabled,
@@ -330,7 +324,7 @@ extension ShareLinkView {
                     guard let self,
                           case let .enabled(id, url, expirationDate, _) = publicLinkState else { return }
 
-                    self.password = newPassword
+                    password = newPassword
 
                     publicLinkState = .enabled(
                         id: id,
