@@ -65,7 +65,11 @@ public final class ConversationUpdatesGenerator: NSObject, IncrementalGeneratorP
     }
 
     public func stop() {
-        fetchedResultsController = nil
+        Task {
+            await context.perform { [self] in
+                fetchedResultsController = nil
+            }
+        }
     }
 
     private func createFetchedResultsController() -> NSFetchedResultsController<ZMConversation> {
