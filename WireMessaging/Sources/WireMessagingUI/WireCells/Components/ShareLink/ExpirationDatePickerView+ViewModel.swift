@@ -22,8 +22,6 @@ import WireMessagingDomain
 
 extension ExpirationDatePickerView {
 
-    // TODO: Check logic in this view modal. Looks like it is working but I have not looked in detail and I've made a
-    // few rushed changes.
     @MainActor
     final class ViewModel: ObservableObject {
         let currentExpirationDate: Date?
@@ -37,6 +35,7 @@ extension ExpirationDatePickerView {
         @Published var expirationDate: Date?
         @Published var isExpirationEnabled: Bool
         @Published var isSaving = false
+        @Published var isPresentingExpirationDateError = false
 
         init(
             linkID: String,
@@ -90,8 +89,7 @@ extension ExpirationDatePickerView {
                 )
                 didSave(expirationDate)
             } catch {
-                // TODO: Handle errors here. Probably we need to show an alert.
-                print("Failed to save expiration date: \(error)")
+                isPresentingExpirationDateError = true
             }
             isSaving = false
         }

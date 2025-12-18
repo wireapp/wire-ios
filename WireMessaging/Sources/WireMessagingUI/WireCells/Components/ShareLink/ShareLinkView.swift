@@ -54,11 +54,15 @@ struct ShareLinkView: View {
                 }
                 
                 VStack {
-                    if viewModel.isPasswordEnabled {
-                        sharePasswordButton()
+                    if viewModel.isPasswordEnabled, let password = viewModel.copyPassword() {
+                        sharePasswordButton(password)
                     }
-
-                    shareLinkButton()
+                    
+                    if viewModel.isCreatingLink {
+                        shareLinkButton(nil)
+                    } else {
+                        shareLinkButton(viewModel.copyLink())
+                    }
                 }
             }
             .onAppear { Task { await viewModel.loadIfNeeded() } }
@@ -76,7 +80,18 @@ struct ShareLinkView: View {
                     viewModel.makeExpirationDatePickerView(linkID: linkID)
                 }
             }
-        }
+            .alert(
+                L10n.Localizable.General.failure,
+                isPresented: $viewModel.isPresentingError,
+                actions: {
+                    Button(
+                        L10n.Localizable.General.confirm,
+                        action: {}
+                    )
+                },
+                message: { Text(L10n.Localizable.General.Error.Unknown.message) }
+            )
+        }.disabled(viewModel.isLoading)
     }
 
     // MARK: - View Components
@@ -184,14 +199,12 @@ struct ShareLinkView: View {
     }
     
     @ViewBuilder
-    private func sharePasswordButton() -> some View {
+    private func sharePasswordButton(_ password: String) -> some View {
         VStack {
-            Button {
-                Task { await viewModel.copyPassword() }
-            } label: {
+            ShareLink(item: password) {
                 HStack {
                     Image(systemName: "square.and.arrow.up")
-                    Text("Share Password")
+                    Text(Strings.ShareLink.Password.sharePassword)
                         .fontWeight(.semibold)
                 }
                 .font(for: .body1)
@@ -204,37 +217,49 @@ struct ShareLinkView: View {
                         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
                 }
             }
-            .padding(.horizontal)
-            .padding(.bottom, 8)
         }
+        .padding(.horizontal)
+        .padding(.bottom, 8)
         .background(ColorTheme.Backgrounds.background.color.opacity(0.9)) // Slight fade behind button area
     }
 
     @ViewBuilder
-    private func shareLinkButton() -> some View {
+    private func shareLinkButton(_ link: URL?) -> some View {
         VStack {
-            Button {
-                viewModel.copyLink()
-            } label: {
-                HStack {
-                    Image(systemName: "square.and.arrow.up")
-                    Text("Share Link")
-                        .fontWeight(.semibold)
+            if let link {
+                ShareLink(item: link) {
+                    shareLinkContent()
                 }
-                .font(for: .body1)
-                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background {
-                    RoundedRectangle(cornerRadius: 16)
-                        .foregroundStyle(ColorTheme.Backgrounds.surface.color)
-                        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
-                }
+            } else {
+                shareLinkContent()
             }
-            .padding(.horizontal)
-            .padding(.bottom, 8)
         }
-        .background(ColorTheme.Backgrounds.background.color.opacity(0.9)) // Slight fade behind button area
+        .padding(.horizontal)
+        .padding(.bottom, 8)
+        .background(ColorTheme.Backgrounds.background.color.opacity(viewModel.isLinkToggleOn ? 0.9: 0.5)) // Slight fade behind button area
+        .disabled(!viewModel.isLinkToggleOn || viewModel.isCreatingLink)
+        .opacity(viewModel.isLinkToggleOn ? 1 : 0.5)
+    }
+    
+    @ViewBuilder
+    private func shareLinkContent() -> some View {
+        HStack {
+            if viewModel.isCreatingLink { ProgressView() }
+            if !viewModel.isCreatingLink {
+                Image(systemName: "square.and.arrow.up")
+            }
+            Text(viewModel.isCreatingLink ? Strings.ShareLink.preparingLinkButton : Strings.ShareLink.shareLinkButton)
+                .fontWeight(.semibold)
+        }
+        .font(for: .body1)
+        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .background {
+            RoundedRectangle(cornerRadius: 16)
+                .foregroundStyle(ColorTheme.Backgrounds.surface.color)
+                .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+        }
     }
 
     @ToolbarContentBuilder
@@ -248,12 +273,16 @@ struct ShareLinkView: View {
         }
 
         ToolbarItem(placement: .topBarTrailing) {
-            Button {
-//                viewModel.saveLink()
-                dismiss()
-            } label: {
-                Text(L10n.Localizable.General.done)
-                    .bold()
+            if viewModel.isLoading && !viewModel.isCreatingLink {
+                ProgressView()
+                    .tint(ColorTheme.Base.secondaryText.color)
+            } else {
+                Button {
+                    dismiss()
+                } label: {
+                    Text(L10n.Localizable.General.done)
+                        .bold()
+                }
             }
         }
     }
@@ -286,6 +315,7 @@ struct ShareLinkView: View {
                 expirationDate: Date().addingTimeInterval(3600),
             )
         }
+        mockAPI.deletePublicLinkLinkID_MockMethod = { _ in }
         return mockAPI
     }()
     

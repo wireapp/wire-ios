@@ -199,6 +199,7 @@
 "conversation.wireCells.shareLink.linkSection.passwordDescription" = "Set a password to restrict access.";
 "conversation.wireCells.shareLink.linkSection.expirationDescription" = "Link expires on a selected day.";
 "conversation.wireCells.shareLink.shareLinkButton" = "Share link";
+"conversation.wireCells.shareLink.preparingLinkButton" = "Preparing link";
 "conversation.wireCells.shareLink.off" = "OFF";
 "conversation.wireCells.shareLink.on" = "ON";
 
@@ -217,6 +218,9 @@
 "conversation.wireCells.shareLink.password.noAccessToExisting.title" = "No access to existing password";
 "conversation.wireCells.shareLink.password.noAccessToExisting.message" = "After reinstalling Wire, you can't copy the set password. Yet, it is still valid.\n\nIf you didn't save the password, change it and reshare the updated link.";
 "conversation.wireCells.shareLink.password.noAccessToExisting.button" = "Change password";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.title" = "Unable to create password-secured link";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.message" = "Please check your network connection and try again.";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.action" = "Try again";
 
 // MARK: - Share Link Expiration View
 "conversation.wireCells.shareLink.expiration.title" = "Expiration";
@@ -224,6 +228,9 @@
 "conversation.wireCells.shareLink.expiration.description" = "The link expires automatically after the set date and time. People can't access the content anymore.";
 "conversation.wireCells.shareLink.expiration.datePickerTitle" = "Expires";
 "conversation.wireCells.shareLink.expiration.dateNotSupported" = "Date in the past is not supported";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.title" = "Unable to add expiration date";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.message" = "Please check your network connection and try again.";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.action" = "Try again";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "File not available";

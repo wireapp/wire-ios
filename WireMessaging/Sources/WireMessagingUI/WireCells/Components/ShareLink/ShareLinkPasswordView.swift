@@ -46,14 +46,40 @@ struct ShareLinkPasswordView: View {
                 .toolbar {
                     toolbarContent()
                 }
-            
+                .alert(
+                    Strings.UnableToCreatePassword.title,
+                    isPresented: $viewModel.isPresentingErrorAlert,
+                    actions: {
+                        Button(
+                            Strings.UnableToCreatePassword.action,
+                            action: {
+                                Task {
+                                    await viewModel.save()
+                                    dismiss()
+                                }
+                            }
+                        )
+
+                        Button(
+                            L10n.Localizable.General.cancel,
+                            role: .cancel,
+                            action: {}
+                        )
+                    },
+                    message: { Text(Strings.UnableToCreatePassword.message) }
+                )
                 .alert(
                     Strings.RemoveConfirmation.title,
                     isPresented: $isPresentingRemovePasswordConfirmation,
                     actions: {
                         Button(
                             Strings.RemoveConfirmation.button,
-                            action: { viewModel.removePassword() }
+                            action: {
+                                Task {
+                                    await viewModel.save()
+                                    dismiss()
+                                }
+                            }
                         )
 
                         Button(
@@ -86,6 +112,7 @@ struct ShareLinkPasswordView: View {
                         .ignoresSafeArea(edges: .all)
                 }
                 .tint(ColorTheme.Base.primary(wireAccentColor).color)
+                .interactiveDismissDisabled(viewModel.isLoading)
         }
     }
 
@@ -98,7 +125,7 @@ struct ShareLinkPasswordView: View {
                 setPasswordToggleArea()
                     .padding(.bottom, 18)
 
-                if viewModel.isPasswordEnabled {
+                if viewModel.displayPasswordInputArea {
                     Group {
                         if viewModel.hasChanges {
                             generatePasswordButton()
@@ -111,9 +138,6 @@ struct ShareLinkPasswordView: View {
                         }
                     }
                 }
-
-                alertTestButtons()
-                    .padding(.top, 30)
             }
             .frame(maxWidth: .infinity)
             .padding()
@@ -234,9 +258,7 @@ struct ShareLinkPasswordView: View {
 
     @ViewBuilder
     private func sharePasswordButton() -> some View {
-        Button {
-            viewModel.copyPasswordToPasteboard()
-        } label: {
+        ShareLink(item: viewModel.copyPassword()) {
             Label {
                 Text(Strings.sharePassword)
             } icon: {
@@ -288,26 +310,6 @@ struct ShareLinkPasswordView: View {
         .tint(.primaryText)
     }
 
-    // Just to test the Popups, can be removed
-    @ViewBuilder
-    private func alertTestButtons() -> some View {
-        VStack {
-            Button {
-                isPresentingRemovePasswordConfirmation = true
-            } label: {
-                Text("show\n\"remove password\"\nconfirmation alert")
-            }
-
-            Button {
-                viewModel.isPresentingNoAccessToExistingPasswordConfirmation = true
-            } label: {
-                Text("show\n\"no access to existing password\"\nalert")
-            }
-        }
-        .buttonStyle(.bordered)
-        .font(for: .subline1)
-    }
-
     @ToolbarContentBuilder
     private func toolbarContent() -> some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
@@ -321,20 +323,41 @@ struct ShareLinkPasswordView: View {
         ToolbarItem(placement: .topBarTrailing) {
             Button {
                 Task {
-                    await viewModel.save()
-                    dismiss()
+                    if !viewModel.isPasswordEnabled {
+                        isPresentingRemovePasswordConfirmation = true
+                    } else {
+                        await viewModel.save()
+                        dismiss()
+                    }
                 }
             } label: {
-                Text(L10n.Localizable.General.save)
-                    .bold()
+                if viewModel.isLoading {
+                    ProgressView()
+                    .tint(ColorTheme.Base.secondaryText.color)
+                } else {
+                    Text(L10n.Localizable.General.save)
+                        .bold()
+                }
             }
             .disabled(!viewModel.canSave)
         }
     }
 }
 
-//#Preview {
-//    ShareLinkPasswordView(
-//        viewModel: ShareLinkPasswordView.ViewModel(password: "r1ckr0ll", linkID: nil, storeFilePublicLinkPasswordUseCase: .init(keychain: Keychain()), didSave: <#T##(Bool) -> Void#>)
-//    )
-//}
+#Preview("Preview with password") {
+    ShareLinkPasswordView(
+        viewModel: .preview(password: "test", requiresPassword: true)
+    )
+}
+
+#Preview("Preview without password") {
+    ShareLinkPasswordView(
+        viewModel: .preview(password: nil, requiresPassword: false)
+    )
+}
+
+#Preview("Preview requires password, no password found") {
+    ShareLinkPasswordView(
+        viewModel: .preview(password: nil, requiresPassword: true)
+    )
+}

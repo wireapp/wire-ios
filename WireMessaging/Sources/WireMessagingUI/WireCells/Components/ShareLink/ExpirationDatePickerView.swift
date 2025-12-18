@@ -84,6 +84,27 @@ struct ExpirationDatePickerView: View {
             .toolbar { toolbarContent() }
             .tint(wireAccentColor.color)
             .background(ColorTheme.Backgrounds.background.color)
+            .alert(
+                Strings.UnableToAddExpiration.title,
+                isPresented: $viewModel.isPresentingExpirationDateError,
+                actions: {
+                    Button(
+                        Strings.UnableToAddExpiration.action,
+                        action: {
+                            Task {
+                                await viewModel.save()
+                            }
+                        }
+                    )
+
+                    Button(
+                        L10n.Localizable.General.cancel,
+                        role: .cancel,
+                        action: {}
+                    )
+                },
+                message: { Text(Strings.UnableToAddExpiration.message) }
+            )
         }
     }
 

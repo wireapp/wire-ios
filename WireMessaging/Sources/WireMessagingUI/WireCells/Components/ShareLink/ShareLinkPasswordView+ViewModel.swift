@@ -36,11 +36,12 @@ extension ShareLinkPasswordView {
         @Published var passwordInput = ""
         @Published var isPasswordInputSecured = true
         @Published var isPresentingNoAccessToExistingPasswordConfirmation = false
-        @Published var alert: AlertModel?
+        @Published var isPresentingErrorAlert = false
+        @Published var isLoading = false
         
         private let linkID: String?
-        private let requiresPassword: Bool
-        private let didSave: (Bool) -> Void
+        private let isMissingPassword: Bool
+        private let didSave: (Bool, String?) -> Void
         private let useCases: UseCases
 
         init(
@@ -48,19 +49,17 @@ extension ShareLinkPasswordView {
             requiresPassword: Bool,
             linkID: String?,
             useCases: UseCases,
-            didSave: @escaping (Bool) -> Void
+            didSave: @escaping (Bool, String?) -> Void
         ) {
             self.linkID = linkID
             self.existingPassword = password
-            self.requiresPassword = requiresPassword
+            self.isMissingPassword = requiresPassword && password == nil
             self.passwordInput = password ?? ""
-            self.isPasswordEnabled = password != nil
+            self.isPasswordEnabled = requiresPassword
             self.useCases = useCases
             self.didSave = didSave
             
-//            if requiresPassword && password == nil {
-//                alert = .init(title: <#T##String#>, message: <#T##String#>)
-//            }
+            isPresentingNoAccessToExistingPasswordConfirmation = isMissingPassword
         }
 
         var currentPassword: String? {
@@ -84,10 +83,16 @@ extension ShareLinkPasswordView {
             }
         }
         
+        var displayPasswordInputArea: Bool {
+            isPasswordEnabled && !isPresentingNoAccessToExistingPasswordConfirmation
+        }
+        
         func save() async {
             guard let linkID else { return }
             
             do {
+                isLoading = true
+                
                 let result = try await useCases.updatePublicLinkPassword.invoke(
                     linkID: linkID,
                     password: isPasswordEnabled ? passwordInput : nil
@@ -99,20 +104,16 @@ extension ShareLinkPasswordView {
                         password: passwordInput
                     )
                 } else {
-                    try await useCases.deletePublicLinkPasswordUseCase.invoke(
+                    await useCases.deletePublicLinkPasswordUseCase.invoke(
                         linkID: linkID
                     )
                 }
                 
-                didSave(result.requiresPassword)
+                didSave(result.requiresPassword, result.requiresPassword ? passwordInput : nil)
             } catch {
-                print("HERE: \(String(describing: error))")
+                isPresentingErrorAlert = true
             }
-        }
-
-        func removePassword() {
-            // TODO: ...
-            // maybe the new figma design will make this obsolete
+            isLoading = false
         }
 
         func generatePassword() {
@@ -147,8 +148,8 @@ extension ShareLinkPasswordView {
             passwordInput = ""
         }
 
-        func copyPasswordToPasteboard() {
-            UIPasteboard.general.string = passwordInput
+        func copyPassword() -> String {
+            passwordInput
         }
     }
 }

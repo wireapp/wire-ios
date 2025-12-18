@@ -17,9 +17,14 @@
 //
 
 package import WireFoundation
+import WireLogging
 import Foundation
 
 package struct WireCellsDeletePublicLinkPasswordUseCase {
+    
+    enum Failure: Error {
+        case itemNotFound
+    }
 
     private let keychain: any KeychainProtocol
 
@@ -29,14 +34,26 @@ package struct WireCellsDeletePublicLinkPasswordUseCase {
 
     package func invoke(
         linkID: String
-    ) async throws {
+    ) async {
         let query: Set<KeychainQueryItem> = [
             .service("Wire: file shared link for wire.com"),
             .account(linkID),
             .itemClass(.genericPassword),
         ]
         
-        try await keychain.deleteItem(query: query)
+        do {
+            try await keychain.deleteItem(query: query)
+        } catch let error as KeychainError {
+            switch error {
+            case .errorStatus(let oSstatus) where oSstatus == errSecItemNotFound:
+                return
+            default:
+                return WireLogger.wireCells.error("Failed to delete password from keychain: \(error)")
+            }
+        } catch {
+            return WireLogger.wireCells.error("Failed to delete password from keychain: \(error)")
+        }
+    
     }
 
 }
