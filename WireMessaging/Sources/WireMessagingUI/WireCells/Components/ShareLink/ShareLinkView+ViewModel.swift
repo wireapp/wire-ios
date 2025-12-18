@@ -18,9 +18,10 @@
 
 import Combine
 import Foundation
-import WireMessagingDomain
-import UIKit
 import SwiftUI
+import UIKit
+import WireMessagingDomain
+import WireFoundation
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells.ShareLink
 
@@ -43,24 +44,37 @@ extension ShareLinkView {
             let deletePublicLink: WireCellsDeletePublicLinkUseCase
             let updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase
             let updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase
+            let getPublicLinkPasswordUseCase: WireCellsGetPublicLinkPasswordUseCase
+            let storePublicLinkPasswordUseCase: WireCellsStorePublicLinkPasswordUseCase
+            let deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase
         }
 
         let fileItem: FilesViewItem
         let useCases: UseCases
 
-        enum SheetNavigation: Identifiable, Hashable {
-            case password
+        enum SheetNavigation: Identifiable {
+            case password(view: ShareLinkPasswordView)
             case expiration(linkID: String)
 
-            var id: Self { self }
+            var id: String {
+                switch self {
+                case .password(let view):
+                    "shareLinkPasswordView\(view.id)"
+                case .expiration(linkID: let linkID):
+                    linkID
+                }
+            }
         }
 
         // MARK: - UI State
 
         @Published var sheetNavigation: SheetNavigation?
-        @Published private var publicLinkState: PublicLinkState
+        @Published var publicLinkState: PublicLinkState
 
-        init(fileItem: FilesViewItem, useCases: UseCases) {
+        init(
+            fileItem: FilesViewItem,
+            useCases: UseCases,
+        ) {
             self.fileItem = fileItem
             self.useCases = useCases
             self.publicLinkState = if let linkID = fileItem.publicLinkID {
@@ -73,36 +87,36 @@ extension ShareLinkView {
         var isLinkToggleOn: Bool {
             switch publicLinkState {
             case .enabled, .enabling:
-                return true
+                true
             case .initial, .loading, .disabled, .disabling:
-                return false
+                false
             }
         }
 
         var isLinkToggleEnabled: Bool {
             switch publicLinkState {
             case .initial, .loading, .enabling, .disabling:
-                return false
+                false
             case .enabled, .disabled:
-                return true
+                true
             }
         }
 
         var linkID: String? {
             switch publicLinkState {
             case let .enabled(id, _, _, _), let .disabling(id, _, _, _):
-                return id
+                id
             default:
-                return nil
+                nil
             }
         }
 
         var isPasswordEnabled: Bool {
             switch publicLinkState {
             case let .enabled(_, _, _, requiresPassword), let .disabling(_, _, _, requiresPassword):
-                return requiresPassword
+                requiresPassword
             default:
-                return false
+                false
             }
         }
 
@@ -119,9 +133,9 @@ extension ShareLinkView {
         var expirationDate: Date? {
             switch publicLinkState {
             case let .enabled(_, _, expirationDate, _), let .disabling(_, _, expirationDate, _):
-                return expirationDate
+                expirationDate
             default:
-                return nil
+                nil
             }
         }
 
@@ -153,6 +167,12 @@ extension ShareLinkView {
             guard case let .enabled(_, url, _, _) = publicLinkState else { return }
             UIPasteboard.general.string = url.absoluteString
         }
+        
+        func copyPassword() async {
+            guard case let .enabled(linkID, _, _, _) = publicLinkState,
+                  let password = await useCases.getPublicLinkPasswordUseCase.invoke(linkID: linkID) else { return }
+            UIPasteboard.general.string = password
+        }
 
         func updateExpirationDate(to newDate: Date?) async {
             guard case let .enabled(id, _, _, _) = publicLinkState else { return }
@@ -177,11 +197,10 @@ extension ShareLinkView {
                 viewModel: ExpirationDatePickerView.ViewModel(
                     linkID: linkID,
                     expirationDate: self.expirationDate,
-                    isPasswordEnabled: self.isPasswordEnabled,
                     didSave: { [weak self] newExpirationDate in
                         guard let self,
                               case let .enabled(id, url, _, requiresPassword) = publicLinkState else { return }
-                        
+
                         publicLinkState = .enabled(
                             id: id,
                             url: url,
@@ -226,6 +245,7 @@ extension ShareLinkView {
                 )
                 do {
                     try await useCases.deletePublicLink.invoke(linkID: id)
+                    try await useCases.deletePublicLinkPasswordUseCase.invoke(linkID: id)
                     publicLinkState = .disabled
                 } catch {
                     publicLinkState = .enabled(
@@ -236,6 +256,38 @@ extension ShareLinkView {
                     )
                 }
             }
+        }
+        
+        func makeShareLinkPasswordView() async -> ShareLinkPasswordView {
+            var password: String? = nil
+            
+            if let linkID {
+                password = await useCases.getPublicLinkPasswordUseCase.invoke(linkID: linkID)
+            }
+            
+            let viewModel = ShareLinkPasswordView.ViewModel(
+                password: password,
+                linkID: linkID,
+                useCases: .init(
+                    updatePublicLinkPassword: useCases.updatePublicLinkPassword,
+                    storePublicLinkPasswordUseCase: useCases.storePublicLinkPasswordUseCase,
+                    deletePublicLinkPasswordUseCase: useCases.deletePublicLinkPasswordUseCase
+                ),
+                didSave: { [weak self] requiresPassword in
+                    guard let self,
+                          case let .enabled(id, url, expirationDate, _) = publicLinkState else { return }
+
+                    publicLinkState = .enabled(
+                        id: id,
+                        url: url,
+                        expirationDate: expirationDate,
+                        requiresPassword: requiresPassword
+                    )
+                    sheetNavigation = nil
+                },
+            )
+            
+            return ShareLinkPasswordView(viewModel: viewModel)
         }
     }
 }

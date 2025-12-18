@@ -28,14 +28,14 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells.Shar
 struct ShareLinkPasswordView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
+    @State private var isPresentingRemovePasswordConfirmation = false
 
     @StateObject private var viewModel: ViewModel
+    
+    let id = UUID()
 
-    let onSave: (String?) -> Void
-
-    init(password: String?, onSave: @escaping (String?) -> Void) {
-        _viewModel = .init(wrappedValue: .init(password: password))
-        self.onSave = onSave
+    init(viewModel: @autoclosure @escaping () -> ShareLinkPasswordView.ViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel())
     }
 
     var body: some View {
@@ -46,9 +46,10 @@ struct ShareLinkPasswordView: View {
                 .toolbar {
                     toolbarContent()
                 }
+            
                 .alert(
                     Strings.RemoveConfirmation.title,
-                    isPresented: $viewModel.isPresentingRemovePasswordConfirmation,
+                    isPresented: $isPresentingRemovePasswordConfirmation,
                     actions: {
                         Button(
                             Strings.RemoveConfirmation.button,
@@ -69,7 +70,7 @@ struct ShareLinkPasswordView: View {
                     actions: {
                         Button(
                             Strings.NoAccessToExisting.button,
-                            action: { viewModel.changePassword() }
+                            action: { viewModel.resetPassword() }
                         )
 
                         Button(
@@ -97,18 +98,19 @@ struct ShareLinkPasswordView: View {
                 setPasswordToggleArea()
                     .padding(.bottom, 18)
 
-                Group {
-                    generatePasswordButton()
-
-                    passwordInputArea()
-
-                    copyPasswordButton()
-
-                    changePasswordButton()
-                        .padding(.top, 24)
+                if viewModel.isPasswordEnabled {
+                    Group {
+                        if viewModel.hasChanges {
+                            generatePasswordButton()
+                            passwordInputArea()
+                        }
+                        
+                        if !viewModel.passwordInput.isEmpty {
+                            sharePasswordButton()
+                            resetPasswordButton()
+                        }
+                    }
                 }
-                .disabled(!viewModel.isPasswordEnabled)
-                .opacity(viewModel.isPasswordEnabled ? 1 : 0.7)
 
                 alertTestButtons()
                     .padding(.top, 30)
@@ -231,12 +233,12 @@ struct ShareLinkPasswordView: View {
     }
 
     @ViewBuilder
-    private func copyPasswordButton() -> some View {
+    private func sharePasswordButton() -> some View {
         Button {
             viewModel.copyPasswordToPasteboard()
         } label: {
             Label {
-                Text(Strings.copyPassword)
+                Text(Strings.sharePassword)
             } icon: {
                 Image(systemName: "document.on.document")
             }
@@ -258,12 +260,14 @@ struct ShareLinkPasswordView: View {
     }
 
     @ViewBuilder
-    private func changePasswordButton() -> some View {
+    private func resetPasswordButton() -> some View {
         Button {
-            // TODO: ...
+            withAnimation(.snappy) {
+                viewModel.resetPassword()
+            }
         } label: {
             Label {
-                Text(Strings.changePassword)
+                Text(Strings.resetPassword)
             } icon: {
                 Image(systemName: "arrow.counterclockwise")
             }
@@ -289,7 +293,7 @@ struct ShareLinkPasswordView: View {
     private func alertTestButtons() -> some View {
         VStack {
             Button {
-                viewModel.isPresentingRemovePasswordConfirmation = true
+                isPresentingRemovePasswordConfirmation = true
             } label: {
                 Text("show\n\"remove password\"\nconfirmation alert")
             }
@@ -316,8 +320,10 @@ struct ShareLinkPasswordView: View {
 
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                onSave(viewModel.currentPassword)
-                dismiss()
+                Task {
+                    await viewModel.save()
+                    dismiss()
+                }
             } label: {
                 Text(L10n.Localizable.General.save)
                     .bold()
@@ -327,9 +333,8 @@ struct ShareLinkPasswordView: View {
     }
 }
 
-#Preview {
-    ShareLinkPasswordView(
-        password: "r1ckr0ll",
-        onSave: { _ in },
-    )
-}
+//#Preview {
+//    ShareLinkPasswordView(
+//        viewModel: ShareLinkPasswordView.ViewModel(password: "r1ckr0ll", linkID: nil, storeFilePublicLinkPasswordUseCase: .init(keychain: Keychain()), didSave: <#T##(Bool) -> Void#>)
+//    )
+//}

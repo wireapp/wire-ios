@@ -28,11 +28,13 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 struct ShareLinkView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
+    
+    let id = UUID()
 
     @StateObject private var viewModel: ViewModel
 
-    init(fileItem: FilesViewItem, useCases: ViewModel.UseCases) {
-        _viewModel = .init(wrappedValue: .init(fileItem: fileItem, useCases: useCases))
+    init(viewModel: @autoclosure @escaping () -> ShareLinkView.ViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel())
     }
 
     var body: some View {
@@ -50,8 +52,14 @@ struct ShareLinkView: View {
                     .padding()
                     .padding(.bottom, 80) // Space for the bottom button
                 }
+                
+                VStack {
+                    if viewModel.isPasswordEnabled {
+                        sharePasswordButton()
+                    }
 
-                shareLinkButton()
+                    shareLinkButton()
+                }
             }
             .onAppear { Task { await viewModel.loadIfNeeded() } }
             .background(ColorTheme.Backgrounds.background.color.ignoresSafeArea())
@@ -62,16 +70,8 @@ struct ShareLinkView: View {
             }
             .sheet(item: $viewModel.sheetNavigation) { navigationItem in
                 switch navigationItem {
-                case .password:
-                    // TODO: Probably adjust how this works. I'm not sure if the password should be passed in or it
-                    // should come via the saved password from the use case or something like that. Check how the
-                    // ExpirationDatePickerView is being integrated. Maybe we should follow that pattern.
-                    ShareLinkPasswordView(
-                        password: "",
-                        onSave: { newPassword in
-
-                        }
-                    )
+                case .password(let shareLinkPasswordView):
+                    shareLinkPasswordView
                 case let .expiration(linkID):
                     viewModel.makeExpirationDatePickerView(linkID: linkID)
                 }
@@ -97,16 +97,16 @@ struct ShareLinkView: View {
                     Task { await viewModel.togglePublicLink(isEnabled: isEnabled) }
                 })
             )
-                .font(for: .body1)
-                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                .padding(.horizontal)
-                .padding(.vertical, 10)
-                .background {
-                    RoundedRectangle(cornerRadius: 10)
-                        .foregroundStyle(ColorTheme.Backgrounds.surface.color)
-                }
-                .tint(wireAccentColor.color)
-                .disabled(!viewModel.isLinkToggleEnabled)
+            .font(for: .body1)
+            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+            .padding(.horizontal)
+            .padding(.vertical, 10)
+            .background {
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundStyle(ColorTheme.Backgrounds.surface.color)
+            }
+            .tint(wireAccentColor.color)
+            .disabled(!viewModel.isLinkToggleEnabled)
         }
     }
 
@@ -123,7 +123,7 @@ struct ShareLinkView: View {
                     title: Strings.ShareLink.LinkSection.passwordTitle,
                     description: Strings.ShareLink.LinkSection.passwordDescription,
                     status: viewModel.passwordStatusText,
-                    action: { viewModel.sheetNavigation = .password },
+                    action: { viewModel.sheetNavigation = .password(view: await viewModel.makeShareLinkPasswordView()) },
                 )
 
                 Spacer().frame(height: 16)
@@ -143,10 +143,12 @@ struct ShareLinkView: View {
         title: String,
         description: String,
         status: String,
-        action: @escaping () -> Void
+        action: @escaping () async -> Void
     ) -> some View {
         VStack(alignment: .leading) {
-            Button(action: action) {
+            Button {
+                Task { await action() }
+            } label: {
                 HStack {
                     Text(title)
                         .font(for: .body1)
@@ -179,6 +181,33 @@ struct ShareLinkView: View {
                 .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 .padding(.leading, 4)
         }
+    }
+    
+    @ViewBuilder
+    private func sharePasswordButton() -> some View {
+        VStack {
+            Button {
+                Task { await viewModel.copyPassword() }
+            } label: {
+                HStack {
+                    Image(systemName: "square.and.arrow.up")
+                    Text("Share Password")
+                        .fontWeight(.semibold)
+                }
+                .font(for: .body1)
+                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background {
+                    RoundedRectangle(cornerRadius: 16)
+                        .foregroundStyle(ColorTheme.Backgrounds.surface.color)
+                        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 8)
+        }
+        .background(ColorTheme.Backgrounds.background.color.opacity(0.9)) // Slight fade behind button area
     }
 
     @ViewBuilder
@@ -259,17 +288,21 @@ struct ShareLinkView: View {
         }
         return mockAPI
     }()
+    
+    let keychain = Keychain()
 
     let useCases: ShareLinkView.ViewModel.UseCases = .init(
         getLinkData: WireCellsGetPublicLinkDataUseCase(nodesAPI: mockAPI),
         createPublicLink: WireCellsCreatePublicLinkUseCase(nodesAPI: mockAPI),
         deletePublicLink: WireCellsDeletePublicLinkUseCase(nodesAPI: mockAPI),
         updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(nodesAPI: mockAPI),
-        updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: mockAPI)
+        updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: mockAPI),
+        getPublicLinkPasswordUseCase: WireCellsGetPublicLinkPasswordUseCase(keychain: keychain),
+        storePublicLinkPasswordUseCase: WireCellsStorePublicLinkPasswordUseCase(keychain: keychain),
+        deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase(keychain: keychain)
     )
 
     ShareLinkView(
-        fileItem: item,
-        useCases: useCases,
+        viewModel: .init(fileItem: item, useCases: useCases)
     )
 }

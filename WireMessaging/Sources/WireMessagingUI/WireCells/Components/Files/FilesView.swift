@@ -100,19 +100,8 @@ package struct FilesView: FilesViewProtocol {
                                 await viewModel.reload()
                             }
                         )
-                    case let .shareLink(fileItem: fileItem):
-                        // TODO: Reload files list to ensure the public link id is up to date after dismissing the
-                        // sheet.
-                        ShareLinkView(
-                            fileItem: fileItem,
-                            useCases: .init(
-                                getLinkData: viewModel.useCases.getPublicLinkData,
-                                createPublicLink: viewModel.useCases.createPublicLink,
-                                deletePublicLink: viewModel.useCases.deletePublicLink,
-                                updatePublicLinkExpiration: viewModel.useCases.updatePublicLinkExpiration,
-                                updatePublicLinkPassword: viewModel.useCases.updatePublicLinkPassword
-                            )
-                        )
+                    case let .shareLink(shareLinkView):
+                        shareLinkView
                     case let .renameFile(fileRenameView):
                         fileRenameView
                     case let .createFolder(folderView):

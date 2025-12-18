@@ -209,8 +209,8 @@
 "conversation.wireCells.shareLink.password.generatePassword" = "Generate Password";
 "conversation.wireCells.shareLink.password.textfieldTitle" = "Password";
 "conversation.wireCells.shareLink.password.textfieldPrompt" = "Enter password";
-"conversation.wireCells.shareLink.password.copyPassword" = "Copy Password";
-"conversation.wireCells.shareLink.password.changePassword" = "Change Password";
+"conversation.wireCells.shareLink.password.sharePassword" = "Share Password";
+"conversation.wireCells.shareLink.password.resetPassword" = "Reset Password";
 "conversation.wireCells.shareLink.password.removeConfirmation.title" = "Remove password?";
 "conversation.wireCells.shareLink.password.removeConfirmation.message" = "Anyone with the link can open the file and view its contents.";
 "conversation.wireCells.shareLink.password.removeConfirmation.button" = "Remove";

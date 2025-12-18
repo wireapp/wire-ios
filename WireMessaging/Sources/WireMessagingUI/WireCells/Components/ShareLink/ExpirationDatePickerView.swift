@@ -178,25 +178,23 @@ struct DateSegmentButton: View {
     }
 }
 
-// TODO: Fix previews - the API has changed
+ #Preview("With initial date") {
+     ExpirationDatePickerView(viewModel: .preview(
+        date: Calendar.current.date(byAdding: .hour, value: 2, to: Date()))
+     )
+     .colorScheme(.light)
+ }
 
-//#Preview("With initial date") {
-//    ExpirationDatePickerView(
-//        expirationDate: Calendar.current.date(byAdding: .hour, value: 2, to: Date()),
-//        onSave: { _ in }
-//    )
-//    .colorScheme(.light)
-//}
-//
-//#Preview("Date in the past") {
-//    ExpirationDatePickerView(
-//        expirationDate: Calendar.current.startOfDay(for: Date()),
-//        onSave: { _ in }
-//    )
-//    .colorScheme(.light)
-//}
-//
-//#Preview("No initial date") {
-//    ExpirationDatePickerView(expirationDate: nil, onSave: { _ in })
-//        .colorScheme(.dark)
-//}
+ #Preview("Date in the past") {
+     ExpirationDatePickerView(viewModel: .preview(
+        date: Calendar.current.startOfDay(for: Date()))
+     )
+     .colorScheme(.light)
+ }
+
+ #Preview("No initial date") {
+     ExpirationDatePickerView(
+        viewModel: .preview(date: nil)
+     )
+     .colorScheme(.dark)
+ }

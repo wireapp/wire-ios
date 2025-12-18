@@ -93,7 +93,7 @@ package final class FilesViewModel: ObservableObject {
 
     enum SheetNavigation: Identifiable {
         case editTags(fileItem: FilesViewItem)
-        case shareLink(fileItem: FilesViewItem)
+        case shareLink(view: ShareLinkView)
         case moveToFolder(fileItem: FilesViewItem)
         case renameFile(view: FileRenameView)
         case createFolder(view: CreateFolderView)
@@ -103,8 +103,8 @@ package final class FilesViewModel: ObservableObject {
             switch self {
             case let .editTags(fileItem: item):
                 "editTags(\(item.id))"
-            case let .shareLink(fileItem: item):
-                "shareLink(\(item.id))"
+            case let .shareLink(view):
+                "shareLink(\(view.id))"
             case let .moveToFolder(fileItem):
                 "moveToFolder(\(fileItem.id))"
             case let .createFolder(view):
@@ -345,7 +345,7 @@ package final class FilesViewModel: ObservableObject {
                 case .editTags:
                     sheetNavigation = .editTags(fileItem: item)
                 case .shareLink:
-                    sheetNavigation = .shareLink(fileItem: item)
+                    sheetNavigation = .shareLink(view: makeShareLinkView(item: item))
                 case .moveToFolder:
                     sheetNavigation = .moveToFolder(fileItem: item)
                 case .edit:
@@ -677,5 +677,36 @@ package final class FilesViewModel: ObservableObject {
 
         return FileRenameView(viewModel: viewModel)
     }
-
+    
+    private func makeShareLinkView(
+        item: FilesViewItem
+    ) -> ShareLinkView {
+        
+        let viewModel = ShareLinkView.ViewModel(
+            fileItem: item,
+            useCases: ShareLinkView.ViewModel.UseCases(
+                getLinkData: useCases.getPublicLinkData,
+                createPublicLink: useCases.createPublicLink,
+                deletePublicLink: useCases.deletePublicLink,
+                updatePublicLinkExpiration: useCases.updatePublicLinkExpiration,
+                updatePublicLinkPassword: useCases.updatePublicLinkPassword,
+                getPublicLinkPasswordUseCase: WireCellsGetPublicLinkPasswordUseCase(keychain: Keychain()),
+                storePublicLinkPasswordUseCase: WireCellsStorePublicLinkPasswordUseCase(keychain: Keychain()),
+                deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase(keychain: Keychain())
+            )
+        )
+        
+        viewModel.$publicLinkState
+            .sink { [weak self] state in
+                switch state {
+                case .enabled, .disabled:
+                    self?.shouldReload = true
+                default:
+                    break
+                }
+                
+            }.store(in: &subscriptions)
+        
+        return ShareLinkView(viewModel: viewModel)
+    }
 }

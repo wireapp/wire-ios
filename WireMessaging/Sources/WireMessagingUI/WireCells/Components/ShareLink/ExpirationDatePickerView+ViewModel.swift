@@ -31,7 +31,6 @@ extension ExpirationDatePickerView {
             .addingTimeInterval(3600)
 
         private let linkID: String
-        private let isPasswordEnabled: Bool
         private let didSave: (Date?) -> Void
         private let updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase
 
@@ -42,7 +41,6 @@ extension ExpirationDatePickerView {
         init(
             linkID: String,
             expirationDate: Date?,
-            isPasswordEnabled: Bool,
             didSave: @escaping (Date?) -> Void,
             updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase
         ) {
@@ -52,7 +50,6 @@ extension ExpirationDatePickerView {
             self.linkID = linkID
             self.isExpirationEnabled = expirationDate != nil
             self.didSave = didSave
-            self.isPasswordEnabled = isPasswordEnabled
             self.updatePublicLinkExpiration = updatePublicLinkExpiration
         }
 

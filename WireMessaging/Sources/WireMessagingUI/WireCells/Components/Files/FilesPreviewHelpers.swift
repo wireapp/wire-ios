@@ -316,6 +316,17 @@ extension CreateFolderViewModel {
     }
 }
 
+extension ExpirationDatePickerView.ViewModel {
+    static func preview(date: Date?) -> ExpirationDatePickerView.ViewModel {
+        ExpirationDatePickerView.ViewModel(
+            linkID: "",
+            expirationDate: date,
+            didSave: { _ in },
+            updatePublicLinkExpiration: .init(nodesAPI: previewTagsApi())
+        )
+    }
+}
+
 let mockTags = [
     "Urgent",
     "Marketing",

@@ -16,24 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+package import WireFoundation
+import Foundation
 
-package struct WireCellsUpdatePublicLinkExpirationUseCase {
+package struct WireCellsDeletePublicLinkPasswordUseCase {
 
-    private let nodesAPI: any NodesAPIProtocol
+    private let keychain: any KeychainProtocol
 
-    package init(nodesAPI: any NodesAPIProtocol) {
-        self.nodesAPI = nodesAPI
+    package init(keychain: any KeychainProtocol) {
+        self.keychain = keychain
     }
 
     package func invoke(
-        linkID: String,
-        expiration: Date?
-    ) async throws -> WireCellsPublicLink {
-        try await nodesAPI.updatePublicLinkExpiration(
-            linkID: linkID,
-            expiration: expiration
-        )
+        linkID: String
+    ) async throws {
+        let query: Set<KeychainQueryItem> = [
+            .service("Wire: file shared link for wire.com"),
+            .account(linkID),
+            .itemClass(.genericPassword),
+        ]
+        
+        try await keychain.deleteItem(query: query)
     }
 
 }

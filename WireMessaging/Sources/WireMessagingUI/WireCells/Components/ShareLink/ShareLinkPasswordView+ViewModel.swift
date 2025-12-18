@@ -18,23 +18,49 @@
 
 import Combine
 import Foundation
+import WireMessagingDomain
 import UIKit // only required for UIPasteboard
 
 extension ShareLinkPasswordView {
     @MainActor
     final class ViewModel: ObservableObject {
         let existingPassword: String?
+        
+        struct UseCases {
+            let updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase
+            let storePublicLinkPasswordUseCase: WireCellsStorePublicLinkPasswordUseCase
+            let deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase
+        }
 
         @Published var isPasswordEnabled: Bool
         @Published var passwordInput = ""
         @Published var isPasswordInputSecured = true
-
-        @Published var isPresentingRemovePasswordConfirmation = false
         @Published var isPresentingNoAccessToExistingPasswordConfirmation = false
+        @Published var alert: AlertModel?
+        
+        private let linkID: String?
+        private let requiresPassword: Bool
+        private let didSave: (Bool) -> Void
+        private let useCases: UseCases
 
-        init(password: String?) {
+        init(
+            password: String?,
+            requiresPassword: Bool,
+            linkID: String?,
+            useCases: UseCases,
+            didSave: @escaping (Bool) -> Void
+        ) {
+            self.linkID = linkID
             self.existingPassword = password
+            self.requiresPassword = requiresPassword
+            self.passwordInput = password ?? ""
             self.isPasswordEnabled = password != nil
+            self.useCases = useCases
+            self.didSave = didSave
+            
+//            if requiresPassword && password == nil {
+//                alert = .init(title: <#T##String#>, message: <#T##String#>)
+//            }
         }
 
         var currentPassword: String? {
@@ -57,6 +83,32 @@ extension ShareLinkPasswordView {
                 hasChanges
             }
         }
+        
+        func save() async {
+            guard let linkID else { return }
+            
+            do {
+                let result = try await useCases.updatePublicLinkPassword.invoke(
+                    linkID: linkID,
+                    password: isPasswordEnabled ? passwordInput : nil
+                )
+                
+                if result.requiresPassword {
+                    try await useCases.storePublicLinkPasswordUseCase.invoke(
+                        linkID: linkID,
+                        password: passwordInput
+                    )
+                } else {
+                    try await useCases.deletePublicLinkPasswordUseCase.invoke(
+                        linkID: linkID
+                    )
+                }
+                
+                didSave(result.requiresPassword)
+            } catch {
+                print("HERE: \(String(describing: error))")
+            }
+        }
 
         func removePassword() {
             // TODO: ...
@@ -64,20 +116,39 @@ extension ShareLinkPasswordView {
         }
 
         func generatePassword() {
-            // TODO: ...
-            // There should be a random password generator somewhere in the code base that we could repurpose for this
-            // feature.
-            passwordInput = "TODO: randomly generated password"
+            passwordInput = generateRandomPassword()
+        }
+        
+        private func generateRandomPassword() -> String {
+            let minLength = 15
+            let maxLength = 20
+            let selectedLength = Int.random(in: minLength ... maxLength)
+
+            let lowercaseLetters = "abcdefghijklmnopqrstuvwxyz"
+            let uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            let numbers = "0123456789"
+            let specialCharacters = "!@#$%^&*()-_+=<>?/[]{|}"
+            let allCharacters = lowercaseLetters + uppercaseLetters + numbers + specialCharacters
+
+            var characters = [Character]()
+            characters.append(lowercaseLetters.randomElement()!)
+            characters.append(uppercaseLetters.randomElement()!)
+            characters.append(numbers.randomElement()!)
+            characters.append(specialCharacters.randomElement()!)
+
+            for _ in 0 ..< (selectedLength - characters.count) {
+                characters.append(allCharacters.randomElement()!)
+            }
+
+            return String(characters.shuffled())
         }
 
-        func changePassword() {
-            // TODO: ...
-            // maybe the new figma design will make this obsolete
+        func resetPassword() {
+            passwordInput = ""
         }
 
         func copyPasswordToPasteboard() {
-            // maybe the new figma design will make this obsolete
-            UIPasteboard().string = passwordInput
+            UIPasteboard.general.string = passwordInput
         }
     }
 }
