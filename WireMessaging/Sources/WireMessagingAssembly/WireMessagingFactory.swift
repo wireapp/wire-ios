@@ -202,6 +202,12 @@ public extension WireMessagingFactory {
                         updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
                         getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
                         createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
+                        fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesAPI),
+                        restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                            repository: nodesAPI,
+                            localAssetsRepository: localAssetRepository,
+                            nodeCache: nodeCache
+                        ),
                         getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: nodesAPI),
                         getAssetUseCase: WireCellsGetAssetUseCase(
                             localAssetRepository: localAssetRepository,

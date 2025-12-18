@@ -102,6 +102,15 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         try await restAPI.deleteVersion(uuid: nodeID, versionID: versionID)
     }
 
+    package func getVersions(nodeID: UUID) async throws -> [WireCellsNodeVersion] {
+        let versionsDTO = try await restAPI.getVersions(uuid: nodeID)
+        return versionsDTO.toDomainModel()
+    }
+
+    package func restoreVersion(nodeID: UUID, versionID: UUID) async throws {
+        try await restAPI.restoreVersion(uuid: nodeID, versionID: versionID)
+    }
+
     package func downloadFile(
         out: URL,
         cellPath: String,
