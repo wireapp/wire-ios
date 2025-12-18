@@ -121,7 +121,7 @@ class ConversationUpdatesGeneratorTests {
         await sut.start()
 
         // WHEN
-        sut.stop()
+        await sut.stop()
 
         // THEN
         var updateConversationItems = [UpdateConversationItem]()
