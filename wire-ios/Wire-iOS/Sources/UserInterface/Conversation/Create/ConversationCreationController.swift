@@ -380,7 +380,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         let accessMode: [WireNetwork.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
         let accessRoles = ConversationAccessRoleV2.from(
             allowGuests: values.allowGuests,
-            allowApps: values.isAppsFeatureEnabled ? values.allowApps : false
+            allowApps: (values.isAppsFeatureEnabled || values.areLegacyBotsAvailable) ? values.allowApps : false
         ).compactMap {
             $0.toNetworkModel()
         }
