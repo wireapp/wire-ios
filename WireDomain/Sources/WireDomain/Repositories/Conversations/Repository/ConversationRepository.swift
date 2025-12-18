@@ -377,6 +377,16 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await deleteMembership(for: removedUserIDs, time: date)
     }
 
+    public func isSelfAnActiveMember(
+        in groupID: MLSGroupID
+    ) async -> Bool {
+        nonisolated(unsafe) var isSelfAnActiveMember = false
+        await conversationsLocalStore.execute(identifier: groupID) { conversation, _ in
+            isSelfAnActiveMember = conversation?.isSelfAnActiveMember ?? false
+        }
+        return isSelfAnActiveMember
+    }
+
     // MARK: - Private
 
     private func addSystemMessage(

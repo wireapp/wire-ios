@@ -22,7 +22,6 @@ import WireTransport
 @objcMembers
 class RecordingMockTransportSession: NSObject, TransportSessionType {
 
-    var pushChannel: ZMPushChannel
     var cookieStorage: ZMPersistentCookieStorage
     var requestLoopDetectionCallback: ((String) -> Void)?
 
@@ -31,8 +30,7 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
         mockReachability
     }
 
-    init(cookieStorage: ZMPersistentCookieStorage, pushChannel: ZMPushChannel) {
-        self.pushChannel = pushChannel
+    init(cookieStorage: ZMPersistentCookieStorage) {
         self.cookieStorage = cookieStorage
 
         super.init()
@@ -86,11 +84,6 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
     }
 
     func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void) {}
-
-    var didCallConfigurePushChannel = false
-    func configurePushChannel(consumer: ZMPushChannelConsumer, groupQueue: GroupQueue) {
-        didCallConfigurePushChannel = true
-    }
 
     var renewAccessTokenCalls = [String]()
     func renewAccessToken(with clientID: String) {

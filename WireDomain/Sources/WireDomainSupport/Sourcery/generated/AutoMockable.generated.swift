@@ -1540,6 +1540,21 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
+    // MARK: - execute
+
+    public var executeIdentifierBlock_Invocations: [(identifier: MLSGroupID, block: (ZMConversation?, NSManagedObjectContext) -> Void)] = []
+    public var executeIdentifierBlock_MockMethod: ((MLSGroupID, @Sendable @escaping (ZMConversation?, NSManagedObjectContext) -> Void) async -> Void)?
+
+    public func execute(identifier: MLSGroupID, block: @Sendable @escaping (ZMConversation?, NSManagedObjectContext) -> Void) async {
+        executeIdentifierBlock_Invocations.append((identifier: identifier, block: block))
+
+        guard let mock = executeIdentifierBlock_MockMethod else {
+            fatalError("no mock for `executeIdentifierBlock`")
+        }
+
+        await mock(identifier, block)
+    }
+
 }
 
 class MockConversationLocationMessageNotificationBuilderProtocol: ConversationLocationMessageNotificationBuilderProtocol {
@@ -1953,6 +1968,24 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol,
         }
     }
 
+    // MARK: - isSelfAnActiveMember
+
+    public var isSelfAnActiveMemberIn_Invocations: [WireDataModel.MLSGroupID] = []
+    public var isSelfAnActiveMemberIn_MockMethod: ((WireDataModel.MLSGroupID) async -> Bool)?
+    public var isSelfAnActiveMemberIn_MockValue: Bool?
+
+    public func isSelfAnActiveMember(in groupID: WireDataModel.MLSGroupID) async -> Bool {
+        isSelfAnActiveMemberIn_Invocations.append(groupID)
+
+        if let mock = isSelfAnActiveMemberIn_MockMethod {
+            return await mock(groupID)
+        } else if let mock = isSelfAnActiveMemberIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isSelfAnActiveMemberIn`")
+        }
+    }
+
 }
 
 class MockConversationTextMessageNotificationBuilderProtocol: ConversationTextMessageNotificationBuilderProtocol {
@@ -1977,45 +2010,6 @@ class MockConversationTextMessageNotificationBuilderProtocol: ConversationTextMe
         } else {
             fatalError("no mock for `buildContentTextConversationIDSenderID`")
         }
-    }
-
-}
-
-public class MockConversationUpdatesGeneratorProtocol: ConversationUpdatesGeneratorProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - start
-
-    public var start_Invocations: [Void] = []
-    public var start_MockMethod: (() async -> Void)?
-
-    public func start() async {
-        start_Invocations.append(())
-
-        guard let mock = start_MockMethod else {
-            fatalError("no mock for `start`")
-        }
-
-        await mock()
-    }
-
-    // MARK: - stop
-
-    public var stop_Invocations: [Void] = []
-    public var stop_MockMethod: (() -> Void)?
-
-    public func stop() {
-        stop_Invocations.append(())
-
-        guard let mock = stop_MockMethod else {
-            fatalError("no mock for `stop`")
-        }
-
-        mock()
     }
 
 }
@@ -2342,6 +2336,84 @@ class MockGenerateNotificationUseCaseProtocol: GenerateNotificationUseCaseProtoc
 
 }
 
+public class MockGeneratorProtocol: GeneratorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - start
+
+    public var start_Invocations: [Void] = []
+    public var start_MockMethod: (() async -> Void)?
+
+    public func start() async {
+        start_Invocations.append(())
+
+        guard let mock = start_MockMethod else {
+            fatalError("no mock for `start`")
+        }
+
+        await mock()
+    }
+
+    // MARK: - stop
+
+    public var stop_Invocations: [Void] = []
+    public var stop_MockMethod: (() -> Void)?
+
+    public func stop() {
+        stop_Invocations.append(())
+
+        guard let mock = stop_MockMethod else {
+            fatalError("no mock for `stop`")
+        }
+
+        mock()
+    }
+
+}
+
+public class MockIncrementalGeneratorProtocol: IncrementalGeneratorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - start
+
+    public var start_Invocations: [Void] = []
+    public var start_MockMethod: (() async -> Void)?
+
+    public func start() async {
+        start_Invocations.append(())
+
+        guard let mock = start_MockMethod else {
+            fatalError("no mock for `start`")
+        }
+
+        await mock()
+    }
+
+    // MARK: - stop
+
+    public var stop_Invocations: [Void] = []
+    public var stop_MockMethod: (() -> Void)?
+
+    public func stop() {
+        stop_Invocations.append(())
+
+        guard let mock = stop_MockMethod else {
+            fatalError("no mock for `stop`")
+        }
+
+        mock()
+    }
+
+}
+
 public class MockIncrementalSyncProtocol: IncrementalSyncProtocol {
 
     // MARK: - Life cycle
@@ -2399,6 +2471,45 @@ public class MockInitialSyncProtocol: InitialSyncProtocol {
         }
 
         try await mock(skipPullingLastUpdateEventID)
+    }
+
+}
+
+public class MockLiveGeneratorProtocol: LiveGeneratorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - start
+
+    public var start_Invocations: [Void] = []
+    public var start_MockMethod: (() async -> Void)?
+
+    public func start() async {
+        start_Invocations.append(())
+
+        guard let mock = start_MockMethod else {
+            fatalError("no mock for `start`")
+        }
+
+        await mock()
+    }
+
+    // MARK: - stop
+
+    public var stop_Invocations: [Void] = []
+    public var stop_MockMethod: (() -> Void)?
+
+    public func stop() {
+        stop_Invocations.append(())
+
+        guard let mock = stop_MockMethod else {
+            fatalError("no mock for `stop`")
+        }
+
+        mock()
     }
 
 }

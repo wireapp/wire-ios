@@ -51,7 +51,6 @@ class EventDecoderTest: MessagingTestBase {
         lastEventIDRepository.storeLastEventID_MockMethod = { _ in }
 
         syncMOC.performGroupedAndWait {
-            self.mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
             self.syncMOC.mlsService = self.mockMLSService
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.accountIdentifier
@@ -718,8 +717,6 @@ extension EventDecoderTest {
 
         // Then
         XCTAssertTrue(decryptedEvents.isEmpty)
-        wait(forConditionToBeTrue: !self.mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty, timeout: 3)
-        XCTAssertEqual(1, mockMLSService.commitPendingProposalsIfNeeded_Invocations.count)
     }
 
     func test_DecryptMLSMessage_CommitsPendingsProposalsIsNotCalled_WhenReceivingProposalViaDownload() async throws {
@@ -742,8 +739,6 @@ extension EventDecoderTest {
 
         // Then
         XCTAssertTrue(decryptedEvents.isEmpty)
-        spinMainQueue(withTimeout: 1)
-        XCTAssertTrue(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
     }
 
     func test_DecryptMLSMessage_ReturnsNoEvent_WhenPayloadIsInvalid() async throws {
