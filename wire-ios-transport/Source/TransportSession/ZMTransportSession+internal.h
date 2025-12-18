@@ -38,7 +38,6 @@
                                  environment:(id<BackendEnvironmentProvider>)environment
                                proxyUsername:(NSString *)proxyUsername
                                proxyPassword:(NSString *)proxyPassword
-                            pushChannelClass:(Class)pushChannelClass
                                cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
                                    userAgent:(NSString *)userAgent

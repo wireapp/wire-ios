@@ -285,8 +285,7 @@ final class APIMigrationManagerTests: MessagingTest {
         )
 
         let mockTransportSession = RecordingMockTransportSession(
-            cookieStorage: cookieStorage,
-            pushChannel: MockPushChannel()
+            cookieStorage: cookieStorage
         )
 
         let mockContextStorable = MockLAContextStorable()

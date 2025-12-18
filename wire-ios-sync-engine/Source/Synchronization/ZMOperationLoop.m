@@ -29,8 +29,6 @@
 #import "WireSyncEngineLogs.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 
-NSString * const ZMPushChannelIsOpenKey = @"pushChannelIsOpen";
-
 static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
 
 
@@ -85,17 +83,6 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         self.apiVersion = apiVersion;
 
         [ZMRequestAvailableNotification addObserver:self];
-        
-        NSManagedObjectContext *moc = self.syncMOC;
-        // this is needed to avoid loading from syncMOC on the main queue
-        [moc performGroupedBlock:^{
-            [self.transportSession configurePushChannelWithConsumer:self groupQueue:moc];
-            if (isSyncV2Enabled) {
-                [self.transportSession.pushChannel setKeepOpen:false];
-            } else {
-                [self.transportSession.pushChannel setKeepOpen:operationStatus.operationState == SyncEngineOperationStateForeground];
-            }
-        }];
     }
 
     return self;

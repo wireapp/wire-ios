@@ -23,8 +23,6 @@ public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, T
 
     var reachability: ReachabilityProvider & TearDownCapable { get }
 
-    var pushChannel: ZMPushChannel { get }
-
     var accessTokenHandler: ZMAccessTokenHandler { get }
 
     var cookieStorage: ZMPersistentCookieStorage { get }
@@ -50,9 +48,6 @@ public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, T
 
     @objc(addCompletionHandlerForBackgroundSessionWithIdentifier:handler:)
     func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void)
-
-    @objc(configurePushChannelWithConsumer:groupQueue:)
-    func configurePushChannel(consumer: ZMPushChannelConsumer, groupQueue: GroupQueue)
 
     @objc(renewAccessTokenWithClientID:)
     func renewAccessToken(with clientID: String)
