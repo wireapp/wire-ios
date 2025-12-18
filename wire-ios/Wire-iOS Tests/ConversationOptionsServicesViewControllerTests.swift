@@ -25,6 +25,7 @@ final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptio
     // MARK: Properties
 
     typealias SetHandler = (Bool, (Result<Void, Error>) -> Void) -> Void
+    var areLegacyBotsAvailable = false
     var isAppsFeatureEnabled = true
     var allowApps: Bool
     var allowAppsChangedHandler: ((Bool) -> Void)?

@@ -559,6 +559,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         let menu = ConversationGuestOptionsViewController(
             conversation: conversation,
             userSession: userSession,
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
             isAppsFeatureEnabled: isAppsFeatureEnabled
         )
         navigationController?.pushViewController(menu, animated: animated)
@@ -570,6 +571,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         let menu = ConversationServicesOptionsViewController(
             conversation: conversation,
             userSession: userSession,
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
             isAppsFeatureEnabled: isAppsFeatureEnabled
         )
         navigationController?.pushViewController(menu, animated: animated)

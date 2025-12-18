@@ -31,6 +31,7 @@ extension ZMConversation {
         private var conversation: ZMConversation
         private var token: NSObjectProtocol?
         private let userSession: ZMUserSession
+        let areLegacyBotsAvailable: Bool
         let isAppsFeatureEnabled: Bool
         var allowGuestsChangedHandler: ((Bool) -> Void)?
         var allowAppsChangedHandler: ((Bool) -> Void)?
@@ -39,10 +40,12 @@ extension ZMConversation {
         init(
             conversation: ZMConversation,
             userSession: ZMUserSession,
+            areLegacyBotsAvailable: Bool,
             isAppsFeatureEnabled: Bool
         ) {
             self.conversation = conversation
             self.userSession = userSession
+            self.areLegacyBotsAvailable = areLegacyBotsAvailable
             self.isAppsFeatureEnabled = isAppsFeatureEnabled
             super.init()
             self.token = ConversationChangeInfo.add(observer: self, for: conversation)

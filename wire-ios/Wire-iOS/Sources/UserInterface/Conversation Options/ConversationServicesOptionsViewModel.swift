@@ -21,6 +21,10 @@ import WireUtilities
 
 protocol ConversationServicesOptionsViewModelConfiguration: AnyObject {
 
+    /// `true` if at least one bot is whitelisted for the team.
+
+    var areLegacyBotsAvailable: Bool { get }
+
     /// `true` if the team is able to use apps (feature flag enabled), `false` for individual users or free teams.
 
     var isAppsFeatureEnabled: Bool { get }
@@ -82,8 +86,7 @@ final class ConversationServicesOptionsViewModel {
     }
 
     private func updateRows() {
-        // TODO: bots whitelisted?
-        if configuration.isAppsFeatureEnabled || false || configuration.allowApps {
+        if configuration.isAppsFeatureEnabled || configuration.areLegacyBotsAvailable || configuration.allowApps {
             state.rows = [.allowAppsToggle(
                 get: { [unowned self] in return configuration.allowApps },
                 set: { [unowned self] in setAllowApps($0, sender: $1) }

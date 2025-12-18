@@ -46,11 +46,13 @@ final class ConversationGuestOptionsViewController: UIViewController,
     convenience init(
         conversation: ZMConversation,
         userSession: ZMUserSession,
+        areLegacyBotsAvailable: Bool,
         isAppsFeatureEnabled: Bool
     ) {
         let configuration = ZMConversation.OptionsConfigurationContainer(
             conversation: conversation,
             userSession: userSession,
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
             isAppsFeatureEnabled: isAppsFeatureEnabled
         )
         self.init(
