@@ -73,7 +73,6 @@ struct GeneratorsDirectoryTests {
         subject.send(state)
         _ = await incrementalStoped
 
-
         // THEN
         #expect(base.stop_Invocations.count == 1)
         #expect(live.stop_Invocations.count == 1)
