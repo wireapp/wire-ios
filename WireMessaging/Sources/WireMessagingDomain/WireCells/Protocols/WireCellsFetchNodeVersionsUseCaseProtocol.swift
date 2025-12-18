@@ -16,24 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-public extension ZMClientMessage {
-
-    override var multipartMessageData: MultipartMessageData? {
-        switch underlyingMessage?.content {
-        case let .multipart(multipart):
-            MultipartMessageData(multipart: multipart)
-        case let .edited(messageEdit):
-            switch messageEdit.content {
-            case let .multipart(multipart):
-                MultipartMessageData(multipart: multipart)
-            default:
-                nil
-            }
-        default:
-            nil
-        }
-    }
-
+public protocol WireCellsFetchNodeVersionsUseCaseProtocol: Sendable {
+    func invoke(nodeID: UUID) async throws -> [WireCellsNodeVersion]
 }

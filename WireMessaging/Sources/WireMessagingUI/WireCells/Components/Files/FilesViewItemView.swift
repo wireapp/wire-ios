@@ -37,12 +37,14 @@ struct FilesViewItemView: View {
     private let canMoveToFolder: Bool
     private let canEditFile: Bool
     private var canDeleteFiles: Bool
+    private let canOpenVersionHistory: Bool
 
     init(
         viewModel: @autoclosure @escaping () -> FilesItemViewModel,
         canRenameFile: Bool = false,
         canEditTags: Bool = false,
         canMoveToFolder: Bool = false,
+        canOpenVersionHistory: Bool = false,
         canEditFile: Bool = false,
         canDeleteFiles: Bool = false
     ) {
@@ -52,6 +54,7 @@ struct FilesViewItemView: View {
         self.canMoveToFolder = canMoveToFolder
         self.canEditFile = canEditFile
         self.canDeleteFiles = canDeleteFiles
+        self.canOpenVersionHistory = canOpenVersionHistory
     }
 
     var body: some View {
@@ -112,7 +115,16 @@ struct FilesViewItemView: View {
                     if viewModel.isDownloadOptionAvailable {
                         Button(action: download) {
                             Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
-                        }.disabled(viewModel.isDownloading)
+                        }
+                    }
+
+                    if canOpenVersionHistory, !viewModel.isInRecycleBin {
+                        Button(action: showVersionHistory) {
+                            Label(
+                                Strings.Files.Item.Menu.versionHistory,
+                                systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90"
+                            )
+                        }
                     }
 
                     if canEditFile, viewModel.isEditable {
@@ -238,6 +250,10 @@ struct FilesViewItemView: View {
         Task { await viewModel.download() }
     }
 
+    private func showVersionHistory() {
+        Task { await viewModel.showVersionHistory() }
+    }
+
     private func rename() {
         Task { await viewModel.rename() }
     }
@@ -318,7 +334,13 @@ private extension View {
 #Preview {
     VStack(spacing: 0) {
         FilesViewItemView(viewModel: .preview())
-        FilesViewItemView(viewModel: .preview(), canRenameFile: true, canEditTags: true, canDeleteFiles: true)
+        FilesViewItemView(
+            viewModel: .preview(),
+            canRenameFile: true,
+            canEditTags: true,
+            canOpenVersionHistory: true,
+            canDeleteFiles: true
+        )
         FilesViewItemView(viewModel: .preview(tags: ["urgent"]), canRenameFile: true, canEditTags: true)
         FilesViewItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]), canDeleteFiles: true)
     }

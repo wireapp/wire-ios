@@ -27,6 +27,7 @@ public extension TimeInterval {
     static let fiveMinutes = 5 * oneMinute
     static let oneMinute = 60 * oneSecond
     static let tenSeconds = 10 * oneSecond
+    static let thirtySeconds = 30 * oneSecond
     static let oneSecond = TimeInterval(1)
 
     /// Number of seconds for a whole year (accounting for leap years) from now.

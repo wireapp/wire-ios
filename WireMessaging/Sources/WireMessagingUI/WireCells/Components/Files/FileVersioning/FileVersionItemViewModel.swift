@@ -16,24 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
+import WireFoundation
+import WireMessagingDomain
 
-public extension ZMClientMessage {
+@MainActor
+final class FileVersionItemViewModel: ObservableObject {
 
-    override var multipartMessageData: MultipartMessageData? {
-        switch underlyingMessage?.content {
-        case let .multipart(multipart):
-            MultipartMessageData(multipart: multipart)
-        case let .edited(messageEdit):
-            switch messageEdit.content {
-            case let .multipart(multipart):
-                MultipartMessageData(multipart: multipart)
-            default:
-                nil
-            }
-        default:
-            nil
-        }
+    private let nodeID: UUID
+    private let versionID: UUID
+    private let onRestore: (FileVersionItem) async -> Void
+
+    let item: FileVersionItem
+    let accentColor: WireAccentColor
+
+    init(
+        nodeID: UUID,
+        item: FileVersionItem,
+        accentColor: WireAccentColor,
+        onRestore: @escaping (FileVersionItem) async -> Void
+    ) {
+        self.nodeID = nodeID
+        self.versionID = item.id
+        self.item = item
+        self.accentColor = accentColor
+        self.onRestore = onRestore
     }
 
+    func restore() async {
+        await onRestore(item)
+    }
 }
