@@ -20,6 +20,20 @@ import Foundation
 
 extension ZMConversation {
 
+    public class func sortCommitPendingProsalsByDateAscending() -> NSSortDescriptor {
+        NSSortDescriptor(
+            key: commitPendingProposalDateKey,
+            ascending: true
+        )
+    }
+
+    public class func commitPendingProposalDatePredicate() -> NSPredicate {
+        NSPredicate(
+            format: "%K != nil",
+            argumentArray: [commitPendingProposalDateKey]
+        )
+    }
+
     open override class func predicateForFilteringResults() -> NSPredicate {
         let selfType = ZMConversationType(rawValue: 1)!
         return NSPredicate(

@@ -179,9 +179,6 @@
         oneOnOneConversationID = oneOnOneConversation.identifier;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
-    
-    [self.sut clearNotifications];
-    WaitForAllGroupsToBeEmpty(0.5);
 
     NSString *messageText = @"Fofooof";
     NSUUID *nonce = [NSUUID createUUID];

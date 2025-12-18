@@ -635,7 +635,6 @@ public final class ZMUserSession: NSObject {
             featureConfigRepository: clientSessionComponent.featureConfigRepository,
             syncStateSubject: clientSessionComponent.syncStateSubject,
             pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator,
-            conversationUpdatesGenerator: clientSessionComponent.conversationUpdatesGenerator,
             networkStatePublisher: networkStateSubject.eraseToAnyPublisher()
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
@@ -667,6 +666,7 @@ public final class ZMUserSession: NSObject {
         Task {
             await clientSessionComponent.workAgent.setAutoStartEnabled(true)
             await clientSessionComponent.workAgent.start()
+            clientSessionComponent.generatorsDirectory.observeSyncState()
         }
     }
 
@@ -739,7 +739,6 @@ public final class ZMUserSession: NSObject {
     }
 
     private func configureTransportSession() {
-        transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier
         transportSession.setNetworkStateDelegate(self)
         transportSession.setAccessTokenRenewalFailureHandler { [weak self] response in
             self?.transportSessionAccessTokenDidFail(response: response)
@@ -1242,21 +1241,6 @@ extension ZMUserSession: SyncAgentDelegate {
                 context: notificationContext
             ).post()
         }
-
-        syncContext.perform { [weak self] in
-            guard let self else { return }
-            let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
-
-            if selfClient?.hasRegisteredMLSClient == true {
-                Task {
-                    do {
-                        try await self.mlsService.repairOutOfSyncConversations()
-                    } catch {
-                        WireLogger.mls.error("Repairing out of sync conversations failed: \(error)")
-                    }
-                }
-            }
-        }
     }
 
     func didStartIncrementalSync() {
@@ -1302,13 +1286,6 @@ extension ZMUserSession: SyncAgentDelegate {
                 )
             } else {
                 WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
-            }
-
-            if !isRecovering, mlsFeature.isEnabled {
-                Task.detached { [mlsService] in
-                    // we don't need to wait for this, as it can take a while to finish
-                    await mlsService.commitPendingProposalsIfNeeded()
-                }
             }
 
             await calculateSelfSupportedProtocolsIfNeeded()
@@ -1515,9 +1492,6 @@ extension ZMUserSession: SyncAgentDelegate {
 extension ZMUserSession: ZMClientRegistrationStatusDelegate {
 
     public func didRegisterSelfUserClient(_ userClient: WireDataModel.UserClient) {
-        // If during registration user allowed notifications,
-        // The push token can only be registered after client registration
-        transportSession.pushChannel.clientID = userClient.remoteIdentifier
         registerCurrentPushToken()
         renewAccessTokenIfNeeded(for: userClient)
 

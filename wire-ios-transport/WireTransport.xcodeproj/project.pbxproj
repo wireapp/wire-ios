@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		01BBCFD82BF559AA001D9397 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 01BBCFD72BF559AA001D9397 /* Starscream */; };
 		591B6E632C8B09F3009F8A7B /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F0296F079E001D7C88 /* WireUtilities.framework */; };
 		591B6E662C8B09F7009F8A7B /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		591B6E692C8B09FB009F8A7B /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; };
@@ -118,7 +117,6 @@
 				Public/ZMBackgroundable.h,
 				Public/ZMKeychain.h,
 				Public/ZMPersistentCookieStorage.h,
-				Public/ZMPushChannel.h,
 				Public/ZMReachability.h,
 				Public/ZMRequestCancellation.h,
 				Public/ZMTaskIdentifierMap.h,
@@ -131,7 +129,6 @@
 				Public/ZMTransportSession.h,
 				Public/ZMURLSession.h,
 				Public/ZMUserAgent.h,
-				PushChannel/ZMPushChannelType.h,
 				Requests/ZMExponentialBackoff.h,
 				"Requests/ZMTransportRequest+Internal.h",
 				URLSession/ZMTaskIdentifier.h,
@@ -165,7 +162,6 @@
 				59FE6ACC2DA90CBA00DB461C /* WireFoundation in Frameworks */,
 				591B6E632C8B09F3009F8A7B /* WireUtilities.framework in Frameworks */,
 				59537CD92CFF7ED800920B59 /* WireLogging in Frameworks */,
-				01BBCFD82BF559AA001D9397 /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -290,7 +286,6 @@
 			);
 			name = "WireTransport-ios";
 			packageProductDependencies = (
-				01BBCFD72BF559AA001D9397 /* Starscream */,
 				59537CD82CFF7ED800920B59 /* WireLogging */,
 				59FE6ACB2DA90CBA00DB461C /* WireFoundation */,
 			);
@@ -381,7 +376,6 @@
 			);
 			mainGroup = 3E88BC9D1B1F35DF00232589;
 			packageReferences = (
-				01BBCFD62BF559AA001D9397 /* XCRemoteSwiftPackageReference "starscream" */,
 			);
 			productRefGroup = 3E88BCA81B1F35DF00232589 /* Products */;
 			projectDirPath = "";
@@ -815,23 +809,7 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		01BBCFD62BF559AA001D9397 /* XCRemoteSwiftPackageReference "starscream" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/wireapp/starscream";
-			requirement = {
-				kind = exactVersion;
-				version = 4.0.8;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		01BBCFD72BF559AA001D9397 /* Starscream */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 01BBCFD62BF559AA001D9397 /* XCRemoteSwiftPackageReference "starscream" */;
-			productName = Starscream;
-		};
 		59537CD82CFF7ED800920B59 /* WireLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLogging;
