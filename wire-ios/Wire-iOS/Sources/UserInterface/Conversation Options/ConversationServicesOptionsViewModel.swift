@@ -82,7 +82,8 @@ final class ConversationServicesOptionsViewModel {
     }
 
     private func updateRows() {
-        if configuration.isAppsFeatureEnabled {
+        // TODO: bots whitelisted?
+        if configuration.isAppsFeatureEnabled || false || configuration.allowApps {
             state.rows = [.allowAppsToggle(
                 get: { [unowned self] in return configuration.allowApps },
                 set: { [unowned self] in setAllowApps($0, sender: $1) }

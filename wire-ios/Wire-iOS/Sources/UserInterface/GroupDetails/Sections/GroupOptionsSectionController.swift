@@ -58,6 +58,10 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             case .services:
                 guard user.canModifyGuestsAccessControlSettings(in: conversation),
                       conversation.botCanBeAdded else { return false }
+                // if apps are already enabled for a conversation, allow disabling them
+                if conversation.allowApps {
+                    return true
+                }
                 switch conversation.messageProtocol {
                 case .mls:
                     return isAppsFeatureEnabled
