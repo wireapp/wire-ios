@@ -146,8 +146,9 @@ struct ShareLinkView: View {
 
                 settingsRow(
                     title: Strings.ShareLink.LinkSection.expirationTitle,
-                    description: Strings.ShareLink.LinkSection.expirationDescription,
+                    description: viewModel.expirationDescription,
                     status: viewModel.expirationStatusText,
+                    statusColor: viewModel.expirationStatusColor,
                     action: { viewModel.sheetNavigation = .expiration(linkID: linkID) }
                 )
             }
@@ -159,6 +160,7 @@ struct ShareLinkView: View {
         title: String,
         description: String,
         status: String,
+        statusColor: Color = ColorTheme.Base.secondaryText.color,
         action: @escaping () async -> Void
     ) -> some View {
         VStack(alignment: .leading) {
@@ -175,7 +177,7 @@ struct ShareLinkView: View {
                     HStack(spacing: 4) {
                         Text(status)
                             .font(for: .body1)
-                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                            .foregroundStyle(statusColor)
 
                         Image(systemName: "chevron.right")
                             .font(.system(size: 14, weight: .semibold))
@@ -194,7 +196,7 @@ struct ShareLinkView: View {
 
             Text(description)
                 .font(for: .subline1)
-                .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                .foregroundStyle(statusColor)
                 .padding(.leading, 4)
         }
     }

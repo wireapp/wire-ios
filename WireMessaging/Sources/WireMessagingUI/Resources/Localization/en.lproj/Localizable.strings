@@ -202,6 +202,8 @@
 "conversation.wireCells.shareLink.preparingLinkButton" = "Preparing link";
 "conversation.wireCells.shareLink.off" = "OFF";
 "conversation.wireCells.shareLink.on" = "ON";
+"conversation.wireCells.shareLink.expired" = "EXPIRED";
+"conversation.wireCells.shareLink.linkExpiredOn" = "Link expired on %@";
 
 // MARK: - Share Link Password View
 "conversation.wireCells.shareLink.password.title" = "Password";

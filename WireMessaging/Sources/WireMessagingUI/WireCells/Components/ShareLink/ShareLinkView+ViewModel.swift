@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import SwiftUI
 import UIKit
+import WireDesign
 import WireFoundation
 import WireMessagingDomain
 
@@ -47,6 +48,14 @@ extension ShareLinkView {
             let deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase
         }
 
+        typealias DateFormattingContext = (
+            locale: Locale,
+            calendar: Calendar,
+            timeZone: TimeZone
+        )
+
+        let context: DateFormattingContext
+
         let fileItem: FilesViewItem
         let useCases: UseCases
         private var password: String?
@@ -73,9 +82,15 @@ extension ShareLinkView {
 
         init(
             fileItem: FilesViewItem,
+            context: DateFormattingContext = (
+                Locale.autoupdatingCurrent,
+                Calendar.autoupdatingCurrent,
+                TimeZone.autoupdatingCurrent
+            ),
             useCases: UseCases,
         ) {
             self.fileItem = fileItem
+            self.context = context
             self.useCases = useCases
             self.publicLinkState = if let linkID = fileItem.publicLinkID {
                 .initial(id: linkID)
@@ -145,7 +160,43 @@ extension ShareLinkView {
         }
 
         var expirationStatusText: String {
-            expirationDate != nil ? Strings.on : Strings.off
+            if let expirationDate {
+                expirationDate > .now ? Strings.on : Strings.expired
+            } else {
+                Strings.off
+            }
+        }
+
+        var expirationStatusColor: Color {
+            if let expirationDate, expirationDate < .now {
+                return ColorTheme.Base.error.color
+            }
+
+            return ColorTheme.Base.secondaryText.color
+        }
+
+        var expirationDescription: String {
+            if let expirationDate {
+                expirationDate > .now ? Strings.LinkSection.expirationDescription : Strings
+                    .linkExpiredOn(formattedExpirationDate(expirationDate))
+            } else {
+                Strings.LinkSection.expirationDescription
+            }
+        }
+
+        private func formattedExpirationDate(_ date: Date) -> String {
+            let style = Date.FormatStyle(
+                locale: context.locale,
+                calendar: context.calendar,
+                timeZone: context.timeZone
+            )
+            .month(.wide)
+            .day()
+            .year()
+            .hour(.defaultDigits(amPM: .abbreviated))
+            .minute()
+
+            return date.formatted(style)
         }
 
         var expirationDate: Date? {
