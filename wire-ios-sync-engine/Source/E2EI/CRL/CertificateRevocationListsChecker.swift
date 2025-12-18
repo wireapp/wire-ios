@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireLogging
 import WireCoreCrypto
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol CertificateRevocationListsChecking {

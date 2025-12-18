@@ -19,10 +19,10 @@
 import WireCoreCrypto
 
 public extension MockCoreCryptoProtocol {
-    
+
     func mockTransaction(context: CoreCryptoContextProtocol) {
         transaction_MockMethod = { block in
-            return try await block(context)
+            try await block(context)
         }
     }
 }
