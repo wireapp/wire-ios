@@ -18,14 +18,14 @@
 
 import Combine
 import Foundation
-import WireMessagingDomain
 import UIKit // only required for UIPasteboard
+import WireMessagingDomain
 
 extension ShareLinkPasswordView {
     @MainActor
     final class ViewModel: ObservableObject {
         let existingPassword: String?
-        
+
         struct UseCases {
             let updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase
             let storePublicLinkPasswordUseCase: WireCellsStorePublicLinkPasswordUseCase
@@ -38,7 +38,7 @@ extension ShareLinkPasswordView {
         @Published var isPresentingNoAccessToExistingPasswordConfirmation = false
         @Published var isPresentingErrorAlert = false
         @Published var isLoading = false
-        
+
         private let linkID: String?
         private let isMissingPassword: Bool
         private let didSave: (Bool, String?) -> Void
@@ -58,8 +58,8 @@ extension ShareLinkPasswordView {
             self.isPasswordEnabled = requiresPassword
             self.useCases = useCases
             self.didSave = didSave
-            
-            isPresentingNoAccessToExistingPasswordConfirmation = isMissingPassword
+
+            self.isPresentingNoAccessToExistingPasswordConfirmation = isMissingPassword
         }
 
         var currentPassword: String? {
@@ -82,22 +82,22 @@ extension ShareLinkPasswordView {
                 hasChanges
             }
         }
-        
+
         var displayPasswordInputArea: Bool {
             isPasswordEnabled && !isPresentingNoAccessToExistingPasswordConfirmation
         }
-        
+
         func save() async {
             guard let linkID else { return }
-            
+
             do {
                 isLoading = true
-                
+
                 let result = try await useCases.updatePublicLinkPassword.invoke(
                     linkID: linkID,
                     password: isPasswordEnabled ? passwordInput : nil
                 )
-                
+
                 if result.requiresPassword {
                     try await useCases.storePublicLinkPasswordUseCase.invoke(
                         linkID: linkID,
@@ -108,7 +108,7 @@ extension ShareLinkPasswordView {
                         linkID: linkID
                     )
                 }
-                
+
                 didSave(result.requiresPassword, result.requiresPassword ? passwordInput : nil)
             } catch {
                 isPresentingErrorAlert = true
@@ -119,7 +119,7 @@ extension ShareLinkPasswordView {
         func generatePassword() {
             passwordInput = generateRandomPassword()
         }
-        
+
         private func generateRandomPassword() -> String {
             let minLength = 15
             let maxLength = 20

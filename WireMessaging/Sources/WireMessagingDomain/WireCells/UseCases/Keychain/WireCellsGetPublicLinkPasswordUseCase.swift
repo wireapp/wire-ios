@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import WireFoundation
 import Foundation
+package import WireFoundation
 
 package struct WireCellsGetPublicLinkPasswordUseCase {
 
@@ -36,13 +36,12 @@ package struct WireCellsGetPublicLinkPasswordUseCase {
             .itemClass(.genericPassword),
             .returningData(true)
         ]
-        
+
         let data: Data? = try? await keychain.fetchItem(query: query)
-        
+
         guard let data else { return nil }
-        
+
         return String(decoding: data, as: UTF8.self)
     }
 
 }
-

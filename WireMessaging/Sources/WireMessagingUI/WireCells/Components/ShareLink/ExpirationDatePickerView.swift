@@ -199,23 +199,23 @@ struct DateSegmentButton: View {
     }
 }
 
- #Preview("With initial date") {
-     ExpirationDatePickerView(viewModel: .preview(
+#Preview("With initial date") {
+    ExpirationDatePickerView(viewModel: .preview(
         date: Calendar.current.date(byAdding: .hour, value: 2, to: Date()))
-     )
-     .colorScheme(.light)
- }
+    )
+    .colorScheme(.light)
+}
 
- #Preview("Date in the past") {
-     ExpirationDatePickerView(viewModel: .preview(
+#Preview("Date in the past") {
+    ExpirationDatePickerView(viewModel: .preview(
         date: Calendar.current.startOfDay(for: Date()))
-     )
-     .colorScheme(.light)
- }
+    )
+    .colorScheme(.light)
+}
 
- #Preview("No initial date") {
-     ExpirationDatePickerView(
+#Preview("No initial date") {
+    ExpirationDatePickerView(
         viewModel: .preview(date: nil)
-     )
-     .colorScheme(.dark)
- }
+    )
+    .colorScheme(.dark)
+}

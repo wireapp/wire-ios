@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 package import WireFoundation
 import WireLogging
-import Foundation
 
 package struct WireCellsStorePublicLinkPasswordUseCase {
 
@@ -35,7 +35,7 @@ package struct WireCellsStorePublicLinkPasswordUseCase {
         guard let data = password.data(using: .utf8) else {
             return
         }
-        
+
         let query: Set<KeychainQueryItem> = [
             .service("Wire: file shared link for wire.com"),
             .account(linkID),
@@ -43,12 +43,12 @@ package struct WireCellsStorePublicLinkPasswordUseCase {
             .accessible(.afterFirstUnlock),
             .data(data)
         ]
-        
+
         do {
             try await keychain.addItem(query: query)
         } catch let error as KeychainError {
             switch error {
-            case .errorStatus(let oSstatus) where oSstatus == errSecDuplicateItem:
+            case let .errorStatus(oSstatus) where oSstatus == errSecDuplicateItem:
                 let updateQuery: Set<KeychainQueryItem> = [.data(data)]
                 try await keychain.updateItem(query: query, attributesToUpdate: updateQuery)
             default:

@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 package import WireFoundation
 import WireLogging
-import Foundation
 
 package struct WireCellsDeletePublicLinkPasswordUseCase {
-    
+
     enum Failure: Error {
         case itemNotFound
     }
@@ -38,14 +38,14 @@ package struct WireCellsDeletePublicLinkPasswordUseCase {
         let query: Set<KeychainQueryItem> = [
             .service("Wire: file shared link for wire.com"),
             .account(linkID),
-            .itemClass(.genericPassword),
+            .itemClass(.genericPassword)
         ]
-        
+
         do {
             try await keychain.deleteItem(query: query)
         } catch let error as KeychainError {
             switch error {
-            case .errorStatus(let oSstatus) where oSstatus == errSecItemNotFound:
+            case let .errorStatus(oSstatus) where oSstatus == errSecItemNotFound:
                 return
             default:
                 return WireLogger.wireCells.error("Failed to delete password from keychain: \(error)")
@@ -53,7 +53,7 @@ package struct WireCellsDeletePublicLinkPasswordUseCase {
         } catch {
             return WireLogger.wireCells.error("Failed to delete password from keychain: \(error)")
         }
-    
+
     }
 
 }

@@ -31,7 +31,7 @@ struct ShareLinkPasswordView: View {
     @State private var isPresentingRemovePasswordConfirmation = false
 
     @StateObject private var viewModel: ViewModel
-    
+
     let id = UUID()
 
     init(viewModel: @autoclosure @escaping () -> ShareLinkPasswordView.ViewModel) {
@@ -131,7 +131,7 @@ struct ShareLinkPasswordView: View {
                             generatePasswordButton()
                             passwordInputArea()
                         }
-                        
+
                         if !viewModel.passwordInput.isEmpty {
                             sharePasswordButton()
                             resetPasswordButton()
@@ -333,7 +333,7 @@ struct ShareLinkPasswordView: View {
             } label: {
                 if viewModel.isLoading {
                     ProgressView()
-                    .tint(ColorTheme.Base.secondaryText.color)
+                        .tint(ColorTheme.Base.secondaryText.color)
                 } else {
                     Text(L10n.Localizable.General.save)
                         .bold()

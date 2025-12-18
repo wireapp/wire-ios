@@ -220,13 +220,13 @@ private func previewPublicLinkApi() -> some NodesAPIProtocol {
         requiresPassword: true,
         expirationDate: Date()
     )
-    
+
     mock.getPublicLinkLinkID_MockMethod = { _ in
         publicLink
     }
-    
+
     mock.updatePublicLinkPasswordLinkIDPassword_MockValue = publicLink
-    
+
     return mock
 }
 
@@ -336,13 +336,13 @@ extension ShareLinkPasswordView.ViewModel {
     static func preview(password: String?, requiresPassword: Bool) -> ShareLinkPasswordView.ViewModel {
         let nodesAPI = previewPublicLinkApi()
         let keychain = Keychain()
-        
+
         let useCases = UseCases(
             updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
             storePublicLinkPasswordUseCase: WireCellsStorePublicLinkPasswordUseCase(keychain: keychain),
             deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase(keychain: keychain)
         )
-        
+
         return ShareLinkPasswordView.ViewModel(
             password: password,
             requiresPassword: requiresPassword,

@@ -677,11 +677,11 @@ package final class FilesViewModel: ObservableObject {
 
         return FileRenameView(viewModel: viewModel)
     }
-    
+
     private func makeShareLinkView(
         item: FilesViewItem
     ) -> ShareLinkView {
-        
+
         let viewModel = ShareLinkView.ViewModel(
             fileItem: item,
             useCases: ShareLinkView.ViewModel.UseCases(
@@ -695,7 +695,7 @@ package final class FilesViewModel: ObservableObject {
                 deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase(keychain: Keychain())
             )
         )
-        
+
         viewModel.$publicLinkState
             .sink { [weak self] state in
                 switch state {
@@ -704,9 +704,9 @@ package final class FilesViewModel: ObservableObject {
                 default:
                     break
                 }
-                
+
             }.store(in: &subscriptions)
-        
+
         return ShareLinkView(viewModel: viewModel)
     }
 }

@@ -109,7 +109,6 @@ struct FilesViewItemView: View {
                         Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
                     }.disabled(viewModel.isDownloading)
 
-
                     if !viewModel.isInRecycleBin {
                         Button(action: shareLink) {
                             Label(Strings.Files.Item.Menu.shareLink, systemImage: "square.and.arrow.up")

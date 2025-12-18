@@ -28,7 +28,7 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 struct ShareLinkView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
-    
+
     let id = UUID()
 
     @StateObject private var viewModel: ViewModel
@@ -52,12 +52,12 @@ struct ShareLinkView: View {
                     .padding()
                     .padding(.bottom, 80) // Space for the bottom button
                 }
-                
+
                 VStack {
                     if viewModel.isPasswordEnabled, let password = viewModel.copyPassword() {
                         sharePasswordButton(password)
                     }
-                    
+
                     if viewModel.isCreatingLink {
                         shareLinkButton(nil)
                     } else {
@@ -74,7 +74,7 @@ struct ShareLinkView: View {
             }
             .sheet(item: $viewModel.sheetNavigation) { navigationItem in
                 switch navigationItem {
-                case .password(let shareLinkPasswordView):
+                case let .password(shareLinkPasswordView):
                     shareLinkPasswordView
                 case let .expiration(linkID):
                     viewModel.makeExpirationDatePickerView(linkID: linkID)
@@ -138,7 +138,8 @@ struct ShareLinkView: View {
                     title: Strings.ShareLink.LinkSection.passwordTitle,
                     description: Strings.ShareLink.LinkSection.passwordDescription,
                     status: viewModel.passwordStatusText,
-                    action: { viewModel.sheetNavigation = .password(view: await viewModel.makeShareLinkPasswordView()) },
+                    action: { viewModel.sheetNavigation = .password(view: await viewModel.makeShareLinkPasswordView())
+                    },
                 )
 
                 Spacer().frame(height: 16)
@@ -197,7 +198,7 @@ struct ShareLinkView: View {
                 .padding(.leading, 4)
         }
     }
-    
+
     @ViewBuilder
     private func sharePasswordButton(_ password: String) -> some View {
         VStack {
@@ -236,11 +237,12 @@ struct ShareLinkView: View {
         }
         .padding(.horizontal)
         .padding(.bottom, 8)
-        .background(ColorTheme.Backgrounds.background.color.opacity(viewModel.isLinkToggleOn ? 0.9: 0.5)) // Slight fade behind button area
+        .background(ColorTheme.Backgrounds.background.color
+            .opacity(viewModel.isLinkToggleOn ? 0.9 : 0.5)) // Slight fade behind button area
         .disabled(!viewModel.isLinkToggleOn || viewModel.isCreatingLink)
         .opacity(viewModel.isLinkToggleOn ? 1 : 0.5)
     }
-    
+
     @ViewBuilder
     private func shareLinkContent() -> some View {
         HStack {
@@ -273,7 +275,7 @@ struct ShareLinkView: View {
         }
 
         ToolbarItem(placement: .topBarTrailing) {
-            if viewModel.isLoading && !viewModel.isCreatingLink {
+            if viewModel.isLoading, !viewModel.isCreatingLink {
                 ProgressView()
                     .tint(ColorTheme.Base.secondaryText.color)
             } else {
@@ -318,7 +320,7 @@ struct ShareLinkView: View {
         mockAPI.deletePublicLinkLinkID_MockMethod = { _ in }
         return mockAPI
     }()
-    
+
     let keychain = Keychain()
 
     let useCases: ShareLinkView.ViewModel.UseCases = .init(
