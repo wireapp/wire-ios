@@ -225,7 +225,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
         let coreCrypto = try await CoreCrypto(
             keystorePath: configuration.path,
-            key:  DatabaseKey(key: configuration.key)
+            key: DatabaseKey(key: configuration.key)
         )
 
         updateKeychainItemAccess()
