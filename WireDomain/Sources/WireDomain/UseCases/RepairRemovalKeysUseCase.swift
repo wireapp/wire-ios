@@ -197,6 +197,12 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
         groupID: MLSGroupID,
         qualifiedID: WireDataModel.QualifiedID
     ) async -> Bool {
+        let logAttributes: LogAttributes = [
+            .public: true,
+            .conversationId: qualifiedID.safeForLoggingDescription,
+            .mlsGroupID: groupID.safeForLoggingDescription
+        ]
+
         let remoteConversation: WireNetwork.Conversation?
         do {
             remoteConversation = try await conversationsAPI.getConversations(
@@ -205,7 +211,7 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
         } catch {
             WireLogger.mls.error(
                 "failed to get epoch for a group, skipping: \(String(describing: error))",
-                attributes: .safePublic, [.conversationId: qualifiedID.safeForLoggingDescription]
+                attributes: logAttributes
             )
             return false
         }
@@ -213,14 +219,14 @@ public struct RepairRemovalKeysUseCase: RepairRemovalKeysUseCaseProtocol {
         guard let remoteConversation else {
             WireLogger.mls.error(
                 "remote conversation for a group not found, skipping",
-                attributes: .safePublic, [.conversationId: qualifiedID.safeForLoggingDescription]
+                attributes: logAttributes
             )
             return false
         }
 
         WireLogger.mls.info(
             "initiating reset for faulty conversation: \(qualifiedID)",
-            attributes: .safePublic, [.conversationId: qualifiedID.safeForLoggingDescription]
+            attributes: logAttributes
         )
 
         let epoch = UInt64(remoteConversation.epoch ?? 0)
