@@ -18,24 +18,28 @@
 
 public import Foundation
 
-public extension TimeInterval {
+public struct WireCellsNodeVersion: Equatable, Identifiable, Sendable {
 
-    static let fourWeeks = 4 * oneWeek
-    static let oneWeek = 7 * oneDay
-    static let oneDay = 24 * oneHour
-    static let oneHour = 60 * oneMinute
-    static let fiveMinutes = 5 * oneMinute
-    static let oneMinute = 60 * oneSecond
-    static let tenSeconds = 10 * oneSecond
-    static let thirtySeconds = 30 * oneSecond
-    static let oneSecond = TimeInterval(1)
-
-    /// Number of seconds for a whole year (accounting for leap years) from now.
-
-    static var oneYearFromNow: Self {
-        let now = Date()
-        let oneYearFromNow = Calendar.current.date(byAdding: .year, value: 1, to: now)!
-        return oneYearFromNow.timeIntervalSince(now)
+    public init(
+        id: UUID,
+        ownerName: String?,
+        modified: Date?,
+        eTag: String?,
+        size: UInt64?,
+        downloadUrl: URL?
+    ) {
+        self.id = id
+        self.ownerName = ownerName
+        self.modified = modified
+        self.eTag = eTag
+        self.size = size
+        self.downloadUrl = downloadUrl
     }
 
+    public let id: UUID
+    public let ownerName: String?
+    public let modified: Date?
+    public let size: UInt64?
+    public let eTag: String?
+    public let downloadUrl: URL?
 }
