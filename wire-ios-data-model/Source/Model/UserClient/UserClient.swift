@@ -310,7 +310,6 @@ public class UserClient: ZMManagedObject, UserClientType {
             // Delete session and fingerprint
             try? await syncClient.deleteSession()
 
-            // Delete should happen on sync context since the cryptobox could be accessed only from there
             await syncMOC.perform {
                 // Mark that we need notify the other party about the session reset
                 syncClient.needsToNotifyOtherUserAboutSessionReset = true

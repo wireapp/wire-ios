@@ -104,6 +104,8 @@ extension ZMClientMessage {
             return true
         case .text:
             return !isEphemeral && isSent
+        case .multipart:
+            return isSent
         default:
             return false
         }

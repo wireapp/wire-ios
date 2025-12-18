@@ -72,6 +72,8 @@ extension MessageBackupModel.Content {
             self.init(text)
         case .composite:
             fallthrough // composite messages are not supported in backups yet
+        case .multipart:
+            fallthrough // TODO: [WPB-17971] Support multipart messages in backup
         case .none:
             return nil
         }

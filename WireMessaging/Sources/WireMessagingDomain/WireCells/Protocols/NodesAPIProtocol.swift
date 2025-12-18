@@ -49,4 +49,6 @@ package protocol NodesAPIProtocol: Sendable {
     func updateTags(nodeID: UUID, tags: [String]) async throws
 
     func getAllTags() async throws -> [String]
+
+    func getVersions(nodeID: UUID) async throws -> [WireCellsNodeVersion]
 }

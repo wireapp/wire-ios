@@ -66,8 +66,9 @@ protocol ConversationCellProviderProtocol {
 
 }
 
-extension WireMessagingFactory: WireMessagingFactoryProtocol {
+extension WireMessagingFactory: @preconcurrency WireMessagingFactoryProtocol {
 
+    @MainActor
     func makeConversationCellProvider(
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProviderProtocol {
