@@ -644,7 +644,7 @@ extension MessagingTestBase {
         try await setupProteusService()
 
         // Establish session after users/clients are created
-        if let otherClient = self.otherClient {
+        if let otherClient {
             try await _proteusClientSimulator!.establishSessionFromSelf(to: otherClient)
         }
 
