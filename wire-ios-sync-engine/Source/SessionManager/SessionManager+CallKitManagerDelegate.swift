@@ -92,7 +92,7 @@ extension SessionManager: CallKitManagerDelegate {
             return
         }
 
-        WireLogger.calling.info("Proactively requesting call config for background session")
+        WireLogger.calling.info("Proactively requesting call config for background session.")
         callCenter.requestCallConfig()
     }
 
