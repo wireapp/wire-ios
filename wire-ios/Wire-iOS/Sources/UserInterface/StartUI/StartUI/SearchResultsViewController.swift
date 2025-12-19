@@ -22,7 +22,11 @@ import WireSyncEngine
 
 enum SearchGroup: Int {
     case people
-    case services // TODO: [WPB-20362] consider having apps and bots instead
+    case apps
+    case bots
+
+    @available(*, deprecated, renamed: "bots")
+    static var services: Self { .bots }
 }
 
 extension SearchGroup {
@@ -31,7 +35,9 @@ extension SearchGroup {
         switch self {
         case .people:
             return true
-        case .services:
+        case .apps:
+            fatalError("TODO") // TODO: fix
+        case .bots:
             guard let user = SelfUser.provider?.providedSelfUser else {
                 assertionFailure("expected available 'user'!")
                 return false
@@ -42,10 +48,19 @@ extension SearchGroup {
 
     #if ADD_SERVICE_DISABLED
         // remove service from the tab
-        static let all: [SearchGroup] = [.people]
+        static func all(for messageProtocol: MessageProtocol) -> [SearchGroup] { [.people] }
     #else
-        static var all: [SearchGroup] {
-            [.people, .services].filter(\.accessible)
+        static func all(for messageProtocol: MessageProtocol) -> [SearchGroup] {
+            switch messageProtocol {
+            case .mls:
+                [.people, .apps]
+                    .filter(\.accessible)
+            case .proteus:
+                [.people, .bots]
+                    .filter(\.accessible)
+            case .mixed:
+                [.people] // TODO: correct?
+            }
         }
     #endif
 
@@ -53,7 +68,7 @@ extension SearchGroup {
         switch self {
         case .people:
             L10n.Localizable.Peoplepicker.Header.people
-        case .services:
+        case .apps, .bots:
             L10n.Localizable.Peoplepicker.Header.apps
         }
     }
@@ -165,6 +180,7 @@ final class SearchResultsViewController: UIViewController {
         return TopPeopleSectionController(topConversationsDirectory: directory)
     }()
 
+    let appsSection: SearchAppsSectionController
     let servicesSection: SearchServicesSectionController
     // TODO: [WPB-20362] add apps section?
     let inviteTeamMemberSection: InviteTeamMemberSection
@@ -212,6 +228,7 @@ final class SearchResultsViewController: UIViewController {
         teamMemberAndContactsSection.allowsSelection = isAddingParticipants
         teamMemberAndContactsSection.selection = userSelection
         teamMemberAndContactsSection.title = L10n.Localizable.Peoplepicker.Header.contacts
+        self.appsSection = SearchAppsSectionController()
         self.servicesSection = SearchServicesSectionController(
             canSelfUserManageTeam: userSession.selfUser.canManageTeam
         )
@@ -328,7 +345,9 @@ final class SearchResultsViewController: UIViewController {
         let team = userSession.selfUser.membership?.team
 
         switch (searchGroup, isAddingParticipants) {
-        case (.services, _):
+        case (.apps, _):
+            sections = [appsSection]
+        case (.bots, _):
             sections = [servicesSection]
         case (.people, true):
             switch (mode, team != nil) {
