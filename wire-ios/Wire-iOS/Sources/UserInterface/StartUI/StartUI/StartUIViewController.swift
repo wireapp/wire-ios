@@ -126,7 +126,7 @@ final class StartUIViewController: UIViewController {
             return isAppsFeatureEnabled
         case .proteus:
             return areLegacyBotsAvailable
-        case .mixed:
+        default:
             return false
         }
     }

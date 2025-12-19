@@ -99,7 +99,7 @@ final class ConversationServicesOptionsViewModel {
             // for MLS conversations consider the apps feature flag
             showAppsNotEnabledHint = false
         } else if configuration.messageProtocol == .proteus, configuration.areLegacyBotsAvailable {
-            // for MLS conversations consider the apps feature flag
+            // for Proteus conversations what matters is if bots are whitelisted for the team
             showAppsNotEnabledHint = false
         }
 

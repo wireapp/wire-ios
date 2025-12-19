@@ -40,6 +40,8 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         case timeout
         case fileCollaboration // keep at the last position
 
+        /// Returns `true` if the option is presented to the user or `false` otherwise.
+
         func accessible(
             in conversation: GroupDetailsConversationType,
             by user: UserType,
