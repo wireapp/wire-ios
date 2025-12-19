@@ -26,7 +26,7 @@ final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptio
     // MARK: Properties
 
     typealias SetHandler = (Bool, (Result<Void, Error>) -> Void) -> Void
-    
+
     var messageProtocol: MessageProtocol = .proteus
     var areLegacyBotsAvailable = false
     var isAppsFeatureEnabled = true

@@ -33,7 +33,7 @@ final class ConversationViewController: UIViewController {
 
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
-    let conversationCreationRepository: any ConversationCreationRepositoryProtocol // TODO: maybe redundant
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
     private let visibleMessage: ZMConversationMessage?
     private let getParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
     var actionControllerForSelectedEmoji: ConversationMessageActionController?

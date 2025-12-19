@@ -59,7 +59,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
-        conversationCreationRepository: any ConversationCreationRepositoryProtocol, // TODO: maybe redundant
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol,
         areLegacyBotsAvailable: Bool,
         isAppsFeatureEnabled: Bool

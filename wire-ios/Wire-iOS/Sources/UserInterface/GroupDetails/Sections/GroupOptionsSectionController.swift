@@ -63,6 +63,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
                 }
                 switch conversation.messageProtocol {
                 case .mls:
+                    // always show the option, but display a hint on the details screen if the feature flag is disabled
                     return true
                 case .proteus:
                     return areLegacyBotsAvailable
