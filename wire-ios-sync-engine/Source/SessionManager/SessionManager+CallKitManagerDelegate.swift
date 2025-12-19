@@ -82,8 +82,12 @@ extension SessionManager: CallKitManagerDelegate {
         }
     }
 
+    /// Proactively requests call config for a background session.
+    /// This ensures the session has fresh call configuration when handling incoming calls.
+    /// - Parameter session: The user session to request config for
     private func requestCallConfigIfNeeded(for session: ZMUserSession) async {
-        guard let callCenter = session.callCenter else {
+        guard session != activeUserSession,
+              let callCenter = session.callCenter else {
             WireLogger.calling.warn("Cannot request call config: callCenter not available")
             return
         }
