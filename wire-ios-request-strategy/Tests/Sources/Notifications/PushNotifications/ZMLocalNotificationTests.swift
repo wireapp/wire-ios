@@ -86,6 +86,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
 
     override func tearDown() {
         sender = nil
+        selfUser = nil
         otherUser1 = nil
         otherUser2 = nil
         userWithNoName = nil
@@ -93,7 +94,6 @@ class ZMLocalNotificationTests: MessagingTestBase {
         groupConversationWithoutName = nil
         groupConversationWithoutUserDefinedName = nil
         invalidConversation = nil
-        _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
         super.tearDown()
     }
 
