@@ -94,7 +94,6 @@ class ZMLocalNotificationTests: MessagingTestBase {
         groupConversationWithoutName = nil
         groupConversationWithoutUserDefinedName = nil
         invalidConversation = nil
-        _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
         super.tearDown()
     }
 
