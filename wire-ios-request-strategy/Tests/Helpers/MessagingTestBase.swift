@@ -36,9 +36,33 @@ class MessagingTestBase: ZMTBaseTest {
     fileprivate(set) var otherClient: UserClient!
     fileprivate(set) var coreDataStack: CoreDataStack!
     fileprivate(set) var accountIdentifier: UUID!
-    fileprivate(set) var coreCrypto: SafeCoreCrypto!
-    fileprivate(set) var proteusService: ProteusServiceInterface!
-    fileprivate(set) var proteusClientSimulator: ProteusClientSimulator!
+
+    // Lazy Proteus/CoreCrypto properties - only initialized when accessed
+    private var _coreCrypto: SafeCoreCrypto?
+    private var _proteusService: ProteusServiceInterface?
+    private var _proteusClientSimulator: ProteusClientSimulator?
+    private var _isProteusInitialized = false
+
+    var coreCrypto: SafeCoreCrypto {
+        get async throws {
+            try await ensureProteusInitialized()
+            return _coreCrypto!
+        }
+    }
+
+    var proteusService: ProteusServiceInterface {
+        get async throws {
+            try await ensureProteusInitialized()
+            return _proteusService!
+        }
+    }
+
+    var proteusClientSimulator: ProteusClientSimulator {
+        get async throws {
+            try await ensureProteusInitialized()
+            return _proteusClientSimulator!
+        }
+    }
 
     let owningDomain = "example.com"
 
@@ -72,23 +96,10 @@ class MessagingTestBase: ZMTBaseTest {
             inMemoryStore: useInMemoryStore
         )
 
-        // Set up proteus client simulator
-
-        let cacheFolder = try XCTUnwrap(FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first)
-        let storageURL = cacheFolder.appendingPathComponent("OtherClients")
-        try? FileManager.default.removeItem(at: storageURL)
-
-        proteusClientSimulator = ProteusClientSimulator(
-            syncMOC: syncMOC,
-            owningDomain: owningDomain,
-            storageURL: storageURL
-        )
-
-        // Caches, timers and proteus service
+        // Caches and timers (lightweight setup)
 
         await setupCaches(in: coreDataStack)
         await setupTimers()
-        try await setupProteusService()
 
         // Set up managed objects
 
@@ -100,8 +111,9 @@ class MessagingTestBase: ZMTBaseTest {
             syncMOC.saveOrRollback()
         }
 
-        // Establish session after users/clients are created
-        try await proteusClientSimulator.establishSessionFromSelf(to: otherClient)
+        // Note: Proteus/CoreCrypto initialization is now lazy - it will be set up
+        // automatically when tests first access proteusService, coreCrypto, or
+        // proteusClientSimulator properties
     }
 
     override func tearDown() async throws {
@@ -115,14 +127,19 @@ class MessagingTestBase: ZMTBaseTest {
             self.groupConversation = nil
         }
         await stopEphemeralMessageTimers()
-        proteusClientSimulator.cleanup()
-        try coreCrypto.tearDown()
 
-        proteusService = nil
-        coreCrypto = nil
+        // Only clean up Proteus if it was initialized
+        if _isProteusInitialized {
+            _proteusClientSimulator?.cleanup()
+            try _coreCrypto?.tearDown()
+        }
+
+        _proteusService = nil
+        _coreCrypto = nil
+        _proteusClientSimulator = nil
+        _isProteusInitialized = false
         accountIdentifier = nil
         coreDataStack = nil
-        proteusClientSimulator = nil
 
         try await super.tearDown()
     }
@@ -608,6 +625,32 @@ extension MessagingTestBase {
 
 extension MessagingTestBase {
 
+    /// Ensures Proteus/CoreCrypto is initialized - call this before accessing proteus properties
+    private func ensureProteusInitialized() async throws {
+        guard !_isProteusInitialized else { return }
+
+        // Set up proteus client simulator
+        let cacheFolder = try XCTUnwrap(FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first)
+        let storageURL = cacheFolder.appendingPathComponent("OtherClients")
+        try? FileManager.default.removeItem(at: storageURL)
+
+        _proteusClientSimulator = ProteusClientSimulator(
+            syncMOC: syncMOC,
+            owningDomain: owningDomain,
+            storageURL: storageURL
+        )
+
+        // Set up Proteus service and CoreCrypto
+        try await setupProteusService()
+
+        // Establish session after users/clients are created
+        if let otherClient {
+            try await _proteusClientSimulator!.establishSessionFromSelf(to: otherClient)
+        }
+
+        _isProteusInitialized = true
+    }
+
     func setupProteusService() async throws {
         let accountDir = coreDataStack.accountContainer
 
@@ -630,12 +673,12 @@ extension MessagingTestBase {
         )
 
         // Initialize CoreCrypto (this calls proteusInit internally)
-        coreCrypto = try await coreCryptoProvider.coreCrypto() as? SafeCoreCrypto
+        _coreCrypto = try await coreCryptoProvider.coreCrypto() as? SafeCoreCrypto
 
         // Create ProteusService with the provider
-        proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
+        _proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
 
-        await syncMOC.perform { [syncMOC, service = self.proteusService] in
+        await syncMOC.perform { [syncMOC, service = self._proteusService] in
             syncMOC.proteusService = service
         }
     }

@@ -65,8 +65,13 @@ struct GeneratorsDirectoryTests {
         )
         sut.observeSyncState()
 
+        async let incrementalStoped: Void = waitForCall { resume in
+            incremental.stop_MockMethod = { resume() }
+        }
+
         // WHEN
         subject.send(state)
+        _ = await incrementalStoped
 
         // THEN
         #expect(base.stop_Invocations.count == 1)
@@ -140,8 +145,18 @@ struct GeneratorsDirectoryTests {
         )
         sut.observeSyncState()
 
+        async let baseStopped: Void = waitForCall { resume in
+            base.stop_MockMethod = { resume() }
+        }
+
+        async let liveStopped: Void = waitForCall { resume in
+            live.stop_MockMethod = { resume() }
+        }
+
         // WHEN
-        subject.send(.suspended)
+        subject.send(state)
+        _ = await baseStopped
+        _ = await liveStopped
 
         // THEN
         #expect(base.stop_Invocations.count == 1)
