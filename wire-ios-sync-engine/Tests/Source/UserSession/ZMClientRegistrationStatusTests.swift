@@ -44,8 +44,6 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        // TODO: check if can be removed or remove tests
-        DeveloperFlag.multibackend.enable(false, storage: .temporary())
 
         // be sure to call this before initializing sut
         uiMOC.setPersistentStoreMetadata(nil as String?, key: ZMPersistedClientIdKey)

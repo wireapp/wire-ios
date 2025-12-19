@@ -219,7 +219,6 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue
         )
         sharingSession = try await loader.load()
-        // TODO: check can we delete AppLockController.LegacyConfig.fromBundle()
     }
 
     override func configurationItems() -> [Any]! {
