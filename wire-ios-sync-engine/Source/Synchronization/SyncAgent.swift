@@ -199,9 +199,12 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// Perform an incremental sync.
     
     func performIncrementalSync() async throws {
-        if isSyncV2Enabled {
-
-            try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
+        try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
+            guard let self else { return }
+            
+            let retrier = BackoffRetrier()
+            
+            try await retrier.retry { [weak self] in
                 guard let self else { return }
                 
                 do {
