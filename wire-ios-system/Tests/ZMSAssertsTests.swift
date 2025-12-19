@@ -69,7 +69,7 @@ final class ZMSAssertsTests: XCTestCase {
 
     func testFatalMessageFormattingWithLongString() {
         // Given
-        let testMessage = String(repeating: "A", count: 10000)
+        let testMessage = String(repeating: "A", count: 10_000)
         let testFile: StaticString = "TestFile.swift"
         let testLine: UInt = 42
 
