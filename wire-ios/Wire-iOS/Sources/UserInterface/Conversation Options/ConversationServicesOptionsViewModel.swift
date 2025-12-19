@@ -17,9 +17,12 @@
 //
 
 import UIKit
+import WireDataModel
 import WireUtilities
 
 protocol ConversationServicesOptionsViewModelConfiguration: AnyObject {
+
+    var messageProtocol: MessageProtocol { get }
 
     /// `true` if at least one bot is whitelisted for the team.
 
@@ -86,19 +89,36 @@ final class ConversationServicesOptionsViewModel {
     }
 
     private func updateRows() {
-        if configuration.isAppsFeatureEnabled || configuration.areLegacyBotsAvailable || configuration.allowApps {
-            state.rows = [.allowAppsToggle(
-                get: { [unowned self] in return configuration.allowApps },
-                set: { [unowned self] in setAllowApps($0, sender: $1) }
-            )]
-        } else {
+
+        var showAppsNotEnabledHint = true
+
+        if configuration.allowApps {
+            // if apps are already enabled for the conversation, show the toggle
+            showAppsNotEnabledHint = false
+        } else if configuration.messageProtocol == .mls, configuration.isAppsFeatureEnabled {
+            // for MLS conversations consider the apps feature flag
+            showAppsNotEnabledHint = false
+        } else if configuration.messageProtocol == .proteus, configuration.areLegacyBotsAvailable {
+            // for MLS conversations consider the apps feature flag
+            showAppsNotEnabledHint = false
+        }
+
+        if showAppsNotEnabledHint {
             state.rows = [
                 .titleAndBody(
                     title: L10n.Localizable.Conversation.Create.AppsDisabled.title,
                     body: L10n.Localizable.Conversation.Create.AppsDisabled.message
                 )
             ]
+        } else {
+            state.rows = [
+                .allowAppsToggle(
+                    get: { [unowned self] in return configuration.allowApps },
+                    set: { [unowned self] in setAllowApps($0, sender: $1) }
+                )
+            ]
         }
+
     }
 
     /// set conversation option AllowApps

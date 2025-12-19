@@ -43,8 +43,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         func accessible(
             in conversation: GroupDetailsConversationType,
             by user: UserType,
-            areLegacyBotsAvailable: Bool,
-            isAppsFeatureEnabled: Bool
+            areLegacyBotsAvailable: Bool
         ) -> Bool {
             switch self {
             case .channelAccess:
@@ -64,10 +63,11 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
                 }
                 switch conversation.messageProtocol {
                 case .mls:
-                    return isAppsFeatureEnabled
+                    return true
                 case .proteus:
                     return areLegacyBotsAvailable
-                default: return false
+                default:
+                    return false
                 }
             case .timeout:
                 return user.canModifyEphemeralSettings(in: conversation) && !conversation.isCellsEnabled
@@ -111,8 +111,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         user: UserType,
         delegate: GroupOptionsSectionControllerDelegate,
         syncCompleted: Bool,
-        areLegacyBotsAvailable: Bool,
-        isAppsFeatureEnabled: Bool
+        areLegacyBotsAvailable: Bool
     ) {
         self.delegate = delegate
         self.conversation = conversation
@@ -121,8 +120,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             option.accessible(
                 in: conversation,
                 by: user,
-                areLegacyBotsAvailable: areLegacyBotsAvailable,
-                isAppsFeatureEnabled: isAppsFeatureEnabled
+                areLegacyBotsAvailable: areLegacyBotsAvailable
             )
         }
     }

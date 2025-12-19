@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModel
 import WireTestingPackage
 import XCTest
 
@@ -25,6 +26,8 @@ final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptio
     // MARK: Properties
 
     typealias SetHandler = (Bool, (Result<Void, Error>) -> Void) -> Void
+    
+    var messageProtocol: MessageProtocol = .proteus
     var areLegacyBotsAvailable = false
     var isAppsFeatureEnabled = true
     var allowApps: Bool

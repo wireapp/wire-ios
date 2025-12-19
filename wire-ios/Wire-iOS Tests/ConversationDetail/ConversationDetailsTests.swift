@@ -49,8 +49,7 @@ final class ConversationDetailsTests: XCTestCase {
             sut.accessible(
                 in: conversation,
                 by: user,
-                areLegacyBotsAvailable: false,
-                isAppsFeatureEnabled: false
+                areLegacyBotsAvailable: false
             )
         )
     }
@@ -60,8 +59,7 @@ final class ConversationDetailsTests: XCTestCase {
             sut.accessible(
                 in: conversation,
                 by: user,
-                areLegacyBotsAvailable: false,
-                isAppsFeatureEnabled: false
+                areLegacyBotsAvailable: false
             )
         )
     }

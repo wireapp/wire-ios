@@ -294,8 +294,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 user: user,
                 delegate: self,
                 syncCompleted: didCompleteInitialSync,
-                areLegacyBotsAvailable: areLegacyBotsAvailable,
-                isAppsFeatureEnabled: isAppsFeatureEnabled
+                areLegacyBotsAvailable: areLegacyBotsAvailable
             )
             if optionsSectionController.hasOptions {
                 sections.append(optionsSectionController)
