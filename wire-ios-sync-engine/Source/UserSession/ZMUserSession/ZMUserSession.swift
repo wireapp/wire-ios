@@ -672,6 +672,9 @@ public final class ZMUserSession: NSObject {
             await clientSessionComponent.workAgent.setAutoStartEnabled(true)
             await clientSessionComponent.workAgent.start()
             clientSessionComponent.generatorsDirectory.observeSyncState()
+
+            // Initialize the generator to enqueue repair work item if needed
+            clientSessionComponent.repairFaultyMLSRemovalKeysGenerator.submitWorkItemIfNeeded()
         }
     }
 
