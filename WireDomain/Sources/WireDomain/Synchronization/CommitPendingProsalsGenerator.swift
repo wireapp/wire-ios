@@ -46,33 +46,34 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
     }
 
     public func start() async {
-        if fetchedResultsController == nil {
-            fetchedResultsController = createFetchedResultsController()
-            fetchedResultsController?.delegate = self
-        }
+        await context.perform { [self] in
+            if fetchedResultsController == nil {
+                fetchedResultsController = createFetchedResultsController()
+                fetchedResultsController?.delegate = self
+            }
 
-        await context.perform {
             do {
-                try self.fetchedResultsController?.performFetch()
+                try fetchedResultsController?.performFetch()
             } catch {
                 WireLogger.conversation.error("error fetching conversations: \(String(describing: error))")
             }
 
-            let conversations = self.fetchedResultsController?.fetchedObjects ?? []
+            let conversations = fetchedResultsController?.fetchedObjects ?? []
             for conversation in conversations {
-                self.scheduleCommitIfNeeded(for: conversation)
+                scheduleCommitIfNeeded(for: conversation)
             }
         }
     }
 
-    public func stop() {
-        fetchedResultsController = nil
-
-        // Cancel all scheduled commits
-        for (_, task) in scheduledTasks {
-            task.cancel()
+    public func stop() async {
+        // Cancel all scheduled commits on the context queue to avoid race conditions
+        await context.perform { [self] in
+            fetchedResultsController = nil
+            for (_, task) in scheduledTasks {
+                task.cancel()
+            }
+            scheduledTasks.removeAll()
         }
-        scheduledTasks.removeAll()
     }
 
     private func createFetchedResultsController() -> NSFetchedResultsController<ZMConversation> {
@@ -168,12 +169,7 @@ extension CommitPendingProposalsGenerator: NSFetchedResultsControllerDelegate {
 
         switch type {
         case .insert, .update:
-            // run on the context queue to safely read properties
-            Task { [context] in
-                await context.perform {
-                    self.scheduleCommitIfNeeded(for: conversation)
-                }
-            }
+            scheduleCommitIfNeeded(for: conversation)
 
         case .move, .delete:
             // Best effort cancel if we can identify it

@@ -624,8 +624,9 @@ extension ConversationContentViewController: UITableViewDelegate {
         // different to actionControllers[<message.nonce>], so it was out of sync
         // it was fixed but for extra safety backup action controller if not found
         var backupActionController: ConversationMessageActionController?
-        if let nonce = cellDescription?.message?.nonce {
-            backupActionController = dataSource.sectionControllers.get(for: nonce)?.actionController
+
+        if let message = cellDescription?.message, let cacheIdentifier = MessageCacheIdentifier(message: message) {
+            backupActionController = dataSource.sectionControllers.get(for: cacheIdentifier)?.actionController
         }
 
         if cellDescription?.supportsActions ?? false,

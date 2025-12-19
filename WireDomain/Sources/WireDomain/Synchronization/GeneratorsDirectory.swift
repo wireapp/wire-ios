@@ -20,7 +20,7 @@ import Combine
 // sourcery: AutoMockable
 public protocol GeneratorProtocol {
     func start() async
-    func stop()
+    func stop() async
 }
 
 // sourcery: AutoMockable
@@ -84,7 +84,9 @@ public final class GeneratorsDirectory {
 
     private func stopGenerators() {
         for generator in generators {
-            generator.stop()
+            Task {
+                await generator.stop()
+            }
         }
     }
 }
