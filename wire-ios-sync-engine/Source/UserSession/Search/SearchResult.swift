@@ -42,7 +42,7 @@ public struct SearchResult {
 
     /// Bots.
 
-    public var services: [ServiceUser]
+    public var services: [ServiceUser] // TODO: [WPB-20362] add `apps`
 
     /// Cache for search users.
 
