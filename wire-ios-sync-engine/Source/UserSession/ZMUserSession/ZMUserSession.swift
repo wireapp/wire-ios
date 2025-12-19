@@ -681,7 +681,7 @@ public final class ZMUserSession: NSObject {
             await clientSessionComponent.workAgent.start()
 
             // Initialize the generator to enqueue repair work item if needed
-            _ = clientSessionComponent.repairFaultyMLSRemovalKeysGenerator
+            clientSessionComponent.repairFaultyMLSRemovalKeysGenerator.submitWorkItemIfNeeded()
         }
     }
 
