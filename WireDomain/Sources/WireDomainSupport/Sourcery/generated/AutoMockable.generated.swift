@@ -2498,18 +2498,37 @@ public class MockInitialSyncProtocol: InitialSyncProtocol {
 
 }
 
-<<<<<<< HEAD
-public class MockLiveGeneratorProtocol: LiveGeneratorProtocol {
-=======
 public class MockInitiateResetMLSConversationUseCaseProtocol: InitiateResetMLSConversationUseCaseProtocol {
->>>>>>> b1bd37ad34 (fix: repair faulty removal keys - WPB-22447 (#4014))
 
     // MARK: - Life cycle
 
     public init() {}
 
 
-<<<<<<< HEAD
+    // MARK: - invoke
+
+    public var invokeGroupIDEpoch_Invocations: [(groupID: WireDataModel.MLSGroupID, epoch: UInt64)] = []
+    public var invokeGroupIDEpoch_MockMethod: ((WireDataModel.MLSGroupID, UInt64) async -> Void)?
+
+    public func invoke(groupID: WireDataModel.MLSGroupID, epoch: UInt64) async {
+        invokeGroupIDEpoch_Invocations.append((groupID: groupID, epoch: epoch))
+
+        guard let mock = invokeGroupIDEpoch_MockMethod else {
+            fatalError("no mock for `invokeGroupIDEpoch`")
+        }
+
+        await mock(groupID, epoch)
+    }
+
+}
+
+public class MockLiveGeneratorProtocol: LiveGeneratorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
     // MARK: - start
 
     public var start_Invocations: [Void] = []
@@ -2538,21 +2557,6 @@ public class MockInitiateResetMLSConversationUseCaseProtocol: InitiateResetMLSCo
         }
 
         mock()
-=======
-    // MARK: - invoke
-
-    public var invokeGroupIDEpoch_Invocations: [(groupID: WireDataModel.MLSGroupID, epoch: UInt64)] = []
-    public var invokeGroupIDEpoch_MockMethod: ((WireDataModel.MLSGroupID, UInt64) async -> Void)?
-
-    public func invoke(groupID: WireDataModel.MLSGroupID, epoch: UInt64) async {
-        invokeGroupIDEpoch_Invocations.append((groupID: groupID, epoch: epoch))
-
-        guard let mock = invokeGroupIDEpoch_MockMethod else {
-            fatalError("no mock for `invokeGroupIDEpoch`")
-        }
-
-        await mock(groupID, epoch)
->>>>>>> b1bd37ad34 (fix: repair faulty removal keys - WPB-22447 (#4014))
     }
 
 }
