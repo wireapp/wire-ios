@@ -35,7 +35,6 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     func teamTest(_ block: () -> Void) {
         selfUser.teamIdentifier = UUID()
         block()
-        selfUser.teamIdentifier = nil
     }
 
     func textNotification(

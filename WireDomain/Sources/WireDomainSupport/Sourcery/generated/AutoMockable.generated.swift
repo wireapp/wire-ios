@@ -2361,16 +2361,16 @@ public class MockGeneratorProtocol: GeneratorProtocol {
     // MARK: - stop
 
     public var stop_Invocations: [Void] = []
-    public var stop_MockMethod: (() -> Void)?
+    public var stop_MockMethod: (() async -> Void)?
 
-    public func stop() {
+    public func stop() async {
         stop_Invocations.append(())
 
         guard let mock = stop_MockMethod else {
             fatalError("no mock for `stop`")
         }
 
-        mock()
+        await mock()
     }
 
 }
@@ -2400,16 +2400,16 @@ public class MockIncrementalGeneratorProtocol: IncrementalGeneratorProtocol {
     // MARK: - stop
 
     public var stop_Invocations: [Void] = []
-    public var stop_MockMethod: (() -> Void)?
+    public var stop_MockMethod: (() async -> Void)?
 
-    public func stop() {
+    public func stop() async {
         stop_Invocations.append(())
 
         guard let mock = stop_MockMethod else {
             fatalError("no mock for `stop`")
         }
 
-        mock()
+        await mock()
     }
 
 }
@@ -2500,16 +2500,16 @@ public class MockLiveGeneratorProtocol: LiveGeneratorProtocol {
     // MARK: - stop
 
     public var stop_Invocations: [Void] = []
-    public var stop_MockMethod: (() -> Void)?
+    public var stop_MockMethod: (() async -> Void)?
 
-    public func stop() {
+    public func stop() async {
         stop_Invocations.append(())
 
         guard let mock = stop_MockMethod else {
             fatalError("no mock for `stop`")
         }
 
-        mock()
+        await mock()
     }
 
 }
