@@ -28,7 +28,7 @@ class RequestLogTests: XCTestCase {
             XCTFail("could not create RequestLog")
             return
         }
-        XCTAssertEqual(sut.endpoint, "prod-nginz-https.wire.com/v2/acc***")
+        XCTAssertEqual(sut.endpoint, "https://prod-nginz-https.wire.com/v2/access")
         XCTAssertEqual(sut.method, "GET")
     }
 
@@ -46,7 +46,7 @@ class RequestLogTests: XCTestCase {
 
         XCTAssertEqual(
             sut.endpoint,
-            "prod-nginz-https.wire.com/v2/not**********?size=***&since=05b*****&client=e00*****"
+            "https://prod-nginz-https.wire.com/v2/notifications?size=500&since=05b4637f-7c5a-11ed-8001-aafb9b836561&client=e00079bf207cf4e6"
         )
     }
 

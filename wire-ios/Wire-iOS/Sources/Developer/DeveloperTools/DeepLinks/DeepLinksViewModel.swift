@@ -44,6 +44,8 @@ final class DeepLinksViewModel: ObservableObject {
         case elna
         case foma
         case lich
+        case fulu
+        case imai
 
     }
 

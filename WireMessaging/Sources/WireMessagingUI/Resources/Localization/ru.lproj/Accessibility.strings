@@ -38,6 +38,9 @@
 "conversation.wireCells.files.error.title" = "Невозможно загрузить файлы";
 "conversation.wireCells.files.error.message" = "Не удалось загрузить ваши файлы и папки. Пожалуйста, попробуйте еще раз.";
 "conversation.wireCells.files.error.reload" = "Перезагрузить";
+"conversation.wireCells.files.moreActionsButton" = "Больше";
+"conversation.wireCells.recycleBin.noData.message" = "Здесь вы найдете все удаленные файлы и папки.";
+"conversation.wireCells.files.moveToFolder.move" = "Переместить сюда";
 
 // MARK: - File Tags View
 "conversation.wireCells.tags.removeTag" = "Удалить тег {0}";

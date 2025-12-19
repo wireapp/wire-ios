@@ -76,6 +76,19 @@ package protocol WireCellsNodesRepositoryProtocol: Sendable {
     /// - Returns: Whether a file already exists at this path and the next available path if any.
     func preCheck(nodePath: String, findAvailablePath: Bool) async throws -> WireCellsPreCheckResult
 
+    /// Retrieves all available versions for a given node.
+    ///
+    /// - Parameter nodeID: The unique identifier of the node whose versions should be fetched.
+    /// - Returns: An array of `WireCellsNodeVersion` objects representing the node’s versions.
+    func getVersions(nodeID: UUID) async throws -> [WireCellsNodeVersion]
+
+    /// Restores a previous version of a node.
+    ///
+    /// - Parameters:
+    ///   - nodeID: The unique identifier of the file node to restore.
+    ///   - versionID: The unique identifier of the version to restore.
+    func restoreVersion(nodeID: UUID, versionID: UUID) async throws
+
 }
 
 package struct WireCellsGetNodesRequest: Equatable, Sendable {

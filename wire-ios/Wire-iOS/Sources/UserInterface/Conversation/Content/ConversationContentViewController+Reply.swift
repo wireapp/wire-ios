@@ -18,10 +18,17 @@
 
 import Foundation
 import WireDataModel
+import WireMessagingDomain
 
 extension ConversationContentViewController {
-    func createReplyComposingView(for message: ZMConversationMessage) -> ReplyComposingView {
-        let replyComposingView = ReplyComposingView(message: message)
+    func createReplyComposingView(
+        for message: ZMConversationMessage,
+        messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil
+    ) -> ReplyComposingView {
+        let replyComposingView = ReplyComposingView(
+            message: message,
+            messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
+        )
         replyComposingView.translatesAutoresizingMaskIntoConstraints = false
 
         bottomContainer.addSubview(replyComposingView)

@@ -26,7 +26,7 @@ extension WireCellsNode {
         path: String = "some/path",
         modified: Date? = nil,
         size: UInt64? = nil,
-        eTag: String? = nil,
+        eTag: String? = "eTag",
         type: WireCellsNodeType? = nil,
         isRecycled: Bool = false,
         isDraft: Bool = false,

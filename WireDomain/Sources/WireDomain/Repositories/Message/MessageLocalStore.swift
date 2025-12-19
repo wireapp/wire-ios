@@ -18,7 +18,6 @@
 
 import CoreData
 import GenericMessageProtocol
-import WireCryptobox
 import WireDataModel
 import WireLogging
 
@@ -680,7 +679,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
                 let members = selfUserTeam.members.compactMap(\.user)
                 let guests = localParticipants.filter {
-                    !$0.isApp && $0.membership == nil
+                    !$0.isAppOrBot && $0.membership == nil
                 }
 
                 newConversationMessage.allTeamUsersAdded = localParticipants.isSuperset(of: members)
@@ -1057,6 +1056,12 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             guard clientMessage.underlyingMessage?.compositeData != nil else { return false }
             genericMessage = GenericMessage(
                 content: newComposite,
+                nonce: messageNonce
+            )
+
+        case let .multipart(multipart):
+            genericMessage = GenericMessage(
+                content: multipart,
                 nonce: messageNonce
             )
         }

@@ -39,6 +39,10 @@ final class FilesBrowserViewTests: XCTestCase {
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
     private var createFolderUseCase: (any WireCellsCreateFolderUseCaseProtocol)!
+    private var fetchNodeVersionsUseCase: WireCellsFetchNodeVersionsUseCase!
+    private var restoreNodeVersionUseCase: WireCellsRestoreNodeVersionUseCase!
+    private var getEditingURLUseCase: WireCellsGetEditingURLUseCase!
+    private var getAssetUseCase: WireCellsGetAssetUseCase!
     private var localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol!
 
     private let record: Bool? = nil
@@ -71,14 +75,32 @@ final class FilesBrowserViewTests: XCTestCase {
         )
         renameNodeUseCase = WireCellsRenameNodeUseCase(
             nodesRepository: MockWireCellsNodesRepositoryProtocol(),
-            localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            localAssetsRepository: localAssetsRepository,
             nodeCache: MockWireCellsNodeCacheProtocol(),
             nodeRenameNotifier: WireCellsNodeRenameNotifier()
         )
         updateTagsUseCase = WireCellsUpdateTagsUseCase(nodesAPI: nodesApi)
         getTagSuggestionsUseCase = WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi)
+        getAssetUseCase = WireCellsGetAssetUseCase(
+            localAssetRepository: localAssetsRepository,
+            fileCache: MockFileCache()
+        )
+
         createFolderUseCase = WireCellsCreateFolderUseCase(
             nodesRepository: nodesRepository
+        )
+
+        fetchNodeVersionsUseCase = WireCellsFetchNodeVersionsUseCase(repository: nodesRepository)
+        restoreNodeVersionUseCase = WireCellsRestoreNodeVersionUseCase(
+            repository: nodesRepository,
+            localAssetsRepository: localAssetsRepository,
+            nodeCache: MockWireCellsNodeCacheProtocol()
+        )
+
+        let editingURLRepository = MockWireCellsEditingURLRepositoryProtocol()
+        editingURLRepository.getEditorURLId_MockValue = nil
+        getEditingURLUseCase = WireCellsGetEditingURLUseCase(
+            editingURLRepository: editingURLRepository
         )
     }
 
@@ -88,6 +110,13 @@ final class FilesBrowserViewTests: XCTestCase {
         nodesRepository = nil
         fetchNodesUseCase = nil
         localAssetsRepository = nil
+        fetchNodeVersionsUseCase = nil
+        createFolderUseCase = nil
+        getTagSuggestionsUseCase = nil
+        updateTagsUseCase = nil
+        renameNodeUseCase = nil
+        deleteNodeUseCase = nil
+        restoreNodeVersionUseCase = nil
     }
 
     @MainActor
@@ -172,12 +201,17 @@ final class FilesBrowserViewTests: XCTestCase {
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
                 createFolder: createFolderUseCase,
+                fetchNodeVersions: fetchNodeVersionsUseCase,
+                restoreNodeVersion: restoreNodeVersionUseCase,
+                getEditingURL: getEditingURLUseCase,
+                getAssetUseCase: getAssetUseCase
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetsRepository,
             nodesRepository: nodesRepository,
             fileCache: MockFileCache(),
             isFoldersEnabled: false,
+            isCollaboraEnabled: false,
             accentColorProvider: { .default }
         )
 

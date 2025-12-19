@@ -25,6 +25,7 @@ import WireLocators
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
+import WireMessagingDomain
 import WireMessagingUI
 import WireSyncEngine
 
@@ -32,6 +33,7 @@ final class ConversationViewController: UIViewController {
 
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
     private let visibleMessage: ZMConversationMessage?
     private let getParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
     var actionControllerForSelectedEmoji: ConversationMessageActionController?
@@ -122,6 +124,7 @@ final class ConversationViewController: UIViewController {
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository,
                 isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
             )
         case .`self`, .oneOnOne, .connection:
@@ -143,6 +146,7 @@ final class ConversationViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         mediaPlaybackManager: MediaPlaybackManager?,
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable,
@@ -154,6 +158,7 @@ final class ConversationViewController: UIViewController {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
 
         self.individualChangesFactory = MessagesIndividualUpdatesFactory(
             context: userSession.contextProvider.viewContext
@@ -177,6 +182,7 @@ final class ConversationViewController: UIViewController {
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository,
                 wireMessagingFactory: wireMessagingFactory
             )
         }
@@ -291,7 +297,13 @@ final class ConversationViewController: UIViewController {
         updateInputBarVisibility()
 
         if let quote = conversation.draftMessage?.quote, !quote.hasBeenDeleted, let contentViewController {
-            inputBarController.addReplyComposingView(contentViewController.createReplyComposingView(for: quote))
+            let messageReplyAttachmentsViewModel = MessageReplyAttachmentsViewModel(
+                fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
+            )
+            inputBarController.addReplyComposingView(contentViewController.createReplyComposingView(
+                for: quote,
+                messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
+            ))
         }
 
         resolveConversationIfOneOnOne()
@@ -807,7 +819,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         contentViewController?.didFinishEditing(message)
         userSession.enqueue {
             if let newText,
-               !newText.isEmpty {
+               !newText.isEmpty || message.isMultipart {
                 let fetchLinkPreview = !Settings.disableLinkPreviews
                 message.textMessageData?.editText(newText, mentions: mentions, fetchLinkPreview: fetchLinkPreview)
             } else {
@@ -856,7 +868,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                 conversation: conversation,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             collections.delegate = self
 

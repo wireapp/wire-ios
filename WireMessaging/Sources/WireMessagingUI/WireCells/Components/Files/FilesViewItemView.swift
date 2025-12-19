@@ -35,20 +35,26 @@ struct FilesViewItemView: View {
     private var canRenameFile: Bool
     private var canEditTags: Bool
     private let canMoveToFolder: Bool
+    private let canEditFile: Bool
     private var canDeleteFiles: Bool
+    private let canOpenVersionHistory: Bool
 
     init(
         viewModel: @autoclosure @escaping () -> FilesItemViewModel,
         canRenameFile: Bool = false,
         canEditTags: Bool = false,
         canMoveToFolder: Bool = false,
+        canOpenVersionHistory: Bool = false,
+        canEditFile: Bool = false,
         canDeleteFiles: Bool = false
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
         self.canRenameFile = canRenameFile
         self.canEditTags = canEditTags
         self.canMoveToFolder = canMoveToFolder
+        self.canEditFile = canEditFile
         self.canDeleteFiles = canDeleteFiles
+        self.canOpenVersionHistory = canOpenVersionHistory
     }
 
     var body: some View {
@@ -109,8 +115,25 @@ struct FilesViewItemView: View {
                     if viewModel.isDownloadOptionAvailable {
                         Button(action: download) {
                             Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
-                        }.disabled(viewModel.isDownloading)
+                        }
                     }
+
+                    if canOpenVersionHistory, !viewModel.isInRecycleBin {
+                        Button(action: showVersionHistory) {
+                            Label(
+                                Strings.Files.Item.Menu.versionHistory,
+                                systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90"
+                            )
+                        }
+                    }
+
+                    if canEditFile, viewModel.isEditable {
+                        Button(action: editFile) {
+                            Label(Strings.Files.Item.Menu.editFile, systemImage: "square.and.pencil")
+                        }
+                    }
+
+                    Divider()
 
                     if canRenameFile, !viewModel.isInRecycleBin {
                         Button(action: rename) {
@@ -137,7 +160,7 @@ struct FilesViewItemView: View {
                     }
 
                     if canDeleteFiles {
-                        if viewModel.isInRecycleBin {
+                        if viewModel.isInRecycleBin || !viewModel.isFoldersEnabled {
                             Button(
                                 role: .destructive,
                                 action: { delete(permanently: true) },
@@ -219,8 +242,16 @@ struct FilesViewItemView: View {
         Task { await viewModel.open() }
     }
 
+    private func editFile() {
+        Task { await viewModel.edit() }
+    }
+
     private func download() {
         Task { await viewModel.download() }
+    }
+
+    private func showVersionHistory() {
+        Task { await viewModel.showVersionHistory() }
     }
 
     private func rename() {
@@ -303,7 +334,13 @@ private extension View {
 #Preview {
     VStack(spacing: 0) {
         FilesViewItemView(viewModel: .preview())
-        FilesViewItemView(viewModel: .preview(), canRenameFile: true, canEditTags: true, canDeleteFiles: true)
+        FilesViewItemView(
+            viewModel: .preview(),
+            canRenameFile: true,
+            canEditTags: true,
+            canOpenVersionHistory: true,
+            canDeleteFiles: true
+        )
         FilesViewItemView(viewModel: .preview(tags: ["urgent"]), canRenameFile: true, canEditTags: true)
         FilesViewItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]), canDeleteFiles: true)
     }

@@ -232,7 +232,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
         }
     }
 
-    func testThatItInvalidatesSelfClientAndDeletesAndRecreatesCryptoBoxOnDidDetectCurrentClientDeletion() {
+    func testThatItInvalidatesSelfClient_OnDidDetectCurrentClientDeletion() {
         syncMOC.performAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)

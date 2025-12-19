@@ -35,6 +35,6 @@
 @property (nonatomic) id<RequestStrategy> requestStrategy;
 @property (nonatomic, weak) id<UpdateEventProcessor> updateEventProcessor;
 @property (nonatomic, weak) NSManagedObjectContext *syncMOC;
-@property (nonatomic) PushNotificationStatus *pushNotificationStatus;
+@property (nonatomic) PushNotificationStatus *pushNotificationStatus; // TO remove
 @property (nonatomic) SyncStatus *syncStatus;
 @end

@@ -1891,6 +1891,12 @@ internal enum L10n {
           internal static let brokenMessage = L10n.tr("Localizable", "content.message.reply.broken_message", fallback: "You cannot see this message.")
           /// Edited
           internal static let editedMessage = L10n.tr("Localizable", "content.message.reply.edited_message", fallback: "Edited")
+          internal enum Files {
+            /// %@ files
+            internal static func count(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.message.reply.files.count", String(describing: p1), fallback: "%@ files")
+            }
+          }
           internal enum OriginalTimestamp {
             /// Original message from %@
             internal static func date(_ p1: Any) -> String {
@@ -2156,8 +2162,6 @@ internal enum L10n {
           internal static func other(_ p1: Any) -> String {
             return L10n.tr("Localizable", "content.system.cannot_decrypt.other", String(describing: p1), fallback: "A message from %@ could not be decrypted.")
           }
-          /// Fix future messages
-          internal static let resetSession = L10n.tr("Localizable", "content.system.cannot_decrypt.reset_session", fallback: "Fix future messages")
           /// A message from you could not be decrypted.
           internal static let `self` = L10n.tr("Localizable", "content.system.cannot_decrypt.self", fallback: "A message from you could not be decrypted.")
         }

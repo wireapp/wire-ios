@@ -151,7 +151,7 @@ struct MoveToFolderPage<ViewModel>: View where ViewModel: MoveToFolderPageViewMo
 }
 
 // TODO: [WPB-21903] - Unify with FilesInfoView
-private struct MoveToFolderEmptyStateView: View {
+package struct MoveToFolderEmptyStateView: View {
 
     let title: String?
     let message: String

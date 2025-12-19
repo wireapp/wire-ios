@@ -117,9 +117,14 @@
 "conversation.wireCells.files.loadMore.title" = "Load more";
 "conversation.wireCells.files.item.menu.open" = "Open";
 "conversation.wireCells.files.item.menu.download" = "Download";
+"conversation.wireCells.files.item.menu.editFile" = "Edit file";
 "conversation.wireCells.files.item.menu.rename" = "Rename";
 "conversation.wireCells.files.item.menu.moveToFolder" = "Move to folder";
 "conversation.wireCells.files.item.menu.addOrRemoveTags" = "Add or remove tags";
+"conversation.wireCells.files.item.menu.delete" = "Delete Permanently";
+"conversation.wireCells.files.item.menu.versionHistory" = "Version history";
+"conversation.wireCells.files.item.deleteConfirmation.title" = "This will permanently delete the file %@ for all participants. Everyone will lose access and there is no way to recover the file.";
+"conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Delete Permanently";
 "conversation.wireCells.files.item.menu.delete" = "Delete";
 "conversation.wireCells.files.item.deleteFileConfirmation.title" = "The file \"%@\" will move to this conversation's recycle bin.";
 "conversation.wireCells.files.item.deleteFolderConfirmation.title" = "The folder \"%@\" will move to this conversation's recycle bin.";
@@ -146,7 +151,7 @@
 "conversation.wireCells.files.renameFolder.navigationTitle" = "Rename folder";
 "conversation.wireCells.files.renameFile.filenameTooLongError" = "Use a shorter file name (most 64 characters)";
 "conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Use a shorter folder name (most 64 characters)";
-"conversation.wireCells.files.renameFile.wrongCharacterError" = "Use a name without \"/\" or \".\"";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Use a name without \"/\" and not starting with \".\"";
 "conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "A file with that name already exists";
 "conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "A folder with that name already exists";
 "conversation.wireCells.files.renameFile.placeholder" = "Enter file name";
@@ -191,3 +196,16 @@
 "conversation.message.attachment.previewNotAvailable" = "Unable to display preview";
 "conversation.message.attachment.unableToDownload" = "Unable to download file";
 "conversation.message.attachment.loadingContent" = "Loading content";
+
+// MARK: - Files versioning
+"conversation.wireCells.filesVersioning.navigationTitle" = "Version history";
+"conversation.wireCells.filesVersioning.currentFile" = "Current";
+"conversation.wireCells.filesVersioning.restoreAlertTitle" = "Restore version";
+"conversation.wireCells.filesVersioning.restoreAlertMessage" = "This copies the restored version and sets it as the current one. All previous versions remain available.";
+"conversation.wireCells.filesVersioning.restoreAlertAction" = "Restore";
+"conversation.wireCells.filesVersioning.restoreFailureAlertTitle" = "Restoring version failed";
+"conversation.wireCells.filesVersioning.restoreFailureAlertMessage" = "Something went wrong while restoring a version. Please retry.";
+"conversation.wireCells.filesVersioning.downloadVersion" = "Download version";
+"conversation.wireCells.filesVersioning.retry" = "Retry";
+"conversation.wireCells.filesVersioning.restoringVersion" = "Restoring version...";
+"conversation.wireCells.filesVersioning.downloadingVersion" = "Downloading file version";

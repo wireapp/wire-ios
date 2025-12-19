@@ -80,8 +80,6 @@ public final class MLSService: MLSServiceInterface {
         case keyPackageQueriedTime
     }
 
-    var pendingProposalCommitTimers = [MLSGroupID: Timer]()
-
     let targetUnclaimedKeyPackageCount = 100
     let actionsProvider: MLSActionsProviderProtocol
 
@@ -1380,164 +1378,6 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Pending proposals
 
-    enum MLSCommitPendingProposalsError: Error {
-
-        case failedToCommitPendingProposals
-
-    }
-
-    private var lastExecutionTime = Date.distantPast
-    private let throttleInterval: TimeInterval = 2.0 // 2 seconds throttle
-
-    public func commitPendingProposalsIfNeeded() async {
-        let now = Date.now
-
-        guard now.timeIntervalSince(lastExecutionTime) > throttleInterval else {
-            return // Ignore call if within the throttle period
-        }
-
-        lastExecutionTime = now
-
-        await commitPendingProposals()
-    }
-
-    func commitPendingProposals() async {
-        guard let context else {
-            return
-        }
-
-        logger.info("committing any scheduled pending proposals")
-
-        let groupsWithPendingCommits = await sortedGroupsWithPendingCommits()
-
-        logger.info("\(groupsWithPendingCommits.count) groups with scheduled pending proposals")
-
-        // Committing proposals for each group is independent and should not wait for
-        // each other.
-        await withTaskGroup(of: Void.self) { taskGroup in
-            for (groupID, timestamp) in groupsWithPendingCommits {
-                taskGroup.addTask { [self] in
-                    do {
-                        if timestamp.isInThePast {
-                            logger.info(
-                                "commit scheduled in the past, committing...",
-                                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-                            )
-                            try await commitPendingProposals(in: groupID)
-                        } else {
-                            logger.info(
-                                "commit scheduled in the future, waiting...",
-                                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-                            )
-
-                            let timeIntervalSinceNow = timestamp.timeIntervalSinceNow
-                            if timeIntervalSinceNow > 0 {
-                                try await Task.sleep(nanoseconds: timeIntervalSinceNow.nanoseconds)
-                            }
-
-                            let isSelfAnActiveMember = await context.perform {
-                                let conversation = ZMConversation.fetch(with: groupID, in: context)
-                                return conversation?.isSelfAnActiveMember ?? false
-                            }
-
-                            guard isSelfAnActiveMember else {
-                                logger.info(
-                                    "cancelling commit as the user is no longer a member",
-                                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-                                )
-                                return
-                            }
-
-                            logger.info(
-                                "scheduled commit is ready, committing...",
-                                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-                            )
-                            try await commitPendingProposals(in: groupID)
-                        }
-
-                    } catch {
-                        logger.error(
-                            "failed to commit pending proposals: \(String(describing: error))",
-                            attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-                        )
-                    }
-                }
-            }
-        }
-        logger.debug("end any scheduled pending proposals")
-    }
-
-    private func sortedGroupsWithPendingCommits() async -> [(MLSGroupID, Date)] {
-        guard let context else {
-            return []
-        }
-
-        var result: [(MLSGroupID, Date)] = []
-
-        let groupIDsAndProposalDatesArray: [(MLSGroupID, Date)] = await context.perform {
-            ZMConversation.fetchConversationsWithPendingProposals(
-                in: context
-            ).filter(
-                \.isSelfAnActiveMember
-            ).compactMap {
-                guard
-                    let groupID = $0.mlsGroupID,
-                    let proposalDate = $0.commitPendingProposalDate
-                else {
-                    return nil
-                }
-                return (groupID, proposalDate)
-            }
-        }
-
-        for (groupID, timestamp) in groupIDsAndProposalDatesArray {
-            // The pending proposal will always fail and cause
-            // recovery too many recovery syncs.
-            guard !brokenGroupIDs.contains(groupID) else {
-                continue
-            }
-
-            result.append((groupID, timestamp))
-
-            // The pending proposal might be for the subconversation,
-            // so include it just in case.
-            if let subgroupID = await subconversationGroupIDRepository.fetchSubconversationGroupID(
-                forType: .conference,
-                parentGroupID: groupID
-            ) {
-                result.append((subgroupID, timestamp))
-            }
-        }
-
-        return result.sorted { lhs, rhs in
-            let (lhsCommitDate, rhsCommitDate) = (lhs.1, rhs.1)
-            return lhsCommitDate <= rhsCommitDate
-        }
-    }
-
-    private func commitPendingProposalsIfNeeded(in groupID: MLSGroupID) async throws {
-        guard existsPendingProposals(in: groupID) else { return }
-        // Sending a message while there are pending proposals will result in an error,
-        // so commit any first.
-        logger.info("preemptively committing pending proposals in group (\(groupID.safeForLoggingDescription))")
-        try await commitPendingProposals(in: groupID)
-        logger.info("success: committed pending proposals in group (\(groupID.safeForLoggingDescription))")
-    }
-
-    private func existsPendingProposals(in groupID: MLSGroupID) -> Bool {
-        guard let context else { return false }
-
-        var groupHasPendingProposals = false
-
-        context.performAndWait {
-            if let conversation = ZMConversation.fetch(with: groupID, in: context) {
-                groupHasPendingProposals = conversation.commitPendingProposalDate != nil
-            }
-        }
-
-        return groupHasPendingProposals
-    }
-
     public func commitPendingProposals(in groupID: MLSGroupID) async throws {
         try await retryOnCommitFailure(for: groupID) { [weak self] in
             try await self?.internalCommitPendingProposals(in: groupID)
@@ -1548,7 +1388,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("committing pending proposals in: \(groupID.safeForLoggingDescription)")
             try await mlsActionExecutor.commitPendingProposals(in: groupID)
-            clearPendingProposalCommitDate(for: groupID)
+            await clearPendingProposalCommitDate(for: groupID)
             delegate?.mlsServiceDidCommitPendingProposal(for: groupID)
         } catch {
             logger
@@ -1559,12 +1399,12 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func clearPendingProposalCommitDate(for groupID: MLSGroupID) {
+    private func clearPendingProposalCommitDate(for groupID: MLSGroupID) async {
         guard let context else {
             return
         }
 
-        context.performAndWait {
+        await context.perform {
             let conversation = ZMConversation.fetch(with: groupID, in: context)
             conversation?.commitPendingProposalDate = nil
         }
@@ -1978,6 +1818,13 @@ public final class MLSService: MLSServiceInterface {
             parentQualifiedID: parentQualifiedID,
             parentGroupID: parentGroupID,
             subconversationType: subconversationType
+        )
+    }
+
+    public func conferenceSubconversation(parentGroupID: MLSGroupID) async -> MLSGroupID? {
+        await subconversationGroupIDRepository.fetchSubconversationGroupID(
+            forType: .conference,
+            parentGroupID: parentGroupID
         )
     }
 

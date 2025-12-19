@@ -25,7 +25,8 @@ package enum NodesAPIError: Error {
     case moveFailed
 }
 
-package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol {
+package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol,
+    WireCellsEditingURLRepositoryProtocol {
     private let awsClient: AWSClient
     private let restAPI: RestAPI
     private let fileManager: FileManager
@@ -101,6 +102,15 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         try await restAPI.deleteVersion(uuid: nodeID, versionID: versionID)
     }
 
+    package func getVersions(nodeID: UUID) async throws -> [WireCellsNodeVersion] {
+        let versionsDTO = try await restAPI.getVersions(uuid: nodeID)
+        return versionsDTO.toDomainModel()
+    }
+
+    package func restoreVersion(nodeID: UUID, versionID: UUID) async throws {
+        try await restAPI.restoreVersion(uuid: nodeID, versionID: versionID)
+    }
+
     package func downloadFile(
         out: URL,
         cellPath: String,
@@ -147,6 +157,10 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         } catch {
             throw error
         }
+    }
+
+    package func getEditorURL(id: UUID) async throws -> (url: URL, date: Date)? {
+        try await restAPI.getEditorURL(id: id)
     }
 
     package func createPublicLink(nodeID: UUID, fileName: String) async throws -> WireCellsPublicLink {

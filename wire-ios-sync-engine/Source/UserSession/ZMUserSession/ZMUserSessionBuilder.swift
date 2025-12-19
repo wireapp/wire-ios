@@ -39,7 +39,6 @@ struct ZMUserSessionBuilder {
     private var contextStorage: (any LAContextStorable)?
     private var coreCryptoProvider: (any CoreCryptoProviderProtocol)?
     private var coreDataStack: CoreDataStack?
-    private var cryptoboxMigrationManager: (any CryptoboxMigrationManagerInterface)?
     private var dependencies: UserSessionDependencies?
     private var e2eiActivationDateRepository: (any E2EIActivationDateRepositoryProtocol)?
     private var earService: (any EARServiceInterface)?
@@ -75,7 +74,6 @@ struct ZMUserSessionBuilder {
             let contextStorage,
             let coreCryptoProvider,
             let coreDataStack,
-            let cryptoboxMigrationManager,
             let e2eiActivationDateRepository,
             let dependencies,
             let earService,
@@ -172,7 +170,6 @@ struct ZMUserSessionBuilder {
             coreDataStack: coreDataStack,
             earService: earService,
             mlsService: mlsService,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             proteusToMLSMigrationCoordinator: proteusToMLSMigrationCoordinator,
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: sharedContainerURL,
@@ -199,7 +196,6 @@ struct ZMUserSessionBuilder {
         currentAppVersion: String,
         currentBuildNumber: String,
         application: any ZMApplication,
-        cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         coreDataStack: CoreDataStack,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         configuration: ZMUserSession.Configuration,
@@ -300,7 +296,6 @@ struct ZMUserSessionBuilder {
         self.contextStorage = contextStorage
         self.coreCryptoProvider = coreCryptoProvider
         self.coreDataStack = coreDataStack
-        self.cryptoboxMigrationManager = cryptoboxMigrationManager
         dependencies = buildUserSessionDependencies(coreDataStack: coreDataStack)
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
         self.earService = earService

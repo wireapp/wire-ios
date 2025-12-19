@@ -23,6 +23,7 @@ import WireMessagingDomain
 
 enum WireCellsNodesAPIError: Error {
     case failedToDecodeNode
+    case failedToDecodeNodeVersions
     case missingData(String)
 }
 
@@ -74,6 +75,19 @@ final class RestAPI: Sendable {
                     throw sdkError.underlyingError
                 }
             }
+        }
+    }
+
+    func getEditorURL(id: UUID) async throws -> (url: URL, date: Date)? {
+        do {
+            let response = try await NodeServiceAPI.getByUuid(
+                uuid: id.transportString(),
+                flags: [.withEditorURLs],
+                apiConfiguration: makeConfiguration()
+            )
+            return response.editorURLs?["collabora"]?.info
+        } catch let error as ErrorResponse {
+            throw error.underlyingError
         }
     }
 
@@ -178,6 +192,39 @@ final class RestAPI: Sendable {
         _ = try await NodeServiceAPI.deleteVersion(
             uuid: uuid.transportString(),
             versionId: versionID.transportString(),
+            apiConfiguration: makeConfiguration()
+        )
+    }
+
+    func getVersions(uuid: UUID) async throws -> WireCellsNodeVersionsNetworkModel {
+        let query = RestNodeVersionsFilter(
+            filterBy: .versionsAll,
+            flags: [.withPreSignedURLs],
+            limit: nil,
+            offset: nil,
+            sortDirDesc: true,
+            sortField: nil
+        )
+
+        let response = try await NodeServiceAPI.nodeVersions(
+            uuid: uuid.transportString(),
+            query: query,
+            apiConfiguration: makeConfiguration()
+        )
+
+        guard let dto = response.toDTO() else {
+            throw WireCellsNodesAPIError.failedToDecodeNodeVersions
+        }
+
+        return dto
+    }
+
+    func restoreVersion(uuid: UUID, versionID: UUID) async throws {
+        let parameters = RestPromoteParameters(publish: false)
+        _ = try await NodeServiceAPI.promoteVersion(
+            uuid: uuid.transportString(),
+            versionId: versionID.transportString(),
+            parameters: parameters,
             apiConfiguration: makeConfiguration()
         )
     }
@@ -374,7 +421,7 @@ private extension WireCellsGetNodesRequest {
 
     var lookupRequest: RestLookupRequest {
         var request = RestLookupRequest(
-            flags: [.withPreSignedURLs],
+            flags: [.withPreSignedURLs, .withEditorURLs],
             limit: "\(limit)",
             offset: "\(offset)",
         )
@@ -447,5 +494,20 @@ private extension ErrorResponse {
         case let .error(_, _, _, error):
             error
         }
+    }
+}
+
+private extension RestPreSignedURL {
+
+    var info: (url: URL, date: Date)? {
+        guard
+            let urlString = url,
+            let url = URL(string: urlString),
+            let expiresAtString = expiresAt,
+            let expiresAtTimeInterval = TimeInterval(expiresAtString)
+        else {
+            return nil
+        }
+        return (url: url, date: Date(timeIntervalSinceNow: expiresAtTimeInterval))
     }
 }

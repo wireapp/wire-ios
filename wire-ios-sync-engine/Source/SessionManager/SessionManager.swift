@@ -281,13 +281,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    public private(set) var backgroundUserSessions = [UUID: ZMUserSession]() {
-        didSet {
-            VoIPPushHelper.setLoadedUserSessions(
-                accountIDs: Array(backgroundUserSessions.keys)
-            )
-        }
-    }
+    public private(set) var backgroundUserSessions = [UUID: ZMUserSession]()
 
     public internal(set) var unauthenticatedSession: UnauthenticatedSession? {
         willSet {
@@ -347,6 +341,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     let jailbreakDetector: JailbreakDetectorProtocol?
     fileprivate var accountTokens: [UUID: [Any]] = [:]
     fileprivate var memoryWarningObserver: NSObjectProtocol?
+    var conversationVisibleObserver: NSObjectProtocol?
     fileprivate var isSelectingAccount: Bool = false
 
     var proxyCredentials: WireTransport.ProxyCredentials?

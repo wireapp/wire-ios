@@ -82,36 +82,33 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
         }
     }
 
-    func testThatItCreatesANotificationForParticipantAdd_Self() {
+    func testThatItCreatesANotificationForParticipantAdd_Self() throws {
 
         //    "push.notification.member.join.self" = "%1$@ added you";
         //    "push.notification.member.join.self.noconversationname" = "%1$@ added you to a conversation";
 
         // given, when
-        syncMOC.performGroupedAndWait {
-            let note1 = self.noteForParticipantAdded(
+        try syncMOC.performGroupedAndWait {
+            let note1 = try XCTUnwrap(self.noteForParticipantAdded(
                 self.groupConversation,
                 aSender: self.sender,
                 otherUsers: [self.selfUser]
-            )
-            let note2 = self.noteForParticipantAdded(
+            ))
+            let note2 = try XCTUnwrap(self.noteForParticipantAdded(
                 self.groupConversationWithoutName,
                 aSender: self.sender,
                 otherUsers: [self.selfUser]
-            )
-            let note3 = self.noteForParticipantAdded(
+            ))
+            let note3 = try XCTUnwrap(self.noteForParticipantAdded(
                 self.groupConversation,
                 aSender: self.sender,
                 otherUsers: [self.selfUser, self.otherUser1]
-            )
+            ))
 
             // then
-            XCTAssertNotNil(note1)
-            XCTAssertNotNil(note2)
-            XCTAssertNotNil(note3)
-            XCTAssertEqual(note1!.body, "Super User added you")
-            XCTAssertEqual(note2!.body, "Super User added you to a conversation")
-            XCTAssertEqual(note3!.body, "Super User added you")
+            XCTAssertEqual(note1.body, "Super User added you")
+            XCTAssertEqual(note2.body, "Super User added you to a conversation")
+            XCTAssertEqual(note3.body, "Super User added you")
         }
     }
 

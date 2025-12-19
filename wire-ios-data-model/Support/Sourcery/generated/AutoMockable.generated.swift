@@ -2196,53 +2196,6 @@ public class MockCoreDataStackProtocol: CoreDataStackProtocol {
 
 }
 
-public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - isMigrationNeeded
-
-    public var isMigrationNeededAccountDirectory_Invocations: [URL] = []
-    public var isMigrationNeededAccountDirectory_MockMethod: ((URL) -> Bool)?
-    public var isMigrationNeededAccountDirectory_MockValue: Bool?
-
-    public func isMigrationNeeded(accountDirectory: URL) -> Bool {
-        isMigrationNeededAccountDirectory_Invocations.append(accountDirectory)
-
-        if let mock = isMigrationNeededAccountDirectory_MockMethod {
-            return mock(accountDirectory)
-        } else if let mock = isMigrationNeededAccountDirectory_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `isMigrationNeededAccountDirectory`")
-        }
-    }
-
-    // MARK: - performMigration
-
-    public var performMigrationAccountDirectoryCoreCrypto_Invocations: [(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol)] = []
-    public var performMigrationAccountDirectoryCoreCrypto_MockError: Error?
-    public var performMigrationAccountDirectoryCoreCrypto_MockMethod: ((URL, SafeCoreCryptoProtocol) async throws -> Void)?
-
-    public func performMigration(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol) async throws {
-        performMigrationAccountDirectoryCoreCrypto_Invocations.append((accountDirectory: accountDirectory, coreCrypto: coreCrypto))
-
-        if let error = performMigrationAccountDirectoryCoreCrypto_MockError {
-            throw error
-        }
-
-        guard let mock = performMigrationAccountDirectoryCoreCrypto_MockMethod else {
-            fatalError("no mock for `performMigrationAccountDirectoryCoreCrypto`")
-        }
-
-        try await mock(accountDirectory, coreCrypto)
-    }
-
-}
-
 public class MockE2EIServiceInterface: E2EIServiceInterface {
 
     // MARK: - Life cycle
@@ -3090,70 +3043,6 @@ public class MockEARServiceInterface: EARServiceInterface {
 
 }
 
-class MockFileManagerInterface: FileManagerInterface {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - fileExists
-
-    var fileExistsAtPath_Invocations: [String] = []
-    var fileExistsAtPath_MockMethod: ((String) -> Bool)?
-    var fileExistsAtPath_MockValue: Bool?
-
-    func fileExists(atPath path: String) -> Bool {
-        fileExistsAtPath_Invocations.append(path)
-
-        if let mock = fileExistsAtPath_MockMethod {
-            return mock(path)
-        } else if let mock = fileExistsAtPath_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fileExistsAtPath`")
-        }
-    }
-
-    // MARK: - removeItem
-
-    var removeItemAt_Invocations: [URL] = []
-    var removeItemAt_MockError: Error?
-    var removeItemAt_MockMethod: ((URL) throws -> Void)?
-
-    func removeItem(at url: URL) throws {
-        removeItemAt_Invocations.append(url)
-
-        if let error = removeItemAt_MockError {
-            throw error
-        }
-
-        guard let mock = removeItemAt_MockMethod else {
-            fatalError("no mock for `removeItemAt`")
-        }
-
-        try mock(url)
-    }
-
-    // MARK: - cryptoboxDirectory
-
-    var cryptoboxDirectoryIn_Invocations: [URL] = []
-    var cryptoboxDirectoryIn_MockMethod: ((URL) -> URL)?
-    var cryptoboxDirectoryIn_MockValue: URL?
-
-    func cryptoboxDirectory(in accountDirectory: URL) -> URL {
-        cryptoboxDirectoryIn_Invocations.append(accountDirectory)
-
-        if let mock = cryptoboxDirectoryIn_MockMethod {
-            return mock(accountDirectory)
-        } else if let mock = cryptoboxDirectoryIn_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `cryptoboxDirectoryIn`")
-        }
-    }
-
-}
-
 public class MockIsSelfUserE2EICertifiedUseCaseProtocol: IsSelfUserE2EICertifiedUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -3794,39 +3683,6 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         }
 
         mock(consumableNotifications)
-    }
-
-    // MARK: - fetchChatBubblesSimple
-
-    public var fetchChatBubblesSimple_Invocations: [Void] = []
-    public var fetchChatBubblesSimple_MockMethod: (() -> Feature.ChatBubblesSimple)?
-    public var fetchChatBubblesSimple_MockValue: Feature.ChatBubblesSimple?
-
-    public func fetchChatBubblesSimple() -> Feature.ChatBubblesSimple {
-        fetchChatBubblesSimple_Invocations.append(())
-
-        if let mock = fetchChatBubblesSimple_MockMethod {
-            return mock()
-        } else if let mock = fetchChatBubblesSimple_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchChatBubblesSimple`")
-        }
-    }
-
-    // MARK: - storeChatBubblesSimple
-
-    public var storeChatBubblesSimple_Invocations: [Feature.ChatBubblesSimple] = []
-    public var storeChatBubblesSimple_MockMethod: ((Feature.ChatBubblesSimple) -> Void)?
-
-    public func storeChatBubblesSimple(_ chatBubblesSimple: Feature.ChatBubblesSimple) {
-        storeChatBubblesSimple_Invocations.append(chatBubblesSimple)
-
-        guard let mock = storeChatBubblesSimple_MockMethod else {
-            fatalError("no mock for `storeChatBubblesSimple`")
-        }
-
-        mock(chatBubblesSimple)
     }
 
     // MARK: - fetchCells
@@ -4608,6 +4464,24 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
     }
 
+    // MARK: - conferenceSubconversation
+
+    public var conferenceSubconversationParentGroupID_Invocations: [MLSGroupID] = []
+    public var conferenceSubconversationParentGroupID_MockMethod: ((MLSGroupID) async -> MLSGroupID?)?
+    public var conferenceSubconversationParentGroupID_MockValue: MLSGroupID??
+
+    public func conferenceSubconversation(parentGroupID: MLSGroupID) async -> MLSGroupID? {
+        conferenceSubconversationParentGroupID_Invocations.append(parentGroupID)
+
+        if let mock = conferenceSubconversationParentGroupID_MockMethod {
+            return await mock(parentGroupID)
+        } else if let mock = conferenceSubconversationParentGroupID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `conferenceSubconversationParentGroupID`")
+        }
+    }
+
     // MARK: - leaveSubconversation
 
     public var leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_Invocations: [(parentQualifiedID: QualifiedID, parentGroupID: MLSGroupID, subconversationType: SubgroupType)] = []
@@ -4689,21 +4563,6 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         } else {
             fatalError("no mock for `subconversationMembersFor`")
         }
-    }
-
-    // MARK: - commitPendingProposalsIfNeeded
-
-    public var commitPendingProposalsIfNeeded_Invocations: [Void] = []
-    public var commitPendingProposalsIfNeeded_MockMethod: (() async -> Void)?
-
-    public func commitPendingProposalsIfNeeded() async {
-        commitPendingProposalsIfNeeded_Invocations.append(())
-
-        guard let mock = commitPendingProposalsIfNeeded_MockMethod else {
-            fatalError("no mock for `commitPendingProposalsIfNeeded`")
-        }
-
-        await mock()
     }
 
     // MARK: - commitPendingProposals
