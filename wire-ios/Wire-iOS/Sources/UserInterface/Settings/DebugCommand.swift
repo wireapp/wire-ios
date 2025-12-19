@@ -45,7 +45,7 @@ enum DebugCommand {
         case "resync resources":
             self = .resyncResources
 
-        case "repairFaultyMLSRemovalKeys":
+        case "initiateResetMLSGroups":
             self = .repairFaultyMLSRemovalKeys
 
         default:

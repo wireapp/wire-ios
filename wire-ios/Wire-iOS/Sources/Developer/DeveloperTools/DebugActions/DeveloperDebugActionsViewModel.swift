@@ -87,7 +87,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Invalidate all conversations", action: invalidateAllConversations),
             .init(title: "Set last app version migration", action: requestAppVersionInput),
             .init(title: "Initiate reset of first from top MLS", action: initiateResetBrokenMLSConversation),
-            .init(title: "Repair faulty removal key", action: initiateRepairRemovalKeys),
+            .init(title: "Initiate reset of affect MLS groups", action: initiateRepairRemovalKeys),
             .init(title: "Logout", action: logout)
 
         ]
