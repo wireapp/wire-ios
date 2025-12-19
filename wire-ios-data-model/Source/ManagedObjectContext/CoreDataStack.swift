@@ -132,7 +132,11 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
         #endif
     }
 
-    public lazy var syncContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
+    public lazy var syncContext: NSManagedObjectContext = {
+        let context = messagesContainer.newBackgroundContext()
+        context.markAsSyncContext()
+        return context
+    }()
 
     public lazy var searchContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
 
@@ -391,7 +395,7 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
     }
 
     func configureSyncContext(_ context: NSManagedObjectContext) async {
-        context.markAsSyncContext()
+        // Note: markAsSyncContext() is now called in the lazy initializer
         await context.perform {
             context.localDomain = self.localDomain
             context.isFederationEnabled = self.isFederationEnabled

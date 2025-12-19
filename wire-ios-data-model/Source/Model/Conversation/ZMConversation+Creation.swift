@@ -60,9 +60,9 @@ public extension ZMConversation {
         created: UnsafeMutablePointer<Bool>
     ) -> ZMConversation {
         // We must only ever call this on the sync context. Otherwise, there's a race condition
-        // where the UI and sync contexts could both insert the same user (same UUID) and we'd end up
-        // having two duplicates of that user, and we'd have a really hard time recovering from that.
-        require(context.zm_isSyncContext, "Users are only allowed to be created on sync context")
+        // where the UI and sync contexts could both insert the same conversation (same UUID) and we'd end up
+        // having two duplicates of that conversation, and we'd have a really hard time recovering from that.
+        require(context.zm_isSyncContext, "Conversations are only allowed to be created on sync context")
         let domain: String? = context.isFederationEnabled ? domain : nil
 
         if let conversation = fetch(with: remoteIdentifier, domain: domain, in: context) {
