@@ -309,7 +309,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
         }
 
         // then
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 2))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
     func testThatItCallsResultHandler_On204() {
