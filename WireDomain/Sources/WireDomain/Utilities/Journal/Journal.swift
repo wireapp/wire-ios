@@ -137,7 +137,8 @@ public extension Journal {
             JournalKey.isInitialSyncRequired,
             JournalKey.isSyncV2Enabled,
             JournalKey.isBackendMLSEnabled,
-            JournalKey.isFederationMigrationRequired
+            JournalKey.isFederationMigrationRequired,
+            JournalKey.isRepairFaultyMLSRemovalKeysRequired
 
         ].forEach {
             result[$0.name] = "\(self[$0] == true ? "Yes" : "No")"

@@ -830,4 +830,10 @@ public final class ClientSessionComponent {
         }
     )
 
+    public lazy var repairFaultyMLSRemovalKeysGenerator = RepairFaultyMLSRemovalKeysGenerator(
+        journal: journal,
+        repairUseCase: repairFaultyRemovalKeysUsecase,
+        workAgent: workAgent
+    )
+
 }
