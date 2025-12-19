@@ -53,14 +53,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
         mockCookieStorage.isAuthenticated = true
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockClientRegistationDelegate = MockClientRegistrationStatusDelegate()
-        sut = ZMClientRegistrationStatus(
-            context: syncMOC,
-            cookieProvider: mockCookieStorage,
-            coreCryptoProvider: mockCoreCryptoProvider,
-            localDomain: "wire.com",
-            isBackendMLSEnabled: false
-        )
-        sut.registrationStatusDelegate = mockClientRegistationDelegate
+        createSut(mlsEnabled: false)
 
         syncMOC.performAndWait {
             syncMOC.proteusService = MockProteusServiceInterface()
@@ -75,6 +68,17 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
         super.tearDown()
     }
 
+    private func createSut(mlsEnabled: Bool) {
+        sut = ZMClientRegistrationStatus(
+            context: syncMOC,
+            cookieProvider: mockCookieStorage,
+            coreCryptoProvider: mockCoreCryptoProvider,
+            localDomain: "wire.com",
+            isBackendMLSEnabled: mlsEnabled
+        )
+        sut.registrationStatusDelegate = mockClientRegistationDelegate
+    }
+    
     // MARK: Initialisation
 
     func testThatItRequestsE2EIEnrollment_whenRequiredOnInitialisation() {
@@ -86,7 +90,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             client.user = selfUser
             client.remoteIdentifier = "identifier"
             self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
-
+            
             enableMLS()
             enableE2EI()
 
@@ -114,6 +118,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
             mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_MockMethod = { _ in }
 
+            
             enableMLS()
 
             // when
@@ -794,8 +799,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
     @objc
     private func enableMLS() {
         LegacyFeatureRepository(context: syncMOC).storeMLS(Feature.MLS(status: .enabled))
-        BackendInfo.apiVersion = .v5
-        BackendInfo.isMLSEnabled = true
+        createSut(mlsEnabled: true)
     }
 
     @objc
