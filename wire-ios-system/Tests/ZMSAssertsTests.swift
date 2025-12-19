@@ -31,7 +31,7 @@ final class ZMSAssertsTests: XCTestCase {
         // When/Then - Verify NSString formatting doesn't crash with Swift String
         // This tests the internal formatting logic used by fatal()
         let output = NSString(
-            format: "ASSERT: [%s:%d] <%s> %@",
+            format: "ASSERT: [%@:%d] <%@> %@",
             "\(testFile)",
             Int32(testLine),
             "Swift assertion",
@@ -54,7 +54,7 @@ final class ZMSAssertsTests: XCTestCase {
 
         // When/Then - Verify NSString formatting works with empty string
         let output = NSString(
-            format: "ASSERT: [%s:%d] <%s> %@",
+            format: "ASSERT: [%@:%d] <%@> %@",
             "\(testFile)",
             Int32(testLine),
             "Swift assertion",
@@ -75,7 +75,7 @@ final class ZMSAssertsTests: XCTestCase {
 
         // When/Then - Verify NSString formatting works with very long strings
         let output = NSString(
-            format: "ASSERT: [%s:%d] <%s> %@",
+            format: "ASSERT: [%@:%d] <%@> %@",
             "\(testFile)",
             Int32(testLine),
             "Swift assertion",
@@ -94,7 +94,7 @@ final class ZMSAssertsTests: XCTestCase {
 
         // When/Then - Verify NSString formatting handles unicode correctly
         let output = NSString(
-            format: "ASSERT: [%s:%d] <%s> %@",
+            format: "ASSERT: [%@:%d] <%@> %@",
             "\(testFile)",
             Int32(testLine),
             "Swift assertion",
