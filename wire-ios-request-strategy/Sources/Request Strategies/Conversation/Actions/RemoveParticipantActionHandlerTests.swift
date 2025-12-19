@@ -62,7 +62,9 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
 
     override func tearDown() {
         sut = nil
-
+        service = nil
+        user = nil
+        conversation = nil
         super.tearDown()
     }
 
