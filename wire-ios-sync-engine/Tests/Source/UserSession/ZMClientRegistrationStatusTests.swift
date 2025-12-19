@@ -78,7 +78,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
         )
         sut.registrationStatusDelegate = mockClientRegistationDelegate
     }
-    
+
     // MARK: Initialisation
 
     func testThatItRequestsE2EIEnrollment_whenRequiredOnInitialisation() {
@@ -90,7 +90,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             client.user = selfUser
             client.remoteIdentifier = "identifier"
             self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
-            
+
             enableMLS()
             enableE2EI()
 
@@ -118,7 +118,6 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
             mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_MockMethod = { _ in }
 
-            
             enableMLS()
 
             // when
