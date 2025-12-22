@@ -24,7 +24,7 @@ jobs:
     secrets: inherit
 
   publish_report:
-    name: Allure report (downloadable HTML)
+    name: Allure report
     needs: [critical_flows]
     if: always()
     uses: ./.github/workflows/_reusable_allure_reporting.yaml

@@ -1,21 +1,19 @@
-name: Reusable - Allure reporting from XCResult
+name: Allure reporting 📊
 
 on:
   workflow_call:
     inputs:
       branch_name:
-        description: "Raw branch name (e.g. release/cycle-4.12)"
         required: true
         type: string
       run_on:
-        description: "Runner image"
         required: false
         type: string
         default: "ghcr.io/cirruslabs/macos-runner:sequoia"
 
 jobs:
   generate_allure:
-    name: Generate Allure report (artifact)
+    name: Generate Allure report
     runs-on: ${{ inputs.run_on }}
 
     steps:
@@ -46,8 +44,9 @@ jobs:
           echo "Using xcresult: $XCRESULT"
           mkdir -p ./allure-site
 
-          # Allure 3 can generate directly from .xcresult
-          npx --yes allure generate "$XCRESULT" -o ./allure-site --clean
+          # Allure 3 (beta) can generate directly from .xcresult.
+          npm exec --yes --package=allure@3.0.0-beta.22 -- \
+            allure generate "$XCRESULT" -o ./allure-site --clean
 
       - name: Upload Allure HTML artifact
         uses: actions/upload-artifact@v4
@@ -66,5 +65,4 @@ jobs:
             echo;
             echo "Download the artifact from the **Artifacts** section of this workflow run, then open **index.html** from the extracted folder in your browser.";
             echo;
-            echo "Note: GitHub Actions artifacts don’t provide a direct browsable URL for HTML. Later, enabling GitHub Pages (or installing artifact.ci) enables click-to-view.";
           } >> "$GITHUB_STEP_SUMMARY"
