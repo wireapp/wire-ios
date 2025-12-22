@@ -27,7 +27,7 @@ public func fatal(
 ) -> Never {
 
     let output = NSString(
-        format: "ASSERT: [%s:%d] <%s> %s",
+        format: "ASSERT: [%s:%d] <%s> %@",
         "\(file)",
         Int32(line),
         "Swift assertion",
