@@ -51,8 +51,6 @@ public protocol LegacyFeatureRepositoryInterface {
     func storeChannels(_ channels: Feature.Channels)
     func fetchConsumableNotifications() -> Feature.ConsumableNotifications
     func storeConsumableNotifications(_ consumableNotifications: Feature.ConsumableNotifications)
-    func fetchChatBubblesSimple() -> Feature.ChatBubblesSimple
-    func storeChatBubblesSimple(_ chatBubblesSimple: Feature.ChatBubblesSimple)
     func fetchCells() -> Feature.Cells
     func storeCells(_ cells: Feature.Cells)
     func fetchAssetAuditLog() -> Feature.AssetAuditLog
@@ -542,22 +540,6 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
         }
     }
 
-    // MARK: - Chat Bubbles Simple
-
-    public func fetchChatBubblesSimple() -> Feature.ChatBubblesSimple {
-        guard let feature = Feature.fetch(name: .chatBubblesSimple, context: context) else {
-            return .init()
-        }
-
-        return .init(status: feature.status)
-    }
-
-    public func storeChatBubblesSimple(_ chatBubblesSimple: Feature.ChatBubblesSimple) {
-        Feature.updateOrCreate(havingName: .chatBubblesSimple, in: context) {
-            $0.status = chatBubblesSimple.status
-        }
-    }
-
     // MARK: Cells
 
     public func fetchCells() -> Feature.Cells {
@@ -630,9 +612,6 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
 
             case .consumableNotifications:
                 storeConsumableNotifications(.init())
-
-            case .chatBubblesSimple:
-                storeChatBubblesSimple(.init())
 
             case .cells:
                 storeCells(.init())

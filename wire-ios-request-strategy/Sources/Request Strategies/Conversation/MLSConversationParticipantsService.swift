@@ -124,11 +124,11 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
             }
             throw MLSConversationParticipantsError.failedToClaimKeyPackages(users: Set(failedUsers))
 
-        } catch let SendCommitBundleAction.Failure.nonFederatingDomains(domains: domains) {
+        } catch let SendMLSMessageFailure.nonFederatingDomains(domains: domains) {
 
             throw FederationError.nonFederatingDomains(domains)
 
-        } catch let SendCommitBundleAction.Failure.unreachableDomains(domains: domains) {
+        } catch let SendMLSMessageFailure.unreachableDomains(domains: domains) {
 
             throw FederationError.unreachableDomains(domains)
 

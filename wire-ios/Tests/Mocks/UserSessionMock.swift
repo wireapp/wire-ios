@@ -405,8 +405,6 @@ final class UserSessionMock: UserSession {
         config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
     )
 
-    var isChatBubbleSimpleEnabled: Bool = false
-
     var isWireCellsEnabled: Bool = false
 
     var isEnterpriseUser: Bool = false
@@ -472,4 +470,5 @@ extension UserSessionMock: ContextProvider {
     var syncContext: NSManagedObjectContext { contextProvider.syncContext }
     var searchContext: NSManagedObjectContext { contextProvider.searchContext }
     var eventContext: NSManagedObjectContext { contextProvider.eventContext }
+
 }

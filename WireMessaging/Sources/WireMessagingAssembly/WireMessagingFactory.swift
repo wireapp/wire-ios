@@ -35,8 +35,9 @@ public struct WireMessagingFactory {
     private let localAssetRepository: WireCellsLocalAssetRepository
     private let filenameGenerator = FilenameGenerator()
     private let lastOpenRequest: WireCellsLastOpenRequest
-    private let nodeCache = WireCellsNodeCache()
+    private let nodeCache: WireCellsNodeCache
     private let isFoldersEnabled: Bool
+    private let isCollaboraEnabled: Bool
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
 
     @MainActor var lastOpenRequestNodeID: UUID?
@@ -47,7 +48,8 @@ public struct WireMessagingFactory {
         accessToken: any AccessTokenProvider,
         fileCache: any FileCache,
         contextProvider: any ManagedObjectContextProvider,
-        isFoldersEnabled: Bool
+        isFoldersEnabled: Bool,
+        isCollaboraEnabled: Bool
     ) {
         // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
         let serverURL = switch serverURL.host {
@@ -63,6 +65,7 @@ public struct WireMessagingFactory {
             serverURL
         }
 
+        self.nodeCache = WireCellsNodeCache()
         self.nodesAPI = NodesAPI(serverURL: serverURL, accessToken: accessToken)
         self.uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
         self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
@@ -75,6 +78,7 @@ public struct WireMessagingFactory {
         )
         self.lastOpenRequest = WireCellsLastOpenRequest()
         self.isFoldersEnabled = isFoldersEnabled
+        self.isCollaboraEnabled = isCollaboraEnabled
         self.nodeRenameNotifier = WireCellsNodeRenameNotifier()
     }
 
@@ -132,6 +136,13 @@ public struct WireMessagingFactory {
     public func makeUpdateTagsUseCase() -> some WireCellsUpdateTagsUseCaseProtocol {
         WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI)
     }
+
+    public func makeFetchNodeUseCase() -> any WireCellsFetchNodeUseCaseProtocol {
+        WireCellsFetchNodeUseCase(
+            repository: nodesAPI,
+            cache: nodeCache
+        )
+    }
 }
 
 public extension WireMessagingFactory {
@@ -154,6 +165,7 @@ public extension WireMessagingFactory {
                 nodeRenameNotifier: nodeRenameNotifier,
                 fileCache: fileCache,
                 isFoldersEnabled: isFoldersEnabled,
+                isCollaboraEnabled: isCollaboraEnabled,
                 accentColorProvider: accentColorProvider
             ).environment(\.wireAccentColor, accentColorProvider())
         )
@@ -167,11 +179,16 @@ public extension WireMessagingFactory {
             rootView: FilesBrowserView(
                 viewModel: FilesViewModel(
                     useCases: .init(
-                        fetchNodes: WireCellsFetchNodesUseCase(
+                        fetchNodes: WireCellsFetchNodesPageUseCase(
                             configuration: .filesBrowserView,
                             repository: nodesAPI
                         ),
                         deleteNodes: WireCellsDeleteNodesUseCase(
+                            repository: nodesAPI,
+                            fileCache: fileCache,
+                            localAssetStore: localAssetStore
+                        ),
+                        restoreNodes: WireCellsRestoreNodesUseCase(
                             repository: nodesAPI,
                             fileCache: fileCache,
                             localAssetStore: localAssetStore
@@ -185,42 +202,28 @@ public extension WireMessagingFactory {
                         updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
                         getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
                         createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
+                        fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesAPI),
+                        restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                            repository: nodesAPI,
+                            localAssetsRepository: localAssetRepository,
+                            nodeCache: nodeCache
+                        ),
+                        getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: nodesAPI),
+                        getAssetUseCase: WireCellsGetAssetUseCase(
+                            localAssetRepository: localAssetRepository,
+                            fileCache: fileCache
+                        )
                     ),
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,
+                    nodesRepository: nodesAPI,
                     fileCache: fileCache,
                     isFoldersEnabled: false,
+                    isCollaboraEnabled: isCollaboraEnabled,
                     accentColorProvider: accentColorProvider
                 )
             )
         )
-    }
-
-    @MainActor
-    func makeAttachmentsPreviewView(
-        attachments: [WireCellsMessageAttachment],
-        alignment: HorizontalAlignment
-    ) -> UIViewController {
-        let viewController = UIHostingController(
-            rootView: WireCellsAttachmentsPreviewView(
-                viewModel: WireCellsAttachmentsPreviewViewModel(
-                    attachments: attachments,
-                    alignment: alignment,
-                    fetchNodeUseCase: WireCellsFetchNodeUseCase(
-                        repository: nodesAPI,
-                        cache: nodeCache
-                    ),
-                    getAssetUseCase: WireCellsGetAssetUseCase(
-                        localAssetRepository: localAssetRepository,
-                        fileCache: fileCache
-                    ),
-                    localAssetRepository: localAssetRepository,
-                    lastOpenRequest: lastOpenRequest,
-                    nodeRenameNotifier: nodeRenameNotifier
-                )
-            ))
-        viewController.view.backgroundColor = .clear
-        return viewController
     }
 
     func makeConversationCellProvider(
@@ -235,6 +238,7 @@ public extension WireMessagingFactory {
                 localAssetRepository: localAssetRepository,
                 fileCache: fileCache
             ),
+            nodeCache: nodeCache,
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
             nodeRenameNotifier: nodeRenameNotifier,

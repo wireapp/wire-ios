@@ -91,12 +91,10 @@ public extension MessagingTest {
     func setBackendInfoDefaults() {
         BackendInfo.apiVersion = .v0
         BackendInfo.domain = "example.com"
-
-        var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
-        proteusViaCoreCrypto.isOn = false
     }
 
     @objc
+    @discardableResult
     func createSelfClient() -> UserClient {
         createSelfClient(capabilities: [])
     }

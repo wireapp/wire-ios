@@ -200,7 +200,7 @@ final class CompanyLoginRequesterTests: XCTestCase {
 
 private final class MockSession: NSObject, URLSessionProtocol {
 
-    class MockURLSessionDataTask: URLSessionDataTask {
+    class MockURLSessionDataTask: URLSessionDataTask, @unchecked Sendable {
         override func resume() {
             // no-op
         }

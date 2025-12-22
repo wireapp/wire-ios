@@ -140,7 +140,7 @@ public enum Locators {
         case username
         case createWireTeamButton
         case manageTeamButton
-        case addAcccountOrTeamButton
+        case addAccountOrTeamButton
     }
 
     public enum CreateGroupPage: String {
@@ -259,6 +259,11 @@ public enum Locators {
     public enum WebViewPage: String {
 
         case resetPassword = "Reset password"
+    }
+
+    public enum FileVersioningPage: String {
+
+        case closeButton
     }
 
 }

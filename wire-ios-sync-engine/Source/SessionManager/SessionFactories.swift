@@ -105,7 +105,6 @@ open class AuthenticatedSessionFactory {
             isSyncV2Enabled: journal[.isSyncV2Enabled]
         )
 
-        let cryptoboxMigrationManager = CryptoboxMigrationManager()
         let coreCryptoKeyMigrationManager = CoreCryptoKeyMigrationManager(journal: journal)
 
         let coreCryptoProvider = CoreCryptoProvider(
@@ -114,7 +113,6 @@ open class AuthenticatedSessionFactory {
             accountDirectory: coreDataStack.accountContainer,
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
             localDomain: BackendInfo.domain
         )
@@ -126,7 +124,6 @@ open class AuthenticatedSessionFactory {
             currentAppVersion: currentAppVersion,
             currentBuildNumber: currentBuildNumber,
             application: application,
-            cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreDataStack: coreDataStack,
             coreCryptoProvider: coreCryptoProvider,
             configuration: configuration,

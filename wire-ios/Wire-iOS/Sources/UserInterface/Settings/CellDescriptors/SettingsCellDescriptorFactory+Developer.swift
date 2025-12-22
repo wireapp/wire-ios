@@ -65,7 +65,6 @@ extension SettingsCellDescriptorFactory {
         )
 
         developerCellDescriptors.append(SettingsShareDatabaseCellDescriptor())
-        developerCellDescriptors.append(SettingsShareCryptoboxCellDescriptor())
 
         developerCellDescriptors.append(
             Button(

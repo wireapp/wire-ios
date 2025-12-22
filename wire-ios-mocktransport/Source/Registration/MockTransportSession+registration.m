@@ -182,7 +182,6 @@
                 if(!dryrun) {
                     [self.phoneNumbersWaitingForVerificationForProfile removeObject:phone];
                     self.selfUser.phone = phone;
-                    [self saveAndCreatePushChannelEventForSelfUser];
                 }
                 return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
                 

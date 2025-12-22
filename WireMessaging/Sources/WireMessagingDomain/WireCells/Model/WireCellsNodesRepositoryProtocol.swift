@@ -41,6 +41,12 @@ package protocol WireCellsNodesRepositoryProtocol: Sendable {
     ///  - permanently: A boolean indicating whether to delete the nodes permanently or move them to the recycle bin.
     func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool
 
+    /// Restores nodes with the specified IDs from the recycle bin.
+    ///
+    /// - Parameters:
+    ///  - nodeIDs: An array of UUIDs representing the IDs of the nodes to restore.
+    func restoreNodes(nodeIDs: [UUID]) async throws -> Bool
+
     /// Creates a folder at the specified path.
     ///
     /// - Parameters:
@@ -55,6 +61,13 @@ package protocol WireCellsNodesRepositoryProtocol: Sendable {
     /// - Returns: Whether the renaming was successful.
     func renameNode(nodeID: UUID, targetPath: String) async throws -> Bool
 
+    /// Moves a node to a new container path.
+    ///
+    /// - Parameters:
+    ///  - nodeID: The `UUID` of the node to move.
+    ///  - newContainerPath: The new container path for the node.
+    func moveNode(nodeID: UUID, newContainerPath: String) async throws
+
     /// Apply some pre-validation checks on node name before sending an upload
     ///
     /// - Parameters:
@@ -62,6 +75,19 @@ package protocol WireCellsNodesRepositoryProtocol: Sendable {
     ///     - findAvailablePath: Finds the next available path if path already exists.
     /// - Returns: Whether a file already exists at this path and the next available path if any.
     func preCheck(nodePath: String, findAvailablePath: Bool) async throws -> WireCellsPreCheckResult
+
+    /// Retrieves all available versions for a given node.
+    ///
+    /// - Parameter nodeID: The unique identifier of the node whose versions should be fetched.
+    /// - Returns: An array of `WireCellsNodeVersion` objects representing the node’s versions.
+    func getVersions(nodeID: UUID) async throws -> [WireCellsNodeVersion]
+
+    /// Restores a previous version of a node.
+    ///
+    /// - Parameters:
+    ///   - nodeID: The unique identifier of the file node to restore.
+    ///   - versionID: The unique identifier of the version to restore.
+    func restoreVersion(nodeID: UUID, versionID: UUID) async throws
 
 }
 
@@ -73,8 +99,14 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
         /// A `Configuration` suitable for the conversation file view.
         case conversationFileView(root: WireCellsNodeLocator, isFoldersEnabled: Bool)
 
+        /// A `Configuration` suitable for the recycle bin, where deleted files are stored.
+        case recycleBinView(root: WireCellsNodeLocator, isFoldersEnabled: Bool)
+
         /// A `Configuration` suitable for the files browser view.
         case filesBrowserView
+
+        /// A `Configuration` suitable for moving nodes to a folder.
+        case moveToFolder(root: String)
     }
 
     /// An optional search term to filter nodes by name.

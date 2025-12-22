@@ -486,7 +486,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                     Set([UUID.mockID1, .mockID2])
                 )
 
-                throw SendCommitBundleAction.Failure.nonFederatingDomains(Set(["nonfederated2"]))
+                throw SendMLSMessageFailure.nonFederatingDomains(Set(["nonfederated2"]))
             } else {
                 // On retry, we only try to add MLS participants which are on a federated domain
                 XCTAssertEqual(
@@ -571,7 +571,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                     Set([UUID.mockID1, .mockID2])
                 )
 
-                throw SendCommitBundleAction.Failure.unreachableDomains(Set(["federated2"]))
+                throw SendMLSMessageFailure.unreachableDomains(Set(["federated2"]))
             } else {
                 // On retry, we try to add all MLS participants that are on a reachable domain
                 XCTAssertEqual(

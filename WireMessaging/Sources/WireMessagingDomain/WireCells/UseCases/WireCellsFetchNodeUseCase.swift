@@ -19,7 +19,7 @@
 package import Foundation
 
 /// Fetches cached and remote `WireCellsNodes` for a given node ID.
-package struct WireCellsFetchNodeUseCase {
+package struct WireCellsFetchNodeUseCase: WireCellsFetchNodeUseCaseProtocol {
 
     private let repository: any WireCellsNodesRepositoryProtocol
     private let cache: any WireCellsNodeCacheProtocol

@@ -19,25 +19,19 @@
 import Foundation
 import GenericMessageProtocol
 import WireDataModelSupport
-import WireRequestStrategy
+@preconcurrency import WireRequestStrategy
 import WireSyncEngineSupport
 import WireTransport
 
 @testable import WireSyncEngine
 
+@preconcurrency
 class CallingRequestStrategyTests: MessagingTest {
 
     var sut: CallingRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockFetchUserClientsUseCase: MockFetchUserClientsUseCase!
     var mockMessageSender: MockMessageSenderInterface!
-
-    override class func setUp() {
-        super.setUp()
-
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = false
-    }
 
     override func setUp() {
         super.setUp()
@@ -503,7 +497,6 @@ class CallingRequestStrategyTests: MessagingTest {
     // MARK: - Targeted Calling Messages
 
     func testThatItTargetsCallMessagesIfTargetClientsAreSpecified() throws {
-        var sentMessage: GenericMessageEntity?
         let (conversationAVSID, user1, client1, user2, client2, targets) = try syncMOC.performAndWait { [self] in
             sut = CallingRequestStrategy(
                 managedObjectContext: syncMOC,
@@ -547,12 +540,13 @@ class CallingRequestStrategyTests: MessagingTest {
             let avsClient2 = AVSClient(userId: user2.avsIdentifier, clientId: client2.remoteIdentifier!)
             let targets = [avsClient1, avsClient2]
 
-            mockMessageSender.sendMessageMessage_MockMethod = { message in
-                sentMessage = message as? GenericMessageEntity
-            }
-
             let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
             return (conversationAVSID, user1, client1, user2, client2, targets)
+        }
+
+        var sentMessage: GenericMessageEntity?
+        mockMessageSender.sendMessageMessage_MockMethod = { message in
+            sentMessage = message as? GenericMessageEntity
         }
 
         // When we schedule the targeted message
@@ -596,7 +590,8 @@ class CallingRequestStrategyTests: MessagingTest {
     }
 
     func testThatItDoesNotTargetCallMessagesIfNoTargetClientsAreSpecified() async throws {
-        let (user1, user2, client1, client2, client3, client4, conversationAVSID) = try await syncMOC
+
+        let conversationAVSID = try await syncMOC
             .perform { [self] in
                 // Given
                 let selfClient = createSelfClient()
@@ -605,15 +600,15 @@ class CallingRequestStrategyTests: MessagingTest {
                 let user1 = ZMUser.insertNewObject(in: syncMOC)
                 user1.remoteIdentifier = .create()
 
-                let client1 = createClient(for: user1, connectedTo: selfClient)
-                let client2 = createClient(for: user1, connectedTo: selfClient)
+                createClient(for: user1, connectedTo: selfClient)
+                createClient(for: user1, connectedTo: selfClient)
 
                 // Another user with two clients connected to self
                 let user2 = ZMUser.insertNewObject(in: syncMOC)
                 user2.remoteIdentifier = .create()
 
-                let client3 = createClient(for: user2, connectedTo: selfClient)
-                let client4 = createClient(for: user2, connectedTo: selfClient)
+                createClient(for: user2, connectedTo: selfClient)
+                createClient(for: user2, connectedTo: selfClient)
 
                 // A conversation with both users and self
                 let conversation = ZMConversation.insertNewObject(in: syncMOC)
@@ -626,8 +621,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
                 syncMOC.saveOrRollback()
 
-                let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
-                return (user1, user2, client1, client2, client3, client4, conversationAVSID)
+                return try XCTUnwrap(conversation.avsIdentifier)
             }
 
         var sentMessage: GenericMessageEntity?
@@ -665,16 +659,6 @@ class CallingRequestStrategyTests: MessagingTest {
         let client = UserClient.insertNewObject(in: syncMOC)
         client.remoteIdentifier = .randomRemoteIdentifier()
         client.user = user
-
-        // swiftlint:disable:next todo_requires_jira_link
-        // TODO: [John] use flag here
-        syncMOC.zm_cryptKeyStore.encryptionContext.perform { session in
-            try! session.createClientSession(
-                client.sessionIdentifier!,
-                base64PreKeyString: syncMOC.zm_cryptKeyStore.lastPreKey()
-            )
-        }
-
         return client
     }
 
@@ -728,7 +712,6 @@ class CallingRequestStrategyTests: MessagingTest {
     }
 
     func test_ThatItHandlesMLSRejectMessage() throws {
-        var sentMessage: GenericMessageEntity?
         let (user1AVSIdentifier, client1RemoteIdentifier, conversationAVSID) = try syncMOC.performAndWait { [self] in
             // Given
             createMLSSelfConversation()
@@ -755,16 +738,17 @@ class CallingRequestStrategyTests: MessagingTest {
 
             syncMOC.saveOrRollback()
 
-            mockMessageSender.sendMessageMessage_MockMethod = { message in
-                sentMessage = message as? GenericMessageEntity
-            }
-
             let mockMLSService = MockMLSServiceInterface()
 
             syncMOC.mlsService = mockMLSService
 
             let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
             return (user1.avsIdentifier, client1.remoteIdentifier!, conversationAVSID)
+        }
+
+        var sentMessage: GenericMessageEntity?
+        mockMessageSender.sendMessageMessage_MockMethod = { message in
+            sentMessage = message as? GenericMessageEntity
         }
 
         // Targeting one client

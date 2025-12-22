@@ -354,6 +354,8 @@
 "conversation.create.guests.subtitle" = "Ava see vestlus meeskonnast väljas olevatele inimestele.";
 "conversation.create.apps.title" = "Allow apps";
 "conversation.create.apps.subtitle" = "Open this conversation to apps.";
+"conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
+"conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
 "conversation.create.receipts.title" = "Lugemiskinnitused";
 "conversation.create.receipts.subtitle" = "Kui see on sees, saavad inimesed näha, kas nende vestluse sõnumid on loetud.";
 "conversation.create.mls.title" = "Protocol";

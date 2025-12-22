@@ -85,12 +85,12 @@ public final class PushTokenService: PushTokenServiceInterface {
 
         do {
             for remoteToken in remoteTokens where remoteToken != excludedToken {
-                WireLogger.push.debug("unregister invalid token: \(remoteToken.deviceToken.safeForLoggingDescription)")
+                WireLogger.push.debug("unregister invalid token: <\(remoteToken.deviceToken.readableHash)>")
                 var removeAction = RemovePushTokenAction(deviceToken: remoteToken.deviceTokenString)
                 try await removeAction.perform(in: context)
                 WireLogger.push
                     .debug(
-                        "unregister invalid token of type: \(remoteToken.deviceToken.safeForLoggingDescription), success"
+                        "unregister invalid token of type: <\(remoteToken.deviceToken.readableHash)>, success"
                     )
             }
         } catch let error as RemovePushTokenAction.Failure {

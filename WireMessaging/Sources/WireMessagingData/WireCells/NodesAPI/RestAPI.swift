@@ -23,6 +23,7 @@ import WireMessagingDomain
 
 enum WireCellsNodesAPIError: Error {
     case failedToDecodeNode
+    case failedToDecodeNodeVersions
     case missingData(String)
 }
 
@@ -30,6 +31,7 @@ final class RestAPI: Sendable {
 
     private enum Constants {
         static let deleteBackgroundActionName = "delete"
+        static let restoreBackgroundActionName = "restore"
         static let renameBackgroundActionName = "move"
     }
 
@@ -70,11 +72,22 @@ final class RestAPI: Sendable {
                 if let urlError = error as? URLError, urlError.code == .cancelled {
                     throw CancellationError()
                 } else {
-                    throw sdkError
+                    throw sdkError.underlyingError
                 }
             }
-        } catch {
-            throw error
+        }
+    }
+
+    func getEditorURL(id: UUID) async throws -> (url: URL, date: Date)? {
+        do {
+            let response = try await NodeServiceAPI.getByUuid(
+                uuid: id.transportString(),
+                flags: [.withEditorURLs],
+                apiConfiguration: makeConfiguration()
+            )
+            return response.editorURLs?["collabora"]?.info
+        } catch let error as ErrorResponse {
+            throw error.underlyingError
         }
     }
 
@@ -83,32 +96,38 @@ final class RestAPI: Sendable {
     /// - Parameters:
     ///  - nodeID: The `UUID`s of the node to rename.
     ///  - targetPath: The new path for the node.
+    ///  - targetIsParent: Whether the `targetPath` is the parent folder of the node.
     /// - Returns: Whether the renaming was successful.
 
-    func renameNode(nodeID: UUID, targetPath: String) async throws -> Bool {
+    func renameNode(nodeID: UUID, targetPath: String, targetIsParent: Bool) async throws -> Bool {
         let node = RestNodeLocator(uuid: nodeID.uuidString)
 
         let parameters = RestActionParameters(
             awaitStatus: .finished,
             awaitTimeout: "5s",
             copyMoveOptions: RestActionOptionsCopyMove(
-                targetIsParent: false,
+                targetIsParent: targetIsParent,
                 targetPath: targetPath
             ),
             nodes: [node],
         )
 
-        let response = try await NodeServiceAPI.performAction(
-            name: .move,
-            parameters: parameters,
-            apiConfiguration: makeConfiguration()
-        )
-        guard
-            let actions = response.backgroundActions,
-            let renameAction = actions.first(where: { $0.name == Constants.renameBackgroundActionName }) else {
-            return false
+        do {
+            let response = try await NodeServiceAPI.performAction(
+                name: .move,
+                parameters: parameters,
+                apiConfiguration: makeConfiguration()
+            )
+
+            guard
+                let actions = response.backgroundActions,
+                let renameAction = actions.first(where: { $0.name == Constants.renameBackgroundActionName }) else {
+                return false
+            }
+            return renameAction.status == .finished
+        } catch let error as ErrorResponse {
+            throw error.underlyingError
         }
-        return renameAction.status == .finished
     }
 
     /// Deletes nodes by their `UUID`s.
@@ -138,6 +157,27 @@ final class RestAPI: Sendable {
         return deleteAction.status == .finished
     }
 
+    /// Restores nodes from the recycle bin by their `UUID`s.
+    func restoreNodes(nodeIDs: [UUID]) async throws -> Bool {
+        let nodes = nodeIDs.map { RestNodeLocator(uuid: $0.transportString()) }
+        let parameters = RestActionParameters(
+            awaitStatus: .finished,
+            awaitTimeout: "60s",
+            nodes: nodes
+        )
+        let response = try await NodeServiceAPI.performAction(
+            name: .restore,
+            parameters: parameters,
+            apiConfiguration: makeConfiguration()
+        )
+        guard
+            let actions = response.backgroundActions,
+            let restoreAction = actions.first(where: { $0.name == Constants.restoreBackgroundActionName }) else {
+            return false
+        }
+        return restoreAction.status == .finished
+    }
+
     func publishDraft(uuid: UUID, versionID: UUID) async throws {
         let parameters = RestPromoteParameters(publish: true)
         _ = try await NodeServiceAPI.promoteVersion(
@@ -152,6 +192,39 @@ final class RestAPI: Sendable {
         _ = try await NodeServiceAPI.deleteVersion(
             uuid: uuid.transportString(),
             versionId: versionID.transportString(),
+            apiConfiguration: makeConfiguration()
+        )
+    }
+
+    func getVersions(uuid: UUID) async throws -> WireCellsNodeVersionsNetworkModel {
+        let query = RestNodeVersionsFilter(
+            filterBy: .versionsAll,
+            flags: [.withPreSignedURLs],
+            limit: nil,
+            offset: nil,
+            sortDirDesc: true,
+            sortField: nil
+        )
+
+        let response = try await NodeServiceAPI.nodeVersions(
+            uuid: uuid.transportString(),
+            query: query,
+            apiConfiguration: makeConfiguration()
+        )
+
+        guard let dto = response.toDTO() else {
+            throw WireCellsNodesAPIError.failedToDecodeNodeVersions
+        }
+
+        return dto
+    }
+
+    func restoreVersion(uuid: UUID, versionID: UUID) async throws {
+        let parameters = RestPromoteParameters(publish: false)
+        _ = try await NodeServiceAPI.promoteVersion(
+            uuid: uuid.transportString(),
+            versionId: versionID.transportString(),
+            parameters: parameters,
             apiConfiguration: makeConfiguration()
         )
     }
@@ -348,7 +421,7 @@ private extension WireCellsGetNodesRequest {
 
     var lookupRequest: RestLookupRequest {
         var request = RestLookupRequest(
-            flags: [.withPreSignedURLs],
+            flags: [.withPreSignedURLs, .withEditorURLs],
             limit: "\(limit)",
             offset: "\(offset)",
         )
@@ -364,6 +437,18 @@ private extension WireCellsGetNodesRequest {
             )
             request.scope = RestLookupScope(
                 recursive: isFoldersEnabled ? false : true,
+                root: RestNodeLocator(root)
+            )
+        case let .recycleBinView(root: root, isFoldersEnabled):
+            request.filters = RestLookupFilter(
+                status: LookupFilterStatusFilter(
+                    deleted: .only,
+                    isDraft: false
+                ),
+                type: isFoldersEnabled ? .unknown : .leaf // .unknown includes files (leafs) & folders (collections)
+            )
+            request.scope = RestLookupScope(
+                recursive: !isFoldersEnabled,
                 root: RestNodeLocator(root)
             )
         case .filesBrowserView:
@@ -384,8 +469,45 @@ private extension WireCellsGetNodesRequest {
             )
             request.sortDirDesc = true
             request.sortField = "mtime"
+        case let .moveToFolder(root):
+            request.filters = RestLookupFilter(
+                status: LookupFilterStatusFilter(
+                    deleted: .not,
+                    isDraft: false
+                ),
+                type: .collection
+            )
+            request.scope = RestLookupScope(
+                recursive: false,
+                root: RestNodeLocator(path: root)
+            )
         }
         return request
     }
 
+}
+
+private extension ErrorResponse {
+
+    var underlyingError: any Error {
+        switch self {
+        case let .error(_, _, _, error):
+            error
+        }
+    }
+}
+
+private extension RestPreSignedURL {
+
+    var info: (url: URL, date: Date)? {
+        guard
+            let urlString = url,
+            let url = URL(string: urlString),
+            let expiresAtString = expiresAt,
+            let expiresAtTimeInterval = TimeInterval(expiresAtString)
+        else {
+            return nil
+        }
+        return (url: url, date: Date(timeIntervalSinceNow: expiresAtTimeInterval))
+    }
 }

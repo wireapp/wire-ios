@@ -40,6 +40,7 @@ final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptio
     func setAllowApps(_ allowApps: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
         setAllowApps?(allowApps, completion)
     }
+
 }
 
 final class ConversationServicesOptionsViewControllerTests: XCTestCase {

@@ -354,6 +354,8 @@
 "conversation.create.guests.subtitle" = "Открыть эту беседу для пользователей не из вашей команды.";
 "conversation.create.apps.title" = "Разрешить приложения";
 "conversation.create.apps.subtitle" = "Открыть эту беседу для приложений.";
+"conversation.create.apps_disabled.title" = "Ваша команда еще не использует приложения";
+"conversation.create.apps_disabled.message" = "Для улучшения рабочего процесса с приложениями, вашей команде требуется настройка. Пожалуйста, свяжитесь с администратором вашей команды.";
 "conversation.create.receipts.title" = "Отчеты о прочтении";
 "conversation.create.receipts.subtitle" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
 "conversation.create.mls.title" = "Протокол";

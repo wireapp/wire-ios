@@ -27,7 +27,11 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 package protocol FilesViewProtocol: View {
     var viewModel: FilesViewModel { get }
     var isBrowsing: Bool { get }
-    init(viewModel: @autoclosure @escaping () -> FilesViewModel)
+    init(
+        viewModel: @autoclosure @escaping () -> FilesViewModel,
+        onOpenRecycleBin: @escaping () -> Void,
+        onDismissContainer: @escaping () -> Void
+    )
 }
 
 // MARK: - List
@@ -44,6 +48,9 @@ extension FilesViewProtocol {
             .listRowSeparator(.hidden)
             .listRowBackground(ColorTheme.Backgrounds.surface.color)
         }
+        .listStyle(.plain)
+        .refreshable { reloadTask(refreshing: true) }
+        .background(listBackgroundView)
         .animation(.default, value: viewModel.state)
     }
 
@@ -52,6 +59,17 @@ extension FilesViewProtocol {
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
                 .onTapGesture { Task { await viewModel.openItem(item: item) } }
+        }
+    }
+
+    @ViewBuilder private var listBackgroundView: some View {
+        switch viewModel.state {
+        case let .received(items) where items.isEmpty:
+            FilesInfoView(info: .noFilesFound(scope: isBrowsing ? .allConversations : .oneConversation))
+        case .pending:
+            FilesInfoView(info: .preparingFiles)
+        default:
+            EmptyView()
         }
     }
 }
@@ -64,8 +82,13 @@ extension FilesViewProtocol {
     func itemRow(index: Int) -> some View {
         FilesViewItemView(
             viewModel: viewModel.itemViewModel(index: index),
-            canRenameFile: !isBrowsing, // action not allowed when browsing files
-            canEditTags: !isBrowsing, // action not allowed when browsing files
+            // some actions are not allowed when browsing files
+            canRenameFile: !isBrowsing,
+            canEditTags: !isBrowsing,
+            canMoveToFolder: !isBrowsing && viewModel.isFoldersEnabled,
+            canOpenVersionHistory: !isBrowsing && viewModel.isCollaboraEnabled,
+            canEditFile: !isBrowsing,
+            canDeleteFiles: !isBrowsing
         )
     }
 

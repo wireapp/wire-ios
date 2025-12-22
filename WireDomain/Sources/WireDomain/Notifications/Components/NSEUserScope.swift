@@ -90,8 +90,6 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         }
     }
 
-    public let cryptoboxMigrationManager: CryptoboxMigrationManager = .init()
-
     init(
         parent: any Scope,
         account: Account
@@ -143,11 +141,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             throw Failure.userNotAuthenticated
         }
 
-        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: userAccountDataURL) else {
-            throw Failure.mainAppRequired(message: "cryptobox migration required")
-        }
-
-        guard coreCryptoKeyMigrationManager.isAnyMigrationRequired else {
+        guard !coreCryptoKeyMigrationManager.isAnyMigrationRequired else {
             throw Failure.mainAppRequired(message: "core crypto key migration required")
         }
 
