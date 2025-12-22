@@ -1,0 +1,70 @@
+name: Reusable - Allure reporting from XCResult
+
+on:
+  workflow_call:
+    inputs:
+      branch_name:
+        description: "Raw branch name (e.g. release/cycle-4.12)"
+        required: true
+        type: string
+      run_on:
+        description: "Runner image"
+        required: false
+        type: string
+        default: "ghcr.io/cirruslabs/macos-runner:sequoia"
+
+jobs:
+  generate_allure:
+    name: Generate Allure report (artifact)
+    runs-on: ${{ inputs.run_on }}
+
+    steps:
+      - name: Compute artifact names
+        id: vars
+        shell: bash
+        run: |
+          SANITIZED_BRANCH=$(echo "${{ inputs.branch_name }}" | sed 's/[^a-zA-Z0-9._-]/_/g')
+
+          echo "xcresults_artifact=XCResults for $SANITIZED_BRANCH (${{ github.run_id }} - ${{ github.run_attempt }})" >> "$GITHUB_OUTPUT"
+          echo "allure_artifact=allure-report-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
+
+      - name: Download XCResults artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ steps.vars.outputs.xcresults_artifact }}
+          path: ./xcresults
+
+      - name: Generate Allure HTML from .xcresult
+        shell: bash
+        run: |
+          XCRESULT=$(find ./xcresults -type d -name "*.xcresult" | head -n 1)
+          if [ -z "$XCRESULT" ]; then
+            echo "No .xcresult found under ./xcresults"
+            exit 1
+          fi
+
+          echo "Using xcresult: $XCRESULT"
+          mkdir -p ./allure-site
+
+          # Allure 3 can generate directly from .xcresult
+          npx --yes allure generate "$XCRESULT" -o ./allure-site --clean
+
+      - name: Upload Allure HTML artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.vars.outputs.allure_artifact }}
+          path: ./allure-site
+          if-no-files-found: error
+
+      - name: Summary
+        shell: bash
+        run: |
+          {
+            echo "## Allure report generated";
+            echo;
+            echo "Artifact name: **${{ steps.vars.outputs.allure_artifact }}**";
+            echo;
+            echo "Download the artifact from the **Artifacts** section of this workflow run, then open **index.html** from the extracted folder in your browser.";
+            echo;
+            echo "Note: GitHub Actions artifacts don’t provide a direct browsable URL for HTML. Later, enabling GitHub Pages (or installing artifact.ci) enables click-to-view.";
+          } >> "$GITHUB_STEP_SUMMARY"

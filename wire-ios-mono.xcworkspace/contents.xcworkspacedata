@@ -17,6 +17,9 @@
       location = "group:.github/workflows"
       name = "workflows">
       <FileRef
+         location = "group:_reusable_allure_report.yaml">
+      </FileRef>
+      <FileRef
          location = "group:_reusable_app_release.yml">
       </FileRef>
       <FileRef

@@ -22,3 +22,11 @@ jobs:
       test_dependencies: false
       run_critical_flows: true
     secrets: inherit
+
+ publish_report:
+    name: Allure report (downloadable HTML)
+    needs: [critical_flows]
+    if: always()
+    uses: ./.github/workflows/_reusable_allure_reporting.yaml
+    with:
+      branch_name: ${{ github.ref_name }}
