@@ -23,7 +23,7 @@ jobs:
       run_critical_flows: true
     secrets: inherit
 
- publish_report:
+  publish_report:
     name: Allure report (downloadable HTML)
     needs: [critical_flows]
     if: always()
