@@ -36,35 +36,58 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
     private let conversationLocalStore: ConversationLocalStoreProtocol
     private let conversationRepository: ConversationRepositoryProtocol
     private let lockRepository: ResetMLSConversationLockRepositoryProtocol
+    private let selfDomain: String?
 
     public init(
         api: MLSAPI,
         mlsService: MLSServiceInterface,
         conversationLocalStore: ConversationLocalStoreProtocol,
         conversationRepository: ConversationRepositoryProtocol,
-        lockRepository: ResetMLSConversationLockRepositoryProtocol
+        lockRepository: ResetMLSConversationLockRepositoryProtocol,
+        selfDomain: String?
     ) {
         self.api = api
         self.mlsService = mlsService
         self.conversationLocalStore = conversationLocalStore
         self.conversationRepository = conversationRepository
         self.lockRepository = lockRepository
+        self.selfDomain = selfDomain
     }
 
-    public func invoke(groupID: WireDataModel.MLSGroupID, epoch: UInt64) async {
-
+    public func invoke(
+        groupID: WireDataModel.MLSGroupID,
+        epoch: UInt64
+    ) async {
         var attributes: LogAttributes = [:]
 
         do {
+            guard let selfDomain else {
+                WireLogger.mls.error("Can't initiate reset broken MLS conversation failed: self domain unknown")
+                return
+            }
 
-            guard let conversation = await conversationLocalStore.fetchMLSConversation(groupID: groupID),
-                  let qualifiedID = await conversationLocalStore.qualifiedID(for: conversation)
+            guard
+                let conversation = await conversationLocalStore.fetchMLSConversation(groupID: groupID),
+                let qualifiedID = await conversationLocalStore.qualifiedID(for: conversation)
             else {
                 WireLogger.mls.error("Initiate reset broken MLS conversation failed: no conversation found")
                 return
             }
 
+<<<<<<< HEAD
             attributes = [.conversationId: qualifiedID.safeForLoggingDescription]
+=======
+            guard qualifiedID.domain == selfDomain else {
+                WireLogger.mls.warn("Can't initiate reset broken MLS conversation for other domains")
+                return
+            }
+
+            attributes = [
+                .public: true,
+                .conversationId: qualifiedID.safeForLoggingDescription,
+                .mlsGroupID: groupID.safeForLoggingDescription
+            ]
+>>>>>>> e2853ef371 (fix: don't reset federated conversations - WPB-22499 🍒 (#4048))
 
             lockRepository.setInitiatedReset(conversationID: qualifiedID)
 

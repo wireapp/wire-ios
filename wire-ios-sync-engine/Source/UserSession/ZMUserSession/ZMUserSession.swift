@@ -1349,7 +1349,8 @@ extension ZMUserSession: SyncAgentDelegate {
             conversationRepository: clientSessionComponent.conversationRepository,
             lockRepository: ResetMLSConversationLockRepository(
                 userID: userId
-            )
+            ),
+            selfDomain: resolvedBackendMetadata.domain
         )
     }
 

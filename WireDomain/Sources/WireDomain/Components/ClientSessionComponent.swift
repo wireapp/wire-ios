@@ -798,7 +798,8 @@ public final class ClientSessionComponent {
         mlsService: mlsService,
         conversationLocalStore: conversationLocalStore,
         conversationRepository: conversationRepository,
-        lockRepository: resetMLSConversationLockRepository
+        lockRepository: resetMLSConversationLockRepository,
+        selfDomain: backendMetadata.domain
     )
 
     public lazy var mlsTransport: any WireCoreCryptoUniffi.MlsTransport = MLSTransportImpl(
