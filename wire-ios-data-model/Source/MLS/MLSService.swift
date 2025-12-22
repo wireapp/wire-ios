@@ -752,6 +752,12 @@ public final class MLSService: MLSServiceInterface {
 
     }
 
+    public func externalSenderKey(groupID: MLSGroupID) async throws -> Data {
+        try await coreCrypto.perform { coreCrypto in
+            try await coreCrypto.getExternalSender(conversationId: groupID.conversationId)
+        }.copyBytes()
+    }
+
     public func conversationExists(groupID: MLSGroupID) async throws -> Bool {
 
         logger.info("checking if group (\(groupID)) exists...")
