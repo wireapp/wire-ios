@@ -3835,6 +3835,42 @@ public class MockPushSupportedProtocolsUseCaseProtocol: PushSupportedProtocolsUs
 
 }
 
+<<<<<<< HEAD
+=======
+public class MockRepairRemovalKeysUseCaseProtocol: RepairRemovalKeysUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() async throws -> RepairRemovalKeysResult)?
+    public var invoke_MockValue: RepairRemovalKeysResult?
+
+    @discardableResult
+    public func invoke() async throws -> RepairRemovalKeysResult {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+}
+
+>>>>>>> 3796fbc68e (fix: add debug command to trigger key repair - WPB-22447 🍒 (#4046))
 public class MockResetMLSConversationLockRepositoryProtocol: ResetMLSConversationLockRepositoryProtocol {
 
     // MARK: - Life cycle
