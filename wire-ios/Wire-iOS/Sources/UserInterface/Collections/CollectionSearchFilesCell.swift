@@ -24,19 +24,19 @@ import WireFoundation
 
 final class CollectionSearchFilesCell: CollectionCell {
     private var containerView = UIView()
-    
+
     private let label: UILabel = {
         let label = UILabel()
         label.text = L10n.Localizable.Collections.Section.SearchFiles.description
         return label
     }()
-    
+
     private let chevronImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(systemName: "chevron.right"))
         imageView.tintColor = ColorTheme.Base.secondaryText
         return imageView
     }()
-    
+
     private let informationButton: UIButton = {
         var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "info.circle")
@@ -67,13 +67,13 @@ final class CollectionSearchFilesCell: CollectionCell {
             label.bottomAnchor.constraint(equalTo: secureContentsView.bottomAnchor),
             label.leadingAnchor.constraint(equalTo: secureContentsView.leadingAnchor, constant: 16),
             label.trailingAnchor.constraint(greaterThanOrEqualTo: informationButton.trailingAnchor),
-            
+
             // information button
             informationButton.heightAnchor.constraint(equalToConstant: 18),
             informationButton.widthAnchor.constraint(equalToConstant: 18),
             informationButton.trailingAnchor.constraint(equalTo: chevronImageView.leadingAnchor, constant: -16),
             informationButton.centerYAnchor.constraint(equalTo: secureContentsView.centerYAnchor),
-            
+
             // chevron icon
             chevronImageView.heightAnchor.constraint(equalToConstant: 20),
             chevronImageView.widthAnchor.constraint(equalToConstant: 12),

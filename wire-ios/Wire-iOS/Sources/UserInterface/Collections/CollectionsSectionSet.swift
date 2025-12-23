@@ -44,7 +44,7 @@ struct CollectionsSectionSet: OptionSet, Hashable {
 
     /// Returns visible sections in the display order
     static let visible: [CollectionsSectionSet] = [images, videos, links, filesAndAudio, loading]
-    
+
     /// Returns visible sections with search files in the display order
     static let visibleWithSearchFiles = [CollectionsSectionSet.searchFiles] + CollectionsSectionSet.visible
 }

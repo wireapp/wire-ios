@@ -17,11 +17,11 @@
 //
 
 import UIKit
+import WireFoundation
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingDomain
 import WireSyncEngine
-import WireFoundation
 
 protocol CollectionsViewControllerDelegate: AnyObject {
     func collectionsViewController(
@@ -29,7 +29,7 @@ protocol CollectionsViewControllerDelegate: AnyObject {
         performAction: MessageAction,
         onMessage: ZMConversationMessage
     )
-    
+
     func collectionsViewControllerDidRequestOpenSearchFiles(
         _ viewController: CollectionsViewController
     )
@@ -138,8 +138,9 @@ final class CollectionsViewController: UIViewController {
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.conversationCreationRepository = conversationCreationRepository
         self.isCellsEnabled = isCellsEnabled
-        
-        collectionsSectionSet = isCellsEnabled ? CollectionsSectionSet.visibleWithSearchFiles : CollectionsSectionSet.visible
+
+        self.collectionsSectionSet = isCellsEnabled ? CollectionsSectionSet
+            .visibleWithSearchFiles : CollectionsSectionSet.visible
 
         switch sections {
         case CollectionsSectionSet.images:
@@ -434,7 +435,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         case CollectionsSectionSet.links:
             let max = inOverviewMode ? maxOverviewElementsInTable : Int.max
             return min(linkMessages.count, max)
-            
+
         case CollectionsSectionSet.loading, .searchFiles:
             return 1
 
@@ -516,13 +517,12 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             if !CollectionsView.useAutolayout {
                 desiredHeight = fetchingDone ? 24 : 88
             }
-            
+
         case CollectionsSectionSet.searchFiles:
             desiredWidth = contentView.collectionView.bounds.size.width - horizontalInset(in: section)
             if !CollectionsView.useAutolayout {
                 desiredHeight = 50
             }
-
 
         default: fatal("Unknown section")
         }
@@ -612,7 +612,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             cell.collapsed = fetchingDone
             cell.containerWidth = collectionView.bounds.size.width - horizontalInset(in: section)
             return cell
-            
+
         case CollectionsSectionSet.searchFiles:
             let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: CollectionSearchFilesCell.reuseIdentifier,
@@ -720,15 +720,15 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         layout collectionViewLayout: UICollectionViewLayout,
         insetForSectionAt section: Int
     ) -> UIEdgeInsets {
-        return sectionInsets(in: collectionSection(for: section))
+        sectionInsets(in: collectionSection(for: section))
     }
-    
+
     private func collectionSection(for section: Int) -> CollectionsSectionSet {
         guard let section = CollectionsSectionSet(
             index: UInt(section),
             isCellsEnabled: isCellsEnabled
         ) else { fatal("Unknown section") }
-        
+
         return section
     }
 
@@ -740,7 +740,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         if section == .loading {
             return
         }
-        
+
         if section == .searchFiles {
             delegate?.collectionsViewControllerDidRequestOpenSearchFiles(self)
             return
@@ -749,7 +749,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         let message = message(for: indexPath)
         perform(.present, for: message, source: collectionView.cellForItem(at: indexPath)!)
     }
-    
+
     private func showSearchFilesAlert() {
         typealias SearchFiles = L10n.Localizable.Collections.Section.SearchFiles
         let alertController = UIAlertController(
@@ -757,7 +757,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             message: SearchFiles.Alert.message,
             preferredStyle: .alert
         )
-        
+
         let searchFilesAction = UIAlertAction(
             title: SearchFiles.description,
             style: .default
@@ -765,12 +765,12 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             guard let self else { return }
             delegate?.collectionsViewControllerDidRequestOpenSearchFiles(self)
         }
-        
+
         let cancelAction = UIAlertAction(
             title: L10n.Localizable.General.close,
             style: .cancel
         ) { _ in }
-        
+
         [searchFilesAction, cancelAction].forEach(alertController.addAction)
         present(alertController, animated: true)
     }
