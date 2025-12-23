@@ -171,6 +171,11 @@ public final class ZMUserSession: NSObject {
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchCells()
     }
+    
+    public var wireCellsBackendURL: URL? {
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchCellsInternal().config.backend.url
+    }
 
     public var isWireCellsEnabled: Bool {
         wireCellsFeature.status == .enabled

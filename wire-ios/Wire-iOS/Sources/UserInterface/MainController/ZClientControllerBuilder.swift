@@ -25,6 +25,7 @@ import WireMessagingDomain
 import WireNetwork
 @preconcurrency import WireSyncEngine
 import WireTransport
+import WireLogging
 
 struct ZClientControllerBuilder {
 
@@ -55,8 +56,8 @@ struct ZClientControllerBuilder {
 
     @MainActor
     private func buildWireMessagingFactory() -> any WireMessagingFactoryProtocol {
-        WireMessagingFactory(
-            serverURL: newEnvironment?.config.endpoints.restAPIURL ?? legacyEnvironment.backendURL,
+        return WireMessagingFactory(
+            serverURL: userSession.wireCellsBackendURL ?? legacyEnvironment.backendURL,
             // TODO: [WPB-18798] Temporary fix, when multibackend is on we use new backend environment, when off we use the legacy one
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,

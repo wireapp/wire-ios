@@ -117,6 +117,10 @@ public enum FeatureConfig: Equatable, Sendable {
     /// Config for **Cells** feature
     /// **Cells** allow users to send and receive messages with multiple attachments (video, image, files..)
     case cells(CellsFeatureConfig)
+    
+    /// Config for **Cells** (internal) feature
+    /// Provides the proper cells backend URL.
+    case cellsInternal(CellsInternalFeatureConfig)
 
     /// Global config, that contains other config inside, e.g. 'reset broken mls'
 

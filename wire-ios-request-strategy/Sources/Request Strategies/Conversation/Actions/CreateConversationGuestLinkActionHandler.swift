@@ -38,7 +38,7 @@ final class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConver
                 payload: nil,
                 apiVersion: apiVersion.rawValue
             )
-        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
+        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
             // For these versions, a payload may include a password.
             var payload: [String: Any] = [:]
             if let password = action.password {

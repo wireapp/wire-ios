@@ -54,6 +54,7 @@ public protocol LegacyFeatureRepositoryInterface {
     func fetchCells() -> Feature.Cells
     func storeCells(_ cells: Feature.Cells)
     func fetchAssetAuditLog() -> Feature.AssetAuditLog
+    func fetchCellsInternal() -> Feature.CellsInternal
 
 }
 
@@ -565,6 +566,27 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
 
         return .init(status: feature.status)
     }
+    
+    // MARK: - Cells internal
+
+    public func fetchCellsInternal() -> Feature.CellsInternal {
+        guard
+            let feature = Feature.fetch(name: .cellsInternal, context: context),
+            let featureConfig = feature.config
+        else {
+            return .init()
+        }
+
+        var config = Feature.CellsInternal.Config()
+
+        do {
+            config = try decoder.decode(Feature.CellsInternal.Config.self, from: featureConfig)
+        } catch {
+            logger.error("failed to decode Feature.CellsInternal.Config: \(error)")
+        }
+
+        return .init(status: feature.status, config: config)
+    }
 
     // MARK: - Methods
 
@@ -616,7 +638,7 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
             case .cells:
                 storeCells(.init())
 
-            case .assetAuditLog:
+            case .assetAuditLog, .cellsInternal:
                 // No op: not supported in legacy repository.
                 break
             }

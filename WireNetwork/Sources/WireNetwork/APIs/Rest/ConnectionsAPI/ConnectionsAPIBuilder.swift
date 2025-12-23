@@ -67,6 +67,8 @@ public struct ConnectionsAPIBuilder {
             ConnectionsAPIV12(apiService: apiService)
         case .v13:
             ConnectionsAPIV13(apiService: apiService)
+        case .v14:
+            ConnectionsAPIV14(apiService: apiService)
         }
     }
 

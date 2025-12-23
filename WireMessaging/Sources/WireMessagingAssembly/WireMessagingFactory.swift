@@ -51,20 +51,6 @@ public struct WireMessagingFactory {
         isFoldersEnabled: Bool,
         isCollaboraEnabled: Bool
     ) {
-        // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
-        let serverURL = switch serverURL.host {
-        case "prod-nginz-https.wire.com": // Production
-            URL(string: "https://cells-beta.wire.com")!
-        case "staging-nginz-https.zinfra.io": // Staging
-            URL(string: "https://cells.staging.zinfra.io")!
-        case "nginz-https.fulu.wire.link": // Fulu
-            URL(string: "https://cells.fulu.wire.link")!
-        case "nginz-https.imai.wire.link": // Imai
-            URL(string: "https://cells.imai.wire.link")!
-        default:
-            serverURL
-        }
-
         self.nodeCache = WireCellsNodeCache()
         self.nodesAPI = NodesAPI(serverURL: serverURL, accessToken: accessToken)
         self.uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)

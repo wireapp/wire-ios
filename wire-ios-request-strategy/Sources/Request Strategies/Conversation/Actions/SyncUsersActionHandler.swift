@@ -63,7 +63,7 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
             action.fail(with: .endpointUnavailable)
             return nil
 
-        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
+        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
             guard
                 let payloadData = RequestPayload(qualified_ids: action.qualifiedIDs).payloadString()
             else {
@@ -98,7 +98,7 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
             action.fail(with: .endpointUnavailable)
             return
 
-        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
+        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
             switch response.httpStatus {
             case 200:
                 guard let rawData = response.rawData,

@@ -222,6 +222,12 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 name: .cells,
                 isEnabled: cellsConfig.status == .enabled
             )
+            
+        case let .cellsInternal(cellsInternalConfig):
+            return FeatureState(
+                name: .cellsInternal,
+                isEnabled: cellsInternalConfig.status == .enabled
+            )
 
         case let .unknown(featureName):
             logger.warn(

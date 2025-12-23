@@ -75,7 +75,7 @@ final class SetAllowGuestsAndAppsActionHandler: ActionHandler<SetAllowGuestsAndA
 
         let path: String
         switch apiVersion {
-        case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
+        case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
             let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else {
                 action.fail(with: .domainUnavailable)

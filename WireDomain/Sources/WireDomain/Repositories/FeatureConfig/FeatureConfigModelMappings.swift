@@ -132,3 +132,11 @@ extension WireNetwork.ChannelsPermision {
         }
     }
 }
+
+extension WireNetwork.CellsInternalFeatureConfig {
+    func toDomainModel() -> Feature.CellsInternal.Config {
+        Feature.CellsInternal.Config(
+            backend: .init(url: backendURL)
+        )
+    }
+}
