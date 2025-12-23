@@ -9,7 +9,7 @@ on:
       run_on:
         required: false
         type: string
-        default: "ubuntu-latest"
+        default: "macos-latest"
     outputs:
       allure-artifact-name:
         description: "Name of the Allure report artifact"
@@ -44,29 +44,28 @@ jobs:
       - name: Generate Allure HTML Report
         shell: bash
         run: |
-          # Find the xcresult bundle
           XCRESULT=$(find ./xcresults -type d -name "*.xcresult" | head -n 1)
           
           if [ -z "$XCRESULT" ]; then
-            echo "❌ No .xcresult found under ./xcresults"
+            echo "❌ No .xcresult found"
             exit 1
           fi
           
           echo "✅ Using xcresult: $XCRESULT"
+          npx allure generate "$XCRESULT" -o allure-report
           
-          # Generate report directly from xcresult (Allure 3)
-          # Suppress harmless attachment warnings
-          npx allure generate "$XCRESULT" -o allure-report 2>&1 | \
-            grep -v "Can't read attachment" || true
-          
-          # Verify report was created
           if [ ! -f "allure-report/index.html" ]; then
-            echo "❌ Allure report not generated"
+            echo "❌ Report not generated"
             exit 1
           fi
           
-          echo "✅ Allure report generated successfully:"
-          ls -la allure-report/index.html
+          if [ ! -d "allure-report/data" ]; then
+            echo "❌ Report data folder missing"
+            exit 1
+          fi
+          
+          echo "✅ Allure report generated successfully"
+          ls -la allure-report/data/ | head -10
 
       - name: Upload Allure HTML artifact
         id: upload-allure
@@ -87,9 +86,9 @@ jobs:
             echo "";
             echo "### 📥 How to View the Report";
             echo "";
-            echo "1. Download the artifact from the **Artifacts** section below";
-            echo "2. Extract the ZIP file";
-            echo "3. Open **index.html** in your browser";
+            echo "1. Click the download link below or scroll to **Artifacts** section";
+            echo "2. Download and extract the ZIP file";
+            echo "3. Double-click **index.html** to open in your browser";
             echo "";
             echo "---";
             echo "";
