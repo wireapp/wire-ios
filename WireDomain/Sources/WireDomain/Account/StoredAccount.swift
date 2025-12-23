@@ -50,12 +50,10 @@ struct StoredAccount: Codable {
 struct StoredLoginCredentials: Codable {
 
     var emailAddress: String?
-    var hasPassword: Bool
     var usesCompanyLogin: Bool
 
     init(_ loginCredentials: LoginCredentials) {
         self.emailAddress = loginCredentials.emailAddress
-        self.hasPassword = loginCredentials.hasPassword
         self.usesCompanyLogin = loginCredentials.usesCompanyLogin
     }
 
@@ -86,7 +84,6 @@ extension LoginCredentials {
     convenience init(_ loginCredentials: StoredLoginCredentials) {
         self.init(
             emailAddress: loginCredentials.emailAddress,
-            hasPassword: loginCredentials.hasPassword,
             usesCompanyLogin: loginCredentials.usesCompanyLogin
         )
     }

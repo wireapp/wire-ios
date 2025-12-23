@@ -223,7 +223,7 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
     @MainActor
     func testReauthenticate_Email_TokenExpired() {
         DeveloperFlag.multibackend.enable(false, storage: .temporary())
-        let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
+        let credentials = LoginCredentials(emailAddress: "test@example.com", usesCompanyLogin: false)
         runSnapshotTest(for: .reauthenticate(
             credentials: credentials,
             environment: nil,
@@ -235,7 +235,7 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
     @MainActor
     func testReauthenticate_Email_DuringLogin() {
         DeveloperFlag.multibackend.enable(false, storage: .temporary())
-        let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
+        let credentials = LoginCredentials(emailAddress: "test@example.com", usesCompanyLogin: false)
         runSnapshotTest(for: .reauthenticate(
             credentials: credentials,
             environment: nil,
@@ -247,7 +247,7 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
     @MainActor
     func testReauthenticate_CompanyLogin() {
         DeveloperFlag.multibackend.enable(false, storage: .temporary())
-        let credentials = LoginCredentials(emailAddress: nil, hasPassword: false, usesCompanyLogin: true)
+        let credentials = LoginCredentials(emailAddress: nil, usesCompanyLogin: true)
         runSnapshotTest(for: .reauthenticate(
             credentials: credentials,
             environment: nil,

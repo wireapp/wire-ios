@@ -25,6 +25,7 @@ import WireCommonComponents
 import WireCountly
 import WireDataModel
 import WireFoundation
+import WireLogging
 import WireNetwork
 import WireSyncEngine
 
@@ -130,7 +131,7 @@ final class AuthenticationInterfaceBuilder {
             }
 
             let authenticationType: WireAuthenticationAPI.AuthenticationType
-            if credentials?.usesCompanyLogin == true, credentials?.hasPassword == false {
+            if credentials?.usesCompanyLogin == true {
                 authenticationType = .reauthSSO
             } else if let email = credentials?.emailAddress {
                 authenticationType = .reauthEmail(email)
@@ -158,7 +159,7 @@ final class AuthenticationInterfaceBuilder {
         case let .reauthenticate(credentials, _, _, isSignedOut):
             let viewController: AuthenticationStepController
 
-            if credentials?.usesCompanyLogin == true, credentials?.hasPassword == false {
+            if credentials?.usesCompanyLogin == true {
                 // Is the user has SSO enabled, show the screen to log in with SSO
                 let companyLoginStep = ReauthenticateWithCompanyLoginStepDescription()
                 viewController = makeViewController(for: companyLoginStep)
@@ -188,7 +189,6 @@ final class AuthenticationInterfaceBuilder {
             let prefilledCredentials = AuthenticationPrefilledCredentials(
                 credentials: LoginCredentials(
                     emailAddress: user.unverifiedEmail,
-                    hasPassword: false,
                     usesCompanyLogin: false
                 ),
                 isExpired: false
