@@ -891,7 +891,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     }
 
     @objc
-    private func onFilesButtonPressed(_ sender: AnyObject?) {
+    func onFilesButtonPressed(_ sender: AnyObject?) {
         let selfUserColorRawValue = userSession.selfUser.accentColorValue
 
         let filesView = wireMessagingFactory

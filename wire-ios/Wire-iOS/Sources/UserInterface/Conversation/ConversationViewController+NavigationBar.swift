@@ -255,6 +255,12 @@ extension ConversationViewController: CollectionsViewControllerDelegate {
             contentViewController?.perform(action: action, for: message, view: view)
         }
     }
+    
+    func collectionsViewControllerDidRequestOpenSearchFiles(
+        _ viewController: CollectionsViewController
+    ) {
+        onFilesButtonPressed(nil)
+    }
 }
 
 extension ConversationViewController: WireCallCenterCallStateObserver {

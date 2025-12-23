@@ -109,7 +109,7 @@ private extension FilesBrowserView {
 
 // MARK: - Helper
 
-private extension View {
+extension View {
     @ViewBuilder
     func `if`(
         _ condition: Bool,

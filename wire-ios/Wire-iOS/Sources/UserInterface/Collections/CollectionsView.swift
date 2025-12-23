@@ -62,6 +62,10 @@ final class CollectionsView: UIView {
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: CollectionHeaderView.reuseIdentifier
         )
+        collectionView.register(
+            CollectionSearchFilesCell.self,
+            forCellWithReuseIdentifier: CollectionSearchFilesCell.reuseIdentifier
+        )
         collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.allowsMultipleSelection = false

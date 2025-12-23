@@ -1868,6 +1868,10 @@ Enter your identity provider’s credentials in the next step to update the cert
 "collections.search.field.placeholder" = "Search text messages";
 "collections.search.no_items" = "No results";
 
+"collections.section.searchFiles.description" = "Search files";
+"collections.section.searchFiles.alert.title" = "File collaboration (Cells beta version)";
+"collections.section.searchFiles.alert.message" = "Find files shared in conversations with file collaboration";
+
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
