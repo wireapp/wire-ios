@@ -41,39 +41,32 @@ jobs:
           name: ${{ steps.vars.outputs.xcresults_artifact }}
           path: ./xcresults
 
-      - name: Install xcresults converter
-        shell: bash
-        run: |
-          DOWNLOAD_URL="https://github.com/eroshenkoam/xcresults/releases/latest/download/xcresults"
-          curl -sL "${DOWNLOAD_URL}" -o ./xcresults-tool
-          chmod +x ./xcresults-tool
-
-      - name: Convert xcresult to Allure format
-        shell: bash
-        run: |
-          # Find all .xcresult bundles and convert them
-          find ./xcresults -type d -name "*.xcresult" -exec ./xcresults-tool export {} allure-results \;
-          
-          # Verify we have results
-          if [ ! -d "allure-results" ] || [ -z "$(ls -A allure-results)" ]; then
-            echo "❌ No Allure results generated"
-            exit 1
-          fi
-          
-          echo "✅ Allure results generated:"
-          ls -la allure-results
-
-      - name: Install Allure
-        shell: bash
-        run: |
-          npm install -g allure-commandline
-
       - name: Generate Allure HTML Report
         shell: bash
         run: |
-          allure generate allure-results -o allure-report
-          echo "✅ Allure report generated:"
-          ls -la allure-report
+          # Find the xcresult bundle
+          XCRESULT=$(find ./xcresults -type d -name "*.xcresult" | head -n 1)
+          
+          if [ -z "$XCRESULT" ]; then
+            echo "❌ No .xcresult found under ./xcresults"
+            exit 1
+          fi
+          
+          echo "✅ Using xcresult: $XCRESULT"
+          
+          # Generate report directly from xcresult (Allure 3)
+          # Suppress harmless attachment warnings
+          npx allure generate "$XCRESULT" -o allure-report 2>&1 | \
+            grep -v "Can't read attachment" || true
+          
+          # Verify report was created
+          if [ ! -f "allure-report/index.html" ]; then
+            echo "❌ Allure report not generated"
+            exit 1
+          fi
+          
+          echo "✅ Allure report generated successfully:"
+          ls -la allure-report/index.html
 
       - name: Upload Allure HTML artifact
         id: upload-allure
