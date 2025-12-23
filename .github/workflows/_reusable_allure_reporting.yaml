@@ -9,12 +9,22 @@ on:
       run_on:
         required: false
         type: string
-        default: "ghcr.io/cirruslabs/macos-runner:sequoia"
+        default: "ubuntu-latest"
+    outputs:
+      allure-artifact-name:
+        description: "Name of the Allure report artifact"
+        value: ${{ jobs.generate_allure.outputs.artifact_name }}
+      allure-artifact-url:
+        description: "Direct URL to download Allure report"
+        value: ${{ jobs.generate_allure.outputs.artifact_url }}
 
 jobs:
   generate_allure:
     name: Generate Allure report
     runs-on: ${{ inputs.run_on }}
+    outputs:
+      artifact_name: ${{ steps.vars.outputs.allure_artifact }}
+      artifact_url: ${{ steps.upload-allure.outputs.artifact-url }}
 
     steps:
       - name: Compute artifact names
@@ -22,9 +32,8 @@ jobs:
         shell: bash
         run: |
           SANITIZED_BRANCH=$(echo "${{ inputs.branch_name }}" | sed 's/[^a-zA-Z0-9._-]/_/g')
-
           echo "xcresults_artifact=XCResults for $SANITIZED_BRANCH (${{ github.run_id }} - ${{ github.run_attempt }})" >> "$GITHUB_OUTPUT"
-          echo "allure_artifact=allure-report-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
+          echo "allure_artifact=allure-report-critical-flows-${{ github.run_number }}" >> "$GITHUB_OUTPUT"
 
       - name: Download XCResults artifact
         uses: actions/download-artifact@v4
@@ -32,37 +41,64 @@ jobs:
           name: ${{ steps.vars.outputs.xcresults_artifact }}
           path: ./xcresults
 
-      - name: Generate Allure HTML from .xcresult
+      - name: Install xcresults converter
         shell: bash
         run: |
-          XCRESULT=$(find ./xcresults -type d -name "*.xcresult" | head -n 1)
-          if [ -z "$XCRESULT" ]; then
-            echo "No .xcresult found under ./xcresults"
+          DOWNLOAD_URL="https://github.com/eroshenkoam/xcresults/releases/latest/download/xcresults"
+          curl -sL "${DOWNLOAD_URL}" -o ./xcresults-tool
+          chmod +x ./xcresults-tool
+
+      - name: Convert xcresult to Allure format
+        shell: bash
+        run: |
+          # Find all .xcresult bundles and convert them
+          find ./xcresults -type d -name "*.xcresult" -exec ./xcresults-tool export {} allure-results \;
+          
+          # Verify we have results
+          if [ ! -d "allure-results" ] || [ -z "$(ls -A allure-results)" ]; then
+            echo "❌ No Allure results generated"
             exit 1
           fi
+          
+          echo "✅ Allure results generated:"
+          ls -la allure-results
 
-          echo "Using xcresult: $XCRESULT"
-          mkdir -p ./allure-site
+      - name: Install Allure
+        shell: bash
+        run: |
+          npm install -g allure-commandline
 
-          # Allure 3 (beta) can generate directly from .xcresult.
-          npm exec --yes --package=allure@3.0.0-beta.22 -- \
-            allure generate "$XCRESULT" -o ./allure-site --clean
+      - name: Generate Allure HTML Report
+        shell: bash
+        run: |
+          allure generate allure-results -o allure-report
+          echo "✅ Allure report generated:"
+          ls -la allure-report
 
       - name: Upload Allure HTML artifact
+        id: upload-allure
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.vars.outputs.allure_artifact }}
-          path: ./allure-site
+          path: allure-report/
+          retention-days: 30
           if-no-files-found: error
 
-      - name: Summary
+      - name: Add to Job Summary
         shell: bash
         run: |
           {
-            echo "## Allure report generated";
-            echo;
-            echo "Artifact name: **${{ steps.vars.outputs.allure_artifact }}**";
-            echo;
-            echo "Download the artifact from the **Artifacts** section of this workflow run, then open **index.html** from the extracted folder in your browser.";
-            echo;
+            echo "## 📊 Allure Report Generated Successfully";
+            echo "";
+            echo "**Artifact Name:** \`${{ steps.vars.outputs.allure_artifact }}\`";
+            echo "";
+            echo "### 📥 How to View the Report";
+            echo "";
+            echo "1. Download the artifact from the **Artifacts** section below";
+            echo "2. Extract the ZIP file";
+            echo "3. Open **index.html** in your browser";
+            echo "";
+            echo "---";
+            echo "";
+            echo "_Report retention: 30 days_";
           } >> "$GITHUB_STEP_SUMMARY"

@@ -30,3 +30,27 @@ jobs:
     uses: ./.github/workflows/_reusable_allure_reporting.yaml
     with:
       branch_name: ${{ github.ref_name }}
+    secrets: inherit
+
+  report_summary:
+    name: Report Summary
+    needs: [critical_flows, publish_report]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Add Download Link to Summary
+        run: |
+          echo "## 📊 Critical Flows Test Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow:** Critical Flows" >> $GITHUB_STEP_SUMMARY
+          echo "**Run Number:** ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📥 Download Allure Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 **[Click here to download](${{ needs.publish_report.outputs.allure-artifact-url }})**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Artifact:** \`${{ needs.publish_report.outputs.allure-artifact-name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📌 _Extract ZIP and open index.html to view test results_" >> $GITHUB_STEP_SUMMARY
