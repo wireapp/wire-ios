@@ -110,3 +110,9 @@ wire-ios-automation/ios/backendConnections.json
 
 # Automation Output
 wire-ios-automation/out/
+
+# Allure Report
+allure-report/
+allure-results/
+.allure/ 
+

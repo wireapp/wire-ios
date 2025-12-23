@@ -41,7 +41,7 @@ jobs:
           name: ${{ steps.vars.outputs.xcresults_artifact }}
           path: ./xcresults
 
-      - name: Generate Allure HTML Report
+      - name: Generate Single-File Allure Report with Awesome Plugin
         shell: bash
         run: |
           XCRESULT=$(find ./xcresults -type d -name "*.xcresult" | head -n 1)
@@ -52,20 +52,17 @@ jobs:
           fi
           
           echo "✅ Using xcresult: $XCRESULT"
-          npx allure generate "$XCRESULT" -o allure-report
+          
+          # Use Allure Awesome plugin for single-file generation
+          npx allure awesome "$XCRESULT" --single-file -o allure-report
           
           if [ ! -f "allure-report/index.html" ]; then
             echo "❌ Report not generated"
             exit 1
           fi
           
-          if [ ! -d "allure-report/data" ]; then
-            echo "❌ Report data folder missing"
-            exit 1
-          fi
-          
-          echo "✅ Allure report generated successfully"
-          ls -la allure-report/data/ | head -10
+          FILE_SIZE=$(du -h allure-report/index.html | cut -f1)
+          echo "✅ Single-file Allure report generated: $FILE_SIZE"
 
       - name: Upload Allure HTML artifact
         id: upload-allure
@@ -86,9 +83,8 @@ jobs:
             echo "";
             echo "### 📥 How to View the Report";
             echo "";
-            echo "1. Click the download link below or scroll to **Artifacts** section";
-            echo "2. Download and extract the ZIP file";
-            echo "3. Double-click **index.html** to open in your browser";
+            echo "1. Download and extract the ZIP file";
+            echo "2. **Double-click index.html** to open in your browser";
             echo "";
             echo "---";
             echo "";
