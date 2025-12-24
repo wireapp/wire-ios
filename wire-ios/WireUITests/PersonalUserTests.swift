@@ -21,7 +21,7 @@ import XCTest
 final class PersonalUsersTests: WireUITestCase {
 
     @MainActor
-    func test_Register_asPersonalUser() async throws {
+    func testCritical_Register_asPersonalUser() async throws {
         let user = UserGenerator.generateUniqueUserInfo()
 
         let welcomePage = try WelcomePage()
@@ -58,7 +58,7 @@ final class PersonalUsersTests: WireUITestCase {
     }
 
     @MainActor
-    func test_Login_asExistingPersonalUser() async throws {
+    func testCritical_Login_asExistingPersonalUser() async throws {
         let user = try await userHelper.createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
@@ -70,7 +70,7 @@ final class PersonalUsersTests: WireUITestCase {
     }
 
     @MainActor
-    func test_PersonalAccountLifecycle() async throws {
+    func testCritical_PersonalAccountLifecycle() async throws {
         let userA = try await userHelper.createPersonalUser()
         let userB = try await userHelper.createPersonalUser()
         let messageFromUserB = "Hello from \(userB.name)"

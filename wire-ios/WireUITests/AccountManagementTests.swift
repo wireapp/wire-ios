@@ -24,7 +24,7 @@ final class AccountManagementTests: WireUITestCase {
     var teamMember: UserInfo!
 
     @MainActor
-    func test_Account_Management_Lock_With_Passcode() async throws {
+    func testCritical_Account_Management_Lock_With_Passcode() async throws {
         let passcode = UserGenerator.generateAppPasscode()
 
         do {
@@ -62,7 +62,7 @@ final class AccountManagementTests: WireUITestCase {
     }
 
     @MainActor
-    func test_Account_Management_Update_Email_Reset_password() async throws {
+    func testCritical_Account_Management_Update_Email_Reset_password() async throws {
         let updatedUserDetails = UserGenerator.generateUniqueUserInfo()
 
         do {

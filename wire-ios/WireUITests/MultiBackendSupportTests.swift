@@ -45,7 +45,7 @@ final class MultiBackendSupportTests: WireUITestCase {
     }
 
     @MainActor
-    func test_Add_MultiBackend_Accounts() async throws {
+    func testCritical_Add_MultiBackend_Accounts() async throws {
 
         defer { BackendContext.current = .staging }
 

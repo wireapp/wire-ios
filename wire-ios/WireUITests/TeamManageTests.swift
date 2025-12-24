@@ -22,7 +22,7 @@ import XCTest
 final class TeamManageTests: WireUITestCase {
 
     @MainActor
-    func test_Migrate_PersonalUserToTeam() async throws {
+    func testCritical_Migrate_PersonalUserToTeam() async throws {
         let user = try await userHelper.createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
@@ -44,7 +44,7 @@ final class TeamManageTests: WireUITestCase {
     }
 
     @MainActor
-    func test_PersonalUser_InvitedToTeam() async throws {
+    func testCritical_PersonalUser_InvitedToTeam() async throws {
         let owner = try await userHelper.createPersonalUser()
         let memberUser = UserGenerator.generateUniqueUserInfo()
         let teamID = try await BackendClient.upgradePersonalToTeam(
@@ -79,7 +79,7 @@ final class TeamManageTests: WireUITestCase {
     }
 
     @MainActor
-    func test_TeamOwner_GroupCreatedAndSendMessage() async throws {
+    func testCritical_TeamOwner_GroupCreatedAndSendMessage() async throws {
 
         let groupName = UserGenerator.generateRandomGroupName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
@@ -124,7 +124,7 @@ final class TeamManageTests: WireUITestCase {
     }
 
     @MainActor
-    func test_GroupAdmin_RemoveAndAddParticipantFromGroup() async throws {
+    func testCritical_GroupAdmin_RemoveAndAddParticipantFromGroup() async throws {
 
         let groupName = UserGenerator.generateRandomGroupName()
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()

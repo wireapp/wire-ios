@@ -32,50 +32,21 @@ class WireUITestCase: XCTestCase {
         static let critical = "critical"
     }
 
-    static let testTags: [String: [String]] = [
-        "test_CreateBackupAndRestoreHistory": [UITestTag.critical],
-        "test_Add_MultiBackend_Accounts": [UITestTag.critical],
-        "test_Register_asPersonalUser": [UITestTag.critical],
-        "test_Login_asExistingPersonalUser": [UITestTag.critical],
-        "test_PersonalAccountLifecycle": [UITestTag.critical],
-        "test_Migrate_PersonalUserToTeam": [UITestTag.critical],
-        "test_PersonalUser_InvitedToTeam": [UITestTag.critical],
-        "test_TeamOwner_GroupCreatedAndSendMessage": [UITestTag.critical],
-        "test_GroupAdmin_RemoveAndAddParticipantFromGroup": [UITestTag.critical],
-        "test_Login_withWrongEmail_NextIsDisabled": [UITestTag.critical],
-        "test_Login_withoutPassword_NextIsDisabled": [UITestTag.critical]
-
-    ]
-
-    private func requestedTags() -> Set<String> {
+    private static let isCriticalMode: Bool = {
         let raw = ProcessInfo.processInfo.environment["UITEST_TAGS"] ?? ""
-        let parts = raw.split(separator: ",").map {
-            $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        }
-        return Set(parts.filter { !$0.isEmpty })
-    }
-
-    private func currentTestMethodName() -> String {
-        let components = name.split(separator: " ")
-        guard let last = components.last else { return name }
-        return last.replacingOccurrences(of: "]", with: "")
-    }
+        return raw.range(of: UITestTag.critical, options: .caseInsensitive) != nil
+    }()
 
     private func shouldSkipBasedOnTags() -> Bool {
-        let requested = requestedTags()
-        if requested.isEmpty { return false }
-
-        let methodName = currentTestMethodName()
-        let methodTags = Set(Self.testTags[methodName, default: []].map { $0.lowercased() })
-
-        return requested.isDisjoint(with: methodTags)
+        guard Self.isCriticalMode else { return false }
+        return name.range(of: UITestTag.critical, options: .caseInsensitive) == nil
     }
 
     override func setUpWithError() throws {
         try super.setUpWithError()
 
         if shouldSkipBasedOnTags() {
-            throw XCTSkip("Skipping test \(currentTestMethodName()) due to UITEST_TAGS filter")
+            throw XCTSkip("Skipping test \(name) due to UITEST_TAGS filter")
         }
 
         XCUIApplication().terminate()

@@ -22,7 +22,7 @@ import XCTest
 final class BackupRestoreHistoryTests: WireUITestCase {
 
     @MainActor
-    func test_CreateBackupAndRestoreHistory() async throws {
+    func testCritical_CreateBackupAndRestoreHistory() async throws {
         let groupName = UserGenerator.generateRandomGroupName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
