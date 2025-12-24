@@ -33,13 +33,15 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     var initialSync: MockInitialSyncProtocol!
     var incrementalSync: MockIncrementalSyncProtocol!
     var liveSync: MockLiveSyncProtocol!
+    var networkStateSubject: CurrentValueSubject<NetworkState, Never>!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
     var backgroundActivity: BackgroundActivityFactory!
     var backgroundActivityManager: MockBackgroundActivityManager!
     var featureConfigRepository: MockFeatureConfigRepositoryProtocol!
     var mainAppPushChannelCoordinator: MockMainAppPushChannelCoordinatorProtocol!
-    var conversationUpdatesGenerator: MockConversationUpdatesGeneratorProtocol!
+
+    var incrementalSyncDidFinish: XCTestExpectation!
 
     override func setUp() {
         journal = Journal(
@@ -52,6 +54,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         incrementalSync = MockIncrementalSyncProtocol()
         liveSync = MockLiveSyncProtocol()
         syncStateSubject = CurrentValueSubject(.idle)
+        networkStateSubject = CurrentValueSubject(.online)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
         backgroundActivityManager = MockBackgroundActivityManager()
         backgroundActivity = BackgroundActivityFactory.shared
@@ -59,9 +62,6 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         backgroundActivity.activityManager = backgroundActivityManager
         featureConfigRepository = MockFeatureConfigRepositoryProtocol()
         mainAppPushChannelCoordinator = MockMainAppPushChannelCoordinatorProtocol()
-        conversationUpdatesGenerator = MockConversationUpdatesGeneratorProtocol()
-        conversationUpdatesGenerator.start_MockMethod = {}
-        conversationUpdatesGenerator.stop_MockMethod = {}
 
         sut = SyncAgent(
             journal: journal,
@@ -73,8 +73,10 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
             featureConfigRepository: featureConfigRepository,
             syncStateSubject: syncStateSubject,
             pushChannelCoordinator: mainAppPushChannelCoordinator,
-            conversationUpdatesGenerator: conversationUpdatesGenerator
+            networkStatePublisher: networkStateSubject.eraseToAnyPublisher()
         )
+
+        incrementalSyncDidFinish = XCTestExpectation(description: "incrementalSyncDidFinish")
     }
 
     override func tearDown() {
@@ -91,7 +93,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         backgroundActivity = nil
         featureConfigRepository = nil
         mainAppPushChannelCoordinator = nil
-        conversationUpdatesGenerator = nil
+        incrementalSyncDidFinish = nil
     }
 
     func provideInitialSync() throws -> any InitialSyncProtocol {
@@ -100,6 +102,28 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
     func provideIncrementalSync() throws -> any IncrementalSyncProtocol {
         incrementalSync
+    }
+
+    func testNetworkStateChangeResumeSync() async throws {
+        // GIVEN
+        journal[.isSyncV2Enabled] = true
+        journal[.isInitialSyncRequired] = false
+
+        incrementalSync.perform_MockMethod = {
+            IncrementalSync.Token(
+                task: Task {},
+                closePushChannel: {}
+            )
+        }
+        XCTAssertFalse(sut.syncRunning)
+        sut.delegate = self
+
+        // WHEN
+        networkStateSubject.send(.offline)
+        networkStateSubject.send(.online)
+
+        // THEN
+        await fulfillment(of: [incrementalSyncDidFinish], timeout: 2)
     }
 
     func testPerformSyncIfNeeded_InitialSync() async throws {
@@ -278,8 +302,6 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         } catch {}
 
         await fulfillment(of: [expectation])
-
-        try XCTAssertCount(conversationUpdatesGenerator.start_Invocations, count: 1)
     }
 
     func testSuspend_Sync_State_Update_To_Suspended_And_Background_Task_Is_Active() async throws {
@@ -316,8 +338,6 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         await sut.suspend()
 
         await fulfillment(of: [expectation])
-
-        try XCTAssertCount(conversationUpdatesGenerator.stop_Invocations, count: 1)
     }
 
     func provideLiveSync(delegate: any WireDomain.LiveSyncDelegate) throws -> any WireDomain.LiveSyncProtocol {
@@ -345,4 +365,27 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         // Then
         XCTAssertEqual(liveSync.perform_Invocations.count, 1)
     }
+}
+
+extension SyncAgentTests: SyncAgentDelegate {
+    func syncAgentDidStartInitialSync(_ syncAgent: WireSyncEngine.SyncAgent) {}
+
+    func syncAgentDidFinishInitialSync(_ syncAgent: WireSyncEngine.SyncAgent) {}
+
+    func syncAgentDidStartIncrementalSync(_ syncAgent: WireSyncEngine.SyncAgent) {}
+
+    func syncAgentDidFinishIncrementalSync(_ syncAgent: WireSyncEngine.SyncAgent, isRecovering: Bool) {
+        incrementalSyncDidFinish.fulfill()
+    }
+
+    func syncAgentDidFailSyncing(_ syncAgent: WireSyncEngine.SyncAgent, error: any Error) {}
+
+    func syncAgentDidStartLegacyInitialSync(_ syncAgent: WireSyncEngine.SyncAgent) {}
+
+    func syncAgentDidFinishLegacyInitialSync(_ syncAgent: WireSyncEngine.SyncAgent) {}
+
+    func syncAgentDidStartLegacyIncrementalSync(_ syncAgent: WireSyncEngine.SyncAgent) {}
+
+    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: WireSyncEngine.SyncAgent, isRecovering: Bool) {}
+
 }

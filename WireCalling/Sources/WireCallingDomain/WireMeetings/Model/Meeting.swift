@@ -35,16 +35,20 @@ public struct Meeting: Equatable, Sendable {
 
     public let end: Date
 
+    public let repeatOption: RepeatOption
+
     public init(
         id: UUID,
         title: String,
         start: Date,
-        end: Date
+        end: Date,
+        repeatOption: RepeatOption = .never
     ) {
         self.id = id
         self.title = title
         self.start = start
         self.end = end
+        self.repeatOption = repeatOption
     }
 
 }

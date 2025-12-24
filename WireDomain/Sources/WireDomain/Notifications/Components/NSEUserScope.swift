@@ -84,7 +84,11 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         }
     }
 
-    public let cryptoboxMigrationManager: CryptoboxMigrationManager = .init()
+    private var coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager {
+        shared {
+            CoreCryptoKeyMigrationManager(journal: journal)
+        }
+    }
 
     init(
         parent: any Scope,
@@ -137,14 +141,15 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             throw Failure.userNotAuthenticated
         }
 
-        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: userAccountDataURL) else {
-            throw Failure.mainAppRequired(message: "cryptobox migration required")
+        guard !coreCryptoKeyMigrationManager.isAnyMigrationRequired else {
+            throw Failure.mainAppRequired(message: "core crypto key migration required")
         }
 
         // TODO: [WPB-19778] guard no app version migration needed.
 
-        guard let clientID = await coreDataStack.syncContext.perform({
-            let selfUser = ZMUser.selfUser(in: coreDataStack.syncContext)
+        let context = coreDataStack.syncContext
+        guard let clientID = await context.perform({ [context] in
+            let selfUser = ZMUser.selfUser(in: context)
             return selfUser.selfClient()?.remoteIdentifier
         }) else {
             throw Failure.mainAppRequired(message: "no self client id")

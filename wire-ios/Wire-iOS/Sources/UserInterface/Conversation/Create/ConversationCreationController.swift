@@ -21,6 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireDomain
+import WireFoundation
+import WireLocators
 import WireLogging
 import WireNetwork
 import WireSyncEngine
@@ -104,9 +106,10 @@ final class ConversationCreationController: UIViewController {
         return section
     }()
 
-    private lazy var appsSection: ConversationCreateAppsSectionController = {
-        let section = ConversationCreateAppsSectionController(values: values)
+    private lazy var appsSection: ConversationCreateAllowAppsSectionController = {
+        let section = ConversationCreateAllowAppsSectionController(values: values)
 
+        section.wireAccentColor = WireAccentColor(rawValue: userSession.selfUser.accentColorValue) ?? .default
         section.toggleAction = { [unowned self] allowApps in
             values.allowApps = allowApps
             updateOptions()
@@ -261,7 +264,7 @@ final class ConversationCreationController: UIViewController {
             }
         )
 
-        nextButtonItem.accessibilityIdentifier = "button.newgroup.next"
+        nextButtonItem.accessibilityIdentifier = Locators.CreateGroupPage.newGroupNextButton.rawValue
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = isGroupNameValid()
         navigationItem.rightBarButtonItem = nextButtonItem

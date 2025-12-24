@@ -30,6 +30,10 @@ import WireSyncEngineSupport
 @testable import Wire
 
 final class UserSessionMock: UserSession {
+    func resolveOneOnOneConversation(with userID: WireDataModel.QualifiedID) async throws -> WireDataModel
+        .OneOnOneConversationResolution {
+        .noAction
+    }
 
     var apiVersion: APIVersion = .v0
     var localDomain = "wire.com"
@@ -401,8 +405,6 @@ final class UserSessionMock: UserSession {
         config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
     )
 
-    var isChatBubbleSimpleEnabled: Bool = false
-
     var isWireCellsEnabled: Bool = false
 
     var isEnterpriseUser: Bool = false
@@ -468,4 +470,5 @@ extension UserSessionMock: ContextProvider {
     var syncContext: NSManagedObjectContext { contextProvider.syncContext }
     var searchContext: NSManagedObjectContext { contextProvider.searchContext }
     var eventContext: NSManagedObjectContext { contextProvider.eventContext }
+
 }

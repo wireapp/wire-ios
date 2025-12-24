@@ -36,6 +36,6 @@ public struct UserClientInfo: Sendable {
         let ed448: String?
         let p256: String?
         let p384: String?
-        let p512: String?
+        let p521: String?
     }
 }

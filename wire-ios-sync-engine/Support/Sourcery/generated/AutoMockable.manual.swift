@@ -252,7 +252,10 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
 }
 
 public class MockUserSession: UserSession {
-
+    public func resolveOneOnOneConversation(with userID: WireDataModel.QualifiedID) async throws -> WireDataModel.OneOnOneConversationResolution {
+        return .noAction
+    }
+    
     public var isBuildBlacklisted = false
     public var resolvedBackendMetadata = BackendMetadataProvider(
         apiVersionOverride: .v0,
@@ -507,12 +510,8 @@ public class MockUserSession: UserSession {
 
     public var underlyingMlsFeature: Feature.MLS!
 
-    // MARK: - chatBubblesSimpleFeature
-    
-    public var isChatBubbleSimpleEnabled: Bool = false
-    
     public var isWireCellsEnabled: Bool = false
-    
+
     public var isEnterpriseUser: Bool = false
     
     // MARK: - mlsGroupVerification

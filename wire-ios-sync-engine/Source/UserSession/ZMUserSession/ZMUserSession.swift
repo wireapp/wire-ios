@@ -78,12 +78,10 @@ public final class ZMUserSession: NSObject {
 
     var recurringActionService: any RecurringActionServiceInterface
 
-    var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     private(set) var coreCryptoProvider: CoreCryptoProviderProtocol
     private(set) var userId: UUID
     let proteusService: ProteusServiceInterface
     private(set) var mlsService: MLSServiceInterface
-    private(set) var proteusProvider: ProteusProviding!
     let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     public lazy var featureRepository = LegacyFeatureRepository(context: syncContext)
@@ -167,15 +165,6 @@ public final class ZMUserSession: NSObject {
     public var channelsFeature: Feature.Channels {
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchChannels()
-    }
-
-    public var chatBubbleSimpleFeature: Feature.ChatBubblesSimple {
-        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
-        return featureRepository.fetchChatBubblesSimple()
-    }
-
-    public var isChatBubbleSimpleEnabled: Bool {
-        chatBubbleSimpleFeature.status == .enabled || DeveloperFlag.chatBubblesSimple.isOn
     }
 
     public var wireCellsFeature: Feature.Cells {
@@ -272,6 +261,8 @@ public final class ZMUserSession: NSObject {
     // To prevent too eagerly resolving all conversations.
     var didAlreadyResolveAllOneOnOnes = false
 
+    private lazy var networkStateSubject: CurrentValueSubject<NetworkState, Never> = .init(networkState)
+
     public private(set) var networkState: NetworkState = .online {
         didSet {
             if oldValue != networkState {
@@ -280,6 +271,7 @@ public final class ZMUserSession: NSObject {
                     notificationContext: managedObjectContext.notificationContext
                 )
             }
+            networkStateSubject.send(networkState)
         }
     }
 
@@ -308,7 +300,7 @@ public final class ZMUserSession: NSObject {
         GetUserClientFingerprintUseCase(
             syncContext: coreDataStack.syncContext,
             transportSession: transportSession,
-            proteusProvider: proteusProvider,
+            proteusService: proteusService,
             metadata: resolvedBackendMetadata
         )
     }
@@ -454,7 +446,6 @@ public final class ZMUserSession: NSObject {
         coreDataStack: CoreDataStack,
         earService: any EARServiceInterface,
         mlsService: any MLSServiceInterface,
-        cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         proteusToMLSMigrationCoordinator: any ProteusToMLSMigrationCoordinating,
         sharedUserDefaults: UserDefaults,
         sharedContainerURL: URL,
@@ -495,7 +486,6 @@ public final class ZMUserSession: NSObject {
         self.earService = earService
         self.mlsService = mlsService
         self.proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
-        self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
@@ -557,12 +547,6 @@ public final class ZMUserSession: NSObject {
         syncManagedObjectContext.performGroupedAndWait { [self] in
             localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
             configureTransportSession()
-
-            // need to be before we create strategies since it is passed
-            proteusProvider = ProteusProvider(
-                proteusService: proteusService,
-                keyStore: syncManagedObjectContext.zm_cryptKeyStore
-            )
 
             self.strategyDirectory = strategyDirectory ?? createStrategyDirectory()
             legacyUpdateEventProcessor = eventProcessor ?? createUpdateEventProcessor()
@@ -651,7 +635,7 @@ public final class ZMUserSession: NSObject {
             featureConfigRepository: clientSessionComponent.featureConfigRepository,
             syncStateSubject: clientSessionComponent.syncStateSubject,
             pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator,
-            conversationUpdatesGenerator: clientSessionComponent.conversationUpdatesGenerator
+            networkStatePublisher: networkStateSubject.eraseToAnyPublisher()
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
         self.syncAgent = syncAgent
@@ -682,6 +666,7 @@ public final class ZMUserSession: NSObject {
         Task {
             await clientSessionComponent.workAgent.setAutoStartEnabled(true)
             await clientSessionComponent.workAgent.start()
+            clientSessionComponent.generatorsDirectory.observeSyncState()
         }
     }
 
@@ -754,7 +739,6 @@ public final class ZMUserSession: NSObject {
     }
 
     private func configureTransportSession() {
-        transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier
         transportSession.setNetworkStateDelegate(self)
         transportSession.setAccessTokenRenewalFailureHandler { [weak self] response in
             self?.transportSessionAccessTokenDidFail(response: response)
@@ -775,7 +759,7 @@ public final class ZMUserSession: NSObject {
             localNotificationDispatcher: localNotificationDispatcher!,
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
-            proteusProvider: proteusProvider,
+            proteusService: proteusService,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
             pullSelfUserClientsFactory: { [weak self] context in
@@ -965,11 +949,13 @@ public final class ZMUserSession: NSObject {
         } else if resourcesSync {
             await triggerResourcesSync()
         } else if journal[.isConversationSyncRequired] {
-            // as wanted this should not be blocking, see AppVersionMigration_4_1_1
+            // as wanted this should not be blocking, see AppVersionMigration_4_1_1, AppVersionMigration_4_10_0
             Task {
                 let sync = clientSessionComponent?.pullAllConversationsSync
                 try? await sync?.pull()
             }
+            // trigger the sync in this case too, to get the right sync bar state
+            syncAgent?.resume()
         } else {
             syncAgent?.resume()
         }
@@ -1255,21 +1241,6 @@ extension ZMUserSession: SyncAgentDelegate {
                 context: notificationContext
             ).post()
         }
-
-        syncContext.perform { [weak self] in
-            guard let self else { return }
-            let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
-
-            if selfClient?.hasRegisteredMLSClient == true {
-                Task {
-                    do {
-                        try await self.mlsService.repairOutOfSyncConversations()
-                    } catch {
-                        WireLogger.mls.error("Repairing out of sync conversations failed: \(error)")
-                    }
-                }
-            }
-        }
     }
 
     func didStartIncrementalSync() {
@@ -1315,13 +1286,6 @@ extension ZMUserSession: SyncAgentDelegate {
                 )
             } else {
                 WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
-            }
-
-            if !isRecovering, mlsFeature.isEnabled {
-                Task.detached { [mlsService] in
-                    // we don't need to wait for this, as it can take a while to finish
-                    await mlsService.commitPendingProposalsIfNeeded()
-                }
             }
 
             await calculateSelfSupportedProtocolsIfNeeded()
@@ -1410,6 +1374,15 @@ extension ZMUserSession: SyncAgentDelegate {
         } catch {
             WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
         }
+    }
+
+    public func resolveOneOnOneConversation(with userID: WireDataModel
+        .QualifiedID) async throws -> OneOnOneConversationResolution {
+        guard let clientSessionComponent else {
+            return .noAction
+        }
+
+        return try await clientSessionComponent.oneOnOneResolver.resolveOneOnOneConversation(with: userID)
     }
 
     private func performPostQuickSyncE2EIActions() {
@@ -1519,9 +1492,6 @@ extension ZMUserSession: SyncAgentDelegate {
 extension ZMUserSession: ZMClientRegistrationStatusDelegate {
 
     public func didRegisterSelfUserClient(_ userClient: WireDataModel.UserClient) {
-        // If during registration user allowed notifications,
-        // The push token can only be registered after client registration
-        transportSession.pushChannel.clientID = userClient.remoteIdentifier
         registerCurrentPushToken()
         renewAccessTokenIfNeeded(for: userClient)
 

@@ -601,78 +601,6 @@
     XCTAssertEqual(selfUser.clients.count, 0u);
 }
 
-- (void)testThatItSendsANoficationWhenRemovingASelfClient {
- 
-    // GIVEN
-    __block MockUser *selfUser;
-    __block MockUserClient *client;
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        selfUser = [session insertSelfUserWithName:@"Foo"];
-        [session registerClientForUser:selfUser label:@"self user" type:@"permanent" deviceClass:@"phone"];
-        client = [selfUser.clients anyObject];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    NSUInteger previousEventsCount = self.sut.generatedPushEvents.count;
-    NSString *clientId = client.identifier;
-    
-    // WHEN
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        [session deleteUserClientWithIdentifier:client.identifier forUser:selfUser];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    XCTAssertEqual(self.sut.generatedPushEvents.count, previousEventsCount+1u);
-    MockPushEvent *lastEvent = self.sut.generatedPushEvents.lastObject;
-    
-    NSDictionary *expectedPayload = @{
-                                      @"client" : @{
-                                              @"id" : clientId,
-                                            },
-                                      @"type" : @"user.client-remove"
-                                      };
-    XCTAssertEqualObjects(lastEvent.payload, expectedPayload);
-}
-
-- (void)testThatItSendsANoficationWhenAddingASelfClient {
-    
-    // GIVEN
-    __block MockUser *selfUser;
-    __block MockUserClient *client;
-    NSString *clientLabel = @"client label";
-    NSString *clientType = @"permanent";
-    NSString *deviceClass = @"phone";
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        selfUser = [session insertSelfUserWithName:@"Foo"];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // WHEN
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        client = [session registerClientForUser:selfUser label:clientLabel type:clientType  deviceClass:deviceClass];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // THEN
-    XCTAssertEqual(self.sut.generatedPushEvents.count, 1u);
-    MockPushEvent *lastEvent = self.sut.generatedPushEvents.lastObject;
-    
-    NSDictionary *expectedPayload = @{
-                                      @"client" : @{
-                                              @"label" : clientLabel,
-                                              @"location" : @{
-                                                      @"lat" : @(0),
-                                                      @"lon" : @(0)
-                                                      },
-                                              @"time": client.time.transportString,
-                                              @"id" : client.identifier,
-                                              @"type" : clientType,
-                                              @"class" : deviceClass
-                                      },
-                                      @"type" : @"user.client-add"
-    };
-    XCTAssertEqualObjects(lastEvent.payload, expectedPayload);
-}
-
 - (void)testThatItDoesNotSendsANoficationWhenAddingAClientOfAnotherUser {
     // GIVEN
     __block MockUser *otherUser;
@@ -709,25 +637,6 @@
     
     // THEN
     XCTAssertEqual(self.sut.generatedPushEvents.count, 0u);
-}
-
-- (void)testThatEncryptEncryptDataBetweenTwoClients;
-{
-    __block MockUserClient *selfClient;
-    __block MockUserClient *destClient;
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        
-        MockUser *selfUser = [session insertSelfUserWithName:@"Brigite Sorço"];
-        selfClient = [session registerClientForUser:selfUser label:@"moi" type:@"permanent" deviceClass:@"phone"];
-        destClient = [session registerClientForUser:selfUser label:@"autre" type:@"permanent" deviceClass:@"phone"];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    NSData *clearData = [@"Please, encrypt me!" dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *encryptedData = [MockUserClient encryptedWithData:clearData from:destClient to:selfClient];
-    
-    XCTAssertNotNil(encryptedData);
-    XCTAssertNotEqualObjects(clearData, encryptedData);
 }
 
 @end

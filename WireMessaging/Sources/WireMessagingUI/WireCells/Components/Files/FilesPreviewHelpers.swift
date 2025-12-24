@@ -29,14 +29,15 @@ extension FilesViewModel {
 
     /// A stubbed instance of `FilesViewModel` for SwiftUI previews.
     static func preview(isFoldersEnabled: Bool = false) -> FilesViewModel {
-        let cache = fileCache()
+        let cache = mockFileCache()
         let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
+        let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
 
         return FilesViewModel(
             useCases: .init(
-                fetchNodes: WireCellsFetchNodesUseCase(
+                fetchNodes: WireCellsFetchNodesPageUseCase(
                     configuration: .conversationFileView(root: .path("root"), isFoldersEnabled: true),
                     repository: previewNodesRepository()
                 ),
@@ -45,9 +46,14 @@ extension FilesViewModel {
                     fileCache: cache,
                     localAssetStore: localAssetStore
                 ),
+                restoreNodes: WireCellsRestoreNodesUseCase(
+                    repository: previewNodesRepository(),
+                    fileCache: cache,
+                    localAssetStore: localAssetStore
+                ),
                 renameNode: WireCellsRenameNodeUseCase(
                     nodesRepository: previewNodesRepository(),
-                    localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                    localAssetsRepository: localAssetRepository,
                     nodeCache: MockWireCellsNodeCacheProtocol(),
                     nodeRenameNotifier: WireCellsNodeRenameNotifier()
                 ),
@@ -60,13 +66,30 @@ extension FilesViewModel {
                 createFolder: WireCellsCreateFolderUseCase(
                     nodesRepository: previewNodesRepository()
                 ),
+                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(
+                    repository: previewNodesRepository()
+                ),
+                restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                    repository: previewNodesRepository(),
+                    localAssetsRepository: localAssetRepository,
+                    nodeCache: MockWireCellsNodeCacheProtocol()
+                ),
+                getEditingURL: WireCellsGetEditingURLUseCase(
+                    editingURLRepository: previewEditingURLRepository()
+                ),
+                getAssetUseCase: WireCellsGetAssetUseCase(
+                    localAssetRepository: localAssetRepository, fileCache: cache
+                )
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,
-            localAssetRepository: PreviewLocalAssetRepository(),
+            localAssetRepository: localAssetRepository,
+            nodesRepository: previewNodesRepository(),
             fileCache: cache,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
             isFoldersEnabled: isFoldersEnabled,
+            isCollaboraEnabled: false,
+            accentColorProvider: { .default }
         )
     }
 
@@ -103,22 +126,85 @@ extension FilesItemViewModel {
         FilesItemViewModel(
             item: FilesViewItem(
                 id: UUID(),
+                eTag: "eTag",
                 kind: .file,
                 name: "foo.jpg",
                 filePath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image foo.jpg",
                 ownedBy: "Viola",
                 modifiedAt: Date(),
                 icon: .image,
-                tags: tags
+                tags: tags,
+                isEditable: false
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
-            onOpen: { _ in },
-            onDelete: { _ in },
-            onRename: { _ in },
-            onEditTagsSelected: { _ in }
+            onItemAction: { _, _ in },
+            isInRecycleBin: false,
+            isFoldersEnabled: false,
         )
     }
 
+}
+
+extension FileVersionItemViewModel {
+    /// A stubbed instance of `FileVersionItemViewModel` for SwiftUI previews.
+    static func preview() -> FileVersionItemViewModel {
+        let localAssetsRepository = PreviewLocalAssetRepository()
+
+        return FileVersionItemViewModel(
+            nodeID: UUID(),
+            item: .init(
+                id: UUID(),
+                title: "5:46AM",
+                subtitle: "Deniz Agha · 13MB"
+            ),
+            accentColor: .default,
+            onRestore: { _ in }
+        )
+    }
+}
+
+extension FilesFiltersViewModel {
+
+    /// A stubbed instance of `FilesFiltersViewModel` for SwiftUI previews.
+    static func preview() -> FilesFiltersViewModel {
+        let nodesAPI = MockNodesAPIProtocol()
+        nodesAPI.getAllTags_MockValue = mockTags
+
+        return FilesFiltersViewModel(
+            fetchTagsUseCase:
+            WireCellsGetTagSuggestionsUseCase(
+                nodesAPI: nodesAPI
+            ),
+            savedTags: nil,
+            accentColorProvider: { .default }
+        )
+    }
+
+}
+
+extension FileVersioningViewModel {
+
+    /// A stubbed instance of `FileVersioningViewModel` for SwiftUI previews.
+    static func preview() -> FileVersioningViewModel {
+        let repository = MockWireCellsNodesRepositoryProtocol()
+        repository.getVersionsNodeID_MockValue = WireCellsNodeVersion.mock
+
+        let useCase = WireCellsFetchNodeVersionsUseCase(repository: repository)
+        let localAssetsRepository = PreviewLocalAssetRepository()
+        repository.restoreVersionNodeIDVersionID_MockMethod = { _, _ in }
+
+        return FileVersioningViewModel(
+            nodeID: UUID(),
+            name: "foo.jpg",
+            fetchNodeVersionsUseCase: useCase,
+            restoreNodeVersionUseCase: WireCellsRestoreNodeVersionUseCase(
+                repository: repository,
+                localAssetsRepository: localAssetsRepository,
+                nodeCache: MockWireCellsNodeCacheProtocol()
+            ),
+            accentColorProvider: { .default }
+        )
+    }
 }
 
 // MARK: - Dependencies
@@ -134,6 +220,7 @@ private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
             ownerUserName: "Person \(index)",
         )
     }
+    repository.getVersionsNodeID_MockValue = WireCellsNodeVersion.mock
     repository.getNodes_MockMethod = { request in
         try await Task.sleep(nanoseconds: 1_000_000_000) // Simulate network delay
 
@@ -148,13 +235,19 @@ private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
 private func previewTagsApi() -> some NodesAPIProtocol {
     let mock = MockNodesAPIProtocol()
     mock.getAllTags_MockMethod = {
-        ["suggested tag 1", "lorem", "ipsum"]
+        mockTags
     }
     mock.updateTagsNodeIDTags_MockMethod = { _, _ in }
     return mock
 }
 
-private func fileCache() -> any FileCache {
+private func previewEditingURLRepository() -> any WireCellsEditingURLRepositoryProtocol {
+    let mock = MockWireCellsEditingURLRepositoryProtocol()
+    mock.getEditorURLId_MockValue = nil
+    return mock
+}
+
+private func mockFileCache() -> any FileCache {
     let fileURL = URL.temporaryDirectory.appendingPathComponent("mock-file.txt")
     let file = Data("Some text file content".utf8)
     try? file.write(to: fileURL)
@@ -244,3 +337,142 @@ extension CreateFolderViewModel {
         )
     }
 }
+
+extension WireCellsNodeVersion {
+    static let mock: [WireCellsNodeVersion] = [
+        .init(
+            id: UUID(),
+            ownerName: "foo1",
+            modified: .init(timeIntervalSince1970: 1_759_311_973),
+            eTag: "something",
+            size: 2_158_877,
+            downloadUrl: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo2",
+            modified: .init(timeIntervalSince1970: 1_759_311_973),
+            eTag: "something",
+            size: 172_493,
+            downloadUrl: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo3",
+            modified: .init(timeIntervalSince1970: 1_761_663_940),
+            eTag: "something",
+            size: 2_216_387,
+            downloadUrl: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo4",
+            modified: .init(timeIntervalSince1970: 1_761_663_393),
+            eTag: "something",
+            size: 2_216_387,
+            downloadUrl: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo5",
+            modified: .init(timeIntervalSince1970: 1_759_241_119),
+            eTag: "something",
+            size: 27_808,
+            downloadUrl: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo6",
+            modified: .init(timeIntervalSince1970: 1_759_369_815),
+            eTag: "something",
+            size: 27_808,
+            downloadUrl: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo7",
+            modified: .init(timeIntervalSince1970: 1_759_401_599),
+            eTag: "something",
+            size: 27_808,
+            downloadUrl: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo8",
+            modified: .init(timeIntervalSince1970: 1_761_681_900),
+            eTag: "something",
+            size: 27_808,
+            downloadUrl: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo9",
+            modified: .init(timeIntervalSince1970: 1_761_628_800),
+            eTag: "something",
+            size: 27_808,
+            downloadUrl: URL(string: "https://wire.com")
+        )
+    ]
+}
+
+let mockTags = [
+    "Urgent",
+    "Marketing",
+    "screenshot",
+    "",
+    "charles-files-are-no-fun",
+    "accessibility",
+    "product",
+    "autumn",
+    "happy",
+    "Technical Docs",
+    "Lorem Ipsum",
+    "Android",
+    "some tag",
+    "Some Tag ",
+    "Some Tag",
+    "tag some... ",
+    "Pictures",
+    "Test",
+    "Test ",
+    "QA Review",
+    "Done",
+    "In Progress",
+    "To Do",
+    "Pending Ticket",
+    "jira",
+    "Urgent ",
+    "Android ",
+    "ttaagg",
+    "ttaagg2",
+    "confirmation email investigations",
+    "Testing Data",
+    "play",
+    "jira ",
+    "tag1",
+    "tag12",
+    "cute",
+    "cute ",
+    " cute",
+    "conference",
+    "food",
+    "Never",
+    "gonna",
+    "give",
+    "you",
+    "up",
+    "screenshot ",
+    "nothing",
+    "QM",
+    "Marketing ",
+    "nothing ",
+    "Sam",
+    "cells",
+    "roadmap",
+    "apps",
+    "troubleshooting",
+    "network",
+    "merkblatt",
+    "charles-files-are-no-fun ",
+    "🐝 "
+]

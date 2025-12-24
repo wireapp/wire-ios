@@ -41,7 +41,6 @@
 
 @property (nonatomic, readonly) NSMutableSet *emailsWaitingForVerificationForRegistration;
 
-@property (atomic, weak, readonly) id<ZMPushChannelConsumer> pushChannelConsumer;
 @property (atomic) BOOL clientCompletedLogin;
 
 @end

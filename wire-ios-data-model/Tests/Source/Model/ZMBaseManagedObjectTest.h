@@ -31,7 +31,6 @@
 @protocol ZMObjectStrategyDirectory;
 @class ZMAssetClientMessage;
 
-@import WireCryptobox;
 @import WireImages;
 @class UserClient;
 
@@ -91,8 +90,6 @@
 
 - (nonnull UserClient *)createSelfClient;
 - (nonnull UserClient *)createSelfClientOnMOC:(nonnull NSManagedObjectContext *)moc;
-
-- (nonnull UserClient *)createClientForUser:(nonnull ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser;
 
 @end
 

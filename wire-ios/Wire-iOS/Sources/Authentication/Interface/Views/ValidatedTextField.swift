@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireReusableUIComponents
 
 protocol TextFieldValidationDelegate: AnyObject {
@@ -113,7 +114,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
             iconButton.isEnabled = true
         default:
             iconButton = IconButton(style: .circular, variant: .dark)
-            iconButton.accessibilityIdentifier = "ConfirmButton"
+            iconButton.accessibilityIdentifier = Locators.SetUsernamePage.confirmUsernameButton.rawValue
             iconButton.accessibilityLabel = L10n.Localizable.General.next
             iconButton.isEnabled = false
         }
@@ -223,7 +224,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
             textContentType = isTeam ? .organizationName : .name
         case .username:
             autocapitalizationType = .none
-            accessibilityIdentifier = "UsernameField"
+            accessibilityIdentifier = Locators.SetUsernamePage.usernameTextField.rawValue
             textContentType = .username
         case .unknown:
             keyboardType = .asciiCapable
@@ -231,7 +232,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         case let .passcode(rules, isNew):
             keyboardType = .asciiCapable
             isSecureTextEntry = true
-            accessibilityIdentifier = "PasscodeField"
+            accessibilityIdentifier = Locators.SetPasscodePage.passcodeField.rawValue
             autocapitalizationType = .none
             returnKeyType = isNew ? .default : .continue
             // Hack: disable auto fill passcode

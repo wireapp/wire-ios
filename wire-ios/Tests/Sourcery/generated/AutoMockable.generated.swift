@@ -1857,60 +1857,59 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
         }
     }
 
-    // MARK: - makeFilesView
+    // MARK: - makeFetchNodeUseCase
 
-    var makeFilesViewCellNameIsCellsStatePendingAccentColor_Invocations: [(cellName: String, isCellsStatePending: Bool, accentColor: WireAccentColor)] = []
-    var makeFilesViewCellNameIsCellsStatePendingAccentColor_MockMethod: ((String, Bool, WireAccentColor) -> UIViewController)?
-    var makeFilesViewCellNameIsCellsStatePendingAccentColor_MockValue: UIViewController?
+    var makeFetchNodeUseCase_Invocations: [Void] = []
+    var makeFetchNodeUseCase_MockMethod: (() -> WireCellsFetchNodeUseCaseProtocol)?
+    var makeFetchNodeUseCase_MockValue: WireCellsFetchNodeUseCaseProtocol?
 
-    @MainActor
-    func makeFilesView(cellName: String, isCellsStatePending: Bool, accentColor: WireAccentColor) -> UIViewController {
-        makeFilesViewCellNameIsCellsStatePendingAccentColor_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending, accentColor: accentColor))
+    func makeFetchNodeUseCase() -> WireCellsFetchNodeUseCaseProtocol {
+        makeFetchNodeUseCase_Invocations.append(())
 
-        if let mock = makeFilesViewCellNameIsCellsStatePendingAccentColor_MockMethod {
-            return mock(cellName, isCellsStatePending, accentColor)
-        } else if let mock = makeFilesViewCellNameIsCellsStatePendingAccentColor_MockValue {
+        if let mock = makeFetchNodeUseCase_MockMethod {
+            return mock()
+        } else if let mock = makeFetchNodeUseCase_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeFilesViewCellNameIsCellsStatePendingAccentColor`")
+            fatalError("no mock for `makeFetchNodeUseCase`")
+        }
+    }
+
+    // MARK: - makeFilesView
+
+    var makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_Invocations: [(cellName: String, isCellsStatePending: Bool, accentColorProvider: () -> WireAccentColor)] = []
+    var makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_MockMethod: ((String, Bool, @escaping () -> WireAccentColor) -> UIViewController)?
+    var makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_MockValue: UIViewController?
+
+    @MainActor
+    func makeFilesView(cellName: String, isCellsStatePending: Bool, accentColorProvider: @escaping () -> WireAccentColor) -> UIViewController {
+        makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending, accentColorProvider: accentColorProvider))
+
+        if let mock = makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_MockMethod {
+            return mock(cellName, isCellsStatePending, accentColorProvider)
+        } else if let mock = makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeFilesViewCellNameIsCellsStatePendingAccentColorProvider`")
         }
     }
 
     // MARK: - makeFilesBrowserView
 
-    var makeFilesBrowserView_Invocations: [Void] = []
-    var makeFilesBrowserView_MockMethod: (() -> UIViewController)?
-    var makeFilesBrowserView_MockValue: UIViewController?
+    var makeFilesBrowserViewAccentColorProvider_Invocations: [() -> WireAccentColor] = []
+    var makeFilesBrowserViewAccentColorProvider_MockMethod: ((@escaping () -> WireAccentColor) -> UIViewController)?
+    var makeFilesBrowserViewAccentColorProvider_MockValue: UIViewController?
 
     @MainActor
-    func makeFilesBrowserView() -> UIViewController {
-        makeFilesBrowserView_Invocations.append(())
+    func makeFilesBrowserView(accentColorProvider: @escaping () -> WireAccentColor) -> UIViewController {
+        makeFilesBrowserViewAccentColorProvider_Invocations.append(accentColorProvider)
 
-        if let mock = makeFilesBrowserView_MockMethod {
-            return mock()
-        } else if let mock = makeFilesBrowserView_MockValue {
+        if let mock = makeFilesBrowserViewAccentColorProvider_MockMethod {
+            return mock(accentColorProvider)
+        } else if let mock = makeFilesBrowserViewAccentColorProvider_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeFilesBrowserView`")
-        }
-    }
-
-    // MARK: - makeAttachmentsPreviewView
-
-    var makeAttachmentsPreviewViewAttachmentsAlignment_Invocations: [(attachments: [WireCellsMessageAttachment], alignment: HorizontalAlignment)] = []
-    var makeAttachmentsPreviewViewAttachmentsAlignment_MockMethod: (([WireCellsMessageAttachment], HorizontalAlignment) -> UIViewController)?
-    var makeAttachmentsPreviewViewAttachmentsAlignment_MockValue: UIViewController?
-
-    @MainActor
-    func makeAttachmentsPreviewView(attachments: [WireCellsMessageAttachment], alignment: HorizontalAlignment) -> UIViewController {
-        makeAttachmentsPreviewViewAttachmentsAlignment_Invocations.append((attachments: attachments, alignment: alignment))
-
-        if let mock = makeAttachmentsPreviewViewAttachmentsAlignment_MockMethod {
-            return mock(attachments, alignment)
-        } else if let mock = makeAttachmentsPreviewViewAttachmentsAlignment_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `makeAttachmentsPreviewViewAttachmentsAlignment`")
+            fatalError("no mock for `makeFilesBrowserViewAccentColorProvider`")
         }
     }
 

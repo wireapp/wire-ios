@@ -1347,14 +1347,6 @@ internal enum L10n {
         }
       }
     }
-    internal enum BackendNotSupported {
-      internal enum Alert {
-        /// The server version is not supported by this app. Please contact your system administrator.
-        internal static let message = L10n.tr("Localizable", "backend_not_supported.alert.message", fallback: "The server version is not supported by this app. Please contact your system administrator.")
-        /// Server version not supported
-        internal static let title = L10n.tr("Localizable", "backend_not_supported.alert.title", fallback: "Server version not supported")
-      }
-    }
     internal enum ButtonMessageCell {
       /// Your answer can't be sent, please retry.
       internal static let genericError = L10n.tr("Localizable", "button_message_cell.generic_error", fallback: "Your answer can't be sent, please retry.")
@@ -1899,6 +1891,12 @@ internal enum L10n {
           internal static let brokenMessage = L10n.tr("Localizable", "content.message.reply.broken_message", fallback: "You cannot see this message.")
           /// Edited
           internal static let editedMessage = L10n.tr("Localizable", "content.message.reply.edited_message", fallback: "Edited")
+          internal enum Files {
+            /// %@ files
+            internal static func count(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.message.reply.files.count", String(describing: p1), fallback: "%@ files")
+            }
+          }
           internal enum OriginalTimestamp {
             /// Original message from %@
             internal static func date(_ p1: Any) -> String {
@@ -2164,8 +2162,6 @@ internal enum L10n {
           internal static func other(_ p1: Any) -> String {
             return L10n.tr("Localizable", "content.system.cannot_decrypt.other", String(describing: p1), fallback: "A message from %@ could not be decrypted.")
           }
-          /// Fix future messages
-          internal static let resetSession = L10n.tr("Localizable", "content.system.cannot_decrypt.reset_session", fallback: "Fix future messages")
           /// A message from you could not be decrypted.
           internal static let `self` = L10n.tr("Localizable", "content.system.cannot_decrypt.self", fallback: "A message from you could not be decrypted.")
         }
@@ -2594,6 +2590,12 @@ internal enum L10n {
           internal static let subtitle = L10n.tr("Localizable", "conversation.create.apps.subtitle", fallback: "Open this conversation to apps.")
           /// Allow apps
           internal static let title = L10n.tr("Localizable", "conversation.create.apps.title", fallback: "Allow apps")
+        }
+        internal enum AppsDisabled {
+          /// To improve your workflow with apps, your team needs configuration. Please contact your team admin.
+          internal static let message = L10n.tr("Localizable", "conversation.create.apps_disabled.message", fallback: "To improve your workflow with apps, your team needs configuration. Please contact your team admin.")
+          /// Your team doesn't use apps yet
+          internal static let title = L10n.tr("Localizable", "conversation.create.apps_disabled.title", fallback: "Your team doesn't use apps yet")
         }
         internal enum Channel {
           /// Back

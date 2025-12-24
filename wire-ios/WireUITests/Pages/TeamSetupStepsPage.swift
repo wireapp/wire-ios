@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 /// Some steps followed while setting up team i.e name, disclaimers etc
@@ -26,19 +27,26 @@ class TeamSetupStepsPage: PageModel {
     }
 
     var teamNameTextField: XCUIElement {
-        app.descendants(matching: .any)["Your Team"].firstMatch
+        app.descendants(matching: .textField)[Locators.TeamSetupStepsPage.teamNameTextField.rawValue].firstMatch
     }
 
     var continueButton: XCUIElement {
-        app.descendants(matching: .any)["Continue"].firstMatch
+        app.descendants(matching: .any)[Locators.TeamSetupStepsPage.continueButton.rawValue].firstMatch
     }
 
     var checkbox: XCUIElement {
-        app.descendants(matching: .any)["square"].firstMatch
+        app.descendants(matching: .any)[Locators.TeamSetupStepsPage.checkbox.rawValue].firstMatch
     }
 
+    var checkboxes: XCUIElementQuery {
+        app.descendants(matching: .any).matching(identifier: Locators.TeamSetupStepsPage.checkbox.rawValue)
+    }
+
+    var firstCheckbox: XCUIElement { checkboxes.element(boundBy: 0) }
+    var secondCheckbox: XCUIElement { checkboxes.element(boundBy: 1) }
+
     var backToWireButton: XCUIElement {
-        app.descendants(matching: .any)["Back To Wire"].firstMatch
+        app.descendants(matching: .any)[Locators.TeamSetupStepsPage.backToWireButton.rawValue].firstMatch
     }
 
     func tapContinue() throws -> TeamSetupStepsPage {
@@ -53,8 +61,8 @@ class TeamSetupStepsPage: PageModel {
     }
 
     func acceptTheConfirmationAndContinue() -> TeamSetupStepsPage {
-        checkbox.tap()
-        checkbox.tap()
+        firstCheckbox.tap()
+        secondCheckbox.tap()
         continueButton.tap()
         return self
     }

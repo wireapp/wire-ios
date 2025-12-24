@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
+package import Combine
 package import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
-import WireFoundation
+package import WireFoundation
 import WireLogging
 package import WireMessagingDomain
 import WireMessagingDomainSupport
@@ -41,10 +41,17 @@ package struct FilesViewItem: Identifiable, Hashable {
     /// Identifier of this item on the wire cells backend.
     package let id: UUID
 
+    /// The ETag of this item.
+    let eTag: String
+
+    /// The id of the topmost folder in the recycle bin, if the item is not at the root of the recycle bin.
+    /// Needed to restore items which are in folders rather than directly at the root of the recycle bin.
+    var recycleBinTopFolderId: UUID?
+
     /// The kind of this item - file or folder.
     let kind: Kind
 
-    /// The name of the user who owns (uploaded or created) this item.
+    /// The name of the this item.
     let name: String
 
     /// The filepath of the item.
@@ -61,7 +68,13 @@ package struct FilesViewItem: Identifiable, Hashable {
 
     /// The tags that users have added for that file.
     let tags: [String]
+
+    /// Whether the item can be edited.
+    let isEditable: Bool
 }
+
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 @MainActor
 /// View model for the `FilesView`.
@@ -77,11 +90,26 @@ package final class FilesViewModel: ObservableObject {
 
     enum SheetNavigation: Identifiable {
         case editTags(fileItem: FilesViewItem)
+        case moveToFolder(fileItem: FilesViewItem)
+        case renameFile(view: FileRenameView)
+        case createFolder(view: CreateFolderView)
+        case filters(view: FilesFiltersView)
+        case versionHistory(view: FileVersioningView)
 
         var id: String {
             switch self {
             case let .editTags(fileItem: item):
                 "editTags(\(item.id))"
+            case let .moveToFolder(fileItem):
+                "moveToFolder(\(fileItem.id)"
+            case let .createFolder(view):
+                "createFolder(\(view.id))"
+            case let .renameFile(view):
+                "renameFile(\(view.id))"
+            case let .filters(view):
+                "filters(\(view.id))"
+            case let .versionHistory(view):
+                "versionHistory(\(view.id))"
             }
         }
     }
@@ -120,42 +148,62 @@ package final class FilesViewModel: ObservableObject {
 
     package struct UseCases {
         package init(
-            fetchNodes: WireCellsFetchNodesUseCase,
+            fetchNodes: WireCellsFetchNodesPageUseCase,
             deleteNodes: WireCellsDeleteNodesUseCase,
+            restoreNodes: WireCellsRestoreNodesUseCase,
             renameNode: any WireCellsRenameNodeUseCaseProtocol,
             updateTags: any WireCellsUpdateTagsUseCaseProtocol,
             getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol,
             createFolder: any WireCellsCreateFolderUseCaseProtocol,
+            fetchNodeVersions: any WireCellsFetchNodeVersionsUseCaseProtocol,
+            restoreNodeVersion: any WireCellsRestoreNodeVersionUseCaseProtocol,
+            getEditingURL: WireCellsGetEditingURLUseCase,
+            getAssetUseCase: WireCellsGetAssetUseCase
         ) {
 
             self.fetchNodes = fetchNodes
             self.deleteNodes = deleteNodes
+            self.restoreNodes = restoreNodes
             self.renameNode = renameNode
             self.updateTags = updateTags
             self.getTagSuggestions = getTagSuggestions
             self.createFolder = createFolder
+            self.fetchNodeVersions = fetchNodeVersions
+            self.restoreNodeVersion = restoreNodeVersion
+            self.getEditingURL = getEditingURL
+            self.getAssetUseCase = getAssetUseCase
         }
 
-        let fetchNodes: WireCellsFetchNodesUseCase
+        let fetchNodes: WireCellsFetchNodesPageUseCase
         let deleteNodes: WireCellsDeleteNodesUseCase
+        let restoreNodes: WireCellsRestoreNodesUseCase
         let renameNode: any WireCellsRenameNodeUseCaseProtocol
         let updateTags: any WireCellsUpdateTagsUseCaseProtocol
         let getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
         let createFolder: any WireCellsCreateFolderUseCaseProtocol
+        let fetchNodeVersions: any WireCellsFetchNodeVersionsUseCaseProtocol
+        let restoreNodeVersion: any WireCellsRestoreNodeVersionUseCaseProtocol
+        let getEditingURL: WireCellsGetEditingURLUseCase
+        let getAssetUseCase: WireCellsGetAssetUseCase
     }
 
     let useCases: UseCases
 
     private let setNavigation: ([FilesViewItem]) -> Void
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
+    private let nodesRepository: any WireCellsNodesRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
     private let cellName: String? // nil when browsing all files
     private var subscriptions = Set<AnyCancellable>()
     private let navigationPath: [FilesViewItem]
+    private let accentColorProvider: () -> WireAccentColor
     let isFoldersEnabled: Bool
+    let isCollaboraEnabled: Bool
+    let isRecycleBin: Bool
+    let triggerReload: PassthroughSubject<Void, Never>
 
-    @Published private(set) var hasMore = true
+    @Published var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
     @Published var searchText = ""
     @Published var alert: AlertModel?
@@ -164,10 +212,14 @@ package final class FilesViewModel: ObservableObject {
     @Published var sheetNavigation: SheetNavigation?
     @Published var createFolderView: CreateFolderView?
     @Published var fileRenameView: FileRenameView?
+    @Published var isEditing: FilesViewItem?
 
-    var didCreateFolder: Bool = false
-    var didRenameFile: Bool = false
+    var shouldReload: Bool = false
+    var filterWithTags: [String] = []
     let title: String?
+    var showSearchBar: Bool {
+        state != .error && state != .pending
+    }
 
     package init(
         useCases: UseCases,
@@ -176,21 +228,43 @@ package final class FilesViewModel: ObservableObject {
         setNavigation: @escaping ([FilesViewItem]) -> Void = { _ in },
         isCellsStatePending: Bool,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
+        nodesRepository: any WireCellsNodesRepositoryProtocol,
         fileCache: any FileCache,
         cellName: String? = nil,
-        isFoldersEnabled: Bool
+        isFoldersEnabled: Bool,
+        isCollaboraEnabled: Bool,
+        isRecycleBin: Bool = false,
+        triggerReload: PassthroughSubject<Void, Never> = .init(),
+        accentColorProvider: @escaping () -> WireAccentColor
     ) {
         self.useCases = useCases
         self.title = title
         self.navigationPath = navigationPath
         self.setNavigation = setNavigation
         self.localAssetRepository = localAssetRepository
+        self.nodesRepository = nodesRepository
         self.fileCache = fileCache
         self.cellName = cellName
         self.state = isCellsStatePending ? .pending : .loading
         self.isFoldersEnabled = isFoldersEnabled
+        self.isCollaboraEnabled = isCollaboraEnabled
+        self.isRecycleBin = isRecycleBin
+        self.triggerReload = triggerReload
+        self.accentColorProvider = accentColorProvider
 
         bindSearch()
+    }
+
+    var navigationTitle: String {
+        if let title {
+            title
+        } else {
+            if isRecycleBin {
+                Strings.RecycleBin.navigationTitle
+            } else {
+                Strings.Files.navigationTitle
+            }
+        }
     }
 
     /// Whether the view model is currently loading items.
@@ -217,13 +291,9 @@ package final class FilesViewModel: ObservableObject {
     /// When `refreshing` is `true`, the current state is preserved since loading is managed by the system.
 
     func reload(refreshing: Bool = false) async {
-        guard state != .pending else {
-            return
-        }
-
         cancelLoad()
         state = refreshing ? state : .loading
-        hasMore = true
+        hasMore = !refreshing
 
         await loadMore(refreshing: refreshing)
     }
@@ -247,18 +317,83 @@ package final class FilesViewModel: ObservableObject {
         FilesItemViewModel(
             item: state.items[index],
             localAssetRepository: localAssetRepository,
-            onOpen: { [weak self] item in
-                await self?.openItem(item: item)
+            onItemAction: { [weak self] action, item in
+                guard let self else { return }
+                switch action {
+                case .open:
+                    await openItem(item: item)
+                case .deleteToRecycleBin:
+                    await deleteItem(item, permanently: false)
+                case .deletePermanently:
+                    await deleteItem(item, permanently: true)
+                case .restore:
+                    await restoreItem(item)
+                case .rename:
+                    sheetNavigation = .renameFile(view: makeFileRenameView(item: item))
+                case .editTags:
+                    sheetNavigation = .editTags(fileItem: item)
+                case .moveToFolder:
+                    sheetNavigation = .moveToFolder(fileItem: item)
+                case .onVersionHistory:
+                    sheetNavigation = .versionHistory(view: makeFileVersioningView(item: item))
+                case .edit:
+                    isEditing = item
+                }
             },
-            onDelete: { [weak self] item in
-                await self?.deleteItem(item)
-            },
-            onRename: { [weak self] item in
-                self?.fileRenameView = self?.makeFileRenameView(item: item)
-            },
-            onEditTagsSelected: { [weak self] item in
-                self?.sheetNavigation = .editTags(fileItem: item)
-            },
+            isInRecycleBin: isRecycleBin,
+            isFoldersEnabled: isFoldersEnabled,
+        )
+    }
+
+    func openFilters() {
+        let filesFiltersViewModel = FilesFiltersViewModel(
+            fetchTagsUseCase: useCases.getTagSuggestions,
+            savedTags: filterWithTags,
+            accentColorProvider: accentColorProvider
+        )
+
+        filesFiltersViewModel.$savedTags
+            .sink { [weak self] tags in
+                guard let self else { return }
+                shouldReload = filterWithTags != tags
+                filterWithTags = tags
+            }.store(in: &subscriptions)
+
+        sheetNavigation = .filters(
+            view: FilesFiltersView(viewModel: filesFiltersViewModel)
+        )
+    }
+
+    func moveToFolderView(item: FilesViewItem) -> some View {
+        let containerPath = item.filePath.components(separatedBy: "/").dropLast().joined(separator: "/")
+        let nodesRepository = nodesRepository
+        let assetRepository = localAssetRepository
+        let useCases = useCases
+        return MoveToFolderView(
+            viewModel: MoveToFolderViewModel(
+                containerPath: containerPath,
+                nodeID: item.id,
+                nodeName: item.name,
+                onFinish: { [weak self] in
+                    self?.sheetNavigation = nil
+                    Task { await self?.reload(refreshing: true) }
+                },
+                nodesRepository: nodesRepository,
+                localAssetRepository: assetRepository,
+                moveNodeUseCase: WireCellsMoveNodeUseCase(nodesRepository: nodesRepository),
+                createFolderUseCase: useCases.createFolder
+            )
+        )
+    }
+
+    func editFileView(item: FilesViewItem) -> some View {
+        let getEditingURLUseCase = useCases.getEditingURL
+        return EditFileView(
+            viewModel: EditFileViewModel(
+                nodeID: item.id,
+                fileName: item.name,
+                getEditingURLUseCase: getEditingURLUseCase
+            )
         )
     }
 
@@ -294,13 +429,37 @@ package final class FilesViewModel: ObservableObject {
         setNavigation(newPath)
     }
 
+    func onSheetDismissed() async {
+        if shouldReload {
+            await reload()
+            shouldReload = false
+        }
+    }
+
     // MARK: - Private
 
     /// Navigates to the folder represented by the given item.
     private func openFolder(item: FilesViewItem) {
         precondition(item.kind == .folder)
 
-        setNavigation(navigationPath + [item])
+        var targetItem = item
+
+        if isRecycleBin {
+            let pathComponents = targetItem.filePath.split(separator: "/").map { String($0) }
+            if pathComponents.count == 3 {
+                // remember the id of the top folder in the recycle bin for later when an item in a subfolder will be
+                // restored
+                targetItem.recycleBinTopFolderId = targetItem.id
+            } else if pathComponents.count > 3 {
+                // for the next subfolder, just assign the id of the same top folder
+                if let previousItem = navigationPath.last,
+                   let recycleBinTopFolderId = previousItem.recycleBinTopFolderId {
+                    targetItem.recycleBinTopFolderId = recycleBinTopFolderId
+                }
+            }
+        }
+
+        setNavigation(navigationPath + [targetItem])
     }
 
     /// Downloads if necessary and views the asset represented by the given item.
@@ -311,7 +470,8 @@ package final class FilesViewModel: ObservableObject {
         lastSelectedItem = item
 
         do {
-            if let url = try await localURL(for: item), item == lastSelectedItem {
+            let url = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
+            if item == lastSelectedItem {
                 viewingURL = url
             }
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
@@ -334,35 +494,19 @@ package final class FilesViewModel: ObservableObject {
 
         // to know whether we need to reload nodes.
         viewModel.$didCreate
+            .filter(\.self)
             .sink { [weak self] didCreate in
-                self?.didCreateFolder = didCreate
+                self?.shouldReload = didCreate
             }.store(in: &subscriptions)
 
-        createFolderView = CreateFolderView(
+        let createFolderView = CreateFolderView(
             viewModel: viewModel
         )
+
+        sheetNavigation = .createFolder(view: createFolderView)
     }
 
     // MARK: - Private
-
-    private func localURL(for item: FilesViewItem) async throws -> URL? {
-        // If the file is already downloaded, return the local URL.
-        if
-            let cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey,
-            let url = fileCache.fileURL(forKey: cacheKey) {
-            return url
-        }
-
-        let cacheKey: String?
-        do {
-            try await localAssetRepository.downloadAsset(nodeID: item.id)
-            cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey
-        } catch WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress {
-            try await awaitDownload(item: item)
-            cacheKey = try localAssetRepository.asset(nodeID: item.id)?.downloadState.cacheKey
-        }
-        return cacheKey.flatMap { fileCache.fileURL(forKey: $0) }
-    }
 
     private func cancelLoad() {
         loadMoreTask?.cancel()
@@ -402,14 +546,18 @@ package final class FilesViewModel: ObservableObject {
     ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
         let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
             searchTerm: searchText.isEmpty ? nil : searchText,
+            tags: filterWithTags,
             offset: offset
         )
 
-        let items = nodes.map { node in
+        let items: [FilesViewItem] = nodes.compactMap { node in
+            guard let eTag = node.eTag else { return nil }
+
             let url = URL(string: node.path)
             let kind: FilesViewItem.Kind = node.type == .collection ? .folder : .file
             return FilesViewItem(
                 id: node.id,
+                eTag: eTag,
                 kind: kind,
                 name: url?.lastPathComponent ?? node.path,
                 filePath: node.path,
@@ -419,7 +567,8 @@ package final class FilesViewModel: ObservableObject {
                     type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
                     fileExtension: url?.pathExtension
                 ),
-                tags: node.tags
+                tags: node.tags,
+                isEditable: node.isEditable
             )
         }
 
@@ -427,22 +576,7 @@ package final class FilesViewModel: ObservableObject {
         return (items, isLastPage)
     }
 
-    private func awaitDownload(item: FilesViewItem) async throws {
-        for await item in localAssetRepository.observeAsset(nodeID: item.id).values {
-            try Task.checkCancellation()
-
-            switch item?.downloadState {
-            case .downloaded:
-                return
-            case let .failed(error):
-                throw error
-            default:
-                break
-            }
-        }
-    }
-
-    private func deleteItem(_ asset: FilesViewItem) async {
+    private func deleteItem(_ asset: FilesViewItem, permanently: Bool) async {
         guard state.isLoaded else {
             WireLogger.wireCells.error("Attempt to delete asset while not visible", attributes: .safePublic)
             return
@@ -453,7 +587,32 @@ package final class FilesViewModel: ObservableObject {
         state = .received(items: Self.processItems(currentItems))
 
         do {
-            try await useCases.deleteNodes.invoke(nodeIDs: [asset.id])
+            try await useCases.deleteNodes.invoke(nodeIDs: [asset.id], deletePermanently: permanently)
+        } catch {
+            guard state.isLoaded else { return }
+
+            var currentItems = state.items
+            currentItems.append(asset)
+            state = .received(items: Self.processItems(currentItems))
+        }
+    }
+
+    private func restoreItem(_ asset: FilesViewItem) async {
+        guard state.isLoaded else {
+            WireLogger.wireCells.error("Attempt to restore asset while not visible", attributes: .safePublic)
+            return
+        }
+
+        var currentItems = state.items
+        currentItems.removeAll { $0.id == asset.id }
+        state = .received(items: Self.processItems(currentItems))
+
+        let nodeIdToRestore = navigationPath.last?.recycleBinTopFolderId ?? asset.id
+
+        do {
+            try await useCases.restoreNodes.invoke(nodeIDs: [nodeIdToRestore])
+
+            setNavigation([])
         } catch {
             guard state.isLoaded else { return }
 
@@ -502,10 +661,27 @@ package final class FilesViewModel: ObservableObject {
         // to know whether we need to reload items.
         viewModel.$didRename
             .sink { [weak self] didRename in
-                self?.didRenameFile = didRename
+                self?.shouldReload = didRename
             }.store(in: &subscriptions)
 
         return FileRenameView(viewModel: viewModel)
+    }
+
+    private func makeFileVersioningView(
+        item: FilesViewItem
+    ) -> FileVersioningView {
+        // always reload this view when file versioning is dismissed
+        shouldReload = true
+
+        let viewModel = FileVersioningViewModel(
+            nodeID: item.id,
+            name: item.name,
+            fetchNodeVersionsUseCase: useCases.fetchNodeVersions,
+            restoreNodeVersionUseCase: useCases.restoreNodeVersion,
+            accentColorProvider: accentColorProvider
+        )
+
+        return FileVersioningView(viewModel: viewModel)
     }
 
 }

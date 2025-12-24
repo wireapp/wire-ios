@@ -22,18 +22,6 @@ import XCTest
 
 final class AVURLAsset_conversionTests: XCTestCase {
 
-    override static func setUp() {
-        super.setUp()
-        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = false
-    }
-
-    override static func tearDown() {
-        super.tearDown()
-        DeveloperFlag.storage = UserDefaults.standard
-    }
-
     func testThatVideoIsConvertedToUploadFormat() {
         // GIVEN
         let videoURL = urlForResource(inTestBundleNamed: "video.mp4")

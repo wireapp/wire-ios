@@ -21,6 +21,7 @@ import WireAccountImageUI
 import WireDesign
 import WireReusableUIComponents
 public import UIKit
+import WireLocators
 
 public class ConversationTitleView: UIView {
 
@@ -122,7 +123,7 @@ public class ConversationTitleView: UIView {
         addSubview(tapButton)
         tapButton.pin(to: self)
         tapButton.showsMenuAsPrimaryAction = true
-        tapButton.accessibilityIdentifier = "conversation_title_button"
+        tapButton.accessibilityIdentifier = Locators.ActiveConversationPage.conversationTitleButton.rawValue
     }
 
     public func updateSource(_ source: ConversationTitleSource) {

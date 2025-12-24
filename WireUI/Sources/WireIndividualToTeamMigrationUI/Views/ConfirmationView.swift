@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireReusableUIComponents
 
 struct ConfirmationView: View {
@@ -71,6 +72,7 @@ struct ConfirmationView: View {
                     action: { actionCallback(.continue) },
                     label: { Text(String.localized(key: "individualToTeam.button.continue", bundle: .module)) }
                 )
+                .accessibilityIdentifier(Locators.TeamSetupStepsPage.continueButton.rawValue)
                 .wireButtonStyle(.primary)
                 .disabled(!(migrationConfirmed && termsAccepted))
             }

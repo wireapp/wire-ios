@@ -17,6 +17,7 @@
 //
 
 @import Foundation;
+@import WireUtilities;
 
 @protocol ZMApplication;
 @protocol FlowManagerType;
@@ -29,8 +30,6 @@
 @class SyncStatus;
 @class PushNotificationStatus;
 @class ZMSyncStrategy;
-
-extern NSString * const ZMPushChannelIsOpenKey;
 
 @interface ZMOperationLoop : NSObject <TearDownCapable>
 

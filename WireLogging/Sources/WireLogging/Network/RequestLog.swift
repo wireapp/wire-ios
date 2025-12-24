@@ -80,33 +80,7 @@ struct RequestLog: Codable {
 
 public extension URL {
     var endpointRemoteLogDescription: String {
-        let visibleCharactersCount = 3
-
-        var components = URLComponents(string: absoluteString)
-        let path = components?.path ?? ""
-        let pathComponents = path.components(separatedBy: "/").map { $0.truncated(visibleCharactersCount) }
-
-        var queryComponents = components?.queryItems ?? []
-        queryComponents.enumerated().forEach { item in
-            var redactedItem = item.element
-            // truncates to 8 digits max for ids
-            let value = redactedItem.value?.redactedAndTruncated(
-                maxVisibleCharacters: visibleCharactersCount,
-                length: 8
-            ) ?? ""
-            redactedItem.value = value
-            queryComponents[item.offset] = redactedItem
-        }
-
-        components?.path = pathComponents.joined(separator: "/")
-        components?.queryItems = queryComponents
-
-        var endpoint = [components?.host, components?.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))]
-            .compactMap(\.self)
-            .filter { !$0.isEmpty }
-            .joined(separator: "/")
-        endpoint.append(components?.query?.isEmpty == false ? "?\(components!.query!)" : "")
-        return endpoint
+        absoluteString
     }
 }
 
@@ -135,6 +109,13 @@ public extension String {
 }
 
 public extension WireLogger {
+
+    static var defaultEncoder: JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        return encoder
+    }
+
     func log(_ request: URLRequest) {
         log(request: request as NSURLRequest)
     }
@@ -143,7 +124,7 @@ public extension WireLogger {
         let info = RequestLog(request)
 
         do {
-            let data = try JSONEncoder().encode(info)
+            let data = try Self.defaultEncoder.encode(info)
             let jsonString = String(decoding: data, as: UTF8.self)
             let message = "REQUEST: \(jsonString)"
             self.info(message, attributes: .safePublic)
@@ -153,11 +134,11 @@ public extension WireLogger {
         }
     }
 
-    func log(response: HTTPURLResponse) {
-        guard let info = ResponseLog(response) else { return }
+    func log(response: HTTPURLResponse, body: Data? = nil) {
+        guard let info = ResponseLog(response, body: body) else { return }
 
         do {
-            let data = try JSONEncoder().encode(info)
+            let data = try Self.defaultEncoder.encode(info)
             let jsonString = String(decoding: data, as: UTF8.self)
             let message = "RESPONSE: \(jsonString)"
             self.info(message, attributes: .safePublic)

@@ -23,6 +23,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireFolderPickerUI
+import WireLocators
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
@@ -186,7 +187,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in self?.presentConnectUI() }
         let newConversationButton = UIButton(primaryAction: newConversationAction)
         let startConversationItem = UIBarButtonItem(customView: newConversationButton)
-        startConversationItem.accessibilityIdentifier = "create_group_or_search_button"
+        startConversationItem.accessibilityIdentifier = Locators.ConversationsPage.createGroupOrSearchButton.rawValue
         startConversationItem.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton
             .description
         navigationItem.rightBarButtonItems = [startConversationItem, spacer]
@@ -512,7 +513,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             user: selfUser,
             userSession: viewModel.userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileViewControllerBuilder
+            selfProfileUIBuilder: selfProfileViewControllerBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 

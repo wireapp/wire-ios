@@ -19,6 +19,7 @@
 package import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 package import WireMessagingDomain
 
 package struct ConversationTypePicker: View {
@@ -129,6 +130,7 @@ package struct ConversationTypePicker: View {
                 chevronView()
             }
         })
+        .accessibilityIdentifier(Locators.NewConversationPage.createNewGroupButton.rawValue)
     }
 
     func iconView(for imageName: String) -> some View {

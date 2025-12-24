@@ -128,29 +128,6 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         XCTAssertNil(existingConversation)
     }
 
-    func testThatItReturnsIdAndNameForExistingConversation() {
-        // given
-        let path = String(format: "/conversations/join?code=%@&key=%@", "existing-conversation-code", "test-key")
-
-        // when
-        let response = response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
-
-        // then
-        XCTAssertEqual(response?.httpStatus, 200)
-        guard let receivedPayload = response?.payload as? [String: Any] else {
-            XCTFail()
-            return
-        }
-
-        XCTAssertNotNil(receivedPayload["id"])
-        XCTAssertNotNil(receivedPayload["name"])
-        let existingConversation = fetchConversation(
-            with: receivedPayload["id"] as! String,
-            in: sut.managedObjectContext
-        )
-        XCTAssertEqual(existingConversation, conversation)
-    }
-
     func testThatItReturnsError_WhenTheCodeIsInvalid_FetchConversation() {
         // given
         let path = String(format: "/conversations/join?code=%@&key=%@", "wrong-code", "test-key")

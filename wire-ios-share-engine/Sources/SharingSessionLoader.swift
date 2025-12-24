@@ -48,6 +48,7 @@ public struct SharingSessionLoader {
     private let accountID: UUID
     private let backendStore: BackendEnvironmentStore
     private let journal: Journal
+    private let coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager
 
     public init(
         account: Account,
@@ -71,6 +72,7 @@ public struct SharingSessionLoader {
             userID: accountID,
             storage: sharedUserDefaults
         )
+        self.coreCryptoKeyMigrationManager = CoreCryptoKeyMigrationManager(journal: journal)
     }
 
     public func load() async throws -> SharingSession {
@@ -114,10 +116,15 @@ public struct SharingSessionLoader {
             throw Failure.mainAppRequired(message: "sync v2 should be enabled")
         }
 
+        guard !coreCryptoKeyMigrationManager.isAnyMigrationRequired else {
+            throw Failure.mainAppRequired(message: "core crypto key migration is required")
+        }
+
         // TODO: [WPB-19778] guard no app version migration needed.
 
-        guard let selfClientID = await coreDataStack.syncContext.perform({
-            let selfUser = ZMUser.selfUser(in: coreDataStack.syncContext)
+        let context = coreDataStack.syncContext
+        guard let selfClientID = await context.perform({ [context] in
+            let selfUser = ZMUser.selfUser(in: context)
             return selfUser.selfClient()?.remoteIdentifier
         }) else {
             throw Failure.mainAppRequired(message: "no self client id")
@@ -317,10 +324,6 @@ public struct SharingSessionLoader {
             requestGeneratorStore: requestGeneratorStore,
             transportSession: transportSession
         )
-        let cryptoboxMigrationManager = CryptoboxMigrationManager()
-        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: userAccountDataURL) else {
-            throw Failure.mainAppRequired(message: "cryptobox migration required")
-        }
         let contextStorage = LAContextStorage()
         let earService = EARService(
             accountID: accountID,
@@ -337,7 +340,6 @@ public struct SharingSessionLoader {
             accountDirectory: userAccountDataURL,
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
             localDomain: backendMetadata.domain
@@ -406,7 +408,6 @@ public struct SharingSessionLoader {
             operationLoop: operationLoop,
             strategyFactory: strategyFactory,
             appLockConfig: nil,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             earService: earService,
             contextStorage: contextStorage,
             proteusService: proteusService,

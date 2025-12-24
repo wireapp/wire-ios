@@ -77,7 +77,7 @@ public protocol ConversationRepositoryProtocol: Sendable {
     func pullMLSOneToOneConversation(
         userID: String,
         userDomain: String
-    ) async throws -> String
+    ) async throws -> (String, MLSPublicKeys?)
 
     /// Fetches a MLS conversation locally.
     ///
@@ -192,4 +192,10 @@ public protocol ConversationRepositoryProtocol: Sendable {
         conversationID: String
     ) async throws -> String?
 
+    /// Checks if selfUser is still in a given conversation
+    /// - Parameter groupID: mlsGroupID of the conversation
+    /// - Returns: true if selfUser belongs to the conversation, false otherwise
+    func isSelfAnActiveMember(
+        in groupID: WireDataModel.MLSGroupID
+    ) async -> Bool
 }

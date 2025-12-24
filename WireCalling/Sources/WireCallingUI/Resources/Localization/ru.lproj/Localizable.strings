@@ -53,3 +53,12 @@
 "wireMeetings.schedule.password.placeholder" = "Введите пароль";
 "wireMeetings.schedule.confirmedPassword.placeholder" = "Подтвердить пароль";
 "wireMeetings.schedule.confirmedPassword.error" = "Пароли не совпадают";
+"wireMeetings.schedule.time.starts" = "Начало";
+"wireMeetings.schedule.time.ends" = "Конец";
+"wireMeetings.schedule.time.repeats" = "Повторы";
+"wireMeetings.schedule.time.never" = "Никогда";
+"wireMeetings.schedule.time.daily" = "Ежедневно";
+"wireMeetings.schedule.time.weekly" = "Еженедельно";
+"wireMeetings.schedule.time.everyTwoWeeks" = "Каждые 2 недели";
+"wireMeetings.schedule.time.monthly" = "Ежемесячно";
+"wireMeetings.schedule.time.yearly" = "Ежегодно";

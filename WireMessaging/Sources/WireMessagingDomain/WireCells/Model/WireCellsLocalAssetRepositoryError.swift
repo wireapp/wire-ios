@@ -28,10 +28,6 @@ public enum WireCellsLocalAssetRepositoryError: Error, Equatable {
 
     case missingETag
 
-    /// A download for the requested asset is already in progress.
-
-    case downloadAlreadyInProgress
-
     /// The requested asset is unknown to the repository.
 
     case unknownAsset
