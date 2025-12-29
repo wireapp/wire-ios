@@ -171,7 +171,7 @@ public final class ZMUserSession: NSObject {
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchCells()
     }
-    
+
     public var wireCellsBackendURL: URL? {
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchCellsInternal().config.backend.url
@@ -181,17 +181,17 @@ public final class ZMUserSession: NSObject {
         guard wireCellsFeature.status == .enabled else {
             return false
         }
-        
+
         guard let backendInfoApiVersion = resolvedBackendMetadata.apiVersion,
               backendInfoApiVersion >= .v14 else {
             // unsupported version
             return false
         }
-        
+
         guard wireCellsBackendURL != nil else {
             return false
         }
-        
+
         return true
     }
 

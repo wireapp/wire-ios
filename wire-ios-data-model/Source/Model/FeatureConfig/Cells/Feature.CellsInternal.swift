@@ -36,17 +36,17 @@ public extension Feature {
             self.status = status
             self.config = config
         }
-        
+
         public struct Config: Codable {
             public let backend: Backend
-            
+
             public init(backend: Backend = .init(url: nil)) {
                 self.backend = backend
             }
-            
+
             public struct Backend: Codable {
                 public let url: URL?
-                
+
                 public init(url: URL?) {
                     self.url = url
                 }

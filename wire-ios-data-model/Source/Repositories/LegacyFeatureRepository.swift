@@ -566,7 +566,7 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
 
         return .init(status: feature.status)
     }
-    
+
     // MARK: - Cells internal
 
     public func fetchCellsInternal() -> Feature.CellsInternal {

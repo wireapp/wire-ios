@@ -25,7 +25,7 @@ public struct CellsInternalFeatureConfig: Equatable, Sendable {
     /// The cells backend URL.
 
     public let backendURL: URL
-    
+
     public let status: FeatureConfigStatus
 
     public init(

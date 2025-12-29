@@ -60,7 +60,7 @@ struct FeatureConfigsResponseAPIV14: Decodable, ToAPIModelConvertible {
     let allowedGlobalOperations: FeatureWithConfig<FeatureConfigResponse.AllowedGlobalOperationsV10>
     let consumableNotifications: FeatureWithoutConfig
     let assetAuditLog: FeatureWithoutConfig
-    
+
     // added in v14
     let cellsInternal: FeatureWithConfig<FeatureConfigResponse.CellsInternalV14>
 
@@ -152,7 +152,7 @@ struct FeatureConfigsResponseAPIV14: Decodable, ToAPIModelConvertible {
 
         let cellsFeatureConfig = CellsFeatureConfig(status: cells.status.toAPIModel())
         featureConfigs.append(.cells(cellsFeatureConfig))
-        
+
         // added in v14
         let cellsInternalConfig = CellsInternalFeatureConfig(
             status: cellsInternal.status.toAPIModel(),
@@ -169,7 +169,7 @@ extension FeatureConfigResponse {
 
     struct CellsInternalV14: Decodable {
         let backend: BackendV14
-        
+
         struct BackendV14: Decodable {
             let url: URL
         }

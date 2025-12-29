@@ -271,7 +271,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             )
         }
     }
-    
+
     func testGetFeatureConfigs_SuccessResponse_200_V14_And_Next_Versions_Then_Verify_Requests() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
@@ -688,7 +688,7 @@ extension FeatureConfigsAPITests {
             .assetAuditLog(.init(status: .enabled)),
             .cells(.init(status: .enabled))
         ]
-        
+
         static let featureConfigsV14: [FeatureConfig] = featureConfigsV12 + [
             .assetAuditLog(.init(status: .enabled)),
             .cells(.init(status: .enabled)),

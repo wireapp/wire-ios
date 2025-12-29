@@ -20,12 +20,12 @@ import WireCallingAssembly
 import WireCommonComponents
 import WireData
 @preconcurrency import WireDataModel
+import WireLogging
 import WireMessagingAssembly
 import WireMessagingDomain
 import WireNetwork
 @preconcurrency import WireSyncEngine
 import WireTransport
-import WireLogging
 
 struct ZClientControllerBuilder {
 
