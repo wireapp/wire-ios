@@ -138,8 +138,7 @@ jobs:
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
         run: |
-          bundle exec fastlane run_uitests \
-            --only-testing:"PersonalUsersTests/test_Login_asExistingPersonalUser" \
+          bundle exec fastlane run_uitests
 
       - name: "Test all selected frameworks"
         if: ${{ inputs.test_dependencies || inputs.all }}
