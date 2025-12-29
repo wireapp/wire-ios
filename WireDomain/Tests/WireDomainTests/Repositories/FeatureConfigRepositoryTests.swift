@@ -279,6 +279,12 @@ final class FeatureConfigRepositoryTests: XCTestCase {
             ),
             .cells(
                 .init(status: .enabled)
+            ),
+            .cellsInternal(
+                .init(
+                    status: .enabled,
+                    backendURL: URL(string: "https://wire.com")!
+                )
             )
         ]
 

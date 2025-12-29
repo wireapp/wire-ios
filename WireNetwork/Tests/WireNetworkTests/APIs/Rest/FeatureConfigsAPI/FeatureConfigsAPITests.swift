@@ -271,6 +271,26 @@ final class FeatureConfigsAPITests: XCTestCase {
             )
         }
     }
+    
+    func testGetFeatureConfigs_SuccessResponse_200_V14_And_Next_Versions_Then_Verify_Requests() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetFeatureConfigsSuccessResponseV14")
+        ])
+
+        let supportedVersions = APIVersion.v14.andNextVersions
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
+            // When
+            let result = try await sut.getFeatureConfigs()
+            // Then
+            XCTAssertEqual(
+                result,
+                Scaffolding.featureConfigsV14
+            )
+        }
+    }
 
 }
 
@@ -667,6 +687,12 @@ extension FeatureConfigsAPITests {
         static let featureConfigsV12: [FeatureConfig] = featureConfigsV11 + [
             .assetAuditLog(.init(status: .enabled)),
             .cells(.init(status: .enabled))
+        ]
+        
+        static let featureConfigsV14: [FeatureConfig] = featureConfigsV12 + [
+            .assetAuditLog(.init(status: .enabled)),
+            .cells(.init(status: .enabled)),
+            .cellsInternal(.init(status: .enabled, backendURL: URL(string: "https://example.com")!))
         ]
 
     }
