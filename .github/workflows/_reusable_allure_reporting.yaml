@@ -54,10 +54,7 @@ jobs:
           echo "✅ Using xcresult: $XCRESULT"
           
           # Use Allure Awesome plugin for single-file generation
-          npx allure awesome "$XCRESULT" \
-            --single-file \
-            --exclude-attachment-type regex:kXCTAttachmentLegacy.* \
-            -o allure-report
+          npx allure awesome "$XCRESULT" --single-file -o allure-report
           
           if [ ! -f "allure-report/index.html" ]; then
             echo "❌ Report not generated"
