@@ -38,26 +38,27 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
     steps:
-      - name: Download JUnit Reports
+      - name: Download XCResults
         uses: actions/download-artifact@v4
         with:
-          pattern: "*.junit*"
-          path: ./junit
-      
+          name: ${{ needs.critical_flows.outputs.xcresults_artifact }}
+          path: ./xcresults
+
       - name: Generate Summary
         shell: bash
         run: |
-          PASSED=$(find ./junit -name "*.junit" -exec grep -c '<testcase.*time="[0-9]' {} + 2>/dev/null | awk '{sum+=$1} END {print sum+0}' || echo 0)
-          FAILED=$(find ./junit -name "*.junit" -exec grep -c '<failure' {} + 2>/dev/null | awk '{sum+=$1} END {print sum+0}' || echo 0)
-
-          PASSED=${PASSED:-0}
-          FAILED=${FAILED:-0}
-          TOTAL=$((PASSED + FAILED))
-
+          XCRESULT=$(find ./xcresults -name "*.xcresult" | head -1)
+          
+          PASSED=$(xcrun xccov parse "$XCRESULT" | grep -c "passed")
+          FAILED=$(xcrun xccov parse "$XCRESULT" | grep -c "failed")
+          SKIPPED=$(xcrun xccov parse "$XCRESULT" | grep -c "skipped")
+          TOTAL=$((PASSED + FAILED + SKIPPED))
+          
           echo "## 🧪 Critical Flows Test Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "✅ **Passed:** $PASSED" >> $GITHUB_STEP_SUMMARY
           echo "❌ **Failed:** $FAILED" >> $GITHUB_STEP_SUMMARY
+          echo "⏭ **Skipped:** $SKIPPED" >> $GITHUB_STEP_SUMMARY
           echo "📊 **Total:** $TOTAL" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "🔗 **[Download Allure Report](${{ needs.publish_report.outputs.allure-artifact-url }})**" >> $GITHUB_STEP_SUMMARY
@@ -65,3 +66,21 @@ jobs:
           echo "**Artifact:** \`${{ needs.publish_report.outputs.allure-artifact-name }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Run:** #${{ github.run_number }} | **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+    
+    
+      - name: PR Comment
+        if: (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && needs.critical_flows.result == 'success'
+        run: |
+          gh pr comment ${{ github.event.pull_request.number || github.event.issue.number }} --body "\
+            ## 🧪 Critical Flows Test Summary
+
+            ✅ **Passed:** $PASSED
+            ❌ **Failed:** $FAILED
+            ⏭ **Skipped:** $SKIPPED
+            📊 **Total:** $TOTAL
+
+            🔗 **[Download Allure Report](${{ needs.publish_report.outputs.allure-artifact-url }})**
+            **Artifact:** \`${{ needs.publish_report.outputs.allure-artifact-name }}\`
+            **Run:** #${{ github.run_number }}" || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
