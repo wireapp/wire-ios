@@ -35,30 +35,27 @@ jobs:
   summary:
     name: Test Summary & Report
     needs: [critical_flows, publish_report]
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     if: always()
     steps:
-      - name: Download XCResults
+      - name: Download JUnit Reports
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.critical_flows.outputs.xcresults_artifact }}
-          path: ./xcresults
-
+          pattern: "*.junit*"
+          path: ./junit
+      
       - name: Generate Summary
         shell: bash
         run: |
-          XCRESULT=$(find ./xcresults -name "*.xcresult" | head -1)
-          
-          PASSED=$(xcrun xccov parse "$XCRESULT" | grep -c "passed")
-          FAILED=$(xcrun xccov parse "$XCRESULT" | grep -c "failed")
-          SKIPPED=$(xcrun xccov parse "$XCRESULT" | grep -c "skipped")
-          TOTAL=$((PASSED + FAILED + SKIPPED))
+          # Count from JUnit files (same as Test Results bot uses)
+          PASSED=$(find ./junit -name "*.junit" -exec grep -c '<testcase.*time=' {} \; 2>/dev/null | awk '{sum+=$1} END {print (sum?sum:0)}' || echo 0)
+          FAILED=$(find ./junit -name "*.junit" -exec grep -c '<failure' {} \; 2>/dev/null | awk '{sum+=$1} END {print (sum?sum:0)}' || echo 0)
+          TOTAL=$((PASSED + FAILED))
           
           echo "## 🧪 Critical Flows Test Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "✅ **Passed:** $PASSED" >> $GITHUB_STEP_SUMMARY
           echo "❌ **Failed:** $FAILED" >> $GITHUB_STEP_SUMMARY
-          echo "⏭ **Skipped:** $SKIPPED" >> $GITHUB_STEP_SUMMARY
           echo "📊 **Total:** $TOTAL" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "🔗 **[Download Allure Report](${{ needs.publish_report.outputs.allure-artifact-url }})**" >> $GITHUB_STEP_SUMMARY
