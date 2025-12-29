@@ -56,7 +56,7 @@ struct ZClientControllerBuilder {
 
     @MainActor
     private func buildWireMessagingFactory() -> any WireMessagingFactoryProtocol {
-        return WireMessagingFactory(
+        WireMessagingFactory(
             serverURL: userSession.wireCellsBackendURL ?? legacyEnvironment.backendURL,
             // TODO: [WPB-18798] Temporary fix, when multibackend is on we use new backend environment, when off we use the legacy one
             accessToken: DefaultAccessTokenProvider(userSession: userSession),

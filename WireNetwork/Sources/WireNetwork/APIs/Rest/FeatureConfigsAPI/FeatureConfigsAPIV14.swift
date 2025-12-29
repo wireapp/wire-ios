@@ -33,7 +33,7 @@ final class FeatureConfigsAPIV14: FeatureConfigsAPIV13 {
         )
 
         return try ResponseParser()
-            .success(code: .ok, type: FeatureConfigsResponseAPIV12.self)
+            .success(code: .ok, type: FeatureConfigsResponseAPIV14.self)
             .failure(code: .forbidden, label: "operation-denied", error: FeatureConfigsAPIError.insufficientPermissions)
             .failure(code: .forbidden, label: "no-team-member", error: FeatureConfigsAPIError.userIsNotTeamMember)
             .failure(code: .notFound, label: "no-team", error: FeatureConfigsAPIError.teamNotFound)

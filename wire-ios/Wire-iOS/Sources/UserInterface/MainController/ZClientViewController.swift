@@ -291,7 +291,7 @@ final class ZClientViewController: UIViewController {
             .sink { [weak self] featureState in
                 guard let self else { return }
                 switch featureState.name {
-                case .cells where featureState.isEnabled:
+                case .cells where userSession.isWireCellsEnabled:
                     let filesBrowserView = wireMessagingFactory.makeFilesBrowserView { [weak self] in
                         guard let self else { return .default }
                         let selfUserColorRawValue = userSession.selfUser.accentColorValue
