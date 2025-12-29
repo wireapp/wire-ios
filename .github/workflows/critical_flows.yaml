@@ -6,11 +6,6 @@ on:
     branches:
       - 'develop'
       - 'release/cycle-*'
-  pull_request:
-    branches:
-      - 'develop'
-      - 'release/cycle-*'
-    types: [opened, synchronize]
   
 # This is what will cancel the workflow
 concurrency:
@@ -59,34 +54,3 @@ jobs:
           echo "**Artifact:** \`${{ needs.publish_report.outputs.allure-artifact-name }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "📌 _Extract ZIP and open index.html to view test results_" >> $GITHUB_STEP_SUMMARY
-
-      - name: Find existing comment if any
-        id: find
-        if: github.event_name == 'pull_request'
-        uses: peter-evans/find-comment@v5
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: github-actions[bot]
-          body-includes: "Critical Flows Test Report"
-
-      - name: Add/Update PR Comment
-        if: github.event_name == 'pull_request'
-        uses: peter-evans/create-or-update-comment@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-id: ${{ steps.find.outputs.comment-id }}
-          body: |
-            ## 🔴 Critical Flows Test Report
-            
-            **Job Run:** #${{ github.run_number }} • [View Workflow](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            **Branch:** `${{ github.ref_name }}`
-            **Commit:** `${{ github.sha }}`
-            
-            ### 📥 Download Allure Report
-            🔗 **[Click to Download](${{ needs.publish_report.outputs.allure-artifact-url }})**
-            
-            **Artifact:** `${{ needs.publish_report.outputs.allure-artifact-name }}`
-            
-            ---
-            📌 _Extract ZIP and open index.html to view detailed test results_
