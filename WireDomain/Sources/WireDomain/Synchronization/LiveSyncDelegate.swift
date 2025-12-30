@@ -23,4 +23,7 @@ public protocol LiveSyncDelegate: AnyObject {
     func didMissedEvents(sync: IncrementalSyncV2) async
     func didFail(sync: IncrementalSyncV2, error: any Error)
     func didStart(sync: IncrementalSyncV2)
+
+    func didStartProcessingEvents(sync: IncrementalSyncV2)
+    func didFinishProcessingEvents(sync: IncrementalSyncV2)
 }

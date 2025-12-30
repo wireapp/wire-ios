@@ -18,6 +18,7 @@
 
 import avs
 import Foundation
+import WireLogging
 
 private let zmLog = ZMSLog(tag: "calling")
 
@@ -47,6 +48,8 @@ public protocol AVSWrapperType {
     /// This method should be called before processing with `isProcessingNotifications` set to `true` as well as
     /// after processing has been completed with `isProcessingNotifications` set to `false`.
     func notify(isProcessingNotifications isProcessing: Bool)
+
+    func notify1(isBackground: Bool)
 
     func setMLSConferenceInfo(conversationId: AVSIdentifier, info: MLSConferenceInfo)
     var isMuted: Bool { get set }
@@ -248,7 +251,15 @@ public final class AVSWrapper: AVSWrapperType {
     }
 
     public func notify(isProcessingNotifications isProcessing: Bool) {
+        print("🎄 notify: \(isProcessing)")
+        WireLogger.avs.debug("Katerina's log1: wcall_process_notifications called, processing: \(isProcessing)", attributes: .safePublic)
         wcall_process_notifications(handle, isProcessing ? 1 : 0)
+    }
+
+    public func notify1(isBackground: Bool) {
+        print("🎄 isBackground: \(isBackground)")
+        WireLogger.avs.debug("Katerina's log2: wcall_set_background called, isBackground: \(isBackground)", attributes: .safePublic)
+        wcall_set_background(handle, isBackground ? 1 : 0)
     }
 
     /// Set the MLS conference info for a given conversation.

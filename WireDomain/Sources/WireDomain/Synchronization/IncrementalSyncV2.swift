@@ -184,7 +184,11 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     /// Process pending events from the event database that were decrypted during the NSE
     private func processStoredEvents() async throws {
         let batchSize: UInt = 500
-
+        delegate?.didStartProcessingEvents(sync: self)
+        defer {
+            // ✅ Notify AVS we're done batch-processing
+            delegate?.didFinishProcessingEvents(sync: self)
+        }
         while true {
             // If we need to abort, do it before processing the next batch.
             try Task.checkCancellation()

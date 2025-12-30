@@ -235,9 +235,11 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                                 .perform()
                         } else {
                             delegate?.syncAgentDidStartIncrementalSync(self)
+                            //
                             incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
                                 .perform()
                             delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
+                            //
                         }
                     } catch IncrementalSyncV2.Failure.mainAppPushChannelAlreadyOpened {
                         syncStateSubject.send(.suspended)
@@ -369,6 +371,23 @@ extension SyncAgent: LiveSyncDelegate {
 
     func didStart(sync: IncrementalSyncV2) {
         delegate?.syncAgentDidStartIncrementalSync(self)
+    }
+
+    // ✅ Add these implementations
+    func didStartProcessingEvents(sync: IncrementalSyncV2) {
+        // Post notification that CallingRequestStrategy listens to
+        NotificationCenter.default.post(
+            name: .eventProcessorDidStartProcessingEventsNotification,
+            object: self
+        )
+    }
+
+    func didFinishProcessingEvents(sync: IncrementalSyncV2) {
+        // Post notification that CallingRequestStrategy listens to
+        NotificationCenter.default.post(
+            name: .eventProcessorDidFinishProcessingEventsNotification,
+            object: self
+        )
     }
 
 }

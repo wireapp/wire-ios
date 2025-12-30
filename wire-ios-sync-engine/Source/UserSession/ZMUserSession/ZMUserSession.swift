@@ -51,6 +51,7 @@ public final class ZMUserSession: NSObject {
     public private(set) var isTornDown = false
 
     private(set) var isNetworkOnline = true
+    var isInBackground = false
 
     public private(set) var coreDataStack: CoreDataStack!
 
@@ -1101,8 +1102,13 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
     public func didReceiveData() {
         managedObjectContext.performGroupedBlock { [weak self] in
-            self?.isNetworkOnline = true
-            self?.updateNetworkState()
+            guard let self else { return }
+            self.isNetworkOnline = true
+            self.updateNetworkState()
+            if !self.isInBackground {
+                self.callCenter?.avsWrapper.notify1(isBackground: false)
+            }
+
         }
     }
 
@@ -1111,7 +1117,7 @@ extension ZMUserSession: ZMNetworkStateDelegate {
             self?.isNetworkOnline = false
             self?.updateNetworkState()
             self?.saveOrRollbackChanges()
-
+            self?.callCenter?.avsWrapper.notify1(isBackground: true)
         }
     }
 
@@ -1252,6 +1258,8 @@ extension ZMUserSession: SyncAgentDelegate {
         Task {
             await showSyncBar(true)
         }
+        NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
+        //callCenter?.avsWrapper.notify(isProcessingNotifications: true)
     }
 
     @MainActor
@@ -1298,6 +1306,8 @@ extension ZMUserSession: SyncAgentDelegate {
             // TODO: [WPB-18175] Port MLS client creation and related MLS operations from here to the InitialSync
 
             await recurringActionService.performActionsIfNeeded()
+//            callCenter?.avsWrapper.notify(isProcessingNotifications: false)
+            NotificationCenter.default.post(name: .eventProcessorDidFinishProcessingEventsNotification, object: self)
         }
 
         performPostQuickSyncE2EIActions()
