@@ -56,8 +56,24 @@ struct ZClientControllerBuilder {
 
     @MainActor
     private func buildWireMessagingFactory() -> any WireMessagingFactoryProtocol {
-        WireMessagingFactory(
-            serverURL: userSession.wireCellsBackendURL ?? legacyEnvironment.backendURL,
+        let cellsURLResolver: @Sendable () async throws -> URL = {
+            enum Failure: Error {
+                case missingCellsBackendURL
+            }
+            
+            let clientSessionComponent = userSession.clientSessionComponent
+            let featureConfig = clientSessionComponent?.featureConfigRepository
+            let serverURL = try await featureConfig?.fetchCellsInternal().config?.backend.url
+
+            guard let serverURL else {
+                throw Failure.missingCellsBackendURL
+            }
+            
+            return serverURL
+        }
+        
+        return WireMessagingFactory(
+            cellsURLResolver: cellsURLResolver,
             // TODO: [WPB-18798] Temporary fix, when multibackend is on we use new backend environment, when off we use the legacy one
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,

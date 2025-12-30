@@ -26,6 +26,8 @@ import WireMessagingData
 public import WireMessagingUI
 
 public struct WireMessagingFactory {
+    
+    public typealias CellsURLResolver = @Sendable () async throws -> URL
 
     private let nodesAPI: NodesAPI
     private let uploadManager: WireCellsNodeUploadManager
@@ -44,7 +46,7 @@ public struct WireMessagingFactory {
 
     @MainActor
     public init(
-        serverURL: URL,
+        cellsURLResolver: @escaping CellsURLResolver,
         accessToken: any AccessTokenProvider,
         fileCache: any FileCache,
         contextProvider: any ManagedObjectContextProvider,
@@ -52,7 +54,7 @@ public struct WireMessagingFactory {
         isCollaboraEnabled: Bool
     ) {
         self.nodeCache = WireCellsNodeCache()
-        self.nodesAPI = NodesAPI(serverURL: serverURL, accessToken: accessToken)
+        self.nodesAPI = NodesAPI(serverURLResolver: cellsURLResolver, accessToken: accessToken)
         self.uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
         self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
         self.fileCache = fileCache

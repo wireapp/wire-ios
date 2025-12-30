@@ -31,11 +31,17 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
     private let restAPI: RestAPI
     private let fileManager: FileManager
 
-    package init(serverURL: URL, accessToken: any AccessTokenProvider) {
+    package init(
+        serverURLResolver: @escaping @Sendable () async throws -> URL,
+        accessToken: any AccessTokenProvider
+    ) {
         self.init(
-            awsClient: AWSClient(serverURL: serverURL, accessToken: accessToken),
+            awsClient: AWSClient(
+                serverURLResolver: serverURLResolver,
+                accessToken: accessToken
+            ),
             restAPI: RestAPI(
-                serverURL: serverURL.appendingPathComponent("/v2"),
+                serverURLResolver: serverURLResolver,
                 accessToken: accessToken
             )
         )

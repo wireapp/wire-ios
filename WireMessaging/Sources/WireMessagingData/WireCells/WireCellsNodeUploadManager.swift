@@ -111,9 +111,9 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
     ) async -> AsyncStream<WireCellsUploadStatus> {
         let (stream, continuation) = AsyncStream.makeStream(of: WireCellsUploadStatus.self)
         let task = Task { [nodesAPI] in
-            let upload = await nodesAPI.uploadFile(path: assetPath, node: node, versionID: versionID)
-
             do {
+                let upload = try await nodesAPI.uploadFile(path: assetPath, node: node, versionID: versionID)
+                
                 for try await progress in upload {
                     await self.updateUploadProgress(
                         nodeID: node.id,

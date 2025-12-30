@@ -28,7 +28,7 @@ package protocol NodesAPIProtocol: Sendable {
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws
 
-    func uploadFile(path: URL, node: WireCellsNode, versionID: UUID) async -> AsyncThrowingStream<Int, any Error>
+    func uploadFile(path: URL, node: WireCellsNode, versionID: UUID) async throws -> AsyncThrowingStream<Int, any Error>
 
     func deleteVersion(nodeID: UUID, versionID: UUID) async throws
 

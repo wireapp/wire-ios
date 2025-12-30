@@ -178,21 +178,10 @@ public final class ZMUserSession: NSObject {
     }
 
     public var isWireCellsEnabled: Bool {
-        guard wireCellsFeature.status == .enabled else {
-            return false
-        }
-
-        guard let backendInfoApiVersion = resolvedBackendMetadata.apiVersion,
-              backendInfoApiVersion >= .v14 else {
-            // unsupported version
-            return false
-        }
-
-        guard wireCellsBackendURL != nil else {
-            return false
-        }
-
-        return true
+        let isFeatureEnabled = wireCellsFeature.status == .enabled
+        let hasBackendURL = wireCellsBackendURL != nil
+        
+        return isFeatureEnabled && hasBackendURL
     }
 
     public var conferenceCallingFeature: Feature.ConferenceCalling {
