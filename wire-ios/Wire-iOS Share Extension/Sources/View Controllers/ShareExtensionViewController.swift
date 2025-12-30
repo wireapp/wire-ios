@@ -185,6 +185,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         guard let item = navigationController?.navigationBar.items?.first else { return }
         item.rightBarButtonItem?.action = #selector(appendPostTapped)
         item.rightBarButtonItem?.title = L10n.ShareExtension.SendButton.title
+        item.rightBarButtonItem?.accessibilityIdentifier = "sendButtonOnShareExtension"
         item
             .titleView = UIImageView(
                 image: WireStyleKit.imageOfLogo(color: UIColor.Wire.primaryLabel)

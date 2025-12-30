@@ -34,6 +34,7 @@ class UserHelper {
     let teamsAPI: TeamsAPI
     let selfUserAPI: SelfUserAPI
     let conversationsAPI: ConversationsAPI
+    let connectionsAPI: ConnectionsAPI
 
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
@@ -54,6 +55,7 @@ class UserHelper {
         self.teamsAPI = TeamsAPIBuilder(apiService: networkStack.apiService)
             .makeAPI(for: apiVersion)
         self.conversationsAPI = ConversationsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
+        self.connectionsAPI = ConnectionsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
     }
 
     func basicAuth(_ backend: BackendTarget = BackendContext.current) -> String {
@@ -93,12 +95,13 @@ class UserHelper {
         try await authenticationAPI.activateUser(email: user.email, key: activationKey, code: activationCode)
 
         // get accessToken for current user
-        let (_, accessToken) = try await authenticationAPI.login(
+        let (_, accessToken, userId) = try await authenticationAPI.login(
             email: user.email,
             password: user.password,
             verificationCode: nil,
             label: nil
         )
+        user.id = userId
         authenticationManager.accessToken = accessToken
 
         // Set username
@@ -180,7 +183,7 @@ class UserHelper {
 
         try await authenticationAPI.activateUser(email: email, key: activationKey, code: activationCode)
 
-        let (_, accessToken) = try await authenticationAPI.login(
+        let (_, accessToken, _) = try await authenticationAPI.login(
             email: email,
             password: password,
             verificationCode: nil,
@@ -269,7 +272,7 @@ class UserHelper {
             isReadReceiptsEnabled: true
         )
 
-        let (_, accessToken) = try await authenticationAPI.login(
+        let (_, accessToken, _) = try await authenticationAPI.login(
             email: owner.email,
             password: owner.password,
             verificationCode: nil,
@@ -278,6 +281,31 @@ class UserHelper {
         authenticationManager.accessToken = accessToken
 
         _ = try await conversationsAPI.createGroupConversation(parameters: params)
+    }
+
+    func sendConnectionRequestToUser(
+        domain: String,
+        userId: String
+    ) async throws {
+
+        _ = try await connectionsAPI.sendConnectionRequest(domain: domain, userId: userId)
+    }
+
+    func acceptConnectionRequestFromUser(
+        domain: String,
+        user1: UserInfo,
+        userId: String
+    ) async throws {
+
+        let (_, accessToken, _) = try await authenticationAPI.login(
+            email: user1.email,
+            password: user1.password,
+            verificationCode: nil,
+            label: nil
+        )
+        authenticationManager.accessToken = accessToken
+
+        try await connectionsAPI.acceptConnectionRequest(domain: domain, userId: userId)
     }
 }
 
