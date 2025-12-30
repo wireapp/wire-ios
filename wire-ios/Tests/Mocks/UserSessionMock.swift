@@ -406,6 +406,8 @@ final class UserSessionMock: UserSession {
     )
 
     var isWireCellsEnabled: Bool = false
+    
+    var wireCellsBackendURL: URL? = nil
 
     var isEnterpriseUser: Bool = false
 
