@@ -1023,7 +1023,35 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Joining conversations
 
-    func test_PerformPendingJoins_It_Establishes_Group() async throws {
+    func test_PerformPendingJoins_It_Establishes_Group_SelfConversation() async throws {
+        try await assert_PerformPendingJoins_It_Establishes_Group(
+            conversationType: .`self`,
+            file: #file,
+            line: #line
+        )
+    }
+
+    func test_PerformPendingJoins_It_Establishes_Group_OneOnOne() async throws {
+        try await assert_PerformPendingJoins_It_Establishes_Group(
+            conversationType: .oneOnOne,
+            file: #file,
+            line: #line
+        )
+    }
+
+    func test_PerformPendingJoins_It_Establishes_Group_Group() async throws {
+        try await assert_PerformPendingJoins_It_Establishes_Group(
+            conversationType: .group,
+            file: #file,
+            line: #line
+        )
+    }
+
+    func assert_PerformPendingJoins_It_Establishes_Group(
+        conversationType: ZMConversationType,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) async throws {
         // Given
         let groupID = MLSGroupID.random()
         let conversationID = UUID.create()
@@ -1033,9 +1061,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.remoteIdentifier = conversationID
             conversation.domain = domain
             conversation.mlsGroupID = groupID
-            conversation.mlsStatus = .pendingJoin
-            conversation.conversationType = .`self`
             conversation.messageProtocol = .mls
+            conversation.mlsStatus = .pendingJoin
+            conversation.conversationType = conversationType
+
+            // Only epoch 0 leads to establishing group
+            conversation.epoch = 0
+
             return conversation
         }
 
@@ -1055,17 +1087,17 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // it creates CC conversation
         let createCoreCryptoConversationInvocations = mockCoreCryptoContext
             .createConversationConversationIdCreatorCredentialTypeConfig_Invocations
-        XCTAssertEqual(createCoreCryptoConversationInvocations.count, 1)
+        XCTAssertEqual(createCoreCryptoConversationInvocations.count, 1, file: file, line: line)
 
         // it commits pending proposals
-        XCTAssertEqual(mockMLSActionExecutor.commitPendingProposalsCount, 1)
+        XCTAssertEqual(mockMLSActionExecutor.commitPendingProposalsCount, 1, file: file, line: line)
 
         // it updates key material
-        XCTAssertEqual(mockMLSActionExecutor.updateKeyMaterialCount, 1)
+        XCTAssertEqual(mockMLSActionExecutor.updateKeyMaterialCount, 1, file: file, line: line)
 
         // it sets conversation state to ready
         let conversationMLSStatus = await uiMOC.perform { conversation.mlsStatus }
-        XCTAssertEqual(conversationMLSStatus, .ready)
+        XCTAssertEqual(conversationMLSStatus, .ready, file: file, line: line)
     }
 
     func test_PerformPendingJoins_IsSuccessful() async throws {
