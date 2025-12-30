@@ -755,6 +755,29 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(conversationID, conversationDomain, mlsGroupID)
     }
 
+    // MARK: - fetchAllMLSConversations
+
+    public var fetchAllMLSConversationsDomain_Invocations: [String?] = []
+    public var fetchAllMLSConversationsDomain_MockError: Error?
+    public var fetchAllMLSConversationsDomain_MockMethod: ((String?) async throws -> [ZMConversation])?
+    public var fetchAllMLSConversationsDomain_MockValue: [ZMConversation]?
+
+    public func fetchAllMLSConversations(domain: String?) async throws -> [ZMConversation] {
+        fetchAllMLSConversationsDomain_Invocations.append(domain)
+
+        if let error = fetchAllMLSConversationsDomain_MockError {
+            throw error
+        }
+
+        if let mock = fetchAllMLSConversationsDomain_MockMethod {
+            return try await mock(domain)
+        } else if let mock = fetchAllMLSConversationsDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAllMLSConversationsDomain`")
+        }
+    }
+
     // MARK: - fetchMLSConversation
 
     public var fetchMLSConversationGroupID_Invocations: [WireDataModel.MLSGroupID] = []
@@ -2475,6 +2498,30 @@ public class MockInitialSyncProtocol: InitialSyncProtocol {
 
 }
 
+public class MockInitiateResetMLSConversationUseCaseProtocol: InitiateResetMLSConversationUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeGroupIDEpoch_Invocations: [(groupID: WireDataModel.MLSGroupID, epoch: UInt64)] = []
+    public var invokeGroupIDEpoch_MockMethod: ((WireDataModel.MLSGroupID, UInt64) async -> Void)?
+
+    public func invoke(groupID: WireDataModel.MLSGroupID, epoch: UInt64) async {
+        invokeGroupIDEpoch_Invocations.append((groupID: groupID, epoch: epoch))
+
+        guard let mock = invokeGroupIDEpoch_MockMethod else {
+            fatalError("no mock for `invokeGroupIDEpoch`")
+        }
+
+        await mock(groupID, epoch)
+    }
+
+}
+
 public class MockLiveGeneratorProtocol: LiveGeneratorProtocol {
 
     // MARK: - Life cycle
@@ -3831,6 +3878,39 @@ public class MockPushSupportedProtocolsUseCaseProtocol: PushSupportedProtocolsUs
         }
 
         try await mock()
+    }
+
+}
+
+public class MockRepairRemovalKeysUseCaseProtocol: RepairRemovalKeysUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() async throws -> RepairRemovalKeysResult)?
+    public var invoke_MockValue: RepairRemovalKeysResult?
+
+    @discardableResult
+    public func invoke() async throws -> RepairRemovalKeysResult {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
     }
 
 }

@@ -463,7 +463,8 @@ public final class ZMUserSession: NSObject {
         dependencies: UserSessionDependencies,
         journal: Journal,
         logFilesProvider: LogFilesProviding,
-        cookieStorage: any CookieStorageProtocol
+        cookieStorage: any CookieStorageProtocol,
+        faultyMLSRemovalKeysByDomain: [String: [String]]
     ) {
         self.application = application
         self.currentAppVersion = currentAppVersion
@@ -516,7 +517,8 @@ public final class ZMUserSession: NSObject {
             mlsService: mlsService,
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
         )
 
         self.conversationEventProcessor = ConversationEventProcessor(
@@ -1363,7 +1365,8 @@ extension ZMUserSession: SyncAgentDelegate {
             conversationRepository: clientSessionComponent.conversationRepository,
             lockRepository: ResetMLSConversationLockRepository(
                 userID: userId
-            )
+            ),
+            selfDomain: resolvedBackendMetadata.domain
         )
     }
 
