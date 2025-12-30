@@ -113,7 +113,7 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
         let task = Task { [nodesAPI] in
             do {
                 let upload = try await nodesAPI.uploadFile(path: assetPath, node: node, versionID: versionID)
-                
+
                 for try await progress in upload {
                     await self.updateUploadProgress(
                         nodeID: node.id,

@@ -180,7 +180,7 @@ public final class ZMUserSession: NSObject {
     public var isWireCellsEnabled: Bool {
         let isFeatureEnabled = wireCellsFeature.status == .enabled
         let hasBackendURL = wireCellsBackendURL != nil
-        
+
         return isFeatureEnabled && hasBackendURL
     }
 

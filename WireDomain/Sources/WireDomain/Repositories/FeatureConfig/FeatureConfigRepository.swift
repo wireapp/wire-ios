@@ -104,7 +104,7 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             type: Feature.AppLock.Config.self
         )
     }
-    
+
     public func fetchCellsInternal() async throws -> LocalFeature<Feature.CellsInternal.Config> {
         try await fetchFeatureConfig(
             name: .cellsInternal,

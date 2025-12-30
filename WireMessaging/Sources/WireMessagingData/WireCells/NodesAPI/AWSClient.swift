@@ -261,14 +261,14 @@ final class AWSClient: Sendable {
         let signed = try await s3.presignedURLForGetObject(input: input, expiration: expiration)
         return signed.absoluteString
     }
-    
+
     private func makeS3Client() async throws -> any S3ClientProtocol {
         let config = try! await S3Client.S3ClientConfiguration(
             awsCredentialIdentityResolver: CredentialIdentityResolver(accessTokenProvider: accessToken),
             region: Constants.region,
             endpoint: try await serverURLResolver().absoluteString
         )
-        
+
         return S3Client(config: config)
     }
 }

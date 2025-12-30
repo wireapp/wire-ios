@@ -26,7 +26,7 @@ import WireMessagingData
 public import WireMessagingUI
 
 public struct WireMessagingFactory {
-    
+
     public typealias CellsURLResolver = @Sendable () async throws -> URL
 
     private let nodesAPI: NodesAPI

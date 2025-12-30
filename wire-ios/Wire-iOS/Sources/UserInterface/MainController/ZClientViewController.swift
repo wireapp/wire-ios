@@ -298,16 +298,16 @@ final class ZClientViewController: UIViewController {
                 }
             }
     }
-    
+
     private func setupWireCellsFilesTab() {
         guard userSession.isWireCellsEnabled else { return }
-        
+
         let filesBrowserView = wireMessagingFactory.makeFilesBrowserView { [weak self] in
             guard let self else { return .default }
             let selfUserColorRawValue = userSession.selfUser.accentColorValue
             return WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
         }
-        
+
         if UIDevice.current.userInterfaceIdiom == .pad {
             guard !sidebarViewController.showFiles else { return }
             sidebarViewController.showFiles = true
