@@ -437,7 +437,7 @@ private extension WireCellsGetNodesRequest {
                 type: isFoldersEnabled ? .unknown : .leaf // .unknown includes files (leafs) & folders (collections)
             )
             request.scope = RestLookupScope(
-                recursive: isFoldersEnabled ? false : true,
+                recursive: searchTerm?.isEmpty == false,
                 root: RestNodeLocator(root)
             )
         case let .recycleBinView(root: root, isFoldersEnabled):
