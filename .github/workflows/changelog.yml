@@ -47,14 +47,14 @@ jobs:
         run: echo "CURRENT_TAG=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
       - name: 'Set previous Git tag to latest tag if comparing to head'
         if: "${{ env.HEAD_TAG_DIFF != '0' }}"
-        run: echo "PREVIOUS_TAG=$(git tag | grep -E '${{ env.regex }}' | tail -n 1)" >> "$GITHUB_ENV"
+        run: echo "PREVIOUS_TAG=$(git tag | grep -E '${{ env.regex }}' | sort -V | tail -n 1)" >> "$GITHUB_ENV"
 
       - name: 'Set current Git tag to latest tagged commit'
         if: "${{ env.HEAD_TAG_DIFF == '0' }}"
-        run: echo "CURRENT_TAG=$(git tag | grep -E '${{ env.regex }}' | tail -n 1)" >> "$GITHUB_ENV"
+        run: echo "CURRENT_TAG=$(git tag | grep -E '${{ env.regex }}' | sort -V | tail -n 1)" >> "$GITHUB_ENV"
       - name: 'Set previous Git tag previous tag because head is latest tag'
         if: "${{ env.HEAD_TAG_DIFF == '0' }}"
-        run: echo "PREVIOUS_TAG=$(git tag | grep -E '${{ env.regex }}' | tail -n 2 | head -n 1)" >> "$GITHUB_ENV"
+        run: echo "PREVIOUS_TAG=$(git tag | grep -E '${{ env.regex }}' | sort -V | tail -n 2 | head -n 1)" >> "$GITHUB_ENV"
 
       - name: 'Print environment variables'
         run: |

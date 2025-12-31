@@ -62,24 +62,23 @@ struct WireCellsAttachmentsPreviewItemView: View {
                     )
                 )
             case (.video, .small):
-                WireCellsDocumentAttachmentPreview(
-                    headerIcon: Image(viewModel.icon),
-                    headerText: viewModel.headerText,
-                    labelText: viewModel.fileName,
+                WireCellsSmallVideoPreviewView(
+                    url: viewModel.imagePreviewURL,
                     progress: viewModel.progress,
-                    isError: viewModel.isAssetDownloadError,
+                    downloadError: viewModel.isAssetDownloadError,
+                    duration: viewModel.attachmentDuration,
                 )
-                .frame(height: 74)
-                .frame(idealWidth: 288)
             case (.video, .large):
-                WireCellsDocumentAttachmentPreview(
+                WireCellsLargeVideoPreviewView(
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
                     progress: viewModel.progress,
-                    isError: viewModel.isAssetDownloadError,
+                    downloadError: viewModel.isAssetDownloadError,
+                    url: viewModel.imagePreviewURL,
+                    imageAspectRatio: viewModel.previewAspectRatio,
+                    duration: viewModel.attachmentDuration,
                 )
-                .frame(height: 74)
                 .frame(idealWidth: 288)
             case (.document, .small):
                 WireCellsDocumentAttachmentPreview(
@@ -92,14 +91,14 @@ struct WireCellsAttachmentsPreviewItemView: View {
                 .frame(height: 74)
                 .frame(idealWidth: 288)
             case (.document, .large):
-                WireCellsDocumentAttachmentPreview(
+                WireCellsLargeDocumentPreviewView(
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
                     progress: viewModel.progress,
-                    isError: viewModel.isAssetDownloadError,
+                    downloadError: viewModel.isAssetDownloadError,
+                    url: viewModel.imagePreviewURL,
                 )
-                .frame(height: 74)
                 .frame(idealWidth: 288)
             case (.audio, .small), (.audio, .large):
                 WireCellsDocumentAttachmentPreview(
@@ -114,7 +113,8 @@ struct WireCellsAttachmentsPreviewItemView: View {
             }
         }
         .contentShape(Rectangle()) // Constrains the tappable content area of the view.
-        .onAppear(perform: refresh)
+        .onAppear(perform: viewModel.startPolling)
+        .onDisappear(perform: viewModel.stopPolling)
         .onTapGesture(perform: open)
         .quickLookPreview($viewModel.viewingURL)
     }
@@ -135,5 +135,4 @@ struct WireCellsAttachmentsPreviewItemView: View {
     WireCellsAttachmentsPreviewItemView(
         viewModel: WireCellsAttachmentsPreviewViewModel.makePreview().itemViewModel(index: 0)
     )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

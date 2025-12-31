@@ -776,7 +776,7 @@ public final class ClientSessionComponent {
         userLocalStore: userLocalStore
     )
 
-    private lazy var oneOnOneResolver = OneOnOneResolver(
+    public private(set) lazy var oneOnOneResolver = OneOnOneResolver(
         context: syncContext,
         userLocalStore: userLocalStore,
         conversationLocalStore: conversationLocalStore,
@@ -806,12 +806,40 @@ public final class ClientSessionComponent {
         conversationEventProcessor: conversationEventProcessor
     )
 
-}
+    public lazy var workAgent: WorkAgent = .init(scheduler: PriorityOrderWorkItemScheduler())
 
-extension InitiateResetMLSConversationUseCase: ResetBrokenMLSConversationDelegate {
+    public lazy var conversationUpdatesGenerator: IncrementalGeneratorProtocol = ConversationUpdatesGenerator(
+        repository: conversationRepository,
+        context: syncContext,
+        onConversationUpdated: { [weak self] workItem in
 
-    public func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: Int64) async {
-        await invoke(groupID: groupID, epoch: epoch)
+            self?.workAgent.submitItem(workItem)
+        }
+    )
+
+    public lazy var commitPendingProposalsGenerator: LiveGeneratorProtocol = CommitPendingProposalsGenerator(
+        repository: conversationRepository,
+        mlsService: mlsService,
+        context: syncContext,
+        isMLSGroupBroken: { [weak self] groupID in
+            self?.isMLSGroupBroken(groupID: groupID) == true
+        },
+        onCommitPendingProposals: { [weak self] workItem in
+
+            self?.workAgent.submitItem(workItem)
+        }
+    )
+
+    public lazy var generatorsDirectory = GeneratorsDirectory(
+        generators: [
+            conversationUpdatesGenerator,
+            commitPendingProposalsGenerator
+        ],
+        syncStatePublisher: syncStateSubject.eraseToAnyPublisher()
+    )
+
+    private func isMLSGroupBroken(groupID: MLSGroupID) -> Bool {
+        let brokenGroupIds = journal[.brokenMLSGroupIDs]
+        return brokenGroupIds.contains(groupID.description)
     }
-
 }

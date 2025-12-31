@@ -33,27 +33,27 @@ class ConversationsPage: PageModel {
     }
 
     var plusButtonToCreateGroup: XCUIElement {
-        app.descendants(matching: .any)["create_group_or_search_button"].firstMatch
+        app.descendants(matching: .any)[Locators.ConversationsPage.createGroupOrSearchButton.rawValue].firstMatch
     }
 
     var conversationCell: XCUIElement {
-        app.buttons["title"]
+        app.buttons[Locators.ConversationsPage.conversationCell.rawValue]
     }
 
     var blockButtonOnMoreOptions: XCUIElement {
-        app.buttons["Block…"]
+        app.buttons[Locators.ConversationsPage.blockOptionOnContextMenu.rawValue]
     }
 
     var blockButtonOnBottomSheet: XCUIElement {
-        app.buttons["Block"]
+        app.buttons[Locators.ConversationsPage.blockButtonOnBottomSheet.rawValue].firstMatch
     }
 
     var videoCallButton: XCUIElement {
-        app.descendants(matching: .any)["videoCallBarButton"].firstMatch
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoCallBarButton.rawValue].firstMatch
     }
 
     var acceptRequestButton: XCUIElement {
-        app.buttons["accept"]
+        app.buttons[Locators.ConnectionRequestsPage.connectRequestButton.rawValue]
     }
 
     func openSettings() throws -> SettingsPage {
@@ -61,11 +61,13 @@ class ConversationsPage: PageModel {
         return try SettingsPage()
     }
 
-    func openUserAccountPageForUser(with input: String) throws -> UserAccountPage {
+    func openUserAccountPageForUser(with input: String) throws -> UserProfilePage {
         let predicate = NSPredicate(format: "value BEGINSWITH %@", input)
         let button = app.buttons.containing(predicate).firstMatch
-        button.tap()
-        return try UserAccountPage()
+        if button.waitForExistence(timeout: 2), button.isHittable {
+            button.tap()
+        }
+        return try UserProfilePage()
     }
 
     func tapPlusButtonToCreateGroup() throws -> NewConversationPage {

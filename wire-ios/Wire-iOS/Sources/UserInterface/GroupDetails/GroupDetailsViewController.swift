@@ -31,6 +31,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
     private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: any SelfProfileViewControllerBuilderProtocol
+    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
     private let collectionViewController: SectionCollectionViewController
     private let conversation: GroupDetailsConversationType
     private let footerView = GroupDetailsFooterView()
@@ -55,12 +56,14 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {
         self.conversation = conversation
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
         self.collectionViewController = SectionCollectionViewController()
         super.init(nibName: nil, bundle: nil)
@@ -184,7 +187,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         sections.append(renameGroupSectionController)
         self.renameGroupSectionController = renameGroupSectionController
 
-        let (participants, serviceUsers) = (conversation.sortedOtherParticipants, conversation.sortedServiceUsers)
+        let (participants, apps) = (conversation.sortedOtherParticipants, conversation.sortedApps)
         participants.forEach { user in
             if !userStatuses.keys.contains(user.remoteIdentifier) {
                 userStatuses[user.remoteIdentifier] = .init(user: user, isE2EICertified: false)
@@ -313,9 +316,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         // MARK: services sections
 
-        if !serviceUsers.isEmpty {
+        if !apps.isEmpty {
             let servicesSection = ServicesSectionController(
-                serviceUsers: serviceUsers,
+                apps: apps,
                 conversation: conversation,
                 delegate: self
             )
@@ -337,7 +340,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
               changeInfo.participantsChanged ||
               changeInfo.nameChanged ||
               changeInfo.allowGuestsChanged ||
-              changeInfo.allowServicesChanged ||
+              changeInfo.allowAppsChanged ||
               changeInfo.destructionTimeoutChanged ||
               changeInfo.mutedMessageTypesChanged ||
               changeInfo.legalHoldStatusChanged
@@ -395,7 +398,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
 
         detailsViewController.delegate = self
@@ -421,7 +425,8 @@ extension GroupDetailsViewController {
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 
@@ -525,7 +530,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             profileViewControllerDelegate: self,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
 
         navigationController?.pushViewController(viewController, animated: true)
@@ -636,4 +642,5 @@ extension ZMConversation {
             user.refreshData()
         }
     }
+
 }

@@ -18,7 +18,7 @@
 
 import WireDataModel
 
-final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuestsAndServicesAction> {
+final class SetAllowGuestsAndAppsActionHandler: ActionHandler<SetAllowGuestsAndAppsAction> {
 
     private let eventProcessor: ConversationEventProcessor
     private let localDomain: String?
@@ -40,7 +40,7 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
     // MARK: - Request Generation
 
     override func request(
-        for action: SetAllowGuestsAndServicesAction,
+        for action: SetAllowGuestsAndAppsAction,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
 
@@ -54,10 +54,10 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
         }
         var accessRoles = conversation.accessRoles
 
-        if action.allowServices {
-            accessRoles.insert(.service)
+        if action.allowApps {
+            accessRoles.insert(.app)
         } else {
-            accessRoles.remove(.service)
+            accessRoles.remove(.app)
         }
 
         if action.allowGuests {
@@ -75,7 +75,7 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
 
         let path: String
         switch apiVersion {
-        case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+        case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
             let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else {
                 action.fail(with: .domainUnavailable)
@@ -98,7 +98,7 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
 
     // MARK: - Request Handling
 
-    override func handleResponse(_ response: ZMTransportResponse, action: SetAllowGuestsAndServicesAction) {
+    override func handleResponse(_ response: ZMTransportResponse, action: SetAllowGuestsAndAppsAction) {
 
         var action = action
 

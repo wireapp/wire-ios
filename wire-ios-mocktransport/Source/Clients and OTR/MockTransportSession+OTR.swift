@@ -185,7 +185,7 @@ extension MockTransportSession {
         toConversation conversation: MockConversation,
         recipients: [Proteus_UserEntry],
         senderClient: MockUserClient,
-        createEventBlock: (MockUserClient, Data, Data) -> MockEvent
+        createEventBlock: (MockUserClient, Data) -> MockEvent
     ) {
 
         let activeUsers = conversation.activeUsers.array as? [MockUser]
@@ -210,8 +210,7 @@ extension MockTransportSession {
                 return
             }
 
-            let decryptedData = MockUserClient.decryptMessage(data: entry.text, from: senderClient, to: client)
-            _ = createEventBlock(client, entry.text, decryptedData)
+            _ = createEventBlock(client, entry.text)
         }
     }
 }

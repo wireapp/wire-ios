@@ -32,9 +32,20 @@ final class FilesBrowserViewTests: XCTestCase {
     private let modifiedAt = try! Date("2023-10-01T12:00:00Z", strategy: .iso8601)
     private var snapshotHelper: SnapshotHelper!
     private var nodesRepository: MockWireCellsNodesRepositoryProtocol!
-    private var fetchNodesUseCase: WireCellsFetchNodesUseCase!
+    private var fetchNodesUseCase: WireCellsFetchNodesPageUseCase!
     private var deleteNodeUseCase: WireCellsDeleteNodesUseCase!
+    private var restoreNodeUseCase: WireCellsRestoreNodesUseCase!
+    private var renameNodeUseCase: WireCellsRenameNodeUseCase!
+    private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
+    private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
+    private var createFolderUseCase: (any WireCellsCreateFolderUseCaseProtocol)!
+    private var fetchNodeVersionsUseCase: WireCellsFetchNodeVersionsUseCase!
+    private var restoreNodeVersionUseCase: WireCellsRestoreNodeVersionUseCase!
+    private var getEditingURLUseCase: WireCellsGetEditingURLUseCase!
+    private var getAssetUseCase: WireCellsGetAssetUseCase!
     private var localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol!
+
+    private let record: Bool? = nil
 
     @MainActor
     override func setUp() async throws {
@@ -43,14 +54,53 @@ final class FilesBrowserViewTests: XCTestCase {
         nodesRepository = MockWireCellsNodesRepositoryProtocol()
         nodesRepository.getNodes_MockMethod = { _ in ([], nil) }
         localAssetsRepository = MockWireCellsLocalAssetRepositoryProtocol()
-        fetchNodesUseCase = WireCellsFetchNodesUseCase(
-            configuration: .conversationFileView(root: .id(.mockID1)),
+
+        let nodesApi = MockNodesAPIProtocol()
+        nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
+        nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
+
+        fetchNodesUseCase = WireCellsFetchNodesPageUseCase(
+            configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
             repository: nodesRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
             repository: nodesRepository,
             fileCache: MockFileCache(),
             localAssetStore: MockWireCellsLocalAssetStoreProtocol()
+        )
+        restoreNodeUseCase = WireCellsRestoreNodesUseCase(
+            repository: nodesRepository,
+            fileCache: MockFileCache(),
+            localAssetStore: MockWireCellsLocalAssetStoreProtocol()
+        )
+        renameNodeUseCase = WireCellsRenameNodeUseCase(
+            nodesRepository: MockWireCellsNodesRepositoryProtocol(),
+            localAssetsRepository: localAssetsRepository,
+            nodeCache: MockWireCellsNodeCacheProtocol(),
+            nodeRenameNotifier: WireCellsNodeRenameNotifier()
+        )
+        updateTagsUseCase = WireCellsUpdateTagsUseCase(nodesAPI: nodesApi)
+        getTagSuggestionsUseCase = WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi)
+        getAssetUseCase = WireCellsGetAssetUseCase(
+            localAssetRepository: localAssetsRepository,
+            fileCache: MockFileCache()
+        )
+
+        createFolderUseCase = WireCellsCreateFolderUseCase(
+            nodesRepository: nodesRepository
+        )
+
+        fetchNodeVersionsUseCase = WireCellsFetchNodeVersionsUseCase(repository: nodesRepository)
+        restoreNodeVersionUseCase = WireCellsRestoreNodeVersionUseCase(
+            repository: nodesRepository,
+            localAssetsRepository: localAssetsRepository,
+            nodeCache: MockWireCellsNodeCacheProtocol()
+        )
+
+        let editingURLRepository = MockWireCellsEditingURLRepositoryProtocol()
+        editingURLRepository.getEditorURLId_MockValue = nil
+        getEditingURLUseCase = WireCellsGetEditingURLUseCase(
+            editingURLRepository: editingURLRepository
         )
     }
 
@@ -60,6 +110,13 @@ final class FilesBrowserViewTests: XCTestCase {
         nodesRepository = nil
         fetchNodesUseCase = nil
         localAssetsRepository = nil
+        fetchNodeVersionsUseCase = nil
+        createFolderUseCase = nil
+        getTagSuggestionsUseCase = nil
+        updateTagsUseCase = nil
+        renameNodeUseCase = nil
+        deleteNodeUseCase = nil
+        restoreNodeVersionUseCase = nil
     }
 
     @MainActor
@@ -68,10 +125,10 @@ final class FilesBrowserViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -80,10 +137,10 @@ final class FilesBrowserViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -92,10 +149,10 @@ final class FilesBrowserViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -104,23 +161,31 @@ final class FilesBrowserViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
     func testFilesBrowserView_ReceivedItemsState() async {
-        let view = makeFilesBrowserView(state: .received(items: [.fixture(), .fixture()]))
+        let view = makeFilesBrowserView(
+            state: .received(
+                items: [
+                    .fixture(),
+                    .fixture(tags: ["tag1"]),
+                    .fixture(tags: ["tag1", "tag2", "abc"])
+                ]
+            )
+        )
         localAssetsRepository.observeAssetNodeID_MockValue = Just(nil).eraseToAnyPublisher()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -128,14 +193,30 @@ final class FilesBrowserViewTests: XCTestCase {
         state: FilesViewModel.State
     ) -> some View {
         let filesViewModel = FilesViewModel(
-            fetchNodesUseCase: fetchNodesUseCase,
-            deleteNodesUseCase: deleteNodeUseCase,
+            useCases: .init(
+                fetchNodes: fetchNodesUseCase,
+                deleteNodes: deleteNodeUseCase,
+                restoreNodes: restoreNodeUseCase,
+                renameNode: renameNodeUseCase,
+                updateTags: updateTagsUseCase,
+                getTagSuggestions: getTagSuggestionsUseCase,
+                createFolder: createFolderUseCase,
+                fetchNodeVersions: fetchNodeVersionsUseCase,
+                restoreNodeVersion: restoreNodeVersionUseCase,
+                getEditingURL: getEditingURLUseCase,
+                getAssetUseCase: getAssetUseCase
+            ),
             isCellsStatePending: false,
             localAssetRepository: localAssetsRepository,
-            fileCache: MockFileCache()
+            nodesRepository: nodesRepository,
+            fileCache: MockFileCache(),
+            isFoldersEnabled: false,
+            isCollaboraEnabled: false,
+            accentColorProvider: { .default }
         )
 
         filesViewModel.state = state
+        filesViewModel.hasMore = false
 
         let filesBrowserView = FilesBrowserView(viewModel: filesViewModel)
 
@@ -143,7 +224,6 @@ final class FilesBrowserViewTests: XCTestCase {
             filesBrowserView
         }
         .frame(width: 375, height: 667)
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 
 }

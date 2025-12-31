@@ -231,8 +231,13 @@ public extension GenericMessage {
         case let .text(data):
             return data
         case let .edited(messageEdit):
-            if case let .text(data)? = messageEdit.content {
+            switch messageEdit.content {
+            case let .text(data):
                 return data
+            case let .multipart(data) where data.hasText:
+                return data.text
+            default:
+                return nil
             }
         case let .ephemeral(ephemeral):
             if case let .text(data)? = ephemeral.content {
@@ -511,6 +516,20 @@ extension Location {
     }
 }
 
+// MARK: - Multipart
+
+public extension Multipart {
+    init(
+        text: Text,
+        attachments: [Attachment]
+    ) {
+        self = Multipart.with {
+            $0.text = text
+            $0.attachments = attachments
+        }
+    }
+}
+
 // MARK: - Text
 
 public extension Text {
@@ -652,6 +671,13 @@ public extension GenericMessageProtocol.MessageEdit {
         self = MessageEdit.with {
             $0.replacingMessageID = replacingMessageID.transportString()
             $0.text = text
+        }
+    }
+
+    init(replacingMessageID: UUID, multipart: Multipart) {
+        self = MessageEdit.with {
+            $0.replacingMessageID = replacingMessageID.transportString()
+            $0.multipart = multipart
         }
     }
 }

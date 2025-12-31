@@ -32,6 +32,23 @@ struct FilesInfoView: View {
         enum Scope: Equatable {
             case allConversations
             case oneConversation
+            case recycleBin
+        }
+
+        func textForScope(_ scope: Scope) -> String {
+            switch scope {
+            case .allConversations: Strings.AllFiles.NoData.message
+            case .oneConversation: Strings.Files.NoData.message
+            case .recycleBin: Strings.RecycleBin.NoData.message
+            }
+        }
+
+        func accessibilityTextForScope(_ scope: Scope) -> String {
+            switch scope {
+            case .allConversations: Accessibility.AllFiles.NoData.message
+            case .oneConversation: Accessibility.Files.NoData.message
+            case .recycleBin: Accessibility.RecycleBin.NoData.message
+            }
         }
 
         var localizedStrings: (title: String, message: String) {
@@ -41,7 +58,7 @@ struct FilesInfoView: View {
             case let .noFilesFound(scope):
                 (
                     Strings.Files.NoData.title,
-                    scope == .allConversations ? Strings.AllFiles.NoData.message : Strings.Files.NoData.message
+                    textForScope(scope)
                 )
             case .error:
                 (Strings.Files.Error.title, Strings.Files.Error.message)
@@ -55,8 +72,7 @@ struct FilesInfoView: View {
             case let .noFilesFound(scope):
                 (
                     Accessibility.Files.NoData.title,
-                    scope == .allConversations ? Accessibility.AllFiles.NoData.message : Accessibility.Files.NoData
-                        .message
+                    accessibilityTextForScope(scope)
                 )
             case .error:
                 (Accessibility.Files.Error.title, Accessibility.Files.Error.message)
@@ -142,7 +158,7 @@ struct LoadMoreView: View {
                     .accessibilityLabel(Accessibility.Files.LoadMore.title)
                     .accessibilityIdentifier("load-more")
                     .buttonStyle(.borderless)
-                    .wireTextStyle(.body3)
+                    .font(for: .body3)
                     .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
 
             }

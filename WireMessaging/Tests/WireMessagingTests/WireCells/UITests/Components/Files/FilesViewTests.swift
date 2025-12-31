@@ -32,8 +32,15 @@ final class FilesViewTests: XCTestCase {
     private let modifiedAt = try! Date("2023-10-01T12:00:00Z", strategy: .iso8601)
     private var snapshotHelper: SnapshotHelper!
     private var nodesRepository: MockWireCellsNodesRepositoryProtocol!
-    private var fetchNodesUseCase: WireCellsFetchNodesUseCase!
+    private var fetchNodesUseCase: WireCellsFetchNodesPageUseCase!
     private var deleteNodeUseCase: WireCellsDeleteNodesUseCase!
+    private var restoreNodeUseCase: WireCellsRestoreNodesUseCase!
+    private var renameNodeUseCase: WireCellsRenameNodeUseCase!
+    private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
+    private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
+    private var getEditingURLUseCase: WireCellsGetEditingURLUseCase!
+
+    private let record: Bool? = nil
 
     @MainActor
     override func setUp() async throws {
@@ -41,14 +48,40 @@ final class FilesViewTests: XCTestCase {
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
         nodesRepository = MockWireCellsNodesRepositoryProtocol()
         nodesRepository.getNodes_MockMethod = { _ in ([], nil) }
-        fetchNodesUseCase = WireCellsFetchNodesUseCase(
-            configuration: .conversationFileView(root: .id(.mockID1)),
+
+        let nodesApi = MockNodesAPIProtocol()
+        nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
+        nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
+
+        let localAssetsRepository = MockWireCellsLocalAssetRepositoryProtocol()
+
+        fetchNodesUseCase = WireCellsFetchNodesPageUseCase(
+            configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
             repository: nodesRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
             repository: nodesRepository,
             fileCache: MockFileCache(),
             localAssetStore: MockWireCellsLocalAssetStoreProtocol()
+        )
+        restoreNodeUseCase = WireCellsRestoreNodesUseCase(
+            repository: nodesRepository,
+            fileCache: MockFileCache(),
+            localAssetStore: MockWireCellsLocalAssetStoreProtocol()
+        )
+        renameNodeUseCase = WireCellsRenameNodeUseCase(
+            nodesRepository: nodesRepository,
+            localAssetsRepository: localAssetsRepository,
+            nodeCache: MockWireCellsNodeCacheProtocol(),
+            nodeRenameNotifier: WireCellsNodeRenameNotifier()
+        )
+        updateTagsUseCase = WireCellsUpdateTagsUseCase(nodesAPI: nodesApi)
+        getTagSuggestionsUseCase = WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi)
+
+        let editingURLRepository = MockWireCellsEditingURLRepositoryProtocol()
+        editingURLRepository.getEditorURLId_MockValue = nil
+        getEditingURLUseCase = WireCellsGetEditingURLUseCase(
+            editingURLRepository: editingURLRepository
         )
     }
 
@@ -57,71 +90,139 @@ final class FilesViewTests: XCTestCase {
         snapshotHelper = nil
         nodesRepository = nil
         fetchNodesUseCase = nil
+        renameNodeUseCase = nil
+        updateTagsUseCase = nil
+        getTagSuggestionsUseCase = nil
     }
 
     @MainActor
     func testFilesViewItemView_withShortStrings() {
         let item = FilesViewItem(
             id: UUID(),
-            filename: "image.jpg",
+            eTag: "eTag",
+            kind: .file,
+            name: "image.jpg",
+            filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
-            icon: .image
+            icon: .image,
+            tags: [],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
             .frame(width: 390)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
     func testFilesViewItemView_withLongStrings() {
         let item = FilesViewItem(
             id: UUID(),
-            filename: "some random file with a long name.excel",
+            eTag: "eTag",
+            kind: .file,
+            name: "some random file with a long name.excel",
+            filePath: "",
             ownedBy: "Liana Margaret Smith-Jones",
             modifiedAt: modifiedAt,
-            icon: .spreadsheet
+            icon: .spreadsheet,
+            tags: [],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
             .frame(width: 390)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
+    }
+
+    @MainActor
+    func testFilesViewItemView_withOneTag() {
+        let item = FilesViewItem(
+            id: UUID(),
+            eTag: "eTag",
+            kind: .file,
+            name: "image.jpg",
+            filePath: "",
+            ownedBy: "Natsuko Shiroi",
+            modifiedAt: modifiedAt,
+            icon: .image,
+            tags: ["important"],
+            isEditable: false
+        )
+
+        let view = FilesViewItemView(viewModel: .make(item: item))
+            .frame(width: 390)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light", record: record)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark", record: record)
+    }
+
+    @MainActor
+    func testFilesViewItemView_withThreeTags() {
+        let item = FilesViewItem(
+            id: UUID(),
+            eTag: "eTag",
+            kind: .file,
+            name: "image.jpg",
+            filePath: "",
+            ownedBy: "Natsuko Shiroi",
+            modifiedAt: modifiedAt,
+            icon: .image,
+            tags: ["tag1", "tag2", "abcdef"],
+            isEditable: false
+        )
+
+        let view = FilesViewItemView(viewModel: .make(item: item))
+            .frame(width: 390)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light", record: record)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
     func testFilesViewItemView_dynamicTypeVariants() {
         let item = FilesViewItem(
             id: UUID(),
-            filename: "some random file with a long name.excel",
+            eTag: "eTag",
+            kind: .file,
+            name: "some random file with a long name.excel",
+            filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
-            icon: .spreadsheet
+            icon: .spreadsheet,
+            tags: [],
+            isEditable: false
         )
 
         let view = FilesViewItemView(viewModel: .make(item: item))
             .frame(width: 390)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         for dynamicTypeSize in [DynamicTypeSize.allCases.min()!, DynamicTypeSize.allCases.max()!] {
             snapshotHelper
                 .verify(
                     matching: view.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
+                    named: "\(dynamicTypeSize)",
+                    record: record
                 )
         }
     }
@@ -130,10 +231,15 @@ final class FilesViewTests: XCTestCase {
     func testFilesViewItemView_whenDownloading() {
         let item = FilesViewItem(
             id: UUID(),
-            filename: "image.jpg",
+            eTag: "eTag",
+            kind: .file,
+            name: "image.jpg",
+            filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
-            icon: .image
+            icon: .image,
+            tags: [],
+            isEditable: false
         )
         let asset = WireCellsLocalAsset(
             nodeID: item.id,
@@ -146,24 +252,28 @@ final class FilesViewTests: XCTestCase {
 
         let view = FilesViewItemView(viewModel: .make(item: item, asset: asset))
             .frame(width: 390)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
     func testFilesViewItemView_whenDownloadFailed() {
         let item = FilesViewItem(
             id: UUID(),
-            filename: "image.jpg",
+            eTag: "eTag",
+            kind: .file,
+            name: "image.jpg",
+            filePath: "",
             ownedBy: "Natsuko Shiroi",
             modifiedAt: modifiedAt,
-            icon: .image
+            icon: .image,
+            tags: [],
+            isEditable: false
         )
         let asset = WireCellsLocalAsset(
             nodeID: item.id,
@@ -176,14 +286,13 @@ final class FilesViewTests: XCTestCase {
 
         let view = FilesViewItemView(viewModel: .make(item: item, asset: asset))
             .frame(width: 390)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -192,10 +301,10 @@ final class FilesViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -204,10 +313,10 @@ final class FilesViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -216,10 +325,10 @@ final class FilesViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -228,10 +337,10 @@ final class FilesViewTests: XCTestCase {
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: view, named: "light", record: record)
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: view, named: "dark", record: record)
     }
 
     @MainActor
@@ -239,18 +348,44 @@ final class FilesViewTests: XCTestCase {
         state: FilesViewModel.State
     ) -> some View {
         let filesViewModel = FilesViewModel(
-            fetchNodesUseCase: fetchNodesUseCase,
-            deleteNodesUseCase: deleteNodeUseCase,
+            useCases: .init(
+                fetchNodes: fetchNodesUseCase,
+                deleteNodes: deleteNodeUseCase,
+                restoreNodes: restoreNodeUseCase,
+                renameNode: renameNodeUseCase,
+                updateTags: updateTagsUseCase,
+                getTagSuggestions: getTagSuggestionsUseCase,
+                createFolder: WireCellsCreateFolderUseCase(
+                    nodesRepository: nodesRepository
+                ),
+                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesRepository),
+                restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                    repository: nodesRepository,
+                    localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                    nodeCache: MockWireCellsNodeCacheProtocol()
+                ),
+                getEditingURL: getEditingURLUseCase,
+                getAssetUseCase: WireCellsGetAssetUseCase(
+                    localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+                    fileCache: MockFileCache()
+                )
+            ),
             isCellsStatePending: false,
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
-            fileCache: MockFileCache()
+            nodesRepository: nodesRepository,
+            fileCache: MockFileCache(),
+            isFoldersEnabled: true,
+            isCollaboraEnabled: false,
+            accentColorProvider: { .default }
         )
 
         filesViewModel.state = state
+        filesViewModel.hasMore = false
 
-        return FilesView(viewModel: filesViewModel)
-            .frame(width: 375, height: 667)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        return NavigationStack {
+            FilesView(viewModel: filesViewModel)
+        }
+        .frame(width: 375, height: 667)
     }
 
 }
@@ -270,11 +405,12 @@ private extension FilesItemViewModel {
         return FilesItemViewModel(
             item: item,
             localAssetRepository: localAssetRepository,
-            onOpen: { _ in },
-            onDelete: { _ in },
+            onItemAction: { _, _ in },
             locale: Locale(identifier: "en_US_POSIX"),
             calendar: Calendar(identifier: .gregorian),
-            timeZone: .gmt
+            timeZone: .gmt,
+            isInRecycleBin: false,
+            isFoldersEnabled: false
         )
     }
 

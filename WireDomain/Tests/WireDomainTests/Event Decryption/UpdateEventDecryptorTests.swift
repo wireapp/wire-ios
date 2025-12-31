@@ -55,7 +55,6 @@ final class UpdateEventDecryptorTests: XCTestCase {
             mlsService: mlsService,
             messageLocalStore: messageLocalStore
         )
-        mlsService.commitPendingProposalsIfNeeded_MockMethod = {}
     }
 
     override func tearDown() async throws {
@@ -200,10 +199,6 @@ final class UpdateEventDecryptorTests: XCTestCase {
                 .user(.pushRemove)
             ]
         )
-
-        await Task.yield()
-
-        XCTAssertEqual(mlsService.commitPendingProposalsIfNeeded_Invocations.count, 1)
     }
 
     func testWhenWrongEpochErrorIsThrown() async throws {

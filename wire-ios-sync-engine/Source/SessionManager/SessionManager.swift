@@ -281,13 +281,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    public private(set) var backgroundUserSessions = [UUID: ZMUserSession]() {
-        didSet {
-            VoIPPushHelper.setLoadedUserSessions(
-                accountIDs: Array(backgroundUserSessions.keys)
-            )
-        }
-    }
+    public private(set) var backgroundUserSessions = [UUID: ZMUserSession]()
 
     public internal(set) var unauthenticatedSession: UnauthenticatedSession? {
         willSet {
@@ -314,7 +308,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     let application: ZMApplication
     var deleteAccountToken: Any?
     var callCenterObserverToken: Any?
-    var blacklistVerificator: ZMBlacklistVerificator?
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
     let apiMigrationManager: APIMigrationManager
@@ -348,6 +341,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     let jailbreakDetector: JailbreakDetectorProtocol?
     fileprivate var accountTokens: [UUID: [Any]] = [:]
     fileprivate var memoryWarningObserver: NSObjectProtocol?
+    var conversationVisibleObserver: NSObjectProtocol?
     fileprivate var isSelectingAccount: Bool = false
 
     var proxyCredentials: WireTransport.ProxyCredentials?
@@ -474,8 +468,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             countlyProvider: countlyProvider,
             logFilesProvider: logFilesProvider
         )
-
-        configureBlacklistDownload()
 
         self.memoryWarningObserver = NotificationCenter.default.addObserver(
             forName: UIApplication.didReceiveMemoryWarningNotification,
@@ -660,38 +652,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    private func configureBlacklistDownload() {
-        guard !DeveloperFlag.multibackend.isOn else {
-            return
-        }
-        if configuration.blacklistDownloadInterval > 0 {
-            blacklistVerificator?.tearDown()
-            blacklistVerificator = ZMBlacklistVerificator(
-                checkInterval: configuration.blacklistDownloadInterval,
-                version: currentBuildNumber,
-                environment: environment,
-                proxyUsername: proxyCredentials?.username,
-                proxyPassword: proxyCredentials?.password,
-                readyForRequests: isUnauthenticatedTransportSessionReady,
-                working: nil,
-                application: application,
-                minTLSVersion: minTLSVersion,
-                blacklistCallback: { [weak self] blacklisted in
-                    guard let self, !self.isAppVersionBlacklisted else { return }
-
-                    if blacklisted {
-                        isAppVersionBlacklisted = true
-                        delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
-                        // When the application version is blacklisted we don't want have a
-                        // transition to any other state in the UI, so we won't inform it
-                        // anymore by setting the delegate to nil.
-                        delegate = nil
-                    }
-                }
-            )
-        }
-    }
-
     public func removeProxyCredentials() {
         guard let proxy = environment.proxy else { return }
         _ = ProxyCredentials.destroy(for: proxy)
@@ -721,9 +681,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         isUnauthenticatedTransportSessionReady = ready
         apiVersionResolver = createAPIVersionResolver()
 
-        if blacklistVerificator != nil {
-            configureBlacklistDownload()
-        }
         // force creation of unauthenticatedSession
         unauthenticatedSessionFactory.readyForRequests = ready
     }
@@ -1037,7 +994,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         if let session = backgroundUserSessions[account.userIdentifier] {
             WireLogger.sessionManager.debug("Session for \(account) is already loaded")
             return session
-        } else if DeveloperFlag.multibackend.isOn {
+        } else {
             do {
                 let loader = try UserSessionLoader(
                     account: account,
@@ -1104,6 +1061,16 @@ public final class SessionManager: NSObject, SessionManagerType {
                     error: .networkError(code: error.errorCode)
                 )
                 return nil
+            } catch let UserSessionLoader.Failure.failedToLoadPersistenceStack(error) {
+                WireLogger.sessionManager.error(
+                    "failed to load user session: \(String(describing: error))",
+                    attributes: .safePublic
+                )
+                delegate?.sessionManagerDidFailToLoadSession(
+                    for: account,
+                    error: .databaseError(error)
+                )
+                return nil
             } catch let error as SafeForLoggingStringConvertible {
                 WireLogger.sessionManager.error(
                     "failed to load user session: \(error.safeForLoggingDescription)",
@@ -1125,8 +1092,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                 )
                 return nil
             }
-        } else {
-            return await setupUserSession(account: account)
         }
     }
 
@@ -1156,132 +1121,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                 activeUserSession = nil
                 completion()
             }
-        }
-    }
-
-    @MainActor
-    private func setupUserSession(account: Account) async -> ZMUserSession? {
-        let coreDataStack = CoreDataStack(
-            account: account,
-            applicationContainer: sharedContainerURL,
-            dispatchGroup: dispatchGroup,
-            localDomain: BackendInfo.domain,
-            isFederationEnabled: BackendInfo.isFederationEnabled
-        )
-
-        if coreDataStack.needsMigration {
-            await withCheckedContinuation { continuation in
-                guard let delegate else {
-                    continuation.resume()
-                    return
-                }
-                delegate.sessionManagerWillMigrateAccount {
-                    continuation.resume()
-                }
-            }
-        }
-
-        do {
-            try await coreDataStack.load()
-        } catch {
-            delegate?.sessionManagerDidFailToLoadDatabase(error: error)
-            return nil
-        }
-
-        let journal = Journal(
-            userID: account.userIdentifier,
-            storage: sharedUserDefaults
-        )
-
-        if shouldEnableSyncV2(journal: journal) {
-            await enableSyncV2(
-                journal: journal,
-                coreDataStack: coreDataStack
-            )
-        }
-
-        let userSession = startBackgroundSession(
-            for: account,
-            with: coreDataStack,
-            journal: journal,
-            logFilesProvider: logFilesProvider
-        )
-
-        let migrationService = userSession.makeAppVersionMigrationService()
-        if migrationService.isMigrationNeeded {
-            await delegate?.sessionManagerWillMigrateAccount()
-
-            do {
-                try await migrationService.performAppMigrations()
-            } catch {
-                WireLogger.session.error(
-                    "Failed to perform app version migrations: \(String(describing: error))"
-                )
-            }
-        }
-
-        var shouldTriggerSync = true
-        do {
-            try await userSession.migrateToConsumableNotificationsIfNeeded()
-        } catch ZMUserSessionError.selfClientNotReady {
-            // We skip trigger sync, because in this case (fresh login),
-            // we don't have a registered client yet, so no consumable capability
-            WireLogger.sync.warn("No consumable-notifications migrator available")
-            shouldTriggerSync = false
-        } catch {
-            return nil
-        }
-
-        if shouldTriggerSync {
-            await userSession.triggerSync()
-        }
-
-        return userSession
-    }
-
-    private func shouldEnableSyncV2(journal: Journal) -> Bool {
-        guard let apiVersion = BackendInfo.apiVersion else {
-            fatalError("api version unknown")
-        }
-
-        let isAvailable = apiVersion >= .v8
-        let isAlreadyEnabled = journal[.isSyncV2Enabled]
-        return isAvailable && !isAlreadyEnabled
-    }
-
-    private func enableSyncV2(
-        journal: Journal,
-        coreDataStack: CoreDataStack
-    ) async {
-        guard let localDomain = BackendInfo.domain else {
-            fatalError("local domain unknown")
-        }
-
-        let dao: UpdateEventMigratorDAOProtocol = if #available(iOS 17, *) {
-            ActorBasedUpdateEventMigratorDAO(context: coreDataStack.eventContext)
-        } else {
-            UpdateEventMigratorDAO(context: coreDataStack.eventContext)
-        }
-
-        let migrator = UpdateEventMigrator(
-            dao: dao,
-            localDomain: localDomain
-        )
-
-        do {
-            if try await migrator.isMigrationNeeded() {
-                try await migrator.migrateLegacyUpdateEvents()
-                // Since we only migrate some events, we require an
-                // initial sync to ensure we didn't miss updates.
-                journal[.isInitialSyncRequired] = true
-            } else {
-                WireLogger.sync.debug("no migration needed")
-            }
-
-            journal[.isSyncV2Enabled] = true
-
-        } catch {
-            WireLogger.sync.critical("failed to migrate update events: \(error)")
         }
     }
 
@@ -1508,11 +1347,10 @@ public final class SessionManager: NSObject, SessionManagerType {
     deinit {
         DispatchQueue
             .main
-            .async { [backgroundUserSessions, blacklistVerificator, unauthenticatedSession, reachability] in
+            .async { [backgroundUserSessions, unauthenticatedSession, reachability] in
                 backgroundUserSessions.values.forEach { session in
                     session.tearDown()
                 }
-                blacklistVerificator?.tearDown()
                 unauthenticatedSession?.tearDown()
                 reachability.tearDown()
             }
@@ -2073,6 +1911,7 @@ public extension SessionManager {
         case clientIsObsolete
         case networkError(code: Int)
         case genericError
+        case databaseError(Error)
 
     }
 

@@ -224,8 +224,6 @@ public protocol UserSession: AnyObject {
 
     var channelsFeature: Feature.Channels { get }
 
-    var isChatBubbleSimpleEnabled: Bool { get }
-
     var isWireCellsEnabled: Bool { get }
 
     var isEnterpriseUser: Bool { get }
@@ -272,7 +270,7 @@ public protocol UserSession: AnyObject {
 
     func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol
 
-    func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol
+    func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol
 
     func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol
 
@@ -297,6 +295,9 @@ public protocol UserSession: AnyObject {
     func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol
 
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
+
+    func resolveOneOnOneConversation(with userID: WireDataModel
+        .QualifiedID) async throws -> OneOnOneConversationResolution
 
     func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol?
 

@@ -17,7 +17,6 @@
 //
 
 import UIKit
-import WireFoundation
 
 public extension UIButton.Configuration {
 

@@ -29,7 +29,7 @@
 "exportBackup.setBackupPassword.placeholder" = "Введите пароль";
 "exportBackup.setBackupPassword.rules" = "Используйте как минимум 8 символов, включая одну строчную букву, одну заглавную букву, цифру и специальный символ.";
 
-"exportBackup.cancel.title" = "Отмена";
+"exportBackup.cancel.title" = "Cancel";
 "exportBackup.errorAlert.title" = "Что-то пошло не так";
 "exportBackup.errorAlert.message" = "Не удалось создать резервную копию. Пожалуйста, повторите попытку или обратитесь в службу поддержки Wire.";
 "exportBackup.errorAlert.ok" = "OK";
@@ -39,11 +39,11 @@
 "exportBackup.creatingBackup.success" = "Резервная копия успешно создана.";
 "exportBackup.creatingBackup.saveButton.title" = "Сохранить файл";
 
-"importBackup.cancel.title" = "Отмена";
+"importBackup.cancel.title" = "Cancel";
 
 "importBackup.overwriteConfirmation.title" = "Файл перезаписывает вашу историю";
 "importBackup.overwriteConfirmation.message" = "Содержимое резервной копии заменит текущую историю бесед на этом устройстве.";
-"importBackup.overwriteConfirmation.cancel" = "Отмена";
+"importBackup.overwriteConfirmation.cancel" = "Cancel";
 "importBackup.overwriteConfirmation.proceed" = "Продолжить";
 
 "importBackup.alert.ok" = "OK";
@@ -54,6 +54,8 @@
 "importBackup.alert.incompatibleBackupError.message" = "Эта резервная копия была создана в более новой или устаревшей версии Wire и не может быть восстановлена.";
 "importBackup.alert.wrongFileError.title" = "Несовместимый файл резервной копии";
 "importBackup.alert.wrongFileError.message" = "Вы не можете восстановить историю из другой учетной записи.";
+"importBackup.alert.invalidFileError.title" = "Неверный тип файла";
+"importBackup.alert.invalidFileError.message" = "Выберите файл резервной копии Wire (.wbu, .ios_wbu или .ios-wbu).";
 
 "importBackup.enterPassword.title" = "Введите пароль";
 "importBackup.enterPassword.description" = "Эта резервная копия защищена паролем.";
@@ -63,4 +65,5 @@
 "importBackup.enterPassword.button.title" = "Продолжить";
 
 "importBackup.restoringHistory.title" = "Восстановление истории…";
+"importBackup.loadingBackup.message" = "Загрузка резервной копии…";
 "importBackup.restoringHistory.message" = "Загрузка бесед…";

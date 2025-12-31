@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 import WireMainNavigationUI
 import WireMessagingAssembly
+import WireMessagingDomain
 import WireSyncEngine
 
 @MainActor
@@ -30,6 +31,7 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
 
     var userSession: UserSession
     var selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    var conversationCreationRepository: any ConversationCreationRepositoryProtocol
     var mediaPlaybackManager: MediaPlaybackManager?
     var wireMessagingFactory: any WireMessagingFactoryProtocol
 
@@ -45,6 +47,7 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
             userSession: userSession,
             mainCoordinator: .init(mainCoordinator: mainCoordinator),
             selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository,
             mediaPlaybackManager: mediaPlaybackManager,
             wireMessagingFactory: wireMessagingFactory
         )

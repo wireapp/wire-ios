@@ -16,16 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 extension Set<ZMUser> {
 
-    var serviceUsers: Set<ZMUser> {
-        filter(\.isServiceUser)
+    var appsOrBots: Set<ZMUser> {
+        filter(\.isAppOrBot)
     }
 
     func categorizeServicesAndUser() -> (services: Set<ZMUser>, users: Set<ZMUser>) {
-        let services = serviceUsers
+        let services = appsOrBots
         let users = subtracting(services)
         return (services, users)
     }

@@ -34,11 +34,15 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     private let attachment: WireCellsMessageAttachment
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
+    private let nodeCache: any WireCellsNodeCacheProtocol
     private let lastOpenRequest: WireCellsLastOpenRequest
+    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
+    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
+    private let _displayStyle: DisplayStyle
     private var cancellables = Set<AnyCancellable>()
+    private var pollingTask: Task<Void, Never>?
 
     let alignment: HorizontalAlignment
-    let displayStyle: DisplayStyle
 
     @Published var viewingURL: URL?
     @Published private var asset: WireCellsLocalAsset?
@@ -50,24 +54,39 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         alignment: HorizontalAlignment,
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
+        nodeCache: any WireCellsNodeCacheProtocol,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         lastOpenRequest: WireCellsLastOpenRequest,
+        nodeRenameNotifier: WireCellsNodeRenameNotifier,
         displayStyle: DisplayStyle
     ) {
         self.attachment = attachment
         self.alignment = alignment
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
+        self.nodeCache = nodeCache
         self.lastOpenRequest = lastOpenRequest
-        self.displayStyle = displayStyle
+        self.nodeRenameNotifier = nodeRenameNotifier
+        self.localAssetRepository = localAssetRepository
+        self._displayStyle = displayStyle
         self.isDeleted = false
 
-        localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
-            self?.asset = asset
-        }.store(in: &cancellables)
+        setupBindings()
+
+        if let cacheInfo = nodeCache.item(for: attachment.nodeID) {
+            updateNode(cacheInfo.node)
+        }
+    }
+
+    var displayStyle: DisplayStyle {
+        isDeleted ? .small : _displayStyle
     }
 
     var fileCategory: WireCellsFileCategory {
+        if isDeleted {
+            return .document
+        }
+
         let fileType = contentType.flatMap { UTType(mimeType: $0) }
         return WireCellsFileCategory(fileType)
     }
@@ -127,17 +146,27 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     func refresh() async {
         do {
             for try await node in fetchNodeUseCase.invoke(nodeID: nodeID) {
-                self.node = node
-
-                if let node {
-                    isDeleted = node.isRecycled
-                } else {
-                    isDeleted = true
-                }
+                updateNode(node)
             }
         } catch {
             WireLogger.wireCells.info("Failed to refresh node with ID: \(nodeID), error: \(error)")
         }
+    }
+
+    func startPolling() {
+        pollingTask?.cancel()
+        pollingTask = Task { [weak self] in
+            while !Task.isCancelled {
+                await self?.refresh()
+
+                try? await Task.sleep(for: .seconds(30))
+            }
+        }
+    }
+
+    func stopPolling() {
+        pollingTask?.cancel()
+        pollingTask = nil
     }
 
     func open() async {
@@ -146,7 +175,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         lastOpenRequest.nodeID = nodeID
 
         do {
-            let url = try await getAssetUseCase.invoke(nodeID: nodeID)
+            let url = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
             if lastOpenRequest.nodeID == nodeID {
                 viewingURL = url
             }
@@ -173,10 +202,38 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         previewSize?.width as? Double // Explicit conversion necessary due to compiler bug
     }
 
+    var attachmentDuration: String? {
+        let fileType = attachment.contentType.flatMap { UTType(mimeType: $0) }
+
+        guard fileType == .video || fileType == .audio else {
+            return nil
+        }
+
+        guard let durationInMS = attachment.initialMetadata?.duration else {
+            return nil
+        }
+
+        let duration = Duration.milliseconds(durationInMS)
+        return duration.formatted(.time(pattern: .minuteSecond))
+    }
+
     // MARK: - Private
+
+    private func updateNode(_ node: WireCellsNode?) {
+        self.node = node
+        if let node {
+            isDeleted = node.isRecycled
+        } else {
+            isDeleted = true
+        }
+    }
 
     private var nodeID: UUID {
         node?.id ?? attachment.nodeID
+    }
+
+    private var eTag: String? {
+        node?.eTag
     }
 
     private var pathURL: URL? {
@@ -196,6 +253,25 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     private var isDownloading: Bool {
         asset?.downloadState.isDownloading == true
+    }
+
+    private func setupBindings() {
+        nodeRenameNotifier.publisher
+            .sink { [weak self] nodeID in
+                guard nodeID == self?.attachment.nodeID else {
+                    return
+                }
+
+                Task {
+                    // this node has been renamed, refresh
+                    await self?.refresh()
+                }
+            }.store(in: &cancellables)
+
+        localAssetRepository.observeAsset(nodeID: attachment.nodeID)
+            .sink { [weak self] asset in
+                self?.asset = asset
+            }.store(in: &cancellables)
     }
 
 }

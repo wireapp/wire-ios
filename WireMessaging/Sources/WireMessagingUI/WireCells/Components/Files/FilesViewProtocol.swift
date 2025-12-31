@@ -26,7 +26,12 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 /// common reusable views.
 package protocol FilesViewProtocol: View {
     var viewModel: FilesViewModel { get }
-    init(viewModel: FilesViewModel)
+    var isBrowsing: Bool { get }
+    init(
+        viewModel: @autoclosure @escaping () -> FilesViewModel,
+        onOpenRecycleBin: @escaping () -> Void,
+        onDismissContainer: @escaping () -> Void
+    )
 }
 
 // MARK: - List
@@ -43,6 +48,9 @@ extension FilesViewProtocol {
             .listRowSeparator(.hidden)
             .listRowBackground(ColorTheme.Backgrounds.surface.color)
         }
+        .listStyle(.plain)
+        .refreshable { reloadTask(refreshing: true) }
+        .background(listBackgroundView)
         .animation(.default, value: viewModel.state)
     }
 
@@ -50,7 +58,18 @@ extension FilesViewProtocol {
         ForEach(Array(viewModel.state.items.enumerated()), id: \.element) { index, item in
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
-                .onTapGesture { Task { await viewModel.viewAsset(item: item) } }
+                .onTapGesture { Task { await viewModel.openItem(item: item) } }
+        }
+    }
+
+    @ViewBuilder private var listBackgroundView: some View {
+        switch viewModel.state {
+        case let .received(items) where items.isEmpty:
+            FilesInfoView(info: .noFilesFound(scope: isBrowsing ? .allConversations : .oneConversation))
+        case .pending:
+            FilesInfoView(info: .preparingFiles)
+        default:
+            EmptyView()
         }
     }
 }
@@ -61,7 +80,16 @@ extension FilesViewProtocol {
 
     @ViewBuilder
     func itemRow(index: Int) -> some View {
-        FilesViewItemView(viewModel: viewModel.itemViewModel(index: index))
+        FilesViewItemView(
+            viewModel: viewModel.itemViewModel(index: index),
+            // some actions are not allowed when browsing files
+            canRenameFile: !isBrowsing,
+            canEditTags: !isBrowsing,
+            canMoveToFolder: !isBrowsing && viewModel.isFoldersEnabled,
+            canOpenVersionHistory: !isBrowsing && viewModel.isCollaboraEnabled,
+            canEditFile: !isBrowsing,
+            canDeleteFiles: !isBrowsing
+        )
     }
 
     var loadMoreRow: some View {
@@ -82,8 +110,8 @@ extension FilesViewProtocol {
 
 extension FilesViewProtocol {
 
-    func reloadTask() {
-        Task { await viewModel.reload() }
+    func reloadTask(refreshing: Bool = false) {
+        Task { await viewModel.reload(refreshing: refreshing) }
     }
 
     func loadMoreIfNeededTask(index: Int) {

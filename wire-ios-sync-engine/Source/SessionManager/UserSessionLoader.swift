@@ -184,7 +184,7 @@ final class UserSessionLoader {
         )
 
         // Check if this build is blacklisted.
-        if try await isBuildBlacklisted(userSession: userSession) {
+        if await isBuildBlacklisted(userSession: userSession) {
             await userSession.close(deleteCookie: false)
             throw Failure.buildIsBlacklisted
         }
@@ -353,7 +353,7 @@ final class UserSessionLoader {
         metadata: ResolvedBackendMetadata,
         eventContext: NSManagedObjectContext
     ) async throws {
-        let isAvailable = metadata.apiVersion >= .v8
+        let isAvailable = metadata.apiVersion >= .minimumSyncV2CompatibleVersion
         let isAlreadyEnabled = journal[.isSyncV2Enabled]
         let shouldEnable = isAvailable && !isAlreadyEnabled
 
@@ -419,7 +419,6 @@ final class UserSessionLoader {
             isSyncV2Enabled: journal[.isSyncV2Enabled]
         )
 
-        let cryptoboxMigrationManager = CryptoboxMigrationManager()
         let coreCryptoKeyMigrationManager = CoreCryptoKeyMigrationManager(journal: journal)
 
         let coreCryptoProvider = CoreCryptoProvider(
@@ -428,7 +427,6 @@ final class UserSessionLoader {
             accountDirectory: coreDataStack.accountContainer,
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
             localDomain: backendMetadata.domain
         )
@@ -537,7 +535,6 @@ final class UserSessionLoader {
             coreDataStack: coreDataStack,
             earService: earService,
             mlsService: mlsService,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             proteusToMLSMigrationCoordinator: proteusToMLSMigrationCoordinator,
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: sharedContainerURL,
@@ -599,13 +596,9 @@ final class UserSessionLoader {
         }
     }
 
-    private func isBuildBlacklisted(userSession: ZMUserSession) async throws -> Bool {
-        do {
-            let useCase = userSession.userSessionComponent.makeIsBuildBlacklistedUseCase()
-            return try await useCase.invoke()
-        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
-            return false
-        }
+    private func isBuildBlacklisted(userSession: ZMUserSession) async -> Bool {
+        let useCase = userSession.userSessionComponent.makeIsBuildBlacklistedUseCase()
+        return await useCase.invoke()
     }
 
     private func performPendingMigrations(

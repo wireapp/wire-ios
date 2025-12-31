@@ -33,12 +33,15 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     var initialSync: MockInitialSyncProtocol!
     var incrementalSync: MockIncrementalSyncProtocol!
     var liveSync: MockLiveSyncProtocol!
+    var networkStateSubject: CurrentValueSubject<NetworkState, Never>!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
     var backgroundActivity: BackgroundActivityFactory!
     var backgroundActivityManager: MockBackgroundActivityManager!
     var featureConfigRepository: MockFeatureConfigRepositoryProtocol!
     var mainAppPushChannelCoordinator: MockMainAppPushChannelCoordinatorProtocol!
+
+    var incrementalSyncDidFinish: XCTestExpectation!
 
     override func setUp() {
         journal = Journal(
@@ -51,6 +54,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         incrementalSync = MockIncrementalSyncProtocol()
         liveSync = MockLiveSyncProtocol()
         syncStateSubject = CurrentValueSubject(.idle)
+        networkStateSubject = CurrentValueSubject(.online)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
         backgroundActivityManager = MockBackgroundActivityManager()
         backgroundActivity = BackgroundActivityFactory.shared
@@ -68,8 +72,11 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
             legacySyncStatus: legacySyncStatus,
             featureConfigRepository: featureConfigRepository,
             syncStateSubject: syncStateSubject,
-            pushChannelCoordinator: mainAppPushChannelCoordinator
+            pushChannelCoordinator: mainAppPushChannelCoordinator,
+            networkStatePublisher: networkStateSubject.eraseToAnyPublisher()
         )
+
+        incrementalSyncDidFinish = XCTestExpectation(description: "incrementalSyncDidFinish")
     }
 
     override func tearDown() {
@@ -86,6 +93,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         backgroundActivity = nil
         featureConfigRepository = nil
         mainAppPushChannelCoordinator = nil
+        incrementalSyncDidFinish = nil
     }
 
     func provideInitialSync() throws -> any InitialSyncProtocol {
@@ -94,6 +102,28 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
     func provideIncrementalSync() throws -> any IncrementalSyncProtocol {
         incrementalSync
+    }
+
+    func testNetworkStateChangeResumeSync() async throws {
+        // GIVEN
+        journal[.isSyncV2Enabled] = true
+        journal[.isInitialSyncRequired] = false
+
+        incrementalSync.perform_MockMethod = {
+            IncrementalSync.Token(
+                task: Task {},
+                closePushChannel: {}
+            )
+        }
+        XCTAssertFalse(sut.syncRunning)
+        sut.delegate = self
+
+        // WHEN
+        networkStateSubject.send(.offline)
+        networkStateSubject.send(.online)
+
+        // THEN
+        await fulfillment(of: [incrementalSyncDidFinish], timeout: 2)
     }
 
     func testPerformSyncIfNeeded_InitialSync() async throws {
@@ -335,4 +365,27 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         // Then
         XCTAssertEqual(liveSync.perform_Invocations.count, 1)
     }
+}
+
+extension SyncAgentTests: SyncAgentDelegate {
+    func syncAgentDidStartInitialSync(_ syncAgent: WireSyncEngine.SyncAgent) {}
+
+    func syncAgentDidFinishInitialSync(_ syncAgent: WireSyncEngine.SyncAgent) {}
+
+    func syncAgentDidStartIncrementalSync(_ syncAgent: WireSyncEngine.SyncAgent) {}
+
+    func syncAgentDidFinishIncrementalSync(_ syncAgent: WireSyncEngine.SyncAgent, isRecovering: Bool) {
+        incrementalSyncDidFinish.fulfill()
+    }
+
+    func syncAgentDidFailSyncing(_ syncAgent: WireSyncEngine.SyncAgent, error: any Error) {}
+
+    func syncAgentDidStartLegacyInitialSync(_ syncAgent: WireSyncEngine.SyncAgent) {}
+
+    func syncAgentDidFinishLegacyInitialSync(_ syncAgent: WireSyncEngine.SyncAgent) {}
+
+    func syncAgentDidStartLegacyIncrementalSync(_ syncAgent: WireSyncEngine.SyncAgent) {}
+
+    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: WireSyncEngine.SyncAgent, isRecovering: Bool) {}
+
 }

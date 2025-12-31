@@ -73,7 +73,7 @@ extension UserTypeIconStyle {
         } else if let conversation {
             self = !user.isGuest(in: conversation) || user.isSelfUser ? .member : .guest
         } else {
-            self = !selfUserHasTeam || user.isTeamMember || user.isServiceUser
+            self = !selfUserHasTeam || user.isTeamMember || user.isAppOrBot
                 ? .member
                 : .guest
         }

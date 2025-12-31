@@ -23,18 +23,26 @@ import WireSyncEngine
 
 final class WireConversationChannelCreationFormViewControllerFactory {
 
+    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
+
     weak var delegate: ConversationCreationControllerDelegate?
 
-    public init() {}
+    public init(
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
+    ) {
+        self.conversationCreationRepository = conversationCreationRepository
+    }
 
     @MainActor
     func create(
         userSession: UserSession
-    ) -> WireConversationChannelCreationFormViewController {
-        let vc = WireConversationChannelCreationFormViewController(
-            userSession: userSession
+    ) async -> WireConversationChannelCreationFormViewController {
+        let vc = await WireConversationChannelCreationFormViewController(
+            userSession: userSession,
+            conversationCreationRepository: conversationCreationRepository
         )
         vc.delegate = delegate
         return vc
     }
+
 }

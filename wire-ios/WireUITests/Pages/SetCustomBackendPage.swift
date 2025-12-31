@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class SetCustomBackendPage: PageModel {
@@ -24,7 +25,7 @@ class SetCustomBackendPage: PageModel {
     }
 
     var proceedButton: XCUIElement {
-        app.buttons["Proceed"]
+        app.buttons[Locators.SetCustomBackendPage.proceedButton.rawValue]
     }
 
     @discardableResult

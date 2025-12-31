@@ -22,10 +22,17 @@ import WireCallingUI
 public import UIKit
 import SwiftUI
 import WireCallingData
+public import WireReusableUIComponents
 
 public struct WireMeetingsFactory {
+    private let passwordValidator: any PasswordValidator
+    private let isContextMenuAllowed: Bool
+
     @MainActor
-    public init() {}
+    public init(passwordValidator: any PasswordValidator, isContextMenuAllowed: Bool) {
+        self.passwordValidator = passwordValidator
+        self.isContextMenuAllowed = isContextMenuAllowed
+    }
 }
 
 public extension WireMeetingsFactory {
@@ -41,7 +48,9 @@ public extension WireMeetingsFactory {
             upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
                 repository: MeetingsRepository.demo(),
                 currentDateProvider: .system
-            )
+            ),
+            passwordValidator: passwordValidator,
+            isContextMenuAllowed: isContextMenuAllowed
         )
 
         return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))

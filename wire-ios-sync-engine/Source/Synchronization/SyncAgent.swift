@@ -63,13 +63,12 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
     private let featureConfigRepository: any FeatureConfigRepositoryProtocol
     private let pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol
-
+    private let networkStatePublisher: AnyPublisher<NetworkState, Never>
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private let initialSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
     private var ongoingSyncTask: Task<Void, Never>?
-
-    private var subscription: AnyCancellable?
+    private var cancellables: Set<AnyCancellable> = .init()
 
     var syncRunning: Bool {
         ongoingSyncTask != nil || incrementalSyncToken != nil
@@ -94,7 +93,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         legacySyncStatus: any SyncStatusProtocol,
         featureConfigRepository: any FeatureConfigRepositoryProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
-        pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol
+        pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol,
+        networkStatePublisher: AnyPublisher<NetworkState, Never>
     ) {
         self.journal = journal
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
@@ -105,6 +105,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         self.featureConfigRepository = featureConfigRepository
         self.syncStateSubject = syncStateSubject
         self.pushChannelCoordinator = pushChannelCoordinator
+        self.networkStatePublisher = networkStatePublisher
         super.init()
 
         setupBindings()
@@ -123,9 +124,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         syncStateSubject.send(.idle)
 
         ongoingSyncTask = Task {
-            WireLogger.sync.debug(
-                "resuming sync"
-            )
+            WireLogger.sync.debug("resuming sync")
             do {
                 // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
                 // cancel the task (not keeping any file lock in suspend mode)
@@ -154,7 +153,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         WireLogger.sync.debug(
             "suspending sync \(backgroundActivity != nil ? "in a background task" : "")"
         )
-
         ongoingSyncTask?.cancel()
         ongoingSyncTask = nil
         await incrementalSyncToken?.suspend()
@@ -221,7 +219,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
-
         if isSyncV2Enabled {
 
             try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
@@ -311,7 +308,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     }
 
     private func setupBindings() {
-        subscription = syncStateSubject
+        syncStateSubject
             .receive(on: DispatchQueue.main)
             .filter {
                 let liveSyncTerminated = $0 == .liveSyncing(.finished)
@@ -323,7 +320,26 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 // if live sync terminated and we're in foreground
                 // app will try to recover by performing an incremental sync again
                 self?.resume()
+            }.store(in: &cancellables)
+
+        networkStatePublisher
+            .receive(on: DispatchQueue.main)
+            .scan((
+                previous: NetworkState?.none,
+                current: NetworkState?.none
+            )) { state, newNetworkState -> (
+                previous: NetworkState?,
+                current: NetworkState?
+            ) in
+                (previous: state.current, current: newNetworkState)
             }
+            .sink { [weak self] state in
+                if state.current == .online, state.previous == .offline {
+                    WireLogger.sync.warn("was offline, now back online, resume sync")
+                    self?.resume()
+                }
+            }
+            .store(in: &cancellables)
     }
 }
 

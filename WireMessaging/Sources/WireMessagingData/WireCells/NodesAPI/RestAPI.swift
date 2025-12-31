@@ -23,14 +23,16 @@ import WireMessagingDomain
 
 enum WireCellsNodesAPIError: Error {
     case failedToDecodeNode
+    case failedToDecodeNodeVersions
     case missingData(String)
 }
 
 final class RestAPI: Sendable {
 
     private enum Constants {
-        static let sortedBy = "mtime"
         static let deleteBackgroundActionName = "delete"
+        static let restoreBackgroundActionName = "restore"
+        static let renameBackgroundActionName = "move"
     }
 
     private let serverURL: URL
@@ -42,7 +44,10 @@ final class RestAPI: Sendable {
     }
 
     func getNode(uuid: UUID) async throws -> WireCellsNodeNetworkModel {
-        let response = try await NodeServiceAPI.getByUuid(uuid: uuid.uuidString, apiConfiguration: makeConfiguration())
+        let response = try await NodeServiceAPI.getByUuid(
+            uuid: uuid.transportString(),
+            apiConfiguration: makeConfiguration()
+        )
         guard let dto = response.toDTO() else {
             throw WireCellsNodesAPIError.failedToDecodeNode
         }
@@ -52,32 +57,11 @@ final class RestAPI: Sendable {
     func getNodes(
         _ request: WireCellsGetNodesRequest
     ) async throws -> (nodes: [WireCellsNodeNetworkModel], nextOffset: Int?) {
-        let request = RestLookupRequest(
-            filters: RestLookupFilter(
-                status: LookupFilterStatusFilter(
-                    deleted: StatusFilterDeletedStatus(request.filter.deletionStatus),
-                    isDraft: false
-                ),
-                text: LookupFilterTextSearch(searchIn: .baseName, term: request.filter.text ?? "*"),
-                type: TreeNodeType(request.filter.type)
-            ),
-            flags: [.withPreSignedURLs],
-            limit: "\(request.limit)",
-            offset: "\(request.offset)",
-            query: request.query.map { query in
-                let nodeIDs = query.nodeIDs?.compactMap { $0.uuidString.lowercased() }
-                return TreeQuery(uUIDs: nodeIDs)
-            },
-            scope: RestLookupScope(
-                recursive: request.scope.isRecursive,
-                root: request.scope.root.map { RestNodeLocator($0) }
-            ),
-            sortDirDesc: true,
-            sortField: Constants.sortedBy
-        )
-
         do {
-            let collection = try await NodeServiceAPI.lookup(body: request, apiConfiguration: makeConfiguration())
+            let collection = try await NodeServiceAPI.lookup(
+                body: request.lookupRequest,
+                apiConfiguration: makeConfiguration()
+            )
             let nodes = collection.nodes?.compactMap { $0.toDTO() } ?? []
             let nextOffset = collection.pagination?.nextOffset
 
@@ -88,11 +72,61 @@ final class RestAPI: Sendable {
                 if let urlError = error as? URLError, urlError.code == .cancelled {
                     throw CancellationError()
                 } else {
-                    throw sdkError
+                    throw sdkError.underlyingError
                 }
             }
-        } catch {
-            throw error
+        }
+    }
+
+    func getEditorURL(id: UUID) async throws -> (url: URL, date: Date)? {
+        do {
+            let response = try await NodeServiceAPI.getByUuid(
+                uuid: id.transportString(),
+                flags: [.withEditorURLs],
+                apiConfiguration: makeConfiguration()
+            )
+            return response.editorURLs?["collabora"]?.info
+        } catch let error as ErrorResponse {
+            throw error.underlyingError
+        }
+    }
+
+    /// Renames a node.
+    ///
+    /// - Parameters:
+    ///  - nodeID: The `UUID`s of the node to rename.
+    ///  - targetPath: The new path for the node.
+    ///  - targetIsParent: Whether the `targetPath` is the parent folder of the node.
+    /// - Returns: Whether the renaming was successful.
+
+    func renameNode(nodeID: UUID, targetPath: String, targetIsParent: Bool) async throws -> Bool {
+        let node = RestNodeLocator(uuid: nodeID.uuidString)
+
+        let parameters = RestActionParameters(
+            awaitStatus: .finished,
+            awaitTimeout: "5s",
+            copyMoveOptions: RestActionOptionsCopyMove(
+                targetIsParent: targetIsParent,
+                targetPath: targetPath
+            ),
+            nodes: [node],
+        )
+
+        do {
+            let response = try await NodeServiceAPI.performAction(
+                name: .move,
+                parameters: parameters,
+                apiConfiguration: makeConfiguration()
+            )
+
+            guard
+                let actions = response.backgroundActions,
+                let renameAction = actions.first(where: { $0.name == Constants.renameBackgroundActionName }) else {
+                return false
+            }
+            return renameAction.status == .finished
+        } catch let error as ErrorResponse {
+            throw error.underlyingError
         }
     }
 
@@ -103,7 +137,7 @@ final class RestAPI: Sendable {
     ///  - permanently: Whether to permanently delete the nodes or move them to the recycle bin.
     /// - Returns: Whether the deletion was successful.
     func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool {
-        let nodes = nodeIDs.map { RestNodeLocator(uuid: $0.uuidString) }
+        let nodes = nodeIDs.map { RestNodeLocator(uuid: $0.transportString()) }
         let parameters = RestActionParameters(
             awaitStatus: .finished,
             awaitTimeout: "60s",
@@ -123,11 +157,32 @@ final class RestAPI: Sendable {
         return deleteAction.status == .finished
     }
 
+    /// Restores nodes from the recycle bin by their `UUID`s.
+    func restoreNodes(nodeIDs: [UUID]) async throws -> Bool {
+        let nodes = nodeIDs.map { RestNodeLocator(uuid: $0.transportString()) }
+        let parameters = RestActionParameters(
+            awaitStatus: .finished,
+            awaitTimeout: "60s",
+            nodes: nodes
+        )
+        let response = try await NodeServiceAPI.performAction(
+            name: .restore,
+            parameters: parameters,
+            apiConfiguration: makeConfiguration()
+        )
+        guard
+            let actions = response.backgroundActions,
+            let restoreAction = actions.first(where: { $0.name == Constants.restoreBackgroundActionName }) else {
+            return false
+        }
+        return restoreAction.status == .finished
+    }
+
     func publishDraft(uuid: UUID, versionID: UUID) async throws {
         let parameters = RestPromoteParameters(publish: true)
         _ = try await NodeServiceAPI.promoteVersion(
-            uuid: uuid.uuidString,
-            versionId: versionID.uuidString,
+            uuid: uuid.transportString(),
+            versionId: versionID.transportString(),
             parameters: parameters,
             apiConfiguration: makeConfiguration()
         )
@@ -135,18 +190,72 @@ final class RestAPI: Sendable {
 
     func deleteVersion(uuid: UUID, versionID: UUID) async throws {
         _ = try await NodeServiceAPI.deleteVersion(
-            uuid: uuid.uuidString,
-            versionId: versionID.uuidString,
+            uuid: uuid.transportString(),
+            versionId: versionID.transportString(),
             apiConfiguration: makeConfiguration()
         )
     }
 
-    func preCheck(path: String) async throws -> WireCellsPreCheckResultDTO {
+    func getVersions(uuid: UUID) async throws -> WireCellsNodeVersionsNetworkModel {
+        let query = RestNodeVersionsFilter(
+            filterBy: .versionsAll,
+            flags: [.withPreSignedURLs],
+            limit: nil,
+            offset: nil,
+            sortDirDesc: true,
+            sortField: nil
+        )
+
+        let response = try await NodeServiceAPI.nodeVersions(
+            uuid: uuid.transportString(),
+            query: query,
+            apiConfiguration: makeConfiguration()
+        )
+
+        guard let dto = response.toDTO() else {
+            throw WireCellsNodesAPIError.failedToDecodeNodeVersions
+        }
+
+        return dto
+    }
+
+    func restoreVersion(uuid: UUID, versionID: UUID) async throws {
+        let parameters = RestPromoteParameters(publish: false)
+        _ = try await NodeServiceAPI.promoteVersion(
+            uuid: uuid.transportString(),
+            versionId: versionID.transportString(),
+            parameters: parameters,
+            apiConfiguration: makeConfiguration()
+        )
+    }
+
+    /// Creates a new folder at the specified path.
+    ///
+    /// - Parameters:
+    ///  - path: The path of the new folder.
+    func createFolder(at path: String) async throws {
+        let request = RestCreateRequest(inputs: [
+            RestIncomingNode(
+                locator: RestNodeLocator(
+                    path: path
+                ),
+                resourceUuid: UUID().transportString(),
+                type: .collection,
+            )
+        ])
+
+        _ = try await NodeServiceAPI.create(
+            body: request,
+            apiConfiguration: makeConfiguration()
+        )
+    }
+
+    func preCheck(path: String, findAvailablePath: Bool = true) async throws -> WireCellsPreCheckResultDTO {
         let request = RestCreateCheckRequest(
-            findAvailablePath: true,
+            findAvailablePath: findAvailablePath,
             inputs: [RestIncomingNode(
                 locator: RestNodeLocator(path: path),
-                type: .leaf
+                type: .unknown
             )]
         )
 
@@ -164,7 +273,7 @@ final class RestAPI: Sendable {
 
     func getPublicLink(uuid: UUID) async throws -> URL {
         let response = try await NodeServiceAPI.getPublicLink(
-            linkUuid: uuid.uuidString,
+            linkUuid: uuid.transportString(),
             apiConfiguration: makeConfiguration()
         )
 
@@ -187,7 +296,7 @@ final class RestAPI: Sendable {
         )
 
         let response = try await NodeServiceAPI.createPublicLink(
-            uuid: uuid.uuidString,
+            uuid: uuid.transportString(),
             publicLinkRequest: request,
             apiConfiguration: makeConfiguration()
         )
@@ -210,7 +319,31 @@ final class RestAPI: Sendable {
     }
 
     func deletePublicLink(uuid: UUID) async throws {
-        _ = try await NodeServiceAPI.deletePublicLink(linkUuid: uuid.uuidString, apiConfiguration: makeConfiguration())
+        _ = try await NodeServiceAPI.deletePublicLink(
+            linkUuid: uuid.transportString(),
+            apiConfiguration: makeConfiguration()
+        )
+    }
+
+    func updateTags(uuid: UUID, tags: [String]) async throws {
+        let update = RestMetaUpdate(
+            operation: .put,
+            userMeta: .init(jsonValue: "\"\(tags.joined(separator: ","))\"", namespace: "usermeta-tags")
+        )
+
+        _ = try await NodeServiceAPI.patchNode(
+            uuid: uuid.uuidString.lowercased(),
+            nodeUpdates: .init(metaUpdates: [update]),
+            apiConfiguration: makeConfiguration()
+        )
+    }
+
+    func getAllTags() async throws -> [String] {
+        let response = try await NodeServiceAPI.listNamespaceValues(
+            namespace: "usermeta-tags",
+            apiConfiguration: makeConfiguration()
+        )
+        return response.values ?? []
     }
 
     private func makeConfiguration() async throws -> CellsSDKAPIConfiguration {
@@ -225,20 +358,6 @@ final class RestAPI: Sendable {
 
 // MARK: - Helpers
 
-private extension StatusFilterDeletedStatus {
-
-    init(_ value: WireCellsNodeDeletionStatus) {
-        switch value {
-        case .deleted:
-            self = .only
-        case .notDeleted:
-            self = .not
-        case .any:
-            self = .any
-        }
-    }
-}
-
 private extension RestNodeLocator {
 
     init(_ value: WireCellsNodeLocator) {
@@ -246,24 +365,10 @@ private extension RestNodeLocator {
         case let .path(path):
             self.init(path: path)
         case let .id(uuid):
-            self.init(uuid: uuid.uuidString.lowercased())
+            self.init(uuid: uuid.transportString())
         }
     }
 
-}
-
-private extension TreeNodeType {
-
-    init(_ value: WireCellsNodeType) {
-        switch value {
-        case .leaf:
-            self = .leaf
-        case .collection:
-            self = .collection
-        case .any:
-            self = .unknown
-        }
-    }
 }
 
 private struct LoggingIntercepter: OpenAPIInterceptor {
@@ -309,5 +414,100 @@ private struct LoggingIntercepter: OpenAPIInterceptor {
             error: error,
             completion: completion
         )
+    }
+}
+
+private extension WireCellsGetNodesRequest {
+
+    var lookupRequest: RestLookupRequest {
+        var request = RestLookupRequest(
+            flags: [.withPreSignedURLs, .withEditorURLs],
+            limit: "\(limit)",
+            offset: "\(offset)",
+        )
+
+        switch configuration {
+        case let .conversationFileView(root, isFoldersEnabled):
+            request.filters = RestLookupFilter(
+                status: LookupFilterStatusFilter(
+                    deleted: .not,
+                    isDraft: false
+                ),
+                type: isFoldersEnabled ? .unknown : .leaf // .unknown includes files (leafs) & folders (collections)
+            )
+            request.scope = RestLookupScope(
+                recursive: isFoldersEnabled ? false : true,
+                root: RestNodeLocator(root)
+            )
+        case let .recycleBinView(root: root, isFoldersEnabled):
+            request.filters = RestLookupFilter(
+                status: LookupFilterStatusFilter(
+                    deleted: .only,
+                    isDraft: false
+                ),
+                type: isFoldersEnabled ? .unknown : .leaf // .unknown includes files (leafs) & folders (collections)
+            )
+            request.scope = RestLookupScope(
+                recursive: !isFoldersEnabled,
+                root: RestNodeLocator(root)
+            )
+        case .filesBrowserView:
+            request.filters = RestLookupFilter(
+                metadata: tags.isEmpty ? [] : [LookupFilterMetaFilter(
+                    namespace: "usermeta-tags",
+                    term: tags.joined(separator: ",")
+                )], status: LookupFilterStatusFilter(
+                    deleted: .not,
+                    isDraft: false
+                ),
+                text: LookupFilterTextSearch(searchIn: .baseName, term: searchTerm ?? "*"),
+                type: .leaf
+            )
+            request.scope = RestLookupScope(
+                recursive: true,
+                root: nil
+            )
+            request.sortDirDesc = true
+            request.sortField = "mtime"
+        case let .moveToFolder(root):
+            request.filters = RestLookupFilter(
+                status: LookupFilterStatusFilter(
+                    deleted: .not,
+                    isDraft: false
+                ),
+                type: .collection
+            )
+            request.scope = RestLookupScope(
+                recursive: false,
+                root: RestNodeLocator(path: root)
+            )
+        }
+        return request
+    }
+
+}
+
+private extension ErrorResponse {
+
+    var underlyingError: any Error {
+        switch self {
+        case let .error(_, _, _, error):
+            error
+        }
+    }
+}
+
+private extension RestPreSignedURL {
+
+    var info: (url: URL, date: Date)? {
+        guard
+            let urlString = url,
+            let url = URL(string: urlString),
+            let expiresAtString = expiresAt,
+            let expiresAtTimeInterval = TimeInterval(expiresAtString)
+        else {
+            return nil
+        }
+        return (url: url, date: Date(timeIntervalSinceNow: expiresAtTimeInterval))
     }
 }

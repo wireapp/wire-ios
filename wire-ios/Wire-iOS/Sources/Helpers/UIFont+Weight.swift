@@ -21,6 +21,7 @@ import UIKit
 extension UIFont {
 
     /// Returns a font object that is the same as the receiver but which has the specified weight
+
     func withWeight(_ weight: Weight) -> UIFont {
 
         // Remove bold trait since we will modify the weight

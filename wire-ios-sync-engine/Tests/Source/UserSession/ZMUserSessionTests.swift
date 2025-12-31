@@ -103,28 +103,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertNil(mocUI?.zm_sync)
     }
 
-    func testThatItNotfiesTheTransportSessionWhenSelfUserClientIsRegistered() {
-        // GIVEN
-        let userClient = syncMOC.performAndWait {
-            self.createSelfClient()
-        }
-
-        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
-        mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
-
-        // WHEN
-        syncMOC.performGroupedBlock { [self] in
-            sut.didRegisterSelfUserClient(userClient)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        syncMOC.performAndWait {
-            XCTAssertEqual(mockPushChannel.clientID, userClient.remoteIdentifier)
-        }
-    }
-
     func testItSlowSyncsAfterRegisteringClient() async throws {
         // GIVEN
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
@@ -382,71 +360,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
     }
 
-    func testThatItNotifiesObserversWhenTheNetworkStatusBecomesOnline() {
-        // GIVEN
-        let stateRecorder = NetworkStateRecorder()
-        sut.didGoOffline()
-        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
-        XCTAssertEqual(sut.networkState, .offline)
-
-        // WHEN
-        stateRecorder.observe(in: sut.managedObjectContext.notificationContext)
-        sut.didReceiveData()
-
-        // THEN
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(stateRecorder.stateChanges.count, 1)
-        XCTAssertEqual(stateRecorder.stateChanges.first, .onlineSynchronizing)
-    }
-
-    func testThatItDoesNotNotifiesObserversWhenTheNetworkStatusWasAlreadyOnline() {
-        // GIVEN
-        // Update the network state to online
-        sut.isPerformingSync = false
-        sut.updateNetworkState()
-
-        let stateRecorder = NetworkStateRecorder()
-        stateRecorder.observe(in: sut.managedObjectContext.notificationContext)
-        XCTAssertEqual(stateRecorder.stateChanges.count, 0)
-
-        // WHEN
-        sut.didReceiveData()
-
-        // THEN
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(stateRecorder.stateChanges.count, 0)
-    }
-
-    func testThatItNotifiesObserversWhenTheNetworkStatusBecomesOffline() {
-        // GIVEN
-        let stateRecorder = NetworkStateRecorder()
-        stateRecorder.observe(in: sut.managedObjectContext.notificationContext)
-
-        // WHEN
-        sut.didGoOffline()
-
-        // THEN
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(stateRecorder.stateChanges.count, 1)
-        XCTAssertEqual(stateRecorder.stateChanges.first, .offline)
-    }
-
-    func testThatItDoesNotNotifiesObserversWhenTheNetworkStatusWasAlreadyOffline() {
-        // GIVEN
-        let stateRecorder = NetworkStateRecorder()
-
-        sut.didGoOffline()
-        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
-
-        // WHEN
-        stateRecorder.observe(in: sut.managedObjectContext.notificationContext)
-        sut.didGoOffline()
-
-        // THEN
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(stateRecorder.stateChanges.count, 0)
-    }
-
     func testThatItSetsTheMinimumBackgroundFetchInterval() {
         XCTAssertNotEqual(application.minimumBackgroundFetchInverval, UIApplication.backgroundFetchIntervalNever)
         XCTAssertGreaterThanOrEqual(
@@ -485,7 +398,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             self.sut.featureRepository.storeMLS(mls)
         }
         mockMLSService.performPendingJoins_MockMethod = {}
-        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
@@ -523,7 +435,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
         XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
         XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
-        XCTAssertFalse(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
 
         XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
 
@@ -542,7 +453,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         }
 
         mockMLSService.performPendingJoins_MockMethod = {}
-        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
         mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_MockMethod = { _ in }

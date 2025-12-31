@@ -93,6 +93,7 @@ extension ZMSearchUser: SearchServiceUser {
 
 @objc
 public class ZMSearchUser: NSObject, UserType {
+
     public var providerIdentifier: String?
     public var summary: String?
     public var assetKeys: SearchUserAssetKeys?
@@ -208,9 +209,15 @@ public class ZMSearchUser: NSObject, UserType {
         return user.teamRole
     }
 
-    public var isServiceUser: Bool {
-        providerIdentifier != nil
+    public var isApp: Bool {
+        false // Apps (new-style services) don't use ZMSearchUser
     }
+
+    public var isBot: Bool {
+        providerIdentifier?.isEmpty == false
+    }
+
+    public var isAppOrBot: Bool { isBot }
 
     public var usesCompanyLogin: Bool {
         user?.usesCompanyLogin == true
@@ -474,7 +481,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     @objc
-    public init(
+    public required init(
         contextProvider: ContextProvider,
         name: String,
         handle: String?,
@@ -650,7 +657,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     @objc public var canBeConnected: Bool {
-        guard !isServiceUser else { return false }
+        guard !isAppOrBot else { return false }
 
         if let user {
             return user.canBeConnected

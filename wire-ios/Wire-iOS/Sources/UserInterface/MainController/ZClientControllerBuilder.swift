@@ -17,6 +17,7 @@
 //
 
 import WireCallingAssembly
+import WireCommonComponents
 import WireData
 @preconcurrency import WireDataModel
 import WireMessagingAssembly
@@ -59,14 +60,20 @@ struct ZClientControllerBuilder {
             // TODO: [WPB-18798] Temporary fix, when multibackend is on we use new backend environment, when off we use the legacy one
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
-            contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider)
+            contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider),
+            isFoldersEnabled: DeveloperFlag.wireCellsFolders.isOn,
+            isCollaboraEnabled: DeveloperFlag.wireCellsCollabora.isOn
         )
     }
 
     @MainActor
     private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
-        WireMeetingsFactory()
+        WireMeetingsFactory(
+            passwordValidator: AuthenticationPasswordValidator(),
+            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
+        )
     }
+
 }
 
 private struct DefaultAccessTokenProvider: AccessTokenProvider {
@@ -88,6 +95,7 @@ private struct DefaultAccessTokenProvider: AccessTokenProvider {
             expirationDate: token.expirationDate
         )
     }
+
 }
 
 extension FileAssetCache: WireMessagingDomain.FileCache, @unchecked @retroactive Sendable {}

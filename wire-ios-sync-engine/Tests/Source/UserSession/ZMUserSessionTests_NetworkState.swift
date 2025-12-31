@@ -32,13 +32,12 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         // given
         let userId = NSUUID.create()!
 
-        mockPushChannel = MockPushChannel()
         cookieStorage = ZMPersistentCookieStorage(
             forServerName: "usersessiontest.example.com",
             userIdentifier: userId,
             useCache: true
         )
-        let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
+        let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage)
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
         let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
@@ -46,7 +45,6 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         coreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         coreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
         coreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
-        let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         let coreDataStack = try await createCoreDataStack()
         let selfClient = coreDataStack.syncContext.performAndWait {
             self.setupSelfClient(inMoc: coreDataStack.syncContext)
@@ -70,7 +68,6 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             currentAppVersion: "3.120.0",
             currentBuildNumber: "00000",
             application: application,
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: coreDataStack,
             coreCryptoProvider: coreCryptoProvider,
             configuration: configuration,
@@ -102,10 +99,6 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
         // then
         XCTAssertTrue(self.transportSession.didCallSetNetworkStateDelegate)
-        XCTAssertEqual(mockPushChannel.keepOpen, true)
-        coreDataStack.syncContext.performAndWait {
-            XCTAssertEqual(mockPushChannel.clientID, selfClient.remoteIdentifier)
-        }
         testSession.tearDown()
     }
 }

@@ -32,15 +32,15 @@ class FirstTimePage: PageModel {
     }
 
     var okButton: XCUIElement {
-        app.buttons[Locators.FirstTimePage.okButton.rawValue]
+        app.buttons[Locators.FirstTimePage.okButton.rawValue].firstMatch
     }
 
     var savePasswordSheet: XCUIElement {
-        app.staticTexts["Save Password?"]
+        app.staticTexts[Locators.FirstTimePage.savePasswordSheet.rawValue]
     }
 
     var notNowOptionOnSavePasswordSheet: XCUIElement {
-        app.buttons["Not Now"]
+        app.buttons[Locators.FirstTimePage.notNowOption.rawValue]
     }
 
     var handler: (XCTestCase, any NSObjectProtocol)?
@@ -49,6 +49,7 @@ class FirstTimePage: PageModel {
     func acceptFirstTimeAlert() -> FirstTimePage {
         dismissSavePasswordAlertIfPresent()
         okButton.tap()
+        okButton.waitToDisappear()
         return self
     }
 

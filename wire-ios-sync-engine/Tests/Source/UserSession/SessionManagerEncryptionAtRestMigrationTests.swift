@@ -96,7 +96,7 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
             ModelHelper().createSelfClient(in: syncMOC)
             syncMOC.saveOrRollback()
         }
-        try userSession.viewContext.saveOrRollback()
+        userSession.viewContext.saveOrRollback()
     }
 
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2

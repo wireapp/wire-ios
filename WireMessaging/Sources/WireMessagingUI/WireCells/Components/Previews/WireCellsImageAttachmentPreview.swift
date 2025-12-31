@@ -25,10 +25,12 @@ struct WireCellsImageAttachmentPreview: View {
     let progress: Double?
     let isError: Bool
 
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
     var body: some View {
         WireCellsAttachmentPreview(
             progress: progress,
-            progressColor: isError ? ColorTheme.Base.error.color : ColorTheme.Base.primary.color
+            progressColor: isError ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
         ) {
             ZStack(alignment: .center) {
                 if let thumbnail {

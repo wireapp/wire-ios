@@ -127,10 +127,14 @@ extension ConversationEventNotificationBuilder {
                 domain: senderID.domain
             ).isSelfUser) ?? false
 
+            let isSelfConversation = await conversationLocalStore.isSelfConversation(conversation)
+            // Reject events from self user, except in self-conversation (e.g., calling "answered elsewhere")
+            let shouldAllowSender = isSenderSelfUser ? isSelfConversation : true
+
             let eventTimeStamp = time
             let lastReadTimestamp = await conversationLocalStore.lastReadServerTimestamp(conversation)
 
-            guard !isSenderSelfUser,
+            guard shouldAllowSender,
                   !isConversationMuted else {
                 return false
             }

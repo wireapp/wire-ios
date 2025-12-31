@@ -48,7 +48,7 @@ extension UIView {
 extension ConversationContentViewController: ConversationMessageCellDelegate {
 
     func conversationMessageCell(
-        _ contentView: any ConversationMessageCell,
+        _ contentView: UIView,
         present viewController: UIViewController
     ) {
         if let popoverPresentationController = viewController.popoverPresentationController {
@@ -100,7 +100,8 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
             preferredDisplayMode: preferredDisplayMode,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         let navigationController = UINavigationController(rootViewController: messageDetailsViewController)
         navigationController.modalPresentationStyle = .formSheet

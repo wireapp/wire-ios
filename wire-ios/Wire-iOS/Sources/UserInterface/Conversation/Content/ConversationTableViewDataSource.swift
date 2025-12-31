@@ -55,7 +55,13 @@ final class ConversationTableViewDataSource: NSObject {
 
     var registeredCells: [AnyClass] = []
 
-    var sectionControllers = ThreadSafeDictionary<UUID, ConversationMessageSectionController>()
+    /// Cache for section controllers, keyed by message identifier
+    ///
+    /// The identifier includes both nonce and deliveryState to ensure proper cache invalidation
+    /// when a message's delivery state changes (e.g., from `.pending` to `.sent`).
+    ///
+    /// See `MessageCacheIdentifier` for implementation details.
+    var sectionControllers = ThreadSafeDictionary<MessageCacheIdentifier, ConversationMessageSectionController>()
 
     private(set) var hasOlderMessagesToLoad = false
     private(set) var hasNewerMessagesToLoad = false
@@ -75,7 +81,7 @@ final class ConversationTableViewDataSource: NSObject {
     weak var messageActionResponder: MessageActionResponder?
     private let getUserByIDUseCase: GetUserByIDUseCaseProtocol
 
-    let debouncer = LeadingTrailingDebouncer<UUID>(cooldownTime: 0.3)
+    let debouncer = LeadingTrailingDebouncer(cooldownTime: 0.3)
 
     var contentWidth: CGFloat = UIScreen.main.bounds.width {
         didSet {
@@ -106,8 +112,6 @@ final class ConversationTableViewDataSource: NSObject {
     }
 
     private(set) var currentSections: [Section] = []
-
-    private let isChatBubbleSimpleEnabled: Bool
 
     private let wireMessagingFactory: any WireMessagingFactoryProtocol
 
@@ -154,7 +158,17 @@ final class ConversationTableViewDataSource: NSObject {
             }
 
             // Go through messages and calculate sections
-            let result = messages.enumerated().map { offset, element in
+            let result: [(
+                MessageCacheIdentifier,
+                ConversationMessageSectionController,
+                ConversationMessageContext
+            )] = messages.enumerated().compactMap { offset, element in
+
+                // Create a cache identifier that includes deliveryState to invalidate the cache on state change
+                guard let identifier = MessageCacheIdentifier(message: element) else {
+                    return nil
+                }
+
                 let context = self.context(
                     for: element,
                     at: offset,
@@ -163,10 +177,11 @@ final class ConversationTableViewDataSource: NSObject {
                     messages: messages
                 )
 
-                let sectionController = if let nonce = element.nonce,
-                                           let cachedSectionController = self.sectionControllers.get(for: nonce) {
+                let sectionController = if let cachedSectionController = self.sectionControllers.get(for: identifier) {
+                    // Cache hit - reuse existing section controller
                     cachedSectionController
                 } else {
+                    // Cache miss - create new section controller with fresh cell descriptions
                     self.makeSectionController(
                         message: element,
                         index: offset,
@@ -178,18 +193,18 @@ final class ConversationTableViewDataSource: NSObject {
 
                 // Re-create cell description if the context has changed (message has been moved around
                 // or received new neighbours).
-                return (element.nonce!, sectionController, context)
+                return (identifier, sectionController, context)
             }
 
             // Return back to main thread
             DispatchQueue.main.async {
                 var sections = [Section]()
 
-                for (messageObjectId, sectionController, context) in result {
+                for (identifier, sectionController, context) in result {
 
                     // saving calculations result in local cache
-                    self.sectionControllers.set(value: sectionController, for: messageObjectId)
-                    self.actionControllers.set(value: sectionController.actionController, for: messageObjectId)
+                    self.sectionControllers.set(value: sectionController, for: identifier)
+                    self.actionControllers.set(value: sectionController.actionController, for: identifier.nonce)
 
                     // Re-set messages from Main thread to section controller to not have crash with later interactions
                     // with data
@@ -216,8 +231,10 @@ final class ConversationTableViewDataSource: NSObject {
                         sectionController.recreateCellDescriptions(in: context)
                     }
 
+                    // Section model uses nonce for DifferenceKit identity (not cache identifier)
+                    // This ensures the same message is recognized as the same section across delivery state changes.
                     sections.append(ArraySection(
-                        model: messageObjectId,
+                        model: identifier.nonce,
                         elements: sectionController.tableViewCellDescriptions
                     ))
                 }
@@ -241,17 +258,6 @@ final class ConversationTableViewDataSource: NSObject {
               let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
         else { return currentSections }
 
-        for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
-            // workaround: this loop might add a status view to a message, which is removed again later, so skip
-            if description.instance is ConversationMessageToolboxCellDescription {
-                continue
-            }
-            if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
-                cell.accessibilityCustomActions = sectionController.actionController?.makeAccessibilityActions()
-                description.configureCell(cell, animated: true)
-            }
-        }
-
         let messages = allMessages
 
         let context = context(
@@ -263,6 +269,17 @@ final class ConversationTableViewDataSource: NSObject {
         )
 
         sectionController.recreateCellDescriptions(in: context)
+
+        for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
+            // workaround: this loop might add a status view to a message, which is removed again later, so skip
+            if description.instance is ConversationMessageToolboxCellDescription {
+                continue
+            }
+            if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
+                cell.accessibilityCustomActions = sectionController.actionController?.makeAccessibilityActions()
+                description.configureCell(cell, animated: true)
+            }
+        }
 
         var updatedSections = currentSections
         updatedSections[section] = ArraySection(
@@ -294,7 +311,6 @@ final class ConversationTableViewDataSource: NSObject {
         self.tableView = tableView
         self.userSession = userSession
         self.getUserByIDUseCase = getUserByIDUseCase
-        self.isChatBubbleSimpleEnabled = userSession.isChatBubbleSimpleEnabled
         self.wireMessagingFactory = wireMessagingFactory
         self.cellProvider = conversationCellProvider
 
@@ -372,7 +388,7 @@ final class ConversationTableViewDataSource: NSObject {
             userSession: userSession,
             useInvertedIndices: true,
             contentWidth: contentWidth,
-            isChatBubbleSimpleEnabled: isChatBubbleSimpleEnabled
+            wireMessagingFactory: wireMessagingFactory
         )
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
@@ -391,8 +407,9 @@ final class ConversationTableViewDataSource: NSObject {
         selfUser: any UserType,
         messages: [ZMMessage]
     ) -> ConversationMessageSectionController {
-        if let nonce = message.nonce,
-           let cachedEntry = sectionControllers.get(for: nonce) {
+        let identifier = MessageCacheIdentifier(message: message)
+
+        if let identifier, let cachedEntry = sectionControllers.get(for: identifier) {
             cachedEntry.contentWidth = contentWidth
             return cachedEntry
         }
@@ -405,8 +422,8 @@ final class ConversationTableViewDataSource: NSObject {
             firstUnreadMessageNonce: firstUnreadMessage?.nonce
         )
 
-        if let nonce = message.nonce {
-            sectionControllers.set(value: sectionController, for: nonce)
+        if let identifier {
+            sectionControllers.set(value: sectionController, for: identifier)
         }
 
         return sectionController
@@ -684,7 +701,10 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     }
 
     func collapse(message: ZMConversationMessage) {
-        guard let nonce = message.nonce, let section = sectionControllers.get(for: nonce) else {
+        guard
+            let identifier = MessageCacheIdentifier(message: message),
+            let section = sectionControllers.get(for: identifier)
+        else {
             return
         }
         section.collapse()
@@ -722,8 +742,24 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
 
         let cellDescription = section.elements[indexPath.row]
         if let model = cellDescription.conversationCellModel {
+            return cellProvider.provideCell(
+                for: model,
+                tableView: tableView,
+                indexPath: indexPath,
+                onLongPress: { [weak self] cell in
+                    guard let actionController = cellDescription.actionController else { return }
 
-            return cellProvider.provideCell(for: model, tableView: tableView, indexPath: indexPath)
+                    let messageActionController = MessageActionsViewController.controller(
+                        withActions: MessageAction.allCases,
+                        actionController: actionController
+                    )
+
+                    self?.conversationCellDelegate?.conversationMessageCell(
+                        cell,
+                        present: messageActionController
+                    )
+                }
+            )
 
         } else {
 

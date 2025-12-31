@@ -18,7 +18,6 @@
 
 @import WireTransport;
 @import WireUtilities;
-@import WireCryptobox;
 
 #import "MockConversation.h"
 #import "MockEvent.h"
@@ -262,17 +261,6 @@
                                 @"text": [data base64EncodedStringWithOptions:0]
                                 };
     return [self eventIfNeededByUser:fromClient.user type:ZMUpdateEventTypeConversationOtrMessageAdd data:eventData];
-}
-
-- (MockEvent *)encryptAndInsertDataFromClient:(MockUserClient *)fromClient
-                                     toClient:(MockUserClient *)toClient
-                                         data:(NSData *)data;
-{
-    Require(fromClient.identifier != nil);
-    Require(toClient.identifier != nil);
-    Require(data != nil);
-    NSData *encrypted = [MockUserClient encryptedWithData:data from:fromClient to:toClient];
-    return [self insertOTRMessageFromClient:fromClient toClient:toClient data:encrypted];
 }
 
 - (MockEvent *)insertOTRAssetFromClient:(MockUserClient *)fromClient

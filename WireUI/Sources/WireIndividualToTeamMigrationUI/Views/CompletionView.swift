@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 
 struct CompletionView: View {
 
@@ -40,13 +41,14 @@ struct CompletionView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text(String.formated(key: "individualToTeam.completion.body", bundle: .module, teamName))
-                .wireTextStyle(.body1)
+                .font(for: .body1)
             Spacer()
 
             Button(
                 action: { actionCallback(.goBack) },
                 label: { Text(String.localized(key: "individualToTeam.completion.button.backToApp", bundle: .module)) }
             )
+            .accessibilityIdentifier(Locators.TeamSetupStepsPage.backToWireButton.rawValue)
             .wireButtonStyle(.secondary)
 
             Button(

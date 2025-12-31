@@ -108,7 +108,13 @@ final class StartUIViewController: UIViewController {
     }
 
     var showsGroupSelector: Bool {
-        isAppsFeatureEnabled && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
+        guard DeveloperFlag.considerAppsFeatureFlag.isOn else {
+            return SearchGroup.all.count > 1 &&
+                userSession.selfUser.canSeeServices &&
+                userSession.defaultProtocol != .mls
+        }
+
+        return isAppsFeatureEnabled && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
     }
 
     // MARK: - Init
@@ -123,7 +129,8 @@ final class StartUIViewController: UIViewController {
         mainCoordinator: AnyMainCoordinator,
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
         channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.isAppsFeatureEnabled = isAppsFeatureEnabled
         self.isFederationEnabled = userSession.resolvedBackendMetadata.isFederationEnabled
@@ -141,7 +148,8 @@ final class StartUIViewController: UIViewController {
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.profilePresenter = .init(
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         super.init(nibName: nil, bundle: nil)
 
@@ -312,13 +320,17 @@ final class StartUIViewController: UIViewController {
     // MARK: - Navigation methods
 
     private func navigateToConversationCreation() {
-        let conversationCreationController = createGroupConversationUIBuilder.build()
-        navigationController?.pushViewController(conversationCreationController, animated: true)
+        Task {
+            let conversationCreationController = await createGroupConversationUIBuilder.build()
+            navigationController?.pushViewController(conversationCreationController, animated: true)
+        }
     }
 
     private func navigateToChannelCreation() {
-        let vc = channelConversationFormFactory.create(userSession: userSession)
-        navigationController?.pushViewController(vc, animated: true)
+        Task {
+            let vc = await channelConversationFormFactory.create(userSession: userSession)
+            navigationController?.pushViewController(vc, animated: true)
+        }
     }
 
     /// Checks whether a channel can be created, conditions are:
@@ -366,7 +378,6 @@ final class StartUIViewController: UIViewController {
                 .edgesIgnoringSafeArea(.all)
             banner
         }
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         let hostingController = UIHostingController(rootView: rootView)
         hostingController.view.backgroundColor = .clear

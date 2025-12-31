@@ -22,36 +22,39 @@ public enum DeveloperFlag: String, CaseIterable {
 
     public static var storage = UserDefaults.standard
 
-    case createLegacyBackups
-    case showCreateMLSGroupToggle
-    case proteusViaCoreCrypto
-    case forceDatabaseLoadingFailure
-    case ignoreIncomingEvents
-    case skipMLSMessagesDecryption
-    case debugDuplicateObjects
-    case decryptAndStoreEventsSleep
-    case forceCRLExpiryAfterOneMinute
-    case useWireAuthentication
-    case disablePushChannelBatching
-    case multibackend
-    case newRegistration
-    case showUnreadConversationsFilter
     case channelsHistory
     case chatBubbles
-    case chatBubblesSimple
+    case considerAppsFeatureFlag
     case consumableNotifications
+    case createLegacyBackups
+    case debugDuplicateObjects
+    case decryptAndStoreEventsSleep
+    case disablePushChannelBatching
+    case forceCRLExpiryAfterOneMinute
+    case forceDatabaseLoadingFailure
+    case ignoreIncomingEvents
+    case multibackend
+    case newRegistration
+    case showCreateMLSGroupToggle
+    case showUnreadConversationsFilter
+    case skipMLSMessagesDecryption
+    case useWireAuthentication
+    case wireCellsFolders
     case wireMeetings
+    case wireCellsCollabora
 
     public var description: String {
         switch self {
+        case .considerAppsFeatureFlag:
+            "Apps are not fully supported by the backend yet (e.g. no search endpoint available yet). However, some " +
+                "customers already have the apps feature flag enabled as a workaround for another issue." +
+                "If this toggle is off, the apps feature flag is ignored. Toggle it on for development."
+
         case .createLegacyBackups:
             "Don't use the cross-platform library when creating backups."
 
         case .showCreateMLSGroupToggle:
             "Turn on to show the MLS toggle when creating a new group."
-
-        case .proteusViaCoreCrypto:
-            "Turn on to use CoreCrypto for proteus messaging."
 
         case .forceDatabaseLoadingFailure:
             "Turn on to force database loading failure in the process of database migration"
@@ -92,14 +95,17 @@ public enum DeveloperFlag: String, CaseIterable {
         case .chatBubbles:
             "Show conversation messages as chat bubbles"
 
-        case .chatBubblesSimple:
-            "Turn on the simplified version of chat bubbles"
-
         case .consumableNotifications:
             "Turn on to enable consumable notifications"
 
         case .wireMeetings:
             "Turn on to enable Wire meetings"
+
+        case .wireCellsFolders:
+            "Turn on to enable Wire Cells folders"
+
+        case .wireCellsCollabora:
+            "Turn on to enable Collabora file editing in Wire Cells"
         }
     }
 
@@ -130,8 +136,6 @@ public enum DeveloperFlag: String, CaseIterable {
         switch self {
         case .createLegacyBackups:
             "CreateLegacyBackupsEnabled"
-        case .proteusViaCoreCrypto:
-            "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:

@@ -65,7 +65,9 @@
 @property (nonatomic, readwrite) NSUInteger totalCommonConnections;
 @property (nonatomic, readwrite) NSTimeInterval expiresAfter;
 @property (nonatomic, assign) BOOL isSelfUser;
-@property (nonatomic, assign) BOOL isServiceUser;
+@property (nonatomic, assign) BOOL isApp;
+@property (nonatomic, assign) BOOL isBot;
+@property (nonatomic, assign) BOOL isAppOrBot;
 @property (nonatomic, readwrite) BOOL isTeamMember;
 @property (nonatomic, readwrite) TeamRole teamRole;
 @property (nonatomic, assign) BOOL isGuestInConversation;

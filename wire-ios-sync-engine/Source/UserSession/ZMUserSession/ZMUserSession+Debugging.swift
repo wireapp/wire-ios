@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireCryptobox
 
 extension ZMUserSession {
 
@@ -50,7 +49,6 @@ extension ZMUserSession {
 
     static func initDebugCommands() -> [String: DebugCommand] {
         let commands = [
-            DebugCommandLogEncryption(),
             DebugCommandShowIdentifiers(),
             DebugCommandHelp(),
             DebugCommandVariables()
@@ -153,113 +151,6 @@ public enum DebugCommandResult {
 
 // MARK: - Command execution
 
-private extension EncryptionSessionIdentifier {
-
-    init?(string: String) {
-        let split = string.split(separator: "_")
-        guard split.count == 2 else { return nil }
-        let user = String(split[0])
-        let client = String(split[1])
-        self.init(userId: user, clientId: client)
-    }
-}
-
-private class DebugCommandLogEncryption: DebugCommandMixin {
-
-    var currentlyEnabledLogs: Set<EncryptionSessionIdentifier> = Set()
-
-    private var usage: String {
-        "\(keyword) <add|remove|list> <sessionId|all>"
-    }
-
-    init() {
-        super.init(keyword: "logEncryption")
-    }
-
-    override func execute(
-        arguments: [String],
-        userSession: ZMUserSession,
-        state: [String: Any],
-        onComplete: @escaping ((DebugCommandResult) -> Void)
-    ) {
-        defer {
-            saveEnabledLogs(userSession: userSession)
-        }
-
-        if arguments.first == "list" {
-            return onComplete(.success(
-                info:
-                "Enabled:\n" +
-                    currentlyEnabledLogs
-                    .map(\.rawValue)
-                    .joined(separator: "\n")
-            ))
-        }
-
-        guard arguments.count == 2,
-              arguments[0] == "add" || arguments[0] == "remove"
-        else {
-            return onComplete(.failure(error: "usage: \(usage)"))
-        }
-
-        let isAdding = arguments[0] == "add"
-        let subject = arguments[1]
-
-        userSession.syncManagedObjectContext.perform {
-            // swiftlint:disable:next todo_requires_jira_link
-            // TODO: [John] use flag here
-            guard let keyStore = userSession.syncManagedObjectContext.zm_cryptKeyStore else {
-                return onComplete(.failure(error: "No encryption context"))
-            }
-
-            if !isAdding, subject == "all" {
-                keyStore.encryptionContext.disableExtendedLoggingOnAllSessions()
-                self.currentlyEnabledLogs = Set()
-                return onComplete(.success(info: "all removed"))
-            }
-
-            guard let identifier = EncryptionSessionIdentifier(string: subject) else {
-                return onComplete(.failure(error: "Invalid id \(subject)"))
-            }
-
-            if isAdding {
-                self.currentlyEnabledLogs.insert(identifier)
-            } else {
-                self.currentlyEnabledLogs.remove(identifier)
-            }
-
-            keyStore.encryptionContext.setExtendedLogging(identifier: identifier, enabled: isAdding)
-            return onComplete(.success(info: "Added logging for identifier \(identifier)"))
-        }
-    }
-
-    private let logsKey = "enabledLogs"
-
-    private func saveEnabledLogs(userSession: ZMUserSession) {
-        let idsToSave = currentlyEnabledLogs.map(\.rawValue)
-        saveState(userSession: userSession, state: [logsKey: idsToSave])
-    }
-
-    override func restoreFromState(
-        userSession: ZMUserSession,
-        state: [String: Any]
-    ) {
-        guard let logs = state[logsKey] as? [String] else { return }
-        currentlyEnabledLogs = Set(logs.compactMap {
-            EncryptionSessionIdentifier(string: $0)
-        })
-        userSession.syncManagedObjectContext.performGroupedBlock {
-            guard let keyStore = userSession.syncManagedObjectContext.zm_cryptKeyStore else {
-                return
-            }
-
-            self.currentlyEnabledLogs.forEach {
-                keyStore.encryptionContext.setExtendedLogging(identifier: $0, enabled: true)
-            }
-        }
-    }
-}
-
 /// Show the user and client identifier
 private class DebugCommandShowIdentifiers: DebugCommandMixin {
 
@@ -285,7 +176,7 @@ private class DebugCommandShowIdentifiers: DebugCommandMixin {
             info:
             "User: \(user.remoteIdentifier.uuidString)\n" +
                 "Client: \(client.remoteIdentifier ?? "-")\n" +
-                "Session: \(client.sessionIdentifier?.rawValue ?? "-")"
+                "Session: \(client.proteusSessionID?.rawValue ?? "-")"
         ))
     }
 }

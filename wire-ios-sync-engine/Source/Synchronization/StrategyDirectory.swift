@@ -29,6 +29,7 @@ public protocol StrategyDirectoryProtocol {
     var eventAsyncConsumers: [ZMEventAsyncConsumer] { get }
     var requestStrategies: [RequestStrategy] { get }
     var contextChangeTrackers: [ZMContextChangeTracker] { get }
+    var clientContextChangeTrackers: [ZMContextChangeTracker] { get }
 
 }
 
@@ -40,6 +41,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     public private(set) var eventConsumers: [ZMEventConsumer]
     public private(set) var eventAsyncConsumers: [ZMEventAsyncConsumer]
     public private(set) var contextChangeTrackers: [ZMContextChangeTracker]
+    public private(set) var clientContextChangeTrackers: [ZMContextChangeTracker] = []
     public private(set) var initiateResetMLSConversationUseCaseFactory: (NSManagedObjectContext) -> WireRequestStrategy
         .InitiateResetMLSConversationUseCaseProtocol
 
@@ -53,7 +55,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         localNotificationDispatcher: LocalNotificationDispatcher,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
-        proteusProvider: ProteusProviding,
+        proteusService: ProteusServiceInterface,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
@@ -72,7 +74,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             localNotificationDispatcher: localNotificationDispatcher,
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
-            proteusProvider: proteusProvider,
+            proteusService: proteusService,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
             pullSelfUserClientsFactory: pullSelfUserClientsFactory,
@@ -113,7 +115,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         localNotificationDispatcher: LocalNotificationDispatcher,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
-        proteusProvider: ProteusProviding,
+        proteusService: ProteusServiceInterface,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
@@ -143,7 +145,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
                 context: syncMOC,
-                proteusProvider: proteusProvider
+                proteusService: proteusService
             ),
             ZMMissingUpdateEventsTranscoder(
                 managedObjectContext: syncMOC,
@@ -472,16 +474,16 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             self.requestStrategies.append(contentsOf: strategies.compactMap { $0 as? RequestStrategy })
             self.eventConsumers.append(contentsOf: strategies.compactMap { $0 as? ZMEventConsumer })
             self.eventAsyncConsumers.append(contentsOf: strategies.compactMap { $0 as? ZMEventAsyncConsumer })
-            self.contextChangeTrackers
-                .append(contentsOf: strategies.flatMap { (object: Any) -> [ZMContextChangeTracker] in
-                    if let source = object as? ZMContextChangeTrackerSource {
-                        return source.contextChangeTrackers
-                    } else if let tracker = object as? ZMContextChangeTracker {
-                        return [tracker]
-                    } else {
-                        return []
-                    }
-                })
+            self.clientContextChangeTrackers = strategies.flatMap { (object: Any) -> [ZMContextChangeTracker] in
+                if let source = object as? ZMContextChangeTrackerSource {
+                    return source.contextChangeTrackers
+                } else if let tracker = object as? ZMContextChangeTracker {
+                    return [tracker]
+                } else {
+                    return []
+                }
+            }
+            self.contextChangeTrackers.append(contentsOf: clientContextChangeTrackers)
         }
     }
 

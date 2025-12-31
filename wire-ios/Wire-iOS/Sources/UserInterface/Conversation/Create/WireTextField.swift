@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 
 class WireTextField: ContextMenuControllableUITextField {
 
@@ -87,7 +88,7 @@ class WireTextField: ContextMenuControllableUITextField {
     private func setupTextFieldProperties() {
         returnKeyType = .next
         autocapitalizationType = .words
-        accessibilityIdentifier = "NameField"
+        accessibilityIdentifier = Locators.CreateGroupPage.groupNameField.rawValue
         autocorrectionType = .no
         contentVerticalAlignment = .center
         font = .font(for: .body1)

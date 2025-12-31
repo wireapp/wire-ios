@@ -34,5 +34,4 @@ func confirmationPreview() -> some View {
         stepCount: 4,
         stepTitle: String.localized(key: "individualToTeam.confirmation.title", bundle: .module)
     )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

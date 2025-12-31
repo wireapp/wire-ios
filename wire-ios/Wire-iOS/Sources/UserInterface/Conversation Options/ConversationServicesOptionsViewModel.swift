@@ -20,10 +20,16 @@ import UIKit
 import WireUtilities
 
 protocol ConversationServicesOptionsViewModelConfiguration: AnyObject {
-    var allowServices: Bool { get }
-    var areServicePresent: Bool { get }
-    var allowServicesChangedHandler: ((Bool) -> Void)? { get set }
-    func setAllowServices(_ allowServices: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+
+    /// `true` if apps can be participants of the conversation, `false` otherwise.
+
+    var allowApps: Bool { get }
+
+    var areAppsPresent: Bool { get }
+    var allowAppsChangedHandler: ((Bool) -> Void)? { get set }
+
+    func setAllowApps(_ allowApps: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+
 }
 
 protocol ConversationServicesOptionsViewModelDelegate: AnyObject {
@@ -43,6 +49,7 @@ protocol ConversationServicesOptionsViewModelDelegate: AnyObject {
         fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration,
         confirmRemovingServices completion: @escaping (Bool) -> Void
     ) -> UIAlertController?
+
 }
 
 final class ConversationServicesOptionsViewModel {
@@ -65,34 +72,34 @@ final class ConversationServicesOptionsViewModel {
         self.configuration = configuration
         updateRows()
 
-        configuration.allowServicesChangedHandler = { [weak self] _ in
+        configuration.allowAppsChangedHandler = { [weak self] _ in
             self?.updateRows()
         }
     }
 
     private func updateRows() {
         state.rows = [.allowAppsToggle(
-            get: { [unowned self] in return configuration.allowServices },
-            set: { [unowned self] in setAllowServices($0, sender: $1) }
+            get: { [unowned self] in return configuration.allowApps },
+            set: { [unowned self] in setAllowApps($0, sender: $1) }
         )]
     }
 
-    /// set conversation option AllowServices
+    /// set conversation option AllowApps
     /// - Parameters:
-    ///   - allowServices: new state AllowServices
-    ///   - sender: the source view which triggers setAllowServices action
+    ///   - allowApps: new state AllowApps
+    ///   - sender: the source view which triggers setAllowApps action
     /// - Returns: alert controller
     @discardableResult
-    func setAllowServices(
-        _ allowServices: Bool,
+    func setAllowApps(
+        _ allowApps: Bool,
         sender: UIView
     ) -> UIAlertController? {
-        func _setAllowServices() {
+        func _setAllowApps() {
             let item = CancelableItem(delay: 0.4) { [weak self] in
                 self?.state.isLoading = true
             }
 
-            configuration.setAllowServices(allowServices) { [weak self] result in
+            configuration.setAllowApps(allowApps) { [weak self] result in
                 guard let self else { return }
                 item.cancel()
                 state.isLoading = false
@@ -106,11 +113,11 @@ final class ConversationServicesOptionsViewModel {
             }
         }
 
-        guard allowServices != configuration.allowServices else { return nil }
+        guard allowApps != configuration.allowApps else { return nil }
 
         // In case allow services mode should be deactivated & service in conversation, ask the delegate
         // to confirm this action as all services will be removed.
-        if !allowServices, configuration.areServicePresent {
+        if !allowApps, configuration.areAppsPresent {
             // Make "remove services" warning only appear if services are present
             return delegate?.conversationServicesOptionsViewModel(
                 self,
@@ -122,10 +129,10 @@ final class ConversationServicesOptionsViewModel {
                 guard let self else { return }
 
                 guard remove else { return updateRows() }
-                _setAllowServices()
+                _setAllowApps()
             }
         } else {
-            _setAllowServices()
+            _setAllowApps()
         }
 
         return nil

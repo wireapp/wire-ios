@@ -95,7 +95,7 @@ public enum KeychainManager {
 
     // MARK: - Key generation
 
-    static func generateKey(numberOfBytes: UInt = 32) throws -> Data {
+    public static func generateKey(numberOfBytes: UInt = 32) throws -> Data {
         var key = [UInt8](repeating: 0, count: Int(numberOfBytes))
         let status = SecRandomCopyBytes(kSecRandomDefault, key.count, &key)
 

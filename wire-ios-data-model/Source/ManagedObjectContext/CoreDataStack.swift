@@ -40,7 +40,7 @@ extension CoreDataStackError: LocalizedError {
     }
 }
 
-@objc
+@objc(ZMContextProvider)
 public protocol ContextProvider {
 
     var account: Account { get }
@@ -50,6 +50,7 @@ public protocol ContextProvider {
     var syncContext: NSManagedObjectContext { get }
     var searchContext: NSManagedObjectContext { get }
     var eventContext: NSManagedObjectContext { get }
+
 }
 
 extension URL {
@@ -114,8 +115,8 @@ public protocol CoreDataStackProtocol: ContextProvider {
 
 }
 
-@objcMembers
-public class CoreDataStack: NSObject, CoreDataStackProtocol {
+@objc @objcMembers
+public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvider {
 
     public let account: Account
 
@@ -131,7 +132,11 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
         #endif
     }
 
-    public lazy var syncContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
+    public lazy var syncContext: NSManagedObjectContext = {
+        let context = messagesContainer.newBackgroundContext()
+        context.markAsSyncContext()
+        return context
+    }()
 
     public lazy var searchContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
 
@@ -180,8 +185,14 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
 
         self.accountContainer = accountDirectory
 
-        let eventContainer = PersistentContainer(name: "ZMEventModel")
-        let messagesContainer = PersistentContainer(name: "zmessaging")
+        let eventContainer = PersistentContainer(
+            name: "ZMEventModel",
+            managedObjectModel: CoreDataStack.loadEventsModel()
+        )
+        let messagesContainer = PersistentContainer(
+            name: "zmessaging",
+            managedObjectModel: CoreDataStack.loadMessagingModel()
+        )
 
         let description: NSPersistentStoreDescription
         let eventStoreDescription: NSPersistentStoreDescription
@@ -384,7 +395,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     }
 
     func configureSyncContext(_ context: NSManagedObjectContext) async {
-        context.markAsSyncContext()
+        // Note: markAsSyncContext() is now called in the lazy initializer
         await context.perform {
             context.localDomain = self.localDomain
             context.isFederationEnabled = self.isFederationEnabled
@@ -394,13 +405,6 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
 
             context.accountDirectoryURL = self.accountContainer
             context.applicationContainerURL = self.applicationContainer
-
-            if !DeveloperFlag.proteusViaCoreCrypto.isOn {
-                context.setupUserKeyStore(
-                    accountDirectory: self.accountContainer,
-                    applicationContainer: self.applicationContainer
-                )
-            }
 
             context.undoManager = nil
             context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
@@ -445,7 +449,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     }
 
     public static func loadMessagingModel() -> NSManagedObjectModel {
-        let modelBundle = Bundle(for: ZMManagedObject.self)
+        let modelBundle = WireDataBundle.bundle
 
         guard let result = NSManagedObjectModel(
             contentsOf: modelBundle.bundleURL
@@ -458,7 +462,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     }
 
     public static func loadEventsModel() -> NSManagedObjectModel {
-        let modelBundle = WireDataModelBundle.bundle
+        let modelBundle = WireDataBundle.bundle
 
         guard let result = NSManagedObjectModel(
             contentsOf: modelBundle.bundleURL

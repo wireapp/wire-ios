@@ -33,9 +33,10 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
     public let modified: Date?
     public let size: UInt64?
     public let eTag: String?
-    public let type: String?
+    public let type: WireCellsNodeType?
     public let isRecycled: Bool
     public let isDraft: Bool
+    public let isEditable: Bool
     public let contentUrl: URL?
     public let contentHash: String?
     public let mimeType: String?
@@ -44,6 +45,7 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
     public let ownerUserName: String?
     public let conversationID: QualifiedID?
     public let publicLinkID: WireCellsPublicLinkID?
+    public let tags: [String]
 
     /// A pre-signed URL to download the file. Note that this URL will expire so shouldn't be stored long-term.
 
@@ -55,9 +57,10 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
         modified: Date? = nil,
         size: UInt64? = nil,
         eTag: String? = nil,
-        type: String? = nil,
+        type: WireCellsNodeType? = nil,
         isRecycled: Bool = false,
         isDraft: Bool = false,
+        isEditable: Bool = false,
         contentUrl: URL? = nil,
         contentHash: String? = nil,
         mimeType: String? = nil,
@@ -66,7 +69,8 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
         ownerUserName: String? = nil,
         conversationID: QualifiedID? = nil,
         publicLinkID: WireCellsPublicLinkID? = nil,
-        downloadURL: URL? = nil
+        downloadURL: URL? = nil,
+        tags: [String] = []
     ) {
         self.id = uuid
         self.path = path
@@ -76,6 +80,7 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
         self.type = type
         self.isRecycled = isRecycled
         self.isDraft = isDraft
+        self.isEditable = isEditable
         self.contentUrl = contentUrl
         self.contentHash = contentHash
         self.mimeType = mimeType
@@ -85,5 +90,6 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
         self.conversationID = conversationID
         self.publicLinkID = publicLinkID
         self.downloadURL = downloadURL
+        self.tags = tags
     }
 }

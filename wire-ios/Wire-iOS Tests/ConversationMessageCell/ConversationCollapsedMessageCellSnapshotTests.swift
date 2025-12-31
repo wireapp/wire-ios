@@ -46,7 +46,11 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
         super.tearDown()
     }
 
-    func testUploadedCell_fromThisDevice() {
+    // Skipping the tests because collapsing own messages feature is
+    // temporarily disabled due to conflicts with chat bubbles
+    // https://wearezeta.atlassian.net/browse/WPB-18939
+
+    func disabled_testUploadedCell_fromThisDevice() {
         let messages: [String: MockMessage] = [
             "file": message,
             "audio": MockMessageFactory.audioMessage()!,
@@ -66,7 +70,7 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
         messages.forEach { verify(message: $0.value, named: $0.key) }
     }
 
-    func testTextCollapsed() {
+    func disabled_testTextCollapsed() {
         let messages: [String: MockMessage] = [
             "singleLineText": MockMessageFactory.textMessage(withText: "Single Line text"),
             "twoLineText": MockMessageFactory.textMessage(withText: "First Line text\n Second line"),
@@ -87,7 +91,7 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
 
     }
 
-    func testUploadedCell_fromThisDevice_collapseOwnMessagesDisabled() {
+    func disabled_testUploadedCell_fromThisDevice_collapseOwnMessagesDisabled() {
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = Bundle.main.bundleURL
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = false
@@ -95,7 +99,7 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
         verify(message: message)
     }
 
-    func testUploadedCell_fromOtherUser() {
+    func disabled_testUploadedCell_fromOtherUser() {
         message.senderUser = SwiftMockLoader.mockUsers().first!
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = nil
@@ -103,7 +107,7 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
         verify(message: message)
     }
 
-    func testWithErrorMessage() {
+    func disabled_testWithErrorMessage() {
         message = MockMessageFactory.fileTransferMessage(sender: mockSelfUser)
 
         message.backingFileMessageData.transferState = .uploaded

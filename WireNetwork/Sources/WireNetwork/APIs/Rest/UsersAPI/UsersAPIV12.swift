@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class UsersAPIV12: UsersAPIV11 {
+class UsersAPIV12: UsersAPIV11 {
 
     override var apiVersion: APIVersion {
         .v12

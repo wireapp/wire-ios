@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
@@ -34,7 +35,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     private var userIsSelfUser = false
     private var isSelfUserPartOfATeam = false
-    private var userIsServiceUser = false
+    private var userIsAppOrBot = false
 
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
@@ -192,12 +193,12 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
         // titleLabel
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.accessibilityIdentifier = "user_cell.name"
+        titleLabel.accessibilityIdentifier = Locators.ConversationDetailsPage.userCellName.rawValue
         titleLabel.lineBreakMode = .byTruncatingMiddle
 
         // subtitleLabel
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        subtitleLabel.accessibilityIdentifier = "user_cell.username"
+        subtitleLabel.accessibilityIdentifier = Locators.NewConversationPage.usernameCell.rawValue
 
         // avatar
         avatarImageView.userSession = ZMUserSession.shared()
@@ -351,7 +352,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         if !checkmarkIconView.isHidden {
             accessibilityHint = isSelected ? CreateConversation.SelectedUser.hint : CreateConversation.UnselectedUser
                 .hint
-        } else if userIsServiceUser {
+        } else if userIsAppOrBot {
             accessibilityHint = ServicesList.ServiceCell.hint
         } else {
             accessibilityHint = ContactsList.UserCell.hint
@@ -388,7 +389,7 @@ extension UserCell {
         self.userStatus = userStatus
         self.userIsSelfUser = userIsSelfUser
         self.isSelfUserPartOfATeam = isSelfUserPartOfATeam
-        userIsServiceUser = user.isServiceUser
+        userIsAppOrBot = user.isAppOrBot
 
         let subtitle: NSAttributedString? = if overrideSubtitle == nil {
             self.subtitle(for: user)
@@ -450,8 +451,8 @@ extension UserCell: UserCellSubtitleProtocol {}
 extension UserCell {
 
     private func subtitle(for user: UserType) -> NSAttributedString? {
-        if user.isServiceUser, let service = user as? SearchServiceUser {
-            subtitle(forServiceUser: service)
+        if user.isAppOrBot, let appOrBot = user as? SearchServiceUser {
+            subtitle(forServiceUser: appOrBot)
         } else {
             subtitle(forRegularUser: user)
         }

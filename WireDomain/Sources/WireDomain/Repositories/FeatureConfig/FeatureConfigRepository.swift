@@ -123,10 +123,10 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 isEnabled: appLockFeatureConfig.status == .enabled
             )
 
-        case let .apps(cellsConfig):
+        case let .apps(appsConfig):
             return FeatureState(
                 name: .apps,
-                isEnabled: cellsConfig.status == .enabled
+                isEnabled: appsConfig.status == .enabled
             )
 
         case let .assetAuditLog(config):
@@ -215,12 +215,6 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             return FeatureState(
                 name: .consumableNotifications,
                 isEnabled: config.status == .enabled
-            )
-
-        case let .chatBubblesSimple(chatBubblesSimpleFeatureConfig):
-            return FeatureState(
-                name: .chatBubblesSimple,
-                isEnabled: chatBubblesSimpleFeatureConfig.status == .enabled
             )
 
         case let .cells(cellsConfig):

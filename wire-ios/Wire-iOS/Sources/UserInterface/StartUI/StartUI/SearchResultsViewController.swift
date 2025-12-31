@@ -449,7 +449,7 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
                 indexPath: indexPath,
                 section: sectionFor(controller: searchSectionController)
             )
-        } else if let service = user as? ServiceUser, service.isServiceUser {
+        } else if let service = user as? ServiceUser, service.isAppOrBot {
             delegate?.searchResultsViewController(self, didTapOnSeviceUser: service)
         } else if let searchUser = user as? ZMSearchUser {
             delegate?.searchResultsViewController(

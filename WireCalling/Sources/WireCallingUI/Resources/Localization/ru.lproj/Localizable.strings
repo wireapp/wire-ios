@@ -15,3 +15,50 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// MARK: - Meetings List
+
+
+"wireMeetings.list.title" = "Встречи";
+"wireMeetings.list.tabs.past" = "Прошлые";
+"wireMeetings.list.tabs.next" = "Next";
+"wireMeetings.list.actions.meetNow" = "Встречи сейчас";
+"wireMeetings.list.actions.scheduleMeeting" = "Запланировать встречу";
+"wireMeetings.list.actions.showAll" = "Показать все";
+"wireMeetings.list.emptyState.next.title" = "Предстоящих встреч пока нет";
+"wireMeetings.list.emptyState.next.subtitle" = "Начните встречу с членами команды, гостями или внешними участниками.";
+"wireMeetings.list.emptyState.past.title" = "Прошлых встреч пока нет";
+"wireMeetings.list.emptyState.past.subtitle" = "Здесь вы найдете все предыдущие встречи.";
+"wireMeetings.list.header.today" = "Сегодня";
+"wireMeetings.list.header.tomorrow" = "Завтра";
+"wireMeetings.list.header.yesterday" = "Вчера";
+"wireMeetings.list.header.ongoing" = "В настоящее время";
+
+// MARK: - Schedule a meeting
+
+"wireMeetings.schedule.now.title" = "Встречи сейчас";
+"wireMeetings.schedule.future.title" = "Новая встреча";
+"wireMeetings.schedule.cancel.button" = "Отмена";
+"wireMeetings.schedule.schedule.button" = "Расписание";
+"wireMeetings.schedule.next.button" = "Далее";
+"wireMeetings.schedule.setupTitle.header" = "Название";
+"wireMeetings.schedule.setupTitle.placeholder" = "Введите название встречи";
+"wireMeetings.schedule.setupParticipants.header" = "Участники";
+"wireMeetings.schedule.setupParticipants.placeholder" = "Добавить участников";
+"wireMeetings.schedule.allowGuests.title" = "Разрешить гостей";
+"wireMeetings.schedule.disableGuestAccess.alert.title" = "Отключить доступ гостей?";
+"wireMeetings.schedule.disableGuestAccess.alert.subtitle" = "Текущие гости будут удалены из беседы. Новые гости допущены не будут.";
+"wireMeetings.schedule.disableGuestAccess.alert.disable" = "Отключить";
+"wireMeetings.schedule.disableGuestAccess.alert.cancel" = "Отмена";
+"wireMeetings.schedule.setupPassword.header" = "Пароль (необязательно)";
+"wireMeetings.schedule.password.placeholder" = "Введите пароль";
+"wireMeetings.schedule.confirmedPassword.placeholder" = "Подтвердить пароль";
+"wireMeetings.schedule.confirmedPassword.error" = "Пароли не совпадают";
+"wireMeetings.schedule.time.starts" = "Начало";
+"wireMeetings.schedule.time.ends" = "Конец";
+"wireMeetings.schedule.time.repeats" = "Повторы";
+"wireMeetings.schedule.time.never" = "Никогда";
+"wireMeetings.schedule.time.daily" = "Ежедневно";
+"wireMeetings.schedule.time.weekly" = "Еженедельно";
+"wireMeetings.schedule.time.everyTwoWeeks" = "Каждые 2 недели";
+"wireMeetings.schedule.time.monthly" = "Ежемесячно";
+"wireMeetings.schedule.time.yearly" = "Ежегодно";

@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireLocators
 
 struct ImportBackupView: View {
 
@@ -44,13 +45,19 @@ struct ImportBackupView: View {
             .foregroundStyle(Color.primaryText)
             .fileImporter(
                 isPresented: $isFileImporterPresented,
-                allowedContentTypes: WireBackupUTIs,
+                // Workaround: Google Drive doesn't recognize Wire backup
+                // UTIs so if we only allow them, the user won't be able
+                // to select Wire backups stored in Google Drive.
+                // Instead, we allow any file and then we'll validate the
+                // file type afterwards.
+                allowedContentTypes: [.data],
                 onCompletion: viewModel.pickedBackupFile
             )
 
             .sheet(isPresented: $viewModel.isImportProgressPresented) {
 
                 ImportProgressView(
+                    isLoadingFile: viewModel.isLoadingFile,
                     progressValues: viewModel.importProgress,
                     cancelAction: viewModel.reset
                 )
@@ -86,6 +93,7 @@ struct ImportBackupView: View {
             } message: {
                 Text(viewModel.alertContent.message)
             }
+            .accessibilityIdentifier(Locators.BackupOrRestorePage.restoreFromBackupButton.rawValue)
         }
     }
 }

@@ -19,6 +19,7 @@
 import Foundation
 import SwiftUI
 import UIKit
+import WireFoundation
 import WireMessagingAssembly
 import WireMessagingDomain
 import WireMessagingUI
@@ -33,15 +34,19 @@ protocol WireMessagingFactoryProtocol {
     func makeDeleteDraftUseCase(cellName: String) -> WireCellsDeleteDraftUseCaseProtocol
     func makeRetryUploadDraftUseCase(cellName: String) -> WireCellsRetryUploadDraftUseCaseProtocol
     func makeDeleteNodesUseCase() -> WireCellsDeleteNodesUseCaseProtocol
+    func makeFetchNodeUseCase() -> WireCellsFetchNodeUseCaseProtocol
     @MainActor
-    func makeFilesView(cellName: String, isCellsStatePending: Bool, nodeIDs: [UUID]) -> UIViewController
-    @MainActor
-    func makeFilesBrowserView() -> UIViewController
-    @MainActor
-    func makeAttachmentsPreviewView(
-        attachments: [WireCellsMessageAttachment],
-        alignment: HorizontalAlignment
+    func makeFilesView(
+        cellName: String,
+        isCellsStatePending: Bool,
+        accentColorProvider: @escaping () -> WireAccentColor
     ) -> UIViewController
+
+    @MainActor
+    func makeFilesBrowserView(
+        accentColorProvider: @escaping () -> WireAccentColor
+    ) -> UIViewController
+
     func makeConversationCellProvider(
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProviderProtocol
@@ -55,13 +60,15 @@ protocol ConversationCellProviderProtocol {
     func provideCell(
         for model: ConversationCellModel,
         tableView: UITableView,
-        indexPath: IndexPath
+        indexPath: IndexPath,
+        onLongPress: @escaping (UITableViewCell) -> Void
     ) -> UITableViewCell
 
 }
 
-extension WireMessagingFactory: WireMessagingFactoryProtocol {
+extension WireMessagingFactory: @preconcurrency WireMessagingFactoryProtocol {
 
+    @MainActor
     func makeConversationCellProvider(
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProviderProtocol {

@@ -129,8 +129,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     public func pullMLSOneToOneConversation(
         userID: String,
         userDomain: String
-    ) async throws -> String {
-        let mlsConversation =
+    ) async throws -> (String, MLSPublicKeys?) {
+        let (mlsConversation, mlsPublicKeys) =
             try await conversationsAPI.getMLSOneToOneConversation(
                 userID: userID,
                 in: userDomain
@@ -147,7 +147,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             isMLSEnabled: isMLSEnabled
         )
 
-        return mlsGroupID
+        return (mlsGroupID, mlsPublicKeys)
     }
 
     public func fetchMLSConversation(
@@ -375,6 +375,16 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         }
 
         await deleteMembership(for: removedUserIDs, time: date)
+    }
+
+    public func isSelfAnActiveMember(
+        in groupID: MLSGroupID
+    ) async -> Bool {
+        nonisolated(unsafe) var isSelfAnActiveMember = false
+        await conversationsLocalStore.execute(identifier: groupID) { conversation, _ in
+            isSelfAnActiveMember = conversation?.isSelfAnActiveMember ?? false
+        }
+        return isSelfAnActiveMember
     }
 
     // MARK: - Private

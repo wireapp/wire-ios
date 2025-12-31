@@ -23,6 +23,7 @@ import UIKit
 import WireAccountImageUI
 import WireCallingAssembly
 import WireCommonComponents
+import WireData
 import WireDesign
 import WireFoundation
 import WireLogging
@@ -105,11 +106,14 @@ final class ZClientViewController: UIViewController {
     private lazy var conversationViewControllerBuilder = ConversationViewControllerBuilder(
         userSession: userSession,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
+        conversationCreationRepository: conversationCreationRepository,
         mediaPlaybackManager: mediaPlaybackManager,
         wireMessagingFactory: wireMessagingFactory
     )
 
-    private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory()
+    private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory(
+        conversationCreationRepository: conversationCreationRepository
+    )
 
     private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(
         userSession: userSession,
@@ -144,11 +148,14 @@ final class ZClientViewController: UIViewController {
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         createGroupConversationUIBuilder: createGroupConversationBuilder,
         channelConversationFormFactory: channelConversationFormFactory,
-        selfProfileUIBuilder: selfProfileViewControllerBuilder
+        selfProfileUIBuilder: selfProfileViewControllerBuilder,
+        featureConfigRepository: userSession.clientSessionComponent!.featureConfigRepository,
+        conversationCreationRepository: conversationCreationRepository
     )
 
     private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(
-        userSession: userSession
+        userSession: userSession,
+        conversationCreationRepository: conversationCreationRepository
     )
 
     private lazy var folderPickerViewControllerBuilder = FolderPickerViewControllerBuilder(
@@ -157,6 +164,8 @@ final class ZClientViewController: UIViewController {
             self?.conversationFilter()
         }
     )
+
+    private(set) lazy var conversationCreationRepository = ConversationCreationRepository()
 
     private(set) lazy var conversationListViewController = ConversationListViewController(
         account: account,
@@ -167,6 +176,7 @@ final class ZClientViewController: UIViewController {
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
         connectViewControllerBuilder: connectBuilder,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+        conversationCreationRepository: conversationCreationRepository,
         createGroupConversationViewControllerBuilder: createGroupConversationBuilder,
         folderPickerViewControllerBuilder: folderPickerViewControllerBuilder,
         getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
@@ -200,6 +210,7 @@ final class ZClientViewController: UIViewController {
     )
 
     /// init method for testing allows injecting an Account object and self user
+
     required init(
         account: Account,
         selfProfileViewsMonitor: SelfProfileViewsMonitor,
@@ -281,7 +292,11 @@ final class ZClientViewController: UIViewController {
                 guard let self else { return }
                 switch featureState.name {
                 case .cells where featureState.isEnabled:
-                    let filesBrowserView = wireMessagingFactory.makeFilesBrowserView()
+                    let filesBrowserView = wireMessagingFactory.makeFilesBrowserView { [weak self] in
+                        guard let self else { return .default }
+                        let selfUserColorRawValue = userSession.selfUser.accentColorValue
+                        return WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
+                    }
                     if UIDevice.current.userInterfaceIdiom == .pad {
                         guard !sidebarViewController.showFiles else { break }
                         sidebarViewController.showFiles = true
@@ -391,7 +406,11 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
         if userSession.isWireCellsEnabled {
-            let filesBrowserView = wireMessagingFactory.makeFilesBrowserView()
+            let filesBrowserView = wireMessagingFactory.makeFilesBrowserView { [weak self] in
+                guard let self else { return .default }
+                let selfUserColorRawValue = userSession.selfUser.accentColorValue
+                return WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
+            }
             mainTabBarController.filesUI = filesBrowserView
         }
 
@@ -524,6 +543,7 @@ final class ZClientViewController: UIViewController {
             userSession: userSession,
             mainCoordinator: .init(mainCoordinator: mainCoordinator),
             selfProfileUIBuilder: selfProfileViewControllerBuilder,
+            conversationCreationRepository: conversationCreationRepository,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navController = UINavigationController(rootViewController: controller)
@@ -772,7 +792,8 @@ final class ZClientViewController: UIViewController {
                 context: .deviceList,
                 userSession: userSession,
                 mainCoordinator: .init(mainCoordinator: mainCoordinator),
-                selfProfileUIBuilder: selfProfileViewControllerBuilder
+                selfProfileUIBuilder: selfProfileViewControllerBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
 
             if let conversationViewController = (conversationRootViewController as? ConversationRootViewController)?

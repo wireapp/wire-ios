@@ -31,8 +31,6 @@
 #import "ZMUpdateEvent+WireDataModel.h"
 
 #import <WireDataModel/WireDataModel-Swift.h>
-#import <WireCryptobox/cbox.h>
-
 
 static NSString *ZMLogTag ZM_UNUSED = @"ephemeral";
 
@@ -94,7 +92,6 @@ NSString * const ZMMessageNeedsLinkAttachmentsUpdateKey = @"needsLinkAttachments
 NSString * const ZMMessageDiscoveredClientsKey = @"discoveredClients";
 NSString * const ZMMessageButtonStatesKey = @"buttonStates";
 NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
-
 
 @interface ZMMessage ()
 
@@ -262,7 +259,11 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
         self.expirationReasonCode = [NSNumber numberWithInteger:expirationReason];
     }
     [self removeExpirationDate];
-    self.conversation.hasUnreadUnsentMessage = YES;
+
+    if (self.visibleInConversation != nil) {
+        // Only warn for unsent messages if it's actually visible.
+        self.conversation.hasUnreadUnsentMessage = YES;
+    }
 }
 
 + (NSSet *)keyPathsForValuesAffectingDeliveryState;
@@ -765,22 +766,6 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
         self.needsUpdatingUsers = [self.addedUsers anyObjectMatchingWithBlock:matchUnfetchedUserBlock] ||
                                   [self.removedUsers anyObjectMatchingWithBlock:matchUnfetchedUserBlock];
     }
-}
-
-- (BOOL)isDecryptionErrorRecoverable {
-    if (self.decryptionErrorCode == nil) {
-        return NO;
-    }
-    
-    NSInteger errorCode = self.decryptionErrorCode.integerValue;
-    
-    if (errorCode == CBOX_TOO_DISTANT_FUTURE ||
-        errorCode == CBOX_DEGENERATED_KEY ||
-        errorCode == CBOX_PREKEY_NOT_FOUND) {
-        return YES;
-    }
-    
-    return NO;
 }
 
 + (ZMSystemMessageType)systemMessageTypeFromUpdateEvent:(ZMUpdateEvent *)updateEvent;

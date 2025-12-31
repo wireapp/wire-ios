@@ -58,7 +58,7 @@
 ZM_EMPTY_ASSERTING_INIT()
 
 
-- (instancetype)initWithContextProvider:(id<ContextProvider>)contextProvider
+- (instancetype)initWithContextProvider:(id<ZMContextProvider>)contextProvider
                 notificationsDispatcher:(NotificationDispatcher *)notificationsDispatcher
                         operationStatus:(OperationStatus *)operationStatus
                             application:(id<ZMApplication>)application
@@ -121,6 +121,13 @@ ZM_EMPTY_ASSERTING_INIT()
     NOT_USED(note);
     [self.application unregisterObserverForStateChange:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)updateStrategyClientContextChangeTrackers
+{
+    [self.syncMOC performBlock:^{
+        [self.changeTrackerBootStrap addChangeTrackers:self.strategyDirectory.clientContextChangeTrackers];
+    }];
 }
 
 - (NSManagedObjectContext *)moc

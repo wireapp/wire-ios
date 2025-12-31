@@ -33,7 +33,6 @@ public struct SharingSessionLoader {
         case persistenceStoresNotFound
         case failedToStoreMetadata(any Error)
         case failedToLoadPersistenceStack(any Error)
-        case failedToCheckBuildBlacklist(any Error)
         case buildIsBlacklisted(buildNumber: String)
 
     }
@@ -49,6 +48,7 @@ public struct SharingSessionLoader {
     private let accountID: UUID
     private let backendStore: BackendEnvironmentStore
     private let journal: Journal
+    private let coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager
 
     public init(
         account: Account,
@@ -72,6 +72,7 @@ public struct SharingSessionLoader {
             userID: accountID,
             storage: sharedUserDefaults
         )
+        self.coreCryptoKeyMigrationManager = CoreCryptoKeyMigrationManager(journal: journal)
     }
 
     public func load() async throws -> SharingSession {
@@ -107,7 +108,7 @@ public struct SharingSessionLoader {
         )
 
         // Return early if needed.
-        guard try await !isBuildBlacklisted(networkService: networkServices.blacklist) else {
+        guard await !isBuildBlacklisted(networkService: networkServices.blacklist) else {
             throw Failure.buildIsBlacklisted(buildNumber: buildNumber)
         }
 
@@ -115,10 +116,15 @@ public struct SharingSessionLoader {
             throw Failure.mainAppRequired(message: "sync v2 should be enabled")
         }
 
+        guard !coreCryptoKeyMigrationManager.isAnyMigrationRequired else {
+            throw Failure.mainAppRequired(message: "core crypto key migration is required")
+        }
+
         // TODO: [WPB-19778] guard no app version migration needed.
 
-        guard let selfClientID = await coreDataStack.syncContext.perform({
-            let selfUser = ZMUser.selfUser(in: coreDataStack.syncContext)
+        let context = coreDataStack.syncContext
+        guard let selfClientID = await context.perform({ [context] in
+            let selfUser = ZMUser.selfUser(in: context)
             return selfUser.selfClient()?.remoteIdentifier
         }) else {
             throw Failure.mainAppRequired(message: "no self client id")
@@ -233,23 +239,19 @@ public struct SharingSessionLoader {
         return coreDataStack
     }
 
-    private func isBuildBlacklisted(networkService: NetworkService) async throws -> Bool {
+    private func isBuildBlacklisted(networkService: NetworkService) async -> Bool {
         let api = BlacklistAPIBuilder(networkService: networkService).makeAPI()
         let useCase = IsBuildBlacklistedUseCaseImpl(
             currentBuildNumber: buildNumber,
             api: api
         )
 
-        do {
-            return try await useCase.invoke()
-        } catch {
-            throw Failure.failedToCheckBuildBlacklist(error)
-        }
+        return await useCase.invoke()
     }
 
     // TODO: [WPB-17732] de-duplicate when implementing NSE
     private func shouldEnableSyncV2(metadata: ResolvedBackendMetadata) -> Bool {
-        let isAvailable = metadata.apiVersion >= .v8
+        let isAvailable = metadata.apiVersion >= .minimumSyncV2CompatibleVersion
         let isAlreadyEnabled = journal[.isSyncV2Enabled]
         return isAvailable && !isAlreadyEnabled
     }
@@ -322,10 +324,6 @@ public struct SharingSessionLoader {
             requestGeneratorStore: requestGeneratorStore,
             transportSession: transportSession
         )
-        let cryptoboxMigrationManager = CryptoboxMigrationManager()
-        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: userAccountDataURL) else {
-            throw Failure.mainAppRequired(message: "cryptobox migration required")
-        }
         let contextStorage = LAContextStorage()
         let earService = EARService(
             accountID: accountID,
@@ -342,7 +340,6 @@ public struct SharingSessionLoader {
             accountDirectory: userAccountDataURL,
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
             localDomain: backendMetadata.domain
@@ -411,7 +408,6 @@ public struct SharingSessionLoader {
             operationLoop: operationLoop,
             strategyFactory: strategyFactory,
             appLockConfig: nil,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             earService: earService,
             contextStorage: contextStorage,
             proteusService: proteusService,

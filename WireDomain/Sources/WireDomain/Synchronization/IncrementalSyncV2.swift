@@ -116,6 +116,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         let pushChannel: PushChannelV2Protocol
         do {
+            syncStateSubject.send(.incrementalSyncing(.createPushChannel))
             pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID, marker: syncMarker)
         } catch {
             await pushChannelState.markAsClosed()

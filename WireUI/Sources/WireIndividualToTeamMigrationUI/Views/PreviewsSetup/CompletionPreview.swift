@@ -31,5 +31,4 @@ func completionPreview() -> some View {
         stepCount: 4,
         stepTitle: String.formated(key: "individualToTeam.completion.title", bundle: .module, "Some User")
     )
-    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

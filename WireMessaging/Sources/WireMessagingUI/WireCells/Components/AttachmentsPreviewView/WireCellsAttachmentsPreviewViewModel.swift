@@ -27,8 +27,10 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
 
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
+    private let nodeCache: any WireCellsNodeCacheProtocol
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let lastOpenRequest: WireCellsLastOpenRequest
+    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
 
     let attachments: [WireCellsMessageAttachment]
     let alignment: HorizontalAlignment
@@ -38,15 +40,19 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
         alignment: HorizontalAlignment,
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
+        nodeCache: any WireCellsNodeCacheProtocol,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
-        lastOpenRequest: WireCellsLastOpenRequest
+        lastOpenRequest: WireCellsLastOpenRequest,
+        nodeRenameNotifier: WireCellsNodeRenameNotifier
     ) {
         self.attachments = attachments
         self.alignment = alignment
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
+        self.nodeCache = nodeCache
         self.localAssetRepository = localAssetRepository
         self.lastOpenRequest = lastOpenRequest
+        self.nodeRenameNotifier = nodeRenameNotifier
     }
 
     /// Returns a `WireCellsAttachmentsPreviewView` for the item at the given index.
@@ -56,8 +62,10 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
             alignment: alignment,
             fetchNodeUseCase: fetchNodeUseCase,
             getAssetUseCase: getAssetUseCase,
+            nodeCache: nodeCache,
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
+            nodeRenameNotifier: nodeRenameNotifier,
             displayStyle: attachments.count > 1 ? .small : .large
         )
     }
@@ -118,8 +126,10 @@ extension WireCellsAttachmentsPreviewViewModel {
                 localAssetRepository: localAssetRepository,
                 fileCache: fileCache
             ),
+            nodeCache: nodeCache,
             localAssetRepository: localAssetRepository,
-            lastOpenRequest: WireCellsLastOpenRequest()
+            lastOpenRequest: WireCellsLastOpenRequest(),
+            nodeRenameNotifier: WireCellsNodeRenameNotifier()
         )
     }
 

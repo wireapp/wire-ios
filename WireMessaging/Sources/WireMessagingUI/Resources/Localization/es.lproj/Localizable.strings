@@ -20,10 +20,15 @@
 "general.loading" = "Cargando...";
 "general.confirm" = "OK";
 "general.failure" = "Algo salió mal";
+"general.close" = "Cerrar";
+"general.save" = "Guardar";
+"general.cancel" = "Cancelar";
 "general.error.unknown.title." = "Algo salió mal";
 "general.error.unknown.message." = "Vuelva a intentarlo más tarde.";
 "general.error.noInternet.title." = "No hay conexión a internet";
 "general.error.noInternet.message." = "Parece haber un problema con la red. Por favor, inténtalo más tarde.";
+"general.create" = "Crear";
+"general.cancel" = "Cancelar";
 
 // MARK: - Channel Access level
 "channel_access_level.public" = "Público";
@@ -70,7 +75,7 @@
 
 "conversation.creationForm.options.footer" = "Todos los miembros del equipo pueden unirse a canales públicos. Pero sólo los administradores del canal o los miembros pueden añadir personas a un canal privado. Un canal privado no se puede cambiar a público más adelante.";
 
-"conversation.creationForm.services.toggle" = "Permitir servicios";
+"conversation.creationForm.apps.toggle" = "Permitir aplicaciones";
 "conversation.creationForm.guests.toggle" = "Permitir invitados";
 "conversation.creationForm.guests.description" = "Abre esta conversación a personas ajenas a tu equipo o servicios.";
 
@@ -98,8 +103,8 @@
 "conversation.channelHistory.share.sectionFootnote" = "Puedes compartir el historial de la conversación con los nuevos miembros del canal. De esta manera, ellos también pueden ver los mensajes y archivos anteriores.\nCuando lo desactivas, los miembros del canal no verán ningún historial de la conversación.";
 "conversation.channelHistory.navigationTitle" = "Historial de conversaciones";
 "conversation.creationForm.channelHistory.sectionFootnote" = "Seleccione un período. Cuando los participantes se unen a este canal, pueden seguir el historial de este periodo.";
-"conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "Se ha producido un error al obtener las opciones de profundidad del historial del canal.";
-"conversation.channelHistory.updateHistoryDepth.error" = "Ocurrió un error mientras se actualizaba la profundidad del historial del canal.";
+"conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "An error occurred while fetching channel history depth options.";
+"conversation.channelHistory.updateHistoryDepth.error" = "An error occurred while updating channel history depth.";
 "conversation.file.preview.open" = "Abrir vista previa";
 "conversation.draft.attachmentMenu.retry" = "Reintentar";
 "conversation.draft.attachmentMenu.remove" = "Quitar archivo";
@@ -112,9 +117,12 @@
 "conversation.wireCells.files.item.menu.open" = "Abrir";
 "conversation.wireCells.files.item.menu.download" = "Descargar";
 "conversation.wireCells.files.item.menu.rename" = "Renombrar";
-"conversation.wireCells.files.item.menu.delete" = "Eliminar Permanentemente";
-"conversation.wireCells.files.item.deleteConfirmation.title" = "Esto eliminará permanentemente el archivo %@ para todos los participantes. Todos perderán el acceso y no hay forma de recuperar el archivo.";
-"conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Eliminar Permanentemente";
+"conversation.wireCells.files.item.menu.moveToFolder" = "Move to folder";
+"conversation.wireCells.files.item.menu.addOrRemoveTags" = "Add or remove tags";
+"conversation.wireCells.files.item.menu.delete" = "Eliminar";
+"conversation.wireCells.files.item.deleteFileConfirmation.title" = "The file \"%@\" will move to this conversation's recycle bin.";
+"conversation.wireCells.files.item.deleteFolderConfirmation.title" = "The folder \"%@\" will move to this conversation's recycle bin.";
+"conversation.wireCells.files.item.deleteConfirmation.button" = "Eliminar";
 "conversation.wireCells.files.noData.title" = "Aún no hay archivos o carpetas";
 "conversation.wireCells.files.noData.message" = "You'll find all files and folders shared in this conversation here.";
 "conversation.wireCells.allFiles.noData.message" = "You'll find all files and folders shared across your conversations here.";
@@ -124,6 +132,61 @@
 "conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
 "conversation.wireCells.files.error.reload" = "Reload";
 "conversation.wireCells.files.search.title" = "Search files";
+"conversation.wireCells.files.list.newFolder" = "New folder";
+"conversation.wireCells.files.newFolder.title" = "Nombre de carpeta";
+"conversation.wireCells.files.newFolder.placeholder" = "Enter folder name";
+"conversation.wireCells.files.newFolder.navigationTitle" = "Create folder";
+"conversation.wireCells.files.newFolder.folderNameTooLongError" = "Use a shorter folder name (most 64 characters)";
+"conversation.wireCells.files.newFolder.wrongCharacterError" = "Use a name without \"/\"";
+"conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "A folder with that name already exists";
+"conversation.wireCells.files.fileName.title" = "Nombre del archivo";
+"conversation.wireCells.files.folderName.title" = "Nombre de carpeta";
+"conversation.wireCells.files.renameFile.navigationTitle" = "Rename file";
+"conversation.wireCells.files.renameFolder.navigationTitle" = "Rename folder";
+"conversation.wireCells.files.renameFile.filenameTooLongError" = "Use a shorter file name (most 64 characters)";
+"conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Use a shorter folder name (most 64 characters)";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Use a name without \"/\" or \".\"";
+"conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "A file with that name already exists";
+"conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "A folder with that name already exists";
+"conversation.wireCells.files.renameFile.placeholder" = "Enter file name";
+"conversation.wireCells.files.renameFolder.placeholder" = "Enter folder name";
+"conversation.wireCells.files.openRecycleBin" = "Open recycle bin";
+"conversation.wireCells.recycleBin.navigationTitle" = "Recycle Bin";
+"conversation.wireCells.recycleBin.noData.message" = "You'll find all deleted files and folders here.";
+"conversation.wireCells.recycleBin.item.menu.delete" = "Delete Permanently";
+"conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Delete Permanently";
+"conversation.wireCells.recycleBin.item.deleteFileConfirmation.title" = "This will permanently delete the file \"%@\" for all participants. Everyone will lose access and there is no way to recover the file.";
+"conversation.wireCells.recycleBin.item.deleteFolderConfirmation.title" = "This will permanently delete the folder \"%@\" with all files and subfolders.";
+"conversation.wireCells.recycleBin.item.menu.restore" = "Restore";
+"conversation.wireCells.recycleBin.item.restoreFileConfirmation.button" = "Restore File";
+"conversation.wireCells.recycleBin.item.restoreFileConfirmation.title" = "This file \"%@\" will be restored and available again to everyone in this conversation.";
+"conversation.wireCells.recycleBin.item.restoreFolderConfirmation.button" = "Restore Folder";
+"conversation.wireCells.recycleBin.item.restoreFolderConfirmation.title" = "This folder \"%@\" with all files and subfolders will be restored and available again to everyone in this conversation.";
+"conversation.wireCells.recycleBin.item.restoreParentConfirmation.button" = "Restore Parent Folder";
+"conversation.wireCells.recycleBin.item.restoreParentConfirmation.title" = "You can’t restore folders or files from a deleted folder. To restore the desired item, you must restore its parent folder.\n\nThe folder \"%@\" with all files and subfolders will be restored and available to everyone in this conversation.";
+"conversation.wireCells.allFiles.filters.clearAll" = "Clear all";
+"conversation.wireCells.allFiles.filters.apply" = "Apply";
+"conversation.wireCells.allFiles.filters.tags.sectionTitle" = "Tags";
+"conversation.wireCells.allFiles.filters.tags.loadMore" = "Cargar más";
+"conversation.wireCells.allFiles.filters.navigationTitle" = "Filters";
+"conversation.wireCells.allFiles.filters.tags.emptyTitle" = "No tags were created yet.";
+
+// MARK: - File Tags View
+"conversation.wireCells.tags.title" = "Add or remove tags";
+"conversation.wireCells.tags.headline" = "All members of your team can see and use the tags you create.";
+"conversation.wireCells.tags.suggestedTagsSection" = "Suggested tags";
+"conversation.wireCells.tags.suggestedTagsSectionEmpty" = "No tags were created yet.";
+"conversation.wireCells.tags.textFieldPlaceholder" = "Enter tag name";
+"conversation.wireCells.tags.error.nameTooLong" = "Use a shorter tag name (at most 30 characters)";
+"conversation.wireCells.tags.error.specialCharacters" = "Use a tag without special characters {0}";
+"conversation.wireCells.tags.error.saveFailedTitle" = "Unable to edit tags";
+"conversation.wireCells.tags.error.saveFailedMessage" = "Due to an error your tags could not be edited.";
+"conversation.wireCells.tags.error.retryButton" = "Try again";
+"conversation.wireCells.files.moveToFolder.move" = "Move here";
+"conversation.wireCells.files.moveToFolder.noSubfolders" = "There are no subfolders in this folder.";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "Archivo no disponible";
+"conversation.message.attachment.previewNotAvailable" = "Unable to display preview";
+"conversation.message.attachment.unableToDownload" = "Unable to download file";
+"conversation.message.attachment.loadingContent" = "Loading content";

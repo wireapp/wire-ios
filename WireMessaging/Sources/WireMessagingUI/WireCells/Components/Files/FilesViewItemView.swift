@@ -30,8 +30,31 @@ struct FilesViewItemView: View {
     @StateObject private var viewModel: FilesItemViewModel
     @ScaledMetric private var imageHeight: CGFloat = 28
 
-    init(viewModel: @autoclosure @escaping () -> FilesItemViewModel) {
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
+    private var canRenameFile: Bool
+    private var canEditTags: Bool
+    private let canMoveToFolder: Bool
+    private let canEditFile: Bool
+    private var canDeleteFiles: Bool
+    private let canOpenVersionHistory: Bool
+
+    init(
+        viewModel: @autoclosure @escaping () -> FilesItemViewModel,
+        canRenameFile: Bool = false,
+        canEditTags: Bool = false,
+        canMoveToFolder: Bool = false,
+        canOpenVersionHistory: Bool = false,
+        canEditFile: Bool = false,
+        canDeleteFiles: Bool = false
+    ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
+        self.canRenameFile = canRenameFile
+        self.canEditTags = canEditTags
+        self.canMoveToFolder = canMoveToFolder
+        self.canEditFile = canEditFile
+        self.canDeleteFiles = canDeleteFiles
+        self.canOpenVersionHistory = canOpenVersionHistory
     }
 
     var body: some View {
@@ -44,18 +67,44 @@ struct FilesViewItemView: View {
                     .frame(width: 56, height: imageHeight)
                     .padding(.horizontal, 4)
 
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: 5) {
                     Text(viewModel.fileName)
-                        .wireTextStyle(.body2)
+                        .font(for: .body2)
                         .lineLimit(1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
-                    Text(viewModel.subtitle ?? "")
-                        .wireTextStyle(.subline1)
-                        .lineLimit(1)
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                }.environment(\.wireTextStyleMapping, WireTextStyleMapping())
+                    HStack(spacing: 5) {
+                        let tagsInfo = viewModel.tagsInfo
 
+                        if let firstTag = tagsInfo.firstTag {
+                            Text(firstTag)
+                                .font(for: .subline1)
+                                .fontWeight(.medium)
+                                .lineLimit(1)
+                                .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
+                                .padding(.vertical, 2)
+                                .padding(.horizontal, 5)
+                                .background {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(ColorTheme.Base.primaryVariant(wireAccentColor).color)
+                                }
+                        }
+
+                        if let additionalTagsIndicator = tagsInfo.additionalTagsIndicator {
+                            Text(additionalTagsIndicator)
+                                .font(for: .subline1)
+                                .fontWeight(.medium)
+                                .lineLimit(1)
+                                .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
+                                .padding(.trailing, 2)
+                        }
+
+                        Text(viewModel.subtitle ?? "")
+                            .font(for: .subline1)
+                            .lineLimit(1)
+                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    }
+                }
                 Spacer()
 
                 Menu {
@@ -63,19 +112,67 @@ struct FilesViewItemView: View {
                         Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
                     }.disabled(viewModel.isDownloading)
 
-                    if !viewModel.isDownloadOptionAvailable {
+                    if viewModel.isDownloadOptionAvailable {
                         Button(action: download) {
                             Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
-                        }.disabled(viewModel.isDownloading)
+                        }
                     }
 
-                    // FIXME: [WPB-19393] Enable
-//                    Button(action: rename) {
-//                        Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
-//                    }
+                    if canOpenVersionHistory, !viewModel.isInRecycleBin {
+                        Button(action: showVersionHistory) {
+                            Label(
+                                Strings.Files.Item.Menu.versionHistory,
+                                systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90"
+                            )
+                        }
+                    }
 
-                    Button(role: .destructive, action: delete) {
-                        Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill")
+                    if canEditFile, viewModel.isEditable {
+                        Button(action: editFile) {
+                            Label(Strings.Files.Item.Menu.editFile, systemImage: "square.and.pencil")
+                        }
+                    }
+
+                    Divider()
+
+                    if canRenameFile, !viewModel.isInRecycleBin {
+                        Button(action: rename) {
+                            Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
+                        }
+                    }
+
+                    if canMoveToFolder {
+                        Button(action: moveToFolder) {
+                            Label(Strings.Files.Item.Menu.moveToFolder, systemImage: "folder")
+                        }
+                    }
+
+                    if canEditTags, !viewModel.isInRecycleBin {
+                        Button(action: editTags) {
+                            Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
+                        }
+                    }
+
+                    if viewModel.isInRecycleBin {
+                        Button(action: restore) {
+                            Label(Strings.RecycleBin.Item.Menu.restore, systemImage: "arrow.uturn.backward")
+                        }
+                    }
+
+                    if canDeleteFiles {
+                        if viewModel.isInRecycleBin || !viewModel.isFoldersEnabled {
+                            Button(
+                                role: .destructive,
+                                action: { delete(permanently: true) },
+                                label: { Label(Strings.RecycleBin.Item.Menu.delete, systemImage: "trash.fill") }
+                            )
+                        } else {
+                            Button(
+                                role: .destructive,
+                                action: { delete(permanently: false) },
+                                label: { Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill") }
+                            )
+                        }
                     }
                 } label: {
                     Image(systemName: "ellipsis")
@@ -85,17 +182,49 @@ struct FilesViewItemView: View {
                 }
                 .tint(nil)
                 .menuOrder(.fixed)
-                .confirmationDialog(
-                    Strings.Files.Item.DeleteConfirmation.title(viewModel.fileName),
-                    isPresented: $viewModel.isShowDeleteConfirmation,
-                    titleVisibility: .visible
-                ) {
-                    Button(
-                        Strings.Files.Item.DeleteConfirmation.deletePermanently,
-                        role: .destructive,
-                        action: confirmDelete
-                    )
-                }
+                .deletionConfirmationDialog( // delete file to recycle bin
+                    isPresented: $viewModel.isPresentingDeleteFileToRecycleBinConfirmation,
+                    title: Strings.Files.Item.DeleteFileConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.Files.Item.DeleteConfirmation.button,
+                    confirm: { confirmDelete(permanently: false) }
+                )
+                .deletionConfirmationDialog( // delete folder to recycle bin
+                    isPresented: $viewModel.isPresentingDeleteFolderToRecycleBinConfirmation,
+                    title: Strings.Files.Item.DeleteFolderConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.Files.Item.DeleteConfirmation.button,
+                    confirm: { confirmDelete(permanently: false) }
+                )
+                .deletionConfirmationDialog( // delete file permanently
+                    isPresented: $viewModel.isPresentingDeleteFilePermanentlyConfirmation,
+                    title: Strings.RecycleBin.Item.DeleteFileConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.RecycleBin.Item.DeleteConfirmation.button,
+                    confirm: { confirmDelete(permanently: true) }
+                )
+                .deletionConfirmationDialog( // delete folder permanently
+                    isPresented: $viewModel.isPresentingDeleteFolderPermanentlyConfirmation,
+                    title: Strings.RecycleBin.Item.DeleteFolderConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.RecycleBin.Item.DeleteConfirmation.button,
+                    confirm: { confirmDelete(permanently: true) }
+                )
+                .restorationConfirmationDialog( // restore file
+                    isPresented: $viewModel.isPresentingRestoreFileConfirmation,
+                    title: Strings.RecycleBin.Item.RestoreFileConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.RecycleBin.Item.RestoreFileConfirmation.button,
+                    confirm: { confirmRestore() }
+                )
+                .restorationConfirmationDialog( // restore folder
+                    isPresented: $viewModel.isPresentingRestoreFolderConfirmation,
+                    title: Strings.RecycleBin.Item.RestoreFolderConfirmation.title(viewModel.fileName),
+                    buttonText: Strings.RecycleBin.Item.RestoreFolderConfirmation.button,
+                    confirm: { confirmRestore() }
+                )
+                .restorationConfirmationDialog( // restore parent folder (topmost folder in recycle bin)
+                    isPresented: $viewModel.isPresentingRestoreParentConfirmation,
+                    title: Strings.RecycleBin.Item.RestoreParentConfirmation
+                        .title(viewModel.nameOfTopmostFolderInRecycleBin),
+                    buttonText: Strings.RecycleBin.Item.RestoreParentConfirmation.button,
+                    confirm: { confirmRestore() }
+                )
             }
             .padding(.top, 8)
             .padding(.bottom, 5) // Less padding to accommodate progress bar
@@ -113,29 +242,106 @@ struct FilesViewItemView: View {
         Task { await viewModel.open() }
     }
 
+    private func editFile() {
+        Task { await viewModel.edit() }
+    }
+
     private func download() {
         Task { await viewModel.download() }
     }
 
+    private func showVersionHistory() {
+        Task { await viewModel.showVersionHistory() }
+    }
+
     private func rename() {
-        // FIXME: [WPB-19393] Implement
+        Task { await viewModel.rename() }
     }
 
-    private func delete() {
-        viewModel.showDeleteConfirmation()
+    private func moveToFolder() {
+        Task { await viewModel.moveToFolder() }
     }
 
-    private func confirmDelete() {
-        Task { await viewModel.confirmDelete() }
+    private func editTags() {
+        Task { await viewModel.onItemAction(.editTags, viewModel.item) }
+    }
+
+    private func restore() {
+        viewModel.showRestoreConfirmation()
+    }
+
+    private func delete(permanently: Bool) {
+        viewModel.showDeleteConfirmation(deletePermanently: permanently)
+    }
+
+    private func confirmDelete(permanently: Bool) {
+        Task { await viewModel.confirmDelete(permanently: permanently) }
+    }
+
+    private func confirmRestore() {
+        Task { await viewModel.confirmRestore() }
     }
 
     private var progressColor: Color {
-        viewModel.showErrorState ? ColorTheme.Base.error.color : ColorTheme.Base.primary.color
+        viewModel.showErrorState ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
     }
 
 }
 
+private extension View {
+    @ViewBuilder
+    func deletionConfirmationDialog(
+        isPresented: Binding<Bool>,
+        title: String,
+        buttonText: String,
+        confirm: @escaping () -> Void
+    ) -> some View {
+        confirmationDialog(
+            title,
+            isPresented: isPresented,
+            titleVisibility: .visible,
+            actions: {
+                Button(
+                    buttonText,
+                    role: .destructive,
+                    action: confirm
+                )
+            }
+        )
+    }
+
+    @ViewBuilder
+    func restorationConfirmationDialog(
+        isPresented: Binding<Bool>,
+        title: String,
+        buttonText: String,
+        confirm: @escaping () -> Void
+    ) -> some View {
+        confirmationDialog(
+            title,
+            isPresented: isPresented,
+            titleVisibility: .visible,
+            actions: {
+                Button(
+                    buttonText,
+                    action: confirm
+                )
+            }
+        )
+    }
+}
+
 #Preview {
-    FilesViewItemView(viewModel: .preview())
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    VStack(spacing: 0) {
+        FilesViewItemView(viewModel: .preview())
+        FilesViewItemView(
+            viewModel: .preview(),
+            canRenameFile: true,
+            canEditTags: true,
+            canOpenVersionHistory: true,
+            canDeleteFiles: true
+        )
+        FilesViewItemView(viewModel: .preview(tags: ["urgent"]), canRenameFile: true, canEditTags: true)
+        FilesViewItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]), canDeleteFiles: true)
+    }
 }

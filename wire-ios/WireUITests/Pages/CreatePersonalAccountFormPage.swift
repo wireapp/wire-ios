@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class CreatePersonalAccountFormPage: PageModel {
@@ -25,29 +26,36 @@ class CreatePersonalAccountFormPage: PageModel {
     }
 
     var nameTextField: XCUIElement {
-        app.descendants(matching: .any)["Enter your name"].firstMatch
-    }
-
-    var showPasswordButton: XCUIElement {
-        app.descendants(matching: .any)["eye.slash"].firstMatch
+        app.descendants(matching: .textField)[Locators.CreatePersonalAccountFormPage.enterNameField.rawValue].firstMatch
     }
 
     var passwordField: XCUIElement {
-        app.descendants(matching: .any)["Enter a password"].firstMatch
+        app.descendants(matching: .textField)[Locators.CreatePersonalAccountFormPage.enterPasswordField.rawValue]
+            .firstMatch
     }
 
     var confirmPasswordField: XCUIElement {
-        app.descendants(matching: .any)["Confirm password"].firstMatch
+        app.descendants(matching: .textField)[Locators.CreatePersonalAccountFormPage.enterConfirmPasswordField.rawValue]
+            .firstMatch
+    }
+
+    var showPasswordIcon: XCUIElement {
+        app.descendants(matching: .button)[Locators.CreatePersonalAccountFormPage.enterPasswordField.rawValue]
+            .firstMatch
+    }
+
+    var showConfirmPasswordIcon: XCUIElement {
+        app.descendants(matching: .button)[Locators.CreatePersonalAccountFormPage.enterConfirmPasswordField.rawValue]
+            .firstMatch
     }
 
     var continueButton: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Continue"]
+        app.descendants(matching: .button)[Locators.CreatePersonalAccountFormPage.continueButton.rawValue].firstMatch
     }
 
     var acceptButton: XCUIElement {
         let elementsQuery = app.otherElements
-        return elementsQuery.buttons["Accept"]
+        return elementsQuery.buttons[Locators.CreatePersonalAccountFormPage.acceptTermsOfUse.rawValue]
     }
 
     func enterName(_ name: String) throws -> CreatePersonalAccountFormPage {
@@ -56,14 +64,16 @@ class CreatePersonalAccountFormPage: PageModel {
     }
 
     func enterPassword(_ password: String) throws -> CreatePersonalAccountFormPage {
-        showPasswordButton.tap()
-        try passwordField.tapIfKeyboardNotFocused().typeText(password)
+        showPasswordIcon.tap()
+        try passwordField.tapIfKeyboardNotFocused()
+        passwordField.typeText(password)
         return self
     }
 
     func enterConfirmPassword(_ confirmPassword: String) throws -> CreatePersonalAccountFormPage {
-        showPasswordButton.tap()
-        try confirmPasswordField.tapIfKeyboardNotFocused().typeText(confirmPassword)
+        showConfirmPasswordIcon.tap()
+        try confirmPasswordField.tapIfKeyboardNotFocused()
+        confirmPasswordField.typeText(confirmPassword)
         return self
     }
 
@@ -77,5 +87,4 @@ class CreatePersonalAccountFormPage: PageModel {
         acceptButton.tap()
         return try VerificationCodePage()
     }
-
 }

@@ -20,7 +20,7 @@ package import Foundation
 
 // sourcery: AutoMockable
 package protocol NodesAPIProtocol: Sendable {
-    func preCheck(nodePath: String) async throws -> WireCellsPreCheckResult
+    func preCheck(nodePath: String, findAvailablePath: Bool) async throws -> WireCellsPreCheckResult
 
     func downloadFile(
         out: URL,
@@ -45,4 +45,10 @@ package protocol NodesAPIProtocol: Sendable {
     func getPublicLink(linkUUID: UUID) async throws -> URL
 
     func deletePublicLink(linkUUID: UUID) async throws
+
+    func updateTags(nodeID: UUID, tags: [String]) async throws
+
+    func getAllTags() async throws -> [String]
+
+    func getVersions(nodeID: UUID) async throws -> [WireCellsNodeVersion]
 }

@@ -31,6 +31,7 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
     package let type: String?
     package let isRecycled: Bool
     package let isDraft: Bool
+    package let isEditable: Bool
     package let contentUrl: URL?
     package let contentHash: String?
     package let mimeType: String?
@@ -40,6 +41,7 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
     package let conversationId: String?
     package let publicLinkId: String?
     package let downloadURL: URL?
+    package let tags: [String]
 
     package init(
         uuid: UUID,
@@ -50,6 +52,7 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
         type: String? = nil,
         isRecycled: Bool = false,
         isDraft: Bool = false,
+        isEditable: Bool = false,
         contentUrl: URL? = nil,
         contentHash: String? = nil,
         mimeType: String? = nil,
@@ -58,7 +61,8 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
         ownerUserName: String?,
         conversationId: String? = nil,
         publicLinkId: String? = nil,
-        downloadURL: URL? = nil
+        downloadURL: URL? = nil,
+        tags: [String] = []
     ) {
         self.uuid = uuid
         self.path = path
@@ -68,6 +72,7 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
         self.type = type
         self.isRecycled = isRecycled
         self.isDraft = isDraft
+        self.isEditable = isEditable
         self.contentUrl = contentUrl
         self.contentHash = contentHash
         self.mimeType = mimeType
@@ -77,6 +82,7 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
         self.conversationId = conversationId
         self.publicLinkId = publicLinkId
         self.downloadURL = downloadURL
+        self.tags = tags
     }
 }
 
@@ -88,9 +94,10 @@ package extension WireCellsNodeNetworkModel {
             modified: modified.map { Date(timeIntervalSince1970: Double($0)) },
             size: size,
             eTag: eTag,
-            type: type,
+            type: type.flatMap { WireCellsNodeType(rawValue: $0) },
             isRecycled: isRecycled,
             isDraft: isDraft,
+            isEditable: isEditable,
             contentUrl: contentUrl,
             contentHash: contentHash,
             mimeType: mimeType,
@@ -99,7 +106,8 @@ package extension WireCellsNodeNetworkModel {
             ownerUserName: ownerUserName,
             conversationID: conversationId.flatMap(QualifiedID.init(string:)),
             publicLinkID: publicLinkId.map(WireCellsPublicLinkID.init(string:)),
-            downloadURL: downloadURL
+            downloadURL: downloadURL,
+            tags: tags
         )
     }
 }
@@ -112,7 +120,7 @@ package extension WireCellsNode {
             modified: modified.map { UInt64($0.timeIntervalSince1970) },
             size: size,
             eTag: eTag,
-            type: type,
+            type: type?.rawValue,
             isRecycled: isRecycled,
             isDraft: isDraft,
             contentUrl: contentUrl,
@@ -122,7 +130,8 @@ package extension WireCellsNode {
             ownerUserId: ownerUserID?.transportString,
             ownerUserName: ownerUserName,
             conversationId: conversationID?.transportString,
-            publicLinkId: publicLinkID?.string
+            publicLinkId: publicLinkID?.string,
+            tags: tags
         )
     }
 }
@@ -140,22 +149,27 @@ package extension RestNode {
             type: type?.rawValue ?? "",
             isRecycled: isRecycled ?? false,
             isDraft: isDraft ?? false,
+            isEditable: editorURLsKeys?.contains("collabora") ?? false,
             contentUrl: preSignedGET?.url.flatMap(URL.init(string:)),
             contentHash: contentHash,
             mimeType: contentType,
             previews: previews?.compactMap { preview -> PreviewDTO? in
                 PreviewDTO(preview)
             } ?? [],
-            ownerUserId: userMetadata?
-                .first(where: { $0.namespace == "usermeta-owner-uuid" })?
-                .valueAsString,
-            ownerUserName: userMetadata?
-                .first(where: { $0.namespace == "usermeta-owner" })?
-                .valueAsString,
+            ownerUserId: metadataString("usermeta-owner-uuid"),
+            ownerUserName: metadataString("usermeta-owner"),
             conversationId: contextWorkspace?.uuid,
             publicLinkId: shares?.first?.uuid,
-            downloadURL: preSignedGET?.url.flatMap(URL.init(string:))
+            downloadURL: preSignedGET?.url.flatMap(URL.init(string:)),
+            tags: metadataString("usermeta-tags")?
+                .split(separator: ",").map { String($0) } ?? []
         )
+    }
+
+    private func metadataString(_ namespace: String) -> String? {
+        userMetadata?
+            .first { $0.namespace == namespace }?
+            .valueAsString
     }
 }
 
@@ -205,7 +219,7 @@ private extension WireFoundation.QualifiedID {
     }
 
     var transportString: String {
-        "\(id.uuidString.lowercased())@\(domain)"
+        "\(id.transportString())@\(domain)"
     }
 }
 

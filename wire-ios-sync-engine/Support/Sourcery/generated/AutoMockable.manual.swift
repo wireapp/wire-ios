@@ -252,7 +252,10 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
 }
 
 public class MockUserSession: UserSession {
-
+    public func resolveOneOnOneConversation(with userID: WireDataModel.QualifiedID) async throws -> WireDataModel.OneOnOneConversationResolution {
+        return .noAction
+    }
+    
     public var isBuildBlacklisted = false
     public var resolvedBackendMetadata = BackendMetadataProvider(
         apiVersionOverride: .v0,
@@ -507,12 +510,8 @@ public class MockUserSession: UserSession {
 
     public var underlyingMlsFeature: Feature.MLS!
 
-    // MARK: - chatBubblesSimpleFeature
-    
-    public var isChatBubbleSimpleEnabled: Bool = false
-    
     public var isWireCellsEnabled: Bool = false
-    
+
     public var isEnterpriseUser: Bool = false
     
     // MARK: - mlsGroupVerification
@@ -1092,21 +1091,21 @@ public class MockUserSession: UserSession {
         }
     }
 
-    // MARK: - makeSetConversationGuestsAndServicesUseCase
+    // MARK: - makeSetConversationGuestsAndAppsUseCase
 
-    public var makeSetConversationGuestsAndServicesUseCase_Invocations: [Void] = []
-    public var makeSetConversationGuestsAndServicesUseCase_MockMethod: (() -> SetAllowGuestAndServicesUseCaseProtocol)?
-    public var makeSetConversationGuestsAndServicesUseCase_MockValue: SetAllowGuestAndServicesUseCaseProtocol?
+    public var makeSetConversationGuestsAndAppsUseCase_Invocations: [Void] = []
+    public var makeSetConversationGuestsAndAppsUseCase_MockMethod: (() -> SetAllowGuestAndAppsUseCaseProtocol)?
+    public var makeSetConversationGuestsAndAppsUseCase_MockValue: SetAllowGuestAndAppsUseCaseProtocol?
 
-    public func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
-        makeSetConversationGuestsAndServicesUseCase_Invocations.append(())
+    public func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol {
+        makeSetConversationGuestsAndAppsUseCase_Invocations.append(())
 
-        if let mock = makeSetConversationGuestsAndServicesUseCase_MockMethod {
+        if let mock = makeSetConversationGuestsAndAppsUseCase_MockMethod {
             return mock()
-        } else if let mock = makeSetConversationGuestsAndServicesUseCase_MockValue {
+        } else if let mock = makeSetConversationGuestsAndAppsUseCase_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeSetConversationGuestsAndServicesUseCase`")
+            fatalError("no mock for `makeSetConversationGuestsAndAppsUseCase`")
         }
     }
 

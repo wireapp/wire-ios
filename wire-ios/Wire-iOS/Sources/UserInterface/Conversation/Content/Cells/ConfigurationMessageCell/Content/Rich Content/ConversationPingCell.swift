@@ -158,7 +158,7 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = false
-    lazy var shouldAlignMessageContentForBubbles = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    let shouldAlignMessageContentForBubbles = true
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?

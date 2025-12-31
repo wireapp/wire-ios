@@ -19,50 +19,35 @@
 import SwiftUI
 import WireDesign
 
-package struct MeetingsEmptyStateView: View {
-    private typealias Strings = L10n.Localizable.WireMeetings.List.EmptyState
+struct MeetingsEmptyStateView: View {
+    let title: String
+    let subtitle: String
 
-    var body: some View {
-        ZStack {
-            VStack(spacing: 28) {
-                Spacer(minLength: 0)
-                Text(Strings.title)
-                    .font(.textStyle(.h2))
-                    .foregroundColor(ColorTheme.Backgrounds.onSurfaceVariant.color)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
-                    .accessibilityIdentifier("meetingsEmptyStateTitle")
-
-                Text(Strings.subtitle)
-                    .font(.textStyle(.body1))
-                    .foregroundColor(ColorTheme.Backgrounds.onSurfaceVariant.color)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
-                    .accessibilityIdentifier("meetingsEmptyStateSubtitle")
-                Spacer(minLength: 0)
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorTheme.Backgrounds.surfaceVariant.color)
-        .overlay(
-            arrowView
-                .frame(width: 120, height: 200)
-                .padding(.trailing, 40)
-                .padding(.top, 40)
-                .allowsHitTesting(false)
-                .accessibilityHidden(true),
-            alignment: .topTrailing
-        )
-        .contentShape(Rectangle())
+    init(title: String, subtitle: String) {
+        self.title = title
+        self.subtitle = subtitle
     }
 
-    @ViewBuilder private var arrowView: some View {
-        Image(.meetingsEmptyArrow)
-            .resizable()
-            .renderingMode(.original)
+    var body: some View {
+        VStack(spacing: 12) {
+            Text(title)
+                .font(for: .h2)
+                .foregroundColor(ColorTheme.Backgrounds.onSurfaceVariant.color)
+                .multilineTextAlignment(.center)
+
+            Text(subtitle)
+                .font(for: .body1)
+                .foregroundColor(ColorTheme.Backgrounds.onSurfaceVariant.color)
+                .multilineTextAlignment(.center)
+        }
+        .padding(.horizontal, 40)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
 #Preview {
-    MeetingsEmptyStateView()
+    MeetingsEmptyStateView(
+        title: "No upcoming meetings",
+        subtitle: "Start or schedule a meeting with team members, guests, or external parties."
+    )
 }

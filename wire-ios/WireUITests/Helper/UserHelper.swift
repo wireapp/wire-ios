@@ -266,7 +266,7 @@ class UserHelper {
             unqualifiedUserIDs: [],
             name: groupName,
             accessMode: [.invite, .code],
-            accessRoles: [.teamMember, .guest, .service, .nonTeamMember],
+            accessRoles: [.teamMember, .guest, .app, .nonTeamMember],
             legacyAccessRole: nil,
             teamID: owner.teamID,
             isReadReceiptsEnabled: true

@@ -57,7 +57,7 @@ final class NotificationService: UNNotificationServiceExtension {
             )
         } else {
             WireLogger.notifications.warn("no notification service loaded", attributes: .safePublic)
-            contentHandler(.empty)
+            contentHandler(.emptyNotification)
         }
     }
 
@@ -103,61 +103,20 @@ final class NotificationService: UNNotificationServiceExtension {
             return nil
         }
 
-        guard let apiVersion = fetchLastKnownAPIVersion(
-            for: request,
-            appContainerURL: appContainerURL
-        ) else {
-            WireLogger.notifications.warn("no last known api version", attributes: .safePublic)
-            return nil
-        }
-
-        if apiVersion >= .v8 {
-            WireLogger.notifications.info(
-                "loading new notification service",
-                attributes: .safePublic
-            )
-            return NotificationServiceExtension(
-                currentAppVersion: currentAppVersion,
-                currentBuildNumber: currentBuildNumber,
-                appContainerURL: appContainerURL,
-                sharedUserDefaults: sharedUserDefaults,
-                cookieEncryptionKey: UserDefaults.cookiesKey(),
-                minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
-                preferredAPIVersion: BackendInfo.preferredAPIVersion.map {
-                    UInt($0.rawValue)
-                }
-            )
-        } else {
-            WireLogger.notifications.info(
-                "loading legacy notification service",
-                attributes: .safePublic
-            )
-            return LegacyNotificationService(
-                appGroupID: appID,
-                appContainerURL: appContainerURL,
-                currentAppVersion: currentAppVersion,
-                currentBuildNumber: currentBuildNumber
-            )
-        }
+        WireLogger.notifications.info(
+            "loading new notification service",
+            attributes: .safePublic
+        )
+        return NotificationServiceExtension(
+            currentAppVersion: currentAppVersion,
+            currentBuildNumber: currentBuildNumber,
+            appContainerURL: appContainerURL,
+            sharedUserDefaults: sharedUserDefaults,
+            cookieEncryptionKey: UserDefaults.cookiesKey(),
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
+            preferredAPIVersion: BackendInfo.preferredAPIVersion.map {
+                UInt($0.rawValue)
+            }
+        )
     }
-
-    private func fetchLastKnownAPIVersion(
-        for request: UNNotificationRequest,
-        appContainerURL: URL
-    ) -> WireNetwork.APIVersion? {
-        do {
-            let payload = try ProcessNotificationRequestUseCase().invoke(request: request)
-            let accountURLs = AccountURLs(root: appContainerURL)
-            let environmentStore = try BackendEnvironmentStore(directory: accountURLs.accountData)
-            let metadata = try environmentStore.fetchBackendMetadata(accountID: payload.userID)
-            return metadata?.apiVersion
-        } catch {
-            WireLogger.notifications.error(
-                "failed to fetch last known api version",
-                attributes: .safePublic
-            )
-            return nil
-        }
-    }
-
 }

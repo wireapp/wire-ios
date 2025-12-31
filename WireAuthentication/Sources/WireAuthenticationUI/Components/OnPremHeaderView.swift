@@ -19,6 +19,7 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
+import WireLocators
 import WireNetwork
 
 package struct OnPremHeaderView: View {
@@ -51,9 +52,9 @@ package struct OnPremHeaderView: View {
                 + Text(Image(systemName: "info.circle"))
                 .foregroundColor(.gray)
         })
-        .accessibilityIdentifier("onPremInfoButton")
+        .accessibilityIdentifier(Locators.WelcomePage.onPremInfoButton.rawValue)
         .multilineTextAlignment(.center)
-        .font(.textStyle(.h2))
+        .font(for: .h2)
         .lineLimit(nil)
         .fixedSize(horizontal: false, vertical: true)
         .alert(Strings.Alert.title, isPresented: $showCustomBackendAlert) {

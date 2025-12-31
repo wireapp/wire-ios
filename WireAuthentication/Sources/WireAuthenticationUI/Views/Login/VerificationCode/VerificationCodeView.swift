@@ -47,7 +47,7 @@ package struct VerificationCodeView: View {
     package var body: some View {
         VStack(spacing: 20) {
             Text(Strings.VerificationCode.message(viewModel.email))
-                .wireTextStyle(.body1)
+                .font(for: .body1)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.primaryText)
 
@@ -116,7 +116,7 @@ package struct VerificationCodeView: View {
                             )
                     )
                     .multilineTextAlignment(.center)
-                    .font(.textStyle(.h2))
+                    .font(for: .h2)
                     .keyboardType(.numberPad)
                     .foregroundColor(.primary)
                     .focused($focusedIndex, equals: index)

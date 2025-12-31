@@ -42,6 +42,7 @@ public class SearchTask {
     private var servicesTaskIdentifier: ZMTaskIdentifier?
     private var resultHandlers: [ResultHandler] = []
     private var result = SearchResult(
+        context: .init(concurrencyType: .privateQueueConcurrencyType),
         contacts: [],
         teamMembers: [],
         directory: [],
@@ -50,11 +51,23 @@ public class SearchTask {
         searchUsersCache: nil
     )
 
-    private var tasksRemaining = 0 {
-        didSet {
+    private let tasksRemainingLock = NSRecursiveLock()
+    private var _tasksRemaining = 0
+    private var tasksRemaining: Int {
+        get {
+            tasksRemainingLock.withLock {
+                _tasksRemaining
+            }
+        }
+        set {
+            let oldValue = tasksRemainingLock.withLock {
+                let oldValue = _tasksRemaining
+                _tasksRemaining = newValue
+                return oldValue
+            }
             // only trigger handles if decrement to 0
-            if oldValue > tasksRemaining {
-                let isCompleted = tasksRemaining == 0
+            if oldValue > newValue {
+                let isCompleted = newValue == 0
                 resultHandlers.forEach { $0(result, isCompleted) }
 
                 if isCompleted {
@@ -124,11 +137,11 @@ public class SearchTask {
     public func cancel() {
         resultHandlers.removeAll()
 
-        teamMembershipTaskIdentifier.flatMap(transportSession.cancelTask)
-        userLookupTaskIdentifier.flatMap(transportSession.cancelTask)
-        directoryTaskIdentifier.flatMap(transportSession.cancelTask)
-        servicesTaskIdentifier.flatMap(transportSession.cancelTask)
-        handleTaskIdentifier.flatMap(transportSession.cancelTask)
+        teamMembershipTaskIdentifier.map(transportSession.cancelTask)
+        userLookupTaskIdentifier.map(transportSession.cancelTask)
+        directoryTaskIdentifier.map(transportSession.cancelTask)
+        servicesTaskIdentifier.map(transportSession.cancelTask)
+        handleTaskIdentifier.map(transportSession.cancelTask)
 
         tasksRemaining = 0
     }
@@ -181,6 +194,7 @@ extension SearchTask {
                     .compactMap { contextProvider.viewContext.object(with: $0.objectID) as? ZMUser }
 
                 let result = SearchResult(
+                    context: contextProvider.viewContext,
                     contacts: copiedConnectedUsers.map {
                         ZMSearchUser(
                             contextProvider: contextProvider,
@@ -265,6 +279,7 @@ extension SearchTask {
                     }
 
                 let result = SearchResult(
+                    context: contextProvider.viewContext,
                     contacts: searchConnectedUsers,
                     teamMembers: searchTeamMembers,
                     directory: [],
@@ -629,6 +644,7 @@ extension SearchTask {
                         // prepend result to prevResult only if it doesn't contain it
                         if !prevResult.directory.contains(user) {
                             self?.result = SearchResult(
+                                context: prevResult.context,
                                 contacts: prevResult.contacts,
                                 teamMembers: prevResult.teamMembers,
                                 directory: result.directory + prevResult.directory,
@@ -669,8 +685,10 @@ extension SearchTask {
 extension SearchTask {
 
     func performRemoteSearchForServices() {
+        let teamIdentifier = searchContext.performAndWait { ZMUser.selfUser(in: searchContext).team?.remoteIdentifier }
         guard
             let apiVersion,
+            let teamIdentifier,
             case let .search(searchRequest) = task,
             !searchRequest.searchOptions.contains(.localResultsOnly),
             searchRequest.searchOptions.contains(.services)
@@ -679,8 +697,6 @@ extension SearchTask {
         tasksRemaining += 1
 
         searchContext.performGroupedBlock { [self] in
-            let selfUser = ZMUser.selfUser(in: searchContext)
-            guard let teamIdentifier = selfUser.team?.remoteIdentifier else { return }
 
             let request = type(of: self).servicesSearchRequest(
                 teamIdentifier: teamIdentifier,

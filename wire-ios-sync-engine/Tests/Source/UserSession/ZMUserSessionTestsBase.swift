@@ -31,7 +31,6 @@ import WireTransportSupport
 class ZMUserSessionTestsBase: MessagingTest {
 
     var mockSessionManager: MockSessionManager!
-    var mockPushChannel: MockPushChannel!
     var mockEARService: MockEARServiceInterface!
     var mockMLSService: MockMLSServiceInterface!
     var backendEnvironment: WireTransport.BackendEnvironment!
@@ -94,8 +93,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             userIdentifier: .create(),
             useCache: true
         )
-        mockPushChannel = MockPushChannel()
-        transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
+
+        transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage)
         mockSessionManager = MockSessionManager()
         mediaManager = MockMediaManager()
         flowManagerMock = FlowManagerMock()
@@ -104,7 +103,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockEARService.setInitialEARFlagValue_MockMethod = { _ in }
 
         mockMLSService = MockMLSServiceInterface()
-        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.onNewCRLsDistributionPoints_MockValue = PassthroughSubject<CRLsDistributionPoints, Never>()
             .eraseToAnyPublisher()
         mockMLSService.epochChanges_MockValue = .init { continuation in
@@ -148,7 +146,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockFetchBackendMLSPublicKeysActionHandler = nil
         mockCoreCryptoProvider = nil
         sut?.tearDown()
-        mockPushChannel = nil
         super.tearDown()
     }
 
@@ -162,9 +159,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
-
-        let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
-        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
 
         let mockContextStorable = MockLAContextStorable()
         mockContextStorable.clear_MockMethod = {}
@@ -184,7 +178,6 @@ class ZMUserSessionTestsBase: MessagingTest {
             currentAppVersion: "3.120.0",
             currentBuildNumber: "00000",
             application: application,
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: coreDataStack,
             coreCryptoProvider: mockCoreCryptoProvider,
             configuration: configuration,

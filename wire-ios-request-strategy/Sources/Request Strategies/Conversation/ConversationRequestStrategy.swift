@@ -52,7 +52,6 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
     let updateRoleActionHandler: UpdateRoleActionHandler
 
-    let updateSync: KeyPathObjectSync<ConversationRequestStrategy>
     let actionSync: EntityActionSync
 
     var isFetchingAllConversations: Bool = false
@@ -138,11 +137,6 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             transcoder: conversationByQualifiedIDTranscoder
         )
 
-        self.updateSync = KeyPathObjectSync(
-            entityName: ZMConversation.entityName(),
-            \.needsToBeUpdatedFromBackend
-        )
-
         self.conversationEventProcessor = ConversationEventProcessor(
             context: managedObjectContext,
             localDomain: localDomain,
@@ -183,7 +177,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             ),
             UpdateConversationProtocolActionHandler(context: managedObjectContext),
             CreateConversationGuestLinkActionHandler(context: managedObjectContext),
-            SetAllowGuestsAndServicesActionHandler(
+            SetAllowGuestsAndAppsActionHandler(
                 context: managedObjectContext,
                 localDomain: localDomain,
                 isFederationEnabled: isFederationEnabled
@@ -205,7 +199,6 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             .allowsRequestsWhileWaitingForWebsocket
         ]
 
-        updateSync.transcoder = self
         conversationByIDListSync.delegate = self
         conversationByQualifiedIDListSync.delegate = self
     }
@@ -223,7 +216,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         case .v0:
             conversationByIDSync.sync(identifiers: conversations.compactMap(\.remoteIdentifier))
 
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
             if let qualifiedIDs = conversations.qualifiedIDs {
                 conversationByQualifiedIDSync.sync(identifiers: qualifiedIDs)
             } else if let localDomain {
@@ -256,7 +249,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
                 }
             }
 
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
             conversationQualifiedIDsSync.fetch { [weak self] result in
                 switch result {
                 case let .success(qualifiedConversationIDList):
@@ -289,53 +282,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        [updateSync, modifiedSync]
-    }
-
-}
-
-extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
-
-    typealias T = ZMConversation
-
-    func synchronize(_ object: ZMConversation, completion: @escaping () -> Void) {
-        defer { completion() }
-        guard let apiVersion else { return }
-
-        switch apiVersion {
-        case .v0:
-            guard let identifier = object.remoteIdentifier else { return }
-            synchronize(unqualifiedID: identifier)
-
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
-            if let qualifiedID = object.qualifiedID {
-                synchronize(qualifiedID: qualifiedID)
-            } else if let identifier = object.remoteIdentifier, let localDomain {
-                let qualifiedID = QualifiedID(uuid: identifier, domain: localDomain)
-                synchronize(qualifiedID: qualifiedID)
-            }
-        }
-    }
-
-    private func synchronize(qualifiedID: QualifiedID) {
-        let conversationByQualifiedIdIdentifiersSet: Set<ConversationByQualifiedIDTranscoder.T> = [qualifiedID]
-        conversationByQualifiedIDSync.sync(identifiers: conversationByQualifiedIdIdentifiersSet)
-    }
-
-    private func synchronize(unqualifiedID: UUID) {
-        let conversationByIdIdentfiersSet: Set<ConversationByIDTranscoder.T> = [unqualifiedID]
-        conversationByIDSync.sync(identifiers: conversationByIdIdentfiersSet)
-    }
-
-    func cancel(_ object: ZMConversation) {
-        if let identifier = object.qualifiedID {
-            let conversationByQualifiedIdIdentifiersSet: Set<ConversationByQualifiedIDTranscoder.T> = [identifier]
-            conversationByQualifiedIDSync.cancel(identifiers: conversationByQualifiedIdIdentifiersSet)
-        }
-        if let identifier = object.remoteIdentifier {
-            let conversationByIdIdentfiersSet: Set<ConversationByIDTranscoder.T> = [identifier]
-            conversationByIDSync.cancel(identifiers: conversationByIdIdentfiersSet)
-        }
+        [modifiedSync]
     }
 
 }
@@ -478,7 +425,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                     apiVersion: apiVersion.rawValue
                 )
 
-            case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+            case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
                 let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
                 guard let domain else { return nil }
 
@@ -520,7 +467,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                     apiVersion: apiVersion.rawValue
                 )
 
-            case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+            case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
                 let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
                 guard let domain else { return nil }
 
