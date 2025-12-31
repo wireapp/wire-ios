@@ -17,11 +17,29 @@
 //
 
 import WireFoundation
+import WireLocators
 import XCTest
 
 final class ShareExtensionTests: WireUITestCase {
 
-    private let photosApp = XCUIApplication(bundleIdentifier: "com.apple.mobileslideshow")
+    @MainActor
+    private func shareFirstPhotoToWire(name: String) async throws {
+        let photosApp = try PhotosAppPage()
+        try photosApp
+            .launchPhotosApp()
+            .openFirstImage()
+            .shareImageToWire()
+            .chooseConversationAndSend(name: name)
+    }
+
+    @MainActor
+    private func switchBackToWireApp() async throws {
+        app.activate()
+        if !app.wait(for: .runningForeground, timeout: 10) {
+            app.launch()
+            _ = app.wait(for: .runningForeground, timeout: 10)
+        }
+    }
 
     @MainActor
     func testCritical_ShareImageOnetoOne() async throws {
@@ -31,69 +49,17 @@ final class ShareExtensionTests: WireUITestCase {
         let domain = BackendTarget.staging.domainInfo
 
         try await userHelper.sendConnectionRequestToUser(domain: domain, userId: user1.id)
-
         try await userHelper.acceptConnectionRequestFromUser(domain: domain, user1: user1, userId: user2.id)
         let firstTimePage = try app.loginUser(email: user1.email, password: user1.password)
-        _ = try  firstTimePage.acceptPopup(with: self)
+        let conversationsPage = try  firstTimePage.acceptPopup(with: self)
 
-        _ = try await launchPhotosAppAndOpenFirstImage()
-
-        try await shareToWireApp()
-
-        try await chooseConversationAndSend(name: user2.name)
+        try await shareFirstPhotoToWire(name: user2.name)
         try await switchBackToWireApp()
 
-        // verify shared via Wire app - pending
+        let activeConversationPage = try conversationsPage.openConversation()
 
-    }
-
-    @MainActor
-    private func launchPhotosAppAndOpenFirstImage() async throws -> String {
-        photosApp.launch()
-        XCTAssertTrue(photosApp.wait(for: .runningForeground, timeout: 10))
-
-        let firstImage = photosApp.images
-            .matching(identifier: "PXGGridLayout-Info")
-            .element(boundBy: 0)
-
-        let imageLabel = firstImage.label
-        // NOTE: Use a coordinate tap on center because Photos grid cells are not always directly hittable in UI
-        // tests.
-        firstImage
-            .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-            .tap()
-
-        return imageLabel
-    }
-
-    @MainActor
-    private func shareToWireApp() async throws {
-        let shareButton = photosApp.buttons
-            .matching(identifier: "PUOneUpBarButtonItemIdentifierShare")
-            .firstMatch
-
-        shareButton.tap()
-        let shareToWireApp = photosApp.cells["Wire"].firstMatch
-        shareToWireApp.tap()
-    }
-
-    @MainActor
-    private func chooseConversationAndSend(name: String) async throws {
-        let chooseConversationButton = photosApp.buttons["chevron"]
-
-        let selectConversation = photosApp.staticTexts[name]
-        let sendButton = photosApp.buttons["sendButtonOnShareExtension"].firstMatch
-
-        chooseConversationButton.tap()
-        selectConversation.tap()
-        sendButton.tap()
-    }
-
-    @MainActor
-    private func switchBackToWireApp() async throws {
-        app.activate()
-        if app.state != .runningForeground {
-            app.launch()
-        }
+        XCTAssertTrue(
+            activeConversationPage.imageCell.exists, "No Image cell found"
+        )
     }
 }

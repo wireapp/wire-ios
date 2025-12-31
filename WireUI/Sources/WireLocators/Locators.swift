@@ -99,6 +99,7 @@ public enum Locators {
         case conversationTitleButton
         case conversationDetailsButton
         case message
+        case imageCell = "ImageCell"
     }
 
     public enum BackupOrRestorePage: String {
@@ -264,6 +265,15 @@ public enum Locators {
     public enum FileVersioningPage: String {
 
         case closeButton
+    }
+
+    public enum ShareExtensionPage: String {
+
+        case imageTile = "PXGGridLayout-Info"
+        case shareButton = "PUOneUpBarButtonItemIdentifierShare"
+
+        case chooseConversations = "chevron"
+        case sendButtonOnShareExtension
     }
 
 }
