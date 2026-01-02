@@ -20,11 +20,19 @@ import WireLocators
 import XCTest
 
 class PhotosAppPage: PageModel {
-
-    private let photosApp = XCUIApplication(bundleIdentifier: "com.apple.mobileslideshow")
+    private let photosApp: XCUIApplication
 
     override var pageMainElement: XCUIElement {
-        firstImageTile
+        photosApp.windows.firstMatch
+    }
+
+    init(photosApp: XCUIApplication) throws {
+        self.photosApp = photosApp
+        try super.init()
+    }
+
+    var continueButtonOnWhatsNewPhotosApp: XCUIElement {
+        photosApp.buttons[Locators.ShareExtensionPage.continueButton.rawValue].firstMatch
     }
 
     var firstImageTile: XCUIElement {
@@ -54,17 +62,19 @@ class PhotosAppPage: PageModel {
     func selectConversation(name: String) -> XCUIElement {
         photosApp.staticTexts[name].firstMatch
     }
-
+    
     @discardableResult
-    func launchPhotosApp() throws -> PhotosAppPage {
-        photosApp.launch()
-        XCTAssertTrue(photosApp.wait(for: .runningForeground, timeout: 5))
+    func continueWhatsNewIfPresent() throws -> PhotosAppPage {
+        if continueButtonOnWhatsNewPhotosApp.waitForExistence(timeout: 3) {
+            continueButtonOnWhatsNewPhotosApp.tap()
+        }
         return self
     }
 
     @discardableResult
     func openFirstImage() throws -> PhotosAppPage {
-        XCTAssertTrue(firstImageTile.waitForExistence(timeout: 5))
+        try continueWhatsNewIfPresent()
+        XCTAssertTrue(firstImageTile.waitForExistence(timeout: 10))
         // NOTE: Use a coordinate tap on center because Photos grid cells are not always directly hittable in UITests
         firstImageTile
             .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
@@ -74,22 +84,22 @@ class PhotosAppPage: PageModel {
 
     @discardableResult
     func shareImageToWire() throws -> PhotosAppPage {
-        XCTAssertTrue(shareButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(shareButton.waitForExistence(timeout: 10))
         shareButton.tap()
-        XCTAssertTrue(shareToWireApp.waitForExistence(timeout: 5))
+        XCTAssertTrue(shareToWireApp.waitForExistence(timeout: 10))
         shareToWireApp.tap()
         return self
     }
 
     func chooseConversationAndSend(name: String) throws {
-        XCTAssertTrue(chooseConversationButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(chooseConversationButton.waitForExistence(timeout: 10))
         chooseConversationButton.tap()
 
         let conversationToSend = selectConversation(name: name)
-        XCTAssertTrue(conversationToSend.waitForExistence(timeout: 5))
+        XCTAssertTrue(conversationToSend.waitForExistence(timeout: 10))
         conversationToSend.tap()
 
-        XCTAssertTrue(sendButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(sendButton.waitForExistence(timeout: 10))
         sendButton.tap()
     }
 

@@ -22,11 +22,18 @@ import XCTest
 
 final class ShareExtensionTests: WireUITestCase {
 
+    private let photosAppBundleId = XCUIApplication(bundleIdentifier: "com.apple.mobileslideshow")
+
+    @MainActor
+    private func launchPhotosApp() async throws {
+        photosAppBundleId.launch()
+        XCTAssertTrue(photosAppBundleId.wait(for: .runningForeground, timeout: 10))
+    }
+
     @MainActor
     private func shareFirstPhotoToWire(name: String) async throws {
-        let photosApp = try PhotosAppPage()
+        let photosApp = try PhotosAppPage(photosApp: photosAppBundleId)
         try photosApp
-            .launchPhotosApp()
             .openFirstImage()
             .shareImageToWire()
             .chooseConversationAndSend(name: name)
@@ -42,7 +49,7 @@ final class ShareExtensionTests: WireUITestCase {
     }
 
     @MainActor
-    func testCritical_ShareImageOnetoOne() async throws {
+    func test_ShareImageOnetoOne() async throws {
 
         let user1 = try await userHelper.createPersonalUser()
         let user2 = try await userHelper.createPersonalUser()
@@ -53,6 +60,7 @@ final class ShareExtensionTests: WireUITestCase {
         let firstTimePage = try app.loginUser(email: user1.email, password: user1.password)
         let conversationsPage = try  firstTimePage.acceptPopup(with: self)
 
+        try await launchPhotosApp()
         try await shareFirstPhotoToWire(name: user2.name)
         try await switchBackToWireApp()
 

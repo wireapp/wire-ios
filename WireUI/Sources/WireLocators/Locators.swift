@@ -271,9 +271,9 @@ public enum Locators {
 
         case imageTile = "PXGGridLayout-Info"
         case shareButton = "PUOneUpBarButtonItemIdentifierShare"
-
         case chooseConversations = "chevron"
         case sendButtonOnShareExtension
+        case continueButton = "Continue"
     }
 
 }
