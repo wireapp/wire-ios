@@ -29,7 +29,7 @@ public protocol AuthenticationAPI: Sendable {
     ///   - verificationCode: The verification code is sent to the given user’s email address,
     ///   this is an optional field and depends on the team/server settings.
     ///   - label: An optional label to associate with the access token.
-    /// - Returns: HTTP cookie, a valid access token
+    /// - Returns: HTTP cookie, a valid access token.
 
     func login(
         email: String,
