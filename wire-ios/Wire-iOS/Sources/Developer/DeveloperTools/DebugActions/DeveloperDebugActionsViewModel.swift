@@ -87,10 +87,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Invalidate all conversations", action: invalidateAllConversations),
             .init(title: "Set last app version migration", action: requestAppVersionInput),
             .init(title: "Initiate reset of first from top MLS", action: initiateResetBrokenMLSConversation),
-<<<<<<< HEAD
-=======
             .init(title: "Initiate reset of affected MLS groups", action: initiateRepairRemovalKeys),
->>>>>>> 3796fbc68e (fix: add debug command to trigger key repair - WPB-22447 🍒 (#4046))
             .init(title: "Logout", action: logout)
 
         ]
@@ -199,8 +196,6 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     }
 
-<<<<<<< HEAD
-=======
     private func initiateRepairRemovalKeys() {
         guard let useCase = userSession?.clientSessionComponent?.repairFaultyRemovalKeysUsecase else {
             WireLogger.mls.warn(
@@ -230,7 +225,6 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         }
     }
 
->>>>>>> 3796fbc68e (fix: add debug command to trigger key repair - WPB-22447 🍒 (#4046))
     func logout() {
         LogOutHelper(showLoading: {}, hideLoading: {}).logout()
     }
