@@ -80,7 +80,7 @@ extension FilesViewProtocol {
 
     @ViewBuilder
     func itemRow(index: Int) -> some View {
-        FilesViewItemView(
+        FilesItemView(
             viewModel: viewModel.itemViewModel(index: index),
             // some actions are not allowed when browsing files
             canRenameFile: !isBrowsing,

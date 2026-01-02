@@ -334,7 +334,7 @@ package final class FilesViewModel: ObservableObject {
                     sheetNavigation = .editTags(fileItem: item)
                 case .moveToFolder:
                     sheetNavigation = .moveToFolder(fileItem: item)
-                case .onVersionHistory:
+                case .showVersionHistory:
                     sheetNavigation = .versionHistory(view: makeFileVersioningView(item: item))
                 case .edit:
                     isEditing = item

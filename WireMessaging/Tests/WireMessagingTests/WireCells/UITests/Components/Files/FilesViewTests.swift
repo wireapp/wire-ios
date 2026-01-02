@@ -110,7 +110,7 @@ final class FilesViewTests: XCTestCase {
             isEditable: false
         )
 
-        let view = FilesViewItemView(viewModel: .make(item: item))
+        let view = FilesItemView(viewModel: .make(item: item))
             .frame(width: 390)
 
         snapshotHelper
@@ -136,7 +136,7 @@ final class FilesViewTests: XCTestCase {
             isEditable: false
         )
 
-        let view = FilesViewItemView(viewModel: .make(item: item))
+        let view = FilesItemView(viewModel: .make(item: item))
             .frame(width: 390)
 
         snapshotHelper
@@ -162,7 +162,7 @@ final class FilesViewTests: XCTestCase {
             isEditable: false
         )
 
-        let view = FilesViewItemView(viewModel: .make(item: item))
+        let view = FilesItemView(viewModel: .make(item: item))
             .frame(width: 390)
 
         snapshotHelper
@@ -188,7 +188,7 @@ final class FilesViewTests: XCTestCase {
             isEditable: false
         )
 
-        let view = FilesViewItemView(viewModel: .make(item: item))
+        let view = FilesItemView(viewModel: .make(item: item))
             .frame(width: 390)
 
         snapshotHelper
@@ -214,7 +214,7 @@ final class FilesViewTests: XCTestCase {
             isEditable: false
         )
 
-        let view = FilesViewItemView(viewModel: .make(item: item))
+        let view = FilesItemView(viewModel: .make(item: item))
             .frame(width: 390)
 
         for dynamicTypeSize in [DynamicTypeSize.allCases.min()!, DynamicTypeSize.allCases.max()!] {
@@ -250,7 +250,7 @@ final class FilesViewTests: XCTestCase {
             downloadState: .downloading(progress: 0.5)
         )
 
-        let view = FilesViewItemView(viewModel: .make(item: item, asset: asset))
+        let view = FilesItemView(viewModel: .make(item: item, asset: asset))
             .frame(width: 390)
 
         snapshotHelper
@@ -284,7 +284,7 @@ final class FilesViewTests: XCTestCase {
             downloadState: .failed(error: URLError(.notConnectedToInternet))
         )
 
-        let view = FilesViewItemView(viewModel: .make(item: item, asset: asset))
+        let view = FilesItemView(viewModel: .make(item: item, asset: asset))
             .frame(width: 390)
 
         snapshotHelper

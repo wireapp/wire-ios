@@ -41,7 +41,7 @@ final class FilesItemViewModel: ObservableObject {
         case rename
         case editTags
         case moveToFolder
-        case onVersionHistory
+        case showVersionHistory
         case edit
     }
 
@@ -206,7 +206,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     func showVersionHistory() async {
-        await onItemAction(.onVersionHistory, item)
+        await onItemAction(.showVersionHistory, item)
     }
 
     func confirmDelete(permanently: Bool) async {

@@ -25,7 +25,7 @@ import WireMessagingDomainSupport
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-struct FilesViewItemView: View {
+struct FilesItemView: View {
 
     @StateObject private var viewModel: FilesItemViewModel
     @ScaledMetric private var imageHeight: CGFloat = 28
@@ -333,15 +333,15 @@ private extension View {
 
 #Preview {
     VStack(spacing: 0) {
-        FilesViewItemView(viewModel: .preview())
-        FilesViewItemView(
+        FilesItemView(viewModel: .preview())
+        FilesItemView(
             viewModel: .preview(),
             canRenameFile: true,
             canEditTags: true,
             canOpenVersionHistory: true,
             canDeleteFiles: true
         )
-        FilesViewItemView(viewModel: .preview(tags: ["urgent"]), canRenameFile: true, canEditTags: true)
-        FilesViewItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]), canDeleteFiles: true)
+        FilesItemView(viewModel: .preview(tags: ["urgent"]), canRenameFile: true, canEditTags: true)
+        FilesItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]), canDeleteFiles: true)
     }
 }
