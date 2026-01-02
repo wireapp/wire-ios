@@ -113,7 +113,7 @@ final class CallTopOverlayController: UIViewController {
         tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(openCall(_:)))
 
         view.clipsToBounds = true
-        view.backgroundColor = SemanticColors.View.backgroundCallTopOverlay
+        view.backgroundColor = ColorTheme.Base.positive
         view.accessibilityIdentifier = "OpenOngoingCallButton"
         view.shouldGroupAccessibilityChildren = true
         view.isAccessibilityElement = true
@@ -126,7 +126,7 @@ final class CallTopOverlayController: UIViewController {
         durationLabel.translatesAutoresizingMaskIntoConstraints = false
         interactiveView.addSubview(durationLabel)
         durationLabel.font = FontSpec(.small, .semibold).font
-        durationLabel.textColor = SemanticColors.Label.textDefault
+        durationLabel.textColor = ColorTheme.Base.onPositive
         durationLabel.lineBreakMode = .byTruncatingMiddle
         durationLabel.textAlignment = .center
 
@@ -159,7 +159,7 @@ final class CallTopOverlayController: UIViewController {
             if displayMuteIcon {
                 muteIcon.setIcon(.microphoneOff, size: 12, color: .white)
                 muteIcon.setTemplateIcon(.microphoneOff, size: 12)
-                muteIcon.tintColor = SemanticColors.Icon.foregroundDefaultWhite
+                muteIcon.tintColor = ColorTheme.Base.onPositive
                 muteIconWidth?.constant = 12
             } else {
                 muteIcon.image = nil
