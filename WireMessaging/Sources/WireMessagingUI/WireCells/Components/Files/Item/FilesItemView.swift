@@ -94,20 +94,26 @@ struct FilesItemView: View {
 
                 Menu {
                     if menuActions.contains(.open) {
-                        Button(action: open) {
+                        Button {
+                            viewModel.performMenuAction(.open)
+                        } label: {
                             Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
                         }
                         .disabled(viewModel.isDownloading)
                         
                         if viewModel.isDownloadOptionAvailable {
-                            Button(action: download) {
+                            Button {
+                                Task { await viewModel.download() }
+                            } label: {
                                 Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
                             }
                         }
                     }
 
                     if menuActions.contains(.showVersionHistory) {
-                        Button(action: showVersionHistory) {
+                        Button {
+                            viewModel.performMenuAction(.showVersionHistory)
+                        } label: {
                             Label(
                                 Strings.Files.Item.Menu.versionHistory,
                                 systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90"
@@ -116,7 +122,9 @@ struct FilesItemView: View {
                     }
 
                     if menuActions.contains(.edit), viewModel.isEditable {
-                        Button(action: editFile) {
+                        Button {
+                            viewModel.performMenuAction(.edit)
+                        } label: {
                             Label(Strings.Files.Item.Menu.editFile, systemImage: "square.and.pencil")
                         }
                     }
@@ -124,25 +132,33 @@ struct FilesItemView: View {
                     Divider()
 
                     if menuActions.contains(.rename) {
-                        Button(action: rename) {
+                        Button {
+                            viewModel.performMenuAction(.rename)
+                        } label: {
                             Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
                         }
                     }
 
                     if menuActions.contains(.moveToFolder) {
-                        Button(action: moveToFolder) {
+                        Button {
+                            viewModel.performMenuAction(.moveToFolder)
+                        } label: {
                             Label(Strings.Files.Item.Menu.moveToFolder, systemImage: "folder")
                         }
                     }
 
                     if menuActions.contains(.editTags) {
-                        Button(action: editTags) {
+                        Button {
+                            viewModel.performMenuAction(.editTags)
+                        } label: {
                             Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
                         }
                     }
 
                     if menuActions.contains(.restore) {
-                        Button(action: restore) {
+                        Button {
+                            viewModel.performMenuAction(.restore)
+                        } label: {
                             Label(Strings.RecycleBin.Item.Menu.restore, systemImage: "arrow.uturn.backward")
                         }
                     }
@@ -150,7 +166,7 @@ struct FilesItemView: View {
                     if menuActions.contains(.deletePermanently) {
                         Button(
                             role: .destructive,
-                            action: { delete(permanently: true) },
+                            action: { viewModel.performMenuAction(.deletePermanently) },
                             label: { Label(Strings.RecycleBin.Item.Menu.delete, systemImage: "trash.fill") }
                         )
                     }
@@ -158,7 +174,7 @@ struct FilesItemView: View {
                     if menuActions.contains(.deleteToRecycleBin) {
                         Button(
                             role: .destructive,
-                            action: { delete(permanently: false) },
+                            action: { viewModel.performMenuAction(.deleteToRecycleBin) },
                             label: { Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill") }
                         )
                     }
@@ -225,43 +241,7 @@ struct FilesItemView: View {
         }
         .contentShape(Rectangle()) // Tap area
     }
-
-    private func open() {
-        Task { await viewModel.open() }
-    }
-
-    private func editFile() {
-        Task { await viewModel.edit() }
-    }
-
-    private func download() {
-        Task { await viewModel.download() }
-    }
-
-    private func showVersionHistory() {
-        Task { await viewModel.showVersionHistory() }
-    }
-
-    private func rename() {
-        Task { await viewModel.rename() }
-    }
-
-    private func moveToFolder() {
-        Task { await viewModel.moveToFolder() }
-    }
-
-    private func editTags() {
-        Task { await viewModel.onItemAction(.editTags, viewModel.item) }
-    }
-
-    private func restore() {
-        viewModel.showRestoreConfirmation()
-    }
-
-    private func delete(permanently: Bool) {
-        viewModel.showDeleteConfirmation(deletePermanently: permanently)
-    }
-
+    
     private func confirmDelete(permanently: Bool) {
         Task { await viewModel.confirmDelete(permanently: permanently) }
     }

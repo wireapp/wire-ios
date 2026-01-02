@@ -154,21 +154,18 @@ final class FilesItemViewModel: ObservableObject {
     var isEditable: Bool {
         item.isEditable
     }
-
-    func open() async {
-        await onItemAction(.open, item)
-    }
-
-    func rename() async {
-        await onItemAction(.rename, item)
-    }
-
-    func moveToFolder() async {
-        await onItemAction(.moveToFolder, item)
-    }
-
-    func edit() async {
-        await onItemAction(.edit, item)
+    
+    func performMenuAction(_ action: ItemAction) {
+        switch action {
+        case .restore:
+            showRestoreConfirmation()
+        case .deletePermanently:
+            showDeleteConfirmation(deletePermanently: true)
+        case .deleteToRecycleBin:
+            showDeleteConfirmation(deletePermanently: false)
+        default:
+            Task { await onItemAction(action, item) }
+        }
     }
 
     func download() async {
@@ -203,10 +200,6 @@ final class FilesItemViewModel: ObservableObject {
         } else {
             isPresentingRestoreParentConfirmation = true
         }
-    }
-
-    func showVersionHistory() async {
-        await onItemAction(.showVersionHistory, item)
     }
 
     func confirmDelete(permanently: Bool) async {
