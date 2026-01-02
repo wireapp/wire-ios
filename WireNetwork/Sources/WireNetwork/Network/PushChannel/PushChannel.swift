@@ -104,11 +104,12 @@ public actor PushChannel: PushChannelProtocol {
             do {
                 while true {
                     try await Task.sleep(for: .seconds(keepAliveInterval))
-                    WireLogger.pushChannel.debug("sending keep alive ping", attributes: .pushChannelV1)
-                    await webSocket.sendPing()
+                    WireLogger.pushChannel.debug("sending keep alive ping 🍒", attributes: .pushChannelV1)
+                    try await webSocket.sendPing()
                 }
             } catch {
-                WireLogger.pushChannel.warn("keep alive task was cancelled", attributes: .pushChannelV1)
+                WireLogger.pushChannel.warn("keep alive task was cancelled 🍒", attributes: .pushChannelV1)
+                await webSocket.cancel(withError: error)
                 tearDownKeepAliveTask()
             }
         }

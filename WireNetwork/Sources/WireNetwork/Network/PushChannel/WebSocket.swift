@@ -98,12 +98,31 @@ public actor WebSocket: WebSocketProtocol {
         continuation = nil
     }
 
-    public func sendPing() async {
-        connection.sendPing { error in
-            if let error {
-                WireLogger.pushChannel.warn("failed to send keep alive ping: \(error)")
+//    public func sendPing() async {
+//        connection.sendPing { error in
+//            if let error {
+//                WireLogger.pushChannel.warn("failed to send keep alive ping: \(error)")
+//            }
+//        }
+//    }
+    public func sendPing() async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
+            connection.sendPing { error in
+                if let error {
+                    WireLogger.pushChannel.warn("failed to send keep alive ping: \(error)")
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
             }
         }
+    }
+
+    public func cancel(withError error: any Error) async {
+        WireLogger.webSocket.debug("cancelling with error: \(error)")
+        continuation?.finish(throwing: error)
+        connection.cancel(with: .abnormalClosure, reason: nil)
+        continuation = nil
     }
 
     public func write(data: Data) async throws {

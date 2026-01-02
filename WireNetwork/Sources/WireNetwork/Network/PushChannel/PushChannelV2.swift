@@ -240,11 +240,12 @@ public final class PushChannelV2: PushChannelV2Protocol {
                 while true {
                     try Task.checkCancellation()
                     try await Task.sleep(for: .seconds(keepAliveInterval))
-                    WireLogger.pushChannel.debug("sending keep alive ping", attributes: .pushChannelV2)
-                    await webSocket.sendPing()
+                    WireLogger.pushChannel.debug("sending keep alive ping 🎄", attributes: .pushChannelV2)
+                    try await webSocket.sendPing()
                 }
             } catch {
-                WireLogger.pushChannel.warn("keep alive task was cancelled", attributes: .pushChannelV2)
+                WireLogger.pushChannel.warn("keep alive task was cancelled 🎄", attributes: .pushChannelV2)
+                await webSocket.cancel(withError: error)
             }
         }
     }

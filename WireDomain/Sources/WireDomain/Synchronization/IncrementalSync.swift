@@ -128,7 +128,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     // because we might be interrupted when in background, we wrap the sync in an expiringActivity that
                     // will cancel the task - not keeping any db operation (sqlite file opened) in suspend mode
                     try await withExpiringActivity(reason: "processLiveStream IncrementalSync") {
-                        await processLiveEvents(
+                        try await processLiveEvents(
                             liveEventStream: liveEventStream,
                             processedEnvelopeIDs: processedEnvelopeIDs
                         )
@@ -155,7 +155,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private func processLiveEvents(
         liveEventStream: AsyncThrowingStream<UpdateEventEnvelope, any Error>,
         processedEnvelopeIDs: Set<UUID>
-    ) async {
+    ) async throws {
         do {
             for try await var envelope in liveEventStream {
                 logger.debug(
@@ -255,6 +255,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
         } catch {
             logger.warn("live event stream encountered error: \(String(describing: error))")
+            throw error 
         }
     }
 
