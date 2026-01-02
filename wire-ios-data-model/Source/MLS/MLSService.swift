@@ -868,13 +868,13 @@ public final class MLSService: MLSServiceInterface {
                     }
 
                     do {
-                        let (epoch, isSelfConversation) = await context.perform {
-                            (pendingGroup.epoch, pendingGroup.isSelfConversation)
+                        let epoch = await context.perform {
+                            pendingGroup.epoch
                         }
                         let conversationExists = try await self.conversationExists(
                             groupID: mlsGroupID
                         )
-                        let shouldEstablishGroup = epoch == 0 && isSelfConversation && !conversationExists
+                        let shouldEstablishGroup = epoch == 0 && !conversationExists
 
                         if shouldEstablishGroup {
                             try await self.internalEstablishPendingGroup(
