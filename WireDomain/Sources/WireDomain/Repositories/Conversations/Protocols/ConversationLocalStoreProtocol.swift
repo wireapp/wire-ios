@@ -84,6 +84,21 @@ public protocol ConversationLocalStoreProtocol {
         mlsGroupID: MLSGroupID
     ) async
 
+    /// Fetches all MLS conversations that are ready.
+    ///
+    /// This method retrieves all conversations that have MLS group IDs and are in a ready state,
+    /// optionally filtered by domain.
+    ///
+    /// - Parameter domain: The domain to filter conversations by. If `nil`, fetches conversations
+    ///   from all domains.
+    ///
+    /// - Returns: An array of `ZMConversation` objects that are MLS-ready. Returns an empty array
+    ///   if no conversations match the criteria.
+    ///
+    /// - Throws: An error if the fetch operation fails.
+
+    func fetchAllMLSConversations(domain: String?) async throws -> [ZMConversation]
+
     /// Fetches a MLS conversation locally.
     ///
     /// - parameters:

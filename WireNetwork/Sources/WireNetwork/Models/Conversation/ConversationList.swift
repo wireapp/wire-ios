@@ -27,4 +27,14 @@ public struct ConversationList: Sendable {
 
     /// Identifies conversations that failed to resolve and thus miss the representing objects.
     public let failed: [QualifiedID]
+
+    public init(
+        found: [Conversation],
+        notFound: [QualifiedID],
+        failed: [QualifiedID]
+    ) {
+        self.found = found
+        self.notFound = notFound
+        self.failed = failed
+    }
 }
