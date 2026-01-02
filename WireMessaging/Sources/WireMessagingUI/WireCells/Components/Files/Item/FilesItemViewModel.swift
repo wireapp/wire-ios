@@ -35,14 +35,14 @@ final class FilesItemViewModel: ObservableObject {
 
     enum ItemAction {
         case open
-        case deleteToRecycleBin
-        case deletePermanently
-        case restore
-        case rename
-        case editTags
-        case moveToFolder
         case showVersionHistory
         case edit
+        case rename
+        case moveToFolder
+        case editTags
+        case restore
+        case deleteToRecycleBin
+        case deletePermanently
     }
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
@@ -152,7 +152,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var isEditable: Bool {
-        item.isEditable && !isInRecycleBin
+        item.isEditable
     }
 
     func open() async {
@@ -257,6 +257,42 @@ final class FilesItemViewModel: ObservableObject {
             firstTag: item.tags.sortedAlphabetically.first,
             additionalTagsIndicator: formattedNumber
         )
+    }
+}
+
+extension [FilesItemViewModel.ItemAction] {
+    static func menuActions(browsing: Bool, recycleBin: Bool, foldersEnabled: Bool, collaboraEnabled: Bool) -> Self {
+        var actions: [FilesItemViewModel.ItemAction] = []
+        
+        if !recycleBin {
+            actions.append(.open)            
+        }
+        
+        if !browsing {
+            if !recycleBin {
+                if collaboraEnabled {
+                    actions.append(.showVersionHistory)
+                }
+                if foldersEnabled {
+                    actions.append(.moveToFolder)
+                }
+                actions.append(.edit)
+                actions.append(.rename)
+                actions.append(.editTags)
+            }
+            
+            if recycleBin {
+                actions.append(.restore)
+            }
+            
+            if recycleBin || !foldersEnabled {
+                actions.append(.deletePermanently)
+            } else {
+                actions.append(.deleteToRecycleBin)
+            }
+        }
+                
+        return actions
     }
 }
 

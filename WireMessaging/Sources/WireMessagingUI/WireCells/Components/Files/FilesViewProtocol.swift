@@ -82,13 +82,12 @@ extension FilesViewProtocol {
     func itemRow(index: Int) -> some View {
         FilesItemView(
             viewModel: viewModel.itemViewModel(index: index),
-            // some actions are not allowed when browsing files
-            canRenameFile: !isBrowsing,
-            canEditTags: !isBrowsing,
-            canMoveToFolder: !isBrowsing && viewModel.isFoldersEnabled,
-            canOpenVersionHistory: !isBrowsing && viewModel.isCollaboraEnabled,
-            canEditFile: !isBrowsing,
-            canDeleteFiles: !isBrowsing
+            menuActions: .menuActions(
+                browsing: isBrowsing,
+                recycleBin: viewModel.isRecycleBin,
+                foldersEnabled: viewModel.isFoldersEnabled,
+                collaboraEnabled: viewModel.isCollaboraEnabled
+            )
         )
     }
 

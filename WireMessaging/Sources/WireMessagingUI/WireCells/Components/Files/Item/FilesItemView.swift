@@ -32,29 +32,14 @@ struct FilesItemView: View {
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
-    private var canRenameFile: Bool
-    private var canEditTags: Bool
-    private let canMoveToFolder: Bool
-    private let canEditFile: Bool
-    private var canDeleteFiles: Bool
-    private let canOpenVersionHistory: Bool
+    private let menuActions: [FilesItemViewModel.ItemAction]
 
     init(
         viewModel: @autoclosure @escaping () -> FilesItemViewModel,
-        canRenameFile: Bool = false,
-        canEditTags: Bool = false,
-        canMoveToFolder: Bool = false,
-        canOpenVersionHistory: Bool = false,
-        canEditFile: Bool = false,
-        canDeleteFiles: Bool = false
+        menuActions: [FilesItemViewModel.ItemAction]
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
-        self.canRenameFile = canRenameFile
-        self.canEditTags = canEditTags
-        self.canMoveToFolder = canMoveToFolder
-        self.canEditFile = canEditFile
-        self.canDeleteFiles = canDeleteFiles
-        self.canOpenVersionHistory = canOpenVersionHistory
+        self.menuActions = menuActions
     }
 
     var body: some View {
@@ -108,17 +93,20 @@ struct FilesItemView: View {
                 Spacer()
 
                 Menu {
-                    Button(action: open) {
-                        Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
-                    }.disabled(viewModel.isDownloading)
-
-                    if viewModel.isDownloadOptionAvailable {
-                        Button(action: download) {
-                            Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
+                    if menuActions.contains(.open) {
+                        Button(action: open) {
+                            Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
+                        }
+                        .disabled(viewModel.isDownloading)
+                        
+                        if viewModel.isDownloadOptionAvailable {
+                            Button(action: download) {
+                                Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
+                            }
                         }
                     }
 
-                    if canOpenVersionHistory, !viewModel.isInRecycleBin {
+                    if menuActions.contains(.showVersionHistory) {
                         Button(action: showVersionHistory) {
                             Label(
                                 Strings.Files.Item.Menu.versionHistory,
@@ -127,7 +115,7 @@ struct FilesItemView: View {
                         }
                     }
 
-                    if canEditFile, viewModel.isEditable {
+                    if menuActions.contains(.edit), viewModel.isEditable {
                         Button(action: editFile) {
                             Label(Strings.Files.Item.Menu.editFile, systemImage: "square.and.pencil")
                         }
@@ -135,44 +123,44 @@ struct FilesItemView: View {
 
                     Divider()
 
-                    if canRenameFile, !viewModel.isInRecycleBin {
+                    if menuActions.contains(.rename) {
                         Button(action: rename) {
                             Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
                         }
                     }
 
-                    if canMoveToFolder {
+                    if menuActions.contains(.moveToFolder) {
                         Button(action: moveToFolder) {
                             Label(Strings.Files.Item.Menu.moveToFolder, systemImage: "folder")
                         }
                     }
 
-                    if canEditTags, !viewModel.isInRecycleBin {
+                    if menuActions.contains(.editTags) {
                         Button(action: editTags) {
                             Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
                         }
                     }
 
-                    if viewModel.isInRecycleBin {
+                    if menuActions.contains(.restore) {
                         Button(action: restore) {
                             Label(Strings.RecycleBin.Item.Menu.restore, systemImage: "arrow.uturn.backward")
                         }
                     }
 
-                    if canDeleteFiles {
-                        if viewModel.isInRecycleBin || !viewModel.isFoldersEnabled {
-                            Button(
-                                role: .destructive,
-                                action: { delete(permanently: true) },
-                                label: { Label(Strings.RecycleBin.Item.Menu.delete, systemImage: "trash.fill") }
-                            )
-                        } else {
-                            Button(
-                                role: .destructive,
-                                action: { delete(permanently: false) },
-                                label: { Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill") }
-                            )
-                        }
+                    if menuActions.contains(.deletePermanently) {
+                        Button(
+                            role: .destructive,
+                            action: { delete(permanently: true) },
+                            label: { Label(Strings.RecycleBin.Item.Menu.delete, systemImage: "trash.fill") }
+                        )
+                    }
+                    
+                    if menuActions.contains(.deleteToRecycleBin) {
+                        Button(
+                            role: .destructive,
+                            action: { delete(permanently: false) },
+                            label: { Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill") }
+                        )
                     }
                 } label: {
                     Image(systemName: "ellipsis")
@@ -333,15 +321,24 @@ private extension View {
 
 #Preview {
     VStack(spacing: 0) {
-        FilesItemView(viewModel: .preview())
         FilesItemView(
             viewModel: .preview(),
-            canRenameFile: true,
-            canEditTags: true,
-            canOpenVersionHistory: true,
-            canDeleteFiles: true
+            menuActions: .menuActions(browsing: true, recycleBin: false, foldersEnabled: true, collaboraEnabled: true)
         )
-        FilesItemView(viewModel: .preview(tags: ["urgent"]), canRenameFile: true, canEditTags: true)
-        FilesItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]), canDeleteFiles: true)
+        
+        FilesItemView(
+            viewModel: .preview(),
+            menuActions: .menuActions(browsing: false, recycleBin: false, foldersEnabled: true, collaboraEnabled: true)
+        )
+        
+        FilesItemView(
+            viewModel: .preview(tags: ["urgent"]),
+            menuActions: .menuActions(browsing: false, recycleBin: false, foldersEnabled: true, collaboraEnabled: true)
+        )
+        
+        FilesItemView(
+            viewModel: .preview(tags: ["urgent", "funny", "important"]),
+            menuActions: .menuActions(browsing: false, recycleBin: true, foldersEnabled: true, collaboraEnabled: true)
+        )
     }
 }
