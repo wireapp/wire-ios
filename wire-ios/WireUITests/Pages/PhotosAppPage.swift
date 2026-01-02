@@ -62,7 +62,7 @@ class PhotosAppPage: PageModel {
     func selectConversation(name: String) -> XCUIElement {
         photosApp.staticTexts[name].firstMatch
     }
-    
+
     @discardableResult
     func continueWhatsNewIfPresent() throws -> PhotosAppPage {
         if continueButtonOnWhatsNewPhotosApp.waitForExistence(timeout: 3) {

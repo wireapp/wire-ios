@@ -34,7 +34,7 @@ public struct LoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
         verificationCode: String?
     ) async throws -> ([HTTPCookie], AccessToken) {
         do {
-            let (cookies, token, _) = try await authenticationAPI.login(
+            let (cookies, token) = try await authenticationAPI.login(
                 email: email,
                 password: password,
                 verificationCode: verificationCode,

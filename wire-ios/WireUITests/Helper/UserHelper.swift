@@ -95,17 +95,21 @@ class UserHelper {
         try await authenticationAPI.activateUser(email: user.email, key: activationKey, code: activationCode)
 
         // get accessToken for current user
-        let (_, accessToken, userId) = try await authenticationAPI.login(
+        let (_, accessToken) = try await authenticationAPI.login(
             email: user.email,
             password: user.password,
             verificationCode: nil,
             label: nil
         )
-        user.id = userId
+
         authenticationManager.accessToken = accessToken
 
         // Set username
         try await selfUserAPI.updateHandle(handle: user.username)
+
+        // Store id in UserInfo
+        let getSelfUser = try await selfUserAPI.getSelfUser()
+        user.id = getSelfUser.id.uuidString
 
         createdUsers.append(user)
         return user
@@ -183,7 +187,7 @@ class UserHelper {
 
         try await authenticationAPI.activateUser(email: email, key: activationKey, code: activationCode)
 
-        let (_, accessToken, _) = try await authenticationAPI.login(
+        let (_, accessToken) = try await authenticationAPI.login(
             email: email,
             password: password,
             verificationCode: nil,
@@ -272,7 +276,7 @@ class UserHelper {
             isReadReceiptsEnabled: true
         )
 
-        let (_, accessToken, _) = try await authenticationAPI.login(
+        let (_, accessToken) = try await authenticationAPI.login(
             email: owner.email,
             password: owner.password,
             verificationCode: nil,
@@ -297,7 +301,7 @@ class UserHelper {
         userId: String
     ) async throws {
 
-        let (_, accessToken, _) = try await authenticationAPI.login(
+        let (_, accessToken) = try await authenticationAPI.login(
             email: user1.email,
             password: user1.password,
             verificationCode: nil,

@@ -36,7 +36,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         password: String,
         verificationCode: String?,
         label: String?
-    ) async throws -> (cookie: [HTTPCookie], accessToken: AccessToken, userId: String) {
+    ) async throws -> ([HTTPCookie], AccessToken) {
         let path = "\(pathPrefix)/login"
         let body = LoginRequestBodyV0(
             email: email,
@@ -118,9 +118,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             throw error
         }
 
-        let userId = accessToken.userID.uuidString
-
-        return (cookies, accessToken, userId)
+        return (cookies, accessToken)
     }
 
     func getOnPremConfigURL(forDomain domain: String) async throws -> DomainInfo {
