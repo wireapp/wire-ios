@@ -74,10 +74,28 @@ extension SessionManager: CallKitManagerDelegate {
                 return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
             }
 
+            await requestCallConfigIfNeeded(for: userSession)
             await userSession.processPendingCallEvents()
 
             WireLogger.calling.info("did process call events, returning conversation...")
             completionHandler(.success(conversation))
+        }
+    }
+
+    /// Proactively requests call config for a background session.
+    /// This ensures the session has fresh call configuration when handling incoming calls.
+    /// - Parameter session: The user session to request config for
+    private func requestCallConfigIfNeeded(for session: ZMUserSession) async {
+        guard session != activeUserSession else { return }
+
+        session.managedObjectContext.performGroupedBlock {
+            guard let callCenter = session.callCenter else {
+                WireLogger.calling.warn("Cannot request call config: callCenter not available")
+                return
+            }
+
+            WireLogger.calling.info("Proactively requesting call config for background session.")
+            callCenter.requestCallConfig()
         }
     }
 

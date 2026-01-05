@@ -66,7 +66,8 @@ open class AuthenticatedSessionFactory {
         sharedUserDefaults: UserDefaults,
         isDeveloperModeEnabled: Bool,
         journal: Journal,
-        logFilesProvider: LogFilesProviding
+        logFilesProvider: LogFilesProviding,
+        faultyMLSRemovalKeysByDomain: [String: [String]]
     ) -> ZMUserSession? {
         let wireAPIBackendEnvironment = BackendEnvironment(
             url: environment.backendURL,
@@ -140,7 +141,8 @@ open class AuthenticatedSessionFactory {
             userId: account.userIdentifier,
             minTLSVersion: minTLSVersion,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
         )
 
         let userSession = userSessionBuilder.build()
