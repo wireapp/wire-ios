@@ -242,6 +242,7 @@
 		59202AD42D54D49400143413 /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59202AD32D54D49400143413 /* WireDomainPackage */; };
 		59271BE82B908DAC0019B726 /* SecurityClassificationProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BE72B908DAC0019B726 /* SecurityClassificationProviding.swift */; };
 		59271BEA2B908E150019B726 /* SecurityClassification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BE92B908E150019B726 /* SecurityClassification.swift */; };
+		5929DB752F0C009E0054DBE0 /* WireNetworkSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 5929DB742F0C009E0054DBE0 /* WireNetworkSupport */; };
 		59358C8C2DF19ED700C32162 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 59358C8B2DF19ED700C32162 /* WireAnalytics */; };
 		59358C902DF1A01300C32162 /* WireAnalyticsSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59358C8F2DF1A01300C32162 /* WireAnalyticsSupport */; };
 		5943E9BC2D11CB3B00D39FFF /* CallEndedReason+initWithCallClosedReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5943E9BB2D11CB3300D39FFF /* CallEndedReason+initWithCallClosedReason.swift */; };
@@ -1242,6 +1243,7 @@
 				59DA5E202DA7ED95007C3629 /* WireDomainSupport.framework in Frameworks */,
 				5996E8952C19CB36007A52F0 /* WireUtilitiesSupport.framework in Frameworks */,
 				CB4895532C4FB77C00CA2C25 /* WireTesting.framework in Frameworks */,
+				5929DB752F0C009E0054DBE0 /* WireNetworkSupport in Frameworks */,
 				594EAA002EA23E73009BC0EB /* WireUtilitiesPackageSupport in Frameworks */,
 				59202AD42D54D49400143413 /* WireDomainPackage in Frameworks */,
 				0145AE902B1155760097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
@@ -2509,6 +2511,7 @@
 				34F8CA972E02BFEB000FE4E0 /* WireNetwork */,
 				59BB29242E29527500C49DB6 /* WireLoggingSupport */,
 				594EA9FF2EA23E73009BC0EB /* WireUtilitiesPackageSupport */,
+				5929DB742F0C009E0054DBE0 /* WireNetworkSupport */,
 			);
 			productName = "WireSyncEngine-iOS-Tests";
 			productReference = 3E1860C3191A649D000FE027 /* UnitTests.xctest */;
@@ -3675,6 +3678,10 @@
 		59202AD32D54D49400143413 /* WireDomainPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireDomainPackage;
+		};
+		5929DB742F0C009E0054DBE0 /* WireNetworkSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireNetworkSupport;
 		};
 		59358C8B2DF19ED700C32162 /* WireAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;

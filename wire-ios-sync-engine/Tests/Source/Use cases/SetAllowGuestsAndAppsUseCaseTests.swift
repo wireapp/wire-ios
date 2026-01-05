@@ -18,6 +18,7 @@
 
 import WireDataModelSupport
 import XCTest
+import WireNetworkSupport
 
 @testable import WireSyncEngine
 
@@ -39,10 +40,9 @@ final class SetAllowGuestsAndAppsUseCaseTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() async throws {
-        try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
         await syncContext.perform { [self] in
-            sut = SetAllowGuestAndAppsUseCase()
+            sut = SetAllowGuestAndAppsUseCase(api: MockConversationsAPI())
             mockSelfUser = modelHelper.createSelfUser(in: syncContext)
             mockConversation = modelHelper.createGroupConversation(in: syncContext)
             mockConversation.teamRemoteIdentifier = UUID()
@@ -57,7 +57,6 @@ final class SetAllowGuestsAndAppsUseCaseTests: XCTestCase {
         mockSelfUser = nil
         mockConversation = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
     }
 
     // MARK: - Helper method

@@ -268,9 +268,9 @@ public protocol UserSession: AnyObject {
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol
 
-    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol
+    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol?
 
-    func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol
+    func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol?
 
     func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol
 
