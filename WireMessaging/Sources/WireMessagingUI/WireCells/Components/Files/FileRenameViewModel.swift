@@ -116,10 +116,14 @@ final class FileRenameViewModel: ObservableObject {
             let nodeID = model.nodeID
             let nodeFilePath = model.filepath
 
+            let newFilename = filenameInput.trimmingCharacters(
+                in: .whitespacesAndNewlines
+            )
+
             try await renameNodeUseCase.invoke(
                 nodeID: nodeID,
                 nodeFilepath: nodeFilePath,
-                newFilename: filenameInput,
+                newFilename: newFilename,
                 isFolder: kind == .folder
             )
 
@@ -171,7 +175,7 @@ final class FileRenameViewModel: ObservableObject {
                 errorMessage = inputTooLongErrorMessage
             case .slashCharacter, .dotPrefix:
                 errorMessage = Strings.Files.RenameFile.wrongCharacterError
-            case .empty, .containsWhitespace:
+            case .empty:
                 errorMessage = nil
             }
         }

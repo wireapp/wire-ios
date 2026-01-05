@@ -112,7 +112,7 @@ final class CreateFolderViewModel: ObservableObject {
                 errorMessage = Strings.Files.NewFolder.folderNameTooLongError
             case .slashCharacter, .dotPrefix:
                 errorMessage = Strings.Files.RenameFile.wrongCharacterError
-            case .empty, .containsWhitespace:
+            case .empty:
                 errorMessage = nil
             }
         }
