@@ -27,13 +27,36 @@ import WireNetwork
 @preconcurrency import WireSyncEngine
 import WireTransport
 
-struct ZClientControllerBuilder {
+final class ZClientControllerBuilder {
 
     private(set) var account: Account
     private(set) var userSession: UserSession
     private(set) var trackingManager: TrackingManager?
     let legacyEnvironment: WireTransport.BackendEnvironment
     let newEnvironment: WireNetwork.BackendEnvironment2?
+    private lazy var wireCellsBackendURL: URL? = {
+        let contextProvider = userSession.contextProvider
+        let syncContext = contextProvider.syncContext
+        let featureRepository = LegacyFeatureRepository(context: syncContext)
+        
+        return syncContext.performAndWait {
+            featureRepository.fetchCellsInternal().config.backend.url
+        }
+    }()
+    
+    init(
+        account: Account,
+        userSession: UserSession,
+        trackingManager: TrackingManager? = nil,
+        legacyEnvironment: WireTransport.BackendEnvironment,
+        newEnvironment: WireNetwork.BackendEnvironment2?
+    ) {
+        self.account = account
+        self.userSession = userSession
+        self.trackingManager = trackingManager
+        self.legacyEnvironment = legacyEnvironment
+        self.newEnvironment = newEnvironment
+    }
 
     @MainActor
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
@@ -56,20 +79,16 @@ struct ZClientControllerBuilder {
 
     @MainActor
     private func buildWireMessagingFactory() -> any WireMessagingFactoryProtocol {
-        let cellsURLResolver: @Sendable () async throws -> URL = {
+        let cellsURLResolver: @Sendable () throws -> URL = { [weak self] in
             enum Failure: Error {
                 case missingCellsBackendURL
             }
 
-            let clientSessionComponent = userSession.clientSessionComponent
-            let featureConfig = clientSessionComponent?.featureConfigRepository
-            let serverURL = try await featureConfig?.fetchCellsInternal().config?.backend.url
-
-            guard let serverURL else {
+            guard let self, let wireCellsBackendURL else {
                 throw Failure.missingCellsBackendURL
             }
 
-            return serverURL
+            return wireCellsBackendURL
         }
 
         return WireMessagingFactory(

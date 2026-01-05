@@ -32,7 +32,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
     private let fileManager: FileManager
 
     package init(
-        serverURLResolver: @escaping @Sendable () async throws -> URL,
+        serverURLResolver: @escaping @Sendable () throws -> URL,
         accessToken: any AccessTokenProvider
     ) {
         self.init(

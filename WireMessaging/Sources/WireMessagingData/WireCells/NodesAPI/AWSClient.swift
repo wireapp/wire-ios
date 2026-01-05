@@ -24,6 +24,7 @@ import SmithyIdentity
 import SmithyStreams
 import WireLogging
 import WireMessagingDomain
+import SmithyHTTPAPI
 
 // sourcery: AutoMockable
 package protocol S3ClientProtocol: Sendable {
@@ -59,17 +60,29 @@ final class AWSClient: Sendable {
         static let region = "us-east-1"
     }
 
-    private let serverURLResolver: @Sendable () async throws -> URL
-    private let accessToken: any AccessTokenProvider
+    private let s3: any S3ClientProtocol
     private let makeStream: @Sendable (FileStream) -> ObservableStream
 
+    convenience init(
+        serverURLResolver: @escaping @Sendable () throws -> URL,
+        accessToken: any AccessTokenProvider
+    ) {
+        let config = try! S3Client.S3ClientConfiguration(
+            awsCredentialIdentityResolver: CredentialIdentityResolver(accessTokenProvider: accessToken),
+            region: Constants.region,
+            endpointResolver: AWSEndpointResolver(
+                serverURLResolver: serverURLResolver,
+                bucket: Constants.bucket
+            )
+        )
+        self.init(s3: S3Client(config: config))
+    }
+
     init(
-        serverURLResolver: @escaping @Sendable () async throws -> URL,
-        accessToken: any AccessTokenProvider,
+        s3: any S3ClientProtocol,
         makeStream: @Sendable @escaping (FileStream) -> ObservableStream = { ObservableStream($0) }
     ) {
-        self.serverURLResolver = serverURLResolver
-        self.accessToken = accessToken
+        self.s3 = s3
         self.makeStream = makeStream
     }
 
@@ -78,7 +91,6 @@ final class AWSClient: Sendable {
         to fileHandle: FileHandle,
         onProgressUpdate: @escaping (UInt64) -> Void
     ) async throws {
-        let s3 = try await makeS3Client()
         let input = GetObjectInput(bucket: Constants.bucket, key: objectKey)
         let response = try await s3.getObject(input: input)
         guard let body = response.body else {
@@ -167,7 +179,6 @@ final class AWSClient: Sendable {
         versionID: UUID,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
-        let s3 = try await makeS3Client()
         let fileStream = FileStream(fileHandle: try FileHandle(forReadingFrom: path))
         let stream = makeStream(fileStream)
 
@@ -199,7 +210,6 @@ final class AWSClient: Sendable {
         versionID: UUID,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
-        let s3 = try await makeS3Client()
         let fileHandle = try FileHandle(forReadingFrom: path)
         defer { try? fileHandle.close() }
 
@@ -255,21 +265,10 @@ final class AWSClient: Sendable {
     }
 
     func getPreSignedUrl(objectKey: String) async throws -> String {
-        let s3 = try await makeS3Client()
         let expiration = TimeInterval(Constants.preSignedUrlExpiryInHours * 60 * 60)
         let input = GetObjectInput(bucket: Constants.bucket, key: objectKey)
         let signed = try await s3.presignedURLForGetObject(input: input, expiration: expiration)
         return signed.absoluteString
-    }
-
-    private func makeS3Client() async throws -> any S3ClientProtocol {
-        let config = try! await S3Client.S3ClientConfiguration(
-            awsCredentialIdentityResolver: CredentialIdentityResolver(accessTokenProvider: accessToken),
-            region: Constants.region,
-            endpoint: try await serverURLResolver().absoluteString
-        )
-
-        return S3Client(config: config)
     }
 }
 
@@ -280,6 +279,24 @@ private extension WireCellsNodeNetworkModel {
             "Create-Resource-UUID": uuid.transportString(),
             "Create-Version-ID": versionID.transportString()
         ]
+    }
+}
+
+private struct AWSEndpointResolver: EndpointResolver {
+    let serverURLResolver: @Sendable () throws -> URL
+    let bucket: String
+    
+    init(
+        serverURLResolver: @escaping @Sendable () throws -> URL,
+        bucket: String
+    ) {
+        self.serverURLResolver = serverURLResolver
+        self.bucket = bucket
+    }
+    
+    func resolve(params: AWSS3.EndpointParams) throws -> SmithyHTTPAPI.Endpoint {
+        let serverURL = try serverURLResolver().appendingPathComponent("/\(bucket)")
+        return try SmithyHTTPAPI.Endpoint(urlString: serverURL.absoluteString)
     }
 }
 

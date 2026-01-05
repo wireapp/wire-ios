@@ -35,11 +35,11 @@ final class RestAPI: Sendable {
         static let renameBackgroundActionName = "move"
     }
 
-    private let serverURLResolver: @Sendable () async throws -> URL
+    private let serverURLResolver: @Sendable () throws -> URL
     private let accessTokenProvider: any AccessTokenProvider
 
     init(
-        serverURLResolver: @escaping @Sendable () async throws -> URL,
+        serverURLResolver: @escaping @Sendable () throws -> URL,
         accessToken: any AccessTokenProvider
     ) {
         self.serverURLResolver = serverURLResolver
@@ -351,7 +351,7 @@ final class RestAPI: Sendable {
 
     private func makeConfiguration() async throws -> CellsSDKAPIConfiguration {
         let config = CellsSDKAPIConfiguration()
-        config.basePath = try await serverURLResolver().appendingPathComponent("/v2").absoluteString
+        config.basePath = try serverURLResolver().appendingPathComponent("/v2").absoluteString
         config.customHeaders = ["Authorization": "Bearer \(try await accessTokenProvider.accessToken().token)"]
         config.interceptor = LoggingIntercepter()
 
