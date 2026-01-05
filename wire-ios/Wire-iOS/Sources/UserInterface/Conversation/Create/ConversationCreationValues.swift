@@ -34,6 +34,7 @@ final class ConversationCreationValues {
 
     let isChannel: Bool
     let isAppsFeatureEnabled: Bool
+    let areLegacyBotsAvailable: Bool
     var channelHistoryDepth: String?
     var name: String
     var allowGuests: Bool
@@ -68,6 +69,7 @@ final class ConversationCreationValues {
     init(
         isChannel: Bool,
         isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool,
         name: String = "",
         participants: UserSet = UserSet(),
         allowGuests: Bool = true,
@@ -79,6 +81,7 @@ final class ConversationCreationValues {
     ) {
         self.isChannel = isChannel
         self.isAppsFeatureEnabled = isAppsFeatureEnabled
+        self.areLegacyBotsAvailable = areLegacyBotsAvailable
         self.name = name
         self.unfilteredParticipants = participants
         self.allowGuests = allowGuests

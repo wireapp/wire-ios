@@ -43,6 +43,7 @@ final class ZClientViewController: UIViewController {
     // MARK: - Private Members - Add wire cells factory here somehow
 
     let account: Account
+    let contextProvider: any ManagedObjectContextProvider
     let userSession: UserSession
     let trackingManager: TrackingManager?
     private let selfProfileViewsMonitor: SelfProfileViewsMonitor
@@ -165,7 +166,9 @@ final class ZClientViewController: UIViewController {
         }
     )
 
-    private(set) lazy var conversationCreationRepository = ConversationCreationRepository()
+    private(set) lazy var conversationCreationRepository = ConversationCreationRepository(
+        searchUsersUseCase: { [weak userSession] in userSession?.makeSearchUsersUseCase() }
+    )
 
     private(set) lazy var conversationListViewController = ConversationListViewController(
         account: account,
@@ -213,6 +216,7 @@ final class ZClientViewController: UIViewController {
 
     required init(
         account: Account,
+        contextProvider: any ManagedObjectContextProvider,
         selfProfileViewsMonitor: SelfProfileViewsMonitor,
         userSession: UserSession,
         trackingManager: TrackingManager?,
@@ -220,6 +224,7 @@ final class ZClientViewController: UIViewController {
         wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.account = account
+        self.contextProvider = contextProvider
         self.selfProfileViewsMonitor = selfProfileViewsMonitor
         self.userSession = userSession
         self.trackingManager = trackingManager
@@ -538,17 +543,24 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter conversation: conversation to open
     func openDetailScreen(for conversation: ZMConversation) {
-        let controller = GroupDetailsViewController(
-            conversation: conversation,
-            userSession: userSession,
-            mainCoordinator: .init(mainCoordinator: mainCoordinator),
-            selfProfileUIBuilder: selfProfileViewControllerBuilder,
-            conversationCreationRepository: conversationCreationRepository,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
-        )
-        let navController = UINavigationController(rootViewController: controller)
-        navController.modalPresentationStyle = .formSheet
-        present(navController, animated: true)
+        Task {
+            let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
+                .isFeatureEnabled(.apps) ?? false
+            let controller = GroupDetailsViewController(
+                conversation: conversation,
+                userSession: userSession,
+                mainCoordinator: .init(mainCoordinator: mainCoordinator),
+                selfProfileUIBuilder: selfProfileViewControllerBuilder,
+                conversationCreationRepository: conversationCreationRepository,
+                isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+                areLegacyBotsAvailable: areLegacyBotsAvailable,
+                isAppsFeatureEnabled: isAppsFeatureEnabled
+            )
+            let navController = UINavigationController(rootViewController: controller)
+            navController.modalPresentationStyle = .formSheet
+            present(navController, animated: true)
+        }
     }
 
     @objc
@@ -873,7 +885,7 @@ final class ZClientViewController: UIViewController {
             let useCase = GetUserAccountImageSourceUseCase()
             cachedAccountImage = try await useCase.invoke(
                 user: userSession.selfUser,
-                userContext: userSession.contextProvider.viewContext,
+                userContext: contextProvider.viewContext,
                 account: account
             ).mapToAccountImageSource()
         } catch {
