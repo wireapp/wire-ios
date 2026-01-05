@@ -135,8 +135,36 @@ class ConversationsAPIV5: ConversationsAPIV4 {
         }
     }
 
-    func updateConversationAccess() async throws {
-        fatalError("TODO")
+    func updateConversationAccess(
+        conversationID: QualifiedID,
+        accessModes: Set<ConversationAccessMode>,
+        accessRoles: Set<ConversationAccessRole>
+    ) async throws {
+        let parameters = UpdateConversationAccessParametersV0(
+            accessModes: accessModes.map { $0.toNetworkModel() },
+            accessRoles: accessRoles.map { $0.toNetworkModel() }
+        )
+        let body = try JSONEncoder.defaultEncoder.encode(parameters)
+        let path = "\(pathPrefix)\(basePath)/\(conversationID.domain)/\(conversationID.id)/access"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.put)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        try ResponseParser()
+            .success(code: .ok)
+            .success(code: .noContent)
+            .failure(code: .forbidden, label: "invalid-op", error: ConversationsAPIError.invalidOperation)
+            .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
+            .failure(code: .forbidden, label: "action-denied", error: ConversationsAPIError.insufficienAuthorization)
+            .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
+            .parse(code: response.statusCode, data: data)
     }
 
 }
@@ -228,5 +256,15 @@ struct ConversationV5: Decodable, ToAPIModelConvertible, DecodableConversation {
             lastEvent: lastEvent,
             lastEventTime: lastEventTime?.date
         )
+    }
+}
+
+private struct UpdateConversationAccessParametersV0: Encodable {
+    let accessModes: [ConversationAccessModeV0]
+    let accessRoles: [ConversationAccessRoleV0]
+
+    enum CodingKeys: String, CodingKey {
+        case accessModes = "access"
+        case accessRoles = "access_role"
     }
 }
