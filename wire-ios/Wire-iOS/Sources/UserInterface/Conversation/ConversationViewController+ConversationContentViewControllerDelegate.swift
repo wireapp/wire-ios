@@ -143,6 +143,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         })
     }
 
+    @MainActor
     func conversationContentViewController(
         _ controller: ConversationContentViewController,
         presentGuestOptionsFrom sourceView: UIView
@@ -152,35 +153,46 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             return
         }
 
-        let groupDetailsViewController = GroupDetailsViewController(
-            conversation: conversation,
-            userSession: userSession,
-            mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder,
-            conversationCreationRepository: conversationCreationRepository,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
-        )
-        let navigationController = UINavigationController(rootViewController: groupDetailsViewController)
-        groupDetailsViewController.presentGuestOptions(animated: false)
-        presentParticipantsViewController(navigationController, from: sourceView)
+        Task {
+            let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
+                .isFeatureEnabled(.apps) ?? false
+
+            let groupDetailsViewController = GroupDetailsViewController(
+                conversation: conversation,
+                userSession: userSession,
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository,
+                isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+                areLegacyBotsAvailable: areLegacyBotsAvailable,
+                isAppsFeatureEnabled: isAppsFeatureEnabled
+            )
+            let navigationController = UINavigationController(rootViewController: groupDetailsViewController)
+            groupDetailsViewController.presentGuestOptions(animated: false)
+            presentParticipantsViewController(navigationController, from: sourceView)
+        }
     }
 
+    @MainActor
     func conversationContentViewController(
         _ controller: ConversationContentViewController,
         presentParticipantsDetailsWithSelectedUsers selectedUsers: [UserType],
         from sourceView: UIView
     ) {
-        if let groupDetailsViewController = (participantsController as? UINavigationController)?
-            .topViewController as? GroupDetailsViewController {
-            groupDetailsViewController.presentParticipantsDetails(
-                with: conversation.sortedOtherParticipants,
-                selectedUsers: selectedUsers,
-                animated: false
-            )
-        }
+        Task {
+            if let groupDetailsViewController = (await participantsController as? UINavigationController)?
+                .topViewController as? GroupDetailsViewController {
+                groupDetailsViewController.presentParticipantsDetails(
+                    with: conversation.sortedOtherParticipants,
+                    selectedUsers: selectedUsers,
+                    animated: false
+                )
+            }
 
-        if let participantsController {
-            presentParticipantsViewController(participantsController, from: sourceView)
+            if let participantsController = await participantsController {
+                presentParticipantsViewController(participantsController, from: sourceView)
+            }
         }
     }
 
