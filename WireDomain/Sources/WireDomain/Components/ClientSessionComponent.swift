@@ -856,6 +856,7 @@ public final class ClientSessionComponent {
         let brokenGroupIds = journal[.brokenMLSGroupIDs]
         return brokenGroupIds.contains(groupID.description)
     }
+
     public lazy var repairFaultyMLSRemovalKeysGenerator = RepairFaultyMLSRemovalKeysGenerator(
         journal: journal,
         repairUseCase: repairFaultyRemovalKeysUsecase,
