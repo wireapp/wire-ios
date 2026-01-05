@@ -22,7 +22,7 @@ import WireSyncEngine
 
 enum SearchGroup: Int {
     case people
-    case services
+    case services // TODO: [WPB-20362] consider having apps and bots instead
 }
 
 extension SearchGroup {
@@ -166,6 +166,7 @@ final class SearchResultsViewController: UIViewController {
     }()
 
     let servicesSection: SearchServicesSectionController
+    // TODO: [WPB-20362] add apps section?
     let inviteTeamMemberSection: InviteTeamMemberSection
 
     var isAddingParticipants: Bool
@@ -211,11 +212,9 @@ final class SearchResultsViewController: UIViewController {
         teamMemberAndContactsSection.allowsSelection = isAddingParticipants
         teamMemberAndContactsSection.selection = userSelection
         teamMemberAndContactsSection.title = L10n.Localizable.Peoplepicker.Header.contacts
-        self
-            .servicesSection = SearchServicesSectionController(
-                canSelfUserManageTeam: userSession.selfUser
-                    .canManageTeam
-            )
+        self.servicesSection = SearchServicesSectionController(
+            canSelfUserManageTeam: userSession.selfUser.canManageTeam
+        )
         conversationsSection.title = team != nil ? L10n.Localizable.Peoplepicker.Header
             .teamConversations(teamName ?? "") : L10n.Localizable.Peoplepicker.Header.conversations
         self.inviteTeamMemberSection = InviteTeamMemberSection(team: team)

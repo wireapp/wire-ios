@@ -108,7 +108,9 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
@@ -130,7 +132,9 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
@@ -163,7 +167,9 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
@@ -185,7 +191,9 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
@@ -206,7 +214,9 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
@@ -229,7 +239,9 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         snapshotHelper.verify(matching: sut)
@@ -250,7 +262,9 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
@@ -272,7 +286,9 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
@@ -294,7 +310,9 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
@@ -316,7 +334,9 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         // THEN
@@ -340,7 +360,9 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            areLegacyBotsAvailable: false,
+            isAppsFeatureEnabled: false
         )
 
         snapshotHelper.verify(matching: sut)

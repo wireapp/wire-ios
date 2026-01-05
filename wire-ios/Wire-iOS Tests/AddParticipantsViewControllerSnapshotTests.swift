@@ -80,6 +80,7 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
         let newValues = ConversationCreationValues(
             isChannel: false,
             isAppsFeatureEnabled: true,
+            areLegacyBotsAvailable: false,
             name: "",
             participants: [],
             allowGuests: true,

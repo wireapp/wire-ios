@@ -22,7 +22,7 @@ import WireSyncEngine
 
 extension ConversationLike where Self: GroupDetailsConversationType {
     var botCanBeAdded: Bool {
-        conversationType != .oneOnOne && teamType != nil && allowApps
+        conversationType != .oneOnOne && teamType != nil
     }
 }
 
