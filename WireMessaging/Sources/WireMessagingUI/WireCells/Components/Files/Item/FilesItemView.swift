@@ -100,7 +100,7 @@ struct FilesItemView: View {
                             Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
                         }
                         .disabled(viewModel.isDownloading)
-                        
+
                         if viewModel.isDownloadOptionAvailable {
                             Button {
                                 Task { await viewModel.download() }
@@ -170,7 +170,7 @@ struct FilesItemView: View {
                             label: { Label(Strings.RecycleBin.Item.Menu.delete, systemImage: "trash.fill") }
                         )
                     }
-                    
+
                     if menuActions.contains(.deleteToRecycleBin) {
                         Button(
                             role: .destructive,
@@ -241,7 +241,7 @@ struct FilesItemView: View {
         }
         .contentShape(Rectangle()) // Tap area
     }
-    
+
     private func confirmDelete(permanently: Bool) {
         Task { await viewModel.confirmDelete(permanently: permanently) }
     }
@@ -305,17 +305,17 @@ private extension View {
             viewModel: .preview(),
             menuActions: .menuActions(browsing: true, recycleBin: false, foldersEnabled: true, collaboraEnabled: true)
         )
-        
+
         FilesItemView(
             viewModel: .preview(),
             menuActions: .menuActions(browsing: false, recycleBin: false, foldersEnabled: true, collaboraEnabled: true)
         )
-        
+
         FilesItemView(
             viewModel: .preview(tags: ["urgent"]),
             menuActions: .menuActions(browsing: false, recycleBin: false, foldersEnabled: true, collaboraEnabled: true)
         )
-        
+
         FilesItemView(
             viewModel: .preview(tags: ["urgent", "funny", "important"]),
             menuActions: .menuActions(browsing: false, recycleBin: true, foldersEnabled: true, collaboraEnabled: true)

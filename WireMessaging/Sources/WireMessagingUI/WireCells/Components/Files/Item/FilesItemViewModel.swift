@@ -154,7 +154,7 @@ final class FilesItemViewModel: ObservableObject {
     var isEditable: Bool {
         item.isEditable
     }
-    
+
     func performMenuAction(_ action: ItemAction) {
         switch action {
         case .restore:
@@ -256,11 +256,11 @@ final class FilesItemViewModel: ObservableObject {
 extension [FilesItemViewModel.ItemAction] {
     static func menuActions(browsing: Bool, recycleBin: Bool, foldersEnabled: Bool, collaboraEnabled: Bool) -> Self {
         var actions: [FilesItemViewModel.ItemAction] = []
-        
+
         if !recycleBin {
-            actions.append(.open)            
+            actions.append(.open)
         }
-        
+
         if !browsing {
             if !recycleBin {
                 if collaboraEnabled {
@@ -273,18 +273,18 @@ extension [FilesItemViewModel.ItemAction] {
                 actions.append(.rename)
                 actions.append(.editTags)
             }
-            
+
             if recycleBin {
                 actions.append(.restore)
             }
-            
+
             if recycleBin || !foldersEnabled {
                 actions.append(.deletePermanently)
             } else {
                 actions.append(.deleteToRecycleBin)
             }
         }
-                
+
         return actions
     }
 }
