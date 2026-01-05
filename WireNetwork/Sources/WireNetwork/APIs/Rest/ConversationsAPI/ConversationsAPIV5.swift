@@ -158,8 +158,8 @@ class ConversationsAPIV5: ConversationsAPIV4 {
         }
 
         let parameters = UpdateConversationAccessParametersV0(
-            accessModes: accessModes.map { $0.toNetworkModel() },
-            accessRoles: accessRoles.map { $0.toNetworkModel() }
+            accessModes: accessModes.map { $0.toNetworkModel() }.sorted { $0.rawValue < $1.rawValue },
+            accessRoles: accessRoles.map { $0.toNetworkModel() }.sorted { $0.rawValue < $1.rawValue }
         )
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
         let path = "\(pathPrefix)\(basePath)/\(conversationID.domain)/\(conversationID.id)/access"
