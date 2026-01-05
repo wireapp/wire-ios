@@ -95,7 +95,7 @@ final class ConversationsAPITests: XCTestCase {
     func testUpdateConversationAccess_givenV5AndSuccessResponse200_thenSucceeds() async throws {
         // given
         let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "")
+            (.ok, "testUpdateConversationAccess_givenV5AndSuccessResponse200")
         ])
 
         let api = ConversationsAPIV5(apiService: apiService)
@@ -113,7 +113,7 @@ final class ConversationsAPITests: XCTestCase {
     func testUpdateConversationAccess_givenV5AndSuccessResponse204_thenSucceeds() async throws {
         // given
         let apiService = MockAPIServiceProtocol.withResponses([
-            (.noContent, "")
+            (.noContent, "testUpdateConversationAccess_givenV5AndSuccessResponse204")
         ])
 
         let api = ConversationsAPIV5(apiService: apiService)

@@ -175,13 +175,17 @@ class ConversationsAPIV5: ConversationsAPIV4 {
         )
 
         try ResponseParser()
-            .success(code: .ok)
+            .success(code: .ok, type: DummyPayload.self)
             .success(code: .noContent)
             .failure(code: .forbidden, label: "invalid-op", error: ConversationsAPIError.invalidOperation)
             .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
             .failure(code: .forbidden, label: "action-denied", error: ConversationsAPIError.insufficienAuthorization)
             .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
             .parse(code: response.statusCode, data: data)
+
+        struct DummyPayload: Decodable, ToAPIModelConvertible {
+            func toAPIModel() -> Void {}
+        }
     }
 
 }
