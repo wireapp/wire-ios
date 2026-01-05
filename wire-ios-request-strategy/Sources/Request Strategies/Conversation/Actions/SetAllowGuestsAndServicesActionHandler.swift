@@ -72,6 +72,7 @@ final class SetAllowGuestsAndAppsActionHandler: ActionHandler<SetAllowGuestsAndA
             "access": ConversationAccessMode.value(forAllowGuests: action.allowGuests).stringValue,
             "access_role": accessRoles.map(\.rawValue)
         ]
+        print(payload) // TODO: delete
 
         let path: String
         switch apiVersion {
