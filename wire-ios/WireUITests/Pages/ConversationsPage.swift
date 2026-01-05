@@ -62,11 +62,21 @@ class ConversationsPage: PageModel {
     }
 
     func openUserAccountPageForUser(with input: String) throws -> UserProfilePage {
-        let predicate = NSPredicate(format: "value BEGINSWITH %@", input)
-        let button = app.buttons.containing(predicate).firstMatch
-        if button.waitForExistence(timeout: 2), button.isHittable {
-            button.tap()
+        let namePredicate = NSPredicate(format: "value BEGINSWITH %@", input)
+        let nameButton = app.buttons.containing(namePredicate).firstMatch
+
+        if nameButton.waitForExistence(timeout: 2), nameButton.isHittable {
+            nameButton.tap()
+        } else {
+            // Note: Sometimes predicate doesn't work so fallback to identifier.
+            let profileImage = app.buttons[Locators.ConversationsPage.accountProfileImageView.rawValue].firstMatch
+            XCTAssertTrue(
+                profileImage.waitForExistence(timeout: 2),
+                "Not able to open user profile"
+            )
+            profileImage.tap()
         }
+
         return try UserProfilePage()
     }
 

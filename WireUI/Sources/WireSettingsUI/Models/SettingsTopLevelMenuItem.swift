@@ -27,19 +27,3 @@ public enum SettingsTopLevelMenuItem: Sendable {
     case about
     case developerOptions
 }
-
-// MARK: - Accessibility identifiers
-
-public extension SettingsTopLevelMenuItem {
-    var accessibilityID: String {
-        switch self {
-        case .account: Locators.SettingsPage.accountCell.rawValue
-        case .devices: "devicesCell"
-        case .options: Locators.SettingsPage.optionsCell.rawValue
-        case .advanced: "advancedCell"
-        case .support: "supportCell"
-        case .about: "aboutCell"
-        case .developerOptions: "developerOptionsCell"
-        }
-    }
-}

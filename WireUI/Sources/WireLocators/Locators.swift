@@ -64,12 +64,13 @@ public enum Locators {
         case conversationCell
         case blockOptionOnContextMenu = "Block…"
         case blockButtonOnBottomSheet
+        case accountProfileImageView = "account_profile_image_view"
     }
 
     public enum SettingsPage: String {
 
-        case accountCell
-        case optionsCell
+        case accountCell = "Account"
+        case optionsCell = "Options"
     }
 
     public enum AccountSettingsPage: String {
