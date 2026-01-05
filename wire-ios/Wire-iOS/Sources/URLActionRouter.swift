@@ -143,10 +143,6 @@ class URLActionRouter: URLActionRouterProtocol {
 
 extension URLActionRouter: PresentationDelegate {
 
-    func updateActiveCallPresentationStateIfNeeded() {
-        authenticatedRouter?.updateActiveCallPresentationState()
-    }
-
     func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
         typealias ConversationAlert = L10n.Localizable.Join.Group.Conversation.Alert
 
