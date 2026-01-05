@@ -253,35 +253,40 @@ final class FilesItemViewModel: ObservableObject {
     }
 }
 
-extension [FilesItemViewModel.ItemAction] {
-    static func menuActions(browsing: Bool, recycleBin: Bool, foldersEnabled: Bool, collaboraEnabled: Bool) -> Self {
-        var actions: [FilesItemViewModel.ItemAction] = []
+extension Collection<FilesItemViewModel.ItemAction> {
+    static func menuActions(
+        browsing: Bool,
+        recycleBin: Bool,
+        foldersEnabled: Bool,
+        collaboraEnabled: Bool
+    ) -> Set<Element> {
+        var actions: Set<FilesItemViewModel.ItemAction> = []
 
         if !recycleBin {
-            actions.append(.open)
+            actions.insert(.open)
         }
 
         if !browsing {
             if !recycleBin {
                 if collaboraEnabled {
-                    actions.append(.showVersionHistory)
+                    actions.insert(.showVersionHistory)
                 }
                 if foldersEnabled {
-                    actions.append(.moveToFolder)
+                    actions.insert(.moveToFolder)
                 }
-                actions.append(.edit)
-                actions.append(.rename)
-                actions.append(.editTags)
+                actions.insert(.edit)
+                actions.insert(.rename)
+                actions.insert(.editTags)
             }
 
             if recycleBin {
-                actions.append(.restore)
+                actions.insert(.restore)
             }
 
             if recycleBin || !foldersEnabled {
-                actions.append(.deletePermanently)
+                actions.insert(.deletePermanently)
             } else {
-                actions.append(.deleteToRecycleBin)
+                actions.insert(.deleteToRecycleBin)
             }
         }
 

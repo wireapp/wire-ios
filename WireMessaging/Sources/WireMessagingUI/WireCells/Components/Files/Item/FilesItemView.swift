@@ -32,11 +32,11 @@ struct FilesItemView: View {
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
-    private let menuActions: [FilesItemViewModel.ItemAction]
+    private let menuActions: Set<FilesItemViewModel.ItemAction>
 
     init(
         viewModel: @autoclosure @escaping () -> FilesItemViewModel,
-        menuActions: [FilesItemViewModel.ItemAction]
+        menuActions: Set<FilesItemViewModel.ItemAction>
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
         self.menuActions = menuActions
@@ -45,7 +45,6 @@ struct FilesItemView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
-
                 Image(viewModel.icon.resource)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -90,94 +89,11 @@ struct FilesItemView: View {
                             .foregroundStyle(ColorTheme.Base.secondaryText.color)
                     }
                 }
+
                 Spacer()
 
                 Menu {
-                    if menuActions.contains(.open) {
-                        Button {
-                            viewModel.performMenuAction(.open)
-                        } label: {
-                            Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
-                        }
-                        .disabled(viewModel.isDownloading)
-
-                        if viewModel.isDownloadOptionAvailable {
-                            Button {
-                                Task { await viewModel.download() }
-                            } label: {
-                                Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
-                            }
-                        }
-                    }
-
-                    if menuActions.contains(.showVersionHistory) {
-                        Button {
-                            viewModel.performMenuAction(.showVersionHistory)
-                        } label: {
-                            Label(
-                                Strings.Files.Item.Menu.versionHistory,
-                                systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90"
-                            )
-                        }
-                    }
-
-                    if menuActions.contains(.edit), viewModel.isEditable {
-                        Button {
-                            viewModel.performMenuAction(.edit)
-                        } label: {
-                            Label(Strings.Files.Item.Menu.editFile, systemImage: "square.and.pencil")
-                        }
-                    }
-
-                    Divider()
-
-                    if menuActions.contains(.rename) {
-                        Button {
-                            viewModel.performMenuAction(.rename)
-                        } label: {
-                            Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
-                        }
-                    }
-
-                    if menuActions.contains(.moveToFolder) {
-                        Button {
-                            viewModel.performMenuAction(.moveToFolder)
-                        } label: {
-                            Label(Strings.Files.Item.Menu.moveToFolder, systemImage: "folder")
-                        }
-                    }
-
-                    if menuActions.contains(.editTags) {
-                        Button {
-                            viewModel.performMenuAction(.editTags)
-                        } label: {
-                            Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
-                        }
-                    }
-
-                    if menuActions.contains(.restore) {
-                        Button {
-                            viewModel.performMenuAction(.restore)
-                        } label: {
-                            Label(Strings.RecycleBin.Item.Menu.restore, systemImage: "arrow.uturn.backward")
-                        }
-                    }
-
-                    if menuActions.contains(.deletePermanently) {
-                        Button(
-                            role: .destructive,
-                            action: { viewModel.performMenuAction(.deletePermanently) },
-                            label: { Label(Strings.RecycleBin.Item.Menu.delete, systemImage: "trash.fill") }
-                        )
-                    }
-
-                    if menuActions.contains(.deleteToRecycleBin) {
-                        Button(
-                            role: .destructive,
-                            action: { viewModel.performMenuAction(.deleteToRecycleBin) },
-                            label: { Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill") }
-                        )
-                    }
+                    menuContent()
                 } label: {
                     Image(systemName: "ellipsis")
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
@@ -242,6 +158,107 @@ struct FilesItemView: View {
         .contentShape(Rectangle()) // Tap area
     }
 
+    @ViewBuilder
+    private func menuContent() -> some View {
+        menuItem(.open) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
+            }
+            .disabled(viewModel.isDownloading)
+
+            if viewModel.isDownloadOptionAvailable {
+                Button {
+                    Task { await viewModel.download() }
+                } label: {
+                    Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
+                }
+            }
+        }
+
+        menuItem(.showVersionHistory) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(
+                    Strings.Files.Item.Menu.versionHistory,
+                    systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90"
+                )
+            }
+        }
+
+        if viewModel.isEditable {
+            menuItem(.edit) { item in
+                Button {
+                    viewModel.performMenuAction(item)
+                } label: {
+                    Label(Strings.Files.Item.Menu.editFile, systemImage: "square.and.pencil")
+                }
+            }
+        }
+
+        Divider()
+
+        menuItem(.rename) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
+            }
+        }
+
+        menuItem(.moveToFolder) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(Strings.Files.Item.Menu.moveToFolder, systemImage: "folder")
+            }
+        }
+
+        menuItem(.editTags) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
+            }
+        }
+
+        menuItem(.restore) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(Strings.RecycleBin.Item.Menu.restore, systemImage: "arrow.uturn.backward")
+            }
+        }
+
+        menuItem(.deletePermanently) { item in
+            Button(
+                role: .destructive,
+                action: { viewModel.performMenuAction(item) },
+                label: { Label(Strings.RecycleBin.Item.Menu.delete, systemImage: "trash.fill") }
+            )
+        }
+
+        menuItem(.deleteToRecycleBin) { item in
+            Button(
+                role: .destructive,
+                action: { viewModel.performMenuAction(item) },
+                label: { Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill") }
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func menuItem(
+        _ itemAction: FilesItemViewModel.ItemAction,
+        @ViewBuilder menuItem: (FilesItemViewModel.ItemAction) -> some View
+    ) -> some View {
+        if menuActions.contains(itemAction) {
+            menuItem(itemAction)
+        }
+    }
+
     private func confirmDelete(permanently: Bool) {
         Task { await viewModel.confirmDelete(permanently: permanently) }
     }
@@ -253,7 +270,6 @@ struct FilesItemView: View {
     private var progressColor: Color {
         viewModel.showErrorState ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
     }
-
 }
 
 private extension View {
