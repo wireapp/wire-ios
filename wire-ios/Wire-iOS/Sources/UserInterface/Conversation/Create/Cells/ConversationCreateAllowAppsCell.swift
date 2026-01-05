@@ -40,6 +40,8 @@ final class ConversationCreateAllowAppsCell: IconToggleCell {
 extension ConversationCreateAllowAppsCell: ConversationCreationValuesConfigurable {
     func configure(with values: ConversationCreationValues) {
         isOn = values.allowApps
-        toggle.isUserInteractionEnabled = values.isAppsFeatureEnabled
+        toggle.isUserInteractionEnabled =
+            (values.encryptionProtocol == .mls && values.isAppsFeatureEnabled) ||
+            (values.encryptionProtocol == .proteus && values.areLegacyBotsAvailable)
     }
 }

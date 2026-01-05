@@ -19,6 +19,7 @@
 import Foundation
 import WireTestingPackage
 import XCTest
+
 @testable import Wire
 
 final class ConversationDetailsTests: XCTestCase {
@@ -45,13 +46,21 @@ final class ConversationDetailsTests: XCTestCase {
         conversation.isChannel = false
 
         XCTAssertFalse(
-            sut.accessible(in: conversation, by: user)
+            sut.accessible(
+                in: conversation,
+                by: user,
+                areLegacyBotsAvailable: false
+            )
         )
     }
 
     func testAccessOptionNotAllowed_ForChannel_Member() {
         XCTAssertFalse(
-            sut.accessible(in: conversation, by: user)
+            sut.accessible(
+                in: conversation,
+                by: user,
+                areLegacyBotsAvailable: false
+            )
         )
     }
 
