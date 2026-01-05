@@ -97,7 +97,7 @@ public final class PullAllConversationsSync: PullAllConversationsSyncProtocol {
         for conversation in conversations.found {
             await store.storeConversation(
                 conversation.toDomainModel(),
-                timestamp: .now,
+                timestamp: Date.distantPast,
                 isFederationEnabled: isFederationEnabled,
                 isMLSEnabled: isMLSEnabled
             )
