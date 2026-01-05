@@ -20,9 +20,9 @@ import Foundation
 import WireDomain
 
 /// **Issue:**: Faulty MLS removal keys need repair - [WPB-22447]
-struct AppVersionMigration_4_11_1: AppVersionMigration {
+struct AppVersionMigration_4_12_0: AppVersionMigration {
 
-    let version: SemanticVersion = "4.11.1"
+    let version: SemanticVersion = "4.12.0"
     let journal: any JournalProtocol
     let repairGenerator: RepairFaultyMLSRemovalKeysGenerator?
 

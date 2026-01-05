@@ -1722,7 +1722,7 @@ extension ZMUserSession {
             ),
             AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider),
             AppVersionMigration_4_10_0(journal: journal),
-            AppVersionMigration_4_11_1(
+            AppVersionMigration_4_12_0(
                 journal: journal,
                 repairGenerator: clientSessionComponent?.repairFaultyMLSRemovalKeysGenerator
             )
