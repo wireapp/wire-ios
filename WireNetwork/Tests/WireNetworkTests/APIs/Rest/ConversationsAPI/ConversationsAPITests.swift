@@ -18,6 +18,7 @@
 
 import WireTestingPackage
 import XCTest
+
 @testable import WireNetwork
 @testable import WireNetworkSupport
 
@@ -71,6 +72,12 @@ final class ConversationsAPITests: XCTestCase {
                 permission: .everyone
             )
         }
+    }
+
+    // MARK: updateConversationAccess
+
+    func testSomething() async throws {
+        fatalError()
     }
 
     // MARK: getLegacyConversation
