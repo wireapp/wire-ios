@@ -68,6 +68,7 @@ public enum ColorTheme {
         public static let onWarning = UIColor(light: .white, dark: .black)
 
         public static let positive = UIColor(light: .green500Light, dark: .green500Dark)
+        public static let onPositive = UIColor(light: .white, dark: .black)
         public static let onSuccess = UIColor(light: .white, dark: .black)
 
         public static let highlight = UIColor(light: .amber200Dark, dark: .amber300Dark)
