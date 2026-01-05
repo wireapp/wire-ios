@@ -188,6 +188,14 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         throw ConversationsAPIError.unsupportedEndpointForAPIVersion
     }
 
+    func updateConversationAccess(
+        conversationID _: QualifiedID,
+        allowGuests _: Bool,
+        allowApps _: Bool
+    ) async throws {
+        throw ConversationsAPIError.unsupportedEndpointForAPIVersion
+    }
+
 }
 
 // MARK: Encodables

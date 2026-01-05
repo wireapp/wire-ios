@@ -135,7 +135,7 @@ class ConversationsAPIV5: ConversationsAPIV4 {
         }
     }
 
-    func updateConversationAccess(
+    override func updateConversationAccess(
         conversationID: QualifiedID,
         allowGuests: Bool,
         allowApps: Bool

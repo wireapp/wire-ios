@@ -76,8 +76,140 @@ final class ConversationsAPITests: XCTestCase {
 
     // MARK: updateConversationAccess
 
-    func testSomething() async throws {
-        fatalError()
+    func testUpdateConversationAccess_givenV5AndNextVersions_thenVerifyRequest() async throws {
+        // given
+        let apiVersions = APIVersion.v5.andNextVersions
+        let conversationID = QualifiedID(id: Scaffolding.conversationID, domain: Scaffolding.domain)
+
+        // when
+        // then
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+            try await sut.updateConversationAccess(
+                conversationID: conversationID,
+                allowGuests: true,
+                allowApps: false
+            )
+        }
+    }
+
+    func testUpdateConversationAccess_givenV5AndSuccessResponse200_thenSucceeds() async throws {
+        // given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "")
+        ])
+
+        let api = ConversationsAPIV5(apiService: apiService)
+        let conversationID = QualifiedID(id: Scaffolding.conversationID, domain: Scaffolding.domain)
+
+        // when
+        // then
+        try await api.updateConversationAccess(
+            conversationID: conversationID,
+            allowGuests: true,
+            allowApps: true
+        )
+    }
+
+    func testUpdateConversationAccess_givenV5AndSuccessResponse204_thenSucceeds() async throws {
+        // given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.noContent, "")
+        ])
+
+        let api = ConversationsAPIV5(apiService: apiService)
+        let conversationID = QualifiedID(id: Scaffolding.conversationID, domain: Scaffolding.domain)
+
+        // when
+        // then
+        try await api.updateConversationAccess(
+            conversationID: conversationID,
+            allowGuests: false,
+            allowApps: false
+        )
+    }
+
+    func testUpdateConversationAccess_givenV5AndFailureResponse403InvalidOp_thenThrowsInvalidOperation() async throws {
+        // given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "invalid-op"
+        )
+
+        let api = ConversationsAPIV5(apiService: apiService)
+        let conversationID = QualifiedID(id: Scaffolding.conversationID, domain: Scaffolding.domain)
+
+        // when
+        // then
+        await XCTAssertThrowsErrorAsync(ConversationsAPIError.invalidOperation) {
+            try await api.updateConversationAccess(
+                conversationID: conversationID,
+                allowGuests: true,
+                allowApps: false
+            )
+        }
+    }
+
+    func testUpdateConversationAccess_givenV5AndFailureResponse403AccessDenied_thenThrowsAccessDenied() async throws {
+        // given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "access-denied"
+        )
+
+        let api = ConversationsAPIV5(apiService: apiService)
+        let conversationID = QualifiedID(id: Scaffolding.conversationID, domain: Scaffolding.domain)
+
+        // when
+        // then
+        await XCTAssertThrowsErrorAsync(ConversationsAPIError.accessDenied) {
+            try await api.updateConversationAccess(
+                conversationID: conversationID,
+                allowGuests: true,
+                allowApps: false
+            )
+        }
+    }
+
+    func testUpdateConversationAccess_givenV5AndFailureResponse403ActionDenied_thenThrowsInsufficientAuthorization() async throws {
+        // given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "action-denied"
+        )
+
+        let api = ConversationsAPIV5(apiService: apiService)
+        let conversationID = QualifiedID(id: Scaffolding.conversationID, domain: Scaffolding.domain)
+
+        // when
+        // then
+        await XCTAssertThrowsErrorAsync(ConversationsAPIError.insufficienAuthorization) {
+            try await api.updateConversationAccess(
+                conversationID: conversationID,
+                allowGuests: true,
+                allowApps: false
+            )
+        }
+    }
+
+    func testUpdateConversationAccess_givenV5AndFailureResponse404NoConversation_thenThrowsConversationNotFound() async throws {
+        // given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .notFound,
+            label: "no-conversation"
+        )
+
+        let api = ConversationsAPIV5(apiService: apiService)
+        let conversationID = QualifiedID(id: Scaffolding.conversationID, domain: Scaffolding.domain)
+
+        // when
+        // then
+        await XCTAssertThrowsErrorAsync(ConversationsAPIError.conversationNotFound) {
+            try await api.updateConversationAccess(
+                conversationID: conversationID,
+                allowGuests: true,
+                allowApps: false
+            )
+        }
     }
 
     // MARK: getLegacyConversation
