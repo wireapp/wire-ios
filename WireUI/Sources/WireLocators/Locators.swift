@@ -69,8 +69,8 @@ public enum Locators {
 
     public enum SettingsPage: String {
 
-        case accountCell = "Account"
-        case optionsCell = "Options"
+        case accountCell
+        case optionsCell
     }
 
     public enum AccountSettingsPage: String {

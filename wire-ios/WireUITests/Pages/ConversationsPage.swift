@@ -67,16 +67,7 @@ class ConversationsPage: PageModel {
 
         if nameButton.waitForExistence(timeout: 2), nameButton.isHittable {
             nameButton.tap()
-        } else {
-            // Note: Sometimes predicate doesn't work so fallback to identifier.
-            let profileImage = app.buttons[Locators.ConversationsPage.accountProfileImageView.rawValue].firstMatch
-            XCTAssertTrue(
-                profileImage.waitForExistence(timeout: 2),
-                "Not able to open user profile"
-            )
-            profileImage.tap()
         }
-
         return try UserProfilePage()
     }
 
