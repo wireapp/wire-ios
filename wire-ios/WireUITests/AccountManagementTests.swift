@@ -25,28 +25,13 @@ final class AccountManagementTests: WireUITestCase {
 
     @MainActor
     func test_Account_Management_Lock_With_Passcode() async throws {
+
         let passcode = UserGenerator.generateAppPasscode()
 
-        do {
-            let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-            let ownerAccessToken = try await userHelper.fetchAccessToken(
-                email: teamOwner.email,
-                password: teamOwner.password
-            )
-            let teamID = try XCTUnwrap(teamOwner.teamID)
+        let user = try await userHelper.createPersonalUser()
 
-            let (_, userInfo) = try await userHelper.registerUsersAsTeamMember(
-                ownerAccessToken: ownerAccessToken,
-                teamID: teamID
-            )
-            teamMember = userInfo
-        } catch {
-            throw XCTSkip("error in setup of test: \(error)")
-        }
-
-        let page = try await app.loginUser(email: teamMember.email, password: teamMember.password)
-            .acceptPopupOnTeamMemberSetup(with: self)
-            .setUsername(teamMember.username)
+        let page = try await app.loginUser(email: user.email, password: user.password)
+            .acceptPopup(with: self)
             .openSettings()
             .openOptionsMenu()
             .enableLockWithPasscode()
@@ -59,32 +44,18 @@ final class AccountManagementTests: WireUITestCase {
         )
 
         _ = try page.enterPasscode(passcode)
+
     }
 
     @MainActor
     func test_Account_Management_Update_Email_Reset_password() async throws {
+
         let updatedUserDetails = UserGenerator.generateUniqueUserInfo()
 
-        do {
-            let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-            let ownerAccessToken = try await userHelper.fetchAccessToken(
-                email: teamOwner.email,
-                password: teamOwner.password
-            )
-            let teamID = try XCTUnwrap(teamOwner.teamID)
+        let user = try await userHelper.createPersonalUser()
 
-            let (_, userInfo) = try await userHelper.registerUsersAsTeamMember(
-                ownerAccessToken: ownerAccessToken,
-                teamID: teamID
-            )
-            teamMember = userInfo
-        } catch {
-            throw XCTSkip("error in setup of test: \(error)")
-        }
-
-        let verifyEmailPage = try app.loginUser(email: teamMember.email, password: teamMember.password)
-            .acceptPopupOnTeamMemberSetup(with: self)
-            .setUsername(teamMember.username)
+        let verifyEmailPage = try app.loginUser(email: user.email, password: user.password)
+            .acceptPopup(with: self)
             .openSettings()
             .openAccountSettings()
             .tapEmailField()
