@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct SetAllowGuestsAndAppsAction: EntityAction {
+public struct SetAllowGuestsAndAppsAction: EntityAction { // TODO: delete?
 
     public typealias Result = Void
 

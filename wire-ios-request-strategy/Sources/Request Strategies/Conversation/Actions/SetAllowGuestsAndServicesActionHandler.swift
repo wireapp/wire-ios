@@ -18,7 +18,7 @@
 
 import WireDataModel
 
-final class SetAllowGuestsAndAppsActionHandler: ActionHandler<SetAllowGuestsAndAppsAction> {
+final class SetAllowGuestsAndAppsActionHandler: ActionHandler<SetAllowGuestsAndAppsAction> { // TODO: delete?
 
     private let eventProcessor: ConversationEventProcessor
     private let localDomain: String?
