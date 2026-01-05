@@ -35,6 +35,7 @@ enum CellConfiguration {
     )
     case loading
     case text(String)
+    case titleAndBody(title: String, body: String)
     case info(String)
     case iconAction(
         title: String,
@@ -65,6 +66,7 @@ enum CellConfiguration {
         case .leadingButton: ActionCell.self
         case .loading: LoadingIndicatorCell.self
         case .text: TextCell.self
+        case .titleAndBody: TitleBodyCell.self
         case .info: GuestLinkInfoCell.self
         case .iconAction: IconActionCell.self
         case .appearance: SettingsAppearanceCell.self
@@ -78,6 +80,7 @@ enum CellConfiguration {
              .secureLinkHeader,
              .loading,
              .text,
+             .titleAndBody,
              .info,
              .appearance: nil
         case let .leadingButton(_, _, action: action): action
@@ -95,6 +98,7 @@ enum CellConfiguration {
             ActionCell.self,
             LoadingIndicatorCell.self,
             TextCell.self,
+            TitleBodyCell.self,
             GuestLinkInfoCell.self,
             IconActionCell.self,
             SettingsAppearanceCell.self

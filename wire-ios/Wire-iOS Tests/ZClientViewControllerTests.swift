@@ -37,6 +37,7 @@ final class ZClientViewControllerTests: XCTestCase {
         userSession.coreDataStack = coreDataFixture.coreDataStack
         sut = ZClientViewController(
             account: Account.mockAccount(imageData: mockImageData),
+            contextProvider: DefaultManagedObjectContextProvider(contextProvider: coreDataFixture.coreDataStack),
             selfProfileViewsMonitor: MockSelfProfileViewsMonitorImplementation(didViewSelfProfile: false),
             userSession: userSession,
             trackingManager: nil,
