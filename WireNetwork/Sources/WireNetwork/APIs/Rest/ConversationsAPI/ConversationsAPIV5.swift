@@ -137,9 +137,26 @@ class ConversationsAPIV5: ConversationsAPIV4 {
 
     func updateConversationAccess(
         conversationID: QualifiedID,
-        accessModes: Set<ConversationAccessMode>,
-        accessRoles: Set<ConversationAccessRole>
+        allowGuests: Bool,
+        allowApps: Bool
     ) async throws {
+
+        // Build access roles based on allowGuests and allowApps
+        var accessRoles: Set<ConversationAccessRole> = [.teamMember]
+        if allowGuests {
+            accessRoles.insert(.guest)
+            accessRoles.insert(.nonTeamMember)
+        }
+        if allowApps {
+            accessRoles.insert(.app)
+        }
+
+        // Build access modes based on allowGuests
+        var accessModes = Set<ConversationAccessMode>()
+        if allowGuests {
+            accessModes = [.invite, .code]
+        }
+
         let parameters = UpdateConversationAccessParametersV0(
             accessModes: accessModes.map { $0.toNetworkModel() },
             accessRoles: accessRoles.map { $0.toNetworkModel() }
