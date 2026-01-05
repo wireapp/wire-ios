@@ -30,8 +30,8 @@ public extension Feature {
         // MARK: - Life cycle
 
         public init(
-            status: Feature.Status = .disabled,
-            config: Config = .init()
+            status: Feature.Status,
+            config: Config
         ) {
             self.status = status
             self.config = config
@@ -40,7 +40,7 @@ public extension Feature {
         public struct Config: Codable {
             public let backend: Backend
 
-            public init(backend: Backend = .init(url: nil)) {
+            public init(backend: Backend) {
                 self.backend = backend
             }
 

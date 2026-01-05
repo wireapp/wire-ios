@@ -40,7 +40,7 @@ final class ZClientControllerBuilder {
         let featureRepository = LegacyFeatureRepository(context: syncContext)
         
         return syncContext.performAndWait {
-            featureRepository.fetchCellsInternal().config.backend.url
+            featureRepository.fetchCellsInternal()?.config.backend.url
         }
     }()
     

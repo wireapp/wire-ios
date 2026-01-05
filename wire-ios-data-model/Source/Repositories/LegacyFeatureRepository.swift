@@ -54,7 +54,7 @@ public protocol LegacyFeatureRepositoryInterface {
     func fetchCells() -> Feature.Cells
     func storeCells(_ cells: Feature.Cells)
     func fetchAssetAuditLog() -> Feature.AssetAuditLog
-    func fetchCellsInternal() -> Feature.CellsInternal
+    func fetchCellsInternal() -> Feature.CellsInternal?
 
 }
 
@@ -569,23 +569,21 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
 
     // MARK: - Cells internal
 
-    public func fetchCellsInternal() -> Feature.CellsInternal {
+    public func fetchCellsInternal() -> Feature.CellsInternal? {
         guard
             let feature = Feature.fetch(name: .cellsInternal, context: context),
             let featureConfig = feature.config
         else {
-            return .init()
+            return nil
         }
-
-        var config = Feature.CellsInternal.Config()
 
         do {
-            config = try decoder.decode(Feature.CellsInternal.Config.self, from: featureConfig)
+            let config = try decoder.decode(Feature.CellsInternal.Config.self, from: featureConfig)
+            return Feature.CellsInternal(status: feature.status, config: config)
         } catch {
             logger.error("failed to decode Feature.CellsInternal.Config: \(error)")
+            return nil
         }
-
-        return .init(status: feature.status, config: config)
     }
 
     // MARK: - Methods
