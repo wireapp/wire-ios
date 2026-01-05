@@ -134,6 +134,11 @@ class ConversationsAPIV5: ConversationsAPIV4 {
             }
         }
     }
+
+    func updateConversationAccess() async throws {
+        fatalError("TODO")
+    }
+
 }
 
 // MARK: Decodables
