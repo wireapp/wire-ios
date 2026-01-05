@@ -40,6 +40,11 @@ extension UpdateEventDecodingProxy {
                 let event = FeatureConfigUpdateEvent(featureConfig: .appLock(config))
                 updateEvent = .featureConfig(.update(event))
 
+            case "apps":
+                let config = try AppsFeatureConfigDecoder().decode(from: container)
+                let event = FeatureConfigUpdateEvent(featureConfig: .apps(config))
+                updateEvent = .featureConfig(.update(event))
+
             case "classifiedDomains":
                 let config = try ClassifiedDomainsFeatureConfigDecoder().decode(from: container)
                 let event = FeatureConfigUpdateEvent(featureConfig: .classifiedDomains(config))

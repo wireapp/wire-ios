@@ -369,6 +369,7 @@ final class AddParticipantsViewController: UIViewController {
             let updated = ConversationCreationValues(
                 isChannel: values.isChannel,
                 isAppsFeatureEnabled: values.isAppsFeatureEnabled,
+                areLegacyBotsAvailable: values.areLegacyBotsAvailable,
                 name: values.name,
                 participants: userSelection.users,
                 allowGuests: values.allowGuests,

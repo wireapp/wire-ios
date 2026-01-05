@@ -16,29 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMessagingDomain
-import WireSyncEngine
+import SwiftUI
+import WireDesign
 
-struct ConversationCreationRepository: ConversationCreationRepositoryProtocol {
+/// Bold headline and normal body text.
 
-    let searchUsersUseCase: () -> (any SearchUsersUseCaseProtocol)?
+final class TitleBodyCell: UITableViewCell, CellConfigurationConfigurable {
 
-    @concurrent
-    func areBotsSetUpInTheTeam() async throws -> Bool {
+    func configure(with configuration: CellConfiguration) {
+        guard case let .titleAndBody(title, body) = configuration else { preconditionFailure() }
 
-        guard let searchUsersUseCase = searchUsersUseCase() else { return false }
-
-        // search for any old-style services/bots whitelisted in the team
-        let result = try await searchUsersUseCase.invoke(
-            query: "",
-            options: .services,
-            messageProtocol: .proteus
-        )
-
-        return await result.context.perform {
-            !result.services.isEmpty
+        contentConfiguration = UIHostingConfiguration {
+            VStack(alignment: .leading, spacing: 24) {
+                Text(title)
+                    .bold()
+                Text(body)
+            }
         }
 
-    }
+        backgroundColor = SemanticColors.View.backgroundDefault
 
+    }
+}
+
+@available(iOS 17, *)
+#Preview {
+    TitleBodyCellPreview()
 }

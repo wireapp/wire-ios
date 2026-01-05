@@ -49,6 +49,7 @@ public struct SearchOptions: OptionSet {
     /// Services which are enabled in your team.
 
     public static let services = SearchOptions(rawValue: 1 << 6)
+    // TODO: [WPB-20362] consider renaming to `bots` and adding `apps`
 
     /// Users from federated servers.
 
