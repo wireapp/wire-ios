@@ -14,7 +14,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 "account_type_selector.close.label" = "Close account selection";
 "create_personal_account.close.label" = "Close personal account creation";
