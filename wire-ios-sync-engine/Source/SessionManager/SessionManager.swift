@@ -341,7 +341,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     let jailbreakDetector: JailbreakDetectorProtocol?
     fileprivate var accountTokens: [UUID: [Any]] = [:]
     fileprivate var memoryWarningObserver: NSObjectProtocol?
-    var conversationVisibleObserver: NSObjectProtocol?
     fileprivate var isSelectingAccount: Bool = false
 
     var proxyCredentials: WireTransport.ProxyCredentials?

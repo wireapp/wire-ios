@@ -70,8 +70,4 @@ public protocol PresentationDelegate: AnyObject {
 
     // Called when showing the password prompt before joining a group conversation
     func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void)
-
-    /// Updates the calling UI state if there's an active call
-    func updateActiveCallPresentationStateIfNeeded()
-
 }

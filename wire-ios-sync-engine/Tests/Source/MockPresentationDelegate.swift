@@ -74,6 +74,4 @@ class MockPresentationDelegate: PresentationDelegate {
         completion(mockPassword)
     }
 
-    func updateActiveCallPresentationStateIfNeeded() {}
-
 }
