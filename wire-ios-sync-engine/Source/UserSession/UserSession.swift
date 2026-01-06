@@ -280,7 +280,7 @@ public protocol UserSession: AnyObject {
 
     func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol
 
-    func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol
+    func makeAppendLocationMessageUseCase() -> any AppendLocationMessageUseCaseProtocol
 
     func makeAppendFileMessageUseCase() -> any AppendFileMessageUseCaseProtocol
 

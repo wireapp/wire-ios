@@ -54,16 +54,19 @@ struct SetAllowGuestAndAppsUseCase: SetAllowGuestAndAppsUseCaseProtocol {
         allowGuests: Bool,
         allowApps: Bool
     ) async throws {
-        guard conversation.canManageGuestsAccess else {
-            throw SetAllowGuestsAndAppsUseCaseError.invalidOperation
-        }
 
         guard let context = conversation.managedObjectContext else {
             throw SetAllowGuestsAndAppsUseCaseError.contextUnavailable
         }
 
-        let conversationID = await context.perform {
-            WireFoundation.QualifiedID(conversation.qualifiedID!)
+        let (canManageGuestsAccess, conversationID) = await context.perform {
+            let canManageGuestsAccess = conversation.canManageGuestsAccess
+            let conversationID = WireFoundation.QualifiedID(conversation.qualifiedID!)
+            return (canManageGuestsAccess, conversationID)
+        }
+
+        guard canManageGuestsAccess else {
+            throw SetAllowGuestsAndAppsUseCaseError.invalidOperation
         }
 
         try await api.updateConversationAccess(
