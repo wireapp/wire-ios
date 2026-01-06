@@ -553,15 +553,21 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
     }
 
     func presentGuestOptions(animated: Bool) {
-        guard let conversation = conversation as? ZMConversation else { return }
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard
+            let conversation = conversation as? ZMConversation,
+            let userSession = ZMUserSession.shared(),
+            let createSecureGuestLinkUseCase = userSession.makeConversationSecureGuestLinkUseCase(),
+            let navigationController
+        else { return }
+
         let menu = ConversationGuestOptionsViewController(
             conversation: conversation,
             userSession: userSession,
+            createSecureGuestLinkUseCase: createSecureGuestLinkUseCase,
             areLegacyBotsAvailable: areLegacyBotsAvailable,
             isAppsFeatureEnabled: isAppsFeatureEnabled
         )
-        navigationController?.pushViewController(menu, animated: animated)
+        navigationController.pushViewController(menu, animated: animated)
     }
 
     func presentServicesOptions(animated: Bool) {
