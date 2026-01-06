@@ -394,7 +394,6 @@ extension UserClientRequestStrategyTests {
                 code: UserSessionErrorCode.needsPasswordToRegisterClient.rawValue,
                 userInfo: [
                     ZMEmailCredentialKey: emailAddress,
-                    ZMUserHasPasswordKey: true,
                     ZMUserUsesCompanyLoginCredentialKey: false,
                     ZMUserLoginCredentialsKey: LoginCredentials(
                         emailAddress: emailAddress,
