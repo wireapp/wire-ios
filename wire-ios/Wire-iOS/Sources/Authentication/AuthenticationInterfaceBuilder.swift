@@ -25,7 +25,6 @@ import WireCommonComponents
 import WireCountly
 import WireDataModel
 import WireFoundation
-import WireLogging
 import WireNetwork
 import WireSyncEngine
 
