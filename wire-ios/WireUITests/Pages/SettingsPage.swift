@@ -38,6 +38,7 @@ class SettingsPage: PageModel {
     }
 
     func openAccountSettings() throws -> AccountSettingsPage {
+        XCTAssertTrue(accountSettingsMenu.waitForExistence(timeout: 3))
         accountSettingsMenu.tap()
         return try AccountSettingsPage()
     }
