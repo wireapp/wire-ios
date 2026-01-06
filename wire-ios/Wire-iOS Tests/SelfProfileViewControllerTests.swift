@@ -46,7 +46,7 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
 
         userSession = UserSessionMock(mockUser: selfUser)
         accountManager = MockSelfProfileAccountManager()
-      
+
         setupMultipleAccounts(true)
     }
 
@@ -55,7 +55,7 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
             accountManager.sortedAccounts_MockValue = []
             return
         }
-        
+
         let accounts = [
             Account(
                 userName: "Iggy Pop",
@@ -74,7 +74,7 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
         ]
         accountManager.sortedAccounts_MockValue = accounts
     }
-    
+
     // MARK: - tearDown
 
     override func tearDown() {
