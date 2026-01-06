@@ -103,6 +103,13 @@ public extension JournalKey where Value == Bool {
         defaultValue: false
     )
 
+    /// Whether faulty MLS removal keys need to be repaired.
+
+    static let isRepairFaultyMLSRemovalKeysRequired = Self(
+        "isRepairFaultyMLSRemovalKeysRequired",
+        defaultValue: false
+    )
+
 }
 
 public extension JournalKey where Value == Set<String> {
