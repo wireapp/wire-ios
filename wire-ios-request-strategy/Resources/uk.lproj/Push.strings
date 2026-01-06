@@ -1,20 +1,20 @@
-// 
+//
 // Wire
 // Copyright (C) 2026 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 // These strings form the alert body of a local notification. The alert title
 // be in the form "[Group Name]" or "[Sender Name]". If there is a team name available
 // then " in [Team Name]" will be appended to the title. If there is no information
@@ -24,9 +24,6 @@
 // and message content in the alert body.
 // Sender names are shown in the title for one to one conversations, with the message
 // content in the alert body.
-
-
-
 
 "push.notification.default" = "Нове повідомлення";
 
