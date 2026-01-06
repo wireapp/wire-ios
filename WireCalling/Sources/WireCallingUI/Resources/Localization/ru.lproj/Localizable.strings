@@ -17,7 +17,6 @@
 //
 // MARK: - Meetings List
 
-
 "wireMeetings.list.title" = "Встречи";
 "wireMeetings.list.tabs.past" = "Прошлые";
 "wireMeetings.list.tabs.next" = "Next";
