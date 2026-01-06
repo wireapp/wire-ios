@@ -37,9 +37,14 @@ final class CreateGroupConversationViewControllerBuilder: CreateGroupConversatio
 
     @MainActor
     func build() async -> UIViewController {
-        let viewController = await ConversationCreationController(
+        let featureConfigRepository = userSession.clientSessionComponent?.featureConfigRepository
+        let isAppsFeatureEnabled = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
+        let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+        let viewController = ConversationCreationController(
             preSelectedParticipants: nil,
-            userSession: userSession
+            userSession: userSession,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable
         )
         viewController.delegate = delegate
         return viewController

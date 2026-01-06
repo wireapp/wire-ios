@@ -75,7 +75,7 @@ extension ConversationViewController {
         let button = UIButton(type: .system)
         button.setTitle(L10n.Localizable.ConversationList.RightAccessory.JoinButton.title, for: .normal)
         button.titleLabel?.font = .font(for: .body2)
-        button.setTitleColor(SemanticColors.Label.textWhite, for: .normal)
+        button.setTitleColor(SemanticColors.Label.textDefaultWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.titleLabel?.adjustsFontForContentSizeCategory = false
 
