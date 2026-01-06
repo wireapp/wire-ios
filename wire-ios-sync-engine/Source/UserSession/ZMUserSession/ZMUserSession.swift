@@ -665,6 +665,9 @@ public final class ZMUserSession: NSObject {
             await clientSessionComponent.workAgent.setAutoStartEnabled(true)
             await clientSessionComponent.workAgent.start()
             clientSessionComponent.generatorsDirectory.observeSyncState()
+
+            // Initialize the generator to enqueue repair work item if needed
+            clientSessionComponent.repairFaultyMLSRemovalKeysGenerator.submitWorkItemIfNeeded()
         }
     }
 
@@ -1688,7 +1691,11 @@ extension ZMUserSession {
                 sessionManager: sessionManager
             ),
             AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider),
-            AppVersionMigration_4_10_0(journal: journal)
+            AppVersionMigration_4_10_0(journal: journal),
+            AppVersionMigration_4_12_0(
+                journal: journal,
+                repairGenerator: clientSessionComponent?.repairFaultyMLSRemovalKeysGenerator
+            )
         ]
     }
 
