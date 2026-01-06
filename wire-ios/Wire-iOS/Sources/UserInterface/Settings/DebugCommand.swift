@@ -30,6 +30,11 @@ enum DebugCommand {
 
     case resyncResources
 
+    /// Repair conversations with faulty MLS removal keys based
+    /// on the configuration in SessionManagerConfiguration.
+
+    case repairFaultyMLSRemovalKeys
+
     init?(string: String) {
         // We may want to have commands that accept arguments, which means
         // we'd have to do the parsing of the command here.
@@ -39,6 +44,9 @@ enum DebugCommand {
 
         case "resync resources":
             self = .resyncResources
+
+        case "initiateResetMLSGroups":
+            self = .repairFaultyMLSRemovalKeys
 
         default:
             return nil

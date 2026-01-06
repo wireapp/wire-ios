@@ -3893,20 +3893,24 @@ public class MockRepairRemovalKeysUseCaseProtocol: RepairRemovalKeysUseCaseProto
 
     public var invoke_Invocations: [Void] = []
     public var invoke_MockError: Error?
-    public var invoke_MockMethod: (() async throws -> Void)?
+    public var invoke_MockMethod: (() async throws -> RepairRemovalKeysResult)?
+    public var invoke_MockValue: RepairRemovalKeysResult?
 
-    public func invoke() async throws {
+    @discardableResult
+    public func invoke() async throws -> RepairRemovalKeysResult {
         invoke_Invocations.append(())
 
         if let error = invoke_MockError {
             throw error
         }
 
-        guard let mock = invoke_MockMethod else {
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `invoke`")
         }
-
-        try await mock()
     }
 
 }
