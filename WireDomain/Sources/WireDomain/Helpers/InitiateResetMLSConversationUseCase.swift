@@ -65,7 +65,11 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
                 return
             }
 
-            attributes = [.conversationId: qualifiedID.safeForLoggingDescription]
+            attributes = [
+                .public: true,
+                .conversationId: qualifiedID.safeForLoggingDescription,
+                .mlsGroupID: groupID.safeForLoggingDescription
+            ]
 
             lockRepository.setInitiatedReset(conversationID: qualifiedID)
 

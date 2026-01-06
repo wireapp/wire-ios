@@ -38,7 +38,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
 
         for _ in 0 ..< countOfMembers {
             let (qualifiedId, teamMember) = try await userHelper.registerUsersAsTeamMember(
-                ownerAccessToken: ownerAccessToken,
+                ownerAccessToken: ownerAccessToken.token,
                 teamID: teamID
             )
             qualifiedIds.append(qualifiedId)
@@ -52,8 +52,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
         )
 
         var activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopupOnTeamMemberSetup(with: self)
-            .setUsername(teamOwner.username)
+            .acceptPopup(with: self)
             .openConversation()
             .sendMessage(messageFromOwner)
 

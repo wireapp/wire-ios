@@ -132,6 +132,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         cell.titleText = title
 
         if let tableCell = cell as? SettingsTableCell {
+            tableCell.accessibilityIdentifier = settingsTopLevelMenuItem?.accessibilityID
             tableCell.valueLabel.accessibilityIdentifier = title + "Field"
             tableCell.valueLabel.isAccessibilityElement = true
         }
