@@ -75,7 +75,8 @@ final class InitiateResetMLSConversationUseCaseTests: XCTestCase {
             mlsService: mockMLSService,
             conversationLocalStore: mockConversationLocalStore,
             conversationRepository: mockConversationRepository,
-            lockRepository: mockResetLockRepository
+            lockRepository: mockResetLockRepository,
+            selfDomain: conversationID.domain
         )
     }
 
@@ -118,6 +119,27 @@ final class InitiateResetMLSConversationUseCaseTests: XCTestCase {
         XCTAssertEqual(mockMLSService.wipeGroup_Invocations.count, 0)
         XCTAssertEqual(mockMLSService.establishPendingGroupGroupID_Invocations.count, 0)
         XCTAssertEqual(mockResetLockRepository.setInitiatedResetConversationID_Invocations.count, 0)
+    }
+
+    func testInvoke_DoNothing_WhenConversationDomainIsNotSelfDomain() async {
+
+        // Given - conversation with different domain
+        let otherDomain = "other.example.com"
+        let otherDomainConversationID = QualifiedID(uuid: conversationID.uuid, domain: otherDomain)
+        mockConversationLocalStore.qualifiedIDFor_MockValue = otherDomainConversationID
+
+        let groupID = MLSGroupID.random()
+        // When
+        await sut.invoke(groupID: groupID, epoch: 99)
+
+        // Then
+        XCTAssertEqual(mockConversationLocalStore.fetchMLSConversationGroupID_Invocations.count, 1)
+        XCTAssertEqual(mockConversationLocalStore.qualifiedIDFor_Invocations.count, 1)
+        XCTAssertEqual(mockAPI.resetMLSConversationEpochGroupID_Invocations.count, 0)
+        XCTAssertEqual(mockMLSService.wipeGroup_Invocations.count, 0)
+        XCTAssertEqual(mockMLSService.establishPendingGroupGroupID_Invocations.count, 0)
+        XCTAssertEqual(mockResetLockRepository.setInitiatedResetConversationID_Invocations.count, 0)
+        XCTAssertEqual(mockConversationRepository.pullConversationIdDomain_Invocations.count, 0)
     }
 
 }
