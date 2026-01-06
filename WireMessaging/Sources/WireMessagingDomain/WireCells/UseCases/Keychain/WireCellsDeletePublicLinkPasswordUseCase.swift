@@ -36,7 +36,7 @@ package struct WireCellsDeletePublicLinkPasswordUseCase {
         linkID: String
     ) async {
         let query: Set<KeychainQueryItem> = [
-            .service("Wire: file shared link for wire.com"),
+            .service(Keychain.wireDriveSharedLinkPasswordService),
             .account(linkID),
             .itemClass(.genericPassword)
         ]

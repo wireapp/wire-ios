@@ -17,9 +17,14 @@
 //
 
 import Foundation
+import WireLogging
 package import WireFoundation
 
 package struct WireCellsGetPublicLinkPasswordUseCase {
+    
+    enum Failure: Error {
+        case itemNotFound
+    }
 
     private let keychain: any KeychainProtocol
 
@@ -31,17 +36,21 @@ package struct WireCellsGetPublicLinkPasswordUseCase {
         linkID: String,
     ) async -> String? {
         let query: Set<KeychainQueryItem> = [
-            .service("Wire: file shared link for wire.com"),
+            .service(Keychain.wireDriveSharedLinkPasswordService),
             .account(linkID),
             .itemClass(.genericPassword),
             .returningData(true)
         ]
 
-        let data: Data? = try? await keychain.fetchItem(query: query)
+        do {
+            let data: Data? = try await keychain.fetchItem(query: query)
+            guard let data else { throw Failure.itemNotFound }
+            return String(decoding: data, as: UTF8.self)
+        } catch {
+            WireLogger.wireCells.error("Unable to get public link password from keychain \(String(describing: error))")
+            return nil
+        }
 
-        guard let data else { return nil }
-
-        return String(decoding: data, as: UTF8.self)
     }
 
 }

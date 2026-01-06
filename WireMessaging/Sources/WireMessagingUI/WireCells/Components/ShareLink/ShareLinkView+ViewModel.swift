@@ -19,7 +19,6 @@
 import Combine
 import Foundation
 import SwiftUI
-import UIKit
 import WireDesign
 import WireFoundation
 import WireMessagingDomain
@@ -238,7 +237,7 @@ extension ShareLinkView {
             return url
         }
 
-        func copyPassword() -> String? {
+        func getPassword() -> String? {
             guard case .enabled = publicLinkState,
                   let password else { return nil }
             return password

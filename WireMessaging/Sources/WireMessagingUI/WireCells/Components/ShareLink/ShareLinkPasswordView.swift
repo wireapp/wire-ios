@@ -258,7 +258,7 @@ struct ShareLinkPasswordView: View {
 
     @ViewBuilder
     private func sharePasswordButton() -> some View {
-        ShareLink(item: viewModel.copyPassword()) {
+        ShareLink(item: viewModel.getPassword()) {
             Label {
                 Text(Strings.sharePassword)
             } icon: {

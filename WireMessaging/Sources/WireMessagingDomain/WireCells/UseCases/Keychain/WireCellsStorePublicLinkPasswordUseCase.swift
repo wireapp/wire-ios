@@ -37,7 +37,7 @@ package struct WireCellsStorePublicLinkPasswordUseCase {
         }
 
         let query: Set<KeychainQueryItem> = [
-            .service("Wire: file shared link for wire.com"),
+            .service(Keychain.wireDriveSharedLinkPasswordService),
             .account(linkID),
             .itemClass(.genericPassword),
             .accessible(.afterFirstUnlock),

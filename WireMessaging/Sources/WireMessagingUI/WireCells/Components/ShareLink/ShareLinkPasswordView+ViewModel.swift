@@ -18,7 +18,6 @@
 
 import Combine
 import Foundation
-import UIKit // only required for UIPasteboard
 import WireMessagingDomain
 
 extension ShareLinkPasswordView {
@@ -148,7 +147,7 @@ extension ShareLinkPasswordView {
             passwordInput = ""
         }
 
-        func copyPassword() -> String {
+        func getPassword() -> String {
             passwordInput
         }
     }

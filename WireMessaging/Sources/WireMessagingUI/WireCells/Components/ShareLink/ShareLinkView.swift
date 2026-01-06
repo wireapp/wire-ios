@@ -54,7 +54,7 @@ struct ShareLinkView: View {
                 }
 
                 VStack {
-                    if viewModel.isPasswordEnabled, let password = viewModel.copyPassword() {
+                    if viewModel.isPasswordEnabled, let password = viewModel.getPassword() {
                         sharePasswordButton(password)
                     }
 
