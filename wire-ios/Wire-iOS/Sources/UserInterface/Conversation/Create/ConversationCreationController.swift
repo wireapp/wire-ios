@@ -49,6 +49,7 @@ final class ConversationCreationController: UIViewController {
     typealias CreateGroupName = L10n.Localizable.Conversation.Create.GroupName
 
     private let userSession: UserSession
+    private let areLegacyBotsAvailable: Bool
 
     private let collectionViewController = SectionCollectionViewController()
 
@@ -69,7 +70,7 @@ final class ConversationCreationController: UIViewController {
     private var optionsSections: [ConversationCreateSectionController] {
         let sections = [
             guestsSection,
-            appsSection,
+            (values.encryptionProtocol == .mls || areLegacyBotsAvailable) ? appsSection : nil,
             // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
             values.encryptionProtocol != .mls ? receiptsSection : nil,
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil,
@@ -173,15 +174,17 @@ final class ConversationCreationController: UIViewController {
 
     init(
         preSelectedParticipants: UserSet?,
-        userSession: UserSession
-    ) async {
+        userSession: UserSession,
+        isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool
+    ) {
         self.preSelectedParticipants = preSelectedParticipants
         self.userSession = userSession
-        let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
-            .isFeatureEnabled(.apps) ?? false
+        self.areLegacyBotsAvailable = areLegacyBotsAvailable
         self.values = ConversationCreationValues(
             isChannel: false,
             isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )
@@ -377,7 +380,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         let accessMode: [WireNetwork.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
         let accessRoles = ConversationAccessRoleV2.from(
             allowGuests: values.allowGuests,
-            allowApps: values.isAppsFeatureEnabled ? values.allowApps : false
+            allowApps: (values.isAppsFeatureEnabled || values.areLegacyBotsAvailable) ? values.allowApps : false
         ).compactMap {
             $0.toNetworkModel()
         }

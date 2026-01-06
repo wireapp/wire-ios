@@ -87,6 +87,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Invalidate all conversations", action: invalidateAllConversations),
             .init(title: "Set last app version migration", action: requestAppVersionInput),
             .init(title: "Initiate reset of first from top MLS", action: initiateResetBrokenMLSConversation),
+            .init(title: "Repair faulty removal key", action: initiateRepairRemovalKeys),
             .init(title: "Logout", action: logout)
 
         ]
@@ -193,6 +194,31 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             )
         }
 
+    }
+
+    private func initiateRepairRemovalKeys() {
+        guard let useCase = userSession?.clientSessionComponent?.repairFaultyRemovalKeysUsecase else {
+            WireLogger.mls.warn(
+                "unable to manually trigger to initiate repair removal keys because the usecase is not available",
+                attributes: .safePublic
+            )
+            return
+        }
+
+        Task { @MainActor in
+            WireLogger.mls.info(
+                "manual trigger to initiate repair removal keys",
+                attributes: .safePublic
+            )
+            do {
+                try await useCase.invoke()
+            } catch {
+                WireLogger.mls.error(
+                    "manual trigger to repair removal keys failed: \(String(describing: error))",
+                    attributes: .safePublic
+                )
+            }
+        }
     }
 
     func logout() {

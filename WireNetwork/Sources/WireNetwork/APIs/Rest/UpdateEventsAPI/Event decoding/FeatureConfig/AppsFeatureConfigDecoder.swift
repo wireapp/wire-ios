@@ -16,29 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMessagingDomain
-import WireSyncEngine
+import Foundation
 
-struct ConversationCreationRepository: ConversationCreationRepositoryProtocol {
+struct AppsFeatureConfigDecoder {
 
-    let searchUsersUseCase: () -> (any SearchUsersUseCaseProtocol)?
-
-    @concurrent
-    func areBotsSetUpInTheTeam() async throws -> Bool {
-
-        guard let searchUsersUseCase = searchUsersUseCase() else { return false }
-
-        // search for any old-style services/bots whitelisted in the team
-        let result = try await searchUsersUseCase.invoke(
-            query: "",
-            options: .services,
-            messageProtocol: .proteus
+    func decode(
+        from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
+    ) throws -> AppsFeatureConfig {
+        let payload = try container.decode(
+            FeatureWithoutConfig.self,
+            forKey: .payload
         )
 
-        return await result.context.perform {
-            !result.services.isEmpty
-        }
-
+        return AppsFeatureConfig(status: payload.status.toAPIModel())
     }
 
 }
