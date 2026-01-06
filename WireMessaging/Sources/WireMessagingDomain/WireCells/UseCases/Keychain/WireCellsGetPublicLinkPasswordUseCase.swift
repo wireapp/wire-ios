@@ -21,7 +21,7 @@ import WireLogging
 package import WireFoundation
 
 package struct WireCellsGetPublicLinkPasswordUseCase {
-    
+
     enum Failure: Error {
         case itemNotFound
     }
