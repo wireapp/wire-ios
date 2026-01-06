@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2026 Wire Swiss GmbH
+// Copyright (C) 2025 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+import WireDomain
 
-"conversation.username.groupingSeparator" = "，";
-"user_session.error.blacklisted-email" = "不允许使用此电子邮件地址";
-"user_session.error.domain-blocked" = "此电子邮件需要团队邀请。请联系您的组织IT管理员收到邀请。";
-"user_session.error.email-exists" = "此邮箱已被注冊.";
-"user_session.error.invalid-email" = "该电子邮件地址无效。";
-"user_session.error.invalid-code" = "请输入有效的代码";
-"user_session.error.unauthorized-email" = "出了点问题，请再试一次";
-"user_session.error.unknown" = "出了点问题，请再试一次";
+/// **Issue:**: Faulty MLS removal keys need repair - [WPB-22447]
+struct AppVersionMigration_4_12_0: AppVersionMigration {
+
+    let version: SemanticVersion = "4.12.0"
+    let journal: any JournalProtocol
+    let repairGenerator: RepairFaultyMLSRemovalKeysGenerator?
+
+    func perform() async throws {
+        // Mark that faulty MLS removal keys need to be repaired
+        journal[.isRepairFaultyMLSRemovalKeysRequired] = true
+
+        // Submit the work item now that the flag is set
+        repairGenerator?.submitWorkItemIfNeeded()
+    }
+
+}

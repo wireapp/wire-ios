@@ -17,7 +17,6 @@
 //
 // MARK: - Meetings List
 
-
 "wireMeetings.list.title" = "Meetings";
 "wireMeetings.list.tabs.past" = "Letzte";
 "wireMeetings.list.tabs.next" = "Nächste";
