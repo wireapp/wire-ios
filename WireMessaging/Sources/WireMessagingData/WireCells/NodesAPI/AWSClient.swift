@@ -20,11 +20,11 @@ import AWSClientRuntime
 package import AWSS3
 package import Foundation
 import Smithy
+import SmithyHTTPAPI
 import SmithyIdentity
 import SmithyStreams
 import WireLogging
 import WireMessagingDomain
-import SmithyHTTPAPI
 
 // sourcery: AutoMockable
 package protocol S3ClientProtocol: Sendable {
@@ -285,7 +285,7 @@ private extension WireCellsNodeNetworkModel {
 private struct AWSEndpointResolver: EndpointResolver {
     let serverURLResolver: @Sendable () throws -> URL
     let bucket: String
-    
+
     init(
         serverURLResolver: @escaping @Sendable () throws -> URL,
         bucket: String
@@ -293,7 +293,7 @@ private struct AWSEndpointResolver: EndpointResolver {
         self.serverURLResolver = serverURLResolver
         self.bucket = bucket
     }
-    
+
     func resolve(params: AWSS3.EndpointParams) throws -> SmithyHTTPAPI.Endpoint {
         let serverURL = try serverURLResolver().appendingPathComponent("/\(bucket)")
         return try SmithyHTTPAPI.Endpoint(urlString: serverURL.absoluteString)

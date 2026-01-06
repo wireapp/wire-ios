@@ -38,12 +38,12 @@ final class ZClientControllerBuilder {
         let contextProvider = userSession.contextProvider
         let syncContext = contextProvider.syncContext
         let featureRepository = LegacyFeatureRepository(context: syncContext)
-        
+
         return syncContext.performAndWait {
             featureRepository.fetchCellsInternal()?.config.backend.url
         }
     }()
-    
+
     init(
         account: Account,
         userSession: UserSession,
