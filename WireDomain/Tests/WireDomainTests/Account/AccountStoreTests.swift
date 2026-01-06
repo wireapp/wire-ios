@@ -363,7 +363,6 @@ final class AccountStoreTests {
         // Then
         let expectedCredentials = LoginCredentials(
             emailAddress: "alice@example.com",
-            hasPassword: true,
             usesCompanyLogin: false
         )
         let expectedAccount = Account(

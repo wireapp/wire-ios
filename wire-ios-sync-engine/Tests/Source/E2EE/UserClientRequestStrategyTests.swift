@@ -398,7 +398,6 @@ extension UserClientRequestStrategyTests {
                     ZMUserUsesCompanyLoginCredentialKey: false,
                     ZMUserLoginCredentialsKey: LoginCredentials(
                         emailAddress: emailAddress,
-                        hasPassword: true,
                         usesCompanyLogin: false
                     )
                 ]
