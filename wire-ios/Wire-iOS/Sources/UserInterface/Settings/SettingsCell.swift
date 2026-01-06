@@ -193,6 +193,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
     override func prepareForReuse() {
         super.prepareForReuse()
         preview = .none
+        accessibilityIdentifier = nil
     }
 
     func setup() {
