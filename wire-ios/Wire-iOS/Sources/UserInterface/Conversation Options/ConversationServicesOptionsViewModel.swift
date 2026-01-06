@@ -17,9 +17,20 @@
 //
 
 import UIKit
+import WireDataModel
 import WireUtilities
 
 protocol ConversationServicesOptionsViewModelConfiguration: AnyObject {
+
+    var messageProtocol: MessageProtocol { get }
+
+    /// `true` if at least one bot is whitelisted for the team.
+
+    var areLegacyBotsAvailable: Bool { get }
+
+    /// `true` if the team is able to use apps (feature flag enabled), `false` for individual users or free teams.
+
+    var isAppsFeatureEnabled: Bool { get }
 
     /// `true` if apps can be participants of the conversation, `false` otherwise.
 
@@ -78,10 +89,36 @@ final class ConversationServicesOptionsViewModel {
     }
 
     private func updateRows() {
-        state.rows = [.allowAppsToggle(
-            get: { [unowned self] in return configuration.allowApps },
-            set: { [unowned self] in setAllowApps($0, sender: $1) }
-        )]
+
+        var showAppsNotEnabledHint = true
+
+        if configuration.allowApps {
+            // if apps are already enabled for the conversation, show the toggle
+            showAppsNotEnabledHint = false
+        } else if configuration.messageProtocol == .mls, configuration.isAppsFeatureEnabled {
+            // for MLS conversations consider the apps feature flag
+            showAppsNotEnabledHint = false
+        } else if configuration.messageProtocol == .proteus, configuration.areLegacyBotsAvailable {
+            // for Proteus conversations what matters is if bots are whitelisted for the team
+            showAppsNotEnabledHint = false
+        }
+
+        if showAppsNotEnabledHint {
+            state.rows = [
+                .titleAndBody(
+                    title: L10n.Localizable.Conversation.Create.AppsDisabled.title,
+                    body: L10n.Localizable.Conversation.Create.AppsDisabled.message
+                )
+            ]
+        } else {
+            state.rows = [
+                .allowAppsToggle(
+                    get: { [unowned self] in return configuration.allowApps },
+                    set: { [unowned self] in setAllowApps($0, sender: $1) }
+                )
+            ]
+        }
+
     }
 
     /// set conversation option AllowApps

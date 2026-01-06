@@ -4396,6 +4396,29 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         try await mock(groupID)
     }
 
+    // MARK: - externalSenderKey
+
+    public var externalSenderKeyGroupID_Invocations: [MLSGroupID] = []
+    public var externalSenderKeyGroupID_MockError: Error?
+    public var externalSenderKeyGroupID_MockMethod: ((MLSGroupID) async throws -> Data)?
+    public var externalSenderKeyGroupID_MockValue: Data?
+
+    public func externalSenderKey(groupID: MLSGroupID) async throws -> Data {
+        externalSenderKeyGroupID_Invocations.append(groupID)
+
+        if let error = externalSenderKeyGroupID_MockError {
+            throw error
+        }
+
+        if let mock = externalSenderKeyGroupID_MockMethod {
+            return try await mock(groupID)
+        } else if let mock = externalSenderKeyGroupID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `externalSenderKeyGroupID`")
+        }
+    }
+
     // MARK: - conversationExists
 
     public var conversationExistsGroupID_Invocations: [MLSGroupID] = []

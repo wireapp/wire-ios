@@ -16,29 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMessagingDomain
-import WireSyncEngine
+import WireData
+import WireDataModel
 
-struct ConversationCreationRepository: ConversationCreationRepositoryProtocol {
+struct DefaultManagedObjectContextProvider: ManagedObjectContextProvider {
 
-    let searchUsersUseCase: () -> (any SearchUsersUseCaseProtocol)?
+    let contextProvider: any ContextProvider
 
-    @concurrent
-    func areBotsSetUpInTheTeam() async throws -> Bool {
+    var viewContext: NSManagedObjectContext {
+        contextProvider.viewContext
+    }
 
-        guard let searchUsersUseCase = searchUsersUseCase() else { return false }
-
-        // search for any old-style services/bots whitelisted in the team
-        let result = try await searchUsersUseCase.invoke(
-            query: "",
-            options: .services,
-            messageProtocol: .proteus
-        )
-
-        return await result.context.perform {
-            !result.services.isEmpty
-        }
-
+    func newBackgroundContext() -> NSManagedObjectContext {
+        contextProvider.newBackgroundContext()
     }
 
 }

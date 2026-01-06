@@ -86,7 +86,10 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
 
     // MARK: - Helper Method
 
-    private func createSut(isTeamMember: Bool, messageProtocol: Feature.MLS.Config.MessageProtocol = .proteus) async {
+    private func createSut(
+        isTeamMember: Bool,
+        messageProtocol: Feature.MLS.Config.MessageProtocol = .proteus
+    ) async {
         let mockSelfUser = MockUserType.createSelfUser(name: "Alice", inTeam: isTeamMember ? UUID() : nil)
         let mockUserSession = UserSessionMock(mockUser: mockSelfUser)
         mockUserSession.isWireCellsEnabled = true
@@ -98,9 +101,11 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
             )
         )
 
-        sut = await ConversationCreationController(
+        sut = ConversationCreationController(
             preSelectedParticipants: nil,
-            userSession: mockUserSession
+            userSession: mockUserSession,
+            isAppsFeatureEnabled: false,
+            areLegacyBotsAvailable: false
         )
     }
 }
