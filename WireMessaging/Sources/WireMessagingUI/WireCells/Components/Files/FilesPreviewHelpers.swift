@@ -165,8 +165,6 @@ extension FilesItemViewModel {
 extension FileVersionItemViewModel {
     /// A stubbed instance of `FileVersionItemViewModel` for SwiftUI previews.
     static func preview() -> FileVersionItemViewModel {
-        let localAssetsRepository = PreviewLocalAssetRepository()
-
         return FileVersionItemViewModel(
             nodeID: UUID(),
             item: .init(
