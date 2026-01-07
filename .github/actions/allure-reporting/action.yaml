@@ -21,6 +21,18 @@ runs:
       if: always()
       shell: bash
       run: bash ./scripts/run-generate-allure-report.sh "${{ inputs.xcresult_search_path }}"
+    
+    - name: Detect Allure report
+      id: allure_report
+      if: always()
+      shell: bash
+      run: |
+        if [[ -f "allure-report/index.html" ]]; then
+          echo "exists=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "exists=false" >> "$GITHUB_OUTPUT"
+          echo "::warning::No Allure report generated; skipping comment steps."
+        fi
 
     - name: Prepare visual representation of test results
       if: always()
@@ -33,11 +45,15 @@ runs:
         comment_title: "Test Results"
 
     - name: Resolve Allure artifact URL
-      if: ${{ always() && github.event_name == 'pull_request' }}
+      if: ${{ always() && steps.allure_report.outputs.exists == 'true' && github.event_name == 'pull_request' }}
       shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: bash ./scripts/run-allure-report-url.sh "${{ inputs.allure_artifact_name }}"
 
     - name: Patch Allure link into the Test Results comment
-      if: ${{ always() && github.event_name == 'pull_request' }}
+      if: ${{ always() && steps.allure_report.outputs.exists == 'true' && github.event_name == 'pull_request' }}
       shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: bash ./scripts/run-update-comment.sh "Test Results" "${{ inputs.allure_artifact_name }}"

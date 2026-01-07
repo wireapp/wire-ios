@@ -233,18 +233,18 @@ jobs:
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       
-      - name: Notify on Wire for iOS CI
-        uses: 8398a7/action-slack@v3
-        continue-on-error: true
-        if: ${{ !inputs.all && failure() }}
-        with:
-          status: ${{ job.status }}
-          text: |
-            **🚨 Tests for ${{ inputs.branch || github.head_ref }} failed 🆘**
-
-            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
-            **Triggered by:** ${{ github.triggering_actor }}
-            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+#      - name: Notify on Wire for iOS CI
+#        uses: 8398a7/action-slack@v3
+#        continue-on-error: true
+#        if: ${{ !inputs.all && failure() }}
+#        with:
+#          status: ${{ job.status }}
+#          text: |
+#            **🚨 Tests for ${{ inputs.branch || github.head_ref }} failed 🆘**
+#
+#            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
+#            **Triggered by:** ${{ github.triggering_actor }}
+#            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   analyze-xcresults:
     needs: run-tests

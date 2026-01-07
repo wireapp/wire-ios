@@ -26,8 +26,8 @@ echo "🔍 Searching for .xcresult under: ${XCRESULT_SEARCH_PATH}"
 XCRESULT="$(find "${XCRESULT_SEARCH_PATH}" -type d -name "*.xcresult" | head -n 1 || true)"
 
 if [[ -z "${XCRESULT}" ]]; then
-  echo "❌ No .xcresult found under ./${XCRESULT_SEARCH_PATH}" >&2
-  exit 1
+  echo "⚠️  No .xcresult found under ./${XCRESULT_SEARCH_PATH}. Skipping Allure report generation."
+  exit 0
 fi
 
 echo "✅ Using xcresult: ${XCRESULT}"

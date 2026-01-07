@@ -45,4 +45,3 @@ fi
 # Export for subsequent steps
 echo "ALLURE_ARTIFACT_NAME=${ALLURE_ARTIFACT_NAME}" >> "$GITHUB_ENV"
 echo "ALLURE_ARTIFACT_URL=${ALLURE_ARTIFACT_URL}" >> "$GITHUB_ENV"
-
