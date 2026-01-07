@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class UserClientsAPIV13: UserClientsAPIV12 {
+class UserClientsAPIV13: UserClientsAPIV12 {
     override var apiVersion: APIVersion { .v13 }
 }

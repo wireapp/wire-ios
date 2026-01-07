@@ -172,8 +172,16 @@ public final class ZMUserSession: NSObject {
         return featureRepository.fetchCells()
     }
 
+    public var wireCellsBackendURL: URL? {
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchCellsInternal()?.config.backend.url
+    }
+
     public var isWireCellsEnabled: Bool {
-        wireCellsFeature.status == .enabled
+        let isFeatureEnabled = wireCellsFeature.status == .enabled
+        let hasBackendURL = wireCellsBackendURL != nil
+
+        return isFeatureEnabled && hasBackendURL
     }
 
     public var conferenceCallingFeature: Feature.ConferenceCalling {
