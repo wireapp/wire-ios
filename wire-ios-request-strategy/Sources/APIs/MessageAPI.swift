@@ -420,7 +420,7 @@ class MessageAPIV12: MessageAPIV11 {
     override var apiVersion: APIVersion { .v12 }
 }
 
-final class MessageAPIV13: MessageAPIV12 {
+class MessageAPIV13: MessageAPIV12 {
     override var apiVersion: APIVersion { .v13 }
 
     override func sendMLSMessage(
@@ -478,4 +478,8 @@ final class MessageAPIV13: MessageAPIV12 {
         }
 
     }
+}
+
+final class MessageAPIV14: MessageAPIV13 {
+    override var apiVersion: APIVersion { .v14 }
 }
