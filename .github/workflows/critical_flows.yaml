@@ -18,7 +18,7 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: false
-#      notify_secret: WIRE_IOS_QA_WEBHOOK
+      notify_secret: WIRE_IOS_QA_WEBHOOK
       test_dependencies: false
       run_critical_flows: true
     secrets: inherit
