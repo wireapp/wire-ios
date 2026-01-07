@@ -226,6 +226,8 @@ public protocol UserSession: AnyObject {
 
     var isWireCellsEnabled: Bool { get }
 
+    var wireCellsBackendURL: URL? { get }
+
     var isEnterpriseUser: Bool { get }
 
     func fetchAllClients()

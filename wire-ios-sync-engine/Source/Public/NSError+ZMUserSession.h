@@ -100,7 +100,6 @@ FOUNDATION_EXPORT NSString * const ZMClientsKey;
 FOUNDATION_EXPORT NSString * const ZMUserLoginCredentialsKey;
 FOUNDATION_EXPORT NSString * const ZMPhoneCredentialKey;
 FOUNDATION_EXPORT NSString * const ZMEmailCredentialKey;
-FOUNDATION_EXPORT NSString * const ZMUserHasPasswordKey;
 FOUNDATION_EXPORT NSString * const ZMUserUsesCompanyLoginCredentialKey;
 FOUNDATION_EXPORT NSString * const ZMAccountDeletedReasonKey;
 
