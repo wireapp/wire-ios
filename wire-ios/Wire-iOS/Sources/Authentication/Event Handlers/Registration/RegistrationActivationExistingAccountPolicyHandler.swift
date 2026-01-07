@@ -72,7 +72,6 @@ private extension AuthenticationCoordinatorAlertAction {
     static func login(email: String) -> Self {
         let credentials = LoginCredentials(
             emailAddress: email,
-            hasPassword: true,
             usesCompanyLogin: false
         )
         let prefilledCredentials = AuthenticationPrefilledCredentials(
