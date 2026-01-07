@@ -98,7 +98,7 @@ final class FileVersioningViewTests: XCTestCase {
             localAssetsRepository: localAssetRepository,
             nodeCache: MockWireCellsNodeCacheProtocol()
         )
-        
+
         let getAssetUseCase = WireCellsGetAssetUseCase(
             localAssetRepository: localAssetRepository,
             fileCache: MockFileCache()
