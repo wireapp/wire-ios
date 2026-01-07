@@ -40,6 +40,7 @@ final class FilesItemViewModel: ObservableObject {
         case restore
         case rename
         case editTags
+        case shareLink
         case moveToFolder
         case onVersionHistory
         case edit

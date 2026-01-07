@@ -79,7 +79,23 @@ extension FilesViewModel {
                 ),
                 getAssetUseCase: WireCellsGetAssetUseCase(
                     localAssetRepository: localAssetRepository, fileCache: cache
+                ),
+                getPublicLinkData: WireCellsGetPublicLinkDataUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                ),
+                createPublicLink: WireCellsCreatePublicLinkUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                ),
+                deletePublicLink: WireCellsDeletePublicLinkUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                ),
+                updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                ),
+                updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(
+                    nodesAPI: previewPublicLinkApi()
                 )
+
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,
@@ -134,7 +150,8 @@ extension FilesItemViewModel {
                 modifiedAt: Date(),
                 icon: .image,
                 tags: tags,
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil,
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
             onItemAction: { _, _ in },
@@ -247,6 +264,24 @@ private func previewEditingURLRepository() -> any WireCellsEditingURLRepositoryP
     return mock
 }
 
+private func previewPublicLinkApi() -> some NodesAPIProtocol {
+    let mock = MockNodesAPIProtocol()
+    let publicLink = WireCellsPublicLink(
+        linkID: "aaa",
+        url: URL(string: "https://wire.com")!,
+        requiresPassword: true,
+        expirationDate: Date()
+    )
+
+    mock.getPublicLinkLinkID_MockMethod = { _ in
+        publicLink
+    }
+
+    mock.updatePublicLinkPasswordLinkIDPassword_MockValue = publicLink
+
+    return mock
+}
+
 private func mockFileCache() -> any FileCache {
     let fileURL = URL.temporaryDirectory.appendingPathComponent("mock-file.txt")
     let file = Data("Some text file content".utf8)
@@ -334,6 +369,38 @@ extension CreateFolderViewModel {
         return CreateFolderViewModel(
             createFolderUseCase: createFolderUseCase,
             folderPath: "Test-1/Test-2"
+        )
+    }
+}
+
+extension ExpirationDatePickerView.ViewModel {
+    static func preview(date: Date?) -> ExpirationDatePickerView.ViewModel {
+        ExpirationDatePickerView.ViewModel(
+            linkID: "",
+            expirationDate: date,
+            didSave: { _ in },
+            updatePublicLinkExpiration: .init(nodesAPI: previewTagsApi())
+        )
+    }
+}
+
+extension ShareLinkPasswordView.ViewModel {
+    static func preview(password: String?, requiresPassword: Bool) -> ShareLinkPasswordView.ViewModel {
+        let nodesAPI = previewPublicLinkApi()
+        let keychain = Keychain()
+
+        let useCases = UseCases(
+            updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
+            storePublicLinkPasswordUseCase: WireCellsStorePublicLinkPasswordUseCase(keychain: keychain),
+            deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase(keychain: keychain)
+        )
+
+        return ShareLinkPasswordView.ViewModel(
+            password: password,
+            requiresPassword: requiresPassword,
+            linkID: "aaa",
+            useCases: useCases,
+            didSave: { _, _ in }
         )
     }
 }
