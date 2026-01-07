@@ -87,7 +87,7 @@ final class FilenameValidatorTests {
     @Test
     func `When input is empty it throws error`() async {
         // given
-        let input = "   "
+        let input = ""
 
         // then
         await #expect(throws: FilenameValidator.Failure.empty) {
