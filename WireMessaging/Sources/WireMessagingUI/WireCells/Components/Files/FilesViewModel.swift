@@ -732,8 +732,10 @@ package final class FilesViewModel: ObservableObject {
         let viewModel = FileVersioningViewModel(
             nodeID: item.id,
             name: item.name,
+            eTag: item.eTag,
             fetchNodeVersionsUseCase: useCases.fetchNodeVersions,
             restoreNodeVersionUseCase: useCases.restoreNodeVersion,
+            getAssetUseCase: useCases.getAssetUseCase,
             accentColorProvider: accentColorProvider
         )
 
