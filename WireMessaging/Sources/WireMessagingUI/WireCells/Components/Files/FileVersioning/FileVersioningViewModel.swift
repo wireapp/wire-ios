@@ -155,9 +155,11 @@ final class FileVersioningViewModel: ObservableObject {
                 versionID: item.id
             )
 
-            async let _ = fetch()
-            async let url = getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
-            viewingURL = try await url
+            Task {
+                await fetch()
+            }
+
+            viewingURL = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
 
         } catch {
             alert = AlertModel(
