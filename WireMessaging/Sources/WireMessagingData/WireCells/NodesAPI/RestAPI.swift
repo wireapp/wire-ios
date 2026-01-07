@@ -25,6 +25,7 @@ enum WireCellsNodesAPIError: Error {
     case failedToDecodeNode
     case failedToDecodeNodeVersions
     case missingData(String)
+    case invalidParameters(String)
 }
 
 final class RestAPI: Sendable {
@@ -274,28 +275,18 @@ final class RestAPI: Sendable {
         }
     }
 
-    func getPublicLink(uuid: UUID) async throws -> URL {
+    func getPublicLink(linkID: String) async throws -> WireCellsPublicLink {
         let response = try await NodeServiceAPI.getPublicLink(
-            linkUuid: uuid.transportString(),
+            linkUuid: linkID,
             apiConfiguration: makeConfiguration()
         )
 
-        guard let urlString = response.linkUrl else {
-            throw WireCellsNodesAPIError.missingData("Link URL not found")
-        }
-        guard let url = URL(string: urlString) else {
-            throw WireCellsNodesAPIError.missingData("Link URL is invalid")
-        }
-
-        return url
+        return try WireCellsPublicLink(response, serverURL: serverURLResolver())
     }
 
-    func createPublicLink(uuid: UUID, fileName: String) async throws -> WireCellsPublicLink {
+    func createPublicLink(uuid: UUID, label: String) async throws -> WireCellsPublicLink {
         let request = RestPublicLinkRequest(
-            link: RestShareLink(
-                label: fileName,
-                permissions: [.preview, .download]
-            )
+            link: RestShareLink(label: label, permissions: [.preview, .download])
         )
 
         let response = try await NodeServiceAPI.createPublicLink(
@@ -304,28 +295,59 @@ final class RestAPI: Sendable {
             apiConfiguration: makeConfiguration()
         )
 
-        guard let idString = response.uuid else {
-            throw WireCellsNodesAPIError.missingData("UUID is null")
-        }
-        guard let id = UUID(uuidString: idString) else {
-            throw WireCellsNodesAPIError.missingData("UUID is invalid")
-        }
-
-        guard let urlString = response.linkUrl else {
-            throw WireCellsNodesAPIError.missingData("Link URL not found")
-        }
-        guard let url = URL(string: urlString) else {
-            throw WireCellsNodesAPIError.missingData("Link URL is invalid")
-        }
-
-        return WireCellsPublicLink(uuid: id, url: url)
+        return try WireCellsPublicLink(response, serverURL: serverURLResolver())
     }
 
-    func deletePublicLink(uuid: UUID) async throws {
+    func deletePublicLink(linkID: String) async throws {
         _ = try await NodeServiceAPI.deletePublicLink(
-            linkUuid: uuid.transportString(),
+            linkUuid: linkID,
             apiConfiguration: makeConfiguration()
         )
+    }
+
+    func updatePublicLinkExpiration(linkID: String, expiration: Date?) async throws -> WireCellsPublicLink {
+        var currentLink = try await NodeServiceAPI.getPublicLink(
+            linkUuid: linkID,
+            apiConfiguration: makeConfiguration()
+        )
+        currentLink.accessEnd = expiration.map { String(Int($0.timeIntervalSince1970)) }
+
+        let updatedLink = try await NodeServiceAPI.updatePublicLink(
+            linkUuid: linkID,
+            publicLinkRequest: RestPublicLinkRequest(
+                link: currentLink,
+                passwordEnabled: currentLink.passwordRequired
+            ),
+            apiConfiguration: makeConfiguration()
+        )
+
+        return try WireCellsPublicLink(updatedLink, serverURL: serverURLResolver())
+    }
+
+    func updatePublicLinkPassword(
+        linkID: String,
+        password: String?
+    ) async throws -> WireCellsPublicLink {
+        var currentLink = try await NodeServiceAPI.getPublicLink(
+            linkUuid: linkID,
+            apiConfiguration: makeConfiguration()
+        )
+
+        let hasExistingPassword = currentLink.passwordRequired == true
+        currentLink.passwordRequired = password != nil
+
+        let updatedLink = try await NodeServiceAPI.updatePublicLink(
+            linkUuid: linkID,
+            publicLinkRequest: RestPublicLinkRequest(
+                createPassword: !hasExistingPassword ? password : nil,
+                link: currentLink,
+                passwordEnabled: password != nil,
+                updatePassword: hasExistingPassword ? password : nil,
+            ),
+            apiConfiguration: makeConfiguration()
+        )
+
+        return try WireCellsPublicLink(updatedLink, serverURL: serverURLResolver())
     }
 
     func updateTags(uuid: UUID, tags: [String]) async throws {
@@ -349,9 +371,15 @@ final class RestAPI: Sendable {
         return response.values ?? []
     }
 
+    private var apiURL: URL {
+        get throws {
+            try serverURLResolver().appendingPathComponent("/v2")
+        }
+    }
+
     private func makeConfiguration() async throws -> CellsSDKAPIConfiguration {
         let config = CellsSDKAPIConfiguration()
-        config.basePath = try serverURLResolver().appendingPathComponent("/v2").absoluteString
+        config.basePath = try apiURL.absoluteString
         config.customHeaders = ["Authorization": "Bearer \(try await accessTokenProvider.accessToken().token)"]
         config.interceptor = LoggingIntercepter()
 
@@ -514,4 +542,22 @@ private extension RestPreSignedURL {
         }
         return (url: url, date: Date(timeIntervalSinceNow: expiresAtTimeInterval))
     }
+
+}
+
+private extension WireCellsPublicLink {
+
+    init(_ value: RestShareLink, serverURL: URL) throws {
+        guard let linkID = value.uuid, let url = value.linkUrl else {
+            throw WireCellsNodesAPIError.missingData("Missing link ID or URL")
+        }
+
+        self.init(
+            linkID: linkID,
+            url: serverURL.appendingPathComponent(url),
+            requiresPassword: value.passwordRequired ?? false,
+            expirationDate: value.accessEnd.flatMap { TimeInterval($0) }.map { Date(timeIntervalSince1970: $0) }
+        )
+    }
+
 }

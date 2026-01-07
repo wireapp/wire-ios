@@ -156,7 +156,12 @@ package struct FilesViewContainer: View {
                 getAssetUseCase: WireCellsGetAssetUseCase(
                     localAssetRepository: localAssetRepository,
                     fileCache: fileCache
-                )
+                ),
+                getPublicLinkData: WireCellsGetPublicLinkDataUseCase(nodesAPI: nodesAPI),
+                createPublicLink: WireCellsCreatePublicLinkUseCase(nodesAPI: nodesAPI),
+                deletePublicLink: WireCellsDeletePublicLinkUseCase(nodesAPI: nodesAPI),
+                updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
+                updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI)
             ),
             title: path.last?.name,
             navigationPath: path,
