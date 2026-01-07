@@ -79,8 +79,38 @@ struct RequestLog: Codable {
 }
 
 public extension URL {
+
     var endpointRemoteLogDescription: String {
-        absoluteString
+        var components = URLComponents(string: absoluteString)
+        let searchContactPath = "/search/contacts"
+
+        let path = components?.path ?? ""
+        guard path.contains(searchContactPath) else {
+            return absoluteString
+        }
+
+        // redact query param
+        var queryComponents = components?.queryItems ?? []
+        queryComponents.enumerated().forEach { item in
+            var redactedItem = item.element
+            if redactedItem.name == "q" {
+                redactedItem.value = "***"
+            }
+            queryComponents[item.offset] = redactedItem
+        }
+
+        components?.queryItems = queryComponents
+
+        var endpoint = [
+            "\(components?.scheme ?? ""):/",
+            components?.host,
+            path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        ]
+        .compactMap(\.self)
+        .filter { !$0.isEmpty }
+        .joined(separator: "/")
+        endpoint.append(components?.query?.isEmpty == false ? "?\(components!.query!)" : "")
+        return endpoint
     }
 }
 

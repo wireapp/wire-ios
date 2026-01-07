@@ -78,7 +78,12 @@ final class FilesViewModelTests {
                 getAssetUseCase: WireCellsGetAssetUseCase(
                     localAssetRepository: localAssetRepository,
                     fileCache: fileCache
-                )
+                ),
+                getPublicLinkData: WireCellsGetPublicLinkDataUseCase<MockNodesAPIProtocol>(nodesAPI: nodesApi),
+                createPublicLink: WireCellsCreatePublicLinkUseCase(nodesAPI: nodesApi),
+                deletePublicLink: WireCellsDeletePublicLinkUseCase(nodesAPI: nodesApi),
+                updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(nodesAPI: nodesApi),
+                updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesApi),
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
@@ -171,7 +176,8 @@ final class FilesViewModelTests {
                 modifiedAt: nil,
                 icon: .other,
                 tags: [],
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil
             )],
             [], // Clears items
             [FilesViewItem(
@@ -184,7 +190,8 @@ final class FilesViewModelTests {
                 modifiedAt: nil,
                 icon: .other,
                 tags: [],
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil
             )]
         ])
     }
@@ -234,7 +241,8 @@ final class FilesViewModelTests {
                 modifiedAt: now,
                 icon: .image,
                 tags: [],
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil
             ),
             FilesViewItem(
                 id: node2.id,
@@ -246,7 +254,8 @@ final class FilesViewModelTests {
                 modifiedAt: nil,
                 icon: .other,
                 tags: [],
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil
             )
         ])
     }
@@ -286,7 +295,8 @@ final class FilesViewModelTests {
                 modifiedAt: now,
                 icon: .other,
                 tags: [],
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil
             ),
             FilesViewItem(
                 id: node2.id,
@@ -298,7 +308,8 @@ final class FilesViewModelTests {
                 modifiedAt: now - 60,
                 icon: .other,
                 tags: [],
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil
             ),
             FilesViewItem(
                 id: node3.id,
@@ -310,7 +321,8 @@ final class FilesViewModelTests {
                 modifiedAt: nil,
                 icon: .other,
                 tags: [],
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil
             )
         ])
     }
@@ -434,7 +446,8 @@ final class FilesViewModelTests {
                     modifiedAt: nil,
                     icon: .other,
                     tags: [],
-                    isEditable: false
+                    isEditable: false,
+                    publicLinkID: nil
                 ),
                 FilesViewItem(
                     id: nodeC.id,
@@ -446,7 +459,8 @@ final class FilesViewModelTests {
                     modifiedAt: nil,
                     icon: .other,
                     tags: [],
-                    isEditable: false
+                    isEditable: false,
+                    publicLinkID: nil
                 ),
                 FilesViewItem(
                     id: nodeD.id,
@@ -458,7 +472,8 @@ final class FilesViewModelTests {
                     modifiedAt: nil,
                     icon: .other,
                     tags: [],
-                    isEditable: false
+                    isEditable: false,
+                    publicLinkID: nil
                 ),
                 FilesViewItem(
                     id: nodeA.id,
@@ -470,7 +485,8 @@ final class FilesViewModelTests {
                     modifiedAt: now,
                     icon: .other,
                     tags: [],
-                    isEditable: false
+                    isEditable: false,
+                    publicLinkID: nil
                 )
             ]
         )

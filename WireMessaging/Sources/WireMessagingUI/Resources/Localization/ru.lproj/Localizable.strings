@@ -47,7 +47,7 @@
 "channel_access_level.change_level_alert.title" = "Изменить доступ с публичного на приватный?";
 "channel_access_level.change_level_alert.message" = "Это означает, что члены команды не смогут присоединиться к этому каналу самостоятельно.\\В зависимости от вашего выбора, добавлять новых участников могут только администраторы канала или как администраторы, так и участники.Вы не сможете отменить этот шаг. Канал останется закрытым.";
 "channel_access_level.change_level_alert.button.change" = "Изменить на приватный";
-"channel_access_level.change_level_alert.button.cancel" = "Cancel";
+"channel_access_level.change_level_alert.button.cancel" = "Отмена";
 
 
 "conversation.create.channel.title" = "Новый канал";
@@ -56,7 +56,7 @@
 
 // MARK: - Navigation
 "conversation.create.channel.back" = "Назад";
-"conversation.create.channel.next" = "Next";
+"conversation.create.channel.next" = "Вперед";
 
 // MARK: - Channel name
 "conversation.creationForm.channelName.sectionTitle" = "Название канала";
@@ -116,9 +116,14 @@
 "conversation.wireCells.files.loadMore.title" = "Загрузить еще";
 "conversation.wireCells.files.item.menu.open" = "Открыть";
 "conversation.wireCells.files.item.menu.download" = "Скачать";
+"conversation.wireCells.files.item.menu.editFile" = "Изменить файл";
 "conversation.wireCells.files.item.menu.rename" = "Переименовать";
 "conversation.wireCells.files.item.menu.moveToFolder" = "Переместить в папку";
 "conversation.wireCells.files.item.menu.addOrRemoveTags" = "Добавить или удалить теги";
+"conversation.wireCells.files.item.menu.delete" = "Удалить навсегда";
+"conversation.wireCells.files.item.menu.versionHistory" = "История версий";
+"conversation.wireCells.files.item.deleteConfirmation.title" = "Это приведет к необратимому удалению файла %@ для всех участников. Все потеряют доступ и восстановить файл будет невозможно.";
+"conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Удалить навсегда";
 "conversation.wireCells.files.item.menu.delete" = "Удалить";
 "conversation.wireCells.files.item.deleteFileConfirmation.title" = "Файл \"%@\"  будет перемещен в корзину этой беседы.";
 "conversation.wireCells.files.item.deleteFolderConfirmation.title" = "Папка \"%@\"  будет перемещена в корзину этой беседы.";
@@ -145,7 +150,7 @@
 "conversation.wireCells.files.renameFolder.navigationTitle" = "Переименовать папку";
 "conversation.wireCells.files.renameFile.filenameTooLongError" = "Используйте более короткое название файла (максимум 64 символа)";
 "conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Используйте более короткое название папки (максимум 64 символа)";
-"conversation.wireCells.files.renameFile.wrongCharacterError" = "Используйте название без \"/\" или \".\"";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Используйте название без \"/\" и не начинающееся с \".\"";
 "conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "Файл с таким названием уже существует";
 "conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "Папка с таким названием уже существует";
 "conversation.wireCells.files.renameFile.placeholder" = "Введите название файла";
@@ -190,3 +195,16 @@
 "conversation.message.attachment.previewNotAvailable" = "Не удается отобразить предпросмотр";
 "conversation.message.attachment.unableToDownload" = "Не удается загрузить файл";
 "conversation.message.attachment.loadingContent" = "Загрузка контента";
+
+// MARK: - Files versioning
+"conversation.wireCells.filesVersioning.navigationTitle" = "История версий";
+"conversation.wireCells.filesVersioning.currentFile" = "Текущее";
+"conversation.wireCells.filesVersioning.restoreAlertTitle" = "Восстановить версию";
+"conversation.wireCells.filesVersioning.restoreAlertMessage" = "При этом будет скопирована восстановленная версия и установлена в качестве текущей. Все предыдущие версии останутся доступными.";
+"conversation.wireCells.filesVersioning.restoreAlertAction" = "Восстановить";
+"conversation.wireCells.filesVersioning.restoreFailureAlertTitle" = "Не удалось восстановить версию";
+"conversation.wireCells.filesVersioning.restoreFailureAlertMessage" = "Что-то пошло не так при восстановлении версии. Повторите попытку.";
+"conversation.wireCells.filesVersioning.downloadVersion" = "Скачать версию";
+"conversation.wireCells.filesVersioning.retry" = "Повторить";
+"conversation.wireCells.filesVersioning.restoringVersion" = "Восстановление версии... ";
+"conversation.wireCells.filesVersioning.downloadingVersion" = "Загрузка версии файла";
