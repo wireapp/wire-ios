@@ -77,7 +77,7 @@ open class AbstractRequestStrategy: NSObject, RequestStrategy {
 //        case .establishingWebsocket: // should not happen
 //            prerequisites.insert(.allowsRequestsWhileWaitingForWebsocket)
 //        case .quickSyncing: // should not happen
-            prerequisites.insert(.allowsRequestsDuringQuickSync)
+//            prerequisites.insert(.allowsRequestsDuringQuickSync)
         case .online:
             prerequisites.insert(.allowsRequestsWhileOnline)
         }

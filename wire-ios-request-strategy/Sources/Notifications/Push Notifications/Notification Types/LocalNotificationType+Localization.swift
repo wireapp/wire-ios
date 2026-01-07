@@ -207,11 +207,7 @@ extension LocalNotificationType {
         return nil
     }
 
-    func bundledMessagesBodyText(messageCount: Int) -> String {
-        guard case .bundledMessages = self else { return "" }
-        return .localizedStringWithFormat(baseKey.pushFormatString, arguments: [messageCount])
-    }
-
+  
     func messageBodyText(senderName: String?) -> String {
         if case let LocalNotificationType.event(eventType) = self {
             messageBodyText(eventType: eventType, senderName: senderName)

@@ -21,7 +21,6 @@ import Foundation
 extension LocalNotificationDispatcher {
 
     func process(callState: CallState, in conversation: ZMConversation, caller: ZMUser) {
-        fatalError("check me")
         // Missed call notification are handled separately, except if call was answered
         // elsewhere for 1-1 conversations.
         switch (callState, conversation.conversationType) {
@@ -42,7 +41,6 @@ extension LocalNotificationDispatcher {
     }
 
     func processMissedCall(in conversation: ZMConversation, caller: ZMUser) {
-        fatalError("check me")
         let note = ZMLocalNotification(
             callState: .terminating(reason: .canceled),
             conversation: conversation,
