@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -114,28 +114,36 @@ final class ConversationViewController: UIViewController {
     var updateLeftNavigationBarItemsTask: Task<Void, Never>?
 
     var participantsController: UIViewController? {
+        get async {
 
-        var viewController: UIViewController?
+            let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
+                .isFeatureEnabled(.apps) ?? false
 
-        switch conversation.conversationType {
-        case .group:
-            viewController = GroupDetailsViewController(
-                conversation: conversation,
-                userSession: userSession,
-                mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder,
-                conversationCreationRepository: conversationCreationRepository,
-                isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
-            )
-        case .`self`, .oneOnOne, .connection:
-            viewController = createUserDetailViewController()
-        case .invalid:
-            fatal("Trying to open invalid conversation")
-        default:
-            break
+            var viewController: UIViewController?
+
+            switch conversation.conversationType {
+            case .group:
+                viewController = GroupDetailsViewController(
+                    conversation: conversation,
+                    userSession: userSession,
+                    mainCoordinator: mainCoordinator,
+                    selfProfileUIBuilder: selfProfileUIBuilder,
+                    conversationCreationRepository: conversationCreationRepository,
+                    isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+                    areLegacyBotsAvailable: areLegacyBotsAvailable,
+                    isAppsFeatureEnabled: isAppsFeatureEnabled
+                )
+            case .`self`, .oneOnOne, .connection:
+                viewController = createUserDetailViewController()
+            case .invalid:
+                fatal("Trying to open invalid conversation")
+            default:
+                break
+            }
+            guard let viewController else { return nil }
+            return UINavigationController(rootViewController: viewController)
         }
-        guard let viewController else { return nil }
-        return UINavigationController(rootViewController: viewController)
     }
 
     private let individualChangesFactory: MessagesIndividualUpdatesFactory
@@ -819,7 +827,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         contentViewController?.didFinishEditing(message)
         userSession.enqueue {
             if let newText,
-               !newText.isEmpty {
+               !newText.isEmpty || message.isMultipart {
                 let fetchLinkPreview = !Settings.disableLinkPreviews
                 message.textMessageData?.editText(newText, mentions: mentions, fetchLinkPreview: fetchLinkPreview)
             } else {
@@ -853,10 +861,13 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         }
     }
 
+    @MainActor
     @objc
     private func onConversationDetailsPressed() {
-        if let superview = titleView.superview, let participantsController {
-            presentParticipantsViewController(participantsController, from: superview)
+        Task {
+            if let superview = titleView.superview, let participantsController = await participantsController {
+                presentParticipantsViewController(participantsController, from: superview)
+            }
         }
     }
 

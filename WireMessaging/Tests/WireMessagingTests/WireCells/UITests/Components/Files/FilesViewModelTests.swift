@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -68,6 +68,12 @@ final class FilesViewModelTests {
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesApi),
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi),
                 createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesRepository),
+                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesRepository),
+                restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                    repository: nodesRepository,
+                    localAssetsRepository: localAssetRepository,
+                    nodeCache: MockWireCellsNodeCacheProtocol()
+                ),
                 getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: editingURLRepository),
                 getAssetUseCase: WireCellsGetAssetUseCase(
                     localAssetRepository: localAssetRepository,
@@ -83,6 +89,7 @@ final class FilesViewModelTests {
             accentColorProvider: { .default }
         )
 
+        localAssetRepository.assetNodeID_MockValue = .fixture()
         localAssetRepository
             .refreshAssetMetadataNodeID_MockValue = (WireCellsNode.fixture(), WireCellsLocalAsset.fixture())
         localAssetRepository.downloadAssetNodeID_MockMethod = { _ in }

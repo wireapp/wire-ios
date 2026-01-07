@@ -134,7 +134,6 @@
 		EE67F741296F0EBC001D7C88 /* WireCanvas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F740296F0EBC001D7C88 /* WireCanvas.framework */; };
 		EE67F742296F0EBC001D7C88 /* WireCanvas.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F740296F0EBC001D7C88 /* WireCanvas.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE7905F627F326EB00FCBF8C /* Wire Share Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B2729719A730008B894 /* cryptobox.xcframework */; };
 		EEE25B3829719C170008B894 /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3729719C170008B894 /* WireDataModel.framework */; };
 		EEE25B3929719C170008B894 /* WireDataModel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3729719C170008B894 /* WireDataModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B3B29719C370008B894 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3A29719C370008B894 /* WireLinkPreview.framework */; };
@@ -417,8 +416,6 @@
 		EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireNotificationEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9AEC9D2BD15A3600F7853F /* Wire-iOS.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = "Wire-iOS.docc"; sourceTree = "<group>"; };
 		EEE25B2629719A730008B894 /* Clibsodium.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Clibsodium.xcframework; path = ../Carthage/Build/Clibsodium.xcframework; sourceTree = "<group>"; };
-		EEE25B2729719A730008B894 /* cryptobox.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = cryptobox.xcframework; path = ../Carthage/Build/cryptobox.xcframework; sourceTree = "<group>"; };
-		EEE25B3429719BD30008B894 /* WireCryptobox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireCryptobox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEE25B3729719C170008B894 /* WireDataModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEE25B3A29719C370008B894 /* WireLinkPreview.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireLinkPreview.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEE25B4029719C750008B894 /* WireRequestStrategy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -649,10 +646,10 @@
 				ConversationMessageCell/MockCell.swift,
 				ConversationMessageCell/ReadReceiptSystemMessage/ReadReceiptViewModelTests.swift,
 				ConversationMessageCell/SimpleChatBubblesSnapshotTests.swift,
-				ConversationOptionsServicesViewControllerTests.swift,
 				ConversationOptionsViewControllerTests.swift,
 				ConversationReplyCellDescriptionTests.swift,
 				ConversationReplyCellTests.swift,
+				ConversationServicesOptionsViewControllerTests.swift,
 				ConversationStatusTests.swift,
 				"ConversationStatusTests+Icon.swift",
 				ConversationTitleViewTests.swift,
@@ -967,7 +964,6 @@
 				EEE25B3829719C170008B894 /* WireDataModel.framework in Frameworks */,
 				59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */,
 				EE33C48D296485FA00C058D1 /* WireShareEngine.framework in Frameworks */,
-				EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */,
 				59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */,
 				590DCA082C971A56002D0A2C /* WireSidebarUI in Frameworks */,
 				594341D72D08611700A6C0B5 /* WireCountly in Frameworks */,
@@ -1181,7 +1177,6 @@
 				E9816C8F2CC9244700D77F22 /* WireSyncEngine.framework */,
 				E970F6E42CC90115007A2CEB /* WireTransport.framework */,
 				EE67F740296F0EBC001D7C88 /* WireCanvas.framework */,
-				EEE25B3429719BD30008B894 /* WireCryptobox.framework */,
 				EEE25B3729719C170008B894 /* WireDataModel.framework */,
 				59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */,
 				016DB6DD2C261A4900DEB81B /* WireDomain.framework */,
@@ -1202,7 +1197,6 @@
 				598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */,
 				EE67F73D296F0E7D001D7C88 /* Ziphy.framework */,
 				EEE25B2629719A730008B894 /* Clibsodium.xcframework */,
-				EEE25B2729719A730008B894 /* cryptobox.xcframework */,
 				EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */,
 				EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */,
 			);

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ struct ZClientControllerBuilder {
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
         let viewController = ZClientViewController(
             account: account,
+            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
             selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
             trackingManager: trackingManager,
@@ -60,7 +61,7 @@ struct ZClientControllerBuilder {
             // TODO: [WPB-18798] Temporary fix, when multibackend is on we use new backend environment, when off we use the legacy one
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
-            contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider),
+            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
             isFoldersEnabled: DeveloperFlag.wireCellsFolders.isOn,
             isCollaboraEnabled: DeveloperFlag.wireCellsCollabora.isOn
         )
@@ -99,17 +100,3 @@ private struct DefaultAccessTokenProvider: AccessTokenProvider {
 }
 
 extension FileAssetCache: WireMessagingDomain.FileCache, @unchecked @retroactive Sendable {}
-
-private struct DefaultContextProvider: ManagedObjectContextProvider {
-
-    let contextProvider: any ContextProvider
-
-    var viewContext: NSManagedObjectContext {
-        contextProvider.viewContext
-    }
-
-    func newBackgroundContext() -> NSManagedObjectContext {
-        contextProvider.newBackgroundContext()
-    }
-
-}

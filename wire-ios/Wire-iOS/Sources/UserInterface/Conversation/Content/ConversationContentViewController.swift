@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -624,8 +624,9 @@ extension ConversationContentViewController: UITableViewDelegate {
         // different to actionControllers[<message.nonce>], so it was out of sync
         // it was fixed but for extra safety backup action controller if not found
         var backupActionController: ConversationMessageActionController?
-        if let nonce = cellDescription?.message?.nonce {
-            backupActionController = dataSource.sectionControllers.get(for: nonce)?.actionController
+
+        if let message = cellDescription?.message, let cacheIdentifier = MessageCacheIdentifier(message: message) {
+            backupActionController = dataSource.sectionControllers.get(for: cacheIdentifier)?.actionController
         }
 
         if cellDescription?.supportsActions ?? false,

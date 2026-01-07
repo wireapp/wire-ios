@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -80,6 +80,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
     private let nodeName: String
     private let onFinish: () -> Void
     private let nodesRepository: any WireCellsNodesRepositoryProtocol
+    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let moveNodeUseCase: WireCellsMoveNodeUseCase
     private let createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol
 
@@ -91,6 +92,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
         nodeName: String,
         onFinish: @escaping () -> Void,
         nodesRepository: any WireCellsNodesRepositoryProtocol,
+        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         moveNodeUseCase: WireCellsMoveNodeUseCase,
         createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol
     ) {
@@ -103,6 +105,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
         self.nodesRepository = nodesRepository
         self.moveNodeUseCase = moveNodeUseCase
         self.createFolderUseCase = createFolderUseCase
+        self.localAssetRepository = localAssetRepository
     }
 
     func makeView(path: String) -> some View {

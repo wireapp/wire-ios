@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -202,6 +202,12 @@ public extension WireMessagingFactory {
                         updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
                         getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
                         createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
+                        fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesAPI),
+                        restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                            repository: nodesAPI,
+                            localAssetsRepository: localAssetRepository,
+                            nodeCache: nodeCache
+                        ),
                         getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: nodesAPI),
                         getAssetUseCase: WireCellsGetAssetUseCase(
                             localAssetRepository: localAssetRepository,

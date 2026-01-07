@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -457,7 +457,8 @@ public final class ZMUserSession: NSObject {
         dependencies: UserSessionDependencies,
         journal: Journal,
         logFilesProvider: LogFilesProviding,
-        cookieStorage: any CookieStorageProtocol
+        cookieStorage: any CookieStorageProtocol,
+        faultyMLSRemovalKeysByDomain: [String: [String]]
     ) {
         self.application = application
         self.currentAppVersion = currentAppVersion
@@ -509,7 +510,8 @@ public final class ZMUserSession: NSObject {
             mlsService: mlsService,
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
         )
         
         self.conversationEventProcessor = ConversationEventProcessor(
@@ -661,6 +663,9 @@ public final class ZMUserSession: NSObject {
             await clientSessionComponent.workAgent.setAutoStartEnabled(true)
             await clientSessionComponent.workAgent.start()
             clientSessionComponent.generatorsDirectory.observeSyncState()
+
+            // Initialize the generator to enqueue repair work item if needed
+            clientSessionComponent.repairFaultyMLSRemovalKeysGenerator.submitWorkItemIfNeeded()
         }
     }
 
@@ -1282,7 +1287,8 @@ extension ZMUserSession: SyncAgentDelegate {
             conversationRepository: clientSessionComponent.conversationRepository,
             lockRepository: ResetMLSConversationLockRepository(
                 userID: userId
-            )
+            ),
+            selfDomain: resolvedBackendMetadata.domain
         )
     }
 
@@ -1602,7 +1608,11 @@ extension ZMUserSession {
                 sessionManager: sessionManager
             ),
             AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider),
-            AppVersionMigration_4_10_0(journal: journal)
+            AppVersionMigration_4_10_0(journal: journal),
+            AppVersionMigration_4_12_0(
+                journal: journal,
+                repairGenerator: clientSessionComponent?.repairFaultyMLSRemovalKeysGenerator
+            )
         ]
     }
 

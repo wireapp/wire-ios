@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -103,6 +103,8 @@ package struct FilesView: FilesViewProtocol {
                         fileRenameView
                     case let .createFolder(folderView):
                         folderView
+                    case let .versionHistory(versionHistoryView):
+                        versionHistoryView
                     case let .moveToFolder(fileItem):
                         viewModel.moveToFolderView(item: fileItem)
                     default:

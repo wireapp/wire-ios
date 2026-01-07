@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ final class FilesItemViewModel: ObservableObject {
         case rename
         case editTags
         case moveToFolder
+        case onVersionHistory
         case edit
     }
 
@@ -202,6 +203,10 @@ final class FilesItemViewModel: ObservableObject {
         } else {
             isPresentingRestoreParentConfirmation = true
         }
+    }
+
+    func showVersionHistory() async {
+        await onItemAction(.onVersionHistory, item)
     }
 
     func confirmDelete(permanently: Bool) async {

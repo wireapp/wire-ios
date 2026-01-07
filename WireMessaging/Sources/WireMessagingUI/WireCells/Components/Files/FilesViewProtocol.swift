@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -82,11 +82,13 @@ extension FilesViewProtocol {
     func itemRow(index: Int) -> some View {
         FilesViewItemView(
             viewModel: viewModel.itemViewModel(index: index),
-            canRenameFile: !isBrowsing, // action not allowed when browsing files
-            canEditTags: !isBrowsing, // action not allowed when browsing files
-            canMoveToFolder: !isBrowsing && viewModel.isFoldersEnabled, // action not allowed when browsing files
-            canEditFile: !isBrowsing, // action not allowed when browsing files
-            canDeleteFiles: !isBrowsing, // action not allowed when browsing files
+            // some actions are not allowed when browsing files
+            canRenameFile: !isBrowsing,
+            canEditTags: !isBrowsing,
+            canMoveToFolder: !isBrowsing && viewModel.isFoldersEnabled,
+            canOpenVersionHistory: !isBrowsing && viewModel.isCollaboraEnabled,
+            canEditFile: !isBrowsing,
+            canDeleteFiles: !isBrowsing
         )
     }
 

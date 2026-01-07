@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,6 +57,7 @@ struct ZMUserSessionBuilder {
     private var apiVersion: WireNetwork.APIVersion?
     private var journal: Journal?
     private var logFilesProvider: LogFilesProviding?
+    private var faultyMLSRemovalKeysByDomain: [String: [String]]?
 
     // MARK: - Initialize
 
@@ -184,7 +185,8 @@ struct ZMUserSessionBuilder {
             dependencies: dependencies,
             journal: journal,
             logFilesProvider: logFilesProvider,
-            cookieStorage: cookieStorage
+            cookieStorage: cookieStorage,
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain ?? [:]
         )
     }
 
@@ -212,7 +214,8 @@ struct ZMUserSessionBuilder {
         userId: UUID,
         minTLSVersion: String?,
         journal: Journal,
-        logFilesProvider: LogFilesProviding
+        logFilesProvider: LogFilesProviding,
+        faultyMLSRemovalKeysByDomain: [String: [String]]
     ) {
         // reused dependencies
 
@@ -313,6 +316,7 @@ struct ZMUserSessionBuilder {
         self.wireAPIBackendEnvironment = wireAPIBackendEnvironment
         self.journal = journal
         self.logFilesProvider = logFilesProvider
+        self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
     }
 
     // MARK: UserSesssionDependencies

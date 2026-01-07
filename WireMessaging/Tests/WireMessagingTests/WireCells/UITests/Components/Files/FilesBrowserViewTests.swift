@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,6 +39,8 @@ final class FilesBrowserViewTests: XCTestCase {
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
     private var createFolderUseCase: (any WireCellsCreateFolderUseCaseProtocol)!
+    private var fetchNodeVersionsUseCase: WireCellsFetchNodeVersionsUseCase!
+    private var restoreNodeVersionUseCase: WireCellsRestoreNodeVersionUseCase!
     private var getEditingURLUseCase: WireCellsGetEditingURLUseCase!
     private var getAssetUseCase: WireCellsGetAssetUseCase!
     private var localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol!
@@ -73,7 +75,7 @@ final class FilesBrowserViewTests: XCTestCase {
         )
         renameNodeUseCase = WireCellsRenameNodeUseCase(
             nodesRepository: MockWireCellsNodesRepositoryProtocol(),
-            localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            localAssetsRepository: localAssetsRepository,
             nodeCache: MockWireCellsNodeCacheProtocol(),
             nodeRenameNotifier: WireCellsNodeRenameNotifier()
         )
@@ -86,6 +88,13 @@ final class FilesBrowserViewTests: XCTestCase {
 
         createFolderUseCase = WireCellsCreateFolderUseCase(
             nodesRepository: nodesRepository
+        )
+
+        fetchNodeVersionsUseCase = WireCellsFetchNodeVersionsUseCase(repository: nodesRepository)
+        restoreNodeVersionUseCase = WireCellsRestoreNodeVersionUseCase(
+            repository: nodesRepository,
+            localAssetsRepository: localAssetsRepository,
+            nodeCache: MockWireCellsNodeCacheProtocol()
         )
 
         let editingURLRepository = MockWireCellsEditingURLRepositoryProtocol()
@@ -101,6 +110,13 @@ final class FilesBrowserViewTests: XCTestCase {
         nodesRepository = nil
         fetchNodesUseCase = nil
         localAssetsRepository = nil
+        fetchNodeVersionsUseCase = nil
+        createFolderUseCase = nil
+        getTagSuggestionsUseCase = nil
+        updateTagsUseCase = nil
+        renameNodeUseCase = nil
+        deleteNodeUseCase = nil
+        restoreNodeVersionUseCase = nil
     }
 
     @MainActor
@@ -185,6 +201,8 @@ final class FilesBrowserViewTests: XCTestCase {
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
                 createFolder: createFolderUseCase,
+                fetchNodeVersions: fetchNodeVersionsUseCase,
+                restoreNodeVersion: restoreNodeVersionUseCase,
                 getEditingURL: getEditingURLUseCase,
                 getAssetUseCase: getAssetUseCase
             ),

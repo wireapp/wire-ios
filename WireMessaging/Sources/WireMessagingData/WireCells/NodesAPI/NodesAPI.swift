@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -100,6 +100,15 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
 
     package func deleteVersion(nodeID: UUID, versionID: UUID) async throws {
         try await restAPI.deleteVersion(uuid: nodeID, versionID: versionID)
+    }
+
+    package func getVersions(nodeID: UUID) async throws -> [WireCellsNodeVersion] {
+        let versionsDTO = try await restAPI.getVersions(uuid: nodeID)
+        return versionsDTO.toDomainModel()
+    }
+
+    package func restoreVersion(nodeID: UUID, versionID: UUID) async throws {
+        try await restAPI.restoreVersion(uuid: nodeID, versionID: versionID)
     }
 
     package func downloadFile(

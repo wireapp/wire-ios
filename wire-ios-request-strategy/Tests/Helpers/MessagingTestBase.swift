@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -537,7 +537,7 @@ extension MessagingTestBase {
         try await setupProteusService()
 
         // Establish session after users/clients are created
-        if let otherClient = self.otherClient {
+        if let otherClient {
             try await _proteusClientSimulator!.establishSessionFromSelf(to: otherClient)
         }
 

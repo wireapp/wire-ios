@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Combine
 // sourcery: AutoMockable
 public protocol GeneratorProtocol {
     func start() async
-    func stop()
+    func stop() async
 }
 
 // sourcery: AutoMockable
@@ -84,7 +84,9 @@ public final class GeneratorsDirectory {
 
     private func stopGenerators() {
         for generator in generators {
-            generator.stop()
+            Task {
+                await generator.stop()
+            }
         }
     }
 }

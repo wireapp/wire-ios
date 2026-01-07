@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -84,7 +84,8 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             userId: userId,
             minTLSVersion: nil,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            faultyMLSRemovalKeysByDomain: [:]
         )
         let testSession = builder.build()
         testSession.setup(
