@@ -407,6 +407,8 @@ final class UserSessionMock: UserSession {
 
     var isWireCellsEnabled: Bool = false
 
+    var wireCellsBackendURL: URL?
+
     var isEnterpriseUser: Bool = false
 
     func fetchAllClients() {}

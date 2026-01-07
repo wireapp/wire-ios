@@ -105,6 +105,13 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         )
     }
 
+    public func fetchCellsInternal() async throws -> LocalFeature<Feature.CellsInternal.Config> {
+        try await fetchFeatureConfig(
+            name: .cellsInternal,
+            type: Feature.CellsInternal.Config.self
+        )
+    }
+
     // MARK: - Private
 
     private func sendFeatureState(for featureConfig: FeatureConfig) async {
@@ -221,6 +228,12 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             return FeatureState(
                 name: .cells,
                 isEnabled: cellsConfig.status == .enabled
+            )
+
+        case let .cellsInternal(cellsInternalConfig):
+            return FeatureState(
+                name: .cellsInternal,
+                isEnabled: cellsInternalConfig.status == .enabled
             )
 
         case let .unknown(featureName):

@@ -2308,6 +2308,29 @@ public class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtoco
         }
     }
 
+    // MARK: - fetchCellsInternal
+
+    public var fetchCellsInternal_Invocations: [Void] = []
+    public var fetchCellsInternal_MockError: Error?
+    public var fetchCellsInternal_MockMethod: (() async throws -> LocalFeature<Feature.CellsInternal.Config>)?
+    public var fetchCellsInternal_MockValue: LocalFeature<Feature.CellsInternal.Config>?
+
+    public func fetchCellsInternal() async throws -> LocalFeature<Feature.CellsInternal.Config> {
+        fetchCellsInternal_Invocations.append(())
+
+        if let error = fetchCellsInternal_MockError {
+            throw error
+        }
+
+        if let mock = fetchCellsInternal_MockMethod {
+            return try await mock()
+        } else if let mock = fetchCellsInternal_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchCellsInternal`")
+        }
+    }
+
     // MARK: - isFeatureEnabled
 
     public var isFeatureEnabled_Invocations: [Feature.Name] = []

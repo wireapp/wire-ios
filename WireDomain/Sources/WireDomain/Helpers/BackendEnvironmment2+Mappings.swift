@@ -124,6 +124,8 @@ public extension WireNetwork.APIVersion {
             self = .v12
         case .v13:
             self = .v13
+        case .v14:
+            self = .v14
         }
     }
 
