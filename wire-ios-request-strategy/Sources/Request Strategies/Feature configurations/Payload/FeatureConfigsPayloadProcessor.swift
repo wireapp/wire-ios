@@ -284,7 +284,7 @@ struct FeatureConfigsPayloadProcessor {
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.E2EI.Config>.self, from: data)
             repository.storeE2EI(.init(status: response.status, config: response.config))
 
-        case .channels, .consumableNotifications, .allowedGlobalOperations, .cells, .assetAuditLog:
+        case .channels, .consumableNotifications, .allowedGlobalOperations, .cells, .assetAuditLog, .cellsInternal:
             WireLogger.featureConfigs.warn(
                 "decoding unsupported feature config: \"\(featureName)\", this should not happen",
                 attributes: .safePublic
