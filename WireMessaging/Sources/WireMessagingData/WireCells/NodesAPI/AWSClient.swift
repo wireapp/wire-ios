@@ -20,6 +20,7 @@ import AWSClientRuntime
 package import AWSS3
 package import Foundation
 import Smithy
+import SmithyHTTPAPI
 import SmithyIdentity
 import SmithyStreams
 import WireLogging
@@ -62,11 +63,17 @@ final class AWSClient: Sendable {
     private let s3: any S3ClientProtocol
     private let makeStream: @Sendable (FileStream) -> ObservableStream
 
-    convenience init(serverURL: URL, accessToken: any AccessTokenProvider) {
+    convenience init(
+        serverURLResolver: @escaping @Sendable () throws -> URL,
+        accessToken: any AccessTokenProvider
+    ) {
         let config = try! S3Client.S3ClientConfiguration(
             awsCredentialIdentityResolver: CredentialIdentityResolver(accessTokenProvider: accessToken),
             region: Constants.region,
-            endpoint: serverURL.absoluteString
+            endpointResolver: AWSEndpointResolver(
+                serverURLResolver: serverURLResolver,
+                bucket: Constants.bucket
+            )
         )
         self.init(s3: S3Client(config: config))
     }
@@ -272,6 +279,24 @@ private extension WireCellsNodeNetworkModel {
             "Create-Resource-UUID": uuid.transportString(),
             "Create-Version-ID": versionID.transportString()
         ]
+    }
+}
+
+private struct AWSEndpointResolver: EndpointResolver {
+    let serverURLResolver: @Sendable () throws -> URL
+    let bucket: String
+
+    init(
+        serverURLResolver: @escaping @Sendable () throws -> URL,
+        bucket: String
+    ) {
+        self.serverURLResolver = serverURLResolver
+        self.bucket = bucket
+    }
+
+    func resolve(params: AWSS3.EndpointParams) throws -> SmithyHTTPAPI.Endpoint {
+        let serverURL = try serverURLResolver().appendingPathComponent("/\(bucket)")
+        return try SmithyHTTPAPI.Endpoint(urlString: serverURL.absoluteString)
     }
 }
 

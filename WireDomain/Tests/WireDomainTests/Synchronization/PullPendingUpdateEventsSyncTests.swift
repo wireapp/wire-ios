@@ -120,6 +120,52 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         XCTAssertEqual(journal[.brokenMLSGroupIDs].first, Scaffolding.mlsGroupID)
     }
 
+    func testLastEventIDIsNotPersisted_untilTransactionIsCompleted() async throws {
+        // Mock
+        store.lastEventID_MockValue = Scaffolding.lastEventID
+        store.indexOfLastEventEnvelope_MockValue = Scaffolding.indexOfLastEventEnvelope
+
+        api.getUpdateEventsSelfClientIDSinceEventID_MockValue = PayloadPager(start: "page2") { start in
+            switch start {
+            case "page2":
+                return Scaffolding.page2
+
+            default:
+                throw "unknown page: \(start ?? "nil")"
+            }
+        }
+
+        decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
+            EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
+        }
+
+        store.persistEventEnvelopesIndex_MockMethod = { _, _ in }
+        store.storeLastEventIDId_MockMethod = { _ in }
+        store.storeServerTimeDelta_MockMethod = { _ in }
+
+        coreCrypto.completeTransactionByDefault = false
+
+        // When
+        let pullingEventsTask = Task { [sut] in
+            try await sut.pull()
+        }
+
+        // we wait until the sync tries to commit the batch of decrypted events
+        try await coreCrypto.waitUntilTransactionIsPending()
+
+        // Then
+        try XCTAssertCount(store.storeLastEventIDId_Invocations, count: 0)
+
+        coreCrypto.completeAllTransactions()
+        _ = await pullingEventsTask.result
+
+        // after allowing the transaction to complete we should we see
+        // that the last event ID got persisted
+        let storeLastEventIDInvocations = store.storeLastEventIDId_Invocations
+        try XCTAssertCount(storeLastEventIDInvocations, count: 1)
+        XCTAssertEqual(storeLastEventIDInvocations[0], Scaffolding.envelope4.id)
+    }
+
 }
 
 private enum Scaffolding {

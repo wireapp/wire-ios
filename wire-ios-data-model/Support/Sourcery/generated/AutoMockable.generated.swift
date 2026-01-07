@@ -3736,6 +3736,24 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         }
     }
 
+    // MARK: - fetchCellsInternal
+
+    public var fetchCellsInternal_Invocations: [Void] = []
+    public var fetchCellsInternal_MockMethod: (() -> Feature.CellsInternal?)?
+    public var fetchCellsInternal_MockValue: Feature.CellsInternal??
+
+    public func fetchCellsInternal() -> Feature.CellsInternal? {
+        fetchCellsInternal_Invocations.append(())
+
+        if let mock = fetchCellsInternal_MockMethod {
+            return mock()
+        } else if let mock = fetchCellsInternal_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchCellsInternal`")
+        }
+    }
+
 }
 
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {

@@ -20,6 +20,6 @@ import WireDataModel
 
 /// A feature fetched locally
 public struct LocalFeature<T: Decodable> {
-    let status: Feature.Status
-    let config: T?
+    public let status: Feature.Status
+    public let config: T?
 }
