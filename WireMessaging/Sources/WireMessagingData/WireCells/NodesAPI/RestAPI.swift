@@ -36,11 +36,14 @@ final class RestAPI: Sendable {
         static let renameBackgroundActionName = "move"
     }
 
-    private let serverURL: URL
+    private let serverURLResolver: @Sendable () throws -> URL
     private let accessTokenProvider: any AccessTokenProvider
 
-    init(serverURL: URL, accessToken: any AccessTokenProvider) {
-        self.serverURL = serverURL
+    init(
+        serverURLResolver: @escaping @Sendable () throws -> URL,
+        accessToken: any AccessTokenProvider
+    ) {
+        self.serverURLResolver = serverURLResolver
         self.accessTokenProvider = accessToken
     }
 
@@ -278,7 +281,7 @@ final class RestAPI: Sendable {
             apiConfiguration: makeConfiguration()
         )
 
-        return try WireCellsPublicLink(response, serverURL: serverURL)
+        return try WireCellsPublicLink(response, serverURL: serverURLResolver())
     }
 
     func createPublicLink(uuid: UUID, label: String) async throws -> WireCellsPublicLink {
@@ -292,7 +295,7 @@ final class RestAPI: Sendable {
             apiConfiguration: makeConfiguration()
         )
 
-        return try WireCellsPublicLink(response, serverURL: serverURL)
+        return try WireCellsPublicLink(response, serverURL: serverURLResolver())
     }
 
     func deletePublicLink(linkID: String) async throws {
@@ -318,7 +321,7 @@ final class RestAPI: Sendable {
             apiConfiguration: makeConfiguration()
         )
 
-        return try WireCellsPublicLink(updatedLink, serverURL: serverURL)
+        return try WireCellsPublicLink(updatedLink, serverURL: serverURLResolver())
     }
 
     func updatePublicLinkPassword(
@@ -344,7 +347,7 @@ final class RestAPI: Sendable {
             apiConfiguration: makeConfiguration()
         )
 
-        return try WireCellsPublicLink(updatedLink, serverURL: serverURL)
+        return try WireCellsPublicLink(updatedLink, serverURL: serverURLResolver())
     }
 
     func updateTags(uuid: UUID, tags: [String]) async throws {
@@ -369,12 +372,14 @@ final class RestAPI: Sendable {
     }
 
     private var apiURL: URL {
-        serverURL.appendingPathComponent("/v2")
+        get throws {
+            try serverURLResolver().appendingPathComponent("/v2")
+        }
     }
 
     private func makeConfiguration() async throws -> CellsSDKAPIConfiguration {
         let config = CellsSDKAPIConfiguration()
-        config.basePath = apiURL.absoluteString
+        config.basePath = try apiURL.absoluteString
         config.customHeaders = ["Authorization": "Bearer \(try await accessTokenProvider.accessToken().token)"]
         config.interceptor = LoggingIntercepter()
 

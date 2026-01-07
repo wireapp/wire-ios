@@ -147,6 +147,13 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     )
                 )
             )
+        case let .cellsInternal(config):
+            .cellsInternal(
+                StorableCellsInternalFeatureConfig(
+                    status: StorableFeatureConfigStatus(config.status),
+                    backendURL: config.backendURL
+                )
+            )
         case let .unknown(featureName):
             .unknown(featureName: featureName)
         }
@@ -265,6 +272,13 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
             .cells(
                 .init(status: config.status.toAPIModel())
             )
+        case let .cellsInternal(config):
+            .cellsInternal(
+                .init(
+                    status: config.status.toAPIModel(),
+                    backendURL: config.backendURL
+                )
+            )
         case let .unknown(featureName):
             .unknown(featureName: featureName)
         }
@@ -297,6 +311,7 @@ enum StorableFeatureConfig: Equatable, Codable, Sendable {
     case allowedGlobalOperations(StorableAllowedGlobalOperationsFeatureConfig)
     case consumableNotifications(StorableBasicFeatureConfig)
     case cells(StorableBasicFeatureConfig)
+    case cellsInternal(StorableCellsInternalFeatureConfig)
     case unknown(featureName: String)
 
 }
@@ -436,4 +451,9 @@ struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
     let allowedToCreateChannels: Permission
     let allowedToOpenChannels: Permission
 
+}
+
+struct StorableCellsInternalFeatureConfig: Codable, Equatable, Sendable {
+    let status: StorableFeatureConfigStatus
+    let backendURL: URL
 }

@@ -52,7 +52,7 @@ class UpdateRoleActionHandler: ActionHandler<UpdateRoleAction> {
         switch apiVersion {
         case .v0, .v1, .v2, .v3, .v4, .v5, .v6:
             path = "/conversations/\(convID)/members/\(userID)"
-        case .v7, .v8, .v9, .v10, .v11, .v12, .v13:
+        case .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
             guard
                 let convDomain = conversation.domain ?? localDomain,
                 let userDomain = participant.domain ?? localDomain

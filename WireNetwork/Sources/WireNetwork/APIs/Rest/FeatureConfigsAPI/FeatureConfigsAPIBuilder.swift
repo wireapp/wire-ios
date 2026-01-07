@@ -67,6 +67,8 @@ public struct FeatureConfigsAPIBuilder {
             FeatureConfigsAPIV12(apiService: apiService)
         case .v13:
             FeatureConfigsAPIV13(apiService: apiService)
+        case .v14:
+            FeatureConfigsAPIV14(apiService: apiService)
         }
     }
 }
