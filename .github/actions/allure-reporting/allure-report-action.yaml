@@ -20,26 +20,7 @@ runs:
     - name: Generate Allure Report
       if: always()
       shell: bash
-      run: |
-        set -euo pipefail
-
-        XCRESULT=$(find "${{ inputs.xcresult_search_path }}" -type d -name "*.xcresult" | head -n 1)
-        if [ -z "${XCRESULT}" ]; then
-          echo "❌ No .xcresult found under ./${{ inputs.xcresult_search_path }}"
-          exit 1
-        fi
-
-        echo "✅ Using xcresult: ${XCRESULT}"
-
-        npx allure awesome "${XCRESULT}" --single-file -o allure-report
-
-        if [ ! -f "allure-report/index.html" ]; then
-          echo "❌ Allure report not generated (missing allure-report/index.html)"
-          exit 1
-        fi
-
-        FILE_SIZE=$(du -h allure-report/index.html | cut -f1)
-        echo "✅ Allure report generated: ${FILE_SIZE}"
+      run: ./script/run-generate-allure-report.sh "${{ inputs.xcresult_search_path }}"
 
     - name: Prepare visual representation of test results
       if: always()
@@ -53,58 +34,10 @@ runs:
 
     - name: Resolve Allure artifact URL
       if: ${{ always() && github.event_name == 'pull_request' }}
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const artifactName = `${{ inputs.allure_artifact_name }}`;
-          const { owner, repo } = context.repo;
-          const run_id = context.runId;
-
-          const res = await github.rest.actions.listWorkflowRunArtifacts({ owner, repo, run_id, per_page: 100 });
-          const artifact = res.data.artifacts.find(a => a.name === artifactName);
-
-          let url = `${context.serverUrl}/${owner}/${repo}/actions/runs/${run_id}`;
-          if (artifact) {
-            url = `${context.serverUrl}/${owner}/${repo}/actions/runs/${run_id}/artifacts/${artifact.id}`;
-          } else {
-            core.warning(`Allure artifact not found: ${artifactName}`);
-          }
-
-          core.exportVariable('ALLURE_ARTIFACT_NAME', artifactName);
-          core.exportVariable('ALLURE_ARTIFACT_URL', url);
-
+      shell: bash
+      run: ./script/run-allure-report-url.sh "${{ inputs.allure_artifact_name }}"
 
     - name: Patch Allure link into the Test Results comment
       if: ${{ always() && github.event_name == 'pull_request' }}
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const { owner, repo } = context.repo;
-          const prNumber = context.payload.pull_request.number;
-
-          const commentTitle = `${{ inputs.comment_title }}`;
-          const allureArtifactName = process.env.ALLURE_ARTIFACT_NAME || `${{ inputs.allure_artifact_name }}`;
-          const allureUrl = process.env.ALLURE_ARTIFACT_URL || `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
-
-          const markerStart = '<!-- allure-link-start -->';
-          const markerEnd = '<!-- allure-link-end -->';
-          const block = `${markerStart}\n\n**Allure report (single-file HTML):** [${allureArtifactName}](${allureUrl})\n\n${markerEnd}`;
-
-          const comments = await github.rest.issues.listComments({ owner, repo, issue_number: prNumber, per_page: 100 });
-          const target = comments.data.find(c => (c.body || '').includes(commentTitle));
-
-          if (!target) {
-            core.warning('EnricoMi comment not found; skipping patch (no extra comment will be created).');
-            return;
-          }
-
-          let body = target.body || '';
-          const startIdx = body.indexOf(markerStart);
-          const endIdx = body.indexOf(markerEnd);
-
-          if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
-            body = body.slice(0, startIdx) + body.slice(endIdx + markerEnd.length);
-          }
-
-          body = body.trimEnd() + `\n\n${block}`;
-          await github.rest.issues.updateComment({ owner, repo, comment_id: target.id, body });
+      shell: bash
+      run: ./script/run-update-comment.sh "Test Results" "${{ inputs.allure_artifact_name }}"

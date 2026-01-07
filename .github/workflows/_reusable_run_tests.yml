@@ -85,7 +85,7 @@ jobs:
       - name: Load .env file
         uses: xom9ikk/dotenv@v2
         with:
-            path: fastlane/
+          path: fastlane/
 
       - name: Restore Carthage Cache
         uses: actions/cache@v3
@@ -199,7 +199,7 @@ jobs:
             app-group.zip
             fastlane/app-group.zip
 
-     - name: Publish test results + Allure report
+      - name: Publish test results + Allure report
         if: always()
         uses: ./.github/actions/allure-reporting/allure-report-action
         with:
