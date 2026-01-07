@@ -19,6 +19,7 @@ runs:
 
     - name: Generate Allure Report
       if: always()
+      shell: bash
       run: bash .github/scripts/run-generate-allure-report.sh "${{ inputs.xcresult_search_path }}"
 
     - name: Prepare visual representation of test results
@@ -33,8 +34,10 @@ runs:
 
     - name: Resolve Allure artifact URL
       if: ${{ always() && github.event_name == 'pull_request' }}
+      shell: bash
       run: bash .github/scripts/run-allure-report-url.sh "${{ inputs.allure_artifact_name }}"
 
     - name: Patch Allure link into the Test Results comment
       if: ${{ always() && github.event_name == 'pull_request' }}
+      shell: bash
       run: bash .github/scripts/run-update-comment.sh "Test Results" "${{ inputs.allure_artifact_name }}"
