@@ -203,7 +203,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         email: String?,
         backendConfigURL: URL
     ) async {
-        guard !existsAnotherAccount else { // double check this
+        guard !existsAnotherAccount else {
             alert = .switchBackendFailed
             return
         }
