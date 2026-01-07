@@ -23,7 +23,6 @@
 NSString * const ZMClientsKey = @"clients";
 NSString * const ZMPhoneCredentialKey = @"phone";
 NSString * const ZMEmailCredentialKey = @"email";
-NSString * const ZMUserHasPasswordKey = @"has-password";
 NSString * const ZMUserUsesCompanyLoginCredentialKey = @"uses-company-login";
 NSString * const ZMUserLoginCredentialsKey = @"login-credentials";
 NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";

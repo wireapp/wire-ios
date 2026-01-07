@@ -22,7 +22,7 @@ import WireTesting
 extension MockUser {
 
     var loginCredentials: LoginCredentials {
-        LoginCredentials(emailAddress: email, hasPassword: email != nil, usesCompanyLogin: false)
+        LoginCredentials(emailAddress: email, usesCompanyLogin: false)
     }
 
 }
