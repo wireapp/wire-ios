@@ -50,6 +50,24 @@ class RequestLogTests: XCTestCase {
         )
     }
 
+    func testParsingEndpointWithSearchContactsRedactedQueryParams() throws {
+        let request =
+            NSURLRequest(
+                url: URL(
+                    string: "https://prod-nginz-https.wire.com/v13/search/contacts?q=test&size=10"
+                )!
+            )
+        guard let sut: RequestLog = .init(request) else {
+            XCTFail("could not create RequestLog")
+            return
+        }
+
+        XCTAssertEqual(
+            sut.endpoint,
+            "https://prod-nginz-https.wire.com/v13/search/contacts?q=***&size=10"
+        )
+    }
+
     func testAuthorizationHeaderValueIsRedacted() throws {
         let request = NSMutableURLRequest(url: URL(string: "https://prod-nginz-https.wire.com/push/tokens")!)
         request.addValue("Bearer wertrtetetr42343242432456789p", forHTTPHeaderField: "Authorization")
