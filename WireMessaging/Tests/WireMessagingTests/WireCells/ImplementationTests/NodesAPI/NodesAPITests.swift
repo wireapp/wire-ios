@@ -46,7 +46,7 @@ final class NodesAPITests {
                 makeStream: { ObservableStream($0, bufferingPolicy: .unbounded) }
             ),
             restAPI: RestAPI(
-                serverURL: URL(string: "example.com")!,
+                serverURLResolver: { URL(string: "example.com")! },
                 accessToken: MockAccessTokenProvider()
             ),
         )

@@ -28,7 +28,7 @@ package protocol NodesAPIProtocol: Sendable {
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws
 
-    func uploadFile(path: URL, node: WireCellsNode, versionID: UUID) async -> AsyncThrowingStream<Int, any Error>
+    func uploadFile(path: URL, node: WireCellsNode, versionID: UUID) async throws -> AsyncThrowingStream<Int, any Error>
 
     func deleteVersion(nodeID: UUID, versionID: UUID) async throws
 
@@ -40,11 +40,22 @@ package protocol NodesAPIProtocol: Sendable {
 
     func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool
 
-    func createPublicLink(nodeID: UUID, fileName: String) async throws -> WireCellsPublicLink
+    func createPublicLink(nodeID: UUID, label: String) async throws
+        -> WireCellsPublicLink
 
-    func getPublicLink(linkUUID: UUID) async throws -> URL
+    func getPublicLink(linkID: String) async throws -> WireCellsPublicLink
 
-    func deletePublicLink(linkUUID: UUID) async throws
+    func deletePublicLink(linkID: String) async throws
+
+    func updatePublicLinkExpiration(
+        linkID: String,
+        expiration: Date?
+    ) async throws -> WireCellsPublicLink
+
+    func updatePublicLinkPassword(
+        linkID: String,
+        password: String?
+    ) async throws -> WireCellsPublicLink
 
     func updateTags(nodeID: UUID, tags: [String]) async throws
 

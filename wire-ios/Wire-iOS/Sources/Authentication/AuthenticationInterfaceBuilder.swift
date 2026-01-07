@@ -126,7 +126,7 @@ final class AuthenticationInterfaceBuilder {
             }
 
             let authenticationType: WireAuthenticationAPI.AuthenticationType
-            if credentials?.usesCompanyLogin == true, credentials?.hasPassword == false {
+            if credentials?.usesCompanyLogin == true {
                 authenticationType = .reauthSSO
             } else if let email = credentials?.emailAddress {
                 authenticationType = .reauthEmail(email)
@@ -158,7 +158,6 @@ final class AuthenticationInterfaceBuilder {
             let prefilledCredentials = AuthenticationPrefilledCredentials(
                 credentials: LoginCredentials(
                     emailAddress: user.unverifiedEmail,
-                    hasPassword: false,
                     usesCompanyLogin: false
                 ),
                 isExpired: false

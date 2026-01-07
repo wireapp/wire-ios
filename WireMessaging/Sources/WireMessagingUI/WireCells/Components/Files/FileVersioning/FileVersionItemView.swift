@@ -59,9 +59,14 @@ struct FileVersionItemView: View {
                 Menu {
                     restoreButton
                 } label: {
-                    Image(systemName: "ellipsis")
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    ZStack {
+                        Color.clear
+                            .frame(width: 44, height: 44)
+                        Image(systemName: "ellipsis")
+                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    }
                 }
+                .padding(.trailing, -14)
             }
         }
         .alert(
