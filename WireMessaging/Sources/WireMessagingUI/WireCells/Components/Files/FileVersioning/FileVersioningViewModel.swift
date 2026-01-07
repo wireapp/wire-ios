@@ -43,8 +43,10 @@ final class FileVersioningViewModel: ObservableObject {
     let name: String
 
     private let nodeID: UUID
+    private let eTag: String?
     private let fetchNodeVersionsUseCase: any WireCellsFetchNodeVersionsUseCaseProtocol
     private let restoreNodeVersionUseCase: any WireCellsRestoreNodeVersionUseCaseProtocol
+    private let getAssetUseCase: WireCellsGetAssetUseCase
     private let accentColorProvider: () -> WireAccentColor
     private var subscriptions = Set<AnyCancellable>()
 
@@ -82,6 +84,7 @@ final class FileVersioningViewModel: ObservableObject {
     init(
         nodeID: UUID,
         name: String,
+        eTag: String?,
         context: DateFormattingContext = (
             Locale.autoupdatingCurrent,
             Calendar.autoupdatingCurrent,
@@ -89,13 +92,16 @@ final class FileVersioningViewModel: ObservableObject {
         ),
         fetchNodeVersionsUseCase: any WireCellsFetchNodeVersionsUseCaseProtocol,
         restoreNodeVersionUseCase: any WireCellsRestoreNodeVersionUseCaseProtocol,
+        getAssetUseCase: WireCellsGetAssetUseCase,
         accentColorProvider: @escaping () -> WireAccentColor
     ) {
         self.nodeID = nodeID
         self.name = name
+        self.eTag = eTag
         self.context = context
         self.fetchNodeVersionsUseCase = fetchNodeVersionsUseCase
         self.restoreNodeVersionUseCase = restoreNodeVersionUseCase
+        self.getAssetUseCase = getAssetUseCase
         self.accentColorProvider = accentColorProvider
         self.state = .loading
     }
@@ -149,7 +155,9 @@ final class FileVersioningViewModel: ObservableObject {
                 versionID: item.id
             )
 
-            await fetch()
+            async let _ = fetch()
+            async let url = getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
+            viewingURL = try await url
 
         } catch {
             alert = AlertModel(

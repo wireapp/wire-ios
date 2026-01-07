@@ -59,8 +59,13 @@ struct FileVersionItemView: View {
                 Menu {
                     restoreButton
                 } label: {
-                    Image(systemName: "ellipsis")
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    ZStack(alignment: .trailing) {
+                        Rectangle()
+                            .frame(width: 44)
+                            .opacity(0.001)
+                        Image(systemName: "ellipsis")
+                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    }
                 }
             }
         }

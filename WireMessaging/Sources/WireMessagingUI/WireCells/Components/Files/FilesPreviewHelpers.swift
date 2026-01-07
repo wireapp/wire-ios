@@ -196,11 +196,16 @@ extension FileVersioningViewModel {
         return FileVersioningViewModel(
             nodeID: UUID(),
             name: "foo.jpg",
+            eTag: nil,
             fetchNodeVersionsUseCase: useCase,
             restoreNodeVersionUseCase: WireCellsRestoreNodeVersionUseCase(
                 repository: repository,
                 localAssetsRepository: localAssetsRepository,
                 nodeCache: MockWireCellsNodeCacheProtocol()
+            ),
+            getAssetUseCase: WireCellsGetAssetUseCase(
+                localAssetRepository: localAssetsRepository,
+                fileCache: MockFileCache()
             ),
             accentColorProvider: { .default }
         )
