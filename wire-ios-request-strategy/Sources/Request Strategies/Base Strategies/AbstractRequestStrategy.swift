@@ -72,6 +72,12 @@ open class AbstractRequestStrategy: NSObject, RequestStrategy {
         switch applicationStatus.synchronizationState {
         case .unauthenticated:
             prerequisites.insert(.allowsRequestsWhileUnauthenticated)
+//        case .slowSyncing: // should not happen
+//            prerequisites.insert(.allowsRequestsDuringSlowSync)
+//        case .establishingWebsocket: // should not happen
+//            prerequisites.insert(.allowsRequestsWhileWaitingForWebsocket)
+//        case .quickSyncing: // should not happen
+            prerequisites.insert(.allowsRequestsDuringQuickSync)
         case .online:
             prerequisites.insert(.allowsRequestsWhileOnline)
         }
