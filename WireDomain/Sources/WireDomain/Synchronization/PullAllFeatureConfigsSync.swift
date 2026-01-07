@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -142,6 +142,12 @@ extension FeatureConfigLocalStoreProtocol {
                 name: .cells,
                 isEnabled: config.status == .enabled,
                 config: nil
+            )
+        case let .cellsInternal(config):
+            await storeFeature(
+                name: .cellsInternal,
+                isEnabled: config.status == .enabled,
+                config: config.toDomainModel()
             )
         case let .unknown(name):
             WireLogger.featureConfigs.warn("encountered unknown feature config '\(name)' when storing, skipping")

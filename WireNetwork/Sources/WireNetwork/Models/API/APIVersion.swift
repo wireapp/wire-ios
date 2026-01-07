@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ public enum APIVersion: UInt, CaseIterable, Comparable, Sendable {
     case v11
     case v12
     case v13
+    case v14
 
     /// API versions considered production ready by the client.
     ///

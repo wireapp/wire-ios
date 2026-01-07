@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -130,7 +130,7 @@ final class AuthenticationInterfaceBuilder {
             }
 
             let authenticationType: WireAuthenticationAPI.AuthenticationType
-            if credentials?.usesCompanyLogin == true, credentials?.hasPassword == false {
+            if credentials?.usesCompanyLogin == true {
                 authenticationType = .reauthSSO
             } else if let email = credentials?.emailAddress {
                 authenticationType = .reauthEmail(email)
@@ -158,7 +158,7 @@ final class AuthenticationInterfaceBuilder {
         case let .reauthenticate(credentials, _, _, isSignedOut):
             let viewController: AuthenticationStepController
 
-            if credentials?.usesCompanyLogin == true, credentials?.hasPassword == false {
+            if credentials?.usesCompanyLogin == true {
                 // Is the user has SSO enabled, show the screen to log in with SSO
                 let companyLoginStep = ReauthenticateWithCompanyLoginStepDescription()
                 viewController = makeViewController(for: companyLoginStep)
@@ -188,7 +188,6 @@ final class AuthenticationInterfaceBuilder {
             let prefilledCredentials = AuthenticationPrefilledCredentials(
                 credentials: LoginCredentials(
                     emailAddress: user.unverifiedEmail,
-                    hasPassword: false,
                     usesCompanyLogin: false
                 ),
                 isExpired: false

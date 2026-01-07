@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 // MARK: Channel History
 "conversation.create.channel.back" = "Go back to new conversation overview";
 "conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";
+
 
 // MARK: Conversation Files View
 "conversation.wireCells.files.close" = "Close files";
