@@ -112,6 +112,12 @@ struct FilesViewItemView: View {
                         Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
                     }.disabled(viewModel.isDownloading)
 
+                    if !viewModel.isInRecycleBin {
+                        Button(action: shareLink) {
+                            Label(Strings.Files.Item.Menu.shareLink, systemImage: "square.and.arrow.up")
+                        }
+                    }
+
                     if viewModel.isDownloadOptionAvailable {
                         Button(action: download) {
                             Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
@@ -244,6 +250,10 @@ struct FilesViewItemView: View {
 
     private func editFile() {
         Task { await viewModel.edit() }
+    }
+
+    private func shareLink() {
+        Task { await viewModel.onItemAction(.shareLink, viewModel.item) }
     }
 
     private func download() {

@@ -200,7 +200,12 @@ public extension WireMessagingFactory {
                         getAssetUseCase: WireCellsGetAssetUseCase(
                             localAssetRepository: localAssetRepository,
                             fileCache: fileCache
-                        )
+                        ),
+                        getPublicLinkData: WireCellsGetPublicLinkDataUseCase(nodesAPI: nodesAPI),
+                        createPublicLink: WireCellsCreatePublicLinkUseCase(nodesAPI: nodesAPI),
+                        deletePublicLink: WireCellsDeletePublicLinkUseCase(nodesAPI: nodesAPI),
+                        updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
+                        updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI)
                     ),
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,
