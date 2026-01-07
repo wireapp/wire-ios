@@ -24,7 +24,6 @@ public extension ZMUser {
     @objc var loginCredentials: LoginCredentials {
         LoginCredentials(
             emailAddress: emailAddress,
-            hasPassword: emailAddress != nil,
             usesCompanyLogin: usesCompanyLogin
         )
     }
@@ -37,7 +36,6 @@ public extension LoginCredentials {
     var dictionaryRepresentation: [String: Any] {
         var userInfo: [String: Any] = [:]
         userInfo[ZMUserLoginCredentialsKey] = self
-        userInfo[ZMUserHasPasswordKey] = hasPassword
         userInfo[ZMUserUsesCompanyLoginCredentialKey] = usesCompanyLogin
 
         if let emailAddress, !emailAddress.isEmpty {
