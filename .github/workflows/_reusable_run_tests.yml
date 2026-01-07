@@ -201,7 +201,7 @@ jobs:
 
       - name: Publish test results + Allure report
         if: always()
-        uses: ./.github/actions/allure-reporting/allure-report-action
+        uses: ./.github/actions/allure-reporting
         with:
           allure_artifact_name: "allure-report-${{ github.run_number }}"
           xcresult_search_path: "artifacts"

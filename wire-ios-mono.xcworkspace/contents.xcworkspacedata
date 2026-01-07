@@ -20,7 +20,7 @@
          location = "group:allure-reporting"
          name = "allure-reporting">
          <FileRef
-            location = "group:allure-report-action.yaml">
+            location = "group:action.yaml">
          </FileRef>
       </Group>
    </Group>
