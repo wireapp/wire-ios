@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -63,9 +63,11 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         self.userSession = userSession
         let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
             .isFeatureEnabled(.apps) ?? false
+        let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
         self.values = ConversationCreationValues(
             isChannel: true,
             isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )

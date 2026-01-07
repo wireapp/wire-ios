@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,17 +24,15 @@ import Foundation
 public class LoginCredentials: NSObject, Codable {
 
     @objc public let emailAddress: String?
-    @objc public let hasPassword: Bool
     @objc public let usesCompanyLogin: Bool
 
-    public init(emailAddress: String?, hasPassword: Bool, usesCompanyLogin: Bool) {
+    public init(emailAddress: String?, usesCompanyLogin: Bool) {
         self.emailAddress = emailAddress
-        self.hasPassword = hasPassword
         self.usesCompanyLogin = usesCompanyLogin
     }
 
     public override var debugDescription: String {
-        "<LoginCredentials>:\n\temailAddress: \(String(describing: emailAddress))\n\thasPassword: \(hasPassword)\n\tusesCompanyLogin: \(usesCompanyLogin)"
+        "<LoginCredentials>:\n\temailAddress: \(String(describing: emailAddress))\n\tusesCompanyLogin: \(usesCompanyLogin)"
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
@@ -43,16 +41,14 @@ public class LoginCredentials: NSObject, Codable {
         }
 
         let emailEquals = emailAddress == otherCredentials.emailAddress
-        let passwordEquals = hasPassword == otherCredentials.hasPassword
         let companyLoginEquals = usesCompanyLogin == otherCredentials.usesCompanyLogin
 
-        return emailEquals && passwordEquals && companyLoginEquals
+        return emailEquals && companyLoginEquals
     }
 
     public override var hash: Int {
         var hasher = Hasher()
         hasher.combine(emailAddress)
-        hasher.combine(hasPassword)
         hasher.combine(usesCompanyLogin)
         return hasher.finalize()
     }

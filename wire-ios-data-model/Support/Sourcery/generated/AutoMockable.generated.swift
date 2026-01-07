@@ -2,7 +2,7 @@
 // DO NOT EDIT
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -3736,6 +3736,24 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         }
     }
 
+    // MARK: - fetchCellsInternal
+
+    public var fetchCellsInternal_Invocations: [Void] = []
+    public var fetchCellsInternal_MockMethod: (() -> Feature.CellsInternal?)?
+    public var fetchCellsInternal_MockValue: Feature.CellsInternal??
+
+    public func fetchCellsInternal() -> Feature.CellsInternal? {
+        fetchCellsInternal_Invocations.append(())
+
+        if let mock = fetchCellsInternal_MockMethod {
+            return mock()
+        } else if let mock = fetchCellsInternal_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchCellsInternal`")
+        }
+    }
+
 }
 
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
@@ -4376,6 +4394,29 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         try await mock(groupID)
+    }
+
+    // MARK: - externalSenderKey
+
+    public var externalSenderKeyGroupID_Invocations: [MLSGroupID] = []
+    public var externalSenderKeyGroupID_MockError: Error?
+    public var externalSenderKeyGroupID_MockMethod: ((MLSGroupID) async throws -> Data)?
+    public var externalSenderKeyGroupID_MockValue: Data?
+
+    public func externalSenderKey(groupID: MLSGroupID) async throws -> Data {
+        externalSenderKeyGroupID_Invocations.append(groupID)
+
+        if let error = externalSenderKeyGroupID_MockError {
+            throw error
+        }
+
+        if let mock = externalSenderKeyGroupID_MockMethod {
+            return try await mock(groupID)
+        } else if let mock = externalSenderKeyGroupID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `externalSenderKeyGroupID`")
+        }
     }
 
     // MARK: - conversationExists

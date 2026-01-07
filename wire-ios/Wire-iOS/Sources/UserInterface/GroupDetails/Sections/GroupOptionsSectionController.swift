@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,23 +40,45 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         case timeout
         case fileCollaboration // keep at the last position
 
+        /// Returns `true` if the option is presented to the user or `false` otherwise.
+
         func accessible(
             in conversation: GroupDetailsConversationType,
-            by user: UserType
+            by user: UserType,
+            areLegacyBotsAvailable: Bool
         ) -> Bool {
             switch self {
-            case .channelAccess: user.canModifyChannelAccessLevelSettings(in: conversation)
-            case .notifications: user.canModifyNotificationSettings(in: conversation)
-            case .fileCollaboration: conversation.isCellsEnabled
-            case .guests:        user.canModifyGuestsAccessControlSettings(in: conversation)
-            case .services:      user.canModifyGuestsAccessControlSettings(in: conversation) && conversation
-                .botCanBeAdded
-            case .timeout:       user.canModifyEphemeralSettings(in: conversation) && !conversation.isCellsEnabled
+            case .channelAccess:
+                return user.canModifyChannelAccessLevelSettings(in: conversation)
+            case .notifications:
+                return user.canModifyNotificationSettings(in: conversation)
+            case .fileCollaboration:
+                return conversation.isCellsEnabled
+            case .guests:
+                return user.canModifyGuestsAccessControlSettings(in: conversation)
+            case .services:
+                guard user.canModifyGuestsAccessControlSettings(in: conversation),
+                      conversation.botCanBeAdded else { return false }
+                // if apps are already enabled for a conversation, allow disabling them
+                if conversation.allowApps {
+                    return true
+                }
+                switch conversation.messageProtocol {
+                case .mls:
+                    // always show the option, but display a hint on the details screen if the feature flag is disabled
+                    return true
+                case .proteus:
+                    return areLegacyBotsAvailable
+                default:
+                    return false
+                }
+            case .timeout:
+                return user.canModifyEphemeralSettings(in: conversation) && !conversation.isCellsEnabled
             case .channelHistoryDepth:
                 if DeveloperFlag.channelsHistory.isOn {
-                    user.canModifyChannelHistoryDepthSettings(in: conversation)
+                    return user.canModifyChannelHistoryDepthSettings(in: conversation)
                 } else {
-                    false
+                    return false
                 }
             }
         }
@@ -91,12 +113,19 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         conversation: GroupDetailsConversationType,
         user: UserType,
         delegate: GroupOptionsSectionControllerDelegate,
-        syncCompleted: Bool
+        syncCompleted: Bool,
+        areLegacyBotsAvailable: Bool
     ) {
         self.delegate = delegate
         self.conversation = conversation
         self.syncCompleted = syncCompleted
-        self.options = Option.allCases.filter { $0.accessible(in: conversation, by: user) }
+        self.options = Option.allCases.filter { option in
+            option.accessible(
+                in: conversation,
+                by: user,
+                areLegacyBotsAvailable: areLegacyBotsAvailable
+            )
+        }
     }
 
     // MARK: - Collection View

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -73,6 +73,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
         zClientViewController = ZClientViewController(
             account: coreDataStack.account,
+            contextProvider: DefaultManagedObjectContextProvider(contextProvider: coreDataStack),
             selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
             trackingManager: nil,
