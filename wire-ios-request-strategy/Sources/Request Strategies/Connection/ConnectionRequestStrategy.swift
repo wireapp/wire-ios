@@ -142,7 +142,7 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
                 connectionByIDSync.sync(identifiers: userIdSet)
             }
 
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
             if let qualifiedID = object.to.qualifiedID {
                 let qualifiedIdSet: Set<ConnectionByQualifiedIDTranscoder.T> = [qualifiedID]
                 connectionByQualifiedIDSync.sync(identifiers: qualifiedIdSet)

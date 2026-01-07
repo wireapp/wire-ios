@@ -35,6 +35,7 @@ public class Feature: ZMManagedObject {
         case apps
         case assetAuditLog
         case cells
+        case cellsInternal
         case channels
         case classifiedDomains
         case conferenceCalling
@@ -230,6 +231,7 @@ public class Feature: ZMManagedObject {
              .apps,
              .assetAuditLog,
              .cells,
+             .cellsInternal,
              .channels,
              .classifiedDomains,
              .conferenceCalling,
