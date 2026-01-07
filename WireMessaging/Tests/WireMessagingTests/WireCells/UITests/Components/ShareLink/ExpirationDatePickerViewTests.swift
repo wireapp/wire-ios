@@ -54,6 +54,7 @@ final class ExpirationDatePickerViewTests: XCTestCase {
             case .noExpirationDate:
                 viewModel = .init(
                     linkID: "test",
+                    calendar: Calendar(identifier: .gregorian),
                     expirationDate: nil,
                     didSave: { _ in },
                     updatePublicLinkExpiration: updatePublicLinkExpiration
@@ -61,6 +62,7 @@ final class ExpirationDatePickerViewTests: XCTestCase {
             case .hasExpirationDate:
                 viewModel = .init(
                     linkID: "test",
+                    calendar: Calendar(identifier: .gregorian),
                     expirationDate: .distantFuture,
                     didSave: { _ in },
                     updatePublicLinkExpiration: updatePublicLinkExpiration

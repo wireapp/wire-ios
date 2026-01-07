@@ -25,8 +25,7 @@ extension ExpirationDatePickerView {
     @MainActor
     final class ViewModel: ObservableObject {
         let currentExpirationDate: Date?
-        let defaultExpirationDate: Date = Calendar.current.date(byAdding: .hour, value: 1, to: Date()) ?? Date()
-            .addingTimeInterval(3600)
+        let defaultExpirationDate: Date
 
         private let linkID: String
         private let didSave: (Date?) -> Void
@@ -39,10 +38,13 @@ extension ExpirationDatePickerView {
 
         init(
             linkID: String,
+            calendar: Calendar = Calendar.autoupdatingCurrent,
             expirationDate: Date?,
             didSave: @escaping (Date?) -> Void,
             updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase
         ) {
+            self.defaultExpirationDate = calendar.date(byAdding: .hour, value: 1, to: Date()) ?? Date()
+                .addingTimeInterval(3600)
             self.currentExpirationDate = expirationDate
             // do not assign a default here; keep nil if none provided
             self.expirationDate = expirationDate
