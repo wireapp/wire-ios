@@ -34,7 +34,7 @@ MARKER_START='<!-- allure-link-start -->'
 MARKER_END='<!-- allure-link-end -->'
 BLOCK="${MARKER_START}
 
-**Allure report (single-file HTML):** [${ALLURE_ARTIFACT_NAME}](${ALLURE_URL})
+**Allure report: ** [${ALLURE_ARTIFACT_NAME}](${ALLURE_URL})
 
 ${MARKER_END}"
 
