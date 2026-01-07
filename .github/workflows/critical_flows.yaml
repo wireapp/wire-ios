@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - 'develop'
-      - 'release/cycle-*' 
+      - 'release/cycle-*'
   
 # This is what will cancel the workflow
 concurrency:
