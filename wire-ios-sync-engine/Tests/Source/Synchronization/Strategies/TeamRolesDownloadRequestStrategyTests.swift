@@ -193,7 +193,6 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
     }
 
-
     func testThatItCreatesNoNewRequestAfterReceivingAResponse() {
         var team: Team!
 

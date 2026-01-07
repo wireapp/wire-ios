@@ -673,7 +673,6 @@ class CallingRequestStrategyTests: MessagingTest {
         return try! JSONSerialization.data(withJSONObject: json, options: [])
     }
 
-
     func test_ThatItHandlesMLSRejectMessage() throws {
         let (user1AVSIdentifier, client1RemoteIdentifier, conversationAVSID) = try syncMOC.performAndWait { [self] in
             // Given

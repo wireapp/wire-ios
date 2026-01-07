@@ -46,7 +46,7 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy,
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return downstreamSync.nextRequest(for: apiVersion)
+        downstreamSync.nextRequest(for: apiVersion)
     }
 
     // MARK: - ZMContextChangeTrackerSource

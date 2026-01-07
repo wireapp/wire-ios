@@ -60,7 +60,7 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMSingleRe
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.configuration = [
-//            .allowsRequestsDuringSlowSync,
+            //            .allowsRequestsDuringSlowSync,
 //            .allowsRequestsDuringQuickSync,
             .allowsRequestsWhileWaitingForWebsocket,
             .allowsRequestsWhileOnline
@@ -129,8 +129,6 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMSingleRe
         deletedLabels.forEach { managedObjectContext.delete($0) } // TODO: jacob consider doing a batch delete
         managedObjectContext.saveOrRollback()
     }
-
-   
 
     // MARK: - ZMSingleRequestTranscoder
 

@@ -50,7 +50,7 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         self.operationStatus = OperationStatus()
         self.teamInvitationStatus = TeamInvitationStatus()
         operationStatus.isInBackground = application.applicationState == .background
-    
+
         self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext)
         self.clientUpdateStatus = ClientUpdateStatus(syncManagedObjectContext: managedObjectContext)
         self.clientRegistrationStatus = ZMClientRegistrationStatus(

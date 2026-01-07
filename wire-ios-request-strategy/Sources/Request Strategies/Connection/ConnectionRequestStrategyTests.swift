@@ -171,7 +171,6 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
         }
     }
 
-
     // MARK: Helpers
 
     func fetchConnection(_ connection: ZMConnection, response: ZMTransportResponse) {

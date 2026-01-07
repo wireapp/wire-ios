@@ -102,7 +102,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.configuration = [
-            .allowsRequestsWhileOnline,
+            .allowsRequestsWhileOnline
         ]
 
         updateSync.transcoder = self
@@ -110,15 +110,15 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
 
-        return requestGenerators.nextRequest(for: apiVersion)
+        requestGenerators.nextRequest(for: apiVersion)
     }
 
     public var requestGenerators: [ZMRequestGenerator] {
-            [
-                connectionByIDSync,
-                connectionByQualifiedIDSync,
-                actionSync
-            ]
+        [
+            connectionByIDSync,
+            connectionByQualifiedIDSync,
+            actionSync
+        ]
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {

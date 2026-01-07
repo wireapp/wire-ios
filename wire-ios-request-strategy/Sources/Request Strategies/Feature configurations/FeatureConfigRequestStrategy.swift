@@ -56,10 +56,10 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
             .allowsRequestsWhileInBackground
         ]
     }
-    
+
     // MARK: - Request
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return actionSync.nextRequest(for: apiVersion)
+        actionSync.nextRequest(for: apiVersion)
     }
 }

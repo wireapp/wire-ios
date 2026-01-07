@@ -19,8 +19,8 @@
 public import Foundation
 
 import WireFoundation
-import WireUtilitiesPackage
 import WireLogging
+import WireUtilitiesPackage
 
 public extension SessionManager {
 
@@ -64,7 +64,11 @@ private struct ImportBackupAppStateUpdater: ImportBackupAppStateUpdaterProtocol 
         do {
             try await userSession.syncAgent?.performInitialSync()
         } catch {
-            WireLogger.sync.error("error performing slow sync: \(String(describing: error))", attributes: .initialSync, .safePublic)
+            WireLogger.sync.error(
+                "error performing slow sync: \(String(describing: error))",
+                attributes: .initialSync,
+                .safePublic
+            )
         }
     }
 }

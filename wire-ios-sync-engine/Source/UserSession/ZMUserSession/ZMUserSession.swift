@@ -35,8 +35,6 @@ protocol UserSessionDelegate: AnyObject, UserSessionAppLockDelegate, UserSession
 
 }
 
-
-
 enum ZMUserSessionError: Error {
     case selfClientNotReady
 }
@@ -513,12 +511,12 @@ public final class ZMUserSession: NSObject {
             coreCryptoProvider: coreCryptoProvider,
             faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
         )
-        
+
         self.conversationEventProcessor = ConversationEventProcessor(
-              context: coreDataStack.syncContext,
-              localDomain: resolvedBackendMetadata.domain,
-              isFederationEnabled: resolvedBackendMetadata.isFederationEnabled
-          )
+            context: coreDataStack.syncContext,
+            localDomain: resolvedBackendMetadata.domain,
+            isFederationEnabled: resolvedBackendMetadata.isFederationEnabled
+        )
     }
 
     func trackAppOpenAnalyticEventWhenAppBecomesActive() {
@@ -1359,7 +1357,7 @@ extension ZMUserSession: SyncAgentDelegate {
             "process pending call events",
             attributes: .incrementalSync
         )
-        
+
         syncAgent?.resume()
     }
 

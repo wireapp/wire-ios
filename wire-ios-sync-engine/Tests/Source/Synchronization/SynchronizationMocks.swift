@@ -200,7 +200,6 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
 
 class FakeCookieStorage: ZMPersistentCookieStorage {}
 
-
 @objc
 public class MockPushMessageHandler: NSObject, PushMessageHandler {
 

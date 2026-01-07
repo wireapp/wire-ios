@@ -95,7 +95,7 @@ final class LocalNotificationDispatcherTests: DatabaseTest {
 }
 
 extension LocalNotificationDispatcherTests {
-   
+
     func testThatWhenFailingAMessageItSchedulesANotification() {
         syncMOC.performGroupedAndWait {
             // GIVEN

@@ -66,7 +66,7 @@ public final class TeamRolesDownloadRequestStrategy:
     }
 
     public override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return downstreamSync.nextRequest(for: apiVersion)
+        downstreamSync.nextRequest(for: apiVersion)
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
@@ -76,7 +76,7 @@ public final class TeamRolesDownloadRequestStrategy:
     public var requestGenerators: [ZMRequestGenerator] {
         [self]
     }
-    
+
     // MARK: - ZMDownstreamTranscoder
 
     public func request(

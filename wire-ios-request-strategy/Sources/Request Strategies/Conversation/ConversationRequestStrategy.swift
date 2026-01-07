@@ -155,7 +155,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return requestGenerators.nextRequest(for: apiVersion)
+        requestGenerators.nextRequest(for: apiVersion)
     }
 
     func fetch(_ conversations: Set<ZMConversation>, for apiVersion: APIVersion) {
@@ -172,14 +172,14 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             }
         }
     }
-    
+
     public var requestGenerators: [ZMRequestGenerator] {
-            [
-                conversationByIDSync,
-                conversationByQualifiedIDSync,
-                modifiedSync,
-                actionSync
-            ]
+        [
+            conversationByIDSync,
+            conversationByQualifiedIDSync,
+            modifiedSync,
+            actionSync
+        ]
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {

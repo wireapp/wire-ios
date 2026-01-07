@@ -17,6 +17,7 @@
 //
 
 import Foundation
+
 // TODO: check if used?
 final class BundledMessagesNotificationBuilder: NotificationBuilder {
 

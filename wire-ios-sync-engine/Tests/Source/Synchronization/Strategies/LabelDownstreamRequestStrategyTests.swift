@@ -104,7 +104,6 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
     }
 
-
     func testThatItRequestsLabels_WhenRefetchingIsNecessary() {
         syncMOC.performGroupedAndWait {
             // GIVEN

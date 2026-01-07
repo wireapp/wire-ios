@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import WireDataModelSupport
 import WireTesting
 import WireTestingPackage
-import Combine
 
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
@@ -33,11 +33,12 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         super.setUp()
         cancellables = []
     }
+
     override func tearDown() {
         super.tearDown()
         cancellables = nil
     }
-    
+
     func testThatSyncContextReturnsSelfForLinkedSyncContext() {
         // GIVEN
         XCTAssertNotNil(sut.syncManagedObjectContext)
@@ -130,7 +131,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        let expectation = self.expectation(description: "wait for trigger slow")
+        let expectation = expectation(description: "wait for trigger slow")
         sut.clientSessionComponent?.syncStateSubject.sink { state in
             if state == .initialSyncing(.pullLastEventID) {
                 expectation.fulfill()

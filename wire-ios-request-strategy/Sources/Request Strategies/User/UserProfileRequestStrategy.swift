@@ -86,7 +86,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
 
-        return [userProfileByID, userProfileByQualifiedID, actionSync].nextRequest(for: apiVersion)
+        [userProfileByID, userProfileByQualifiedID, actionSync].nextRequest(for: apiVersion)
     }
 
     func fetch(users: Set<ZMUser>, for apiVersion: APIVersion) {
@@ -110,7 +110,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
     public func didFinishSyncingAllObjects() {
         // do nothing
     }
-    
+
     public func didFailToSyncAllObjects() {
         // do nothing
     }
