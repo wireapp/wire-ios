@@ -44,6 +44,9 @@ jobs:
     name: Run tests
     runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
     timeout-minutes: 90
+    permissions:
+      contents: read
+      pull-requests: write
     outputs:
       xcresult_files: ${{ steps.find-xcresults.outputs.xcresult_files }}
     env:
@@ -196,14 +199,12 @@ jobs:
             app-group.zip
             fastlane/app-group.zip
 
-      - name: Prepare visual representation of test results
-        uses: EnricoMi/publish-unit-test-result-action/macos@v2
+     - name: Publish test results + Allure report
         if: always()
+        uses: ./.github/actions/allure-reporting/allure-report-action
         with:
-          files: |
-            build/reports/*.junit
-            artifacts/**/*.junit
-          compare_to_earlier_commit: false
+          allure_artifact_name: "allure-report-${{ github.run_number }}"
+          xcresult_search_path: "artifacts"
 
       - name: Archiving DerivedData Logs
         uses: actions/upload-artifact@v4

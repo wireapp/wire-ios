@@ -14,11 +14,19 @@
       location = "group:Cartfile.resolved">
    </FileRef>
    <Group
+      location = "container:.github/actions"
+      name = "actions">
+      <Group
+         location = "group:allure-reporting"
+         name = "allure-reporting">
+         <FileRef
+            location = "group:allure-report-action.yaml">
+         </FileRef>
+      </Group>
+   </Group>
+   <Group
       location = "group:.github/workflows"
       name = "workflows">
-      <FileRef
-         location = "group:_reusable_allure_reporting.yaml">
-      </FileRef>
       <FileRef
          location = "group:_reusable_app_release.yml">
       </FileRef>
