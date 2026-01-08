@@ -202,8 +202,8 @@
 "conversation.wireCells.shareLink.linkSection.expirationTitle" = "Expiration";
 "conversation.wireCells.shareLink.linkSection.passwordDescription" = "Set a password to restrict access.";
 "conversation.wireCells.shareLink.linkSection.expirationDescription" = "Link expires on a selected day.";
-"conversation.wireCells.shareLink.shareLinkButton" = "Share link";
-"conversation.wireCells.shareLink.preparingLinkButton" = "Preparing link";
+"conversation.wireCells.shareLink.shareLinkButton" = "Share Link";
+"conversation.wireCells.shareLink.preparingLinkButton" = "Preparing Link…";
 "conversation.wireCells.shareLink.off" = "OFF";
 "conversation.wireCells.shareLink.on" = "ON";
 "conversation.wireCells.shareLink.expired" = "EXPIRED";
