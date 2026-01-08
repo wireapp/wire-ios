@@ -324,17 +324,3 @@ private struct CredentialIdentityResolver: AWSCredentialIdentityResolver {
     }
 
 }
-
-class StrB: Foundation.Stream {
-
-    var cancelled = false
-
-    override var streamError: (any Error)? {
-        if cancelled {
-            return NSError(domain: NSCocoaErrorDomain, code: NSUserCancelledError, userInfo: nil)
-        }
-
-        return super.streamError
-    }
-
-}
