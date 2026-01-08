@@ -70,6 +70,13 @@ package struct FilesView: FilesViewProtocol {
             .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
             .toolbar { toolbarContent }
+            .if(viewModel.showSearchBar) { view in
+                view.searchable(
+                    text: $viewModel.searchText,
+                    placement: .navigationBarDrawer,
+                    prompt: Strings.Files.Search.title
+                )
+            }
             .onAppear { reloadTask() }
             .onReceive(viewModel.triggerReload) { _ in
                 Task {
