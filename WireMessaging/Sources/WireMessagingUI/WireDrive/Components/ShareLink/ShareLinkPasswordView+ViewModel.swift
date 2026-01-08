@@ -26,9 +26,9 @@ extension ShareLinkPasswordView {
         let existingPassword: String?
 
         struct UseCases {
-            let updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase
-            let storePublicLinkPasswordUseCase: WireCellsStorePublicLinkPasswordUseCase
-            let deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase
+            let updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase
+            let storePublicLinkPasswordUseCase: WireDriveStorePublicLinkPasswordUseCase
+            let deletePublicLinkPasswordUseCase: WireDriveDeletePublicLinkPasswordUseCase
         }
 
         @Published var isPasswordEnabled: Bool

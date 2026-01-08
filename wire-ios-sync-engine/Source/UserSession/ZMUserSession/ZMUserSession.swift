@@ -172,14 +172,14 @@ public final class ZMUserSession: NSObject {
         return featureRepository.fetchCells()
     }
 
-    public var wireCellsBackendURL: URL? {
+    public var wireDriveBackendURL: URL? {
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchCellsInternal()?.config.backend.url
     }
 
-    public var isWireCellsEnabled: Bool {
+    public var isWireDriveEnabled: Bool {
         let isFeatureEnabled = wireCellsFeature.status == .enabled
-        let hasBackendURL = wireCellsBackendURL != nil
+        let hasBackendURL = wireDriveBackendURL != nil
 
         return isFeatureEnabled && hasBackendURL
     }

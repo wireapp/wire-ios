@@ -29,12 +29,12 @@ package struct FilesViewContainer: View {
 
     private let cellName: String
     private let nodesAPI: NodesAPI
-    private let nodesRepository: any WireCellsNodesRepositoryProtocol
+    private let nodesRepository: any WireDriveNodesRepositoryProtocol
     private let isCellsStatePending: Bool
-    private let localAssetStore: any WireCellsLocalAssetStoreProtocol
-    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
-    private let nodeCache: any WireCellsNodeCacheProtocol
-    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
+    private let localAssetStore: any WireDriveLocalAssetStoreProtocol
+    private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
+    private let nodeCache: any WireDriveNodeCacheProtocol
+    private let nodeRenameNotifier: WireDriveNodeRenameNotifier
     private let fileCache: any FileCache
     private let isFoldersEnabled: Bool
     private let isCollaboraEnabled: Bool
@@ -53,12 +53,12 @@ package struct FilesViewContainer: View {
     package init(
         cellName: String,
         nodesAPI: NodesAPI,
-        nodesRepository: any WireCellsNodesRepositoryProtocol,
+        nodesRepository: any WireDriveNodesRepositoryProtocol,
         isCellsStatePending: Bool,
-        localAssetStore: any WireCellsLocalAssetStoreProtocol,
-        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
-        nodeCache: any WireCellsNodeCacheProtocol,
-        nodeRenameNotifier: WireCellsNodeRenameNotifier,
+        localAssetStore: any WireDriveLocalAssetStoreProtocol,
+        localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
+        nodeCache: any WireDriveNodeCacheProtocol,
+        nodeRenameNotifier: WireDriveNodeRenameNotifier,
         fileCache: any FileCache,
         isFoldersEnabled: Bool,
         isCollaboraEnabled: Bool,
@@ -120,48 +120,48 @@ package struct FilesViewContainer: View {
     private func makeViewModel() -> FilesViewModel {
         FilesViewModel(
             useCases: .init(
-                fetchNodes: WireCellsFetchNodesPageUseCase(
+                fetchNodes: WireDriveFetchNodesPageUseCase(
                     configuration: .conversationFileView(
                         root: path.last.map { .id($0.id) } ?? .path(cellName),
                         isFoldersEnabled: isFoldersEnabled
                     ),
                     repository: nodesRepository
                 ),
-                deleteNodes: WireCellsDeleteNodesUseCase(
+                deleteNodes: WireDriveDeleteNodesUseCase(
                     repository: nodesRepository,
                     fileCache: fileCache,
                     localAssetStore: localAssetStore
                 ),
-                restoreNodes: WireCellsRestoreNodesUseCase(
+                restoreNodes: WireDriveRestoreNodesUseCase(
                     repository: nodesRepository,
                     fileCache: fileCache,
                     localAssetStore: localAssetStore
                 ),
-                renameNode: WireCellsRenameNodeUseCase(
+                renameNode: WireDriveRenameNodeUseCase(
                     nodesRepository: nodesRepository,
                     localAssetsRepository: localAssetRepository,
                     nodeCache: nodeCache,
                     nodeRenameNotifier: nodeRenameNotifier
                 ),
-                updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
-                getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
-                createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
-                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesAPI),
-                restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI),
+                getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
+                createFolder: WireDriveCreateFolderUseCase(nodesRepository: nodesAPI),
+                fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesAPI),
+                restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
                     repository: nodesAPI,
                     localAssetsRepository: localAssetRepository,
                     nodeCache: nodeCache
                 ),
-                getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: nodesAPI),
-                getAssetUseCase: WireCellsGetAssetUseCase(
+                getEditingURL: WireDriveGetEditingURLUseCase(editingURLRepository: nodesAPI),
+                getAssetUseCase: WireDriveGetAssetUseCase(
                     localAssetRepository: localAssetRepository,
                     fileCache: fileCache
                 ),
-                getPublicLinkData: WireCellsGetPublicLinkDataUseCase(nodesAPI: nodesAPI),
-                createPublicLink: WireCellsCreatePublicLinkUseCase(nodesAPI: nodesAPI),
-                deletePublicLink: WireCellsDeletePublicLinkUseCase(nodesAPI: nodesAPI),
-                updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
-                updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI)
+                getPublicLinkData: WireDriveGetPublicLinkDataUseCase(nodesAPI: nodesAPI),
+                createPublicLink: WireDriveCreatePublicLinkUseCase(nodesAPI: nodesAPI),
+                deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesAPI),
+                updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
+                updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI)
             ),
             title: path.last?.name,
             navigationPath: path,

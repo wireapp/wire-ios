@@ -38,7 +38,7 @@ package struct FilesViewItem: Identifiable, Hashable {
         case folder
     }
 
-    /// Identifier of this item on the wire cells backend.
+    /// Identifier of this item on the wire drive backend.
     package let id: UUID
 
     /// The ETag of this item.
@@ -154,22 +154,22 @@ package final class FilesViewModel: ObservableObject {
 
     package struct UseCases {
         package init(
-            fetchNodes: WireCellsFetchNodesPageUseCase,
-            deleteNodes: WireCellsDeleteNodesUseCase,
-            restoreNodes: WireCellsRestoreNodesUseCase,
-            renameNode: any WireCellsRenameNodeUseCaseProtocol,
-            updateTags: any WireCellsUpdateTagsUseCaseProtocol,
-            getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol,
-            createFolder: any WireCellsCreateFolderUseCaseProtocol,
-            fetchNodeVersions: any WireCellsFetchNodeVersionsUseCaseProtocol,
-            restoreNodeVersion: any WireCellsRestoreNodeVersionUseCaseProtocol,
-            getEditingURL: WireCellsGetEditingURLUseCase,
-            getAssetUseCase: WireCellsGetAssetUseCase,
-            getPublicLinkData: any WireCellsGetPublicLinkDataUseCaseProtocol,
-            createPublicLink: WireCellsCreatePublicLinkUseCase,
-            deletePublicLink: WireCellsDeletePublicLinkUseCase,
-            updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase,
-            updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase
+            fetchNodes: WireDriveFetchNodesPageUseCase,
+            deleteNodes: WireDriveDeleteNodesUseCase,
+            restoreNodes: WireDriveRestoreNodesUseCase,
+            renameNode: any WireDriveRenameNodeUseCaseProtocol,
+            updateTags: any WireDriveUpdateTagsUseCaseProtocol,
+            getTagSuggestions: any WireDriveGetTagSuggestionsUseCaseProtocol,
+            createFolder: any WireDriveCreateFolderUseCaseProtocol,
+            fetchNodeVersions: any WireDriveFetchNodeVersionsUseCaseProtocol,
+            restoreNodeVersion: any WireDriveRestoreNodeVersionUseCaseProtocol,
+            getEditingURL: WireDriveGetEditingURLUseCase,
+            getAssetUseCase: WireDriveGetAssetUseCase,
+            getPublicLinkData: any WireDriveGetPublicLinkDataUseCaseProtocol,
+            createPublicLink: WireDriveCreatePublicLinkUseCase,
+            deletePublicLink: WireDriveDeletePublicLinkUseCase,
+            updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase,
+            updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase
         ) {
 
             self.fetchNodes = fetchNodes
@@ -190,29 +190,29 @@ package final class FilesViewModel: ObservableObject {
             self.updatePublicLinkPassword = updatePublicLinkPassword
         }
 
-        let fetchNodes: WireCellsFetchNodesPageUseCase
-        let deleteNodes: WireCellsDeleteNodesUseCase
-        let restoreNodes: WireCellsRestoreNodesUseCase
-        let renameNode: any WireCellsRenameNodeUseCaseProtocol
-        let updateTags: any WireCellsUpdateTagsUseCaseProtocol
-        let getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
-        let createFolder: any WireCellsCreateFolderUseCaseProtocol
-        let fetchNodeVersions: any WireCellsFetchNodeVersionsUseCaseProtocol
-        let restoreNodeVersion: any WireCellsRestoreNodeVersionUseCaseProtocol
-        let getEditingURL: WireCellsGetEditingURLUseCase
-        let getAssetUseCase: WireCellsGetAssetUseCase
-        let getPublicLinkData: any WireCellsGetPublicLinkDataUseCaseProtocol
-        let createPublicLink: WireCellsCreatePublicLinkUseCase
-        let deletePublicLink: WireCellsDeletePublicLinkUseCase
-        let updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase
-        let updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase
+        let fetchNodes: WireDriveFetchNodesPageUseCase
+        let deleteNodes: WireDriveDeleteNodesUseCase
+        let restoreNodes: WireDriveRestoreNodesUseCase
+        let renameNode: any WireDriveRenameNodeUseCaseProtocol
+        let updateTags: any WireDriveUpdateTagsUseCaseProtocol
+        let getTagSuggestions: any WireDriveGetTagSuggestionsUseCaseProtocol
+        let createFolder: any WireDriveCreateFolderUseCaseProtocol
+        let fetchNodeVersions: any WireDriveFetchNodeVersionsUseCaseProtocol
+        let restoreNodeVersion: any WireDriveRestoreNodeVersionUseCaseProtocol
+        let getEditingURL: WireDriveGetEditingURLUseCase
+        let getAssetUseCase: WireDriveGetAssetUseCase
+        let getPublicLinkData: any WireDriveGetPublicLinkDataUseCaseProtocol
+        let createPublicLink: WireDriveCreatePublicLinkUseCase
+        let deletePublicLink: WireDriveDeletePublicLinkUseCase
+        let updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase
+        let updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase
     }
 
     let useCases: UseCases
 
     private let setNavigation: ([FilesViewItem]) -> Void
-    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
-    private let nodesRepository: any WireCellsNodesRepositoryProtocol
+    private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
+    private let nodesRepository: any WireDriveNodesRepositoryProtocol
     private let fileCache: any FileCache
     private var lastSelectedItem: FilesViewItem?
     private let cellName: String? // nil when browsing all files
@@ -248,8 +248,8 @@ package final class FilesViewModel: ObservableObject {
         navigationPath: [FilesViewItem] = [],
         setNavigation: @escaping ([FilesViewItem]) -> Void = { _ in },
         isCellsStatePending: Bool,
-        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
-        nodesRepository: any WireCellsNodesRepositoryProtocol,
+        localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
+        nodesRepository: any WireDriveNodesRepositoryProtocol,
         fileCache: any FileCache,
         cellName: String? = nil,
         isFoldersEnabled: Bool,
@@ -403,7 +403,7 @@ package final class FilesViewModel: ObservableObject {
                 },
                 nodesRepository: nodesRepository,
                 localAssetRepository: assetRepository,
-                moveNodeUseCase: WireCellsMoveNodeUseCase(nodesRepository: nodesRepository),
+                moveNodeUseCase: WireDriveMoveNodeUseCase(nodesRepository: nodesRepository),
                 createFolderUseCase: useCases.createFolder
             )
         )
@@ -602,7 +602,7 @@ package final class FilesViewModel: ObservableObject {
 
     private func deleteItem(_ asset: FilesViewItem, permanently: Bool) async {
         guard state.isLoaded else {
-            WireLogger.wireCells.error("Attempt to delete asset while not visible", attributes: .safePublic)
+            WireLogger.wireDrive.error("Attempt to delete asset while not visible", attributes: .safePublic)
             return
         }
 
@@ -623,7 +623,7 @@ package final class FilesViewModel: ObservableObject {
 
     private func restoreItem(_ asset: FilesViewItem) async {
         guard state.isLoaded else {
-            WireLogger.wireCells.error("Attempt to restore asset while not visible", attributes: .safePublic)
+            WireLogger.wireDrive.error("Attempt to restore asset while not visible", attributes: .safePublic)
             return
         }
 
@@ -703,9 +703,9 @@ package final class FilesViewModel: ObservableObject {
                 deletePublicLink: useCases.deletePublicLink,
                 updatePublicLinkExpiration: useCases.updatePublicLinkExpiration,
                 updatePublicLinkPassword: useCases.updatePublicLinkPassword,
-                getPublicLinkPasswordUseCase: WireCellsGetPublicLinkPasswordUseCase(keychain: Keychain()),
-                storePublicLinkPasswordUseCase: WireCellsStorePublicLinkPasswordUseCase(keychain: Keychain()),
-                deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase(keychain: Keychain())
+                getPublicLinkPasswordUseCase: WireDriveGetPublicLinkPasswordUseCase(keychain: Keychain()),
+                storePublicLinkPasswordUseCase: WireDriveStorePublicLinkPasswordUseCase(keychain: Keychain()),
+                deletePublicLinkPasswordUseCase: WireDriveDeletePublicLinkPasswordUseCase(keychain: Keychain())
             )
         )
 

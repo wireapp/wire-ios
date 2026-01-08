@@ -44,9 +44,9 @@ final class FileVersioningViewModel: ObservableObject {
 
     private let nodeID: UUID
     private let eTag: String?
-    private let fetchNodeVersionsUseCase: any WireCellsFetchNodeVersionsUseCaseProtocol
-    private let restoreNodeVersionUseCase: any WireCellsRestoreNodeVersionUseCaseProtocol
-    private let getAssetUseCase: WireCellsGetAssetUseCase
+    private let fetchNodeVersionsUseCase: any WireDriveFetchNodeVersionsUseCaseProtocol
+    private let restoreNodeVersionUseCase: any WireDriveRestoreNodeVersionUseCaseProtocol
+    private let getAssetUseCase: WireDriveGetAssetUseCase
     private let accentColorProvider: () -> WireAccentColor
     private var subscriptions = Set<AnyCancellable>()
 
@@ -90,9 +90,9 @@ final class FileVersioningViewModel: ObservableObject {
             Calendar.autoupdatingCurrent,
             TimeZone.autoupdatingCurrent
         ),
-        fetchNodeVersionsUseCase: any WireCellsFetchNodeVersionsUseCaseProtocol,
-        restoreNodeVersionUseCase: any WireCellsRestoreNodeVersionUseCaseProtocol,
-        getAssetUseCase: WireCellsGetAssetUseCase,
+        fetchNodeVersionsUseCase: any WireDriveFetchNodeVersionsUseCaseProtocol,
+        restoreNodeVersionUseCase: any WireDriveRestoreNodeVersionUseCaseProtocol,
+        getAssetUseCase: WireDriveGetAssetUseCase,
         accentColorProvider: @escaping () -> WireAccentColor
     ) {
         self.nodeID = nodeID
@@ -175,7 +175,7 @@ final class FileVersioningViewModel: ObservableObject {
         }
     }
 
-    private func makeVersionModels(from versions: [WireCellsNodeVersion]) -> [VersionModel] {
+    private func makeVersionModels(from versions: [WireDriveNodeVersion]) -> [VersionModel] {
         let groupedVersions = groupedVersionsByDay(versions)
             .sorted(by: { $0.key > $1.key })
 
@@ -210,8 +210,8 @@ final class FileVersioningViewModel: ObservableObject {
     // MARK: - Grouping & Sorting
 
     private func groupedVersionsByDay(
-        _ versions: [WireCellsNodeVersion]
-    ) -> [Date: [WireCellsNodeVersion]] {
+        _ versions: [WireDriveNodeVersion]
+    ) -> [Date: [WireDriveNodeVersion]] {
         Dictionary(grouping: versions) { version in
             let date = version.modified ?? Date.distantPast
             let calendar = context.calendar
@@ -220,8 +220,8 @@ final class FileVersioningViewModel: ObservableObject {
     }
 
     private func sortVersionsByTime(
-        _ arg1: WireCellsNodeVersion,
-        _ arg2: WireCellsNodeVersion
+        _ arg1: WireDriveNodeVersion,
+        _ arg2: WireDriveNodeVersion
     ) -> Bool {
         let calendar = context.calendar
         let date1 = arg1.modified ?? Date.distantPast
@@ -237,7 +237,7 @@ final class FileVersioningViewModel: ObservableObject {
         return compared1 > compared2
     }
 
-    private func makeVersionItem(version: WireCellsNodeVersion) -> FileVersionItem {
+    private func makeVersionItem(version: WireDriveNodeVersion) -> FileVersionItem {
         let title = version.modified.map(formattedItemDate) ?? ""
         let subtitle = [version.ownerName, version.size.map(formattedFileSize)]
             .compactMap(\.self)

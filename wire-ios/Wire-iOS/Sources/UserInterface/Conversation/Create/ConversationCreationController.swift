@@ -74,7 +74,7 @@ final class ConversationCreationController: UIViewController {
             // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
             values.encryptionProtocol != .mls ? receiptsSection : nil,
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil,
-            userSession.isWireCellsEnabled ? fileManagementSection : nil
+            userSession.isWireDriveEnabled ? fileManagementSection : nil
         ].compactMap(\.self)
 
         if let firstSection = sections.first {
@@ -403,7 +403,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),
                 enableReceipts: values.enableReceipts,
-                cells: userSession.isWireCellsEnabled ? values.enableFileManagement : nil,
+                cells: userSession.isWireDriveEnabled ? values.enableFileManagement : nil,
                 isMLSEnabled: session.isBackendMLSEnabled
             )
 

@@ -20,7 +20,7 @@ import SwiftUI
 import WireDesign
 import WireFoundation
 
-/// A wire cells attachment preview for document attachments.
+/// A wire drive attachment preview for document attachments.
 
 struct WireDriveDocumentAttachmentPreview: View {
 
@@ -39,11 +39,11 @@ struct WireDriveDocumentAttachmentPreview: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireCellsAttachmentPreview(
+        WireDriveAttachmentPreview(
             progress: progress,
             progressColor: isError ? Constants.errorColor : ColorTheme.Base.primary(wireAccentColor).color
         ) {
-            WireCellsDocumentHeaderView(
+            WireDriveDocumentHeaderView(
                 headerIcon: headerIcon,
                 headerText: headerText,
                 labelText: labelText,
@@ -57,7 +57,7 @@ struct WireDriveDocumentAttachmentPreview: View {
 }
 
 #Preview {
-    WireCellsDocumentAttachmentPreview(
+    WireDriveDocumentAttachmentPreview(
         headerIcon: Image(FileIcon.pdf.resource),
         headerText: "PDF (336 KB)",
         labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",

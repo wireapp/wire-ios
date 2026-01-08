@@ -300,7 +300,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 sections.append(optionsSectionController)
             }
 
-            if conversation.isCellsEnabled, let collectionView = collectionViewController.collectionView {
+            if conversation.isWireDriveEnabled, let collectionView = collectionViewController.collectionView {
                 let selfDeletingMessagesDisabledSectionController = SelfDeletingMessagesDisabledSectionController(
                     conversation: conversation,
                     collectionView: collectionView

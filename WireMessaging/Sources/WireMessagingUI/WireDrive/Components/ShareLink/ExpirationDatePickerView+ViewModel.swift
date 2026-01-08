@@ -29,7 +29,7 @@ extension ExpirationDatePickerView {
 
         private let linkID: String
         private let didSave: (Date?) -> Void
-        private let updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase
+        private let updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase
 
         @Published var expirationDate: Date?
         @Published var isExpirationEnabled: Bool
@@ -41,7 +41,7 @@ extension ExpirationDatePickerView {
             calendar: Calendar = Calendar.autoupdatingCurrent,
             expirationDate: Date?,
             didSave: @escaping (Date?) -> Void,
-            updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase
+            updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase
         ) {
             self.defaultExpirationDate = calendar.date(byAdding: .hour, value: 1, to: Date()) ?? Date()
                 .addingTimeInterval(3600)

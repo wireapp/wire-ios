@@ -40,7 +40,7 @@ package protocol S3ClientProtocol: Sendable {
 
 extension S3Client: S3ClientProtocol, @unchecked @retroactive Sendable {}
 
-package enum WireCellsAWSClientError: Error {
+package enum WireDriveAWSClientError: Error {
     case downloadError
     case downloadErrorNoData
     case downloadErrorUnknownObject
@@ -94,13 +94,13 @@ final class AWSClient: Sendable {
         let input = GetObjectInput(bucket: Constants.bucket, key: objectKey)
         let response = try await s3.getObject(input: input)
         guard let body = response.body else {
-            throw WireCellsAWSClientError.downloadErrorNoData
+            throw WireDriveAWSClientError.downloadErrorNoData
         }
 
         switch body {
         case .data:
             guard let data = try await body.readData() else {
-                throw WireCellsAWSClientError.downloadError
+                throw WireDriveAWSClientError.downloadError
             }
 
             // Write the `Data` to the file.
@@ -108,7 +108,7 @@ final class AWSClient: Sendable {
             do {
                 try fileHandle.write(contentsOf: data)
             } catch {
-                throw WireCellsAWSClientError.writeError
+                throw WireDriveAWSClientError.writeError
             }
 
             onProgressUpdate(UInt64(data.count))
@@ -122,7 +122,7 @@ final class AWSClient: Sendable {
                 do {
                     try fileHandle.write(contentsOf: chunk)
                 } catch {
-                    throw WireCellsAWSClientError.writeError
+                    throw WireDriveAWSClientError.writeError
                 }
 
                 bytesRead += UInt64(chunk.count)
@@ -130,13 +130,13 @@ final class AWSClient: Sendable {
             }
 
         default:
-            throw WireCellsAWSClientError.downloadErrorUnknownObject
+            throw WireDriveAWSClientError.downloadErrorUnknownObject
         }
     }
 
     func upload(
         path: URL,
-        node: WireCellsNodeNetworkModel,
+        node: WireDriveNodeNetworkModel,
         versionID: UUID
     ) async -> AsyncThrowingStream<Int, any Error> {
         AsyncThrowingStream { continuation in
@@ -159,7 +159,7 @@ final class AWSClient: Sendable {
 
     private func upload(
         path: URL,
-        node: WireCellsNodeNetworkModel,
+        node: WireDriveNodeNetworkModel,
         versionID: UUID,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
@@ -175,7 +175,7 @@ final class AWSClient: Sendable {
 
     private func uploadRegular(
         path: URL,
-        node: WireCellsNodeNetworkModel,
+        node: WireDriveNodeNetworkModel,
         versionID: UUID,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
@@ -200,13 +200,13 @@ final class AWSClient: Sendable {
             _ = try await s3.putObject(input: input)
         } onCancel: {
             // TODO: [WPB-18574] AWS SDK doesn't support cancelling in flight requests. Find a work around.
-            WireLogger.wireCells.info("Cancelling upload for node: \(node.path)")
+            WireLogger.wireDrive.info("Cancelling upload for node: \(node.path)")
         }
     }
 
     private func uploadMultipart(
         path: URL,
-        node: WireCellsNodeNetworkModel,
+        node: WireDriveNodeNetworkModel,
         versionID: UUID,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
@@ -223,7 +223,7 @@ final class AWSClient: Sendable {
             )
         )
         guard let uploadId = createOutput.uploadId else {
-            throw WireCellsAWSClientError.missingUploadID
+            throw WireDriveAWSClientError.missingUploadID
         }
 
         var completedParts: [S3ClientTypes.CompletedPart] = []
@@ -272,7 +272,7 @@ final class AWSClient: Sendable {
     }
 }
 
-private extension WireCellsNodeNetworkModel {
+private extension WireDriveNodeNetworkModel {
     func createDraftNodeMetadata(versionID: UUID) -> [String: String] {
         [
             "Draft-Mode": "true",

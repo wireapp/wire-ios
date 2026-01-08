@@ -37,8 +37,8 @@ struct TagsEditView: View {
     private let tagBubbleSpacing: CGFloat = 8
 
     struct UseCases {
-        let updateTags: any WireCellsUpdateTagsUseCaseProtocol
-        let getSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
+        let updateTags: any WireDriveUpdateTagsUseCaseProtocol
+        let getSuggestions: any WireDriveGetTagSuggestionsUseCaseProtocol
     }
 
     init(fileItem: FilesViewItem, useCases: UseCases, postSaveAction: @escaping () async -> Void) {
@@ -325,8 +325,8 @@ struct TagsEditView: View {
     }()
 
     let useCases = TagsEditView.UseCases(
-        updateTags: WireCellsUpdateTagsUseCase(nodesAPI: mockAPI),
-        getSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: mockAPI),
+        updateTags: WireDriveUpdateTagsUseCase(nodesAPI: mockAPI),
+        getSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: mockAPI),
     )
 
     TagsEditView(fileItem: item, useCases: useCases, postSaveAction: {})

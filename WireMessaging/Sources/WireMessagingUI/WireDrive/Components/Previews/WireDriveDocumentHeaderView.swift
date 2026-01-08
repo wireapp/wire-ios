@@ -75,7 +75,7 @@ struct WireDriveDocumentHeaderView: View {
 }
 
 #Preview {
-    WireCellsDocumentHeaderView(
+    WireDriveDocumentHeaderView(
         headerIcon: Image(FileIcon.pdf.resource),
         headerText: "PDF (336 KB)",
         labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",

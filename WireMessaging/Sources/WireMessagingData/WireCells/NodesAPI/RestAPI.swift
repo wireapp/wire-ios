@@ -21,7 +21,7 @@ import Foundation
 import WireLogging
 import WireMessagingDomain
 
-enum WireCellsNodesAPIError: Error {
+enum WireDriveNodesAPIError: Error {
     case failedToDecodeNode
     case failedToDecodeNodeVersions
     case missingData(String)
@@ -47,20 +47,20 @@ final class RestAPI: Sendable {
         self.accessTokenProvider = accessToken
     }
 
-    func getNode(uuid: UUID) async throws -> WireCellsNodeNetworkModel {
+    func getNode(uuid: UUID) async throws -> WireDriveNodeNetworkModel {
         let response = try await NodeServiceAPI.getByUuid(
             uuid: uuid.transportString(),
             apiConfiguration: makeConfiguration()
         )
         guard let dto = response.toDTO() else {
-            throw WireCellsNodesAPIError.failedToDecodeNode
+            throw WireDriveNodesAPIError.failedToDecodeNode
         }
         return dto
     }
 
     func getNodes(
-        _ request: WireCellsGetNodesRequest
-    ) async throws -> (nodes: [WireCellsNodeNetworkModel], nextOffset: Int?) {
+        _ request: WireDriveGetNodesRequest
+    ) async throws -> (nodes: [WireDriveNodeNetworkModel], nextOffset: Int?) {
         do {
             let collection = try await NodeServiceAPI.lookup(
                 body: request.lookupRequest,
@@ -200,7 +200,7 @@ final class RestAPI: Sendable {
         )
     }
 
-    func getVersions(uuid: UUID) async throws -> WireCellsNodeVersionsNetworkModel {
+    func getVersions(uuid: UUID) async throws -> WireDriveNodeVersionsNetworkModel {
         let query = RestNodeVersionsFilter(
             filterBy: .versionsAll,
             flags: [.withPreSignedURLs],
@@ -217,7 +217,7 @@ final class RestAPI: Sendable {
         )
 
         guard let dto = response.toDTO() else {
-            throw WireCellsNodesAPIError.failedToDecodeNodeVersions
+            throw WireDriveNodesAPIError.failedToDecodeNodeVersions
         }
 
         return dto
@@ -254,7 +254,7 @@ final class RestAPI: Sendable {
         )
     }
 
-    func preCheck(path: String, findAvailablePath: Bool = true) async throws -> WireCellsPreCheckResultDTO {
+    func preCheck(path: String, findAvailablePath: Bool = true) async throws -> WireDrivePreCheckResultDTO {
         let request = RestCreateCheckRequest(
             findAvailablePath: findAvailablePath,
             inputs: [RestIncomingNode(
@@ -266,25 +266,25 @@ final class RestAPI: Sendable {
         let response = try await NodeServiceAPI.createCheck(body: request, apiConfiguration: makeConfiguration())
 
         if let result = response.results?.first {
-            return WireCellsPreCheckResultDTO(
+            return WireDrivePreCheckResultDTO(
                 fileExists: result.exists ?? false,
                 nextPath: result.nextPath
             )
         } else {
-            return WireCellsPreCheckResultDTO()
+            return WireDrivePreCheckResultDTO()
         }
     }
 
-    func getPublicLink(linkID: String) async throws -> WireCellsPublicLink {
+    func getPublicLink(linkID: String) async throws -> WireDrivePublicLink {
         let response = try await NodeServiceAPI.getPublicLink(
             linkUuid: linkID,
             apiConfiguration: makeConfiguration()
         )
 
-        return try WireCellsPublicLink(response, serverURL: serverURLResolver())
+        return try WireDrivePublicLink(response, serverURL: serverURLResolver())
     }
 
-    func createPublicLink(uuid: UUID, label: String) async throws -> WireCellsPublicLink {
+    func createPublicLink(uuid: UUID, label: String) async throws -> WireDrivePublicLink {
         let request = RestPublicLinkRequest(
             link: RestShareLink(label: label, permissions: [.preview, .download])
         )
@@ -295,7 +295,7 @@ final class RestAPI: Sendable {
             apiConfiguration: makeConfiguration()
         )
 
-        return try WireCellsPublicLink(response, serverURL: serverURLResolver())
+        return try WireDrivePublicLink(response, serverURL: serverURLResolver())
     }
 
     func deletePublicLink(linkID: String) async throws {
@@ -305,7 +305,7 @@ final class RestAPI: Sendable {
         )
     }
 
-    func updatePublicLinkExpiration(linkID: String, expiration: Date?) async throws -> WireCellsPublicLink {
+    func updatePublicLinkExpiration(linkID: String, expiration: Date?) async throws -> WireDrivePublicLink {
         var currentLink = try await NodeServiceAPI.getPublicLink(
             linkUuid: linkID,
             apiConfiguration: makeConfiguration()
@@ -321,13 +321,13 @@ final class RestAPI: Sendable {
             apiConfiguration: makeConfiguration()
         )
 
-        return try WireCellsPublicLink(updatedLink, serverURL: serverURLResolver())
+        return try WireDrivePublicLink(updatedLink, serverURL: serverURLResolver())
     }
 
     func updatePublicLinkPassword(
         linkID: String,
         password: String?
-    ) async throws -> WireCellsPublicLink {
+    ) async throws -> WireDrivePublicLink {
         var currentLink = try await NodeServiceAPI.getPublicLink(
             linkUuid: linkID,
             apiConfiguration: makeConfiguration()
@@ -347,7 +347,7 @@ final class RestAPI: Sendable {
             apiConfiguration: makeConfiguration()
         )
 
-        return try WireCellsPublicLink(updatedLink, serverURL: serverURLResolver())
+        return try WireDrivePublicLink(updatedLink, serverURL: serverURLResolver())
     }
 
     func updateTags(uuid: UUID, tags: [String]) async throws {
@@ -391,7 +391,7 @@ final class RestAPI: Sendable {
 
 private extension RestNodeLocator {
 
-    init(_ value: WireCellsNodeLocator) {
+    init(_ value: WireDriveNodeLocator) {
         switch value {
         case let .path(path):
             self.init(path: path)
@@ -412,7 +412,7 @@ private struct LoggingIntercepter: OpenAPIInterceptor {
         requestBuilder: RequestBuilder<some Any>,
         completion: @escaping (Result<URLRequest, any Error>) -> Void
     ) {
-        WireLogger.wireCells.log(urlRequest)
+        WireLogger.wireDrive.log(urlRequest)
 
         interceptor.intercept(
             urlRequest: urlRequest,
@@ -431,9 +431,9 @@ private struct LoggingIntercepter: OpenAPIInterceptor {
         error: any Error,
         completion: @escaping (OpenAPIInterceptorRetry) -> Void
     ) {
-        WireLogger.wireCells.warn("Wire cells node API request failed: \(error)")
+        WireLogger.wireDrive.warn("Wire drive node API request failed: \(error)")
         if let response = response as? HTTPURLResponse {
-            WireLogger.wireCells.log(response: response)
+            WireLogger.wireDrive.log(response: response)
         }
 
         interceptor.retry(
@@ -448,7 +448,7 @@ private struct LoggingIntercepter: OpenAPIInterceptor {
     }
 }
 
-private extension WireCellsGetNodesRequest {
+private extension WireDriveGetNodesRequest {
 
     var lookupRequest: RestLookupRequest {
         var request = RestLookupRequest(
@@ -544,11 +544,11 @@ private extension RestPreSignedURL {
 
 }
 
-private extension WireCellsPublicLink {
+private extension WireDrivePublicLink {
 
     init(_ value: RestShareLink, serverURL: URL) throws {
         guard let linkID = value.uuid, let url = value.linkUrl else {
-            throw WireCellsNodesAPIError.missingData("Missing link ID or URL")
+            throw WireDriveNodesAPIError.missingData("Missing link ID or URL")
         }
 
         self.init(

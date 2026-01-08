@@ -54,10 +54,10 @@ package final class FilesFiltersViewModel: ObservableObject {
     @Published var savedTags: [String]
     @Published var showError: Bool = false
 
-    private let fetchTagsUseCase: any WireCellsGetTagSuggestionsUseCaseProtocol
+    private let fetchTagsUseCase: any WireDriveGetTagSuggestionsUseCaseProtocol
 
     init(
-        fetchTagsUseCase: any WireCellsGetTagSuggestionsUseCaseProtocol,
+        fetchTagsUseCase: any WireDriveGetTagSuggestionsUseCaseProtocol,
         savedTags: [String]?,
         accentColorProvider: @escaping () -> WireAccentColor
 

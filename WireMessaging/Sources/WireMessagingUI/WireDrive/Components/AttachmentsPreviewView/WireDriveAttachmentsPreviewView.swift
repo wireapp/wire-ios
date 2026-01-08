@@ -25,9 +25,9 @@ import WireMessagingDomainSupport
 /// A collection of attachment previews suitable for displaying in a conversation message.
 package struct WireDriveAttachmentsPreviewView: View {
 
-    @StateObject var viewModel: WireCellsAttachmentsPreviewViewModel
+    @StateObject var viewModel: WireDriveAttachmentsPreviewViewModel
 
-    package init(viewModel: @autoclosure @escaping () -> WireCellsAttachmentsPreviewViewModel) {
+    package init(viewModel: @autoclosure @escaping () -> WireDriveAttachmentsPreviewViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
     }
 
@@ -42,12 +42,12 @@ package struct WireDriveAttachmentsPreviewView: View {
 
     @ViewBuilder
     func itemRow(index: Int) -> some View {
-        WireCellsAttachmentsPreviewItemView(viewModel: viewModel.itemViewModel(index: index))
+        WireDriveAttachmentsPreviewItemView(viewModel: viewModel.itemViewModel(index: index))
     }
 }
 
 // MARK: - Preview
 
 #Preview {
-    WireCellsAttachmentsPreviewView(viewModel: .makePreview())
+    WireDriveAttachmentsPreviewView(viewModel: .makePreview())
 }

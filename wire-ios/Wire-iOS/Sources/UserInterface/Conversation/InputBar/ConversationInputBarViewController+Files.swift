@@ -45,13 +45,13 @@ extension ConversationInputBarViewController {
     /// Upload files at the given `urls`.
     ///
     /// - parameter urls: The URLs of the files to upload.
-    /// - note: If wire cells is enabled, each file will be uploaded separately. If wire cells is disabled and there are
+    /// - note: If wire drive is enabled, each file will be uploaded separately. If wire drive is disabled and there are
     /// multiple files, these will be zipped and then uploaded.
 
     func uploadFiles(at urls: [URL]) {
         guard !urls.isEmpty else { return }
 
-        if userSession.isWireCellsEnabled, conversation.isCellsEnabled {
+        if userSession.isWireDriveEnabled, conversation.isWireDriveEnabled {
             for url in urls {
                 Task.detached { [uploadDraftUseCase] in
                     // We don't care about the result of the operation here as we will be observing changes.

@@ -40,7 +40,7 @@ final class ZClientViewController: UIViewController {
 
     typealias MainCoordinator = WireMainNavigationUI.MainCoordinator<MainCoordinatorDependencies>
 
-    // MARK: - Private Members - Add wire cells factory here somehow
+    // MARK: - Private Members - Add wire drive factory here somehow
 
     let account: Account
     let contextProvider: any ManagedObjectContextProvider
@@ -75,7 +75,7 @@ final class ZClientViewController: UIViewController {
     weak var router: AuthenticatedRouterProtocol?
 
     private lazy var sidebarViewController = SidebarViewControllerBuilder().build(
-        isWireCellsEnabled: userSession.isWireCellsEnabled
+        isWireDriveEnabled: userSession.isWireDriveEnabled
     )
 
     private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
@@ -98,7 +98,7 @@ final class ZClientViewController: UIViewController {
     lazy var mainTabBarController = {
         let tabBarController = MainCoordinator.TabBarController(
             showMeetings: DeveloperFlag.wireMeetings.isOn,
-            showFiles: userSession.isWireCellsEnabled
+            showFiles: userSession.isWireDriveEnabled
         )
         tabBarController.applyMainTabBarControllerAppearance()
         return tabBarController
@@ -297,15 +297,15 @@ final class ZClientViewController: UIViewController {
                 guard let self else { return }
                 switch featureState.name {
                 case .cells, .cellsInternal:
-                    setupWireCellsFilesTab()
+                    setupWireDriveFilesTab()
                 default:
                     break
                 }
             }
     }
 
-    private func setupWireCellsFilesTab() {
-        guard userSession.isWireCellsEnabled else { return }
+    private func setupWireDriveFilesTab() {
+        guard userSession.isWireDriveEnabled else { return }
 
         let filesBrowserView = wireMessagingFactory.makeFilesBrowserView { [weak self] in
             guard let self else { return .default }
@@ -417,7 +417,7 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.meetingsUI = meetingsUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
-        if userSession.isWireCellsEnabled {
+        if userSession.isWireDriveEnabled {
             let filesBrowserView = wireMessagingFactory.makeFilesBrowserView { [weak self] in
                 guard let self else { return .default }
                 let selfUserColorRawValue = userSession.selfUser.accentColorValue

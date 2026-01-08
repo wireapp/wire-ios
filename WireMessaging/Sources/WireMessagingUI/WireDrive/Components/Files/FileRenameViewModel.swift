@@ -43,7 +43,7 @@ final class FileRenameViewModel: ObservableObject {
         errorMessage != nil || !isInputValid
     }
 
-    private let renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol
+    private let renameNodeUseCase: any WireDriveRenameNodeUseCaseProtocol
     private let model: Model
     private let kind: FilesViewItem.Kind
     private var subscriptions = Set<AnyCancellable>()
@@ -100,7 +100,7 @@ final class FileRenameViewModel: ObservableObject {
     }
 
     init(
-        renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol,
+        renameNodeUseCase: any WireDriveRenameNodeUseCaseProtocol,
         model: Model,
         kind: FilesViewItem.Kind
     ) {
@@ -131,7 +131,7 @@ final class FileRenameViewModel: ObservableObject {
 
             return true
 
-        } catch let error as WireCellsRenameNodeError {
+        } catch let error as WireDriveRenameNodeError {
             isLoading = false
             switch error {
             case .serverFailedToRenameNode, .invalidPath:
@@ -144,7 +144,7 @@ final class FileRenameViewModel: ObservableObject {
         } catch {
             isLoading = false
             errorMessage = L10n.Localizable.General.failure
-            WireLogger.wireCells.error("Renaming file failed: \(error)")
+            WireLogger.wireDrive.error("Renaming file failed: \(error)")
             return false
         }
     }

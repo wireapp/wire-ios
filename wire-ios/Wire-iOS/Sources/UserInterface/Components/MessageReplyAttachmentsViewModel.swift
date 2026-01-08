@@ -22,7 +22,7 @@ import WireMessagingDomain
 import WireMessagingUI
 
 final class MessageReplyAttachmentsViewModel {
-    private let fetchNodeUseCase: any WireCellsFetchNodeUseCaseProtocol
+    private let fetchNodeUseCase: any WireDriveFetchNodeUseCaseProtocol
     private var task: Task<Void, Error>?
     private let cache = UIImage.defaultUserImageCache.cache
 
@@ -33,7 +33,7 @@ final class MessageReplyAttachmentsViewModel {
 
     @Published var previewImageInfo: PreviewImageInfo?
 
-    init(fetchNodeUseCase: any WireCellsFetchNodeUseCaseProtocol) {
+    init(fetchNodeUseCase: any WireDriveFetchNodeUseCaseProtocol) {
         self.fetchNodeUseCase = fetchNodeUseCase
     }
 
@@ -66,7 +66,7 @@ final class MessageReplyAttachmentsViewModel {
     // MARK: - Private
 
     private func downloadImage(
-        from node: WireCellsNode,
+        from node: WireDriveNode,
         isVideo: Bool
     ) async throws {
         guard let smallPreview = node.previews.min(by: {

@@ -510,9 +510,9 @@ public class MockUserSession: UserSession {
 
     public var underlyingMlsFeature: Feature.MLS!
 
-    public var isWireCellsEnabled: Bool = false
+    public var isWireDriveEnabled: Bool = false
     
-    public var wireCellsBackendURL: URL? = nil
+    public var wireDriveBackendURL: URL? = nil
 
     public var isEnterpriseUser: Bool = false
     

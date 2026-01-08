@@ -34,19 +34,19 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
 
     typealias CellName = String
 
-    private let drafts: CurrentValueSubject<[CellName: OrderedDictionary<UUID, WireCellsDraft>], Never>
-    private var continuations: [UUID: AsyncStream<[WireCellsDraft]>.Continuation] = [:]
-    private let uploadManager: any WireCellsNodeUploadManagerProtocol
+    private let drafts: CurrentValueSubject<[CellName: OrderedDictionary<UUID, WireDriveDraft>], Never>
+    private var continuations: [UUID: AsyncStream<[WireDriveDraft]>.Continuation] = [:]
+    private let uploadManager: any WireDriveNodeUploadManagerProtocol
     private let nodesAPI: any NodesAPIProtocol
 
-    package init(uploadManager: any WireCellsNodeUploadManagerProtocol, nodesAPI: any NodesAPIProtocol) {
+    package init(uploadManager: any WireDriveNodeUploadManagerProtocol, nodesAPI: any NodesAPIProtocol) {
         self.init(uploadManager: uploadManager, nodesAPI: nodesAPI, drafts: [:])
     }
 
     init(
-        uploadManager: any WireCellsNodeUploadManagerProtocol,
+        uploadManager: any WireDriveNodeUploadManagerProtocol,
         nodesAPI: any NodesAPIProtocol,
-        drafts: [CellName: OrderedDictionary<UUID, WireCellsDraft>]
+        drafts: [CellName: OrderedDictionary<UUID, WireDriveDraft>]
     ) {
         self.uploadManager = uploadManager
         self.nodesAPI = nodesAPI
@@ -57,10 +57,10 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         continuations.values.forEach { $0.finish() }
     }
 
-    package func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]> {
+    package func drafts(for cellName: String) -> AsyncStream<[WireDriveDraft]> {
         let continuationID = UUID()
         let (stream, continuation) = AsyncStream.makeStream(
-            of: [WireCellsDraft].self,
+            of: [WireDriveDraft].self,
             bufferingPolicy: .bufferingNewest(1)
         )
 
@@ -104,7 +104,7 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
                         try await nodesAPI.publishDraft(nodeID: nodeID, versionID: draft.versionID)
                         return .success(nodeID)
                     } catch {
-                        WireLogger.wireCells.error("Failed to publish draft: \(error)")
+                        WireLogger.wireDrive.error("Failed to publish draft: \(error)")
                         return .failure(error)
                     }
                 }
@@ -130,7 +130,7 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
     /// - parameter cellName: The name of the cell for which to clear published drafts.
     /// - returns: The list of cleared published drafts.
 
-    package func clearPublishedDrafts(for cellName: String) -> [WireCellsDraft] {
+    package func clearPublishedDrafts(for cellName: String) -> [WireDriveDraft] {
         guard let drafts = drafts.value[cellName] else { return [] }
 
         let publishedDrafts = drafts.values.filter { $0.status == .uploaded(isDraft: false) }
@@ -142,13 +142,13 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
 
     /// Adds a draft for the given cell name.
 
-    package func addDraft(_ draft: WireCellsDraft, for cellName: String) {
+    package func addDraft(_ draft: WireDriveDraft, for cellName: String) {
         drafts.value[cellName, default: [:]][draft.nodeID] = draft
     }
 
     /// Returns the draft for the given node ID and cell name, if it exists.
 
-    package func fetchDraft(nodeID: UUID, cellName: String) -> WireCellsDraft? {
+    package func fetchDraft(nodeID: UUID, cellName: String) -> WireDriveDraft? {
         drafts.value[cellName]?[nodeID]
     }
 
@@ -160,7 +160,7 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
 
     /// Updates draft for the given cell name.
 
-    package func updateDraft(_ new: WireCellsDraft, for cellName: String) {
+    package func updateDraft(_ new: WireDriveDraft, for cellName: String) {
         guard let old = fetchDraft(nodeID: new.nodeID, cellName: cellName), new != old else { return }
 
         drafts.value[cellName]?[new.nodeID] = new
@@ -172,23 +172,23 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         continuations[uuid] = nil
     }
 
-    private func setStatus(_ status: WireCellsUploadStatus, cellName: CellName, id: UUID) {
+    private func setStatus(_ status: WireDriveUploadStatus, cellName: CellName, id: UUID) {
         drafts.value[cellName]?[id]?.status = status
     }
 
     #if DEBUG
-        var getDraftsForTesting: [CellName: OrderedDictionary<UUID, WireCellsDraft>] {
+        var getDraftsForTesting: [CellName: OrderedDictionary<UUID, WireDriveDraft>] {
             drafts.value
         }
 
-        func setDraftsForTesting(_ drafts: [CellName: OrderedDictionary<UUID, WireCellsDraft>]) {
+        func setDraftsForTesting(_ drafts: [CellName: OrderedDictionary<UUID, WireDriveDraft>]) {
             self.drafts.value = drafts
         }
     #endif
 
 }
 
-private extension OrderedDictionary<UUID, WireCellsDraft> {
+private extension OrderedDictionary<UUID, WireDriveDraft> {
     var areAllUploaded: Bool {
         allSatisfy {
             switch $0.value.status {

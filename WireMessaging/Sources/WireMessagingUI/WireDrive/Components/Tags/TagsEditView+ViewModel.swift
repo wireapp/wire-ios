@@ -141,7 +141,7 @@ extension TagsEditView {
                 await postSaveAction()
                 dismiss.send()
             } catch {
-                WireLogger.wireCells.error("Error while saving tags: \(error)", attributes: .safePublic)
+                WireLogger.wireDrive.error("Error while saving tags: \(error)", attributes: .safePublic)
                 isSaveErrorMessagePresented = true
             }
         }

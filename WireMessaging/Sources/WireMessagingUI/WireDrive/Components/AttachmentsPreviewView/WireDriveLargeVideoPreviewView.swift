@@ -42,13 +42,13 @@ struct WireDriveLargeVideoPreviewView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireCellsAttachmentPreview(
+        WireDriveAttachmentPreview(
             progress: progress,
             progressColor: downloadError
                 ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
         ) {
             VStack {
-                WireCellsDocumentHeaderView(
+                WireDriveDocumentHeaderView(
                     headerIcon: headerIcon,
                     headerText: headerText,
                     labelText: labelText,
@@ -155,7 +155,7 @@ struct WireDriveLargeVideoPreviewView: View {
 }
 
 #Preview {
-    WireCellsLargeVideoPreviewView(
+    WireDriveLargeVideoPreviewView(
         headerIcon: Image(FileIcon.pdf.resource),
         headerText: "PDF (336 KB)",
         labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",

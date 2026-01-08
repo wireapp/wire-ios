@@ -53,7 +53,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             case .notifications:
                 return user.canModifyNotificationSettings(in: conversation)
             case .fileCollaboration:
-                return conversation.isCellsEnabled
+                return conversation.isWireDriveEnabled
             case .guests:
                 return user.canModifyGuestsAccessControlSettings(in: conversation)
             case .services:
@@ -73,7 +73,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
                     return false
                 }
             case .timeout:
-                return user.canModifyEphemeralSettings(in: conversation) && !conversation.isCellsEnabled
+                return user.canModifyEphemeralSettings(in: conversation) && !conversation.isWireDriveEnabled
             case .channelHistoryDepth:
                 if DeveloperFlag.channelsHistory.isOn {
                     return user.canModifyChannelHistoryDepthSettings(in: conversation)
@@ -184,7 +184,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         case .services:
             delegate?.presentServicesOptions(animated: true)
         case .timeout:
-            if !conversation.isCellsEnabled {
+            if !conversation.isWireDriveEnabled {
                 delegate?.presentTimeoutOptions(animated: true)
             }
         case .notifications:
@@ -207,7 +207,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         referenceSizeForFooterInSection section: Int
     ) -> CGSize {
 
-        guard conversation.isCellsEnabled else {
+        guard conversation.isWireDriveEnabled else {
             return .zero
         }
 
@@ -235,7 +235,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             for: indexPath
         ) as! SectionFooter
 
-        view.titleLabel.text = conversation.isCellsEnabled ? L10n.Localizable.GroupDetails.FileCollaborationCell
+        view.titleLabel.text = conversation.isWireDriveEnabled ? L10n.Localizable.GroupDetails.FileCollaborationCell
             .footer : nil
 
         return view

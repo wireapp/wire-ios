@@ -42,7 +42,7 @@ final class EditFileViewModel: EditFileViewModelProtocol {
     }
 
     private let nodeID: UUID
-    private let getEditingURLUseCase: WireCellsGetEditingURLUseCase
+    private let getEditingURLUseCase: WireDriveGetEditingURLUseCase
 
     let fileName: String
 
@@ -51,7 +51,7 @@ final class EditFileViewModel: EditFileViewModelProtocol {
     init(
         nodeID: UUID,
         fileName: String,
-        getEditingURLUseCase: WireCellsGetEditingURLUseCase
+        getEditingURLUseCase: WireDriveGetEditingURLUseCase
     ) {
         self.nodeID = nodeID
         self.fileName = fileName

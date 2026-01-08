@@ -32,7 +32,7 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
 
     private let thumbnailGenerator: any ThumbnailGenerator
 
-    private var drafts: [WireCellsDraft] = []
+    private var drafts: [WireDriveDraft] = []
     private var thumbnails: [UUID: UIImage] = [:]
     private var generatingThumbnailIDs: Set<UUID> = []
 
@@ -47,7 +47,7 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
         self.thumbnailGenerator = thumbnailGenerator
     }
 
-    public func update(with drafts: [WireCellsDraft]) {
+    public func update(with drafts: [WireDriveDraft]) {
         self.drafts = drafts
         refreshItems()
 
@@ -67,7 +67,7 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
         items = drafts.compactMap { AttachmentsCarouselItem(draft: $0, thumbnail: thumbnails[$0.versionID]) }
     }
 
-    private func generateThumbnail(for draft: WireCellsDraft) async {
+    private func generateThumbnail(for draft: WireDriveDraft) async {
         guard
             !generatingThumbnailIDs.contains(draft.versionID),
             thumbnails[draft.versionID] == nil,
@@ -86,7 +86,7 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
             thumbnails[draft.versionID] = thumbnail
             refreshItems()
         } catch {
-            WireLogger.wireCells.error("Failed to generate thumbnail for file type: \(fileType.identifier)")
+            WireLogger.wireDrive.error("Failed to generate thumbnail for file type: \(fileType.identifier)")
         }
 
         generatingThumbnailIDs.remove(draft.versionID)
@@ -96,7 +96,7 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
 
 private extension AttachmentsCarouselItem {
 
-    init?(draft: WireCellsDraft, thumbnail: UIImage?) {
+    init?(draft: WireDriveDraft, thumbnail: UIImage?) {
         let state: AttachmentsCarouselItem.State
         switch draft.status {
         case let .uploading(progress):
@@ -135,7 +135,7 @@ private extension AttachmentsCarouselItem {
 private extension AttachmentsCarouselItem.Kind {
 
     init(_ value: UTType?, thumbnail: UIImage?) {
-        let category = WireCellsFileCategory(value)
+        let category = WireDriveFileCategory(value)
 
         switch category {
         case .image:
@@ -151,7 +151,7 @@ private extension AttachmentsCarouselItem.Kind {
 
 }
 
-private extension WireCellsDraft {
+private extension WireDriveDraft {
 
     var nameAndExtension: (name: String, extension: String) {
         let url = URL(fileURLWithPath: name)

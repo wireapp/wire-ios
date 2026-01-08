@@ -22,21 +22,21 @@ package import WireMessagingDomain
 
 public final class ConversationCellProvider {
 
-    private let fetchNodeUseCase: WireCellsFetchNodeUseCase
-    private let getAssetUseCase: WireCellsGetAssetUseCase
-    private let nodeCache: any WireCellsNodeCacheProtocol
-    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
-    private let lastOpenRequest: WireCellsLastOpenRequest
-    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
+    private let fetchNodeUseCase: WireDriveFetchNodeUseCase
+    private let getAssetUseCase: WireDriveGetAssetUseCase
+    private let nodeCache: any WireDriveNodeCacheProtocol
+    private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
+    private let lastOpenRequest: WireDriveLastOpenRequest
+    private let nodeRenameNotifier: WireDriveNodeRenameNotifier
     private let insetsProvider: () -> ConversationCellInsets
 
     package init(
-        fetchNodeUseCase: WireCellsFetchNodeUseCase,
-        getAssetUseCase: WireCellsGetAssetUseCase,
-        nodeCache: any WireCellsNodeCacheProtocol,
-        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
-        lastOpenRequest: WireCellsLastOpenRequest,
-        nodeRenameNotifier: WireCellsNodeRenameNotifier,
+        fetchNodeUseCase: WireDriveFetchNodeUseCase,
+        getAssetUseCase: WireDriveGetAssetUseCase,
+        nodeCache: any WireDriveNodeCacheProtocol,
+        localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
+        lastOpenRequest: WireDriveLastOpenRequest,
+        nodeRenameNotifier: WireDriveNodeRenameNotifier,
         insetsProvider: @escaping () -> ConversationCellInsets
     ) {
         self.fetchNodeUseCase = fetchNodeUseCase
@@ -81,7 +81,7 @@ public final class ConversationCellProvider {
             let insets = insetsProvider().insets(
                 isSentBySelfUser: model.isSentBySelfUser
             )
-            let viewModel = WireCellsAttachmentsPreviewViewModel(
+            let viewModel = WireDriveAttachmentsPreviewViewModel(
                 attachments: model.attachments,
                 alignment: model.isSentBySelfUser ? .trailing : .leading,
                 fetchNodeUseCase: fetchNodeUseCase,
@@ -92,7 +92,7 @@ public final class ConversationCellProvider {
                 nodeRenameNotifier: nodeRenameNotifier
             )
             cell.configure(
-                content: WireCellsAttachmentsPreviewView(viewModel: viewModel),
+                content: WireDriveAttachmentsPreviewView(viewModel: viewModel),
                 insets: EdgeInsets(top: 0, leading: insets.leading, bottom: 0, trailing: insets.trailing),
                 onLongPress: onLongPress,
                 onSizeChange: { [weak tableView] in

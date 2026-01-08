@@ -25,25 +25,25 @@ import WireMessagingDomainSupport
 @MainActor
 package final class WireDriveAttachmentsPreviewViewModel: ObservableObject {
 
-    private let fetchNodeUseCase: WireCellsFetchNodeUseCase
-    private let getAssetUseCase: WireCellsGetAssetUseCase
-    private let nodeCache: any WireCellsNodeCacheProtocol
-    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
-    private let lastOpenRequest: WireCellsLastOpenRequest
-    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
+    private let fetchNodeUseCase: WireDriveFetchNodeUseCase
+    private let getAssetUseCase: WireDriveGetAssetUseCase
+    private let nodeCache: any WireDriveNodeCacheProtocol
+    private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
+    private let lastOpenRequest: WireDriveLastOpenRequest
+    private let nodeRenameNotifier: WireDriveNodeRenameNotifier
 
-    let attachments: [WireCellsMessageAttachment]
+    let attachments: [WireDriveMessageAttachment]
     let alignment: HorizontalAlignment
 
     package init(
-        attachments: [WireCellsMessageAttachment],
+        attachments: [WireDriveMessageAttachment],
         alignment: HorizontalAlignment,
-        fetchNodeUseCase: WireCellsFetchNodeUseCase,
-        getAssetUseCase: WireCellsGetAssetUseCase,
-        nodeCache: any WireCellsNodeCacheProtocol,
-        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
-        lastOpenRequest: WireCellsLastOpenRequest,
-        nodeRenameNotifier: WireCellsNodeRenameNotifier
+        fetchNodeUseCase: WireDriveFetchNodeUseCase,
+        getAssetUseCase: WireDriveGetAssetUseCase,
+        nodeCache: any WireDriveNodeCacheProtocol,
+        localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
+        lastOpenRequest: WireDriveLastOpenRequest,
+        nodeRenameNotifier: WireDriveNodeRenameNotifier
     ) {
         self.attachments = attachments
         self.alignment = alignment
@@ -55,9 +55,9 @@ package final class WireDriveAttachmentsPreviewViewModel: ObservableObject {
         self.nodeRenameNotifier = nodeRenameNotifier
     }
 
-    /// Returns a `WireCellsAttachmentsPreviewView` for the item at the given index.
-    func itemViewModel(index: Int) -> WireCellsAttachmentsPreviewItemViewModel {
-        WireCellsAttachmentsPreviewItemViewModel(
+    /// Returns a `WireDriveAttachmentsPreviewView` for the item at the given index.
+    func itemViewModel(index: Int) -> WireDriveAttachmentsPreviewItemViewModel {
+        WireDriveAttachmentsPreviewItemViewModel(
             attachment: attachments[index],
             alignment: alignment,
             fetchNodeUseCase: fetchNodeUseCase,
@@ -74,26 +74,26 @@ package final class WireDriveAttachmentsPreviewViewModel: ObservableObject {
 
 // MARK: - Previews
 
-extension WireCellsAttachmentsPreviewViewModel {
+extension WireDriveAttachmentsPreviewViewModel {
 
     @MainActor
-    static func makePreview() -> WireCellsAttachmentsPreviewViewModel {
+    static func makePreview() -> WireDriveAttachmentsPreviewViewModel {
         let attachments = [
-            WireCellsMessageAttachment(
+            WireDriveMessageAttachment(
                 nodeID: UUID(),
                 contentType: "image/png",
                 initialName: "Picture.png",
                 initialSize: 1000,
                 initialMetadata: nil
             ),
-            WireCellsMessageAttachment(
+            WireDriveMessageAttachment(
                 nodeID: UUID(),
                 contentType: "video/mp4",
                 initialName: "Video.mp4",
                 initialSize: 2000,
                 initialMetadata: nil
             ),
-            WireCellsMessageAttachment(
+            WireDriveMessageAttachment(
                 nodeID: UUID(),
                 contentType: "application/pdf",
                 initialName: "Document.pdf",
@@ -101,35 +101,35 @@ extension WireCellsAttachmentsPreviewViewModel {
                 initialMetadata: nil
             )
         ]
-        let nodesRepository = MockWireCellsNodesRepositoryProtocol()
+        let nodesRepository = MockWireDriveNodesRepositoryProtocol()
         nodesRepository.getNodes_MockValue = (nodes: [], nextOffset: nil)
         nodesRepository.getNodeId_MockMethod = { _ in nil }
 
-        let nodeCache = MockWireCellsNodeCacheProtocol()
+        let nodeCache = MockWireDriveNodeCacheProtocol()
         nodeCache.itemFor_MockMethod = { _ in nil }
         nodeCache.setItemFor_MockMethod = { _, _ in }
 
-        let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
+        let localAssetRepository = MockWireDriveLocalAssetRepositoryProtocol()
         localAssetRepository.observeAssetNodeID_MockValue = AnyPublisher(Just(nil))
 
         let fileCache = MockFileCache()
         fileCache.fileURLForKey_MockMethod = { _ in nil }
 
-        return WireCellsAttachmentsPreviewViewModel(
+        return WireDriveAttachmentsPreviewViewModel(
             attachments: attachments,
             alignment: .leading,
-            fetchNodeUseCase: WireCellsFetchNodeUseCase(
+            fetchNodeUseCase: WireDriveFetchNodeUseCase(
                 repository: nodesRepository,
                 cache: nodeCache
             ),
-            getAssetUseCase: WireCellsGetAssetUseCase(
+            getAssetUseCase: WireDriveGetAssetUseCase(
                 localAssetRepository: localAssetRepository,
                 fileCache: fileCache
             ),
             nodeCache: nodeCache,
             localAssetRepository: localAssetRepository,
-            lastOpenRequest: WireCellsLastOpenRequest(),
-            nodeRenameNotifier: WireCellsNodeRenameNotifier()
+            lastOpenRequest: WireDriveLastOpenRequest(),
+            nodeRenameNotifier: WireDriveNodeRenameNotifier()
         )
     }
 

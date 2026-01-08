@@ -89,20 +89,20 @@ private struct AttachmentsCarouselItemView: View {
     @ViewBuilder var content: some View {
         switch item.kind {
         case let .image(thumbnail):
-            WireCellsImageAttachmentPreview(
+            WireDriveImageAttachmentPreview(
                 thumbnail: thumbnail.map { Image(uiImage: $0) },
                 progress: item.state.progress,
                 isError: item.state.isFailed
             )
         case let .video(thumbnail):
-            WireCellsVideoAttachmentPreview(
+            WireDriveVideoAttachmentPreview(
                 thumbnail: thumbnail.map { Image(uiImage: $0) },
                 progress: item.state.progress,
                 isError: item.state.isFailed,
                 canPlay: false
             )
         case .audio, .document:
-            WireCellsDocumentAttachmentPreview(
+            WireDriveDocumentAttachmentPreview(
                 headerIcon: Image(item.fileIcon.resource),
                 headerText: item.fileExtension.map { "\($0.uppercased()) (\(item.size))" } ?? item.size,
                 labelText: item.name,

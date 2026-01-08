@@ -405,9 +405,9 @@ final class UserSessionMock: UserSession {
         config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
     )
 
-    var isWireCellsEnabled: Bool = false
+    var isWireDriveEnabled: Bool = false
 
-    var wireCellsBackendURL: URL?
+    var wireDriveBackendURL: URL?
 
     var isEnterpriseUser: Bool = false
 

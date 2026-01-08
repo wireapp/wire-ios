@@ -28,7 +28,7 @@ struct WireDriveImageAttachmentPreview: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireCellsAttachmentPreview(
+        WireDriveAttachmentPreview(
             progress: progress,
             progressColor: isError ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
         ) {
@@ -47,7 +47,7 @@ struct WireDriveImageAttachmentPreview: View {
                 }
 
                 if isError {
-                    WireCellsAttachmentPreviewErrorCircle()
+                    WireDriveAttachmentPreviewErrorCircle()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -56,7 +56,7 @@ struct WireDriveImageAttachmentPreview: View {
 }
 
 #Preview {
-    WireCellsImageAttachmentPreview(
+    WireDriveImageAttachmentPreview(
         thumbnail: Image("rectangular-placeholder", bundle: .module),
         progress: 0.7,
         isError: true

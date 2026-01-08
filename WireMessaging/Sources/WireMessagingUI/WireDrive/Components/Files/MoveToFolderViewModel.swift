@@ -28,7 +28,7 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 struct NavigationMenuOption: Hashable, Sendable {
 
-    /// The wire cells path of the navigation option.
+    /// The wire drive path of the navigation option.
     let path: String
 
     /// The title of the navigation option.
@@ -79,10 +79,10 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
     private let nodeID: UUID
     private let nodeName: String
     private let onFinish: () -> Void
-    private let nodesRepository: any WireCellsNodesRepositoryProtocol
-    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
-    private let moveNodeUseCase: WireCellsMoveNodeUseCase
-    private let createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol
+    private let nodesRepository: any WireDriveNodesRepositoryProtocol
+    private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
+    private let moveNodeUseCase: WireDriveMoveNodeUseCase
+    private let createFolderUseCase: any WireDriveCreateFolderUseCaseProtocol
 
     @Published var navigationPath: [FilesNavigationItem]
 
@@ -91,10 +91,10 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
         nodeID: UUID,
         nodeName: String,
         onFinish: @escaping () -> Void,
-        nodesRepository: any WireCellsNodesRepositoryProtocol,
-        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
-        moveNodeUseCase: WireCellsMoveNodeUseCase,
-        createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol
+        nodesRepository: any WireDriveNodesRepositoryProtocol,
+        localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
+        moveNodeUseCase: WireDriveMoveNodeUseCase,
+        createFolderUseCase: any WireDriveCreateFolderUseCaseProtocol
     ) {
         self.navigationPath = FilesNavigationItem.items(for: containerPath)
         self.rootPath = containerPath.components(separatedBy: "/").first ?? ""
@@ -114,7 +114,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
     }
 
     private func makeViewModel(path: String) -> MoveToFolderPageViewModel {
-        let nodesCollection = WireCellsNodesCollection()
+        let nodesCollection = WireDriveNodesCollection()
         return MoveToFolderPageViewModel(
             containerPath: path,
             originalContainerPath: originalContainerPath,
@@ -127,7 +127,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
                 self?.onFinish()
             },
             nodesCollection: nodesCollection,
-            fetchNodesUseCase: WireCellsFetchNodesUseCase(
+            fetchNodesUseCase: WireDriveFetchNodesUseCase(
                 state: nodesCollection,
                 configuration: .moveToFolder(root: path),
                 repository: nodesRepository

@@ -30,7 +30,7 @@ final class FilesItemViewModel: ObservableObject {
 
     private let nodeID: UUID
     let item: FilesViewItem
-    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
+    private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
 
     enum ItemAction {
@@ -48,7 +48,7 @@ final class FilesItemViewModel: ObservableObject {
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
 
-    @Published private var asset: WireCellsLocalAsset?
+    @Published private var asset: WireDriveLocalAsset?
 
     @Published var isPresentingDeleteFilePermanentlyConfirmation = false
     @Published var isPresentingDeleteFolderPermanentlyConfirmation = false
@@ -78,7 +78,7 @@ final class FilesItemViewModel: ObservableObject {
 
     init(
         item: FilesViewItem,
-        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
+        localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         onItemAction: @escaping (ItemAction, FilesViewItem) async -> Void,
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,

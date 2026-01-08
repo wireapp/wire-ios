@@ -30,7 +30,7 @@ struct WireDriveSmallVideoPreviewView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireCellsAttachmentPreview(
+        WireDriveAttachmentPreview(
             progress: progress,
             progressColor: downloadError ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color,
         ) {
@@ -44,12 +44,12 @@ struct WireDriveSmallVideoPreviewView: View {
                 }
 
                 if downloadError {
-                    WireCellsAttachmentPreviewErrorCircle()
+                    WireDriveAttachmentPreviewErrorCircle()
                 }
             }
             .frame(
-                width: WireCellsAttachmentsPreviewSizes.smallWidth,
-                height: WireCellsAttachmentsPreviewSizes.smallHeight
+                width: WireDriveAttachmentsPreviewSizes.smallWidth,
+                height: WireDriveAttachmentsPreviewSizes.smallHeight
             )
             .overlay(alignment: .bottom) {
                 if let duration {
@@ -76,7 +76,7 @@ struct WireDriveSmallVideoPreviewView: View {
                         }
                     }
             case .failure:
-                WireCellsAttachmentPreviewErrorCircle()
+                WireDriveAttachmentPreviewErrorCircle()
             @unknown default:
                 EmptyView()
             }
@@ -94,7 +94,7 @@ struct WireDriveSmallVideoPreviewView: View {
 }
 
 #Preview {
-    WireCellsSmallVideoPreviewView(
+    WireDriveSmallVideoPreviewView(
         url: URL(
             string:
             "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"

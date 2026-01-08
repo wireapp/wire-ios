@@ -99,15 +99,15 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
     private let nodeName: String
     private let onNavigate: (String) -> Void
     private let onFinish: () -> Void
-    private let nodesCollection: WireCellsNodesCollection
-    private let fetchNodesUseCase: WireCellsFetchNodesUseCase
-    private let moveNodeUseCase: WireCellsMoveNodeUseCase
-    private let createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol
+    private let nodesCollection: WireDriveNodesCollection
+    private let fetchNodesUseCase: WireDriveFetchNodesUseCase
+    private let moveNodeUseCase: WireDriveMoveNodeUseCase
+    private let createFolderUseCase: any WireDriveCreateFolderUseCaseProtocol
     private var subscriptions = Set<AnyCancellable>()
 
     let title: String
 
-    @Published private var nodes: [WireCellsNode] = []
+    @Published private var nodes: [WireDriveNode] = []
     @Published private var isMoving = false
     @Published private var isLoadingContent = false
     @Published private var loadingContentError: (any Error)?
@@ -122,10 +122,10 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
         nodeName: String,
         onNavigate: @escaping (String) -> Void,
         onFinish: @escaping () -> Void,
-        nodesCollection: WireCellsNodesCollection,
-        fetchNodesUseCase: WireCellsFetchNodesUseCase,
-        moveNodeUseCase: WireCellsMoveNodeUseCase,
-        createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol
+        nodesCollection: WireDriveNodesCollection,
+        fetchNodesUseCase: WireDriveFetchNodesUseCase,
+        moveNodeUseCase: WireDriveMoveNodeUseCase,
+        createFolderUseCase: any WireDriveCreateFolderUseCaseProtocol
     ) {
         self.title = Self.title(for: containerPath)
         self.nodeID = nodeID

@@ -30,69 +30,69 @@ extension FilesViewModel {
     /// A stubbed instance of `FilesViewModel` for SwiftUI previews.
     static func preview(isFoldersEnabled: Bool = false) -> FilesViewModel {
         let cache = mockFileCache()
-        let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
+        let localAssetStore = MockWireDriveLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
-        let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
+        let localAssetRepository = MockWireDriveLocalAssetRepositoryProtocol()
 
         return FilesViewModel(
             useCases: .init(
-                fetchNodes: WireCellsFetchNodesPageUseCase(
+                fetchNodes: WireDriveFetchNodesPageUseCase(
                     configuration: .conversationFileView(root: .path("root"), isFoldersEnabled: true),
                     repository: previewNodesRepository()
                 ),
-                deleteNodes: WireCellsDeleteNodesUseCase(
+                deleteNodes: WireDriveDeleteNodesUseCase(
                     repository: previewNodesRepository(),
                     fileCache: cache,
                     localAssetStore: localAssetStore
                 ),
-                restoreNodes: WireCellsRestoreNodesUseCase(
+                restoreNodes: WireDriveRestoreNodesUseCase(
                     repository: previewNodesRepository(),
                     fileCache: cache,
                     localAssetStore: localAssetStore
                 ),
-                renameNode: WireCellsRenameNodeUseCase(
+                renameNode: WireDriveRenameNodeUseCase(
                     nodesRepository: previewNodesRepository(),
                     localAssetsRepository: localAssetRepository,
-                    nodeCache: MockWireCellsNodeCacheProtocol(),
-                    nodeRenameNotifier: WireCellsNodeRenameNotifier()
+                    nodeCache: MockWireDriveNodeCacheProtocol(),
+                    nodeRenameNotifier: WireDriveNodeRenameNotifier()
                 ),
-                updateTags: WireCellsUpdateTagsUseCase(
+                updateTags: WireDriveUpdateTagsUseCase(
                     nodesAPI: previewTagsApi()
                 ),
-                getTagSuggestions: WireCellsGetTagSuggestionsUseCase(
+                getTagSuggestions: WireDriveGetTagSuggestionsUseCase(
                     nodesAPI: previewTagsApi()
                 ),
-                createFolder: WireCellsCreateFolderUseCase(
+                createFolder: WireDriveCreateFolderUseCase(
                     nodesRepository: previewNodesRepository()
                 ),
-                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(
+                fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(
                     repository: previewNodesRepository()
                 ),
-                restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
                     repository: previewNodesRepository(),
                     localAssetsRepository: localAssetRepository,
-                    nodeCache: MockWireCellsNodeCacheProtocol()
+                    nodeCache: MockWireDriveNodeCacheProtocol()
                 ),
-                getEditingURL: WireCellsGetEditingURLUseCase(
+                getEditingURL: WireDriveGetEditingURLUseCase(
                     editingURLRepository: previewEditingURLRepository()
                 ),
-                getAssetUseCase: WireCellsGetAssetUseCase(
+                getAssetUseCase: WireDriveGetAssetUseCase(
                     localAssetRepository: localAssetRepository, fileCache: cache
                 ),
-                getPublicLinkData: WireCellsGetPublicLinkDataUseCase(
+                getPublicLinkData: WireDriveGetPublicLinkDataUseCase(
                     nodesAPI: previewPublicLinkApi()
                 ),
-                createPublicLink: WireCellsCreatePublicLinkUseCase(
+                createPublicLink: WireDriveCreatePublicLinkUseCase(
                     nodesAPI: previewPublicLinkApi()
                 ),
-                deletePublicLink: WireCellsDeletePublicLinkUseCase(
+                deletePublicLink: WireDriveDeletePublicLinkUseCase(
                     nodesAPI: previewPublicLinkApi()
                 ),
-                updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(
+                updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(
                     nodesAPI: previewPublicLinkApi()
                 ),
-                updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(
+                updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(
                     nodesAPI: previewPublicLinkApi()
                 )
 
@@ -114,16 +114,16 @@ extension FilesViewModel {
 extension FileRenameViewModel {
     /// A stubbed instance of `FileRenameViewModel` for SwiftUI previews.
     static func preview(kind: FilesViewItem.Kind) -> FileRenameViewModel {
-        let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
+        let localAssetStore = MockWireDriveLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
 
         return FileRenameViewModel(
-            renameNodeUseCase: WireCellsRenameNodeUseCase(
+            renameNodeUseCase: WireDriveRenameNodeUseCase(
                 nodesRepository: previewNodesRepository(),
-                localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
-                nodeCache: MockWireCellsNodeCacheProtocol(),
-                nodeRenameNotifier: WireCellsNodeRenameNotifier()
+                localAssetsRepository: MockWireDriveLocalAssetRepositoryProtocol(),
+                nodeCache: MockWireDriveNodeCacheProtocol(),
+                nodeRenameNotifier: WireDriveNodeRenameNotifier()
             ),
             model: Model(
                 nodeID: .init(),
@@ -187,7 +187,7 @@ extension FilesFiltersViewModel {
 
         return FilesFiltersViewModel(
             fetchTagsUseCase:
-            WireCellsGetTagSuggestionsUseCase(
+            WireDriveGetTagSuggestionsUseCase(
                 nodesAPI: nodesAPI
             ),
             savedTags: nil,
@@ -201,10 +201,10 @@ extension FileVersioningViewModel {
 
     /// A stubbed instance of `FileVersioningViewModel` for SwiftUI previews.
     static func preview() -> FileVersioningViewModel {
-        let repository = MockWireCellsNodesRepositoryProtocol()
-        repository.getVersionsNodeID_MockValue = WireCellsNodeVersion.mock
+        let repository = MockWireDriveNodesRepositoryProtocol()
+        repository.getVersionsNodeID_MockValue = WireDriveNodeVersion.mock
 
-        let useCase = WireCellsFetchNodeVersionsUseCase(repository: repository)
+        let useCase = WireDriveFetchNodeVersionsUseCase(repository: repository)
         let localAssetsRepository = PreviewLocalAssetRepository()
         repository.restoreVersionNodeIDVersionID_MockMethod = { _, _ in }
 
@@ -213,12 +213,12 @@ extension FileVersioningViewModel {
             name: "foo.jpg",
             eTag: nil,
             fetchNodeVersionsUseCase: useCase,
-            restoreNodeVersionUseCase: WireCellsRestoreNodeVersionUseCase(
+            restoreNodeVersionUseCase: WireDriveRestoreNodeVersionUseCase(
                 repository: repository,
                 localAssetsRepository: localAssetsRepository,
-                nodeCache: MockWireCellsNodeCacheProtocol()
+                nodeCache: MockWireDriveNodeCacheProtocol()
             ),
-            getAssetUseCase: WireCellsGetAssetUseCase(
+            getAssetUseCase: WireDriveGetAssetUseCase(
                 localAssetRepository: localAssetsRepository,
                 fileCache: MockFileCache()
             ),
@@ -229,10 +229,10 @@ extension FileVersioningViewModel {
 
 // MARK: - Dependencies
 
-private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
-    let repository = MockWireCellsNodesRepositoryProtocol()
+private func previewNodesRepository() -> any WireDriveNodesRepositoryProtocol {
+    let repository = MockWireDriveNodesRepositoryProtocol()
     let nodes = (0 ... 150).map { index in
-        WireCellsNode(
+        WireDriveNode(
             uuid: UUID(),
             path: "root/foo-\(index).jpg",
             modified: Date().addingTimeInterval(Double(-index * 60)),
@@ -240,7 +240,7 @@ private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
             ownerUserName: "Person \(index)",
         )
     }
-    repository.getVersionsNodeID_MockValue = WireCellsNodeVersion.mock
+    repository.getVersionsNodeID_MockValue = WireDriveNodeVersion.mock
     repository.getNodes_MockMethod = { request in
         try await Task.sleep(nanoseconds: 1_000_000_000) // Simulate network delay
 
@@ -261,15 +261,15 @@ private func previewTagsApi() -> some NodesAPIProtocol {
     return mock
 }
 
-private func previewEditingURLRepository() -> any WireCellsEditingURLRepositoryProtocol {
-    let mock = MockWireCellsEditingURLRepositoryProtocol()
+private func previewEditingURLRepository() -> any WireDriveEditingURLRepositoryProtocol {
+    let mock = MockWireDriveEditingURLRepositoryProtocol()
     mock.getEditorURLId_MockValue = nil
     return mock
 }
 
 private func previewPublicLinkApi() -> some NodesAPIProtocol {
     let mock = MockNodesAPIProtocol()
-    let publicLink = WireCellsPublicLink(
+    let publicLink = WireDrivePublicLink(
         linkID: "aaa",
         url: URL(string: "https://wire.com")!,
         requiresPassword: true,
@@ -296,21 +296,21 @@ private func mockFileCache() -> any FileCache {
     return cache
 }
 
-private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryProtocol, @unchecked Sendable {
+private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryProtocol, @unchecked Sendable {
 
     var failIndex = 0
-    var publishers: [UUID: CurrentValueSubject<WireCellsLocalAsset?, Never>] = [:]
+    var publishers: [UUID: CurrentValueSubject<WireDriveLocalAsset?, Never>] = [:]
 
-    func asset(nodeID: UUID) throws -> WireMessagingDomain.WireCellsLocalAsset? {
+    func asset(nodeID: UUID) throws -> WireMessagingDomain.WireDriveLocalAsset? {
         publishers[nodeID]?.value
     }
 
     func refreshAssetMetadata(
         nodeID: UUID
-    ) async throws -> (node: WireCellsNode, asset: WireCellsLocalAsset) {
-        let node = WireCellsNode(uuid: .init(), path: "")
+    ) async throws -> (node: WireDriveNode, asset: WireDriveLocalAsset) {
+        let node = WireDriveNode(uuid: .init(), path: "")
 
-        let localAsset = WireCellsLocalAsset(
+        let localAsset = WireDriveLocalAsset(
             nodeID: nodeID,
             eTag: "something",
             path: "some/path.jpg",
@@ -328,7 +328,7 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
         let shouldFail = failIndex % 3 == 0
 
         for progress in stride(from: 0.0, to: 1.1, by: 0.1) {
-            let downloadState: WireCellsLocalAsset.DownloadState = if shouldFail, progress > 0.1 {
+            let downloadState: WireDriveLocalAsset.DownloadState = if shouldFail, progress > 0.1 {
                 .failed(error: URLError(.notConnectedToInternet))
             } else if progress < 1 {
                 .downloading(progress: Double(progress))
@@ -337,7 +337,7 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
             }
 
             try await Task.sleep(for: .milliseconds(200))
-            let update = WireCellsLocalAsset(
+            let update = WireDriveLocalAsset(
                 nodeID: nodeID,
                 eTag: "something",
                 path: "some/path.jpg",
@@ -354,8 +354,8 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
         }
     }
 
-    func observeAsset(nodeID: UUID) -> AnyPublisher<WireMessagingDomain.WireCellsLocalAsset?, Never> {
-        let publisher = publishers[nodeID] ?? CurrentValueSubject<WireCellsLocalAsset?, Never>(nil)
+    func observeAsset(nodeID: UUID) -> AnyPublisher<WireMessagingDomain.WireDriveLocalAsset?, Never> {
+        let publisher = publishers[nodeID] ?? CurrentValueSubject<WireDriveLocalAsset?, Never>(nil)
         publishers[nodeID] = publisher
         return publisher.eraseToAnyPublisher()
     }
@@ -367,7 +367,7 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
 extension CreateFolderViewModel {
     /// A stubbed instance of `CreateFolderViewModel` for SwiftUI previews.
     static func preview() -> CreateFolderViewModel {
-        let createFolderUseCase = MockWireCellsCreateFolderUseCaseProtocol()
+        let createFolderUseCase = MockWireDriveCreateFolderUseCaseProtocol()
 
         return CreateFolderViewModel(
             createFolderUseCase: createFolderUseCase,
@@ -393,9 +393,9 @@ extension ShareLinkPasswordView.ViewModel {
         let keychain = Keychain()
 
         let useCases = UseCases(
-            updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
-            storePublicLinkPasswordUseCase: WireCellsStorePublicLinkPasswordUseCase(keychain: keychain),
-            deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase(keychain: keychain)
+            updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
+            storePublicLinkPasswordUseCase: WireDriveStorePublicLinkPasswordUseCase(keychain: keychain),
+            deletePublicLinkPasswordUseCase: WireDriveDeletePublicLinkPasswordUseCase(keychain: keychain)
         )
 
         return ShareLinkPasswordView.ViewModel(
@@ -408,8 +408,8 @@ extension ShareLinkPasswordView.ViewModel {
     }
 }
 
-extension WireCellsNodeVersion {
-    static let mock: [WireCellsNodeVersion] = [
+extension WireDriveNodeVersion {
+    static let mock: [WireDriveNodeVersion] = [
         .init(
             id: UUID(),
             ownerName: "foo1",

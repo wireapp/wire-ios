@@ -31,13 +31,13 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         case large
     }
 
-    private let attachment: WireCellsMessageAttachment
-    private let fetchNodeUseCase: WireCellsFetchNodeUseCase
-    private let getAssetUseCase: WireCellsGetAssetUseCase
-    private let nodeCache: any WireCellsNodeCacheProtocol
-    private let lastOpenRequest: WireCellsLastOpenRequest
-    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
-    private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
+    private let attachment: WireDriveMessageAttachment
+    private let fetchNodeUseCase: WireDriveFetchNodeUseCase
+    private let getAssetUseCase: WireDriveGetAssetUseCase
+    private let nodeCache: any WireDriveNodeCacheProtocol
+    private let lastOpenRequest: WireDriveLastOpenRequest
+    private let nodeRenameNotifier: WireDriveNodeRenameNotifier
+    private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
     private let _displayStyle: DisplayStyle
     private var cancellables = Set<AnyCancellable>()
     private var pollingTask: Task<Void, Never>?
@@ -45,19 +45,19 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
     let alignment: HorizontalAlignment
 
     @Published var viewingURL: URL?
-    @Published private var asset: WireCellsLocalAsset?
-    @Published private var node: WireCellsNode?
+    @Published private var asset: WireDriveLocalAsset?
+    @Published private var node: WireDriveNode?
     @Published private var isDeleted: Bool
 
     init(
-        attachment: WireCellsMessageAttachment,
+        attachment: WireDriveMessageAttachment,
         alignment: HorizontalAlignment,
-        fetchNodeUseCase: WireCellsFetchNodeUseCase,
-        getAssetUseCase: WireCellsGetAssetUseCase,
-        nodeCache: any WireCellsNodeCacheProtocol,
-        localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
-        lastOpenRequest: WireCellsLastOpenRequest,
-        nodeRenameNotifier: WireCellsNodeRenameNotifier,
+        fetchNodeUseCase: WireDriveFetchNodeUseCase,
+        getAssetUseCase: WireDriveGetAssetUseCase,
+        nodeCache: any WireDriveNodeCacheProtocol,
+        localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
+        lastOpenRequest: WireDriveLastOpenRequest,
+        nodeRenameNotifier: WireDriveNodeRenameNotifier,
         displayStyle: DisplayStyle
     ) {
         self.attachment = attachment
@@ -82,13 +82,13 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         isDeleted ? .small : _displayStyle
     }
 
-    var fileCategory: WireCellsFileCategory {
+    var fileCategory: WireDriveFileCategory {
         if isDeleted {
             return .document
         }
 
         let fileType = contentType.flatMap { UTType(mimeType: $0) }
-        return WireCellsFileCategory(fileType)
+        return WireDriveFileCategory(fileType)
     }
 
     var headerText: String {
@@ -149,7 +149,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
                 updateNode(node)
             }
         } catch {
-            WireLogger.wireCells.info("Failed to refresh node with ID: \(nodeID), error: \(error)")
+            WireLogger.wireDrive.info("Failed to refresh node with ID: \(nodeID), error: \(error)")
         }
     }
 
@@ -180,7 +180,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
                 viewingURL = url
             }
         } catch {
-            WireLogger.wireCells.error("Failed to open file with node ID: \(nodeID), error: \(error)")
+            WireLogger.wireDrive.error("Failed to open file with node ID: \(nodeID), error: \(error)")
         }
     }
 
@@ -219,7 +219,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
 
     // MARK: - Private
 
-    private func updateNode(_ node: WireCellsNode?) {
+    private func updateNode(_ node: WireDriveNode?) {
         self.node = node
         if let node {
             isDeleted = node.isRecycled

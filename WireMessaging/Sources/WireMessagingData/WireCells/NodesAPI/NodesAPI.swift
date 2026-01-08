@@ -25,8 +25,7 @@ package enum NodesAPIError: Error {
     case moveFailed
 }
 
-package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol,
-    WireCellsEditingURLRepositoryProtocol {
+package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol, WireDriveEditingURLRepositoryProtocol {
     private let awsClient: AWSClient
     private let restAPI: RestAPI
     private let fileManager: FileManager
@@ -57,7 +56,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         self.fileManager = fileManager
     }
 
-    package func preCheck(nodePath: String, findAvailablePath: Bool) async throws -> WireCellsPreCheckResult {
+    package func preCheck(nodePath: String, findAvailablePath: Bool) async throws -> WireDrivePreCheckResult {
         let result = try await restAPI.preCheck(
             path: nodePath,
             findAvailablePath: findAvailablePath
@@ -70,7 +69,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
 
     package func uploadFile(
         path: URL,
-        node: WireCellsNode,
+        node: WireDriveNode,
         versionID: UUID
     ) async -> AsyncThrowingStream<Int, any Error> {
         await awsClient.upload(path: path, node: node.toDTO(), versionID: versionID)
@@ -108,7 +107,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         try await restAPI.deleteVersion(uuid: nodeID, versionID: versionID)
     }
 
-    package func getVersions(nodeID: UUID) async throws -> [WireCellsNodeVersion] {
+    package func getVersions(nodeID: UUID) async throws -> [WireDriveNodeVersion] {
         let versionsDTO = try await restAPI.getVersions(uuid: nodeID)
         return versionsDTO.toDomainModel()
     }
@@ -132,17 +131,17 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         try await awsClient.download(objectKey: cellPath, to: fileHandle, onProgressUpdate: onProgressUpdate)
     }
 
-    package func getPreviews(nodeID: UUID) async throws -> [WireCellsNodePreview] {
+    package func getPreviews(nodeID: UUID) async throws -> [WireDriveNodePreview] {
         let dto = try await restAPI.getNode(uuid: nodeID)
         return dto.previews.compactMap { $0.toModel() }
     }
 
-    package func getNode(nodeID: UUID) async throws -> WireCellsNode {
+    package func getNode(nodeID: UUID) async throws -> WireDriveNode {
         let dto = try await restAPI.getNode(uuid: nodeID)
         return dto.toDomainModel()
     }
 
-    package func getNode(id: UUID) async throws -> WireCellsNode? {
+    package func getNode(id: UUID) async throws -> WireDriveNode? {
         do {
             return try await getNode(nodeID: id)
         } catch let error as CellsSDK.ErrorResponse where error.httpStatusCode == 404 {
@@ -151,8 +150,8 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
     }
 
     package func getNodes(
-        _ request: WireCellsGetNodesRequest
-    ) async throws -> (nodes: [WireCellsNode], nextOffset: Int?) {
+        _ request: WireDriveGetNodesRequest
+    ) async throws -> (nodes: [WireDriveNode], nextOffset: Int?) {
         do {
             let (nodes, nextOffset) = try await restAPI.getNodes(request)
             return (nodes: nodes.map { $0.toDomainModel() }, nextOffset: nextOffset)
@@ -169,14 +168,14 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         try await restAPI.getEditorURL(id: id)
     }
 
-    package func createPublicLink(nodeID: UUID, label: String) async throws -> WireCellsPublicLink {
+    package func createPublicLink(nodeID: UUID, label: String) async throws -> WireDrivePublicLink {
         try await restAPI.createPublicLink(
             uuid: nodeID,
             label: label
         )
     }
 
-    package func getPublicLink(linkID: String) async throws -> WireCellsPublicLink {
+    package func getPublicLink(linkID: String) async throws -> WireDrivePublicLink {
         try await restAPI.getPublicLink(linkID: linkID)
     }
 
@@ -187,7 +186,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
     package func updatePublicLinkExpiration(
         linkID: String,
         expiration: Date?
-    ) async throws -> WireCellsPublicLink {
+    ) async throws -> WireDrivePublicLink {
         try await restAPI.updatePublicLinkExpiration(
             linkID: linkID,
             expiration: expiration
@@ -197,7 +196,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
     package func updatePublicLinkPassword(
         linkID: String,
         password: String?
-    ) async throws -> WireCellsPublicLink {
+    ) async throws -> WireDrivePublicLink {
         try await restAPI.updatePublicLinkPassword(
             linkID: linkID,
             password: password

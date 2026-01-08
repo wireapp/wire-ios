@@ -37,14 +37,14 @@ final class CreateFolderViewModel: ObservableObject {
         errorMessage != nil || !isInputValid
     }
 
-    private let createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol
+    private let createFolderUseCase: any WireDriveCreateFolderUseCaseProtocol
     private let folderPath: String
     private var subscriptions = Set<AnyCancellable>()
     private let filenameValidator = FilenameValidator()
     private var isInputValid = true
 
     init(
-        createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol,
+        createFolderUseCase: any WireDriveCreateFolderUseCaseProtocol,
         folderPath: String
     ) {
         self.createFolderUseCase = createFolderUseCase
@@ -69,7 +69,7 @@ final class CreateFolderViewModel: ObservableObject {
 
             return true
 
-        } catch let error as WireCellsCreateFolderUseCaseError {
+        } catch let error as WireDriveCreateFolderUseCaseError {
             isLoading = false
             switch error {
             case .serverFailedToCreateFolder:
@@ -82,7 +82,7 @@ final class CreateFolderViewModel: ObservableObject {
         } catch {
             isLoading = false
             errorMessage = L10n.Localizable.General.failure
-            WireLogger.wireCells.error("Creating folder failed: \(error)")
+            WireLogger.wireDrive.error("Creating folder failed: \(error)")
             return false
         }
     }

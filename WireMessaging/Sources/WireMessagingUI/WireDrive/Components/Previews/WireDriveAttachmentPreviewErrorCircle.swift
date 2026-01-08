@@ -19,7 +19,7 @@
 import SwiftUI
 import WireDesign
 
-/// A wire cells specific view that displays an warning icon within a circle.
+/// A wire drive specific view that displays an warning icon within a circle.
 
 struct WireDriveAttachmentPreviewErrorCircle: View {
 
@@ -50,5 +50,5 @@ struct WireDriveAttachmentPreviewErrorCircle: View {
 }
 
 #Preview {
-    WireCellsAttachmentPreviewErrorCircle()
+    WireDriveAttachmentPreviewErrorCircle()
 }

@@ -49,7 +49,7 @@ public struct ConversationChannelCreationForm: View {
             // TODO: [WPB-16771] Uncomment when read receipts supported on MLS
             //            readReceiptsSection
 
-            if viewModel.isWireCellsEnabled {
+            if viewModel.isWireDriveEnabled {
                 fileManagementSection
             }
 
@@ -211,7 +211,7 @@ public struct ConversationChannelCreationForm: View {
         viewModel: ConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: false,
-            isWireCellsEnabled: true,
+            isWireDriveEnabled: true,
             teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
     )

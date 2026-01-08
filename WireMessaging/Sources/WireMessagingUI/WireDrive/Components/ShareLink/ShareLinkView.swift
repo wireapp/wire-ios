@@ -312,7 +312,7 @@ struct ShareLinkView: View {
     let mockAPI = {
         let mockAPI = MockNodesAPIProtocol()
         mockAPI.getPublicLinkLinkID_MockMethod = { _ in
-            WireCellsPublicLink(
+            WireDrivePublicLink(
                 linkID: "aaaa",
                 url: URL(string: "https://example.com")!,
                 requiresPassword: true,
@@ -326,14 +326,14 @@ struct ShareLinkView: View {
     let keychain = Keychain()
 
     let useCases: ShareLinkView.ViewModel.UseCases = .init(
-        getLinkData: WireCellsGetPublicLinkDataUseCase(nodesAPI: mockAPI),
-        createPublicLink: WireCellsCreatePublicLinkUseCase(nodesAPI: mockAPI),
-        deletePublicLink: WireCellsDeletePublicLinkUseCase(nodesAPI: mockAPI),
-        updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(nodesAPI: mockAPI),
-        updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: mockAPI),
-        getPublicLinkPasswordUseCase: WireCellsGetPublicLinkPasswordUseCase(keychain: keychain),
-        storePublicLinkPasswordUseCase: WireCellsStorePublicLinkPasswordUseCase(keychain: keychain),
-        deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase(keychain: keychain)
+        getLinkData: WireDriveGetPublicLinkDataUseCase(nodesAPI: mockAPI),
+        createPublicLink: WireDriveCreatePublicLinkUseCase(nodesAPI: mockAPI),
+        deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: mockAPI),
+        updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: mockAPI),
+        updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: mockAPI),
+        getPublicLinkPasswordUseCase: WireDriveGetPublicLinkPasswordUseCase(keychain: keychain),
+        storePublicLinkPasswordUseCase: WireDriveStorePublicLinkPasswordUseCase(keychain: keychain),
+        deletePublicLinkPasswordUseCase: WireDriveDeletePublicLinkPasswordUseCase(keychain: keychain)
     )
 
     ShareLinkView(

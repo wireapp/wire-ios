@@ -37,14 +37,14 @@ extension ShareLinkView {
         }
 
         struct UseCases {
-            let getLinkData: any WireCellsGetPublicLinkDataUseCaseProtocol
-            let createPublicLink: WireCellsCreatePublicLinkUseCase
-            let deletePublicLink: WireCellsDeletePublicLinkUseCase
-            let updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase
-            let updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase
-            let getPublicLinkPasswordUseCase: WireCellsGetPublicLinkPasswordUseCase
-            let storePublicLinkPasswordUseCase: WireCellsStorePublicLinkPasswordUseCase
-            let deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase
+            let getLinkData: any WireDriveGetPublicLinkDataUseCaseProtocol
+            let createPublicLink: WireDriveCreatePublicLinkUseCase
+            let deletePublicLink: WireDriveDeletePublicLinkUseCase
+            let updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase
+            let updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase
+            let getPublicLinkPasswordUseCase: WireDriveGetPublicLinkPasswordUseCase
+            let storePublicLinkPasswordUseCase: WireDriveStorePublicLinkPasswordUseCase
+            let deletePublicLinkPasswordUseCase: WireDriveDeletePublicLinkPasswordUseCase
         }
 
         typealias DateFormattingContext = (

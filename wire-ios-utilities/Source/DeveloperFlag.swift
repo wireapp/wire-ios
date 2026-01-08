@@ -96,10 +96,10 @@ public enum DeveloperFlag: String, CaseIterable {
             "Turn on to enable Wire meetings"
 
         case .wireCellsFolders:
-            "Turn on to enable Wire Cells folders"
+            "Turn on to enable Wire Drive folders"
 
         case .wireCellsCollabora:
-            "Turn on to enable Collabora file editing in Wire Cells"
+            "Turn on to enable Collabora file editing in Wire Drive"
         }
     }
 

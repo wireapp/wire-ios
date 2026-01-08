@@ -218,7 +218,7 @@ final class MessageReplyAttachmentsViewSnapshotTests: XCTestCase {
             attachments: attachments
         )
 
-        let fetchNodeUseCase = MockWireCellsFetchNodeUseCaseProtocol()
+        let fetchNodeUseCase = MockWireDriveFetchNodeUseCaseProtocol()
         fetchNodeUseCase.invokeNodeID_MockValue = AsyncThrowingStream { continuation in
             continuation.finish()
         }

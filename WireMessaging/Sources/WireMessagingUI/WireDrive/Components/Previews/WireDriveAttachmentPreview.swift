@@ -61,7 +61,7 @@ struct WireDriveAttachmentPreview<Content: View>: View {
     }
 }
 
-/// Constants used in `WireCellsAttachmentPreview` for styling and layout. They need to be defined here because
+/// Constants used in `WireDriveAttachmentPreview` for styling and layout. They need to be defined here because
 /// `WireCellsAttachmentPreview` is generic.
 
 private enum Constants {
@@ -71,7 +71,7 @@ private enum Constants {
 }
 
 #Preview {
-    WireCellsAttachmentPreview(
+    WireDriveAttachmentPreview(
         progress: 0.5,
         progressColor: .blue
     ) {

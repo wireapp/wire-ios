@@ -29,9 +29,9 @@ struct WireDriveAttachmentsPreviewItemView: View {
         static let maxImageHeight: Double = 400
     }
 
-    @StateObject private var viewModel: WireCellsAttachmentsPreviewItemViewModel
+    @StateObject private var viewModel: WireDriveAttachmentsPreviewItemViewModel
 
-    init(viewModel: @autoclosure @escaping () -> WireCellsAttachmentsPreviewItemViewModel) {
+    init(viewModel: @autoclosure @escaping () -> WireDriveAttachmentsPreviewItemViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
     }
 
@@ -39,7 +39,7 @@ struct WireDriveAttachmentsPreviewItemView: View {
         HStack {
             switch (viewModel.fileCategory, viewModel.displayStyle) {
             case (.image, .small):
-                WireCellsImageConversationAttachmentPreview(
+                WireDriveImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
                     progress: viewModel.progress,
                     isAssetDownloadError: viewModel.isAssetDownloadError,
@@ -47,7 +47,7 @@ struct WireDriveAttachmentsPreviewItemView: View {
                 )
                 .frame(width: 74, height: 74)
             case (.image, .large):
-                WireCellsImageConversationAttachmentPreview(
+                WireDriveImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
                     progress: viewModel.progress,
                     isAssetDownloadError: viewModel.isAssetDownloadError,
@@ -62,14 +62,14 @@ struct WireDriveAttachmentsPreviewItemView: View {
                     )
                 )
             case (.video, .small):
-                WireCellsSmallVideoPreviewView(
+                WireDriveSmallVideoPreviewView(
                     url: viewModel.imagePreviewURL,
                     progress: viewModel.progress,
                     downloadError: viewModel.isAssetDownloadError,
                     duration: viewModel.attachmentDuration,
                 )
             case (.video, .large):
-                WireCellsLargeVideoPreviewView(
+                WireDriveLargeVideoPreviewView(
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
@@ -81,7 +81,7 @@ struct WireDriveAttachmentsPreviewItemView: View {
                 )
                 .frame(idealWidth: 288)
             case (.document, .small):
-                WireCellsDocumentAttachmentPreview(
+                WireDriveDocumentAttachmentPreview(
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
@@ -91,7 +91,7 @@ struct WireDriveAttachmentsPreviewItemView: View {
                 .frame(height: 74)
                 .frame(idealWidth: 288)
             case (.document, .large):
-                WireCellsLargeDocumentPreviewView(
+                WireDriveLargeDocumentPreviewView(
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
@@ -101,7 +101,7 @@ struct WireDriveAttachmentsPreviewItemView: View {
                 )
                 .frame(idealWidth: 288)
             case (.audio, .small), (.audio, .large):
-                WireCellsDocumentAttachmentPreview(
+                WireDriveDocumentAttachmentPreview(
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
@@ -132,7 +132,7 @@ struct WireDriveAttachmentsPreviewItemView: View {
 // MARK: - Preview
 
 #Preview {
-    WireCellsAttachmentsPreviewItemView(
-        viewModel: WireCellsAttachmentsPreviewViewModel.makePreview().itemViewModel(index: 0)
+    WireDriveAttachmentsPreviewItemView(
+        viewModel: WireDriveAttachmentsPreviewViewModel.makePreview().itemViewModel(index: 0)
     )
 }
