@@ -17,7 +17,7 @@
 //
 
 /// The deletion status of the node.
-package enum WireCellsNodeDeletionStatus {
+package enum WireDriveNodeDeletionStatus {
 
     /// The node is deleted.
     case deleted

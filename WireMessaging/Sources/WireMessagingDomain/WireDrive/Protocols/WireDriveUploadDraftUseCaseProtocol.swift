@@ -19,15 +19,15 @@
 public import Foundation
 public import UniformTypeIdentifiers
 
-/// Uploads file as a draft to the cells server.
+/// Uploads file as a draft to the drive server.
 
 public protocol WireDriveUploadDraftUseCaseProtocol: Sendable {
 
-    /// Uploads the file at `fileURL` to the cells server.
+    /// Uploads the file at `fileURL` to the drive server.
 
     func invoke(fileURL: URL) async throws
 
-    /// Creates a file using `imageData` and uploads it to the cells server.
+    /// Creates a file using `imageData` and uploads it to the drive server.
 
     func invoke(data: Data, type: UTType) async throws
 }

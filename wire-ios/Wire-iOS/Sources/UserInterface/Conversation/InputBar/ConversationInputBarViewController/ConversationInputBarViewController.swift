@@ -1249,12 +1249,12 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         ])
     }
 
-    private func useWireCells() -> Bool {
+    private func useWireDrive() -> Bool {
         userSession.isWireDriveEnabled && conversation.isWireDriveEnabled
     }
 
     private func observeDraftAttachments() {
-        guard useWireCells() else { return }
+        guard useWireDrive() else { return }
 
         Task.detached { [weak self, observeDraftsUseCase, attachmentsCarouselViewModel] in
             let observed = await observeDraftsUseCase.invoke()

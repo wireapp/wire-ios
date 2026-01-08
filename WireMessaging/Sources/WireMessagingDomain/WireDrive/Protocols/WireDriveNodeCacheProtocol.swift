@@ -32,10 +32,10 @@ package struct WireDriveNodeCacheItem {
 /// Caches `WireDriveNode` values.
 package protocol WireDriveNodeCacheProtocol: Sendable {
 
-    /// Sets a `WireCellsNodeCacheItem` for a given `nodeID`.
+    /// Sets a `WireDriveNodeCacheItem` for a given `nodeID`.
     func setItem(_ value: WireDriveNodeCacheItem, for nodeID: UUID) async
 
-    /// Returns a `WireCellsNodeCacheItem` for a given `nodeID`, or `nil` if no value is cached.
+    /// Returns a `WireDriveNodeCacheItem` for a given `nodeID`, or `nil` if no value is cached.
     @MainActor
     func item(for nodeID: UUID) -> WireDriveNodeCacheItem?
 

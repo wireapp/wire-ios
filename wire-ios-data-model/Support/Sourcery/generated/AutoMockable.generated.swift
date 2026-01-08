@@ -385,11 +385,11 @@ public class MockConversationLike: ConversationLike {
     // MARK: - isWireDriveEnabled
 
     public var isWireDriveEnabled: Bool {
-        get { return underlyingisWireDriveEnabled }
-        set(value) { underlyingisWireDriveEnabled = value }
+        get { return underlyingIsWireDriveEnabled }
+        set(value) { underlyingIsWireDriveEnabled = value }
     }
 
-    public var underlyingisWireDriveEnabled: Bool!
+    public var underlyingIsWireDriveEnabled: Bool!
 
 
     // MARK: - localParticipantsContain

@@ -130,7 +130,7 @@ package final class FilesViewModel: ObservableObject {
 
         case loading
         case received(items: [FilesViewItem])
-        case pending // cells are not ready yet
+        case pending // drive is not ready yet
         case error
 
         var items: [FilesViewItem] {

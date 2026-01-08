@@ -20,7 +20,7 @@ package import Foundation
 package import Combine
 
 // sourcery: AutoMockable
-/// Repository for accessing & updating `WireCellsLocalAsset`s.
+/// Repository for accessing & updating `WireDriveLocalAsset`s.
 package protocol WireDriveLocalAssetRepositoryProtocol: Sendable {
 
     /// Returns a `WireCellsLocalAsset` for the given `nodeID` or nil if metadata for the asset has has never been
