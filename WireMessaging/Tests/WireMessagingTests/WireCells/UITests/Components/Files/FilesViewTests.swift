@@ -61,7 +61,7 @@ final class FilesViewTests: XCTestCase {
         let localAssetsRepository = MockWireCellsLocalAssetRepositoryProtocol()
 
         fetchNodesUseCase = WireCellsFetchNodesPageUseCase(
-            configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
+            configuration: .conversationFileView(root: .id(.mockID1)),
             repository: nodesRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
@@ -128,7 +128,7 @@ final class FilesViewTests: XCTestCase {
             publicLinkID: nil
         )
 
-        let view = FilesItemView(viewModel: .make(item: item), menuActions: [])
+        let view = FilesItemView(viewModel: .make(item: item))
             .frame(width: 390)
 
         snapshotHelper
@@ -155,7 +155,7 @@ final class FilesViewTests: XCTestCase {
             publicLinkID: nil
         )
 
-        let view = FilesItemView(viewModel: .make(item: item), menuActions: [])
+        let view = FilesItemView(viewModel: .make(item: item))
             .frame(width: 390)
 
         snapshotHelper
@@ -182,7 +182,7 @@ final class FilesViewTests: XCTestCase {
             publicLinkID: nil
         )
 
-        let view = FilesItemView(viewModel: .make(item: item), menuActions: [])
+        let view = FilesItemView(viewModel: .make(item: item))
             .frame(width: 390)
 
         snapshotHelper
@@ -209,7 +209,7 @@ final class FilesViewTests: XCTestCase {
             publicLinkID: nil
         )
 
-        let view = FilesItemView(viewModel: .make(item: item), menuActions: [])
+        let view = FilesItemView(viewModel: .make(item: item))
             .frame(width: 390)
 
         snapshotHelper
@@ -236,7 +236,7 @@ final class FilesViewTests: XCTestCase {
             publicLinkID: nil
         )
 
-        let view = FilesItemView(viewModel: .make(item: item), menuActions: [])
+        let view = FilesItemView(viewModel: .make(item: item))
             .frame(width: 390)
 
         for dynamicTypeSize in [DynamicTypeSize.allCases.min()!, DynamicTypeSize.allCases.max()!] {
@@ -273,7 +273,7 @@ final class FilesViewTests: XCTestCase {
             downloadState: .downloading(progress: 0.5)
         )
 
-        let view = FilesItemView(viewModel: .make(item: item, asset: asset), menuActions: [])
+        let view = FilesItemView(viewModel: .make(item: item, asset: asset))
             .frame(width: 390)
 
         snapshotHelper
@@ -308,7 +308,7 @@ final class FilesViewTests: XCTestCase {
             downloadState: .failed(error: URLError(.notConnectedToInternet))
         )
 
-        let view = FilesItemView(viewModel: .make(item: item, asset: asset), menuActions: [])
+        let view = FilesItemView(viewModel: .make(item: item, asset: asset))
             .frame(width: 390)
 
         snapshotHelper
@@ -403,8 +403,7 @@ final class FilesViewTests: XCTestCase {
             localAssetRepository: MockWireCellsLocalAssetRepositoryProtocol(),
             nodesRepository: nodesRepository,
             fileCache: MockFileCache(),
-            isFoldersEnabled: true,
-            isCollaboraEnabled: false,
+            isBrowsing: false,
             accentColorProvider: { .default }
         )
 
@@ -438,8 +437,8 @@ private extension FilesItemViewModel {
             locale: Locale(identifier: "en_US_POSIX"),
             calendar: Calendar(identifier: .gregorian),
             timeZone: .gmt,
-            isInRecycleBin: false,
-            isFoldersEnabled: false
+            isBrowsing: false,
+            isInRecycleBin: false
         )
     }
 

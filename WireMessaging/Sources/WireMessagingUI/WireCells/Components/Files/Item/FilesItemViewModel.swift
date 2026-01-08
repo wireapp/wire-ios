@@ -67,8 +67,6 @@ final class FilesItemViewModel: ObservableObject {
 
     let isBrowsing: Bool
     let isInRecycleBin: Bool
-    let isFoldersEnabled: Bool
-    let isCollaboraEnabled: Bool
 
     struct TagsInfo {
         let firstTag: String?
@@ -89,9 +87,7 @@ final class FilesItemViewModel: ObservableObject {
         calendar: Calendar = .autoupdatingCurrent,
         timeZone: TimeZone = .autoupdatingCurrent,
         isBrowsing: Bool,
-        isInRecycleBin: Bool,
-        isFoldersEnabled: Bool,
-        isCollaboraEnabled: Bool
+        isInRecycleBin: Bool
     ) {
         self.nodeID = item.id
         self.item = item
@@ -109,8 +105,6 @@ final class FilesItemViewModel: ObservableObject {
 
         self.isBrowsing = isBrowsing
         self.isInRecycleBin = isInRecycleBin
-        self.isFoldersEnabled = isFoldersEnabled
-        self.isCollaboraEnabled = isCollaboraEnabled
 
         self.menuActions = makeMenuActions()
 
@@ -272,29 +266,19 @@ final class FilesItemViewModel: ObservableObject {
         }
 
         if !isBrowsing {
-            if !isInRecycleBin {
-                if isCollaboraEnabled {
-                    actions.insert(.showVersionHistory)
-
-                    if isEditable {
-                        actions.insert(.edit)
-                    }
-                }
-                if isFoldersEnabled {
-                    actions.insert(.moveToFolder)
-                }
-                actions.insert(.rename)
-                actions.insert(.editTags)
-            }
-
             if isInRecycleBin {
                 actions.insert(.restore)
-            }
-
-            if isInRecycleBin || !isFoldersEnabled {
                 actions.insert(.deletePermanently)
             } else {
+                actions.insert(.showVersionHistory)
+                actions.insert(.moveToFolder)
+                actions.insert(.rename)
+                actions.insert(.editTags)
                 actions.insert(.deleteToRecycleBin)
+
+                if isEditable {
+                    actions.insert(.edit)
+                }
             }
         }
 

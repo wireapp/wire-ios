@@ -28,7 +28,7 @@ import WireMessagingDomainSupport
 extension FilesViewModel {
 
     /// A stubbed instance of `FilesViewModel` for SwiftUI previews.
-    static func preview(isFoldersEnabled: Bool = false) -> FilesViewModel {
+    static func preview() -> FilesViewModel {
         let cache = mockFileCache()
         let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
@@ -38,7 +38,7 @@ extension FilesViewModel {
         return FilesViewModel(
             useCases: .init(
                 fetchNodes: WireCellsFetchNodesPageUseCase(
-                    configuration: .conversationFileView(root: .path("root"), isFoldersEnabled: true),
+                    configuration: .conversationFileView(root: .path("root")),
                     repository: previewNodesRepository()
                 ),
                 deleteNodes: WireCellsDeleteNodesUseCase(
@@ -103,8 +103,6 @@ extension FilesViewModel {
             fileCache: cache,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
             isBrowsing: false,
-            isFoldersEnabled: isFoldersEnabled,
-            isCollaboraEnabled: false,
             accentColorProvider: { .default }
         )
     }
@@ -156,8 +154,6 @@ extension FilesItemViewModel {
             onItemAction: { _, _ in },
             isBrowsing: false,
             isInRecycleBin: false,
-            isFoldersEnabled: false,
-            isCollaboraEnabled: false
         )
     }
 
