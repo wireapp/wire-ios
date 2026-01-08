@@ -23,7 +23,7 @@ import WireDesign
 import WireFoundation
 
 final class CollectionSearchFilesCell: CollectionCell {
-    private var containerView = UIView()
+    private let containerView = UIView()
 
     private let label: UILabel = {
         let label = UILabel()
