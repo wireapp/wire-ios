@@ -38,7 +38,7 @@ struct FilenameValidator {
             .failure(.dotPrefix)
         } else if input.count > Constants.maxInputLength {
             .failure(.tooLong)
-        } else if input.contains("/") {
+        } else if input.contains("/") || input.contains("\\") {
             .failure(.slashCharacter)
         } else {
             .success(())
