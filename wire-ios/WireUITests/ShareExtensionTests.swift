@@ -23,18 +23,19 @@ import XCTest
 final class ShareExtensionTests: WireUITestCase {
 
     private let photosAppBundleId = XCUIApplication(bundleIdentifier: "com.apple.mobileslideshow")
+    private let timeout: TimeInterval = 2
 
     @MainActor
     private func launchPhotosApp() async throws {
         photosAppBundleId.launch()
-        XCTAssertTrue(photosAppBundleId.wait(for: .runningForeground, timeout: 10))
+        XCTAssertTrue(photosAppBundleId.wait(for: .runningForeground, timeout: timeout))
     }
 
     @MainActor
     private func shareFirstPhotoToWire(name: String) async throws {
         let photosApp = try PhotosAppPage(photosApp: photosAppBundleId)
         try photosApp
-            .openFirstImage()
+            .openImage()
             .shareImageToWire()
             .chooseConversationAndSend(name: name)
     }
@@ -42,9 +43,9 @@ final class ShareExtensionTests: WireUITestCase {
     @MainActor
     private func switchBackToWireApp() async throws {
         app.activate()
-        if !app.wait(for: .runningForeground, timeout: 10) {
+        if !app.wait(for: .runningForeground, timeout: timeout) {
             app.launch()
-            _ = app.wait(for: .runningForeground, timeout: 10)
+            _ = app.wait(for: .runningForeground, timeout: timeout)
         }
     }
 

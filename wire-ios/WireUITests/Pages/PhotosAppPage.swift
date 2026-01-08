@@ -74,7 +74,7 @@ class PhotosAppPage: PageModel {
     func openFirstImage() throws -> PhotosAppPage {
         try continueWhatsNewIfPresent()
         XCTAssertTrue(firstImageTile.waitForExistence(timeout: 10))
-        // NOTE: Use a coordinate tap on center because Photos grid cells are not always directly hittable in UITests
+        // NOTE: Tap the center via coordinates because Photos grid cells are often not directly hittable in UITests
         firstImageTile
             .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
             .tap()
@@ -91,6 +91,8 @@ class PhotosAppPage: PageModel {
     }
 
     func chooseConversationAndSend(name: String) throws {
+        defer { photosApp.terminate() }
+
         XCTAssertTrue(chooseConversationButton.waitForExistence(timeout: timeout))
         chooseConversationButton.tap()
 
@@ -100,6 +102,9 @@ class PhotosAppPage: PageModel {
 
         XCTAssertTrue(sendButton.waitForExistence(timeout: timeout))
         sendButton.tap()
+
+        XCTAssertTrue(shareButton.waitForExistence(timeout: timeout))
+        photosApp.terminate()
     }
 
 }
