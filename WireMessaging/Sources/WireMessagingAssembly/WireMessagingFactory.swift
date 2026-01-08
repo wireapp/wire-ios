@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@ public import WireMessagingUI
 
 public struct WireMessagingFactory {
 
+    public typealias CellsURLResolver = @Sendable () throws -> URL
+
     private let nodesAPI: NodesAPI
     private let uploadManager: WireCellsNodeUploadManager
     private let draftsRepository: DraftsRepository
@@ -44,29 +46,15 @@ public struct WireMessagingFactory {
 
     @MainActor
     public init(
-        serverURL: URL,
+        cellsURLResolver: @escaping CellsURLResolver,
         accessToken: any AccessTokenProvider,
         fileCache: any FileCache,
         contextProvider: any ManagedObjectContextProvider,
         isFoldersEnabled: Bool,
         isCollaboraEnabled: Bool
     ) {
-        // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
-        let serverURL = switch serverURL.host {
-        case "prod-nginz-https.wire.com": // Production
-            URL(string: "https://cells-beta.wire.com")!
-        case "staging-nginz-https.zinfra.io": // Staging
-            URL(string: "https://cells.staging.zinfra.io")!
-        case "nginz-https.fulu.wire.link": // Fulu
-            URL(string: "https://cells.fulu.wire.link")!
-        case "nginz-https.imai.wire.link": // Imai
-            URL(string: "https://cells.imai.wire.link")!
-        default:
-            serverURL
-        }
-
         self.nodeCache = WireCellsNodeCache()
-        self.nodesAPI = NodesAPI(serverURL: serverURL, accessToken: accessToken)
+        self.nodesAPI = NodesAPI(serverURLResolver: cellsURLResolver, accessToken: accessToken)
         self.uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
         self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
         self.fileCache = fileCache
@@ -212,7 +200,12 @@ public extension WireMessagingFactory {
                         getAssetUseCase: WireCellsGetAssetUseCase(
                             localAssetRepository: localAssetRepository,
                             fileCache: fileCache
-                        )
+                        ),
+                        getPublicLinkData: WireCellsGetPublicLinkDataUseCase(nodesAPI: nodesAPI),
+                        createPublicLink: WireCellsCreatePublicLinkUseCase(nodesAPI: nodesAPI),
+                        deletePublicLink: WireCellsDeletePublicLinkUseCase(nodesAPI: nodesAPI),
+                        updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
+                        updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI)
                     ),
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,

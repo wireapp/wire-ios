@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -660,7 +660,6 @@
 
 "content.system.cannot_decrypt.self" = "Eine Nachricht von Ihnen konnte nicht entschlüsselt werden.";
 "content.system.cannot_decrypt.other" = "Eine Nachricht von %@ konnte nicht entschlüsselt werden.";
-"content.system.cannot_decrypt.reset_session" = "Entschlüsselung künftiger Nachrichten";
 "content.system.cannot_decrypt.error_details" = "(Behobener Fehler: %d ID: %@)";
 
 "content.system.cannot_decrypt_resolved.self" = "Sie können jetzt Nachrichten von sich selbst entschlüsseln. Um verlorene Nachrichten wiederherzustellen, müssen Sie sie erneut senden.";
@@ -733,6 +732,8 @@
 "content.reactions_list.likers" = "Gefällt";
 
 "content.file.too_big" = "Sie können Dateien bis zu %@ senden";
+
+"content.message.reply.files.count" = "%@ Dateien";
 
 // Reactions
 "content.reactions.title" = "Reaktion auswählen";
@@ -1840,10 +1841,6 @@
 "databaseloadingfailure.alert.delete_database.continue" = "Weiter";
 "databaseloadingfailure.alert.retry" = "Wiederholen";
 
-// Backend not supported alert
-"backend_not_supported.alert.title" = "Serverversion wird nicht unterstützt";
-"backend_not_supported.alert.message" = "Die Serverversion wird von dieser App nicht unterstützt. Bitte wenden Sie sich an Ihren Systemadministrator.";
-
 // Third Party
 "giphy.conversation.message" = "%@ · via giphy.com";
 "giphy.conversation.random_message" = "via giphy.com";
@@ -1860,7 +1857,7 @@
 
 // Collections
 "collections.section.images.title" = "Bilder";
-"collections.section.files.title" = "Dokumente";
+"collections.section.files.title" = "Dateien";
 "collections.section.videos.title" = "Videos";
 "collections.section.links.title" = "Links";
 "collections.section.all.button" = "Zeige alle %d →";

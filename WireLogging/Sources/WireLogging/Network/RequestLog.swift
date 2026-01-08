@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -79,8 +79,38 @@ struct RequestLog: Codable {
 }
 
 public extension URL {
+
     var endpointRemoteLogDescription: String {
-        absoluteString
+        var components = URLComponents(string: absoluteString)
+        let searchContactPath = "/search/contacts"
+
+        let path = components?.path ?? ""
+        guard path.contains(searchContactPath) else {
+            return absoluteString
+        }
+
+        // redact query param
+        var queryComponents = components?.queryItems ?? []
+        queryComponents.enumerated().forEach { item in
+            var redactedItem = item.element
+            if redactedItem.name == "q" {
+                redactedItem.value = "***"
+            }
+            queryComponents[item.offset] = redactedItem
+        }
+
+        components?.queryItems = queryComponents
+
+        var endpoint = [
+            "\(components?.scheme ?? ""):/",
+            components?.host,
+            path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        ]
+        .compactMap(\.self)
+        .filter { !$0.isEmpty }
+        .joined(separator: "/")
+        endpoint.append(components?.query?.isEmpty == false ? "?\(components!.query!)" : "")
+        return endpoint
     }
 }
 

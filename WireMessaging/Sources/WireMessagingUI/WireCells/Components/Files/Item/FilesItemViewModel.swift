@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ final class FilesItemViewModel: ObservableObject {
         case rename
         case moveToFolder
         case editTags
+        case shareLink
         case restore
         case deleteToRecycleBin
         case deletePermanently
@@ -270,11 +271,11 @@ extension Collection<FilesItemViewModel.ItemAction> {
             if !recycleBin {
                 if collaboraEnabled {
                     actions.insert(.showVersionHistory)
+                    actions.insert(.edit)
                 }
                 if foldersEnabled {
                     actions.insert(.moveToFolder)
                 }
-                actions.insert(.edit)
                 actions.insert(.rename)
                 actions.insert(.editTags)
             }

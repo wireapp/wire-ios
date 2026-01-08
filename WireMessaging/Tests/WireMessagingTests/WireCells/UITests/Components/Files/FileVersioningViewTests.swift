@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -99,12 +99,19 @@ final class FileVersioningViewTests: XCTestCase {
             nodeCache: MockWireCellsNodeCacheProtocol()
         )
 
+        let getAssetUseCase = WireCellsGetAssetUseCase(
+            localAssetRepository: localAssetRepository,
+            fileCache: MockFileCache()
+        )
+
         let viewModel = FileVersioningViewModel(
             nodeID: .mockID1,
             name: "foo.jpg",
+            eTag: nil,
             context: (Locale(identifier: "en_US_POSIX"), Calendar(identifier: .gregorian), TimeZone.gmt),
             fetchNodeVersionsUseCase: fetchNodeVersionUseCase,
             restoreNodeVersionUseCase: restoreNodeVersionUseCase,
+            getAssetUseCase: getAssetUseCase,
             accentColorProvider: { .default }
         )
 

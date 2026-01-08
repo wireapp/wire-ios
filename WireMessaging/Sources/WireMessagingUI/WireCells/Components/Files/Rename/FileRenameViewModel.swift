@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -95,6 +95,10 @@ final class FileRenameViewModel: ObservableObject {
         }
     }
 
+    private var trimmedInput: String {
+        filenameInput.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     init(
         renameNodeUseCase: any WireCellsRenameNodeUseCaseProtocol,
         model: Model,
@@ -119,7 +123,7 @@ final class FileRenameViewModel: ObservableObject {
             try await renameNodeUseCase.invoke(
                 nodeID: nodeID,
                 nodeFilepath: nodeFilePath,
-                newFilename: filenameInput,
+                newFilename: trimmedInput,
                 isFolder: kind == .folder
             )
 
@@ -149,8 +153,8 @@ final class FileRenameViewModel: ObservableObject {
 
     private func bindTextInput() {
         $filenameInput
-            .compactMap { [weak self] input in
-                self?.filenameValidator.validate(input)
+            .compactMap { [weak self] _ in
+                self?.filenameValidator.validate(self?.trimmedInput ?? "")
             }
             .flatMap(\.self)
             .sink { [weak self] result in

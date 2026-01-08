@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,9 @@ public class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
 
     var coreCrypto: MockCoreCryptoProtocol
     var coreCryptoContext: MockCoreCryptoContextProtocol
+    var completeTransactionByDefault: Bool = true
+
+    private var transactionContinuations: [CheckedContinuation<Void, Never>] = []
 
     public init(
         coreCrypto: MockCoreCryptoProtocol = .init(),
@@ -48,7 +51,16 @@ public class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
     var performAsyncCount = 0
     public func perform<T>(_ block: (WireCoreCrypto.CoreCryptoContextProtocol) async throws -> T) async rethrows -> T {
         performAsyncCount += 1
-        return try await block(coreCryptoContext)
+
+        let result = try await block(coreCryptoContext)
+
+        if !completeTransactionByDefault {
+            await withCheckedContinuation { continuation in
+                transactionContinuations.append(continuation)
+            }
+        }
+
+        return result
     }
 
     public func configure(block: (any WireCoreCrypto.CoreCryptoProtocol) async throws -> Void) async throws {
@@ -63,6 +75,19 @@ public class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
         }
 
         try mock(clientID)
+    }
+
+    public func waitUntilTransactionIsPending() async throws {
+        while transactionContinuations.isEmpty {
+            try await Task.sleep(nanoseconds: 1_000_000)
+        }
+    }
+
+    public func completeAllTransactions() {
+        transactionContinuations.forEach { cont in
+            cont.resume()
+        }
+
     }
 
     var tearDownCount = 0
