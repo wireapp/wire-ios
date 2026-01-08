@@ -21,6 +21,7 @@ import XCTest
 
 class PhotosAppPage: PageModel {
     private let photosApp: XCUIApplication
+    private let timeout: TimeInterval = 2
 
     override var pageMainElement: XCUIElement {
         photosApp.windows.firstMatch
@@ -36,9 +37,7 @@ class PhotosAppPage: PageModel {
     }
 
     var firstImageTile: XCUIElement {
-        photosApp.images
-            .matching(identifier: Locators.ShareExtensionPage.imageTile.rawValue)
-            .element(boundBy: 0)
+        photosApp.images[Locators.ShareExtensionPage.imageTile.rawValue].firstMatch
     }
 
     var shareButton: XCUIElement {
@@ -65,7 +64,7 @@ class PhotosAppPage: PageModel {
 
     @discardableResult
     func continueWhatsNewIfPresent() throws -> PhotosAppPage {
-        if continueButtonOnWhatsNewPhotosApp.waitForExistence(timeout: 3) {
+        if continueButtonOnWhatsNewPhotosApp.waitForExistence(timeout: timeout) {
             continueButtonOnWhatsNewPhotosApp.tap()
         }
         return self
@@ -84,22 +83,22 @@ class PhotosAppPage: PageModel {
 
     @discardableResult
     func shareImageToWire() throws -> PhotosAppPage {
-        XCTAssertTrue(shareButton.waitForExistence(timeout: 10))
+        XCTAssertTrue(shareButton.waitForExistence(timeout: timeout))
         shareButton.tap()
-        XCTAssertTrue(shareToWireApp.waitForExistence(timeout: 10))
+        XCTAssertTrue(shareToWireApp.waitForExistence(timeout: timeout))
         shareToWireApp.tap()
         return self
     }
 
     func chooseConversationAndSend(name: String) throws {
-        XCTAssertTrue(chooseConversationButton.waitForExistence(timeout: 10))
+        XCTAssertTrue(chooseConversationButton.waitForExistence(timeout: timeout))
         chooseConversationButton.tap()
 
         let conversationToSend = selectConversation(name: name)
-        XCTAssertTrue(conversationToSend.waitForExistence(timeout: 10))
+        XCTAssertTrue(conversationToSend.waitForExistence(timeout: timeout))
         conversationToSend.tap()
 
-        XCTAssertTrue(sendButton.waitForExistence(timeout: 10))
+        XCTAssertTrue(sendButton.waitForExistence(timeout: timeout))
         sendButton.tap()
     }
 

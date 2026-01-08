@@ -108,8 +108,8 @@ class UserHelper {
         try await selfUserAPI.updateHandle(handle: user.username)
 
         // Store id in UserInfo
-        let getSelfUser = try await selfUserAPI.getSelfUser()
-        user.id = getSelfUser.id.uuidString
+        let selfUser = try await selfUserAPI.getSelfUser()
+        user.id = selfUser.id.uuidString
 
         createdUsers.append(user)
         return user
