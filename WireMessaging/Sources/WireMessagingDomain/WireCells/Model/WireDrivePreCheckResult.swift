@@ -16,17 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+import Foundation
 
-// sourcery: AutoMockable
-package protocol DraftsRepositoryProtocol: Sendable {
-
-    func drafts(for cellName: String) async -> AsyncStream<[WireDriveDraft]>
-    func publishAll(for cellName: String) async throws
-    func clearPublishedDrafts(for cellName: String) async -> [WireDriveDraft]
-    func addDraft(_ draft: WireDriveDraft, for cellName: String) async
-    func fetchDraft(nodeID: UUID, cellName: String) async -> WireDriveDraft?
-    func deleteDraft(nodeID: UUID, cellName: String) async
-    func updateDraft(_ draft: WireDriveDraft, for cellName: String) async
-
+/// Represents the result of a pre-check operation to determine if a file
+/// with the given path and name already exists on the Cell server.
+public enum WireDrivePreCheckResult: Equatable, Hashable, Sendable {
+    case success
+    case fileExists(nextPath: String)
 }

@@ -19,14 +19,9 @@
 package import Foundation
 
 // sourcery: AutoMockable
-package protocol DraftsRepositoryProtocol: Sendable {
+package protocol WireDriveEditingURLRepositoryProtocol: Sendable {
 
-    func drafts(for cellName: String) async -> AsyncStream<[WireDriveDraft]>
-    func publishAll(for cellName: String) async throws
-    func clearPublishedDrafts(for cellName: String) async -> [WireDriveDraft]
-    func addDraft(_ draft: WireDriveDraft, for cellName: String) async
-    func fetchDraft(nodeID: UUID, cellName: String) async -> WireDriveDraft?
-    func deleteDraft(nodeID: UUID, cellName: String) async
-    func updateDraft(_ draft: WireDriveDraft, for cellName: String) async
+    /// Returns a URL to an online editor where the document can be edited.
+    func getEditorURL(id: UUID) async throws -> (url: URL, date: Date)?
 
 }

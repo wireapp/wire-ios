@@ -18,15 +18,12 @@
 
 package import Foundation
 
-// sourcery: AutoMockable
-package protocol DraftsRepositoryProtocol: Sendable {
+/// A means of locating a node.
+package enum WireDriveNodeLocator: Equatable {
 
-    func drafts(for cellName: String) async -> AsyncStream<[WireDriveDraft]>
-    func publishAll(for cellName: String) async throws
-    func clearPublishedDrafts(for cellName: String) async -> [WireDriveDraft]
-    func addDraft(_ draft: WireDriveDraft, for cellName: String) async
-    func fetchDraft(nodeID: UUID, cellName: String) async -> WireDriveDraft?
-    func deleteDraft(nodeID: UUID, cellName: String) async
-    func updateDraft(_ draft: WireDriveDraft, for cellName: String) async
+    /// The path to the node.
+    case path(String)
 
+    /// The ID of the node.
+    case id(UUID)
 }

@@ -18,15 +18,25 @@
 
 package import Foundation
 
-// sourcery: AutoMockable
-package protocol DraftsRepositoryProtocol: Sendable {
+/// A cached `WireDriveNode`.
+///
+/// A `nil` value indicates that the node was not found on the server, for example it may have been deleted. This is
+/// different from the value never having been added to the cache.
+package struct WireDriveNodeCacheItem {
 
-    func drafts(for cellName: String) async -> AsyncStream<[WireDriveDraft]>
-    func publishAll(for cellName: String) async throws
-    func clearPublishedDrafts(for cellName: String) async -> [WireDriveDraft]
-    func addDraft(_ draft: WireDriveDraft, for cellName: String) async
-    func fetchDraft(nodeID: UUID, cellName: String) async -> WireDriveDraft?
-    func deleteDraft(nodeID: UUID, cellName: String) async
-    func updateDraft(_ draft: WireDriveDraft, for cellName: String) async
+    package let node: WireCellsNode?
+
+}
+
+// sourcery: AutoMockable
+/// Caches `WireDriveNode` values.
+package protocol WireDriveNodeCacheProtocol: Sendable {
+
+    /// Sets a `WireCellsNodeCacheItem` for a given `nodeID`.
+    func setItem(_ value: WireCellsNodeCacheItem, for nodeID: UUID) async
+
+    /// Returns a `WireCellsNodeCacheItem` for a given `nodeID`, or `nil` if no value is cached.
+    @MainActor
+    func item(for nodeID: UUID) -> WireCellsNodeCacheItem?
 
 }

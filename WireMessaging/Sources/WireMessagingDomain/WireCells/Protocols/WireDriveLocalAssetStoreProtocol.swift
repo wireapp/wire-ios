@@ -16,17 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+package import Combine
 package import Foundation
 
 // sourcery: AutoMockable
-package protocol DraftsRepositoryProtocol: Sendable {
+@MainActor
+package protocol WireDriveLocalAssetStoreProtocol: Sendable {
 
-    func drafts(for cellName: String) async -> AsyncStream<[WireDriveDraft]>
-    func publishAll(for cellName: String) async throws
-    func clearPublishedDrafts(for cellName: String) async -> [WireDriveDraft]
-    func addDraft(_ draft: WireDriveDraft, for cellName: String) async
-    func fetchDraft(nodeID: UUID, cellName: String) async -> WireDriveDraft?
-    func deleteDraft(nodeID: UUID, cellName: String) async
-    func updateDraft(_ draft: WireDriveDraft, for cellName: String) async
+    /// Returns the `WireDriveLocalAsset` for a given `nodeID` or `nil`.
+    func asset(nodeID: UUID) throws -> WireCellsLocalAsset?
+
+    /// Updates an existing `WireDriveLocalAsset` or creates a new one if none exists with its `nodeID`.
+    func upsertAsset(_ asset: WireDriveLocalAsset) throws
+
+    /// Returns a publisher to monitor changes to an `WireDriveLocalAsset` for a given `nodeID`.
+    func observeAsset(nodeID: UUID) -> AnyPublisher<WireCellsLocalAsset?, Never>
+
+    /// Deletes all existing `WireCellsLocalAsset` for the given `nodeIDs`.
+    func deleteAssets(nodeIDs: [UUID]) async throws
 
 }

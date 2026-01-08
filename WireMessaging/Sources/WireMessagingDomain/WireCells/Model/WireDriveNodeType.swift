@@ -16,17 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+/// The type of the node.
+public enum WireDriveNodeType: String, Hashable, Sendable {
 
-// sourcery: AutoMockable
-package protocol DraftsRepositoryProtocol: Sendable {
+    /// A file that is not a folder.
+    case leaf = "LEAF"
 
-    func drafts(for cellName: String) async -> AsyncStream<[WireDriveDraft]>
-    func publishAll(for cellName: String) async throws
-    func clearPublishedDrafts(for cellName: String) async -> [WireDriveDraft]
-    func addDraft(_ draft: WireDriveDraft, for cellName: String) async
-    func fetchDraft(nodeID: UUID, cellName: String) async -> WireDriveDraft?
-    func deleteDraft(nodeID: UUID, cellName: String) async
-    func updateDraft(_ draft: WireDriveDraft, for cellName: String) async
-
+    /// A collection such as a folder.
+    case collection = "COLLECTION"
 }

@@ -16,17 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+public import Foundation
 
-// sourcery: AutoMockable
-package protocol DraftsRepositoryProtocol: Sendable {
+public struct WireDriveLocalAssetMetadata: Equatable, Sendable {
 
-    func drafts(for cellName: String) async -> AsyncStream<[WireDriveDraft]>
-    func publishAll(for cellName: String) async throws
-    func clearPublishedDrafts(for cellName: String) async -> [WireDriveDraft]
-    func addDraft(_ draft: WireDriveDraft, for cellName: String) async
-    func fetchDraft(nodeID: UUID, cellName: String) async -> WireDriveDraft?
-    func deleteDraft(nodeID: UUID, cellName: String) async
-    func updateDraft(_ draft: WireDriveDraft, for cellName: String) async
+    public let nodeID: UUID
+    public var eTag: String
+    public var path: String
+    public var contentType: String?
+    public var size: UInt64?
+    public var isDownloaded: Bool
+
+    public init(
+        nodeID: UUID,
+        eTag: String,
+        path: String,
+        contentType: String?,
+        size: UInt64?,
+        isDownloaded: Bool
+    ) {
+        self.nodeID = nodeID
+        self.eTag = eTag
+        self.path = path
+        self.contentType = contentType
+        self.size = size
+        self.isDownloaded = isDownloaded
+    }
 
 }

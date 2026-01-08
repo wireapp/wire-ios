@@ -16,17 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+public import WireFoundation
 
-// sourcery: AutoMockable
-package protocol DraftsRepositoryProtocol: Sendable {
+public enum WireCellsNodeConversationRepositoryError: Error {
+    case cellNameNotFound
+    case genericError(any Error)
+}
 
-    func drafts(for cellName: String) async -> AsyncStream<[WireDriveDraft]>
-    func publishAll(for cellName: String) async throws
-    func clearPublishedDrafts(for cellName: String) async -> [WireDriveDraft]
-    func addDraft(_ draft: WireDriveDraft, for cellName: String) async
-    func fetchDraft(nodeID: UUID, cellName: String) async -> WireDriveDraft?
-    func deleteDraft(nodeID: UUID, cellName: String) async
-    func updateDraft(_ draft: WireDriveDraft, for cellName: String) async
+public protocol WireCellsNodeConversationRepository {
+    func getCellName(conversationID: QualifiedID) async throws(WireCellsNodeConversationRepositoryError)
+        -> String
 
+    func setWireCell(
+        conversationID: QualifiedID,
+        cellName: String
+    ) async throws(WireCellsNodeConversationRepositoryError)
+
+    func getConversationNames() async throws(WireCellsNodeConversationRepositoryError) -> [WireDriveConversation]
 }

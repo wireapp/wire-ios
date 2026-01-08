@@ -16,17 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+public import Foundation
+public import UniformTypeIdentifiers
 
-// sourcery: AutoMockable
-package protocol DraftsRepositoryProtocol: Sendable {
+/// Uploads file as a draft to the cells server.
 
-    func drafts(for cellName: String) async -> AsyncStream<[WireDriveDraft]>
-    func publishAll(for cellName: String) async throws
-    func clearPublishedDrafts(for cellName: String) async -> [WireDriveDraft]
-    func addDraft(_ draft: WireDriveDraft, for cellName: String) async
-    func fetchDraft(nodeID: UUID, cellName: String) async -> WireDriveDraft?
-    func deleteDraft(nodeID: UUID, cellName: String) async
-    func updateDraft(_ draft: WireDriveDraft, for cellName: String) async
+public protocol WireDriveUploadDraftUseCaseProtocol: Sendable {
+
+    /// Uploads the file at `fileURL` to the cells server.
+
+    func invoke(fileURL: URL) async throws
+
+    /// Creates a file using `imageData` and uploads it to the cells server.
+
+    func invoke(data: Data, type: UTType) async throws
+}
+
+public enum WireDriveUploadDraftUseCaseError: Error, Sendable {
+
+    /// The file size of the requested file cannot be determined.
+
+    case missingFileSize
 
 }

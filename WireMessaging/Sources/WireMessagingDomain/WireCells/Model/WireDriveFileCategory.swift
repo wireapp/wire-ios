@@ -16,17 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+package import UniformTypeIdentifiers
 
-// sourcery: AutoMockable
-package protocol DraftsRepositoryProtocol: Sendable {
+package enum WireDriveFileCategory {
 
-    func drafts(for cellName: String) async -> AsyncStream<[WireDriveDraft]>
-    func publishAll(for cellName: String) async throws
-    func clearPublishedDrafts(for cellName: String) async -> [WireDriveDraft]
-    func addDraft(_ draft: WireDriveDraft, for cellName: String) async
-    func fetchDraft(nodeID: UUID, cellName: String) async -> WireDriveDraft?
-    func deleteDraft(nodeID: UUID, cellName: String) async
-    func updateDraft(_ draft: WireDriveDraft, for cellName: String) async
+    case image
+    case video
+    case audio
+    case document
+
+    package init(_ fileType: UTType?) {
+        guard let fileType else {
+            self = .document
+            return
+        }
+
+        if fileType.conforms(to: .image) {
+            self = .image
+        } else if fileType.conforms(to: .audio) { // `audio` must come before `.audiovisualContent`
+            self = .audio
+        } else if fileType.conforms(to: .audiovisualContent) {
+            self = .video
+        } else {
+            self = .document
+        }
+    }
 
 }

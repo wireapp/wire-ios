@@ -20,7 +20,7 @@ package import Foundation
 
 // sourcery: AutoMockable
 package protocol NodesAPIProtocol: Sendable {
-    func preCheck(nodePath: String, findAvailablePath: Bool) async throws -> WireCellsPreCheckResult
+    func preCheck(nodePath: String, findAvailablePath: Bool) async throws -> WireDrivePreCheckResult
 
     func downloadFile(
         out: URL,
@@ -28,38 +28,38 @@ package protocol NodesAPIProtocol: Sendable {
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws
 
-    func uploadFile(path: URL, node: WireCellsNode, versionID: UUID) async throws -> AsyncThrowingStream<Int, any Error>
+    func uploadFile(path: URL, node: WireDriveNode, versionID: UUID) async throws -> AsyncThrowingStream<Int, any Error>
 
     func deleteVersion(nodeID: UUID, versionID: UUID) async throws
 
     func publishDraft(nodeID: UUID, versionID: UUID) async throws
 
-    func getPreviews(nodeID: UUID) async throws -> [WireCellsNodePreview]
+    func getPreviews(nodeID: UUID) async throws -> [WireDriveNodePreview]
 
-    func getNode(nodeID: UUID) async throws -> WireCellsNode
+    func getNode(nodeID: UUID) async throws -> WireDriveNode
 
     func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool
 
     func createPublicLink(nodeID: UUID, label: String) async throws
-        -> WireCellsPublicLink
+        -> WireDrivePublicLink
 
-    func getPublicLink(linkID: String) async throws -> WireCellsPublicLink
+    func getPublicLink(linkID: String) async throws -> WireDrivePublicLink
 
     func deletePublicLink(linkID: String) async throws
 
     func updatePublicLinkExpiration(
         linkID: String,
         expiration: Date?
-    ) async throws -> WireCellsPublicLink
+    ) async throws -> WireDrivePublicLink
 
     func updatePublicLinkPassword(
         linkID: String,
         password: String?
-    ) async throws -> WireCellsPublicLink
+    ) async throws -> WireDrivePublicLink
 
     func updateTags(nodeID: UUID, tags: [String]) async throws
 
     func getAllTags() async throws -> [String]
 
-    func getVersions(nodeID: UUID) async throws -> [WireCellsNodeVersion]
+    func getVersions(nodeID: UUID) async throws -> [WireDriveNodeVersion]
 }

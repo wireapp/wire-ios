@@ -16,17 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+import Foundation
 
-// sourcery: AutoMockable
-package protocol DraftsRepositoryProtocol: Sendable {
+/// Publishes all drafts associated with a given conversation.
 
-    func drafts(for cellName: String) async -> AsyncStream<[WireDriveDraft]>
-    func publishAll(for cellName: String) async throws
-    func clearPublishedDrafts(for cellName: String) async -> [WireDriveDraft]
-    func addDraft(_ draft: WireDriveDraft, for cellName: String) async
-    func fetchDraft(nodeID: UUID, cellName: String) async -> WireDriveDraft?
-    func deleteDraft(nodeID: UUID, cellName: String) async
-    func updateDraft(_ draft: WireDriveDraft, for cellName: String) async
+public protocol WireDrivePublishDraftsUseCaseProtocol {
+
+    /// Publish all drafts.
+    ///
+    /// - Throws: Throws an error if not **all** drafts have been uploaded or if there are unpublished drafts remaining
+    /// once the operation completes.
+
+    func invoke() async throws
 
 }

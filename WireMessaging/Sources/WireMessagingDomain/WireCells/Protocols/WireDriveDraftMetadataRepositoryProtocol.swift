@@ -19,14 +19,16 @@
 package import Foundation
 
 // sourcery: AutoMockable
-package protocol DraftsRepositoryProtocol: Sendable {
+/// Generates `WireDriveDraft.Metadata` for files at the given URLs
+package protocol WireDriveDraftMetadataRepositoryProtocol: Sendable {
 
-    func drafts(for cellName: String) async -> AsyncStream<[WireDriveDraft]>
-    func publishAll(for cellName: String) async throws
-    func clearPublishedDrafts(for cellName: String) async -> [WireDriveDraft]
-    func addDraft(_ draft: WireDriveDraft, for cellName: String) async
-    func fetchDraft(nodeID: UUID, cellName: String) async -> WireDriveDraft?
-    func deleteDraft(nodeID: UUID, cellName: String) async
-    func updateDraft(_ draft: WireDriveDraft, for cellName: String) async
+    /// Generates image metadata for the file at the given URL
+    func imageMetadata(fileURL: URL) async throws -> WireDriveDraft.Metadata?
+
+    /// Generates video metadata for the file at the given URL
+    func videoMetadata(fileURL: URL) async throws -> WireDriveDraft.Metadata?
+
+    /// Generates audio metadata for the file at the given URL
+    func audioMetadata(fileURL: URL) async throws -> WireDriveDraft.Metadata?
 
 }
