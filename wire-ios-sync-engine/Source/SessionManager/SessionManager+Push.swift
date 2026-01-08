@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -125,23 +125,6 @@ extension SessionManager: UNUserNotificationCenterDelegate {
             fatalError("User session \(session) is not present in backgroundSessions")
         }
     }
-
-    /// Registers an observer to update active call presentation state when the conversation becomes visible.
-    fileprivate func observeConversationDidBecomeVisible() {
-        conversationVisibleObserver = NotificationCenter.default.addObserver(
-            forName: .conversationDidBecomeVisible,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            guard let self else { return }
-
-            if let observer = conversationVisibleObserver {
-                NotificationCenter.default.removeObserver(observer)
-                conversationVisibleObserver = nil
-            }
-            presentationDelegate?.updateActiveCallPresentationStateIfNeeded()
-        }
-    }
 }
 
 public extension SessionManager {
@@ -153,11 +136,6 @@ public extension SessionManager {
     ) {
         guard !conversation.isDeletedRemotely else {
             return
-        }
-
-        // If switching accounts, observe when conversation becomes visible to update call UI
-        if session != activeUserSession {
-            observeConversationDidBecomeVisible()
         }
 
         activateAccount(for: session) {
@@ -174,8 +152,4 @@ public extension SessionManager {
     func showUserProfile(user: UserType) {
         presentationDelegate?.showUserProfile(user: user)
     }
-}
-
-public extension Notification.Name {
-    static let conversationDidBecomeVisible = Notification.Name("ConversationDidBecomeVisible")
 }

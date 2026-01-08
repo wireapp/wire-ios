@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
     package let ownerUserId: String?
     package let ownerUserName: String?
     package let conversationId: String?
-    package let publicLinkId: String?
+    package let publicLinkID: String?
     package let downloadURL: URL?
     package let tags: [String]
 
@@ -60,7 +60,7 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
         ownerUserId: String? = nil,
         ownerUserName: String?,
         conversationId: String? = nil,
-        publicLinkId: String? = nil,
+        publicLinkID: String? = nil,
         downloadURL: URL? = nil,
         tags: [String] = []
     ) {
@@ -80,7 +80,7 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
         self.ownerUserId = ownerUserId
         self.ownerUserName = ownerUserName
         self.conversationId = conversationId
-        self.publicLinkId = publicLinkId
+        self.publicLinkID = publicLinkID
         self.downloadURL = downloadURL
         self.tags = tags
     }
@@ -105,7 +105,7 @@ package extension WireCellsNodeNetworkModel {
             ownerUserID: ownerUserId.flatMap { QualifiedID(string: $0) },
             ownerUserName: ownerUserName,
             conversationID: conversationId.flatMap(QualifiedID.init(string:)),
-            publicLinkID: publicLinkId.map(WireCellsPublicLinkID.init(string:)),
+            publicLinkID: publicLinkID.map(WireCellsPublicLinkID.init(string:)),
             downloadURL: downloadURL,
             tags: tags
         )
@@ -130,7 +130,7 @@ package extension WireCellsNode {
             ownerUserId: ownerUserID?.transportString,
             ownerUserName: ownerUserName,
             conversationId: conversationID?.transportString,
-            publicLinkId: publicLinkID?.string,
+            publicLinkID: publicLinkID?.string,
             tags: tags
         )
     }
@@ -159,7 +159,7 @@ package extension RestNode {
             ownerUserId: metadataString("usermeta-owner-uuid"),
             ownerUserName: metadataString("usermeta-owner"),
             conversationId: contextWorkspace?.uuid,
-            publicLinkId: shares?.first?.uuid,
+            publicLinkID: shares?.first?.uuid,
             downloadURL: preSignedGET?.url.flatMap(URL.init(string:)),
             tags: metadataString("usermeta-tags")?
                 .split(separator: ",").map { String($0) } ?? []

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,12 +34,20 @@ final class ConversationCreateAllowAppsSectionController: ConversationCreateSect
         footerText = values.isAppsFeatureEnabled ? L10n.Localizable.Conversation.Create.Apps.subtitle : ""
     }
 
-}
-
-extension ConversationCreateAllowAppsSectionController {
+    /// Returns `1` for showing the toggle only and `2` for showing the disabled toggle with an info banner below.
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        values.isAppsFeatureEnabled ? 1 : 2
+        if values.areLegacyBotsAvailable, values.encryptionProtocol == .proteus {
+            // Whenever the team was using old-style services (bots) we show the toggle but don't depend on the apps
+            // feature flag. Hence we don't show the banner.
+            1
+        } else if values.isAppsFeatureEnabled {
+            // no need to show a banner
+            1
+        } else {
+            // disable toggle and show info banner
+            2
+        }
     }
 
     override func collectionView(

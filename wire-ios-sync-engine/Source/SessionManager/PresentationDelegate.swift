@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,8 +70,4 @@ public protocol PresentationDelegate: AnyObject {
 
     // Called when showing the password prompt before joining a group conversation
     func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void)
-
-    /// Updates the calling UI state if there's an active call
-    func updateActiveCallPresentationStateIfNeeded()
-
 }

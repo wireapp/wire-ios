@@ -1145,21 +1145,7 @@ internal enum L10n {
   internal enum InfoPlist {
     /// Allow Wire to access your camera so you can place video calls and send photos.
     internal static let nsCameraUsageDescription = L10n.tr("InfoPlist", "NSCameraUsageDescription", fallback: "Allow Wire to access your camera so you can place video calls and send photos.")
-    /// *  Wire
-    ///  *  Copyright (C) 2025 Wire Swiss GmbH
-    ///  *
-    ///  *  This program is free software: you can redistribute it and/or modify
-    ///  *  it under the terms of the GNU General Public License as published by
-    ///  *  the Free Software Foundation, either version 3 of the License, or
-    ///  *  (at your option) any later version.
-    ///  *
-    ///  *  This program is distributed in the hope that it will be useful,
-    ///  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ///  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    ///  *  GNU General Public License for more details.
-    ///  *
-    ///  *  You should have received a copy of the GNU General Public License
-    ///  *  along with this program. If not, see http://www.gnu.org/licenses/.
+    /// Allow Wire to access your contacts to connect you with others. We anonymize all information before uploading it to our server and do not share it with anyone else.
     internal static let nsContactsUsageDescription = L10n.tr("InfoPlist", "NSContactsUsageDescription", fallback: "Allow Wire to access your contacts to connect you with others. We anonymize all information before uploading it to our server and do not share it with anyone else.")
     /// Is shown to the user when app is locked with AppLock feature on the phone that supports Face ID
     internal static let nsFaceIDUsageDescription = L10n.tr("InfoPlist", "NSFaceIDUsageDescription", fallback: "In order to authenticate in the app allow Wire to access the Face ID feature.")
@@ -1666,6 +1652,16 @@ internal enum L10n {
         internal enum Links {
           /// Links
           internal static let title = L10n.tr("Localizable", "collections.section.links.title", fallback: "Links")
+        }
+        internal enum SearchFiles {
+          /// Search files
+          internal static let description = L10n.tr("Localizable", "collections.section.searchFiles.description", fallback: "Search files")
+          internal enum Alert {
+            /// Find files shared in conversations with file collaboration
+            internal static let message = L10n.tr("Localizable", "collections.section.searchFiles.alert.message", fallback: "Find files shared in conversations with file collaboration")
+            /// File collaboration (Cells beta version)
+            internal static let title = L10n.tr("Localizable", "collections.section.searchFiles.alert.title", fallback: "File collaboration (Cells beta version)")
+          }
         }
         internal enum Videos {
           /// Videos

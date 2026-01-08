@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -82,6 +82,8 @@ package struct FilesBrowserView: FilesViewProtocol {
                 switch navigationItem {
                 case let .filters(filtersView):
                     filtersView
+                case let .shareLink(shareLinkView):
+                    shareLinkView
                 default:
                     EmptyView()
                 }
@@ -109,7 +111,7 @@ private extension FilesBrowserView {
 
 // MARK: - Helper
 
-private extension View {
+extension View {
     @ViewBuilder
     func `if`(
         _ condition: Bool,

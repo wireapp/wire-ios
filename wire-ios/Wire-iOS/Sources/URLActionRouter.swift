@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -142,10 +142,6 @@ class URLActionRouter: URLActionRouterProtocol {
 // MARK: - PresentationDelegate
 
 extension URLActionRouter: PresentationDelegate {
-
-    func updateActiveCallPresentationStateIfNeeded() {
-        authenticatedRouter?.updateActiveCallPresentationState()
-    }
 
     func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
         typealias ConversationAlert = L10n.Localizable.Join.Group.Conversation.Alert

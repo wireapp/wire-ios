@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -660,7 +660,6 @@
 
 "content.system.cannot_decrypt.self" = "No se pudo descifrar un mensaje tuyo.";
 "content.system.cannot_decrypt.other" = "No se pudo descifrar un mensaje de %@.";
-"content.system.cannot_decrypt.reset_session" = "Corregir mensajes futuros";
 "content.system.cannot_decrypt.error_details" = "(Error corregido: %d ID: %@)";
 
 "content.system.cannot_decrypt_resolved.self" = "Ahora puedes descifrar mensajes de ti mismo. Para recuperar mensajes perdidos, necesitas reenviarlos.";
@@ -733,6 +732,8 @@
 "content.reactions_list.likers" = "Le ha gustado a";
 
 "content.file.too_big" = "Puedes enviar archivos de hasta %@";
+
+"content.message.reply.files.count" = "%@ files";
 
 // Reactions
 "content.reactions.title" = "Seleccionar reacción";
@@ -1839,10 +1840,6 @@
 "databaseloadingfailure.alert.delete_database.message" = "Al eliminar la base de datos, todos los datos y mensajes locales de esta cuenta se eliminarán permanentemente.";
 "databaseloadingfailure.alert.delete_database.continue" = "Continuar";
 "databaseloadingfailure.alert.retry" = "Reintentar";
-
-// Backend not supported alert
-"backend_not_supported.alert.title" = "Versión del servidor no soportada";
-"backend_not_supported.alert.message" = "La versión del servidor no es compatible con esta aplicación. Póngase en contacto con el administrador del sistema.";
 
 // Third Party
 "giphy.conversation.message" = "%@ · vía giphy.com";

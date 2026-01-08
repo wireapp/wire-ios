@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,9 +59,14 @@ struct FileVersionItemView: View {
                 Menu {
                     restoreButton
                 } label: {
-                    Image(systemName: "ellipsis")
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    ZStack {
+                        Color.clear
+                            .frame(width: 44, height: 44)
+                        Image(systemName: "ellipsis")
+                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    }
                 }
+                .padding(.trailing, -14)
             }
         }
         .alert(
