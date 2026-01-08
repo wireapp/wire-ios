@@ -126,6 +126,7 @@ final class CollectionsViewControllerTests: XCTestCase {
     func testThatNoElementStateIsShownWhenCollectionIsEmpty() {
         let controller = CollectionsViewController(
             collection: emptyCollection,
+            isCellsEnabled: false,
             fetchingDone: true,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
@@ -138,6 +139,7 @@ final class CollectionsViewControllerTests: XCTestCase {
     func testThatLoadingIsShownWhenFetching() {
         let controller = CollectionsViewController(
             collection: emptyCollection,
+            isCellsEnabled: false,
             fetchingDone: false,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
@@ -244,6 +246,7 @@ final class CollectionsViewControllerTests: XCTestCase {
 
         let controller = CollectionsViewController(
             collection: collection,
+            isCellsEnabled: false,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
