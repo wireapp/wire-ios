@@ -48,13 +48,6 @@ final class ZClientControllerBuilder {
         default:
             serverURL
         }
-//        let contextProvider = userSession.contextProvider
-//        let syncContext = contextProvider.syncContext
-//        let featureRepository = LegacyFeatureRepository(context: syncContext)
-//
-//        return syncContext.performAndWait {
-//            featureRepository.fetchCellsInternal()?.config.backend.url
-//        }
     }()
 
     init(
@@ -98,7 +91,7 @@ final class ZClientControllerBuilder {
                 case missingCellsBackendURL
             }
 
-            guard let self /* , let wireCellsBackendURL */ else {
+            guard let self else {
                 throw Failure.missingCellsBackendURL
             }
 
