@@ -32,7 +32,7 @@ struct FilenameValidator {
     }
 
     func validate(_ input: String) -> AnyPublisher<Result<Void, Failure>, Never> {
-        let result: Result<Void, Failure> = if input.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        let result: Result<Void, Failure> = if input.isEmpty {
             .failure(.empty)
         } else if input.hasPrefix(".") {
             .failure(.dotPrefix)
