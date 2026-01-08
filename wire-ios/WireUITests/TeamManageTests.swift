@@ -84,28 +84,14 @@ final class TeamManageTests: WireUITestCase {
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
 
-        let teamID = try XCTUnwrap(teamOwner.teamID)
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
-            email: teamOwner.email,
-            password: teamOwner.password
-        )
-
-        let (_, teamMember1) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken.token,
-            teamID: teamID,
-        )
-
-        let (_, teamMember2) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken.token,
-            teamID: teamID,
-        )
+        let teamNames = try await userHelper.registerSomeTeams(teamOwner: teamOwner)
 
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopup(with: self)
             .tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enterGroupName(groupName)
-            .tapMemberCells(withLabelPrefixes: [teamMember1.name, teamMember2.name])
+            .tapMemberCells(withLabelPrefixes: teamNames)
             .doneSelectingMembers()
             .sendMessage(messageFromOwner)
 
@@ -175,5 +161,32 @@ final class TeamManageTests: WireUITestCase {
                 .waitForExistence(timeout: 5),
             "User \(teamMembers[0].name) is not present in group"
         )
+    }
+    
+    /// [WPB-3772] Bug: Opening an archived conversation unarchives it
+    @MainActor
+    func test_TeamOwner_ArchiveTeams() async throws {
+        let groupName = UserGenerator.generateRandomGroupName()
+
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+
+        let teamNames = try await userHelper.registerSomeTeams(teamOwner: teamOwner)
+
+        let archivedConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup(with: self)
+            .tapPlusButtonToCreateGroup()
+            .tapNewGroupButton()
+            .enterGroupName(groupName)
+            .tapMemberCells(withLabelPrefixes: teamNames)
+            .doneSelectingMembers()
+            .openConversationDetails()
+            .moreOptionsConversationDetails()
+            .archiveOptionsConversationDetails()
+            .openArchived()
+            .openConversation()
+            .goBackToConversationPage()
+            .openArchived()
+
+        XCTAssertTrue(archivedConversationPage.existsConversation(byName: groupName))
     }
 }

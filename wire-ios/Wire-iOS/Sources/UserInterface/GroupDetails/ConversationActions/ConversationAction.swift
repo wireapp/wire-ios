@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLocators
 
 extension ZMConversation {
     enum Action: Equatable {
@@ -183,8 +184,19 @@ extension ZMConversation.Action {
         }
     }
 
+    var accessibilityIdentifier: String {
+        switch self {
+        case .archive: Locators.ConversationDetailsActions.archive.rawValue
+        default: ""
+        }
+    }
+
     func alertAction(handler: @escaping () -> Void) -> UIAlertAction {
-        .init(title: title, style: isDestructive ? .destructive : .default) { _ in handler() }
+        .init(
+            title: title,
+            style: isDestructive ? .destructive : .default,
+            accessibilityIdentifier: accessibilityIdentifier
+        ) { _ in handler() }
     }
 
     @available(
@@ -195,5 +207,18 @@ extension ZMConversation.Action {
     )
     func previewAction(handler: @escaping () -> Void) -> UIPreviewAction {
         .init(title: title, style: isDestructive ? .destructive : .default, handler: { _, _ in handler() })
+    }
+}
+
+extension UIAlertAction {
+
+    convenience init(
+        title: String?,
+        style: UIAlertAction.Style,
+        accessibilityIdentifier: String,
+        handler: ((UIAlertAction) -> Void)? = nil
+    ) {
+        self.init(title: title, style: style, handler: handler)
+        setValue(accessibilityIdentifier, forKey: "accessibilityIdentifier")
     }
 }

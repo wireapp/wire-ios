@@ -64,6 +64,7 @@ public enum Locators {
         case conversationCell
         case blockOptionOnContextMenu = "Block…"
         case blockButtonOnBottomSheet
+        case bottomBarArchivedButton
     }
 
     public enum SettingsPage: String {
@@ -130,6 +131,10 @@ public enum Locators {
         case userCellName
         case close
 
+    }
+
+    public enum ConversationDetailsActions: String {
+        case archive
     }
 
     public enum UserProfilePage: String {
