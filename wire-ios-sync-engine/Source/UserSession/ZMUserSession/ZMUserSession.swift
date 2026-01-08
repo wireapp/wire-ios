@@ -181,6 +181,7 @@ public final class ZMUserSession: NSObject {
         wireCellsFeature.status == .enabled
 //        let hasBackendURL = wireCellsBackendURL != nil
 
+//        return isFeatureEnabled && hasBackendURL
     }
 
     public var conferenceCallingFeature: Feature.ConferenceCalling {
