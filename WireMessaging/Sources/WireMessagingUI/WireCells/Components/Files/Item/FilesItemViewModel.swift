@@ -58,7 +58,7 @@ final class FilesItemViewModel: ObservableObject {
     @Published var isPresentingRestoreFileConfirmation = false
     @Published var isPresentingRestoreFolderConfirmation = false
     @Published var isPresentingRestoreParentConfirmation = false
-    
+
     @Published var menuActions: Set<ItemAction> = []
 
     let fileName: String
@@ -106,12 +106,12 @@ final class FilesItemViewModel: ObservableObject {
         )
         self.icon = item.icon
         self.localAssetRepository = localAssetRepository
-        
+
         self.isBrowsing = isBrowsing
         self.isInRecycleBin = isInRecycleBin
         self.isFoldersEnabled = isFoldersEnabled
         self.isCollaboraEnabled = isCollaboraEnabled
-        
+
         self.menuActions = makeMenuActions()
 
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
@@ -263,7 +263,7 @@ final class FilesItemViewModel: ObservableObject {
             additionalTagsIndicator: formattedNumber
         )
     }
-    
+
     private func makeMenuActions() -> Set<ItemAction> {
         var actions: Set<ItemAction> = []
 
@@ -275,7 +275,7 @@ final class FilesItemViewModel: ObservableObject {
             if !isInRecycleBin {
                 if isCollaboraEnabled {
                     actions.insert(.showVersionHistory)
-                    
+
                     if isEditable {
                         actions.insert(.edit)
                     }
