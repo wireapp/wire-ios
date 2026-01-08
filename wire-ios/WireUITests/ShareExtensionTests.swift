@@ -35,7 +35,7 @@ final class ShareExtensionTests: WireUITestCase {
     private func shareFirstPhotoToWire(name: String) async throws {
         let photosApp = try PhotosAppPage(photosApp: photosAppBundleId)
         try photosApp
-            .openImage()
+            .openFirstImage()
             .shareImageToWire()
             .chooseConversationAndSend(name: name)
     }
