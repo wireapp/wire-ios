@@ -58,12 +58,17 @@ final class FilesItemViewModel: ObservableObject {
     @Published var isPresentingRestoreFileConfirmation = false
     @Published var isPresentingRestoreFolderConfirmation = false
     @Published var isPresentingRestoreParentConfirmation = false
+    
+    @Published var menuActions: Set<ItemAction> = []
 
     let fileName: String
     let subtitle: String?
     let icon: FileIcon
+
+    let isBrowsing: Bool
     let isInRecycleBin: Bool
     let isFoldersEnabled: Bool
+    let isCollaboraEnabled: Bool
 
     struct TagsInfo {
         let firstTag: String?
@@ -83,9 +88,10 @@ final class FilesItemViewModel: ObservableObject {
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,
         timeZone: TimeZone = .autoupdatingCurrent,
+        isBrowsing: Bool,
         isInRecycleBin: Bool,
-        isFoldersEnabled: Bool
-
+        isFoldersEnabled: Bool,
+        isCollaboraEnabled: Bool
     ) {
         self.nodeID = item.id
         self.item = item
@@ -100,8 +106,13 @@ final class FilesItemViewModel: ObservableObject {
         )
         self.icon = item.icon
         self.localAssetRepository = localAssetRepository
+        
+        self.isBrowsing = isBrowsing
         self.isInRecycleBin = isInRecycleBin
         self.isFoldersEnabled = isFoldersEnabled
+        self.isCollaboraEnabled = isCollaboraEnabled
+        
+        self.menuActions = makeMenuActions()
 
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
             self?.asset = asset
@@ -252,39 +263,35 @@ final class FilesItemViewModel: ObservableObject {
             additionalTagsIndicator: formattedNumber
         )
     }
-}
+    
+    private func makeMenuActions() -> Set<ItemAction> {
+        var actions: Set<ItemAction> = []
 
-extension Collection<FilesItemViewModel.ItemAction> {
-    static func menuActions(
-        browsing: Bool,
-        recycleBin: Bool,
-        foldersEnabled: Bool,
-        collaboraEnabled: Bool
-    ) -> Set<Element> {
-        var actions: Set<FilesItemViewModel.ItemAction> = []
-
-        if !recycleBin {
+        if !isInRecycleBin {
             actions.insert(.open)
         }
 
-        if !browsing {
-            if !recycleBin {
-                if collaboraEnabled {
+        if !isBrowsing {
+            if !isInRecycleBin {
+                if isCollaboraEnabled {
                     actions.insert(.showVersionHistory)
-                    actions.insert(.edit)
+                    
+                    if isEditable {
+                        actions.insert(.edit)
+                    }
                 }
-                if foldersEnabled {
+                if isFoldersEnabled {
                     actions.insert(.moveToFolder)
                 }
                 actions.insert(.rename)
                 actions.insert(.editTags)
             }
 
-            if recycleBin {
+            if isInRecycleBin {
                 actions.insert(.restore)
             }
 
-            if recycleBin || !foldersEnabled {
+            if isInRecycleBin || !isFoldersEnabled {
                 actions.insert(.deletePermanently)
             } else {
                 actions.insert(.deleteToRecycleBin)

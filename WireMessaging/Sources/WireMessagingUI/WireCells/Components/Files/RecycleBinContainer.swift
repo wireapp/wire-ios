@@ -129,6 +129,7 @@ package struct RecycleBinContainer: View {
             nodesRepository: nodesRepository,
             fileCache: fileCache,
             cellName: cellName,
+            isBrowsing: false,
             isFoldersEnabled: isFoldersEnabled,
             isCollaboraEnabled: false,
             isRecycleBin: true,

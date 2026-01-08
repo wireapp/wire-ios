@@ -219,9 +219,12 @@ package final class FilesViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
     private let navigationPath: [FilesViewItem]
     private let accentColorProvider: () -> WireAccentColor
+
+    let isBrowsing: Bool
     let isFoldersEnabled: Bool
     let isCollaboraEnabled: Bool
     let isRecycleBin: Bool
+
     let triggerReload: PassthroughSubject<Void, Never>
 
     @Published var hasMore = true
@@ -252,6 +255,7 @@ package final class FilesViewModel: ObservableObject {
         nodesRepository: any WireCellsNodesRepositoryProtocol,
         fileCache: any FileCache,
         cellName: String? = nil,
+        isBrowsing: Bool,
         isFoldersEnabled: Bool,
         isCollaboraEnabled: Bool,
         isRecycleBin: Bool = false,
@@ -267,6 +271,7 @@ package final class FilesViewModel: ObservableObject {
         self.fileCache = fileCache
         self.cellName = cellName
         self.state = isCellsStatePending ? .pending : .loading
+        self.isBrowsing = isBrowsing
         self.isFoldersEnabled = isFoldersEnabled
         self.isCollaboraEnabled = isCollaboraEnabled
         self.isRecycleBin = isRecycleBin
@@ -363,8 +368,10 @@ package final class FilesViewModel: ObservableObject {
                     isEditing = item
                 }
             },
+            isBrowsing: isBrowsing,
             isInRecycleBin: isRecycleBin,
             isFoldersEnabled: isFoldersEnabled,
+            isCollaboraEnabled: isCollaboraEnabled
         )
     }
 

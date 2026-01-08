@@ -32,14 +32,8 @@ struct FilesItemView: View {
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
-    private let menuActions: Set<FilesItemViewModel.ItemAction>
-
-    init(
-        viewModel: @autoclosure @escaping () -> FilesItemViewModel,
-        menuActions: Set<FilesItemViewModel.ItemAction>
-    ) {
+    init(viewModel: @autoclosure @escaping () -> FilesItemViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
-        self.menuActions = menuActions
     }
 
     var body: some View {
@@ -188,13 +182,11 @@ struct FilesItemView: View {
             }
         }
 
-        if viewModel.isEditable {
-            menuItem(.edit) { item in
-                Button {
-                    viewModel.performMenuAction(item)
-                } label: {
-                    Label(Strings.Files.Item.Menu.editFile, systemImage: "square.and.pencil")
-                }
+        menuItem(.edit) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(Strings.Files.Item.Menu.editFile, systemImage: "square.and.pencil")
             }
         }
 
@@ -254,7 +246,7 @@ struct FilesItemView: View {
         _ itemAction: FilesItemViewModel.ItemAction,
         @ViewBuilder menuItem: (FilesItemViewModel.ItemAction) -> some View
     ) -> some View {
-        if menuActions.contains(itemAction) {
+        if viewModel.menuActions.contains(itemAction) {
             menuItem(itemAction)
         }
     }
@@ -317,24 +309,8 @@ private extension View {
 
 #Preview {
     VStack(spacing: 0) {
-        FilesItemView(
-            viewModel: .preview(),
-            menuActions: .menuActions(browsing: true, recycleBin: false, foldersEnabled: true, collaboraEnabled: true)
-        )
-
-        FilesItemView(
-            viewModel: .preview(),
-            menuActions: .menuActions(browsing: false, recycleBin: false, foldersEnabled: true, collaboraEnabled: true)
-        )
-
-        FilesItemView(
-            viewModel: .preview(tags: ["urgent"]),
-            menuActions: .menuActions(browsing: false, recycleBin: false, foldersEnabled: true, collaboraEnabled: true)
-        )
-
-        FilesItemView(
-            viewModel: .preview(tags: ["urgent", "funny", "important"]),
-            menuActions: .menuActions(browsing: false, recycleBin: true, foldersEnabled: true, collaboraEnabled: true)
-        )
+        FilesItemView(viewModel: .preview())
+        FilesItemView(viewModel: .preview(tags: ["urgent"]))
+        FilesItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]))
     }
 }

@@ -80,15 +80,7 @@ extension FilesViewProtocol {
 
     @ViewBuilder
     func itemRow(index: Int) -> some View {
-        FilesItemView(
-            viewModel: viewModel.itemViewModel(index: index),
-            menuActions: .menuActions(
-                browsing: isBrowsing,
-                recycleBin: viewModel.isRecycleBin,
-                foldersEnabled: viewModel.isFoldersEnabled,
-                collaboraEnabled: viewModel.isCollaboraEnabled
-            )
-        )
+        FilesItemView(viewModel: viewModel.itemViewModel(index: index))
     }
 
     var loadMoreRow: some View {
