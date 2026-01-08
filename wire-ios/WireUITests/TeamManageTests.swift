@@ -20,10 +20,6 @@ import WireFoundation
 import XCTest
 
 final class TeamManageTests: WireUITestCase {
-    
-//    override func tearDownWithError() throws {
-//        app = nil
-//    }
 
     @MainActor
     func test_Migrate_PersonalUserToTeam() async throws {
