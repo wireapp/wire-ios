@@ -97,6 +97,7 @@
 {
     const BOOL isRequestStillValid = counterValue == self.requestUniqueCounter;
     if(!isRequestStillValid) {
+        [WireLoggerObjC assertionDumpLog:@"⚠️ isRequestStillValid no!"];
         return;
     };
     

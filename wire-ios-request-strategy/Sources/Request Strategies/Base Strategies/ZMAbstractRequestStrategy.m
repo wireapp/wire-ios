@@ -46,7 +46,9 @@ static NSString* ZMLogTag ZM_UNUSED = @"Request Configuration";
 
 - (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion
 {
-    if ([self configuration:self.configuration isSubsetOfPrerequisites:[AbstractRequestStrategy prerequisitesForApplicationStatus:self.applicationStatus]]) {
+    ZMStrategyConfigurationOption options = [AbstractRequestStrategy prerequisitesForApplicationStatus:self.applicationStatus];
+    [WireLoggerObjC assertionDumpLog:[NSString stringWithFormat:@"current options: %d", options]];
+    if ([self configuration:self.configuration isSubsetOfPrerequisites:options]) {
         return [self nextRequestIfAllowedForAPIVersion:apiVersion];
     }
     
@@ -57,7 +59,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Request Configuration";
 {
     ZMStrategyConfigurationOption option = 0;
     
-    for (NSUInteger index = 0; option <= ZMStrategyConfigurationOptionAllowsRequestsDuringQuickSync; index++) {
+    for (NSUInteger index = 0; option <= ZMStrategyConfigurationOptionAllowsRequestsWhileOnline; index++) {
         option = 1 << index;
         
         if ((prerequisites & option) == option && (configuration & option) != option) {

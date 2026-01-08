@@ -27,7 +27,6 @@
 
 @class ZMPersistentCookieStorage;
 @class OperationStatus;
-@class SyncStatus;
 @class ZMSyncStrategy;
 
 @interface ZMOperationLoop : NSObject <TearDownCapable>

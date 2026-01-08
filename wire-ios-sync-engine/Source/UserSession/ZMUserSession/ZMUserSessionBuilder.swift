@@ -25,6 +25,7 @@ import WireNetwork
 import WireRequestStrategy
 import WireUtilities
 
+@available(*, deprecated, message: "See UserSessionLoader instead.")
 struct ZMUserSessionBuilder {
 
     // MARK: - Properties

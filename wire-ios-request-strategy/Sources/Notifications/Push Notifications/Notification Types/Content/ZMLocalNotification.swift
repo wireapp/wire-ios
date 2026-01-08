@@ -236,7 +236,6 @@ extension LocalNotificationType {
 
 }
 
-
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUNNotificationSoundName(_ input: String) -> UNNotificationSoundName {
     UNNotificationSoundName(rawValue: input)

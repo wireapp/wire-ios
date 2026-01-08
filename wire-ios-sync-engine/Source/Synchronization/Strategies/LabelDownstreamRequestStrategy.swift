@@ -60,9 +60,6 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMSingleRe
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.configuration = [
-            //            .allowsRequestsDuringSlowSync,
-//            .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket,
             .allowsRequestsWhileOnline
         ]
         self.slowSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)

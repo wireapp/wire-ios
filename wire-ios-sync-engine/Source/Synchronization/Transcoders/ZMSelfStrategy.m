@@ -40,7 +40,6 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
 @property (nonatomic) ZMSingleRequestSync *downstreamSelfUserSync;
 @property (nonatomic) NSPredicate *needsToBeUdpatedFromBackend;
 @property (nonatomic, weak) ZMClientRegistrationStatus *clientStatus;
-@property (nonatomic, weak) SyncStatus *syncStatus;
 @property (nonatomic) BOOL didCheckNeedsToBeUdpatedFromBackend;
 @end
 
@@ -92,8 +91,7 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
 - (ZMStrategyConfigurationOption)configuration
 {
     return ZMStrategyConfigurationOptionAllowsRequestsWhileUnauthenticated
-         | ZMStrategyConfigurationOptionAllowsRequestsWhileOnline
-         | ZMStrategyConfigurationOptionAllowsRequestsDuringSlowSync;
+         | ZMStrategyConfigurationOptionAllowsRequestsWhileOnline; // this will run on initial sync but it does not have to, so we have 2 requests for self
 }
 
 - (NSArray *)contextChangeTrackers
@@ -105,7 +103,6 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
 {
     [self.timedDownstreamSync invalidate];
     self.clientStatus = nil;
-    self.syncStatus = nil;
 }
 
 - (ZMTransportRequest *)nextRequestIfAllowedForAPIVersion:(APIVersion)apiVersion;
@@ -250,7 +247,6 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
 {
     NOT_USED(sync);
     ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];
-    SyncStatus *syncStatus = self.syncStatus;
     
     if (response.result == ZMTransportResponseStatusSuccess) {
         

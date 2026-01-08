@@ -76,8 +76,8 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.configuration = [
-            .allowsRequestsWhileOnline,
-            .allowsRequestsDuringSlowSync
+            .allowsRequestsWhileOnline // so once we have a client it can request
+            // TODO: fix so it request only after initial sync is over?
         ]
         userProfileByID.delegate = self
         userProfileByQualifiedID.delegate = self

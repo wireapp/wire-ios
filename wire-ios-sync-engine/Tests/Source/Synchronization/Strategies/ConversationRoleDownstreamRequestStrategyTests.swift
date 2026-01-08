@@ -25,7 +25,7 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
-        mockApplicationStatus.mockSynchronizationState = .slowSyncing
+        mockApplicationStatus.mockSynchronizationState = .unauthenticated
         sut = ConversationRoleDownstreamRequestStrategy(
             withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus

@@ -73,8 +73,9 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
         configuration = [
             .allowsRequestsWhileInBackground,
-            .allowsRequestsWhileOnline,
-            .allowsRequestsWhileWaitingForWebsocket
+            .allowsRequestsWhileOnline
+            // this is (now) allowed during initial and incremental sync, is it ok?
+
         ]
 
         self.callConfigRequestSync = ZMSingleRequestSync(

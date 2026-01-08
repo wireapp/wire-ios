@@ -148,6 +148,12 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     @objc public var currentPhase: ClientRegistrationPhase {
+        let phase = internalCurrentPhase
+        WireLogger.system.debug("⚠️ registrationPhase: \(phase)")
+        return phase
+    }
+
+    private var internalCurrentPhase: ClientRegistrationPhase {
         // The flow is as follows
         // ZMClientRegistrationPhaseWaitingForLogin
         // [We try to login / register with the given credentials]
@@ -260,6 +266,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         }
 
         return .unregistered
+
     }
 
     public var clientIsReadyForRequests: Bool {

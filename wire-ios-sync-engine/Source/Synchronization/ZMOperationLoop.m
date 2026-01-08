@@ -125,14 +125,17 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         APIVersionWrapper *apiVersion = [self currentAPIVersion];
 
         if (apiVersion == nil) {
+            [WireLoggerObjC assertionDumpLog:@"⚠️ apiversion nil"];
             return nil;
         }
 
         ZMTransportRequest *request = [self.requestStrategy nextRequestForAPIVersion:apiVersion.value];
-
+        NSString *message = [NSString stringWithFormat:@"⚠️ request created: %@", request];
+        [WireLoggerObjC assertionDumpLog:message];
+        
         [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.syncMOC block:^(ZMTransportResponse *response) {
             ZM_STRONG(self);
-            
+        
             [self.syncMOC enqueueDelayedSaveWithGroup:response.dispatchGroup];
             
             // Check if there is something to do now and when the save completes

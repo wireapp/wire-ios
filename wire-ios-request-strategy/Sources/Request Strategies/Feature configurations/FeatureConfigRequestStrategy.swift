@@ -46,14 +46,9 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
             withManagedObjectContext: managedObjectContext,
             applicationStatus: applicationStatus
         )
-
         configuration = [
-            .allowsRequestsWhileUnauthenticated,
-            .allowsRequestsWhileOnline,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsDuringSlowSync,
-            .allowsRequestsWhileWaitingForWebsocket,
-            .allowsRequestsWhileInBackground
+            // only useful while unauthenicated
+            .allowsRequestsWhileUnauthenticated
         ]
     }
 

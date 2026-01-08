@@ -207,7 +207,6 @@ extension LocalNotificationType {
         return nil
     }
 
-  
     func messageBodyText(senderName: String?) -> String {
         if case let LocalNotificationType.event(eventType) = self {
             messageBodyText(eventType: eventType, senderName: senderName)

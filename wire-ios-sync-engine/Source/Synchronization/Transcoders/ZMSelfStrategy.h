@@ -23,7 +23,6 @@
 @class ZMUpstreamModifiedObjectSync;
 @class ZMClientRegistrationStatus;
 @class ApplicationStatusDirectory;
-@class SyncStatus;
 
 @interface ZMSelfStrategy : ZMAbstractRequestStrategy <ZMContextChangeTrackerSource, TearDownCapable>
 

@@ -93,8 +93,6 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
 
         self.configuration = [
             .allowsRequestsWhileOnline,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket,
             .allowsRequestsWhileInBackground
         ]
         userClientByQualifiedUserIDTranscoder.contextChangedTracker = self

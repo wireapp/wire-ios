@@ -42,12 +42,10 @@ public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStra
         )
 
         configuration = [
+            // this means it could fetch during initial and incremental sync
             .allowsRequestsWhileUnauthenticated,
             .allowsRequestsWhileOnline,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsDuringSlowSync,
-            .allowsRequestsWhileWaitingForWebsocket,
-            .allowsRequestsWhileInBackground
+            .allowsRequestsWhileInBackground // should we fetch in background mlspublic keys?
         ]
     }
 

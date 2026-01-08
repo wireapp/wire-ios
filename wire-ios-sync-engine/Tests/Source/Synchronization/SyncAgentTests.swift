@@ -29,7 +29,6 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     var sut: SyncAgent!
     var journal: Journal!
     var lastUpdateEventIDRepository: MockLastEventIDRepositoryInterface!
-    var legacySyncStatus: MockSyncStatusProtocol!
     var initialSync: MockInitialSyncProtocol!
     var incrementalSync: MockIncrementalSyncProtocol!
     var liveSync: MockLiveSyncProtocol!
@@ -49,7 +48,6 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
             storage: UserDefaults.temporary()
         )
         lastUpdateEventIDRepository = MockLastEventIDRepositoryInterface()
-        legacySyncStatus = MockSyncStatusProtocol()
         initialSync = MockInitialSyncProtocol()
         incrementalSync = MockIncrementalSyncProtocol()
         liveSync = MockLiveSyncProtocol()
@@ -81,7 +79,6 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         sut = nil
         journal = nil
         lastUpdateEventIDRepository = nil
-        legacySyncStatus = nil
         initialSync = nil
         incrementalSync = nil
         liveSync = nil
@@ -138,7 +135,6 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
                 closePushChannel: {}
             )
         }
-        legacySyncStatus.performQuickSync_MockMethod = {}
         featureConfigRepository.isFeatureEnabled_MockValue = false
 
         // When
@@ -347,13 +343,5 @@ extension SyncAgentTests: SyncAgentDelegate {
     }
 
     func syncAgentDidFailSyncing(_ syncAgent: WireSyncEngine.SyncAgent, error: any Error) {}
-
-    func syncAgentDidStartLegacyInitialSync(_ syncAgent: WireSyncEngine.SyncAgent) {}
-
-    func syncAgentDidFinishLegacyInitialSync(_ syncAgent: WireSyncEngine.SyncAgent) {}
-
-    func syncAgentDidStartLegacyIncrementalSync(_ syncAgent: WireSyncEngine.SyncAgent) {}
-
-    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: WireSyncEngine.SyncAgent, isRecovering: Bool) {}
 
 }
