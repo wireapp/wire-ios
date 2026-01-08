@@ -165,9 +165,7 @@ extension FilesItemViewModel {
 extension FileVersionItemViewModel {
     /// A stubbed instance of `FileVersionItemViewModel` for SwiftUI previews.
     static func preview() -> FileVersionItemViewModel {
-        let localAssetsRepository = PreviewLocalAssetRepository()
-
-        return FileVersionItemViewModel(
+        FileVersionItemViewModel(
             nodeID: UUID(),
             item: .init(
                 id: UUID(),
@@ -213,11 +211,16 @@ extension FileVersioningViewModel {
         return FileVersioningViewModel(
             nodeID: UUID(),
             name: "foo.jpg",
+            eTag: nil,
             fetchNodeVersionsUseCase: useCase,
             restoreNodeVersionUseCase: WireCellsRestoreNodeVersionUseCase(
                 repository: repository,
                 localAssetsRepository: localAssetsRepository,
                 nodeCache: MockWireCellsNodeCacheProtocol()
+            ),
+            getAssetUseCase: WireCellsGetAssetUseCase(
+                localAssetRepository: localAssetsRepository,
+                fileCache: MockFileCache()
             ),
             accentColorProvider: { .default }
         )
