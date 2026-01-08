@@ -290,6 +290,28 @@ class UserHelper {
 
         _ = try await conversationsAPI.createGroupConversation(parameters: params)
     }
+
+    func registerSomeTeams(teamOwner: UserInfo) async throws -> [String] {
+        guard let teamID = teamOwner.teamID else {
+            return []
+        }
+
+        let ownerAccessToken = try await fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+
+        let (_, teamMember1) = try await registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            teamID: teamID,
+        )
+
+        let (_, teamMember2) = try await registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            teamID: teamID,
+        )
+        return [teamMember1.name, teamMember2.name]
+    }
 }
 
 extension BackendEnvironment {
