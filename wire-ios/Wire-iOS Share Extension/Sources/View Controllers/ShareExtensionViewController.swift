@@ -28,11 +28,11 @@ import WireDesign
 import WireDomain
 import WireFoundation
 import WireLinkPreview
+import WireLocators
 import WireLogging
 import WireNetwork
 import WireShareEngine
 import WireUtilities
-import WireLocators
 
 typealias Completion = () -> Void
 private let zmLog = ZMSLog(tag: "UI")
@@ -186,7 +186,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         guard let item = navigationController?.navigationBar.items?.first else { return }
         item.rightBarButtonItem?.action = #selector(appendPostTapped)
         item.rightBarButtonItem?.title = L10n.ShareExtension.SendButton.title
-        item.rightBarButtonItem?.accessibilityIdentifier = Locators.ShareExtensionPage.sendButtonOnShareExtension.rawValue
+        item.rightBarButtonItem?.accessibilityIdentifier = Locators.ShareExtensionPage.sendButtonOnShareExtension
+            .rawValue
         item
             .titleView = UIImageView(
                 image: WireStyleKit.imageOfLogo(color: UIColor.Wire.primaryLabel)
