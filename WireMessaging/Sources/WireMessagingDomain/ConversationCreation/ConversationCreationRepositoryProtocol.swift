@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,4 +17,14 @@
 //
 
 // sourcery: AutoMockable
-public protocol ConversationCreationRepositoryProtocol {}
+public protocol ConversationCreationRepositoryProtocol {
+
+    /// Legacy services (bots) are deprecated and cannot be set up any more. However, teams who have bots already set up
+    /// may continue using them.
+    /// While the `apps` feature flag controls if the UI allows for starting a conversation with an app (new-style
+    /// MLS-only service) or adding an app to a conversation, there is no feature flag for bots (old-style Proteus-only
+    /// services). If there are bots already added to the team, bots are considered enabled.
+
+    func areBotsSetUpInTheTeam() async throws -> Bool
+
+}

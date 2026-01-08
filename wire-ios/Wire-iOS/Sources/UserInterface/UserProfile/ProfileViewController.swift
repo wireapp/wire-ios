@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -147,15 +147,26 @@ final class ProfileViewController: UIViewController {
 
     private func bringUpConversationCreationFlow() {
         Task {
-            let controller = await ConversationCreationController(
+            let featureConfigRepository = viewModel.userSession.clientSessionComponent?.featureConfigRepository
+            let isAppsFeatureEnabled = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
+            let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+            let controller = ConversationCreationController(
                 preSelectedParticipants: viewModel.userSet,
-                userSession: viewModel.userSession
+                userSession: viewModel.userSession,
+                isAppsFeatureEnabled: isAppsFeatureEnabled,
+                areLegacyBotsAvailable: areLegacyBotsAvailable
             )
             controller.delegate = self
 
             let wrappedController = controller.wrapInNavigationController()
             wrappedController.modalPresentationStyle = .formSheet
-            present(wrappedController, animated: true)
+            if presentedViewController != nil {
+                dismiss(animated: true) {
+                    self.present(wrappedController, animated: true)
+                }
+            } else {
+                present(wrappedController, animated: true)
+            }
         }
     }
 

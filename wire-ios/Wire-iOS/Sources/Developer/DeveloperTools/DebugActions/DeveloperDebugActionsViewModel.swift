@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Invalidate all conversations", action: invalidateAllConversations),
             .init(title: "Set last app version migration", action: requestAppVersionInput),
             .init(title: "Initiate reset of first from top MLS", action: initiateResetBrokenMLSConversation),
-            .init(title: "Repair faulty removal key", action: initiateRepairRemovalKeys),
+            .init(title: "Initiate reset of affected MLS groups", action: initiateRepairRemovalKeys),
             .init(title: "Logout", action: logout)
 
         ]
@@ -211,7 +211,11 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
                 attributes: .safePublic
             )
             do {
-                try await useCase.invoke()
+                let result = try await useCase.invoke()
+                WireLogger.mls.info(
+                    "manual trigger to initiate repair removal keys compete. Repaired initiated for \(result.conversationsRepaired)/\(result.faultyConversationsFound) affected conversations.",
+                    attributes: .safePublic
+                )
             } catch {
                 WireLogger.mls.error(
                     "manual trigger to repair removal keys failed: \(String(describing: error))",

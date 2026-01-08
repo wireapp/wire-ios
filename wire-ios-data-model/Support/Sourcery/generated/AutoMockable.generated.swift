@@ -2,7 +2,7 @@
 // DO NOT EDIT
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -3733,6 +3733,24 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
             return mock
         } else {
             fatalError("no mock for `fetchAssetAuditLog`")
+        }
+    }
+
+    // MARK: - fetchCellsInternal
+
+    public var fetchCellsInternal_Invocations: [Void] = []
+    public var fetchCellsInternal_MockMethod: (() -> Feature.CellsInternal?)?
+    public var fetchCellsInternal_MockValue: Feature.CellsInternal??
+
+    public func fetchCellsInternal() -> Feature.CellsInternal? {
+        fetchCellsInternal_Invocations.append(())
+
+        if let mock = fetchCellsInternal_MockMethod {
+            return mock()
+        } else if let mock = fetchCellsInternal_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchCellsInternal`")
         }
     }
 

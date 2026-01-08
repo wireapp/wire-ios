@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 "wireMeetings.list.title" = "Встречи";
 "wireMeetings.list.tabs.past" = "Прошлые";
-"wireMeetings.list.tabs.next" = "Next";
+"wireMeetings.list.tabs.next" = "Вперед";
 "wireMeetings.list.actions.meetNow" = "Встречи сейчас";
 "wireMeetings.list.actions.scheduleMeeting" = "Запланировать встречу";
 "wireMeetings.list.actions.showAll" = "Показать все";
