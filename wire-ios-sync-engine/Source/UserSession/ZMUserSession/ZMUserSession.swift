@@ -60,7 +60,6 @@ public final class ZMUserSession: NSObject {
     public private(set) var transportSession: TransportSessionType
     let storedDidSaveNotifications: ContextDidSaveNotificationPersistence
     let userExpirationObserver: UserExpirationObserver
-//    private(set) var legacyUpdateEventProcessor: UpdateEventProcessor?
     private(set) var strategyDirectory: StrategyDirectoryProtocol?
     private(set) var syncStrategy: ZMSyncStrategy?
     private(set) var operationLoop: ZMOperationLoop?
