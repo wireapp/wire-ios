@@ -34,7 +34,7 @@ MARKER_START='<!-- allure-link-start -->'
 MARKER_END='<!-- allure-link-end -->'
 BLOCK="${MARKER_START}
 
-**Allure report: ** [${ALLURE_ARTIFACT_NAME}](${ALLURE_URL})
+**Summary:** [${ALLURE_ARTIFACT_NAME}](${ALLURE_URL})
 
 ${MARKER_END}"
 
@@ -60,10 +60,9 @@ fi
 
 BODY="${BODY%$'\n'}"$'\n\n'"${BLOCK}"
 
-gh api \
+gh api --silent \
   -X PATCH \
   "/repos/${OWNER}/${REPO}/issues/comments/${COMMENT_ID}" \
   -f body="$BODY"
 
 echo "✅ Allure link patched into PR comment (id=${COMMENT_ID})"
-
