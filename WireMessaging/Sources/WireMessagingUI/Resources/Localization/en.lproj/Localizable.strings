@@ -156,7 +156,8 @@
 "conversation.wireCells.files.renameFolder.navigationTitle" = "Rename folder";
 "conversation.wireCells.files.renameFile.filenameTooLongError" = "Use a shorter file name (most 64 characters)";
 "conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Use a shorter folder name (most 64 characters)";
-"conversation.wireCells.files.renameFile.wrongCharacterError" = "Use a name without \"/\" and not starting with \".\"";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Use a name without \"/\"";
+"conversation.wireCells.files.renameFile.dotPrefix" = "Don't start the name with \".\"";
 "conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "A file with that name already exists";
 "conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "A folder with that name already exists";
 "conversation.wireCells.files.renameFile.placeholder" = "Enter file name";
