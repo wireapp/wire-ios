@@ -21,7 +21,7 @@ set -Eeuo pipefail
 
 COMMENT_TITLE="${1:?comment_title is required}"
 ALLURE_ARTIFACT_NAME="${2:?allure_artifact_name is required}"
-
+HAS_ALLURE_REPORT=false
 OWNER="${GITHUB_REPOSITORY%/*}"
 REPO="${GITHUB_REPOSITORY#*/}"
 
@@ -54,9 +54,8 @@ if [[ -z "${ALLURE_URL}" ]]; then
     | head -n 1 || true)"
 
   if [[ -n "${ARTIFACT_ID:-}" && "${ARTIFACT_ID}" != "null" ]]; then
+    HAS_ALLURE_REPORT=true
     ALLURE_URL="${GITHUB_SERVER_URL}/${OWNER}/${REPO}/actions/artifacts/${ARTIFACT_ID}"
-  else
-    ALLURE_URL="${RUN_SUMMARY_URL}"
   fi
 fi
 
@@ -64,8 +63,14 @@ MARKER_START='<!-- allure-link-start -->'
 MARKER_END='<!-- allure-link-end -->'
 BLOCK="${MARKER_START}
 
-**Summary:** [workflow run #${GITHUB_RUN_ID}](${SUMMARY_URL})
-**Allure report (download zip):** [${ALLURE_ARTIFACT_NAME}](${ALLURE_URL})
+**Summary:** [workflow run #${GITHUB_RUN_ID}](${SUMMARY_URL})"
+
+if [[ "${HAS_ALLURE_REPORT}" == "true" ]]; then
+  BLOCK="${BLOCK}
+**Allure report (download zip):** [${ALLURE_ARTIFACT_NAME}](${ALLURE_URL})"
+fi
+
+BLOCK="${BLOCK}
 
 ${MARKER_END}"
 
