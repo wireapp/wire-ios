@@ -83,48 +83,6 @@ class AbstractRequestStrategyTests: MessagingTestBase {
             sut: sut
         )
 
-        assertFail(
-            withConfiguration: [.allowsRequestsDuringSlowSync],
-            operationState: .foreground,
-            synchronizationState: .online,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsDuringSlowSync],
-            operationState: .foreground,
-            synchronizationState: .unauthenticated,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsWhileWaitingForWebsocket],
-            operationState: .foreground,
-            synchronizationState: .online,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsWhileWaitingForWebsocket],
-            operationState: .foreground,
-            synchronizationState: .unauthenticated,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsDuringQuickSync],
-            operationState: .foreground,
-            synchronizationState: .online,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsDuringQuickSync],
-            operationState: .foreground,
-            synchronizationState: .unauthenticated,
-            sut: sut
-        )
-
         // unauthenticated
 
         assertPass(

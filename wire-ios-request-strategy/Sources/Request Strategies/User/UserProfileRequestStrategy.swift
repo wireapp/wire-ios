@@ -75,7 +75,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy {
 
         self.configuration = [
             .allowsRequestsWhileOnline // so once we have a client it can request
-            // TODO: fix so it request only after initial sync is over?
+            // TODO: [WPB-22688] fix so it request only after initial sync is over?
         ]
         userProfileByQualifiedIDTranscoder.contextChangedTracker = self
     }

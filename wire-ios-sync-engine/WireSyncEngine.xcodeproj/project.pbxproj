@@ -1228,13 +1228,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0149B6172EE1C8510081EA8A /* Generators */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Generators;
-			sourceTree = "<group>";
-		};
 		060C06662B7619C600B484C6 /* E2EI */ = {
 			isa = PBXGroup;
 			children = (
@@ -1584,7 +1577,6 @@
 				F19F1D361EFBF60A00275E27 /* SessionManager */,
 				F19F1D121EFBC17A00275E27 /* UnauthenticatedSession */,
 				3E89FFA3191B6E15002D3A3E /* Data Model */,
-				0149B6172EE1C8510081EA8A /* Generators */,
 				85D85DBFC1F3A95767DEEA45 /* Synchronization */,
 				3EAD6A08199BB6C800D519DB /* Calling */,
 				EE88B0522BF62B430013F0BD /* Services */,
