@@ -43,13 +43,29 @@ if [[ -z "${PR_NUMBER}" || "${PR_NUMBER}" == "null" ]]; then
   exit 0
 fi
 
-ALLURE_URL="${ALLURE_ARTIFACT_URL:-${GITHUB_SERVER_URL}/${OWNER}/${REPO}/actions/runs/${GITHUB_RUN_ID}}"
+RUN_SUMMARY_URL="${GITHUB_SERVER_URL}/${OWNER}/${REPO}/actions/runs/${GITHUB_RUN_ID}"
+SUMMARY_URL="${RUN_SUMMARY_URL}"
+
+ALLURE_URL="${ALLURE_ARTIFACT_URL:-}"
+
+if [[ -z "${ALLURE_URL}" ]]; then
+  ARTIFACT_ID="$(gh api "/repos/${OWNER}/${REPO}/actions/runs/${GITHUB_RUN_ID}/artifacts" \
+    --jq ".artifacts[] | select(.name == \"${ALLURE_ARTIFACT_NAME}\") | .id" \
+    | head -n 1 || true)"
+
+  if [[ -n "${ARTIFACT_ID:-}" && "${ARTIFACT_ID}" != "null" ]]; then
+    ALLURE_URL="${GITHUB_SERVER_URL}/${OWNER}/${REPO}/actions/artifacts/${ARTIFACT_ID}"
+  else
+    ALLURE_URL="${RUN_SUMMARY_URL}"
+  fi
+fi
 
 MARKER_START='<!-- allure-link-start -->'
 MARKER_END='<!-- allure-link-end -->'
 BLOCK="${MARKER_START}
 
-**Summary:** [${ALLURE_ARTIFACT_NAME}](${ALLURE_URL})
+**Summary:** [workflow run #${GITHUB_RUN_ID}](${SUMMARY_URL})
+**Allure report (download zip):** [${ALLURE_ARTIFACT_NAME}](${ALLURE_URL})
 
 ${MARKER_END}"
 
