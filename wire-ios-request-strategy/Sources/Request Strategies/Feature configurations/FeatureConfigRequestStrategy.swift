@@ -37,7 +37,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
         applicationStatus: ApplicationStatus,
         apiVersion: WireTransport.APIVersion?
     ) {
-        // TODO: only used in ZMClientRegistrationStatus
+        // note this is only used in ZMClientRegistrationStatus
         self.actionHandler = GetFeatureConfigsActionHandler(context: managedObjectContext)
         self.actionSync = EntityActionSync(actionHandlers: [actionHandler])
         self.apiVersion = apiVersion
