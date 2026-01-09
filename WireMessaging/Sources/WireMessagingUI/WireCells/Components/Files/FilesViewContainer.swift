@@ -173,6 +173,7 @@ package struct FilesViewContainer: View {
             nodesRepository: nodesRepository,
             fileCache: fileCache,
             cellName: cellName,
+            isBrowsing: false,
             isFoldersEnabled: isFoldersEnabled,
             isCollaboraEnabled: isCollaboraEnabled,
             isRecycleBin: false,

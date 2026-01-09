@@ -89,6 +89,7 @@ final class FilesViewModelTests {
             localAssetRepository: localAssetRepository,
             nodesRepository: nodesRepository,
             fileCache: fileCache,
+            isBrowsing: false,
             isFoldersEnabled: true,
             isCollaboraEnabled: false,
             accentColorProvider: { .default }
