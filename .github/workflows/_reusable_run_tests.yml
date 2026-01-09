@@ -47,6 +47,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      checks: write
     outputs:
       xcresult_files: ${{ steps.find-xcresults.outputs.xcresult_files }}
     env:
@@ -198,6 +199,16 @@ jobs:
             artifacts/**/*.junit
             app-group.zip
             fastlane/app-group.zip
+
+      - name: Publish Test Results Summary
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action/macos@v2
+        with:
+          files: |
+            build/reports/*.junit
+            artifacts/**/*.junit
+          compare_to_earlier_commit: false
+          comment_title: "Test Results"
 
       - name: Publish test results + Allure report
         if: always()
