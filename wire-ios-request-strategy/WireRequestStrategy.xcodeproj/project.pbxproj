@@ -294,7 +294,6 @@
 		EE3245FC2821D41000F2A84A /* VoIPPushHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3245FB2821D41000F2A84A /* VoIPPushHelper.swift */; };
 		EE3246042823196100F2A84A /* VoIPPushHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3246032823196100F2A84A /* VoIPPushHelperTests.swift */; };
 		EE402C0528996C6900CA0E40 /* MLSMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE402C0428996C6900CA0E40 /* MLSMessage.swift */; };
-		EE4345DF2865D0FB0090AC34 /* ConversationByQualifiedIDListTranscoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE4345DE2865D0FB0090AC34 /* ConversationByQualifiedIDListTranscoderTests.swift */; };
 		EE7F02272A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F02262A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift */; };
 		EE7F02292A835FBA00FE5695 /* CreateGroupConversationActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F02282A835FBA00FE5695 /* CreateGroupConversationActionHandlerTests.swift */; };
 		EE7F022B2A8391C500FE5695 /* ConversationServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F022A2A8391C500FE5695 /* ConversationServiceTests.swift */; };
@@ -770,7 +769,6 @@
 		EE3245FB2821D41000F2A84A /* VoIPPushHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoIPPushHelper.swift; sourceTree = "<group>"; };
 		EE3246032823196100F2A84A /* VoIPPushHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoIPPushHelperTests.swift; sourceTree = "<group>"; };
 		EE402C0428996C6900CA0E40 /* MLSMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMessage.swift; sourceTree = "<group>"; };
-		EE4345DE2865D0FB0090AC34 /* ConversationByQualifiedIDListTranscoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationByQualifiedIDListTranscoderTests.swift; sourceTree = "<group>"; };
 		EE668BB12954A7C700D939E7 /* WireDataModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F72B296F0CE4001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE7F02262A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupConversationActionHandler.swift; sourceTree = "<group>"; };
@@ -1199,7 +1197,6 @@
 				630D41B92B07D9F400633867 /* MLSConversationParticipantsServiceTests.swift */,
 				630D41AB2B077F3900633867 /* ProteusConversationParticipantsService.swift */,
 				630D41BB2B07DA3E00633867 /* ProteusConversationParticipantsServiceTests.swift */,
-				EE4345DE2865D0FB0090AC34 /* ConversationByQualifiedIDListTranscoderTests.swift */,
 				6360A2112B0B721F00A5D5FB /* MLSClientIDsProvider.swift */,
 			);
 			path = Conversation;
@@ -2617,7 +2614,6 @@
 				63457C082B2CA8E300AFFEF3 /* E2EIKeyPackageRotatorTests.swift in Sources */,
 				EE8807932AC40AB100278E3C /* ConnectionPayloadProcessorTests.swift in Sources */,
 				F18401EE2073C26C00E9F4CC /* LinkPreviewAssetUploadRequestStrategyTests.swift in Sources */,
-				EE4345DF2865D0FB0090AC34 /* ConversationByQualifiedIDListTranscoderTests.swift in Sources */,
 				F18401EA2073C26700E9F4CC /* AbstractRequestStrategyTests.swift in Sources */,
 				630D41B82B07BDB600633867 /* ConversationParticipantsServiceTests.swift in Sources */,
 				16E70F5B270DCCB900718E5D /* UpdateConnectionActionHandlerTests.swift in Sources */,

@@ -31,7 +31,6 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     let connectionByIDTranscoder: ConnectionByIDTranscoder
     let connectionByQualifiedIDSync: IdentifierObjectSync<ConnectionByQualifiedIDTranscoder>
     let connectionByQualifiedIDTranscoder: ConnectionByQualifiedIDTranscoder
-    let localConnectionListSync: PaginatedSync<Payload.PaginatedLocalConnectionList>
     let connectionListSync: PaginatedSync<Payload.PaginatedConnectionList>
     let updateSync: KeyPathObjectSync<ConnectionRequestStrategy>
     let connectToUserActionHandler: ConnectToUserActionHandler
@@ -48,13 +47,6 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
         localDomain: String?,
         isFederationEnabled: Bool
     ) {
-
-        self.localConnectionListSync =
-            PaginatedSync<Payload.PaginatedLocalConnectionList>(
-                basePath: "/connections",
-                pageSize: 200,
-                context: managedObjectContext
-            )
 
         self.connectionListSync =
             PaginatedSync<Payload.PaginatedConnectionList>(

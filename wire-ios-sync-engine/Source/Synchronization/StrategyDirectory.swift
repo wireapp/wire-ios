@@ -288,10 +288,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
             ),
-            SignatureRequestStrategy(
-                withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
-            ),
             FeatureConfigRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,

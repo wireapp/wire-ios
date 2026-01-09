@@ -19,14 +19,12 @@
 import Foundation
 import WireLogging
 
-/// Request strategy for fetching user profiles and processing user update events.
+/// Request strategy for fetching user profiles.
 ///
 /// User profiles are fetched:
-/// - During the `.fetchingUsers` slow sync phase.
 /// - When a user is marked as `needsToBeUpdatedFromBackend`.
 ///
-public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObjectSyncDelegate {
-    var isFetchingAllConnectedUsers: Bool = false
+public class UserProfileRequestStrategy: AbstractRequestStrategy {
 
     let userProfileByID: IdentifierObjectSync<UserProfileByIDTranscoder>
     let userProfileByQualifiedID: IdentifierObjectSync<UserProfileByQualifiedIDTranscoder>
@@ -79,8 +77,6 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
             .allowsRequestsWhileOnline // so once we have a client it can request
             // TODO: fix so it request only after initial sync is over?
         ]
-        userProfileByID.delegate = self
-        userProfileByQualifiedID.delegate = self
         userProfileByQualifiedIDTranscoder.contextChangedTracker = self
     }
 
@@ -106,15 +102,6 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
             }
         }
     }
-
-    public func didFinishSyncingAllObjects() {
-        // do nothing
-    }
-
-    public func didFailToSyncAllObjects() {
-        // do nothing
-    }
-
 }
 
 extension UserProfileRequestStrategy: ZMContextChangeTracker {

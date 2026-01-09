@@ -19,7 +19,6 @@
 import Foundation
 
 /// Downloads all team members during the slow sync and updating when processing events or when manually requested.
-// TODO: replace by TeamUpdatesGenerator
 public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy,
     ZMContextChangeTrackerSource, ZMDownstreamTranscoder {
 
