@@ -99,12 +99,19 @@ final class FileVersioningViewTests: XCTestCase {
             nodeCache: MockWireCellsNodeCacheProtocol()
         )
 
+        let getAssetUseCase = WireCellsGetAssetUseCase(
+            localAssetRepository: localAssetRepository,
+            fileCache: MockFileCache()
+        )
+
         let viewModel = FileVersioningViewModel(
             nodeID: .mockID1,
             name: "foo.jpg",
+            eTag: nil,
             context: (Locale(identifier: "en_US_POSIX"), Calendar(identifier: .gregorian), TimeZone.gmt),
             fetchNodeVersionsUseCase: fetchNodeVersionUseCase,
             restoreNodeVersionUseCase: restoreNodeVersionUseCase,
+            getAssetUseCase: getAssetUseCase,
             accentColorProvider: { .default }
         )
 

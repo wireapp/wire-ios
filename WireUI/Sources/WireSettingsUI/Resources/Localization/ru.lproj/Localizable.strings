@@ -29,7 +29,7 @@
 "exportBackup.setBackupPassword.placeholder" = "Введите пароль";
 "exportBackup.setBackupPassword.rules" = "Используйте как минимум 8 символов, включая одну строчную букву, одну заглавную букву, цифру и специальный символ.";
 
-"exportBackup.cancel.title" = "Cancel";
+"exportBackup.cancel.title" = "Отмена";
 "exportBackup.errorAlert.title" = "Что-то пошло не так";
 "exportBackup.errorAlert.message" = "Не удалось создать резервную копию. Пожалуйста, повторите попытку или обратитесь в службу поддержки Wire.";
 "exportBackup.errorAlert.ok" = "OK";
@@ -39,11 +39,11 @@
 "exportBackup.creatingBackup.success" = "Резервная копия успешно создана.";
 "exportBackup.creatingBackup.saveButton.title" = "Сохранить файл";
 
-"importBackup.cancel.title" = "Cancel";
+"importBackup.cancel.title" = "Отмена";
 
 "importBackup.overwriteConfirmation.title" = "Файл перезаписывает вашу историю";
 "importBackup.overwriteConfirmation.message" = "Содержимое резервной копии заменит текущую историю бесед на этом устройстве.";
-"importBackup.overwriteConfirmation.cancel" = "Cancel";
+"importBackup.overwriteConfirmation.cancel" = "Отмена";
 "importBackup.overwriteConfirmation.proceed" = "Продолжить";
 
 "importBackup.alert.ok" = "OK";

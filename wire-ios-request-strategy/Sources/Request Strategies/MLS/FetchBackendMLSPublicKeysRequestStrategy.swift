@@ -32,7 +32,7 @@ public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStra
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
-        // TODO: only used on MLSActionsProvider and ZMClientRegistrationStatus
+        // note: only used on MLSActionsProvider and ZMClientRegistrationStatus
         self.actionHandler = FetchBackendMLSPublicKeysActionHandler(context: managedObjectContext)
         self.actionSync = EntityActionSync(actionHandlers: [actionHandler])
 

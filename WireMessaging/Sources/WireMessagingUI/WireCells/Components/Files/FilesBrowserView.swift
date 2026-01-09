@@ -82,6 +82,8 @@ package struct FilesBrowserView: FilesViewProtocol {
                 switch navigationItem {
                 case let .filters(filtersView):
                     filtersView
+                case let .shareLink(shareLinkView):
+                    shareLinkView
                 default:
                     EmptyView()
                 }
@@ -109,7 +111,7 @@ private extension FilesBrowserView {
 
 // MARK: - Helper
 
-private extension View {
+extension View {
     @ViewBuilder
     func `if`(
         _ condition: Bool,
