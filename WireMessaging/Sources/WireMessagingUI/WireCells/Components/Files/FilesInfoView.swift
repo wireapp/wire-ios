@@ -23,6 +23,7 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct FilesInfoView: View {
+    @Environment(\.openURL) private var openURL
 
     enum Info: Equatable {
         case preparingFiles
@@ -57,7 +58,7 @@ struct FilesInfoView: View {
                 (Strings.Files.PendingCells.title, Strings.Files.PendingCells.message)
             case let .noFilesFound(scope):
                 (
-                    Strings.Files.NoData.title,
+                    scope == .oneConversation ? Strings.Files.NoData.title : Strings.AllFiles.NoData.title,
                     textForScope(scope)
                 )
             case .error:
@@ -92,6 +93,10 @@ struct FilesInfoView: View {
                 ("error-title", "error-message")
             }
         }
+        
+        var learnMoreURL: String {
+            "https://support.wire.com/hc/en-us/articles/32207745256221-Shared-Drive-in-conversations"
+        }
     }
 
     let info: Info
@@ -115,33 +120,60 @@ struct FilesInfoView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityLabel(info.accessibilityStrings.message)
                 .accessibilityIdentifier(info.accessibilityIdentifiers.message)
-
-            if info == .error {
-                Button {
-                    onReload?()
-                } label: {
-                    Text(Strings.Files.Error.reload)
-                        .padding()
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(SemanticColors.Label.textDefault.color)
-                        .frame(maxHeight: 35)
-                        .background(
-                            RoundedRectangle(
-                                cornerRadius: 10,
-                                style: .continuous
-                            )
-                            .stroke(SemanticColors.Button.borderSecondaryEnabled.color, lineWidth: 1)
-
-                        )
-                }
-                .accessibilityLabel(Strings.Files.Error.reload)
-                .accessibilityIdentifier("filesBrowser.reloadButton")
+            
+            switch info {
+            case .noFilesFound:
+                learnMoreLink
+            case .error:
+                reloadButton
+            default:
+                EmptyView()
             }
         }
         .padding(20)
         .frame(maxWidth: 420)
         .padding()
     }
+    
+    private var learnMoreLink: some View {
+        Link(
+            info == .noFilesFound(scope: .oneConversation) ? Strings.Files.NoData.learnMore : Strings.AllFiles.NoData.learnMore,
+            destination: URL(string: info.learnMoreURL)!
+        )
+        .foregroundColor(SemanticColors.Label.baseSecondaryText.color)
+        .underline()
+    }
+    
+    private var reloadButton: some View {
+        Button {
+            onReload?()
+        } label: {
+            Text(Strings.Files.Error.reload)
+                .padding()
+                .font(.subheadline.weight(.semibold))
+                .foregroundColor(SemanticColors.Label.textDefault.color)
+                .frame(maxHeight: 35)
+                .background(
+                    RoundedRectangle(
+                        cornerRadius: 10,
+                        style: .continuous
+                    )
+                    .stroke(SemanticColors.Button.borderSecondaryEnabled.color, lineWidth: 1)
+
+                )
+        }
+        .accessibilityLabel(Strings.Files.Error.reload)
+        .accessibilityIdentifier("filesBrowser.reloadButton")
+    }
+    
+}
+
+#Preview("no files found - single conversation") {
+    FilesInfoView(info: .noFilesFound(scope: .oneConversation))
+}
+
+#Preview("no files found - all conversations") {
+    FilesInfoView(info: .noFilesFound(scope: .allConversations))
 }
 
 struct LoadMoreView: View {
