@@ -221,8 +221,6 @@ package final class FilesViewModel: ObservableObject {
     private let accentColorProvider: () -> WireAccentColor
 
     let isBrowsing: Bool
-    let isFoldersEnabled: Bool
-    let isCollaboraEnabled: Bool
     let isRecycleBin: Bool
 
     let triggerReload: PassthroughSubject<Void, Never>
@@ -256,8 +254,6 @@ package final class FilesViewModel: ObservableObject {
         fileCache: any FileCache,
         cellName: String? = nil,
         isBrowsing: Bool,
-        isFoldersEnabled: Bool,
-        isCollaboraEnabled: Bool,
         isRecycleBin: Bool = false,
         triggerReload: PassthroughSubject<Void, Never> = .init(),
         accentColorProvider: @escaping () -> WireAccentColor
@@ -272,8 +268,6 @@ package final class FilesViewModel: ObservableObject {
         self.cellName = cellName
         self.state = isCellsStatePending ? .pending : .loading
         self.isBrowsing = isBrowsing
-        self.isFoldersEnabled = isFoldersEnabled
-        self.isCollaboraEnabled = isCollaboraEnabled
         self.isRecycleBin = isRecycleBin
         self.triggerReload = triggerReload
         self.accentColorProvider = accentColorProvider
@@ -370,8 +364,6 @@ package final class FilesViewModel: ObservableObject {
             },
             isBrowsing: isBrowsing,
             isInRecycleBin: isRecycleBin,
-            isFoldersEnabled: isFoldersEnabled,
-            isCollaboraEnabled: isCollaboraEnabled
         )
     }
 

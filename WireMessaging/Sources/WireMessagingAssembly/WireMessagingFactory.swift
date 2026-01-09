@@ -18,7 +18,7 @@
 
 public import Foundation
 public import UIKit
-public import SwiftUI
+import SwiftUI
 public import WireData
 public import WireFoundation
 public import WireMessagingDomain
@@ -38,8 +38,6 @@ public struct WireMessagingFactory {
     private let filenameGenerator = FilenameGenerator()
     private let lastOpenRequest: WireCellsLastOpenRequest
     private let nodeCache: WireCellsNodeCache
-    private let isFoldersEnabled: Bool
-    private let isCollaboraEnabled: Bool
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
 
     @MainActor var lastOpenRequestNodeID: UUID?
@@ -49,9 +47,7 @@ public struct WireMessagingFactory {
         cellsURLResolver: @escaping CellsURLResolver,
         accessToken: any AccessTokenProvider,
         fileCache: any FileCache,
-        contextProvider: any ManagedObjectContextProvider,
-        isFoldersEnabled: Bool,
-        isCollaboraEnabled: Bool
+        contextProvider: any ManagedObjectContextProvider
     ) {
         self.nodeCache = WireCellsNodeCache()
         self.nodesAPI = NodesAPI(serverURLResolver: cellsURLResolver, accessToken: accessToken)
@@ -65,8 +61,6 @@ public struct WireMessagingFactory {
             store: localAssetStore
         )
         self.lastOpenRequest = WireCellsLastOpenRequest()
-        self.isFoldersEnabled = isFoldersEnabled
-        self.isCollaboraEnabled = isCollaboraEnabled
         self.nodeRenameNotifier = WireCellsNodeRenameNotifier()
     }
 
@@ -152,8 +146,6 @@ public extension WireMessagingFactory {
                 nodeCache: nodeCache,
                 nodeRenameNotifier: nodeRenameNotifier,
                 fileCache: fileCache,
-                isFoldersEnabled: isFoldersEnabled,
-                isCollaboraEnabled: isCollaboraEnabled,
                 accentColorProvider: accentColorProvider
             ).environment(\.wireAccentColor, accentColorProvider())
         )
@@ -212,8 +204,6 @@ public extension WireMessagingFactory {
                     nodesRepository: nodesAPI,
                     fileCache: fileCache,
                     isBrowsing: true,
-                    isFoldersEnabled: false,
-                    isCollaboraEnabled: isCollaboraEnabled,
                     accentColorProvider: accentColorProvider,
                 )
             )
