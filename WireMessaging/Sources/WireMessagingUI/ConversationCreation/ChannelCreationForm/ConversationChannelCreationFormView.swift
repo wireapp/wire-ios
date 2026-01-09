@@ -22,6 +22,11 @@ import WireMessagingDomain
 import WireReusableUIComponents
 
 public struct ConversationChannelCreationForm: View {
+    
+    private enum Constants {
+        static let learnMoreURL = "https://support.wire.com/hc/en-us/articles/32207749480477-Use-Wire-Drive-in-conversations"
+    }
+    
     public typealias ViewModel = ConversationChannelCreationFormViewModel
 
     private typealias Strings = L10n.Localizable.Conversation
@@ -197,12 +202,20 @@ public struct ConversationChannelCreationForm: View {
 
     var fileManagementSection: some View {
         Section(content: {
-            Toggle(Strings.CreationForm.WireCells.toggle + " (Cells beta)", isOn: $viewModel.fileManagementEnabled)
+            Toggle(Strings.CreationForm.WireCells.toggle, isOn: $viewModel.fileManagementEnabled)
         }, footer: {
-            Text(Strings.CreationForm.WireCells.description)
-            // Text(" [\(Strings.CreationForm.WireCells.learnMore)](https://wire.com)") // TODO: [WPB-20191] URL to be
-            // defined, uncomment when we have the URL
+            Text(footerText)
         })
+    }
+    
+    private var footerText: AttributedString {
+        var text = AttributedString(Strings.CreationForm.WireCells.description + " ")
+
+        var link = AttributedString(Strings.CreationForm.WireCells.learnMore)
+        link.link = URL(string: Constants.learnMoreURL)
+
+        text.append(link)
+        return text
     }
 }
 
