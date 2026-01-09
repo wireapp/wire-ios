@@ -93,7 +93,7 @@ struct FilesInfoView: View {
                 ("error-title", "error-message")
             }
         }
-        
+
         var learnMoreURL: String {
             "https://support.wire.com/hc/en-us/articles/32207745256221-Shared-Drive-in-conversations"
         }
@@ -120,7 +120,7 @@ struct FilesInfoView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityLabel(info.accessibilityStrings.message)
                 .accessibilityIdentifier(info.accessibilityIdentifiers.message)
-            
+
             switch info {
             case .noFilesFound:
                 learnMoreLink
@@ -134,16 +134,17 @@ struct FilesInfoView: View {
         .frame(maxWidth: 420)
         .padding()
     }
-    
+
     private var learnMoreLink: some View {
         Link(
-            info == .noFilesFound(scope: .oneConversation) ? Strings.Files.NoData.learnMore : Strings.AllFiles.NoData.learnMore,
+            info == .noFilesFound(scope: .oneConversation) ? Strings.Files.NoData.learnMore : Strings.AllFiles.NoData
+                .learnMore,
             destination: URL(string: info.learnMoreURL)!
         )
         .foregroundColor(SemanticColors.Label.baseSecondaryText.color)
         .underline()
     }
-    
+
     private var reloadButton: some View {
         Button {
             onReload?()
@@ -165,7 +166,7 @@ struct FilesInfoView: View {
         .accessibilityLabel(Strings.Files.Error.reload)
         .accessibilityIdentifier("filesBrowser.reloadButton")
     }
-    
+
 }
 
 #Preview("no files found - single conversation") {

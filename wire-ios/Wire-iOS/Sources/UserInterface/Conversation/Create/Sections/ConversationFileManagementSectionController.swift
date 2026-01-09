@@ -86,13 +86,13 @@ extension ConversationCreateFileManagementSectionController {
             )
             return
         }
-        
+
         let linkRange = NSRange(learnMoreRange, in: fullText)
         let fullRange = NSRange(location: 0, length: fullText.count)
         attributedText.addAttribute(.link, value: supportLink, range: linkRange)
         attributedText.addAttribute(.font, value: UIFont.font(for: .subline1), range: fullRange)
         attributedText.addAttribute(.foregroundColor, value: SemanticColors.Label.textSectionFooter, range: fullRange)
-        
+
         footer.linkTextView.attributedText = attributedText
     }
 }

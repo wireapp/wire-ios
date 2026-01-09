@@ -22,11 +22,11 @@ import WireMessagingDomain
 import WireReusableUIComponents
 
 public struct ConversationChannelCreationForm: View {
-    
+
     private enum Constants {
         static let learnMoreURL = "https://support.wire.com/hc/en-us/articles/32207749480477-Use-Wire-Drive-in-conversations"
     }
-    
+
     public typealias ViewModel = ConversationChannelCreationFormViewModel
 
     private typealias Strings = L10n.Localizable.Conversation
@@ -207,7 +207,7 @@ public struct ConversationChannelCreationForm: View {
             Text(footerText)
         })
     }
-    
+
     private var footerText: AttributedString {
         var text = AttributedString(Strings.CreationForm.WireCells.description + " ")
 
