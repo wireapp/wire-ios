@@ -61,7 +61,7 @@ final class FilesViewTests: XCTestCase {
         let localAssetsRepository = MockWireCellsLocalAssetRepositoryProtocol()
 
         fetchNodesUseCase = WireCellsFetchNodesPageUseCase(
-            configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
+            configuration: .conversationFileView(root: .id(.mockID1)),
             repository: nodesRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
@@ -404,8 +404,6 @@ final class FilesViewTests: XCTestCase {
             nodesRepository: nodesRepository,
             fileCache: MockFileCache(),
             isBrowsing: false,
-            isFoldersEnabled: true,
-            isCollaboraEnabled: false,
             accentColorProvider: { .default }
         )
 
@@ -440,9 +438,7 @@ private extension FilesItemViewModel {
             calendar: Calendar(identifier: .gregorian),
             timeZone: .gmt,
             isBrowsing: false,
-            isInRecycleBin: false,
-            isFoldersEnabled: false,
-            isCollaboraEnabled: false
+            isInRecycleBin: false
         )
     }
 

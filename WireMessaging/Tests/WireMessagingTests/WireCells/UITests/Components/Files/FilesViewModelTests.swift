@@ -46,7 +46,7 @@ final class FilesViewModelTests {
         self.sut = FilesViewModel(
             useCases: .init(
                 fetchNodes: WireCellsFetchNodesPageUseCase(
-                    configuration: .conversationFileView(root: .path("some-cell"), isFoldersEnabled: false),
+                    configuration: .conversationFileView(root: .path("some-cell")),
                     repository: nodesRepository
                 ),
                 deleteNodes: WireCellsDeleteNodesUseCase(
@@ -90,8 +90,6 @@ final class FilesViewModelTests {
             nodesRepository: nodesRepository,
             fileCache: fileCache,
             isBrowsing: false,
-            isFoldersEnabled: true,
-            isCollaboraEnabled: false,
             accentColorProvider: { .default }
         )
 
