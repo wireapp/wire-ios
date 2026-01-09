@@ -25,8 +25,23 @@ ALLURE_ARTIFACT_NAME="${2:?allure_artifact_name is required}"
 OWNER="${GITHUB_REPOSITORY%/*}"
 REPO="${GITHUB_REPOSITORY#*/}"
 
-PR_NUMBER="${GITHUB_REF#refs/pull/}"
-PR_NUMBER="${PR_NUMBER%/merge}"
+# Determine PR number:
+# - PR events: refs/pull/<n>/merge
+# - Branch runs: find open PR where head branch == current branch
+PR_NUMBER=""
+
+if [[ "${GITHUB_REF:-}" == refs/pull/* ]]; then
+  PR_NUMBER="${GITHUB_REF#refs/pull/}"
+  PR_NUMBER="${PR_NUMBER%/merge}"
+else
+  HEAD_BRANCH="${GITHUB_REF_NAME:-${GITHUB_REF#refs/heads/}}"
+  PR_NUMBER="$(gh pr list --state open --head "${HEAD_BRANCH}" --json number --jq '.[0].number' 2>/dev/null || true)"
+fi
+
+if [[ -z "${PR_NUMBER}" || "${PR_NUMBER}" == "null" ]]; then
+  echo "ℹ️ No open PR found for this run; skipping PR comment patch."
+  exit 0
+fi
 
 ALLURE_URL="${ALLURE_ARTIFACT_URL:-${GITHUB_SERVER_URL}/${OWNER}/${REPO}/actions/runs/${GITHUB_RUN_ID}}"
 

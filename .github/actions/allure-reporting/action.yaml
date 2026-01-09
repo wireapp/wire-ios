@@ -30,7 +30,7 @@ runs:
         path: allure-report/
 
     - name: Patch Allure link into the Test Results comment
-      if: ${{ always() && github.event_name == 'pull_request' }}
+      if: always()
       shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
