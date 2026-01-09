@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -79,7 +79,23 @@ extension FilesViewModel {
                 ),
                 getAssetUseCase: WireCellsGetAssetUseCase(
                     localAssetRepository: localAssetRepository, fileCache: cache
+                ),
+                getPublicLinkData: WireCellsGetPublicLinkDataUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                ),
+                createPublicLink: WireCellsCreatePublicLinkUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                ),
+                deletePublicLink: WireCellsDeletePublicLinkUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                ),
+                updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                ),
+                updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(
+                    nodesAPI: previewPublicLinkApi()
                 )
+
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,
@@ -134,7 +150,8 @@ extension FilesItemViewModel {
                 modifiedAt: Date(),
                 icon: .image,
                 tags: tags,
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil,
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
             onItemAction: { _, _ in },
@@ -148,9 +165,7 @@ extension FilesItemViewModel {
 extension FileVersionItemViewModel {
     /// A stubbed instance of `FileVersionItemViewModel` for SwiftUI previews.
     static func preview() -> FileVersionItemViewModel {
-        let localAssetsRepository = PreviewLocalAssetRepository()
-
-        return FileVersionItemViewModel(
+        FileVersionItemViewModel(
             nodeID: UUID(),
             item: .init(
                 id: UUID(),
@@ -196,11 +211,16 @@ extension FileVersioningViewModel {
         return FileVersioningViewModel(
             nodeID: UUID(),
             name: "foo.jpg",
+            eTag: nil,
             fetchNodeVersionsUseCase: useCase,
             restoreNodeVersionUseCase: WireCellsRestoreNodeVersionUseCase(
                 repository: repository,
                 localAssetsRepository: localAssetsRepository,
                 nodeCache: MockWireCellsNodeCacheProtocol()
+            ),
+            getAssetUseCase: WireCellsGetAssetUseCase(
+                localAssetRepository: localAssetsRepository,
+                fileCache: MockFileCache()
             ),
             accentColorProvider: { .default }
         )
@@ -244,6 +264,24 @@ private func previewTagsApi() -> some NodesAPIProtocol {
 private func previewEditingURLRepository() -> any WireCellsEditingURLRepositoryProtocol {
     let mock = MockWireCellsEditingURLRepositoryProtocol()
     mock.getEditorURLId_MockValue = nil
+    return mock
+}
+
+private func previewPublicLinkApi() -> some NodesAPIProtocol {
+    let mock = MockNodesAPIProtocol()
+    let publicLink = WireCellsPublicLink(
+        linkID: "aaa",
+        url: URL(string: "https://wire.com")!,
+        requiresPassword: true,
+        expirationDate: Date()
+    )
+
+    mock.getPublicLinkLinkID_MockMethod = { _ in
+        publicLink
+    }
+
+    mock.updatePublicLinkPasswordLinkIDPassword_MockValue = publicLink
+
     return mock
 }
 
@@ -334,6 +372,38 @@ extension CreateFolderViewModel {
         return CreateFolderViewModel(
             createFolderUseCase: createFolderUseCase,
             folderPath: "Test-1/Test-2"
+        )
+    }
+}
+
+extension ExpirationDatePickerView.ViewModel {
+    static func preview(date: Date?) -> ExpirationDatePickerView.ViewModel {
+        ExpirationDatePickerView.ViewModel(
+            linkID: "",
+            expirationDate: date,
+            didSave: { _ in },
+            updatePublicLinkExpiration: .init(nodesAPI: previewTagsApi())
+        )
+    }
+}
+
+extension ShareLinkPasswordView.ViewModel {
+    static func preview(password: String?, requiresPassword: Bool) -> ShareLinkPasswordView.ViewModel {
+        let nodesAPI = previewPublicLinkApi()
+        let keychain = Keychain()
+
+        let useCases = UseCases(
+            updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
+            storePublicLinkPasswordUseCase: WireCellsStorePublicLinkPasswordUseCase(keychain: keychain),
+            deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase(keychain: keychain)
+        )
+
+        return ShareLinkPasswordView.ViewModel(
+            password: password,
+            requiresPassword: requiresPassword,
+            linkID: "aaa",
+            useCases: useCases,
+            didSave: { _, _ in }
         )
     }
 }

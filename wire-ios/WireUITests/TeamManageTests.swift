@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,18 +25,16 @@ final class TeamManageTests: WireUITestCase {
     func testCritical_Migrate_PersonalUserToTeam() async throws {
         let user = try await userHelper.createPersonalUser()
 
-        let firstTimePage = try app.loginUser(email: user.email, password: user.password)
-        var userProfilePage = try  firstTimePage.acceptPopup(with: self)
+        let conversationPage = try app.loginUser(email: user.email, password: user.password)
+            .acceptPopup(with: self)
             .openUserAccountPageForUser(with: user.name)
-
-        let conversationPage = try userProfilePage
             .tapCreateTeamButton()
             .tapContinue()
             .typeTeamNameAndContinue(user.teamName)
             .acceptTheConfirmationAndContinue()
             .tapBackToWireButton()
 
-        userProfilePage = try conversationPage.openUserAccountPageForUser(with: user.name)
+        let userProfilePage = try conversationPage.openUserAccountPageForUser(with: user.name)
 
         let teamName = try XCTUnwrap(userProfilePage.getTeamName())
         XCTAssertEqual(teamName, user.teamName, "Team name didn't match expected value \(user.teamName)")
@@ -93,20 +91,18 @@ final class TeamManageTests: WireUITestCase {
         )
 
         let (_, teamMember1) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken,
+            ownerAccessToken: ownerAccessToken.token,
             teamID: teamID,
         )
 
         let (_, teamMember2) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken,
+            ownerAccessToken: ownerAccessToken.token,
             teamID: teamID,
         )
 
-        let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-        let conversationPage = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)
-            .setUsername(teamOwner.username)
-
-        let activeConversationPage = try conversationPage.tapPlusButtonToCreateGroup()
+        let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup(with: self)
+            .tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enterGroupName(groupName)
             .tapMemberCells(withLabelPrefixes: [teamMember1.name, teamMember2.name])
@@ -140,7 +136,7 @@ final class TeamManageTests: WireUITestCase {
 
         for _ in 0 ..< countOfMembers {
             let (qualifiedId, teamMember) = try await userHelper.registerUsersAsTeamMember(
-                ownerAccessToken: ownerAccessToken,
+                ownerAccessToken: ownerAccessToken.token,
                 teamID: teamID
             )
             qualifiedIds.append(qualifiedId)
@@ -154,8 +150,7 @@ final class TeamManageTests: WireUITestCase {
         )
 
         let conversationDetailsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopupOnTeamMemberSetup(with: self)
-            .setUsername(teamOwner.username)
+            .acceptPopup(with: self)
             .openConversation()
             .openConversationDetails()
             .openUserDetailsPage(byName: teamMembers[0].name)

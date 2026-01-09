@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -660,7 +660,6 @@
 
 "content.system.cannot_decrypt.self" = "A message from you could not be decrypted.";
 "content.system.cannot_decrypt.other" = "A message from %@ could not be decrypted.";
-"content.system.cannot_decrypt.reset_session" = "Fix future messages";
 "content.system.cannot_decrypt.error_details" = "(Fixed error: %d ID: %@)";
 
 "content.system.cannot_decrypt_resolved.self" = "You can now decrypt messages from yourself. To recover lost messages, you need to resend them.";
@@ -733,6 +732,8 @@
 "content.reactions_list.likers" = "Synes godt af";
 
 "content.file.too_big" = "Du kan sende filer op til %@";
+
+"content.message.reply.files.count" = "%@ files";
 
 // Reactions
 "content.reactions.title" = "Select reaction";
@@ -1839,10 +1840,6 @@
 "databaseloadingfailure.alert.delete_database.message" = "By deleting the database, all local data and messages for this account will be permanently deleted.";
 "databaseloadingfailure.alert.delete_database.continue" = "Fortsæt";
 "databaseloadingfailure.alert.retry" = "Retry";
-
-// Backend not supported alert
-"backend_not_supported.alert.title" = "Server version not supported";
-"backend_not_supported.alert.message" = "The server version is not supported by this app. Please contact your system administrator.";
 
 // Third Party
 "giphy.conversation.message" = "%@ · via giphy.com";

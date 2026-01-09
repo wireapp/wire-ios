@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,6 +53,7 @@ public protocol FeatureConfigRepositoryProtocol {
     func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config>
     func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config>
     func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config>
+    func fetchCellsInternal() async throws -> LocalFeature<Feature.CellsInternal.Config>
 
     func isFeatureEnabled(
         _ feature: Feature.Name

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -168,18 +168,29 @@ class UserHelper {
         )
 
         teamOwner.teamID = teamID
+
+        // Get activation code
+        let (activationCode, activationKey) = try await authenticationAPI.getActivationCode(
+            forEmail: teamOwner.email,
+            basicAuth: basicAuth()
+        )
+
+        // Activate user
+        try await authenticationAPI.activateUser(email: teamOwner.email, key: activationKey, code: activationCode)
+
+        authenticationManager.accessToken = try await fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+
+        // Set username
+        try await selfUserAPI.updateHandle(handle: teamOwner.username)
+
         createdUsers.append(teamOwner)
         return (qualifiedID: qualifiedId, owner: teamOwner)
     }
 
-    func fetchAccessToken(email: String, password: String) async throws -> String {
-        let (activationCode, activationKey) = try await authenticationAPI.getActivationCode(
-            forEmail: email,
-            basicAuth: basicAuth()
-        )
-
-        try await authenticationAPI.activateUser(email: email, key: activationKey, code: activationCode)
-
+    func fetchAccessToken(email: String, password: String) async throws -> AccessToken {
         let (_, accessToken) = try await authenticationAPI.login(
             email: email,
             password: password,
@@ -187,7 +198,7 @@ class UserHelper {
             label: nil
         )
 
-        return accessToken.token
+        return accessToken
     }
 
     func registerUsersAsTeamMember(

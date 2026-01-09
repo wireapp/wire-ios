@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -752,6 +752,12 @@ public final class MLSService: MLSServiceInterface {
 
     }
 
+    public func externalSenderKey(groupID: MLSGroupID) async throws -> Data {
+        try await coreCrypto.perform { coreCrypto in
+            try await coreCrypto.getExternalSender(conversationId: groupID.conversationId)
+        }.copyBytes()
+    }
+
     public func conversationExists(groupID: MLSGroupID) async throws -> Bool {
 
         logger.info("checking if group (\(groupID)) exists...")
@@ -868,13 +874,13 @@ public final class MLSService: MLSServiceInterface {
                     }
 
                     do {
-                        let (epoch, isSelfConversation) = await context.perform {
-                            (pendingGroup.epoch, pendingGroup.isSelfConversation)
+                        let epoch = await context.perform {
+                            pendingGroup.epoch
                         }
                         let conversationExists = try await self.conversationExists(
                             groupID: mlsGroupID
                         )
-                        let shouldEstablishGroup = epoch == 0 && isSelfConversation && !conversationExists
+                        let shouldEstablishGroup = epoch == 0 && !conversationExists
 
                         if shouldEstablishGroup {
                             try await self.internalEstablishPendingGroup(

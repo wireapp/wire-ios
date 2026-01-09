@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -111,6 +111,12 @@ struct FilesViewItemView: View {
                     Button(action: open) {
                         Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
                     }.disabled(viewModel.isDownloading)
+
+                    if !viewModel.isInRecycleBin {
+                        Button(action: shareLink) {
+                            Label(Strings.Files.Item.Menu.shareLink, systemImage: "square.and.arrow.up")
+                        }
+                    }
 
                     if viewModel.isDownloadOptionAvailable {
                         Button(action: download) {
@@ -244,6 +250,10 @@ struct FilesViewItemView: View {
 
     private func editFile() {
         Task { await viewModel.edit() }
+    }
+
+    private func shareLink() {
+        Task { await viewModel.onItemAction(.shareLink, viewModel.item) }
     }
 
     private func download() {
