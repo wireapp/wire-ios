@@ -24,6 +24,7 @@ ALLURE_ARTIFACT_NAME="${2:?allure_artifact_name is required}"
 HAS_ALLURE_REPORT=false
 OWNER="${GITHUB_REPOSITORY%/*}"
 REPO="${GITHUB_REPOSITORY#*/}"
+ALLURE_URL=""
 
 # Determine PR number:
 # - PR events: refs/pull/<n>/merge
@@ -45,8 +46,6 @@ fi
 
 RUN_SUMMARY_URL="${GITHUB_SERVER_URL}/${OWNER}/${REPO}/actions/runs/${GITHUB_RUN_ID}"
 SUMMARY_URL="${RUN_SUMMARY_URL}"
-
-ALLURE_URL="${ALLURE_ARTIFACT_URL:-}"
 
 if [[ -z "${ALLURE_URL}" ]]; then
   ARTIFACT_ID="$(gh api "/repos/${OWNER}/${REPO}/actions/runs/${GITHUB_RUN_ID}/artifacts" \
