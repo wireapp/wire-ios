@@ -226,6 +226,7 @@ final class FilesBrowserViewTests: XCTestCase {
             localAssetRepository: localAssetsRepository,
             nodesRepository: nodesRepository,
             fileCache: MockFileCache(),
+            isBrowsing: false,
             isFoldersEnabled: false,
             isCollaboraEnabled: false,
             accentColorProvider: { .default }

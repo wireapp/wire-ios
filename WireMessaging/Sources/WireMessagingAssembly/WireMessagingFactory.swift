@@ -211,9 +211,10 @@ public extension WireMessagingFactory {
                     localAssetRepository: localAssetRepository,
                     nodesRepository: nodesAPI,
                     fileCache: fileCache,
+                    isBrowsing: true,
                     isFoldersEnabled: false,
                     isCollaboraEnabled: isCollaboraEnabled,
-                    accentColorProvider: accentColorProvider
+                    accentColorProvider: accentColorProvider,
                 )
             )
         )

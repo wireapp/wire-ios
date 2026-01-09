@@ -95,7 +95,6 @@ extension FilesViewModel {
                 updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(
                     nodesAPI: previewPublicLinkApi()
                 )
-
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,
@@ -103,12 +102,12 @@ extension FilesViewModel {
             nodesRepository: previewNodesRepository(),
             fileCache: cache,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
+            isBrowsing: false,
             isFoldersEnabled: isFoldersEnabled,
             isCollaboraEnabled: false,
             accentColorProvider: { .default }
         )
     }
-
 }
 
 extension FileRenameViewModel {
@@ -155,8 +154,10 @@ extension FilesItemViewModel {
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
             onItemAction: { _, _ in },
+            isBrowsing: false,
             isInRecycleBin: false,
             isFoldersEnabled: false,
+            isCollaboraEnabled: false
         )
     }
 
