@@ -25,7 +25,8 @@ package enum NodesAPIError: Error {
     case moveFailed
 }
 
-package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol, WireDriveEditingURLRepositoryProtocol {
+package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol,
+    WireDriveEditingURLRepositoryProtocol {
     private let awsClient: AWSClient
     private let restAPI: RestAPI
     private let fileManager: FileManager
