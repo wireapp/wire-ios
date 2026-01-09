@@ -82,13 +82,6 @@ open class ClientUpdateStatus: NSObject {
     }
 
     open var currentPhase: ClientUpdatePhase {
-        let phase = internalPhase
-        WireLogger.system.debug("⚠️ clientUpdatePhase: \(phase)")
-        return phase
-    }
-
-    private var internalPhase: ClientUpdatePhase {
-
         if isFetchingClients {
             return .fetchingClients
         }
