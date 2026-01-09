@@ -6,7 +6,7 @@ inputs:
     default: "artifacts"
   allure_artifact_name:
     required: false
-    default: "report-${{ github.run_number }}"
+    default: "html-report-${{ github.run_number }}"
 
 runs:
   using: "composite"

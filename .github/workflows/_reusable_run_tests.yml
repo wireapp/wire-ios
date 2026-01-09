@@ -214,8 +214,37 @@ jobs:
         if: always()
         uses: ./.github/actions/allure-reporting
         with:
-          allure_artifact_name: "report-${{ github.run_number }}"
+          allure_artifact_name: "html-report-${{ github.run_number }}"
           xcresult_search_path: "artifacts"
+
+      - name: Add Allure Report to Job Summary
+        if: ${{ always() && env.ALLURE_REPORT_AVAILABLE == 'true' }}
+        shell: bash
+        run: |
+          {
+            echo "## 📊 Allure Report Generated Successfully";
+            echo "";
+            echo "**Artifact Name:** \`html-report-${{ github.run_number }}\`";
+            echo "";
+            echo "### 📥 How to View the Report";
+            echo "";
+            echo "1. Download and extract the ZIP file";
+            echo "2. **Double-click index.html** to open in your browser";
+            echo "";
+            echo "---";
+            echo "";
+            echo "_Report retention depends on repository artifact settings_";
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Add Allure Report Not Generated to Job Summary
+        if: ${{ always() && env.ALLURE_REPORT_AVAILABLE != 'true' }}
+        shell: bash
+        run: |
+          {
+            echo "## 📊 Allure Report";
+            echo "";
+            echo "⚠️ No \`.xcresult\` found under \`artifacts\`. Allure report was not generated.";
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Archiving DerivedData Logs
         uses: actions/upload-artifact@v4

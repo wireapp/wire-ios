@@ -27,6 +27,9 @@ XCRESULT="$(find "${XCRESULT_SEARCH_PATH}" -type d -name "*.xcresult" | head -n 
 
 if [[ -z "${XCRESULT}" ]]; then
   echo "⚠️  No .xcresult found under ./${XCRESULT_SEARCH_PATH}. Skipping Allure report generation."
+  if [[ -n "${GITHUB_ENV:-}" ]]; then
+    echo "ALLURE_REPORT_AVAILABLE=false" >> "${GITHUB_ENV}"
+  fi
   exit 0
 fi
 
@@ -42,3 +45,7 @@ fi
 
 FILE_SIZE="$(du -h allure-report/index.html | cut -f1)"
 echo "✅ Allure report generated successfully (${FILE_SIZE})"
+
+if [[ -n "${GITHUB_ENV:-}" ]]; then
+  echo "ALLURE_REPORT_AVAILABLE=true" >> "${GITHUB_ENV}"
+fi
