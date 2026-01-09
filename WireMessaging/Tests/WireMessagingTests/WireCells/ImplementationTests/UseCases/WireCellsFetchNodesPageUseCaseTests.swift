@@ -30,7 +30,7 @@ struct WireCellsFetchNodesPageUseCaseTests {
 
     init() {
         self.sut = WireCellsFetchNodesPageUseCase(
-            configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path"), isFoldersEnabled: false),
+            configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path")),
             repository: repository
         )
         repository.getNodes_MockValue = (nodes: [WireCellsNode.fixture()], nextOffset: 30)
@@ -41,7 +41,7 @@ struct WireCellsFetchNodesPageUseCaseTests {
     func testInvoke_withConversationFileViewConfiguration() async throws {
         // Given
         let sut = WireCellsFetchNodesPageUseCase(
-            configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path"), isFoldersEnabled: false),
+            configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path")),
             repository: repository
         )
 
@@ -60,7 +60,7 @@ struct WireCellsFetchNodesPageUseCaseTests {
                     searchTerm: nil,
                     limit: 30,
                     offset: 0,
-                    configuration: .conversationFileView(root: .path("some/path"), isFoldersEnabled: false)
+                    configuration: .conversationFileView(root: .path("some/path"))
                 )
             ]
         )

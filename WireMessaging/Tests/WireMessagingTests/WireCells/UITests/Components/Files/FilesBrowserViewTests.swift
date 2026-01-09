@@ -44,6 +44,11 @@ final class FilesBrowserViewTests: XCTestCase {
     private var getEditingURLUseCase: WireCellsGetEditingURLUseCase!
     private var getAssetUseCase: WireCellsGetAssetUseCase!
     private var localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol!
+    private var getPublicLinkData: WireCellsGetPublicLinkDataUseCase<MockNodesAPIProtocol>!
+    private var createPublicLink: WireCellsCreatePublicLinkUseCase!
+    private var deletePublicLink: WireCellsDeletePublicLinkUseCase!
+    private var updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase!
+    private var updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase!
 
     private let record: Bool? = nil
 
@@ -60,7 +65,7 @@ final class FilesBrowserViewTests: XCTestCase {
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
 
         fetchNodesUseCase = WireCellsFetchNodesPageUseCase(
-            configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
+            configuration: .conversationFileView(root: .id(.mockID1)),
             repository: nodesRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
@@ -102,6 +107,12 @@ final class FilesBrowserViewTests: XCTestCase {
         getEditingURLUseCase = WireCellsGetEditingURLUseCase(
             editingURLRepository: editingURLRepository
         )
+
+        getPublicLinkData = WireCellsGetPublicLinkDataUseCase(nodesAPI: nodesApi)
+        createPublicLink = WireCellsCreatePublicLinkUseCase(nodesAPI: nodesApi)
+        deletePublicLink = WireCellsDeletePublicLinkUseCase(nodesAPI: nodesApi)
+        updatePublicLinkExpiration = WireCellsUpdatePublicLinkExpirationUseCase(nodesAPI: nodesApi)
+        updatePublicLinkPassword = WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesApi)
     }
 
     @MainActor
@@ -204,14 +215,18 @@ final class FilesBrowserViewTests: XCTestCase {
                 fetchNodeVersions: fetchNodeVersionsUseCase,
                 restoreNodeVersion: restoreNodeVersionUseCase,
                 getEditingURL: getEditingURLUseCase,
-                getAssetUseCase: getAssetUseCase
+                getAssetUseCase: getAssetUseCase,
+                getPublicLinkData: getPublicLinkData,
+                createPublicLink: createPublicLink,
+                deletePublicLink: deletePublicLink,
+                updatePublicLinkExpiration: updatePublicLinkExpiration,
+                updatePublicLinkPassword: updatePublicLinkPassword,
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetsRepository,
             nodesRepository: nodesRepository,
             fileCache: MockFileCache(),
-            isFoldersEnabled: false,
-            isCollaboraEnabled: false,
+            isBrowsing: true,
             accentColorProvider: { .default }
         )
 

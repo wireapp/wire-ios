@@ -311,7 +311,8 @@ struct TagsEditView: View {
         modifiedAt: nil,
         icon: .document,
         tags: ["Lorem", "Ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"],
-        isEditable: false
+        isEditable: false,
+        publicLinkID: nil
     )
 
     let mockAPI = {
