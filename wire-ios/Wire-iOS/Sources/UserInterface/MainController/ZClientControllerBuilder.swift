@@ -103,9 +103,7 @@ final class ZClientControllerBuilder {
             // TODO: [WPB-18798] Temporary fix, when multibackend is on we use new backend environment, when off we use the legacy one
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
-            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
-            isFoldersEnabled: DeveloperFlag.wireCellsFolders.isOn,
-            isCollaboraEnabled: DeveloperFlag.wireCellsCollabora.isOn
+            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider)
         )
     }
 
