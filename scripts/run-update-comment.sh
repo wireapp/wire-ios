@@ -54,7 +54,7 @@ if [[ -z "${ALLURE_URL}" ]]; then
 
   if [[ -n "${ARTIFACT_ID:-}" && "${ARTIFACT_ID}" != "null" ]]; then
     HAS_ALLURE_REPORT=true
-    ALLURE_URL="${GITHUB_SERVER_URL}/${OWNER}/${REPO}/actions/artifacts/${ARTIFACT_ID}"
+    ALLURE_URL="${GITHUB_SERVER_URL}/${OWNER}/${REPO}/actions/runs/${GITHUB_RUN_ID}/artifacts/${ARTIFACT_ID}"
   fi
 fi
 
