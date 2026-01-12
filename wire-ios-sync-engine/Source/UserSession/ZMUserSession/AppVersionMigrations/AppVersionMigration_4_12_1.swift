@@ -66,15 +66,13 @@ struct AppVersionMigration_4_12_1: AppVersionMigration {
 
         try await context.perform {
             for existingConversation in conversationList.found {
+
                 let conversations = conversationIds.compactMap { ZMConversation.existingObject(for: $0, in: context) }
                 if let conversation = conversations.first(where: {
-                    $0.qualifiedID?.domain ==
-                        existingConversation.qualifiedID?.domain &&
-                        $0.qualifiedID?.uuid ==
-                        existingConversation.qualifiedID?.id
+                    $0.qualifiedID?.toNetworkModel() == existingConversation.qualifiedID
                 }) {
                     conversation.isDeletedRemotely = false
-                    WireLogger.appVersionMigration.debug(
+                    WireLogger.appVersionMigration.info(
                         "Restore deleted conversation",
                         attributes: [.conversationId: conversation.qualifiedID?.safeForLoggingDescription],
                         .safePublic
@@ -82,8 +80,31 @@ struct AppVersionMigration_4_12_1: AppVersionMigration {
                 }
             }
 
+            for failedConversationID in conversationList.failed {
+
+                let conversation = ZMConversation.fetch(
+                    with: failedConversationID.id,
+                    domain: failedConversationID.domain,
+                    in: context
+                )
+                if let conversation {
+                    conversation.isDeletedRemotely = false
+                    WireLogger.appVersionMigration.info(
+                        "Restoring failed conversation",
+                        attributes: [.conversationId: conversation.qualifiedID?.safeForLoggingDescription],
+                        .safePublic
+                    )
+
+                }
+            }
+
             try context.save()
         }
     }
+}
 
+private extension WireDataModel.QualifiedID {
+    func toNetworkModel() -> WireNetwork.QualifiedID {
+        .init(id: uuid, domain: domain)
+    }
 }
