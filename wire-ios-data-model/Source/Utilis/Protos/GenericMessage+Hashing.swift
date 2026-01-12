@@ -81,22 +81,10 @@ extension GenericMessageProtocol.Asset: BigEndianDataConvertible {
 
 extension GenericMessageProtocol.Multipart: BigEndianDataConvertible {
     var asBigEndianData: Data {
-        attachments.map(\.cellAsset.uuid).asBigEndianData
-    }
-}
-
-extension Array<String>: BigEndianDataConvertible {
-    var asBigEndianData: Data {
-        var data = Data()
-
-        for string in self {
-            let stringData = string.asBigEndianData
-            var length = UInt32(stringData.count).bigEndian
-            data.append(Data(bytes: &length, count: 4))
-            data.append(stringData)
-        }
-
-        return data
+        let messageTextData = text.content.data(using: .utf16BigEndian)!
+        let attachmentsData = attachments.map(\.cellAsset.uuid).joined(separator: ", ").data(using: .utf16BigEndian)!
+        
+        return Data([0xFE, 0xFF]) + messageTextData + attachmentsData
     }
 }
 
