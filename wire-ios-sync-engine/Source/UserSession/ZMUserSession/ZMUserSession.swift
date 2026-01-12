@@ -1727,17 +1727,19 @@ extension ZMUserSession {
                 repairGenerator: clientSessionComponent?.repairFaultyMLSRemovalKeysGenerator
             )
         ]
-        
+
         if let clientSessionComponent {
             migrations.append(
-                AppVersionMigration_4_12_1(coreDataStack: coreDataStack,
-                                           api: clientSessionComponent.conversationsAPI,
-                                           store: clientSessionComponent.conversationLocalStore)
+                AppVersionMigration_4_12_1(
+                    coreDataStack: coreDataStack,
+                    api: clientSessionComponent.conversationsAPI,
+                    store: clientSessionComponent.conversationLocalStore
+                )
             )
         } else {
             // skip migration when first login, ok since there is no bug to fix then
         }
-        
+
         return migrations
     }
 

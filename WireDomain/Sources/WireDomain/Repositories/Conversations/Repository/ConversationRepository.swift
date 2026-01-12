@@ -82,8 +82,6 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             for: [qualifiedID]
         )
 
-        
-        
         if let conversation = conversationList.found.first {
             await conversationsLocalStore.storeConversation(
                 conversation.toDomainModel(),

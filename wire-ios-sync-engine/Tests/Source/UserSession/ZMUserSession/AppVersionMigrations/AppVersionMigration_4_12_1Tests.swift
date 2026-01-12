@@ -17,46 +17,54 @@
 //
 import Foundation
 import Testing
-import WireNetwork
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetwork
 import WireNetworkSupport
 @testable import WireSyncEngine
 
 struct AppVersionMigration_4_12_1Tests {
-    
+
     let coreDataHelper = CoreDataStackHelper()
     let modelHelper = ModelHelper()
-    
+
     let mockConversationsAPI = MockConversationsAPI()
     let mockConversationLocalStore = MockConversationLocalStoreProtocol()
 
     let stack: CoreDataStack
     let sut: AppVersionMigration_4_12_1
-    
+
     init() async throws {
-        stack = try await coreDataHelper.createStack()
-        sut = AppVersionMigration_4_12_1(coreDataStack: stack,
-                                             api: mockConversationsAPI,
-                                             store: mockConversationLocalStore)
+        self.stack = try await coreDataHelper.createStack()
+        self.sut = AppVersionMigration_4_12_1(
+            coreDataStack: stack,
+            api: mockConversationsAPI,
+            store: mockConversationLocalStore
+        )
 
     }
-    
+
     @Test("Restores deleted conversations that are still in backend ")
-    func testMigration() async throws{
+    func testMigration() async throws {
         let conversationID = QualifiedID.random()
         let qualifiedId = WireNetwork.QualifiedID(id: conversationID.uuid, domain: conversationID.domain)
-        
-        mockConversationsAPI.getConversationsFor_MockValue = .init(found: [.init(qualifiedID: qualifiedId)],
-                                                                   notFound: [],
-                                                                   failed: [])
-        
+
+        mockConversationsAPI.getConversationsFor_MockValue = .init(
+            found: [.init(qualifiedID: qualifiedId)],
+            notFound: [],
+            failed: []
+        )
+
         let context = stack.syncContext
-        
+
         var conversationA: ZMConversation?
         var conversationB: ZMConversation?
         try await context.perform {
-            conversationA = modelHelper.createGroupConversation(id: qualifiedId.id, domain: qualifiedId.domain, in: context)
+            conversationA = modelHelper.createGroupConversation(
+                id: qualifiedId.id,
+                domain: qualifiedId.domain,
+                in: context
+            )
             conversationA?.isDeletedRemotely = true
 
             conversationB = modelHelper.createGroupConversation(in: context)
@@ -65,7 +73,7 @@ struct AppVersionMigration_4_12_1Tests {
 
         // WHEN
         try await sut.perform()
-        
+
         // THEN
         try await context.perform {
             let updatedConversation = try XCTUnwrap(conversationA)
@@ -73,23 +81,28 @@ struct AppVersionMigration_4_12_1Tests {
             XCTAssertTrue(conversationB?.isDeletedRemotely == false)
         }
     }
-    
-    
+
     @Test("Don't restore deleted conversations not found in backend")
-    func testDoesNotRestore() async throws{
+    func testDoesNotRestore() async throws {
         let conversationID = QualifiedID.random()
         let qualifiedId = WireNetwork.QualifiedID(id: conversationID.uuid, domain: conversationID.domain)
-        
-        mockConversationsAPI.getConversationsFor_MockValue = .init(found: [],
-                                                                   notFound: [qualifiedId],
-                                                                   failed: [])
-        
+
+        mockConversationsAPI.getConversationsFor_MockValue = .init(
+            found: [],
+            notFound: [qualifiedId],
+            failed: []
+        )
+
         let context = stack.syncContext
-        
+
         var conversationA: ZMConversation?
         var conversationB: ZMConversation?
         try await context.perform {
-            conversationA = modelHelper.createGroupConversation(id: qualifiedId.id, domain: qualifiedId.domain, in: context)
+            conversationA = modelHelper.createGroupConversation(
+                id: qualifiedId.id,
+                domain: qualifiedId.domain,
+                in: context
+            )
             conversationA?.isDeletedRemotely = true
 
             conversationB = modelHelper.createGroupConversation(in: context)
@@ -98,7 +111,7 @@ struct AppVersionMigration_4_12_1Tests {
 
         // WHEN
         try await sut.perform()
-        
+
         // THEN
         try await context.perform {
             let updatedConversation = try XCTUnwrap(conversationA)

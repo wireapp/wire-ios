@@ -18,8 +18,8 @@
 
 import Foundation
 import WireDomain
-import WireNetwork
 import WireLogging
+import WireNetwork
 
 /// **Issue:**: Missing conversations - [WPB-22231]
 struct AppVersionMigration_4_12_1: AppVersionMigration {
@@ -28,41 +28,60 @@ struct AppVersionMigration_4_12_1: AppVersionMigration {
     let coreDataStack: CoreDataStackProtocol
     let api: ConversationsAPI
     let store: ConversationLocalStoreProtocol
-    
+
     func perform() async throws {
         let context = coreDataStack.syncContext
-    
+
         var conversationIds: [NSManagedObjectID] = []
         let deletedConversationIds = await context.perform {
             // fetch all deleted conversations
             let conversations = ZMConversation.fetchDeleted(in: context)
-            conversationIds = conversations.map { $0.objectID }
-            return conversations.compactMap { $0.qualifiedID.map { WireNetwork.QualifiedID(id: $0.uuid, domain: $0.domain)} }
+            conversationIds = conversations.map(\.objectID)
+            return conversations.compactMap { $0.qualifiedID.map { WireNetwork.QualifiedID(
+                id: $0.uuid,
+                domain: $0.domain
+            ) } }
         }
-        
-        WireLogger.appVersionMigration.info("\(deletedConversationIds.count) Deleted conversations found", attributes: .safePublic)
-        
+
+        WireLogger.appVersionMigration.info(
+            "\(deletedConversationIds.count) Deleted conversations found",
+            attributes: .safePublic
+        )
+
         let conversationList = try await api.getConversations(for: deletedConversationIds)
-        
-        WireLogger.appVersionMigration.info("\(conversationList.found.count) conversations found", attributes: .safePublic)
-        WireLogger.appVersionMigration.info("\(conversationList.notFound.count) conversations really deleted", attributes:
-                .safePublic)
-        WireLogger.appVersionMigration.info("\(conversationList.failed.count) conversations failed", attributes: .safePublic)
-        
+
+        WireLogger.appVersionMigration.info(
+            "\(conversationList.found.count) conversations found",
+            attributes: .safePublic
+        )
+        WireLogger.appVersionMigration.info(
+            "\(conversationList.notFound.count) conversations really deleted",
+            attributes:
+            .safePublic
+        )
+        WireLogger.appVersionMigration.info(
+            "\(conversationList.failed.count) conversations failed",
+            attributes: .safePublic
+        )
+
         try await context.perform {
             for existingConversation in conversationList.found {
-                let conversations = conversationIds.compactMap { ZMConversation.existingObject(for: $0, in: context)}
+                let conversations = conversationIds.compactMap { ZMConversation.existingObject(for: $0, in: context) }
                 if let conversation = conversations.first(where: {
                     $0.qualifiedID?.domain ==
-                    existingConversation.qualifiedID?.domain &&
-                    $0.qualifiedID?.uuid ==
-                    existingConversation.qualifiedID?.id
+                        existingConversation.qualifiedID?.domain &&
+                        $0.qualifiedID?.uuid ==
+                        existingConversation.qualifiedID?.id
                 }) {
                     conversation.isDeletedRemotely = false
-                    WireLogger.appVersionMigration.debug("Restore deleted conversation", attributes: [.conversationId: conversation.qualifiedID?.safeForLoggingDescription], .safePublic)
+                    WireLogger.appVersionMigration.debug(
+                        "Restore deleted conversation",
+                        attributes: [.conversationId: conversation.qualifiedID?.safeForLoggingDescription],
+                        .safePublic
+                    )
                 }
             }
-            
+
             try context.save()
         }
     }
