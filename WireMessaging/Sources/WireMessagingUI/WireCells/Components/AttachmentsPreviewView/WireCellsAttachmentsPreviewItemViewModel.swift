@@ -44,7 +44,6 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     let alignment: HorizontalAlignment
 
-    @Published var viewingURL: URL?
     @Published private var asset: WireCellsLocalAsset?
     @Published private var node: WireCellsNode?
     @Published private var isDeleted: Bool
@@ -177,7 +176,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         do {
             let url = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
             if lastOpenRequest.nodeID == nodeID {
-                viewingURL = url
+                QuickLookPreviewPresenter.present(url: url)
             }
         } catch {
             WireLogger.wireCells.error("Failed to open file with node ID: \(nodeID), error: \(error)")
