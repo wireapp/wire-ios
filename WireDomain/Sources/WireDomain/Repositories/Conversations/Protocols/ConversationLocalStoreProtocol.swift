@@ -30,6 +30,7 @@ import WireDataModel
 ///
 /// Check out the Confluence page for full details
 /// [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
+// soucery: AutoMockable
 public protocol ConversationLocalStoreProtocol {
 
     func qualifiedID(for conversation: ZMConversation) async -> QualifiedID?

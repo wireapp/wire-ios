@@ -1712,7 +1712,7 @@ extension ZMUserSession {
 extension ZMUserSession {
 
     private func makeAppVersionMigrations() -> [any AppVersionMigration] {
-        [
+        var migrations: [any AppVersionMigration] = [
             AppVersionMigration_4_1_1(journal: journal, logFilesProvider: logFilesProvider),
             AppVersionMigration_4_2_0(
                 appGroupIdentifier: Bundle.main.appGroupIdentifier,
@@ -1727,6 +1727,18 @@ extension ZMUserSession {
                 repairGenerator: clientSessionComponent?.repairFaultyMLSRemovalKeysGenerator
             )
         ]
+        
+        if let clientSessionComponent {
+            migrations.append(
+                AppVersionMigration_4_12_1(coreDataStack: coreDataStack,
+                                           api: clientSessionComponent.conversationsAPI,
+                                           store: clientSessionComponent.conversationLocalStore)
+            )
+        } else {
+            // skip migration when first login, ok since there is no bug to fix then
+        }
+        
+        return migrations
     }
 
 }
