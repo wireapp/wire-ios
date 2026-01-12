@@ -21,11 +21,11 @@ set -Eeuo pipefail
 
 XCRESULT_SEARCH_PATH="${1:-artifacts}"
 
-echo "🔍 Searching for .xcresult under: ${XCRESULT_SEARCH_PATH}"
+echo "🔍 Searching for .xcresults under: ${XCRESULT_SEARCH_PATH}"
 
-XCRESULT="$(find "${XCRESULT_SEARCH_PATH}" -type d -name "*.xcresult" | head -n 1 || true)"
+mapfile -t XCRESULTS < <(find "${XCRESULT_SEARCH_PATH}" -type d -name "*.xcresult" 2>/dev/null || true)
 
-if [[ -z "${XCRESULT}" ]]; then
+if [[ "${#XCRESULTS[@]}" -eq 0 ]]; then
   echo "⚠️  No .xcresult found under ./${XCRESULT_SEARCH_PATH}. Skipping Allure report generation."
   if [[ -n "${GITHUB_ENV:-}" ]]; then
     echo "ALLURE_REPORT_AVAILABLE=false" >> "${GITHUB_ENV}"
@@ -33,19 +33,47 @@ if [[ -z "${XCRESULT}" ]]; then
   exit 0
 fi
 
-echo "✅ Using xcresult: ${XCRESULT}"
+rm -rf allure-reports
+mkdir -p allure-reports
 
-echo "🧪 Generating Allure report…"
-npx --yes allure awesome "${XCRESULT}" --single-file -o allure-report
+GENERATED_ANY=false
 
-if [[ ! -f "allure-report/index.html" ]]; then
-  echo "❌ Allure report not generated (missing allure-report/index.html)" >&2
-  exit 1
-fi
+for XCRESULT in "${XCRESULTS[@]}"; do
+  # Prefer parent schema name
+  SCHEME="$(basename "$(dirname "${XCRESULT}")")"
+  if [[ -z "${SCHEME}" ]]; then
+    SCHEME="$(basename "${XCRESULT}")"
+    SCHEME="${SCHEME%.xcresult}"
+  fi
 
-FILE_SIZE="$(du -h allure-report/index.html | cut -f1)"
-echo "✅ Allure report generated successfully (${FILE_SIZE})"
+  OUT_DIR="allure-reports/${SCHEME}"
+
+  rm -rf "${OUT_DIR}"
+  mkdir -p "${OUT_DIR}"
+
+  echo "🧪 Allure: ${SCHEME}"
+  if ! npx --yes allure awesome "${XCRESULT}" --single-file -o "${OUT_DIR}" >/dev/null; then
+    echo "⚠️  Allure generation failed for '${SCHEME}' (continuing)"
+    continue
+  fi
+
+  if [[ -f "${OUT_DIR}/index.html" ]]; then
+    GENERATED_ANY=true
+  else
+    echo "⚠️  Missing ${OUT_DIR}/index.html for '${SCHEME}' (continuing)"
+  fi
+done
 
 if [[ -n "${GITHUB_ENV:-}" ]]; then
-  echo "ALLURE_REPORT_AVAILABLE=true" >> "${GITHUB_ENV}"
+  if [[ "${GENERATED_ANY}" == "true" ]]; then
+    echo "ALLURE_REPORT_AVAILABLE=true" >> "${GITHUB_ENV}"
+  else
+    echo "ALLURE_REPORT_AVAILABLE=false" >> "${GITHUB_ENV}"
+  fi
+fi
+
+if [[ "${GENERATED_ANY}" == "true" ]]; then
+  echo "✅ Allure reports generated under ./allure-reports"
+else
+  echo "⚠️  No Allure reports were generated."
 fi

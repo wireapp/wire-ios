@@ -23,11 +23,11 @@ runs:
       run: bash ./scripts/run-generate-allure-report.sh "${{ inputs.xcresult_search_path }}"
         
     - name: Upload Allure Report Artifact
-      if: always()
+      if: ${{ env.ALLURE_REPORT_AVAILABLE == 'true' }}
       uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.allure_artifact_name }}
-        path: allure-report/
+        path: allure-reports/
 
     - name: Patch Allure link into the Test Results comment
       if: always()
