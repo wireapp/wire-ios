@@ -21,16 +21,6 @@ package import Foundation
 /// Fetches cached and remote `WireCellsNodes` for a given node ID.
 package struct WireCellsFetchNodeUseCase: WireCellsFetchNodeUseCaseProtocol {
 
-    enum FetchResult {
-
-        /// A `WireCellsNode` was found on the server.
-        case node(WireCellsNode)
-
-        /// No `WireCellsNode` was found on the server. It might have been deleted or the user does not have permission
-        /// to access to it.
-        case unknown
-    }
-
     private let repository: any WireCellsNodesRepositoryProtocol
     private let cache: any WireCellsNodeCacheProtocol
 
@@ -66,13 +56,15 @@ package struct WireCellsFetchNodeUseCase: WireCellsFetchNodeUseCaseProtocol {
     /// Returns a cached `WireCellsNode` if available, and a closure to fetch the latest `WireCellsNode` from the
     /// server.
     @MainActor
-    func invoke(nodeID: UUID) -> (cached: FetchResult?, getLatest: () async throws -> FetchResult) {
-        let cachedResult: FetchResult?
+    package func invokeNew(
+        nodeID: UUID
+    ) -> (cached: WireCellsFetchedNode?, getLatest: () async throws -> WireCellsFetchedNode) {
+        let cachedResult: WireCellsFetchedNode?
         if let cached = cache.item(for: nodeID) {
             if let node = cached.node {
                 cachedResult = .node(node)
             } else {
-                cachedResult = .unknown
+                cachedResult = .notFound
             }
         } else {
             cachedResult = nil
@@ -80,13 +72,13 @@ package struct WireCellsFetchNodeUseCase: WireCellsFetchNodeUseCaseProtocol {
 
         return (
             cached: cachedResult,
-            getLatest: { () async throws -> FetchResult in
+            getLatest: { () async throws -> WireCellsFetchedNode in
                 if let latest = try await repository.getNode(id: nodeID) {
                     await cache.setItem(WireCellsNodeCacheItem(node: latest), for: nodeID)
                     return .node(latest)
                 } else {
                     await cache.setItem(WireCellsNodeCacheItem(node: nil), for: nodeID)
-                    return .unknown
+                    return .notFound
                 }
             }
         )

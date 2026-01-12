@@ -16,12 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
 
-// sourcery: AutoMockable
-public protocol WireCellsFetchNodeUseCaseProtocol: Sendable {
-    func invoke(nodeID: UUID) -> AsyncThrowingStream<WireCellsNode?, any Error>
+/// The result of fetching a wire cells node.
+public enum WireCellsFetchedNode {
 
-    @MainActor
-    func invokeNew(nodeID: UUID) -> (cached: WireCellsFetchedNode?, getLatest: () async throws -> WireCellsFetchedNode)
+    /// A `WireCellsNode` was found on the server.
+    case node(WireCellsNode)
+
+    /// No `WireCellsNode` was found on the server - it may have been deleted or the user might not have permission to
+    /// access to it.
+    case notFound
 }
