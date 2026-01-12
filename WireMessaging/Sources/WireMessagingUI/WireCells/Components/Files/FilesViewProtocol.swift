@@ -80,16 +80,7 @@ extension FilesViewProtocol {
 
     @ViewBuilder
     func itemRow(index: Int) -> some View {
-        FilesViewItemView(
-            viewModel: viewModel.itemViewModel(index: index),
-            // some actions are not allowed when browsing files
-            canRenameFile: !isBrowsing,
-            canEditTags: !isBrowsing,
-            canMoveToFolder: !isBrowsing && viewModel.isFoldersEnabled,
-            canOpenVersionHistory: !isBrowsing && viewModel.isCollaboraEnabled,
-            canEditFile: !isBrowsing && viewModel.isCollaboraEnabled,
-            canDeleteFiles: !isBrowsing
-        )
+        FilesItemView(viewModel: viewModel.itemViewModel(index: index))
     }
 
     var loadMoreRow: some View {
