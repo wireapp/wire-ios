@@ -47,6 +47,10 @@ struct AppVersionMigration_4_12_1: AppVersionMigration {
             "\(deletedConversationIds.count) Deleted conversations found",
             attributes: .safePublic
         )
+        guard !deletedConversationIds.isEmpty else {
+            // no deleted conversation, just skip
+            return
+        }
 
         let conversationList = try await api.getConversations(for: deletedConversationIds)
 

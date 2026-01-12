@@ -119,4 +119,61 @@ struct AppVersionMigration_4_12_1Tests {
             XCTAssertFalse(conversationB?.isDeletedRemotely == false)
         }
     }
+
+    @Test("Don't fail if no deleted conversations")
+    func testNoDeletedConversations() async throws {
+        let conversationID = QualifiedID.random()
+        let qualifiedId = WireNetwork.QualifiedID(id: conversationID.uuid, domain: conversationID.domain)
+
+        mockConversationsAPI.getConversationsFor_MockError = ConversationsAPIError.illegalArgument(message: "identifiers between 0 and 1000")
+
+        let context = stack.syncContext
+
+        try await context.perform {
+            modelHelper.createGroupConversation(in: context)
+            try context.save()
+        }
+
+        // WHEN / THEN
+        try await sut.perform() // should not throw
+    }
+    
+    
+    @Test("Restores deleted conversations that were missing from backend")
+    func testFailedMigration() async throws {
+        let conversationID = QualifiedID.random()
+        let qualifiedId = WireNetwork.QualifiedID(id: conversationID.uuid, domain: conversationID.domain)
+
+        mockConversationsAPI.getConversationsFor_MockValue = .init(
+            found: [],
+            notFound: [],
+            failed: [qualifiedId]
+        )
+
+        let context = stack.syncContext
+
+        var conversationA: ZMConversation?
+        var conversationB: ZMConversation?
+        try await context.perform {
+            conversationA = modelHelper.createGroupConversation(
+                id: qualifiedId.id,
+                domain: qualifiedId.domain,
+                in: context
+            )
+            conversationA?.isDeletedRemotely = true
+
+            conversationB = modelHelper.createGroupConversation(in: context)
+            try context.save()
+        }
+
+        // WHEN
+        try await sut.perform()
+
+        // THEN
+        try await context.perform {
+            let updatedConversation = try XCTUnwrap(conversationA)
+            XCTAssertFalse(updatedConversation.isDeletedRemotely)
+            XCTAssertTrue(conversationB?.isDeletedRemotely == false)
+        }
+    }
 }
