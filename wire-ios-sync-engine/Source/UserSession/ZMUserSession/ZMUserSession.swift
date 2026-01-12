@@ -51,6 +51,9 @@ public final class ZMUserSession: NSObject {
     public private(set) var isTornDown = false
 
     private(set) var isNetworkOnline = true
+    var isInBackground = false
+    var currentSyncState: SyncState = .idle
+    private var syncStateCancellable: AnyCancellable?
 
     public private(set) var coreDataStack: CoreDataStack!
 
@@ -629,6 +632,7 @@ public final class ZMUserSession: NSObject {
             )
         )
         self.clientSessionComponent = clientSessionComponent
+        observeSyncStateForAVS()
 
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
 
@@ -706,6 +710,8 @@ public final class ZMUserSession: NSObject {
 
     deinit {
         userSessionComponent = nil
+        syncStateCancellable?.cancel()
+        syncStateCancellable = nil
         require(isTornDown, "tearDown must be called before the ZMUserSession is deallocated")
     }
 
@@ -1109,7 +1115,6 @@ extension ZMUserSession: ZMNetworkStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isNetworkOnline = true
             self?.updateNetworkState()
-//            self?.callCenter?.avsWrapper.notify1(isBackground: false)
         }
     }
 
@@ -1118,7 +1123,7 @@ extension ZMUserSession: ZMNetworkStateDelegate {
             self?.isNetworkOnline = false
             self?.updateNetworkState()
             self?.saveOrRollbackChanges()
-            self?.callCenter?.avsWrapper.setBackground(isBackground: true)
+            self?.updateAVSBackgroundState()
         }
     }
 
@@ -1130,6 +1135,26 @@ extension ZMUserSession: ZMNetworkStateDelegate {
             .online
         case (false, _):
             .offline
+        }
+    }
+
+    private func observeSyncStateForAVS() {
+        guard let clientSessionComponent else { return }
+
+        syncStateCancellable = clientSessionComponent.syncStateSubject
+            .sink { [weak self] syncState in
+                self?.currentSyncState = syncState
+                self?.updateAVSBackgroundState()
+            }
+    }
+
+    func updateAVSBackgroundState() {
+        let isSocketClosed = currentSyncState == .suspended
+        let shouldBeInBackground = isInBackground && isSocketClosed
+
+        managedObjectContext.perform { [weak self] in
+            print("🙈 isSocketClosed: \(isSocketClosed), isInBackground: \(self?.isInBackground)")
+            self?.callCenter?.avsWrapper.setBackground(isBackground: shouldBeInBackground)
         }
     }
 }

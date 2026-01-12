@@ -64,17 +64,20 @@ public extension ZMUserSession {
 
     @objc
     func applicationDidEnterBackground(_ note: Notification?) {
-        managedObjectContext.perform { [weak self] in
-            self?.callCenter?.avsWrapper.setBackground(isBackground: true)
-        }
+        isInBackground = true
         Task { @MainActor [weak self] in
             guard let self else { return }
-            let hasActiveCalls = callCenter?.activeCalls.isEmpty == false
+//            let hasActiveCalls = callCenter?.activeCalls.isEmpty == false
 
-            if !hasActiveCalls {
+//            if !hasActiveCalls {
                 await syncAgent?.suspend()
-            }
+//            }
+            let isSocketClosed = currentSyncState == .suspended
+            let shouldBeInBackground = isInBackground && isSocketClosed
+            print("😈 isSocketClosed: \(isSocketClosed), isInBackground: \(isInBackground)")
+            //updateAVSBackgroundState()
         }
+
 
         stopEphemeralTimers()
         lockDatabase()
@@ -89,16 +92,13 @@ public extension ZMUserSession {
 
     @objc
     func applicationWillEnterForeground(_ note: Notification?) {
-        if isNetworkOnline {
-            managedObjectContext.perform { [weak self] in
-                self?.callCenter?.avsWrapper.setBackground(isBackground: false)
-            }
-        }
+        isInBackground = false
         syncAgent?.resume()
         mergeChangesFromStoredSaveNotificationsIfNeeded()
         startEphemeralTimers()
         deleteOldEphemeralMessages()
         processPendingEvents()
+        updateAVSBackgroundState()
     }
 
     internal func processPendingEvents() {
