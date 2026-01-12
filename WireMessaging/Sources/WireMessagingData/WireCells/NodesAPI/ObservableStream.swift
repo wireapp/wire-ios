@@ -17,15 +17,16 @@
 //
 
 import Foundation
+import os
 import Smithy
 
 /// Wraps a `Smithy.Stream` allowing its progress to be observed. This is a workaround to enable reading upload progress
 /// using the AWS SDK.
-
 final class ObservableStream: Smithy.Stream, Sendable {
 
     private let wrappedStream: any Smithy.Stream
     private let readContinuation: AsyncStream<Int>.Continuation
+    private let cancellationState = OSAllocatedUnfairLock(uncheckedState: false)
 
     let readProgress: AsyncStream<Int>
 
@@ -58,30 +59,40 @@ final class ObservableStream: Smithy.Stream, Sendable {
     }
 
     func read(upToCount count: Int) throws -> Data? {
+        guard isCancelled == false else { return nil }
+
         let result = try wrappedStream.read(upToCount: count)
         readContinuation.yield(position)
         return result
     }
 
     func readAsync(upToCount count: Int) async throws -> Data? {
+        guard isCancelled == false else { return nil }
+
         let result = try await wrappedStream.readAsync(upToCount: count)
         readContinuation.yield(position)
         return result
     }
 
     func readToEnd() throws -> Data? {
+        guard isCancelled == false else { return nil }
+
         let result = try wrappedStream.readToEnd()
         readContinuation.yield(position)
         return result
     }
 
     func readToEndAsync() async throws -> Data? {
+        guard isCancelled == false else { return nil }
+
         let result = try await wrappedStream.readToEndAsync()
         readContinuation.yield(position)
         return result
     }
 
     func seek(toOffset offset: Int) throws {
+        guard isCancelled == false else { throw CancellationError() }
+
         try wrappedStream.seek(toOffset: offset)
         readContinuation.yield(position)
     }
@@ -98,5 +109,22 @@ final class ObservableStream: Smithy.Stream, Sendable {
 
     func closeWithError(_ error: any Error) {
         wrappedStream.closeWithError(error)
+    }
+
+    // MARK: - Cancellation
+
+    private var isCancelled: Bool {
+        cancellationState.withLock { $0 }
+    }
+
+    /// Cancels the stream, causing further read operations to return nil or throw a CancellationError.
+    ///
+    /// This is a hack to work around the lack of cancellation support in the AWS SDK. It relies on implementation
+    /// details of the SDK and its dependencies but it does currently work - when called while a file is being uploaded,
+    /// the upload stops and an error will soon after be thrown.
+    func cancel() {
+        cancellationState.withLock {
+            $0 = true
+        }
     }
 }

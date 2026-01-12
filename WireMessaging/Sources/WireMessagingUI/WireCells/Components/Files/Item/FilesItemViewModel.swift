@@ -35,15 +35,15 @@ final class FilesItemViewModel: ObservableObject {
 
     enum ItemAction {
         case open
-        case deleteToRecycleBin
-        case deletePermanently
-        case restore
+        case showVersionHistory
+        case edit
         case rename
+        case moveToFolder
         case editTags
         case shareLink
-        case moveToFolder
-        case onVersionHistory
-        case edit
+        case restore
+        case deleteToRecycleBin
+        case deletePermanently
     }
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
@@ -59,11 +59,14 @@ final class FilesItemViewModel: ObservableObject {
     @Published var isPresentingRestoreFolderConfirmation = false
     @Published var isPresentingRestoreParentConfirmation = false
 
+    @Published var menuActions: Set<ItemAction> = []
+
     let fileName: String
     let subtitle: String?
     let icon: FileIcon
+
+    let isBrowsing: Bool
     let isInRecycleBin: Bool
-    let isFoldersEnabled: Bool
 
     struct TagsInfo {
         let firstTag: String?
@@ -83,9 +86,8 @@ final class FilesItemViewModel: ObservableObject {
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,
         timeZone: TimeZone = .autoupdatingCurrent,
-        isInRecycleBin: Bool,
-        isFoldersEnabled: Bool
-
+        isBrowsing: Bool,
+        isInRecycleBin: Bool
     ) {
         self.nodeID = item.id
         self.item = item
@@ -100,8 +102,11 @@ final class FilesItemViewModel: ObservableObject {
         )
         self.icon = item.icon
         self.localAssetRepository = localAssetRepository
+
+        self.isBrowsing = isBrowsing
         self.isInRecycleBin = isInRecycleBin
-        self.isFoldersEnabled = isFoldersEnabled
+
+        self.menuActions = makeMenuActions()
 
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
             self?.asset = asset
@@ -153,23 +158,20 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var isEditable: Bool {
-        item.isEditable && !isInRecycleBin
+        item.isEditable
     }
 
-    func open() async {
-        await onItemAction(.open, item)
-    }
-
-    func rename() async {
-        await onItemAction(.rename, item)
-    }
-
-    func moveToFolder() async {
-        await onItemAction(.moveToFolder, item)
-    }
-
-    func edit() async {
-        await onItemAction(.edit, item)
+    func performMenuAction(_ action: ItemAction) {
+        switch action {
+        case .restore:
+            showRestoreConfirmation()
+        case .deletePermanently:
+            showDeleteConfirmation(deletePermanently: true)
+        case .deleteToRecycleBin:
+            showDeleteConfirmation(deletePermanently: false)
+        default:
+            Task { await onItemAction(action, item) }
+        }
     }
 
     func download() async {
@@ -204,10 +206,6 @@ final class FilesItemViewModel: ObservableObject {
         } else {
             isPresentingRestoreParentConfirmation = true
         }
-    }
-
-    func showVersionHistory() async {
-        await onItemAction(.onVersionHistory, item)
     }
 
     func confirmDelete(permanently: Bool) async {
@@ -258,6 +256,33 @@ final class FilesItemViewModel: ObservableObject {
             firstTag: item.tags.sortedAlphabetically.first,
             additionalTagsIndicator: formattedNumber
         )
+    }
+
+    private func makeMenuActions() -> Set<ItemAction> {
+        var actions: Set<ItemAction> = []
+
+        if !isInRecycleBin {
+            actions.insert(.open)
+        }
+
+        if !isBrowsing {
+            if isInRecycleBin {
+                actions.insert(.restore)
+                actions.insert(.deletePermanently)
+            } else {
+                actions.insert(.showVersionHistory)
+                actions.insert(.moveToFolder)
+                actions.insert(.rename)
+                actions.insert(.editTags)
+                actions.insert(.deleteToRecycleBin)
+
+                if isEditable {
+                    actions.insert(.edit)
+                }
+            }
+        }
+
+        return actions
     }
 }
 
