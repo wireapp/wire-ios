@@ -33,7 +33,7 @@ struct AppVersionMigration_4_12_1: AppVersionMigration {
         let context = coreDataStack.syncContext
 
         var conversationIds: [NSManagedObjectID] = []
-        let deletedConversationIds = await context.perform {
+        let deletedConversationIDs = await context.perform {
             // fetch all deleted conversations
             let conversations = ZMConversation.fetchDeleted(in: context)
             conversationIds = conversations.map(\.objectID)
@@ -44,15 +44,15 @@ struct AppVersionMigration_4_12_1: AppVersionMigration {
         }
 
         WireLogger.appVersionMigration.info(
-            "\(deletedConversationIds.count) Deleted conversations found",
+            "\(deletedConversationIDs.count) Deleted conversations found",
             attributes: .safePublic
         )
-        guard !deletedConversationIds.isEmpty else {
+        guard !deletedConversationIDs.isEmpty else {
             // no deleted conversation, just skip
             return
         }
 
-        let conversationList = try await api.getConversations(for: deletedConversationIds)
+        let conversationList = try await api.getConversations(for: deletedConversationIDs)
 
         WireLogger.appVersionMigration.info(
             "\(conversationList.found.count) conversations found",

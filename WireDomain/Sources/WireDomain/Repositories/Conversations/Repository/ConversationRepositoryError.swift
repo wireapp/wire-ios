@@ -24,7 +24,7 @@ enum ConversationRepositoryError: Error {
 
     /// Conversation failed to be retrieved
 
-    case conversationFailed
+    case retrievalFailed
 
     /// Conversation not found
 

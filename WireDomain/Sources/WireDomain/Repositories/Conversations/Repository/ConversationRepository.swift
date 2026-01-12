@@ -92,7 +92,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         } else if conversationList.notFound.contains(qualifiedID) {
             throw ConversationRepositoryError.conversationNotFound
         } else {
-            throw ConversationRepositoryError.conversationFailed
+            throw ConversationRepositoryError.retrievalFailed
         }
 
     }
