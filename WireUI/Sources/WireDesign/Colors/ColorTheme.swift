@@ -109,9 +109,9 @@ public enum ColorTheme {
 
     public enum Buttons {
 
-        enum Primary {
+        public enum Primary {
 
-            static let enabled = UIColor(light: .blue500Light, dark: .blue500Dark)
+            public static let enabled = UIColor(light: .blue500Light, dark: .blue500Dark)
             static let onEnabled = UIColor(light: .white, dark: .black)
 
             static let disabled = UIColor(light: .gray50, dark: .gray80)

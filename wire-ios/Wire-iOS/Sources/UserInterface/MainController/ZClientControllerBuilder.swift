@@ -34,13 +34,19 @@ final class ZClientControllerBuilder {
     private(set) var trackingManager: TrackingManager?
     let legacyEnvironment: WireTransport.BackendEnvironment
     let newEnvironment: WireNetwork.BackendEnvironment2?
-    private lazy var wireCellsBackendURL: URL? = {
-        let contextProvider = userSession.contextProvider
-        let syncContext = contextProvider.syncContext
-        let featureRepository = LegacyFeatureRepository(context: syncContext)
-
-        return syncContext.performAndWait {
-            featureRepository.fetchCellsInternal()?.config.backend.url
+    private lazy var wireCellsBackendURL: URL = {
+        let serverURL = newEnvironment?.config.endpoints.restAPIURL ?? legacyEnvironment.backendURL
+        return switch serverURL.host {
+        case "prod-nginz-https.wire.com": // Production
+            URL(string: "https://cells-beta.wire.com")!
+        case "staging-nginz-https.zinfra.io": // Staging
+            URL(string: "https://cells.staging.zinfra.io")!
+        case "nginz-https.fulu.wire.link": // Fulu
+            URL(string: "https://cells.fulu.wire.link")!
+        case "nginz-https.imai.wire.link": // Imai
+            URL(string: "https://cells.imai.wire.link")!
+        default:
+            serverURL
         }
     }()
 
@@ -85,7 +91,7 @@ final class ZClientControllerBuilder {
                 case missingCellsBackendURL
             }
 
-            guard let self, let wireCellsBackendURL else {
+            guard let self else {
                 throw Failure.missingCellsBackendURL
             }
 
@@ -97,9 +103,7 @@ final class ZClientControllerBuilder {
             // TODO: [WPB-18798] Temporary fix, when multibackend is on we use new backend environment, when off we use the legacy one
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
-            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
-            isFoldersEnabled: DeveloperFlag.wireCellsFolders.isOn,
-            isCollaboraEnabled: DeveloperFlag.wireCellsCollabora.isOn
+            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider)
         )
     }
 

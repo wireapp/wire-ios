@@ -28,7 +28,7 @@ import WireMessagingDomainSupport
 extension FilesViewModel {
 
     /// A stubbed instance of `FilesViewModel` for SwiftUI previews.
-    static func preview(isFoldersEnabled: Bool = false) -> FilesViewModel {
+    static func preview() -> FilesViewModel {
         let cache = mockFileCache()
         let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
@@ -38,7 +38,7 @@ extension FilesViewModel {
         return FilesViewModel(
             useCases: .init(
                 fetchNodes: WireCellsFetchNodesPageUseCase(
-                    configuration: .conversationFileView(root: .path("root"), isFoldersEnabled: true),
+                    configuration: .conversationFileView(root: .path("root")),
                     repository: previewNodesRepository()
                 ),
                 deleteNodes: WireCellsDeleteNodesUseCase(
@@ -95,7 +95,6 @@ extension FilesViewModel {
                 updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(
                     nodesAPI: previewPublicLinkApi()
                 )
-
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,
@@ -103,12 +102,10 @@ extension FilesViewModel {
             nodesRepository: previewNodesRepository(),
             fileCache: cache,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
-            isFoldersEnabled: isFoldersEnabled,
-            isCollaboraEnabled: false,
+            isBrowsing: false,
             accentColorProvider: { .default }
         )
     }
-
 }
 
 extension FileRenameViewModel {
@@ -155,8 +152,8 @@ extension FilesItemViewModel {
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
             onItemAction: { _, _ in },
+            isBrowsing: false,
             isInRecycleBin: false,
-            isFoldersEnabled: false,
         )
     }
 
