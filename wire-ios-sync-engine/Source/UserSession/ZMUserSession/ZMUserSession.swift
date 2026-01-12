@@ -1109,6 +1109,7 @@ extension ZMUserSession: ZMNetworkStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isNetworkOnline = true
             self?.updateNetworkState()
+//            self?.callCenter?.avsWrapper.notify1(isBackground: false)
         }
     }
 
@@ -1117,7 +1118,7 @@ extension ZMUserSession: ZMNetworkStateDelegate {
             self?.isNetworkOnline = false
             self?.updateNetworkState()
             self?.saveOrRollbackChanges()
-
+            self?.callCenter?.avsWrapper.setBackground(isBackground: true)
         }
     }
 

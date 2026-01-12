@@ -64,6 +64,9 @@ public extension ZMUserSession {
 
     @objc
     func applicationDidEnterBackground(_ note: Notification?) {
+        managedObjectContext.perform { [weak self] in
+            self?.callCenter?.avsWrapper.setBackground(isBackground: true)
+        }
         Task { @MainActor [weak self] in
             guard let self else { return }
             let hasActiveCalls = callCenter?.activeCalls.isEmpty == false
@@ -86,6 +89,11 @@ public extension ZMUserSession {
 
     @objc
     func applicationWillEnterForeground(_ note: Notification?) {
+        if isNetworkOnline {
+            managedObjectContext.perform { [weak self] in
+                self?.callCenter?.avsWrapper.setBackground(isBackground: false)
+            }
+        }
         syncAgent?.resume()
         mergeChangesFromStoredSaveNotificationsIfNeeded()
         startEphemeralTimers()
