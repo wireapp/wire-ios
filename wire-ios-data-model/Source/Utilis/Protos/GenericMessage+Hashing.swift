@@ -83,7 +83,7 @@ extension GenericMessageProtocol.Multipart: BigEndianDataConvertible {
     var asBigEndianData: Data {
         let messageTextData = text.content.data(using: .utf16BigEndian)!
         let attachmentsData = attachments.map(\.cellAsset.uuid).joined(separator: ", ").data(using: .utf16BigEndian)!
-        
+
         return Data([0xFE, 0xFF]) + messageTextData + attachmentsData
     }
 }
