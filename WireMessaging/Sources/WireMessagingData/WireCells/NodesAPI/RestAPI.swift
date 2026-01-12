@@ -458,29 +458,29 @@ private extension WireCellsGetNodesRequest {
         )
 
         switch configuration {
-        case let .conversationFileView(root, isFoldersEnabled):
+        case let .conversationFileView(root):
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
                     deleted: .not,
                     isDraft: false
                 ),
                 text: LookupFilterTextSearch(searchIn: .baseName, term: searchTerm ?? "*"),
-                type: isFoldersEnabled ? .unknown : .leaf // .unknown includes files (leafs) & folders (collections)
+                type: .unknown // .unknown includes files (leafs) & folders (collections)
             )
             request.scope = RestLookupScope(
                 recursive: searchTerm?.isEmpty == false,
                 root: RestNodeLocator(root)
             )
-        case let .recycleBinView(root: root, isFoldersEnabled):
+        case let .recycleBinView(root: root):
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
                     deleted: .only,
                     isDraft: false
                 ),
-                type: isFoldersEnabled ? .unknown : .leaf // .unknown includes files (leafs) & folders (collections)
+                type: .unknown // .unknown includes files (leafs) & folders (collections)
             )
             request.scope = RestLookupScope(
-                recursive: !isFoldersEnabled,
+                recursive: false,
                 root: RestNodeLocator(root)
             )
         case .filesBrowserView:
