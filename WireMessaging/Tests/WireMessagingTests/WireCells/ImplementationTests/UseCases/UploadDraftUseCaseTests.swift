@@ -159,6 +159,48 @@ final class UploadDraftUseCaseTests {
         #expect(updatesParams.map(\.cellName).allSatisfy { $0 == "cell-name" })
     }
 
+    @Test
+    func invokeWithNodeID_whenUploadCancelled() async throws {
+        // Given
+        let nodeID = UUID()
+
+        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture(
+            nodeID: nodeID,
+            status: .uploading(progress: 0.5)
+        )
+
+        uploadManager
+            .uploadNodeIDVersionIDAssetPathAssetSizeDestNodePath_MockValue
+            = (
+                WireCellsNode(uuid: nodeID, path: "foo.txt"),
+                AsyncStream.make(
+                    [
+                        .uploading(progress: 0.5),
+                        .cancelled
+                    ]
+                )
+            )
+
+        draftsRepository.updateDraftFor_MockMethod = { _, _ in }
+
+        // When
+        try await sut.invoke(nodeID: nodeID)
+
+        // Then if has the correct draft statuses
+        let statuses = draftsRepository.updateDraftFor_Invocations.map(\.draft.status)
+        #expect(
+            statuses == [
+                .uploading(progress: 0.0),
+                .uploading(progress: 0.0),
+                .uploading(progress: 0.5),
+                .cancelled
+            ]
+        )
+
+        // Then it doesn't try to fetch latest node info after uploading
+        #expect(nodesAPI.getNodeNodeID_Invocations.isEmpty)
+    }
+
     // MARK: - invoke(fileURL:)
 
     @Test
