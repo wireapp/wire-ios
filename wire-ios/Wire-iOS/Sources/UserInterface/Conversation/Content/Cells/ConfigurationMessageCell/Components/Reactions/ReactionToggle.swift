@@ -40,7 +40,7 @@ final class ReactionToggle: UIControl {
     )
 
     private var onToggle: ((ZMConversationMessage) -> Void)?
-    private var accentColor: UIColor = .clear
+    private var accentColor: UIColor
     private var message: ZMConversationMessage?
 
     var isToggled: Bool {
@@ -61,7 +61,7 @@ final class ReactionToggle: UIControl {
     ) {
         self.message = message
         self.onToggle = onToggle
-        self.accentColor = message?.senderUser?.accentColor ?? .clear
+        self.accentColor = message?.senderUser?.accentColor ?? .blue
         self.isToggled = isToggled
 
         super.init(frame: .zero)
