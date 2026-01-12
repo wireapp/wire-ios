@@ -125,7 +125,8 @@ struct AppVersionMigration_4_12_1Tests {
         let conversationID = QualifiedID.random()
         let qualifiedId = WireNetwork.QualifiedID(id: conversationID.uuid, domain: conversationID.domain)
 
-        mockConversationsAPI.getConversationsFor_MockError = ConversationsAPIError.illegalArgument(message: "identifiers between 0 and 1000")
+        mockConversationsAPI.getConversationsFor_MockError = ConversationsAPIError
+            .illegalArgument(message: "identifiers between 0 and 1000")
 
         let context = stack.syncContext
 
@@ -137,8 +138,7 @@ struct AppVersionMigration_4_12_1Tests {
         // WHEN / THEN
         try await sut.perform() // should not throw
     }
-    
-    
+
     @Test("Restores deleted conversations that were missing from backend")
     func testFailedMigration() async throws {
         let conversationID = QualifiedID.random()

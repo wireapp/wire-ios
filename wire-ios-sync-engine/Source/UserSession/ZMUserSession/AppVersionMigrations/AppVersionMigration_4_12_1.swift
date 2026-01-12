@@ -69,9 +69,11 @@ struct AppVersionMigration_4_12_1: AppVersionMigration {
         )
 
         try await context.perform {
+
+            let conversations = conversationIds.compactMap { ZMConversation.existingObject(for: $0, in: context) }
+
             for existingConversation in conversationList.found {
 
-                let conversations = conversationIds.compactMap { ZMConversation.existingObject(for: $0, in: context) }
                 if let conversation = conversations.first(where: {
                     $0.qualifiedID?.toNetworkModel() == existingConversation.qualifiedID
                 }) {
