@@ -1236,8 +1236,6 @@ extension ZMUserSession: SyncAgentDelegate {
         performPostQuickSyncE2EIActions()
     }
 
-
-
     private func makeInitiateResetMLSConversationUseCase(
         context: NSManagedObjectContext,
         conversationRepository: ConversationRepositoryProtocol
