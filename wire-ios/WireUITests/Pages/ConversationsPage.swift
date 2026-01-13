@@ -32,6 +32,10 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.bottomBarSettingsButton.rawValue]
     }
 
+    var archivedButton: XCUIElement {
+        app.buttons[Locators.ConversationsPage.bottomBarArchivedButton.rawValue]
+    }
+
     var plusButtonToCreateGroup: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.createGroupOrSearchButton.rawValue].firstMatch
     }
@@ -63,6 +67,11 @@ class ConversationsPage: PageModel {
     func openSettings() throws -> SettingsPage {
         settingsButton.tap()
         return try SettingsPage()
+    }
+
+    func openArchived() throws -> ArchivedConversationsPage {
+        archivedButton.tap()
+        return try ArchivedConversationsPage()
     }
 
     func openUserProfilePage() throws -> UserProfilePage {
