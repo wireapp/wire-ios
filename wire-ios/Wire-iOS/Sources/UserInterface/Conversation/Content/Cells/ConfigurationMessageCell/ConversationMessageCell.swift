@@ -233,6 +233,11 @@ extension ConversationMessageCellDescription {
         set { objc_setAssociatedObject(self, &bottomMarginKey, newValue, .OBJC_ASSOCIATION_ASSIGN) }
     }
 
+    var backgroundColor: UIColor? {
+        get { objc_getAssociatedObject(self, &backgroundColorKey) as? UIColor }
+        set { objc_setAssociatedObject(self, &backgroundColorKey, newValue, .OBJC_ASSOCIATION_RETAIN) }
+    }
+
     func willDisplayCell() {
         _ = message?.startSelfDestructionIfNeeded()
     }
@@ -248,6 +253,11 @@ extension ConversationMessageCellDescription {
         cell.cellView.delegate = delegate
         cell.cellView.message = message
         cell.cellView.actionController = actionController
+
+        if let bgColor = backgroundColor {
+            cell.cellView.backgroundColor = bgColor
+        }
+
         if let message {
             // sometimes action controller still has background context message
             // so re-set message from main context to avoid crash
@@ -286,6 +296,7 @@ extension ConversationMessageCellDescription {
 
 private nonisolated(unsafe) var topMarginKey = 0
 private nonisolated(unsafe) var bottomMarginKey = 0
+private nonisolated(unsafe) var backgroundColorKey = 0
 
 extension ConversationMessageCellDescription where View.Configuration: Equatable {
 
