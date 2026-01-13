@@ -31,6 +31,7 @@ final class ImportBackupViewModel: ObservableObject {
     private let importBackupUseCaseFactory: any ImportBackupUseCaseFactoryProtocol
     private let coordinator: BackgroundImportCoordinator
     private let logger: any LoggerProtocol
+    private let fileManager = FileManager.default
 
     // MARK: - Published State (UI only)
 
@@ -53,6 +54,7 @@ final class ImportBackupViewModel: ObservableObject {
     // MARK: - Private State
 
     private var hasDestructiveImportBeenConfirmed = false
+    private var currentBackupCopy: URL?
 
     private typealias Strings = L10n.Localizable.ImportBackup
 
@@ -74,6 +76,7 @@ final class ImportBackupViewModel: ObservableObject {
     func reset() {
         coordinator.cancelImport()
         state = nil
+        cleanupBackupCopy()
     }
 
     func pickedBackupFile(result: Result<URL, any Error>) {
@@ -90,23 +93,14 @@ final class ImportBackupViewModel: ObservableObject {
             Task { [self] in
                 do {
                     state = .loadingFile
+
+                    // Generate temporary copy for import
+                    let copy = try await generateCopy(from: url)
+                    currentBackupCopy = copy
                     hasDestructiveImportBeenConfirmed = false
 
-                    // Check if destructive import needs confirmation
-                    let useCase = try importBackupUseCaseFactory.importBackupUseCase(for: url)
-                    if useCase.isImportDestructive, !hasDestructiveImportBeenConfirmed {
-                        alertContent = .init(
-                            title: Strings.OverwriteConfirmation.title,
-                            message: Strings.OverwriteConfirmation.message,
-                            cancel: Strings.OverwriteConfirmation.cancel,
-                            action: Strings.OverwriteConfirmation.proceed
-                        )
-                        state = .requestConfirmation(url: url)
-                        return
-                    }
-
-                    // Start import via coordinator (coordinator handles file copy)
-                    try await startImport(from: url, password: nil)
+                    // Start import via coordinator
+                    try await startImport(from: copy, password: "")
                 } catch {
                     onFailure(error)
                 }
@@ -147,8 +141,19 @@ final class ImportBackupViewModel: ObservableObject {
         }
     }
 
-    private func startImport(from url: URL, password: String?) async throws {
-        logger.info("[DEBUG] Starting import with coordinator")
+    private func startImport(from url: URL, password: String) async throws {
+        // Check if destructive import needs confirmation
+        let useCase = try importBackupUseCaseFactory.importBackupUseCase(for: url)
+        if useCase.isImportDestructive, !hasDestructiveImportBeenConfirmed {
+            alertContent = .init(
+                title: Strings.OverwriteConfirmation.title,
+                message: Strings.OverwriteConfirmation.message,
+                cancel: Strings.OverwriteConfirmation.cancel,
+                action: Strings.OverwriteConfirmation.proceed
+            )
+            state = .requestConfirmation(url: url)
+            return
+        }
 
         // Start import via coordinator and consume the progress stream
         let progressStream = coordinator.startImport(for: url, password: password)
@@ -176,19 +181,18 @@ final class ImportBackupViewModel: ObservableObject {
                 action: Strings.Alert.ok
             )
             state = .restoreFailed
-            throw error
         } catch ImportLegacyBackupError.passwordRequired, ImportBackupError.passwordRequired {
             logger.debug("password is required to open backup file")
             state = .requestingPassword(url: url, isPasswordIncorrect: false)
-            return // Don't throw - user needs to enter password
+            return // Don't cleanup - preserve copy for password retry
         } catch ImportBackupError.incorrectPassword {
             logger.debug("provided password is incorrect")
             state = .requestingPassword(url: url, isPasswordIncorrect: true)
-            return // Don't throw - user needs to retry password
+            return // Don't cleanup - preserve copy for password retry
         } catch ImportLegacyBackupError.decryptionError {
             logger.warn("failed to decrypt backup file, presenting the password input again")
             state = .requestingPassword(url: url, isPasswordIncorrect: true)
-            return // Don't throw - user needs to retry password
+            return // Don't cleanup - preserve copy for password retry
         } catch ImportBackupError.incompatibleFileFormat {
             logger.warn("restore failed due to incompatible file format")
             alertContent = .init(
@@ -197,7 +201,6 @@ final class ImportBackupViewModel: ObservableObject {
                 action: Strings.Alert.ok
             )
             state = .restoreFailed
-            throw error
         } catch ImportBackupError.selfUserIDMismatch, ImportLegacyBackupError.invalidAccountID {
             logger.warn("restore failed due to invalid account ID")
             alertContent = .init(
@@ -206,10 +209,10 @@ final class ImportBackupViewModel: ObservableObject {
                 action: Strings.Alert.ok
             )
             state = .restoreFailed
-            throw error
         } catch is CancellationError {
             logger.info("restore cancelled")
             reset()
+            return // Don't cleanup - reset() already handles it
         } catch {
             logger.error("unexpected error while restoring: " + String(reflecting: error))
             alertContent = .init(
@@ -218,7 +221,70 @@ final class ImportBackupViewModel: ObservableObject {
                 action: Strings.Alert.ok
             )
             state = .restoreFailed
-            throw error
+        }
+
+        // Cleanup temporary copy after success or fatal error
+        cleanupBackupCopy()
+    }
+
+    private func generateCopy(from url: URL) async throws -> URL {
+        let localURL = try await materializeURL(url)
+        let gotAccess = localURL.startAccessingSecurityScopedResource()
+        // let the file manager throw the error in case `gotAccess` is `false`.
+
+        let tmpDirectory = try fileManager.url(
+            for: .itemReplacementDirectory,
+            in: .userDomainMask,
+            appropriateFor: localURL,
+            create: true
+        )
+        let copy = tmpDirectory.appendingPathComponent(localURL.lastPathComponent)
+
+        try fileManager.copyItem(at: localURL, to: copy)
+        if gotAccess {
+            localURL.stopAccessingSecurityScopedResource()
+        }
+
+        return copy
+    }
+
+    // Materialize the url if needed. If we picked from iCloud
+    // then it should already be downloaded and available locally,
+    // but this may not be the case for other file providers such
+    // as Google Drive.
+    private func materializeURL(_ url: URL) async throws -> URL {
+        let task = Task.detached {
+            try await withCheckedThrowingContinuation { continuation in
+                let coordinator = NSFileCoordinator()
+                var error: NSError?
+
+                coordinator.coordinate(
+                    readingItemAt: url,
+                    options: [],
+                    error: &error
+                ) {
+                    continuation.resume(returning: $0)
+                }
+
+                // The completion is not called if there's an error, so we need
+                // to check it here.
+                if let error {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+
+        return try await task.value
+    }
+
+    private func cleanupBackupCopy() {
+        guard let copy = currentBackupCopy else { return }
+
+        do {
+            try fileManager.removeItem(at: copy)
+            currentBackupCopy = nil
+        } catch {
+            logger.error("failed to remove temporary file: " + String(reflecting: error))
         }
     }
 

@@ -34,23 +34,19 @@ final class BackgroundImportCoordinator {
 
     private let importUseCaseFactory: any ImportBackupUseCaseFactoryProtocol
     private let logger: WireLogger
-    private let fileManager: FileManager
 
     // MARK: - State
 
     private var currentBackgroundActivity: BackgroundActivity?
     private var currentImportTask: Task<Void, Never>?
-    private var currentBackupCopy: URL?
 
     // MARK: - Initialization
 
     init(
         importUseCaseFactory: any ImportBackupUseCaseFactoryProtocol,
-        fileManager: FileManager = .default,
         logger: WireLogger = WireLogger(tag: "backup")
     ) {
         self.importUseCaseFactory = importUseCaseFactory
-        self.fileManager = fileManager
         self.logger = logger
     }
 
@@ -59,7 +55,7 @@ final class BackgroundImportCoordinator {
     /// Starts a new import with background continuation support
     ///
     /// - Parameters:
-    ///   - url: URL to the backup file from file picker
+    ///   - url: URL to the backup file (temporary copy created by ViewModel)
     ///   - password: Password for encrypted backups (empty string if unencrypted)
     /// - Returns: An async throwing stream of import progress events
     ///
@@ -71,21 +67,12 @@ final class BackgroundImportCoordinator {
         // Start background activity
         startBackgroundActivity()
 
-        // Create a stream that wraps the use case stream and manages background activity + file lifecycle
+        // Create a stream that wraps the use case stream and manages background activity
         return AsyncThrowingStream { continuation in
             currentImportTask = Task {
-                defer {
-                    // Clean up the temporary copy when done
-                    cleanupBackupCopy()
-                }
-
                 do {
-                    // Generate temporary copy for import
-                    let copy = try await generateFileCopy(for: url)
-                    currentBackupCopy = copy
-
-                    // Create use case with the copy
-                    let useCase = try importUseCaseFactory.importBackupUseCase(for: copy)
+                    // Create use case with the provided URL
+                    let useCase = try importUseCaseFactory.importBackupUseCase(for: url)
 
                     // Stream progress from use case
                     for try await progress in useCase.invoke(password: password ?? "") {
@@ -120,7 +107,6 @@ final class BackgroundImportCoordinator {
         currentImportTask = nil
 
         endBackgroundActivity()
-        cleanupBackupCopy()
     }
 
     // MARK: - Private Methods
@@ -151,69 +137,5 @@ final class BackgroundImportCoordinator {
         // Only end the iOS background task
         // The Swift Task will naturally suspend and resume with app lifecycle
         endBackgroundActivity()
-    }
-
-    // MARK: - File Management
-
-    private func generateFileCopy(for url: URL) async throws -> URL {
-        let localURL = try await materializeURL(url)
-        let gotAccess = localURL.startAccessingSecurityScopedResource()
-        // let the file manager throw the error in case `gotAccess` is `false`.
-
-        let tmpDirectory = try fileManager.url(
-            for: .itemReplacementDirectory,
-            in: .userDomainMask,
-            appropriateFor: localURL,
-            create: true
-        )
-        let copy = tmpDirectory.appendingPathComponent(localURL.lastPathComponent)
-
-        try fileManager.copyItem(at: localURL, to: copy)
-        if gotAccess {
-            localURL.stopAccessingSecurityScopedResource()
-        }
-
-        return copy
-    }
-
-    // Materialize the url if needed. If we picked from iCloud
-    // then it should already be downloaded and available locally,
-    // but this may not be the case for other file providers such
-    // as Google Drive.
-    private func materializeURL(_ url: URL) async throws -> URL {
-        let task = Task.detached {
-            try await withCheckedThrowingContinuation { continuation in
-                let coordinator = NSFileCoordinator()
-                var error: NSError?
-
-                coordinator.coordinate(
-                    readingItemAt: url,
-                    options: [],
-                    error: &error
-                ) {
-                    continuation.resume(returning: $0)
-                }
-
-                // The completion is not called if there's an error, so we need
-                // to check it here.
-                if let error {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-
-        return try await task.value
-    }
-
-    private func cleanupBackupCopy() {
-        guard let copy = currentBackupCopy else { return }
-
-        do {
-            try fileManager.removeItem(at: copy)
-        } catch {
-            logger.warn("Failed to cleanup backup file copy: \(error)")
-        }
-
-        currentBackupCopy = nil
     }
 }
