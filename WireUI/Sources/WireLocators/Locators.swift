@@ -64,6 +64,7 @@ public enum Locators {
         case conversationCell
         case blockOptionOnContextMenu = "Block…"
         case blockButtonOnBottomSheet
+        case accountProfileImageView
     }
 
     public enum SettingsPage: String {
