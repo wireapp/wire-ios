@@ -45,3 +45,7 @@
 // MARK: - File Tags View
 "conversation.wireCells.tags.removeTag" = "Remove tag {0}";
 "conversation.wireCells.tags.addTag" = "Add tag {0}";
+
+// MARK: - Share Link View
+"conversation.wireCells.shareLink.hidePassword" = "Ocultar senha";
+"conversation.wireCells.shareLink.showPassword" = "Mostrar senha";

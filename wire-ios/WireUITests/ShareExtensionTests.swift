@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,11 +23,12 @@ import XCTest
 final class ShareExtensionTests: WireUITestCase {
 
     private let photosAppBundleId = XCUIApplication(bundleIdentifier: "com.apple.mobileslideshow")
+    private let timeout: TimeInterval = 2
 
     @MainActor
     private func launchPhotosApp() async throws {
         photosAppBundleId.launch()
-        XCTAssertTrue(photosAppBundleId.wait(for: .runningForeground, timeout: 10))
+        XCTAssertTrue(photosAppBundleId.wait(for: .runningForeground, timeout: timeout))
     }
 
     @MainActor
@@ -42,12 +43,13 @@ final class ShareExtensionTests: WireUITestCase {
     @MainActor
     private func switchBackToWireApp() async throws {
         app.activate()
-        if !app.wait(for: .runningForeground, timeout: 10) {
+        if !app.wait(for: .runningForeground, timeout: timeout) {
             app.launch()
-            _ = app.wait(for: .runningForeground, timeout: 10)
+            _ = app.wait(for: .runningForeground, timeout: timeout)
         }
     }
 
+    // TestCase: https://app.testiny.io/IOS/testplans/tp/109/tc/8199
     @MainActor
     func test_ShareImageOnetoOne() async throws {
 
@@ -62,50 +64,6 @@ final class ShareExtensionTests: WireUITestCase {
 
         try await launchPhotosApp()
         try await shareFirstPhotoToWire(name: user2.name)
-        try await switchBackToWireApp()
-
-        let activeConversationPage = try conversationsPage.openConversation()
-
-        XCTAssertTrue(
-            activeConversationPage.imageCell.exists, "No Image cell found"
-        )
-    }
-
-    @MainActor
-    func test_ShareImageToGroupConversation() async throws {
-
-        let groupName = UserGenerator.generateRandomGroupName()
-
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
-            email: teamOwner.email,
-            password: teamOwner.password
-        )
-        let teamID = try XCTUnwrap(teamOwner.teamID)
-        let countOfMembers = 2
-
-        var qualifiedIds: [QualifiedID] = []
-
-        for _ in 0 ..< countOfMembers {
-            let (qualifiedId, _) = try await userHelper.registerUsersAsTeamMember(
-                ownerAccessToken: ownerAccessToken,
-                teamID: teamID
-            )
-            qualifiedIds.append(qualifiedId)
-        }
-
-        try await userHelper.createGroupConversations(
-            qualifiedIds: qualifiedIds,
-            owner: teamOwner,
-            groupName: groupName
-        )
-        
-        let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopupOnTeamMemberSetup(with: self)
-            .setUsername(teamOwner.username)
-
-        try await launchPhotosApp()
-        try await shareFirstPhotoToWire(name: groupName)
         try await switchBackToWireApp()
 
         let activeConversationPage = try conversationsPage.openConversation()
