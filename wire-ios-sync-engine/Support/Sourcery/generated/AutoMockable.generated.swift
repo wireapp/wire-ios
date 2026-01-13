@@ -550,66 +550,6 @@ public class MockIsE2EICertificateEnrollmentRequiredProtocol: IsE2EICertificateE
 
 }
 
-public class MockLegacyResolveOneOnOneConversationsUseCaseProtocol: LegacyResolveOneOnOneConversationsUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invoke_Invocations: [Void] = []
-    public var invoke_MockError: Error?
-    public var invoke_MockMethod: (() async throws -> Bool)?
-    public var invoke_MockValue: Bool?
-
-    @discardableResult
-    public func invoke() async throws -> Bool {
-        invoke_Invocations.append(())
-
-        if let error = invoke_MockError {
-            throw error
-        }
-
-        if let mock = invoke_MockMethod {
-            return try await mock()
-        } else if let mock = invoke_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `invoke`")
-        }
-    }
-
-}
-
-public class MockLegacySupportedProtocolsServiceInterface: LegacySupportedProtocolsServiceInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - calculateSupportedProtocols
-
-    public var calculateSupportedProtocols_Invocations: [Void] = []
-    public var calculateSupportedProtocols_MockMethod: (() -> Set<WireDataModel.MessageProtocol>)?
-    public var calculateSupportedProtocols_MockValue: Set<WireDataModel.MessageProtocol>?
-
-    public func calculateSupportedProtocols() -> Set<WireDataModel.MessageProtocol> {
-        calculateSupportedProtocols_Invocations.append(())
-
-        if let mock = calculateSupportedProtocols_MockMethod {
-            return mock()
-        } else if let mock = calculateSupportedProtocols_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `calculateSupportedProtocols`")
-        }
-    }
-
-}
-
 public class MockPasteboard: Pasteboard {
 
     // MARK: - Life cycle

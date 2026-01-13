@@ -772,12 +772,6 @@ public final class ZMUserSession: NSObject {
             proteusService: proteusService,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            pullSelfUserClientsFactory: { [weak self] context in
-                guard let self else {
-                    fatal("userSession not reachable")
-                }
-                return makePullSelfUserClients(context: context)
-            },
             searchUsersCache: dependencies.caches.searchUsers,
             initiateResetMLSConversationUseCaseFactory: { [weak self] context in
                 guard let self, let repo = clientSessionComponent?.conversationRepository else {
@@ -1235,51 +1229,14 @@ extension ZMUserSession: SyncAgentDelegate {
                 WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
             }
 
-            await calculateSelfSupportedProtocolsIfNeeded()
             await resolveOneOnOneConversationsIfNeeded()
-
-            // TODO: [WPB-18175] Port MLS client creation and related MLS operations from here to the InitialSync
-
             await recurringActionService.performActionsIfNeeded()
         }
 
         performPostQuickSyncE2EIActions()
     }
 
-    /// Calculate supported protocols for self user in case they are empty
-    /// - note: Supported protocols are calculated only during slow sync
-    /// or while resolving 1-1 conversations (MLS enabled).
-    /// It fixes users that updates to latest version without having a supported-protocol.
-    /// This could be removed once MLS is enabled.
-    private func calculateSelfSupportedProtocolsIfNeeded() async {
-        await syncContext.perform { [syncContext] in
-            let service = LegacySupportedProtocolsService(context: syncContext)
-            let selfUser = ZMUser.selfUser(in: syncContext)
-            if selfUser.supportedProtocols.isEmpty {
-                WireLogger.supportedProtocols.warn("no supported protocols found")
-                selfUser.supportedProtocols = service.calculateSupportedProtocols()
-                syncContext.saveOrRollback()
-            }
-        }
-    }
 
-    /// Note: this method is used only for legacy sync
-    private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext)
-        -> any LegacyResolveOneOnOneConversationsUseCaseProtocol {
-        let supportedProtocolService = LegacySupportedProtocolsService(context: context)
-
-        let resolver = LegacyOneOnOneResolver(
-            migrator: OneOnOneMigrator(mlsService: mlsService),
-            isMLSEnabled: mlsFeature.isEnabled
-        )
-
-        return LegacyResolveOneOnOneConversationsUseCase(
-            context: context,
-            supportedProtocolService: supportedProtocolService,
-            resolver: resolver,
-            pullSelfUserClientsFactory: makePullSelfUserClients
-        )
-    }
 
     private func makeInitiateResetMLSConversationUseCase(
         context: NSManagedObjectContext,
@@ -1301,24 +1258,13 @@ extension ZMUserSession: SyncAgentDelegate {
         )
     }
 
-    private func makePullSelfUserClients(context: NSManagedObjectContext) -> PullSelfUserClientsSyncProtocol {
-        guard let clientSessionComponent else {
-            fatalError()
-        }
-
-        return PullSelfUserClientsSync(
-            api: clientSessionComponent.userClientsAPI,
-            store: clientSessionComponent.userClientsLocalStore
-        )
-    }
-
     private func resolveOneOnOneConversationsIfNeeded() async {
         guard mlsFeature.isEnabled, !didAlreadyResolveAllOneOnOnes else { return }
 
-        let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
+        let resolveOneOnOneUseCase = clientSessionComponent?.oneOnOneResolver
         do {
-            let didResolve = try await resolveOneOnOneUseCase.invoke()
-            didAlreadyResolveAllOneOnOnes = didResolve
+            try await resolveOneOnOneUseCase?.resolveAllOneOnOneConversations()
+            didAlreadyResolveAllOneOnOnes = true
         } catch {
             WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
         }

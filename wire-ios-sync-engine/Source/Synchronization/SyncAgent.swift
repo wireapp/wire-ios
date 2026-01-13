@@ -367,7 +367,7 @@ extension SyncAgent: MLSSyncDelegate {
                     delegate?.syncAgentDidStartIncrementalSync(self)
                     incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
                         .perform()
-                    delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
+                    delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: true)
                 }
             }
         } catch {

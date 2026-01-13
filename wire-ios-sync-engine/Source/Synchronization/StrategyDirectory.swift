@@ -52,7 +52,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         proteusService: ProteusServiceInterface,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?,
         initiateResetMLSConversationUseCaseFactory: @escaping (NSManagedObjectContext) -> WireRequestStrategy
             .InitiateResetMLSConversationUseCaseProtocol,
@@ -69,7 +68,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             proteusService: proteusService,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            pullSelfUserClientsFactory: pullSelfUserClientsFactory,
             searchUsersCache: searchUsersCache,
             metadata: metadata
         )
@@ -106,7 +104,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         proteusService: ProteusServiceInterface,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?,
         metadata: BackendMetadataProvider
     ) -> [Any] {

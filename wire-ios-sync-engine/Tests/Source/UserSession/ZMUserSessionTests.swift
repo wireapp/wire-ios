@@ -405,23 +405,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(conversations.filter { $0.firstUnreadMessage != nil }.count, 0)
     }
 
-    func test_didFinishQuickSync_CalculateSupportedProtocolsIfNoProtocols() {
-        syncMOC.performAndWait {
-            // GIVEN
-            ZMUser.selfUser(in: self.syncMOC).supportedProtocols = .init()
-
-            // WHEN
-            sut.didFinishIncrementalSync(isRecovering: false)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        let supportedProtocols = syncMOC.performAndWait { ZMUser.selfUser(in: self.syncMOC).supportedProtocols }
-
-        XCTAssertTrue(supportedProtocols.contains(.proteus))
-    }
-
     func test_OnSelfClientInvalidated() async throws {
         // GIVEN
         let applicationStatusDirectory = sut.applicationStatusDirectory
