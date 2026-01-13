@@ -186,7 +186,7 @@ enum ConversationSystemMessageCellDescription {
                     )
                 )
             }
-            if conversation.isOpenGroup {
+            if conversation.isOpenGroup || conversation.isCellsEnabled {
                 let encryptionInfoCell = ConversationEncryptionInfoSystemMessageCellDescription(
                     isWireCellsEnabled: conversation.isCellsEnabled
                 )
