@@ -184,10 +184,10 @@ extension ZMConversation.Action {
         }
     }
 
-    var accessibilityIdentifier: String {
+    var accessibilityIdentifier: String? {
         switch self {
         case .archive: Locators.ConversationDetailsActions.archive.rawValue
-        default: ""
+        default: nil
         }
     }
 
@@ -215,10 +215,12 @@ extension UIAlertAction {
     convenience init(
         title: String?,
         style: UIAlertAction.Style,
-        accessibilityIdentifier: String,
+        accessibilityIdentifier: String?,
         handler: ((UIAlertAction) -> Void)? = nil
     ) {
         self.init(title: title, style: style, handler: handler)
-        setValue(accessibilityIdentifier, forKey: "accessibilityIdentifier")
+        if let accessibilityIdentifier {
+            setValue(accessibilityIdentifier, forKey: "accessibilityIdentifier")
+        }
     }
 }
