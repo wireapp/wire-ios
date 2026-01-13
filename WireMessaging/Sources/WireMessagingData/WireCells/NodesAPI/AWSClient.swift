@@ -197,10 +197,19 @@ final class AWSClient: Sendable {
         )
 
         try await withTaskCancellationHandler {
-            _ = try await s3.putObject(input: input)
+            do {
+                _ = try await s3.putObject(input: input)
+            } catch {
+                if Task.isCancelled {
+                    WireLogger.wireCells.info("Upload cancelled for node: \(node.path)")
+                    throw CancellationError()
+                }
+
+                throw error
+            }
         } onCancel: {
-            // TODO: [WPB-18574] AWS SDK doesn't support cancelling in flight requests. Find a work around.
             WireLogger.wireCells.info("Cancelling upload for node: \(node.path)")
+            stream.cancel()
         }
     }
 

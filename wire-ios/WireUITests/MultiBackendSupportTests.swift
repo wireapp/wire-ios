@@ -54,7 +54,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         _ = try accountPageBackend1
             .backToSettings()
             .switchToConversationsTab()
-            .openUserAccountPageForUser(with: userBackend1.name)
+            .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
         try switchBackend(target: .anta)
@@ -64,7 +64,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         accountPageBackend1 = try accountPageBackend2
             .backToSettings()
             .switchToConversationsTab()
-            .openUserAccountPageForUser(with: userBackend2.name)
+            .openUserProfilePage()
             .switchUserAccountForUser(withName: userBackend1.name)
             .openSettings()
             .openAccountSettings()

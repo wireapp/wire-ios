@@ -29,6 +29,7 @@
 "general.error.noInternet.message." = "There seems to be a problem with your network. Please try again later.";
 "general.create" = "Create";
 "general.cancel" = "Cancel";
+"general.done" = "Done";
 
 // MARK: - Channel Access level
 "channel_access_level.public" = "Public";
@@ -116,6 +117,7 @@
 "conversation.wireCells.files.item.subtitle" = "%@ by %@";
 "conversation.wireCells.files.loadMore.title" = "Load more";
 "conversation.wireCells.files.item.menu.open" = "Open";
+"conversation.wireCells.files.item.menu.shareLink" = "Share";
 "conversation.wireCells.files.item.menu.download" = "Download";
 "conversation.wireCells.files.item.menu.editFile" = "Edit file";
 "conversation.wireCells.files.item.menu.rename" = "Rename";
@@ -190,6 +192,51 @@
 "conversation.wireCells.tags.error.retryButton" = "Try again";
 "conversation.wireCells.files.moveToFolder.move" = "Move here";
 "conversation.wireCells.files.moveToFolder.noSubfolders" = "There are no subfolders in this folder.";
+
+// MARK: - Share Link View
+"conversation.wireCells.shareLink.title" = "Share via link";
+"conversation.wireCells.shareLink.description" = "Upload and share your file via a public link. All recipients can view and download it.";
+"conversation.wireCells.shareLink.createLinkToogle" = "Create public link";
+"conversation.wireCells.shareLink.linkSection.title" = "LINK SETTINGS (OPTIONAL)";
+"conversation.wireCells.shareLink.linkSection.passwordTitle" = "Password";
+"conversation.wireCells.shareLink.linkSection.expirationTitle" = "Expiration";
+"conversation.wireCells.shareLink.linkSection.passwordDescription" = "Set a password to restrict access.";
+"conversation.wireCells.shareLink.linkSection.expirationDescription" = "Link expires on a selected day.";
+"conversation.wireCells.shareLink.shareLinkButton" = "Share Link";
+"conversation.wireCells.shareLink.preparingLinkButton" = "Preparing Link…";
+"conversation.wireCells.shareLink.off" = "OFF";
+"conversation.wireCells.shareLink.on" = "ON";
+"conversation.wireCells.shareLink.expired" = "EXPIRED";
+"conversation.wireCells.shareLink.linkExpiredOn" = "Link expired on %@";
+
+// MARK: - Share Link Password View
+"conversation.wireCells.shareLink.password.title" = "Password";
+"conversation.wireCells.shareLink.password.description" = "People who want to access content via the link need to enter this password first.";
+"conversation.wireCells.shareLink.password.setPasswordToggle" = "Set password";
+"conversation.wireCells.shareLink.password.generatePassword" = "Generate Password";
+"conversation.wireCells.shareLink.password.textfieldTitle" = "Password";
+"conversation.wireCells.shareLink.password.textfieldPrompt" = "Enter password";
+"conversation.wireCells.shareLink.password.sharePassword" = "Share Password";
+"conversation.wireCells.shareLink.password.resetPassword" = "Reset Password";
+"conversation.wireCells.shareLink.password.removeConfirmation.title" = "Remove password?";
+"conversation.wireCells.shareLink.password.removeConfirmation.message" = "Anyone with the link can open the file and view its contents.";
+"conversation.wireCells.shareLink.password.removeConfirmation.button" = "Remove";
+"conversation.wireCells.shareLink.password.noAccessToExisting.title" = "No access to existing password";
+"conversation.wireCells.shareLink.password.noAccessToExisting.message" = "After reinstalling Wire, you can't copy the set password. Yet, it is still valid.\n\nIf you didn't save the password, change it and reshare the updated link.";
+"conversation.wireCells.shareLink.password.noAccessToExisting.button" = "Change password";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.title" = "Unable to create password-secured link";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.message" = "Please check your network connection and try again.";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.action" = "Try again";
+
+// MARK: - Share Link Expiration View
+"conversation.wireCells.shareLink.expiration.title" = "Expiration";
+"conversation.wireCells.shareLink.expiration.addExpirationToggle" = "Add expiration";
+"conversation.wireCells.shareLink.expiration.description" = "The link expires automatically after the set date and time. People can't access the content anymore.";
+"conversation.wireCells.shareLink.expiration.datePickerTitle" = "Expires";
+"conversation.wireCells.shareLink.expiration.dateNotSupported" = "Date in the past is not supported";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.title" = "Unable to add expiration date";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.message" = "Please check your network connection and try again.";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.action" = "Try again";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "File not available";

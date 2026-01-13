@@ -178,10 +178,7 @@ public final class ZMUserSession: NSObject {
     }
 
     public var isWireCellsEnabled: Bool {
-        let isFeatureEnabled = wireCellsFeature.status == .enabled
-        let hasBackendURL = wireCellsBackendURL != nil
-
-        return isFeatureEnabled && hasBackendURL
+        wireCellsFeature.status == .enabled
     }
 
     public var conferenceCallingFeature: Feature.ConferenceCalling {
@@ -723,6 +720,14 @@ public final class ZMUserSession: NSObject {
         tokens.removeAll()
         application.unregisterObserverForStateChange(self)
         callStateObserver = nil
+
+        // Clear delegates to break retain cycles
+        earService.delegate = nil
+        appLockController.delegate = nil
+        applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = nil
+
+        syncAgent?.delegate = nil
+        syncAgent = nil
         syncStrategy?.tearDown()
         syncStrategy = nil
         operationLoop?.tearDown()
@@ -732,6 +737,10 @@ public final class ZMUserSession: NSObject {
         callCenter?.tearDown()
         coreDataStack.close()
         contextStorage.clear()
+
+        // Note: strategyDirectory, legacyUpdateEventProcessor, and urlActionProcessors
+        // are left to be cleaned up when ZMUserSession is deallocated to avoid
+        // triggering strategy teardowns while async operations may still be running.
 
         NotificationCenter.default.removeObserver(self)
         WireLogger.authentication.clearClientID()

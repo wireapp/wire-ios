@@ -36,8 +36,6 @@ package struct FilesViewContainer: View {
     private let nodeCache: any WireCellsNodeCacheProtocol
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
     private let fileCache: any FileCache
-    private let isFoldersEnabled: Bool
-    private let isCollaboraEnabled: Bool
     private let accentColorProvider: () -> WireAccentColor
 
     private let triggerReloadFiles: PassthroughSubject<Void, Never> = .init()
@@ -60,8 +58,6 @@ package struct FilesViewContainer: View {
         nodeCache: any WireCellsNodeCacheProtocol,
         nodeRenameNotifier: WireCellsNodeRenameNotifier,
         fileCache: any FileCache,
-        isFoldersEnabled: Bool,
-        isCollaboraEnabled: Bool,
         accentColorProvider: @escaping () -> WireAccentColor
     ) {
         self.cellName = cellName
@@ -73,8 +69,6 @@ package struct FilesViewContainer: View {
         self.nodeCache = nodeCache
         self.nodeRenameNotifier = nodeRenameNotifier
         self.fileCache = fileCache
-        self.isFoldersEnabled = isFoldersEnabled
-        self.isCollaboraEnabled = isCollaboraEnabled
         self.accentColorProvider = accentColorProvider
     }
 
@@ -109,7 +103,6 @@ package struct FilesViewContainer: View {
                         nodeCache: nodeCache,
                         nodeRenameNotifier: nodeRenameNotifier,
                         fileCache: fileCache,
-                        isFoldersEnabled: isFoldersEnabled,
                         accentColorProvider: accentColorProvider
                     )
                 }
@@ -123,7 +116,6 @@ package struct FilesViewContainer: View {
                 fetchNodes: WireCellsFetchNodesPageUseCase(
                     configuration: .conversationFileView(
                         root: path.last.map { .id($0.id) } ?? .path(cellName),
-                        isFoldersEnabled: isFoldersEnabled
                     ),
                     repository: nodesRepository
                 ),
@@ -156,7 +148,12 @@ package struct FilesViewContainer: View {
                 getAssetUseCase: WireCellsGetAssetUseCase(
                     localAssetRepository: localAssetRepository,
                     fileCache: fileCache
-                )
+                ),
+                getPublicLinkData: WireCellsGetPublicLinkDataUseCase(nodesAPI: nodesAPI),
+                createPublicLink: WireCellsCreatePublicLinkUseCase(nodesAPI: nodesAPI),
+                deletePublicLink: WireCellsDeletePublicLinkUseCase(nodesAPI: nodesAPI),
+                updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
+                updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI)
             ),
             title: path.last?.name,
             navigationPath: path,
@@ -168,8 +165,7 @@ package struct FilesViewContainer: View {
             nodesRepository: nodesRepository,
             fileCache: fileCache,
             cellName: cellName,
-            isFoldersEnabled: isFoldersEnabled,
-            isCollaboraEnabled: isCollaboraEnabled,
+            isBrowsing: false,
             isRecycleBin: false,
             triggerReload: triggerReloadFiles,
             accentColorProvider: accentColorProvider
