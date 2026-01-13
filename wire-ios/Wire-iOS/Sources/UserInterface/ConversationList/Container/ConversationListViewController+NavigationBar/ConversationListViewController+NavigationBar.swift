@@ -46,7 +46,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     ) {
 
         accountImageView?.source = accountImage
-        accountImageView?.accessibilityIdentifier = "account_profile_image_view"
+        accountImageView?.accessibilityIdentifier = Locators.ConversationsPage.accountProfileImageView.rawValue
 
         if let userName = viewModel.userSession.selfUser.name {
             accountImageView?.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam
@@ -79,6 +79,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
         accountImageView.hideProfileNotificationsBadge = viewModel.hideProfileNotificationsBadge
         accountImageView.isAccessibilityElement = true
+        accountImageView.accessibilityIdentifier = Locators.ConversationsPage.accountProfileImageView.rawValue
         accountImageView.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam
             .accessibilityValue(viewModel.userSession.selfUser.name ?? "")
         accountImageView.accessibilityTraits = .button
