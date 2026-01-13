@@ -956,6 +956,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
             await configureAnalytics(for: session)
             await requestCertificateEnrollmentIfNeeded()
+        } else {
+            WireLogger.sessionManager.debug("User is not logged in, complete login elsewhere")
         }
 
         return session
