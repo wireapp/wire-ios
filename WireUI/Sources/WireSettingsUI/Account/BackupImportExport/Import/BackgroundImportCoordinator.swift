@@ -37,7 +37,7 @@ final class BackgroundImportCoordinator {
 
     // MARK: - State
 
-    private var currentBackgroundActivity: BackgroundActivity?
+    private var currentBackgroundTask: UIBackgroundTaskIdentifier?
     private var currentImportTask: Task<Void, Never>?
 
     // MARK: - Initialization
@@ -112,13 +112,13 @@ final class BackgroundImportCoordinator {
     // MARK: - Private Methods
 
     private func startBackgroundActivity() {
-        // End any existing activity first
-        if let activity = currentBackgroundActivity {
-            BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+        // End any existing task first
+        if let task = currentBackgroundTask, task != .invalid {
+            UIApplication.shared.endBackgroundTask(task)
         }
 
-        currentBackgroundActivity = BackgroundActivityFactory.shared.startBackgroundActivity(
-            name: "Backup Import"
+        currentBackgroundTask = UIApplication.shared.beginBackgroundTask(
+            withName: "Backup Import"
         ) { [weak self] in
             Task { @MainActor [weak self] in
                 self?.handleBackgroundExpiration()
@@ -127,10 +127,10 @@ final class BackgroundImportCoordinator {
     }
 
     private func endBackgroundActivity() {
-        guard let activity = currentBackgroundActivity else { return }
+        guard let task = currentBackgroundTask, task != .invalid else { return }
 
-        BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-        currentBackgroundActivity = nil
+        UIApplication.shared.endBackgroundTask(task)
+        currentBackgroundTask = nil
     }
 
     private func handleBackgroundExpiration() {

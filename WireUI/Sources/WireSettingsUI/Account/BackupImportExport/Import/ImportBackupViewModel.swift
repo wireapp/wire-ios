@@ -67,8 +67,6 @@ final class ImportBackupViewModel: ObservableObject {
         self.importBackupUseCaseFactory = importBackupUseCaseFactory
         self.coordinator = BackgroundImportCoordinator(importUseCaseFactory: importBackupUseCaseFactory)
         self.logger = logger
-
-        BackgroundActivityFactory.shared.activityManager = UIApplication.shared
     }
 
     // MARK: - Methods
