@@ -115,11 +115,7 @@ public final class ZMUserSession: NSObject {
     // MARK: Computed Properties
 
     public var isBackendMLSEnabled: Bool {
-        if DeveloperFlag.multibackend.isOn {
-            journal[.isBackendMLSEnabled]
-        } else {
-            BackendInfo.isMLSEnabled
-        }
+        journal[.isBackendMLSEnabled]
     }
 
     var isPerformingSync = true {
@@ -874,10 +870,7 @@ public final class ZMUserSession: NSObject {
         recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
         recurringActionService.registerAction(refreshTeamMetadataAction)
         recurringActionService.registerAction(refreshFederationCertificatesAction)
-
-        if DeveloperFlag.multibackend.isOn {
-            recurringActionService.registerAction(checkBuildBlacklistAction)
-        }
+        recurringActionService.registerAction(checkBuildBlacklistAction)
     }
 
     func startRequestLoopTracker() {
@@ -1290,7 +1283,6 @@ extension ZMUserSession: SyncAgentDelegate {
 
         WaitingGroupTask(context: syncContext) { [weak self] in
             guard let self else { return }
-            await fetchBackendMLSPublicKeys()
             await fetchAndStoreFeatureConfig()
 
             let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
@@ -1420,21 +1412,6 @@ extension ZMUserSession: SyncAgentDelegate {
             try await clientSessionComponent?.featureConfigRepository.pullFeatureConfigs()
         } catch {
             WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
-        }
-    }
-
-    private func fetchBackendMLSPublicKeys() async {
-        guard !DeveloperFlag.multibackend.isOn else {
-            // fetching done on UserSessionLoader
-            return
-        }
-        do {
-            var getBackendMLSPublicKeysAction = FetchBackendMLSPublicKeysAction()
-            let backendPublicKeys = try await getBackendMLSPublicKeysAction.perform(in: notificationContext)
-            let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
-            BackendInfo.isMLSEnabled = hasValidKeys
-        } catch {
-            WireLogger.mls.info("Backend doesn't have MLS public keys: \(String(reflecting: error))")
         }
     }
 
