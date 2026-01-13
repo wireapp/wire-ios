@@ -23,7 +23,10 @@ XCRESULT_SEARCH_PATH="${1:-artifacts}"
 
 echo "🔍 Searching for .xcresults under: ${XCRESULT_SEARCH_PATH}"
 
-mapfile -t XCRESULTS < <(find "${XCRESULT_SEARCH_PATH}" -type d -name "*.xcresult" 2>/dev/null || true)
+XCRESULTS=()
+while IFS= read -r -d '' xc; do
+  XCRESULTS+=("$xc")
+done < <(find "${XCRESULT_SEARCH_PATH}" -type d -name "*.xcresult" -print0 2>/dev/null || true)
 
 if [[ "${#XCRESULTS[@]}" -eq 0 ]]; then
   echo "⚠️  No .xcresult found under ./${XCRESULT_SEARCH_PATH}. Skipping Allure report generation."
