@@ -387,22 +387,13 @@ extension ZMUserSession: UserSession {
     }
 
     public var resolvedBackendMetadata: BackendMetadataProvider {
-        if DeveloperFlag.multibackend.isOn {
-            let metadata = userSessionComponent.backendMetadata
-            return BackendMetadataProvider(
-                apiVersionOverride: .init(rawValue: Int32(metadata.apiVersion.rawValue)),
-                domainOverride: metadata.domain,
-                isFederationEnabledOverride: metadata.isFederationEnabled,
-                isBackendMLSEnabledOverride: journal[.isBackendMLSEnabled]
-            )
-        } else {
-            return BackendMetadataProvider(
-                apiVersionOverride: nil,
-                domainOverride: nil,
-                isFederationEnabledOverride: nil,
-                isBackendMLSEnabledOverride: nil
-            )
-        }
+        let metadata = userSessionComponent.backendMetadata
+        return BackendMetadataProvider(
+            apiVersionOverride: .init(rawValue: Int32(metadata.apiVersion.rawValue)),
+            domainOverride: metadata.domain,
+            isFederationEnabledOverride: metadata.isFederationEnabled,
+            isBackendMLSEnabledOverride: journal[.isBackendMLSEnabled]
+        )
     }
 
 }

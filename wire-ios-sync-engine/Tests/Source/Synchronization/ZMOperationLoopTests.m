@@ -30,7 +30,6 @@
 - (void)setUp
 {
     [super setUp];
-    [self disableMultibackend];
     
     self.cookieStorage = [[FakeCookieStorage alloc] init];
     self.mockTransportSesssion = [[RecordingMockTransportSession alloc] initWithCookieStorage:self.cookieStorage];
@@ -46,7 +45,7 @@
                                                          syncMOC:self.syncMOC
                                           isDeveloperModeEnabled:NO
                                                  isSyncV2Enabled:NO
-                                                      apiVersion:nil];
+                                                      apiVersion:@5];
 }
 
 - (void)tearDown;
@@ -97,7 +96,7 @@
 - (void)testThatItDoesNotSendARequestIfThereIsNoCurrentAPIVersion
 {
     // given
-    [self setBackendInfoAPIVersionNil];
+    [self.sut setApiVersion:nil];
     XCTAssertNil(self.sut.currentAPIVersion);
 
     self.mockRequestStrategy.mockRequest = [[ZMTransportRequest alloc] initWithPath:@"/test"

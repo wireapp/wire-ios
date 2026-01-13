@@ -699,7 +699,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         let mlsFeature = LegacyFeatureRepository(context: context).fetchMLS()
 
         let shouldRegisterMLSCLient = mlsFeature.isEnabled
-        let canRegisterMLSCLient = DeveloperFlag.multibackend.isOn ? isBackendMLSEnabled : BackendInfo.isMLSEnabled
+        let canRegisterMLSCLient = isBackendMLSEnabled
 
         return !hasRegisteredMLSClient && shouldRegisterMLSCLient && canRegisterMLSCLient
     }
