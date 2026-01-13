@@ -67,7 +67,7 @@ extension UIAlertAction {
             setValue(image.withRenderingMode(.alwaysOriginal), forKey: "image")
         }
     }
-    
+
     convenience init(
         title: String?,
         style: UIAlertAction.Style,
