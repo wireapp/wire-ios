@@ -33,6 +33,14 @@ class ConversationDetailsPage: PageModel {
         app.buttons[Locators.ConversationDetailsPage.close.rawValue]
     }
 
+    var moreOptionsConversationDetailsButton: XCUIElement {
+        app.buttons[Locators.ConversationDetailsPage.moreOptionsButton.rawValue]
+    }
+
+    var archiveOptionConversationDetailsButton: XCUIElement {
+        app.buttons.matching(identifier: Locators.ConversationDetailsActions.archive.rawValue).element(boundBy: 0)
+    }
+
     var userCells: XCUIElementQuery {
         app.staticTexts.matching(identifier: Locators.ConversationDetailsPage.userCellName.rawValue)
     }
@@ -46,6 +54,16 @@ class ConversationDetailsPage: PageModel {
     func closeConversationDetails() throws -> ActiveConversationPage {
         closeConversationDetailsButton.tap()
         return try ActiveConversationPage()
+    }
+
+    func moreOptionsConversationDetails() throws -> ConversationDetailsPage {
+        moreOptionsConversationDetailsButton.tap()
+        return try ConversationDetailsPage()
+    }
+
+    func archiveOptionsConversationDetails() throws -> ConversationsPage {
+        archiveOptionConversationDetailsButton.tap()
+        return try ConversationsPage()
     }
 
     func appParticipantToConversation() throws -> SelectParticipantsPage {
