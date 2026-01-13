@@ -10,6 +10,42 @@
             "value" : "Close team created view"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "bs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -20,6 +56,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ansicht Team erstellt schließen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "el-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
           }
         },
         "en" : {
@@ -40,6 +88,18 @@
             "value" : "Close team created view"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -47,6 +107,36 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close team created view"
@@ -64,7 +154,61 @@
             "value" : "Close team created view"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "lb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
         "lt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "me" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "mt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "my" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close team created view"
@@ -76,7 +220,19 @@
             "value" : "Close team created view"
           }
         },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
         "pl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "pt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close team created view"
@@ -88,13 +244,67 @@
             "value" : "Fechar visualização de equipe criada"
           }
         },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Закрыть просмотр создания команды"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "sr-Cyrl-ME" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close team created view"
@@ -106,7 +316,25 @@
             "value" : "Close team created view"
           }
         },
+        "tr-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
         "uk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team created view"
+          }
+        },
+        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close team created view"
@@ -135,6 +363,42 @@
             "value" : "Close confirmation view"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "bs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -145,6 +409,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bestätigungsansicht schließen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "el-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
           }
         },
         "en" : {
@@ -165,6 +441,18 @@
             "value" : "Close confirmation view"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -172,6 +460,36 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close confirmation view"
@@ -189,7 +507,61 @@
             "value" : "Close confirmation view"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "lb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
         "lt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "me" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "mt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "my" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close confirmation view"
@@ -201,7 +573,19 @@
             "value" : "Close confirmation view"
           }
         },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
         "pl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "pt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close confirmation view"
@@ -213,13 +597,67 @@
             "value" : "Fechar visualização de confirmação"
           }
         },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Закрыть окно подтверждения"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "sr-Cyrl-ME" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close confirmation view"
@@ -231,7 +669,25 @@
             "value" : "Close confirmation view"
           }
         },
+        "tr-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
         "uk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close confirmation view"
+          }
+        },
+        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close confirmation view"
@@ -260,6 +716,42 @@
             "value" : "Close team account overview"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "bs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -270,6 +762,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Team-Konto-Übersicht schließen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "el-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
           }
         },
         "en" : {
@@ -290,6 +794,18 @@
             "value" : "Close team account overview"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -297,6 +813,36 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close team account overview"
@@ -314,7 +860,61 @@
             "value" : "Close team account overview"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "lb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
         "lt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "me" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "mt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "my" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close team account overview"
@@ -326,7 +926,19 @@
             "value" : "Close team account overview"
           }
         },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
         "pl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "pt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close team account overview"
@@ -338,13 +950,67 @@
             "value" : "Fechar visão geral da conta da equipe"
           }
         },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Закрыть информацию об аккаунте команды"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "sr-Cyrl-ME" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close team account overview"
@@ -356,7 +1022,25 @@
             "value" : "Close team account overview"
           }
         },
+        "tr-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
         "uk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team account overview"
+          }
+        },
+        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close team account overview"
@@ -385,6 +1069,42 @@
             "value" : "Close team name view"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "bs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -395,6 +1115,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ansicht Teamname schließen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "el-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
           }
         },
         "en" : {
@@ -415,6 +1147,18 @@
             "value" : "Close team name view"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -422,6 +1166,36 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close team name view"
@@ -439,7 +1213,61 @@
             "value" : "Close team name view"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "lb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
         "lt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "me" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "mt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "my" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close team name view"
@@ -451,7 +1279,19 @@
             "value" : "Close team name view"
           }
         },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
         "pl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "pt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close team name view"
@@ -463,13 +1303,67 @@
             "value" : "Fechar visualização do nome da equipe"
           }
         },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Закрыть просмотр информации о названии команды"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "sr-Cyrl-ME" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close team name view"
@@ -481,7 +1375,25 @@
             "value" : "Close team name view"
           }
         },
+        "tr-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
         "uk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close team name view"
+          }
+        },
+        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close team name view"
@@ -510,6 +1422,42 @@
             "value" : "جارِ التحميل…"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "bs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -520,6 +1468,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Wird geladen…"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "el-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
           }
         },
         "en" : {
@@ -540,6 +1500,18 @@
             "value" : "Laadimine…"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -550,6 +1522,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chargement…"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "is" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
           }
         },
         "it" : {
@@ -564,10 +1566,64 @@
             "value" : "読み込み中…"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "lb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kraunama…"
+          }
+        },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "me" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "mt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
           }
         },
         "nl" : {
@@ -576,10 +1632,22 @@
             "value" : "Laden…"
           }
         },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Wczytuje…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
           }
         },
         "pt-BR" : {
@@ -588,13 +1656,67 @@
             "value" : "Carregando…"
           }
         },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Загрузка…"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "sr-Cyrl-ME" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Loading…"
@@ -606,10 +1728,28 @@
             "value" : "Yükleniyor…"
           }
         },
+        "tr-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Завантаження…"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loading…"
           }
         },
         "zh-Hans" : {
