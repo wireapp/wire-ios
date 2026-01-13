@@ -65,26 +65,14 @@ public extension ZMUserSession {
     @objc
     func applicationDidEnterBackground(_ note: Notification?) {
         isInBackground = true
-//        Task { @MainActor [weak self] in
-//            guard let self else { return }
-//            let hasActiveCalls = callCenter?.activeCalls.isEmpty == false
-//
-//            if !hasActiveCalls {
-//                await syncAgent?.suspend()
-//            }
-//            let isSocketClosed = currentSyncState == .suspended
-//            print("😈 isSocketClosed: \(isSocketClosed)")
-//            updateAVSBackgroundState()
-//        }
-
-        Task {
-//            let hasActiveCalls = self?.callCenter?.activeCalls.isEmpty == false
-//            print("🙈 hasActiveCalls: \(hasActiveCalls)")
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            let hasActiveCalls = callCenter?.activeCalls.isEmpty == false
 
 //            if !hasActiveCalls {
                 await syncAgent?.suspend()
 //            }
-            updateAVSBackgroundState()
+           // updateAVSBackgroundState()
         }
 
         stopEphemeralTimers()
@@ -96,6 +84,9 @@ public extension ZMUserSession {
         } catch {
             WireLogger.assets.error("failed to purge temporary assets: \(error)")
         }
+        managedObjectContext.perform { [weak self] in
+            self?.callCenter?.avsWrapper.setBackground(isBackground: true)
+        }
     }
 
     @objc
@@ -106,7 +97,10 @@ public extension ZMUserSession {
         startEphemeralTimers()
         deleteOldEphemeralMessages()
         processPendingEvents()
-        updateAVSBackgroundState()
+//        managedObjectContext.perform { [weak self] in
+//            self?.callCenter?.avsWrapper.setBackground(isBackground: false)
+//        }
+//        updateAVSBackgroundState()
     }
 
     internal func processPendingEvents() {

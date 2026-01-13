@@ -1128,6 +1128,7 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
     public func didGoOffline() {
         managedObjectContext.performGroupedBlock { [weak self] in
+            //self?.callCenter?.avsWrapper.setBackground(isBackground: true)
             self?.isNetworkOnline = false
             self?.updateNetworkState()
             self?.saveOrRollbackChanges()
@@ -1157,14 +1158,14 @@ extension ZMUserSession: ZMNetworkStateDelegate {
             }
     }
 
-    func updateAVSBackgroundState() {
-        managedObjectContext.perform { [weak self] in
-            let isSocketClosed = self?.currentSyncState == .suspended
-            let shouldBeInBackground = self!.isInBackground && isSocketClosed
-            print("🙈 isSocketClosed: \(isSocketClosed), isInBackground: \(self?.isInBackground)")
-            self?.callCenter?.avsWrapper.setBackground(isBackground: shouldBeInBackground)
-        }
-    }
+//    func updateAVSBackgroundState() {
+//        managedObjectContext.perform { [weak self] in
+//            let isSocketClosed = self?.currentSyncState == .suspended
+//            let shouldBeInBackground = self!.isInBackground && isSocketClosed
+//            print("🙈 isSocketClosed: \(isSocketClosed), isInBackground: \(self?.isInBackground)")
+//            self?.callCenter?.avsWrapper.setBackground(isBackground: shouldBeInBackground)
+//        }
+//    }
 }
 
 // MARK: - UpdateEventProcessor
@@ -1292,6 +1293,7 @@ extension ZMUserSession: SyncAgentDelegate {
         Task {
             await showSyncBar(true)
         }
+        NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
     }
 
     @MainActor
@@ -1340,6 +1342,7 @@ extension ZMUserSession: SyncAgentDelegate {
         }
 
         performPostQuickSyncE2EIActions()
+        NotificationCenter.default.post(name: .eventProcessorDidFinishProcessingEventsNotification, object: self)
     }
 
     /// Calculate supported protocols for self user in case they are empty

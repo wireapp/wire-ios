@@ -258,6 +258,7 @@ public final class AVSWrapper: AVSWrapperType {
 
     public func setBackground(isBackground: Bool) {
         wcall_set_background(handle, isBackground ? 1 : 0)
+        print("🤪 isBackground: \(isBackground)")
     }
 
     /// Set the MLS conference info for a given conversation.
