@@ -38,7 +38,6 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
 
     override func setUp() async throws {
         try await super.setUp()
-        DeveloperFlag.multibackend.enable(false)
         snapshotHelper = .init()
         coreDataFixture = try await CoreDataFixture()
 
@@ -47,6 +46,16 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
 
         userSession = UserSessionMock(mockUser: selfUser)
         accountManager = MockSelfProfileAccountManager()
+
+        setupMultipleAccounts(true)
+    }
+
+    private func setupMultipleAccounts(_ multipleAccounts: Bool) {
+        guard multipleAccounts else {
+            accountManager.sortedAccounts_MockValue = []
+            return
+        }
+
         let accounts = [
             Account(
                 userName: "Iggy Pop",
@@ -64,18 +73,18 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
             )
         ]
         accountManager.sortedAccounts_MockValue = accounts
-
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
         snapshotHelper = nil
-        sut = nil
         coreDataFixture = nil
         SelfUser.provider = nil
         selfUser = nil
         userSession = nil
+        accountManager = nil
+        sut = nil
         super.tearDown()
     }
 
@@ -83,19 +92,20 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
 
     @MainActor
     func testForAUserWithNoTeam() {
+        setupMultipleAccounts(false)
         createSut(userName: "Tarja Turunen", teamMember: false)
         snapshotHelper.verify(matching: sut.view)
     }
 
     @MainActor
     func testForAUserWithALongName() {
+        setupMultipleAccounts(false)
         createSut(userName: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", teamMember: true)
         snapshotHelper.verify(matching: sut.view)
     }
 
     @MainActor
     func testAccountSwitcher() {
-        DeveloperFlag.multibackend.enable(true)
         createSut(userName: "Tarja Turunen", teamMember: true, canManageTeam: true)
         snapshotHelper.verify(matching: sut.view)
     }
