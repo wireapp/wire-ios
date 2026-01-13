@@ -68,7 +68,7 @@ class ConversationsPage: PageModel {
         settingsButton.tap()
         return try SettingsPage()
     }
-    
+
     func openArchived() throws -> ArchivedConversationsPage {
         archivedButton.tap()
         return try ArchivedConversationsPage()

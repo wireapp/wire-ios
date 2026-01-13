@@ -162,7 +162,7 @@ final class TeamManageTests: WireUITestCase {
             "User \(teamMembers[0].name) is not present in group"
         )
     }
-    
+
     /// [WPB-3772] Bug: Opening an archived conversation unarchives it
     @MainActor
     func test_TeamOwner_ArchiveTeams() async throws {
