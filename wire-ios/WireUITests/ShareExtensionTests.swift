@@ -70,4 +70,48 @@ final class ShareExtensionTests: WireUITestCase {
             activeConversationPage.imageCell.exists, "No Image cell found"
         )
     }
+
+    @MainActor
+    func test_ShareImageToGroupConversation() async throws {
+
+        let groupName = UserGenerator.generateRandomGroupName()
+
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let ownerAccessToken = try await userHelper.fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+        let countOfMembers = 2
+
+        var qualifiedIds: [QualifiedID] = []
+
+        for _ in 0 ..< countOfMembers {
+            let (qualifiedId, _) = try await userHelper.registerUsersAsTeamMember(
+                ownerAccessToken: ownerAccessToken,
+                teamID: teamID
+            )
+            qualifiedIds.append(qualifiedId)
+        }
+
+        try await userHelper.createGroupConversations(
+            qualifiedIds: qualifiedIds,
+            owner: teamOwner,
+            groupName: groupName
+        )
+        
+        let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopupOnTeamMemberSetup(with: self)
+            .setUsername(teamOwner.username)
+
+        try await launchPhotosApp()
+        try await shareFirstPhotoToWire(name: groupName)
+        try await switchBackToWireApp()
+
+        let activeConversationPage = try conversationsPage.openConversation()
+
+        XCTAssertTrue(
+            activeConversationPage.imageCell.exists, "No Image cell found"
+        )
+    }
 }
