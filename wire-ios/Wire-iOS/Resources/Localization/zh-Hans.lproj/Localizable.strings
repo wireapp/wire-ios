@@ -1867,6 +1867,10 @@
 "collections.search.field.placeholder" = "搜索文字信息";
 "collections.search.no_items" = "没有找到";
 
+"collections.section.searchFiles.description" = "Search files";
+"collections.section.searchFiles.alert.title" = "File collaboration (Cells beta version)";
+"collections.section.searchFiles.alert.message" = "Find files shared in conversations with file collaboration";
+
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
