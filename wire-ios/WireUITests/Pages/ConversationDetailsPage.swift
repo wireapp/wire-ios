@@ -38,7 +38,7 @@ class ConversationDetailsPage: PageModel {
     }
 
     var archiveOptionConversationDetailsButton: XCUIElement {
-        app.buttons.matching(identifier: "archive").element(boundBy: 0)
+        app.buttons.matching(identifier: Locators.ConversationDetailsActions.archive.rawValue).element(boundBy: 0)
     }
 
     var userCells: XCUIElementQuery {

@@ -21,7 +21,7 @@ import XCTest
 
 class ArchivedConversationsPage: ConversationsPage {
 
-    func existsConversation(byName name: String) -> Bool {
+    func conversationExists(withName name: String) -> Bool {
         let predicate = NSPredicate(format: "label == %@", name)
         let userCells = app.buttons.containing(predicate).firstMatch
         return userCells.waitForExistence(timeout: 2) && userCells.isHittable

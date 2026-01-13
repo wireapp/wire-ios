@@ -84,14 +84,14 @@ final class TeamManageTests: WireUITestCase {
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
 
-        let teamNames = try await userHelper.registerSomeTeams(teamOwner: teamOwner)
+        let teamMemberNames = try await userHelper.registerTeamWith2Members(teamOwner: teamOwner)
 
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopup(with: self)
             .tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enterGroupName(groupName)
-            .tapMemberCells(withLabelPrefixes: teamNames)
+            .tapMemberCells(withLabelPrefixes: teamMemberNames)
             .doneSelectingMembers()
             .sendMessage(messageFromOwner)
 
@@ -165,12 +165,12 @@ final class TeamManageTests: WireUITestCase {
 
     /// [WPB-3772] Bug: Opening an archived conversation unarchives it
     @MainActor
-    func test_TeamOwner_ArchiveTeams() async throws {
+    func test_ArchivedConversationUnarchivesWhenOpened() async throws {
         let groupName = UserGenerator.generateRandomGroupName()
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
 
-        let teamNames = try await userHelper.registerSomeTeams(teamOwner: teamOwner)
+        let teamNames = try await userHelper.registerTeamWith2Members(teamOwner: teamOwner)
 
         let archivedConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopup(with: self)
@@ -187,6 +187,6 @@ final class TeamManageTests: WireUITestCase {
             .goBackToConversationPage()
             .openArchived()
 
-        XCTAssertTrue(archivedConversationPage.existsConversation(byName: groupName))
+        XCTAssertTrue(archivedConversationPage.conversationExists(withName: groupName))
     }
 }
