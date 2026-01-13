@@ -104,7 +104,6 @@ class PhotosAppPage: PageModel {
         sendButton.tap()
 
         XCTAssertTrue(shareButton.waitForExistence(timeout: timeout))
-        photosApp.terminate()
     }
 
 }
