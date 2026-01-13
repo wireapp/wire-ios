@@ -1867,6 +1867,10 @@
 "collections.search.field.placeholder" = "Поиск текстовых сообщений";
 "collections.search.no_items" = "Нет результатов";
 
+"collections.section.searchFiles.description" = "Поиск файлов";
+"collections.section.searchFiles.alert.title" = "Совместная работа с файлами (бета-версия Cells)";
+"collections.section.searchFiles.alert.message" = "Найти файлы, которыми поделились в корпоративных беседах";
+
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
