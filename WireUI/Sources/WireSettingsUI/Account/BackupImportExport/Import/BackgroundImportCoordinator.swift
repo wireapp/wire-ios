@@ -65,7 +65,7 @@ final class BackgroundImportCoordinator {
     ) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
 
         // Start background activity
-        startBackgroundActivity()
+        startBackgroundTask()
 
         // Create a stream that wraps the use case stream and manages background activity
         return AsyncThrowingStream { continuation in
@@ -79,16 +79,17 @@ final class BackgroundImportCoordinator {
                         continuation.yield(progress)
 
                         if case .done = progress {
-                            endBackgroundActivity()
+                            endBackgroundTask()
                             continuation.finish()
                             break
                         }
                     }
                 } catch is CancellationError {
+                    endBackgroundTask()
                     continuation.finish()
                 } catch {
                     logger.error("Import failed: \(error)")
-                    endBackgroundActivity()
+                    endBackgroundTask()
                     continuation.finish(throwing: error)
                 }
             }
@@ -106,16 +107,14 @@ final class BackgroundImportCoordinator {
         currentImportTask?.cancel()
         currentImportTask = nil
 
-        endBackgroundActivity()
+        endBackgroundTask()
     }
 
     // MARK: - Private Methods
 
-    private func startBackgroundActivity() {
+    private func startBackgroundTask() {
         // End any existing task first
-        if let task = currentBackgroundTask, task != .invalid {
-            UIApplication.shared.endBackgroundTask(task)
-        }
+        endBackgroundTask()
 
         currentBackgroundTask = UIApplication.shared.beginBackgroundTask(
             withName: "Backup Import"
@@ -126,7 +125,7 @@ final class BackgroundImportCoordinator {
         }
     }
 
-    private func endBackgroundActivity() {
+    private func endBackgroundTask() {
         guard let task = currentBackgroundTask, task != .invalid else { return }
 
         UIApplication.shared.endBackgroundTask(task)
@@ -134,8 +133,9 @@ final class BackgroundImportCoordinator {
     }
 
     private func handleBackgroundExpiration() {
+        logger.info("background activity expired")
         // Only end the iOS background task
         // The Swift Task will naturally suspend and resume with app lifecycle
-        endBackgroundActivity()
+        endBackgroundTask()
     }
 }

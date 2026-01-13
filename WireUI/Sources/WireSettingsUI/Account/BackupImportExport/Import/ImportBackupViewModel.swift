@@ -228,8 +228,14 @@ final class ImportBackupViewModel: ObservableObject {
     private func generateCopy(from url: URL) async throws -> URL {
         let localURL = try await materializeURL(url)
         let gotAccess = localURL.startAccessingSecurityScopedResource()
-        // let the file manager throw the error in case `gotAccess` is `false`.
 
+        defer {
+            if gotAccess {
+                localURL.stopAccessingSecurityScopedResource()
+            }
+        }
+        
+        // let the file manager throw the error in case `gotAccess` is `false`.
         let tmpDirectory = try fileManager.url(
             for: .itemReplacementDirectory,
             in: .userDomainMask,
@@ -239,9 +245,6 @@ final class ImportBackupViewModel: ObservableObject {
         let copy = tmpDirectory.appendingPathComponent(localURL.lastPathComponent)
 
         try fileManager.copyItem(at: localURL, to: copy)
-        if gotAccess {
-            localURL.stopAccessingSecurityScopedResource()
-        }
 
         return copy
     }
