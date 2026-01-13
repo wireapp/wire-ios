@@ -1867,6 +1867,10 @@
 "collections.search.field.placeholder" = "Textnachrichten suchen";
 "collections.search.no_items" = "Keine Ergebnisse";
 
+"collections.section.searchFiles.description" = "Dateien suchen";
+"collections.section.searchFiles.alert.title" = "File collaboration (Cells beta version)";
+"collections.section.searchFiles.alert.message" = "Find files shared in conversations with file collaboration";
+
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
