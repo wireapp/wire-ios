@@ -34,6 +34,7 @@ class UserHelper {
     let teamsAPI: TeamsAPI
     let selfUserAPI: SelfUserAPI
     let conversationsAPI: ConversationsAPI
+    let connectionsAPI: ConnectionsAPI
 
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
@@ -54,6 +55,7 @@ class UserHelper {
         self.teamsAPI = TeamsAPIBuilder(apiService: networkStack.apiService)
             .makeAPI(for: apiVersion)
         self.conversationsAPI = ConversationsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
+        self.connectionsAPI = ConnectionsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
     }
 
     func basicAuth(_ backend: BackendTarget = BackendContext.current) -> String {
@@ -99,10 +101,15 @@ class UserHelper {
             verificationCode: nil,
             label: nil
         )
+
         authenticationManager.accessToken = accessToken
 
         // Set username
         try await selfUserAPI.updateHandle(handle: user.username)
+
+        // Store id in UserInfo
+        let selfUser = try await selfUserAPI.getSelfUser()
+        user.id = selfUser.id.uuidString
 
         createdUsers.append(user)
         return user
@@ -315,6 +322,31 @@ class UserHelper {
             teamID: teamID,
         )
         return [teamMember1.name, teamMember2.name]
+    }
+
+    func sendConnectionRequestToUser(
+        domain: String,
+        userId: String
+    ) async throws {
+
+        _ = try await connectionsAPI.sendConnectionRequest(domain: domain, userId: userId)
+    }
+
+    func acceptConnectionRequestFromUser(
+        domain: String,
+        user1: UserInfo,
+        userId: String
+    ) async throws {
+
+        let (_, accessToken) = try await authenticationAPI.login(
+            email: user1.email,
+            password: user1.password,
+            verificationCode: nil,
+            label: nil
+        )
+        authenticationManager.accessToken = accessToken
+
+        try await connectionsAPI.acceptConnectionRequest(domain: domain, userId: userId)
     }
 }
 
