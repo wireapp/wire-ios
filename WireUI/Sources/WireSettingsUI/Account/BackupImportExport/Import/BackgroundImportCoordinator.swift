@@ -67,6 +67,8 @@ final class BackgroundImportCoordinator {
         // Start background activity
         startBackgroundTask()
 
+        logger.info("starting import with background continuation support", attributes: .safePublic)
+        
         // Create a stream that wraps the use case stream and manages background activity
         return AsyncThrowingStream { continuation in
             currentImportTask = Task {
@@ -79,6 +81,7 @@ final class BackgroundImportCoordinator {
                         continuation.yield(progress)
 
                         if case .done = progress {
+                            logger.info("import completed successfully", attributes: .safePublic)
                             endBackgroundTask()
                             continuation.finish()
                             break
@@ -88,7 +91,7 @@ final class BackgroundImportCoordinator {
                     endBackgroundTask()
                     continuation.finish()
                 } catch {
-                    logger.error("Import failed: \(error)")
+                    logger.error("import failed: \(error)")
                     endBackgroundTask()
                     continuation.finish(throwing: error)
                 }
@@ -133,7 +136,7 @@ final class BackgroundImportCoordinator {
     }
 
     private func handleBackgroundExpiration() {
-        logger.info("background activity expired")
+        logger.info("background import task expired", attributes: .safePublic)
         // Only end the iOS background task
         // The Swift Task will naturally suspend and resume with app lifecycle
         endBackgroundTask()

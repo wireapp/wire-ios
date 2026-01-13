@@ -79,7 +79,7 @@ final class ImportBackupViewModel: ObservableObject {
 
     func pickedBackupFile(result: Result<URL, any Error>) {
         func onFailure(_ error: any Error) {
-            logger.error("failed to pick backup file to restore: " + String(reflecting: error))
+            logger.error("failed to pick backup file to restore: \(String(reflecting: error))")
             state = .restoreFailed
         }
 
@@ -285,7 +285,7 @@ final class ImportBackupViewModel: ObservableObject {
             try fileManager.removeItem(at: copy)
             currentBackupCopy = nil
         } catch {
-            logger.error("failed to remove temporary file: " + String(reflecting: error))
+            logger.error("failed to remove temporary file: \(String(reflecting: error))")
         }
     }
 
