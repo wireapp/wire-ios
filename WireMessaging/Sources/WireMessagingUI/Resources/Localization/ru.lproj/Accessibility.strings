@@ -45,3 +45,7 @@
 // MARK: - File Tags View
 "conversation.wireCells.tags.removeTag" = "Удалить тег {0}";
 "conversation.wireCells.tags.addTag" = "Добавить тег {0}";
+
+// MARK: - Share Link View
+"conversation.wireCells.shareLink.hidePassword" = "Скрыть пароль";
+"conversation.wireCells.shareLink.showPassword" = "Показать пароль";

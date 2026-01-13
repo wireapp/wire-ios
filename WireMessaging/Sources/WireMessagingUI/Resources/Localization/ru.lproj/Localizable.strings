@@ -29,6 +29,7 @@
 "general.error.noInternet.message." = "Похоже, возникла проблема с вашей сетью. Пожалуйста, попробуйте позже.";
 "general.create" = "Создать";
 "general.cancel" = "Отмена";
+"general.done" = "Готово";
 
 // MARK: - Channel Access level
 "channel_access_level.public" = "Публичный";
@@ -115,6 +116,7 @@
 "conversation.wireCells.files.item.subtitle" = "%@ от %@";
 "conversation.wireCells.files.loadMore.title" = "Загрузить еще";
 "conversation.wireCells.files.item.menu.open" = "Открыть";
+"conversation.wireCells.files.item.menu.shareLink" = "Поделится";
 "conversation.wireCells.files.item.menu.download" = "Скачать";
 "conversation.wireCells.files.item.menu.editFile" = "Изменить файл";
 "conversation.wireCells.files.item.menu.rename" = "Переименовать";
@@ -189,6 +191,51 @@
 "conversation.wireCells.tags.error.retryButton" = "Повторить";
 "conversation.wireCells.files.moveToFolder.move" = "Переместить сюда";
 "conversation.wireCells.files.moveToFolder.noSubfolders" = "В этой папке нет подпапок.";
+
+// MARK: - Share Link View
+"conversation.wireCells.shareLink.title" = "Поделиться по ссылке";
+"conversation.wireCells.shareLink.description" = "Загрузите файл и поделитесь им с помощью общедоступной ссылки. Все получатели смогут просмотреть и скачать его.";
+"conversation.wireCells.shareLink.createLinkToogle" = "Создать публичную ссылку";
+"conversation.wireCells.shareLink.linkSection.title" = "НАСТРОЙКИ ССЫЛКИ (НЕОБЯЗАТЕЛЬНО)";
+"conversation.wireCells.shareLink.linkSection.passwordTitle" = "Пароль";
+"conversation.wireCells.shareLink.linkSection.expirationTitle" = "Срок действия";
+"conversation.wireCells.shareLink.linkSection.passwordDescription" = "Установить пароль для ограничения доступа.";
+"conversation.wireCells.shareLink.linkSection.expirationDescription" = "Ссылка истечет в выбранный день.";
+"conversation.wireCells.shareLink.shareLinkButton" = "Поделиться ссылкой";
+"conversation.wireCells.shareLink.preparingLinkButton" = "Подготовка ссылки…";
+"conversation.wireCells.shareLink.off" = "ВЫКЛ";
+"conversation.wireCells.shareLink.on" = "ВКЛ";
+"conversation.wireCells.shareLink.expired" = "ИСТЕКЛА";
+"conversation.wireCells.shareLink.linkExpiredOn" = "Ссылка истекла %@";
+
+// MARK: - Share Link Password View
+"conversation.wireCells.shareLink.password.title" = "Пароль";
+"conversation.wireCells.shareLink.password.description" = "Для получения доступа к контенту по ссылке, необходимо сначала ввести этот пароль.";
+"conversation.wireCells.shareLink.password.setPasswordToggle" = "Установить пароль";
+"conversation.wireCells.shareLink.password.generatePassword" = "Сгенерировать пароль";
+"conversation.wireCells.shareLink.password.textfieldTitle" = "Пароль";
+"conversation.wireCells.shareLink.password.textfieldPrompt" = "Введите пароль";
+"conversation.wireCells.shareLink.password.sharePassword" = "Поделиться паролем";
+"conversation.wireCells.shareLink.password.resetPassword" = "Сбросить пароль";
+"conversation.wireCells.shareLink.password.removeConfirmation.title" = "Удалить пароль?";
+"conversation.wireCells.shareLink.password.removeConfirmation.message" = "Любой, у кого есть ссылка, может открыть файл и просмотреть его содержимое.";
+"conversation.wireCells.shareLink.password.removeConfirmation.button" = "Удалить";
+"conversation.wireCells.shareLink.password.noAccessToExisting.title" = "Нет доступа к существующему паролю";
+"conversation.wireCells.shareLink.password.noAccessToExisting.message" = "После переустановки Wire вы не сможете скопировать установленный пароль. Тем не менее, он по-прежнему действителен.\n\nЕсли вы не сохранили пароль, измените его и повторно поделитесь обновленной ссылкой.";
+"conversation.wireCells.shareLink.password.noAccessToExisting.button" = "Изменить пароль";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.title" = "Не удается создать защищенную паролем ссылку";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.message" = "Проверьте подключение к сети и повторите попытку.";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.action" = "Повторить";
+
+// MARK: - Share Link Expiration View
+"conversation.wireCells.shareLink.expiration.title" = "Срок действия";
+"conversation.wireCells.shareLink.expiration.addExpirationToggle" = "Добавить срок действия";
+"conversation.wireCells.shareLink.expiration.description" = "Ссылка автоматически станет недействительной после установленной даты и времени. Пользователи больше не смогут получить доступ к контенту.";
+"conversation.wireCells.shareLink.expiration.datePickerTitle" = "Истекает";
+"conversation.wireCells.shareLink.expiration.dateNotSupported" = "Дата в прошлом не поддерживается";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.title" = "Невозможно добавить срок действия";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.message" = "Проверьте подключение к сети и повторите попытку.";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.action" = "Повторить";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "Файл недоступен";
