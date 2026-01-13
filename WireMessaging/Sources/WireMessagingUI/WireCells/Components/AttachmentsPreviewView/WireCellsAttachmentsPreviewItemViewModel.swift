@@ -157,7 +157,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         pollingTask?.cancel()
         pollingTask = Task { [weak self] in
             var attemptToGetPreviews = 0
-            
+
             while !Task.isCancelled {
                 await self?.refresh()
                 attemptToGetPreviews += 1
