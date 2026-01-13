@@ -164,6 +164,7 @@ final class TeamManageTests: WireUITestCase {
     }
 
     /// [WPB-3772] Bug: Opening an archived conversation unarchives it
+    /// testiny: https://app.testiny.io/IOS/testcases/tc/8563
     @MainActor
     func test_ArchivedConversationUnarchivesWhenOpened() async throws {
         let groupName = UserGenerator.generateRandomGroupName()
