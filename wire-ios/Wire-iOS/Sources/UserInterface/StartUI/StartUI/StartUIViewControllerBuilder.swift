@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,6 +33,8 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     let conversationCreationRepository: any ConversationCreationRepositoryProtocol
 
+    let featureConfigRepository: FeatureConfigRepositoryProtocol
+
     weak var delegate: StartUIDelegate?
 
     init(
@@ -49,14 +51,16 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
         self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
         self.channelConversationFormFactory = channelConversationFormFactory
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.featureConfigRepository = featureConfigRepository
         self.conversationCreationRepository = conversationCreationRepository
     }
 
     @MainActor
     func build() async -> UIViewController {
-        let featureConfigRepository = userSession.clientSessionComponent?.featureConfigRepository
-        let isAppsFeatureEnabled = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
+        let isAppsFeatureEnabled = await featureConfigRepository.isFeatureEnabled(.apps)
+        let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
         let rootViewController = StartUIViewController(
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
             isAppsFeatureEnabled: isAppsFeatureEnabled,
             userSession: userSession,
             mainCoordinator: mainCoordinator,

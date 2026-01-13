@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,24 +20,55 @@ import WireCallingAssembly
 import WireCommonComponents
 import WireData
 @preconcurrency import WireDataModel
+import WireLogging
 import WireMessagingAssembly
 import WireMessagingDomain
 import WireNetwork
 @preconcurrency import WireSyncEngine
 import WireTransport
 
-struct ZClientControllerBuilder {
+final class ZClientControllerBuilder {
 
     private(set) var account: Account
     private(set) var userSession: UserSession
     private(set) var trackingManager: TrackingManager?
     let legacyEnvironment: WireTransport.BackendEnvironment
     let newEnvironment: WireNetwork.BackendEnvironment2?
+    private lazy var wireCellsBackendURL: URL = {
+        let serverURL = newEnvironment?.config.endpoints.restAPIURL ?? legacyEnvironment.backendURL
+        return switch serverURL.host {
+        case "prod-nginz-https.wire.com": // Production
+            URL(string: "https://cells-beta.wire.com")!
+        case "staging-nginz-https.zinfra.io": // Staging
+            URL(string: "https://cells.staging.zinfra.io")!
+        case "nginz-https.fulu.wire.link": // Fulu
+            URL(string: "https://cells.fulu.wire.link")!
+        case "nginz-https.imai.wire.link": // Imai
+            URL(string: "https://cells.imai.wire.link")!
+        default:
+            serverURL
+        }
+    }()
+
+    init(
+        account: Account,
+        userSession: UserSession,
+        trackingManager: TrackingManager? = nil,
+        legacyEnvironment: WireTransport.BackendEnvironment,
+        newEnvironment: WireNetwork.BackendEnvironment2?
+    ) {
+        self.account = account
+        self.userSession = userSession
+        self.trackingManager = trackingManager
+        self.legacyEnvironment = legacyEnvironment
+        self.newEnvironment = newEnvironment
+    }
 
     @MainActor
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
         let viewController = ZClientViewController(
             account: account,
+            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
             selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
             trackingManager: trackingManager,
@@ -55,14 +86,24 @@ struct ZClientControllerBuilder {
 
     @MainActor
     private func buildWireMessagingFactory() -> any WireMessagingFactoryProtocol {
-        WireMessagingFactory(
-            serverURL: newEnvironment?.config.endpoints.restAPIURL ?? legacyEnvironment.backendURL,
+        let cellsURLResolver: @Sendable () throws -> URL = { [weak self] in
+            enum Failure: Error {
+                case missingCellsBackendURL
+            }
+
+            guard let self else {
+                throw Failure.missingCellsBackendURL
+            }
+
+            return wireCellsBackendURL
+        }
+
+        return WireMessagingFactory(
+            cellsURLResolver: cellsURLResolver,
             // TODO: [WPB-18798] Temporary fix, when multibackend is on we use new backend environment, when off we use the legacy one
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
-            contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider),
-            isFoldersEnabled: DeveloperFlag.wireCellsFolders.isOn,
-            isCollaboraEnabled: DeveloperFlag.wireCellsCollabora.isOn
+            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider)
         )
     }
 
@@ -99,17 +140,3 @@ private struct DefaultAccessTokenProvider: AccessTokenProvider {
 }
 
 extension FileAssetCache: WireMessagingDomain.FileCache, @unchecked @retroactive Sendable {}
-
-private struct DefaultContextProvider: ManagedObjectContextProvider {
-
-    let contextProvider: any ContextProvider
-
-    var viewContext: NSManagedObjectContext {
-        contextProvider.viewContext
-    }
-
-    func newBackgroundContext() -> NSManagedObjectContext {
-        contextProvider.newBackgroundContext()
-    }
-
-}

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -97,10 +97,10 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
     package enum Configuration: Equatable, Sendable {
 
         /// A `Configuration` suitable for the conversation file view.
-        case conversationFileView(root: WireCellsNodeLocator, isFoldersEnabled: Bool)
+        case conversationFileView(root: WireCellsNodeLocator)
 
         /// A `Configuration` suitable for the recycle bin, where deleted files are stored.
-        case recycleBinView(root: WireCellsNodeLocator, isFoldersEnabled: Bool)
+        case recycleBinView(root: WireCellsNodeLocator)
 
         /// A `Configuration` suitable for the files browser view.
         case filesBrowserView

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -110,15 +110,20 @@
 "conversation.draft.attachmentMenu.remove" = "Datei löschen";
 
 // MARK: - Conversation Files View
-"conversation.wireCells.files.navigationTitle" = "Dokumente";
+"conversation.wireCells.files.navigationTitle" = "Dateien";
 "conversation.wireCells.allFiles.navigationTitle" = "Alle Dateien";
 "conversation.wireCells.files.item.subtitle" = "%@ von %@";
 "conversation.wireCells.files.loadMore.title" = "Weitere Objekte laden";
 "conversation.wireCells.files.item.menu.open" = "Öffnen";
 "conversation.wireCells.files.item.menu.download" = "Herunterladen";
+"conversation.wireCells.files.item.menu.editFile" = "Datei bearbeiten";
 "conversation.wireCells.files.item.menu.rename" = "Umbenennen";
 "conversation.wireCells.files.item.menu.moveToFolder" = "In Ordner verschieben";
 "conversation.wireCells.files.item.menu.addOrRemoveTags" = "Tags hinzufügen oder entfernen";
+"conversation.wireCells.files.item.menu.delete" = "Endgültig löschen";
+"conversation.wireCells.files.item.menu.versionHistory" = "Versionsverlauf";
+"conversation.wireCells.files.item.deleteConfirmation.title" = "This will permanently delete the file %@ for all participants. Everyone will lose access and there is no way to recover the file.";
+"conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Endgültig löschen";
 "conversation.wireCells.files.item.menu.delete" = "Löschen";
 "conversation.wireCells.files.item.deleteFileConfirmation.title" = "Die Datei \"%@\" wird in den Papierkorb dieser Unterhaltung verschoben.";
 "conversation.wireCells.files.item.deleteFolderConfirmation.title" = "Der Ordner \"%@\" wird in den Papierkorb dieser Unterhaltung verschoben.";
@@ -145,7 +150,7 @@
 "conversation.wireCells.files.renameFolder.navigationTitle" = "Ordner umbenennen";
 "conversation.wireCells.files.renameFile.filenameTooLongError" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
 "conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
-"conversation.wireCells.files.renameFile.wrongCharacterError" = "Use a name without \"/\" or \".\"";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Use a name without \"/\" and not starting with \".\"";
 "conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "Eine Datei mit diesem Namen existiert bereits";
 "conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "Ein Ordner mit dem Namen existiert bereits";
 "conversation.wireCells.files.renameFile.placeholder" = "Dateinamen eingeben";
@@ -190,3 +195,16 @@
 "conversation.message.attachment.previewNotAvailable" = "Vorschau kann nicht angezeigt werden";
 "conversation.message.attachment.unableToDownload" = "Datei kann nicht heruntergeladen werden";
 "conversation.message.attachment.loadingContent" = "Inhalt wird geladen";
+
+// MARK: - Files versioning
+"conversation.wireCells.filesVersioning.navigationTitle" = "Versionsverlauf";
+"conversation.wireCells.filesVersioning.currentFile" = "Dieses Gerät";
+"conversation.wireCells.filesVersioning.restoreAlertTitle" = "Version wiederherstellen";
+"conversation.wireCells.filesVersioning.restoreAlertMessage" = "Dadurch wird die wiederhergestellte Version kopiert und als aktuelle Version festgelegt. Alle vorherigen Versionen bleiben verfügbar.";
+"conversation.wireCells.filesVersioning.restoreAlertAction" = "Wiederherstellen";
+"conversation.wireCells.filesVersioning.restoreFailureAlertTitle" = "Restoring version failed";
+"conversation.wireCells.filesVersioning.restoreFailureAlertMessage" = "Something went wrong while restoring a version. Please retry.";
+"conversation.wireCells.filesVersioning.downloadVersion" = "Version herunterladen";
+"conversation.wireCells.filesVersioning.retry" = "Wiederholen";
+"conversation.wireCells.filesVersioning.restoringVersion" = "Version wird wiederhergestellt...";
+"conversation.wireCells.filesVersioning.downloadingVersion" = "Downloading file version";
