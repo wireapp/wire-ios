@@ -1867,6 +1867,10 @@
 "collections.search.field.placeholder" = "بحث في الرسائل النصية";
 "collections.search.no_items" = "لا توجد نتائج";
 
+"collections.section.searchFiles.description" = "Search files";
+"collections.section.searchFiles.alert.title" = "File collaboration (Cells beta version)";
+"collections.section.searchFiles.alert.message" = "Find files shared in conversations with file collaboration";
+
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
