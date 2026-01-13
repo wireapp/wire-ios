@@ -65,19 +65,27 @@ public extension ZMUserSession {
     @objc
     func applicationDidEnterBackground(_ note: Notification?) {
         isInBackground = true
-        Task { @MainActor [weak self] in
-            guard let self else { return }
+//        Task { @MainActor [weak self] in
+//            guard let self else { return }
 //            let hasActiveCalls = callCenter?.activeCalls.isEmpty == false
+//
+//            if !hasActiveCalls {
+//                await syncAgent?.suspend()
+//            }
+//            let isSocketClosed = currentSyncState == .suspended
+//            print("😈 isSocketClosed: \(isSocketClosed)")
+//            updateAVSBackgroundState()
+//        }
+
+        Task {
+//            let hasActiveCalls = self?.callCenter?.activeCalls.isEmpty == false
+//            print("🙈 hasActiveCalls: \(hasActiveCalls)")
 
 //            if !hasActiveCalls {
                 await syncAgent?.suspend()
 //            }
-            let isSocketClosed = currentSyncState == .suspended
-            let shouldBeInBackground = isInBackground && isSocketClosed
-            print("😈 isSocketClosed: \(isSocketClosed), isInBackground: \(isInBackground)")
-            //updateAVSBackgroundState()
+            updateAVSBackgroundState()
         }
-
 
         stopEphemeralTimers()
         lockDatabase()

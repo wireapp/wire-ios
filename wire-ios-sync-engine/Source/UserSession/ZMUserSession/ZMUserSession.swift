@@ -1135,7 +1135,7 @@ extension ZMUserSession: ZMNetworkStateDelegate {
             self?.isNetworkOnline = false
             self?.updateNetworkState()
             self?.saveOrRollbackChanges()
-            self?.updateAVSBackgroundState()
+//            self?.updateAVSBackgroundState()
         }
     }
 
@@ -1156,15 +1156,15 @@ extension ZMUserSession: ZMNetworkStateDelegate {
         syncStateCancellable = clientSessionComponent.syncStateSubject
             .sink { [weak self] syncState in
                 self?.currentSyncState = syncState
-                self?.updateAVSBackgroundState()
+//                let isSocketClosed = self?.currentSyncState == .suspended
+//                self?.updateAVSBackgroundState()
             }
     }
 
     func updateAVSBackgroundState() {
-        let isSocketClosed = currentSyncState == .suspended
-        let shouldBeInBackground = isInBackground && isSocketClosed
-
         managedObjectContext.perform { [weak self] in
+            let isSocketClosed = self?.currentSyncState == .suspended
+            let shouldBeInBackground = self!.isInBackground && isSocketClosed
             print("🙈 isSocketClosed: \(isSocketClosed), isInBackground: \(self?.isInBackground)")
             self?.callCenter?.avsWrapper.setBackground(isBackground: shouldBeInBackground)
         }
