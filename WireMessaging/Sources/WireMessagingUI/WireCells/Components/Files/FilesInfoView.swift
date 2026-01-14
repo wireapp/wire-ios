@@ -34,6 +34,17 @@ struct FilesInfoView: View {
             case allConversations
             case oneConversation
             case recycleBin
+
+            var learnMoreURL: String {
+                switch self {
+                case .oneConversation:
+                    "https://support.wire.com/hc/en-us/articles/32207745256221-Shared-Drive-in-conversations"
+                case .allConversations:
+                    "https://support.wire.com/hc/en-us/articles/32207800433309-Access-all-files-shared-across-conversations-Wire-Drive"
+                case .recycleBin:
+                    "https://support.wire.com/hc/en-us/articles/32209394611485-Access-recycle-bin"
+                }
+            }
         }
 
         func textForScope(_ scope: Scope) -> String {
@@ -58,7 +69,8 @@ struct FilesInfoView: View {
                 (Strings.Files.PendingCells.title, Strings.Files.PendingCells.message)
             case let .noFilesFound(scope):
                 (
-                    scope == .oneConversation ? Strings.Files.NoData.title : Strings.AllFiles.NoData.title,
+                    scope == .oneConversation || scope == .recycleBin ?
+                        Strings.Files.NoData.title : Strings.AllFiles.NoData.title,
                     textForScope(scope)
                 )
             case .error:
@@ -93,10 +105,6 @@ struct FilesInfoView: View {
                 ("error-title", "error-message")
             }
         }
-
-        var learnMoreURL: String {
-            "https://support.wire.com/hc/en-us/articles/32207745256221-Shared-Drive-in-conversations"
-        }
     }
 
     let info: Info
@@ -122,8 +130,8 @@ struct FilesInfoView: View {
                 .accessibilityIdentifier(info.accessibilityIdentifiers.message)
 
             switch info {
-            case .noFilesFound:
-                learnMoreLink
+            case let .noFilesFound(scope):
+                learnMoreLink(scope: scope)
             case .error:
                 reloadButton
             default:
@@ -135,14 +143,19 @@ struct FilesInfoView: View {
         .padding()
     }
 
-    private var learnMoreLink: some View {
-        Link(
-            info == .noFilesFound(scope: .oneConversation) ? Strings.Files.NoData.learnMore : Strings.AllFiles.NoData
-                .learnMore,
-            destination: URL(string: info.learnMoreURL)!
-        )
-        .foregroundColor(SemanticColors.Label.baseSecondaryText.color)
-        .underline()
+    private func learnMoreLink(scope: Info.Scope) -> some View {
+        let linkTitle = switch scope {
+        case .oneConversation:
+            Strings.Files.NoData.learnMore
+        case .allConversations:
+            Strings.AllFiles.NoData.learnMore
+        case .recycleBin:
+            Strings.RecycleBin.NoData.learnMore
+        }
+
+        return Link(linkTitle, destination: URL(string: scope.learnMoreURL)!)
+            .foregroundColor(SemanticColors.Label.baseSecondaryText.color)
+            .underline()
     }
 
     private var reloadButton: some View {
@@ -175,6 +188,10 @@ struct FilesInfoView: View {
 
 #Preview("no files found - all conversations") {
     FilesInfoView(info: .noFilesFound(scope: .allConversations))
+}
+
+#Preview("no files found - recycle bin") {
+    FilesInfoView(info: .noFilesFound(scope: .recycleBin))
 }
 
 struct LoadMoreView: View {

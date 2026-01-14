@@ -164,6 +164,7 @@
 "conversation.wireCells.files.renameFolder.placeholder" = "Enter folder name";
 "conversation.wireCells.files.openRecycleBin" = "Open recycle bin";
 "conversation.wireCells.recycleBin.navigationTitle" = "Recycle Bin";
+"conversation.wireCells.recycleBin.noData.learnMore" = "Learn more about Recycle Bin";
 "conversation.wireCells.recycleBin.noData.message" = "You'll find all deleted files and folders here.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Delete Permanently";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Delete Permanently";
