@@ -37,10 +37,10 @@ struct BackgroundImportCoordinatorTests {
     let testURL: URL
 
     init() async throws {
-        testURL = URL(fileURLWithPath: "/tmp/test-backup.zip")
-        mockUseCase = .init()
-        mockFactory = ImportBackupUseCaseFactoryMock(useCase: mockUseCase)
-        sut = BackgroundImportCoordinator(
+        self.testURL = URL(fileURLWithPath: "/tmp/test-backup.zip")
+        self.mockUseCase = .init()
+        self.mockFactory = ImportBackupUseCaseFactoryMock(useCase: mockUseCase)
+        self.sut = BackgroundImportCoordinator(
             importUseCaseFactory: mockFactory,
             logger: WireLogger(tag: "test")
         )
@@ -76,7 +76,7 @@ struct BackgroundImportCoordinatorTests {
         let receivedProgress = try await task.value
         #expect(receivedProgress.count == 2)
 
-        guard case .progress(let current, let total) = receivedProgress[0] else {
+        guard case let .progress(current, total) = receivedProgress[0] else {
             Issue.record("Expected progress but got: \(receivedProgress[0])")
             return
         }
@@ -131,7 +131,7 @@ struct BackgroundImportCoordinatorTests {
         let progressStream = sut.startImport(for: testURL, password: "password123")
 
         // Consume the stream to completion
-        for try await _ in progressStream { }
+        for try await _ in progressStream {}
 
         // Then
         #expect(capturedPassword == "password123")
@@ -184,7 +184,7 @@ struct BackgroundImportCoordinatorTests {
         let result = await task.result
         // CancellationError should finish the stream gracefully without throwing
         switch result {
-        case .success(let count):
+        case let .success(count):
             #expect(count == 0, "Should not have received any progress before cancellation")
         case .failure:
             Issue.record("CancellationError should finish stream gracefully, not propagate as failure")
@@ -225,5 +225,3 @@ struct BackgroundImportCoordinatorTests {
     }
 
 }
-
-

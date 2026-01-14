@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSettingsUI
 import WireFoundation
+import WireSettingsUI
 
 final class ImportBackupUseCaseFactoryMock: ImportBackupUseCaseFactoryProtocol {
     var useCase: any ImportBackupUseCaseProtocol

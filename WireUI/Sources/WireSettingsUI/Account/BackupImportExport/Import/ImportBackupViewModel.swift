@@ -17,10 +17,10 @@
 //
 
 import Foundation
+import UIKit
 import WireDomainPackage
 import WireFoundation
 import WireLogging
-import UIKit
 
 @MainActor
 final class ImportBackupViewModel: ObservableObject {
@@ -115,7 +115,7 @@ final class ImportBackupViewModel: ObservableObject {
             }
         }
     }
-    
+
     func confirmOverwrite() {
         guard case let .requestConfirmation(url) = state else {
             logger.error("confirmOverwrite called while not in state `.requestConfirmation`")
@@ -169,7 +169,7 @@ final class ImportBackupViewModel: ObservableObject {
         do {
             for try await progress in progressStream {
                 switch progress {
-                case .progress(let current, let total):
+                case let .progress(current, total):
                     state = .importingBackup(current: current, total: total)
 
                 case .done:
@@ -244,7 +244,7 @@ final class ImportBackupViewModel: ObservableObject {
                 localURL.stopAccessingSecurityScopedResource()
             }
         }
-        
+
         // let the file manager throw the error in case `gotAccess` is `false`.
         let tmpDirectory = try fileManager.url(
             for: .itemReplacementDirectory,

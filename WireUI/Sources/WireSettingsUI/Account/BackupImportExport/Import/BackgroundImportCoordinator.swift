@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireLogging
-import WireFoundation
 import UIKit
+import WireFoundation
+import WireLogging
 
 /// Coordinates background import operations.
 ///
@@ -68,7 +68,7 @@ final class BackgroundImportCoordinator: BackgroundImportCoordinatorProtocol {
         startBackgroundTask()
 
         logger.info("starting import with background continuation support", attributes: .safePublic)
-        
+
         // Create a stream that wraps the use case stream and manages background activity
         return AsyncThrowingStream { continuation in
             currentImportTask = Task {

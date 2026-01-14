@@ -56,15 +56,15 @@ final class ImportBackupViewModelTests: XCTestCase {
         mockImportBackupUseCase.isImportDestructive = true
 
         mockFactory = .init(useCase: mockImportBackupUseCase)
-        
+
         mockCoordinator = .init()
         mockCoordinator.startImportForPassword_MockMethod = { _, _ in
             let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
             continuation.yield(.done)
             return stream
         }
-        mockCoordinator.cancelImport_MockMethod = { }
-        
+        mockCoordinator.cancelImport_MockMethod = {}
+
         mockLogger = WireLogger(tag: "mock")
 
         sut = .init(
@@ -102,8 +102,8 @@ final class ImportBackupViewModelTests: XCTestCase {
     func testPasswordIsRequested() {
         // Given
         let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
-        mockCoordinator.startImportForPassword_MockMethod = { url, password in
-            return stream
+        mockCoordinator.startImportForPassword_MockMethod = { _, _ in
+            stream
         }
         let sut = sut as ImportBackupViewModel
 
@@ -122,7 +122,7 @@ final class ImportBackupViewModelTests: XCTestCase {
         // Given
         var callCount = 0
         var capturedContinuation: AsyncThrowingStream<ImportBackupProgress, any Error>.Continuation?
-        mockCoordinator.startImportForPassword_MockMethod = { url, password in
+        mockCoordinator.startImportForPassword_MockMethod = { _, _ in
             callCount += 1
             let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
             capturedContinuation = continuation
@@ -160,10 +160,10 @@ final class ImportBackupViewModelTests: XCTestCase {
         // Given
         let sut = sut as ImportBackupViewModel
         mockImportBackupUseCase.isImportDestructive = false
-        
+
         // Set up coordinator mock for import
         var capturedContinuation: AsyncThrowingStream<ImportBackupProgress, any Error>.Continuation?
-        mockCoordinator.startImportForPassword_MockMethod = { url, password in
+        mockCoordinator.startImportForPassword_MockMethod = { _, _ in
             let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
             capturedContinuation = continuation
             return stream
@@ -186,9 +186,7 @@ final class ImportBackupViewModelTests: XCTestCase {
         capturedContinuation?.finish()
 
         // Then - Temporary copy should be cleaned up
-        wait(forConditionToBeTrue: {
-            sut.currentBackupCopy == nil
-        }(), timeout: 3)
+        wait(forConditionToBeTrue: sut.currentBackupCopy == nil, timeout: 3)
         XCTAssertFalse(fileManager.fileExists(atPath: copyURL!.path), "Temp file should be deleted")
     }
 
@@ -196,10 +194,10 @@ final class ImportBackupViewModelTests: XCTestCase {
         // Given
         let sut = sut as ImportBackupViewModel
         mockImportBackupUseCase.isImportDestructive = false
-        
+
         // Set up coordinator mock for import
         var callCount = 0
-        mockCoordinator.startImportForPassword_MockMethod = { url, password in
+        mockCoordinator.startImportForPassword_MockMethod = { _, _ in
             callCount += 1
             let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
 
@@ -227,7 +225,11 @@ final class ImportBackupViewModelTests: XCTestCase {
         wait(forConditionToBeTrue: sut.isAlertPresented, timeout: 3)
 
         // Then - Same URL should be used for both attempts
-        XCTAssertEqual(mockCoordinator.startImportForPassword_Invocations.count, 2, "Coordinator should be called twice")
+        XCTAssertEqual(
+            mockCoordinator.startImportForPassword_Invocations.count,
+            2,
+            "Coordinator should be called twice"
+        )
         if mockCoordinator.startImportForPassword_Invocations.count >= 2 {
             let firstURL = mockCoordinator.startImportForPassword_Invocations[0].url
             let secondURL = mockCoordinator.startImportForPassword_Invocations[1].url
@@ -237,14 +239,17 @@ final class ImportBackupViewModelTests: XCTestCase {
 
         // Verify cleanup after successful import
         XCTAssertNil(sut.currentBackupCopy, "Copy reference should be nil after successful import")
-        XCTAssertFalse(fileManager.fileExists(atPath: copyURL.path), "Temp file should be deleted after successful import")
+        XCTAssertFalse(
+            fileManager.fileExists(atPath: copyURL.path),
+            "Temp file should be deleted after successful import"
+        )
     }
 
     func testReset_cleansUpTemporaryCopy() {
         // Given
         let sut = sut as ImportBackupViewModel
         mockImportBackupUseCase.isImportDestructive = false
-        mockCoordinator.startImportForPassword_MockMethod = { url, password in
+        mockCoordinator.startImportForPassword_MockMethod = { _, _ in
             let (stream, _) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
             return stream
         }
@@ -276,7 +281,7 @@ final class ImportBackupViewModelTests: XCTestCase {
         let sut = sut as ImportBackupViewModel
         mockImportBackupUseCase.isImportDestructive = false
         var capturedContinuation: AsyncThrowingStream<ImportBackupProgress, any Error>.Continuation?
-        mockCoordinator.startImportForPassword_MockMethod = { url, password in
+        mockCoordinator.startImportForPassword_MockMethod = { _, _ in
             let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
             capturedContinuation = continuation
             return stream
@@ -311,7 +316,7 @@ final class ImportBackupViewModelTests: XCTestCase {
         // Given
         let sut = sut as ImportBackupViewModel
         mockImportBackupUseCase.isImportDestructive = false
-        mockCoordinator.startImportForPassword_MockMethod = { url, password in
+        mockCoordinator.startImportForPassword_MockMethod = { _, _ in
             let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
             continuation.finish(throwing: ImportBackupError.incompatibleFileFormat)
             return stream
@@ -330,7 +335,7 @@ final class ImportBackupViewModelTests: XCTestCase {
         // Given
         let sut = sut as ImportBackupViewModel
         mockImportBackupUseCase.isImportDestructive = false
-        mockCoordinator.startImportForPassword_MockMethod = { url, password in
+        mockCoordinator.startImportForPassword_MockMethod = { _, _ in
             let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
             continuation.finish(throwing: ImportBackupError.selfUserIDMismatch)
             return stream
@@ -349,7 +354,7 @@ final class ImportBackupViewModelTests: XCTestCase {
         // Given
         let sut = sut as ImportBackupViewModel
         mockImportBackupUseCase.isImportDestructive = false
-        mockCoordinator.startImportForPassword_MockMethod = { url, password in
+        mockCoordinator.startImportForPassword_MockMethod = { _, _ in
             let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
             continuation.finish(throwing: ImportLegacyBackupError.passwordRequired)
             return stream
@@ -367,7 +372,7 @@ final class ImportBackupViewModelTests: XCTestCase {
         // Given
         let sut = sut as ImportBackupViewModel
         mockImportBackupUseCase.isImportDestructive = false
-        mockCoordinator.startImportForPassword_MockMethod = { url, password in
+        mockCoordinator.startImportForPassword_MockMethod = { _, _ in
             let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
             continuation.finish(throwing: ImportLegacyBackupError.decryptionError)
             return stream
@@ -385,7 +390,7 @@ final class ImportBackupViewModelTests: XCTestCase {
         // Given
         let sut = sut as ImportBackupViewModel
         mockImportBackupUseCase.isImportDestructive = false
-        mockCoordinator.startImportForPassword_MockMethod = { url, password in
+        mockCoordinator.startImportForPassword_MockMethod = { _, _ in
             let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
             continuation.finish(throwing: ImportBackupError.incorrectPassword)
             return stream
@@ -403,7 +408,7 @@ final class ImportBackupViewModelTests: XCTestCase {
         // Given
         let sut = sut as ImportBackupViewModel
         mockImportBackupUseCase.isImportDestructive = false
-        mockCoordinator.startImportForPassword_MockMethod = { url, password in
+        mockCoordinator.startImportForPassword_MockMethod = { _, _ in
             let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
             continuation.finish(throwing: NSError(domain: "test", code: 999))
             return stream
@@ -425,7 +430,7 @@ final class ImportBackupViewModelTests: XCTestCase {
         mockImportBackupUseCase.isImportDestructive = false
         var capturedPasswords: [String?] = []
 
-        mockCoordinator.startImportForPassword_MockMethod = { url, password in
+        mockCoordinator.startImportForPassword_MockMethod = { _, password in
             capturedPasswords.append(password)
             let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
 
