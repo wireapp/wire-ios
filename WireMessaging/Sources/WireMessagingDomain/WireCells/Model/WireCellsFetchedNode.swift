@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 /// The result of fetching a wire cells node.
 public enum WireCellsFetchedNode: Sendable, Equatable {
 

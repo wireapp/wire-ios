@@ -345,7 +345,6 @@ final class ConversationReplyContentView: UIView {
                 }
             )
 
-
             contentAttachmentsView.addSubview(messageReplyAttachmentView!)
             messageReplyAttachmentView!.fitIn(view: contentAttachmentsView)
         }
@@ -430,6 +429,7 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
             configuration.delegate = delegate
         }
     }
+
     weak var actionController: ConversationMessageActionController?
 
     let accessibilityLabel: String? = L10n.Localizable.Content.Message.originalLabel
