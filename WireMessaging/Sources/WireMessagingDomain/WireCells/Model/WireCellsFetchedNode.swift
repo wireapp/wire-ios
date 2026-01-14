@@ -18,7 +18,7 @@
 
 
 /// The result of fetching a wire cells node.
-public enum WireCellsFetchedNode {
+public enum WireCellsFetchedNode: Sendable, Equatable {
 
     /// A `WireCellsNode` was found on the server.
     case node(WireCellsNode)
