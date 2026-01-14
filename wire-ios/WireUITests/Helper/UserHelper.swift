@@ -57,7 +57,10 @@ class UserHelper {
         self.conversationsAPI = ConversationsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.connectionsAPI = ConnectionsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
     }
-
+    
+    /// Fetch basicAuth Info from Env variable
+    /// - Parameter backend: backend
+    /// - Returns: basicAuth String
     func basicAuth(_ backend: BackendTarget = BackendContext.current) -> String {
         switch backend {
         case .staging:
@@ -73,7 +76,9 @@ class UserHelper {
             return auth
         }
     }
-
+    
+    /// Create Personal user
+    /// - Returns: Newly created UserInfo
     func createPersonalUser() async throws -> UserInfo {
         let user = UserGenerator.generateUniqueUserInfo()
 
@@ -114,19 +119,29 @@ class UserHelper {
         createdUsers.append(user)
         return user
     }
-
+    
+    /// Add every user to object
+    /// - Parameter user: userInfo
     func addUser(_ user: UserInfo) {
         createdUsers.append(user)
     }
-
+    
+    /// Add user
+    /// - Parameters:
+    ///   - email: email
+    ///   - password: password
     func addUser(email: String, password: String) {
         createdUsers.append(UserInfo(email: email, password: password))
     }
-
+    
+    /// Delete user
+    /// - Parameter user: userInfo
     func deleteUser(_ user: UserInfo) async throws {
         try await selfUserAPI.deleteSelf(password: user.password)
     }
-
+    
+    /// Get conversationId
+    /// - Returns: qualifiedIds Object
     func getConversationIds() async throws -> [QualifiedID] {
         var conversationIDs = [QualifiedID]()
         for try await ids in try await conversationsAPI.getConversationIdentifiers() {
@@ -134,7 +149,12 @@ class UserHelper {
         }
         return conversationIDs
     }
-
+    
+    /// Delete created test team
+    /// - Parameters:
+    ///   - teamID: teamID
+    ///   - password: password
+    ///   - code: verificationCode
     func deleteTeam(teamID: UUID, password: String, code: String) async throws {
         try await selfUserAPI.deleteTeam(
             teamId: teamID,
@@ -142,7 +162,8 @@ class UserHelper {
             verificationCode: code
         )
     }
-
+    
+    /// Delete  created test users
     func deleteCreatedUsers() async {
         for user in createdUsers {
             do {
@@ -163,7 +184,9 @@ class UserHelper {
             }
         }
     }
-
+    
+    /// Register a team owner
+    /// - Returns: qualifiedId of the owner and ownerInfo
     func registerUserAsTeamOwner() async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
         let teamOwner = UserGenerator.generateUniqueUserInfo()
 
@@ -196,7 +219,12 @@ class UserHelper {
         createdUsers.append(teamOwner)
         return (qualifiedID: qualifiedId, owner: teamOwner)
     }
-
+    
+    /// get accesstoken of user by email and password
+    /// - Parameters:
+    ///   - email: email
+    ///   - password: password
+    /// - Returns: AccesstToken response
     func fetchAccessToken(email: String, password: String) async throws -> AccessToken {
         let (_, accessToken) = try await authenticationAPI.login(
             email: email,
@@ -207,7 +235,12 @@ class UserHelper {
 
         return accessToken
     }
-
+    
+    /// Register user in team as member
+    /// - Parameters:
+    ///   - ownerAccessToken: ownerAccessToken
+    ///   - teamID: teamID
+    /// - Returns: qualifiedId and memberInfo
     func registerUsersAsTeamMember(
         ownerAccessToken: String,
         teamID: UUID
@@ -236,7 +269,9 @@ class UserHelper {
 
         return (qualifiedID, teamMember)
     }
-
+    
+    /// fetch qualified id from conversations
+    /// - Returns: qualifiedID object
     func getQualifiedIdsFromConversationList() async throws -> [QualifiedID] {
         var conversationIDs = [QualifiedID]()
 
@@ -245,7 +280,10 @@ class UserHelper {
         }
         return conversationIDs
     }
-
+    
+    /// fetch conversationId based on name or type
+    /// - Parameter criteria: pass the criteria to filter conversations
+    /// - Returns: conversation UUID and domain info
     func getConversationId(matching criteria: FilterConversationsByCriteria) async throws
         -> (conversationID: UUID?, domain: String?) {
         let conversationIDs = try await getQualifiedIdsFromConversationList()
@@ -266,7 +304,12 @@ class UserHelper {
         }
         return (nil, nil)
     }
-
+    
+    /// Create group conversation
+    /// - Parameters:
+    ///   - qualifiedIds: qualifiedIds for members of the group
+    ///   - owner: group owner
+    ///   - groupName: groupName
     func createGroupConversations(
         qualifiedIds: [QualifiedID],
         owner: UserInfo,
@@ -331,7 +374,12 @@ class UserHelper {
 
         _ = try await connectionsAPI.sendConnectionRequest(domain: domain, userId: userId)
     }
-
+    
+    /// Accept connection request from user
+    /// - Parameters:
+    ///   - domain: domain
+    ///   - user1: user1-sender
+    ///   - userId: userId description
     func acceptConnectionRequestFromUser(
         domain: String,
         user1: UserInfo,
