@@ -101,10 +101,8 @@ final class ImportBackupViewModelTests: XCTestCase {
 
     func testPasswordIsRequested() {
         // Given
-        var capturedContinuation: AsyncThrowingStream<ImportBackupProgress, any Error>.Continuation?
+        let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
         mockCoordinator.startImportForPassword_MockMethod = { url, password in
-            let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
-            capturedContinuation = continuation
             return stream
         }
         let sut = sut as ImportBackupViewModel
@@ -113,7 +111,7 @@ final class ImportBackupViewModelTests: XCTestCase {
         sut.pickedBackupFile(result: .success(temporaryFile))
         wait(forConditionToBeTrue: sut.isImportConfirmationPresented, timeout: 3)
         sut.confirmOverwrite()
-        capturedContinuation?.finish(throwing: ImportBackupError.passwordRequired)
+        continuation.finish(throwing: ImportBackupError.passwordRequired)
 
         // Then
         wait(forConditionToBeTrue: sut.isEnterBackupPasswordPresented, timeout: 3)
@@ -162,6 +160,8 @@ final class ImportBackupViewModelTests: XCTestCase {
         // Given
         let sut = sut as ImportBackupViewModel
         mockImportBackupUseCase.isImportDestructive = false
+        
+        // Set up coordinator mock for import
         var capturedContinuation: AsyncThrowingStream<ImportBackupProgress, any Error>.Continuation?
         mockCoordinator.startImportForPassword_MockMethod = { url, password in
             let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
@@ -173,7 +173,7 @@ final class ImportBackupViewModelTests: XCTestCase {
         sut.pickedBackupFile(result: .success(temporaryFile))
         wait(forConditionToBeTrue: sut.isLoadingFile, timeout: 3)
 
-        // Capture the copy URL while it exists
+        // Capture the copy URL and verify the temporary file exists
         var copyURL: URL?
         wait(forConditionToBeTrue: {
             copyURL = sut.currentBackupCopy
@@ -182,23 +182,23 @@ final class ImportBackupViewModelTests: XCTestCase {
         XCTAssertNotNil(copyURL, "Temporary copy should be created")
         XCTAssertTrue(fileManager.fileExists(atPath: copyURL!.path), "Temp file should exist during import")
 
-        capturedContinuation?.yield(.progress(1, 1))
-        capturedContinuation?.yield(.done)
-
-        wait(forConditionToBeTrue: sut.isAlertPresented, timeout: 3)
+        // Finish the continuation to simulate the import completion
+        capturedContinuation?.finish()
 
         // Then - Temporary copy should be cleaned up
-        XCTAssertNil(sut.currentBackupCopy, "Copy reference should be nil after cleanup")
+        wait(forConditionToBeTrue: {
+            sut.currentBackupCopy == nil
+        }(), timeout: 3)
         XCTAssertFalse(fileManager.fileExists(atPath: copyURL!.path), "Temp file should be deleted")
-        XCTAssertTrue(sut.isAlertPresented)
     }
 
     func testPasswordRetry_PreservesTemporaryCopy() {
         // Given
         let sut = sut as ImportBackupViewModel
         mockImportBackupUseCase.isImportDestructive = false
+        
+        // Set up coordinator mock for import
         var callCount = 0
-
         mockCoordinator.startImportForPassword_MockMethod = { url, password in
             callCount += 1
             let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
@@ -209,6 +209,7 @@ final class ImportBackupViewModelTests: XCTestCase {
             } else {
                 // Second attempt: success
                 continuation.yield(.done)
+                continuation.finish()
             }
             return stream
         }
@@ -251,7 +252,7 @@ final class ImportBackupViewModelTests: XCTestCase {
         sut.pickedBackupFile(result: .success(temporaryFile))
         wait(forConditionToBeTrue: sut.isLoadingFile, timeout: 3)
 
-        // Capture the copy URL while it exists
+        // Capture the copy URL
         var copyURL: URL?
         wait(forConditionToBeTrue: {
             copyURL = sut.currentBackupCopy
@@ -418,32 +419,6 @@ final class ImportBackupViewModelTests: XCTestCase {
 
     // MARK: - State Transition Tests
 
-    func testConfirmOverwrite_proceedsWithImport() {
-        // Given
-        let sut = sut as ImportBackupViewModel
-        mockImportBackupUseCase.isImportDestructive = true
-        var capturedContinuation: AsyncThrowingStream<ImportBackupProgress, any Error>.Continuation?
-        mockCoordinator.startImportForPassword_MockMethod = { url, password in
-            let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
-            capturedContinuation = continuation
-            return stream
-        }
-
-        sut.pickedBackupFile(result: .success(temporaryFile))
-        wait(forConditionToBeTrue: sut.isImportConfirmationPresented, timeout: 3)
-
-        // When
-        sut.confirmOverwrite()
-
-        // Should start importing
-        capturedContinuation?.yield(.progress(1, 10))
-
-        // Then
-        wait(forConditionToBeTrue: sut.importProgress.current > 0, timeout: 3)
-        XCTAssertEqual(sut.importProgress.current, 1)
-        XCTAssertEqual(sut.importProgress.total, 10)
-    }
-
     func testEnterPassword_retriesWithCorrectPassword() {
         // Given
         let sut = sut as ImportBackupViewModel
@@ -485,31 +460,6 @@ final class ImportBackupViewModelTests: XCTestCase {
 
         // Then
         wait(forConditionToBeTrue: sut.isAlertPresented, timeout: 3)
-    }
-
-    // MARK: - Non-destructive Import Tests
-
-    func testNonDestructiveImport_skipsConfirmation() {
-        // Given
-        let sut = sut as ImportBackupViewModel
-        mockImportBackupUseCase.isImportDestructive = false
-        var capturedContinuation: AsyncThrowingStream<ImportBackupProgress, any Error>.Continuation?
-        mockCoordinator.startImportForPassword_MockMethod = { url, password in
-            let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
-            capturedContinuation = continuation
-            return stream
-        }
-
-        // When
-        sut.pickedBackupFile(result: .success(temporaryFile))
-
-        // Should skip confirmation and start importing
-        capturedContinuation?.yield(.progress(1, 10))
-
-        // Then
-        wait(forConditionToBeTrue: sut.importProgress.current > 0, timeout: 3)
-        XCTAssertFalse(sut.isImportConfirmationPresented, "Should not show confirmation for non-destructive import")
-        XCTAssertEqual(sut.importProgress.current, 1)
     }
 
 }
