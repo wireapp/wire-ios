@@ -734,6 +734,7 @@
 "content.file.too_big" = "You can send files up to %@";
 
 "content.message.reply.files.count" = "%@ files";
+"content.message.reply.files.notAvailable" = "File not available";
 
 // Reactions
 "content.reactions.title" = "Select reaction";
