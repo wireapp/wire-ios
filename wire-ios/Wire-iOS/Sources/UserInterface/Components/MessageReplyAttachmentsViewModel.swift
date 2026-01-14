@@ -24,6 +24,7 @@ import WireMessagingUI
 final class MessageReplyAttachmentsViewModel {
     private let fetchNodeUseCase: any WireCellsFetchNodeUseCaseProtocol
     private var task: Task<Void, Error>?
+    private var fetchVisibleNodeIDsTask: Task<Set<UUID>, Error>?
     private let cache = UIImage.defaultUserImageCache.cache
 
     struct PreviewImageInfo {
@@ -61,6 +62,45 @@ final class MessageReplyAttachmentsViewModel {
     func cancel() {
         task?.cancel()
         task = nil
+        fetchVisibleNodeIDsTask?.cancel()
+        fetchVisibleNodeIDsTask = nil
+    }
+
+    @MainActor
+    func cachedVisibleAttachments(attachments: [MultipartMessageData.Attachment]) -> [MultipartMessageData.Attachment] {
+        attachments.filter { attachment in
+            let (cached, _) = fetchNodeUseCase.invokeNew(nodeID: attachment.nodeID)
+            if let cached {
+                return cached.isDeleted == false
+            } else {
+                return true
+            }
+        }
+    }
+
+    @MainActor
+    func latestVisibleAttachments(
+        attachments: [MultipartMessageData.Attachment]
+    ) async throws -> [MultipartMessageData.Attachment] {
+        let tasks = attachments.map { fetchNodeUseCase.invokeNew(nodeID: $0.nodeID).getLatest }
+
+        let task = Task {
+            try await withThrowingTaskGroup(of: WireCellsFetchedNode.self, returning: Set<UUID>.self) { group in
+                for task in tasks { group.addTask { try await task() } }
+                return try await group.reduce(into: Set<UUID>()) { result, node in
+                    switch node {
+                    case .node(let node) where !node.isRecycled:
+                        result.insert(node.id)
+                    default:
+                        break
+                    }
+                }
+            }
+        }
+        fetchVisibleNodeIDsTask = task
+
+        let visibleNodeIDs = try await task.value
+        return attachments.filter { visibleNodeIDs.contains($0.nodeID) }
     }
 
     // MARK: - Private
