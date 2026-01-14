@@ -99,4 +99,10 @@ public final class NetworkReachability: Sendable {
         monitor.cancel()
     }
 
+    // MARK: - For tests
+
+    internal func _sendForTests(_ snap: Snapshot) {
+        snapshotSubject.send(snap)
+    }
+
 }
