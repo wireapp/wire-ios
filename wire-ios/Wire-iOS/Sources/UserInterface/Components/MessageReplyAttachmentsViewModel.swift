@@ -22,6 +22,7 @@ import WireMessagingDomain
 import WireMessagingUI
 
 final class MessageReplyAttachmentsViewModel {
+    private let fetchCachedNodeUseCase: any WireCellsFetchCachedNodeUseCaseProtocol
     private let fetchNodeUseCase: any WireCellsFetchNodeUseCaseProtocol
     private var task: Task<Void, Error>?
     private var fetchVisibleNodeIDsTask: Task<Set<UUID>, Error>?
@@ -34,7 +35,11 @@ final class MessageReplyAttachmentsViewModel {
 
     @Published var previewImageInfo: PreviewImageInfo?
 
-    init(fetchNodeUseCase: any WireCellsFetchNodeUseCaseProtocol) {
+    init(
+        fetchCachedNodeUseCase: any WireCellsFetchCachedNodeUseCaseProtocol,
+        fetchNodeUseCase: any WireCellsFetchNodeUseCaseProtocol
+    ) {
+        self.fetchCachedNodeUseCase = fetchCachedNodeUseCase
         self.fetchNodeUseCase = fetchNodeUseCase
     }
 
@@ -69,11 +74,10 @@ final class MessageReplyAttachmentsViewModel {
     @MainActor
     func cachedVisibleAttachments(attachments: [MultipartMessageData.Attachment]) -> [MultipartMessageData.Attachment] {
         attachments.filter { attachment in
-            let (cached, _) = fetchNodeUseCase.invokeNew(nodeID: attachment.nodeID)
-            if let cached {
-                return cached.isDeleted == false
+            if let cacheInfo = fetchCachedNodeUseCase.invoke(nodeID: attachment.nodeID) {
+                !cacheInfo.isDeleted
             } else {
-                return true
+                true // If we have no cache info, assume it is not deleted
             }
         }
     }
