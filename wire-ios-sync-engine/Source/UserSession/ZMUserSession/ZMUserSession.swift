@@ -918,11 +918,11 @@ public final class ZMUserSession: NSObject {
     }
 
     private func observeNetworkInterfaceSwitch() {
-        self.isNetworkReachableCancellable = networkReachability.interfaceSwitchWhileOnlinePublisher
+        isNetworkReachableCancellable = networkReachability.interfaceSwitchWhileOnlinePublisher
             .sink { [weak self] _, _ in
                 guard let self else { return }
 
-                self.managedObjectContext.performGroupedBlock {
+                managedObjectContext.performGroupedBlock {
                     self.callCenter?.avsWrapper.networkInterfaceChanged()
                 }
             }

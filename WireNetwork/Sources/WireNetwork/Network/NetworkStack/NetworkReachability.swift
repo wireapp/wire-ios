@@ -41,14 +41,14 @@ public final class NetworkReachability: Sendable {
 
     public var snapshotPublisher: AnyPublisher<Snapshot, Never> {
         snapshotSubject
-            .compactMap { $0 }
+            .compactMap(\.self)
             .removeDuplicates()
             .eraseToAnyPublisher()
     }
 
     public var isReachablePublisher: AnyPublisher<Bool, Never> {
         snapshotPublisher
-            .map { $0.isOnline }
+            .map(\.isOnline)
             .removeDuplicates()
             .eraseToAnyPublisher()
     }
@@ -64,9 +64,9 @@ public final class NetworkReachability: Sendable {
             }
             .filter { pair in
                 (pair.new.isWifi != pair.old.isWifi) ||
-                (pair.new.isCellular != pair.old.isCellular) ||
-                (pair.new.isExpensive != pair.old.isExpensive) ||
-                (pair.new.isConstrained != pair.old.isConstrained)
+                    (pair.new.isCellular != pair.old.isCellular) ||
+                    (pair.new.isExpensive != pair.old.isExpensive) ||
+                    (pair.new.isConstrained != pair.old.isConstrained)
             }
             .eraseToAnyPublisher()
     }
@@ -78,7 +78,7 @@ public final class NetworkReachability: Sendable {
     }
 
     public init() {
-        self.monitor.pathUpdateHandler = { [weak self] path in
+        monitor.pathUpdateHandler = { [weak self] path in
             guard let self else { return }
 
             let snap = Snapshot(
@@ -89,10 +89,10 @@ public final class NetworkReachability: Sendable {
                 isConstrained: path.isConstrained
             )
 
-            self.snapshotSubject.send(snap)
+            snapshotSubject.send(snap)
         }
 
-        self.monitor.start(queue: queue)
+        monitor.start(queue: queue)
     }
 
     deinit {
@@ -101,7 +101,7 @@ public final class NetworkReachability: Sendable {
 
     // MARK: - For tests
 
-    internal func _sendForTests(_ snap: Snapshot) {
+    func _sendForTests(_ snap: Snapshot) {
         snapshotSubject.send(snap)
     }
 

@@ -52,35 +52,40 @@ final class NetworkReachabilityTests: XCTestCase {
             isWifi: false,
             isCellular: false,
             isExpensive: false,
-            isConstrained: false)
+            isConstrained: false
+        )
         )
         networkReachability._sendForTests(.init(
             status: .unsatisfied,
             isWifi: true,
             isCellular: false,
             isExpensive: false,
-            isConstrained: false)
+            isConstrained: false
+        )
         )
         networkReachability._sendForTests(.init(
             status: .satisfied,
             isWifi: true,
             isCellular: false,
             isExpensive: false,
-            isConstrained: false)
+            isConstrained: false
+        )
         )
         networkReachability._sendForTests(.init(
             status: .satisfied,
             isWifi: false,
             isCellular: true,
             isExpensive: true,
-            isConstrained: false)
+            isConstrained: false
+        )
         )
         networkReachability._sendForTests(.init(
             status: .unsatisfied,
             isWifi: false,
             isCellular: true,
             isExpensive: true,
-            isConstrained: false)
+            isConstrained: false
+        )
         )
 
         wait(for: [exp], timeout: 1.0)
@@ -122,7 +127,8 @@ final class NetworkReachabilityTests: XCTestCase {
             isWifi: false,
             isCellular: true,
             isExpensive: true,
-            isConstrained: true)
+            isConstrained: true
+        )
 
         networkReachability._sendForTests(s1)
         networkReachability._sendForTests(s2)
@@ -139,4 +145,3 @@ final class NetworkReachabilityTests: XCTestCase {
     }
 
 }
-
