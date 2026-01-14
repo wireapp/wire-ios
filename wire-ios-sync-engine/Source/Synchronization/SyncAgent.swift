@@ -378,9 +378,15 @@ extension SyncAgent: LiveSyncDelegate {
 extension SyncAgent: MLSSyncDelegate {
 
     func recoverWithIncrementalSync() async throws {
+        
         WireLogger.sync.info("performing recovery incremental sync")
 
         if isSyncV2Enabled {
+            if journal[.isInitialSyncRequired] && syncRunning {
+                WireLogger.sync.info("skipping recovery as initial sync is in progress")
+                return
+            }
+            
             // Recovery means to restart any existing sync.
             await suspend()
 
