@@ -16,30 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-package import WireMessagingDomain
+public import Foundation
 
-@MainActor
-package final class WireCellsNodeCache: WireCellsNodeCacheProtocol {
+public protocol WireCellsFetchCachedNodeUseCaseProtocol {
 
-    private var storage: [UUID: WireCellsNodeCacheItem] = [:]
-
-    package init() {}
-
-    package func setItem(_ value: WireCellsNodeCacheItem, for nodeID: UUID) {
-        storage.updateValue(value, forKey: nodeID)
-    }
-
-    package func item(for nodeID: UUID) -> WireCellsNodeCacheItem? {
-        storage[nodeID]
-    }
-
-}
-
-extension WireCellsNodeCache: WireCellsFetchCachedNodeUseCaseProtocol {
-
-    package func invoke(nodeID: UUID) -> WireCellsNodeCacheItem? {
-        item(for: nodeID)
-    }
+    @MainActor
+    func invoke(nodeID: UUID) -> WireCellsNodeCacheItem?
 
 }

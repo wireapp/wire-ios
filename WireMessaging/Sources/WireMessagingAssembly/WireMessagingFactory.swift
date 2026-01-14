@@ -125,6 +125,10 @@ public struct WireMessagingFactory {
             cache: nodeCache
         )
     }
+
+    public func makeFetchCachedNodeUseCase() -> any WireCellsFetchCachedNodeUseCaseProtocol {
+        nodeCache
+    }
 }
 
 public extension WireMessagingFactory {
