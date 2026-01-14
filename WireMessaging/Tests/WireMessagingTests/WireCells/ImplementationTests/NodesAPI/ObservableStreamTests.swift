@@ -107,6 +107,21 @@ final class ObservableStreamTests {
         #expect(await progressesTask.value == [2, 5])
     }
 
+    @Test
+    func cancellation() async throws {
+        // Given, When
+        sut.cancel()
+
+        // Then
+        #expect(try sut.read(upToCount: 1) == nil)
+        #expect(try await sut.readAsync(upToCount: 1) == nil)
+        #expect(try sut.readToEnd() == nil)
+        #expect(try await sut.readToEndAsync() == nil)
+        #expect(throws: CancellationError.self) {
+            try sut.seek(toOffset: 0)
+        }
+    }
+
     private func makeObservationProgressTask(readingCount: Int) -> Task<[Int], Never> {
         Task { [sut] in
             var progresses: [Int] = []
