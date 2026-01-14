@@ -28,7 +28,7 @@ final class ImportBackupViewModel: ObservableObject {
     // MARK: - Dependencies
 
     private let importBackupUseCaseFactory: any ImportBackupUseCaseFactoryProtocol
-    private let coordinator: BackgroundImportCoordinator
+    private let coordinator: any BackgroundImportCoordinatorProtocol
     private let logger: any LoggerProtocol
     private let fileManager = FileManager.default
 
@@ -53,7 +53,7 @@ final class ImportBackupViewModel: ObservableObject {
     // MARK: - Private State
 
     private var hasDestructiveImportBeenConfirmed = false
-    private var currentBackupCopy: URL?
+    private(set) var currentBackupCopy: URL?
 
     private typealias Strings = L10n.Localizable.ImportBackup
 
@@ -65,6 +65,17 @@ final class ImportBackupViewModel: ObservableObject {
     ) {
         self.importBackupUseCaseFactory = importBackupUseCaseFactory
         self.coordinator = BackgroundImportCoordinator(importUseCaseFactory: importBackupUseCaseFactory)
+        self.logger = logger
+    }
+
+    /// Test-only initializer for injecting a mock coordinator
+    init(
+        importBackupUseCaseFactory: any ImportBackupUseCaseFactoryProtocol,
+        coordinator: any BackgroundImportCoordinatorProtocol,
+        logger: any LoggerProtocol
+    ) {
+        self.importBackupUseCaseFactory = importBackupUseCaseFactory
+        self.coordinator = coordinator
         self.logger = logger
     }
 

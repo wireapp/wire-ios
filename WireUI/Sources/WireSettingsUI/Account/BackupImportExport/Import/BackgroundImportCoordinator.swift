@@ -19,7 +19,6 @@
 import Foundation
 import WireLogging
 import WireFoundation
-
 import UIKit
 
 /// Coordinates background import operations.
@@ -27,8 +26,9 @@ import UIKit
 /// Manages the iOS background task lifecycle to allow imports to continue
 /// when the app is backgrounded. The Swift Task naturally suspends and resumes
 /// with the app lifecycle.
+///
 @MainActor
-final class BackgroundImportCoordinator {
+final class BackgroundImportCoordinator: BackgroundImportCoordinatorProtocol {
 
     // MARK: - Dependencies
 
