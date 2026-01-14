@@ -298,6 +298,32 @@ class UserHelper {
         _ = try await conversationsAPI.createGroupConversation(parameters: params)
     }
 
+    /// Registers a set of teams for a specific owner.
+    ///
+    /// - Parameter teamOwner: The user information of the person who will own the teams.
+    /// - Returns: An array of members name.
+    func registerTeamWith2Members(teamOwner: UserInfo) async throws -> [String] {
+        guard let teamID = teamOwner.teamID else {
+            return []
+        }
+
+        let ownerAccessToken = try await fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+
+        let (_, teamMember1) = try await registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            teamID: teamID,
+        )
+
+        let (_, teamMember2) = try await registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            teamID: teamID,
+        )
+        return [teamMember1.name, teamMember2.name]
+    }
+
     func sendConnectionRequestToUser(
         domain: String,
         userId: String
