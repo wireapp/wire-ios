@@ -18,7 +18,7 @@
 
 package import Foundation
 
-/// Fetches cached and remote `WireCellsNodes` for a given node ID.
+/// Fetches remote `WireCellsNodes` for a given node ID.
 package struct WireCellsFetchNodeUseCase: WireCellsFetchNodeUseCaseProtocol {
 
     private let repository: any WireCellsNodesRepositoryProtocol
@@ -32,55 +32,12 @@ package struct WireCellsFetchNodeUseCase: WireCellsFetchNodeUseCaseProtocol {
         self.cache = cache
     }
 
-    /// Returns a stream that first yields a cached `WireCellsNode` if available, then fetches and yields the latest
-    /// `WireCellsNode` from the server.
-    package func invoke(nodeID: UUID) -> AsyncThrowingStream<WireCellsNode?, any Error> {
-        AsyncThrowingStream { [repository, cache] continuation in
-            Task {
-                if let cached = await cache.item(for: nodeID) {
-                    continuation.yield(cached.node)
-                }
+    /// Returns a `WireCellsNode` for a given nodeID or `nil` if not found. Caches the result in memory.
+    package func invoke(nodeID: UUID) async throws -> WireCellsNode? {
+        let node = try await repository.getNode(id: nodeID)
+        await cache.setItem(WireCellsNodeCacheItem(node: node), for: nodeID)
 
-                do {
-                    let latest = try await repository.getNode(id: nodeID)
-                    await cache.setItem(WireCellsNodeCacheItem(node: latest), for: nodeID)
-                    continuation.yield(latest)
-                    continuation.finish()
-                } catch {
-                    continuation.finish(throwing: error)
-                }
-            }
-        }
+        return node
     }
 
-    /// Returns a cached `WireCellsNode` if available, and a closure to fetch the latest `WireCellsNode` from the
-    /// server.
-    @MainActor
-    package func invokeNew(
-        nodeID: UUID
-    ) -> (cached: WireCellsFetchedNode?, getLatest: () async throws -> WireCellsFetchedNode) {
-        let cachedResult: WireCellsFetchedNode?
-        if let cached = cache.item(for: nodeID) {
-            if let node = cached.node {
-                cachedResult = .node(node)
-            } else {
-                cachedResult = .notFound
-            }
-        } else {
-            cachedResult = nil
-        }
-
-        return (
-            cached: cachedResult,
-            getLatest: { () async throws -> WireCellsFetchedNode in
-                if let latest = try await repository.getNode(id: nodeID) {
-                    await cache.setItem(WireCellsNodeCacheItem(node: latest), for: nodeID)
-                    return .node(latest)
-                } else {
-                    await cache.setItem(WireCellsNodeCacheItem(node: nil), for: nodeID)
-                    return .notFound
-                }
-            }
-        )
-    }
 }

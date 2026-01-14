@@ -20,8 +20,7 @@ public import Foundation
 
 // sourcery: AutoMockable
 public protocol WireCellsFetchNodeUseCaseProtocol: Sendable {
-    func invoke(nodeID: UUID) -> AsyncThrowingStream<WireCellsNode?, any Error>
 
-    @MainActor
-    func invokeNew(nodeID: UUID) -> (cached: WireCellsFetchedNode?, getLatest: () async throws -> WireCellsFetchedNode)
+    func invoke(nodeID: UUID) async throws -> WireCellsNode?
+
 }

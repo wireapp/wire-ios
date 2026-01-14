@@ -51,11 +51,7 @@ final class MessageReplyAttachmentsViewModel {
         task = Task { [weak self] in
             guard let self else { return }
 
-            guard let node = try? await fetchNodeUseCase
-                .invoke(nodeID: attachment.nodeID)
-                .compactMap(\.self)
-                .first(where: { $0.id == attachment.nodeID })
-            else { return }
+            guard let node = try? await fetchNodeUseCase.invoke(nodeID: attachment.nodeID) else { return }
 
             try await downloadImage(
                 from: node,
@@ -86,17 +82,15 @@ final class MessageReplyAttachmentsViewModel {
     func latestVisibleAttachments(
         attachments: [MultipartMessageData.Attachment]
     ) async throws -> [MultipartMessageData.Attachment] {
-        let tasks = attachments.map { fetchNodeUseCase.invokeNew(nodeID: $0.nodeID).getLatest }
+        let task = Task { [fetchNodeUseCase] in
+            try await withThrowingTaskGroup(of: WireCellsNode?.self, returning: Set<UUID>.self) { group in
+                for attachment in attachments {
+                    group.addTask { try await fetchNodeUseCase.invoke(nodeID: attachment.nodeID) }
+                }
 
-        let task = Task {
-            try await withThrowingTaskGroup(of: WireCellsFetchedNode.self, returning: Set<UUID>.self) { group in
-                for task in tasks { group.addTask { try await task() } }
                 return try await group.reduce(into: Set<UUID>()) { result, node in
-                    switch node {
-                    case .node(let node) where !node.isRecycled:
+                    if let node, !node.isRecycled {
                         result.insert(node.id)
-                    default:
-                        break
                     }
                 }
             }

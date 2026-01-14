@@ -145,9 +145,8 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     func refresh() async {
         do {
-            for try await node in fetchNodeUseCase.invoke(nodeID: nodeID) {
-                updateNode(node)
-            }
+            let node = try await fetchNodeUseCase.invoke(nodeID: nodeID)
+            updateNode(node)
         } catch {
             WireLogger.wireCells.info("Failed to refresh node with ID: \(nodeID), error: \(error)")
         }
