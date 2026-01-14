@@ -20,7 +20,6 @@ import Foundation
 import WireDomainPackage
 import WireFoundation
 import WireLogging
-import WireBackup
 import UIKit
 
 @MainActor

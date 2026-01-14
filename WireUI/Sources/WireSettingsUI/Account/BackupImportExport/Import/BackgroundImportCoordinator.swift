@@ -26,7 +26,7 @@ import UIKit
 ///
 /// Manages the iOS background task lifecycle to allow imports to continue
 /// when the app is backgrounded. The Swift Task naturally suspends and resumes
-/// with the app lifecycle - no manual persistence or resume logic needed.
+/// with the app lifecycle.
 @MainActor
 final class BackgroundImportCoordinator {
 

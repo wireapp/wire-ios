@@ -56,7 +56,7 @@ final class ImportBackupViewModelTests: XCTestCase {
         mockLogger = WireLogger(tag: "mock")
 
         sut = .init(
-            importBackupUseCaseFactory: ImportBackupUseCaseFactory(useCase: mockImportBackupUseCase),
+            importBackupUseCaseFactory: ImportBackupUseCaseFactoryMock(useCase: mockImportBackupUseCase),
             logger: mockLogger
         )
     }
@@ -129,9 +129,4 @@ final class ImportBackupViewModelTests: XCTestCase {
         wait(forConditionToBeTrue: sut.isAlertPresented, timeout: 3)
     }
 
-}
-
-private struct ImportBackupUseCaseFactory: ImportBackupUseCaseFactoryProtocol {
-    var useCase: any ImportBackupUseCaseProtocol
-    func importBackupUseCase(for url: URL) throws -> any ImportBackupUseCaseProtocol { useCase }
 }
