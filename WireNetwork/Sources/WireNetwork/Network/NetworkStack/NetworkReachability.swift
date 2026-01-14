@@ -77,10 +77,7 @@ public final class NetworkReachability: Sendable {
             .eraseToAnyPublisher()
     }
 
-    public init(
-        monitor: NWPathMonitor,
-        queue: DispatchQueue
-    ) {
+    public init() {
         self.monitor.pathUpdateHandler = { [weak self] path in
             guard let self else { return }
 
