@@ -16,30 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireLocators
+import XCTest
 
-/// Errors originating from `ConversationRepository`.
+class ArchivedConversationsPage: ConversationsPage {
 
-enum ConversationRepositoryError: Error {
-
-    /// Conversation failed to be retrieved
-
-    case retrievalFailed
-
-    /// Conversation not found
-
-    case conversationNotFound
-
-    /// Unable to delete conversation.
-
-    case failedToDeleteConversation(Error)
-
-    /// Missing MLS group ID
-
-    case mlsConversationShouldHaveAGroupID
-
-    /// Unable to fetch conversation guest link
-
-    case failedToFetchGuestLink(Error)
-
+    func conversationExists(withName name: String) -> Bool {
+        let predicate = NSPredicate(format: "label == %@", name)
+        let userCells = app.buttons.containing(predicate).firstMatch
+        return userCells.waitForExistence(timeout: 2) && userCells.isHittable
+    }
 }

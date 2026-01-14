@@ -64,6 +64,8 @@ public enum Locators {
         case conversationCell
         case blockOptionOnContextMenu = "Block…"
         case blockButtonOnBottomSheet
+        case bottomBarArchivedButton
+        case accountProfileImageView
     }
 
     public enum SettingsPage: String {
@@ -99,6 +101,7 @@ public enum Locators {
         case conversationTitleButton
         case conversationDetailsButton
         case message
+        case imageCell = "ImageCell"
     }
 
     public enum BackupOrRestorePage: String {
@@ -130,6 +133,10 @@ public enum Locators {
         case userCellName
         case close
 
+    }
+
+    public enum ConversationDetailsActions: String {
+        case archive
     }
 
     public enum UserProfilePage: String {
@@ -264,6 +271,15 @@ public enum Locators {
     public enum FileVersioningPage: String {
 
         case closeButton
+    }
+
+    public enum ShareExtensionPage: String {
+
+        case imageTile = "PXGGridLayout-Info"
+        case shareButton = "PUOneUpBarButtonItemIdentifierShare"
+        case chooseConversations = "chevron"
+        case sendButtonOnShareExtension
+        case continueButton = "Continue"
     }
 
 }

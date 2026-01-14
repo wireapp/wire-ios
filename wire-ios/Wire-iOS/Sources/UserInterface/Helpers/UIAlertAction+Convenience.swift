@@ -67,4 +67,16 @@ extension UIAlertAction {
             setValue(image.withRenderingMode(.alwaysOriginal), forKey: "image")
         }
     }
+
+    convenience init(
+        title: String?,
+        style: UIAlertAction.Style,
+        accessibilityIdentifier: String?,
+        handler: ((UIAlertAction) -> Void)? = nil
+    ) {
+        self.init(title: title, style: style, handler: handler)
+        if let accessibilityIdentifier {
+            setValue(accessibilityIdentifier, forKey: "accessibilityIdentifier")
+        }
+    }
 }
