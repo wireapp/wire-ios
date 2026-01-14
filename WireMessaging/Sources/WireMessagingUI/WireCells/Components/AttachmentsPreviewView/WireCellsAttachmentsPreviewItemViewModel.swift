@@ -32,9 +32,9 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     }
 
     private let attachment: WireCellsMessageAttachment
+    private let fetchCachedNodeUseCase: any WireCellsFetchCachedNodeUseCaseProtocol
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
-    private let nodeCache: any WireCellsNodeCacheProtocol
     private let lastOpenRequest: WireCellsLastOpenRequest
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
@@ -52,9 +52,9 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     init(
         attachment: WireCellsMessageAttachment,
         alignment: HorizontalAlignment,
+        fetchCachedNodeUseCase: any WireCellsFetchCachedNodeUseCaseProtocol,
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
-        nodeCache: any WireCellsNodeCacheProtocol,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         lastOpenRequest: WireCellsLastOpenRequest,
         nodeRenameNotifier: WireCellsNodeRenameNotifier,
@@ -62,9 +62,9 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     ) {
         self.attachment = attachment
         self.alignment = alignment
+        self.fetchCachedNodeUseCase = fetchCachedNodeUseCase
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
-        self.nodeCache = nodeCache
         self.lastOpenRequest = lastOpenRequest
         self.nodeRenameNotifier = nodeRenameNotifier
         self.localAssetRepository = localAssetRepository
@@ -73,7 +73,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
         setupBindings()
 
-        if let cacheInfo = nodeCache.item(for: attachment.nodeID) {
+        if let cacheInfo = fetchCachedNodeUseCase.invoke(nodeID: attachment.nodeID) {
             updateNode(cacheInfo.node)
         }
     }
