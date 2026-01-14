@@ -57,7 +57,7 @@ class UserHelper {
         self.conversationsAPI = ConversationsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.connectionsAPI = ConnectionsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
     }
-    
+
     /// Fetch basicAuth Info from Env variable
     /// - Parameter backend: backend
     /// - Returns: basicAuth String
@@ -76,7 +76,7 @@ class UserHelper {
             return auth
         }
     }
-    
+
     /// Create Personal user
     /// - Returns: Newly created UserInfo
     func createPersonalUser() async throws -> UserInfo {
@@ -119,13 +119,13 @@ class UserHelper {
         createdUsers.append(user)
         return user
     }
-    
+
     /// Add every user to object
     /// - Parameter user: userInfo
     func addUser(_ user: UserInfo) {
         createdUsers.append(user)
     }
-    
+
     /// Add user
     /// - Parameters:
     ///   - email: email
@@ -133,13 +133,13 @@ class UserHelper {
     func addUser(email: String, password: String) {
         createdUsers.append(UserInfo(email: email, password: password))
     }
-    
+
     /// Delete user
     /// - Parameter user: userInfo
     func deleteUser(_ user: UserInfo) async throws {
         try await selfUserAPI.deleteSelf(password: user.password)
     }
-    
+
     /// Get conversationId
     /// - Returns: qualifiedIds Object
     func getConversationIds() async throws -> [QualifiedID] {
@@ -149,7 +149,7 @@ class UserHelper {
         }
         return conversationIDs
     }
-    
+
     /// Delete created test team
     /// - Parameters:
     ///   - teamID: teamID
@@ -162,7 +162,7 @@ class UserHelper {
             verificationCode: code
         )
     }
-    
+
     /// Delete  created test users
     func deleteCreatedUsers() async {
         for user in createdUsers {
@@ -184,7 +184,7 @@ class UserHelper {
             }
         }
     }
-    
+
     /// Register a team owner
     /// - Returns: qualifiedId of the owner and ownerInfo
     func registerUserAsTeamOwner() async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
@@ -219,7 +219,7 @@ class UserHelper {
         createdUsers.append(teamOwner)
         return (qualifiedID: qualifiedId, owner: teamOwner)
     }
-    
+
     /// get accesstoken of user by email and password
     /// - Parameters:
     ///   - email: email
@@ -235,7 +235,7 @@ class UserHelper {
 
         return accessToken
     }
-    
+
     /// Register user in team as member
     /// - Parameters:
     ///   - ownerAccessToken: ownerAccessToken
@@ -269,7 +269,7 @@ class UserHelper {
 
         return (qualifiedID, teamMember)
     }
-    
+
     /// fetch qualified id from conversations
     /// - Returns: qualifiedID object
     func getQualifiedIdsFromConversationList() async throws -> [QualifiedID] {
@@ -280,7 +280,7 @@ class UserHelper {
         }
         return conversationIDs
     }
-    
+
     /// fetch conversationId based on name or type
     /// - Parameter criteria: pass the criteria to filter conversations
     /// - Returns: conversation UUID and domain info
@@ -304,7 +304,7 @@ class UserHelper {
         }
         return (nil, nil)
     }
-    
+
     /// Create group conversation
     /// - Parameters:
     ///   - qualifiedIds: qualifiedIds for members of the group
@@ -374,7 +374,7 @@ class UserHelper {
 
         _ = try await connectionsAPI.sendConnectionRequest(domain: domain, userId: userId)
     }
-    
+
     /// Accept connection request from user
     /// - Parameters:
     ///   - domain: domain
