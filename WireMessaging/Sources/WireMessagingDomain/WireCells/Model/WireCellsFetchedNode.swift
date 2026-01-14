@@ -26,4 +26,13 @@ public enum WireCellsFetchedNode: Sendable, Equatable {
     /// No `WireCellsNode` was found on the server - it may have been deleted or the user might not have permission to
     /// access to it.
     case notFound
+
+    public var isDeleted: Bool {
+        switch self {
+        case let .node(node):
+            node.isRecycled
+        case .notFound:
+            true
+        }
+    }
 }
