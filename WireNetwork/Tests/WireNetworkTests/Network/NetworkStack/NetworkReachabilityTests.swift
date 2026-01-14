@@ -94,7 +94,7 @@ final class NetworkReachabilityTests: XCTestCase {
         XCTAssertEqual(values, [false, true, false])
     }
 
-    func test_interfaceSwitchPublisher_emitsOnInterfaceOrFlagChange() {
+    func test_interfaceSwitchPublisher_emitsOnInterfaceChange() {
         // Given
         var pairs: [(NetworkReachability.Snapshot, NetworkReachability.Snapshot)] = []
         let exp = expectation(description: "interface switch updates")
