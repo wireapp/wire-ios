@@ -211,7 +211,10 @@ extension URLActionRouter: PresentationDelegate {
             }
 
             if DeveloperFlag.useWireAuthentication.isOn {
-                decisionHandler(SecurityFlags.customBackend.isEnabled)
+                let handleBackendURLAction = { decisionHandler(SecurityFlags.customBackend.isEnabled)
+                }
+                navigate(to: .authenticationModule(handleBackendURLAction))
+
             } else {
                 // Switching backend is handled below, so pass false here.
                 decisionHandler(false)
