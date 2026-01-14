@@ -38,21 +38,23 @@ final class ConversationWelcomeSystemMessageCellDescription: ConversationMessage
     let accessibilityLabel: String?
 
     init(isWireCellsEnabled: Bool) {
-        let title = isWireCellsEnabled ? L10n.Localizable.Conversation.ConnectionView.Welcome.Title.wireCells : L10n.Localizable.Conversation.ConnectionView.Welcome.Title.wire
-        let message = isWireCellsEnabled ? L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireCells : L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wire
+        let title = isWireCellsEnabled ? L10n.Localizable.Conversation.ConnectionView.Welcome.Title.wireCells : L10n
+            .Localizable.Conversation.ConnectionView.Welcome.Title.wire
+        let message = isWireCellsEnabled ? L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireCells : L10n
+            .Localizable.Conversation.ConnectionView.Welcome.Message.wire
         let linkLabel = L10n.Localizable.Conversation.ConnectionView.Welcome.learnMore
         let linkUrl = URL(string: "https://support.wire.com/hc/en-us/articles/10898523878173-End-to-end-encryption")!
-        
+
         let titleAttributes: [NSAttributedString.Key: AnyObject] = [
             .font: FontSpec(.header, .semibold).font!,
             .foregroundColor: LabelColors.textSecurityEnabled
         ]
-        
+
         let messageAttributes: [NSAttributedString.Key: AnyObject] = [
             .font: FontSpec(.header, .regular).font!,
             .foregroundColor: LabelColors.textDefault
         ]
-        
+
         let linkAttributes: [NSAttributedString.Key: AnyObject] = [
             .font: FontSpec(.header, .semibold).font!,
             .foregroundColor: LabelColors.textDefault,
@@ -65,19 +67,26 @@ final class ConversationWelcomeSystemMessageCellDescription: ConversationMessage
             .withRenderingMode(.alwaysOriginal)
             .withTintColor(LabelColors.textSecurityEnabled)
 
-        let attributedText: NSMutableAttributedString = .init(
-            string: title,
-            attributes: titleAttributes
-        )
-        
-        attributedText.append(.init(string: "\n\n" + message, attributes: messageAttributes))
-        
-        attributedText.append(.init(string: "\n\n" + linkLabel + "\n", attributes: linkAttributes))
+        let attributedText: NSMutableAttributedString = .init()
 
-        self.configuration = View.Configuration(icon: icon, attributedText: attributedText, showLine: false)
+        // Faking spacing with line breaks to avoid having to add extra views and having to expose code to be able to
+        // modify margin/padding constraints.
+        let spaceBetweenParagraphs = "\n\n"
+        let bottomMargin = "\n"
+
+        attributedText.append(.init(string: title + spaceBetweenParagraphs, attributes: titleAttributes))
+        attributedText.append(.init(string: message + spaceBetweenParagraphs, attributes: messageAttributes))
+        attributedText.append(.init(string: linkLabel + bottomMargin, attributes: linkAttributes))
+
+        self.configuration = View.Configuration(
+            icon: icon,
+            attributedText: attributedText,
+            showLine: false,
+            resetLinkStyleForOverride: true,
+            backgroundColor: SemanticColors.View.backgroundGreen
+        )
         self.accessibilityLabel = attributedText.string
         self.actionController = nil
-        self.backgroundColor = SemanticColors.View.backgroundGreen
     }
 
 }
