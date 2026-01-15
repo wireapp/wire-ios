@@ -152,9 +152,9 @@ class ConversationsAPIV5: ConversationsAPIV4 {
         }
 
         // Build access modes based on allowGuests
-        var accessModes = Set<ConversationAccessMode>()
+        var accessModes: Set<ConversationAccessMode> = [.invite]
         if allowGuests {
-            accessModes = [.invite, .code]
+            accessModes = [.code]
         }
 
         let parameters = UpdateConversationAccessParametersV0(
