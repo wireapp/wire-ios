@@ -304,19 +304,22 @@ class CameraKeyboardViewController: UIViewController {
         let completeBlock = { (data: Data?, uti: String?) in
             guard let data else { return }
 
-            let returnData: Data = if (uti == "public.heif") ||
-                (uti == "public.heic"),
-                let convertedJPEGData = data.convertHEIFToJPG() {
-                convertedJPEGData
+
+            let utType: UTType?
+            let returnData: Data
+            if (uti == "public.heif") || (uti == "public.heic"), let convertedJPEGData = data.convertHEIFToJPG() {
+                returnData = convertedJPEGData
+                utType = .jpeg
             } else {
-                data
+                returnData = data
+                utType = uti.flatMap { UTType($0) }
             }
 
             let name = PHAssetResource.assetResources(for: asset).first?.originalFilename
 
             let image = SendableImage(
                 name: name,
-                utType: .jpeg,
+                utType: utType,
                 data: returnData
             )
 
