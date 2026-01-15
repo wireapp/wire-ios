@@ -76,10 +76,11 @@ extension ConversationCreateFileManagementSectionController {
     private func addAttributedText(
         to footer: SectionFooter
     ) {
-        let fullText = L10n.Localizable.Conversation.Create.FileManagement.subtitle
+        var fullText = L10n.Localizable.Conversation.Create.FileManagement.subtitle
         let learnMore = L10n.Localizable.Conversation.Create.FileManagement.learnMore
+        fullText += " " + learnMore
         let attributedText = NSMutableAttributedString(string: fullText)
-        let supportLink = "https://support.wire.com/hc/en-us/articles/32207749480477-Use-Wire-Drive-in-conversations"
+        let supportLink = "https://support.wire.com/hc/articles/32207749480477-Use-Wire-Drive-in-conversations"
 
         guard let learnMoreRange = fullText.range(of: learnMore, options: .caseInsensitive) else {
             assertionFailure(

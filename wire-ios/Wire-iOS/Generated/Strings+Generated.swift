@@ -2604,8 +2604,8 @@ internal enum L10n {
         internal enum FileManagement {
           /// Learn more
           internal static let learnMore = L10n.tr("Localizable", "conversation.create.file_management.learnMore", fallback: "Learn more")
-          /// Enable participants to manage their documents and media files in a shared Drive. This can’t be undone. Learn more
-          internal static let subtitle = L10n.tr("Localizable", "conversation.create.file_management.subtitle", fallback: "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone. Learn more")
+          /// Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.
+          internal static let subtitle = L10n.tr("Localizable", "conversation.create.file_management.subtitle", fallback: "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.")
           /// Shared Drive
           internal static let title = L10n.tr("Localizable", "conversation.create.file_management.title", fallback: "Shared Drive")
         }

@@ -372,7 +372,7 @@
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (default)";
 "conversation.create.file_management.title" = "Shared Drive";
-"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone. Learn more";
+"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
 "conversation.create.file_management.learnMore" = "Learn more";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Ongoing call";
