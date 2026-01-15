@@ -110,8 +110,10 @@ final class CreateFolderViewModel: ObservableObject {
             switch failure {
             case .tooLong:
                 errorMessage = Strings.Files.NewFolder.folderNameTooLongError
-            case .slashCharacter, .dotPrefix:
+            case .slashCharacter:
                 errorMessage = Strings.Files.RenameFile.wrongCharacterError
+            case .dotPrefix:
+                errorMessage = Strings.Files.RenameFile.dotPrefix
             case .empty:
                 errorMessage = nil
             }
