@@ -1019,7 +1019,10 @@ public final class MLSService: MLSServiceInterface {
         }
 
         do {
-            logger.info("repairing out of sync conversation... (\(groupID.safeForLoggingDescription))")
+            logger.info(
+                "repairing out of sync conversation...",
+                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+            )
 
             if shouldPerformIncrementalSync {
                 // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
