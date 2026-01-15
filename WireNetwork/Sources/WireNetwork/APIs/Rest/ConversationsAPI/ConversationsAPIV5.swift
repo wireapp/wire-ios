@@ -179,7 +179,7 @@ class ConversationsAPIV5: ConversationsAPIV4 {
             .success(code: .noContent)
             .failure(code: .forbidden, label: "invalid-op", error: ConversationsAPIError.invalidOperation)
             .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
-            .failure(code: .forbidden, label: "action-denied", error: ConversationsAPIError.insufficienAuthorization)
+            .failure(code: .forbidden, label: "action-denied", error: ConversationsAPIError.insufficientAuthorization)
             .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
             .parse(code: response.statusCode, data: data)
 

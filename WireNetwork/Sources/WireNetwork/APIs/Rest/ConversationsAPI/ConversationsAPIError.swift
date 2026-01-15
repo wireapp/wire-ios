@@ -80,7 +80,7 @@ public enum ConversationsAPIError: Error {
     case unreachableBackends
 
     /// Insufficient authorizations
-    case insufficienAuthorization
+    case insufficientAuthorization
 
     /// Insufficient permissions
     case insufficientPermissions
