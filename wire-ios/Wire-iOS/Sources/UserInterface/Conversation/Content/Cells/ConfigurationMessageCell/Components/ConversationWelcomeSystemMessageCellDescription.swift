@@ -43,7 +43,7 @@ final class ConversationWelcomeSystemMessageCellDescription: ConversationMessage
         let message = isWireCellsEnabled ? L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireCells : L10n
             .Localizable.Conversation.ConnectionView.Welcome.Message.wire
         let linkLabel = L10n.Localizable.Conversation.ConnectionView.Welcome.learnMore
-        let linkUrl = URL(string: "https://support.wire.com/hc/en-us/articles/10898523878173-End-to-end-encryption")!
+        let linkUrl = URL(string: "https://support.wire.com/hc/articles/10898523878173")!
 
         let titleAttributes: [NSAttributedString.Key: AnyObject] = [
             .font: FontSpec(.header, .semibold).font!,
