@@ -1024,18 +1024,6 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    // MARK: Access Token
-
-    private func renewAccessTokenIfNeeded(for userClient: WireDataModel.UserClient) {
-        guard
-            let apiVersion = resolvedBackendMetadata.apiVersion,
-            apiVersion > .v2,
-            let clientID = userClient.remoteIdentifier
-        else { return }
-
-        renewAccessToken(with: clientID)
-    }
-
     // MARK: Perform changes
 
     public func saveOrRollbackChanges() {
@@ -1488,7 +1476,6 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
 
     public func didRegisterSelfUserClient(_ userClient: WireDataModel.UserClient) {
         registerCurrentPushToken()
-        renewAccessTokenIfNeeded(for: userClient)
 
         managedObjectContext.performGroupedBlock { [weak self] in
             guard

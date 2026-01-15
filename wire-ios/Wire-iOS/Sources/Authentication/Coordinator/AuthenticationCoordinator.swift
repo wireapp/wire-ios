@@ -411,9 +411,8 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 continueFlow(withVerificationCode: code)
 
             case let .startRegistrationFlow(unverifiedCredential):
-                activateNetworkSessions { [weak self] _ in
-                    self?.startRegistration(unverifiedCredential)
-                }
+                sessionManager.markNetworkSessionsAsReady(true)
+                startRegistration(unverifiedCredential)
 
             case let .setFullName(fullName):
                 updateUnregisteredUser(\.name, fullName)
@@ -428,9 +427,8 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 companyLoginController?.updateBackendEnvironment(with: url)
 
             case let .startCompanyLogin(code):
-                activateNetworkSessions { [weak self] _ in
-                    self?.startCompanyLoginFlowIfPossible(linkCode: code)
-                }
+                sessionManager.markNetworkSessionsAsReady(true)
+                startCompanyLoginFlowIfPossible(linkCode: code)
 
             case .startSSOFlow:
                 startAutomaticSSOFlow()
@@ -718,14 +716,8 @@ extension AuthenticationCoordinator {
             )
         }
 
-        activateNetworkSessions { [weak self] error in
-            guard error == nil else {
-                self?.sessionManager.removeProxyCredentials()
-                self?.showAlertWithNoInternetConnectionError()
-                return
-            }
-            action()
-        }
+        sessionManager.markNetworkSessionsAsReady(true)
+        action()
     }
 
     // Sends the login verification code to the email address
@@ -912,19 +904,6 @@ extension AuthenticationCoordinator {
                 actions: [.ok]
             ))]
         )
-    }
-
-    /// Call this method when ready to use network sessions : first login
-    private func activateNetworkSessions(before action: @escaping (Error?) -> Void) {
-        sessionManager.markNetworkSessionsAsReady(true)
-        startActivityIndicator()
-        sessionManager.resolveAPIVersion { [weak self] error in
-            self?.stopActivityIndicator()
-            if error != nil {
-                self?.sessionManager.markNetworkSessionsAsReady(false)
-            }
-            action(error)
-        }
     }
 
     private func updateUsername(_ username: String) {

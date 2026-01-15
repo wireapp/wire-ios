@@ -29,9 +29,6 @@ protocol ObservableSessionManager: SessionManagerType {
     func markNetworkSessionsAsReady(_ ready: Bool)
     func saveProxyCredentials(username: String, password: String)
     func removeProxyCredentials()
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: maybe move this to other protocol
-    func resolveAPIVersion(completion: @escaping (Error?) -> Void)
 
     var activeUnauthenticatedSession: UnauthenticatedSession { get }
 
