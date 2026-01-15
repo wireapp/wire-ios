@@ -459,12 +459,23 @@ private extension WireCellsGetNodesRequest {
 
         switch configuration {
         case let .conversationFileView(root):
+            let lookupFilterTextSearch: LookupFilterTextSearch? = if let searchTerm {
+                LookupFilterTextSearch(searchIn: .baseName, term: searchTerm)
+            } else {
+                nil
+            }
+
+            if searchTerm != nil {
+                request.sortField = "mtime"
+                request.sortDirDesc = true
+            }
+
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
                     deleted: .not,
                     isDraft: false
                 ),
-                text: LookupFilterTextSearch(searchIn: .baseName, term: searchTerm ?? "*"),
+                text: lookupFilterTextSearch,
                 type: .unknown // .unknown includes files (leafs) & folders (collections)
             )
             request.scope = RestLookupScope(
