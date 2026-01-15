@@ -9,6 +9,42 @@
             "value" : "حفظ في الأرشيف"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "bs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19,6 +55,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archiv"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "el-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
           }
         },
         "en" : {
@@ -39,6 +87,18 @@
             "value" : "Arhiveeri"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -49,6 +109,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archives"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "is" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
           }
         },
         "it" : {
@@ -63,10 +153,64 @@
             "value" : "アーカイブ"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "lb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archyvuoti"
+          }
+        },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "me" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "mt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
           }
         },
         "nl" : {
@@ -75,10 +219,22 @@
             "value" : "Archiveren"
           }
         },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archiwum"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
           }
         },
         "pt-BR" : {
@@ -87,10 +243,28 @@
             "value" : "Arquivar"
           }
         },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Архивировать"
+          }
+        },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
           }
         },
         "sl" : {
@@ -99,16 +273,70 @@
             "value" : "Arhiviraj"
           }
         },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "sr-Cyrl-ME" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Arşivle"
           }
         },
+        "tr-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Архівувати"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
           }
         },
         "zh-Hans" : {
@@ -133,6 +361,42 @@
             "value" : "المحادثات"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "bs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -143,6 +407,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unterhaltungen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "el-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
           }
         },
         "en" : {
@@ -163,6 +439,18 @@
             "value" : "Vestlused"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -172,6 +460,36 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Conversations"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "is" : {
+          "stringUnit" : {
+            "state" : "new",
             "value" : "Conversations"
           }
         },
@@ -187,10 +505,64 @@
             "value" : "会話"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "lb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Susirašinėjimai"
+          }
+        },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "me" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "mt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
           }
         },
         "nl" : {
@@ -199,10 +571,22 @@
             "value" : "Gesprekken"
           }
         },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konwersacje"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
           }
         },
         "pt-BR" : {
@@ -211,10 +595,28 @@
             "value" : "Conversas"
           }
         },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Беседы"
+          }
+        },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
           }
         },
         "sl" : {
@@ -223,16 +625,70 @@
             "value" : "Pogovori"
           }
         },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "sr-Cyrl-ME" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konuşmalar"
           }
         },
+        "tr-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Розмови"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
           }
         },
         "zh-Hans" : {
@@ -254,20 +710,68 @@
       "localizations" : {
         "ar" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "ملفّات"
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "bs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "da" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Filer"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "de" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Dateien"
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "el-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "en" : {
@@ -278,98 +782,278 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ficheros"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "et" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Failid"
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "fi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Tiedostot"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Fichiers"
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "is" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Allegati"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "ファイル"
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "lb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "lt" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Failai"
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "me" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "mt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "nl" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Bestanden"
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "pl" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Pliki"
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Arquivos"
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Файлы"
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "sl" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Zbirke"
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "sr-Cyrl-ME" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "tr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Dosyalar"
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "tr-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Файли"
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "文件"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "檔案"
+            "state" : "new",
+            "value" : "Drive"
           }
         }
       }
@@ -383,6 +1067,42 @@
             "value" : "Meetings"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "bs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -392,6 +1112,18 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Meetings"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "el-CY" : {
+          "stringUnit" : {
+            "state" : "new",
             "value" : "Meetings"
           }
         },
@@ -413,6 +1145,18 @@
             "value" : "Meetings"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -420,6 +1164,36 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Meetings"
@@ -437,7 +1211,61 @@
             "value" : "Meetings"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "lb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
         "lt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "me" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "mt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "my" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Meetings"
@@ -449,7 +1277,19 @@
             "value" : "Meetings"
           }
         },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
         "pl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "pt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Meetings"
@@ -461,13 +1301,67 @@
             "value" : "Meetings"
           }
         },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Встречи"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "sr-Cyrl-ME" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Meetings"
@@ -479,7 +1373,25 @@
             "value" : "Meetings"
           }
         },
+        "tr-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
         "uk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Meetings"
+          }
+        },
+        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Meetings"
@@ -507,6 +1419,42 @@
             "value" : "الإعدادات"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "bs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
@@ -517,6 +1465,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Einstellungen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "el-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
           }
         },
         "en" : {
@@ -537,6 +1497,18 @@
             "value" : "Seaded"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -547,6 +1519,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Paramètres"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "is" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
           }
         },
         "it" : {
@@ -561,10 +1563,64 @@
             "value" : "設定"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "lb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nustatymai"
+          }
+        },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "me" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "mt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
           }
         },
         "nl" : {
@@ -573,10 +1629,22 @@
             "value" : "Instellingen"
           }
         },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ustawienia"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
           }
         },
         "pt-BR" : {
@@ -585,10 +1653,28 @@
             "value" : "Ajustes"
           }
         },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Настройки"
+          }
+        },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
           }
         },
         "sl" : {
@@ -597,16 +1683,70 @@
             "value" : "Nastavitve"
           }
         },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "sr-Cyrl-ME" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ayarlar"
           }
         },
+        "tr-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Налаштування"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings"
           }
         },
         "zh-Hans" : {
