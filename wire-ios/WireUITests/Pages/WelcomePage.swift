@@ -39,7 +39,7 @@ class WelcomePage: PageModel {
 
     func enterEmailOrSSO(_ input: String) throws -> LoginPage {
         try typeEmailOrSSO(input)
-        nextButton.tap()
+        nextButton.waitAndTap()
         return try LoginPage()
     }
 
