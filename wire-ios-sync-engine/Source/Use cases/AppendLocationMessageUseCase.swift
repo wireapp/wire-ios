@@ -18,9 +18,10 @@
 
 public import WireFoundation
 public import WireAnalytics
+
 import WireDataModel
 
-public protocol AppendLocationMessagekUseCaseProtocol {
+public protocol AppendLocationMessageUseCaseProtocol {
 
     func invoke(
         withLocationData locationData: LocationData,
@@ -29,7 +30,7 @@ public protocol AppendLocationMessagekUseCaseProtocol {
 
 }
 
-public struct AppendLocationMessageUseCase: AppendLocationMessagekUseCaseProtocol {
+public struct AppendLocationMessageUseCase: AppendLocationMessageUseCaseProtocol {
 
     weak var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 

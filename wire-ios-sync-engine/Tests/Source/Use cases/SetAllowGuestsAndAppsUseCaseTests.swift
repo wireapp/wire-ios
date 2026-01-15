@@ -17,6 +17,7 @@
 //
 
 import WireDataModelSupport
+import WireNetworkSupport
 import XCTest
 
 @testable import WireSyncEngine
@@ -39,7 +40,6 @@ final class SetAllowGuestsAndAppsUseCaseTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() async throws {
-        try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
         await syncContext.perform { [self] in
             sut = SetAllowGuestAndAppsUseCase()
@@ -57,7 +57,6 @@ final class SetAllowGuestsAndAppsUseCaseTests: XCTestCase {
         mockSelfUser = nil
         mockConversation = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
     }
 
     // MARK: - Helper method
@@ -73,121 +72,56 @@ final class SetAllowGuestsAndAppsUseCaseTests: XCTestCase {
 
     // MARK: Unit Tests
 
-    func testGuestEnablementSucceeds() async {
+    func testGuestEnablementSucceeds() async throws {
 
+        // GIVEN
         await syncContext.perform { [self] in
-            // GIVEN
             setUpRoleAndAction()
-
-            let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
-                result: .success(()),
-                context: syncContext.notificationContext
-            )
-
-            let expectation = XCTestExpectation(description: "completion should be called")
-
-            // WHEN
-            sut.invoke(conversation: mockConversation, allowGuests: true, allowApps: false) { result in
-                // THEN
-                switch result {
-                case .success:
-                    print("Operation successful")
-                case let .failure(error):
-                    XCTFail("Test failed with error: \(error)")
-                }
-                expectation.fulfill()
-            }
-
-            wait(for: [expectation], timeout: 0.4)
         }
+
+        // WHEN
+        try await sut.invoke(conversation: mockConversation, allowGuests: true, allowApps: false)
+
     }
 
     func testGuestEnablementFails_WithInsufficientPermissions() async {
-        await syncContext.perform { [self] in
-            // GIVEN
-            let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
-                result: .failure(.unknown),
-                context: syncContext.notificationContext
-            )
 
-            let expectation =
-                XCTestExpectation(
-                    description: "Completion should be called with a failure due to insufficient permissions"
-                )
-
-            // WHEN
-            sut.invoke(conversation: mockConversation, allowGuests: true, allowApps: false) { result in
-                // THEN
-                switch result {
-                case .success:
-                    XCTFail("Expected operation to fail, but it succeeded.")
-                case let .failure(error):
-                    break
-                }
-                expectation.fulfill()
+        // WHEN
+        do {
+            try await sut.invoke(conversation: mockConversation, allowGuests: true, allowApps: false)
+            XCTFail("Expected operation to fail, but it succeeded.")
+        } catch {
+            guard case .invalidOperation = error as? SetAllowGuestsAndAppsUseCaseError else {
+                return XCTFail("Unexpected error: \(error)")
             }
-
-            wait(for: [expectation], timeout: 0.4)
         }
+
     }
 
-    func testAppsEnablementSucceeds() async {
+    func testAppsEnablementSucceeds() async throws {
 
+        // GIVEN
         await syncContext.perform { [self] in
-            // GIVEN
             setUpRoleAndAction()
-
-            let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
-                result: .success(()),
-                context: syncContext.notificationContext
-            )
-
-            let expectation = XCTestExpectation(description: "completion should be called")
-
-            // WHEN
-            sut.invoke(conversation: mockConversation, allowGuests: false, allowApps: true) { result in
-                // THEN
-                switch result {
-                case .success:
-                    break
-                case let .failure(error):
-                    XCTFail("Test failed with error: \(error)")
-                }
-
-                expectation.fulfill()
-            }
-
-            wait(for: [expectation], timeout: 0.4)
         }
+
+        // WHEN
+        try await sut.invoke(conversation: mockConversation, allowGuests: false, allowApps: true)
+
     }
 
     func testAppsEnablementFails_WithInsufficientPermissions() async {
 
-        await syncContext.perform { [self] in
-            // GIVEN
-            let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
-                result: .failure(.unknown),
-                context: syncContext.notificationContext
-            )
-            let expectation =
-                XCTestExpectation(
-                    description: "Completion should be called with a failure due to insufficient permissions"
-                )
-
-            // WHEN
-            sut.invoke(conversation: mockConversation, allowGuests: false, allowApps: true) { result in
-                // THEN
-                switch result {
-                case .success:
-                    XCTFail("Expected operation to fail, but it succeeded.")
-                case .failure:
-                    break
-                }
-                expectation.fulfill()
+        // WHEN
+        do {
+            try await sut.invoke(conversation: mockConversation, allowGuests: false, allowApps: true)
+            XCTFail("Expected operation to fail, but it succeeded.")
+        } catch {
+            guard case .invalidOperation = error as? SetAllowGuestsAndAppsUseCaseError else {
+                return XCTFail("Unexpected error: \(error)")
             }
-
-            wait(for: [expectation], timeout: 0.4)
         }
+
     }
 
 }
