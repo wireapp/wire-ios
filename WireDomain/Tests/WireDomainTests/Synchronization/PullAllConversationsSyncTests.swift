@@ -88,6 +88,7 @@ final class PullAllConversationsSyncTests: XCTestCase {
         XCTAssertEqual(storeFoundInvocations[0].conversation, Scaffolding.localConversation1)
         XCTAssertEqual(storeFoundInvocations[0].isFederationEnabled, Scaffolding.isFederationEnabled)
         XCTAssertEqual(storeFoundInvocations[0].isMLSEnabled, Scaffolding.isMLSEnabled)
+        XCTAssertEqual(storeFoundInvocations[0].timestamp, Date.distantPast)
 
         let storeNotFoundInvocations = store
             .storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations
