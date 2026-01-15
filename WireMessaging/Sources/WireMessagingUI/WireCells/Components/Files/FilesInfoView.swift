@@ -35,14 +35,14 @@ struct FilesInfoView: View {
             case oneConversation
             case recycleBin
 
-            var learnMoreURL: String {
+            var learnMoreURL: URL {
                 switch self {
                 case .oneConversation:
-                    "https://support.wire.com/hc/en-us/articles/32207745256221-Shared-Drive-in-conversations"
+                    URL.sharedDriveInConversations
                 case .allConversations:
-                    "https://support.wire.com/hc/en-us/articles/32207800433309-Access-all-files-shared-across-conversations-Wire-Drive"
+                    URL.accessAllFilesAccrossConversations
                 case .recycleBin:
-                    "https://support.wire.com/hc/en-us/articles/32209394611485-Access-recycle-bin"
+                    URL.accessRecycleBin
                 }
             }
         }
@@ -153,7 +153,7 @@ struct FilesInfoView: View {
             Strings.RecycleBin.NoData.learnMore
         }
 
-        return Link(linkTitle, destination: URL(string: scope.learnMoreURL)!)
+        return Link(linkTitle, destination: scope.learnMoreURL)
             .foregroundColor(SemanticColors.Label.baseSecondaryText.color)
             .underline()
     }
