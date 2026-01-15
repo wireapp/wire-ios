@@ -185,7 +185,7 @@ package struct PreviewDTO: Equatable, Hashable, Sendable {
     }
 
     init?(_ value: RestFilePreview) {
-        var url: URL? = nil
+        var url: URL?
 
         if let urlString = value.preSignedGET?.url, let contentType = value.contentType {
             guard let previewURL = URL(string: urlString),
