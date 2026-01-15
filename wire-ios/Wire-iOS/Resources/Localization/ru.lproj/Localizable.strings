@@ -18,7 +18,7 @@
 // General strings
 
 "general.ok" = "OK";
-"general.next" = "Next";
+"general.next" = "Вперед";
 "general.cancel" = "Отмена";
 "general.close" = "Закрыть";
 "general.back" = "Назад";
@@ -111,7 +111,7 @@
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "Новый канал";
 "conversation.create.channel.back" = "Назад";
-"conversation.create.channel.next" = "Next";
+"conversation.create.channel.next" = "Вперед";
 
 // Contacts UI
 "contacts_ui.search_placeholder" = "Поиск по имени";
@@ -361,7 +361,7 @@
 "conversation.create.mls.title" = "Протокол";
 "conversation.create.mls.subtitle" = "Выберите MLS для создания группы с использованием протокола Messaging Layer Security.";
 "conversation.create.mls.picker_title" = "Выбрать протокол";
-"conversation.create.mls.cancel" = "Cancel";
+"conversation.create.mls.cancel" = "Отмена";
 "conversation.create.non_federating_domains_error.title" = "Беседа не может быть создана";
 "conversation.create.non_federating_domains_error.message" = "Пользователи бэкендов %@ не могут присоединиться к одной беседе.\nДля создания беседы удалите затронутых участников.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Изменить список участников";
@@ -420,7 +420,7 @@
 "conversation.input_bar.message_preview.accessibility.message_from" = "%@ от %@";
 
 "image_confirmer.confirm" = "OK";
-"image_confirmer.cancel" = "Cancel";
+"image_confirmer.cancel" = "Отмена";
 "image.add_sketch" = "Добавить скетч";
 "image.add_emoji" = "Добавить смайлик";
 "image.edit_image" = "Редактировать изображение";
@@ -660,7 +660,6 @@
 
 "content.system.cannot_decrypt.self" = "Не удалось расшифровать ваше сообщение.";
 "content.system.cannot_decrypt.other" = "Не удалось расшифровать сообщение от %@.";
-"content.system.cannot_decrypt.reset_session" = "Исправить будущие сообщения";
 "content.system.cannot_decrypt.error_details" = "(Исправлена ошибка: %d ID: %@)";
 
 "content.system.cannot_decrypt_resolved.self" = "Теперь вы можете расшифровывать свои сообщения. Чтобы восстановить утраченные сообщения, вы должны отправить их повторно.";
@@ -686,7 +685,7 @@
 "content.file.take_video" = "Записать видео";
 "content.file.browse" = "Обзор";
 
-"content.file.save_video" = "Save";
+"content.file.save_video" = "Сохранить";
 "content.file.save_audio" = "Сохранить";
 "content.image.save_image" = "Сохранить";
 
@@ -733,6 +732,8 @@
 "content.reactions_list.likers" = "Понравилось";
 
 "content.file.too_big" = "Вы можете отправлять файлы до %@";
+
+"content.message.reply.files.count" = "%@ файлов";
 
 // Reactions
 "content.reactions.title" = "Выбрать реакцию";
@@ -1008,7 +1009,7 @@
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "Отменить запрос?";
 "profile.cancel_connection_request_dialog.message" = "Удалить запрос на добавление %@.";
-"profile.cancel_connection_request_dialog.button_cancel" = "Cancel";
+"profile.cancel_connection_request_dialog.button_cancel" = "Отмена";
 "profile.cancel_connection_request_dialog.button_yes" = "Да";
 
 // Unblock button
@@ -1840,10 +1841,6 @@
 "databaseloadingfailure.alert.delete_database.continue" = "Продолжить";
 "databaseloadingfailure.alert.retry" = "Повторить";
 
-// Backend not supported alert
-"backend_not_supported.alert.title" = "Версия сервера не поддерживается";
-"backend_not_supported.alert.message" = "Версия сервера не поддерживается этим приложением.  Пожалуйста, обратитесь к системному администратору.";
-
 // Third Party
 "giphy.conversation.message" = "%@ · через giphy.com";
 "giphy.conversation.random_message" = "через giphy.com";
@@ -1869,6 +1866,10 @@
 
 "collections.search.field.placeholder" = "Поиск текстовых сообщений";
 "collections.search.no_items" = "Нет результатов";
+
+"collections.section.searchFiles.description" = "Поиск файлов";
+"collections.section.searchFiles.alert.title" = "Совместная работа с файлами (бета-версия Cells)";
+"collections.section.searchFiles.alert.message" = "Найти файлы, которыми поделились в корпоративных беседах";
 
 
 

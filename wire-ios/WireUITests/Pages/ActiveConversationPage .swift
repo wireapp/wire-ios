@@ -61,6 +61,10 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.conversationDetailsButton.rawValue]
     }
 
+    var imageCell: XCUIElement {
+        app.otherElements[Locators.ActiveConversationPage.imageCell.rawValue]
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {

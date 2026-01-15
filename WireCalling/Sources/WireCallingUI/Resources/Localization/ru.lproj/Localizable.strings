@@ -17,9 +17,10 @@
 //
 // MARK: - Meetings List
 
+
 "wireMeetings.list.title" = "Встречи";
 "wireMeetings.list.tabs.past" = "Прошлые";
-"wireMeetings.list.tabs.next" = "Next";
+"wireMeetings.list.tabs.next" = "Вперед";
 "wireMeetings.list.actions.meetNow" = "Встречи сейчас";
 "wireMeetings.list.actions.scheduleMeeting" = "Запланировать встречу";
 "wireMeetings.list.actions.showAll" = "Показать все";

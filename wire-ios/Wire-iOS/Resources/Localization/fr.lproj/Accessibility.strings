@@ -21,6 +21,7 @@
 ///
 ///  "<screen>.<component>.<usage>"
 
+
 "peoplepicker.upgrade_banner.close_button.label" = "Close team creation option";
 
 "conversation.backButton.description" = "Revenir aux conversations";

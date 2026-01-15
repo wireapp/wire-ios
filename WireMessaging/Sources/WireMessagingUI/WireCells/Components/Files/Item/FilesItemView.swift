@@ -25,42 +25,20 @@ import WireMessagingDomainSupport
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-struct FilesViewItemView: View {
+struct FilesItemView: View {
 
     @StateObject private var viewModel: FilesItemViewModel
     @ScaledMetric private var imageHeight: CGFloat = 28
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
-    private var canRenameFile: Bool
-    private var canEditTags: Bool
-    private let canMoveToFolder: Bool
-    private let canEditFile: Bool
-    private var canDeleteFiles: Bool
-    private let canOpenVersionHistory: Bool
-
-    init(
-        viewModel: @autoclosure @escaping () -> FilesItemViewModel,
-        canRenameFile: Bool = false,
-        canEditTags: Bool = false,
-        canMoveToFolder: Bool = false,
-        canOpenVersionHistory: Bool = false,
-        canEditFile: Bool = false,
-        canDeleteFiles: Bool = false
-    ) {
+    init(viewModel: @autoclosure @escaping () -> FilesItemViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
-        self.canRenameFile = canRenameFile
-        self.canEditTags = canEditTags
-        self.canMoveToFolder = canMoveToFolder
-        self.canEditFile = canEditFile
-        self.canDeleteFiles = canDeleteFiles
-        self.canOpenVersionHistory = canOpenVersionHistory
     }
 
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
-
                 Image(viewModel.icon.resource)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -105,75 +83,11 @@ struct FilesViewItemView: View {
                             .foregroundStyle(ColorTheme.Base.secondaryText.color)
                     }
                 }
+
                 Spacer()
 
                 Menu {
-                    Button(action: open) {
-                        Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
-                    }.disabled(viewModel.isDownloading)
-
-                    if viewModel.isDownloadOptionAvailable {
-                        Button(action: download) {
-                            Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
-                        }
-                    }
-
-                    if canOpenVersionHistory, !viewModel.isInRecycleBin {
-                        Button(action: showVersionHistory) {
-                            Label(
-                                Strings.Files.Item.Menu.versionHistory,
-                                systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90"
-                            )
-                        }
-                    }
-
-                    if canEditFile, viewModel.isEditable {
-                        Button(action: editFile) {
-                            Label(Strings.Files.Item.Menu.editFile, systemImage: "square.and.pencil")
-                        }
-                    }
-
-                    Divider()
-
-                    if canRenameFile, !viewModel.isInRecycleBin {
-                        Button(action: rename) {
-                            Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
-                        }
-                    }
-
-                    if canMoveToFolder {
-                        Button(action: moveToFolder) {
-                            Label(Strings.Files.Item.Menu.moveToFolder, systemImage: "folder")
-                        }
-                    }
-
-                    if canEditTags, !viewModel.isInRecycleBin {
-                        Button(action: editTags) {
-                            Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
-                        }
-                    }
-
-                    if viewModel.isInRecycleBin {
-                        Button(action: restore) {
-                            Label(Strings.RecycleBin.Item.Menu.restore, systemImage: "arrow.uturn.backward")
-                        }
-                    }
-
-                    if canDeleteFiles {
-                        if viewModel.isInRecycleBin || !viewModel.isFoldersEnabled {
-                            Button(
-                                role: .destructive,
-                                action: { delete(permanently: true) },
-                                label: { Label(Strings.RecycleBin.Item.Menu.delete, systemImage: "trash.fill") }
-                            )
-                        } else {
-                            Button(
-                                role: .destructive,
-                                action: { delete(permanently: false) },
-                                label: { Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill") }
-                            )
-                        }
-                    }
+                    menuContent()
                 } label: {
                     Image(systemName: "ellipsis")
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
@@ -238,40 +152,114 @@ struct FilesViewItemView: View {
         .contentShape(Rectangle()) // Tap area
     }
 
-    private func open() {
-        Task { await viewModel.open() }
+    @ViewBuilder
+    private func menuContent() -> some View {
+        menuItem(.open) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
+            }
+            .disabled(viewModel.isDownloading)
+
+            if viewModel.isDownloadOptionAvailable {
+                Button {
+                    Task { await viewModel.download() }
+                } label: {
+                    Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
+                }
+            }
+        }
+
+        menuItem(.shareLink) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(
+                    Strings.Files.Item.Menu.shareLink,
+                    systemImage: "square.and.arrow.up"
+                )
+            }
+        }
+
+        menuItem(.showVersionHistory) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(
+                    Strings.Files.Item.Menu.versionHistory,
+                    systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90"
+                )
+            }
+        }
+
+        menuItem(.edit) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(Strings.Files.Item.Menu.editFile, systemImage: "square.and.pencil")
+            }
+        }
+
+        Divider()
+
+        menuItem(.rename) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
+            }
+        }
+
+        menuItem(.moveToFolder) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(Strings.Files.Item.Menu.moveToFolder, systemImage: "folder")
+            }
+        }
+
+        menuItem(.editTags) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
+            }
+        }
+
+        menuItem(.restore) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(Strings.RecycleBin.Item.Menu.restore, systemImage: "arrow.uturn.backward")
+            }
+        }
+
+        menuItem(.deletePermanently) { item in
+            Button(
+                role: .destructive,
+                action: { viewModel.performMenuAction(item) },
+                label: { Label(Strings.RecycleBin.Item.Menu.delete, systemImage: "trash.fill") }
+            )
+        }
+
+        menuItem(.deleteToRecycleBin) { item in
+            Button(
+                role: .destructive,
+                action: { viewModel.performMenuAction(item) },
+                label: { Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill") }
+            )
+        }
     }
 
-    private func editFile() {
-        Task { await viewModel.edit() }
-    }
-
-    private func download() {
-        Task { await viewModel.download() }
-    }
-
-    private func showVersionHistory() {
-        Task { await viewModel.showVersionHistory() }
-    }
-
-    private func rename() {
-        Task { await viewModel.rename() }
-    }
-
-    private func moveToFolder() {
-        Task { await viewModel.moveToFolder() }
-    }
-
-    private func editTags() {
-        Task { await viewModel.onItemAction(.editTags, viewModel.item) }
-    }
-
-    private func restore() {
-        viewModel.showRestoreConfirmation()
-    }
-
-    private func delete(permanently: Bool) {
-        viewModel.showDeleteConfirmation(deletePermanently: permanently)
+    @ViewBuilder
+    private func menuItem(
+        _ itemAction: FilesItemViewModel.ItemAction,
+        @ViewBuilder menuItem: (FilesItemViewModel.ItemAction) -> some View
+    ) -> some View {
+        if viewModel.menuActions.contains(itemAction) {
+            menuItem(itemAction)
+        }
     }
 
     private func confirmDelete(permanently: Bool) {
@@ -285,7 +273,6 @@ struct FilesViewItemView: View {
     private var progressColor: Color {
         viewModel.showErrorState ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
     }
-
 }
 
 private extension View {
@@ -333,15 +320,8 @@ private extension View {
 
 #Preview {
     VStack(spacing: 0) {
-        FilesViewItemView(viewModel: .preview())
-        FilesViewItemView(
-            viewModel: .preview(),
-            canRenameFile: true,
-            canEditTags: true,
-            canOpenVersionHistory: true,
-            canDeleteFiles: true
-        )
-        FilesViewItemView(viewModel: .preview(tags: ["urgent"]), canRenameFile: true, canEditTags: true)
-        FilesViewItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]), canDeleteFiles: true)
+        FilesItemView(viewModel: .preview())
+        FilesItemView(viewModel: .preview(tags: ["urgent"]))
+        FilesItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]))
     }
 }

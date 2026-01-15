@@ -660,7 +660,6 @@
 
 "content.system.cannot_decrypt.self" = "No se pudo descifrar un mensaje tuyo.";
 "content.system.cannot_decrypt.other" = "No se pudo descifrar un mensaje de %@.";
-"content.system.cannot_decrypt.reset_session" = "Corregir mensajes futuros";
 "content.system.cannot_decrypt.error_details" = "(Error corregido: %d ID: %@)";
 
 "content.system.cannot_decrypt_resolved.self" = "Ahora puedes descifrar mensajes de ti mismo. Para recuperar mensajes perdidos, necesitas reenviarlos.";
@@ -733,6 +732,8 @@
 "content.reactions_list.likers" = "Le ha gustado a";
 
 "content.file.too_big" = "Puedes enviar archivos de hasta %@";
+
+"content.message.reply.files.count" = "%@ files";
 
 // Reactions
 "content.reactions.title" = "Seleccionar reacción";
@@ -1840,10 +1841,6 @@
 "databaseloadingfailure.alert.delete_database.continue" = "Continuar";
 "databaseloadingfailure.alert.retry" = "Reintentar";
 
-// Backend not supported alert
-"backend_not_supported.alert.title" = "Versión del servidor no soportada";
-"backend_not_supported.alert.message" = "La versión del servidor no es compatible con esta aplicación. Póngase en contacto con el administrador del sistema.";
-
 // Third Party
 "giphy.conversation.message" = "%@ · vía giphy.com";
 "giphy.conversation.random_message" = "vía giphy.com";
@@ -1869,6 +1866,10 @@
 
 "collections.search.field.placeholder" = "Buscar mensajes";
 "collections.search.no_items" = "Ningún resultado";
+
+"collections.section.searchFiles.description" = "Search files";
+"collections.section.searchFiles.alert.title" = "File collaboration (Cells beta version)";
+"collections.section.searchFiles.alert.message" = "Find files shared in conversations with file collaboration";
 
 
 

@@ -1653,6 +1653,16 @@ internal enum L10n {
           /// Links
           internal static let title = L10n.tr("Localizable", "collections.section.links.title", fallback: "Links")
         }
+        internal enum SearchFiles {
+          /// Search files
+          internal static let description = L10n.tr("Localizable", "collections.section.searchFiles.description", fallback: "Search files")
+          internal enum Alert {
+            /// Find files shared in conversations with file collaboration
+            internal static let message = L10n.tr("Localizable", "collections.section.searchFiles.alert.message", fallback: "Find files shared in conversations with file collaboration")
+            /// File collaboration (Cells beta version)
+            internal static let title = L10n.tr("Localizable", "collections.section.searchFiles.alert.title", fallback: "File collaboration (Cells beta version)")
+          }
+        }
         internal enum Videos {
           /// Videos
           internal static let title = L10n.tr("Localizable", "collections.section.videos.title", fallback: "Videos")

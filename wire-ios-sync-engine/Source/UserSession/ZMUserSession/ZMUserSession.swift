@@ -115,11 +115,7 @@ public final class ZMUserSession: NSObject {
     // MARK: Computed Properties
 
     public var isBackendMLSEnabled: Bool {
-        if DeveloperFlag.multibackend.isOn {
-            journal[.isBackendMLSEnabled]
-        } else {
-            BackendInfo.isMLSEnabled
-        }
+        journal[.isBackendMLSEnabled]
     }
 
     var isPerformingSync = true {
@@ -723,6 +719,14 @@ public final class ZMUserSession: NSObject {
         tokens.removeAll()
         application.unregisterObserverForStateChange(self)
         callStateObserver = nil
+
+        // Clear delegates to break retain cycles
+        earService.delegate = nil
+        appLockController.delegate = nil
+        applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = nil
+
+        syncAgent?.delegate = nil
+        syncAgent = nil
         syncStrategy?.tearDown()
         syncStrategy = nil
         operationLoop?.tearDown()
@@ -732,6 +736,10 @@ public final class ZMUserSession: NSObject {
         callCenter?.tearDown()
         coreDataStack.close()
         contextStorage.clear()
+
+        // Note: strategyDirectory, legacyUpdateEventProcessor, and urlActionProcessors
+        // are left to be cleaned up when ZMUserSession is deallocated to avoid
+        // triggering strategy teardowns while async operations may still be running.
 
         NotificationCenter.default.removeObserver(self)
         WireLogger.authentication.clearClientID()
@@ -865,10 +873,7 @@ public final class ZMUserSession: NSObject {
         recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
         recurringActionService.registerAction(refreshTeamMetadataAction)
         recurringActionService.registerAction(refreshFederationCertificatesAction)
-
-        if DeveloperFlag.multibackend.isOn {
-            recurringActionService.registerAction(checkBuildBlacklistAction)
-        }
+        recurringActionService.registerAction(checkBuildBlacklistAction)
     }
 
     func startRequestLoopTracker() {
@@ -1281,7 +1286,6 @@ extension ZMUserSession: SyncAgentDelegate {
 
         WaitingGroupTask(context: syncContext) { [weak self] in
             guard let self else { return }
-            await fetchBackendMLSPublicKeys()
             await fetchAndStoreFeatureConfig()
 
             let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
@@ -1411,21 +1415,6 @@ extension ZMUserSession: SyncAgentDelegate {
             try await clientSessionComponent?.featureConfigRepository.pullFeatureConfigs()
         } catch {
             WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
-        }
-    }
-
-    private func fetchBackendMLSPublicKeys() async {
-        guard !DeveloperFlag.multibackend.isOn else {
-            // fetching done on UserSessionLoader
-            return
-        }
-        do {
-            var getBackendMLSPublicKeysAction = FetchBackendMLSPublicKeysAction()
-            let backendPublicKeys = try await getBackendMLSPublicKeysAction.perform(in: notificationContext)
-            let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
-            BackendInfo.isMLSEnabled = hasValidKeys
-        } catch {
-            WireLogger.mls.info("Backend doesn't have MLS public keys: \(String(reflecting: error))")
         }
     }
 
@@ -1713,7 +1702,7 @@ extension ZMUserSession {
 extension ZMUserSession {
 
     private func makeAppVersionMigrations() -> [any AppVersionMigration] {
-        [
+        var migrations: [any AppVersionMigration] = [
             AppVersionMigration_4_1_1(journal: journal, logFilesProvider: logFilesProvider),
             AppVersionMigration_4_2_0(
                 appGroupIdentifier: Bundle.main.appGroupIdentifier,
@@ -1728,6 +1717,20 @@ extension ZMUserSession {
                 repairGenerator: clientSessionComponent?.repairFaultyMLSRemovalKeysGenerator
             )
         ]
+
+        if let clientSessionComponent {
+            migrations.append(
+                AppVersionMigration_4_12_1(
+                    coreDataStack: coreDataStack,
+                    api: clientSessionComponent.conversationsAPI,
+                    store: clientSessionComponent.conversationLocalStore
+                )
+            )
+        } else {
+            // skip migration when first login, ok since there is no bug to fix then
+        }
+
+        return migrations
     }
 
 }

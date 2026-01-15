@@ -19,11 +19,15 @@
 public import Foundation
 
 public struct WireCellsPublicLink: Equatable, Hashable, Sendable {
-    public let uuid: UUID
+    public let linkID: String
     public let url: URL
+    public let requiresPassword: Bool
+    public let expirationDate: Date?
 
-    package init(uuid: UUID, url: URL) {
-        self.uuid = uuid
+    package init(linkID: String, url: URL, requiresPassword: Bool, expirationDate: Date?) {
+        self.linkID = linkID
         self.url = url
+        self.requiresPassword = requiresPassword
+        self.expirationDate = expirationDate
     }
 }

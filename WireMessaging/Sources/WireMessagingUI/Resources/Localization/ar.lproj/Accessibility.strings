@@ -27,7 +27,6 @@
 "conversation.create.channel.back" = "Go back to new conversation overview";
 "conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";
 
-
 // MARK: Conversation Files View
 "conversation.wireCells.files.close" = "Close files";
 "conversation.wireCells.files.loadMore.title" = "Load more";
@@ -46,3 +45,7 @@
 // MARK: - File Tags View
 "conversation.wireCells.tags.removeTag" = "Remove tag {0}";
 "conversation.wireCells.tags.addTag" = "Add tag {0}";
+
+// MARK: - Share Link View
+"conversation.wireCells.shareLink.hidePassword" = "Hide password";
+"conversation.wireCells.shareLink.showPassword" = "Show password";

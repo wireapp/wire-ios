@@ -70,6 +70,13 @@ package struct FilesView: FilesViewProtocol {
             .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
             .toolbar { toolbarContent }
+            .if(viewModel.showSearchBar) { view in
+                view.searchable(
+                    text: $viewModel.searchText,
+                    placement: .navigationBarDrawer,
+                    prompt: Strings.Files.Search.title
+                )
+            }
             .onAppear { reloadTask() }
             .onReceive(viewModel.triggerReload) { _ in
                 Task {
@@ -86,7 +93,8 @@ package struct FilesView: FilesViewProtocol {
                 item: $viewModel.sheetNavigation,
                 onDismiss: {
                     Task { await viewModel.onSheetDismissed() }
-                }, content: { navigationItem in
+                },
+                content: { navigationItem in
                     switch navigationItem {
                     case let .editTags(fileItem: fileItem):
                         TagsEditView(
@@ -99,6 +107,8 @@ package struct FilesView: FilesViewProtocol {
                                 await viewModel.reload()
                             }
                         )
+                    case let .shareLink(shareLinkView):
+                        shareLinkView
                     case let .renameFile(fileRenameView):
                         fileRenameView
                     case let .createFolder(folderView):
@@ -107,7 +117,7 @@ package struct FilesView: FilesViewProtocol {
                         versionHistoryView
                     case let .moveToFolder(fileItem):
                         viewModel.moveToFolderView(item: fileItem)
-                    default:
+                    case .filters:
                         EmptyView()
                     }
                 }
@@ -137,7 +147,7 @@ private extension FilesView {
             }
         }
 
-        if !viewModel.isRecycleBin, viewModel.isFoldersEnabled {
+        if !viewModel.isRecycleBin {
             ToolbarItem(placement: .navigationBarTrailing) {
                 moreActionsButton
             }
@@ -216,6 +226,6 @@ private extension FilesViewModel.FolderMenuOption {
 
 #Preview {
     NavigationStack {
-        FilesView(viewModel: .preview(isFoldersEnabled: true))
+        FilesView(viewModel: .preview())
     }
 }

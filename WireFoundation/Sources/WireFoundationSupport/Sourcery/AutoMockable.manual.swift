@@ -20,6 +20,10 @@ public import WireFoundation
 
 public actor KeychainProtocolMock: KeychainProtocol {
 
+    // MARK: - Init
+
+    public init() {}
+
     // MARK: - addItem
 
     public var addItemQuery_Invocations: [Set<KeychainQueryItem>] = []

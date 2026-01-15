@@ -32,6 +32,10 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.bottomBarSettingsButton.rawValue]
     }
 
+    var archivedButton: XCUIElement {
+        app.buttons[Locators.ConversationsPage.bottomBarArchivedButton.rawValue]
+    }
+
     var plusButtonToCreateGroup: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.createGroupOrSearchButton.rawValue].firstMatch
     }
@@ -56,16 +60,24 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConnectionRequestsPage.connectRequestButton.rawValue]
     }
 
+    var accountProfileImageView: XCUIElement {
+        app.buttons[Locators.ConversationsPage.accountProfileImageView.rawValue]
+    }
+
     func openSettings() throws -> SettingsPage {
         settingsButton.tap()
         return try SettingsPage()
     }
 
-    func openUserAccountPageForUser(with input: String) throws -> UserProfilePage {
-        let predicate = NSPredicate(format: "value BEGINSWITH %@", input)
-        let button = app.buttons.containing(predicate).firstMatch
-        if button.waitForExistence(timeout: 2), button.isHittable {
-            button.tap()
+    func openArchived() throws -> ArchivedConversationsPage {
+        archivedButton.tap()
+        return try ArchivedConversationsPage()
+    }
+
+    func openUserProfilePage() throws -> UserProfilePage {
+
+        if accountProfileImageView.waitForExistence(timeout: 2), accountProfileImageView.isHittable {
+            accountProfileImageView.tap()
         }
         return try UserProfilePage()
     }

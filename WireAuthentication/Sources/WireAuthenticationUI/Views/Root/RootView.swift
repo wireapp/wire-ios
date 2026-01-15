@@ -65,8 +65,8 @@ package struct RootView: View {
                             switch alert {
                             case .obsoleteClient:
                                 Text(
-                                    viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend.Alert
-                                        .title : L10n.Localizable.ObsoleteClient.Alert.title
+                                    L10n.Localizable.ObsoleteClientMultibackend.Alert
+                                        .title
                                 )
                             default:
                                 Text(alert.title)
@@ -75,15 +75,10 @@ package struct RootView: View {
                         message: { alert in
                             switch alert {
                             case .obsoleteBackend:
-                                Text(
-                                    viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteBackendMultibackend.Alert
-                                        .message : L10n.Localizable.ObsoleteBackend.Alert.message
-                                )
+                                Text(L10n.Localizable.ObsoleteBackendMultibackend.Alert.message)
                             case .obsoleteClient:
-                                Text(
-                                    viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend
-                                        .Alert.message : L10n.Localizable.ObsoleteClient.Alert.message
-                                )
+                                Text(L10n.Localizable.ObsoleteClientMultibackend
+                                    .Alert.message)
                             default:
                                 Text(alert.message)
                             }
@@ -92,7 +87,7 @@ package struct RootView: View {
                             switch alert {
                             case .obsoleteClient:
                                 obsoleteClientAlertActions()
-                            case .obsoleteBackend where viewModel.isMultibackendEnabled:
+                            case .obsoleteBackend:
                                 obsoleteBackendAlertActions()
                             case .logoutConfirmation:
                                 logoutConfirmationButtons
@@ -165,17 +160,15 @@ package struct RootView: View {
     @ViewBuilder
     private func obsoleteClientAlertActions() -> some View {
         Button(
-            viewModel.isMultibackendEnabled ? Strings.Obsolete.Alert.updateButton : Strings.ObsoleteClient.Alert
-                .okButton,
+            Strings.Obsolete.Alert.updateButton,
             action: viewModel.goToAppStore
         )
         switchAccountsAlertButtonIfNeeded()
-        if viewModel.isMultibackendEnabled {
-            Button(
-                Strings.Obsolete.Alert.cancel,
-                action: viewModel.dismissAlert
-            )
-        }
+
+        Button(
+            Strings.Obsolete.Alert.cancel,
+            action: viewModel.dismissAlert
+        )
     }
 
     @ViewBuilder private var logoutConfirmationButtons: some View {

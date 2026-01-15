@@ -660,7 +660,6 @@
 
 "content.system.cannot_decrypt.self" = "无法解密您发送的消息。";
 "content.system.cannot_decrypt.other" = "无法解密来自 %@ 的消息。";
-"content.system.cannot_decrypt.reset_session" = "修复未来的消息";
 "content.system.cannot_decrypt.error_details" = "（已修复错误：%d ID：%@）";
 
 "content.system.cannot_decrypt_resolved.self" = "您现在可以解密来自您自己的消息。要恢复丢失的消息，您需要重新发送它们。";
@@ -733,6 +732,8 @@
 "content.reactions_list.likers" = "赞好";
 
 "content.file.too_big" = "您可以发送最大%@的文件。";
+
+"content.message.reply.files.count" = "%@ files";
 
 // Reactions
 "content.reactions.title" = "选择反应";
@@ -1840,10 +1841,6 @@
 "databaseloadingfailure.alert.delete_database.continue" = "继续";
 "databaseloadingfailure.alert.retry" = "重试";
 
-// Backend not supported alert
-"backend_not_supported.alert.title" = "不支持服务器版本";
-"backend_not_supported.alert.message" = "此应用不支持该服务器版本。请联系您的系统管理员。";
-
 // Third Party
 "giphy.conversation.message" = "%@ · 来源 giphy.com";
 "giphy.conversation.random_message" = "来源 giphy.com";
@@ -1869,6 +1866,10 @@
 
 "collections.search.field.placeholder" = "搜索文字信息";
 "collections.search.no_items" = "没有找到";
+
+"collections.section.searchFiles.description" = "Search files";
+"collections.section.searchFiles.alert.title" = "File collaboration (Cells beta version)";
+"collections.section.searchFiles.alert.message" = "Find files shared in conversations with file collaboration";
 
 
 
