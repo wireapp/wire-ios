@@ -18,12 +18,12 @@
 
 @preconcurrency import Combine
 import Foundation
-import Network
+@preconcurrency import Network
 
 /// One monitor, two publishers.
 /// - Reachability: `isReachablePublisher`
 /// - Network interface changes: `interfaceSwitchPublisher`
-public final class NetworkReachability: Sendable {
+public final class NetworkReachability {
 
     public struct Snapshot: Equatable {
         let status: NWPath.Status
@@ -35,8 +35,8 @@ public final class NetworkReachability: Sendable {
         var isOnline: Bool { status == .satisfied }
     }
 
-    private let monitor = NWPathMonitor()
-    private let queue = DispatchQueue(label: "NetworkReachabilityQueue")
+    private let monitor: any ReachabilityMonitoring
+    private let queue: DispatchQueue
     private let snapshotSubject = CurrentValueSubject<Snapshot?, Never>(nil)
 
     public var snapshotPublisher: AnyPublisher<Snapshot, Never> {
@@ -77,19 +77,21 @@ public final class NetworkReachability: Sendable {
             .eraseToAnyPublisher()
     }
 
-    public init() {
-        monitor.pathUpdateHandler = { [weak self] path in
+    public init(
+        monitor: any ReachabilityMonitoring = NWReachabilityMonitor(),
+        queue: DispatchQueue = DispatchQueue(label: "NetworkReachabilityQueue")
+    ) {
+        self.monitor = monitor
+        self.queue = queue
+        self.monitor.updateHandler = { [weak self] info in
             guard let self else { return }
-
-            let snap = Snapshot(
-                status: path.status,
-                isWifi: path.usesInterfaceType(.wifi),
-                isCellular: path.usesInterfaceType(.cellular),
-                isExpensive: path.isExpensive,
-                isConstrained: path.isConstrained
-            )
-
-            snapshotSubject.send(snap)
+            snapshotSubject.send(Snapshot(
+                status: info.status,
+                isWifi: info.isWifi,
+                isCellular: info.isCellular,
+                isExpensive: info.isExpensive,
+                isConstrained: info.isConstrained
+            ))
         }
 
         monitor.start(queue: queue)
@@ -97,12 +99,6 @@ public final class NetworkReachability: Sendable {
 
     deinit {
         monitor.cancel()
-    }
-
-    // MARK: - For tests
-
-    func _sendForTests(_ snap: Snapshot) {
-        snapshotSubject.send(snap)
     }
 
 }

@@ -17,131 +17,161 @@
 //
 
 import Combine
-import XCTest
-@testable import WireNetwork
+@preconcurrency import Network
+import Testing
+@testable @preconcurrency import WireNetwork
 
-final class NetworkReachabilityTests: XCTestCase {
-    private var cancellables = Set<AnyCancellable>()
-    private var networkReachability: NetworkReachability!
+@Suite
+struct NetworkReachabilityTests {
 
-    override func setUp() async throws {
-        networkReachability = NetworkReachability()
-    }
-
-    override func tearDown() async throws {
-        networkReachability = nil
-    }
-
-    func test_isReachablePublisher_emitsOnlyOnReachabilityChange() {
+    @Test
+    func isReachablePublisher_emitsOnlyOnReachabilityChange() async {
         // Given
+        let mock = MockReachabilityMonitor()
+        let sut = NetworkReachability(monitor: mock)
+
+        var cancellables = Set<AnyCancellable>()
         var values: [Bool] = []
-        let exp = expectation(description: "reachability updates")
-        exp.expectedFulfillmentCount = 3
 
-        // When
-        networkReachability.isReachablePublisher
-            .dropFirst()
-            .sink { v in
-                values.append(v)
-                exp.fulfill()
-            }
-            .store(in: &cancellables)
+        // When + Then
+        await confirmation("reachability updates", expectedCount: 3) { confirm in
+            sut.isReachablePublisher
+                .sink { v in
+                    values.append(v)
+                    confirm()
+                }
+                .store(in: &cancellables)
 
-        networkReachability._sendForTests(.init(
-            status: .unsatisfied,
-            isWifi: false,
-            isCellular: false,
-            isExpensive: false,
-            isConstrained: false
-        )
-        )
-        networkReachability._sendForTests(.init(
-            status: .unsatisfied,
-            isWifi: true,
-            isCellular: false,
-            isExpensive: false,
-            isConstrained: false
-        )
-        )
-        networkReachability._sendForTests(.init(
-            status: .satisfied,
-            isWifi: true,
-            isCellular: false,
-            isExpensive: false,
-            isConstrained: false
-        )
-        )
-        networkReachability._sendForTests(.init(
-            status: .satisfied,
-            isWifi: false,
-            isCellular: true,
-            isExpensive: true,
-            isConstrained: false
-        )
-        )
-        networkReachability._sendForTests(.init(
-            status: .unsatisfied,
-            isWifi: false,
-            isCellular: true,
-            isExpensive: true,
-            isConstrained: false
-        )
-        )
+            mock.send(.init(
+                status: .unsatisfied,
+                isWifi: false,
+                isCellular: false,
+                isExpensive: false,
+                isConstrained: false
+            ))
+            mock.send(.init(
+                status: .unsatisfied,
+                isWifi: true,
+                isCellular: false,
+                isExpensive: false,
+                isConstrained: false
+            )) // no reachability change
+            mock.send(.init(
+                status: .satisfied,
+                isWifi: true,
+                isCellular: false,
+                isExpensive: false,
+                isConstrained: false
+            ))
+            mock.send(.init(
+                status: .satisfied,
+                isWifi: false,
+                isCellular: true,
+                isExpensive: true,
+                isConstrained: false
+            )) // no reachability change
+            mock.send(.init(
+                status: .unsatisfied,
+                isWifi: false,
+                isCellular: true,
+                isExpensive: true,
+                isConstrained: false
+            ))
+        }
 
-        wait(for: [exp], timeout: 1.0)
-
-        // Then
-        XCTAssertEqual(values, [false, true, false])
+        #expect(values == [false, true, false])
     }
 
-    func test_interfaceSwitchPublisher_emitsOnInterfaceChange() {
+    @Test
+    func interfaceSwitchPublisher_emitsOnInterfaceChange() async {
         // Given
+        let mock = MockReachabilityMonitor()
+        let sut = NetworkReachability(monitor: mock)
+
+        var cancellables = Set<AnyCancellable>()
         var pairs: [(NetworkReachability.Snapshot, NetworkReachability.Snapshot)] = []
-        let exp = expectation(description: "interface switch updates")
-        exp.expectedFulfillmentCount = 2
 
-        // When
-        networkReachability.interfaceSwitchWhileOnlinePublisher
-            .sink { new, old in
-                pairs.append((new, old))
-                exp.fulfill()
-            }
-            .store(in: &cancellables)
+        // When + Then
+        await confirmation("interface switch updates", expectedCount: 2) { confirm in
+            sut.interfaceSwitchWhileOnlinePublisher
+                .sink { new, old in
+                    pairs.append((new, old))
+                    confirm()
+                }
+                .store(in: &cancellables)
 
-        let s1 = NetworkReachability.Snapshot(
+            let s1 = PathInfo(
+                status: .satisfied,
+                isWifi: true,
+                isCellular: false,
+                isExpensive: false,
+                isConstrained: false
+            )
+            let s2 = PathInfo(
+                status: .satisfied,
+                isWifi: false,
+                isCellular: true,
+                isExpensive: true,
+                isConstrained: false
+            )
+            let s3 = PathInfo(
+                status: .satisfied,
+                isWifi: false,
+                isCellular: true,
+                isExpensive: true,
+                isConstrained: true
+            )
+
+            mock.send(s1)
+            mock.send(s2)
+            mock.send(s3)
+        }
+
+        #expect(pairs.count == 2)
+
+        func snap(_ i: PathInfo) -> NetworkReachability.Snapshot {
+            .init(
+                status: i.status,
+                isWifi: i.isWifi,
+                isCellular: i.isCellular,
+                isExpensive: i.isExpensive,
+                isConstrained: i.isConstrained
+            )
+        }
+
+        let s1 = PathInfo(
             status: .satisfied,
             isWifi: true,
             isCellular: false,
             isExpensive: false,
             isConstrained: false
         )
-        let s2 = NetworkReachability.Snapshot(
+        let s2 = PathInfo(
             status: .satisfied,
             isWifi: false,
             isCellular: true,
             isExpensive: true,
             isConstrained: false
         )
-        let s3 = NetworkReachability.Snapshot(
-            status: .satisfied,
-            isWifi: false,
-            isCellular: true,
-            isExpensive: true,
-            isConstrained: true
-        )
+        let s3 = PathInfo(status: .satisfied, isWifi: false, isCellular: true, isExpensive: true, isConstrained: true)
 
-        networkReachability._sendForTests(s1)
-        networkReachability._sendForTests(s2)
-        networkReachability._sendForTests(s3)
-
-        wait(for: [exp], timeout: 1.0)
-
-        // Then
-        XCTAssertEqual(pairs.count, 2)
-        XCTAssertEqual(pairs[0].0, s2)
-        XCTAssertEqual(pairs[0].1, s1)
-        XCTAssertEqual(pairs[1].0, s3)
-        XCTAssertEqual(pairs[1].1, s2)
+        #expect(pairs[0].0 == snap(s2))
+        #expect(pairs[0].1 == snap(s1))
+        #expect(pairs[1].0 == snap(s3))
+        #expect(pairs[1].1 == snap(s2))
     }
+}
 
+final class MockReachabilityMonitor: ReachabilityMonitoring {
+    var updateHandler: ((PathInfo) -> Void)?
+
+    private(set) var started = false
+    private(set) var cancelled = false
+
+    func start(queue: DispatchQueue) { started = true }
+    func cancel() { cancelled = true }
+
+    func send(_ info: PathInfo) {
+        updateHandler?(info)
+    }
 }
