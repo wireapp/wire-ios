@@ -42,10 +42,7 @@ class UserHelper {
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
 
-    init() {
-        guard let apiVersion = APIVersion.productionVersions.max() else {
-               fatalError("No production APIVersion defined")
-           }
+    init(apiVersion: APIVersion = APIVersion.productionVersions.max()!) {
         self.apiVersion = apiVersion
         self.createdUsers = []
         self.networkStack = NetworkStack(
