@@ -32,7 +32,8 @@ extension GenericMessage {
         case let .location(data as BigEndianDataConvertible),
              .text(let data as BigEndianDataConvertible),
              .edited(let data as BigEndianDataConvertible),
-             .asset(let data as BigEndianDataConvertible):
+             .asset(let data as BigEndianDataConvertible),
+             .multipart(let data as BigEndianDataConvertible):
             return data.hashWithTimestamp(timestamp: timestamp.timeIntervalSince1970)
         case let .ephemeral(data):
             guard let content = data.content else {
@@ -75,6 +76,15 @@ extension Location: BigEndianDataConvertible {
 extension GenericMessageProtocol.Asset: BigEndianDataConvertible {
     var asBigEndianData: Data {
         uploaded.assetID.asBigEndianData
+    }
+}
+
+extension GenericMessageProtocol.Multipart: BigEndianDataConvertible {
+    var asBigEndianData: Data {
+        let messageTextData = text.content.data(using: .utf16BigEndian)!
+        let attachmentsData = attachments.map(\.cellAsset.uuid).joined(separator: ", ").data(using: .utf16BigEndian)!
+
+        return Data([0xFE, 0xFF]) + messageTextData + attachmentsData
     }
 }
 

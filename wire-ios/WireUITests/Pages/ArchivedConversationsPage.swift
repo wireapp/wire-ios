@@ -16,5 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 4.15.0
-MAJOR_VERSION = 4
+import WireLocators
+import XCTest
+
+class ArchivedConversationsPage: ConversationsPage {
+
+    func conversationExists(withName name: String) -> Bool {
+        let predicate = NSPredicate(format: "label == %@", name)
+        let userCells = app.buttons.containing(predicate).firstMatch
+        return userCells.waitForExistence(timeout: 2) && userCells.isHittable
+    }
+}

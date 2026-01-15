@@ -247,9 +247,13 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (void)tearDown
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
+
     self.tornDown = YES;
-    
+
+    // Clear access token handlers to break retain cycles
+    [self.accessTokenHandler setAccessTokenRenewalFailureHandler:nil];
+    [self.accessTokenHandler setAccessTokenRenewalSuccessHandler:nil];
+
     self.reachabilityObserverToken = nil;
     [self.workGroup enter];
     [self.workQueue addOperationWithBlock:^{
@@ -257,7 +261,7 @@ static NSInteger const DefaultMaximumRequests = 6;
         [self.sessionsDirectory tearDown];
         [self.workGroup leave];
     }];
-    
+
     // Wait until all the requests have been cancelled
     [self.workQueue waitUntilAllOperationsAreFinished];
 }
