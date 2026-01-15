@@ -28,7 +28,6 @@ enum NavigationDestination {
     case userProfile(WireDataModel.UserType)
     case connectionRequest(WireDataModel.QualifiedID)
     case conversationList
-    case authenticationModule(() -> Void)
 }
 
 protocol AuthenticatedRouterProtocol: AnyObject {
@@ -186,10 +185,6 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
         case let .userProfile(user):
             Task { @MainActor in
                 await _zClientViewController?.showUserProfile(user: user)
-            }
-        case .authenticationModule(let action):
-            SessionManager.shared?.addAccount {
-                action()
             }
         }
     }

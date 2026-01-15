@@ -208,12 +208,19 @@ extension URLActionRouter: PresentationDelegate {
             if let error = sessionManager?.canSwitchBackend() {
                 let localizedError = mapToLocalizedError(error)
                 presentLocalizedErrorAlert(localizedError)
+                decisionHandler(false)
+                return
             }
 
             if DeveloperFlag.useWireAuthentication.isOn {
-                let handleBackendURLAction = { decisionHandler(SecurityFlags.customBackend.isEnabled)
+                if let sessionManager, sessionManager.activeUserSession?.isLoggedIn == true {
+                    // allows switching backend from current session
+                    sessionManager.addAccount {
+                        decisionHandler(SecurityFlags.customBackend.isEnabled)
+                    }
+                } else {
+                    decisionHandler(SecurityFlags.customBackend.isEnabled)
                 }
-                navigate(to: .authenticationModule(handleBackendURLAction))
 
             } else {
                 // Switching backend is handled below, so pass false here.
