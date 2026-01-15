@@ -171,6 +171,17 @@ struct FilesItemView: View {
             }
         }
 
+        menuItem(.shareLink) { item in
+            Button {
+                viewModel.performMenuAction(item)
+            } label: {
+                Label(
+                    Strings.Files.Item.Menu.shareLink,
+                    systemImage: "square.and.arrow.up"
+                )
+            }
+        }
+
         menuItem(.showVersionHistory) { item in
             Button {
                 viewModel.performMenuAction(item)
