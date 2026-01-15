@@ -53,7 +53,10 @@ final class TeamManageTests: WireUITestCase {
             password: teamOwner.password
         )
 
-        let (_, memberUser) = try await userHelper.registerUsersAsTeamMember(ownerAccessToken: ownerAccessToken.token, teamID: teamID)
+        let (_, memberUser) = try await userHelper.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            teamID: teamID
+        )
 
         let firstTimePage = try app.loginUser(email: memberUser.email, password: memberUser.password)
         let userProfilePage = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)

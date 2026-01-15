@@ -29,9 +29,9 @@ struct Member {
 class UserHelper {
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
-    
+
     let apiVersion: APIVersion
-    
+
     let authenticationAPI: AuthenticationAPI
     let teamsAPI: TeamsAPI
     let selfUserAPI: SelfUserAPI
