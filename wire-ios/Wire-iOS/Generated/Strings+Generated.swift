@@ -2575,6 +2575,26 @@ internal enum L10n {
         internal static let inAddressBook = L10n.tr("Localizable", "conversation.connection_view.in_address_book", fallback: "in Contacts")
         /// Please still be careful with who you share sensitive information.
         internal static let sensitiveInformationWarning = L10n.tr("Localizable", "conversation.connection_view.sensitive_information_warning", fallback: "Please still be careful with who you share sensitive information.")
+        internal enum Welcome {
+          /// Learn more
+          internal static let learnMore = L10n.tr("Localizable", "conversation.connection_view.welcome.learn_more", fallback: "Learn more")
+          internal enum Message {
+            /// Everything you send and receive in this channel is only accessible to you and other group participants.
+            /// 
+            /// Please still be careful with who you share sensitive information.
+            internal static let wire = L10n.tr("Localizable", "conversation.connection_view.welcome.message.wire", fallback: "Everything you send and receive in this channel is only accessible to you and other group participants.\n\nPlease still be careful with who you share sensitive information.")
+            /// Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.
+            /// 
+            /// Please still be careful with who you share sensitive information.
+            internal static let wireCells = L10n.tr("Localizable", "conversation.connection_view.welcome.message.wire_cells", fallback: "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.\n\nPlease still be careful with who you share sensitive information.")
+          }
+          internal enum Title {
+            /// Communication in Wire is always end-to-end encrypted.
+            internal static let wire = L10n.tr("Localizable", "conversation.connection_view.welcome.title.wire", fallback: "Communication in Wire is always end-to-end encrypted.")
+            /// Communication in Wire is always secured.
+            internal static let wireCells = L10n.tr("Localizable", "conversation.connection_view.welcome.title.wire_cells", fallback: "Communication in Wire is always secured.")
+          }
+        }
         internal enum WireCells {
           /// Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.
           internal static let encryptionInfo = L10n.tr("Localizable", "conversation.connection_view.wire_cells.encryption_info", fallback: "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.")
