@@ -29,7 +29,9 @@ struct Member {
 class UserHelper {
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
-
+    
+    let apiVersion: APIVersion
+    
     let authenticationAPI: AuthenticationAPI
     let teamsAPI: TeamsAPI
     let selfUserAPI: SelfUserAPI
@@ -40,8 +42,11 @@ class UserHelper {
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
 
-    init(apiVersion: APIVersion = .v8) {
-
+    init() {
+        guard let apiVersion = APIVersion.productionVersions.max() else {
+               fatalError("No production APIVersion defined")
+           }
+        self.apiVersion = apiVersion
         self.createdUsers = []
         self.networkStack = NetworkStack(
             backendEnvironment: BackendContext.backendEnvironment,
