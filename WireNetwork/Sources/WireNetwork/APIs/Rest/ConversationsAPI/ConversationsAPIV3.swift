@@ -90,6 +90,61 @@ class ConversationsAPIV3: ConversationsAPIV2 {
             .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
             .parse(code: response.statusCode, data: data)
     }
+
+    override func updateConversationAccess(
+        conversationID: QualifiedID,
+        allowGuests: Bool,
+        allowApps: Bool
+    ) async throws {
+
+        // Build access roles based on allowGuests and allowApps
+        var accessRoles: Set<ConversationAccessRole> = [.teamMember]
+        if allowGuests {
+            accessRoles.insert(.guest)
+            accessRoles.insert(.nonTeamMember)
+        }
+        if allowApps {
+            accessRoles.insert(.app)
+        }
+
+        // Build access modes based on allowGuests
+        var accessModes: Set<ConversationAccessMode> = [.invite]
+        if allowGuests {
+            accessModes.insert(.code)
+        }
+
+        let parameters = UpdateConversationAccessParametersV0(
+            accessModes: accessModes.map { $0.toNetworkModel() }.sorted { $0.rawValue < $1.rawValue },
+            accessRoles: accessRoles.map { $0.toNetworkModel() }.sorted { $0.rawValue < $1.rawValue }
+        )
+        let body = try JSONEncoder.defaultEncoder.encode(parameters)
+        let path = "\(pathPrefix)\(basePath)/\(conversationID.domain)/\(conversationID.id)/access"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.put)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        try ResponseParser()
+            .success(code: .ok, type: DummyPayload.self)
+            .success(code: .noContent)
+            .failure(code: .forbidden, label: "invalid-op", error: ConversationsAPIError.invalidOperation)
+            .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
+            .failure(code: .forbidden, label: "action-denied", error: ConversationsAPIError.insufficientAuthorization)
+            .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
+            .parse(code: response.statusCode, data: data)
+
+        struct DummyPayload: Decodable, ToAPIModelConvertible {
+            func toAPIModel() -> Void {}
+        }
+
+    }
+
 }
 
 // MARK: - Encodables
@@ -222,5 +277,15 @@ struct ConversationV3: Decodable, ToAPIModelConvertible {
             lastEvent: lastEvent,
             lastEventTime: lastEventTime?.date
         )
+    }
+}
+
+private struct UpdateConversationAccessParametersV0: Encodable {
+    let accessModes: [ConversationAccessModeV0]
+    let accessRoles: [ConversationAccessRoleV0]
+
+    enum CodingKeys: String, CodingKey {
+        case accessModes = "access"
+        case accessRoles = "access_role"
     }
 }

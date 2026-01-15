@@ -75,6 +75,11 @@ struct SetAllowGuestAndAppsUseCase: SetAllowGuestAndAppsUseCaseProtocol {
             allowApps: allowApps
         )
 
+        await context.perform {
+            conversation.allowApps = allowApps
+            conversation.allowGuests = allowGuests
+        }
+
 //        return () // TODO: clean up? or fallback?
 //
 //        var action = SetAllowGuestsAndAppsAction(
