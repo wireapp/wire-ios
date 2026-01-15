@@ -74,8 +74,6 @@ public final class ZMUserSession: NSObject {
     let debugCommands: [String: DebugCommand]
     let eventProcessingTracker: EventProcessingTracker = .init()
 
-    var accessTokenRenewalObserver: AccessTokenRenewalObserver?
-
     var recurringActionService: any RecurringActionServiceInterface
 
     private(set) var coreCryptoProvider: CoreCryptoProviderProtocol
@@ -83,7 +81,7 @@ public final class ZMUserSession: NSObject {
     let proteusService: ProteusServiceInterface
     private(set) var mlsService: MLSServiceInterface
     let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
-
+    
     public lazy var featureRepository = LegacyFeatureRepository(context: syncContext)
 
     let earService: EARServiceInterface
@@ -761,12 +759,6 @@ public final class ZMUserSession: NSObject {
 
     private func configureTransportSession() {
         transportSession.setNetworkStateDelegate(self)
-        transportSession.setAccessTokenRenewalFailureHandler { [weak self] response in
-            self?.transportSessionAccessTokenDidFail(response: response)
-        }
-        transportSession.setAccessTokenRenewalSuccessHandler { [weak self]  _, _ in
-            self?.transportSessionAccessTokenDidSucceed()
-        }
     }
 
     private func createStrategyDirectory() -> StrategyDirectoryProtocol {

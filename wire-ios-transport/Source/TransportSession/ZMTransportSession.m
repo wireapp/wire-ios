@@ -762,16 +762,6 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 @implementation ZMTransportSession (AccessToken)
 
-- (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler;
-{
-    [self.accessTokenHandler setAccessTokenRenewalFailureHandler:handler];
-}
-
-- (void)setAccessTokenRenewalSuccessHandler:(ZMAccessTokenHandlerBlock)handler;
-{
-    [self.accessTokenHandler setAccessTokenRenewalSuccessHandler:handler];
-}
-
 - (void)renewAccessTokenWithClientID:(NSString *)clientID
 {
     [self.accessTokenHandler sendAccessTokenRequestWithURLSession:self.sessionsDirectory.foregroundSession clientID:clientID];

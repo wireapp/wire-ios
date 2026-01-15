@@ -310,7 +310,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     var callCenterObserverToken: Any?
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
-    let apiMigrationManager: APIMigrationManager
 
     var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
 
@@ -581,9 +580,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.reachability = reachability
         self.maxNumberAccounts = maxNumberAccounts
         self.isDeveloperModeEnabled = isDeveloperModeEnabled
-        self.apiMigrationManager = APIMigrationManager(
-            migrations: [AccessTokenMigration()]
-        )
 
         // we must set these before initializing the PushDispatcher b/c if the app
         // received a push from terminated state, it requires these properties to be
