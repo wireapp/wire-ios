@@ -66,6 +66,19 @@ final class CreateFolderViewTests: XCTestCase {
     }
 
     @MainActor
+    func testCreateFolderView_DotPrefixError() {
+        let view = makeView()
+        viewModel.folderNameInput = "."
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
     func testCreateFolderView_TooLongInputError() {
         let view = makeView()
         viewModel.folderNameInput = Array(repeating: "r", count: 65).joined()

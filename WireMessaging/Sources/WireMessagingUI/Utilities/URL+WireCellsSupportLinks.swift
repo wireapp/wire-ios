@@ -16,20 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-final class ConversationCreateFileManagementCell: IconToggleCell {
-
-    override func setUp() {
-        super.setUp()
-        title = L10n.Localizable.Conversation.Create.FileManagement.title
-        showSeparator = false
-        icon = nil
-    }
-}
-
-extension ConversationCreateFileManagementCell: ConversationCreationValuesConfigurable {
-    func configure(with values: ConversationCreationValues) {
-        isOn = values.enableFileManagement
-    }
+extension URL {
+    static let useWireDriveInConversations =
+        URL(string: "https://support.wire.com/hc/articles/32207749480477-Use-Wire-Drive-in-conversations")!
+    static let sharedDriveInConversations =
+        URL(string: "https://support.wire.com/hc/articles/32207745256221-Shared-Drive-in-conversations")!
+    static let accessAllFilesAccrossConversations =
+        URL(
+            string: "https://support.wire.com/hc/articles/32207800433309-Access-all-files-shared-across-conversations-Wire-Drive"
+        )!
+    static let accessRecycleBin = URL(string: "https://support.wire.com/hc/articles/32209394611485-Access-recycle-bin")!
 }
