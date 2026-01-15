@@ -35,7 +35,7 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
         self.cookieStorage = cookieStorage
         super.init(withManagedObjectContext: moc, applicationStatus: applicationStatus)
         self.configuration = [
-            .allowsRequestsWhileUnauthenticated, // why would you want to request when not authenticated?
+            .allowsRequestsWhileUnauthenticated,
             .allowsRequestsWhileOnline
         ]
         self.deleteSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)

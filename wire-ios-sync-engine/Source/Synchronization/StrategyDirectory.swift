@@ -273,10 +273,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory,
                 localDomain: metadata.domain
             ),
-            LabelDownstreamRequestStrategy(
-                withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory
-            ),
             LabelUpstreamRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
