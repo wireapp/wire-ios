@@ -304,7 +304,6 @@ class CameraKeyboardViewController: UIViewController {
         let completeBlock = { (data: Data?, uti: String?) in
             guard let data else { return }
 
-
             let utType: UTType?
             let returnData: Data
             if (uti == "public.heif") || (uti == "public.heic"), let convertedJPEGData = data.convertHEIFToJPG() {
