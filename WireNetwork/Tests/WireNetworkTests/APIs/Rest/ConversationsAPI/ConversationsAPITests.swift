@@ -170,7 +170,8 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testUpdateConversationAccess_givenV5AndFailureResponse403ActionDenied_thenThrowsInsufficientAuthorization() async throws {
+    func testUpdateConversationAccess_givenV5AndFailureResponse403ActionDenied_thenThrowsInsufficientAuthorization(
+    ) async throws {
         // given
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .forbidden,
@@ -191,7 +192,8 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testUpdateConversationAccess_givenV5AndFailureResponse404NoConversation_thenThrowsConversationNotFound() async throws {
+    func testUpdateConversationAccess_givenV5AndFailureResponse404NoConversation_thenThrowsConversationNotFound(
+    ) async throws {
         // given
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .notFound,

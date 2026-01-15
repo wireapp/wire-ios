@@ -61,9 +61,9 @@ extension QualifiedID: SafeForLoggingStringConvertible {
     }
 }
 
-extension WireFoundation.QualifiedID {
+public extension WireFoundation.QualifiedID {
 
-    public init(_ qualifiedID: WireDataModel.QualifiedID) {
+    init(_ qualifiedID: WireDataModel.QualifiedID) {
         self.init(
             id: qualifiedID.uuid,
             domain: qualifiedID.domain

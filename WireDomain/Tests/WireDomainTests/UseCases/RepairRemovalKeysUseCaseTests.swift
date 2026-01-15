@@ -20,8 +20,8 @@ import Foundation
 import Testing
 import WireDataModel
 import WireDataModelSupport
-import WireNetwork
 import WireFoundation
+import WireNetwork
 
 @testable import WireDomain
 @testable import WireDomainSupport

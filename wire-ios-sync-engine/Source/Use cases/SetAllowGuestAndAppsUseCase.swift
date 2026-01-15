@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetwork
 import WireFoundation
+import WireNetwork
 
 public enum SetAllowGuestsAndAppsUseCaseError: Error {
 
@@ -79,30 +79,12 @@ struct SetAllowGuestAndAppsUseCase: SetAllowGuestAndAppsUseCaseProtocol {
             conversation.allowApps = allowApps
             conversation.allowGuests = allowGuests
         }
-
-//        return () // TODO: clean up? or fallback?
-//
-//        var action = SetAllowGuestsAndAppsAction(
-//            allowGuests: allowGuests,
-//            allowApps: allowApps,
-//            conversationID: conversation.objectID
-//        )
-//
-//        action.perform(in: context.notificationContext) { result in
-//            switch result {
-//            case .success:
-//                completion(.success(()))
-//            case let .failure(error):
-//                completion(.failure(.networkError(error)))
-//            }
-//
-//        }
     }
 }
 
-extension SetAllowGuestAndAppsUseCaseProtocol { // TODO: delete
+public extension SetAllowGuestAndAppsUseCaseProtocol { // TODO: delete
 
-    public func invoke(
+    func invoke(
         conversation: ZMConversation,
         allowGuests: Bool,
         allowApps: Bool,

@@ -140,7 +140,7 @@ class ConversationsAPIV3: ConversationsAPIV2 {
             .parse(code: response.statusCode, data: data)
 
         struct DummyPayload: Decodable, ToAPIModelConvertible {
-            func toAPIModel() -> Void {}
+            func toAPIModel() {}
         }
 
     }

@@ -237,7 +237,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
 
         struct DummyPayload: Decodable, ToAPIModelConvertible {
-            func toAPIModel() -> Void {}
+            func toAPIModel() {}
         }
 
     }
