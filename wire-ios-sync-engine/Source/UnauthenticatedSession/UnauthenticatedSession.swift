@@ -118,7 +118,7 @@ public class UnauthenticatedSession: NSObject {
             )
         )
     }
-    
+
     public func removeAuthenticationModuleURLActionProcessors() {
         urlActionProcessors.removeAll { processor in
             processor is AuthenticationModuleURLActionProcessor
