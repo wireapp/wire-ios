@@ -263,6 +263,9 @@ final class FilesItemViewModel: ObservableObject {
 
         if !isInRecycleBin {
             actions.insert(.open)
+            if item.kind == .file {
+                actions.insert(.shareLink)
+            }
         }
 
         if !isBrowsing {
@@ -270,7 +273,9 @@ final class FilesItemViewModel: ObservableObject {
                 actions.insert(.restore)
                 actions.insert(.deletePermanently)
             } else {
-                actions.insert(.showVersionHistory)
+                if item.kind == .file {
+                    actions.insert(.showVersionHistory)
+                }
                 actions.insert(.moveToFolder)
                 actions.insert(.rename)
                 actions.insert(.editTags)
