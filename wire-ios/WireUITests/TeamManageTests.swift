@@ -43,23 +43,17 @@ final class TeamManageTests: WireUITestCase {
 
     @MainActor
     func test_PersonalUser_InvitedToTeam() async throws {
-        let owner = try await userHelper.createPersonalUser()
-        let memberUser = UserGenerator.generateUniqueUserInfo()
-        let teamID = try await BackendClient.upgradePersonalToTeam(
-            email: owner.email,
-            password: owner.password,
-            teamName: owner.teamName
+        let teamOwner = try await userHelper.createPersonalUser()
+        let teamID = try await userHelper.upgradePersonalToTeam(
+            teamName: teamOwner.teamName
         )
 
-        let invitationID = try await BackendClient.inviteUserToTeam(
-            teamID: teamID,
-            email: owner.email,
-            password: owner.password,
-            memberName: memberUser.name,
-            memberEmail: memberUser.email
+        let ownerAccessToken = try await userHelper.fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
         )
-        let code = try await BackendClient.getInvitationCode(team: teamID, invitationID: invitationID)
-        try await BackendClient.registerTeamMember(memberUser, invitationCode: code)
+
+        let (_, memberUser) = try await userHelper.registerUsersAsTeamMember(ownerAccessToken: ownerAccessToken.token, teamID: teamID)
 
         let firstTimePage = try app.loginUser(email: memberUser.email, password: memberUser.password)
         let userProfilePage = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)
@@ -67,7 +61,7 @@ final class TeamManageTests: WireUITestCase {
             .openUserProfilePage()
 
         let teamName = try XCTUnwrap(userProfilePage.getTeamName())
-        XCTAssertEqual(teamName, owner.teamName, "Team name didn't match expected value \(owner.teamName)")
+        XCTAssertEqual(teamName, teamOwner.teamName, "Team name didn't match expected value \(teamOwner.teamName)")
 
         let conversationPage = try userProfilePage.closeAccountPage()
         _ = try conversationPage.openSettings()

@@ -39,6 +39,7 @@ class WelcomePage: PageModel {
 
     func enterEmailOrSSO(_ input: String) throws -> LoginPage {
         try typeEmailOrSSO(input)
+        XCTAssertTrue(nextButton.waitForExistence(timeout: 2))
         nextButton.tap()
         return try LoginPage()
     }
