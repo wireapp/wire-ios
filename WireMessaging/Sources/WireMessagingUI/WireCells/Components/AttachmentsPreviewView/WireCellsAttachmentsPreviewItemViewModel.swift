@@ -119,7 +119,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     }
 
     var imagePreviewURL: URL? {
-        node?.previews.sorted(by: { $0.dimension < $1.dimension }).last?.url
+        preview?.url
     }
 
     var progress: Double {
@@ -142,6 +142,14 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         }
     }
 
+    private var preview: WireCellsNodePreview? {
+        node?.previews.sorted(by: { $0.dimension < $1.dimension }).last
+    }
+
+    private var isProcessing: Bool {
+        preview?.processing ?? false
+    }
+
     func refresh() async {
         do {
             for try await node in fetchNodeUseCase.invoke(nodeID: nodeID) {
@@ -155,16 +163,14 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     func startPolling() {
         pollingTask?.cancel()
         pollingTask = Task { [weak self] in
-            var attemptToGetInitialPreviews = 0
+            guard let self else { return }
 
             while !Task.isCancelled {
-                await self?.refresh()
-                attemptToGetInitialPreviews += 1
+                await refresh()
                 // Image previews may not be immediately available after upload.
-                // Poll the server at a high frequency for up to 10 seconds so previews are ready.
-                let refreshInitialPreviews = (self?.imagePreviewURL == nil && attemptToGetInitialPreviews <= 10)
-                let sleepDuration = refreshInitialPreviews ? 1 : 30
-                try? await Task.sleep(for: .seconds(sleepDuration))
+                // Poll the server at a higher frequency if the preview is still being processed.
+                let refreshInitialPreviews = (imagePreviewURL == nil && isProcessing)
+                try? await Task.sleep(for: .seconds(refreshInitialPreviews ? 1 : 30))
             }
         }
     }
