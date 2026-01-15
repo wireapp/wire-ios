@@ -116,7 +116,6 @@ struct WireCellsAttachmentsPreviewItemView: View {
         .onAppear(perform: viewModel.startPolling)
         .onDisappear(perform: viewModel.stopPolling)
         .onTapGesture(perform: open)
-        .quickLookPreview($viewModel.viewingURL)
     }
 
     private func refresh() {
