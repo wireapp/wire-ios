@@ -41,14 +41,10 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() async throws {
-        try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
         await syncContext.perform { [self] in
             setAllowGuestAndAppsUseCase = .init()
-            setAllowGuestAndAppsUseCase
-                .invokeConversationAllowGuestsAllowAppsCompletion_MockMethod = { _, _, _, completion in
-                    completion(.success(()))
-                }
+            setAllowGuestAndAppsUseCase.invokeConversationAllowGuestsAllowApps_MockMethod = { _, _, _ in }
             sut = CreateConversationGuestLinkUseCase(setGuestsAndAppsUseCase: setAllowGuestAndAppsUseCase)
             mockSelfUser = modelHelper.createSelfUser(in: syncContext)
             mockConversation = modelHelper.createGroupConversation(in: syncContext)
@@ -65,7 +61,6 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
         mockConversation = nil
         setAllowGuestAndAppsUseCase = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
     }
 
     // MARK: - Helper Method

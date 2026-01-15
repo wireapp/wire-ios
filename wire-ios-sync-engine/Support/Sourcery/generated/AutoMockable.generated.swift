@@ -1125,21 +1125,6 @@ public class MockSetAllowGuestAndAppsUseCaseProtocol: SetAllowGuestAndAppsUseCas
         try await mock(conversation, allowGuests, allowApps)
     }
 
-    // MARK: - invoke
-
-    public var invokeConversationAllowGuestsAllowAppsCompletion_Invocations: [(conversation: ZMConversation, allowGuests: Bool, allowApps: Bool, completion: (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void)] = []
-    public var invokeConversationAllowGuestsAllowAppsCompletion_MockMethod: ((ZMConversation, Bool, Bool, @escaping (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void) -> Void)?
-
-    public func invoke(conversation: ZMConversation, allowGuests: Bool, allowApps: Bool, completion: @escaping (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void) {
-        invokeConversationAllowGuestsAllowAppsCompletion_Invocations.append((conversation: conversation, allowGuests: allowGuests, allowApps: allowApps, completion: completion))
-
-        guard let mock = invokeConversationAllowGuestsAllowAppsCompletion_MockMethod else {
-            fatalError("no mock for `invokeConversationAllowGuestsAllowAppsCompletion`")
-        }
-
-        mock(conversation, allowGuests, allowApps, completion)
-    }
-
 }
 
 public class MockShareFileUseCaseProtocol: ShareFileUseCaseProtocol {

@@ -48,20 +48,20 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
         completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void
     ) {
 
-        if conversation.isLegacyAccessMode {
-            setGuestsAndAppsUseCase.invoke(
-                conversation: conversation,
-                allowGuests: true,
-                allowApps: conversation.allowApps
-            ) { result in
-                switch result {
-                case let .failure(error):
-                    completion(.failure(.failedToEnableGuestAccess(error)))
-                case .success:
+        if conversation.isLegacyAccessMode { // TODO: test this path
+            Task {
+                do {
+                    try await setGuestsAndAppsUseCase.invoke(
+                        conversation: conversation,
+                        allowGuests: true,
+                        allowApps: conversation.allowApps
+                    )
                     createGuestLink(conversation: conversation, password: password, completion)
+                } catch {
+                    completion(.failure(.failedToEnableGuestAccess(error)))
                 }
             }
-        } else {
+        } else { // TODO: test this path
             createGuestLink(conversation: conversation, password: password, completion)
         }
     }

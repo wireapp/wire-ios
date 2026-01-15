@@ -1186,10 +1186,10 @@ public class MockUserSession: UserSession {
     // MARK: - makeAppendLocationMessageUseCase
 
     public var makeAppendLocationMessageUseCase_Invocations: [Void] = []
-    public var makeAppendLocationMessageUseCase_MockMethod: (() -> any AppendLocationMessagekUseCaseProtocol)?
-    public var makeAppendLocationMessageUseCase_MockValue: (any AppendLocationMessagekUseCaseProtocol)?
+    public var makeAppendLocationMessageUseCase_MockMethod: (() -> any AppendLocationMessageUseCaseProtocol)?
+    public var makeAppendLocationMessageUseCase_MockValue: (any AppendLocationMessageUseCaseProtocol)?
 
-    public func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol {
+    public func makeAppendLocationMessageUseCase() -> any AppendLocationMessageUseCaseProtocol {
         makeAppendLocationMessageUseCase_Invocations.append(())
 
         if let mock = makeAppendLocationMessageUseCase_MockMethod {

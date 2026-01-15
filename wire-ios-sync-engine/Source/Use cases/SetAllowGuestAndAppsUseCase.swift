@@ -36,13 +36,6 @@ public protocol SetAllowGuestAndAppsUseCaseProtocol {
         allowApps: Bool
     ) async throws
 
-    func invoke(
-        conversation: ZMConversation,
-        allowGuests: Bool,
-        allowApps: Bool,
-        completion: @escaping (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void
-    )
-
 }
 
 struct SetAllowGuestAndAppsUseCase: SetAllowGuestAndAppsUseCaseProtocol {
@@ -80,30 +73,4 @@ struct SetAllowGuestAndAppsUseCase: SetAllowGuestAndAppsUseCaseProtocol {
             conversation.allowGuests = allowGuests
         }
     }
-}
-
-public extension SetAllowGuestAndAppsUseCaseProtocol { // TODO: delete
-
-    func invoke(
-        conversation: ZMConversation,
-        allowGuests: Bool,
-        allowApps: Bool,
-        completion: @escaping (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void
-    ) {
-        Task {
-            do {
-                try await invoke(
-                    conversation: conversation,
-                    allowGuests: allowGuests,
-                    allowApps: allowApps
-                )
-                completion(.success(()))
-            } catch let error as SetAllowGuestsAndAppsUseCaseError {
-                completion(.failure(error))
-            } catch {
-                completion(.failure(.networkError(error)))
-            }
-        }
-    }
-
 }
