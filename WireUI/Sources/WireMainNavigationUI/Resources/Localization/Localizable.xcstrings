@@ -254,122 +254,217 @@
       "localizations" : {
         "ar" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "ملفّات"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "da" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "Filer"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "de" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "Dateien"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Drive"
+            "value" : "Files"
           }
         },
         "es" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "Ficheros"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "et" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "Failid"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "fi" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "Tiedostot"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "fr" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "Fichiers"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "it" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "Allegati"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "ja" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "ファイル"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "lt" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "Failai"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "nl" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "Bestanden"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "pl" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "Pliki"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "pt-BR" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "Arquivos"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "ru" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "Файлы"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "sl" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "Zbirke"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "tr" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "Dosyalar"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "uk" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "Файли"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "文件"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
+<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
+=======
+            "state" : "translated",
+            "value" : "檔案"
+>>>>>>> bd302fb126 (revert: add support link and update copy - WPB-22522 (#4128))
           }
         }
       }
