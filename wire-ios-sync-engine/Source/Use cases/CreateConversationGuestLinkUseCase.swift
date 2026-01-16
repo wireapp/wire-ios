@@ -47,25 +47,37 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
         password: String?,
         completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void
     ) {
-        // this code assumes the Core Data models belong to the view context,
-        // also the completion block is expected to be called on the main thread
-        precondition(Thread.isMainThread)
+        guard let context = conversation.managedObjectContext else {
+            return completion(.failure(.contextUnavailable))
+        }
 
-        if conversation.isLegacyAccessMode {
-            Task { @MainActor in
+        let completion = { result in
+            DispatchQueue.main.async {
+                completion(result)
+            }
+        }
+
+        let isLegacyAccessMode = context.performAndWait { conversation.isLegacyAccessMode }
+        if isLegacyAccessMode {
+            Task {
                 do {
+                    let allowApps = await context.perform { conversation.allowApps }
                     try await setGuestsAndAppsUseCase.invoke(
                         conversation: conversation,
                         allowGuests: true,
-                        allowApps: conversation.allowApps
+                        allowApps: allowApps
                     )
-                    createGuestLink(conversation: conversation, password: password, completion)
+                    await context.perform { [self] in
+                        createGuestLink(conversation: conversation, password: password, completion)
+                    }
                 } catch {
                     completion(.failure(.failedToEnableGuestAccess(error)))
                 }
             }
         } else {
-            createGuestLink(conversation: conversation, password: password, completion)
+            context.perform { [self] in
+                createGuestLink(conversation: conversation, password: password, completion)
+            }
         }
     }
 
