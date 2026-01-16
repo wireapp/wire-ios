@@ -35,7 +35,7 @@ struct NetworkReachabilityTests {
 
         // When + Then
         await confirmation("reachability updates", expectedCount: 3) { confirm in
-            sut.isReachablePublisher
+            sut.isOnlinePublisher
                 .sink { v in
                     values.append(v)
                     confirm()
