@@ -85,7 +85,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
 
         let selfUser = await userLocalStore.fetchSelfUser()
         let commonProtocol = await getCommonProtocol(between: selfUser, and: user)
-        
+
         // If there are no common protocols, there can be no communication
         // yet, so mark it read only FIRST! Otherwise we unblock the conversation
         // since it can be resolved.
@@ -97,7 +97,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 in: context
             )
         }
-        
+
         if mlsProvider.isMLSEnabled, commonProtocol == .mls {
             let groupId = try await resolveMLSConversation(
                 for: user
@@ -118,11 +118,11 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 for: user
             )
         }
-        
+
         await context.perform { [context] in
             _ = context.saveOrRollback()
         }
-        
+
         return action
     }
 
@@ -275,7 +275,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
             conversation.isForcedReadOnly = readOnly
         }
     }
-    
+
     private func fetchAllTeamOneOnOneProteusConversations(
         otherUserID: WireDataModel.QualifiedID,
         in context: NSManagedObjectContext
