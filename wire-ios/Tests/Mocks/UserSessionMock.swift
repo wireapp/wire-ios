@@ -350,7 +350,7 @@ final class UserSessionMock: UserSession {
         AppendKnockMessageUseCase(analyticsEventTracker: nil)
     }
 
-    func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol {
+    func makeAppendLocationMessageUseCase() -> any AppendLocationMessageUseCaseProtocol {
         AppendLocationMessageUseCase(analyticsEventTracker: nil)
     }
 
