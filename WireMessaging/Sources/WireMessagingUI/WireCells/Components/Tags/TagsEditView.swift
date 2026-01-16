@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -303,13 +303,16 @@ struct TagsEditView: View {
 #Preview {
     let item = FilesViewItem(
         id: UUID(),
+        eTag: "etag",
         kind: .file,
         name: "some_file.pdf",
         filePath: "some/path",
         ownedBy: nil,
         modifiedAt: nil,
         icon: .document,
-        tags: ["Lorem", "Ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"]
+        tags: ["Lorem", "Ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"],
+        isEditable: false,
+        publicLinkID: nil
     )
 
     let mockAPI = {

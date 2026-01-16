@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     private var userIsSelfUser = false
     private var isSelfUserPartOfATeam = false
-    private var userIsApp = false
+    private var userIsAppOrBot = false
 
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
@@ -352,7 +352,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         if !checkmarkIconView.isHidden {
             accessibilityHint = isSelected ? CreateConversation.SelectedUser.hint : CreateConversation.UnselectedUser
                 .hint
-        } else if userIsApp {
+        } else if userIsAppOrBot {
             accessibilityHint = ServicesList.ServiceCell.hint
         } else {
             accessibilityHint = ContactsList.UserCell.hint
@@ -389,7 +389,7 @@ extension UserCell {
         self.userStatus = userStatus
         self.userIsSelfUser = userIsSelfUser
         self.isSelfUserPartOfATeam = isSelfUserPartOfATeam
-        userIsApp = user.isApp
+        userIsAppOrBot = user.isAppOrBot
 
         let subtitle: NSAttributedString? = if overrideSubtitle == nil {
             self.subtitle(for: user)
@@ -451,8 +451,8 @@ extension UserCell: UserCellSubtitleProtocol {}
 extension UserCell {
 
     private func subtitle(for user: UserType) -> NSAttributedString? {
-        if user.isApp, let service = user as? SearchServiceUser {
-            subtitle(forServiceUser: service)
+        if user.isAppOrBot, let appOrBot = user as? SearchServiceUser {
+            subtitle(forServiceUser: appOrBot)
         } else {
             subtitle(forRegularUser: user)
         }

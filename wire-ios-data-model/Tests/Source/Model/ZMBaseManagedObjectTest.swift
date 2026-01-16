@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import GenericMessageProtocol
 import XCTest
 
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 extension ZMBaseManagedObjectTest {
 
@@ -49,10 +50,9 @@ extension ZMBaseManagedObjectTest {
         return message
     }
 
-    @objc(createClientForUser:createSessionWithSelfUser:onMOC:)
+    @objc(createClientForUser:onMOC:)
     func createClient(
         for user: ZMUser,
-        createSessionWithSelfUser: Bool,
         onMOC moc: NSManagedObjectContext
     ) -> UserClient {
         if user.remoteIdentifier == nil {
@@ -63,22 +63,6 @@ extension ZMBaseManagedObjectTest {
         userClient.remoteIdentifier = String.randomClientIdentifier()
         userClient.user = user
 
-        if createSessionWithSelfUser {
-            let selfClient = ZMUser.selfUser(in: moc).selfClient()
-            performPretendingUiMocIsSyncMoc {
-                do {
-                    let prekey = try moc.zm_cryptKeyStore.lastPreKey()
-                    let selfClient = try XCTUnwrap(selfClient)
-                    _ = selfClient.establishSession(
-                        through: moc.zm_cryptKeyStore,
-                        sessionId: userClient.sessionIdentifier!,
-                        preKey: prekey
-                    )
-                } catch {
-                    XCTFail("unexpected error: \(String(reflecting: error))")
-                }
-            }
-        }
         return userClient
     }
 

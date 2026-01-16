@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ package import Foundation
 /// different from the value never having been added to the cache.
 package struct WireCellsNodeCacheItem {
 
-    let node: WireCellsNode?
+    package let node: WireCellsNode?
 
 }
 
@@ -36,6 +36,7 @@ package protocol WireCellsNodeCacheProtocol: Sendable {
     func setItem(_ value: WireCellsNodeCacheItem, for nodeID: UUID) async
 
     /// Returns a `WireCellsNodeCacheItem` for a given `nodeID`, or `nil` if no value is cached.
-    func item(for nodeID: UUID) async -> WireCellsNodeCacheItem?
+    @MainActor
+    func item(for nodeID: UUID) -> WireCellsNodeCacheItem?
 
 }

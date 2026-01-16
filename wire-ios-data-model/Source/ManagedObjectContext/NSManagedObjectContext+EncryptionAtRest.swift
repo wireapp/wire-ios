@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 import Foundation
 import WireCrypto
-import WireCryptobox
 import WireLogging
 
 extension Sequence where Element: NSManagedObject {
@@ -203,7 +202,7 @@ extension NSManagedObjectContext {
 
         case missingDatabaseKey
         case missingContextData
-        case cryptobox(error: ChaCha20Poly1305.AEADEncryption.EncryptionError)
+        case crypto(error: ChaCha20Poly1305.AEADEncryption.EncryptionError)
 
         var errorDescription: String? {
             switch self {
@@ -213,7 +212,7 @@ extension NSManagedObjectContext {
             case .missingContextData:
                 "Couldn't obtain context data."
 
-            case let .cryptobox(error):
+            case let .crypto(error):
                 error.errorDescription
             }
         }
@@ -247,7 +246,7 @@ extension NSManagedObjectContext {
             )
             return (ciphertext, nonce)
         } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
-            throw EncryptionError.cryptobox(error: error)
+            throw EncryptionError.crypto(error: error)
         }
     }
 
@@ -283,7 +282,7 @@ extension NSManagedObjectContext {
                 key: key._storage
             )
         } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
-            throw EncryptionError.cryptobox(error: error)
+            throw EncryptionError.crypto(error: error)
         }
     }
 

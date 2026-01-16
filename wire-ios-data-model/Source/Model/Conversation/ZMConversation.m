@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 @import WireImages;
 @import WireUtilities;
 @import WireTransport;
-@import WireCryptobox;
 @import MobileCoreServices;
 @import WireImages;
 
@@ -393,7 +392,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return [NSSet setWithObjects:ZMConversationConversationTypeKey, ZMConversationParticipantRolesKey, ZMConversationIsForcedReadOnlyKey, nil];
 }
 
-+ (instancetype)existingOneOnOneConversationWithUser:(ZMUser *)otherUser inUserSession:(id<ContextProvider>)session;
++ (instancetype)existingOneOnOneConversationWithUser:(ZMUser *)otherUser inUserSession:(id<ZMContextProvider>)session;
 {
     NOT_USED(session);
     return otherUser.oneOnOneConversation;

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct FilesInfoView: View {
+    @Environment(\.openURL) private var openURL
 
     enum Info: Equatable {
         case preparingFiles
@@ -32,6 +33,34 @@ struct FilesInfoView: View {
         enum Scope: Equatable {
             case allConversations
             case oneConversation
+            case recycleBin
+
+            var learnMoreURL: URL {
+                switch self {
+                case .oneConversation:
+                    URL.sharedDriveInConversations
+                case .allConversations:
+                    URL.accessAllFilesAccrossConversations
+                case .recycleBin:
+                    URL.accessRecycleBin
+                }
+            }
+        }
+
+        func textForScope(_ scope: Scope) -> String {
+            switch scope {
+            case .allConversations: Strings.AllFiles.NoData.message
+            case .oneConversation: Strings.Files.NoData.message
+            case .recycleBin: Strings.RecycleBin.NoData.message
+            }
+        }
+
+        func accessibilityTextForScope(_ scope: Scope) -> String {
+            switch scope {
+            case .allConversations: Accessibility.AllFiles.NoData.message
+            case .oneConversation: Accessibility.Files.NoData.message
+            case .recycleBin: Accessibility.RecycleBin.NoData.message
+            }
         }
 
         var localizedStrings: (title: String, message: String) {
@@ -40,8 +69,9 @@ struct FilesInfoView: View {
                 (Strings.Files.PendingCells.title, Strings.Files.PendingCells.message)
             case let .noFilesFound(scope):
                 (
-                    Strings.Files.NoData.title,
-                    scope == .allConversations ? Strings.AllFiles.NoData.message : Strings.Files.NoData.message
+                    scope == .oneConversation || scope == .recycleBin ?
+                        Strings.Files.NoData.title : Strings.AllFiles.NoData.title,
+                    textForScope(scope)
                 )
             case .error:
                 (Strings.Files.Error.title, Strings.Files.Error.message)
@@ -55,8 +85,7 @@ struct FilesInfoView: View {
             case let .noFilesFound(scope):
                 (
                     Accessibility.Files.NoData.title,
-                    scope == .allConversations ? Accessibility.AllFiles.NoData.message : Accessibility.Files.NoData
-                        .message
+                    accessibilityTextForScope(scope)
                 )
             case .error:
                 (Accessibility.Files.Error.title, Accessibility.Files.Error.message)
@@ -100,32 +129,69 @@ struct FilesInfoView: View {
                 .accessibilityLabel(info.accessibilityStrings.message)
                 .accessibilityIdentifier(info.accessibilityIdentifiers.message)
 
-            if info == .error {
-                Button {
-                    onReload?()
-                } label: {
-                    Text(Strings.Files.Error.reload)
-                        .padding()
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(SemanticColors.Label.textDefault.color)
-                        .frame(maxHeight: 35)
-                        .background(
-                            RoundedRectangle(
-                                cornerRadius: 10,
-                                style: .continuous
-                            )
-                            .stroke(SemanticColors.Button.borderSecondaryEnabled.color, lineWidth: 1)
-
-                        )
-                }
-                .accessibilityLabel(Strings.Files.Error.reload)
-                .accessibilityIdentifier("filesBrowser.reloadButton")
+            switch info {
+            case let .noFilesFound(scope):
+                learnMoreLink(scope: scope)
+            case .error:
+                reloadButton
+            default:
+                EmptyView()
             }
         }
         .padding(20)
         .frame(maxWidth: 420)
         .padding()
     }
+
+    private func learnMoreLink(scope: Info.Scope) -> some View {
+        let linkTitle = switch scope {
+        case .oneConversation:
+            Strings.Files.NoData.learnMore
+        case .allConversations:
+            Strings.AllFiles.NoData.learnMore
+        case .recycleBin:
+            Strings.RecycleBin.NoData.learnMore
+        }
+
+        return Link(linkTitle, destination: scope.learnMoreURL)
+            .foregroundColor(SemanticColors.Label.baseSecondaryText.color)
+            .underline()
+    }
+
+    private var reloadButton: some View {
+        Button {
+            onReload?()
+        } label: {
+            Text(Strings.Files.Error.reload)
+                .padding()
+                .font(.subheadline.weight(.semibold))
+                .foregroundColor(SemanticColors.Label.textDefault.color)
+                .frame(maxHeight: 35)
+                .background(
+                    RoundedRectangle(
+                        cornerRadius: 10,
+                        style: .continuous
+                    )
+                    .stroke(SemanticColors.Button.borderSecondaryEnabled.color, lineWidth: 1)
+
+                )
+        }
+        .accessibilityLabel(Strings.Files.Error.reload)
+        .accessibilityIdentifier("filesBrowser.reloadButton")
+    }
+
+}
+
+#Preview("no files found - single conversation") {
+    FilesInfoView(info: .noFilesFound(scope: .oneConversation))
+}
+
+#Preview("no files found - all conversations") {
+    FilesInfoView(info: .noFilesFound(scope: .allConversations))
+}
+
+#Preview("no files found - recycle bin") {
+    FilesInfoView(info: .noFilesFound(scope: .recycleBin))
 }
 
 struct LoadMoreView: View {

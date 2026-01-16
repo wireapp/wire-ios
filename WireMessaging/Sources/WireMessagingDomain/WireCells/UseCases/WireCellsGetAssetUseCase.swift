@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,12 +37,10 @@ package struct WireCellsGetAssetUseCase {
         self.fileCache = fileCache
     }
 
-    package func invoke(nodeID: UUID) async throws -> URL {
+    package func invoke(nodeID: UUID, eTag: String?) async throws -> URL {
         // If the file is already downloaded, return the local URL.
-        if
-            let cacheKey = try await localAssetRepository.asset(nodeID: nodeID)?.downloadState.cacheKey,
-            let url = fileCache.fileURL(forKey: cacheKey) {
-            return url
+        if let fileURL = try await cachedAssetURL(for: nodeID, eTag: eTag) {
+            return fileURL
         }
 
         try await localAssetRepository.downloadAsset(nodeID: nodeID)
@@ -55,6 +53,26 @@ package struct WireCellsGetAssetUseCase {
         }
 
         return fileURL
+    }
+
+    // MARK: - Private helpers
+
+    /// Returns the cached asset URL if it exists and matches the provided eTag.
+    private func cachedAssetURL(for nodeID: UUID, eTag: String?) async throws -> URL? {
+        if
+            let eTag,
+            let asset = try await localAssetRepository.asset(nodeID: nodeID),
+            eTag == asset.eTag,
+            let cacheKey = asset.downloadState.cacheKey {
+            return fileCache.fileURL(forKey: cacheKey)
+        }
+
+        if let cacheKey = try await localAssetRepository.refreshAssetMetadata(nodeID: nodeID).asset.downloadState
+            .cacheKey {
+            return fileCache.fileURL(forKey: cacheKey)
+        }
+
+        return nil
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,10 +27,6 @@ public enum WireCellsLocalAssetRepositoryError: Error, Equatable {
     /// The wire cells node contains no eTag for the asset.
 
     case missingETag
-
-    /// A download for the requested asset is already in progress.
-
-    case downloadAlreadyInProgress
 
     /// The requested asset is unknown to the repository.
 

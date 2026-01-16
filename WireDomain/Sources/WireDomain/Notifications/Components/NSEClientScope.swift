@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@ protocol NSEClientScopeDependency: Dependency {
     var journal: Journal { get }
     var sharedUserDefaults: UserDefaults { get }
     var cookieStorage: CookieStorage { get }
-    var cryptoboxMigrationManager: CryptoboxMigrationManager { get }
 
 }
 
@@ -253,7 +252,6 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 accountDirectory: dependency.userAccountDataURL,
                 sharedUserDefaults: dependency.sharedUserDefaults,
                 syncContext: coreDataStack.syncContext,
-                cryptoboxMigrationManager: dependency.cryptoboxMigrationManager,
                 coreCryptoKeyMigrationManager: coreCryptoMigrationManager,
                 allowCreation: false,
                 localDomain: localDomain

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -68,8 +68,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let initialSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
     private var ongoingSyncTask: Task<Void, Never>?
-    private let conversationUpdatesGenerator: ConversationUpdatesGeneratorProtocol
-
     private var cancellables: Set<AnyCancellable> = .init()
 
     var syncRunning: Bool {
@@ -96,7 +94,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         featureConfigRepository: any FeatureConfigRepositoryProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol,
-        conversationUpdatesGenerator: any ConversationUpdatesGeneratorProtocol,
         networkStatePublisher: AnyPublisher<NetworkState, Never>
     ) {
         self.journal = journal
@@ -108,7 +105,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         self.featureConfigRepository = featureConfigRepository
         self.syncStateSubject = syncStateSubject
         self.pushChannelCoordinator = pushChannelCoordinator
-        self.conversationUpdatesGenerator = conversationUpdatesGenerator
         self.networkStatePublisher = networkStatePublisher
         super.init()
 
@@ -157,7 +153,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         WireLogger.sync.debug(
             "suspending sync \(backgroundActivity != nil ? "in a background task" : "")"
         )
-        conversationUpdatesGenerator.stop()
         ongoingSyncTask?.cancel()
         ongoingSyncTask = nil
         await incrementalSyncToken?.suspend()
@@ -224,10 +219,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
-        Task {
-            await conversationUpdatesGenerator.start()
-        }
-
         if isSyncV2Enabled {
 
             try await incrementalSyncTaskManager.performIfNeeded { [weak self] in

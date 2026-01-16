@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,7 +48,6 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 @interface ZMTransportSession () <ZMAccessTokenHandlerDelegate, ZMTimerClient>
 
-@property (nonatomic) Class pushChannelClass;
 @property (nonatomic) BOOL applicationIsBackgrounded;
 @property (nonatomic) BOOL shouldKeepWebsocketOpen;
 
@@ -60,11 +59,6 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
 @property (nonatomic) BOOL tornDown;
 @property (nonatomic) NSString *applicationGroupIdentifier;
-
-@property (nonatomic) id<ZMPushChannelType> transportPushChannel;
-
-@property (nonatomic, weak) id<ZMPushChannelConsumer> pushChannelConsumer;
-@property (nonatomic, weak) id<ZMSGroupQueue> pushChannelGroupQueue;
 
 @property (nonatomic, readonly) ZMSDispatchGroup *workGroup;
 @property (nonatomic, readonly) ZMTransportRequestScheduler *requestScheduler;
@@ -171,7 +165,6 @@ static NSInteger const DefaultMaximumRequests = 6;
                                   environment:environment
                                 proxyUsername:proxyUsername
                                 proxyPassword:proxyPassword
-                             pushChannelClass:nil
                                 cookieStorage:cookieStorage
                            initialAccessToken:initialAccessToken
                                     userAgent:userAgent
@@ -188,7 +181,6 @@ static NSInteger const DefaultMaximumRequests = 6;
                                  environment:(id<BackendEnvironmentProvider>)environment
                                proxyUsername:(NSString *)proxyUsername
                                proxyPassword:(NSString *)proxyPassword
-                            pushChannelClass:(Class)pushChannelClass
                                cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
                                    userAgent:(NSString *)userAgent
@@ -223,18 +215,6 @@ static NSInteger const DefaultMaximumRequests = 6;
         self.maximumConcurrentRequests = DefaultMaximumRequests;
         self.minTLSVersion = minTLSVersion;
 
-        if (pushChannelClass == nil) {
-            pushChannelClass = StarscreamPushChannel.class;
-        }
-        self.transportPushChannel = [[pushChannelClass alloc] initWithScheduler:self.requestScheduler
-                                                                userAgentString:userAgent
-                                                                    environment:environment
-                                                                  proxyUsername:proxyUsername
-                                                                  proxyPassword:proxyPassword
-                                                                  minTLSVersion:minTLSVersion
-                                                                          queue:queue
-                                                                      isEnabled:!isSyncV2Enabled];
-
         self.firstRequestFired = NO;
         self.accessTokenHandler = [[ZMAccessTokenHandler alloc] initWithBaseURL:self.baseURL
                                                                   cookieStorage:self.cookieStorage
@@ -267,18 +247,21 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (void)tearDown
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
+
     self.tornDown = YES;
-    
+
+    // Clear access token handlers to break retain cycles
+    [self.accessTokenHandler setAccessTokenRenewalFailureHandler:nil];
+    [self.accessTokenHandler setAccessTokenRenewalSuccessHandler:nil];
+
     self.reachabilityObserverToken = nil;
-    [self.transportPushChannel close];
     [self.workGroup enter];
     [self.workQueue addOperationWithBlock:^{
         [self.requestScheduler tearDown];
         [self.sessionsDirectory tearDown];
         [self.workGroup leave];
     }];
-    
+
     // Wait until all the requests have been cancelled
     [self.workQueue waitUntilAllOperationsAreFinished];
 }
@@ -532,14 +515,12 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (void)handlerDidReceiveAccessToken:(ZMAccessTokenHandler *)handler
 {
     NOT_USED(handler);
-    self.transportPushChannel.accessToken = self.accessToken;
     [self.requestScheduler sessionDidReceiveAccessToken:self];
 }
 
 - (void)handlerDidClearAccessToken:(ZMAccessTokenHandler *)handler
 {
     NOT_USED(handler);
-    self.transportPushChannel.accessToken = nil;
 }
 
 - (void)enterBackground;
@@ -638,11 +619,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (void)sendSchedulerItem:(id<ZMTransportRequestSchedulerItemAsRequest>)item;
 {
-    if (item.isPushChannelRequest) {
-        [self.transportPushChannel open];
-    } else {
-        [self sendTransportRequest:item.transportRequest];
-    }
+    [self sendTransportRequest:item.transportRequest];
 }
 
 - (void)temporarilyRejectSchedulerItem:(id<ZMTransportRequestSchedulerItemAsRequest>)item;
@@ -660,7 +637,6 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (void)schedulerIncreasedMaximumNumberOfConcurrentRequests:(ZMTransportRequestScheduler *)scheduler;
 {
     ZMLogDebug(@"%@ Notify new request" , NSStringFromSelector(_cmd));
-    [self.transportPushChannel scheduleOpen];
     [ZMTransportSession notifyNewRequestsAvailable:scheduler];
 }
 
@@ -748,7 +724,6 @@ static NSInteger const DefaultMaximumRequests = 6;
 {
     ZMLogInfo(@"reachabilityDidChange -> mayBeReachable = %@", reachability.mayBeReachable ? @"YES" : @"NO");
     [self.requestScheduler reachabilityDidChange:reachability];
-    [self.transportPushChannel reachabilityDidChange:reachability];
 
     BOOL didGoOnline = reachability.mayBeReachable && !reachability.oldMayBeReachable;
     if (didGoOnline && !self.accessTokenHandler.canStartRequestWithAccessToken) {
@@ -781,22 +756,6 @@ static NSInteger const DefaultMaximumRequests = 6;
             return;
         }
     }
-}
-
-@end
-
-
-@implementation ZMTransportSession (PushChannel)
-
-- (void)configurePushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
-{
-    [self.transportPushChannel setPushChannelConsumer:consumer queue:groupQueue];
-
-}
-
-- (id<ZMPushChannel>)pushChannel
-{
-    return self.transportPushChannel;
 }
 
 @end

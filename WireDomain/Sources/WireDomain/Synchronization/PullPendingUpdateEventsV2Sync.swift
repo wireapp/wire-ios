@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -146,7 +146,10 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
             }
         }
 
-        // ack
+        // ack the decrypted events
+        //
+        // NOTE: it's important that we ack after the CC transaction has succesfully completed,
+        // otherwise we risk data loss in case of a crash.
         if let lastEnvelope = storedEnvelopes.last?.0 {
             try await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel, batchSize: storedEnvelopes.count)
         }

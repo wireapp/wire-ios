@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,11 +19,12 @@
 import UIKit
 import WireDataModel
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 extension MessagePresenter {
 
-    /// return a view controller for viewing image messge
+    /// return a view controller for viewing image message
     ///
     /// - Parameters:
     ///   - message: a message with image data
@@ -37,7 +38,8 @@ extension MessagePresenter {
         isPreviewing: Bool,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) -> UIViewController {
 
         guard let conversation = message.conversation else {
@@ -61,7 +63,8 @@ extension MessagePresenter {
             inverse: true,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         imagesController.isPreviewing = isPreviewing
 

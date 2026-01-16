@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -87,6 +87,11 @@ final class StartUIViewController: UIViewController {
     let searchResultsViewController: SearchResultsViewController
 
     let isAppsFeatureEnabled: Bool
+
+    /// Teams cannot add old-style services (bots) anymore, but teams which have been using bots in the past, they
+    /// should still be able to start 1:1 conversations with bots. (only if the team's default protocol is Proteus)
+    let areLegacyBotsAvailable: Bool
+
     let userSession: UserSession
 
     let mainCoordinator: AnyMainCoordinator
@@ -107,18 +112,23 @@ final class StartUIViewController: UIViewController {
         searchResultsViewController
     }
 
+    /// Whether there is a switch control for either listing/searching for users/people or apps/bots.
+    ///
+    /// The people/apps switch control will only be visible if
+    /// - apps/bots are not disabled for this build (restricted clients),
+    /// - the team's default protocol is Proteus the team has been using bots
+    /// - the team's default protocol is MLS and the `apps` feature flag is enabled.
     var showsGroupSelector: Bool {
+        guard SearchGroup.all.count > 1, userSession.selfUser.canSeeServices else { return false }
 
-        // restore old behavior until `apps` feature flows are complete
-        #if true
-            return SearchGroup.all.count > 1 &&
-                userSession.selfUser.canSeeServices &&
-                userSession.defaultProtocol != .mls
-        #else
-            // TODO: [WPB-21834] consider adding a client-side feature flag for the new behavior
-            return isAppsFeatureEnabled && SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
-        #endif
-
+        switch userSession.defaultProtocol {
+        case .mls:
+            return isAppsFeatureEnabled
+        case .proteus:
+            return areLegacyBotsAvailable
+        default:
+            return false
+        }
     }
 
     // MARK: - Init
@@ -128,13 +138,16 @@ final class StartUIViewController: UIViewController {
     }
 
     init(
+        areLegacyBotsAvailable: Bool,
         isAppsFeatureEnabled: Bool,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
         channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
+        self.areLegacyBotsAvailable = areLegacyBotsAvailable
         self.isAppsFeatureEnabled = isAppsFeatureEnabled
         self.isFederationEnabled = userSession.resolvedBackendMetadata.isFederationEnabled
         self.searchResultsViewController = SearchResultsViewController(
@@ -151,7 +164,8 @@ final class StartUIViewController: UIViewController {
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.profilePresenter = .init(
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         super.init(nibName: nil, bundle: nil)
 

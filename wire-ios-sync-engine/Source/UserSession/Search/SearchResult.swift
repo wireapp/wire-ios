@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,21 +16,38 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CoreData
 
 public struct SearchResult {
+
+    /// The managed object context the Core Data objects in the search result must be accessed on.
+
+    public let context: NSManagedObjectContext
+
     /// Users already connected to.
+
     public var contacts: [ZMSearchUser]
+
     /// Users from the team.
+
     public var teamMembers: [ZMSearchUser]
+
     /// Non-connected users.
+
     public var directory: [ZMSearchUser]
+
     /// Group conversations.
+
     public var conversations: [ZMConversation]
+
     /// Bots.
-    public var services: [ServiceUser]
+
+    public var services: [ServiceUser] // TODO: [WPB-20362] add `apps`
+
     /// Cache for search users.
+
     let searchUsersCache: SearchUsersCache?
+
 }
 
 extension SearchResult {
@@ -59,6 +76,7 @@ extension SearchResult {
             searchUsersCache: searchUsersCache
         )
 
+        self.context = contextProvider.viewContext
         self.contacts = []
         self.directory = searchUsers.filter { !$0.isConnected && !$0.isTeamMember }
         self.conversations = []
@@ -89,6 +107,7 @@ extension SearchResult {
             searchUsersCache: searchUsersCache
         )
 
+        self.context = contextProvider.viewContext
         self.contacts = []
         self.teamMembers = []
         self.directory = []
@@ -115,6 +134,7 @@ extension SearchResult {
             return nil
         }
 
+        self.context = contextProvider.viewContext
         self.contacts = []
         self.teamMembers = []
         self.directory = [searchUser]
@@ -157,6 +177,7 @@ extension SearchResult {
         }
 
         return SearchResult(
+            context: context,
             contacts: contacts,
             teamMembers: teamMembers,
             directory: directory,
@@ -168,6 +189,7 @@ extension SearchResult {
 
     func union(withLocalResult result: SearchResult) -> SearchResult {
         SearchResult(
+            context: context,
             contacts: result.contacts,
             teamMembers: result.teamMembers,
             directory: directory,
@@ -179,6 +201,7 @@ extension SearchResult {
 
     func union(withServiceResult result: SearchResult) -> SearchResult {
         SearchResult(
+            context: context,
             contacts: contacts,
             teamMembers: teamMembers,
             directory: directory,
@@ -190,6 +213,7 @@ extension SearchResult {
 
     func union(withDirectoryResult result: SearchResult) -> SearchResult {
         SearchResult(
+            context: context,
             contacts: contacts,
             teamMembers: Array(Set(teamMembers).union(result.teamMembers)),
             directory: result.directory,

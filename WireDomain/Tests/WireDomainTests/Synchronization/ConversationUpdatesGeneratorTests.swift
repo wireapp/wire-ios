@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -108,6 +108,61 @@ class ConversationUpdatesGeneratorTests {
             )
         }
 
+        // WHEN
+        await sut.start()
+
+        // THEN
+        #expect(updateConversationItems.isEmpty)
+    }
+
+    @Test("It does not generate an item when stopped")
+    func stopDoesGenerateItems() async throws {
+        // GIVEN
+        await sut.start()
+
+        // WHEN
+        await sut.stop()
+
+        // THEN
+        var updateConversationItems = [UpdateConversationItem]()
+        let newConversationID = QualifiedID.random()
+        try await confirmation("generator delivers an update for a new conversation") { confirm in
+            self.updateConversationItemClosure = {  item in
+                updateConversationItems.append(item)
+            }
+
+            await coreDataStack.syncContext.perform { [modelHelper, context = coreDataStack.syncContext] in
+                let conversation = modelHelper.createGroupConversation(
+                    id: newConversationID.uuid,
+                    domain: newConversationID.domain,
+                    in: context
+                )
+                conversation.needsToBeUpdatedFromBackend = true
+            }
+            try await Task.sleep(for: .seconds(0.1))
+            confirm()
+        }
+
+        #expect(updateConversationItems.isEmpty)
+    }
+
+    @Test("It does not generate an item when a conversation is deleted")
+    func deletedConversation() async throws {
+        // GIVEN
+        let conversationID = QualifiedID.random()
+        await coreDataStack.syncContext.perform { [modelHelper, context = coreDataStack.syncContext] in
+            let conversation = modelHelper.createGroupConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain,
+                in: context
+            )
+            conversation.needsToBeUpdatedFromBackend = true
+            conversation.isDeletedRemotely = true
+        }
+        var updateConversationItems = [UpdateConversationItem]()
+        updateConversationItemClosure = { item in
+            updateConversationItems.append(item)
+        }
         // WHEN
         await sut.start()
 

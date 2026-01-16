@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,11 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 package protocol FilesViewProtocol: View {
     var viewModel: FilesViewModel { get }
     var isBrowsing: Bool { get }
-    init(viewModel: @autoclosure @escaping () -> FilesViewModel)
+    init(
+        viewModel: @autoclosure @escaping () -> FilesViewModel,
+        onOpenRecycleBin: @escaping () -> Void,
+        onDismissContainer: @escaping () -> Void
+    )
 }
 
 // MARK: - List
@@ -44,6 +48,9 @@ extension FilesViewProtocol {
             .listRowSeparator(.hidden)
             .listRowBackground(ColorTheme.Backgrounds.surface.color)
         }
+        .listStyle(.plain)
+        .refreshable { reloadTask(refreshing: true) }
+        .overlay(listBackgroundView)
         .animation(.default, value: viewModel.state)
     }
 
@@ -54,6 +61,17 @@ extension FilesViewProtocol {
                 .onTapGesture { Task { await viewModel.openItem(item: item) } }
         }
     }
+
+    @ViewBuilder private var listBackgroundView: some View {
+        switch viewModel.state {
+        case let .received(items) where items.isEmpty:
+            FilesInfoView(info: .noFilesFound(scope: isBrowsing ? .allConversations : .oneConversation))
+        case .pending:
+            FilesInfoView(info: .preparingFiles)
+        default:
+            EmptyView()
+        }
+    }
 }
 
 // MARK: - Rows
@@ -62,11 +80,7 @@ extension FilesViewProtocol {
 
     @ViewBuilder
     func itemRow(index: Int) -> some View {
-        FilesViewItemView(
-            viewModel: viewModel.itemViewModel(index: index),
-            canRenameFile: !isBrowsing, // action not allowed when browsing files
-            canEditTags: !isBrowsing, // action not allowed when browsing files
-        )
+        FilesItemView(viewModel: viewModel.itemViewModel(index: index))
     }
 
     var loadMoreRow: some View {

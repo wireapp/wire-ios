@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -74,6 +74,7 @@ extension SessionManager: CallKitManagerDelegate {
                 return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
             }
 
+            await requestCallConfigIfNeeded(for: userSession)
             await userSession.processPendingCallEvents()
 
             WireLogger.calling.info("did process call events, returning conversation...")
@@ -81,10 +82,36 @@ extension SessionManager: CallKitManagerDelegate {
         }
     }
 
+    /// Proactively requests call config for a background session.
+    /// This ensures the session has fresh call configuration when handling incoming calls.
+    /// - Parameter session: The user session to request config for
+    private func requestCallConfigIfNeeded(for session: ZMUserSession) async {
+        guard session != activeUserSession else { return }
+
+        session.managedObjectContext.performGroupedBlock {
+            guard let callCenter = session.callCenter else {
+                WireLogger.calling.warn("Cannot request call config: callCenter not available")
+                return
+            }
+
+            WireLogger.calling.info("Proactively requesting call config for background session.")
+            callCenter.requestCallConfig()
+        }
+    }
+
     func endAllCalls() {
         for userSession in backgroundUserSessions.values {
             userSession.viewContext.perform {
                 userSession.callCenter?.endAllCalls()
+            }
+        }
+    }
+
+    func didEndAllCalls() {
+        WireLogger.calling.info("all calls ended, suspending background tasks", attributes: .safePublic)
+        Task {
+            for userSession in backgroundUserSessions.values {
+                await userSession.syncAgent?.suspend()
             }
         }
     }

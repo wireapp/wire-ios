@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -273,23 +273,18 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         XCTAssertEqual(resolveOneOnOneConversations.invoke_Invocations.count, 1)
     }
 
-    func testThatItInvalidatesTheCurrentSelfClientAndWipeCryptoBoxWhenReceivingAPush() async {
+    func testThatItInvalidatesTheCurrentSelfClient_AndWipesCryptoStack_WhenReceivingAPush() async {
         var event: ZMUpdateEvent?
-        var fingerprint: Data?
         var selfUser: ZMUser!
-        var previousLastPrekey: String?
 
         await syncMOC.performGrouped {
             // given
             selfUser = ZMUser.selfUser(in: self.syncMOC)
             let existingClient = self.createSelfClient()
 
-            // swiftlint:disable:next todo_requires_jira_link
-            // TODO: [John] use flag here
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
-                fingerprint = sessionsDirectory.localFingerprint
-            }
-            previousLastPrekey = try? self.syncMOC.zm_cryptKeyStore.lastPreKey()
+            self.syncMOC.proteusService = MockProteusServiceInterface()
+            self.syncMOC.mlsService = MockMLSServiceInterface()
+            self.syncMOC.coreCrypto = MockSafeCoreCrypto(coreCrypto: MockCoreCryptoProtocol())
 
             XCTAssertEqual(selfUser.clients.count, 1)
             let payload: [String: Any] = [
@@ -310,20 +305,11 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
 
         await syncMOC.performGrouped {
             // then
-            var newFingerprint: Data?
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
-                newFingerprint = sessionsDirectory.localFingerprint
-            }
-            let newLastPrekey = try? self.syncMOC.zm_cryptKeyStore.lastPreKey()
-
-            XCTAssertNotNil(fingerprint)
-            XCTAssertNotNil(newFingerprint)
-            XCTAssertNotEqual(fingerprint, newFingerprint)
             XCTAssertNil(selfUser.clients.first?.remoteIdentifier)
             XCTAssertNil(self.syncMOC.persistentStoreMetadata(forKey: ZMPersistedClientIdKey))
-            XCTAssertNotNil(fingerprint)
-            XCTAssertNotNil(newFingerprint)
-            XCTAssertNotEqual(previousLastPrekey, newLastPrekey)
+            XCTAssertNil(self.syncMOC.proteusService)
+            XCTAssertNil(self.syncMOC.mlsService)
+            XCTAssertNil(self.syncMOC.coreCrypto)
         }
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ public enum APIVersion: UInt, CaseIterable, Comparable, Sendable {
     case v11
     case v12
     case v13
+    case v14
 
     /// API versions considered production ready by the client.
     ///
@@ -50,7 +51,7 @@ public enum APIVersion: UInt, CaseIterable, Comparable, Sendable {
     /// as production ready.
 
     public static let productionVersions: Set<Self> = [
-        .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13
+        .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14
     ]
 
     /// API versions currently under development and not suitable for production
@@ -79,5 +80,5 @@ public enum APIVersion: UInt, CaseIterable, Comparable, Sendable {
 // swiftlint:enable identifier_name
 
 public extension APIVersion {
-    static let minimumSyncV2CompatibleVersion: APIVersion = .v6
+    static let minimumSyncV2CompatibleVersion: APIVersion = .v5
 }

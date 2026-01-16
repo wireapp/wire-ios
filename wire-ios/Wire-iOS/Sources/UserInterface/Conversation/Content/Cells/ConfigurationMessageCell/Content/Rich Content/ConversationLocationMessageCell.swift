@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -75,11 +75,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
 
     private func configureViews() {
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.layer.cornerRadius = if isChatBubbleSimpleEnabled {
-            ConversationMessageContainerView.bubbleCornerRadius
-        } else {
-            12
-        }
+        containerView.layer.cornerRadius = ConversationMessageContainerView.bubbleCornerRadius
         containerView.clipsToBounds = true
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
@@ -114,11 +110,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         addressContainerView.translatesAutoresizingMaskIntoConstraints = false
         addressLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        let margins = conversationHorizontalMargins
-        let containerInsets: UIEdgeInsets = isChatBubbleSimpleEnabled
-            ? .zero
-            : UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
-        containerView.fitIn(view: self, insets: containerInsets)
+        containerView.fitIn(view: self, insets: .zero)
         mapView.fitIn(view: containerView)
         obfuscationView.fitIn(view: containerView)
 
@@ -197,9 +189,6 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         lastConfiguration?.location.openInMaps(with: mapView.region.span)
     }
 
-    private var isChatBubbleSimpleEnabled: Bool {
-        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
-    }
 }
 
 final class ConversationLocationMessageCellDescription: ConversationMessageCellDescription {
@@ -221,7 +210,7 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
-    lazy var shouldAlignMessageContentForBubbles = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    let shouldAlignMessageContentForBubbles = true
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedLocationCell" : "LocationCell"

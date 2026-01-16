@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -68,6 +68,7 @@ public enum ColorTheme {
         public static let onWarning = UIColor(light: .white, dark: .black)
 
         public static let positive = UIColor(light: .green500Light, dark: .green500Dark)
+        public static let onPositive = UIColor(light: .white, dark: .black)
         public static let onSuccess = UIColor(light: .white, dark: .black)
 
         public static let highlight = UIColor(light: .amber200Dark, dark: .amber300Dark)
@@ -108,9 +109,9 @@ public enum ColorTheme {
 
     public enum Buttons {
 
-        enum Primary {
+        public enum Primary {
 
-            static let enabled = UIColor(light: .blue500Light, dark: .blue500Dark)
+            public static let enabled = UIColor(light: .blue500Light, dark: .blue500Dark)
             static let onEnabled = UIColor(light: .white, dark: .black)
 
             static let disabled = UIColor(light: .gray50, dark: .gray80)

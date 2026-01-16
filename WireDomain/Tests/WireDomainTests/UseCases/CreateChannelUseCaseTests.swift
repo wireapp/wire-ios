@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -339,7 +339,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
                     Set([UUID.mockID1, .mockID2])
                 )
 
-                throw SendCommitBundleAction.Failure.nonFederatingDomains(Set(["nonfederated2"]))
+                throw SendMLSMessageFailure.nonFederatingDomains(Set(["nonfederated2"]))
             } else {
                 // On retry, we only try to add MLS participants which are on a federated domain
                 XCTAssertEqual(
@@ -423,7 +423,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
                     Set([UUID.mockID1, .mockID2])
                 )
 
-                throw SendCommitBundleAction.Failure.unreachableDomains(Set(["federated2"]))
+                throw SendMLSMessageFailure.unreachableDomains(Set(["federated2"]))
             } else {
                 // On retry, we try to add all MLS participants that are on a reachable domain
                 XCTAssertEqual(

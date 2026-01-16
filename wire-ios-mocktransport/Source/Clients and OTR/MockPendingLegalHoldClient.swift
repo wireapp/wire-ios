@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,33 +58,21 @@ public extension MockUser {
         let identifier = String.randomClientIdentifier()
         pendingClient.identifier = identifier
 
-        // Generate the prekeys
-        let encryptionContext = MockUserClient.encryptionContext(for: self, clientId: identifier)
+        // Generate mock prekey strings
+        let prekeysStrings = (0 ..< 5).map { _ in UUID().uuidString }
 
-        var generatedPrekeys: [[String: Any]]?
-        var generatedLastPrekey: String?
-
-        encryptionContext.perform { session in
-            generatedPrekeys = try? session.generatePrekeys(NSRange(location: 0, length: 5))
-            generatedLastPrekey = try? session.generateLastPrekey()
-        }
-
-        guard let prekeys = generatedPrekeys, !prekeys.isEmpty, let lastPrekey = generatedLastPrekey else {
-            return false
-        }
-
-        let mockPrekey = MockPreKey.insertNewKeys(
-            withPayload: prekeys.map { $0["prekey"] as! String },
+        let prekeys = MockPreKey.insertNewKeys(
+            withPayload: prekeysStrings,
             context: managedObjectContext
         )
-        pendingClient.prekeys = Set(mockPrekey)
+        pendingClient.prekeys = Set(prekeys)
 
         let mockLastPrekey = NSEntityDescription.insertNewObject(
             forEntityName: "PreKey",
             into: managedObjectContext
         ) as! MockPreKey
-        mockLastPrekey.identifier = Int(CBOX_LAST_PREKEY_ID)
-        mockLastPrekey.value = lastPrekey
+        mockLastPrekey.identifier = Int(UInt16.max)
+        mockLastPrekey.value = UUID().uuidString
 
         pendingClient.lastPrekey = mockLastPrekey
         return true

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,8 +31,6 @@
 #import "ZMUpdateEvent+WireDataModel.h"
 
 #import <WireDataModel/WireDataModel-Swift.h>
-#import <WireCryptobox/cbox.h>
-
 
 static NSString *ZMLogTag ZM_UNUSED = @"ephemeral";
 
@@ -768,22 +766,6 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
         self.needsUpdatingUsers = [self.addedUsers anyObjectMatchingWithBlock:matchUnfetchedUserBlock] ||
                                   [self.removedUsers anyObjectMatchingWithBlock:matchUnfetchedUserBlock];
     }
-}
-
-- (BOOL)isDecryptionErrorRecoverable {
-    if (self.decryptionErrorCode == nil) {
-        return NO;
-    }
-    
-    NSInteger errorCode = self.decryptionErrorCode.integerValue;
-    
-    if (errorCode == CBOX_TOO_DISTANT_FUTURE ||
-        errorCode == CBOX_DEGENERATED_KEY ||
-        errorCode == CBOX_PREKEY_NOT_FOUND) {
-        return YES;
-    }
-    
-    return NO;
 }
 
 + (ZMSystemMessageType)systemMessageTypeFromUpdateEvent:(ZMUpdateEvent *)updateEvent;

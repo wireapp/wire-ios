@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@ public extension ZMConversation {
     internal class func keyPathsForValuesAffectingExternalParticipantsState() -> Set<String> {
         [
             "participantRoles.user.isApp",
+            "participantRoles.user.isBot",
             "participantRoles.user.hasTeam",
             "participantRoles.user.isExternalPartner"
         ]
@@ -63,7 +64,7 @@ public extension ZMConversation {
         let selfUser = ZMUser.selfUser(in: managedObjectContext!)
         let otherUsers = participants.subtracting([selfUser])
 
-        if otherUsers.count == 1, otherUsers.first!.isApp {
+        if otherUsers.count == 1, otherUsers.first!.isAppOrBot {
             return []
         }
 
@@ -75,7 +76,7 @@ public extension ZMConversation {
         for user in otherUsers {
             if canDisplayGuests, user.isFederated {
                 state.insert(.visibleRemotes)
-            } else if user.isApp {
+            } else if user.isAppOrBot {
                 state.insert(.visibleApps)
             } else if canDisplayExternals, user.isExternalPartner {
                 state.insert(.visibleExternals)
@@ -98,7 +99,7 @@ public extension ZMConversation {
     /// Returns whether apps are present, regardless of the display rules.
 
     var areAppsPresent: Bool {
-        localParticipants.any(\.isApp)
+        localParticipants.any(\.isAppOrBot)
     }
 
     /// Returns whether guests are present, regardless of the display rules.

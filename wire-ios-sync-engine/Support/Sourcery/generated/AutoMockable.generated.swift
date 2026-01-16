@@ -2,7 +2,7 @@
 // DO NOT EDIT
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -1107,17 +1107,22 @@ public class MockSetAllowGuestAndAppsUseCaseProtocol: SetAllowGuestAndAppsUseCas
 
     // MARK: - invoke
 
-    public var invokeConversationAllowGuestsAllowAppsCompletion_Invocations: [(conversation: ZMConversation, allowGuests: Bool, allowApps: Bool, completion: (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void)] = []
-    public var invokeConversationAllowGuestsAllowAppsCompletion_MockMethod: ((ZMConversation, Bool, Bool, @escaping (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void) -> Void)?
+    public var invokeConversationAllowGuestsAllowApps_Invocations: [(conversation: ZMConversation, allowGuests: Bool, allowApps: Bool)] = []
+    public var invokeConversationAllowGuestsAllowApps_MockError: Error?
+    public var invokeConversationAllowGuestsAllowApps_MockMethod: ((ZMConversation, Bool, Bool) async throws -> Void)?
 
-    public func invoke(conversation: ZMConversation, allowGuests: Bool, allowApps: Bool, completion: @escaping (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void) {
-        invokeConversationAllowGuestsAllowAppsCompletion_Invocations.append((conversation: conversation, allowGuests: allowGuests, allowApps: allowApps, completion: completion))
+    public func invoke(conversation: ZMConversation, allowGuests: Bool, allowApps: Bool) async throws {
+        invokeConversationAllowGuestsAllowApps_Invocations.append((conversation: conversation, allowGuests: allowGuests, allowApps: allowApps))
 
-        guard let mock = invokeConversationAllowGuestsAllowAppsCompletion_MockMethod else {
-            fatalError("no mock for `invokeConversationAllowGuestsAllowAppsCompletion`")
+        if let error = invokeConversationAllowGuestsAllowApps_MockError {
+            throw error
         }
 
-        mock(conversation, allowGuests, allowApps, completion)
+        guard let mock = invokeConversationAllowGuestsAllowApps_MockMethod else {
+            fatalError("no mock for `invokeConversationAllowGuestsAllowApps`")
+        }
+
+        try await mock(conversation, allowGuests, allowApps)
     }
 
 }

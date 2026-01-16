@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -123,16 +123,26 @@ public class SearchDirectory: NSObject {
 }
 
 extension SearchDirectory: TearDownCapable {
+
     /// Tear down the SearchDirectory.
     ///
     /// NOTE: this must be called before releasing the instance
+
     public func tearDown() {
-        // Evict all cached search users
-        searchUsersCache?.removeAllObjects()
+        let tearDown = { [self] in
+            // Evict all cached search users
+            searchUsersCache?.removeAllObjects()
 
-        // Reset search user observer center to remove unnecessarily observed search users
-        contextProvider.viewContext.searchUserObserverCenter.reset()
+            // Reset search user observer center to remove unnecessarily observed search users
+            contextProvider.viewContext.searchUserObserverCenter.reset()
 
-        isTornDown = true
+            isTornDown = true
+        }
+        if Thread.isMainThread {
+            tearDown()
+        } else {
+            DispatchQueue.main.async(execute: tearDown)
+        }
     }
+
 }

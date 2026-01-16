@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,16 +22,13 @@ public struct MultipartAttachmentsModel: Hashable, Sendable {
 
     let attachments: [WireCellsMessageAttachment]
     let isSentBySelfUser: Bool
-    let isChatBubblesEnabled: Bool
 
     public init(
         attachments: [WireCellsMessageAttachment],
         isSentBySelfUser: Bool,
-        isChatBubblesEnabled: Bool
     ) {
         self.attachments = attachments
         self.isSentBySelfUser = isSentBySelfUser
-        self.isChatBubblesEnabled = isChatBubblesEnabled
     }
 
 }

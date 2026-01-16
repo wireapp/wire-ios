@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,6 @@ public final class SharingSession {
         case needsMigration
         case loggedOut
         case missingSharedContainer
-        case pendingCryptoboxMigration
     }
 
     /// The `NSManagedObjectContext` used to retrieve the conversations
@@ -105,148 +104,6 @@ public final class SharingSession {
         return featureRepository.fetchFileSharing()
     }
 
-    /// Initializes a new `SessionDirectory` to be used in an extension environment
-    /// - parameter databaseDirectory: The `NSURL` of the shared group container
-    /// - throws: `InitializationError.NeedsMigration` in case the local store needs to be
-    /// migrated, which is currently only supported in the main application or `InitializationError.LoggedOut` if
-    /// no user is currently logged in.
-    /// - returns: The initialized session object if no error is thrown
-
-    @MainActor
-    public convenience init(
-        applicationGroupIdentifier: String,
-        accountIdentifier: UUID,
-        hostBundleIdentifier: String,
-        environment: WireTransport.BackendEnvironment,
-        appLockConfig: AppLockController.LegacyConfig?,
-        sharedUserDefaults: UserDefaults,
-        minTLSVersion: String?,
-        currentBuildNumber: String,
-        localDomain: String?,
-        isFederationEnabled: Bool
-    ) async throws {
-
-        let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-
-        let coreDataStack = CoreDataStack(
-            account: Account(userName: "", userIdentifier: accountIdentifier),
-            applicationContainer: sharedContainerURL,
-            localDomain: localDomain,
-            isFederationEnabled: isFederationEnabled
-        )
-
-        guard coreDataStack.storesExists else {
-            throw InitializationError.missingSharedContainer
-        }
-
-        guard !coreDataStack.needsMigration  else {
-            throw InitializationError.needsMigration
-        }
-
-        try await coreDataStack.load()
-
-        // Don't cache the cookie because if the user logs out and back in again in the main app
-        // process, then the cached cookie will be invalid.
-        let cookieStorage = ZMPersistentCookieStorage(
-            forServerName: environment.backendURL.host!,
-            userIdentifier: accountIdentifier,
-            useCache: false
-        )
-
-        let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
-
-        let selfClientID = coreDataStack.syncContext.performAndWait {
-            ZMUser.selfUser(in: coreDataStack.syncContext).selfClient()?.remoteIdentifier
-        }
-
-        let transportSession = ZMTransportSession(
-            environment: environment,
-            proxyUsername: credentials?.username,
-            proxyPassword: credentials?.password,
-            cookieStorage: cookieStorage,
-            reachability: environment.reachability,
-            initialAccessToken: nil,
-            applicationGroupIdentifier: applicationGroupIdentifier,
-            applicationVersion: "1.0.0",
-            minTLSVersion: minTLSVersion,
-            selfClientID: selfClientID,
-            // This flag only concerns the push channel which isn't relevant
-            // in the sharing session.
-            isSyncV2Enabled: false
-        )
-
-        let proxySettings: WireNetwork.ProxySettings? = {
-            guard let proxy = environment.proxy else { return nil }
-
-            if proxy.needsAuthentication {
-                guard
-                    let proxyUsername = credentials?.username,
-                    let proxyPassword = credentials?.password else {
-                    fatalInternal("Proxy needs authentication but credentials are missing")
-                    return nil
-                }
-
-                return .authenticated(
-                    host: proxy.host,
-                    port: proxy.port,
-                    username: proxyUsername,
-                    password: proxyPassword
-                )
-            } else {
-                return .unauthenticated(host: proxy.host, port: proxy.port)
-            }
-        }()
-
-        let wireAPIBackendEnvironment = BackendEnvironment(
-            url: environment.backendURL,
-            webSocketURL: environment.backendWSURL,
-            blacklistURL: environment.blackListURL,
-            pinnedKeys: environment.trustData.map { trustData in
-                PinnedKey(
-                    key: trustData.certificateKey,
-                    rawKey: trustData.rawCertificateKey,
-                    hosts: trustData.hosts.map { host in
-                        switch host.rule {
-                        case .equals:
-                            .equals(host.value)
-                        case .endsWith:
-                            .endsWith(host.value)
-                        }
-                    }
-                )
-            },
-            proxySettings: proxySettings
-        )
-
-        guard let apiVersion = BackendInfo.apiVersion,
-              let wireAPIVersion = WireNetwork.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
-            fatal("cannot resolve api version")
-
-        }
-
-        try await self.init(
-            accountIdentifier: accountIdentifier,
-            selfClientID: selfClientID!,
-            coreDataStack: coreDataStack,
-            transportSession: transportSession,
-            cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
-            accountContainer: CoreDataStack.accountDataFolder(
-                accountIdentifier: accountIdentifier,
-                applicationContainer: sharedContainerURL
-            ),
-            appLockConfig: appLockConfig,
-            wireAPIBackendEnvironment: wireAPIBackendEnvironment,
-            minTLSVersion: .minVersionFrom(minTLSVersion),
-            apiVersion: wireAPIVersion,
-            sharedUserDefaults: sharedUserDefaults,
-            sharedContainerURL: URL("unused")!,
-            legacyEnvironment: environment,
-            proxyCredentials: credentials,
-            currentBuildNumber: currentBuildNumber,
-            localDomain: localDomain
-        )
-    }
-
     @MainActor
     init(
         accountIdentifier: UUID,
@@ -259,7 +116,6 @@ public final class SharingSession {
         operationLoop: RequestGeneratingOperationLoop,
         strategyFactory: StrategyFactory,
         appLockConfig: AppLockController.LegacyConfig?,
-        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         earService: EARServiceInterface,
         contextStorage: LAContextStorable,
         proteusService: ProteusServiceInterface,
@@ -290,13 +146,8 @@ public final class SharingSession {
         guard applicationStatusDirectory.authenticationStatus.state == .authenticated
         else { throw InitializationError.loggedOut }
 
-        let accountDirectory = coreDataStack.accountContainer
-        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
-            throw InitializationError.pendingCryptoboxMigration
-        }
-
         coreDataStack.syncContext.performAndWait {
-            if DeveloperFlag.proteusViaCoreCrypto.isOn, coreDataStack.syncContext.proteusService == nil {
+            if coreDataStack.syncContext.proteusService == nil {
                 coreDataStack.syncContext.proteusService = proteusService
             }
 
@@ -373,7 +224,6 @@ public final class SharingSession {
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
         let analyticsEventPersistence = ShareExtensionAnalyticsPersistence(accountContainer: accountContainer)
 
-        let cryptoboxMigrationManager = CryptoboxMigrationManager()
         let journal = Journal(
             userID: accountIdentifier,
             storage: sharedUserDefaults
@@ -384,7 +234,6 @@ public final class SharingSession {
             accountDirectory: coreDataStack.accountContainer,
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
             localDomain: localDomain
@@ -446,11 +295,7 @@ public final class SharingSession {
             keychain: Keychain()
         )
 
-        let isMLSEnabled = if DeveloperFlag.multibackend.isOn {
-            journal[.isBackendMLSEnabled]
-        } else {
-            BackendInfo.isMLSEnabled
-        }
+        let isMLSEnabled = journal[.isBackendMLSEnabled]
 
         let userSessionComponent = UserSessionComponent(
             currentBuildNumber: currentBuildNumber,
@@ -468,7 +313,9 @@ public final class SharingSession {
             mlsService: mlsService,
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            faultyMLSRemovalKeysByDomain: [:] // not relevant
+
         )
 
         let completionHandlers = ClientSessionComponent.CompletionHandlers(
@@ -497,7 +344,6 @@ public final class SharingSession {
             operationLoop: operationLoop,
             strategyFactory: strategyFactory,
             appLockConfig: appLockConfig,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             earService: earService,
             contextStorage: contextStorage,
             proteusService: proteusService,

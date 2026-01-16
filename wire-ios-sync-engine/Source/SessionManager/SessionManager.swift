@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -281,13 +281,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    public private(set) var backgroundUserSessions = [UUID: ZMUserSession]() {
-        didSet {
-            VoIPPushHelper.setLoadedUserSessions(
-                accountIDs: Array(backgroundUserSessions.keys)
-            )
-        }
-    }
+    public private(set) var backgroundUserSessions = [UUID: ZMUserSession]()
 
     public internal(set) var unauthenticatedSession: UnauthenticatedSession? {
         willSet {
@@ -314,7 +308,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     let application: ZMApplication
     var deleteAccountToken: Any?
     var callCenterObserverToken: Any?
-    var blacklistVerificator: ZMBlacklistVerificator?
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
     let apiMigrationManager: APIMigrationManager
@@ -474,8 +467,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             countlyProvider: countlyProvider,
             logFilesProvider: logFilesProvider
         )
-
-        configureBlacklistDownload()
 
         self.memoryWarningObserver = NotificationCenter.default.addObserver(
             forName: UIApplication.didReceiveMemoryWarningNotification,
@@ -660,38 +651,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    private func configureBlacklistDownload() {
-        guard !DeveloperFlag.multibackend.isOn else {
-            return
-        }
-        if configuration.blacklistDownloadInterval > 0 {
-            blacklistVerificator?.tearDown()
-            blacklistVerificator = ZMBlacklistVerificator(
-                checkInterval: configuration.blacklistDownloadInterval,
-                version: currentBuildNumber,
-                environment: environment,
-                proxyUsername: proxyCredentials?.username,
-                proxyPassword: proxyCredentials?.password,
-                readyForRequests: isUnauthenticatedTransportSessionReady,
-                working: nil,
-                application: application,
-                minTLSVersion: minTLSVersion,
-                blacklistCallback: { [weak self] blacklisted in
-                    guard let self, !self.isAppVersionBlacklisted else { return }
-
-                    if blacklisted {
-                        isAppVersionBlacklisted = true
-                        delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
-                        // When the application version is blacklisted we don't want have a
-                        // transition to any other state in the UI, so we won't inform it
-                        // anymore by setting the delegate to nil.
-                        delegate = nil
-                    }
-                }
-            )
-        }
-    }
-
     public func removeProxyCredentials() {
         guard let proxy = environment.proxy else { return }
         _ = ProxyCredentials.destroy(for: proxy)
@@ -721,9 +680,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         isUnauthenticatedTransportSessionReady = ready
         apiVersionResolver = createAPIVersionResolver()
 
-        if blacklistVerificator != nil {
-            configureBlacklistDownload()
-        }
         // force creation of unauthenticatedSession
         unauthenticatedSessionFactory.readyForRequests = ready
     }
@@ -1000,6 +956,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
             await configureAnalytics(for: session)
             await requestCertificateEnrollmentIfNeeded()
+        } else {
+            WireLogger.sessionManager.debug("User is not logged in, complete login elsewhere")
         }
 
         return session
@@ -1053,7 +1011,8 @@ public final class SessionManager: NSObject, SessionManagerType {
                     mediaManager: authenticatedSessionFactory.mediaManager,
                     flowManager: authenticatedSessionFactory.flowManager,
                     logFilesProvider: logFilesProvider,
-                    isDeveloperModeEnabled: isDeveloperModeEnabled
+                    isDeveloperModeEnabled: isDeveloperModeEnabled,
+                    faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain
                 )
 
                 let userSession = try await loader.load(newEnvironment: newEnvironment)
@@ -1332,7 +1291,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             sharedUserDefaults: sharedUserDefaults,
             isDeveloperModeEnabled: isDeveloperModeEnabled,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain
         )
     }
 
@@ -1390,11 +1350,10 @@ public final class SessionManager: NSObject, SessionManagerType {
     deinit {
         DispatchQueue
             .main
-            .async { [backgroundUserSessions, blacklistVerificator, unauthenticatedSession, reachability] in
+            .async { [backgroundUserSessions, unauthenticatedSession, reachability] in
                 backgroundUserSessions.values.forEach { session in
                     session.tearDown()
                 }
-                blacklistVerificator?.tearDown()
                 unauthenticatedSession?.tearDown()
                 reachability.tearDown()
             }

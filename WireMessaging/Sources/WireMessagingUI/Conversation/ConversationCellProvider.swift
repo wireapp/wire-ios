@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ public final class ConversationCellProvider {
 
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
+    private let nodeCache: any WireCellsNodeCacheProtocol
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let lastOpenRequest: WireCellsLastOpenRequest
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
@@ -32,6 +33,7 @@ public final class ConversationCellProvider {
     package init(
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
+        nodeCache: any WireCellsNodeCacheProtocol,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         lastOpenRequest: WireCellsLastOpenRequest,
         nodeRenameNotifier: WireCellsNodeRenameNotifier,
@@ -39,6 +41,7 @@ public final class ConversationCellProvider {
     ) {
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
+        self.nodeCache = nodeCache
         self.localAssetRepository = localAssetRepository
         self.lastOpenRequest = lastOpenRequest
         self.insetsProvider = insetsProvider
@@ -54,7 +57,7 @@ public final class ConversationCellProvider {
     ) -> UITableViewCell {
         model.registerIfNeeded(in: tableView)
         let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
-        configureCell(cell, with: model, onLongPress: onLongPress)
+        configureCell(cell, tableView: tableView, with: model, onLongPress: onLongPress)
 
         return cell
     }
@@ -62,6 +65,7 @@ public final class ConversationCellProvider {
     @MainActor
     private func configureCell(
         _ cell: UITableViewCell,
+        tableView: UITableView,
         with model: ConversationCellModel,
         onLongPress: @escaping (UITableViewCell) -> Void
     ) {
@@ -75,14 +79,14 @@ public final class ConversationCellProvider {
             guard let cell = cell as? MultipartAttachmentsConversationCell else { break }
 
             let insets = insetsProvider().insets(
-                isChatBubblesEnabled: model.isChatBubblesEnabled,
                 isSentBySelfUser: model.isSentBySelfUser
             )
             let viewModel = WireCellsAttachmentsPreviewViewModel(
                 attachments: model.attachments,
-                alignment: model.isChatBubblesEnabled && model.isSentBySelfUser ? .trailing : .leading,
+                alignment: model.isSentBySelfUser ? .trailing : .leading,
                 fetchNodeUseCase: fetchNodeUseCase,
                 getAssetUseCase: getAssetUseCase,
+                nodeCache: nodeCache,
                 localAssetRepository: localAssetRepository,
                 lastOpenRequest: lastOpenRequest,
                 nodeRenameNotifier: nodeRenameNotifier
@@ -90,7 +94,11 @@ public final class ConversationCellProvider {
             cell.configure(
                 content: WireCellsAttachmentsPreviewView(viewModel: viewModel),
                 insets: EdgeInsets(top: 0, leading: insets.leading, bottom: 0, trailing: insets.trailing),
-                onLongPress: onLongPress
+                onLongPress: onLongPress,
+                onSizeChange: { [weak tableView] in
+                    tableView?.beginUpdates()
+                    tableView?.endUpdates()
+                }
             )
         }
     }
@@ -99,12 +107,8 @@ public final class ConversationCellProvider {
 
 private extension ConversationCellInsets {
 
-    func insets(isChatBubblesEnabled: Bool, isSentBySelfUser: Bool) -> HorizontalInsets {
-        if isChatBubblesEnabled {
-            isSentBySelfUser ? trailingBubble : leadingBubble
-        } else {
-            legacy
-        }
+    func insets(isSentBySelfUser: Bool) -> HorizontalInsets {
+        isSentBySelfUser ? trailingBubble : leadingBubble
     }
 
 }

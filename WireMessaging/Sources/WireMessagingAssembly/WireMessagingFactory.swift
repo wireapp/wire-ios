@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 public import Foundation
 public import UIKit
-public import SwiftUI
+import SwiftUI
 public import WireData
 public import WireFoundation
 public import WireMessagingDomain
@@ -26,6 +26,8 @@ import WireMessagingData
 public import WireMessagingUI
 
 public struct WireMessagingFactory {
+
+    public typealias CellsURLResolver = @Sendable () throws -> URL
 
     private let nodesAPI: NodesAPI
     private let uploadManager: WireCellsNodeUploadManager
@@ -35,35 +37,20 @@ public struct WireMessagingFactory {
     private let localAssetRepository: WireCellsLocalAssetRepository
     private let filenameGenerator = FilenameGenerator()
     private let lastOpenRequest: WireCellsLastOpenRequest
-    private let nodeCache = WireCellsNodeCache()
-    private let isFoldersEnabled: Bool
+    private let nodeCache: WireCellsNodeCache
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
 
     @MainActor var lastOpenRequestNodeID: UUID?
 
     @MainActor
     public init(
-        serverURL: URL,
+        cellsURLResolver: @escaping CellsURLResolver,
         accessToken: any AccessTokenProvider,
         fileCache: any FileCache,
-        contextProvider: any ManagedObjectContextProvider,
-        isFoldersEnabled: Bool
+        contextProvider: any ManagedObjectContextProvider
     ) {
-        // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
-        let serverURL = switch serverURL.host {
-        case "prod-nginz-https.wire.com": // Production
-            URL(string: "https://cells-beta.wire.com")!
-        case "staging-nginz-https.zinfra.io": // Staging
-            URL(string: "https://cells.staging.zinfra.io")!
-        case "nginz-https.fulu.wire.link": // Fulu
-            URL(string: "https://cells.fulu.wire.link")!
-        case "nginz-https.imai.wire.link": // Imai
-            URL(string: "https://cells.imai.wire.link")!
-        default:
-            serverURL
-        }
-
-        self.nodesAPI = NodesAPI(serverURL: serverURL, accessToken: accessToken)
+        self.nodeCache = WireCellsNodeCache()
+        self.nodesAPI = NodesAPI(serverURLResolver: cellsURLResolver, accessToken: accessToken)
         self.uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
         self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
         self.fileCache = fileCache
@@ -74,7 +61,6 @@ public struct WireMessagingFactory {
             store: localAssetStore
         )
         self.lastOpenRequest = WireCellsLastOpenRequest()
-        self.isFoldersEnabled = isFoldersEnabled
         self.nodeRenameNotifier = WireCellsNodeRenameNotifier()
     }
 
@@ -132,6 +118,13 @@ public struct WireMessagingFactory {
     public func makeUpdateTagsUseCase() -> some WireCellsUpdateTagsUseCaseProtocol {
         WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI)
     }
+
+    public func makeFetchNodeUseCase() -> any WireCellsFetchNodeUseCaseProtocol {
+        WireCellsFetchNodeUseCase(
+            repository: nodesAPI,
+            cache: nodeCache
+        )
+    }
 }
 
 public extension WireMessagingFactory {
@@ -153,7 +146,6 @@ public extension WireMessagingFactory {
                 nodeCache: nodeCache,
                 nodeRenameNotifier: nodeRenameNotifier,
                 fileCache: fileCache,
-                isFoldersEnabled: isFoldersEnabled,
                 accentColorProvider: accentColorProvider
             ).environment(\.wireAccentColor, accentColorProvider())
         )
@@ -167,11 +159,16 @@ public extension WireMessagingFactory {
             rootView: FilesBrowserView(
                 viewModel: FilesViewModel(
                     useCases: .init(
-                        fetchNodes: WireCellsFetchNodesUseCase(
+                        fetchNodes: WireCellsFetchNodesPageUseCase(
                             configuration: .filesBrowserView,
                             repository: nodesAPI
                         ),
                         deleteNodes: WireCellsDeleteNodesUseCase(
+                            repository: nodesAPI,
+                            fileCache: fileCache,
+                            localAssetStore: localAssetStore
+                        ),
+                        restoreNodes: WireCellsRestoreNodesUseCase(
                             repository: nodesAPI,
                             fileCache: fileCache,
                             localAssetStore: localAssetStore
@@ -185,42 +182,32 @@ public extension WireMessagingFactory {
                         updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
                         getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
                         createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
+                        fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesAPI),
+                        restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                            repository: nodesAPI,
+                            localAssetsRepository: localAssetRepository,
+                            nodeCache: nodeCache
+                        ),
+                        getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: nodesAPI),
+                        getAssetUseCase: WireCellsGetAssetUseCase(
+                            localAssetRepository: localAssetRepository,
+                            fileCache: fileCache
+                        ),
+                        getPublicLinkData: WireCellsGetPublicLinkDataUseCase(nodesAPI: nodesAPI),
+                        createPublicLink: WireCellsCreatePublicLinkUseCase(nodesAPI: nodesAPI),
+                        deletePublicLink: WireCellsDeletePublicLinkUseCase(nodesAPI: nodesAPI),
+                        updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
+                        updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI)
                     ),
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,
+                    nodesRepository: nodesAPI,
                     fileCache: fileCache,
-                    isFoldersEnabled: false,
-                    accentColorProvider: accentColorProvider
+                    isBrowsing: true,
+                    accentColorProvider: accentColorProvider,
                 )
             )
         )
-    }
-
-    @MainActor
-    func makeAttachmentsPreviewView(
-        attachments: [WireCellsMessageAttachment],
-        alignment: HorizontalAlignment
-    ) -> UIViewController {
-        let viewController = UIHostingController(
-            rootView: WireCellsAttachmentsPreviewView(
-                viewModel: WireCellsAttachmentsPreviewViewModel(
-                    attachments: attachments,
-                    alignment: alignment,
-                    fetchNodeUseCase: WireCellsFetchNodeUseCase(
-                        repository: nodesAPI,
-                        cache: nodeCache
-                    ),
-                    getAssetUseCase: WireCellsGetAssetUseCase(
-                        localAssetRepository: localAssetRepository,
-                        fileCache: fileCache
-                    ),
-                    localAssetRepository: localAssetRepository,
-                    lastOpenRequest: lastOpenRequest,
-                    nodeRenameNotifier: nodeRenameNotifier
-                )
-            ))
-        viewController.view.backgroundColor = .clear
-        return viewController
     }
 
     func makeConversationCellProvider(
@@ -235,6 +222,7 @@ public extension WireMessagingFactory {
                 localAssetRepository: localAssetRepository,
                 fileCache: fileCache
             ),
+            nodeCache: nodeCache,
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
             nodeRenameNotifier: nodeRenameNotifier,

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
 
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
+    private let nodeCache: any WireCellsNodeCacheProtocol
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let lastOpenRequest: WireCellsLastOpenRequest
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
@@ -39,6 +40,7 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
         alignment: HorizontalAlignment,
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
+        nodeCache: any WireCellsNodeCacheProtocol,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         lastOpenRequest: WireCellsLastOpenRequest,
         nodeRenameNotifier: WireCellsNodeRenameNotifier
@@ -47,6 +49,7 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
         self.alignment = alignment
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
+        self.nodeCache = nodeCache
         self.localAssetRepository = localAssetRepository
         self.lastOpenRequest = lastOpenRequest
         self.nodeRenameNotifier = nodeRenameNotifier
@@ -59,6 +62,7 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
             alignment: alignment,
             fetchNodeUseCase: fetchNodeUseCase,
             getAssetUseCase: getAssetUseCase,
+            nodeCache: nodeCache,
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
             nodeRenameNotifier: nodeRenameNotifier,
@@ -122,6 +126,7 @@ extension WireCellsAttachmentsPreviewViewModel {
                 localAssetRepository: localAssetRepository,
                 fileCache: fileCache
             ),
+            nodeCache: nodeCache,
             localAssetRepository: localAssetRepository,
             lastOpenRequest: WireCellsLastOpenRequest(),
             nodeRenameNotifier: WireCellsNodeRenameNotifier()

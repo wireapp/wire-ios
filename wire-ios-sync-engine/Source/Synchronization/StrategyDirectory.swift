@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         localNotificationDispatcher: LocalNotificationDispatcher,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
-        proteusProvider: ProteusProviding,
+        proteusService: ProteusServiceInterface,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
@@ -74,7 +74,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             localNotificationDispatcher: localNotificationDispatcher,
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
-            proteusProvider: proteusProvider,
+            proteusService: proteusService,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
             pullSelfUserClientsFactory: pullSelfUserClientsFactory,
@@ -115,7 +115,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         localNotificationDispatcher: LocalNotificationDispatcher,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
-        proteusProvider: ProteusProviding,
+        proteusService: ProteusServiceInterface,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
@@ -145,7 +145,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
                 context: syncMOC,
-                proteusProvider: proteusProvider
+                proteusService: proteusService
             ),
             ZMMissingUpdateEventsTranscoder(
                 managedObjectContext: syncMOC,
