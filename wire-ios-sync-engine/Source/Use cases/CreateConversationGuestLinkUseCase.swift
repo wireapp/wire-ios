@@ -47,9 +47,12 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
         password: String?,
         completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void
     ) {
+        // this code assumes the Core Data models belong to the view context,
+        // also the completion block is expected to be called on the main thread
+        precondition(Thread.isMainThread)
 
-        if conversation.isLegacyAccessMode { // TODO: test this path
-            Task {
+        if conversation.isLegacyAccessMode {
+            Task { @MainActor in
                 do {
                     try await setGuestsAndAppsUseCase.invoke(
                         conversation: conversation,
@@ -61,7 +64,7 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
                     completion(.failure(.failedToEnableGuestAccess(error)))
                 }
             }
-        } else { // TODO: test this path
+        } else {
             createGuestLink(conversation: conversation, password: password, completion)
         }
     }
