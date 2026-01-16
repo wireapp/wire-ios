@@ -164,13 +164,15 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         pollingTask?.cancel()
         pollingTask = Task { [weak self] in
             guard let self else { return }
+            var refreshInitialPreviewSleepDuration = 1
 
             while !Task.isCancelled {
                 await refresh()
                 // Image previews may not be immediately available after upload.
                 // Poll the server at a higher frequency if the preview is still being processed.
                 let refreshInitialPreviews = (imagePreviewURL == nil && isProcessing)
-                try? await Task.sleep(for: .seconds(refreshInitialPreviews ? 1 : 30))
+                try? await Task.sleep(for: .seconds(refreshInitialPreviews ? refreshInitialPreviewSleepDuration : 30))
+                if refreshInitialPreviews, refreshInitialPreviewSleepDuration < 30 { refreshInitialPreviewSleepDuration *= 2 }
             }
         }
     }
