@@ -1657,10 +1657,10 @@ internal enum L10n {
           /// Search files
           internal static let description = L10n.tr("Localizable", "collections.section.searchFiles.description", fallback: "Search files")
           internal enum Alert {
-            /// Find files in conversations with Shared Drive.
-            internal static let message = L10n.tr("Localizable", "collections.section.searchFiles.alert.message", fallback: "Find files in conversations with Shared Drive.")
-            /// Wire Drive
-            internal static let title = L10n.tr("Localizable", "collections.section.searchFiles.alert.title", fallback: "Wire Drive")
+            /// Find files shared in conversations with file collaboration
+            internal static let message = L10n.tr("Localizable", "collections.section.searchFiles.alert.message", fallback: "Find files shared in conversations with file collaboration")
+            /// File collaboration (Cells beta version)
+            internal static let title = L10n.tr("Localizable", "collections.section.searchFiles.alert.title", fallback: "File collaboration (Cells beta version)")
           }
         }
         internal enum Videos {
@@ -2025,8 +2025,8 @@ internal enum L10n {
         internal static func messageTimerOffYou(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.message_timer_off-you", String(describing: p1), fallback: "%@ turned off the message timer")
         }
-        /// Self-deleting messages are off
-        internal static let messageTimerUnavailable = L10n.tr("Localizable", "content.system.message_timer_unavailable", fallback: "Self-deleting messages are off")
+        /// Self-deleting messages are off for conversations with Cells
+        internal static let messageTimerUnavailable = L10n.tr("Localizable", "content.system.message_timer_unavailable", fallback: "Self-deleting messages are off for conversations with Cells")
         /// You haven’t used this device for a while. Some messages may not appear here.
         internal static let missingMessages = L10n.tr("Localizable", "content.system.missing_messages", fallback: "You haven’t used this device for a while. Some messages may not appear here.")
         /// Plural format key: "%#@d_new_devices@"
@@ -2352,8 +2352,8 @@ internal enum L10n {
           }
         }
         internal enum FileCollaboration {
-          /// Shared Drive is on
-          internal static let enabled = L10n.tr("Localizable", "content.system.file_collaboration.enabled", fallback: "Shared Drive is on")
+          /// File collaboration (Cells) is on
+          internal static let enabled = L10n.tr("Localizable", "content.system.file_collaboration.enabled", fallback: "File collaboration (Cells) is on")
         }
         internal enum MessageLegalHold {
           /// Legal hold deactivated for this conversation
@@ -2517,8 +2517,8 @@ internal enum L10n {
       internal enum Action {
         /// Conversation Details
         internal static let conversationDetails = L10n.tr("Localizable", "conversation.action.conversationDetails", fallback: "Conversation Details")
-        /// Shared Drive
-        internal static let files = L10n.tr("Localizable", "conversation.action.files", fallback: "Shared Drive")
+        /// Files
+        internal static let files = L10n.tr("Localizable", "conversation.action.files", fallback: "Files")
         /// Search
         internal static let search = L10n.tr("Localizable", "conversation.action.search", fallback: "Search")
       }
@@ -2622,12 +2622,10 @@ internal enum L10n {
           internal static let title = L10n.tr("Localizable", "conversation.create.channel.title", fallback: "New channel")
         }
         internal enum FileManagement {
-          /// Learn more
-          internal static let learnMore = L10n.tr("Localizable", "conversation.create.file_management.learnMore", fallback: "Learn more")
-          /// Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.
-          internal static let subtitle = L10n.tr("Localizable", "conversation.create.file_management.subtitle", fallback: "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.")
-          /// Shared Drive
-          internal static let title = L10n.tr("Localizable", "conversation.create.file_management.title", fallback: "Shared Drive")
+          /// Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone.
+          internal static let subtitle = L10n.tr("Localizable", "conversation.create.file_management.subtitle", fallback: "Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone.")
+          /// File collaboration
+          internal static let title = L10n.tr("Localizable", "conversation.create.file_management.title", fallback: "File collaboration")
         }
         internal enum GroupName {
           /// Group name
@@ -3867,8 +3865,8 @@ internal enum L10n {
         internal static let footer = L10n.tr("Localizable", "group_details.file_collaboration_cell.footer", fallback: "Permanently on for this conversation")
         /// On
         internal static let subtitle = L10n.tr("Localizable", "group_details.file_collaboration_cell.subtitle", fallback: "On")
-        /// Shared Drive
-        internal static let title = L10n.tr("Localizable", "group_details.file_collaboration_cell.title", fallback: "Shared Drive")
+        /// File collaboration (Cells)
+        internal static let title = L10n.tr("Localizable", "group_details.file_collaboration_cell.title", fallback: "File collaboration (Cells)")
       }
       internal enum GuestOptionsCell {
         /// Off
@@ -3903,8 +3901,8 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "group_details.timeout_options_cell.title", fallback: "Self-deleting messages")
       }
       internal enum TimeoutOptionsDisabled {
-        /// The feature is not available for conversations with a shared Drive.
-        internal static let footer = L10n.tr("Localizable", "group_details.timeout_options_disabled.footer", fallback: "The feature is not available for conversations with a shared Drive.")
+        /// The feature is not available for conversations with Cells.
+        internal static let footer = L10n.tr("Localizable", "group_details.timeout_options_disabled.footer", fallback: "The feature is not available for conversations with Cells.")
       }
     }
     internal enum GuestRoom {

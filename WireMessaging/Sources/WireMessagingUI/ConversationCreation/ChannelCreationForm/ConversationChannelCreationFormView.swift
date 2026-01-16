@@ -197,20 +197,12 @@ public struct ConversationChannelCreationForm: View {
 
     var fileManagementSection: some View {
         Section(content: {
-            Toggle(Strings.CreationForm.WireCells.toggle, isOn: $viewModel.fileManagementEnabled)
+            Toggle(Strings.CreationForm.WireCells.toggle + " (Cells beta)", isOn: $viewModel.fileManagementEnabled)
         }, footer: {
-            Text(footerText)
+            Text(Strings.CreationForm.WireCells.description)
+            // Text(" [\(Strings.CreationForm.WireCells.learnMore)](https://wire.com)") // TODO: [WPB-20191] URL to be
+            // defined, uncomment when we have the URL
         })
-    }
-
-    private var footerText: AttributedString {
-        var text = AttributedString(Strings.CreationForm.WireCells.description + " ")
-
-        var link = AttributedString(Strings.CreationForm.WireCells.learnMore)
-        link.link = URL.useWireDriveInConversations
-
-        text.append(link)
-        return text
     }
 }
 
