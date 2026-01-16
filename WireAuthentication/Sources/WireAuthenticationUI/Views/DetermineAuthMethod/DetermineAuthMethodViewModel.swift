@@ -203,11 +203,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         email: String?,
         backendConfigURL: URL
     ) async {
-        guard !existsAnotherAccount else {
-            alert = .switchBackendFailed
-            return
-        }
-
         do {
             let useCase = factory.fetchBackendConfigUseCase()
             let environment = try await Task.detached {
