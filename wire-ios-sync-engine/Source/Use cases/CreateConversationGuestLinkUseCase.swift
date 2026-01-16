@@ -47,6 +47,8 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
         password: String?,
         completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void
     ) {
+        // this code assumes the Core Data models belong to the view context,
+        // also the completion block is expected to be called on the main thread
         precondition(Thread.isMainThread)
 
         if conversation.isLegacyAccessMode {
