@@ -85,7 +85,19 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
 
         let selfUser = await userLocalStore.fetchSelfUser()
         let commonProtocol = await getCommonProtocol(between: selfUser, and: user)
-
+        
+        // If there are no common protocols, there can be no communication
+        // yet, so mark it read only FIRST! Otherwise we unblock the conversation
+        // since it can be resolved.
+        // only when conversation messageProtocol's none and iMLSEnabled we'll set conversation to readOnly
+        if !(mlsProvider.isMLSEnabled && commonProtocol == nil) {
+            await setReadOnly(
+                to: false,
+                forOneOnOneWithUser: userID,
+                in: context
+            )
+        }
+        
         if mlsProvider.isMLSEnabled, commonProtocol == .mls {
             let groupId = try await resolveMLSConversation(
                 for: user
@@ -106,6 +118,11 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 for: user
             )
         }
+        
+        await context.perform { [context] in
+            _ = context.saveOrRollback()
+        }
+        
         return action
     }
 
@@ -137,7 +154,6 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
             mlsPublicKeys: mlsPublicKeys,
             user: user,
             userID: userID
-
         )
 
         return mlsGroupID
@@ -242,6 +258,24 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         }
     }
 
+    private func setReadOnly(
+        to readOnly: Bool,
+        forOneOnOneWithUser userID: WireDataModel.QualifiedID,
+        in context: NSManagedObjectContext
+    ) async {
+        await context.perform {
+            guard
+                let otherUser = ZMUser.fetch(with: userID, in: context),
+                let conversation = otherUser.oneOnOneConversation,
+                conversation.isForcedReadOnly != readOnly
+            else {
+                return
+            }
+
+            conversation.isForcedReadOnly = readOnly
+        }
+    }
+    
     private func fetchAllTeamOneOnOneProteusConversations(
         otherUserID: WireDataModel.QualifiedID,
         in context: NSManagedObjectContext
