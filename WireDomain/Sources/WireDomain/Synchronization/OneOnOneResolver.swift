@@ -86,10 +86,11 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         let selfUser = await userLocalStore.fetchSelfUser()
         let commonProtocol = await getCommonProtocol(between: selfUser, and: user)
 
-        // If there are no common protocols, there can be no communication
-        // yet, so mark it read only FIRST! Otherwise we unblock the conversation
-        // since it can be resolved.
-        // only when conversation messageProtocol's none and iMLSEnabled we'll set conversation to readOnly
+        // If MLS is enabled and there are no common protocols, then
+        // there is no possibility to communicate and the 1-1 will be marked
+        // read only (follow case below). However in all other cases
+        // the conversation should be unmarked so that if they were
+        // previously blocked they are now unblocked.
         if !(mlsProvider.isMLSEnabled && commonProtocol == nil) {
             await setReadOnly(
                 to: false,
