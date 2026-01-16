@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ final class PersonalUsersTests: WireUITestCase {
         _ = try userDetailsPage.sendConnectionRequest()
             .closeProfilePage()
             .closeNewConversationPage()
-            .openUserAccountPageForUser(with: userA.name)
+            .openUserProfilePage()
             .tapAddAccountOrTeamButton()
         let connectionRequestsPage = try app.loginUser(email: userB.email, password: userB.password)
             .acceptPopup(with: self)
@@ -104,7 +104,7 @@ final class PersonalUsersTests: WireUITestCase {
         let nameA = try XCTUnwrap(conversationsPage.getNameLabel())
         XCTAssertEqual(nameA, userA.name, "name didn't match \(userA.name)")
 
-        conversationsPage = try conversationsPage.openUserAccountPageForUser(with: userB.name)
+        conversationsPage = try conversationsPage.openUserProfilePage()
             .switchUserAccountForUser(withName: userA.name)
 
         let nameUserB = try XCTUnwrap(conversationsPage.getNameLabel())

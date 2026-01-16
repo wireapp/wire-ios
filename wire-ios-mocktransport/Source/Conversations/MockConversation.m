@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 @import WireTransport;
 @import WireUtilities;
-@import WireCryptobox;
 
 #import "MockConversation.h"
 #import "MockEvent.h"
@@ -262,17 +261,6 @@
                                 @"text": [data base64EncodedStringWithOptions:0]
                                 };
     return [self eventIfNeededByUser:fromClient.user type:ZMUpdateEventTypeConversationOtrMessageAdd data:eventData];
-}
-
-- (MockEvent *)encryptAndInsertDataFromClient:(MockUserClient *)fromClient
-                                     toClient:(MockUserClient *)toClient
-                                         data:(NSData *)data;
-{
-    Require(fromClient.identifier != nil);
-    Require(toClient.identifier != nil);
-    Require(data != nil);
-    NSData *encrypted = [MockUserClient encryptedWithData:data from:fromClient to:toClient];
-    return [self insertOTRMessageFromClient:fromClient toClient:toClient data:encrypted];
 }
 
 - (MockEvent *)insertOTRAssetFromClient:(MockUserClient *)fromClient

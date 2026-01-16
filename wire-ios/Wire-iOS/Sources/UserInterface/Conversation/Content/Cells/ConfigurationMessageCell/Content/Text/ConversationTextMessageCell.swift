@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -274,7 +274,8 @@ extension ConversationTextMessageCellDescription {
         for message: ZMConversationMessage,
         searchQueries: [String],
         selfUser: any UserType,
-        userSession: UserSession
+        userSession: UserSession,
+        wireMessagingFactory: any WireMessagingFactoryProtocol
     ) -> [AnyConversationMessageCellDescription] {
         guard let textMessageData = message.textMessageData else {
             preconditionFailure("Invalid text message")
@@ -285,7 +286,8 @@ extension ConversationTextMessageCellDescription {
             message: message,
             searchQueries: searchQueries,
             selfUser: selfUser,
-            userSession: userSession
+            userSession: userSession,
+            wireMessagingFactory: wireMessagingFactory
         )
     }
 
@@ -294,7 +296,8 @@ extension ConversationTextMessageCellDescription {
         message: ZMConversationMessage,
         searchQueries: [String],
         selfUser: any UserType,
-        userSession: UserSession
+        userSession: UserSession,
+        wireMessagingFactory: any WireMessagingFactoryProtocol
     ) -> [AnyConversationMessageCellDescription] {
 
         var cells: [AnyConversationMessageCellDescription] = []
@@ -331,9 +334,13 @@ extension ConversationTextMessageCellDescription {
 
         // Quote
         if let quotedMessage = textMessageData.quoteMessage {
+            let viewModel = MessageReplyAttachmentsViewModel(fetchNodeUseCase: wireMessagingFactory
+                .makeFetchNodeUseCase())
+
             let quoteCell = ConversationReplyCellDescription(
                 quotedMessage: quotedMessage,
-                accentColor: (selfUser.zmAccentColor ?? .default).accentColor
+                accentColor: (selfUser.zmAccentColor ?? .default).accentColor,
+                messageReplyAttachmentsViewModel: viewModel
             )
             cells.append(AnyConversationMessageCellDescription(quoteCell))
         }

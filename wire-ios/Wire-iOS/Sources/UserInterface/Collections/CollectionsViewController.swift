@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,10 @@
 //
 
 import UIKit
+import WireFoundation
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 protocol CollectionsViewControllerDelegate: AnyObject {
@@ -26,6 +28,10 @@ protocol CollectionsViewControllerDelegate: AnyObject {
         _ viewController: CollectionsViewController,
         performAction: MessageAction,
         onMessage: ZMConversationMessage
+    )
+
+    func collectionsViewControllerDidRequestOpenSearchFiles(
+        _ viewController: CollectionsViewController
     )
 }
 
@@ -63,6 +69,9 @@ final class CollectionsViewController: UIViewController {
     let userSession: UserSession
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
+    var collectionsSectionSet: [CollectionsSectionSet]
+    let isCellsEnabled: Bool
 
     private var fetchingDone: Bool = false {
         didSet {
@@ -88,7 +97,8 @@ final class CollectionsViewController: UIViewController {
         conversation: ZMConversation,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         let matchImages = CategoryMatch(including: .image, excluding: .GIF)
         let matchFiles = CategoryMatch(including: .file, excluding: .video)
@@ -102,9 +112,11 @@ final class CollectionsViewController: UIViewController {
 
         self.init(
             collection: holder,
+            isCellsEnabled: conversation.isCellsEnabled,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 
@@ -112,16 +124,23 @@ final class CollectionsViewController: UIViewController {
         collection: AssetCollectionWrapper,
         sections: CollectionsSectionSet = .all,
         messages: [ZMConversationMessage] = [],
+        isCellsEnabled: Bool,
         fetchingDone: Bool = false,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.collection = collection
         self.sections = sections
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
+        self.isCellsEnabled = isCellsEnabled
+
+        self.collectionsSectionSet = isCellsEnabled ? CollectionsSectionSet
+            .visibleWithSearchFiles : CollectionsSectionSet.visible
 
         switch sections {
         case CollectionsSectionSet.images:
@@ -254,7 +273,7 @@ final class CollectionsViewController: UIViewController {
                 for section in [CollectionsSectionSet.images, CollectionsSectionSet.videos]
                     where numberOfElements(for: section) != 0 {
                     contentView.collectionView
-                        .reloadSections(IndexSet(integer: (CollectionsSectionSet.visible.firstIndex(of: section))!))
+                        .reloadSections(IndexSet(integer: (collectionsSectionSet.firstIndex(of: section))!))
                 }
             }, completion: { _ in
                 self.contentView.collectionView.reloadData()
@@ -417,7 +436,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             let max = inOverviewMode ? maxOverviewElementsInTable : Int.max
             return min(linkMessages.count, max)
 
-        case CollectionsSectionSet.loading:
+        case CollectionsSectionSet.loading, .searchFiles:
             return 1
 
         default: fatal("Unknown section")
@@ -426,7 +445,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
 
     private func totalNumberOfElements() -> Int {
         // Empty collection contains one element (loading cell)
-        CollectionsSectionSet.visible.map { numberOfElements(for: $0) }.reduce(0, +) - 1
+        collectionsSectionSet.map { numberOfElements(for: $0) }.reduce(0, +) - 1
     }
 
     private func moreElementsToSee(in section: CollectionsSectionSet) -> Bool {
@@ -434,9 +453,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     }
 
     private func message(for indexPath: IndexPath) -> ZMConversationMessage {
-        guard let section = CollectionsSectionSet(index: UInt(indexPath.section)) else {
-            fatal("Unknown section")
-        }
+        let section = collectionSection(for: indexPath.section)
 
         return elements(for: section)[indexPath.row]
     }
@@ -471,9 +488,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     }
 
     private func sizeForCell(at indexPath: IndexPath) -> (CGFloat?, CGFloat?) {
-        guard let section = CollectionsSectionSet(index: UInt(indexPath.section)) else {
-            fatal("Unknown section")
-        }
+        let section = collectionSection(for: indexPath.section)
 
         let gridElementSize = gridElementSize(in: section)
 
@@ -503,6 +518,12 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
                 desiredHeight = fetchingDone ? 24 : 88
             }
 
+        case CollectionsSectionSet.searchFiles:
+            desiredWidth = contentView.collectionView.bounds.size.width - horizontalInset(in: section)
+            if !CollectionsView.useAutolayout {
+                desiredHeight = 50
+            }
+
         default: fatal("Unknown section")
         }
 
@@ -515,7 +536,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     }
 
     private func sectionInsets(in section: CollectionsSectionSet) -> UIEdgeInsets {
-        if section == CollectionsSectionSet.loading {
+        if section == CollectionsSectionSet.loading || section == .searchFiles {
             return UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         }
 
@@ -525,13 +546,11 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     // MARK: - Data Source
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        CollectionsSectionSet.visible.count
+        collectionsSectionSet.count
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let section = CollectionsSectionSet(index: UInt(section)) else {
-            fatal("Unknown section")
-        }
+        let section = collectionSection(for: section)
 
         return numberOfElements(for: section)
     }
@@ -549,9 +568,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        guard let section = CollectionsSectionSet(index: UInt(indexPath.section)) else {
-            fatal("Unknown section")
-        }
+        let section = collectionSection(for: indexPath.section)
 
         let resultCell: CollectionCell
 
@@ -596,6 +613,19 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             cell.containerWidth = collectionView.bounds.size.width - horizontalInset(in: section)
             return cell
 
+        case CollectionsSectionSet.searchFiles:
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: CollectionSearchFilesCell.reuseIdentifier,
+                for: indexPath
+            ) as! CollectionSearchFilesCell
+            let accentColor = WireAccentColor(
+                rawValue: userSession.selfUser.accentColorValue
+            )
+            cell.configure(accentColor: accentColor) { [weak self] in
+                self?.showSearchFilesAlert()
+            }
+            return cell
+
         default: fatal("Unknown section")
         }
 
@@ -619,9 +649,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath
     ) -> UICollectionReusableView {
-        guard let section = CollectionsSectionSet(index: UInt(indexPath.section)) else {
-            fatal("Unknown section")
-        }
+        let section = collectionSection(for: indexPath.section)
 
         switch kind {
         case UICollectionView.elementKindSectionHeader:
@@ -640,10 +668,12 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
                     collection: collection,
                     sections: section,
                     messages: elements(for: section),
+                    isCellsEnabled: isCellsEnabled,
                     fetchingDone: fetchingDone,
                     userSession: userSession,
                     mainCoordinator: mainCoordinator,
-                    selfProfileUIBuilder: selfProfileUIBuilder
+                    selfProfileUIBuilder: selfProfileUIBuilder,
+                    conversationCreationRepository: conversationCreationRepository
                 )
                 collectionController.onDismiss = onDismiss
                 collectionController.delegate = delegate
@@ -669,11 +699,9 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
-        guard let section = CollectionsSectionSet(index: UInt(section)) else {
-            fatal("Unknown section")
-        }
+        let section = collectionSection(for: section)
 
-        if section == CollectionsSectionSet.loading {
+        if section == CollectionsSectionSet.loading || section == CollectionsSectionSet.searchFiles {
             return .zero
         }
         return elements(for: section).isEmpty ? .zero : CGSize(width: collectionView.bounds.size.width, height: 48)
@@ -692,20 +720,29 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         layout collectionViewLayout: UICollectionViewLayout,
         insetForSectionAt section: Int
     ) -> UIEdgeInsets {
-        guard let section = CollectionsSectionSet(index: UInt(section)) else {
-            fatal("Unknown section")
-        }
-        return sectionInsets(in: section)
+        sectionInsets(in: collectionSection(for: section))
+    }
+
+    private func collectionSection(for section: Int) -> CollectionsSectionSet {
+        guard let section = CollectionsSectionSet(
+            index: UInt(section),
+            isCellsEnabled: isCellsEnabled
+        ) else { fatal("Unknown section") }
+
+        return section
     }
 
     // MARK: - Delegate
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let section = CollectionsSectionSet(index: UInt(indexPath.section)) else {
-            fatal("Unknown section for indexPath = \(indexPath)")
-        }
+        let section = collectionSection(for: indexPath.section)
 
         if section == .loading {
+            return
+        }
+
+        if section == .searchFiles {
+            delegate?.collectionsViewControllerDidRequestOpenSearchFiles(self)
             return
         }
 
@@ -713,14 +750,37 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         perform(.present, for: message, source: collectionView.cellForItem(at: indexPath)!)
     }
 
+    private func showSearchFilesAlert() {
+        typealias SearchFiles = L10n.Localizable.Collections.Section.SearchFiles
+        let alertController = UIAlertController(
+            title: SearchFiles.Alert.title,
+            message: SearchFiles.Alert.message,
+            preferredStyle: .alert
+        )
+
+        let searchFilesAction = UIAlertAction(
+            title: SearchFiles.description,
+            style: .default
+        ) { [weak self] _ in
+            guard let self else { return }
+            delegate?.collectionsViewControllerDidRequestOpenSearchFiles(self)
+        }
+
+        let cancelAction = UIAlertAction(
+            title: L10n.Localizable.General.close,
+            style: .cancel
+        ) { _ in }
+
+        [searchFilesAction, cancelAction].forEach(alertController.addAction)
+        present(alertController, animated: true)
+    }
+
 }
 
 extension CollectionsViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         for indexPath in indexPaths {
-            guard let section = CollectionsSectionSet(index: UInt(indexPath.section)) else {
-                fatal("Unknown section")
-            }
+            let section = collectionSection(for: indexPath.section)
 
             guard section != .loading else {
                 continue
@@ -812,7 +872,8 @@ extension CollectionsViewController: CollectionCellDelegate {
                     initialMessage: message,
                     userSession: userSession,
                     mainCoordinator: mainCoordinator,
-                    selfProfileUIBuilder: selfProfileUIBuilder
+                    selfProfileUIBuilder: selfProfileUIBuilder,
+                    conversationCreationRepository: conversationCreationRepository
                 )
 
                 let backButton = CollectionsView.backButton()
@@ -838,7 +899,8 @@ extension CollectionsViewController: CollectionCellDelegate {
                     actionResponder: self,
                     userSession: userSession,
                     mainCoordinator: mainCoordinator,
-                    selfProfileUIBuilder: selfProfileUIBuilder
+                    selfProfileUIBuilder: selfProfileUIBuilder,
+                    conversationCreationRepository: conversationCreationRepository
                 )
             }
 
@@ -881,7 +943,8 @@ extension CollectionsViewController: CollectionCellDelegate {
                 message: message,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             let navigationController = UINavigationController(rootViewController: detailsViewController)
             navigationController.modalPresentationStyle = .formSheet

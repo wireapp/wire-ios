@@ -96,8 +96,8 @@
         "repositoryURL": "https://github.com/wireapp/generic-message-proto.git",
         "state": {
           "branch": null,
-          "revision": "e70b883a9588c8a68f2604fd5fc9697bc3f33216",
-          "version": "1.54.0"
+          "revision": "9dd668daf0f7b835599b072bdecd2eb60c6c9058",
+          "version": "1.56.0"
         }
       },
       {
@@ -161,15 +161,6 @@
           "branch": null,
           "revision": "aa4cb4585232b52f116286e432dca055df698863",
           "version": "0.131.0"
-        }
-      },
-      {
-        "package": "Starscream",
-        "repositoryURL": "https://github.com/wireapp/starscream",
-        "state": {
-          "branch": null,
-          "revision": "bf73a16e7409a83c38872726e45e4f432512315e",
-          "version": "4.0.8"
         }
       },
       {

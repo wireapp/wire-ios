@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import WireConversationListUI
 import WireDataModel
 import WireDesign
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"
@@ -36,6 +37,7 @@ final class ConversationListContentController: UICollectionViewController {
     private let conversationListCoordinator: ConversationListCoordinator
     private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
 
     private(set) weak var zClientViewController: ZClientViewController?
 
@@ -57,6 +59,7 @@ final class ConversationListContentController: UICollectionViewController {
         conversationListCoordinator: ConversationListCoordinator,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         zClientViewController: ZClientViewController
     ) where
         ConversationListCoordinator: ConversationListCoordinatorProtocol,
@@ -67,6 +70,7 @@ final class ConversationListContentController: UICollectionViewController {
         self.conversationListCoordinator = .init(conversationListCoordinator: conversationListCoordinator)
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
         self.zClientViewController = zClientViewController
         self.wireMessagingFactory = zClientViewController.wireMessagingFactory
 
@@ -445,6 +449,7 @@ extension ConversationListContentController: UIViewControllerPreviewingDelegate 
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository,
             wireMessagingFactory: wireMessagingFactory
         )
     }

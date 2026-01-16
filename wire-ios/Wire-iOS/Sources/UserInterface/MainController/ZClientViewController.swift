@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import UIKit
 import WireAccountImageUI
 import WireCallingAssembly
 import WireCommonComponents
+import WireData
 import WireDesign
 import WireFoundation
 import WireLogging
@@ -42,6 +43,7 @@ final class ZClientViewController: UIViewController {
     // MARK: - Private Members - Add wire cells factory here somehow
 
     let account: Account
+    let contextProvider: any ManagedObjectContextProvider
     let userSession: UserSession
     let trackingManager: TrackingManager?
     private let selfProfileViewsMonitor: SelfProfileViewsMonitor
@@ -105,11 +107,14 @@ final class ZClientViewController: UIViewController {
     private lazy var conversationViewControllerBuilder = ConversationViewControllerBuilder(
         userSession: userSession,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
+        conversationCreationRepository: conversationCreationRepository,
         mediaPlaybackManager: mediaPlaybackManager,
         wireMessagingFactory: wireMessagingFactory
     )
 
-    private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory()
+    private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory(
+        conversationCreationRepository: conversationCreationRepository
+    )
 
     private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(
         userSession: userSession,
@@ -144,11 +149,14 @@ final class ZClientViewController: UIViewController {
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         createGroupConversationUIBuilder: createGroupConversationBuilder,
         channelConversationFormFactory: channelConversationFormFactory,
-        selfProfileUIBuilder: selfProfileViewControllerBuilder
+        selfProfileUIBuilder: selfProfileViewControllerBuilder,
+        featureConfigRepository: userSession.clientSessionComponent!.featureConfigRepository,
+        conversationCreationRepository: conversationCreationRepository
     )
 
     private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(
-        userSession: userSession
+        userSession: userSession,
+        conversationCreationRepository: conversationCreationRepository
     )
 
     private lazy var folderPickerViewControllerBuilder = FolderPickerViewControllerBuilder(
@@ -156,6 +164,10 @@ final class ZClientViewController: UIViewController {
         conversationFilter: { [weak self] in
             self?.conversationFilter()
         }
+    )
+
+    private(set) lazy var conversationCreationRepository = ConversationCreationRepository(
+        searchUsersUseCase: { [weak userSession] in userSession?.makeSearchUsersUseCase() }
     )
 
     private(set) lazy var conversationListViewController = ConversationListViewController(
@@ -167,6 +179,7 @@ final class ZClientViewController: UIViewController {
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
         connectViewControllerBuilder: connectBuilder,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+        conversationCreationRepository: conversationCreationRepository,
         createGroupConversationViewControllerBuilder: createGroupConversationBuilder,
         folderPickerViewControllerBuilder: folderPickerViewControllerBuilder,
         getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
@@ -200,8 +213,10 @@ final class ZClientViewController: UIViewController {
     )
 
     /// init method for testing allows injecting an Account object and self user
+
     required init(
         account: Account,
+        contextProvider: any ManagedObjectContextProvider,
         selfProfileViewsMonitor: SelfProfileViewsMonitor,
         userSession: UserSession,
         trackingManager: TrackingManager?,
@@ -209,6 +224,7 @@ final class ZClientViewController: UIViewController {
         wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.account = account
+        self.contextProvider = contextProvider
         self.selfProfileViewsMonitor = selfProfileViewsMonitor
         self.userSession = userSession
         self.trackingManager = trackingManager
@@ -280,24 +296,31 @@ final class ZClientViewController: UIViewController {
             .sink { [weak self] featureState in
                 guard let self else { return }
                 switch featureState.name {
-                case .cells where featureState.isEnabled:
-                    let filesBrowserView = wireMessagingFactory.makeFilesBrowserView { [weak self] in
-                        guard let self else { return .default }
-                        let selfUserColorRawValue = userSession.selfUser.accentColorValue
-                        return WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
-                    }
-                    if UIDevice.current.userInterfaceIdiom == .pad {
-                        guard !sidebarViewController.showFiles else { break }
-                        sidebarViewController.showFiles = true
-                        mainTabBarController.filesUI = filesBrowserView
-                    } else {
-                        guard mainTabBarController.filesUI == nil else { break }
-                        mainTabBarController.filesUI = filesBrowserView
-                    }
+                case .cells, .cellsInternal:
+                    setupWireCellsFilesTab()
                 default:
                     break
                 }
             }
+    }
+
+    private func setupWireCellsFilesTab() {
+        guard userSession.isWireCellsEnabled else { return }
+
+        let filesBrowserView = wireMessagingFactory.makeFilesBrowserView { [weak self] in
+            guard let self else { return .default }
+            let selfUserColorRawValue = userSession.selfUser.accentColorValue
+            return WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
+        }
+
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            guard !sidebarViewController.showFiles else { return }
+            sidebarViewController.showFiles = true
+            mainTabBarController.filesUI = filesBrowserView
+        } else {
+            guard mainTabBarController.filesUI == nil else { return }
+            mainTabBarController.filesUI = filesBrowserView
+        }
     }
 
     @discardableResult
@@ -527,16 +550,24 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter conversation: conversation to open
     func openDetailScreen(for conversation: ZMConversation) {
-        let controller = GroupDetailsViewController(
-            conversation: conversation,
-            userSession: userSession,
-            mainCoordinator: .init(mainCoordinator: mainCoordinator),
-            selfProfileUIBuilder: selfProfileViewControllerBuilder,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
-        )
-        let navController = UINavigationController(rootViewController: controller)
-        navController.modalPresentationStyle = .formSheet
-        present(navController, animated: true)
+        Task {
+            let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
+                .isFeatureEnabled(.apps) ?? false
+            let controller = GroupDetailsViewController(
+                conversation: conversation,
+                userSession: userSession,
+                mainCoordinator: .init(mainCoordinator: mainCoordinator),
+                selfProfileUIBuilder: selfProfileViewControllerBuilder,
+                conversationCreationRepository: conversationCreationRepository,
+                isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+                areLegacyBotsAvailable: areLegacyBotsAvailable,
+                isAppsFeatureEnabled: isAppsFeatureEnabled
+            )
+            let navController = UINavigationController(rootViewController: controller)
+            navController.modalPresentationStyle = .formSheet
+            present(navController, animated: true)
+        }
     }
 
     @objc
@@ -780,7 +811,8 @@ final class ZClientViewController: UIViewController {
                 context: .deviceList,
                 userSession: userSession,
                 mainCoordinator: .init(mainCoordinator: mainCoordinator),
-                selfProfileUIBuilder: selfProfileViewControllerBuilder
+                selfProfileUIBuilder: selfProfileViewControllerBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
 
             if let conversationViewController = (conversationRootViewController as? ConversationRootViewController)?
@@ -860,7 +892,7 @@ final class ZClientViewController: UIViewController {
             let useCase = GetUserAccountImageSourceUseCase()
             cachedAccountImage = try await useCase.invoke(
                 user: userSession.selfUser,
-                userContext: userSession.contextProvider.viewContext,
+                userContext: contextProvider.viewContext,
                 account: account
             ).mapToAccountImageSource()
         } catch {

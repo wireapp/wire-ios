@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -271,12 +271,12 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .withBody(body, contentType: .json)
             .build()
 
-        let (data, response) = try await networkService.executeRequest(request)
+        let (_, response) = try await networkService.executeRequest(request)
 
         try ResponseParser()
             .success(code: .ok)
             .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
-            .parse(code: response.statusCode, data: data)
+            .parse(code: response.statusCode, data: nil)
     }
 
     func requestEmailVerificationCode(for email: String) async throws {

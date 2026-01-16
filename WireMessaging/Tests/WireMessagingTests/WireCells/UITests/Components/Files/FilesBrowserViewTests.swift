@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,9 +39,16 @@ final class FilesBrowserViewTests: XCTestCase {
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
     private var createFolderUseCase: (any WireCellsCreateFolderUseCaseProtocol)!
+    private var fetchNodeVersionsUseCase: WireCellsFetchNodeVersionsUseCase!
+    private var restoreNodeVersionUseCase: WireCellsRestoreNodeVersionUseCase!
     private var getEditingURLUseCase: WireCellsGetEditingURLUseCase!
     private var getAssetUseCase: WireCellsGetAssetUseCase!
     private var localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol!
+    private var getPublicLinkData: WireCellsGetPublicLinkDataUseCase<MockNodesAPIProtocol>!
+    private var createPublicLink: WireCellsCreatePublicLinkUseCase!
+    private var deletePublicLink: WireCellsDeletePublicLinkUseCase!
+    private var updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase!
+    private var updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase!
 
     private let record: Bool? = nil
 
@@ -58,7 +65,7 @@ final class FilesBrowserViewTests: XCTestCase {
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
 
         fetchNodesUseCase = WireCellsFetchNodesPageUseCase(
-            configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
+            configuration: .conversationFileView(root: .id(.mockID1)),
             repository: nodesRepository
         )
         deleteNodeUseCase = WireCellsDeleteNodesUseCase(
@@ -73,7 +80,7 @@ final class FilesBrowserViewTests: XCTestCase {
         )
         renameNodeUseCase = WireCellsRenameNodeUseCase(
             nodesRepository: MockWireCellsNodesRepositoryProtocol(),
-            localAssetsRepository: MockWireCellsLocalAssetRepositoryProtocol(),
+            localAssetsRepository: localAssetsRepository,
             nodeCache: MockWireCellsNodeCacheProtocol(),
             nodeRenameNotifier: WireCellsNodeRenameNotifier()
         )
@@ -88,11 +95,24 @@ final class FilesBrowserViewTests: XCTestCase {
             nodesRepository: nodesRepository
         )
 
+        fetchNodeVersionsUseCase = WireCellsFetchNodeVersionsUseCase(repository: nodesRepository)
+        restoreNodeVersionUseCase = WireCellsRestoreNodeVersionUseCase(
+            repository: nodesRepository,
+            localAssetsRepository: localAssetsRepository,
+            nodeCache: MockWireCellsNodeCacheProtocol()
+        )
+
         let editingURLRepository = MockWireCellsEditingURLRepositoryProtocol()
         editingURLRepository.getEditorURLId_MockValue = nil
         getEditingURLUseCase = WireCellsGetEditingURLUseCase(
             editingURLRepository: editingURLRepository
         )
+
+        getPublicLinkData = WireCellsGetPublicLinkDataUseCase(nodesAPI: nodesApi)
+        createPublicLink = WireCellsCreatePublicLinkUseCase(nodesAPI: nodesApi)
+        deletePublicLink = WireCellsDeletePublicLinkUseCase(nodesAPI: nodesApi)
+        updatePublicLinkExpiration = WireCellsUpdatePublicLinkExpirationUseCase(nodesAPI: nodesApi)
+        updatePublicLinkPassword = WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesApi)
     }
 
     @MainActor
@@ -101,6 +121,13 @@ final class FilesBrowserViewTests: XCTestCase {
         nodesRepository = nil
         fetchNodesUseCase = nil
         localAssetsRepository = nil
+        fetchNodeVersionsUseCase = nil
+        createFolderUseCase = nil
+        getTagSuggestionsUseCase = nil
+        updateTagsUseCase = nil
+        renameNodeUseCase = nil
+        deleteNodeUseCase = nil
+        restoreNodeVersionUseCase = nil
     }
 
     @MainActor
@@ -185,15 +212,21 @@ final class FilesBrowserViewTests: XCTestCase {
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
                 createFolder: createFolderUseCase,
+                fetchNodeVersions: fetchNodeVersionsUseCase,
+                restoreNodeVersion: restoreNodeVersionUseCase,
                 getEditingURL: getEditingURLUseCase,
-                getAssetUseCase: getAssetUseCase
+                getAssetUseCase: getAssetUseCase,
+                getPublicLinkData: getPublicLinkData,
+                createPublicLink: createPublicLink,
+                deletePublicLink: deletePublicLink,
+                updatePublicLinkExpiration: updatePublicLinkExpiration,
+                updatePublicLinkPassword: updatePublicLinkPassword,
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetsRepository,
             nodesRepository: nodesRepository,
             fileCache: MockFileCache(),
-            isFoldersEnabled: false,
-            isCollaboraEnabled: false,
+            isBrowsing: true,
             accentColorProvider: { .default }
         )
 

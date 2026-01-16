@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@ public protocol ContextProvider {
     var syncContext: NSManagedObjectContext { get }
     var searchContext: NSManagedObjectContext { get }
     var eventContext: NSManagedObjectContext { get }
+
 }
 
 extension URL {
@@ -115,7 +116,7 @@ public protocol CoreDataStackProtocol: ContextProvider {
 }
 
 @objc @objcMembers
-public class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvider {
+public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvider {
 
     public let account: Account
 
@@ -131,7 +132,11 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvider {
         #endif
     }
 
-    public lazy var syncContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
+    public lazy var syncContext: NSManagedObjectContext = {
+        let context = messagesContainer.newBackgroundContext()
+        context.markAsSyncContext()
+        return context
+    }()
 
     public lazy var searchContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
 
@@ -390,7 +395,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvider {
     }
 
     func configureSyncContext(_ context: NSManagedObjectContext) async {
-        context.markAsSyncContext()
+        // Note: markAsSyncContext() is now called in the lazy initializer
         await context.perform {
             context.localDomain = self.localDomain
             context.isFederationEnabled = self.isFederationEnabled

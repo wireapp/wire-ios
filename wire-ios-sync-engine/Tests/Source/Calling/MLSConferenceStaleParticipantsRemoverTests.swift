@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -216,7 +216,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         from participants: [MLSParticipant]
     ) -> [MLSClientID: XCTestExpectation] {
         participants.reduce(into: [MLSClientID: XCTestExpectation]()) { expectations, participant in
-            var expectation = switch participant.callParticipant.state {
+            let expectation = switch participant.callParticipant.state {
             case .connecting:
                 XCTestExpectation(description: "removed stale participant (\(participant.mlsClientID))")
             default:

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ import WireMessagingDomainSupport
 extension FilesViewModel {
 
     /// A stubbed instance of `FilesViewModel` for SwiftUI previews.
-    static func preview(isFoldersEnabled: Bool = false) -> FilesViewModel {
+    static func preview() -> FilesViewModel {
         let cache = mockFileCache()
         let localAssetStore = MockWireCellsLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
@@ -38,7 +38,7 @@ extension FilesViewModel {
         return FilesViewModel(
             useCases: .init(
                 fetchNodes: WireCellsFetchNodesPageUseCase(
-                    configuration: .conversationFileView(root: .path("root"), isFoldersEnabled: true),
+                    configuration: .conversationFileView(root: .path("root")),
                     repository: previewNodesRepository()
                 ),
                 deleteNodes: WireCellsDeleteNodesUseCase(
@@ -66,25 +66,46 @@ extension FilesViewModel {
                 createFolder: WireCellsCreateFolderUseCase(
                     nodesRepository: previewNodesRepository()
                 ),
+                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(
+                    repository: previewNodesRepository()
+                ),
+                restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                    repository: previewNodesRepository(),
+                    localAssetsRepository: localAssetRepository,
+                    nodeCache: MockWireCellsNodeCacheProtocol()
+                ),
                 getEditingURL: WireCellsGetEditingURLUseCase(
                     editingURLRepository: previewEditingURLRepository()
                 ),
                 getAssetUseCase: WireCellsGetAssetUseCase(
                     localAssetRepository: localAssetRepository, fileCache: cache
+                ),
+                getPublicLinkData: WireCellsGetPublicLinkDataUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                ),
+                createPublicLink: WireCellsCreatePublicLinkUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                ),
+                deletePublicLink: WireCellsDeletePublicLinkUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                ),
+                updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(
+                    nodesAPI: previewPublicLinkApi()
+                ),
+                updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(
+                    nodesAPI: previewPublicLinkApi()
                 )
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,
-            localAssetRepository: PreviewLocalAssetRepository(),
+            localAssetRepository: localAssetRepository,
             nodesRepository: previewNodesRepository(),
             fileCache: cache,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
-            isFoldersEnabled: isFoldersEnabled,
-            isCollaboraEnabled: false,
+            isBrowsing: false,
             accentColorProvider: { .default }
         )
     }
-
 }
 
 extension FileRenameViewModel {
@@ -126,15 +147,32 @@ extension FilesItemViewModel {
                 modifiedAt: Date(),
                 icon: .image,
                 tags: tags,
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil,
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
             onItemAction: { _, _ in },
+            isBrowsing: false,
             isInRecycleBin: false,
-            isFoldersEnabled: false,
         )
     }
 
+}
+
+extension FileVersionItemViewModel {
+    /// A stubbed instance of `FileVersionItemViewModel` for SwiftUI previews.
+    static func preview() -> FileVersionItemViewModel {
+        FileVersionItemViewModel(
+            nodeID: UUID(),
+            item: .init(
+                id: UUID(),
+                title: "5:46AM",
+                subtitle: "Deniz Agha · 13MB"
+            ),
+            accentColor: .default,
+            onRestore: { _ in }
+        )
+    }
 }
 
 extension FilesFiltersViewModel {
@@ -156,6 +194,36 @@ extension FilesFiltersViewModel {
 
 }
 
+extension FileVersioningViewModel {
+
+    /// A stubbed instance of `FileVersioningViewModel` for SwiftUI previews.
+    static func preview() -> FileVersioningViewModel {
+        let repository = MockWireCellsNodesRepositoryProtocol()
+        repository.getVersionsNodeID_MockValue = WireCellsNodeVersion.mock
+
+        let useCase = WireCellsFetchNodeVersionsUseCase(repository: repository)
+        let localAssetsRepository = PreviewLocalAssetRepository()
+        repository.restoreVersionNodeIDVersionID_MockMethod = { _, _ in }
+
+        return FileVersioningViewModel(
+            nodeID: UUID(),
+            name: "foo.jpg",
+            eTag: nil,
+            fetchNodeVersionsUseCase: useCase,
+            restoreNodeVersionUseCase: WireCellsRestoreNodeVersionUseCase(
+                repository: repository,
+                localAssetsRepository: localAssetsRepository,
+                nodeCache: MockWireCellsNodeCacheProtocol()
+            ),
+            getAssetUseCase: WireCellsGetAssetUseCase(
+                localAssetRepository: localAssetsRepository,
+                fileCache: MockFileCache()
+            ),
+            accentColorProvider: { .default }
+        )
+    }
+}
+
 // MARK: - Dependencies
 
 private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
@@ -169,6 +237,7 @@ private func previewNodesRepository() -> any WireCellsNodesRepositoryProtocol {
             ownerUserName: "Person \(index)",
         )
     }
+    repository.getVersionsNodeID_MockValue = WireCellsNodeVersion.mock
     repository.getNodes_MockMethod = { request in
         try await Task.sleep(nanoseconds: 1_000_000_000) // Simulate network delay
 
@@ -192,6 +261,24 @@ private func previewTagsApi() -> some NodesAPIProtocol {
 private func previewEditingURLRepository() -> any WireCellsEditingURLRepositoryProtocol {
     let mock = MockWireCellsEditingURLRepositoryProtocol()
     mock.getEditorURLId_MockValue = nil
+    return mock
+}
+
+private func previewPublicLinkApi() -> some NodesAPIProtocol {
+    let mock = MockNodesAPIProtocol()
+    let publicLink = WireCellsPublicLink(
+        linkID: "aaa",
+        url: URL(string: "https://wire.com")!,
+        requiresPassword: true,
+        expirationDate: Date()
+    )
+
+    mock.getPublicLinkLinkID_MockMethod = { _ in
+        publicLink
+    }
+
+    mock.updatePublicLinkPasswordLinkIDPassword_MockValue = publicLink
+
     return mock
 }
 
@@ -284,6 +371,115 @@ extension CreateFolderViewModel {
             folderPath: "Test-1/Test-2"
         )
     }
+}
+
+extension ExpirationDatePickerView.ViewModel {
+    static func preview(date: Date?) -> ExpirationDatePickerView.ViewModel {
+        ExpirationDatePickerView.ViewModel(
+            linkID: "",
+            expirationDate: date,
+            didSave: { _ in },
+            updatePublicLinkExpiration: .init(nodesAPI: previewTagsApi())
+        )
+    }
+}
+
+extension ShareLinkPasswordView.ViewModel {
+    static func preview(password: String?, requiresPassword: Bool) -> ShareLinkPasswordView.ViewModel {
+        let nodesAPI = previewPublicLinkApi()
+        let keychain = Keychain()
+
+        let useCases = UseCases(
+            updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
+            storePublicLinkPasswordUseCase: WireCellsStorePublicLinkPasswordUseCase(keychain: keychain),
+            deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase(keychain: keychain)
+        )
+
+        return ShareLinkPasswordView.ViewModel(
+            password: password,
+            requiresPassword: requiresPassword,
+            linkID: "aaa",
+            useCases: useCases,
+            didSave: { _, _ in }
+        )
+    }
+}
+
+extension WireCellsNodeVersion {
+    static let mock: [WireCellsNodeVersion] = [
+        .init(
+            id: UUID(),
+            ownerName: "foo1",
+            modified: .init(timeIntervalSince1970: 1_759_311_973),
+            eTag: "something",
+            size: 2_158_877,
+            downloadUrl: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo2",
+            modified: .init(timeIntervalSince1970: 1_759_311_973),
+            eTag: "something",
+            size: 172_493,
+            downloadUrl: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo3",
+            modified: .init(timeIntervalSince1970: 1_761_663_940),
+            eTag: "something",
+            size: 2_216_387,
+            downloadUrl: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo4",
+            modified: .init(timeIntervalSince1970: 1_761_663_393),
+            eTag: "something",
+            size: 2_216_387,
+            downloadUrl: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo5",
+            modified: .init(timeIntervalSince1970: 1_759_241_119),
+            eTag: "something",
+            size: 27_808,
+            downloadUrl: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo6",
+            modified: .init(timeIntervalSince1970: 1_759_369_815),
+            eTag: "something",
+            size: 27_808,
+            downloadUrl: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo7",
+            modified: .init(timeIntervalSince1970: 1_759_401_599),
+            eTag: "something",
+            size: 27_808,
+            downloadUrl: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo8",
+            modified: .init(timeIntervalSince1970: 1_761_681_900),
+            eTag: "something",
+            size: 27_808,
+            downloadUrl: URL(string: "https://wire.com")
+        ),
+        .init(
+            id: UUID(),
+            ownerName: "foo9",
+            modified: .init(timeIntervalSince1970: 1_761_628_800),
+            eTag: "something",
+            size: 27_808,
+            downloadUrl: URL(string: "https://wire.com")
+        )
+    ]
 }
 
 let mockTags = [

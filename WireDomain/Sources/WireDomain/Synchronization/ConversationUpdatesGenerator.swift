@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,13 +19,7 @@ import Foundation
 import WireDataModel
 import WireLogging
 
-/// sourcery: AutoMockable
-public protocol ConversationUpdatesGeneratorProtocol {
-    func start() async
-    func stop()
-}
-
-public final class ConversationUpdatesGenerator: NSObject, ConversationUpdatesGeneratorProtocol {
+public final class ConversationUpdatesGenerator: NSObject, IncrementalGeneratorProtocol {
 
     private let context: NSManagedObjectContext
     private var fetchedResultsController: NSFetchedResultsController<ZMConversation>?
@@ -45,23 +39,24 @@ public final class ConversationUpdatesGenerator: NSObject, ConversationUpdatesGe
 
     /// Starts monitoring and triggers pulls for any needingToBeUpdatedFromBackend conversations.
     public func start() async {
-        if fetchedResultsController == nil {
-            fetchedResultsController = createFetchRequestController()
-            fetchedResultsController?.delegate = self
-        }
+        await context.perform { [self] in
+            if fetchedResultsController == nil {
+                fetchedResultsController = createFetchedResultsController()
+                fetchedResultsController?.delegate = self
+            }
 
-        do {
-            try fetchedResultsController?.performFetch()
-        } catch {
-            WireLogger.conversation.error("error fetching conversations: \(String(describing: error))")
-        }
+            do {
+                try fetchedResultsController?.performFetch()
+            } catch {
+                WireLogger.conversation.error("error fetching conversations: \(String(describing: error))")
+            }
 
-        let conversations = fetchedResultsController?.fetchedObjects ?? []
-        for conversation in conversations {
-            await context.perform {
+            let conversations = fetchedResultsController?.fetchedObjects ?? []
+            for conversation in conversations {
+
                 if let id = conversation.qualifiedID {
-                    self.onConversationUpdated(UpdateConversationItem(
-                        repository: self.repository,
+                    onConversationUpdated(UpdateConversationItem(
+                        repository: repository,
                         conversationID: id.toAPIModel()
                     ))
                 }
@@ -69,11 +64,13 @@ public final class ConversationUpdatesGenerator: NSObject, ConversationUpdatesGe
         }
     }
 
-    public func stop() {
-        fetchedResultsController = nil
+    public func stop() async {
+        await context.perform { [self] in
+            fetchedResultsController = nil
+        }
     }
 
-    private func createFetchRequestController() -> NSFetchedResultsController<ZMConversation> {
+    private func createFetchedResultsController() -> NSFetchedResultsController<ZMConversation> {
         let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
         request.predicate = NSPredicate.all(of: [
             ZMConversation.predicateForNeedingToBeUpdatedFromBackend(),
@@ -87,7 +84,6 @@ public final class ConversationUpdatesGenerator: NSObject, ConversationUpdatesGe
             sectionNameKeyPath: nil,
             cacheName: nil
         )
-
     }
 }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ public struct SearchOptions: OptionSet {
     /// Services which are enabled in your team.
 
     public static let services = SearchOptions(rawValue: 1 << 6)
+    // TODO: [WPB-20362] consider renaming to `bots` and adding `apps`
 
     /// Users from federated servers.
 

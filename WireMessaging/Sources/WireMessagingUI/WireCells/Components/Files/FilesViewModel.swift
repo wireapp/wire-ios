@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -71,6 +71,9 @@ package struct FilesViewItem: Identifiable, Hashable {
 
     /// Whether the item can be edited.
     let isEditable: Bool
+
+    /// The public link identifier if the item has a public link.
+    let publicLinkID: String?
 }
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -90,23 +93,29 @@ package final class FilesViewModel: ObservableObject {
 
     enum SheetNavigation: Identifiable {
         case editTags(fileItem: FilesViewItem)
+        case shareLink(view: ShareLinkView)
         case moveToFolder(fileItem: FilesViewItem)
         case renameFile(view: FileRenameView)
         case createFolder(view: CreateFolderView)
         case filters(view: FilesFiltersView)
+        case versionHistory(view: FileVersioningView)
 
         var id: String {
             switch self {
             case let .editTags(fileItem: item):
                 "editTags(\(item.id))"
+            case let .shareLink(view):
+                "shareLink(\(view.id))"
             case let .moveToFolder(fileItem):
-                "moveToFolder(\(fileItem.id)"
+                "moveToFolder(\(fileItem.id))"
             case let .createFolder(view):
                 "createFolder(\(view.id))"
             case let .renameFile(view):
                 "renameFile(\(view.id))"
             case let .filters(view):
                 "filters(\(view.id))"
+            case let .versionHistory(view):
+                "versionHistory(\(view.id))"
             }
         }
     }
@@ -152,8 +161,15 @@ package final class FilesViewModel: ObservableObject {
             updateTags: any WireCellsUpdateTagsUseCaseProtocol,
             getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol,
             createFolder: any WireCellsCreateFolderUseCaseProtocol,
+            fetchNodeVersions: any WireCellsFetchNodeVersionsUseCaseProtocol,
+            restoreNodeVersion: any WireCellsRestoreNodeVersionUseCaseProtocol,
             getEditingURL: WireCellsGetEditingURLUseCase,
-            getAssetUseCase: WireCellsGetAssetUseCase
+            getAssetUseCase: WireCellsGetAssetUseCase,
+            getPublicLinkData: any WireCellsGetPublicLinkDataUseCaseProtocol,
+            createPublicLink: WireCellsCreatePublicLinkUseCase,
+            deletePublicLink: WireCellsDeletePublicLinkUseCase,
+            updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase,
+            updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase
         ) {
 
             self.fetchNodes = fetchNodes
@@ -163,8 +179,15 @@ package final class FilesViewModel: ObservableObject {
             self.updateTags = updateTags
             self.getTagSuggestions = getTagSuggestions
             self.createFolder = createFolder
+            self.fetchNodeVersions = fetchNodeVersions
+            self.restoreNodeVersion = restoreNodeVersion
             self.getEditingURL = getEditingURL
             self.getAssetUseCase = getAssetUseCase
+            self.getPublicLinkData = getPublicLinkData
+            self.createPublicLink = createPublicLink
+            self.deletePublicLink = deletePublicLink
+            self.updatePublicLinkExpiration = updatePublicLinkExpiration
+            self.updatePublicLinkPassword = updatePublicLinkPassword
         }
 
         let fetchNodes: WireCellsFetchNodesPageUseCase
@@ -174,8 +197,15 @@ package final class FilesViewModel: ObservableObject {
         let updateTags: any WireCellsUpdateTagsUseCaseProtocol
         let getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
         let createFolder: any WireCellsCreateFolderUseCaseProtocol
+        let fetchNodeVersions: any WireCellsFetchNodeVersionsUseCaseProtocol
+        let restoreNodeVersion: any WireCellsRestoreNodeVersionUseCaseProtocol
         let getEditingURL: WireCellsGetEditingURLUseCase
         let getAssetUseCase: WireCellsGetAssetUseCase
+        let getPublicLinkData: any WireCellsGetPublicLinkDataUseCaseProtocol
+        let createPublicLink: WireCellsCreatePublicLinkUseCase
+        let deletePublicLink: WireCellsDeletePublicLinkUseCase
+        let updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase
+        let updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase
     }
 
     let useCases: UseCases
@@ -189,9 +219,10 @@ package final class FilesViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
     private let navigationPath: [FilesViewItem]
     private let accentColorProvider: () -> WireAccentColor
-    let isFoldersEnabled: Bool
-    let isCollaboraEnabled: Bool
+
+    let isBrowsing: Bool
     let isRecycleBin: Bool
+
     let triggerReload: PassthroughSubject<Void, Never>
 
     @Published var hasMore = true
@@ -222,8 +253,7 @@ package final class FilesViewModel: ObservableObject {
         nodesRepository: any WireCellsNodesRepositoryProtocol,
         fileCache: any FileCache,
         cellName: String? = nil,
-        isFoldersEnabled: Bool,
-        isCollaboraEnabled: Bool,
+        isBrowsing: Bool,
         isRecycleBin: Bool = false,
         triggerReload: PassthroughSubject<Void, Never> = .init(),
         accentColorProvider: @escaping () -> WireAccentColor
@@ -237,8 +267,7 @@ package final class FilesViewModel: ObservableObject {
         self.fileCache = fileCache
         self.cellName = cellName
         self.state = isCellsStatePending ? .pending : .loading
-        self.isFoldersEnabled = isFoldersEnabled
-        self.isCollaboraEnabled = isCollaboraEnabled
+        self.isBrowsing = isBrowsing
         self.isRecycleBin = isRecycleBin
         self.triggerReload = triggerReload
         self.accentColorProvider = accentColorProvider
@@ -323,14 +352,18 @@ package final class FilesViewModel: ObservableObject {
                     sheetNavigation = .renameFile(view: makeFileRenameView(item: item))
                 case .editTags:
                     sheetNavigation = .editTags(fileItem: item)
+                case .shareLink:
+                    sheetNavigation = .shareLink(view: makeShareLinkView(item: item))
                 case .moveToFolder:
                     sheetNavigation = .moveToFolder(fileItem: item)
+                case .showVersionHistory:
+                    sheetNavigation = .versionHistory(view: makeFileVersioningView(item: item))
                 case .edit:
                     isEditing = item
                 }
             },
+            isBrowsing: isBrowsing,
             isInRecycleBin: isRecycleBin,
-            isFoldersEnabled: isFoldersEnabled,
         )
     }
 
@@ -356,6 +389,7 @@ package final class FilesViewModel: ObservableObject {
     func moveToFolderView(item: FilesViewItem) -> some View {
         let containerPath = item.filePath.components(separatedBy: "/").dropLast().joined(separator: "/")
         let nodesRepository = nodesRepository
+        let assetRepository = localAssetRepository
         let useCases = useCases
         return MoveToFolderView(
             viewModel: MoveToFolderViewModel(
@@ -367,6 +401,7 @@ package final class FilesViewModel: ObservableObject {
                     Task { await self?.reload(refreshing: true) }
                 },
                 nodesRepository: nodesRepository,
+                localAssetRepository: assetRepository,
                 moveNodeUseCase: WireCellsMoveNodeUseCase(nodesRepository: nodesRepository),
                 createFolderUseCase: useCases.createFolder
             )
@@ -555,7 +590,8 @@ package final class FilesViewModel: ObservableObject {
                     fileExtension: url?.pathExtension
                 ),
                 tags: node.tags,
-                isEditable: node.isEditable
+                isEditable: node.isEditable,
+                publicLinkID: node.publicLinkID?.string
             )
         }
 
@@ -652,6 +688,57 @@ package final class FilesViewModel: ObservableObject {
             }.store(in: &subscriptions)
 
         return FileRenameView(viewModel: viewModel)
+    }
+
+    private func makeShareLinkView(
+        item: FilesViewItem
+    ) -> ShareLinkView {
+
+        let viewModel = ShareLinkView.ViewModel(
+            fileItem: item,
+            useCases: ShareLinkView.ViewModel.UseCases(
+                getLinkData: useCases.getPublicLinkData,
+                createPublicLink: useCases.createPublicLink,
+                deletePublicLink: useCases.deletePublicLink,
+                updatePublicLinkExpiration: useCases.updatePublicLinkExpiration,
+                updatePublicLinkPassword: useCases.updatePublicLinkPassword,
+                getPublicLinkPasswordUseCase: WireCellsGetPublicLinkPasswordUseCase(keychain: Keychain()),
+                storePublicLinkPasswordUseCase: WireCellsStorePublicLinkPasswordUseCase(keychain: Keychain()),
+                deletePublicLinkPasswordUseCase: WireCellsDeletePublicLinkPasswordUseCase(keychain: Keychain())
+            )
+        )
+
+        viewModel.$publicLinkState
+            .sink { [weak self] state in
+                switch state {
+                case .enabled, .disabled:
+                    self?.shouldReload = true
+                default:
+                    break
+                }
+
+            }.store(in: &subscriptions)
+
+        return ShareLinkView(viewModel: viewModel)
+    }
+
+    private func makeFileVersioningView(
+        item: FilesViewItem
+    ) -> FileVersioningView {
+        // always reload this view when file versioning is dismissed
+        shouldReload = true
+
+        let viewModel = FileVersioningViewModel(
+            nodeID: item.id,
+            name: item.name,
+            eTag: item.eTag,
+            fetchNodeVersionsUseCase: useCases.fetchNodeVersions,
+            restoreNodeVersionUseCase: useCases.restoreNodeVersion,
+            getAssetUseCase: useCases.getAssetUseCase,
+            accentColorProvider: accentColorProvider
+        )
+
+        return FileVersioningView(viewModel: viewModel)
     }
 
 }

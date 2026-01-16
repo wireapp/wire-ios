@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,6 +70,13 @@ package struct FilesView: FilesViewProtocol {
             .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
             .toolbar { toolbarContent }
+            .if(viewModel.showSearchBar) { view in
+                view.searchable(
+                    text: $viewModel.searchText,
+                    placement: .navigationBarDrawer,
+                    prompt: Strings.Files.Search.title
+                )
+            }
             .onAppear { reloadTask() }
             .onReceive(viewModel.triggerReload) { _ in
                 Task {
@@ -86,7 +93,8 @@ package struct FilesView: FilesViewProtocol {
                 item: $viewModel.sheetNavigation,
                 onDismiss: {
                     Task { await viewModel.onSheetDismissed() }
-                }, content: { navigationItem in
+                },
+                content: { navigationItem in
                     switch navigationItem {
                     case let .editTags(fileItem: fileItem):
                         TagsEditView(
@@ -99,13 +107,17 @@ package struct FilesView: FilesViewProtocol {
                                 await viewModel.reload()
                             }
                         )
+                    case let .shareLink(shareLinkView):
+                        shareLinkView
                     case let .renameFile(fileRenameView):
                         fileRenameView
                     case let .createFolder(folderView):
                         folderView
+                    case let .versionHistory(versionHistoryView):
+                        versionHistoryView
                     case let .moveToFolder(fileItem):
                         viewModel.moveToFolderView(item: fileItem)
-                    default:
+                    case .filters:
                         EmptyView()
                     }
                 }
@@ -135,7 +147,7 @@ private extension FilesView {
             }
         }
 
-        if !viewModel.isRecycleBin, viewModel.isFoldersEnabled {
+        if !viewModel.isRecycleBin {
             ToolbarItem(placement: .navigationBarTrailing) {
                 moreActionsButton
             }
@@ -214,6 +226,6 @@ private extension FilesViewModel.FolderMenuOption {
 
 #Preview {
     NavigationStack {
-        FilesView(viewModel: .preview(isFoldersEnabled: true))
+        FilesView(viewModel: .preview())
     }
 }

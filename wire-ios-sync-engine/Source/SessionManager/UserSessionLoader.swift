@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@ final class UserSessionLoader {
     private let accountID: UUID
     private let backendStore: BackendEnvironmentStore
     private let journal: Journal
+    private let faultyMLSRemovalKeysByDomain: [String: [String]]
 
     weak var delegate: UserSessionLoaderDelegate?
 
@@ -65,7 +66,8 @@ final class UserSessionLoader {
         mediaManager: MediaManagerType,
         flowManager: FlowManagerType,
         logFilesProvider: LogFilesProviding,
-        isDeveloperModeEnabled: Bool
+        isDeveloperModeEnabled: Bool,
+        faultyMLSRemovalKeysByDomain: [String: [String]]
     ) throws {
         self.account = account
         self.accountManager = accountManager
@@ -89,6 +91,7 @@ final class UserSessionLoader {
             userID: accountID,
             storage: sharedUserDefaults
         )
+        self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
     }
 
     @MainActor
@@ -419,7 +422,6 @@ final class UserSessionLoader {
             isSyncV2Enabled: journal[.isSyncV2Enabled]
         )
 
-        let cryptoboxMigrationManager = CryptoboxMigrationManager()
         let coreCryptoKeyMigrationManager = CoreCryptoKeyMigrationManager(journal: journal)
 
         let coreCryptoProvider = CoreCryptoProvider(
@@ -428,7 +430,6 @@ final class UserSessionLoader {
             accountDirectory: coreDataStack.accountContainer,
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
             localDomain: backendMetadata.domain
         )
@@ -537,7 +538,6 @@ final class UserSessionLoader {
             coreDataStack: coreDataStack,
             earService: earService,
             mlsService: mlsService,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             proteusToMLSMigrationCoordinator: proteusToMLSMigrationCoordinator,
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: sharedContainerURL,
@@ -552,7 +552,8 @@ final class UserSessionLoader {
             dependencies: dependencies,
             journal: journal,
             logFilesProvider: logFilesProvider,
-            cookieStorage: cookieStorage
+            cookieStorage: cookieStorage,
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
         )
 
         userSession.setup(

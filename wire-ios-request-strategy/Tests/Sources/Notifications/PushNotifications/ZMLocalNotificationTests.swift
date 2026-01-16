@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -86,6 +86,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
 
     override func tearDown() {
         sender = nil
+        selfUser = nil
         otherUser1 = nil
         otherUser2 = nil
         userWithNoName = nil
@@ -93,7 +94,6 @@ class ZMLocalNotificationTests: MessagingTestBase {
         groupConversationWithoutName = nil
         groupConversationWithoutUserDefinedName = nil
         invalidConversation = nil
-        _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
         super.tearDown()
     }
 

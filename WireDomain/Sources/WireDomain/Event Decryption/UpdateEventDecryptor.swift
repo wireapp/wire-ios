@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -80,7 +80,6 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
         var decryptedEvents = [UpdateEvent]()
         var brokenMLSGroupIDs = Set<String>()
-        var shouldCommitPendingProposals = false
 
         for event in eventEnvelope.events {
             logAttributes[.messageType] = event.name
@@ -120,7 +119,6 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     "decrypting MLS add message event...",
                     attributes: logAttributes
                 )
-                shouldCommitPendingProposals = true
 
                 do {
                     let decryptedEventData = try await mlsMessageDecryptor.decryptedMessageAddEventData(
@@ -170,21 +168,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             }
         }
 
-        if shouldCommitPendingProposals {
-            Task.detached {
-                // we don't need to wait for this, as it can take a while to finish
-                // it should not block decryption
-                await commitPendingProposalsIfNeeded()
-            }
-        }
-
         return EventDecryptorResult(events: decryptedEvents, brokenMLSGroupIDs: brokenMLSGroupIDs)
-    }
-
-    private func commitPendingProposalsIfNeeded() async {
-        // MLSService will be nil when called from push notification service.
-        // As we don't need to commit pending proposals in that case.
-        await mlsService?.commitPendingProposalsIfNeeded()
     }
 
     private func appendFailedToDecryptProteusMessage(

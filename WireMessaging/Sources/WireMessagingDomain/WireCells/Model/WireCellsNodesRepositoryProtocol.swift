@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -76,6 +76,19 @@ package protocol WireCellsNodesRepositoryProtocol: Sendable {
     /// - Returns: Whether a file already exists at this path and the next available path if any.
     func preCheck(nodePath: String, findAvailablePath: Bool) async throws -> WireCellsPreCheckResult
 
+    /// Retrieves all available versions for a given node.
+    ///
+    /// - Parameter nodeID: The unique identifier of the node whose versions should be fetched.
+    /// - Returns: An array of `WireCellsNodeVersion` objects representing the node’s versions.
+    func getVersions(nodeID: UUID) async throws -> [WireCellsNodeVersion]
+
+    /// Restores a previous version of a node.
+    ///
+    /// - Parameters:
+    ///   - nodeID: The unique identifier of the file node to restore.
+    ///   - versionID: The unique identifier of the version to restore.
+    func restoreVersion(nodeID: UUID, versionID: UUID) async throws
+
 }
 
 package struct WireCellsGetNodesRequest: Equatable, Sendable {
@@ -84,10 +97,10 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
     package enum Configuration: Equatable, Sendable {
 
         /// A `Configuration` suitable for the conversation file view.
-        case conversationFileView(root: WireCellsNodeLocator, isFoldersEnabled: Bool)
+        case conversationFileView(root: WireCellsNodeLocator)
 
         /// A `Configuration` suitable for the recycle bin, where deleted files are stored.
-        case recycleBinView(root: WireCellsNodeLocator, isFoldersEnabled: Bool)
+        case recycleBinView(root: WireCellsNodeLocator)
 
         /// A `Configuration` suitable for the files browser view.
         case filesBrowserView

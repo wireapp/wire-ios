@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import WireDataModel
 import WireDesign
 import WireFoundation
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -35,6 +36,7 @@ final class ConversationListViewController: UIViewController {
     let mainCoordinator: AnyMainCoordinator
     let connectViewControllerBuilder: any ConnectViewControllerBuilderProtocol
     let selfProfileViewControllerBuilder: any SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
     let createGroupConversationUIBuilder: any CreateGroupConversationViewControllerBuilderProtocol
     let conversationListCoordinator: any ConversationListCoordinatorProtocol
     let folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
@@ -139,6 +141,7 @@ final class ConversationListViewController: UIViewController {
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol,
         folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder,
         getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
@@ -158,6 +161,7 @@ final class ConversationListViewController: UIViewController {
             mainCoordinator: mainCoordinator,
             connectViewControllerBuilder: connectViewControllerBuilder,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+            conversationCreationRepository: conversationCreationRepository,
             createGroupConversationViewControllerBuilder: createGroupConversationViewControllerBuilder,
             folderPickerViewControllerBuilder: folderPickerViewControllerBuilder
         )
@@ -169,6 +173,7 @@ final class ConversationListViewController: UIViewController {
         mainCoordinator: AnyMainCoordinator,
         connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol,
         folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
     ) {
@@ -177,6 +182,7 @@ final class ConversationListViewController: UIViewController {
         self.zClientViewController = zClientViewController
         self.connectViewControllerBuilder = connectViewControllerBuilder
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
+        self.conversationCreationRepository = conversationCreationRepository
         self.createGroupConversationUIBuilder = createGroupConversationViewControllerBuilder
         self.folderPickerViewControllerBuilder = folderPickerViewControllerBuilder
         let conversationListCoordinator = ConversationListCoordinator(mainCoordinator: mainCoordinator)
@@ -188,6 +194,7 @@ final class ConversationListViewController: UIViewController {
             conversationListCoordinator: conversationListCoordinator,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileViewControllerBuilder,
+            conversationCreationRepository: conversationCreationRepository,
             zClientViewController: zClientViewController
         )
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)

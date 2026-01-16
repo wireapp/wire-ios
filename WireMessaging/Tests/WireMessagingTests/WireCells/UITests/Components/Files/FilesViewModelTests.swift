@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ final class FilesViewModelTests {
         self.sut = FilesViewModel(
             useCases: .init(
                 fetchNodes: WireCellsFetchNodesPageUseCase(
-                    configuration: .conversationFileView(root: .path("some-cell"), isFoldersEnabled: false),
+                    configuration: .conversationFileView(root: .path("some-cell")),
                     repository: nodesRepository
                 ),
                 deleteNodes: WireCellsDeleteNodesUseCase(
@@ -68,21 +68,32 @@ final class FilesViewModelTests {
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesApi),
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi),
                 createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesRepository),
+                fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesRepository),
+                restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
+                    repository: nodesRepository,
+                    localAssetsRepository: localAssetRepository,
+                    nodeCache: MockWireCellsNodeCacheProtocol()
+                ),
                 getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: editingURLRepository),
                 getAssetUseCase: WireCellsGetAssetUseCase(
                     localAssetRepository: localAssetRepository,
                     fileCache: fileCache
-                )
+                ),
+                getPublicLinkData: WireCellsGetPublicLinkDataUseCase<MockNodesAPIProtocol>(nodesAPI: nodesApi),
+                createPublicLink: WireCellsCreatePublicLinkUseCase(nodesAPI: nodesApi),
+                deletePublicLink: WireCellsDeletePublicLinkUseCase(nodesAPI: nodesApi),
+                updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(nodesAPI: nodesApi),
+                updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesApi),
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
             nodesRepository: nodesRepository,
             fileCache: fileCache,
-            isFoldersEnabled: true,
-            isCollaboraEnabled: false,
+            isBrowsing: false,
             accentColorProvider: { .default }
         )
 
+        localAssetRepository.assetNodeID_MockValue = .fixture()
         localAssetRepository
             .refreshAssetMetadataNodeID_MockValue = (WireCellsNode.fixture(), WireCellsLocalAsset.fixture())
         localAssetRepository.downloadAssetNodeID_MockMethod = { _ in }
@@ -164,7 +175,8 @@ final class FilesViewModelTests {
                 modifiedAt: nil,
                 icon: .other,
                 tags: [],
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil
             )],
             [], // Clears items
             [FilesViewItem(
@@ -177,7 +189,8 @@ final class FilesViewModelTests {
                 modifiedAt: nil,
                 icon: .other,
                 tags: [],
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil
             )]
         ])
     }
@@ -227,7 +240,8 @@ final class FilesViewModelTests {
                 modifiedAt: now,
                 icon: .image,
                 tags: [],
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil
             ),
             FilesViewItem(
                 id: node2.id,
@@ -239,7 +253,8 @@ final class FilesViewModelTests {
                 modifiedAt: nil,
                 icon: .other,
                 tags: [],
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil
             )
         ])
     }
@@ -279,7 +294,8 @@ final class FilesViewModelTests {
                 modifiedAt: now,
                 icon: .other,
                 tags: [],
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil
             ),
             FilesViewItem(
                 id: node2.id,
@@ -291,7 +307,8 @@ final class FilesViewModelTests {
                 modifiedAt: now - 60,
                 icon: .other,
                 tags: [],
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil
             ),
             FilesViewItem(
                 id: node3.id,
@@ -303,7 +320,8 @@ final class FilesViewModelTests {
                 modifiedAt: nil,
                 icon: .other,
                 tags: [],
-                isEditable: false
+                isEditable: false,
+                publicLinkID: nil
             )
         ])
     }
@@ -427,7 +445,8 @@ final class FilesViewModelTests {
                     modifiedAt: nil,
                     icon: .other,
                     tags: [],
-                    isEditable: false
+                    isEditable: false,
+                    publicLinkID: nil
                 ),
                 FilesViewItem(
                     id: nodeC.id,
@@ -439,7 +458,8 @@ final class FilesViewModelTests {
                     modifiedAt: nil,
                     icon: .other,
                     tags: [],
-                    isEditable: false
+                    isEditable: false,
+                    publicLinkID: nil
                 ),
                 FilesViewItem(
                     id: nodeD.id,
@@ -451,7 +471,8 @@ final class FilesViewModelTests {
                     modifiedAt: nil,
                     icon: .other,
                     tags: [],
-                    isEditable: false
+                    isEditable: false,
+                    publicLinkID: nil
                 ),
                 FilesViewItem(
                     id: nodeA.id,
@@ -463,7 +484,8 @@ final class FilesViewModelTests {
                     modifiedAt: now,
                     icon: .other,
                     tags: [],
-                    isEditable: false
+                    isEditable: false,
+                    publicLinkID: nil
                 )
             ]
         )

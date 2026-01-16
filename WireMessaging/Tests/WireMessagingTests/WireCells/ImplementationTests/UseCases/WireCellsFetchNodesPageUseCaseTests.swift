@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,24 +21,27 @@ import Testing
 @testable import WireMessagingDomain
 @testable import WireMessagingDomainSupport
 
+@MainActor
 struct WireCellsFetchNodesPageUseCaseTests {
 
     private let repository = MockWireCellsNodesRepositoryProtocol()
+    private let localAssetRepository = MockWireCellsLocalAssetRepositoryProtocol()
     private let sut: WireCellsFetchNodesPageUseCase
 
     init() {
         self.sut = WireCellsFetchNodesPageUseCase(
-            configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path"), isFoldersEnabled: false),
+            configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path")),
             repository: repository
         )
         repository.getNodes_MockValue = (nodes: [WireCellsNode.fixture()], nextOffset: 30)
+        localAssetRepository.assetNodeID_MockValue = WireCellsLocalAsset.fixture()
     }
 
     @Test
     func testInvoke_withConversationFileViewConfiguration() async throws {
         // Given
         let sut = WireCellsFetchNodesPageUseCase(
-            configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path"), isFoldersEnabled: false),
+            configuration: .conversationFileView(root: WireCellsNodeLocator.path("some/path")),
             repository: repository
         )
 
@@ -57,7 +60,7 @@ struct WireCellsFetchNodesPageUseCaseTests {
                     searchTerm: nil,
                     limit: 30,
                     offset: 0,
-                    configuration: .conversationFileView(root: .path("some/path"), isFoldersEnabled: false)
+                    configuration: .conversationFileView(root: .path("some/path"))
                 )
             ]
         )

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@ public struct APIProvider: APIProviderInterface {
         case .v11: PrekeyAPIV11(httpClient: httpClient)
         case .v12: PrekeyAPIV12(httpClient: httpClient)
         case .v13: PrekeyAPIV13(httpClient: httpClient)
+        case .v14: PrekeyAPIV14(httpClient: httpClient)
         }
     }
 
@@ -69,6 +70,7 @@ public struct APIProvider: APIProviderInterface {
         case .v11: MessageAPIV11(httpClient: httpClient)
         case .v12: MessageAPIV12(httpClient: httpClient)
         case .v13: MessageAPIV13(httpClient: httpClient)
+        case .v14: MessageAPIV14(httpClient: httpClient)
         }
     }
 
@@ -84,6 +86,7 @@ public struct APIProvider: APIProviderInterface {
         case .v11: E2eIAPIV11(httpClient: httpClient)
         case .v12: E2eIAPIV12(httpClient: httpClient)
         case .v13: E2eIAPIV13(httpClient: httpClient)
+        case .v14: E2eIAPIV14(httpClient: httpClient)
         }
     }
 
@@ -103,6 +106,7 @@ public struct APIProvider: APIProviderInterface {
         case .v11: UserClientAPIV11(httpClient: httpClient)
         case .v12: UserClientAPIV12(httpClient: httpClient)
         case .v13: UserClientAPIV13(httpClient: httpClient)
+        case .v14: UserClientAPIV14(httpClient: httpClient)
         }
     }
 }

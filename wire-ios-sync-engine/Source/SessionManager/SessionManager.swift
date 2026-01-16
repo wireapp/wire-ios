@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -281,13 +281,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    public private(set) var backgroundUserSessions = [UUID: ZMUserSession]() {
-        didSet {
-            VoIPPushHelper.setLoadedUserSessions(
-                accountIDs: Array(backgroundUserSessions.keys)
-            )
-        }
-    }
+    public private(set) var backgroundUserSessions = [UUID: ZMUserSession]()
 
     public internal(set) var unauthenticatedSession: UnauthenticatedSession? {
         willSet {
@@ -962,6 +956,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
             await configureAnalytics(for: session)
             await requestCertificateEnrollmentIfNeeded()
+        } else {
+            WireLogger.sessionManager.debug("User is not logged in, complete login elsewhere")
         }
 
         return session
@@ -1015,7 +1011,8 @@ public final class SessionManager: NSObject, SessionManagerType {
                     mediaManager: authenticatedSessionFactory.mediaManager,
                     flowManager: authenticatedSessionFactory.flowManager,
                     logFilesProvider: logFilesProvider,
-                    isDeveloperModeEnabled: isDeveloperModeEnabled
+                    isDeveloperModeEnabled: isDeveloperModeEnabled,
+                    faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain
                 )
 
                 let userSession = try await loader.load(newEnvironment: newEnvironment)
@@ -1294,7 +1291,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             sharedUserDefaults: sharedUserDefaults,
             isDeveloperModeEnabled: isDeveloperModeEnabled,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain
         )
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,15 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
     // MARK: - Properties
 
     typealias View = MessageReactionsCell
-    let configuration: View.Configuration
+    var configuration: View.Configuration
+
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration = MessageReactionsCellConfiguration(reactions: configuration.reactions, message: message)
+            }
+        }
+    }
 
     let shouldAlignMessageContentForBubbles = true
 
@@ -46,14 +54,12 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
             )
         }
 
-        self.configuration = reactions
+        self.configuration = MessageReactionsCellConfiguration(reactions: reactions, message: message)
     }
 
     var supportsActions: Bool = false
 
     var containsHighlightableContent: Bool = false
-
-    var message: ZMConversationMessage?
 
     weak var delegate: ConversationMessageCellDelegate?
 

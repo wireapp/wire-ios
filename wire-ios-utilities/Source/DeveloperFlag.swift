@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
     case channelsHistory
     case chatBubbles
-    case considerAppsFeatureFlag
     case consumableNotifications
     case createLegacyBackups
     case debugDuplicateObjects
@@ -39,17 +38,10 @@ public enum DeveloperFlag: String, CaseIterable {
     case showUnreadConversationsFilter
     case skipMLSMessagesDecryption
     case useWireAuthentication
-    case wireCellsFolders
     case wireMeetings
-    case wireCellsCollabora
 
     public var description: String {
         switch self {
-        case .considerAppsFeatureFlag:
-            "Apps are not fully supported by the backend yet (e.g. no search endpoint available yet). However, some " +
-                "customers already have the apps feature flag enabled as a workaround for another issue." +
-                "If this toggle is off, the apps feature flag is ignored. Toggle it on for development."
-
         case .createLegacyBackups:
             "Don't use the cross-platform library when creating backups."
 
@@ -100,12 +92,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .wireMeetings:
             "Turn on to enable Wire meetings"
-
-        case .wireCellsFolders:
-            "Turn on to enable Wire Cells folders"
-
-        case .wireCellsCollabora:
-            "Turn on to enable Collabora file editing in Wire Cells"
         }
     }
 

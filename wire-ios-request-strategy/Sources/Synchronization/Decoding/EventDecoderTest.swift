@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,7 +51,6 @@ class EventDecoderTest: MessagingTestBase {
         lastEventIDRepository.storeLastEventID_MockMethod = { _ in }
 
         syncMOC.performGroupedAndWait {
-            self.mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
             self.syncMOC.mlsService = self.mockMLSService
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.accountIdentifier
@@ -60,7 +59,6 @@ class EventDecoderTest: MessagingTestBase {
             selfConversation.conversationType = .self
         }
         disableZMLogError(true)
-
     }
 
     override func tearDown() {
@@ -69,6 +67,14 @@ class EventDecoderTest: MessagingTestBase {
         EventDecoder.testingBatchSize = nil
         sut = nil
         super.tearDown()
+    }
+
+    private func decryptAndStoreEvents(
+        _ events: [ZMUpdateEvent],
+        publicKeys: EARPublicKeys? = nil
+    ) async throws -> [ZMUpdateEvent] {
+        try await setupProteusService()
+        return try await sut.decryptAndStoreEvents(events, publicKeys: publicKeys)
     }
 }
 
@@ -83,7 +89,7 @@ extension EventDecoderTest {
             self.eventStreamEvent()
         }
 
-        _ = try await sut.decryptAndStoreEvents([event])
+        _ = try await decryptAndStoreEvents([event])
 
         // when
         await sut.processStoredEvents { events in
@@ -121,7 +127,7 @@ extension EventDecoderTest {
             self.eventStreamEvent()
         }
 
-        _ = try await sut.decryptAndStoreEvents(
+        _ = try await decryptAndStoreEvents(
             [event],
             publicKeys: publicKeys
         )
@@ -150,7 +156,7 @@ extension EventDecoderTest {
             self.eventStreamEvent()
         }
 
-        _ = try await sut.decryptAndStoreEvents([event1])
+        _ = try await decryptAndStoreEvents([event1])
 
         // when
         _ = try await sut.decryptAndStoreEvents([event2])
@@ -190,7 +196,7 @@ extension EventDecoderTest {
             self.eventStreamEvent()
         }
 
-        _ = try await sut.decryptAndStoreEvents([event1, event2, event3, event4])
+        _ = try await decryptAndStoreEvents([event1, event2, event3, event4])
 
         // when
         await sut.processStoredEvents { events in
@@ -229,7 +235,7 @@ extension EventDecoderTest {
             self.eventStreamEvent()
         }
 
-        _ = try await sut.decryptAndStoreEvents([event1, event2])
+        _ = try await decryptAndStoreEvents([event1, event2])
 
         await sut.processStoredEvents(with: nil) { events in
             XCTAssert(events.contains(event1))
@@ -355,7 +361,7 @@ extension EventDecoderTest {
         }
 
         // when
-        _ = try await sut.decryptAndStoreEvents([pushEvent])
+        _ = try await decryptAndStoreEvents([pushEvent])
         await sut.processStoredEvents { events in
             XCTAssertTrue(events.contains(pushEvent))
             pushProcessed.fulfill()
@@ -366,7 +372,7 @@ extension EventDecoderTest {
 
         // and when
         let streamProcessed = customExpectation(description: "Stream event processed")
-        _ = try await sut.decryptAndStoreEvents([streamEvent])
+        _ = try await decryptAndStoreEvents([streamEvent])
         await sut.processStoredEvents { events in
             XCTAssertTrue(events.contains(streamEvent))
             streamProcessed.fulfill()
@@ -390,7 +396,7 @@ extension EventDecoderTest {
         }
 
         // when
-        _ = try await sut.decryptAndStoreEvents([pushEvent])
+        _ = try await decryptAndStoreEvents([pushEvent])
         await sut.processStoredEvents { events in
             XCTAssertTrue(events.contains(pushEvent))
             pushProcessed.fulfill()
@@ -402,7 +408,7 @@ extension EventDecoderTest {
         // and when
         let streamProcessed = customExpectation(description: "Stream event not processed")
 
-        _ = try await sut.decryptAndStoreEvents([streamEvent])
+        _ = try await decryptAndStoreEvents([streamEvent])
         await sut.processStoredEvents { events in
             // as filtering is removed, event with same id can go through process twice
             XCTAssertTrue(events.contains(streamEvent))
@@ -427,7 +433,7 @@ extension EventDecoderTest {
         }
 
         // when
-        _ = try await sut.decryptAndStoreEvents([pushEvent])
+        _ = try await decryptAndStoreEvents([pushEvent])
         await sut.processStoredEvents { events in
             XCTAssertTrue(events.contains(pushEvent))
             pushProcessed.fulfill()
@@ -439,7 +445,7 @@ extension EventDecoderTest {
         // and when
         let streamProcessed = customExpectation(description: "Stream event processed")
 
-        _ = try await sut.decryptAndStoreEvents([streamEvent])
+        _ = try await decryptAndStoreEvents([streamEvent])
         await sut.processStoredEvents { events in
             XCTAssertTrue(events.contains(streamEvent))
             streamProcessed.fulfill()
@@ -718,8 +724,6 @@ extension EventDecoderTest {
 
         // Then
         XCTAssertTrue(decryptedEvents.isEmpty)
-        wait(forConditionToBeTrue: !self.mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty, timeout: 3)
-        XCTAssertEqual(1, mockMLSService.commitPendingProposalsIfNeeded_Invocations.count)
     }
 
     func test_DecryptMLSMessage_CommitsPendingsProposalsIsNotCalled_WhenReceivingProposalViaDownload() async throws {
@@ -742,8 +746,6 @@ extension EventDecoderTest {
 
         // Then
         XCTAssertTrue(decryptedEvents.isEmpty)
-        spinMainQueue(withTimeout: 1)
-        XCTAssertTrue(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
     }
 
     func test_DecryptMLSMessage_ReturnsNoEvent_WhenPayloadIsInvalid() async throws {
@@ -831,7 +833,7 @@ extension EventDecoderTest {
         mockMLSService.processWelcomeMessageWelcomeMessageContext_MockValue = groupID
 
         // When
-        let result = try await sut.decryptAndStoreEvents([event])
+        let result = try await decryptAndStoreEvents([event])
 
         // Then
         XCTAssertEqual(result, [event])
@@ -846,7 +848,7 @@ extension EventDecoderTest {
         mockMLSService.processWelcomeMessageWelcomeMessageContext_MockValue = groupID
 
         // When
-        _ = try await sut.decryptAndStoreEvents([event])
+        _ = try await decryptAndStoreEvents([event])
 
         // Then
         XCTAssertEqual(mockMLSService.processWelcomeMessageWelcomeMessageContext_Invocations.count, 1)

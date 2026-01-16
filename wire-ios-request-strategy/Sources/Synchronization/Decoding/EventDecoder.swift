@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ public final class EventDecoder: NSObject, EventDecoderProtocol {
 extension EventDecoder {
 
     /// Decrypts passed in events and stores them in chronological order in a persisted database,
-    /// it then saves the database and cryptobox
+    /// it then saves the database
     ///
     /// - Parameters:
     ///   - events: Encrypted events

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -78,7 +78,6 @@ public final class ZMUserSession: NSObject {
 
     var recurringActionService: any RecurringActionServiceInterface
 
-    var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     private(set) var coreCryptoProvider: CoreCryptoProviderProtocol
     private(set) var userId: UUID
     let proteusService: ProteusServiceInterface
@@ -116,11 +115,7 @@ public final class ZMUserSession: NSObject {
     // MARK: Computed Properties
 
     public var isBackendMLSEnabled: Bool {
-        if DeveloperFlag.multibackend.isOn {
-            journal[.isBackendMLSEnabled]
-        } else {
-            BackendInfo.isMLSEnabled
-        }
+        journal[.isBackendMLSEnabled]
     }
 
     var isPerformingSync = true {
@@ -173,8 +168,16 @@ public final class ZMUserSession: NSObject {
         return featureRepository.fetchCells()
     }
 
+    public var wireCellsBackendURL: URL? {
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchCellsInternal()?.config.backend.url
+    }
+
     public var isWireCellsEnabled: Bool {
-        wireCellsFeature.status == .enabled
+        let isFeatureEnabled = wireCellsFeature.status == .enabled
+        let hasBackendURL = wireCellsBackendURL != nil
+
+        return isFeatureEnabled && hasBackendURL
     }
 
     public var conferenceCallingFeature: Feature.ConferenceCalling {
@@ -447,7 +450,6 @@ public final class ZMUserSession: NSObject {
         coreDataStack: CoreDataStack,
         earService: any EARServiceInterface,
         mlsService: any MLSServiceInterface,
-        cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         proteusToMLSMigrationCoordinator: any ProteusToMLSMigrationCoordinating,
         sharedUserDefaults: UserDefaults,
         sharedContainerURL: URL,
@@ -462,7 +464,8 @@ public final class ZMUserSession: NSObject {
         dependencies: UserSessionDependencies,
         journal: Journal,
         logFilesProvider: LogFilesProviding,
-        cookieStorage: any CookieStorageProtocol
+        cookieStorage: any CookieStorageProtocol,
+        faultyMLSRemovalKeysByDomain: [String: [String]]
     ) {
         self.application = application
         self.currentAppVersion = currentAppVersion
@@ -488,7 +491,6 @@ public final class ZMUserSession: NSObject {
         self.earService = earService
         self.mlsService = mlsService
         self.proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
-        self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
@@ -515,7 +517,8 @@ public final class ZMUserSession: NSObject {
             mlsService: mlsService,
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
         )
 
         self.conversationEventProcessor = ConversationEventProcessor(
@@ -638,7 +641,6 @@ public final class ZMUserSession: NSObject {
             featureConfigRepository: clientSessionComponent.featureConfigRepository,
             syncStateSubject: clientSessionComponent.syncStateSubject,
             pushChannelCoordinator: clientSessionComponent.mainAppPushChannelCoordinator,
-            conversationUpdatesGenerator: clientSessionComponent.conversationUpdatesGenerator,
             networkStatePublisher: networkStateSubject.eraseToAnyPublisher()
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
@@ -670,6 +672,10 @@ public final class ZMUserSession: NSObject {
         Task {
             await clientSessionComponent.workAgent.setAutoStartEnabled(true)
             await clientSessionComponent.workAgent.start()
+            clientSessionComponent.generatorsDirectory.observeSyncState()
+
+            // Initialize the generator to enqueue repair work item if needed
+            clientSessionComponent.repairFaultyMLSRemovalKeysGenerator.submitWorkItemIfNeeded()
         }
     }
 
@@ -713,6 +719,14 @@ public final class ZMUserSession: NSObject {
         tokens.removeAll()
         application.unregisterObserverForStateChange(self)
         callStateObserver = nil
+
+        // Clear delegates to break retain cycles
+        earService.delegate = nil
+        appLockController.delegate = nil
+        applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = nil
+
+        syncAgent?.delegate = nil
+        syncAgent = nil
         syncStrategy?.tearDown()
         syncStrategy = nil
         operationLoop?.tearDown()
@@ -722,6 +736,10 @@ public final class ZMUserSession: NSObject {
         callCenter?.tearDown()
         coreDataStack.close()
         contextStorage.clear()
+
+        // Note: strategyDirectory, legacyUpdateEventProcessor, and urlActionProcessors
+        // are left to be cleaned up when ZMUserSession is deallocated to avoid
+        // triggering strategy teardowns while async operations may still be running.
 
         NotificationCenter.default.removeObserver(self)
         WireLogger.authentication.clearClientID()
@@ -742,7 +760,6 @@ public final class ZMUserSession: NSObject {
     }
 
     private func configureTransportSession() {
-        transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier
         transportSession.setNetworkStateDelegate(self)
         transportSession.setAccessTokenRenewalFailureHandler { [weak self] response in
             self?.transportSessionAccessTokenDidFail(response: response)
@@ -856,10 +873,7 @@ public final class ZMUserSession: NSObject {
         recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
         recurringActionService.registerAction(refreshTeamMetadataAction)
         recurringActionService.registerAction(refreshFederationCertificatesAction)
-
-        if DeveloperFlag.multibackend.isOn {
-            recurringActionService.registerAction(checkBuildBlacklistAction)
-        }
+        recurringActionService.registerAction(checkBuildBlacklistAction)
     }
 
     func startRequestLoopTracker() {
@@ -1245,21 +1259,6 @@ extension ZMUserSession: SyncAgentDelegate {
                 context: notificationContext
             ).post()
         }
-
-        syncContext.perform { [weak self] in
-            guard let self else { return }
-            let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
-
-            if selfClient?.hasRegisteredMLSClient == true {
-                Task {
-                    do {
-                        try await self.mlsService.repairOutOfSyncConversations()
-                    } catch {
-                        WireLogger.mls.error("Repairing out of sync conversations failed: \(error)")
-                    }
-                }
-            }
-        }
     }
 
     func didStartIncrementalSync() {
@@ -1287,7 +1286,6 @@ extension ZMUserSession: SyncAgentDelegate {
 
         WaitingGroupTask(context: syncContext) { [weak self] in
             guard let self else { return }
-            await fetchBackendMLSPublicKeys()
             await fetchAndStoreFeatureConfig()
 
             let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
@@ -1305,13 +1303,6 @@ extension ZMUserSession: SyncAgentDelegate {
                 )
             } else {
                 WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
-            }
-
-            if !isRecovering, mlsFeature.isEnabled {
-                Task.detached { [mlsService] in
-                    // we don't need to wait for this, as it can take a while to finish
-                    await mlsService.commitPendingProposalsIfNeeded()
-                }
             }
 
             await calculateSelfSupportedProtocolsIfNeeded()
@@ -1375,7 +1366,8 @@ extension ZMUserSession: SyncAgentDelegate {
             conversationRepository: clientSessionComponent.conversationRepository,
             lockRepository: ResetMLSConversationLockRepository(
                 userID: userId
-            )
+            ),
+            selfDomain: resolvedBackendMetadata.domain
         )
     }
 
@@ -1423,21 +1415,6 @@ extension ZMUserSession: SyncAgentDelegate {
             try await clientSessionComponent?.featureConfigRepository.pullFeatureConfigs()
         } catch {
             WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
-        }
-    }
-
-    private func fetchBackendMLSPublicKeys() async {
-        guard !DeveloperFlag.multibackend.isOn else {
-            // fetching done on UserSessionLoader
-            return
-        }
-        do {
-            var getBackendMLSPublicKeysAction = FetchBackendMLSPublicKeysAction()
-            let backendPublicKeys = try await getBackendMLSPublicKeysAction.perform(in: notificationContext)
-            let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
-            BackendInfo.isMLSEnabled = hasValidKeys
-        } catch {
-            WireLogger.mls.info("Backend doesn't have MLS public keys: \(String(reflecting: error))")
         }
     }
 
@@ -1518,9 +1495,6 @@ extension ZMUserSession: SyncAgentDelegate {
 extension ZMUserSession: ZMClientRegistrationStatusDelegate {
 
     public func didRegisterSelfUserClient(_ userClient: WireDataModel.UserClient) {
-        // If during registration user allowed notifications,
-        // The push token can only be registered after client registration
-        transportSession.pushChannel.clientID = userClient.remoteIdentifier
         registerCurrentPushToken()
         renewAccessTokenIfNeeded(for: userClient)
 
@@ -1728,7 +1702,7 @@ extension ZMUserSession {
 extension ZMUserSession {
 
     private func makeAppVersionMigrations() -> [any AppVersionMigration] {
-        [
+        var migrations: [any AppVersionMigration] = [
             AppVersionMigration_4_1_1(journal: journal, logFilesProvider: logFilesProvider),
             AppVersionMigration_4_2_0(
                 appGroupIdentifier: Bundle.main.appGroupIdentifier,
@@ -1737,8 +1711,26 @@ extension ZMUserSession {
                 sessionManager: sessionManager
             ),
             AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider),
-            AppVersionMigration_4_10_0(journal: journal)
+            AppVersionMigration_4_10_0(journal: journal),
+            AppVersionMigration_4_12_0(
+                journal: journal,
+                repairGenerator: clientSessionComponent?.repairFaultyMLSRemovalKeysGenerator
+            )
         ]
+
+        if let clientSessionComponent {
+            migrations.append(
+                AppVersionMigration_4_12_1(
+                    coreDataStack: coreDataStack,
+                    api: clientSessionComponent.conversationsAPI,
+                    store: clientSessionComponent.conversationLocalStore
+                )
+            )
+        } else {
+            // skip migration when first login, ok since there is no bug to fix then
+        }
+
+        return migrations
     }
 
 }

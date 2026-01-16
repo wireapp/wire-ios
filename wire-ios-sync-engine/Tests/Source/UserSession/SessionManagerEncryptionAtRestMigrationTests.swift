@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
             ModelHelper().createSelfClient(in: syncMOC)
             syncMOC.saveOrRollback()
         }
-        try userSession.viewContext.saveOrRollback()
+        userSession.viewContext.saveOrRollback()
     }
 
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
 @import WireTransport;
 @import WireUtilities;
 
-#import "MockConnection.h"
-#import "MockConversation.h"
-#import "MockPicture.h"
-#import "MockEvent.h"
-#import "MockAsset.h"
+#import <WireMockTransport/MockConnection.h>
+#import <WireMockTransport/MockConversation.h>
+#import <WireMockTransport/MockPicture.h>
+#import <WireMockTransport/MockEvent.h>
+#import <WireMockTransport/MockAsset.h>
 
 @class MockPushEvent;
 @class MockTeam;
@@ -46,11 +46,9 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 /// This will simply return @c self, but typecast to the expected type. For convenience.
 - (ZMTransportSession *)mockedTransportSession;
 
-@property (nonatomic, readonly) id<ZMPushChannel> pushChannel;
 @property (nonatomic, nullable) id _userInfoAvailableClosure;
 
 @property (nonatomic) NSURL *baseURL;
-@property (nonatomic) NSURL *websocketURL;
 
 @property (nonatomic) NSString *clientID;
 @property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
@@ -59,7 +57,6 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 @property (nonatomic, readonly, copy) ZMAccessTokenHandlerBlock accessTokenSuccessHandler;
 
 @property (nonatomic, readonly) MockUser* selfUser;
-@property (nonatomic, readonly) BOOL isPushChannelActive;
 @property (nonatomic, copy, nullable) ZMCustomResponseGeneratorBlock responseGeneratorBlock;
 @property (nonatomic, readonly) NSDictionary <NSString *, NSDictionary *> *pushTokens;
 @property (nonatomic) BOOL disableEnqueueRequests;
@@ -79,11 +76,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 /// use to mock 500 error
 @property (nonatomic) BOOL isInternalError;
 
-@property (nonatomic, readonly) NSArray *updateEvents;
-
 @property (nonatomic, readwrite) id<ReachabilityProvider, TearDownCapable> reachability;
-
-@property (nonatomic) BOOL useLegaclyPushNotifications;
 
 @property (nonatomic,  readonly, nullable) NSString *generatedEmailVerificationCode;
 
@@ -91,8 +84,6 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 - (void)addPushToken:(NSString *)token payload:(NSDictionary *)payload;
 - (void)removePushToken:(NSString *)token;
-
-- (void)configurePushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue NS_SWIFT_NAME(configurePushChannel(consumer:groupQueue:));
 
 - (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler NS_SWIFT_NAME(setAccessTokenRenewalFailureHandler(_:));
 
@@ -141,9 +132,6 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 /// Runs the given @c block on the context's queue and saves the context.
 - (void)performRemoteChanges:(void(^)(id<MockTransportSessionObjectCreation>))block;
 
-- (void)saveAndCreatePushChannelEvents;
-- (void)saveAndCreatePushChannelEventForSelfUser;
-
 @end
 
 
@@ -168,9 +156,6 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 - (MockAsset *)insertAssetWithID:(NSUUID *)assetID domain:(nullable NSString *)domain assetToken:(NSUUID *)assetToken assetData:(NSData *)assetData contentType:(NSString *)contentType;
 
-- (void)simulatePushChannelClosed;
-- (void)simulatePushChannelOpened;
-
 /// Whitelist an email so that registration is automatically verified
 - (void)whiteListEmail:(NSString *)email;
 /// Whitelist a phone so that we can login directly without asking for the code first (used in tests)
@@ -178,9 +163,6 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 /// simulate the other party accepting a connection request
 - (void)remotelyAcceptConnectionToUser:(MockUser*)user;
-
-/// remove all stored /notification
-- (void)clearNotifications;
 
 - (MockConnection *)createConnectionRequestFromUser:(MockUser*)fromUser toUser:(MockUser*)toUser message:(nullable NSString *)message;
 
@@ -212,12 +194,6 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (MockService *)insertServiceWithName:(NSString *)name
                             identifier:(NSString *)identifier
                               provider:(NSString *)provider;
-@end
-
-@interface MockTransportSession (IsTyping)
-
-- (void)sendIsTypingEventForConversation:(MockConversation *)conversation user:(MockUser *)user started:(BOOL)started;
-
 @end
 
 @interface MockTransportSession (PhoneVerification)

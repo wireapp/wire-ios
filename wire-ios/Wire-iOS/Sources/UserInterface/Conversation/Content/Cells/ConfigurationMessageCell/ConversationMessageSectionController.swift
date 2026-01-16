@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -107,6 +107,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private let userSession: UserSession
     private let privateDefaults: PrivateUserDefaults<CollapseKey>
+    private let wireMessagingFactory: any WireMessagingFactoryProtocol
 
     /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
@@ -123,7 +124,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         userSession: UserSession,
         useInvertedIndices: Bool,
         contentWidth: CGFloat,
-        userDefaults: UserDefaultsProtocol = UserDefaults.standard
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard,
+        wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.message = message
         self.context = context
@@ -136,6 +138,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             userID: selfUser.remoteIdentifier,
             storage: userDefaults
         )
+        self.wireMessagingFactory = wireMessagingFactory
 
         super.init()
 
@@ -323,7 +326,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 for: message,
                 searchQueries: context.searchQueries,
                 selfUser: selfUser,
-                userSession: userSession
+                userSession: userSession,
+                wireMessagingFactory: wireMessagingFactory
             )
     }
 
@@ -388,12 +392,14 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             switch item {
 
             case let .text(data):
+
                 cells += ConversationTextMessageCellDescription.cells(
                     textMessageData: data,
                     message: message,
                     searchQueries: context.searchQueries,
                     selfUser: selfUser,
-                    userSession: userSession
+                    userSession: userSession,
+                    wireMessagingFactory: wireMessagingFactory
                 )
 
             case let .button(data):

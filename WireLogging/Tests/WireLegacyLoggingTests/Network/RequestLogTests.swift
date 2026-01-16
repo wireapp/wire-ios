@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,6 +48,24 @@ class RequestLogTests: XCTestCase {
         XCTAssertEqual(
             sut.endpoint,
             "https://prod-nginz-https.wire.com/v2/notifications?size=500&since=05b4637f-7c5a-11ed-8001-aafb9b836561&client=e00079bf207cf4e6"
+        )
+    }
+
+    func testParsingEndpointWithSearchContactsRedactedQueryParams() throws {
+        let request =
+            NSURLRequest(
+                url: URL(
+                    string: "https://prod-nginz-https.wire.com/v13/search/contacts?q=test&size=10"
+                )!
+            )
+        guard let sut: RequestLog = .init(request) else {
+            XCTFail("could not create RequestLog")
+            return
+        }
+
+        XCTAssertEqual(
+            sut.endpoint,
+            "https://prod-nginz-https.wire.com/v13/search/contacts?q=***&size=10"
         )
     }
 

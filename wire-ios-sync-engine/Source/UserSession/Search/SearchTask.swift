@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ public class SearchTask {
     private var servicesTaskIdentifier: ZMTaskIdentifier?
     private var resultHandlers: [ResultHandler] = []
     private var result = SearchResult(
+        context: .init(concurrencyType: .privateQueueConcurrencyType),
         contacts: [],
         teamMembers: [],
         directory: [],
@@ -193,6 +194,7 @@ extension SearchTask {
                     .compactMap { contextProvider.viewContext.object(with: $0.objectID) as? ZMUser }
 
                 let result = SearchResult(
+                    context: contextProvider.viewContext,
                     contacts: copiedConnectedUsers.map {
                         ZMSearchUser(
                             contextProvider: contextProvider,
@@ -277,6 +279,7 @@ extension SearchTask {
                     }
 
                 let result = SearchResult(
+                    context: contextProvider.viewContext,
                     contacts: searchConnectedUsers,
                     teamMembers: searchTeamMembers,
                     directory: [],
@@ -641,6 +644,7 @@ extension SearchTask {
                         // prepend result to prevResult only if it doesn't contain it
                         if !prevResult.directory.contains(user) {
                             self?.result = SearchResult(
+                                context: prevResult.context,
                                 contacts: prevResult.contacts,
                                 teamMembers: prevResult.teamMembers,
                                 directory: result.directory + prevResult.directory,
