@@ -183,7 +183,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // when
         // then
-        await XCTAssertThrowsErrorAsync(ConversationsAPIError.insufficienAuthorization) {
+        await XCTAssertThrowsErrorAsync(ConversationsAPIError.insufficientAuthorization) {
             try await api.updateConversationAccess(
                 conversationID: conversationID,
                 allowGuests: true,
