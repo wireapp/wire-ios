@@ -46,7 +46,7 @@ public final class NetworkReachability {
             .eraseToAnyPublisher()
     }
 
-    public var isReachablePublisher: AnyPublisher<Bool, Never> {
+    public var isOnlinePublisher: AnyPublisher<Bool, Never> {
         snapshotPublisher
             .map(\.isOnline)
             .removeDuplicates()
