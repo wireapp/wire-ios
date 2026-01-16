@@ -86,7 +86,7 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
             // GIVEN
             configureRoleAndAccessForConversation()
 
-            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
+            _ = MockActionHandler<CreateConversationGuestLinkAction>(
                 result: .success("www.test.com"),
                 context: syncContext.notificationContext
             )
@@ -114,12 +114,8 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
             // GIVEN
             configureRoleAndAccessForConversation(legacyAccessMode: true)
 
-            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
+            _ = MockActionHandler<CreateConversationGuestLinkAction>(
                 result: .success("www.test.com"),
-                context: syncContext.notificationContext
-            )
-            let setGuestAndAppsMockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
-                result: .success(()),
                 context: syncContext.notificationContext
             )
 
@@ -144,7 +140,7 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
 
         await syncContext.perform { [self] in
 
-            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
+            _ = MockActionHandler<CreateConversationGuestLinkAction>(
                 result: .failure(.unknown),
                 context: syncContext.notificationContext
             )
