@@ -922,7 +922,7 @@ public final class ZMUserSession: NSObject {
             .sink { [weak self] _, _ in
                 guard let self else { return }
 
-                managedObjectContext.performGroupedBlock {
+                managedObjectContext.perform {
                     self.callCenter?.avsWrapper.networkInterfaceChanged()
                 }
             }
