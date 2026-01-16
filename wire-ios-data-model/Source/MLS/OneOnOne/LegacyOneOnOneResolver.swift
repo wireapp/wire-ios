@@ -98,9 +98,22 @@ public final class LegacyOneOnOneResolver: OneOnOneResolverInterface {
 
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
+        // If there are no common protocols, there can be no communication
+        // yet, so mark it read only. Otherwise we unblock the conversation
+        // since it can be resolved.
+        // only when conversation messageProtocol's none and iMLSEnabled we'll set conversation to readOnly
+        if !(messageProtocol == .none && isMLSEnabled) {
+            await setReadOnly(
+                to: false,
+                forOneOnOneWithUser: userID,
+                in: context
+            )
+        }
+
         let action: OneOnOneConversationResolution
         switch messageProtocol {
         case .none where isMLSEnabled:
+            
             action = try await resolveCommonUserProtocolNone(with: userID, in: context)
         case .mls where isMLSEnabled:
             action = try await resolveCommonUserProtocolMLS(with: userID, in: context)
