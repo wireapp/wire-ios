@@ -128,7 +128,7 @@ struct FilesInfoView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityLabel(info.accessibilityStrings.message)
                 .accessibilityIdentifier(info.accessibilityIdentifiers.message)
-            
+
             switch info {
             case let .noFilesFound(scope):
                 learnMoreLink(scope: scope)
@@ -157,7 +157,7 @@ struct FilesInfoView: View {
             .foregroundColor(SemanticColors.Label.baseSecondaryText.color)
             .underline()
     }
-    
+
     private var reloadButton: some View {
         Button {
             onReload?()
@@ -179,7 +179,7 @@ struct FilesInfoView: View {
         .accessibilityLabel(Strings.Files.Error.reload)
         .accessibilityIdentifier("filesBrowser.reloadButton")
     }
-    
+
 }
 
 #Preview("no files found - single conversation") {

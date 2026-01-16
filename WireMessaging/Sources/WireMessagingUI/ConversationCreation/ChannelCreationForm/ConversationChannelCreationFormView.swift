@@ -202,7 +202,7 @@ public struct ConversationChannelCreationForm: View {
             Text(footerText)
         })
     }
-    
+
     private var footerText: AttributedString {
         var text = AttributedString(Strings.CreationForm.WireCells.description + " ")
 

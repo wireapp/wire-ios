@@ -19,8 +19,13 @@
 import Foundation
 
 extension URL {
-    static let useWireDriveInConversations = URL(string: "https://support.wire.com/hc/articles/32207749480477-Use-Wire-Drive-in-conversations")!
-    static let sharedDriveInConversations = URL(string: "https://support.wire.com/hc/articles/32207745256221-Shared-Drive-in-conversations")!
-    static let accessAllFilesAccrossConversations = URL(string: "https://support.wire.com/hc/articles/32207800433309-Access-all-files-shared-across-conversations-Wire-Drive")!
+    static let useWireDriveInConversations =
+        URL(string: "https://support.wire.com/hc/articles/32207749480477-Use-Wire-Drive-in-conversations")!
+    static let sharedDriveInConversations =
+        URL(string: "https://support.wire.com/hc/articles/32207745256221-Shared-Drive-in-conversations")!
+    static let accessAllFilesAccrossConversations =
+        URL(
+            string: "https://support.wire.com/hc/articles/32207800433309-Access-all-files-shared-across-conversations-Wire-Drive"
+        )!
     static let accessRecycleBin = URL(string: "https://support.wire.com/hc/articles/32209394611485-Access-recycle-bin")!
 }
