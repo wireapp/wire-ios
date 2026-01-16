@@ -355,7 +355,7 @@ extension ZMUserSession: UserSession {
         AppendKnockMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
-    public func makeAppendLocationMessageUseCase() -> AppendLocationMessagekUseCaseProtocol {
+    public func makeAppendLocationMessageUseCase() -> AppendLocationMessageUseCaseProtocol {
         AppendLocationMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
