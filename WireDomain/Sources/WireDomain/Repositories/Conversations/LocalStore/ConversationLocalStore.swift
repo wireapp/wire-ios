@@ -114,6 +114,10 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ) async {
         await context.perform {
             conversation.mlsStatus = .ready
+            if conversation.mlsGroupID != mlsGroupID {
+                // reset the epoch if we change mlsGroupID
+                conversation.epoch = 0
+            }
             conversation.mlsGroupID = mlsGroupID
         }
     }
@@ -125,6 +129,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         await context.perform {
             conversation.mlsStatus = .pendingJoinAfterReset
             conversation.mlsGroupID = newMLSGroupID
+            conversation.epoch = 0
         }
     }
 
