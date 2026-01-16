@@ -250,7 +250,7 @@ private enum Scaffolding {
         lastEvent: nil,
         lastEventTime: nil
     )
-    
+
     static let remoteConversation4 = WireNetwork.Conversation(
         id: conversationID4.id,
         qualifiedID: conversationID4,
@@ -276,11 +276,11 @@ private enum Scaffolding {
     static var localConversation1: WireDomain.Conversation {
         remoteConversation1.toDomainModel()
     }
-    
+
     static var localConversation4: WireDomain.Conversation {
         remoteConversation4.toDomainModel()
     }
-    
+
     static var aGivenDate: Date {
         ISO8601DateFormatter().date(from: "2025-10-31T10:00:00Z") ?? Date.now
     }
