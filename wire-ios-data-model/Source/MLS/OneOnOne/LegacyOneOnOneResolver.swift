@@ -98,6 +98,15 @@ public final class LegacyOneOnOneResolver: OneOnOneResolverInterface {
 
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
+        // If there are no common protocols, there can be no communication
+        // yet, so mark it read only. Otherwise we unblock the conversation
+        // since it can be resolved.
+        await setReadOnly(
+            to: messageProtocol == .none,
+            forOneOnOneWithUser: userID,
+            in: context
+        )
+
         let action: OneOnOneConversationResolution
         switch messageProtocol {
         case .none where isMLSEnabled:
@@ -197,19 +206,12 @@ public final class LegacyOneOnOneResolver: OneOnOneResolverInterface {
             throw OneOnOneResolverError.migratorNotFound
         }
 
-        do {
-            let mlsGroupID = try await migrator.migrateToMLS(
-                userID: userID,
-                in: context
-            )
-            await setReadOnly(to: false, forOneOnOneWithUser: userID, in: context)
-            return .migratedToMLSGroup(identifier: mlsGroupID)
-        } catch let MigrateMLSOneOnOneConversationError.failedToEstablishGroup(error) {
-            await setReadOnly(to: true, forOneOnOneWithUser: userID, in: context)
-            throw MigrateMLSOneOnOneConversationError.failedToEstablishGroup(error)
-        } catch {
-            throw error
-        }
+        let mlsGroupID = try await migrator.migrateToMLS(
+            userID: userID,
+            in: context
+        )
+
+        return .migratedToMLSGroup(identifier: mlsGroupID)
     }
 
     private func setReadOnly(

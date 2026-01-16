@@ -158,24 +158,26 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         mlsPublicKeys: MLSPublicKeys?,
         user: ZMUser,
         userID: WireDataModel.QualifiedID
-    ) async {
+    ) async throws {
+        // Establish the group if needed.
+        if try await !mlsProvider.service.conversationExists(groupID: mlsGroupID) {
+            let keys = mlsPublicKeys.flatMap {
+                WireDataModel.BackendMLSPublicKeys(removal: $0.toDataModel())
+            }
 
-        let keys = mlsPublicKeys.flatMap { WireDataModel.BackendMLSPublicKeys(removal: $0.toDataModel()) }
-
-        do {
-            try await setupMLSGroup(
-                mlsConversation: mlsConversation,
-                groupID: mlsGroupID,
-                mlsPublicKeys: keys,
-                userID: userID
-            )
-        } catch {
-            try? await context.unpack(user) { $0.oneOnOneConversation?.isForcedReadOnly = true }
-
-            WireLogger.conversation.error(
-                "Failed to setup MLS group with ID", attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
-            )
-            return
+            do {
+                try await setupMLSGroup(
+                    mlsConversation: mlsConversation,
+                    groupID: mlsGroupID,
+                    mlsPublicKeys: keys,
+                    userID: userID
+                )
+            } catch {
+                WireLogger.conversation.error(
+                    "Failed to setup MLS group with ID", attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
+                )
+                throw error
+            }
         }
 
         await switchLocalConversationToMLS(
