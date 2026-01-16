@@ -311,7 +311,7 @@ final class OneOnOneResolverTests: XCTestCase {
         proteusConversation.isForcedReadOnly = forcedReadOnly
         user.oneOnOneConversation = proteusConversation
         proteusConversation.addParticipantAndUpdateConversationState(user: user)
-        
+
         try proteusConversation.appendText(content: "Hello")
         try proteusConversation.appendText(content: "World!")
 

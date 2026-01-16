@@ -161,10 +161,12 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 .info(
                     "Migrating messages and link the MLS conversation if needed. Conversation is migrated to MLS: \(mlsConversation.migratedToMLS), is oneOnOneConversation MLS: \(otherUser.oneOnOneConversation == mlsConversation)"
                 )
-            
-            try OneOnOneSource.migrate(toMLSConversation: mlsConversation,
-                                   for: otherUser,
-                                   in: context)
+
+            try OneOnOneSource.migrate(
+                toMLSConversation: mlsConversation,
+                for: otherUser,
+                in: context
+            )
         }
     }
 

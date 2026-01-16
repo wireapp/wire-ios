@@ -107,10 +107,13 @@ public final class OneOnOneSource {
 
         return try context.fetch(fetchRequest)
     }
-    
-    
-    public static func migrate(toMLSConversation mlsConversation: ZMConversation, for otherUser: ZMUser, in context: NSManagedObjectContext) throws {
-        
+
+    public static func migrate(
+        toMLSConversation mlsConversation: ZMConversation,
+        for otherUser: ZMUser,
+        in context: NSManagedObjectContext
+    ) throws {
+
         // Note on proteus, it's possible to have duplicate 1-1 conversations, so we need to fetch all relevant
         // 1-1 conversations here.
         let source = OneOnOneSource(context: context)
@@ -220,4 +223,3 @@ private extension NSPredicate {
     }
 
 }
-

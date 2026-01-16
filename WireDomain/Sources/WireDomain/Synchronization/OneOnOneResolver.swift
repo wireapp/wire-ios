@@ -137,7 +137,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
             mlsPublicKeys: mlsPublicKeys,
             user: user,
             userID: userID
-            
+
         )
 
         return mlsGroupID
@@ -233,10 +233,12 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 // no op
                 return
             }
-            
-            try OneOnOneSource.migrate(toMLSConversation: mlsConversation,
-                                   for: user,
-                                   in: context)
+
+            try OneOnOneSource.migrate(
+                toMLSConversation: mlsConversation,
+                for: user,
+                in: context
+            )
         }
     }
 

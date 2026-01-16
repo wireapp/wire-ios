@@ -113,7 +113,7 @@ public final class LegacyOneOnOneResolver: OneOnOneResolverInterface {
         let action: OneOnOneConversationResolution
         switch messageProtocol {
         case .none where isMLSEnabled:
-            
+
             action = try await resolveCommonUserProtocolNone(with: userID, in: context)
         case .mls where isMLSEnabled:
             action = try await resolveCommonUserProtocolMLS(with: userID, in: context)
