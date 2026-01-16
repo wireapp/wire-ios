@@ -21,25 +21,15 @@ import Foundation
 @preconcurrency import Network
 
 /// One monitor, two publishers.
-/// - Reachability: `isReachablePublisher`
+/// - Reachability: `isOnlinePublisher`
 /// - Network interface changes: `interfaceSwitchPublisher`
 public final class NetworkReachability {
 
-    public struct Snapshot: Equatable {
-        let status: NWPath.Status
-        let isWifi: Bool
-        let isCellular: Bool
-        let isExpensive: Bool // WiFi hotspots
-        let isConstrained: Bool // other / virtual interfaces
-
-        var isOnline: Bool { status == .satisfied }
-    }
-
     private let monitor: any ReachabilityMonitoring
     private let queue: DispatchQueue
-    private let snapshotSubject = CurrentValueSubject<Snapshot?, Never>(nil)
+    private let snapshotSubject = CurrentValueSubject<NetworkPathSnapshot?, Never>(nil)
 
-    public var snapshotPublisher: AnyPublisher<Snapshot, Never> {
+    public var snapshotPublisher: AnyPublisher<NetworkPathSnapshot, Never> {
         snapshotSubject
             .compactMap(\.self)
             .removeDuplicates()
@@ -53,12 +43,12 @@ public final class NetworkReachability {
             .eraseToAnyPublisher()
     }
 
-    private var interfaceSwitchPublisher: AnyPublisher<(new: Snapshot, old: Snapshot), Never> {
+    private var interfaceSwitchPublisher: AnyPublisher<(new: NetworkPathSnapshot, old: NetworkPathSnapshot), Never> {
         snapshotPublisher
-            .scan((old: Snapshot?.none, new: Snapshot?.none)) { currentSnap, newSnap in
+            .scan((old: NetworkPathSnapshot?.none, new: NetworkPathSnapshot?.none)) { currentSnap, newSnap in
                 (old: currentSnap.new, new: newSnap)
             }
-            .compactMap { pair -> (new: Snapshot, old: Snapshot)? in
+            .compactMap { pair -> (new: NetworkPathSnapshot, old: NetworkPathSnapshot)? in
                 guard let old = pair.old, let new = pair.new else { return nil }
                 return (new: new, old: old)
             }
@@ -71,7 +61,10 @@ public final class NetworkReachability {
             .eraseToAnyPublisher()
     }
 
-    public var interfaceSwitchWhileOnlinePublisher: AnyPublisher<(new: Snapshot, old: Snapshot), Never> {
+    public var interfaceSwitchWhileOnlinePublisher: AnyPublisher<
+        (new: NetworkPathSnapshot, old: NetworkPathSnapshot),
+        Never
+    > {
         interfaceSwitchPublisher
             .filter { $0.old.isOnline && $0.new.isOnline }
             .eraseToAnyPublisher()
@@ -85,7 +78,7 @@ public final class NetworkReachability {
         self.queue = queue
         self.monitor.updateHandler = { [weak self] info in
             guard let self else { return }
-            snapshotSubject.send(Snapshot(
+            snapshotSubject.send(NetworkPathSnapshot(
                 status: info.status,
                 isWifi: info.isWifi,
                 isCellular: info.isCellular,

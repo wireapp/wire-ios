@@ -19,27 +19,29 @@
 import Foundation
 import Network
 
-public struct PathInfo: Equatable {
+public struct NetworkPathSnapshot: Equatable {
     let status: NWPath.Status
     let isWifi: Bool
     let isCellular: Bool
-    let isExpensive: Bool
-    let isConstrained: Bool
+    let isExpensive: Bool // WiFi hotspots
+    let isConstrained: Bool  // other / virtual interfaces
+
+    var isOnline: Bool { status == .satisfied }
 }
 
 public protocol ReachabilityMonitoring: AnyObject {
-    var updateHandler: ((PathInfo) -> Void)? { get set }
+    var updateHandler: ((NetworkPathSnapshot) -> Void)? { get set }
     func start(queue: DispatchQueue)
     func cancel()
 }
 
 public final class NWReachabilityMonitor: ReachabilityMonitoring {
     private let monitor = NWPathMonitor()
-    public var updateHandler: ((PathInfo) -> Void)?
+    public var updateHandler: ((NetworkPathSnapshot) -> Void)?
 
     public init() {
         monitor.pathUpdateHandler = { [weak self] path in
-            self?.updateHandler?(PathInfo(
+            self?.updateHandler?(NetworkPathSnapshot(
                 status: path.status,
                 isWifi: path.usesInterfaceType(.wifi),
                 isCellular: path.usesInterfaceType(.cellular),

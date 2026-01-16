@@ -89,7 +89,7 @@ struct NetworkReachabilityTests {
         let sut = NetworkReachability(monitor: mock)
 
         var cancellables = Set<AnyCancellable>()
-        var pairs: [(NetworkReachability.Snapshot, NetworkReachability.Snapshot)] = []
+        var pairs: [(NetworkPathSnapshot, NetworkPathSnapshot)] = []
 
         // When + Then
         await confirmation("interface switch updates", expectedCount: 2) { confirm in
@@ -100,21 +100,21 @@ struct NetworkReachabilityTests {
                 }
                 .store(in: &cancellables)
 
-            let s1 = PathInfo(
+            let s1 = NetworkPathSnapshot(
                 status: .satisfied,
                 isWifi: true,
                 isCellular: false,
                 isExpensive: false,
                 isConstrained: false
             )
-            let s2 = PathInfo(
+            let s2 = NetworkPathSnapshot(
                 status: .satisfied,
                 isWifi: false,
                 isCellular: true,
                 isExpensive: true,
                 isConstrained: false
             )
-            let s3 = PathInfo(
+            let s3 = NetworkPathSnapshot(
                 status: .satisfied,
                 isWifi: false,
                 isCellular: true,
@@ -129,41 +129,47 @@ struct NetworkReachabilityTests {
 
         #expect(pairs.count == 2)
 
-        func snap(_ i: PathInfo) -> NetworkReachability.Snapshot {
+        func snapshot(_ snapshot: NetworkPathSnapshot) -> NetworkPathSnapshot {
             .init(
-                status: i.status,
-                isWifi: i.isWifi,
-                isCellular: i.isCellular,
-                isExpensive: i.isExpensive,
-                isConstrained: i.isConstrained
+                status: snapshot.status,
+                isWifi: snapshot.isWifi,
+                isCellular: snapshot.isCellular,
+                isExpensive: snapshot.isExpensive,
+                isConstrained: snapshot.isConstrained
             )
         }
 
-        let s1 = PathInfo(
+        let s1 = NetworkPathSnapshot(
             status: .satisfied,
             isWifi: true,
             isCellular: false,
             isExpensive: false,
             isConstrained: false
         )
-        let s2 = PathInfo(
+        let s2 = NetworkPathSnapshot(
             status: .satisfied,
             isWifi: false,
             isCellular: true,
             isExpensive: true,
             isConstrained: false
         )
-        let s3 = PathInfo(status: .satisfied, isWifi: false, isCellular: true, isExpensive: true, isConstrained: true)
+        let s3 = NetworkPathSnapshot(
+            status: .satisfied,
+            isWifi: false,
+            isCellular: true,
+            isExpensive: true,
+            isConstrained: true
+        )
 
-        #expect(pairs[0].0 == snap(s2))
-        #expect(pairs[0].1 == snap(s1))
-        #expect(pairs[1].0 == snap(s3))
-        #expect(pairs[1].1 == snap(s2))
+        #expect(pairs[0].0 == snapshot(s2))
+        #expect(pairs[0].1 == snapshot(s1))
+        #expect(pairs[1].0 == snapshot(s3))
+        #expect(pairs[1].1 == snapshot(s2))
     }
 }
 
 final class MockReachabilityMonitor: ReachabilityMonitoring {
-    var updateHandler: ((PathInfo) -> Void)?
+    var updateHandler: ((NetworkPathSnapshot) -> Void)?
 
     private(set) var started = false
     private(set) var cancelled = false
@@ -171,7 +177,7 @@ final class MockReachabilityMonitor: ReachabilityMonitoring {
     func start(queue: DispatchQueue) { started = true }
     func cancel() { cancelled = true }
 
-    func send(_ info: PathInfo) {
+    func send(_ info: NetworkPathSnapshot) {
         updateHandler?(info)
     }
 }
