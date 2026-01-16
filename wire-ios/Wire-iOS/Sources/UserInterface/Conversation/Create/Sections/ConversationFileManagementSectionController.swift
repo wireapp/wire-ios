@@ -82,7 +82,7 @@ extension ConversationCreateFileManagementSectionController {
         let attributedText = NSMutableAttributedString(string: fullText)
         let supportLink = "https://support.wire.com/hc/articles/32207749480477-Use-Wire-Drive-in-conversations"
 
-        guard let learnMoreRange = fullText.range(of: "Learn more", options: .caseInsensitive) else {
+        guard let learnMoreRange = fullText.range(of: learnMore, options: .caseInsensitive) else {
             assertionFailure(
                 "'Learn more' substring missing in \(L10n.Localizable.Conversation.Create.FileManagement.subtitle)"
             )
