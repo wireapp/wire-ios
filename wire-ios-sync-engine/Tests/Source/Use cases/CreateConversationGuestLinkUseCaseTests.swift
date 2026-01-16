@@ -66,100 +66,101 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
     // MARK: - Helper Method
 
     private func configureRoleAndAccessForConversation(legacyAccessMode: Bool = false) {
-        let role = Role.insertNewObject(in: syncContext)
-        let action = Action.insertNewObject(in: syncContext)
-        action.name = "modify_conversation_access"
-        role.actions = [action]
+        syncContext.performAndWait {
+            let role = Role.insertNewObject(in: syncContext)
+            let action = Action.insertNewObject(in: syncContext)
+            action.name = "modify_conversation_access"
+            role.actions = [action]
 
-        if legacyAccessMode {
-            mockConversation.accessMode = [.invite]
+            if legacyAccessMode {
+                mockConversation.accessMode = [.invite]
+            }
+
+            mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
         }
-
-        mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
     }
 
     // MARK: - Unit Tests
 
-    func testThatLinkGenerationSucceeds() async {
+    func testThatLinkGenerationSucceeds() {
 
-        await syncContext.perform { [self] in
-            // GIVEN
-            configureRoleAndAccessForConversation()
+        // GIVEN
+        configureRoleAndAccessForConversation()
 
-            _ = MockActionHandler<CreateConversationGuestLinkAction>(
-                result: .success("www.test.com"),
-                context: syncContext.notificationContext
-            )
+        let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
+            result: .success("www.test.com"),
+            context: syncContext.notificationContext
+        )
 
-            let expectation = XCTestExpectation(description: "Guest link creation")
+        let expectation = XCTestExpectation(description: "Guest link creation")
 
-            sut.invoke(conversation: mockConversation, password: nil) { result in
-                switch result {
-                case let .success(link):
-                    XCTAssertNotNil(link)
-                case let .failure(error):
-                    XCTFail("Test failed with error: \(error)")
-                }
-
-                expectation.fulfill()
+        sut.invoke(conversation: mockConversation, password: nil) { result in
+            switch result {
+            case let .success(link):
+                XCTAssertNotNil(link)
+            case let .failure(error):
+                XCTFail("Test failed with error: \(error)")
             }
 
-            wait(for: [expectation], timeout: 0.5)
+            expectation.fulfill()
         }
+
+        wait(for: [expectation], timeout: 0.5)
+        withExtendedLifetime(mockHandler) {}
+
     }
 
-    func testThatLinkGenerationSucceeds_LegacyMode() async {
+    func testThatLinkGenerationSucceeds_LegacyMode() {
 
-        await syncContext.perform { [self] in
-            // GIVEN
-            configureRoleAndAccessForConversation(legacyAccessMode: true)
+        // GIVEN
+        configureRoleAndAccessForConversation(legacyAccessMode: true)
 
-            _ = MockActionHandler<CreateConversationGuestLinkAction>(
-                result: .success("www.test.com"),
-                context: syncContext.notificationContext
-            )
+        let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
+            result: .success("www.test.com"),
+            context: syncContext.notificationContext
+        )
 
-            let expectation = XCTestExpectation(description: "Guest link creation")
+        let expectation = XCTestExpectation(description: "Guest link creation")
 
-            sut.invoke(conversation: mockConversation, password: nil) { result in
-                switch result {
-                case let .success(link):
-                    XCTAssertNotNil(link)
-                case let .failure(error):
-                    XCTFail("Test failed with error: \(error)")
-                }
-
-                expectation.fulfill()
+        sut.invoke(conversation: mockConversation, password: nil) { result in
+            switch result {
+            case let .success(link):
+                XCTAssertNotNil(link)
+            case let .failure(error):
+                XCTFail("Test failed with error: \(error)")
             }
 
-            wait(for: [expectation], timeout: 0.5)
+            expectation.fulfill()
         }
+
+        wait(for: [expectation], timeout: 0.5)
+        withExtendedLifetime(mockHandler) {}
+
     }
 
-    func testThatLinkGenerationFails() async {
+    func testThatLinkGenerationFails() {
 
-        await syncContext.perform { [self] in
+        let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
+            result: .failure(.unknown),
+            context: syncContext.notificationContext
+        )
 
-            _ = MockActionHandler<CreateConversationGuestLinkAction>(
-                result: .failure(.unknown),
-                context: syncContext.notificationContext
-            )
+        let expectation = XCTestExpectation(description: "completion should be called")
 
-            let expectation = XCTestExpectation(description: "completion should be called")
-
-            sut.invoke(conversation: mockConversation, password: nil) { result in
-                switch result {
-                case .success:
-                    XCTFail("Expected operation to fail, but it succeeded.")
-                case .failure:
-                    break
-                }
-
-                expectation.fulfill()
+        sut.invoke(conversation: mockConversation, password: nil) { result in
+            switch result {
+            case .success:
+                XCTFail("Expected operation to fail, but it succeeded.")
+            case .failure:
+                break
             }
 
-            wait(for: [expectation], timeout: 0.5)
+            expectation.fulfill()
         }
+
+        wait(for: [expectation], timeout: 0.5)
+        withExtendedLifetime(mockHandler) {}
+
     }
 
 }
