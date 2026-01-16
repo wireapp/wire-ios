@@ -23,6 +23,7 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct FilesInfoView: View {
+    @Environment(\.openURL) private var openURL
 
     enum Info: Equatable {
         case preparingFiles
@@ -33,6 +34,17 @@ struct FilesInfoView: View {
             case allConversations
             case oneConversation
             case recycleBin
+
+            var learnMoreURL: URL {
+                switch self {
+                case .oneConversation:
+                    URL.sharedDriveInConversations
+                case .allConversations:
+                    URL.accessAllFilesAccrossConversations
+                case .recycleBin:
+                    URL.accessRecycleBin
+                }
+            }
         }
 
         func textForScope(_ scope: Scope) -> String {
@@ -57,7 +69,8 @@ struct FilesInfoView: View {
                 (Strings.Files.PendingCells.title, Strings.Files.PendingCells.message)
             case let .noFilesFound(scope):
                 (
-                    Strings.Files.NoData.title,
+                    scope == .oneConversation || scope == .recycleBin ?
+                        Strings.Files.NoData.title : Strings.AllFiles.NoData.title,
                     textForScope(scope)
                 )
             case .error:
@@ -116,32 +129,69 @@ struct FilesInfoView: View {
                 .accessibilityLabel(info.accessibilityStrings.message)
                 .accessibilityIdentifier(info.accessibilityIdentifiers.message)
 
-            if info == .error {
-                Button {
-                    onReload?()
-                } label: {
-                    Text(Strings.Files.Error.reload)
-                        .padding()
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(SemanticColors.Label.textDefault.color)
-                        .frame(maxHeight: 35)
-                        .background(
-                            RoundedRectangle(
-                                cornerRadius: 10,
-                                style: .continuous
-                            )
-                            .stroke(SemanticColors.Button.borderSecondaryEnabled.color, lineWidth: 1)
-
-                        )
-                }
-                .accessibilityLabel(Strings.Files.Error.reload)
-                .accessibilityIdentifier("filesBrowser.reloadButton")
+            switch info {
+            case let .noFilesFound(scope):
+                learnMoreLink(scope: scope)
+            case .error:
+                reloadButton
+            default:
+                EmptyView()
             }
         }
         .padding(20)
         .frame(maxWidth: 420)
         .padding()
     }
+
+    private func learnMoreLink(scope: Info.Scope) -> some View {
+        let linkTitle = switch scope {
+        case .oneConversation:
+            Strings.Files.NoData.learnMore
+        case .allConversations:
+            Strings.AllFiles.NoData.learnMore
+        case .recycleBin:
+            Strings.RecycleBin.NoData.learnMore
+        }
+
+        return Link(linkTitle, destination: scope.learnMoreURL)
+            .foregroundColor(SemanticColors.Label.baseSecondaryText.color)
+            .underline()
+    }
+
+    private var reloadButton: some View {
+        Button {
+            onReload?()
+        } label: {
+            Text(Strings.Files.Error.reload)
+                .padding()
+                .font(.subheadline.weight(.semibold))
+                .foregroundColor(SemanticColors.Label.textDefault.color)
+                .frame(maxHeight: 35)
+                .background(
+                    RoundedRectangle(
+                        cornerRadius: 10,
+                        style: .continuous
+                    )
+                    .stroke(SemanticColors.Button.borderSecondaryEnabled.color, lineWidth: 1)
+
+                )
+        }
+        .accessibilityLabel(Strings.Files.Error.reload)
+        .accessibilityIdentifier("filesBrowser.reloadButton")
+    }
+
+}
+
+#Preview("no files found - single conversation") {
+    FilesInfoView(info: .noFilesFound(scope: .oneConversation))
+}
+
+#Preview("no files found - all conversations") {
+    FilesInfoView(info: .noFilesFound(scope: .allConversations))
+}
+
+#Preview("no files found - recycle bin") {
+    FilesInfoView(info: .noFilesFound(scope: .recycleBin))
 }
 
 struct LoadMoreView: View {
