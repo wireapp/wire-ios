@@ -344,7 +344,8 @@ extension CompanyLoginController {
                     }
                 }
             case let .failure(error):
-                if case .loggedInAccounts = error as? SessionManager.SwitchBackendError {
+                // note this code should be removed (not used)
+                if case .maxNumberAccountsReached = error as? SessionManager.SwitchBackendError {
                     presentCompanyLoginAlert(error: .domainAssociatedWithWrongServer)
                 } else {
                     presentCompanyLoginAlert(error: .domainNotRegistered)
