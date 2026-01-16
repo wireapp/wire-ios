@@ -131,23 +131,14 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
             throw Error.failedToFetchConversation
         }
 
-        let mlsService = mlsProvider.service
-
-        // If conversation already exists, there is no need to perform a migration.
-        let needsMLSMigration = try await mlsService.conversationExists(
-            groupID: mlsGroupID
-        ) == false
-
-        if needsMLSMigration {
-            await migrateToMLS(
-                mlsConversation: mlsConversation,
-                mlsGroupID: mlsGroupID,
-                mlsPublicKeys: mlsPublicKeys,
-                user: user,
-                userID: userID
-
-            )
-        }
+        try await migrateToMLS(
+            mlsConversation: mlsConversation,
+            mlsGroupID: mlsGroupID,
+            mlsPublicKeys: mlsPublicKeys,
+            user: user,
+            userID: userID
+            
+        )
 
         return mlsGroupID
     }
@@ -159,6 +150,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         user: ZMUser,
         userID: WireDataModel.QualifiedID
     ) async throws {
+
         // Establish the group if needed.
         if try await !mlsProvider.service.conversationExists(groupID: mlsGroupID) {
             let keys = mlsPublicKeys.flatMap {
@@ -180,7 +172,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
             }
         }
 
-        await switchLocalConversationToMLS(
+        try await switchLocalConversationToMLS(
             mlsConversation: mlsConversation,
             for: user,
             userID: userID
@@ -235,45 +227,16 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         mlsConversation: ZMConversation,
         for user: ZMUser,
         userID: WireDataModel.QualifiedID
-    ) async {
-        await context.perform {
+    ) async throws {
+        try await context.perform {
             guard !(mlsConversation.migratedToMLS && user.oneOnOneConversation == mlsConversation) else {
+                // no op
                 return
             }
-
-            // Note on proteus, it's possible to have 2 duplicate 1-1 conversations, so we need to fetch both
-            // conversations here.
-            let proteusConversations: [ZMConversation] = fetchAllTeamOneOnOneProteusConversations(
-                otherUserID: userID,
-                in: context
-            )
-
-            var allProteusConversations = Set(proteusConversations)
-            if let existingConversation = user.oneOnOneConversation,
-               existingConversation.messageProtocol == .proteus {
-                allProteusConversations.insert(existingConversation)
-            }
-
-            // move local messages from proteus conversations if they exist
-            for proteusConversation in allProteusConversations {
-                // Since ZMMessages only have a single conversation connected,
-                // forming this union also removes the relationship to the proteus conversation.
-                mlsConversation.migrateMessages(from: proteusConversation)
-            }
-
-            if !allProteusConversations.isEmpty {
-                // insert system message that we moved from proteus to MLS
-                let sender = ZMUser.selfUser(in: context)
-                mlsConversation.appendMLSMigrationFinalizedSystemMessageIfNeeded(sender: sender, at: .now)
-
-                mlsConversation.isForcedReadOnly = false
-                // update just to be sure
-                mlsConversation.needsToBeUpdatedFromBackend = true
-            }
-
-            /// Switch active conversation
-            user.oneOnOneConversation = mlsConversation
-            mlsConversation.migratedToMLS = true
+            
+            try OneOnOneSource.migrate(toMLSConversation: mlsConversation,
+                                   for: user,
+                                   in: context)
         }
     }
 

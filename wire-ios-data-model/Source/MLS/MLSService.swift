@@ -80,7 +80,9 @@ public final class MLSService: MLSServiceInterface {
         case keyPackageQueriedTime
     }
 
-    let targetUnclaimedKeyPackageCount = 100
+    var targetUnclaimedKeyPackageCount: Int {
+        DeveloperFlag.lowKeyPackageCount.isOn ? 1 : 100
+    }
     let actionsProvider: MLSActionsProviderProtocol
 
     private let subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface
