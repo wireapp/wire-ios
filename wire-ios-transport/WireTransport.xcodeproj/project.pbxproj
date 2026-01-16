@@ -162,7 +162,6 @@
 				59FE6ACC2DA90CBA00DB461C /* WireFoundation in Frameworks */,
 				591B6E632C8B09F3009F8A7B /* WireUtilities.framework in Frameworks */,
 				59537CD92CFF7ED800920B59 /* WireLegacyLogging in Frameworks */,
-				01BBCFD82BF559AA001D9397 /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -287,7 +286,6 @@
 			);
 			name = "WireTransport-ios";
 			packageProductDependencies = (
-				01BBCFD72BF559AA001D9397 /* Starscream */,
 				59537CD82CFF7ED800920B59 /* WireLegacyLogging */,
 				59FE6ACB2DA90CBA00DB461C /* WireFoundation */,
 			);
@@ -812,11 +810,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		01BBCFD72BF559AA001D9397 /* Starscream */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 01BBCFD62BF559AA001D9397 /* XCRemoteSwiftPackageReference "starscream" */;
-			productName = Starscream;
-		};
 		59537CD82CFF7ED800920B59 /* WireLegacyLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLegacyLogging;
