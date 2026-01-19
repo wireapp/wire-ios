@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class UpdateEventsAPIV14: UpdateEventsAPIV13 {
-
-    override var apiVersion: APIVersion { .v14 }
-
+final class SelfUserAPIV15: SelfUserAPIV14 {
+    override var apiVersion: APIVersion { .v15 }
 }
