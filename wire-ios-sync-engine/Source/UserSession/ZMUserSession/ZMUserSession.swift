@@ -1300,7 +1300,7 @@ extension ZMUserSession: SyncAgentDelegate {
             await mlsService.uploadKeyPackagesIfNeeded()
             await calculateSelfSupportedProtocolsIfNeeded()
             await resolveOneOnOneConversationsIfNeeded()
-            
+
             // TODO: [WPB-18175] Port MLS client creation and related MLS operations from here to the InitialSync
 
             await recurringActionService.performActionsIfNeeded()
