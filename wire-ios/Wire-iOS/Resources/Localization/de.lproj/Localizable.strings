@@ -334,10 +334,10 @@
 "conversation.connection_view.encryption_info" = "Kommunikation in Wire ist immer Ende-zu-Ende verschlüsselt. Alles, was Sie in dieser Unterhaltung senden und empfangen, ist nur für Sie und Ihren Kontakt zugänglich.";
 "conversation.connection_view.wire_cells.encryption_info" = "Nachrichten und Anrufe sind immer Ende-zu-Ende verschlüsselt, während Dateien und Ordner bei der Übertragung gesichert und im Ruhezustand verschlüsselt werden.";
 "conversation.connection_view.sensitive_information_warning" = "Bitte seien Sie dennoch vorsichtig, mit wem Sie vertrauliche Informationen teilen.";
-"conversation.connection_view.welcome.title.wire" = "Communication in Wire is always end-to-end encrypted.";
+"conversation.connection_view.welcome.title.wire" = "Kommunikation in Wire ist immer Ende-zu-Ende-verschlüsselt.";
 "conversation.connection_view.welcome.message.wire" = "Everything you send and receive in this channel is only accessible to you and other group participants.\n\nPlease still be careful with who you share sensitive information.";
-"conversation.connection_view.welcome.title.wire_cells" = "Communication in Wire is always secured.";
-"conversation.connection_view.welcome.message.wire_cells" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.title.wire_cells" = "Kommunikation in Wire ist immer sicher.";
+"conversation.connection_view.welcome.message.wire_cells" = "Nachrichten und Anrufe sind immer Ende-zu-Ende verschlüsselt, während Dateien und Ordner bei der Übertragung gesichert und im Ruhezustand verschlüsselt werden.\n\nBitte seien Sie dennoch vorsichtig, mit wem Sie vertrauliche Informationen teilen.\n\n";
 "conversation.connection_view.welcome.learn_more" = "Mehr erfahren";
 
 "conversation.input_bar.shortcut.send" = "Nachricht senden";
@@ -376,8 +376,8 @@
 "conversation.create.protocol_selection.mls_default" = "MLS (Standard)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (Standard)";
-"conversation.create.file_management.title" = "Shared Drive";
-"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
+"conversation.create.file_management.title" = "Geteiltes Drive";
+"conversation.create.file_management.subtitle" = "Ermöglichen Sie den Teilnehmern, ihre Dokumente und Mediendateien in Geteiltes Drive zu verwalten. Dieser Vorgang kann nicht rückgängig gemacht werden.";
 "conversation.create.file_management.learnMore" = "Mehr erfahren";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Aktiver Anruf";
@@ -406,7 +406,7 @@
 
 "conversation.action.search" = "Suche";
 "conversation.action.conversationDetails" = "Unterhaltungsdetails";
-"conversation.action.files" = "Shared Drive";
+"conversation.action.files" = "Geteiltes Drive";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Bild";
@@ -613,7 +613,7 @@
 "content.system.message_timer_off" = "%@ hat selbstlöschende Nachrichten ausgeschaltet";
 "content.system.message_timer_off-you" = "%@ haben selbstlöschende Nachrichten ausgeschaltet";
 
-"content.system.message_timer_unavailable" = "Self-deleting messages are off";
+"content.system.message_timer_unavailable" = "Selbstlöschende Nachrichten sind deaktiviert";
 
 "content.system.backends_stop_federating.self_backend" = "**Ihr Backend** ist nicht mehr mit **%@** verbunden. [Mehr erfahren](%@)";
 "content.system.backends_stop_federating.other_backends" = "Backends **%@** und **%@** sind nicht mehr verbunden. [Mehr erfahren](%@)";
@@ -627,7 +627,7 @@
 "content.system.channel.guest.joined" = "%@ ist dem Channel beigetreten";
 "content.system.channel.guest.you_joined" = "Sie sind dem Channel beigetreten";
 
-"content.system.file_collaboration.enabled" = "Shared Drive is on";
+"content.system.file_collaboration.enabled" = "Geteiltes Drive aktiv";
 
 // read receipt
 
@@ -1096,10 +1096,10 @@
 "group_details.receipt_options_cell.description" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
 "group_details.access_options_cell.title" = "Channel-Zugang";
 "group_details.channel_history_options_cell.title" = "Gesprächsverlauf";
-"group_details.file_collaboration_cell.title" = "Shared Drive";
+"group_details.file_collaboration_cell.title" = "Geteiltes Drive";
 "group_details.file_collaboration_cell.subtitle" = "An";
 "group_details.file_collaboration_cell.footer" = "Dauerhaft aktiv für diese Unterhaltung";
-"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with a shared Drive.";
+"group_details.timeout_options_disabled.footer" = "Die Funktion ist für Unterhaltungen mit Geteiltes Drive nicht verfügbar.";
 
 "group_details.message_protocol.section_tile" = "Details zum Protokoll";
 "group_details.message_protocol.title" = "Protokoll";
@@ -1875,7 +1875,7 @@
 
 "collections.section.searchFiles.description" = "Dateien suchen";
 "collections.section.searchFiles.alert.title" = "Wire Drive";
-"collections.section.searchFiles.alert.message" = "Find files in conversations with Shared Drive.";
+"collections.section.searchFiles.alert.message" = "Finden Sie Dateien in Unterhaltungen mit Geteiltes Drive.";
 
 
 
