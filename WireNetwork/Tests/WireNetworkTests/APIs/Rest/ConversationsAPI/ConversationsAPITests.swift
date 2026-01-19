@@ -1653,7 +1653,7 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(suts.count, supportedVersions.count)
 
         for sut in suts {
-            await XCTAssertThrowsErrorAsync(ConversationsAPIError.insufficienAuthorization) {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.insufficientAuthorization) {
                 try await sut.addChannelPermission(
                     conversationID: Scaffolding.conversationID.uuidString,
                     conversationDomain: Scaffolding.domain,
@@ -1905,61 +1905,6 @@ final class ConversationsAPITests: XCTestCase {
             teamID: .mockID1,
             isReadReceiptsEnabled: true
         )
-    }
-
-}
-
-extension ConversationsAPIError: Equatable {
-    public static func == (lhs: ConversationsAPIError, rhs: ConversationsAPIError) -> Bool {
-        switch (lhs, rhs) {
-        case (.notImplemented, .notImplemented):
-            true
-        case (.invalidBody, .invalidBody):
-            true
-        case (.unsupportedEndpointForAPIVersion, .unsupportedEndpointForAPIVersion):
-            true
-        case (.mlsNotEnabled, .mlsNotEnabled):
-            true
-        case (.usersNotConnected, .usersNotConnected):
-            true
-        case (.userAndDomainShouldNotBeEmpty, .userAndDomainShouldNotBeEmpty):
-            true
-        case (.accessDenied, .accessDenied):
-            true
-        case (.conversationNotFound, .conversationNotFound):
-            true
-        case (.conversationCodeNotFound, .conversationCodeNotFound):
-            true
-        case (.guestLinksDisabled, .guestLinksDisabled):
-            true
-        case (.invalidConversationID, .invalidConversationID):
-            true
-        case (.nonEmptyMemberList, .nonEmptyMemberList):
-            true
-        case (.missingLegalHoldConsent, .missingLegalHoldConsent):
-            true
-        case (.operationDenied, .operationDenied):
-            true
-        case (.noTeamMember, .noTeamMember):
-            true
-        case (.notConnected, .notConnected):
-            true
-        case (.unsupportedChannelCreationForAPIEndpoint, .unsupportedChannelCreationForAPIEndpoint):
-            true
-        case (.nonFederatingBackends, .nonFederatingBackends):
-            true
-        case (.unreachableBackends, .unreachableBackends):
-            true
-        case (.insufficienAuthorization, .insufficienAuthorization):
-            true
-        case (.insufficientPermissions, .insufficientPermissions):
-            true
-        case (.invalidOperation, .invalidOperation):
-            true
-        case (.teamNotFound, .teamNotFound):
-            true
-        default: false
-        }
     }
 
 }
