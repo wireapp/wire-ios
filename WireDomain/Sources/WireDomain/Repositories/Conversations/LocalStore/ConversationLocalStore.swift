@@ -111,7 +111,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         mlsGroupID: MLSGroupID,
         epoch: UInt64,
         conversation: ZMConversation
-
     ) async {
         await context.perform {
             conversation.mlsStatus = .ready
