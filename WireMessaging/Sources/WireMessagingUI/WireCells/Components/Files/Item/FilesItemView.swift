@@ -294,7 +294,7 @@ extension FilesItemView {
         @ScaledMetric private var borderThickness: CGFloat = 1
         @ScaledMetric private var offsetX: CGFloat
         @ScaledMetric private var offsetY: CGFloat
-        
+
         init(forIcon icon: FileIcon) {
             switch icon {
             case .folder:
@@ -305,7 +305,7 @@ extension FilesItemView {
                 _offsetY = .init(wrappedValue: 4)
             }
         }
-        
+
         var body: some View {
             Image(systemName: "link")
                 .resizable()
