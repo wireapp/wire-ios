@@ -93,15 +93,10 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .wireMeetings:
             "Turn on to enable Wire meetings"
-<<<<<<< HEAD
-=======
-
         case .wireCellsFolders:
             "Turn on to enable Wire Cells folders"
-
         case .lowKeyPackageCount:
             "Turn on to set the minimum number of packages to 1"
->>>>>>> 1e2420cfe2 (fix: conversations marked as read only when failing to establish mls group - WPB-22774 (#4129))
         }
     }
 
