@@ -95,8 +95,8 @@ final class FileRenameViewModel: ObservableObject {
         }
     }
 
-    private var trimmedInput: String {
-        filenameInput.trimmingCharacters(in: .whitespacesAndNewlines)
+    private let trimmedInput: (String) -> String = {
+        $0.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     init(
@@ -123,7 +123,7 @@ final class FileRenameViewModel: ObservableObject {
             try await renameNodeUseCase.invoke(
                 nodeID: nodeID,
                 nodeFilepath: nodeFilePath,
-                newFilename: trimmedInput,
+                newFilename: trimmedInput(filenameInput),
                 isFolder: kind == .folder
             )
 
@@ -153,8 +153,8 @@ final class FileRenameViewModel: ObservableObject {
 
     private func bindTextInput() {
         $filenameInput
-            .compactMap { [weak self] _ in
-                self?.filenameValidator.validate(self?.trimmedInput ?? "")
+            .compactMap { [weak self] in
+                self?.filenameValidator.validate(self?.trimmedInput($0) ?? "")
             }
             .flatMap(\.self)
             .sink { [weak self] result in
