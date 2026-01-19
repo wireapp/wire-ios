@@ -254,35 +254,20 @@
       "localizations" : {
         "ar" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "ملفّات"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "da" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "Filer"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "de" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "Dateien"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "en" : {
@@ -293,178 +278,98 @@
         },
         "es" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "Ficheros"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "et" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "Failid"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "fi" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "Tiedostot"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "fr" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "Fichiers"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "it" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "Allegati"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "ja" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "ファイル"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "lt" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "Failai"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "nl" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "Bestanden"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "pl" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "Pliki"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "Arquivos"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "ru" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "Файлы"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "sl" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "Zbirke"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "tr" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "Dosyalar"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "uk" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "Файли"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "文件"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-<<<<<<< HEAD
             "state" : "new",
             "value" : "Drive"
-=======
-            "state" : "needs_review",
-            "value" : "檔案"
->>>>>>> 06321ec064 (feat: add support link update copy - WPB-22531 (#4135))
           }
         }
       }
