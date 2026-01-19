@@ -98,26 +98,24 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         conversation: ZMConversation
     ) async -> (mlsGroupID: MLSGroupID, isMLSReady: Bool)? {
 
-        await context.perform {
+        return try? await context.unpack(conversation) { conversation in
             guard let mlsGroupID = conversation.mlsGroupID else {
                 return nil
             }
 
             return (mlsGroupID, conversation.mlsStatus == .ready)
         }
-
     }
 
     public func storeMLSConversationEstablished(
         mlsGroupID: MLSGroupID,
+        epoch: UInt64,
         conversation: ZMConversation
+        
     ) async {
         await context.perform {
             conversation.mlsStatus = .ready
-            if conversation.mlsGroupID != mlsGroupID {
-                // reset the epoch if we change mlsGroupID
-                conversation.epoch = 0
-            }
+            conversation.epoch = epoch
             conversation.mlsGroupID = mlsGroupID
         }
     }

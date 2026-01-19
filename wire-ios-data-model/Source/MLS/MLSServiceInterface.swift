@@ -480,6 +480,12 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// - Parameter groupID: the mls GroupID of the conversation to re-establish
     func reEstablishPendingGroup(groupID: MLSGroupID) async throws
 
+    
+    /// Epoch for given MLS group
+    /// - Parameter groupID: groupID of the MLS group
+    /// - Returns: epoch
+    func epoch(for groupID: MLSGroupID) async throws -> UInt64
+    
     // MARK: - Sync delegate
 
     /// Set the MLS sync delegate.
@@ -489,4 +495,5 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     func setSyncDelegate(_ delegate: any MLSSyncDelegate)
 
     func setResetBrokenMLSConversationDelegate(_ delegate: any ResetBrokenMLSConversationDelegate)
+
 }

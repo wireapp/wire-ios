@@ -436,7 +436,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         // Mock
 
-        let conversation = await context.perform { [self] in
+        let conversation = await context.perform { [modelHelper, context] in
             modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID,
                 domain: Scaffolding.domain,
@@ -445,20 +445,22 @@ final class ConversationLocalStoreTests: XCTestCase {
         }
 
         let mlsGroupID = try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString))
-
+        let newEpoch = UInt64(100)
         // When
 
         await sut.storeMLSConversationEstablished(
             mlsGroupID: mlsGroupID,
+            epoch: newEpoch,
             conversation: conversation
         )
 
         // Then
 
-        await context.perform {
+        try await context.unpack(conversation, { conversation in
             XCTAssertEqual(conversation.mlsStatus, .ready)
             XCTAssertEqual(conversation.mlsGroupID, mlsGroupID)
-        }
+            XCTAssertEqual(conversation.epoch, newEpoch)
+        })
     }
 
     func testUpdateOrCreateMLSGroup_It_Creates_MLS_Group_Locally() async throws {
