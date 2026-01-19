@@ -110,7 +110,7 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
     /// ```
 
     public mutating func writeAttribute(_ attribute: WireLogAttribute) {
-        attributes += [attribute]
+        attributes.append(attribute)
     }
 
     /// Adds text content to the log message.

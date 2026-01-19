@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -565,11 +565,10 @@ extension ZMClientMessageTests_Deletion {
             ).users.keys
 
             // then all users receive delete message
-            XCTAssertEqual(4, recipients.count)
+            XCTAssertEqual(3, recipients.count)
             XCTAssertTrue(recipients.contains(self.syncSelfUser))
             XCTAssertTrue(recipients.contains(self.syncUser1))
             XCTAssertTrue(recipients.contains(self.syncUser2))
-            XCTAssertTrue(recipients.contains(self.syncUser3))
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

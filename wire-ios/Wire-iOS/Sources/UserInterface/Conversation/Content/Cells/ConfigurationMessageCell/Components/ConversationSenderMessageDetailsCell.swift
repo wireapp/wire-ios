@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ enum TeamRoleIndicator {
     case guest
     case externalPartner
     case federated
-    case app
+    case appOrBot
 }
 
 // MARK: - ConversationSenderMessageDetailsCell
@@ -155,25 +155,17 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             constant: 3
         )
 
-        let existingConstraints = [
-            avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -12),
-            authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left)
-        ]
-
-        let chatBubbleConstraints = [
-            avatar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20.0),
-            authorLabel.leadingAnchor.constraint(equalTo: avatar.trailingAnchor, constant: 12),
-            authorLabel.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ]
-
         NSLayoutConstraint.activate([
             authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
             authorLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -1.5),
+            authorLabel.leadingAnchor.constraint(equalTo: avatar.trailingAnchor, constant: 12),
+            authorLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
 
             avatar.heightAnchor.constraint(equalTo: avatar.widthAnchor),
             avatar.heightAnchor.constraint(equalToConstant: CGFloat(avatar.size.rawValue)),
             avatar.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -1.5),
+            avatar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20.0),
 
             avatarEqualToTopAnchorConstraint,
             avatarGreaterThanOrEqualToTopAnchorConstraint,
@@ -184,16 +176,11 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             availabilityIndicatorView.bottomAnchor.constraint(equalTo: avatar.bottomAnchor, constant: 3)
         ])
 
-        if isChatBubbleSimpleEnabled {
-            NSLayoutConstraint.activate(chatBubbleConstraints)
-        } else {
-            NSLayoutConstraint.activate(existingConstraints)
-        }
     }
 
     private func configureAuthorLabel(object: Configuration) {
         let sender = object.sender
-        let textColor: UIColor = sender.isApp ? SemanticColors.Label.textDefault : sender.accentColor
+        let textColor: UIColor = sender.isAppOrBot ? SemanticColors.Label.textDefault : sender.accentColor
         let attributedString = NSMutableAttributedString(
             string: sender.name ?? L10n.Localizable.Profile.Details.Title.unavailable,
             attributes: [
@@ -233,7 +220,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
                 attributedString.append(attachment)
             }
 
-        case .app:
+        case .appOrBot:
             accessibilityIdentifier = "img.serviceUser"
             if let attachment = attachment(from: .bot, size: 14) {
                 attributedString.append(attachment)
@@ -276,10 +263,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         return NSAttributedString(attachment: attachment)
     }
 
-    private var isChatBubbleSimpleEnabled: Bool {
-        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
-    }
-
     // MARK: - Tap gesture of avatar
 
     @objc
@@ -312,7 +295,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     weak var actionController: ConversationMessageActionController?
 
     let containsHighlightableContent: Bool = false
-    lazy var shouldAlignMessageContentForBubbles: Bool = ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
+    let shouldAlignMessageContentForBubbles: Bool = true
     let isCellAlreadyAligned: Bool = true
 
     let accessibilityIdentifier: String? = nil
@@ -378,8 +361,8 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 private extension UserType {
 
     func teamRoleIndicator(selfUser: any UserType) -> TeamRoleIndicator? {
-        if isApp {
-            .app
+        if isAppOrBot {
+            .appOrBot
 
         } else if isExternalPartner {
             .externalPartner

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireFoundationSupport
+import WireMessagingDomainSupport
 import XCTest
 @testable import Wire
 
@@ -178,6 +179,9 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
     ) -> UIStackView {
         let context = (context ?? ConversationMessageContext.defaultContext)!
 
+        let factory = MockWireMessagingFactoryProtocol()
+        factory.makeFetchNodeUseCase_MockValue = MockWireCellsFetchNodeUseCaseProtocol()
+
         let section = ConversationMessageSectionController(
             message: message,
             context: context,
@@ -186,7 +190,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
             useInvertedIndices: false,
             contentWidth: width,
             userDefaults: mockUserDefaults,
-            isChatBubbleSimpleEnabled: false
+            wireMessagingFactory: factory
         )
 
         let views = section.cellDescriptionsForTesting.map { $0.instance.makeView(message) }

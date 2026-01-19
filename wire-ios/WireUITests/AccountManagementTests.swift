@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,25 +21,17 @@ import XCTest
 
 final class AccountManagementTests: WireUITestCase {
 
+    var teamMember: UserInfo!
+
     @MainActor
     func test_Account_Management_Lock_With_Passcode() async throws {
+
         let passcode = UserGenerator.generateAppPasscode()
 
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
-            email: teamOwner.email,
-            password: teamOwner.password
-        )
-        let teamID = try XCTUnwrap(teamOwner.teamID)
+        let user = try await userHelper.createPersonalUser()
 
-        let (_, teamMember) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken,
-            teamID: teamID
-        )
-
-        let page = try await app.loginUser(email: teamMember.email, password: teamMember.password)
-            .acceptPopupOnTeamMemberSetup(with: self)
-            .setUsername(teamMember.username)
+        let page = try await app.loginUser(email: user.email, password: user.password)
+            .acceptPopup(with: self)
             .openSettings()
             .openOptionsMenu()
             .enableLockWithPasscode()
@@ -52,27 +44,18 @@ final class AccountManagementTests: WireUITestCase {
         )
 
         _ = try page.enterPasscode(passcode)
+
     }
 
     @MainActor
     func test_Account_Management_Update_Email_Reset_password() async throws {
+
         let updatedUserDetails = UserGenerator.generateUniqueUserInfo()
 
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
-            email: teamOwner.email,
-            password: teamOwner.password
-        )
-        let teamID = try XCTUnwrap(teamOwner.teamID)
+        let user = try await userHelper.createPersonalUser()
 
-        let (_, teamMember) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken,
-            teamID: teamID
-        )
-
-        let verifyEmailPage = try app.loginUser(email: teamMember.email, password: teamMember.password)
-            .acceptPopupOnTeamMemberSetup(with: self)
-            .setUsername(teamMember.username)
+        let verifyEmailPage = try app.loginUser(email: user.email, password: user.password)
+            .acceptPopup(with: self)
             .openSettings()
             .openAccountSettings()
             .tapEmailField()

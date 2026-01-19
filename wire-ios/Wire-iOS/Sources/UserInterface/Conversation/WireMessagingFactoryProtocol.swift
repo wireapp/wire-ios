@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ protocol WireMessagingFactoryProtocol {
     func makeDeleteDraftUseCase(cellName: String) -> WireCellsDeleteDraftUseCaseProtocol
     func makeRetryUploadDraftUseCase(cellName: String) -> WireCellsRetryUploadDraftUseCaseProtocol
     func makeDeleteNodesUseCase() -> WireCellsDeleteNodesUseCaseProtocol
+    func makeFetchNodeUseCase() -> WireCellsFetchNodeUseCaseProtocol
     @MainActor
     func makeFilesView(
         cellName: String,
@@ -46,11 +47,6 @@ protocol WireMessagingFactoryProtocol {
         accentColorProvider: @escaping () -> WireAccentColor
     ) -> UIViewController
 
-    @MainActor
-    func makeAttachmentsPreviewView(
-        attachments: [WireCellsMessageAttachment],
-        alignment: HorizontalAlignment
-    ) -> UIViewController
     func makeConversationCellProvider(
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProviderProtocol
@@ -70,8 +66,9 @@ protocol ConversationCellProviderProtocol {
 
 }
 
-extension WireMessagingFactory: WireMessagingFactoryProtocol {
+extension WireMessagingFactory: @preconcurrency WireMessagingFactoryProtocol {
 
+    @MainActor
     func makeConversationCellProvider(
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProviderProtocol {

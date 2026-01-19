@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ public extension TimeInterval {
     static let fiveMinutes = 5 * oneMinute
     static let oneMinute = 60 * oneSecond
     static let tenSeconds = 10 * oneSecond
+    static let thirtySeconds = 30 * oneSecond
     static let oneSecond = TimeInterval(1)
 
     /// Number of seconds for a whole year (accounting for leap years) from now.

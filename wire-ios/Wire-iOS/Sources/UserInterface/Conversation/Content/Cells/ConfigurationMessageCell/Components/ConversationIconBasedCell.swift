@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
             equalTo: trailingAnchor
         )
 
-        if ZMUserSession.isChatBubbleEnabled, shouldRemoveInnerPaddingForBubbles {
+        if shouldRemoveInnerPaddingForBubbles {
             containerWidthConstraint = imageContainer.widthAnchor
                 .constraint(equalToConstant: 32.0)
             imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(
@@ -196,7 +196,7 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         topContentViewTrailingConstraint.constant = trailingTextMargin
-        if ZMUserSession.isChatBubbleEnabled, shouldRemoveInnerPaddingForBubbles {
+        if shouldRemoveInnerPaddingForBubbles {
             containerWidthConstraint.constant = 32.0
             textLabelTrailingConstraint.constant = 0
         } else {

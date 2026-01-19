@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -111,9 +111,9 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
     ) async -> AsyncStream<WireCellsUploadStatus> {
         let (stream, continuation) = AsyncStream.makeStream(of: WireCellsUploadStatus.self)
         let task = Task { [nodesAPI] in
-            let upload = await nodesAPI.uploadFile(path: assetPath, node: node, versionID: versionID)
-
             do {
+                let upload = try await nodesAPI.uploadFile(path: assetPath, node: node, versionID: versionID)
+
                 for try await progress in upload {
                     await self.updateUploadProgress(
                         nodeID: node.id,

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,9 +72,15 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// The role (and permissions) e.g. partner, member, admin, owner
     var teamRole: TeamRole { get }
 
-    /// Whether this is an app/bot/service user.
+    /// Whether this is an app (new-style MLS service).
 
     var isApp: Bool { get }
+
+    /// Whether this is a bot (old-style service).
+
+    var isBot: Bool { get }
+
+    var isAppOrBot: Bool { get }
 
     /// Whether this uses uses SSO.
     var usesCompanyLogin: Bool { get }

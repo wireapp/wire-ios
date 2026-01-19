@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,7 +64,15 @@ extension ZMUser: UserType {
     }
 
     @objc public var isApp: Bool {
-        type == .app || type == .bot
+        type == .app
+    }
+
+    @objc public var isBot: Bool {
+        type == .bot
+    }
+
+    @objc public var isAppOrBot: Bool {
+        isApp || isBot
     }
 
     public var teamName: String? {

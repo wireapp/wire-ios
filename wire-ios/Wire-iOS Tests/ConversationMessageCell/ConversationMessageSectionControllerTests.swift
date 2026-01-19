@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -215,7 +215,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertTrue(sut.isCollapsed)
     }
 
-    func testInitialCollapseValue_systemMessage_collapseOwnMessagesEnabled() throws {
+    func disabled_testInitialCollapseValue_systemMessage_collapseOwnMessagesEnabled() throws {
+        // Skipping test because collapsing own messages feature is
+        // temporarily disabled due to conflicts with chat bubbles
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.systemMessage(with: .conversationNameChanged))
         let sut = makeSUT(message: message)
@@ -231,7 +235,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertTrue(sut.isCollapsed)
     }
 
-    func testInitialCollapseValue_textMessageWithFailedToSendUsers_collapseOwnMessagesEnabled() throws {
+    func disabled_testInitialCollapseValue_textMessageWithFailedToSendUsers_collapseOwnMessagesEnabled() throws {
+        // Skipping test because collapsing own messages feature is
+        // temporarily disabled due to conflicts with chat bubbles
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.systemMessage(with: .conversationNameChanged))
         message.failedToSendUsers = [MockUserType.createDefaultOtherUser()]
@@ -245,7 +253,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertFalse(sut.isCollapsed)
     }
 
-    func testInitialCollapseValue_textMessage_collapseOwnMessagesEnabled() throws {
+    func disabled_testInitialCollapseValue_textMessage_collapseOwnMessagesEnabled() throws {
+        // Skipping test because collapsing own messages feature is
+        // temporarily disabled due to conflicts with chat bubbles
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.textMessage())
         let sut = makeSUT(message: message)
@@ -259,7 +271,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertFalse(sut.isCollapsed)
     }
 
-    func testInitialCollapseValue_fileMessage_sentBySelfUser_collapseOwnMessagesEnabled() throws {
+    func disabled_testInitialCollapseValue_fileMessage_sentBySelfUser_collapseOwnMessagesEnabled() throws {
+        // Skipping test because collapsing own messages feature is
+        // temporarily disabled due to conflicts with chat bubbles
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
         message.senderUser = mockSelfUser
@@ -274,7 +290,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertFalse(sut.isCollapsed)
     }
 
-    func testInitialCollapseValue_fileMessage_sentByOtherUser_collapseOwnMessagesEnabled() throws {
+    func disabled_testInitialCollapseValue_fileMessage_sentByOtherUser_collapseOwnMessagesEnabled() throws {
+        // Skipping test because collapsing own messages feature is
+        // temporarily disabled due to conflicts with chat bubbles
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
         message.senderUser = MockUserType.createDefaultOtherUser()
@@ -282,7 +302,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertFalse(sut.isCollapsed)
     }
 
-    func testSavingWasUncollapsed_FileMessage() throws {
+    func disabled_testSavingWasUncollapsed_FileMessage() throws {
+        // Skipping test because collapsing own messages feature is
+        // temporarily disabled due to conflicts with chat bubbles
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+
         // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
@@ -304,7 +328,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         wait(for: [expectation])
     }
 
-    func testResetWasUncollapsed_FileMessage() throws {
+    func disabled_testResetWasUncollapsed_FileMessage() throws {
+        // Skipping test because collapsing own messages feature is
+        // temporarily disabled due to conflicts with chat bubbles
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+
         // Given already saved that was uncollapsed
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
@@ -329,7 +357,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         wait(for: [expectation])
     }
 
-    func testWhenWasUncollapsedBefore_File() throws {
+    func disabled_testWhenWasUncollapsedBefore_File() throws {
+        // Skipping test because collapsing own messages feature is
+        // temporarily disabled due to conflicts with chat bubbles
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+
         // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
@@ -342,7 +374,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertFalse(sut.isCollapsed)
     }
 
-    func testNotSavingWasUncollapsed_TextMessage() throws {
+    func disabled_testNotSavingWasUncollapsed_TextMessage() throws {
+        // Skipping test because collapsing own messages feature is
+        // temporarily disabled due to conflicts with chat bubbles
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+
         // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let longText = """
@@ -372,7 +408,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         wait(for: [expectation], timeout: 0)
     }
 
-    func testSavingWasUncollapsed_TextMessageWithLink() throws {
+    func disabled_testSavingWasUncollapsed_TextMessageWithLink() throws {
+        // Skipping test because collapsing own messages feature is
+        // temporarily disabled due to conflicts with chat bubbles
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+
         // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(
@@ -395,7 +435,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         wait(for: [expectation], timeout: 0)
     }
 
-    func testNotCollapsed_TextMessageWithLink_SentByOther() throws {
+    func disabled_testNotCollapsed_TextMessageWithLink_SentByOther() throws {
+        // Skipping test because collapsing own messages feature is
+        // temporarily disabled due to conflicts with chat bubbles
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+
         // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(
@@ -408,7 +452,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertFalse(sut.isCollapsed)
     }
 
-    func testRecreatedCellBecomesCollapsed_LinkAttachmentMessage() {
+    func disabled_testRecreatedCellBecomesCollapsed_LinkAttachmentMessage() throws {
+        // Skipping test because collapsing own messages feature is
+        // temporarily disabled due to conflicts with chat bubbles
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+
         // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = MockMessageFactory.textMessage(withText: "www.example.com")
@@ -432,7 +480,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertTrue(sut.cellDescriptionsForTesting.first?.instance is ConversationCollapsedMessageCellDescription)
     }
 
-    func testRecreatedCellNotBecomesCollapsed_LinkAttachmentMessage_FromOther() {
+    func disabled_testRecreatedCellNotBecomesCollapsed_LinkAttachmentMessage_FromOther() throws {
+        // Skipping test because collapsing own messages feature is
+        // temporarily disabled due to conflicts with chat bubbles
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+
         // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = MockMessageFactory.textMessage(withText: "www.example.com")
@@ -454,7 +506,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertEqual(sut.cellDescriptionsForTesting.count, 4)
     }
 
-    func testRecreatedCellBecomesCollapsed_LinkPreviewMessage() {
+    func disabled_testRecreatedCellBecomesCollapsed_LinkPreviewMessage() throws {
+        // Skipping test because collapsing own messages feature is
+        // temporarily disabled due to conflicts with chat bubbles
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+
         // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = MockMessageFactory.textMessage(withText: "www.example.com")
@@ -479,7 +535,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertTrue(sut.cellDescriptionsForTesting.first?.instance is ConversationCollapsedMessageCellDescription)
     }
 
-    func testRecreatedCellNotBecomesCollapsed_LinkPreviewMessage_FromOther() {
+    func disabled_testRecreatedCellNotBecomesCollapsed_LinkPreviewMessage_FromOther() throws {
+        // Skipping test because collapsing own messages feature is
+        // temporarily disabled due to conflicts with chat bubbles
+        // https://wearezeta.atlassian.net/browse/WPB-18939
+
         // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = MockMessageFactory.textMessage(withText: "www.example.com")
@@ -517,7 +577,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             useInvertedIndices: useInvertedIndices,
             contentWidth: 0,
             userDefaults: mockUserDefaults,
-            isChatBubbleSimpleEnabled: false
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         trackForMemoryLeaks(section)

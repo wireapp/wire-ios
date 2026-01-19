@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,6 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     func teamTest(_ block: () -> Void) {
         selfUser.teamIdentifier = UUID()
         block()
-        selfUser.teamIdentifier = nil
     }
 
     func textNotification(
@@ -165,18 +164,18 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
         //    "push.notification.add.message.group" = "%1$@: %2$@";
         //    "push.notification.add.message.group.noconversationname" = "%1$@ in a conversation: %2$@";
         syncMOC.performGroupedAndWait {
-            XCTAssertEqual(self.bodyForNote(self.oneOnOneConversation, sender: self.sender), "Hello Hello!")
-            XCTAssertEqual(self.bodyForNote(self.groupConversation, sender: self.sender), "Super User: Hello Hello!")
+            XCTAssertEqual(bodyForNote(oneOnOneConversation, sender: sender), "Hello Hello!")
+            XCTAssertEqual(bodyForNote(groupConversation, sender: sender), "Super User: Hello Hello!")
             XCTAssertEqual(
-                self.bodyForNote(self.groupConversationWithoutUserDefinedName, sender: self.sender),
+                bodyForNote(groupConversationWithoutUserDefinedName, sender: sender),
                 "Super User: Hello Hello!"
             )
             XCTAssertEqual(
-                self.bodyForNote(self.groupConversationWithoutName, sender: self.sender),
+                bodyForNote(groupConversationWithoutName, sender: sender),
                 "Super User in a conversation: Hello Hello!"
             )
             XCTAssertEqual(
-                self.bodyForNote(self.invalidConversation, sender: self.sender),
+                bodyForNote(invalidConversation, sender: sender),
                 "Super User in a conversation: Hello Hello!"
             )
         }
@@ -198,10 +197,10 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
         }
     }
 
-    func testThatItDoesNotDuplicatePercentageSignsInTextAndConversationName() {
-        syncMOC.performGroupedAndWait {
+    func testThatItDoesNotDuplicatePercentageSignsInTextAndConversationName() throws {
+        try syncMOC.performGroupedAndWait {
             XCTAssertEqual(
-                self.bodyForNote(self.groupConversation, sender: self.sender, text: "Today we grew by 100%"),
+                try bodyForNote(groupConversation, sender: sender, text: "Today we grew by 100%"),
                 "Super User: Today we grew by 100%"
             )
         }

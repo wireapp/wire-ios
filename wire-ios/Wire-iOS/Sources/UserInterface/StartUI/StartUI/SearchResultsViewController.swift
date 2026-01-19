@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import WireSyncEngine
 
 enum SearchGroup: Int {
     case people
-    case services
+    case services // TODO: [WPB-20362] consider having apps and bots instead
 }
 
 extension SearchGroup {
@@ -166,6 +166,7 @@ final class SearchResultsViewController: UIViewController {
     }()
 
     let servicesSection: SearchServicesSectionController
+    // TODO: [WPB-20362] add apps section?
     let inviteTeamMemberSection: InviteTeamMemberSection
 
     var isAddingParticipants: Bool
@@ -211,11 +212,9 @@ final class SearchResultsViewController: UIViewController {
         teamMemberAndContactsSection.allowsSelection = isAddingParticipants
         teamMemberAndContactsSection.selection = userSelection
         teamMemberAndContactsSection.title = L10n.Localizable.Peoplepicker.Header.contacts
-        self
-            .servicesSection = SearchServicesSectionController(
-                canSelfUserManageTeam: userSession.selfUser
-                    .canManageTeam
-            )
+        self.servicesSection = SearchServicesSectionController(
+            canSelfUserManageTeam: userSession.selfUser.canManageTeam
+        )
         conversationsSection.title = team != nil ? L10n.Localizable.Peoplepicker.Header
             .teamConversations(teamName ?? "") : L10n.Localizable.Peoplepicker.Header.conversations
         self.inviteTeamMemberSection = InviteTeamMemberSection(team: team)
@@ -449,7 +448,7 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
                 indexPath: indexPath,
                 section: sectionFor(controller: searchSectionController)
             )
-        } else if let service = user as? ServiceUser, service.isApp {
+        } else if let service = user as? ServiceUser, service.isAppOrBot {
             delegate?.searchResultsViewController(self, didTapOnSeviceUser: service)
         } else if let searchUser = user as? ZMSearchUser {
             delegate?.searchResultsViewController(

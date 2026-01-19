@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,19 +40,6 @@ final class ConversationCannotDecryptSystemMessageCell:
         imageView.image = object.icon
         attributedText = object.attributedText
         textLabel.linkTextAttributes = [:]
-    }
-
-    // MARK: - UITextViewDelegate
-
-    override func textView(
-        _ textView: UITextView,
-        shouldInteractWith url: URL,
-        in characterRange: NSRange,
-        interaction: UITextItemInteraction
-    ) -> Bool {
-        delegate?.perform(action: .resetSession, for: message!, view: self)
-
-        return false
     }
 
 }

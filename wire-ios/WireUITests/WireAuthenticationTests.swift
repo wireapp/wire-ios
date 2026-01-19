@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ final class WireAuthenticationTests: WireUITestCase {
             .enterEmailOrSSO(LoginCredentials.email)
 
         XCTAssertEqual(app.textFields["Enter email"].value as? String, LoginCredentials.email)
+        XCTAssertTrue(loginPage.nextButton.waitForExistence(timeout: 2.0))
         XCTAssertFalse(loginPage.nextButton.isEnabled, "nextButton should be disabled if no password")
     }
 }

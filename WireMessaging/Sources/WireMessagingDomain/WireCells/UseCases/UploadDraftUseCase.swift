@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -91,6 +91,8 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCell
                 draft.status = status
                 await draftRepository.updateDraft(draft, for: cellName)
             }
+
+            if draft.status == .cancelled { return }
 
             // Set post upload values
             let latestNode = try await nodesAPI.getNode(nodeID: draft.nodeID)

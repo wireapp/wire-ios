@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,8 +39,9 @@ struct WireCellsImageConversationAttachmentPreview: View {
     var body: some View {
         WireCellsAttachmentPreview(
             progress: progress,
-            progressColor: isAssetDownloadError ? ColorTheme.Base.error.color : ColorTheme.Base
-                .primary(wireAccentColor).color
+            progressColor: isAssetDownloadError
+                ? ColorTheme.Base.error.color
+                : ColorTheme.Base.primary(wireAccentColor).color
         ) {
             ZStack {
                 if let thumbnailURL {

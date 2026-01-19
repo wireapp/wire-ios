@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,15 +23,24 @@ import WireSyncEngine
 
 final class WireConversationChannelCreationFormViewControllerFactory {
 
+    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
+
     weak var delegate: ConversationCreationControllerDelegate?
 
-    public init() {}
+    public init(
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
+    ) {
+        self.conversationCreationRepository = conversationCreationRepository
+    }
 
     @MainActor
     func create(
         userSession: UserSession
     ) async -> WireConversationChannelCreationFormViewController {
-        let vc = await WireConversationChannelCreationFormViewController(userSession: userSession)
+        let vc = await WireConversationChannelCreationFormViewController(
+            userSession: userSession,
+            conversationCreationRepository: conversationCreationRepository
+        )
         vc.delegate = delegate
         return vc
     }

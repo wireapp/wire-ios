@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,18 +20,6 @@ import WireTesting
 @testable import WireDataModel
 
 class TeamDeletionRuleTests: BaseZMClientMessageTests {
-
-    override class func setUp() {
-        super.setUp()
-        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = false
-    }
-
-    override class func tearDown() {
-        super.tearDown()
-        DeveloperFlag.storage = UserDefaults.standard
-    }
 
     func testThatItDoesntDeleteConversationsWhichArePartOfATeamWhenTeamGetsDeleted() {
         // given

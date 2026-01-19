@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,6 @@ enum MessageAction: CaseIterable, Equatable {
         .sketchEmoji,
         .present,
         .openQuote,
-        .resetSession,
         .delete,
         .react("❤️")
     ]
@@ -62,7 +61,6 @@ enum MessageAction: CaseIterable, Equatable {
         // Not included in ConversationMessageActionController.allMessageActions, for image viewer/open quote
         present,
         openQuote,
-        resetSession,
         react(Emoji.ID),
         visitLink,
         collapse
@@ -102,7 +100,6 @@ enum MessageAction: CaseIterable, Equatable {
             return MessageActionLocale.collapse
         case .present,
              .openQuote,
-             .resetSession,
              .react:
             return nil
         }
@@ -139,7 +136,6 @@ enum MessageAction: CaseIterable, Equatable {
         case .present,
              .openQuote,
              .digitallySign,
-             .resetSession,
              .react,
              .collapse:
             nil
@@ -189,7 +185,6 @@ enum MessageAction: CaseIterable, Equatable {
         case .present,
              .openQuote,
              .digitallySign,
-             .resetSession,
              .react,
              .visitLink,
              .collapse:
@@ -230,8 +225,7 @@ enum MessageAction: CaseIterable, Equatable {
         case .present,
              .sketchDraw,
              .sketchEmoji,
-             .openQuote,
-             .resetSession:
+             .openQuote:
             // no message related actions are not handled in ConversationMessageActionController
             nil
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -197,12 +197,20 @@ public struct ConversationChannelCreationForm: View {
 
     var fileManagementSection: some View {
         Section(content: {
-            Toggle(Strings.CreationForm.WireCells.toggle + " (Cells beta)", isOn: $viewModel.fileManagementEnabled)
+            Toggle(Strings.CreationForm.WireCells.toggle, isOn: $viewModel.fileManagementEnabled)
         }, footer: {
-            Text(Strings.CreationForm.WireCells.description)
-            // Text(" [\(Strings.CreationForm.WireCells.learnMore)](https://wire.com)") // TODO: [WPB-20191] URL to be
-            // defined, uncomment when we have the URL
+            Text(footerText)
         })
+    }
+
+    private var footerText: AttributedString {
+        var text = AttributedString(Strings.CreationForm.WireCells.description + " ")
+
+        var link = AttributedString(Strings.CreationForm.WireCells.learnMore)
+        link.link = URL.useWireDriveInConversations
+
+        text.append(link)
+        return text
     }
 }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -66,6 +66,8 @@
 @property (nonatomic, readwrite) NSTimeInterval expiresAfter;
 @property (nonatomic, assign) BOOL isSelfUser;
 @property (nonatomic, assign) BOOL isApp;
+@property (nonatomic, assign) BOOL isBot;
+@property (nonatomic, assign) BOOL isAppOrBot;
 @property (nonatomic, readwrite) BOOL isTeamMember;
 @property (nonatomic, readwrite) TeamRole teamRole;
 @property (nonatomic, assign) BOOL isGuestInConversation;

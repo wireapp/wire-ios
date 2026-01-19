@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -251,8 +251,6 @@ final class APIMigrationManagerTests: MessagingTest {
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
         mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
 
-        let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
-
         let cookieStorage = ZMPersistentCookieStorage(
             forServerName: "test.example.com",
             userIdentifier: .create(),
@@ -287,8 +285,7 @@ final class APIMigrationManagerTests: MessagingTest {
         )
 
         let mockTransportSession = RecordingMockTransportSession(
-            cookieStorage: cookieStorage,
-            pushChannel: MockPushChannel()
+            cookieStorage: cookieStorage
         )
 
         let mockContextStorable = MockLAContextStorable()
@@ -314,7 +311,6 @@ final class APIMigrationManagerTests: MessagingTest {
             currentAppVersion: "3.120.0",
             currentBuildNumber: "999",
             application: application,
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: coreDataStack,
             coreCryptoProvider: mockCoreCryptoProvider,
             configuration: configuration,
@@ -331,7 +327,8 @@ final class APIMigrationManagerTests: MessagingTest {
             userId: userID,
             minTLSVersion: nil,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            faultyMLSRemovalKeysByDomain: [:]
         )
 
         let userSession = builder.build()

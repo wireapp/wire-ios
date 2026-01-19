@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import AVKit
 import Foundation
 import PassKit
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "MessagePresenter")
@@ -194,7 +195,8 @@ final class MessagePresenter: NSObject {
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         fileAvailabilityObserver = nil
         modalTargetController?.view.window?.endEditing(true)
@@ -211,7 +213,8 @@ final class MessagePresenter: NSObject {
                 actionResponder: delegate,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
         } else if let openableURL = message.textMessageData?.linkPreview?.openableURL {
             openableURL.open()
@@ -229,14 +232,16 @@ final class MessagePresenter: NSObject {
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         let imageViewController = viewController(
             forImageMessage: message,
             actionResponder: delegate,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
         if let imageViewController {
             // to allow image rotation, present the image viewer in full screen style
@@ -250,7 +255,8 @@ final class MessagePresenter: NSObject {
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) -> UIViewController? {
         guard Message.isImage(message),
               message.imageMessageData != nil else {
@@ -263,7 +269,8 @@ final class MessagePresenter: NSObject {
             isPreviewing: false,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 
@@ -272,7 +279,8 @@ final class MessagePresenter: NSObject {
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) -> UIViewController? {
         guard Message.isImage(message),
               message.imageMessageData != nil else {
@@ -285,7 +293,8 @@ final class MessagePresenter: NSObject {
             isPreviewing: true,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 

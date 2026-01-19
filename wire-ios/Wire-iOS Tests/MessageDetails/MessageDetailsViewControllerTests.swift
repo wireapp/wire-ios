@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
 
@@ -80,7 +81,8 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message: message,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         detailsViewController.container.selectIndex(0, animated: false)
 
@@ -112,7 +114,8 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message: message,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         detailsViewController.container.selectIndex(0, animated: false)
 
@@ -143,7 +146,8 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message: message,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         detailsViewController.container.selectIndex(0, animated: false)
 
@@ -175,7 +179,8 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message: message,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         detailsViewController.container.selectIndex(1, animated: false)
 
@@ -211,7 +216,8 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message: message,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         detailsViewController.container.selectIndex(1, animated: false)
 
@@ -236,7 +242,8 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message: message,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         detailsViewController.container.selectIndex(1, animated: false)
 
@@ -260,7 +267,8 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message: message,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         detailsViewController.container.selectIndex(0, animated: false)
 
@@ -284,7 +292,8 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message: message,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         detailsViewController.container.selectIndex(0, animated: false)
 
@@ -310,7 +319,8 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message: message,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         detailsViewController.container.selectIndex(0, animated: false)
 
@@ -336,7 +346,8 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message: message,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         // THEN
@@ -357,7 +368,8 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message: message,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         // THEN
@@ -378,7 +390,8 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message: message,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         // THEN
@@ -399,7 +412,8 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message: message,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         // THEN
@@ -429,7 +443,8 @@ final class MessageDetailsViewControllerTests: XCTestCase {
                 message: message,
                 userSession: userSession,
                 mainCoordinator: mockMainCoordinator,
-                selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+                selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+                conversationCreationRepository: MockConversationCreationRepositoryProtocol()
             )
             detailsViewController.container.selectIndex(0, animated: false)
             return detailsViewController

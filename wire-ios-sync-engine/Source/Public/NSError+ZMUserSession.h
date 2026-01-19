@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -100,7 +100,6 @@ FOUNDATION_EXPORT NSString * const ZMClientsKey;
 FOUNDATION_EXPORT NSString * const ZMUserLoginCredentialsKey;
 FOUNDATION_EXPORT NSString * const ZMPhoneCredentialKey;
 FOUNDATION_EXPORT NSString * const ZMEmailCredentialKey;
-FOUNDATION_EXPORT NSString * const ZMUserHasPasswordKey;
 FOUNDATION_EXPORT NSString * const ZMUserUsesCompanyLoginCredentialKey;
 FOUNDATION_EXPORT NSString * const ZMAccountDeletedReasonKey;
 

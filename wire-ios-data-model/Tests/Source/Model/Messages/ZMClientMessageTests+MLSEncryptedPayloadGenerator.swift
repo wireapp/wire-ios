@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,19 +22,6 @@ import GenericMessageProtocol
 @testable import WireDataModel
 
 final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessageTests {
-
-    override func setUp() {
-        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = true
-
-        super.setUp()
-    }
-
-    override func tearDown() {
-        super.tearDown()
-        DeveloperFlag.storage = UserDefaults.standard
-    }
 
     let encryptionFunction: (Data) throws -> Data = {
         $0.zmSHA256Digest()

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,23 +24,29 @@ extension FilesViewItem {
 
     static func fixture(
         id: UUID = UUID(),
+        eTag: String = "eTag",
         kind: FilesViewItem.Kind = .file,
         name: String = "filename.png",
         filePath: String = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image filename.png",
         ownedBy: String? = nil,
         modifiedAt: Date? = nil,
         icon: FileIcon = .image,
-        tags: [String] = []
+        tags: [String] = [],
+        isEditable: Bool = false,
+        publicLinkID: String? = nil
     ) -> FilesViewItem {
         FilesViewItem(
             id: id,
+            eTag: eTag,
             kind: kind,
             name: name,
             filePath: filePath,
             ownedBy: ownedBy,
             modifiedAt: modifiedAt,
             icon: icon,
-            tags: tags
+            tags: tags,
+            isEditable: isEditable,
+            publicLinkID: publicLinkID
         )
     }
 

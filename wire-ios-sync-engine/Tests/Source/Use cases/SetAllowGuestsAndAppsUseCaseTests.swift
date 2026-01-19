@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModel
 import WireDataModelSupport
+import WireNetworkSupport
 import XCTest
 
 @testable import WireSyncEngine
@@ -39,13 +41,13 @@ final class SetAllowGuestsAndAppsUseCaseTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() async throws {
-        try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
-        await syncContext.perform { [self] in
-            sut = SetAllowGuestAndAppsUseCase()
-            mockSelfUser = modelHelper.createSelfUser(in: syncContext)
-            mockConversation = modelHelper.createGroupConversation(in: syncContext)
+        (sut, mockSelfUser, mockConversation) = await syncContext.perform { [modelHelper, syncContext] in
+            let sut = SetAllowGuestAndAppsUseCase()
+            let mockSelfUser = modelHelper.createSelfUser(in: syncContext)
+            let mockConversation = modelHelper.createGroupConversation(in: syncContext)
             mockConversation.teamRemoteIdentifier = UUID()
+            return (sut, mockSelfUser, mockConversation)
         }
     }
 
@@ -57,137 +59,99 @@ final class SetAllowGuestsAndAppsUseCaseTests: XCTestCase {
         mockSelfUser = nil
         mockConversation = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
-    }
-
-    // MARK: - Helper method
-
-    private func setUpRoleAndAction() {
-        let role = Role.insertNewObject(in: syncContext)
-        let action = Action.insertNewObject(in: syncContext)
-        action.name = "modify_conversation_access"
-        role.actions = [action]
-
-        mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
     }
 
     // MARK: Unit Tests
 
-    func testGuestEnablementSucceeds() async {
+    func testGuestEnablementSucceeds() async throws {
 
+        // GIVEN
         await syncContext.perform { [self] in
-            // GIVEN
-            setUpRoleAndAction()
-
-            let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
-                result: .success(()),
-                context: syncContext.notificationContext
-            )
-
-            let expectation = XCTestExpectation(description: "completion should be called")
-
-            // WHEN
-            sut.invoke(conversation: mockConversation, allowGuests: true, allowApps: false) { result in
-                // THEN
-                switch result {
-                case .success:
-                    print("Operation successful")
-                case let .failure(error):
-                    XCTFail("Test failed with error: \(error)")
-                }
-                expectation.fulfill()
-            }
-
-            wait(for: [expectation], timeout: 0.4)
+            setUpRoleAndAction(syncContext, mockConversation, mockSelfUser)
         }
+        let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
+            result: .success(()),
+            context: syncContext.notificationContext
+        )
+
+        // WHEN
+        try await sut.invoke(conversation: mockConversation, allowGuests: true, allowApps: false)
+        withExtendedLifetime(mockHandler) {}
+
     }
 
     func testGuestEnablementFails_WithInsufficientPermissions() async {
-        await syncContext.perform { [self] in
-            // GIVEN
-            let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
-                result: .failure(.unknown),
-                context: syncContext.notificationContext
-            )
 
-            let expectation =
-                XCTestExpectation(
-                    description: "Completion should be called with a failure due to insufficient permissions"
-                )
+        // GIVEN
+        let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
+            result: .failure(.unknown),
+            context: syncContext.notificationContext
+        )
 
-            // WHEN
-            sut.invoke(conversation: mockConversation, allowGuests: true, allowApps: false) { result in
-                // THEN
-                switch result {
-                case .success:
-                    XCTFail("Expected operation to fail, but it succeeded.")
-                case let .failure(error):
-                    break
-                }
-                expectation.fulfill()
+        // WHEN
+        do {
+            try await sut.invoke(conversation: mockConversation, allowGuests: true, allowApps: false)
+            withExtendedLifetime(mockHandler) {}
+            XCTFail("Expected operation to fail, but it succeeded.")
+        } catch {
+            guard case .invalidOperation = error as? SetAllowGuestsAndAppsUseCaseError else {
+                return XCTFail("Unexpected error: \(error)")
             }
-
-            wait(for: [expectation], timeout: 0.4)
         }
+
     }
 
-    func testAppsEnablementSucceeds() async {
+    func testAppsEnablementSucceeds() async throws {
 
-        await syncContext.perform { [self] in
-            // GIVEN
-            setUpRoleAndAction()
-
-            let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
-                result: .success(()),
-                context: syncContext.notificationContext
-            )
-
-            let expectation = XCTestExpectation(description: "completion should be called")
-
-            // WHEN
-            sut.invoke(conversation: mockConversation, allowGuests: false, allowApps: true) { result in
-                // THEN
-                switch result {
-                case .success:
-                    break
-                case let .failure(error):
-                    XCTFail("Test failed with error: \(error)")
-                }
-
-                expectation.fulfill()
-            }
-
-            wait(for: [expectation], timeout: 0.4)
+        // GIVEN
+        await syncContext.perform { [syncContext, mockConversation, mockSelfUser] in
+            setUpRoleAndAction(syncContext, mockConversation, mockSelfUser)
         }
+        let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
+            result: .success(()),
+            context: syncContext.notificationContext
+        )
+
+        // WHEN
+        try await sut.invoke(conversation: mockConversation, allowGuests: false, allowApps: true)
+        withExtendedLifetime(mockHandler) {}
+
     }
 
     func testAppsEnablementFails_WithInsufficientPermissions() async {
 
-        await syncContext.perform { [self] in
-            // GIVEN
-            let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
-                result: .failure(.unknown),
-                context: syncContext.notificationContext
-            )
-            let expectation =
-                XCTestExpectation(
-                    description: "Completion should be called with a failure due to insufficient permissions"
-                )
+        // GIVEN
+        let mockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
+            result: .failure(.unknown),
+            context: syncContext.notificationContext
+        )
 
-            // WHEN
-            sut.invoke(conversation: mockConversation, allowGuests: false, allowApps: true) { result in
-                // THEN
-                switch result {
-                case .success:
-                    XCTFail("Expected operation to fail, but it succeeded.")
-                case .failure:
-                    break
-                }
-                expectation.fulfill()
+        // WHEN
+        do {
+            try await sut.invoke(conversation: mockConversation, allowGuests: false, allowApps: true)
+            withExtendedLifetime(mockHandler) {}
+            XCTFail("Expected operation to fail, but it succeeded.")
+        } catch {
+            guard case .invalidOperation = error as? SetAllowGuestsAndAppsUseCaseError else {
+                return XCTFail("Unexpected error: \(error)")
             }
-
-            wait(for: [expectation], timeout: 0.4)
         }
+
     }
 
+}
+
+// MARK: - Helper method
+
+private func setUpRoleAndAction(
+    _ context: NSManagedObjectContext,
+    _ mockConversation: ZMConversation,
+    _ mockSelfUser: ZMUser
+) {
+    let role = Role.insertNewObject(in: context)
+    let action = Action.insertNewObject(in: context)
+    action.name = "modify_conversation_access"
+    role.actions = [action]
+
+    mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
 }

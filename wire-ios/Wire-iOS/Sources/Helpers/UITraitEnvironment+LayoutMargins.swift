@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ struct HorizontalMargins {
     var right: CGFloat
     var chatBubbleMinimumLeading: CGFloat
     var chatBubbleMinimumTrailing: CGFloat
-    private let shouldAlign: Bool = ZMUserSession.isChatBubbleEnabled
 
     init(left: CGFloat, right: CGFloat, chatBubbleMinimumLeading: CGFloat, chatBubbleMinimumTrailing: CGFloat) {
         self.left = left
@@ -36,8 +35,8 @@ struct HorizontalMargins {
     init(userInterfaceSizeClass: UIUserInterfaceSizeClass) {
         switch userInterfaceSizeClass {
         case .regular:
-            self.left = shouldAlign ? 56 : 96
-            self.right = shouldAlign ? 16 : 96
+            self.left = 56
+            self.right = 16
             self.chatBubbleMinimumLeading = 136.0
             self.chatBubbleMinimumTrailing = 136.0
         default:

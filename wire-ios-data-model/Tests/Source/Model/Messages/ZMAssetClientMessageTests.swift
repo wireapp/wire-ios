@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -781,23 +781,6 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.underlyingMessage?.asset.preview.remote.otrKey, remoteData.otrKey)
         XCTAssertEqual(sut.underlyingMessage?.asset.preview.remote.sha256, remoteData.sha256)
         XCTAssertEqual(sut.underlyingMessage?.asset.preview.image.width, imageMetadata.width)
-    }
-}
-
-// MARK: Helpers
-
-extension ZMAssetClientMessageTests {
-
-    func createOtherClientAndConversation() -> (UserClient, ZMConversation) {
-        let otherUser = ZMUser.insertNewObject(in: syncMOC)
-        otherUser.remoteIdentifier = .create()
-        let otherClient = createClient(for: otherUser, createSessionWithSelfUser: true)
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.conversationType = .group
-        conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
-        XCTAssertTrue(syncMOC.saveOrRollback())
-
-        return (otherClient, conversation)
     }
 }
 

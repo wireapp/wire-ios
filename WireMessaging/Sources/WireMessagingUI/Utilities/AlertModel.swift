@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 /// Identifies an alert and provides it's title and message.
 ///
@@ -27,6 +28,23 @@ struct AlertModel: Hashable, Identifiable, Sendable {
 
     let title: String
     let message: String
+    let actionsButtons: [ActionButton]
+
+    struct ActionButton: Hashable, Identifiable, Sendable {
+        var id: Self { self }
+
+        let title: String
+        let role: ButtonRole?
+        let handler: @Sendable () async -> Void
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(title)
+        }
+
+        static func == (lhs: ActionButton, rhs: ActionButton) -> Bool {
+            lhs.title == rhs.title
+        }
+    }
 
 }
 
@@ -38,12 +56,18 @@ extension AlertModel {
 
     static let noInternet = AlertModel(
         title: Error.NoInternet.title,
-        message: Error.NoInternet.message
+        message: Error.NoInternet.message,
+        actionsButtons: [
+            ActionButton(title: L10n.Localizable.General.confirm, role: .none, handler: {})
+        ]
     )
 
     static let unknownError = AlertModel(
         title: Error.Unknown.title,
-        message: Error.Unknown.message
+        message: Error.Unknown.message,
+        actionsButtons: [
+            ActionButton(title: L10n.Localizable.General.confirm, role: .none, handler: {})
+        ]
     )
 
 }

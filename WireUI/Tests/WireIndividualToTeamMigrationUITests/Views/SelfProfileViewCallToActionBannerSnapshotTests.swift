@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,35 +35,31 @@ final class SelfProfileViewCallToActionBannerSnapshotTests: XCTestCase {
         snapshotHelper = nil
     }
 
-    @MainActor @ViewBuilder static var view: some View {
-        let screenBounds = UIScreen.main.bounds
-
-        SelfProfileViewCallToActionBanner(actionCallback: { _ in })
-            .frame(width: screenBounds.width, height: screenBounds.height)
-    }
-
     @MainActor
     func testColorSchemeVariants() {
-        let view = Self.view
-
+        let screenBounds = UIScreen.main.bounds
+        let sut = SelfProfileViewCallToActionBanner {}
+            .frame(width: screenBounds.width, height: screenBounds.width)
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
+            .verify(matching: sut, named: "light")
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            .verify(matching: sut, named: "dark")
     }
 
     @MainActor
     func testDynamicTypeVariants() {
-        let view = Self.view
-
+        let screenBounds = UIScreen.main.bounds
+        let sut = SelfProfileViewCallToActionBanner {}
+            .frame(width: screenBounds.width, height: screenBounds.width)
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
                 .verify(
-                    matching: view.dynamicTypeSize(dynamicTypeSize),
+                    matching: sut.dynamicTypeSize(dynamicTypeSize),
                     named: "\(dynamicTypeSize)"
                 )
         }
     }
+
 }

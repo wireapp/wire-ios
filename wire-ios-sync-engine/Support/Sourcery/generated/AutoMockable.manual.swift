@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -510,12 +510,10 @@ public class MockUserSession: UserSession {
 
     public var underlyingMlsFeature: Feature.MLS!
 
-    // MARK: - chatBubblesSimpleFeature
-    
-    public var isChatBubbleSimpleEnabled: Bool = false
-    
     public var isWireCellsEnabled: Bool = false
     
+    public var wireCellsBackendURL: URL? = nil
+
     public var isEnterpriseUser: Bool = false
     
     // MARK: - mlsGroupVerification
@@ -1188,10 +1186,10 @@ public class MockUserSession: UserSession {
     // MARK: - makeAppendLocationMessageUseCase
 
     public var makeAppendLocationMessageUseCase_Invocations: [Void] = []
-    public var makeAppendLocationMessageUseCase_MockMethod: (() -> any AppendLocationMessagekUseCaseProtocol)?
-    public var makeAppendLocationMessageUseCase_MockValue: (any AppendLocationMessagekUseCaseProtocol)?
+    public var makeAppendLocationMessageUseCase_MockMethod: (() -> any AppendLocationMessageUseCaseProtocol)?
+    public var makeAppendLocationMessageUseCase_MockValue: (any AppendLocationMessageUseCaseProtocol)?
 
-    public func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol {
+    public func makeAppendLocationMessageUseCase() -> any AppendLocationMessageUseCaseProtocol {
         makeAppendLocationMessageUseCase_Invocations.append(())
 
         if let mock = makeAppendLocationMessageUseCase_MockMethod {

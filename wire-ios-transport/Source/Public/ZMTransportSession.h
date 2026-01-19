@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,10 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class ZMPersistentCookieStorage;
 @class ZMAccessTokenHandler;
 @class ZMTransportRequestScheduler;
-@protocol ZMPushChannelConsumer;
 @protocol ZMSGroupQueue;
 @protocol ZMKeyValueStore;
-@protocol ZMPushChannel;
 @protocol ReachabilityProvider;
 @protocol BackendEnvironmentProvider;
 @protocol URLSessionsDirectory;
@@ -115,16 +113,6 @@ extern NSString * const ZMTransportSessionReachabilityIsEnabled;
  *   background session indeed is, e.g. after the app has been terminated
  */
 - (void)getBackgroundTasksWithCompletionHandler:(void (^)(NSArray <NSURLSessionTask *>*))completionHandler;
-
-@end
-
-
-
-@interface ZMTransportSession (PushChannel)
-
-@property (nonatomic, readonly) id<ZMPushChannel> pushChannel;
-
-- (void)configurePushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue NS_SWIFT_NAME(configurePushChannel(consumer:groupQueue:));
 
 @end
 

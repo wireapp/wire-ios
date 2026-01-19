@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,20 @@
 import Foundation
 
 extension ZMConversation {
+
+    public class func sortCommitPendingProsalsByDateAscending() -> NSSortDescriptor {
+        NSSortDescriptor(
+            key: commitPendingProposalDateKey,
+            ascending: true
+        )
+    }
+
+    public class func commitPendingProposalDatePredicate() -> NSPredicate {
+        NSPredicate(
+            format: "%K != nil",
+            argumentArray: [commitPendingProposalDateKey]
+        )
+    }
 
     open override class func predicateForFilteringResults() -> NSPredicate {
         let selfType = ZMConversationType(rawValue: 1)!

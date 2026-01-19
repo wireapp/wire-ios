@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,6 +34,15 @@ struct MessageReactionMetadata: Equatable {
 
 }
 
+struct MessageReactionsCellConfiguration: Equatable {
+    let reactions: [MessageReactionMetadata]
+    let message: ZMConversationMessage // Include the message here
+
+    static func == (lhs: MessageReactionsCellConfiguration, rhs: MessageReactionsCellConfiguration) -> Bool {
+        lhs.reactions == rhs.reactions && lhs.message == rhs.message
+    }
+}
+
 // MARK: - MessageReactionsCell
 
 final class MessageReactionsCell: UIView, ConversationMessageCell {
@@ -50,14 +59,10 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     private lazy var insets = UIEdgeInsets(
         top: 2,
-        left: isChatBubbleSimpleEnabled ? 0 : conversationHorizontalMargins.left,
+        left: 0,
         bottom: 0,
-        right: isChatBubbleSimpleEnabled ? 0 : conversationHorizontalMargins.right
+        right: 0
     )
-
-    private var isChatBubbleSimpleEnabled: Bool {
-        ZMUserSession.shared()?.isChatBubbleSimpleEnabled ?? false
-    }
 
     // MARK: - Life cycle
 
@@ -81,25 +86,25 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     // MARK: - configure method
 
     func configure(
-        with reactions: [MessageReactionMetadata],
+        with object: MessageReactionsCellConfiguration,
         animated: Bool
     ) {
-        let reactionToggles = reactions.map { reaction in
+        let reactionToggles = object.reactions.map { reaction in
             ReactionToggle(
                 emoji: reaction.emoji,
                 count: reaction.count,
-                isToggled: reaction.isSelfUserReacting
-            ) { [weak self] in
+                isToggled: reaction.isSelfUserReacting,
+                message: object.message
+            ) { [weak self] tappedMessage in
                 guard
-                    let self,
-                    let message
+                    let self
                 else {
                     return
                 }
 
                 delegate?.perform(
                     action: .react(reaction.emoji),
-                    for: message,
+                    for: tappedMessage,
                     view: self
                 )
             }
@@ -118,7 +123,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
         verticalFittingPriority: UILayoutPriority
     ) -> CGSize {
         let insetsWidth = conversationHorizontalMargins.left + conversationHorizontalMargins
-            .right + (isChatBubbleSimpleEnabled ? 48 : 0)
+            .right + 48
         reactionsView.widthForCalculations = targetSize.width - insetsWidth
         reactionsView.setNeedsLayout()
         reactionsView.layoutIfNeeded()

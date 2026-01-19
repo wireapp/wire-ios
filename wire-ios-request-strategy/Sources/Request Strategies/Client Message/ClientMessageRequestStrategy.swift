@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -119,7 +119,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             // which may no longer make sense after such as delay, we will
             // expire it so the user can retry.
             WireLogger.messaging.info(
-                "expiring statle client message",
+                "expiring stale client message",
                 attributes: [.nonce: object.nonce?.safeForLoggingDescription ?? "<nil>"],
                 .safePublic
             )

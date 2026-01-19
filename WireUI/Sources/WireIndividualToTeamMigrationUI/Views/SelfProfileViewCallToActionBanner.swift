@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,89 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireDesign
-import WireFoundation
+public import SwiftUI
+
 import WireLocators
 import WireReusableUIComponents
 
 public struct SelfProfileViewCallToActionBanner: View {
 
-    public enum Action: Sendable {
-        case createWireTeam
-    }
+    let buttonAction: () -> Void
 
-    let actionCallback: @Sendable (Action) -> Void
-
-    @Environment(\.wireAccentColor) private var wireAccentColor
-
-    public init(actionCallback: @escaping @Sendable (Action) -> Void) {
-        self.actionCallback = actionCallback
+    public init(buttonAction: @escaping () -> Void) {
+        self.buttonAction = buttonAction
     }
 
     public var body: some View {
-        contentView(actionCallback: actionCallback)
-            .padding(8)
-            .bannerBackground(wireAccentColor)
-    }
-}
-
-@MainActor
-@ViewBuilder
-private func contentView(
-    actionCallback: @escaping @Sendable (SelfProfileViewCallToActionBanner.Action) -> Void
-) -> some View {
-    VStack(alignment: .leading, spacing: 12) {
-        Label(title: {
-            Text(String.localized(key: "individualToTeam.banner.title", bundle: .module))
-                .font(for: .h5)
-        }, icon: {
-            Image.infoCircle
-        })
-        Text(String.localized(key: "individualToTeam.banner.body", bundle: .module))
-            .font(for: .body1)
-            .lineLimit(nil)
-
-        Button(
-            action: { actionCallback(.createWireTeam) },
-            label: {
-                Text(String.localized(key: "individualToTeam.banner.button", bundle: .module))
-            }
+        InfoBannerView(
+            title: .init(localized: "individualToTeam.banner.title", bundle: .module),
+            message: .init(localized: "individualToTeam.banner.body", bundle: .module),
+            button: .init(
+                title: .init(localized: "individualToTeam.banner.button", bundle: .module),
+                accessibilityIdentifier: Locators.UserProfilePage.createWireTeamButton.rawValue,
+                action: buttonAction
+            )
         )
-        .wireButtonStyle(.tertiary)
-        .accessibilityIdentifier(Locators.UserProfilePage.createWireTeamButton.rawValue)
     }
+
 }
 
-private extension View {
-    func bannerBackground(_ wireAccentColor: WireAccentColor) -> some View {
-        background {
-            if #available(iOS 17.0, *) {
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(ColorTheme.Banners.border(wireAccentColor).color, lineWidth: 1)
-                    .fill(ColorTheme.Banners.background(wireAccentColor).color)
-            } else {
-                ColorTheme.Banners.background(wireAccentColor).color
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .border(ColorTheme.Banners.border(wireAccentColor).color, width: 1)
-            }
-        }
-    }
-}
-
-public class SelfProfileViewCallToActionBannerHostingController: UIHostingController<SelfProfileViewCallToActionBanner> {
-    public init(actionCallback: @escaping @Sendable (SelfProfileViewCallToActionBanner.Action) -> Void) {
-        super.init(rootView: SelfProfileViewCallToActionBanner(actionCallback: actionCallback))
-        view.backgroundColor = .clear
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-@available(iOS 17.0, *)
 #Preview {
-    SelfProfileViewCallToActionBanner(actionCallback: { _ in })
+    SelfProfileViewCallToActionBanner {}
 }
