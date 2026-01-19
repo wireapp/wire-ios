@@ -196,7 +196,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         for result in object.detectedLinks {
             let linkRange = result.range
             guard linkRange.location + linkRange.length <= mutableAttributedText.length else { continue }
-            
+
             // IMPORTANT: Check for overlap with mentions.
             // If a detected link overlaps with a mention, the mention's styling should take precedence.
             let isOverlappingMention = object.mentions.contains { mention in
