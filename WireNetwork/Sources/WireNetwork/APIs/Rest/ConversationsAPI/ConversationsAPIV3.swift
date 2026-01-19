@@ -139,7 +139,8 @@ class ConversationsAPIV3: ConversationsAPIV2 {
             .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
             .parse(code: response.statusCode, data: data)
 
-        /// We need a type for parsing the payload, however, we are not interested in anything for now, so no properties.
+        /// We need a type for parsing the payload, however, we are not interested in anything for now, so no
+        /// properties.
         struct IgnoredPayload: Decodable, ToAPIModelConvertible {
             func toAPIModel() {}
         }
