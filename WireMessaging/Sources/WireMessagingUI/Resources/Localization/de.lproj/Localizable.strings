@@ -82,8 +82,8 @@
 
 "conversation.creationForm.readReceipts.toggle" = "Lesebestätigungen";
 "conversation.creationForm.readReceipts.description" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
-"conversation.creationForm.wireCells.toggle" = "Shared Drive";
-"conversation.creationForm.wireCells.description" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
+"conversation.creationForm.wireCells.toggle" = "Geteiltes Drive";
+"conversation.creationForm.wireCells.description" = "Ermöglichen Sie den Teilnehmern, ihre Dokumente und Mediendateien in einem geteilten Drive zu verwalten. Dieser Vorgang kann nicht rückgängig gemacht werden.";
 "conversation.creationForm.wireCells.learnMore" = "Mehr erfahren";
 
 
@@ -111,7 +111,7 @@
 "conversation.draft.attachmentMenu.remove" = "Datei löschen";
 
 // MARK: - Conversation Files View
-"conversation.wireCells.files.navigationTitle" = "Shared Drive";
+"conversation.wireCells.files.navigationTitle" = "Geteiltes Drive";
 "conversation.wireCells.allFiles.navigationTitle" = "Drive";
 "conversation.wireCells.files.item.subtitle" = "%@ von %@";
 "conversation.wireCells.files.loadMore.title" = "Weitere Objekte laden";
@@ -132,9 +132,9 @@
 "conversation.wireCells.files.item.deleteConfirmation.button" = "Löschen";
 "conversation.wireCells.files.noData.title" = "Es gibt noch keine Dateien oder Ordner";
 "conversation.wireCells.files.noData.message" = "Hier finden Sie alle Dateien und Ordner, die in dieser Unterhaltung geteilt wurden.";
-"conversation.wireCells.files.noData.learnMore" = "Learn more about Shared Drive";
-"conversation.wireCells.allFiles.noData.title" = "There are no files yet";
-"conversation.wireCells.allFiles.noData.message" = "For conversations that use shared Drive, you'll find all files here.";
+"conversation.wireCells.files.noData.learnMore" = "Erfahren Sie mehr über Geteiltes Drive";
+"conversation.wireCells.allFiles.noData.title" = "Es gibt noch keine Dateien";
+"conversation.wireCells.allFiles.noData.message" = "Bei Unterhaltungen mit Geteiltes Drive finden Sie hier die geteilten Dateien.";
 "conversation.wireCells.allFiles.noData.learnMore" = "Mehr erfahren";
 "conversation.wireCells.files.pendingCells.title" = "Dateien werden geladen";
 "conversation.wireCells.files.pendingCells.message" = "Ihre Dokumente und Mediendateien werden hier verfügbar sein, sobald wir alle Dateien und Ordner hochgeladen haben.";
@@ -156,14 +156,14 @@
 "conversation.wireCells.files.renameFile.filenameTooLongError" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
 "conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
 "conversation.wireCells.files.renameFile.wrongCharacterError" = "Verwenden Sie einen Namen ohne \"/\"";
-"conversation.wireCells.files.renameFile.dotPrefix" = "Don't start the name with \".\"";
+"conversation.wireCells.files.renameFile.dotPrefix" = "Beginnen Sie den Namen nicht mit \".\"";
 "conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "Eine Datei mit diesem Namen existiert bereits";
 "conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "Ein Ordner mit dem Namen existiert bereits";
 "conversation.wireCells.files.renameFile.placeholder" = "Dateinamen eingeben";
 "conversation.wireCells.files.renameFolder.placeholder" = "Ordnernamen eingeben";
 "conversation.wireCells.files.openRecycleBin" = "Papierkorb öffnen";
 "conversation.wireCells.recycleBin.navigationTitle" = "Papierkorb";
-"conversation.wireCells.recycleBin.noData.learnMore" = "Learn more about Recycle Bin";
+"conversation.wireCells.recycleBin.noData.learnMore" = "Erfahren Sie mehr über den Papierkorb";
 "conversation.wireCells.recycleBin.noData.message" = "Hier finden Sie alle gelöschten Dateien und Ordner.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Endgültig löschen";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Endgültig löschen";
