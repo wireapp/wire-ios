@@ -93,8 +93,10 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .wireMeetings:
             "Turn on to enable Wire meetings"
+
         case .wireCellsFolders:
             "Turn on to enable Wire Cells folders"
+
         case .lowKeyPackageCount:
             "Turn on to set the minimum number of packages to 1"
         }
