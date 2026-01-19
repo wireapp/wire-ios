@@ -861,7 +861,7 @@ public final class ZMUserSession: NSObject {
         recurringActionService.registerAction(updateProteusToMLSMigrationStatusAction)
         recurringActionService.registerAction(refreshTeamMetadataAction)
         recurringActionService.registerAction(refreshFederationCertificatesAction)
-
+        recurringActionService.registerAction(uploadKeyPackagesAction)
         if DeveloperFlag.multibackend.isOn {
             recurringActionService.registerAction(checkBuildBlacklistAction)
         }
