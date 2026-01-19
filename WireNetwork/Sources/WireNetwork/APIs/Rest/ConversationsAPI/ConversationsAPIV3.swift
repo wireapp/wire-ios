@@ -113,7 +113,7 @@ class ConversationsAPIV3: ConversationsAPIV2 {
             accessModes.insert(.code)
         }
 
-        let parameters = UpdateConversationAccessParametersV0(
+        let parameters = UpdateConversationAccessParametersV3(
             accessModes: accessModes.map { $0.toNetworkModel() }.sorted { $0.rawValue < $1.rawValue },
             accessRoles: accessRoles.map { $0.toNetworkModel() }.sorted { $0.rawValue < $1.rawValue }
         )
@@ -131,7 +131,7 @@ class ConversationsAPIV3: ConversationsAPIV2 {
         )
 
         try ResponseParser()
-            .success(code: .ok, type: DummyPayload.self)
+            .success(code: .ok, type: IgnoredPayload.self)
             .success(code: .noContent)
             .failure(code: .forbidden, label: "invalid-op", error: ConversationsAPIError.invalidOperation)
             .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
@@ -139,7 +139,8 @@ class ConversationsAPIV3: ConversationsAPIV2 {
             .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
             .parse(code: response.statusCode, data: data)
 
-        struct DummyPayload: Decodable, ToAPIModelConvertible {
+        /// We need a type for parsing the payload, however, we are not interested in anything for now, so no properties.
+        struct IgnoredPayload: Decodable, ToAPIModelConvertible {
             func toAPIModel() {}
         }
 
@@ -280,7 +281,7 @@ struct ConversationV3: Decodable, ToAPIModelConvertible {
     }
 }
 
-private struct UpdateConversationAccessParametersV0: Encodable {
+private struct UpdateConversationAccessParametersV3: Encodable {
     let accessModes: [ConversationAccessModeV0]
     let accessRoles: [ConversationAccessRoleV0]
 

@@ -228,7 +228,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         )
 
         try ResponseParser()
-            .success(code: .ok, type: DummyPayload.self)
+            .success(code: .ok, type: IgnoredPayload.self)
             .success(code: .noContent)
             .failure(code: .forbidden, label: "invalid-op", error: ConversationsAPIError.invalidOperation)
             .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
@@ -236,7 +236,8 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
             .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
             .parse(code: response.statusCode, data: data)
 
-        struct DummyPayload: Decodable, ToAPIModelConvertible {
+        /// We need a type for parsing the payload, however, we are not interested in anything for now, so no properties.
+        struct IgnoredPayload: Decodable, ToAPIModelConvertible {
             func toAPIModel() {}
         }
 
