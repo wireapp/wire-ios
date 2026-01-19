@@ -1278,17 +1278,17 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - storeMLSConversationEstablished
 
-    public var storeMLSConversationEstablishedMlsGroupIDConversation_Invocations: [(mlsGroupID: MLSGroupID, conversation: ZMConversation)] = []
-    public var storeMLSConversationEstablishedMlsGroupIDConversation_MockMethod: ((MLSGroupID, ZMConversation) async -> Void)?
+    public var storeMLSConversationEstablishedMlsGroupIDEpochConversation_Invocations: [(mlsGroupID: MLSGroupID, epoch: UInt64, conversation: ZMConversation)] = []
+    public var storeMLSConversationEstablishedMlsGroupIDEpochConversation_MockMethod: ((MLSGroupID, UInt64, ZMConversation) async -> Void)?
 
-    public func storeMLSConversationEstablished(mlsGroupID: MLSGroupID, conversation: ZMConversation) async {
-        storeMLSConversationEstablishedMlsGroupIDConversation_Invocations.append((mlsGroupID: mlsGroupID, conversation: conversation))
+    public func storeMLSConversationEstablished(mlsGroupID: MLSGroupID, epoch: UInt64, conversation: ZMConversation) async {
+        storeMLSConversationEstablishedMlsGroupIDEpochConversation_Invocations.append((mlsGroupID: mlsGroupID, epoch: epoch, conversation: conversation))
 
-        guard let mock = storeMLSConversationEstablishedMlsGroupIDConversation_MockMethod else {
-            fatalError("no mock for `storeMLSConversationEstablishedMlsGroupIDConversation`")
+        guard let mock = storeMLSConversationEstablishedMlsGroupIDEpochConversation_MockMethod else {
+            fatalError("no mock for `storeMLSConversationEstablishedMlsGroupIDEpochConversation`")
         }
 
-        await mock(mlsGroupID, conversation)
+        await mock(mlsGroupID, epoch, conversation)
     }
 
     // MARK: - storeMLSConversationPendingJoinAfterReset
