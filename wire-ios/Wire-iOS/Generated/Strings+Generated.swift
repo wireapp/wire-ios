@@ -1654,13 +1654,13 @@ internal enum L10n {
           internal static let title = L10n.tr("Localizable", "collections.section.links.title", fallback: "Links")
         }
         internal enum SearchFiles {
-          /// Search files
-          internal static let description = L10n.tr("Localizable", "collections.section.searchFiles.description", fallback: "Search files")
+          /// Search Files
+          internal static let description = L10n.tr("Localizable", "collections.section.searchFiles.description", fallback: "Search Files")
           internal enum Alert {
-            /// Find files in conversations with Shared Drive.
-            internal static let message = L10n.tr("Localizable", "collections.section.searchFiles.alert.message", fallback: "Find files in conversations with Shared Drive.")
-            /// Wire Drive
-            internal static let title = L10n.tr("Localizable", "collections.section.searchFiles.alert.title", fallback: "Wire Drive")
+            /// Find any file or folder in this conversation.
+            internal static let message = L10n.tr("Localizable", "collections.section.searchFiles.alert.message", fallback: "Find any file or folder in this conversation.")
+            /// Shared Drive
+            internal static let title = L10n.tr("Localizable", "collections.section.searchFiles.alert.title", fallback: "Shared Drive")
           }
         }
         internal enum Videos {
