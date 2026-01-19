@@ -27,9 +27,10 @@ struct AppVersionMigration_4_12_2: AppVersionMigration {
 
     let version: SemanticVersion = "4.12.2"
     let coreDataStack: CoreDataStackProtocol
-    let coreCrypto: SafeCoreCryptoProtocol
+    let coreCryptoProvider: CoreCryptoProviderProtocol
 
     func perform() async throws {
+        let coreCrypto = try await coreCryptoProvider.coreCrypto()
         let context = coreDataStack.syncContext
 
         let mlsGroupIDs = await context.perform {

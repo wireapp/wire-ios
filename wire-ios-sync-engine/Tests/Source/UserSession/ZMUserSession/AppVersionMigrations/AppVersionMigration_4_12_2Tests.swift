@@ -29,7 +29,8 @@ struct AppVersionMigration_4_12_2Tests {
     let coreDataHelper = CoreDataStackHelper()
     let modelHelper = ModelHelper()
     let mockSafeCoreCrypto = MockSafeCoreCrypto()
-
+    let mockProvider = MockCoreCryptoProviderProtocol()
+    
     let stack: CoreDataStack
     let sut: AppVersionMigration_4_12_2
 
@@ -37,9 +38,9 @@ struct AppVersionMigration_4_12_2Tests {
         self.stack = try await coreDataHelper.createStack()
         self.sut = AppVersionMigration_4_12_2(
             coreDataStack: stack,
-            coreCrypto: mockSafeCoreCrypto
+            coreCryptoProvider: mockProvider
         )
-
+        mockProvider.coreCrypto_MockValue = mockSafeCoreCrypto
     }
 
     @Test("Set correct epoch for all mls conversations")
