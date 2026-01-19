@@ -28,7 +28,9 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 struct FilesItemView: View {
 
     @StateObject private var viewModel: FilesItemViewModel
-    @ScaledMetric private var imageHeight: CGFloat = 28
+
+    @ScaledMetric private var iconSpaceWidth: CGFloat = 56
+    @ScaledMetric private var iconSpaceHeight: CGFloat = 28
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -39,11 +41,7 @@ struct FilesItemView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
-                Image(viewModel.icon.resource)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 56, height: imageHeight)
-                    .padding(.horizontal, 4)
+                icon()
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(viewModel.fileName)
@@ -150,6 +148,45 @@ struct FilesItemView: View {
             Divider()
         }
         .contentShape(Rectangle()) // Tap area
+    }
+
+    @ScaledMetric private var publicLinkBadgeSize: CGFloat = 10
+    @ScaledMetric private var publicLinkBadgeOffset: CGFloat = 4
+    @ScaledMetric private var publicLinkBadgeInnerPadding: CGFloat = 2
+    @ScaledMetric private var publicLinkBadgeBorderThickness: CGFloat = 2
+
+    @ViewBuilder
+    private func icon() -> some View {
+        Image(viewModel.icon.resource)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .overlay(alignment: .bottomTrailing) {
+                if viewModel.item.publicLinkID != nil {
+                    publicLinkBadge()
+                }
+            }
+            .frame(width: iconSpaceWidth, height: iconSpaceHeight)
+            .padding(.horizontal, 4)
+    }
+    
+    @ViewBuilder
+    private func publicLinkBadge() -> some View {
+        Image(systemName: "link")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .fontWeight(.semibold)
+            .frame(width: publicLinkBadgeSize, height: publicLinkBadgeSize)
+            .padding(publicLinkBadgeInnerPadding)
+            .background {
+                Circle()
+                    .foregroundStyle(ColorTheme.Backgrounds.backgroundVariant.color)
+            }
+            .background {
+                Circle()
+                    .stroke(lineWidth: publicLinkBadgeBorderThickness)
+                    .foregroundStyle(ColorTheme.Strokes.outline.color)
+            }
+            .offset(x: publicLinkBadgeOffset, y: publicLinkBadgeOffset)
     }
 
     @ViewBuilder
@@ -321,6 +358,8 @@ private extension View {
 #Preview {
     VStack(spacing: 0) {
         FilesItemView(viewModel: .preview())
+        FilesItemView(viewModel: .preview(publicLinkID: "mocked-public-link-id-1"))
+        FilesItemView(viewModel: .preview(icon: .audio, publicLinkID: "mocked-public-link-id-2"))
         FilesItemView(viewModel: .preview(tags: ["urgent"]))
         FilesItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]))
     }
