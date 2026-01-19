@@ -30,7 +30,7 @@ struct AppVersionMigration_4_12_2Tests {
     let modelHelper = ModelHelper()
     let mockSafeCoreCrypto = MockSafeCoreCrypto()
     let mockProvider = MockCoreCryptoProviderProtocol()
-    
+
     let stack: CoreDataStack
     let sut: AppVersionMigration_4_12_2
 
