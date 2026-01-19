@@ -433,6 +433,9 @@ public final class ZMUserSession: NSObject {
     private(set) var userSessionComponent: UserSessionComponent!
     public private(set) var clientSessionComponent: ClientSessionComponent?
 
+    private let networkReachability = NetworkReachability()
+    private var isNetworkReachableCancellable: AnyCancellable?
+
     // MARK: - Initialize
 
     init(
@@ -500,6 +503,8 @@ public final class ZMUserSession: NSObject {
         self.logFilesProvider = logFilesProvider
 
         super.init()
+
+        observeNetworkInterfaceSwitch()
 
         self.userSessionComponent = UserSessionComponent(
             currentBuildNumber: currentBuildNumber,
@@ -910,6 +915,17 @@ public final class ZMUserSession: NSObject {
             observer: self,
             contextProvider: contextProvider
         )
+    }
+
+    private func observeNetworkInterfaceSwitch() {
+        isNetworkReachableCancellable = networkReachability.interfaceSwitchWhileOnlinePublisher
+            .sink { [weak self] _, _ in
+                guard let self else { return }
+
+                managedObjectContext.perform {
+                    self.callCenter?.avsWrapper.networkInterfaceChanged()
+                }
+            }
     }
 
     func trackAnalyticsEvent(_ event: AnalyticsEvent) {
