@@ -112,18 +112,6 @@ extension ZMUserSession {
             }
         }
     }
-    
-    var uploadKeyPackagesAction: RecurringAction {
-        .init(id: #function, interval: .oneDay) { [weak self] in
-            do {
-                guard let self else { return }
-
-                await mlsService.uploadKeyPackagesIfNeeded()
-            } catch {
-                WireLogger.e2ei.error("Failed to refresh federation certificates: \(error)")
-            }
-        }
-    }
 
     var checkBuildBlacklistAction: RecurringAction {
         .init(id: #function, interval: .oneHour * 6) { [weak self] in
