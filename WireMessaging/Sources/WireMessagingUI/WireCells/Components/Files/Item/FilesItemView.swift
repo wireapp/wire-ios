@@ -150,11 +150,6 @@ struct FilesItemView: View {
         .contentShape(Rectangle()) // Tap area
     }
 
-    @ScaledMetric private var publicLinkBadgeSize: CGFloat = 10
-    @ScaledMetric private var publicLinkBadgeOffset: CGFloat = 4
-    @ScaledMetric private var publicLinkBadgeInnerPadding: CGFloat = 2
-    @ScaledMetric private var publicLinkBadgeBorderThickness: CGFloat = 2
-
     @ViewBuilder
     private func icon() -> some View {
         Image(viewModel.icon.resource)
@@ -162,31 +157,11 @@ struct FilesItemView: View {
             .aspectRatio(contentMode: .fit)
             .overlay(alignment: .bottomTrailing) {
                 if viewModel.item.publicLinkID != nil {
-                    publicLinkBadge()
+                    PublicLinkBadge(forIcon: viewModel.item.icon)
                 }
             }
             .frame(width: iconSpaceWidth, height: iconSpaceHeight)
             .padding(.horizontal, 4)
-    }
-    
-    @ViewBuilder
-    private func publicLinkBadge() -> some View {
-        Image(systemName: "link")
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .fontWeight(.semibold)
-            .frame(width: publicLinkBadgeSize, height: publicLinkBadgeSize)
-            .padding(publicLinkBadgeInnerPadding)
-            .background {
-                Circle()
-                    .foregroundStyle(ColorTheme.Backgrounds.backgroundVariant.color)
-            }
-            .background {
-                Circle()
-                    .stroke(lineWidth: publicLinkBadgeBorderThickness)
-                    .foregroundStyle(ColorTheme.Strokes.outline.color)
-            }
-            .offset(x: publicLinkBadgeOffset, y: publicLinkBadgeOffset)
     }
 
     @ViewBuilder
@@ -312,6 +287,46 @@ struct FilesItemView: View {
     }
 }
 
+extension FilesItemView {
+    struct PublicLinkBadge: View {
+        @ScaledMetric private var size: CGFloat = 10
+        @ScaledMetric private var innerPadding: CGFloat = 2
+        @ScaledMetric private var borderThickness: CGFloat = 1
+        @ScaledMetric private var offsetX: CGFloat
+        @ScaledMetric private var offsetY: CGFloat
+        
+        init(forIcon icon: FileIcon) {
+            switch icon {
+            case .folder:
+                _offsetX = .init(wrappedValue: 5)
+                _offsetY = .init(wrappedValue: 1)
+            default:
+                _offsetX = .init(wrappedValue: 5)
+                _offsetY = .init(wrappedValue: 4)
+            }
+        }
+        
+        var body: some View {
+            Image(systemName: "link")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .fontWeight(.semibold)
+                .frame(width: size, height: size)
+                .padding(innerPadding)
+                .background {
+                    Circle()
+                        .stroke(lineWidth: borderThickness)
+                        .foregroundStyle(ColorTheme.Strokes.outline.color)
+                }
+                .background {
+                    Circle()
+                        .foregroundStyle(ColorTheme.Backgrounds.backgroundVariant.color)
+                }
+                .offset(x: offsetX, y: offsetY)
+        }
+    }
+}
+
 private extension View {
     @ViewBuilder
     func deletionConfirmationDialog(
@@ -358,8 +373,9 @@ private extension View {
 #Preview {
     VStack(spacing: 0) {
         FilesItemView(viewModel: .preview())
-        FilesItemView(viewModel: .preview(publicLinkID: "mocked-public-link-id-1"))
-        FilesItemView(viewModel: .preview(icon: .audio, publicLinkID: "mocked-public-link-id-2"))
+        FilesItemView(viewModel: .preview(publicLinkID: "link"))
+        FilesItemView(viewModel: .preview(icon: .audio, publicLinkID: "link"))
+        FilesItemView(viewModel: .preview(kind: .folder, icon: .folder, publicLinkID: "link"))
         FilesItemView(viewModel: .preview(tags: ["urgent"]))
         FilesItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]))
     }
