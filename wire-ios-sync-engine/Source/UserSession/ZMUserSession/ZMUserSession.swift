@@ -1731,7 +1731,8 @@ extension ZMUserSession {
             AppVersionMigration_4_12_0(
                 journal: journal,
                 repairGenerator: clientSessionComponent?.repairFaultyMLSRemovalKeysGenerator
-            )
+            ),
+            AppVersionMigration_4_12_2(coreDataStack: coreDataStack, coreCryptoProvider: coreCryptoProvider)
         ]
 
         if let clientSessionComponent {
