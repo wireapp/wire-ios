@@ -182,6 +182,17 @@ public final class MLSService: MLSServiceInterface {
         resetBrokenMLSConversationDelegate = delegate
     }
 
+    public func epoch(for groupID: MLSGroupID) async throws -> UInt64 {
+        try await coreCrypto.perform {
+            let exists = try? await $0.conversationExists(conversationId: groupID.conversationId)
+            if exists == true {
+                return try await $0.conversationEpoch(conversationId: groupID.conversationId)
+            } else {
+                return 0
+            }
+        }
+    }
+
     // MARK: - Conference info for subconversations
 
     public func generateConferenceInfo(
