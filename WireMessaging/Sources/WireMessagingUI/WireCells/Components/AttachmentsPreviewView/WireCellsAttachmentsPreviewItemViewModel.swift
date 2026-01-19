@@ -164,13 +164,13 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         pollingTask?.cancel()
         pollingTask = Task { [weak self] in
             guard let self else { return }
-            
+
             // Initial previews may not be immediately available after upload.
             // While the preview is still being processed, poll the server more frequently,
             // using an exponential backoff capped at 32 seconds.
             var initialPreviewSleep = 1
             let maxInitialPreviewSleep = 32
-            
+
             let normalSleep = 30
 
             while !Task.isCancelled {
