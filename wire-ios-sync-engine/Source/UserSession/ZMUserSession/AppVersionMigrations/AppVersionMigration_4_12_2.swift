@@ -34,20 +34,21 @@ struct AppVersionMigration_4_12_2: AppVersionMigration {
 
         let mlsGroupIDs = await context.perform {
             let conversations = ZMConversation.fetchMLSConversations(in: context)
-            return conversations.compactMap { $0.mlsGroupID }
+            return conversations.compactMap(\.mlsGroupID)
         }
 
         var fixedConversationsCount = 0
-        
+
         for mlsGroupID in mlsGroupIDs {
-            
+
             try await coreCrypto.perform { ccContext in
-                let epoch: UInt64 = if try await ccContext.conversationExists(conversationId: mlsGroupID.conversationId) {
+                let epoch: UInt64 = if try await ccContext
+                    .conversationExists(conversationId: mlsGroupID.conversationId) {
                     UInt64(try await ccContext.conversationEpoch(conversationId: mlsGroupID.conversationId))
                 } else {
                     0
                 }
-                
+
                 await context.perform {
                     let conversation = ZMConversation.fetch(with: mlsGroupID, in: context)
                     if conversation?.epoch != epoch {
@@ -58,8 +59,11 @@ struct AppVersionMigration_4_12_2: AppVersionMigration {
             }
         }
 
-        WireLogger.mls.info("Fixing \(fixedConversationsCount) conversations' epoch out of \(mlsGroupIDs.count) conversations", attributes: .safePublic)
-        
+        WireLogger.mls.info(
+            "Fixing \(fixedConversationsCount) conversations' epoch out of \(mlsGroupIDs.count) conversations",
+            attributes: .safePublic
+        )
+
         try await context.perform {
             try context.save()
             WireLogger.mls.info("Saved all conversations' epoch changes", attributes: .safePublic)

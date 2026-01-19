@@ -98,7 +98,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         conversation: ZMConversation
     ) async -> (mlsGroupID: MLSGroupID, isMLSReady: Bool)? {
 
-        return try? await context.unpack(conversation) { conversation in
+        try? await context.unpack(conversation) { conversation in
             guard let mlsGroupID = conversation.mlsGroupID else {
                 return nil
             }
@@ -111,7 +111,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         mlsGroupID: MLSGroupID,
         epoch: UInt64,
         conversation: ZMConversation
-        
+
     ) async {
         await context.perform {
             conversation.mlsStatus = .ready

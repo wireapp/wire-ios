@@ -18,10 +18,10 @@
 
 import Foundation
 import Testing
-@testable import WireDataModelSupport
 import WireDomainSupport
 import WireNetwork
 import WireNetworkSupport
+@testable import WireDataModelSupport
 @testable import WireSyncEngine
 
 struct AppVersionMigration_4_12_2Tests {
@@ -29,7 +29,7 @@ struct AppVersionMigration_4_12_2Tests {
     let coreDataHelper = CoreDataStackHelper()
     let modelHelper = ModelHelper()
     let mockSafeCoreCrypto = MockSafeCoreCrypto()
-    
+
     let stack: CoreDataStack
     let sut: AppVersionMigration_4_12_2
 
@@ -47,28 +47,28 @@ struct AppVersionMigration_4_12_2Tests {
         enum TestMigrationFailure: Error {
             case notFound
         }
-        
+
         // GIVEN
-        
+
         let context = stack.syncContext
 
         let idA = MLSGroupID.random()
         let idB = MLSGroupID.random()
-        
+
         let expectedEpochA = UInt64(0)
         let expectedEpochB = UInt64(10)
-        
+
         mockSafeCoreCrypto.coreCryptoContext.conversationExistsConversationId_MockValue = true
         mockSafeCoreCrypto.coreCryptoContext.conversationEpochConversationId_MockMethod = { conversationID in
             if conversationID == idA.conversationId {
                 return expectedEpochA
             } else if conversationID == idB.conversationId {
                 return expectedEpochB
-            } else  {
+            } else {
                 throw TestMigrationFailure.notFound
             }
         }
-        
+
         var conversationA: ZMConversation?
         var conversationB: ZMConversation?
         try await context.perform { [modelHelper, context] in
@@ -78,7 +78,6 @@ struct AppVersionMigration_4_12_2Tests {
             try context.save()
         }
 
-        
         // WHEN
         try await sut.perform()
 

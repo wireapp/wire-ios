@@ -456,11 +456,11 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         // Then
 
-        try await context.unpack(conversation, { conversation in
+        try await context.unpack(conversation) { conversation in
             XCTAssertEqual(conversation.mlsStatus, .ready)
             XCTAssertEqual(conversation.mlsGroupID, mlsGroupID)
             XCTAssertEqual(conversation.epoch, newEpoch)
-        })
+        }
     }
 
     func testUpdateOrCreateMLSGroup_It_Creates_MLS_Group_Locally() async throws {
