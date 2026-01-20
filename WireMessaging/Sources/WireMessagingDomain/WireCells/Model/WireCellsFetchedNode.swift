@@ -16,11 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+/// The result of fetching a wire cells node.
+public enum WireCellsFetchedNode: Sendable, Equatable {
 
-// sourcery: AutoMockable
-public protocol WireCellsFetchNodeUseCaseProtocol: Sendable {
+    /// A `WireCellsNode` was found on the server.
+    case node(WireCellsNode)
 
-    func invoke(nodeID: UUID) async throws -> WireCellsNode?
+    /// No `WireCellsNode` was found on the server - it may have been deleted or the user might not have permission to
+    /// access to it.
+    case notFound
 
+    public var isDeleted: Bool {
+        switch self {
+        case let .node(node):
+            node.isRecycled
+        case .notFound:
+            true
+        }
+    }
 }
