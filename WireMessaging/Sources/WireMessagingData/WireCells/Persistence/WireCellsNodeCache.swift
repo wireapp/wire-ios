@@ -35,3 +35,11 @@ package final class WireCellsNodeCache: WireCellsNodeCacheProtocol {
     }
 
 }
+
+extension WireCellsNodeCache: WireCellsFetchCachedNodeUseCaseProtocol {
+
+    package func invoke(nodeID: UUID) -> WireCellsNodeCacheItem? {
+        item(for: nodeID)
+    }
+
+}
