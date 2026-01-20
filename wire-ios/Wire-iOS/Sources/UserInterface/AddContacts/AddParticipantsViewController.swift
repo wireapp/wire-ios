@@ -465,6 +465,8 @@ final class AddParticipantsViewController: UIViewController {
         case (.people, true):
             searchResultsViewController.mode = .search
             searchResultsViewController.searchForLocalUsers(withQuery: searchHeaderViewController.tokenField.filterText)
+        default:
+            fatalError("TODO") // TODO: implement correctly
         }
     }
 
