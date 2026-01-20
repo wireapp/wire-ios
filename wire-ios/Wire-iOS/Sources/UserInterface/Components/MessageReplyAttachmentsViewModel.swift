@@ -71,7 +71,7 @@ final class MessageReplyAttachmentsViewModel {
     func cachedVisibleAttachments(attachments: [MultipartMessageData.Attachment]) -> [MultipartMessageData.Attachment] {
         attachments.filter { attachment in
             if let cacheInfo = fetchCachedNodeUseCase.invoke(nodeID: attachment.nodeID) {
-                !cacheInfo.isDeleted
+                !cacheInfo.isDeletedOrRecycled
             } else {
                 true // If we have no cache info, assume it is not deleted
             }

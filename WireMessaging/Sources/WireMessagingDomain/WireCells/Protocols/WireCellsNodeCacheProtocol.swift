@@ -27,7 +27,7 @@ public struct WireCellsNodeCacheItem: Equatable, Sendable {
     public let node: WireCellsNode?
 
     /// Whether the node is deleted or in the recycle bin.
-    public var isDeleted: Bool {
+    public var isDeletedOrRecycled: Bool {
         guard let node else { return true }
         return node.isRecycled
     }
