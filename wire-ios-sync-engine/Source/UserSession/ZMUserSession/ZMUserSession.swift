@@ -81,7 +81,7 @@ public final class ZMUserSession: NSObject {
     let proteusService: ProteusServiceInterface
     private(set) var mlsService: MLSServiceInterface
     let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
-    
+
     public lazy var featureRepository = LegacyFeatureRepository(context: syncContext)
 
     let earService: EARServiceInterface
