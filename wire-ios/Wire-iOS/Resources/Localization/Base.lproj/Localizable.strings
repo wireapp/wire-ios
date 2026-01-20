@@ -1874,9 +1874,9 @@ Enter your identity provider’s credentials in the next step to update the cert
 "collections.search.field.placeholder" = "Search text messages";
 "collections.search.no_items" = "No results";
 
-"collections.section.searchFiles.description" = "Search files";
-"collections.section.searchFiles.alert.title" = "Wire Drive";
-"collections.section.searchFiles.alert.message" = "Find files in conversations with Shared Drive.";
+"collections.section.searchFiles.description" = "Search Files";
+"collections.section.searchFiles.alert.title" = "Shared Drive";
+"collections.section.searchFiles.alert.message" = "Find any file or folder in this conversation.";
 
 
 
