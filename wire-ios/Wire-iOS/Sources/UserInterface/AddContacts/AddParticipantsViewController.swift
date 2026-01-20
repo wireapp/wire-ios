@@ -188,7 +188,9 @@ final class AddParticipantsViewController: UIViewController {
     ) {
         self.userSession = userSession
 
-        self.viewModel = AddParticipantsViewModel(with: context)
+        self.viewModel = AddParticipantsViewModel(
+            context: context
+        )
 
         self.collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
@@ -376,7 +378,9 @@ final class AddParticipantsViewController: UIViewController {
                 encryptionProtocol: userSession.defaultProtocol,
                 selfUser: userSession.selfUser
             )
-            viewModel = AddParticipantsViewModel(with: .create(updated))
+            viewModel = AddParticipantsViewModel(
+                context: .create(updated)
+            )
         }
 
         // Enable button & collection view content inset

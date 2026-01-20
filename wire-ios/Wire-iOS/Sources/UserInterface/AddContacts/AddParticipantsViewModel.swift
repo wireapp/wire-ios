@@ -23,15 +23,33 @@ import WireLocators
 
 struct AddParticipantsViewModel {
     let context: AddParticipantsViewController.Context
+    let isAppsFeatureEnabled: Bool
+    let areLegacyBotsAvailable: Bool
 
-    init(with context: AddParticipantsViewController.Context) {
+    init(
+        context: AddParticipantsViewController.Context
+    ) {
         self.context = context
+        // TODO: fix
+        isAppsFeatureEnabled = false
+        areLegacyBotsAvailable = false
     }
 
-    var botCanBeAdded: Bool {
+    var botCanBeAdded: Bool { // TODO: apps vs bots?
         switch context {
-        case .create: false
-        case let .add(conversation): conversation.botCanBeAdded
+        case .create:
+            return false
+        case let .add(conversation):
+            guard conversation.botCanBeAdded else { return false }
+
+            switch conversation.messageProtocol {
+            case .mls where isAppsFeatureEnabled:
+                return true
+            case .proteus where areLegacyBotsAvailable:
+                return true
+            default:
+                return false
+            }
         }
     }
 
