@@ -30,17 +30,20 @@ class UserHelper {
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
 
+    let apiVersion: APIVersion
+
     let authenticationAPI: AuthenticationAPI
     let teamsAPI: TeamsAPI
     let selfUserAPI: SelfUserAPI
     let conversationsAPI: ConversationsAPI
     let connectionsAPI: ConnectionsAPI
+    let accountsAPI: AccountsAPI
 
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
 
-    init(apiVersion: APIVersion = .v8) {
-
+    init(apiVersion: APIVersion = APIVersion.productionVersions.max()!) {
+        self.apiVersion = apiVersion
         self.createdUsers = []
         self.networkStack = NetworkStack(
             backendEnvironment: BackendContext.backendEnvironment,
@@ -56,6 +59,7 @@ class UserHelper {
             .makeAPI(for: apiVersion)
         self.conversationsAPI = ConversationsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.connectionsAPI = ConnectionsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
+        self.accountsAPI = AccountsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
     }
 
     func basicAuth(_ backend: BackendTarget = BackendContext.current) -> String {
@@ -143,15 +147,18 @@ class UserHelper {
         )
     }
 
+    func upgradePersonalToTeam(teamName: String) async throws -> UUID {
+        let response = try await accountsAPI.upgradeToTeam(teamName: teamName)
+
+        return response.teamId
+    }
+
     func deleteCreatedUsers() async {
         for user in createdUsers {
             do {
-                if let teamID = try await BackendClient.getTeamIDFromSelfRequest(
-                    email: user.email,
-                    password: user.password
-                ) {
+                if let teamID = try await selfUserAPI.getSelfUser().teamID {
                     // If team exists, try deleting the team
-                    try await BackendClient.sendVerificationCode(email: user.email, password: user.password)
+                    try await authenticationAPI.requestVerificationCode(for: user.email)
                     let code = try await InbucketClient.getVerificationCode(email: user.email)
                     try await deleteTeam(teamID: teamID, password: user.password, code: code)
                 } else {

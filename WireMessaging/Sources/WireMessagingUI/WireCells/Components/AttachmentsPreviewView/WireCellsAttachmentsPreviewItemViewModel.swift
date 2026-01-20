@@ -44,7 +44,6 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
 
     let alignment: HorizontalAlignment
 
-    @Published var viewingURL: URL?
     @Published private var asset: WireCellsLocalAsset?
     @Published private var node: WireCellsNode?
     @Published private var isDeleted: Bool
@@ -120,7 +119,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     }
 
     var imagePreviewURL: URL? {
-        node?.previews.sorted(by: { $0.dimension < $1.dimension }).last?.url
+        preview?.url
     }
 
     var progress: Double {
@@ -143,6 +142,14 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         }
     }
 
+    private var preview: WireCellsNodePreview? {
+        node?.previews.sorted(by: { $0.dimension < $1.dimension }).last
+    }
+
+    private var isProcessing: Bool {
+        preview?.processing ?? false
+    }
+
     func refresh() async {
         do {
             for try await node in fetchNodeUseCase.invoke(nodeID: nodeID) {
@@ -156,10 +163,27 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
     func startPolling() {
         pollingTask?.cancel()
         pollingTask = Task { [weak self] in
-            while !Task.isCancelled {
-                await self?.refresh()
+            guard let self else { return }
 
-                try? await Task.sleep(for: .seconds(30))
+            // Initial previews may not be immediately available after upload.
+            // While the preview is still being processed, poll the server more frequently,
+            // using an exponential backoff capped at 32 seconds.
+            var initialPreviewSleep = 1
+            let maxInitialPreviewSleep = 32
+
+            let normalSleep = 30
+
+            while !Task.isCancelled {
+                await refresh()
+
+                let needsInitialPreviewPolling = imagePreviewURL == nil && isProcessing
+                let sleepSeconds = needsInitialPreviewPolling ? initialPreviewSleep : normalSleep
+
+                try? await Task.sleep(for: .seconds(sleepSeconds))
+
+                if needsInitialPreviewPolling {
+                    initialPreviewSleep = min(initialPreviewSleep * 2, maxInitialPreviewSleep)
+                }
             }
         }
     }
@@ -177,7 +201,7 @@ final class WireCellsAttachmentsPreviewItemViewModel: ObservableObject {
         do {
             let url = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
             if lastOpenRequest.nodeID == nodeID {
-                viewingURL = url
+                QuickLookPreviewPresenter.present(url: url)
             }
         } catch {
             WireLogger.wireCells.error("Failed to open file with node ID: \(nodeID), error: \(error)")

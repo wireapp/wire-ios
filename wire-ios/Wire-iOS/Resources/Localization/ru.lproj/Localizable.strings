@@ -334,6 +334,11 @@
 "conversation.connection_view.encryption_info" = "Общение в Wire всегда защищено сквозным шифрованием. Отправляемые и получаемые сообщения доступны только вам и вашему собеседнику.";
 "conversation.connection_view.wire_cells.encryption_info" = "Сообщения и звонки всегда зашифрованы сквозным шифрованием, при этом файлы и папки защищены в состоянии передачи и зашифрованы в состоянии покоя.";
 "conversation.connection_view.sensitive_information_warning" = "Пожалуйста, будьте осторожны со всеми с кем делитесь конфиденциальной информацией.";
+"conversation.connection_view.welcome.title.wire" = "Коммуникации в Wire всегда зашифрованы сквозным шифрованием.";
+"conversation.connection_view.welcome.message.wire" = "Все, что вы отправляете и получаете на этом канале, доступно только вам и другим участникам группы.\n\nПожалуйста, по-прежнему будьте осторожны с тем, кому вы передаете конфиденциальную информацию.";
+"conversation.connection_view.welcome.title.wire_cells" = "Коммуникации в Wire всегда защищены.";
+"conversation.connection_view.welcome.message.wire_cells" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.learn_more" = "Подробнее";
 
 "conversation.input_bar.shortcut.send" = "Отправить сообщение";
 "conversation.input_bar.shortcut.newline" = "Вставить разрыв строки";
@@ -371,8 +376,9 @@
 "conversation.create.protocol_selection.mls_default" = "MLS (по умолчанию)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (по умолчанию)";
-"conversation.create.file_management.title" = "Совместная работа с файлами";
-"conversation.create.file_management.subtitle" = "Предоставьте пользователям возможность управлять своими документами и медиафайлами. Используйте папки, теги и фильтры для более эффективной работы. Это невозможно отменить.";
+"conversation.create.file_management.title" = "Shared Drive";
+"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
+"conversation.create.file_management.learnMore" = "Подробнее";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Исходящий звонок";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Вы не можете записать аудиосообщение во время звонка.";
@@ -400,7 +406,7 @@
 
 "conversation.action.search" = "Поиск";
 "conversation.action.conversationDetails" = "Информация о беседе";
-"conversation.action.files" = "Файлы";
+"conversation.action.files" = "Shared Drive";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Изображение";
@@ -607,7 +613,7 @@
 "content.system.message_timer_off" = "%@ отключил(-а) таймер сообщения";
 "content.system.message_timer_off-you" = "%@ отключил таймер сообщения";
 
-"content.system.message_timer_unavailable" = "Самоудаляющиеся сообщения отключены для бесед с Cells";
+"content.system.message_timer_unavailable" = "Self-deleting messages are off";
 
 "content.system.backends_stop_federating.self_backend" = "**Ваш бэкэнд** прекратил взаимодействие с **%@**. [Подробнее](%@)";
 "content.system.backends_stop_federating.other_backends" = "Бэкэнды **%@** и **%@** прекратили взаимодействие. [Подробнее](%@)";
@@ -621,7 +627,7 @@
 "content.system.channel.guest.joined" = "%@ присоединился к каналу";
 "content.system.channel.guest.you_joined" = "Вы присоединились к каналу";
 
-"content.system.file_collaboration.enabled" = "Совместная работа (Cells) включена";
+"content.system.file_collaboration.enabled" = "Shared Drive is on";
 
 // read receipt
 
@@ -1090,10 +1096,10 @@
 "group_details.receipt_options_cell.description" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
 "group_details.access_options_cell.title" = "";
 "group_details.channel_history_options_cell.title" = "История беседы";
-"group_details.file_collaboration_cell.title" = "Совместная работа с файлами (Cells)";
+"group_details.file_collaboration_cell.title" = "Shared Drive";
 "group_details.file_collaboration_cell.subtitle" = "Вкл.";
 "group_details.file_collaboration_cell.footer" = "Постоянно для этой беседы";
-"group_details.timeout_options_disabled.footer" = "Функция недоступна для бесед с Cells.";
+"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with a shared Drive.";
 
 "group_details.message_protocol.section_tile" = "Информация о протоколе";
 "group_details.message_protocol.title" = "Протокол";
@@ -1868,8 +1874,8 @@
 "collections.search.no_items" = "Нет результатов";
 
 "collections.section.searchFiles.description" = "Поиск файлов";
-"collections.section.searchFiles.alert.title" = "Совместная работа с файлами (бета-версия Cells)";
-"collections.section.searchFiles.alert.message" = "Найти файлы, которыми поделились в корпоративных беседах";
+"collections.section.searchFiles.alert.title" = "Wire Drive";
+"collections.section.searchFiles.alert.message" = "Find files in conversations with Shared Drive.";
 
 
 

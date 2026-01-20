@@ -214,10 +214,12 @@ jobs:
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
 
-      - name: Get Commit SHA
+      - name: Get Commit Info
         if: always()
         id: get_commit_sha
-        run: echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_ENV
+        run: |
+            echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_ENV
+            echo "commit_message=$(git log -1 --pretty=format:"%s")" >> $GITHUB_ENV
 
       - name: Notify on Wire for iOS Nightly 🤖
         uses: 8398a7/action-slack@v3
@@ -226,8 +228,9 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            **Tests for ${{ inputs.branch || github.head_ref }}**
+            **Tests for ${{ env.SANITIZED_BRANCH }}**
 
+            **Title:** ${{ env.commit_message }}
             **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -239,9 +242,10 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            **🚨 Tests for ${{ inputs.branch || github.head_ref }} failed 🆘**
+            **🚨 Tests for ${{ env.SANITIZED_BRANCH }} failed 🆘**
 
-            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
+            **Title:** ${{ env.commit_message }}
+            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
