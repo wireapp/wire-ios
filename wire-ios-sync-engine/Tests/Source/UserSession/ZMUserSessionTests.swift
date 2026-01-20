@@ -405,6 +405,48 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(conversations.filter { $0.firstUnreadMessage != nil }.count, 0)
     }
 
+    func test_itUploadKeyPackagesIfNeeded_AfterQuickSync() async throws {
+        // GIVEN
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        await syncMOC.perform { [self, syncMOC] in
+            let domain = "anta.com"
+            ZMUser.selfUser(in: syncMOC).domain = domain
+            let selfUserClient = createSelfClient()
+            // MLS client has been registered
+            selfUserClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "somekey")
+            selfUserClient.needsToUploadMLSPublicKeys = false
+            ZMUser.selfUser(in: self.syncMOC).domain = domain
+            sut.didRegisterSelfUserClient(selfUserClient)
+            syncMOC.saveOrRollback()
+
+            sut.setUpSyncAgent(clientID: selfUserClient.remoteIdentifier!)
+
+            // WHEN
+            sut.didFinishIncrementalSync(isRecovering: false)
+        }
+
+        // THEN
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.count, 1)
+    }
+
+    func test_didFinishQuickSync_CalculateSupportedProtocolsIfNoProtocols() {
+        syncMOC.performAndWait {
+            // GIVEN
+            ZMUser.selfUser(in: self.syncMOC).supportedProtocols = .init()
+
+            // WHEN
+            sut.didFinishIncrementalSync(isRecovering: false)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        let supportedProtocols = syncMOC.performAndWait { ZMUser.selfUser(in: self.syncMOC).supportedProtocols }
+
+        XCTAssertTrue(supportedProtocols.contains(.proteus))
+    }
+
     func test_OnSelfClientInvalidated() async throws {
         // GIVEN
         let applicationStatusDirectory = sut.applicationStatusDirectory
