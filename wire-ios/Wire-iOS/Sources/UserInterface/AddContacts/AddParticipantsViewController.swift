@@ -153,11 +153,15 @@ final class AddParticipantsViewController: UIViewController {
 
     convenience init(
         conversation: GroupDetailsConversationType,
-        userSession: UserSession
+        userSession: UserSession,
+        isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool
     ) {
         self.init(
             context: .add(conversation),
-            userSession: userSession
+            userSession: userSession,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable
         )
     }
 
@@ -184,11 +188,16 @@ final class AddParticipantsViewController: UIViewController {
 
     init(
         context: Context,
-        userSession: UserSession
+        userSession: UserSession,
+        isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool
     ) {
         self.userSession = userSession
-
-        self.viewModel = AddParticipantsViewModel(with: context)
+        self.viewModel = AddParticipantsViewModel(
+            context: context,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable
+        )
 
         self.collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
@@ -376,7 +385,11 @@ final class AddParticipantsViewController: UIViewController {
                 encryptionProtocol: userSession.defaultProtocol,
                 selfUser: userSession.selfUser
             )
-            viewModel = AddParticipantsViewModel(with: .create(updated))
+            viewModel = AddParticipantsViewModel(
+                context: .create(updated),
+                isAppsFeatureEnabled: values.isAppsFeatureEnabled,
+                areLegacyBotsAvailable: values.areLegacyBotsAvailable
+            )
         }
 
         // Enable button & collection view content inset
