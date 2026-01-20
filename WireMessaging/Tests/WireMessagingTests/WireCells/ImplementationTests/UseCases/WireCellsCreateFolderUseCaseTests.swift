@@ -23,13 +23,13 @@ import WireMessagingDomainSupport
 @testable import WireMessagingDomain
 
 @MainActor
-final class WireCellsCreateFolderUseCaseTests {
+final class WireCellsCreateUseCaseTests {
 
     private let repository = MockWireCellsNodesRepositoryProtocol()
-    private let sut: WireCellsCreateFolderUseCase
+    private let sut: WireCellsCreateUseCase
 
     init() {
-        self.sut = WireCellsCreateFolderUseCase(
+        self.sut = WireCellsCreateUseCase(
             nodesRepository: repository
         )
 

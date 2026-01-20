@@ -38,7 +38,7 @@ final class FilesBrowserViewTests: XCTestCase {
     private var renameNodeUseCase: WireCellsRenameNodeUseCase!
     private var updateTagsUseCase: (any WireCellsUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireCellsGetTagSuggestionsUseCaseProtocol)!
-    private var createFolderUseCase: (any WireCellsCreateFolderUseCaseProtocol)!
+    private var createFolderUseCase: (any WireCellsCreateUseCaseProtocol)!
     private var fetchNodeVersionsUseCase: WireCellsFetchNodeVersionsUseCase!
     private var restoreNodeVersionUseCase: WireCellsRestoreNodeVersionUseCase!
     private var getEditingURLUseCase: WireCellsGetEditingURLUseCase!
@@ -91,7 +91,7 @@ final class FilesBrowserViewTests: XCTestCase {
             fileCache: MockFileCache()
         )
 
-        createFolderUseCase = WireCellsCreateFolderUseCase(
+        createFolderUseCase = WireCellsCreateUseCase(
             nodesRepository: nodesRepository
         )
 

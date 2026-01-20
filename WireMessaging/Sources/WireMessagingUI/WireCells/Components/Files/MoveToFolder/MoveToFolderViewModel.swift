@@ -82,7 +82,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
     private let nodesRepository: any WireCellsNodesRepositoryProtocol
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let moveNodeUseCase: WireCellsMoveNodeUseCase
-    private let createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol
+    private let createFolderUseCase: any WireCellsCreateUseCaseProtocol
 
     @Published var navigationPath: [FilesNavigationItem]
 
@@ -94,7 +94,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
         nodesRepository: any WireCellsNodesRepositoryProtocol,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         moveNodeUseCase: WireCellsMoveNodeUseCase,
-        createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol
+        createFolderUseCase: any WireCellsCreateUseCaseProtocol
     ) {
         self.navigationPath = FilesNavigationItem.items(for: containerPath)
         self.rootPath = containerPath.components(separatedBy: "/").first ?? ""

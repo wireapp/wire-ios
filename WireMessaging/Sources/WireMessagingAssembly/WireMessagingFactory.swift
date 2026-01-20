@@ -181,7 +181,7 @@ public extension WireMessagingFactory {
                         ),
                         updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
                         getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
-                        createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
+                        createFolder: WireCellsCreateUseCase(nodesRepository: nodesAPI),
                         fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesAPI),
                         restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
                             repository: nodesAPI,

@@ -63,7 +63,7 @@ extension FilesViewModel {
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(
                     nodesAPI: previewTagsApi()
                 ),
-                createFolder: WireCellsCreateFolderUseCase(
+                createFolder: WireCellsCreateUseCase(
                     nodesRepository: previewNodesRepository()
                 ),
                 fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(
@@ -361,14 +361,20 @@ private final class PreviewLocalAssetRepository: WireCellsLocalAssetRepositoryPr
 
 }
 
-extension CreateFolderViewModel {
-    /// A stubbed instance of `CreateFolderViewModel` for SwiftUI previews.
-    static func preview() -> CreateFolderViewModel {
-        let createFolderUseCase = MockWireCellsCreateFolderUseCaseProtocol()
+extension CreateViewModel {
+    /// A stubbed instance of `CreateViewModel` for SwiftUI previews.
+    static func preview() -> CreateViewModel {
+        let createUseCase = MockWireCellsCreateUseCaseProtocol()
 
-        return CreateFolderViewModel(
-            createFolderUseCase: createFolderUseCase,
-            folderPath: "Test-1/Test-2"
+        return CreateViewModel(
+            creationTarget: .file(.init(
+                templateKind: .document,
+                editable: true,
+                label: "Microsoft Word",
+                UUID: "01-Microsoft Word.docx"
+            )),
+            path: "Test-1/Test-2",
+            createUseCase: createUseCase
         )
     }
 }

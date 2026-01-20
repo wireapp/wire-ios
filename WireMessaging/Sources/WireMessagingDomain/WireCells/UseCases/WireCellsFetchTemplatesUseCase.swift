@@ -16,29 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireDesign
+package import Foundation
 
-struct CreateFolderCTA: View {
+/// Fetches templates useable for document creation (.docx, .pptx, .xlsx. etc)
+package struct WireCellsFetchTemplatesUseCase: WireCellsFetchTemplatesUseCaseProtocol {
 
-    let action: () -> Void
+    private let repository: any WireCellsNodesRepositoryProtocol
 
-    var body: some View {
-        VStack(spacing: 0) {
-            Divider()
-
-            Button(action: action) {
-                HStack(alignment: .center, spacing: 20) {
-                    Image(systemName: "plus")
-
-                    Text(L10n.Localizable.Conversation.WireCells.Files.List.newFolder)
-                        .font(for: .body2)
-                    Spacer()
-                }
-            }
-            .tint(ColorTheme.Backgrounds.onSurface.color)
-            .padding()
-        }
-        .contentShape(Rectangle())
+    package init(
+        repository: any WireCellsNodesRepositoryProtocol,
+    ) {
+        self.repository = repository
     }
+
+    package func invoke() async throws -> [WireCellsTemplate] {
+        try await repository.getTemplates()
+    }
+
 }

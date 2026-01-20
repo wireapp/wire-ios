@@ -30,18 +30,19 @@ import XCTest
 final class CreateFolderViewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
-    private var createFolderUseCase: MockWireCellsCreateFolderUseCaseProtocol!
-    private var viewModel: CreateFolderViewModel!
+    private var createFolderUseCase: MockWireCellsCreateUseCaseProtocol!
+    private var viewModel: CreateViewModel!
 
     @MainActor
     override func setUp() async throws {
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
-        createFolderUseCase = MockWireCellsCreateFolderUseCaseProtocol()
+        createFolderUseCase = MockWireCellsCreateUseCaseProtocol()
 
-        viewModel = CreateFolderViewModel(
-            createFolderUseCase: createFolderUseCase,
-            folderPath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2"
+        viewModel = CreateViewModel(
+            creationTarget: .folder,
+            path: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2",
+            createUseCase: createFolderUseCase
         )
     }
 
@@ -55,7 +56,7 @@ final class CreateFolderViewTests: XCTestCase {
     @MainActor
     func testCreateFolderView_WrongCharacterInputError() {
         let view = makeView()
-        viewModel.folderNameInput = "/"
+        viewModel.nameInput = "/"
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -68,7 +69,7 @@ final class CreateFolderViewTests: XCTestCase {
     @MainActor
     func testCreateFolderView_DotPrefixError() {
         let view = makeView()
-        viewModel.folderNameInput = "."
+        viewModel.nameInput = "."
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -81,7 +82,7 @@ final class CreateFolderViewTests: XCTestCase {
     @MainActor
     func testCreateFolderView_TooLongInputError() {
         let view = makeView()
-        viewModel.folderNameInput = Array(repeating: "r", count: 65).joined()
+        viewModel.nameInput = Array(repeating: "r", count: 65).joined()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -107,8 +108,8 @@ final class CreateFolderViewTests: XCTestCase {
     @MainActor
     func testCreateFolderView_FolderAlreadyExistsError() async {
         let view = makeView()
-        createFolderUseCase.invokeFolderPathFolderName_MockError = WireCellsCreateFolderUseCaseError
-            .folderAlreadyExists
+        createFolderUseCase.invokePathName_MockError = WireCellsCreateUseCaseError
+            .alreadyExists
         _ = await viewModel.create()
 
         snapshotHelper
@@ -122,7 +123,7 @@ final class CreateFolderViewTests: XCTestCase {
     @MainActor
     func testCreateFolderView_EmptyInput() {
         let view = makeView()
-        viewModel.folderNameInput = ""
+        viewModel.nameInput = ""
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -136,7 +137,7 @@ final class CreateFolderViewTests: XCTestCase {
     private func makeView() -> some View {
         let viewModel = viewModel!
 
-        return CreateFolderView(viewModel: viewModel)
+        return CreateView(viewModel: viewModel)
             .frame(width: 375, height: 667)
     }
 

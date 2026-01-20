@@ -96,7 +96,7 @@ package final class FilesViewModel: ObservableObject {
         case shareLink(view: ShareLinkView)
         case moveToFolder(fileItem: FilesViewItem)
         case renameFile(view: FileRenameView)
-        case createFolder(view: CreateFolderView)
+        case create(view: CreateView)
         case filters(view: FilesFiltersView)
         case versionHistory(view: FileVersioningView)
 
@@ -108,8 +108,8 @@ package final class FilesViewModel: ObservableObject {
                 "shareLink(\(view.id))"
             case let .moveToFolder(fileItem):
                 "moveToFolder(\(fileItem.id))"
-            case let .createFolder(view):
-                "createFolder(\(view.id))"
+            case let .create(view):
+                "create(\(view.id))"
             case let .renameFile(view):
                 "renameFile(\(view.id))"
             case let .filters(view):
@@ -160,7 +160,7 @@ package final class FilesViewModel: ObservableObject {
             renameNode: any WireCellsRenameNodeUseCaseProtocol,
             updateTags: any WireCellsUpdateTagsUseCaseProtocol,
             getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol,
-            createFolder: any WireCellsCreateFolderUseCaseProtocol,
+            createFolder: any WireCellsCreateUseCaseProtocol,
             fetchNodeVersions: any WireCellsFetchNodeVersionsUseCaseProtocol,
             restoreNodeVersion: any WireCellsRestoreNodeVersionUseCaseProtocol,
             getEditingURL: WireCellsGetEditingURLUseCase,
@@ -196,7 +196,7 @@ package final class FilesViewModel: ObservableObject {
         let renameNode: any WireCellsRenameNodeUseCaseProtocol
         let updateTags: any WireCellsUpdateTagsUseCaseProtocol
         let getTagSuggestions: any WireCellsGetTagSuggestionsUseCaseProtocol
-        let createFolder: any WireCellsCreateFolderUseCaseProtocol
+        let createFolder: any WireCellsCreateUseCaseProtocol
         let fetchNodeVersions: any WireCellsFetchNodeVersionsUseCaseProtocol
         let restoreNodeVersion: any WireCellsRestoreNodeVersionUseCaseProtocol
         let getEditingURL: WireCellsGetEditingURLUseCase
@@ -208,8 +208,6 @@ package final class FilesViewModel: ObservableObject {
         let updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase
     }
 
-    let useCases: UseCases
-
     private let setNavigation: ([FilesViewItem]) -> Void
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let nodesRepository: any WireCellsNodesRepositoryProtocol
@@ -220,10 +218,33 @@ package final class FilesViewModel: ObservableObject {
     private let navigationPath: [FilesViewItem]
     private let accentColorProvider: () -> WireAccentColor
 
+    let useCases: UseCases
     let isBrowsing: Bool
     let isRecycleBin: Bool
-
     let triggerReload: PassthroughSubject<Void, Never>
+    var shouldReload: Bool = false
+    var filterWithTags: [String] = []
+    let title: String?
+    var showSearchBar: Bool {
+        state != .error && state != .pending
+    }
+
+    var navigationTitle: String {
+        if let title {
+            title
+        } else {
+            if isRecycleBin {
+                Strings.RecycleBin.navigationTitle
+            } else {
+                Strings.Files.navigationTitle
+            }
+        }
+    }
+
+    /// Whether the view model is currently loading items.
+    var isLoading: Bool {
+        loadMoreTask != nil
+    }
 
     @Published var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
@@ -232,16 +253,10 @@ package final class FilesViewModel: ObservableObject {
     @Published var viewingURL: URL?
     @Published var state: State
     @Published var sheetNavigation: SheetNavigation?
-    @Published var createFolderView: CreateFolderView?
+    @Published var createView: CreateView?
     @Published var fileRenameView: FileRenameView?
     @Published var isEditing: FilesViewItem?
-
-    var shouldReload: Bool = false
-    var filterWithTags: [String] = []
-    let title: String?
-    var showSearchBar: Bool {
-        state != .error && state != .pending
-    }
+    @Published var templates: [WireCellsTemplate] = []
 
     package init(
         useCases: UseCases,
@@ -273,23 +288,34 @@ package final class FilesViewModel: ObservableObject {
         self.accentColorProvider = accentColorProvider
 
         bindSearch()
+        fetchTemplates()
     }
 
-    var navigationTitle: String {
-        if let title {
-            title
-        } else {
-            if isRecycleBin {
-                Strings.RecycleBin.navigationTitle
-            } else {
-                Strings.Files.navigationTitle
-            }
+    private func fetchTemplates() {
+        Task {
+            // TODO: [WPB-22926] Replace hard coded values with server values when GET/ templates endpoint ready.
+            // Do `templates = try await WireCellsFetchTemplatesUseCase.invoke()`
+            templates = [
+                .init(
+                    templateKind: .document,
+                    editable: true,
+                    label: "Microsoft Word",
+                    UUID: "01-Microsoft Word.docx"
+                ),
+                .init(
+                    templateKind: .spreadsheet,
+                    editable: true,
+                    label: "Microsoft Excel",
+                    UUID: "02-Microsoft Excel.xlsx"
+                ),
+                .init(
+                    templateKind: .presentation,
+                    editable: true,
+                    label: "Microsoft PowerPoint",
+                    UUID: "03-Microsoft PowerPoint.pptx"
+                )
+            ]
         }
-    }
-
-    /// Whether the view model is currently loading items.
-    var isLoading: Bool {
-        loadMoreTask != nil
     }
 
     private func bindSearch() {
@@ -503,29 +529,36 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    func onCreateFolder() {
+    func onCreate(target: CreationTarget) {
         guard let cellName else { return }
 
-        // When navigation path is empty, folder is created at the root path (cell name)
-        let folderPath = navigationPath.last?.filePath ?? cellName
+        // When navigation path is empty, file/folder is created at the root path (cell name)
+        let path = navigationPath.last?.filePath ?? cellName
 
-        let viewModel = CreateFolderViewModel(
-            createFolderUseCase: useCases.createFolder,
-            folderPath: folderPath
+        let viewModel = CreateViewModel(
+            creationTarget: target,
+            path: path,
+            createUseCase: useCases.createFolder
         )
 
         // to know whether we need to reload nodes.
-        viewModel.$didCreate
-            .filter(\.self)
-            .sink { [weak self] didCreate in
-                self?.shouldReload = didCreate
+        viewModel.$createdNode
+            .compactMap(\.self)
+            .sink { [weak self] createdNode in
+                guard let self else { return }
+                shouldReload = true
+
+                if case .file = target {
+                    isEditing = makeFileViewItem(node: createdNode)
+                }
+
             }.store(in: &subscriptions)
 
-        let createFolderView = CreateFolderView(
+        let createFolderView = CreateView(
             viewModel: viewModel
         )
 
-        sheetNavigation = .createFolder(view: createFolderView)
+        sheetNavigation = .create(view: createFolderView)
     }
 
     // MARK: - Private
@@ -572,28 +605,7 @@ package final class FilesViewModel: ObservableObject {
             offset: offset
         )
 
-        let items: [FilesViewItem] = nodes.compactMap { node in
-            guard let eTag = node.eTag else { return nil }
-
-            let url = URL(string: node.path)
-            let kind: FilesViewItem.Kind = node.type == .collection ? .folder : .file
-            return FilesViewItem(
-                id: node.id,
-                eTag: eTag,
-                kind: kind,
-                name: url?.lastPathComponent ?? node.path,
-                filePath: node.path,
-                ownedBy: node.ownerUserName,
-                modifiedAt: node.modified,
-                icon: kind == .folder ? .folder : .make(
-                    type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
-                    fileExtension: url?.pathExtension
-                ),
-                tags: node.tags,
-                isEditable: node.isEditable,
-                publicLinkID: node.publicLinkID?.string
-            )
-        }
+        let items: [FilesViewItem] = nodes.compactMap(makeFileViewItem(node:))
 
         try Task.checkCancellation()
         return (items, isLastPage)
@@ -618,6 +630,29 @@ package final class FilesViewModel: ObservableObject {
             currentItems.append(asset)
             state = .received(items: Self.processItems(currentItems))
         }
+    }
+
+    private nonisolated func makeFileViewItem(node: WireCellsNode) -> FilesViewItem? {
+        guard let eTag = node.eTag else { return nil }
+
+        let url = URL(string: node.path)
+        let kind: FilesViewItem.Kind = node.type == .collection ? .folder : .file
+        return FilesViewItem(
+            id: node.id,
+            eTag: eTag,
+            kind: kind,
+            name: url?.lastPathComponent ?? node.path,
+            filePath: node.path,
+            ownedBy: node.ownerUserName,
+            modifiedAt: node.modified,
+            icon: kind == .folder ? .folder : .make(
+                type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
+                fileExtension: url?.pathExtension
+            ),
+            tags: node.tags,
+            isEditable: node.isEditable,
+            publicLinkID: node.publicLinkID?.string
+        )
     }
 
     private func restoreItem(_ asset: FilesViewItem) async {
@@ -741,4 +776,28 @@ package final class FilesViewModel: ObservableObject {
         return FileVersioningView(viewModel: viewModel)
     }
 
+}
+
+extension WireCellsTemplate.TemplateKind {
+    var title: String {
+        switch self {
+        case .document:
+            Strings.Files.List.CreateFile.document
+        case .spreadsheet:
+            Strings.Files.List.CreateFile.spreadsheet
+        case .presentation:
+            Strings.Files.List.CreateFile.presentation
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .document:
+            "text.document"
+        case .spreadsheet:
+            "tablecells"
+        case .presentation:
+            "sparkles.tv"
+        }
+    }
 }

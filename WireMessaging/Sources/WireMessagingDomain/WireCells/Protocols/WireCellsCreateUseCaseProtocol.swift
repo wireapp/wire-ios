@@ -19,18 +19,21 @@
 import Foundation
 
 // sourcery: AutoMockable
-package protocol WireCellsCreateFolderUseCaseProtocol: Sendable {
+package protocol WireCellsCreateUseCaseProtocol: Sendable {
 
-    /// Creates a new folder on the server.
+    /// Creates a new file or folder on the server.
     ///
     /// This method sends a request to create a folder at the specified path.
     ///
     /// - Parameters:
-    ///   - folderPath: The path of the folder.
-    ///   - folderName: The name of the folder to create.
+    ///   - creationTarget: Whether a folder or a specific file (document, spreadsheet, presentation..).
+    ///   - path: The path of the file/folder.
+    ///   - name: The name of the file/folder to create.
+    /// - Returns: The created node.
     func invoke(
-        folderPath: String,
-        folderName: String
-    ) async throws
+        creationTarget: CreationTarget,
+        path: String,
+        name: String
+    ) async throws -> WireCellsNode
 
 }

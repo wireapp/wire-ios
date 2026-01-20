@@ -237,7 +237,7 @@ final class RestAPI: Sendable {
     ///
     /// - Parameters:
     ///  - path: The path of the new folder.
-    func createFolder(at path: String) async throws {
+    func createFolder(at path: String) async throws -> WireCellsNodeNetworkModel {
         let request = RestCreateRequest(inputs: [
             RestIncomingNode(
                 locator: RestNodeLocator(
@@ -248,10 +248,46 @@ final class RestAPI: Sendable {
             )
         ])
 
-        _ = try await NodeServiceAPI.create(
+        let response = try await NodeServiceAPI.create(
             body: request,
             apiConfiguration: makeConfiguration()
         )
+
+        guard let dto = response.nodes?.first?.toDTO() else {
+            throw WireCellsNodesAPIError.failedToDecodeNode
+        }
+
+        return dto
+    }
+
+    func createFile(at path: String, templateUuid: String) async throws -> WireCellsNodeNetworkModel {
+        let request = RestCreateRequest(inputs: [
+            RestIncomingNode(
+                locator: RestNodeLocator(
+                    path: path
+                ),
+                resourceUuid: UUID().transportString(),
+                templateUuid: templateUuid,
+                type: .leaf
+            )
+        ])
+
+        let response = try await NodeServiceAPI.create(
+            body: request,
+            apiConfiguration: makeConfiguration()
+        )
+
+        guard let dto = response.nodes?.first?.toDTO() else {
+            throw WireCellsNodesAPIError.failedToDecodeNode
+        }
+
+        return dto
+    }
+
+    func getTemplates() async throws -> WireCellsTemplateNetworkModel? {
+        try await NodeServiceAPI
+            .templates(apiConfiguration: makeConfiguration())
+            .toDTO()
     }
 
     func preCheck(path: String, findAvailablePath: Bool = true) async throws -> WireCellsPreCheckResultDTO {

@@ -379,7 +379,7 @@ final class FilesViewTests: XCTestCase {
                 renameNode: renameNodeUseCase,
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
-                createFolder: WireCellsCreateFolderUseCase(
+                createFolder: WireCellsCreateUseCase(
                     nodesRepository: nodesRepository
                 ),
                 fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesRepository),

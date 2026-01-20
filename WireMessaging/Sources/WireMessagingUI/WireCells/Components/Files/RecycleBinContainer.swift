@@ -97,7 +97,7 @@ package struct RecycleBinContainer: View {
                 ),
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
-                createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
+                createFolder: WireCellsCreateUseCase(nodesRepository: nodesAPI),
                 fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesRepository),
                 restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
                     repository: nodesRepository,

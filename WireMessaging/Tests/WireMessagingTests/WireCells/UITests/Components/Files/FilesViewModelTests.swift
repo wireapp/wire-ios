@@ -67,7 +67,7 @@ final class FilesViewModelTests {
                 ),
                 updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesApi),
                 getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesApi),
-                createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesRepository),
+                createFolder: WireCellsCreateUseCase(nodesRepository: nodesRepository),
                 fetchNodeVersions: WireCellsFetchNodeVersionsUseCase(repository: nodesRepository),
                 restoreNodeVersion: WireCellsRestoreNodeVersionUseCase(
                     repository: nodesRepository,

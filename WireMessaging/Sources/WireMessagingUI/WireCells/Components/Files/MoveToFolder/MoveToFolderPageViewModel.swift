@@ -102,7 +102,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
     private let nodesCollection: WireCellsNodesCollection
     private let fetchNodesUseCase: WireCellsFetchNodesUseCase
     private let moveNodeUseCase: WireCellsMoveNodeUseCase
-    private let createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol
+    private let createFolderUseCase: any WireCellsCreateUseCaseProtocol
     private var subscriptions = Set<AnyCancellable>()
 
     let title: String
@@ -125,7 +125,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
         nodesCollection: WireCellsNodesCollection,
         fetchNodesUseCase: WireCellsFetchNodesUseCase,
         moveNodeUseCase: WireCellsMoveNodeUseCase,
-        createFolderUseCase: any WireCellsCreateFolderUseCaseProtocol
+        createFolderUseCase: any WireCellsCreateUseCaseProtocol
     ) {
         self.title = Self.title(for: containerPath)
         self.nodeID = nodeID
@@ -264,20 +264,21 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
 
     func makeCreateFolderView() -> some View {
         // swiftformat:disable:next redundantSelf
-        WireMessagingUI.CreateFolderView(viewModel: self.makeCreateFolderViewModel())
+        WireMessagingUI.CreateView(viewModel: self.makeCreateFolderViewModel())
     }
 
-    private func makeCreateFolderViewModel() -> CreateFolderViewModel {
-        let viewModel = CreateFolderViewModel(
-            createFolderUseCase: createFolderUseCase,
-            folderPath: containerPath
+    private func makeCreateFolderViewModel() -> CreateViewModel {
+        let viewModel = CreateViewModel(
+            creationTarget: .folder,
+            path: containerPath,
+            createUseCase: createFolderUseCase
         )
 
-        viewModel.$didCreate.sink { [weak self] didCreate in
-            if didCreate {
+        viewModel.$createdNode
+            .compactMap(\.self)
+            .sink { [weak self] _ in
                 Task { await self?.reload() }
-            }
-        }.store(in: &subscriptions)
+            }.store(in: &subscriptions)
 
         return viewModel
     }
