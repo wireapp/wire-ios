@@ -1892,6 +1892,8 @@ internal enum L10n {
             internal static func count(_ p1: Any) -> String {
               return L10n.tr("Localizable", "content.message.reply.files.count", String(describing: p1), fallback: "%@ files")
             }
+            /// File not available
+            internal static let notAvailable = L10n.tr("Localizable", "content.message.reply.files.notAvailable", fallback: "File not available")
           }
           internal enum OriginalTimestamp {
             /// Original message from %@
