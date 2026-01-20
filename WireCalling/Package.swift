@@ -1,4 +1,4 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.2
 
 import PackageDescription
 
@@ -64,18 +64,10 @@ let package = Package(
         .testTarget(
             name: "WireCallingTests",
             dependencies: [
-                "WireCallingDomain",
-                "WireCallingDomainSupport",
-                "WireCallingData",
-                .product(name: "WireFoundationSupport", package: "WireFoundation")
-            ],
-        ),
-        .testTarget(
-            name: "WireCallingUITests",
-            dependencies: [
                 "WireCallingUI",
                 "WireCallingDomain",
                 "WireCallingDomainSupport",
+                "WireCallingData",
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireFoundationSupport", package: "WireFoundation")
             ],

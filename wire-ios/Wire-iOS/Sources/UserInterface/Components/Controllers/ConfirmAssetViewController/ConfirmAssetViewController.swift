@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -111,6 +111,8 @@ final class ConfirmAssetViewController: UIViewController {
         createConstraints()
 
         setupStyle()
+
+        presentationController?.delegate = self
     }
 
     override var prefersStatusBarHidden: Bool {
@@ -414,5 +416,12 @@ final class ConfirmAssetViewController: UIViewController {
 extension ConfirmAssetViewController: CanvasViewControllerDelegate {
     func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage) {
         context.onConfirm?(image)
+    }
+}
+
+extension ConfirmAssetViewController: UIAdaptivePresentationControllerDelegate {
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        // this is called (only) when the user swipes down the sheet.
+        context.onCancel?()
     }
 }

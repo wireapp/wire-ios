@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,8 +34,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         let user3 = createUser()
         user3.name = "Beta"
-        user3.providerIdentifier = "dummy ID"
-        user3.serviceIdentifier = "dummy ID"
+        user3.type = .bot
 
         sut.addParticipantsAndUpdateConversationState(users: Set([user1, user2, user3]), role: nil)
 
@@ -43,19 +42,17 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         XCTAssertEqual(sut.sortedOtherParticipants as! [ZMUser], [user2, user1])
     }
 
-    func testThatSortedServiceUsersReturnsUsersSortedByName() {
+    func testThatSortedAppsReturnsUsersSortedByName() {
         // GIVEN
         let sut = createConversation(in: uiMOC)
 
         let user1 = createUser()
         user1.name = "Zeta"
-        user1.providerIdentifier = "dummy ID"
-        user1.serviceIdentifier = "dummy ID"
+        user1.type = .bot
 
         let user2 = createUser()
         user2.name = "Alpha"
-        user2.providerIdentifier = "dummy ID"
-        user2.serviceIdentifier = "dummy ID"
+        user2.type = .bot
 
         let user3 = createUser()
         user3.name = "Beta"
@@ -63,7 +60,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         sut.addParticipantsAndUpdateConversationState(users: Set([user2, user1, user3]), role: nil)
 
         // WHEN & THEN
-        XCTAssertEqual(sut.sortedServiceUsers as! [ZMUser], [user2, user1])
+        XCTAssertEqual(sut.sortedApps as! [ZMUser], [user2, user1])
     }
 
     func testThatLocalParticipantsExcludesUsersMarkedForDeletion() {

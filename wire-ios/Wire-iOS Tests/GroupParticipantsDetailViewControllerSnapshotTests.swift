@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import WireDesign
+import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
 
@@ -95,7 +96,8 @@ final class GroupParticipantsDetailViewControllerSnapshotTests: XCTestCase {
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         let navigationController = makeNavigationController(for: sut)
@@ -142,7 +144,8 @@ final class GroupParticipantsDetailViewControllerSnapshotTests: XCTestCase {
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
 
         let navigationController = makeNavigationController(for: sut)
@@ -160,7 +163,8 @@ final class GroupParticipantsDetailViewControllerSnapshotTests: XCTestCase {
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         sut.viewModel.admins = []
         sut.viewModel.members = []

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -189,20 +189,28 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
 
                 // if it fails, it will attach the content directly
 
-                self?.attachment
-                    .loadItem(
-                        forTypeIdentifier: UTType.image.identifier,
-                        options: options
-                    ) { [weak self] image, error in
+                self?.attachment.loadItem(
+                    forTypeIdentifier: UTType.image.identifier,
+                    options: options
+                ) { [weak self] item, error in
 
-                        error?.log(message: "Unable to load image from attachment")
+                    error?.log(message: "Unable to load image from attachment")
 
-                        if let image = image as? UIImage {
-                            self?.imageData = image.jpegData(compressionQuality: 0.9)
-                        }
-
-                        completion()
+                    let image: UIImage? = switch item {
+                    case let data as Data:
+                        UIImage(data: data)
+                    case let uiImage as UIImage:
+                        uiImage
+                    default:
+                        nil
                     }
+
+                    if let image {
+                        self?.imageData = image.jpegData(compressionQuality: 0.9)
+                    }
+
+                    completion()
+                }
             }
 
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -90,6 +90,8 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 
 - (void)dealloc {
     [self.backoff tearDown];
+    self->_accessTokenRenewalFailureHandler = nil;
+    self->_accessTokenRenewalSuccessHandler = nil;
 }
 
 - (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler

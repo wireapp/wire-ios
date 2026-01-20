@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,9 +24,14 @@ import Testing
 
 struct WireCellsNodeCacheTests {
 
-    private let sut = WireCellsNodeCache()
+    @MainActor private let sut: WireCellsNodeCache
 
-    @Test
+    @MainActor
+    init() {
+        self.sut = WireCellsNodeCache()
+    }
+
+    @Test @MainActor
     func settingAndGetting() async {
         // Given
         let nodeIDA = UUID()
@@ -34,8 +39,8 @@ struct WireCellsNodeCacheTests {
         let nodeIDB = UUID()
 
         // When
-        await sut.setItem(WireCellsNodeCacheItem(node: nodeA), for: nodeIDA)
-        await sut.setItem(WireCellsNodeCacheItem(node: nil), for: nodeIDB)
+        sut.setItem(WireCellsNodeCacheItem(node: nodeA), for: nodeIDA)
+        sut.setItem(WireCellsNodeCacheItem(node: nil), for: nodeIDB)
 
         // Then
         #expect(await sut.item(for: nodeIDA)?.node == nodeA)

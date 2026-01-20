@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireLocators
 
 /// This view controller was created because `UIActivityViewController` allows for assigning a
 /// `completionWithItemsHandler` closure, which SwiftUI's fileExporter doesn't.
@@ -65,7 +66,7 @@ final class CreatingBackupProgressViewController: UIViewController {
         descriptionLabel.font = .preferredFont(forTextStyle: .caption1)
         descriptionLabel.textColor = BaseColorPalette.Grays.gray70
         descriptionLabel.adjustsFontForContentSizeCategory = true
-        descriptionLabel.accessibilityIdentifier = "descriptionLabel"
+        descriptionLabel.accessibilityIdentifier = Locators.CreatingBackupPage.backupCreatedLabel.rawValue
         return descriptionLabel
     }()
 
@@ -83,7 +84,7 @@ final class CreatingBackupProgressViewController: UIViewController {
 
     private lazy var progressView = {
         let progressView = UIProgressView()
-        progressView.accessibilityIdentifier = "progressView"
+        progressView.accessibilityIdentifier = Locators.CreatingBackupPage.progressView.rawValue
         return progressView
     }()
 
@@ -91,7 +92,7 @@ final class CreatingBackupProgressViewController: UIViewController {
         let title = String(localized: "exportBackup.creatingBackup.saveButton.title", bundle: .module)
         let exportButton = UIButton(configuration: .primary, primaryAction: .init(title: title) { _ in })
         exportButton.addTarget(self, action: #selector(showActivityViewController(_:)), for: .primaryActionTriggered)
-        exportButton.accessibilityIdentifier = "exportButton"
+        exportButton.accessibilityIdentifier = Locators.CreatingBackupPage.exportBackupButton.rawValue
         return exportButton
     }()
 

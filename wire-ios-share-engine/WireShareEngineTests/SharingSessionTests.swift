@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -68,20 +68,5 @@ final class SharingSessionTests: BaseSharingSessionTests {
     }
 
     // MARK: - Init
-
-    func test_ItDoesNotInit_WhenCryptoboxMigrationIsPending() async throws {
-        do {
-            // Given
-            mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = true
-
-            // When
-            _ = try await createSharingSession()
-            XCTFail("unexpected success")
-        } catch SharingSession.InitializationError.pendingCryptoboxMigration {
-            // Then
-        } catch {
-            XCTFail("unexpected error: \(error.localizedDescription)")
-        }
-    }
 
 }

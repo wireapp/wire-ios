@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 
 struct AddParticipantsViewModel {
     let context: AddParticipantsViewController.Context
@@ -80,7 +81,7 @@ struct AddParticipantsViewModel {
         case .add:
             let item = UIBarButtonItem.closeButton(action: action, accessibilityLabel: L10n.Localizable.General.close)
             item.tintColor = SemanticColors.Icon.foregroundDefault
-            item.accessibilityIdentifier = "close"
+            item.accessibilityIdentifier = Locators.ConversationDetailsPage.close.rawValue
             return item
         case let .create(values):
             let key = values.participants.isEmpty ? L10n.Localizable.Peoplepicker.Group.skip : L10n.Localizable
@@ -91,7 +92,7 @@ struct AddParticipantsViewModel {
             )
             newItem.tintColor = UIColor.accent()
             newItem.accessibilityIdentifier = values.participants
-                .isEmpty ? "button.addpeople.skip" : "button.addpeople.create"
+                .isEmpty ? Locators.SelectParticipantsPage.skip.rawValue : Locators.SelectParticipantsPage.done.rawValue
             return newItem
         }
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -73,9 +73,12 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         }
     }
 
+    @discardableResult
     public func resolveOneOnOneConversation(
         with userID: WireDataModel.QualifiedID
-    ) async throws {
+    ) async throws -> OneOnOneConversationResolution {
+        var action: OneOnOneConversationResolution = .noAction
+
         let user = try await userLocalStore.fetchUser(
             id: userID.uuid, domain: userID.domain
         )
@@ -84,9 +87,10 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         let commonProtocol = await getCommonProtocol(between: selfUser, and: user)
 
         if mlsProvider.isMLSEnabled, commonProtocol == .mls {
-            try await resolveMLSConversation(
+            let groupId = try await resolveMLSConversation(
                 for: user
             )
+            action = .migratedToMLSGroup(identifier: groupId)
         }
 
         if mlsProvider.isMLSEnabled, commonProtocol == nil {
@@ -94,6 +98,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 between: selfUser,
                 and: user
             )
+            action = .archivedAsReadOnly
         }
 
         if commonProtocol == .proteus {
@@ -101,21 +106,20 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 for: user
             )
         }
+        return action
     }
 
-    private func resolveMLSConversation(for user: ZMUser) async throws {
+    @discardableResult
+    private func resolveMLSConversation(for user: ZMUser) async throws -> MLSGroupID {
         WireLogger.conversation.debug("Should resolve to mls 1-1 conversation")
-
-        let userID = await context.perform {
-            user.qualifiedID
-        }
+        let userID = try await context.unpack(user) { $0.qualifiedID }
 
         guard let userID else {
             throw Error.failedToActivateConversation
         }
 
         // Sync the user MLS conversation from backend.
-        let mlsGroupID = try await pullMLSOneOnOneSync.pull(
+        let (mlsGroupID, mlsPublicKeys) = try await pullMLSOneOnOneSync.pull(
             userID: userID.uuid,
             userDomain: userID.domain
         )
@@ -123,11 +127,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         // Then, fetch the synced MLS conversation.
         let mlsConversation = await conversationLocalStore.fetchMLSConversation(groupID: mlsGroupID)
 
-        let groupID = await context.perform {
-            mlsConversation?.mlsGroupID
-        }
-
-        guard let mlsConversation, let groupID else {
+        guard let mlsConversation else {
             throw Error.failedToFetchConversation
         }
 
@@ -135,40 +135,47 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
 
         // If conversation already exists, there is no need to perform a migration.
         let needsMLSMigration = try await mlsService.conversationExists(
-            groupID: groupID
+            groupID: mlsGroupID
         ) == false
 
         if needsMLSMigration {
             await migrateToMLS(
                 mlsConversation: mlsConversation,
-                mlsGroupID: groupID,
+                mlsGroupID: mlsGroupID,
+                mlsPublicKeys: mlsPublicKeys,
                 user: user,
                 userID: userID
+
             )
         }
+
+        return mlsGroupID
     }
 
     private func migrateToMLS(
         mlsConversation: ZMConversation,
         mlsGroupID: MLSGroupID,
+        mlsPublicKeys: MLSPublicKeys?,
         user: ZMUser,
         userID: WireDataModel.QualifiedID
     ) async {
+
+        let keys = mlsPublicKeys.flatMap { WireDataModel.BackendMLSPublicKeys(removal: $0.toDataModel()) }
+
         do {
             try await setupMLSGroup(
                 mlsConversation: mlsConversation,
                 groupID: mlsGroupID,
+                mlsPublicKeys: keys,
                 userID: userID
             )
         } catch {
-            await context.perform {
-                let userOneOnOneConversation = user.oneOnOneConversation
-                userOneOnOneConversation?.isForcedReadOnly = true
-            }
+            try? await context.unpack(user) { $0.oneOnOneConversation?.isForcedReadOnly = true }
 
-            return WireLogger.conversation.error(
-                "Failed to setup MLS group with ID: \(mlsGroupID.safeForLoggingDescription)"
+            WireLogger.conversation.error(
+                "Failed to setup MLS group with ID", attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
             )
+            return
         }
 
         await switchLocalConversationToMLS(
@@ -187,10 +194,10 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     private func setupMLSGroup(
         mlsConversation: ZMConversation,
         groupID: MLSGroupID,
+        mlsPublicKeys: WireDataModel.BackendMLSPublicKeys?,
         userID: WireDataModel.QualifiedID
     ) async throws {
         let mlsService = mlsProvider.service
-
         let epoch = await context.perform {
             mlsConversation.epoch
         }
@@ -202,7 +209,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 let ciphersuite = try await mlsService.establishGroup(
                     for: groupID,
                     with: users,
-                    removalKeys: nil
+                    removalKeys: mlsPublicKeys
                 )
 
                 await context.perform {
@@ -305,7 +312,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     private func resolveProteusConversation(
         for user: ZMUser
     ) async {
-        await context.perform {
+        try? await context.unpack(user) { user in
             WireLogger.conversation.debug(
                 "Should resolve to Proteus 1-1 conversation",
                 attributes: [.senderUserId: user.remoteIdentifier.safeForLoggingDescription]
@@ -372,5 +379,16 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 return nil
             }
         }
+    }
+}
+
+extension WireNetwork.MLSPublicKeys {
+    func toDataModel() -> WireDataModel.BackendMLSPublicKeys.MLSPublicKeys {
+        .init(
+            ed25519: ed25519?.base64DecodedData,
+            p256: p256?.base64DecodedData,
+            p384: p384?.base64DecodedData,
+            p521: p521?.base64DecodedData
+        )
     }
 }

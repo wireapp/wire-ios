@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
     private var mockConversation: ZMConversation!
     private var mockSelfUser: ZMUser!
     private var sut: CreateConversationGuestLinkUseCaseProtocol!
-    private var setAllowGuestAndServicesUseCase: MockSetAllowGuestAndServicesUseCaseProtocol!
+    private var setAllowGuestAndAppsUseCase: MockSetAllowGuestAndAppsUseCaseProtocol!
 
     private var syncContext: NSManagedObjectContext {
         stack.syncContext
@@ -41,15 +41,11 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() async throws {
-        try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
         await syncContext.perform { [self] in
-            setAllowGuestAndServicesUseCase = .init()
-            setAllowGuestAndServicesUseCase
-                .invokeConversationAllowGuestsAllowServicesCompletion_MockMethod = { _, _, _, completion in
-                    completion(.success(()))
-                }
-            sut = CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: setAllowGuestAndServicesUseCase)
+            setAllowGuestAndAppsUseCase = .init()
+            setAllowGuestAndAppsUseCase.invokeConversationAllowGuestsAllowApps_MockMethod = { _, _, _ in }
+            sut = CreateConversationGuestLinkUseCase(setGuestsAndAppsUseCase: setAllowGuestAndAppsUseCase)
             mockSelfUser = modelHelper.createSelfUser(in: syncContext)
             mockConversation = modelHelper.createGroupConversation(in: syncContext)
             mockConversation.teamRemoteIdentifier = UUID()
@@ -63,112 +59,108 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
         sut = nil
         mockSelfUser = nil
         mockConversation = nil
-        setAllowGuestAndServicesUseCase = nil
+        setAllowGuestAndAppsUseCase = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
     }
 
     // MARK: - Helper Method
 
     private func configureRoleAndAccessForConversation(legacyAccessMode: Bool = false) {
-        let role = Role.insertNewObject(in: syncContext)
-        let action = Action.insertNewObject(in: syncContext)
-        action.name = "modify_conversation_access"
-        role.actions = [action]
+        syncContext.performAndWait {
+            let role = Role.insertNewObject(in: syncContext)
+            let action = Action.insertNewObject(in: syncContext)
+            action.name = "modify_conversation_access"
+            role.actions = [action]
 
-        if legacyAccessMode {
-            mockConversation.accessMode = [.invite]
+            if legacyAccessMode {
+                mockConversation.accessMode = [.invite]
+            }
+
+            mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
         }
-
-        mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
     }
 
     // MARK: - Unit Tests
 
-    func testThatLinkGenerationSucceeds() async {
+    func testThatLinkGenerationSucceeds() {
 
-        await syncContext.perform { [self] in
-            // GIVEN
-            configureRoleAndAccessForConversation()
+        // GIVEN
+        configureRoleAndAccessForConversation()
 
-            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
-                result: .success("www.test.com"),
-                context: syncContext.notificationContext
-            )
+        let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
+            result: .success("www.test.com"),
+            context: syncContext.notificationContext
+        )
 
-            let expectation = XCTestExpectation(description: "Guest link creation")
+        let expectation = XCTestExpectation(description: "Guest link creation")
 
-            sut.invoke(conversation: mockConversation, password: nil) { result in
-                switch result {
-                case let .success(link):
-                    XCTAssertNotNil(link)
-                case let .failure(error):
-                    XCTFail("Test failed with error: \(error)")
-                }
-
-                expectation.fulfill()
+        sut.invoke(conversation: mockConversation, password: nil) { result in
+            switch result {
+            case let .success(link):
+                XCTAssertNotNil(link)
+            case let .failure(error):
+                XCTFail("Test failed with error: \(error)")
             }
 
-            wait(for: [expectation], timeout: 0.5)
+            expectation.fulfill()
         }
+
+        wait(for: [expectation], timeout: 0.5)
     }
 
-    func testThatLinkGenerationSucceeds_LegacyMode() async {
+    func testThatLinkGenerationSucceeds_LegacyMode() {
 
-        await syncContext.perform { [self] in
-            // GIVEN
-            configureRoleAndAccessForConversation(legacyAccessMode: true)
+        // GIVEN
+        configureRoleAndAccessForConversation(legacyAccessMode: true)
 
-            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
-                result: .success("www.test.com"),
-                context: syncContext.notificationContext
-            )
-            let setGuestAndServicesMockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(
-                result: .success(()),
-                context: syncContext.notificationContext
-            )
+        let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
+            result: .success("www.test.com"),
+            context: syncContext.notificationContext
+        )
+        let setGuestAndAppsMockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
+            result: .success(()),
+            context: syncContext.notificationContext
+        )
 
-            let expectation = XCTestExpectation(description: "Guest link creation")
+        let expectation = XCTestExpectation(description: "Guest link creation")
 
-            sut.invoke(conversation: mockConversation, password: nil) { result in
-                switch result {
-                case let .success(link):
-                    XCTAssertNotNil(link)
-                case let .failure(error):
-                    XCTFail("Test failed with error: \(error)")
-                }
-
-                expectation.fulfill()
+        sut.invoke(conversation: mockConversation, password: nil) { result in
+            switch result {
+            case let .success(link):
+                XCTAssertNotNil(link)
+            case let .failure(error):
+                XCTFail("Test failed with error: \(error)")
             }
 
-            wait(for: [expectation], timeout: 0.5)
+            expectation.fulfill()
         }
+
+        wait(for: [expectation], timeout: 0.5)
     }
 
-    func testThatLinkGenerationFails() async {
+    func testThatLinkGenerationFails() {
 
-        await syncContext.perform { [self] in
+        let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
+            result: .failure(.unknown),
+            context: syncContext.notificationContext
+        )
 
-            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
-                result: .failure(.unknown),
-                context: syncContext.notificationContext
-            )
+        let expectation = XCTestExpectation(description: "completion should be called")
 
-            let expectation = XCTestExpectation(description: "completion should be called")
-
-            sut.invoke(conversation: mockConversation, password: nil) { result in
-                switch result {
-                case .success:
-                    XCTFail("Expected operation to fail, but it succeeded.")
-                case .failure:
-                    break
-                }
-
-                expectation.fulfill()
+        sut.invoke(conversation: mockConversation, password: nil) { result in
+            switch result {
+            case .success:
+                XCTFail("Expected operation to fail, but it succeeded.")
+            case .failure:
+                break
             }
 
-            wait(for: [expectation], timeout: 0.5)
+            expectation.fulfill()
         }
+
+        wait(for: [expectation], timeout: 0.5)
+        withExtendedLifetime(mockHandler) {}
+
     }
 
 }

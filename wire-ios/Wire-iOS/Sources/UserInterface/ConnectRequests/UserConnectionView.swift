@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 final class UserConnectionView: UIView, Copyable {
@@ -74,6 +75,7 @@ final class UserConnectionView: UIView, Copyable {
 
         [labelContainer, userImageView, guestIndicator, guestWarningView].forEach(addSubview)
         [firstLabel, secondLabel].forEach(labelContainer.addArrangedSubview)
+        guestIndicator.isHidden = true
         updateLabels()
         updateGuestAccountViews()
     }
@@ -86,7 +88,7 @@ final class UserConnectionView: UIView, Copyable {
     private func updateFirstLabel() {
         if let handleText = handleLabelText {
             firstLabel.attributedText = handleText
-            firstLabel.accessibilityIdentifier = "username"
+            firstLabel.accessibilityIdentifier = Locators.ConnectionRequestsPage.username.rawValue
         } else {
             firstLabel.attributedText = correlationLabelText
             firstLabel.accessibilityIdentifier = "correlation"
@@ -146,11 +148,16 @@ final class UserConnectionView: UIView, Copyable {
 
     private func updateGuestAccountViews() {
         if let viewer = SelfUser.provider?.providedSelfUser {
-            let isGuest = !viewer.isTeamMember || !viewer.canAccessCompanyInformation(of: user)
-            guestIndicator.isHidden = !isGuest
-        } else {
-            // show guest indicator
-            guestIndicator.isHidden = false
+            if viewer.hasTeam {
+                if user.hasTeam {
+                    let isSameTeam = user.isOnSameTeam(otherUser: viewer)
+                    guestIndicator.isHidden = isSameTeam
+                } else {
+                    guestIndicator.isHidden = false
+                }
+            } else {
+                guestIndicator.isHidden = true
+            }
         }
     }
 }

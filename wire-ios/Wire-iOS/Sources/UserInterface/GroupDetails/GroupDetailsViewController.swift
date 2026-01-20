@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
     private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: any SelfProfileViewControllerBuilderProtocol
+    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
     private let collectionViewController: SectionCollectionViewController
     private let conversation: GroupDetailsConversationType
     private let footerView = GroupDetailsFooterView()
@@ -41,6 +42,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     let userSession: UserSession
     private var userStatuses = [UUID: UserStatus]()
     private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
+
+    private let areLegacyBotsAvailable: Bool
+    private let isAppsFeatureEnabled: Bool
 
     var didCompleteInitialSync = false {
         didSet { collectionViewController.sections = computeVisibleSections() }
@@ -55,14 +59,20 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
-        isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
+        isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol,
+        areLegacyBotsAvailable: Bool,
+        isAppsFeatureEnabled: Bool
     ) {
         self.conversation = conversation
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
         self.collectionViewController = SectionCollectionViewController()
+        self.areLegacyBotsAvailable = areLegacyBotsAvailable
+        self.isAppsFeatureEnabled = isAppsFeatureEnabled
         super.init(nibName: nil, bundle: nil)
 
         createSubviews()
@@ -184,7 +194,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         sections.append(renameGroupSectionController)
         self.renameGroupSectionController = renameGroupSectionController
 
-        let (participants, serviceUsers) = (conversation.sortedOtherParticipants, conversation.sortedServiceUsers)
+        let (participants, apps) = (conversation.sortedOtherParticipants, conversation.sortedApps)
         participants.forEach { user in
             if !userStatuses.keys.contains(user.remoteIdentifier) {
                 userStatuses[user.remoteIdentifier] = .init(user: user, isE2EICertified: false)
@@ -283,7 +293,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 conversation: conversation,
                 user: user,
                 delegate: self,
-                syncCompleted: didCompleteInitialSync
+                syncCompleted: didCompleteInitialSync,
+                areLegacyBotsAvailable: areLegacyBotsAvailable
             )
             if optionsSectionController.hasOptions {
                 sections.append(optionsSectionController)
@@ -313,9 +324,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         // MARK: services sections
 
-        if !serviceUsers.isEmpty {
+        if !apps.isEmpty {
             let servicesSection = ServicesSectionController(
-                serviceUsers: serviceUsers,
+                apps: apps,
                 conversation: conversation,
                 delegate: self
             )
@@ -337,7 +348,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
               changeInfo.participantsChanged ||
               changeInfo.nameChanged ||
               changeInfo.allowGuestsChanged ||
-              changeInfo.allowServicesChanged ||
+              changeInfo.allowAppsChanged ||
               changeInfo.destructionTimeoutChanged ||
               changeInfo.mutedMessageTypesChanged ||
               changeInfo.legalHoldStatusChanged
@@ -395,7 +406,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
 
         detailsViewController.delegate = self
@@ -421,7 +433,8 @@ extension GroupDetailsViewController {
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 
@@ -525,7 +538,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             profileViewControllerDelegate: self,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
 
         navigationController?.pushViewController(viewController, animated: true)
@@ -539,16 +553,31 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
     }
 
     func presentGuestOptions(animated: Bool) {
-        guard let conversation = conversation as? ZMConversation else { return }
-        guard let userSession = ZMUserSession.shared() else { return }
-        let menu = ConversationGuestOptionsViewController(conversation: conversation, userSession: userSession)
-        navigationController?.pushViewController(menu, animated: animated)
+        guard
+            let conversation = conversation as? ZMConversation,
+            let userSession = ZMUserSession.shared(),
+            let navigationController
+        else { return }
+
+        let menu = ConversationGuestOptionsViewController(
+            conversation: conversation,
+            userSession: userSession,
+            createSecureGuestLinkUseCase: userSession.makeConversationSecureGuestLinkUseCase(),
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
+            isAppsFeatureEnabled: isAppsFeatureEnabled
+        )
+        navigationController.pushViewController(menu, animated: animated)
     }
 
     func presentServicesOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
         guard let userSession = ZMUserSession.shared() else { return }
-        let menu = ConversationServicesOptionsViewController(conversation: conversation, userSession: userSession)
+        let menu = ConversationServicesOptionsViewController(
+            conversation: conversation,
+            userSession: userSession,
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
+            isAppsFeatureEnabled: isAppsFeatureEnabled
+        )
         navigationController?.pushViewController(menu, animated: animated)
     }
 
@@ -636,4 +665,5 @@ extension ZMConversation {
             user.refreshData()
         }
     }
+
 }

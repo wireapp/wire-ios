@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,8 +24,9 @@ extension WireLoggerObjC {
         WireLogger.network.log(request: request)
     }
 
-    static func logHTTPResponse(_ response: HTTPURLResponse) {
-        WireLogger.network.log(response: response)
+    @objc(logHTTPResponse:body:)
+    static func logHTTPResponse(_ response: HTTPURLResponse, body: Data?) {
+        WireLogger.network.log(response: response, body: body)
     }
 
     @objc(logRequestLoopAtPath:)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class CreatingBackupPage: PageModel {
@@ -25,19 +26,19 @@ class CreatingBackupPage: PageModel {
     }
 
     var creatingBackupPageLabel: XCUIElement {
-        app.descendants(matching: .any)["Creating Backup"]
+        app.descendants(matching: .any)[Locators.CreatingBackupPage.creatingBackupPageLabel.rawValue]
     }
 
     var backupSuccessfullyCreatedLabel: XCUIElement {
-        app.descendants(matching: .any)["Backup successfully created."]
+        app.descendants(matching: .any)[Locators.CreatingBackupPage.backupCreatedLabel.rawValue]
     }
 
     var backupProgressLabel: XCUIElement {
-        app.descendants(matching: .any)["progressView"]
+        app.descendants(matching: .any)[Locators.CreatingBackupPage.progressView.rawValue]
     }
 
     var saveFileButton: XCUIElement {
-        app.buttons["exportButton"]
+        app.buttons[Locators.CreatingBackupPage.exportBackupButton.rawValue]
     }
 
     func getBackupProgressValue() -> String? {
@@ -45,7 +46,9 @@ class CreatingBackupPage: PageModel {
     }
 
     func tapSaveFile() throws -> SaveBackupFileBottomSheetPage {
-        saveFileButton.tap()
+        if backupSuccessfullyCreatedLabel.exists {
+            saveFileButton.tap()
+        }
         return try SaveBackupFileBottomSheetPage()
     }
 

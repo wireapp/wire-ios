@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,12 +60,25 @@ extension MockAPIServiceProtocol {
         label: String = "",
         message: String = ""
     ) -> MockAPIServiceProtocol {
+        withError(
+            statusCode: statusCode,
+            payload: FailureResponseV0(
+                code: statusCode.rawValue,
+                label: label,
+                message: message
+            )
+        )
+    }
+
+    static func withError(
+        statusCode: HTTPStatusCode,
+        payload: some Encodable
+    ) -> MockAPIServiceProtocol {
         let apiService = MockAPIServiceProtocol()
         apiService.executeRequestRequiringAccessToken_MockMethod = { request, _ in
             try request.mockErrorResponse(
                 statusCode: statusCode,
-                label: label,
-                message: message
+                payload: payload
             )
         }
 

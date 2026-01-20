@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -131,12 +131,6 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     resetMLSConversations: config.resetMLSConversations
                 )
             )
-        case let .chatBubblesSimple(config):
-            .chatBubblesSimple(
-                StorableBasicFeatureConfig(
-                    status: StorableFeatureConfigStatus(config.status)
-                )
-            )
         case let .consumableNotifications(config):
             .consumableNotifications(
                 StorableBasicFeatureConfig(
@@ -151,6 +145,13 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     status: StorableFeatureConfigStatus(
                         config.status
                     )
+                )
+            )
+        case let .cellsInternal(config):
+            .cellsInternal(
+                StorableCellsInternalFeatureConfig(
+                    status: StorableFeatureConfigStatus(config.status),
+                    backendURL: config.backendURL
                 )
             )
         case let .unknown(featureName):
@@ -267,15 +268,16 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     status: config.status.toAPIModel()
                 )
             )
-        case let .chatBubblesSimple(config):
-            .chatBubblesSimple(
-                .init(
-                    status: config.status.toAPIModel()
-                )
-            )
         case let .cells(config):
             .cells(
                 .init(status: config.status.toAPIModel())
+            )
+        case let .cellsInternal(config):
+            .cellsInternal(
+                .init(
+                    status: config.status.toAPIModel(),
+                    backendURL: config.backendURL
+                )
             )
         case let .unknown(featureName):
             .unknown(featureName: featureName)
@@ -308,8 +310,8 @@ enum StorableFeatureConfig: Equatable, Codable, Sendable {
     case channels(StorableChannelsFeatureConfig)
     case allowedGlobalOperations(StorableAllowedGlobalOperationsFeatureConfig)
     case consumableNotifications(StorableBasicFeatureConfig)
-    case chatBubblesSimple(StorableBasicFeatureConfig)
     case cells(StorableBasicFeatureConfig)
+    case cellsInternal(StorableCellsInternalFeatureConfig)
     case unknown(featureName: String)
 
 }
@@ -449,4 +451,9 @@ struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
     let allowedToCreateChannels: Permission
     let allowedToOpenChannels: Permission
 
+}
+
+struct StorableCellsInternalFeatureConfig: Codable, Equatable, Sendable {
+    let status: StorableFeatureConfigStatus
+    let backendURL: URL
 }

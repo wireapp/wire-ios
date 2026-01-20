@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -101,28 +101,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         // THEN
         XCTAssertNotNil(mocUI)
         XCTAssertNil(mocUI?.zm_sync)
-    }
-
-    func testThatItNotfiesTheTransportSessionWhenSelfUserClientIsRegistered() {
-        // GIVEN
-        let userClient = syncMOC.performAndWait {
-            self.createSelfClient()
-        }
-
-        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
-        mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
-
-        // WHEN
-        syncMOC.performGroupedBlock { [self] in
-            sut.didRegisterSelfUserClient(userClient)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        syncMOC.performAndWait {
-            XCTAssertEqual(mockPushChannel.clientID, userClient.remoteIdentifier)
-        }
     }
 
     func testItSlowSyncsAfterRegisteringClient() async throws {
@@ -382,71 +360,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
     }
 
-    func testThatItNotifiesObserversWhenTheNetworkStatusBecomesOnline() {
-        // GIVEN
-        let stateRecorder = NetworkStateRecorder()
-        sut.didGoOffline()
-        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
-        XCTAssertEqual(sut.networkState, .offline)
-
-        // WHEN
-        stateRecorder.observe(in: sut.managedObjectContext.notificationContext)
-        sut.didReceiveData()
-
-        // THEN
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(stateRecorder.stateChanges.count, 1)
-        XCTAssertEqual(stateRecorder.stateChanges.first, .onlineSynchronizing)
-    }
-
-    func testThatItDoesNotNotifiesObserversWhenTheNetworkStatusWasAlreadyOnline() {
-        // GIVEN
-        // Update the network state to online
-        sut.isPerformingSync = false
-        sut.updateNetworkState()
-
-        let stateRecorder = NetworkStateRecorder()
-        stateRecorder.observe(in: sut.managedObjectContext.notificationContext)
-        XCTAssertEqual(stateRecorder.stateChanges.count, 0)
-
-        // WHEN
-        sut.didReceiveData()
-
-        // THEN
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(stateRecorder.stateChanges.count, 0)
-    }
-
-    func testThatItNotifiesObserversWhenTheNetworkStatusBecomesOffline() {
-        // GIVEN
-        let stateRecorder = NetworkStateRecorder()
-        stateRecorder.observe(in: sut.managedObjectContext.notificationContext)
-
-        // WHEN
-        sut.didGoOffline()
-
-        // THEN
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(stateRecorder.stateChanges.count, 1)
-        XCTAssertEqual(stateRecorder.stateChanges.first, .offline)
-    }
-
-    func testThatItDoesNotNotifiesObserversWhenTheNetworkStatusWasAlreadyOffline() {
-        // GIVEN
-        let stateRecorder = NetworkStateRecorder()
-
-        sut.didGoOffline()
-        wait(forConditionToBeTrue: self.sut.networkState == .offline, timeout: 5)
-
-        // WHEN
-        stateRecorder.observe(in: sut.managedObjectContext.notificationContext)
-        sut.didGoOffline()
-
-        // THEN
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(stateRecorder.stateChanges.count, 0)
-    }
-
     func testThatItSetsTheMinimumBackgroundFetchInterval() {
         XCTAssertNotEqual(application.minimumBackgroundFetchInverval, UIApplication.backgroundFetchIntervalNever)
         XCTAssertGreaterThanOrEqual(
@@ -474,109 +387,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         // THEN
         uiMOC.refreshAllObjects()
         XCTAssertEqual(conversations.filter { $0.firstUnreadMessage != nil }.count, 0)
-    }
-
-    func test_itPerformsPeriodicMLSUpdates_AfterQuickSync() {
-        // GIVEN
-        DeveloperFlag.multibackend.enable(false, storage: .temporary())
-
-        syncMOC.performAndWait {
-            let mls = Feature.MLS(status: .enabled, config: .init())
-            self.sut.featureRepository.storeMLS(mls)
-        }
-        mockMLSService.performPendingJoins_MockMethod = {}
-        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
-        mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
-        mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
-        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
-
-        let getFeatureConfigsActionHandler = MockActionHandler<GetFeatureConfigsAction>(
-            result: .success(()),
-            context: syncMOC.notificationContext
-        )
-        let pushSupportedProtocolsActionHandler = MockActionHandler<PushSupportedProtocolsAction>(
-            result: .success(()),
-            context: syncMOC.notificationContext
-        )
-        let backendPublicKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
-        let fetchBackendMLSPublicKeysActionHandler = MockActionHandler<FetchBackendMLSPublicKeysAction>(
-            result: .success(backendPublicKeys),
-            context: syncMOC.notificationContext
-        )
-
-        // MLS client has been registered
-        syncMOC.performAndWait {
-            let selfUserClient = createSelfClient()
-            selfUserClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "somekey")
-            selfUserClient.needsToUploadMLSPublicKeys = false
-            ZMUser.selfUser(in: self.syncMOC).domain = "anta.com"
-            sut.didRegisterSelfUserClient(selfUserClient)
-            syncMOC.saveOrRollback()
-
-            // WHEN
-            sut.didFinishIncrementalSync(isRecovering: false)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
-        XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
-        XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
-        XCTAssertFalse(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
-
-        XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
-
-        XCTAssertEqual(fetchBackendMLSPublicKeysActionHandler.performedActions.count, 1)
-    }
-
-    func test_itCreatesMLSClientIfNeeded_AfterQuickSync() {
-        // GIVEN
-        DeveloperFlag.multibackend.enable(false, storage: .temporary())
-
-        syncMOC.performAndWait {
-            ZMUser.selfUser(in: self.syncMOC).domain = "anta.com"
-        }
-        let selfUserClient = syncMOC.performAndWait {
-            self.createSelfClient()
-        }
-
-        mockMLSService.performPendingJoins_MockMethod = {}
-        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
-        mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
-        mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
-        mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_MockMethod = { _ in }
-        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
-
-        syncMOC.performAndWait {
-            sut.setUpSyncAgent(clientID: selfUserClient.remoteIdentifier!)
-            XCTAssertTrue(selfUserClient.mlsPublicKeys.isEmpty)
-
-            XCTAssertFalse(BackendInfo.isMLSEnabled)
-            XCTAssertFalse(sut.featureRepository.fetchMLS().isEnabled)
-        }
-
-        // WHEN
-        let backendPublicKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
-        let fetchBackendMLSPublicKeysActionHandler = MockActionHandler<FetchBackendMLSPublicKeysAction>(
-            result: .success(backendPublicKeys),
-            context: syncMOC.notificationContext
-        )
-        syncMOC.performAndWait {
-            let mls = Feature.MLS(status: .enabled, config: .init())
-            self.sut.featureRepository.storeMLS(mls)
-
-            sut.didFinishIncrementalSync(isRecovering: false)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        syncMOC.performAndWait {
-            XCTAssertEqual(mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_Invocations.count, 1)
-            XCTAssertTrue(BackendInfo.isMLSEnabled)
-            XCTAssertTrue(sut.featureRepository.fetchMLS().isEnabled)
-        }
     }
 
     func test_didFinishQuickSync_CalculateSupportedProtocolsIfNoProtocols() {

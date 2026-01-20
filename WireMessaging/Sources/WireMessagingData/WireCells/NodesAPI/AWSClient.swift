@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import AWSClientRuntime
 package import AWSS3
 package import Foundation
 import Smithy
+import SmithyHTTPAPI
 import SmithyIdentity
 import SmithyStreams
 import WireLogging
@@ -62,11 +63,17 @@ final class AWSClient: Sendable {
     private let s3: any S3ClientProtocol
     private let makeStream: @Sendable (FileStream) -> ObservableStream
 
-    convenience init(serverURL: URL, accessToken: any AccessTokenProvider) {
+    convenience init(
+        serverURLResolver: @escaping @Sendable () throws -> URL,
+        accessToken: any AccessTokenProvider
+    ) {
         let config = try! S3Client.S3ClientConfiguration(
             awsCredentialIdentityResolver: CredentialIdentityResolver(accessTokenProvider: accessToken),
             region: Constants.region,
-            endpoint: serverURL.absoluteString
+            endpointResolver: AWSEndpointResolver(
+                serverURLResolver: serverURLResolver,
+                bucket: Constants.bucket
+            )
         )
         self.init(s3: S3Client(config: config))
     }
@@ -159,7 +166,8 @@ final class AWSClient: Sendable {
         let fileSize = try FileManager.default.attributesOfItem(atPath: path.path)[.size] as! Int64
 
         if fileSize > Constants.maxRegularUploadSize {
-            try await uploadMultipart(path: path, node: node, versionID: versionID, onProgressUpdate: onProgressUpdate)
+            // FIXME: [WPB-18598] Use multipart upload when working
+            try await uploadRegular(path: path, node: node, versionID: versionID, onProgressUpdate: onProgressUpdate)
         } else {
             try await uploadRegular(path: path, node: node, versionID: versionID, onProgressUpdate: onProgressUpdate)
         }
@@ -189,10 +197,19 @@ final class AWSClient: Sendable {
         )
 
         try await withTaskCancellationHandler {
-            _ = try await s3.putObject(input: input)
+            do {
+                _ = try await s3.putObject(input: input)
+            } catch {
+                if Task.isCancelled {
+                    WireLogger.wireCells.info("Upload cancelled for node: \(node.path)")
+                    throw CancellationError()
+                }
+
+                throw error
+            }
         } onCancel: {
-            // TODO: [WPB-18574] AWS SDK doesn't support cancelling in flight requests. Find a work around.
             WireLogger.wireCells.info("Cancelling upload for node: \(node.path)")
+            stream.cancel()
         }
     }
 
@@ -268,9 +285,27 @@ private extension WireCellsNodeNetworkModel {
     func createDraftNodeMetadata(versionID: UUID) -> [String: String] {
         [
             "Draft-Mode": "true",
-            "Create-Resource-UUID": uuid.uuidString,
-            "Create-Version-ID": versionID.uuidString
+            "Create-Resource-UUID": uuid.transportString(),
+            "Create-Version-ID": versionID.transportString()
         ]
+    }
+}
+
+private struct AWSEndpointResolver: EndpointResolver {
+    let serverURLResolver: @Sendable () throws -> URL
+    let bucket: String
+
+    init(
+        serverURLResolver: @escaping @Sendable () throws -> URL,
+        bucket: String
+    ) {
+        self.serverURLResolver = serverURLResolver
+        self.bucket = bucket
+    }
+
+    func resolve(params: AWSS3.EndpointParams) throws -> SmithyHTTPAPI.Endpoint {
+        let serverURL = try serverURLResolver().appendingPathComponent("/\(bucket)")
+        return try SmithyHTTPAPI.Endpoint(urlString: serverURL.absoluteString)
     }
 }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -303,11 +303,11 @@ extension ZMUserSession: UserSession {
     }
 
     public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
-        CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: makeSetConversationGuestsAndServicesUseCase())
+        CreateConversationGuestLinkUseCase(setGuestsAndAppsUseCase: makeSetConversationGuestsAndAppsUseCase())
     }
 
-    public func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
-        SetAllowGuestAndServicesUseCase()
+    public func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol {
+        SetAllowGuestAndAppsUseCase()
     }
 
     @MainActor
@@ -355,7 +355,7 @@ extension ZMUserSession: UserSession {
         AppendKnockMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
-    public func makeAppendLocationMessageUseCase() -> AppendLocationMessagekUseCaseProtocol {
+    public func makeAppendLocationMessageUseCase() -> AppendLocationMessageUseCaseProtocol {
         AppendLocationMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
@@ -389,22 +389,13 @@ extension ZMUserSession: UserSession {
     }
 
     public var resolvedBackendMetadata: BackendMetadataProvider {
-        if DeveloperFlag.multibackend.isOn {
-            let metadata = userSessionComponent.backendMetadata
-            return BackendMetadataProvider(
-                apiVersionOverride: .init(rawValue: Int32(metadata.apiVersion.rawValue)),
-                domainOverride: metadata.domain,
-                isFederationEnabledOverride: metadata.isFederationEnabled,
-                isBackendMLSEnabledOverride: journal[.isBackendMLSEnabled]
-            )
-        } else {
-            return BackendMetadataProvider(
-                apiVersionOverride: nil,
-                domainOverride: nil,
-                isFederationEnabledOverride: nil,
-                isBackendMLSEnabledOverride: nil
-            )
-        }
+        let metadata = userSessionComponent.backendMetadata
+        return BackendMetadataProvider(
+            apiVersionOverride: .init(rawValue: Int32(metadata.apiVersion.rawValue)),
+            domainOverride: metadata.domain,
+            isFederationEnabledOverride: metadata.isFederationEnabled,
+            isBackendMLSEnabledOverride: journal[.isBackendMLSEnabled]
+        )
     }
 
 }

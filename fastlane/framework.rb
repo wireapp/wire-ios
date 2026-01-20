@@ -16,12 +16,10 @@ class Framework
             "WireUI",
             "wire-ios",
             "wire-ios-canvas",
-            "wire-ios-cryptobox",
             "wire-ios-data-model",
             "wire-ios-images",
             "wire-ios-link-preview",
             "wire-ios-mocktransport",
-            "wire-ios-notification-engine",
             "wire-ios-request-strategy",
             "wire-ios-share-engine",
             "wire-ios-sync-engine",
@@ -37,7 +35,6 @@ class Framework
             hash
         end
 
-        frameworks["wire-ios"].add_dependency(frameworks["wire-ios-notification-engine"])
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-share-engine"])
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-sync-engine"])
         frameworks["wire-ios"].add_dependency(frameworks["WireBackup"])
@@ -49,8 +46,6 @@ class Framework
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-testing"]) # included in WireiOSTests
         frameworks["wire-ios"].add_dependency(frameworks["WireLogging"])
 
-        frameworks["wire-ios-notification-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
-        frameworks["wire-ios-notification-engine"].add_dependency(frameworks["WireLogging"])
 
         frameworks["wire-ios-sync-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
         frameworks["wire-ios-sync-engine"].add_dependency(frameworks["WireNetwork"])
@@ -65,7 +60,6 @@ class Framework
         frameworks["wire-ios-request-strategy"].add_dependency(frameworks["WireNetwork"])
         frameworks["wire-ios-request-strategy"].add_dependency(frameworks["WireLogging"])
         
-        frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-cryptobox"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-images"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-link-preview"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-transport"])
@@ -75,9 +69,6 @@ class Framework
         frameworks["wire-ios-data-model"].add_dependency(frameworks["WireLogging"])
         
         frameworks["wire-ios-mocktransport"].add_dependency(frameworks["wire-ios-testing"])
-        frameworks["wire-ios-mocktransport"].add_dependency(frameworks["wire-ios-cryptobox"])
-
-        frameworks["wire-ios-cryptobox"].add_dependency(frameworks["wire-ios-utilities"])
 
         frameworks["wire-ios-transport"].add_dependency(frameworks["wire-ios-utilities"])
         frameworks["wire-ios-transport"].add_dependency(frameworks["wire-ios-testing"]) # included in WireTransportTests
@@ -176,7 +167,7 @@ class Framework
         when "WireAnalytics"
             "WireAnalyticsAll" # if a package has multiple targets, fastlane does not found <Package>-Package
         when "WireLogging"
-            "WireLogging"
+            "WireLoggingAll" # if a package has multiple targets, fastlane does not find <Package>-Package
         when "wire-ios-mocktransport"
             "WireMockTransport"
         else

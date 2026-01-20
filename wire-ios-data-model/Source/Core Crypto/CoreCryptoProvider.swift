@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -62,7 +62,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let sharedContainerURL: URL
     private let accountDirectory: URL
     private let sharedUserDefaults: UserDefaultsProtocol
-    private let cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     private var coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol
     private let featureRespository: LegacyFeatureRepositoryInterface
     private let syncContext: NSManagedObjectContext
@@ -84,7 +83,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         accountDirectory: URL,
         sharedUserDefaults: UserDefaultsProtocol,
         syncContext: NSManagedObjectContext,
-        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol,
         allowCreation: Bool = true,
         localDomain: String?
@@ -95,7 +93,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.sharedUserDefaults = sharedUserDefaults
         self.syncContext = syncContext
         self.allowCreation = allowCreation
-        self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
         self.featureRespository = LegacyFeatureRepository(context: syncContext)
         self.localDomain = localDomain
@@ -227,7 +224,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         let configuration = try await provider.createInitialConfiguration(
             sharedContainerURL: sharedContainerURL,
             userID: selfUserID,
-            createKeyIfNeeded: allowCreation
+            allowKeyCreation: allowCreation
         )
 
         let coreCrypto = try await SafeCoreCrypto(
@@ -236,7 +233,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         )
 
         updateKeychainItemAccess()
-        await migrateCryptoboxSessionsIfNeeded(with: coreCrypto)
 
         try await configureProteusClient(coreCrypto: coreCrypto)
         try await configureMLSClient(coreCrypto: coreCrypto)
@@ -360,29 +356,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             ZMUser.selfUser(in: self.syncContext).selfClient()?.mlsPublicKeys = keys
             self.syncContext.saveOrRollback()
         }
-    }
-
-    private func migrateCryptoboxSessionsIfNeeded(with coreCrypto: SafeCoreCrypto) async {
-        guard cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
-            WireLogger.proteus.info("cryptobox migration is not needed")
-            return
-        }
-
-        WireLogger.proteus.info("preparing for cryptobox migration...")
-
-        do {
-            try await cryptoboxMigrationManager.performMigration(
-                accountDirectory: accountDirectory,
-                coreCrypto: coreCrypto
-            )
-        } catch {
-            WireLogger.proteus.critical("cryptobox migration failed: \(error.localizedDescription)")
-            fatalError(
-                "Failed to migrate data from CryptoBox to CoreCrypto keystore, error : \(error.localizedDescription)"
-            )
-        }
-
-        WireLogger.proteus.info("cryptobox migration success")
     }
 
 }

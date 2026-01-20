@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// MARK: - Navigation
 
+"general.loading" = "Загрузка…";
+"general.confirm" = "OK";
+"general.failure" = "Что-то пошло не так";
+"general.save" = "Сохранить";
+"general.cancel" = "Отмена";
+
+// MARK: Channel History
 "conversation.create.channel.back" = "Вернуться к обзору новой беседы";
 "conversation.creationForm.channelHistory.upgradeBanner.close" = "Закрыть баннер обновления";
 
@@ -26,7 +34,18 @@
 "conversation.wireCells.files.noData.message" = "Здесь вы найдете все файлы и папки, которыми поделились в этой беседе";
 "conversation.wireCells.files.pendingCells.title" = "Файлы загружаются";
 "conversation.wireCells.files.pendingCells.message" = "Ваши документы и медиафайлы будут доступны здесь после того, как мы загрузим все файлы и папки.";
-"conversation.wireCells.allFiles.noData.message" = "You'll find all files and folders shared across your conversations here.";
-"conversation.wireCells.files.error.title" = "Can't load files";
-"conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
-"conversation.wireCells.files.error.reload" = "Reload";
+"conversation.wireCells.allFiles.noData.message" = "Здесь вы найдете все файлы и папки, которыми поделились в ваших беседах.";
+"conversation.wireCells.files.error.title" = "Невозможно загрузить файлы";
+"conversation.wireCells.files.error.message" = "Не удалось загрузить ваши файлы и папки. Пожалуйста, попробуйте еще раз.";
+"conversation.wireCells.files.error.reload" = "Перезагрузить";
+"conversation.wireCells.files.moreActionsButton" = "Больше";
+"conversation.wireCells.recycleBin.noData.message" = "Здесь вы найдете все удаленные файлы и папки.";
+"conversation.wireCells.files.moveToFolder.move" = "Переместить сюда";
+
+// MARK: - File Tags View
+"conversation.wireCells.tags.removeTag" = "Удалить тег {0}";
+"conversation.wireCells.tags.addTag" = "Добавить тег {0}";
+
+// MARK: - Share Link View
+"conversation.wireCells.shareLink.hidePassword" = "Скрыть пароль";
+"conversation.wireCells.shareLink.showPassword" = "Показать пароль";

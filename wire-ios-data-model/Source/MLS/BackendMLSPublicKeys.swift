@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ public struct BackendMLSPublicKeys: Equatable {
     public struct MLSPublicKeys: Equatable {
 
         let ed25519: Data?
+        /// deprecated: this field is not returned by backend
         let ed448: Data?
         let p256: Data?
         let p384: Data?

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -76,7 +76,12 @@ struct WireCellsDraftMetadataRepositoryTests {
         let metadata = try await sut.audioMetadata(fileURL: fileURL)
 
         // then
-        #expect(metadata == .audio(duration: 934))
+        #expect({
+            guard case let .audio(duration) = metadata else { return false }
+            // test was flaky when testing an exact duration, duration would differ a bit depending on the machine it's
+            // run on.
+            return 900 ... 1000 ~= duration
+        }())
     }
 
 }

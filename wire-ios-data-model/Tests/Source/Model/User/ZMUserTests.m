@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -1209,19 +1209,19 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
         ZMUser *user = [ZMUser selfUserInContext:self.syncMOC];
         UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
         
-        UserClient *trustedClient1 = [self createClientForUser:user createSessionWithSelfUser:NO onMOC:self.syncMOC];
+        UserClient *trustedClient1 = [self createClientForUser:user onMOC:self.syncMOC];
         [selfClient trustClient:trustedClient1];
         trustedClient1.needsToNotifyUser = YES;
         
-        UserClient *trustedClient2 = [self createClientForUser:user createSessionWithSelfUser:NO onMOC:self.syncMOC];
+        UserClient *trustedClient2 = [self createClientForUser:user onMOC:self.syncMOC];
         [selfClient trustClient:trustedClient2];
         trustedClient2.needsToNotifyUser = NO;
         
-        UserClient *ignoredClient1 = [self createClientForUser:user createSessionWithSelfUser:NO onMOC:self.syncMOC];
+        UserClient *ignoredClient1 = [self createClientForUser:user onMOC:self.syncMOC];
         [selfClient ignoreClient:ignoredClient1];
         ignoredClient1.needsToNotifyUser = YES;
         
-        UserClient *ignoredClient2 = [self createClientForUser:user createSessionWithSelfUser:NO onMOC:self.syncMOC];
+        UserClient *ignoredClient2 = [self createClientForUser:user onMOC:self.syncMOC];
         [selfClient ignoreClient:ignoredClient2];
         ignoredClient2.needsToNotifyUser = NO;
         
@@ -1925,10 +1925,9 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
 {
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     user.name = @"User Name";
-    user.providerIdentifier = [[NSUUID UUID] transportString];
-    user.serviceIdentifier = [[NSUUID UUID] transportString];
-    
-    XCTAssertTrue(user.isServiceUser);
+    [user setValue:@(ZMTypeOfUserBot) forKey:@"typeValue"];
+
+    XCTAssertTrue(user.isAppOrBot);
     XCTAssertEqualObjects(user.name, @"User Name");
 }
 

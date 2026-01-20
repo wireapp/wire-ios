@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 //
 
+import WireData
 import XCTest
 
 @testable import WireDataModel
@@ -193,7 +194,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
     func testThatTheVersionIdentifiersMatchModelNameAndDoNotDuplicate() throws {
         // given
-        guard let source = Bundle(for: ZMMessage.self).url(forResource: "zmessaging", withExtension: "momd") else {
+        guard let source = WireDataBundle.bundle.url(forResource: "zmessaging", withExtension: "momd") else {
             fatalError("missing resource")
         }
         let fm = FileManager.default

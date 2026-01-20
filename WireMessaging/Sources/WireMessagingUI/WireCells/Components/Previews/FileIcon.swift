@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import SwiftUI
-import UniformTypeIdentifiers
+public import SwiftUI
+public import UniformTypeIdentifiers
 
-enum FileIcon {
+public enum FileIcon: Sendable {
 
     case archive
     case audio
@@ -32,6 +32,7 @@ enum FileIcon {
     case presentation
     case spreadsheet
     case video
+    case folder
 
 }
 
@@ -41,7 +42,7 @@ extension FileIcon {
 
     /// Creates a `FileIcon` based on the provided optional type and file extension.
 
-    static func make(type: UTType?, fileExtension: String?) -> FileIcon {
+    public static func make(type: UTType?, fileExtension: String?) -> FileIcon {
         if let type, let icon = FileIcon.make(type: type) {
             icon
         } else if let fileExtension, let icon = FileIcon.make(fileExtension: fileExtension) {
@@ -121,7 +122,13 @@ extension FileIcon {
             .fileIconSpreadsheet
         case .video:
             .fileIconVideo
+        case .folder:
+            .fileIconFolder
         }
+    }
+
+    public var image: UIImage {
+        UIImage(resource: resource)
     }
 
 }

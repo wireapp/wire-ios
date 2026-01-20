@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,10 +28,15 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 /// Allows browsing files shared across all conversations
 package struct FilesBrowserView: FilesViewProtocol {
-    @ObservedObject package var viewModel: FilesViewModel
+    @StateObject package var viewModel: FilesViewModel
+    package var isBrowsing: Bool { true }
 
-    package init(viewModel: FilesViewModel) {
-        self.viewModel = viewModel
+    package init(
+        viewModel: @autoclosure @escaping () -> FilesViewModel,
+        onOpenRecycleBin: @escaping () -> Void = {},
+        onDismissContainer: @escaping () -> Void = {}
+    ) {
+        self._viewModel = StateObject(wrappedValue: viewModel())
     }
 
     package var body: some View {
@@ -40,26 +45,11 @@ package struct FilesBrowserView: FilesViewProtocol {
                 .ignoresSafeArea(.all)
             Group {
                 switch viewModel.state {
-                case .initial:
-                    Button(action: reloadTask) {
-                        Image(systemName: "arrow.trianglehead.clockwise")
-                            .wireTextStyle(.body3)
-                            .foregroundStyle(SemanticColors.Label.textDefault.color)
-
-                    }
                 case .loading:
                     ProgressView()
                         .progressViewStyle(.circular)
-                case let .received(items):
-                    if items.isEmpty {
-                        FilesInfoView(info: .noFilesFound(scope: .allConversations))
-                    } else {
-                        filesList
-                            .listStyle(.plain)
-                            .refreshable { reloadTask() }
-                    }
-                case .pending:
-                    FilesInfoView(info: .preparingFiles)
+                case .received, .pending:
+                    filesList
                 case .error:
                     FilesInfoView(info: .error, onReload: {
                         reloadTask()
@@ -69,9 +59,10 @@ package struct FilesBrowserView: FilesViewProtocol {
             .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
             .navigationTitle(Strings.AllFiles.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
-            .if(!viewModel.state.items.isEmpty || !viewModel.searchText.isEmpty) { view in
+            .toolbar { toolbarContent }
+            .if(viewModel.showSearchBar) { view in
                 view.searchable(
                     text: $viewModel.searchText,
                     placement: .navigationBarDrawer,
@@ -85,13 +76,42 @@ package struct FilesBrowserView: FilesViewProtocol {
                 message: { Text($0.message) },
                 actions: { _ in confirmButton }
             )
+            .sheet(item: $viewModel.sheetNavigation) {
+                Task { await viewModel.onSheetDismissed() }
+            } content: { navigationItem in
+                switch navigationItem {
+                case let .filters(filtersView):
+                    filtersView
+                case let .shareLink(shareLinkView):
+                    shareLinkView
+                default:
+                    EmptyView()
+                }
+            }
         }
     }
 }
 
+// MARK: - Toolbar
+
+private extension FilesBrowserView {
+
+    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button {
+                viewModel.openFilters()
+            } label: {
+                Image(systemName: "line.3.horizontal.decrease.circle")
+            }
+
+        }
+    }
+
+}
+
 // MARK: - Helper
 
-private extension View {
+extension View {
     @ViewBuilder
     func `if`(
         _ condition: Bool,
@@ -108,6 +128,5 @@ private extension View {
 #Preview {
     NavigationStack {
         FilesBrowserView(viewModel: .preview())
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 }

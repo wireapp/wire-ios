@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -69,6 +69,7 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
     case mlsStaleMessage
     case mlsClientMismatch
     case unreachableDomains(Set<String>)
+    case groupOutOfSync(missingUsers: Set<QualifiedID>)
 
     // 422
     case mlsUnsupportedProposal(message: String)
@@ -161,6 +162,9 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
 
         case let .unreachableDomains(domains):
             "Some domains were unreachable: \(domains)"
+
+        case let .groupOutOfSync(missingUsers):
+            "The group is missing \(missingUsers.count) users"
         }
     }
 

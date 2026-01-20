@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class ActiveConversationPage: PageModel {
@@ -25,27 +26,27 @@ class ActiveConversationPage: PageModel {
     }
 
     var videoCallButton: XCUIElement {
-        app.descendants(matching: .any)["videoCallBarButton"].firstMatch
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoCallBarButton.rawValue].firstMatch
     }
 
     var inputMessageField: XCUIElement {
-        app.textViews["inputField"]
+        app.textViews[Locators.ActiveConversationPage.inputField.rawValue]
     }
 
     var sendButton: XCUIElement {
-        app.buttons["sendButton"]
+        app.buttons[Locators.ActiveConversationPage.sendButton.rawValue]
     }
 
     var conversationBackButton: XCUIElement {
-        app.buttons["ConversationBackButton"]
+        app.buttons[Locators.ActiveConversationPage.conversationBackButton.rawValue]
     }
 
     var senderNameLabel: XCUIElement {
-        app.descendants(matching: .any)["author.name"].firstMatch
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.authorName.rawValue].firstMatch
     }
 
     var messageLabels: XCUIElementQuery {
-        app.textViews.matching(identifier: "Message")
+        app.textViews.matching(identifier: Locators.ActiveConversationPage.message.rawValue)
     }
 
     func getSenderName() -> String? {
@@ -53,11 +54,15 @@ class ActiveConversationPage: PageModel {
     }
 
     var conversationTitleButton: XCUIElement {
-        app.buttons["conversation_title_button"]
+        app.buttons[Locators.ActiveConversationPage.conversationTitleButton.rawValue]
     }
 
     var conversationDetailsButton: XCUIElement {
-        app.buttons["Conversation Details"]
+        app.buttons[Locators.ActiveConversationPage.conversationDetailsButton.rawValue]
+    }
+
+    var imageCell: XCUIElement {
+        app.otherElements[Locators.ActiveConversationPage.imageCell.rawValue]
     }
 
     func fetchMessages() -> [String] {

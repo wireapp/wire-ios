@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,10 @@
 //
 
 import WireDataModel
+import WireFoundation
 import WireNetworkSupport
 import XCTest
+
 @testable import WireDomain
 @testable import WireDomainSupport
 @testable import WireNetwork
@@ -48,11 +50,11 @@ final class PullMLSOneOnOneSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getMLSOneToOneConversationUserIDIn_MockValue = Scaffolding.conversation
+        api.getMLSOneToOneConversationUserIDIn_MockValue = (Scaffolding.conversation, Scaffolding.mlsPublicKeys)
         store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
 
         // When
-        let mlsGroupID = try await sut.pull(
+        let (mlsGroupID, publicKeys) = try await sut.pull(
             userID: Scaffolding.userID,
             userDomain: Scaffolding.userDomain
         )
@@ -70,6 +72,7 @@ final class PullMLSOneOnOneSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[0].isMLSEnabled, Scaffolding.isMLSEnabled)
 
         XCTAssertEqual(mlsGroupID, MLSGroupID(base64Encoded: Scaffolding.mlsGroupID))
+        XCTAssertEqual(publicKeys, Scaffolding.mlsPublicKeys)
     }
 
 }
@@ -103,6 +106,12 @@ private enum Scaffolding {
         lastEventTime: nil
     )
 
+    static let mlsPublicKeys = WireNetwork.MLSPublicKeys(
+        ed25519: .randomAlphanumerical(length: 5),
+        p256: .randomAlphanumerical(length: 5),
+        p384: .randomAlphanumerical(length: 5),
+        p521: .randomAlphanumerical(length: 5)
+    )
     static let mlsGroupID =
         "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireLogging
 import WireSyncEngine
 
@@ -58,7 +59,7 @@ final class ProfileHeaderViewController: UIViewController {
     private let nameLabel: DynamicFontLabel = {
         let label = DynamicFontLabel(style: .h2, color: LabelColors.textDefault)
         label.accessibilityLabel = AccountPageStrings.Name.description
-        label.accessibilityIdentifier = "name"
+        label.accessibilityIdentifier = Locators.UserProfilePage.name.rawValue
 
         label.accessibilityTraits.insert(.header)
         label.lineBreakMode = .byTruncatingMiddle
@@ -78,7 +79,7 @@ final class ProfileHeaderViewController: UIViewController {
         let boldImage = UIImage(systemName: "qrcode", withConfiguration: boldConfig)
         button.setImage(boldImage, for: .normal)
 
-        button.accessibilityIdentifier = "QR code button"
+        button.accessibilityIdentifier = Locators.UserProfilePage.qrCodeButton.rawValue
         button.accessibilityLabel = L10n.Accessibility.Profile.ShareProfileButton.description
 
         return button
@@ -158,7 +159,7 @@ final class ProfileHeaderViewController: UIViewController {
         }
 
         handleLabel.accessibilityLabel = AccountPageStrings.Handle.description
-        handleLabel.accessibilityIdentifier = "username"
+        handleLabel.accessibilityIdentifier = Locators.UserProfilePage.username.rawValue
         handleLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         handleLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
@@ -170,7 +171,7 @@ final class ProfileHeaderViewController: UIViewController {
         teamNameLabel.accessibilityLabel = AccountPageStrings.TeamName.description
         teamNameLabel.numberOfLines = 0
         teamNameLabel.textAlignment = .center
-        teamNameLabel.accessibilityIdentifier = "team name"
+        teamNameLabel.accessibilityIdentifier = Locators.UserProfilePage.teamName.rawValue
         teamNameLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         teamNameLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 

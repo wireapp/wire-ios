@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,39 +40,6 @@ final class SettingsShareDatabaseCellDescriptor: SettingsButtonCellDescriptor {
         super.init(title: "Share Database", isDestructive: false) { _ in
             guard let userSession = ZMUserSession.shared() else { return }
             let fileURL = userSession.managedObjectContext.zm_storeURL!
-            let archiveURL = fileURL.appendingPathExtension("zip")
-
-            try? FileManager.default.removeItem(at: archiveURL)
-            try? FileManager.default.zipItem(
-                at: fileURL,
-                to: archiveURL,
-                shouldKeepParent: false,
-                compressionMethod: .deflate
-            )
-
-            let shareDatabaseDocumentController = UIDocumentInteractionController(url: archiveURL)
-            shareDatabaseDocumentController.delegate = documentDelegate
-            shareDatabaseDocumentController.presentPreview(animated: true)
-        }
-
-    }
-
-}
-
-final class SettingsShareCryptoboxCellDescriptor: SettingsButtonCellDescriptor {
-
-    let documentDelegate: DocumentDelegate
-
-    init() {
-        let documentDelegate = DocumentDelegate()
-        self.documentDelegate = documentDelegate
-
-        super.init(title: "Share Cryptobox", isDestructive: false) { _ in
-            guard let userSession = ZMUserSession.shared() else { return }
-            let fileURL = userSession.managedObjectContext.zm_storeURL!
-                .deletingLastPathComponent()
-                .deletingLastPathComponent()
-                .appending(path: "otr", directoryHint: .isDirectory)
             let archiveURL = fileURL.appendingPathExtension("zip")
 
             try? FileManager.default.removeItem(at: archiveURL)

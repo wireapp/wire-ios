@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ private let log = ZMSLog(tag: "APIVersion")
 extension SessionManager: APIVersionResolverDelegate {
 
     public func resolveAPIVersion(completion: @escaping (Error?) -> Void = { _ in }) {
+        // TODO: [WPB-22507] remove this part is a complete PR
         guard !DeveloperFlag.multibackend.isOn else {
             completion(nil) // we don't need to resolve apiversion here
             return

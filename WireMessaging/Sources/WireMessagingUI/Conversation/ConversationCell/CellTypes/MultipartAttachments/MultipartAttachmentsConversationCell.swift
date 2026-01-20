@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,13 +20,36 @@ import SwiftUI
 
 final class MultipartAttachmentsConversationCell: UITableViewCell {
 
-    func configure(content: WireCellsAttachmentsPreviewView, insets: EdgeInsets) {
+    private var height: CGFloat?
+
+    func configure(
+        content: WireCellsAttachmentsPreviewView,
+        insets: EdgeInsets,
+        onLongPress: @escaping (UITableViewCell) -> Void,
+        onSizeChange: @escaping () -> Void
+    ) {
         contentConfiguration = UIHostingConfiguration {
             content
+                .onGeometryChange(for: CGFloat.self) { geometry in
+                    geometry.size.height
+                } action: { [weak self] newValue in
+                    guard let self else { return }
+
+                    if height == nil {
+                        height = newValue // Initial layout, no need to call onSizeChange
+                    } else if newValue != height {
+                        height = newValue
+                        onSizeChange()
+                    }
+                }
+                .onLongPressGesture {
+                    onLongPress(self)
+                }
         }
         .margins(.all, insets)
         .minSize(width: 0, height: 0)
         .background(.clear)
+
     }
 
     override func prepareForReuse() {

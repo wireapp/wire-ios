@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -139,15 +139,6 @@ extension EventDecoder {
                 await context.perform {
                     conversation?.commitPendingProposalDate = scheduledDate
                 }
-            }
-        }
-
-        if let mlsService = await context.perform({ context.mlsService }),
-           updateEvent.source == .webSocket {
-            Task.detached { [mlsService] in
-                // we don't need to wait for this, as it can take a while to finish
-                // it should not block decryption
-                await mlsService.commitPendingProposalsIfNeeded()
             }
         }
 

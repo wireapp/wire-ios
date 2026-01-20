@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import WireData
 
 struct CoreDataMigrationStep<Version: CoreDataMigrationVersion> {
 
@@ -82,7 +83,7 @@ struct CoreDataMigrationStep<Version: CoreDataMigrationVersion> {
         toDestinationModel destinationModel: NSManagedObjectModel
     ) -> NSMappingModel? {
         NSMappingModel(
-            from: [WireDataModelBundle.bundle],
+            from: [WireDataBundle.bundle],
             forSourceModel: sourceModel,
             destinationModel: destinationModel
         )

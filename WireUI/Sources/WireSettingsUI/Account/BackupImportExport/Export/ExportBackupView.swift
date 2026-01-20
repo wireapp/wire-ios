@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireLocators
 
 struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
 
@@ -50,6 +51,7 @@ struct ExportBackupView<PasswordView: View, ProgressView: View>: View {
                 } message: {
                     Text(Strings.ExportBackup.ErrorAlert.message)
                 }
+                .accessibilityIdentifier(Locators.BackupOrRestorePage.backUpNow.rawValue)
 
         }
     }

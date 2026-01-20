@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -292,10 +292,9 @@ final class UserEventDecodingTests: XCTestCase {
                 lastActiveDate: date(from: "2024-06-04T15:03:07Z"),
                 mlsPublicKeys: MLSPublicKeys(
                     ed25519: "ed25519_key",
-                    ed448: "ed448_key",
                     p256: "p256_key",
                     p384: "p384_key",
-                    p512: "p512_key"
+                    p521: "p512_key"
                 ),
                 cookie: "cookieData",
                 capabilities: [

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,9 +65,7 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
 
     var cookieStorage: ZMPersistentCookieStorage!
 
-    var spyKeyStore: SpyUserClientKeyStore!
     var proteusService: MockProteusServiceInterface!
-    var proteusProvider: MockProteusProvider!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     var postLoginAuthenticationObserverToken: Any?
@@ -76,16 +74,9 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
         super.setUp()
 
         syncMOC.performGroupedAndWait {
-            let spyKeyStore = SpyUserClientKeyStore(
-                accountDirectory: self.accountDirectory,
-                applicationContainer: self.sharedContainerURL
-            )
-            self.spyKeyStore = spyKeyStore
-            self.proteusService = MockProteusServiceInterface()
-            self.proteusProvider = MockProteusProvider(
-                mockProteusService: self.proteusService,
-                mockKeyStore: spyKeyStore
-            )
+
+            self.setupProteusService()
+
             self.coreCryptoProvider = MockCoreCryptoProviderProtocol()
             self.cookieStorage = ZMPersistentCookieStorage(
                 forServerName: "myServer",
@@ -106,7 +97,7 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
                 clientRegistrationStatus: self.clientRegistrationStatus,
                 clientUpdateStatus: self.clientUpdateStatus,
                 context: self.syncMOC,
-                proteusProvider: self.proteusProvider
+                proteusService: self.proteusService
             )
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.userIdentifier
@@ -116,17 +107,30 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
     }
 
     override func tearDown() {
-        try? FileManager.default.removeItem(at: spyKeyStore.cryptoboxDirectory)
-
         clientRegistrationStatus = nil
         mockClientRegistrationStatusDelegate = nil
         clientUpdateStatus = nil
-        spyKeyStore = nil
         sut.tearDown()
         sut = nil
         postLoginAuthenticationObserverToken = nil
         super.tearDown()
     }
+
+    private func setupProteusService() {
+        proteusService = MockProteusServiceInterface()
+        proteusService.generatePrekeysStartCount_MockMethod = { start, count async throws in
+            var prekeys = [IdPrekeyTuple]()
+
+            for index in start ... (start + count) {
+                prekeys.append((index, "prekey-\(index)"))
+            }
+
+            return prekeys
+        }
+        proteusService.lastPrekey_MockValue = "last-resort-prekey"
+        proteusService.underlyingLastPrekeyID = UInt16.max
+    }
+
 }
 
 // MARK: Inserting
@@ -390,11 +394,9 @@ extension UserClientRequestStrategyTests {
                 code: UserSessionErrorCode.needsPasswordToRegisterClient.rawValue,
                 userInfo: [
                     ZMEmailCredentialKey: emailAddress,
-                    ZMUserHasPasswordKey: true,
                     ZMUserUsesCompanyLoginCredentialKey: false,
                     ZMUserLoginCredentialsKey: LoginCredentials(
                         emailAddress: emailAddress,
-                        hasPassword: true,
                         usesCompanyLogin: false
                     )
                 ]

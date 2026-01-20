@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,12 +46,11 @@ final class ConversationMultipartMessageCellDescription: ConversationMessageCell
 
     init(
         multipartMessage: MultipartMessageData,
-        isSimpleChatBubblesEnabled: Bool,
         isSentBySelfUser: Bool
     ) {
         self.configuration = View.Configuration(
             attachments: multipartMessage.attachments,
-            alignment: isSimpleChatBubblesEnabled && isSentBySelfUser ? .trailing : .leading
+            alignment: isSentBySelfUser ? .trailing : .leading
         )
 
         let attachments = multipartMessage.attachments.map {
@@ -76,7 +75,6 @@ final class ConversationMultipartMessageCellDescription: ConversationMessageCell
         self.model = MultipartAttachmentsModel(
             attachments: attachments,
             isSentBySelfUser: isSentBySelfUser,
-            isChatBubblesEnabled: isSimpleChatBubblesEnabled
         )
 
     }

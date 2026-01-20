@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,3 +15,50 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// MARK: - Meetings List
+
+
+"wireMeetings.list.title" = "Meetings";
+"wireMeetings.list.tabs.past" = "Letzte";
+"wireMeetings.list.tabs.next" = "Nächste";
+"wireMeetings.list.actions.meetNow" = "Meeting starten";
+"wireMeetings.list.actions.scheduleMeeting" = "Meeting planen";
+"wireMeetings.list.actions.showAll" = "Alle anzeigen";
+"wireMeetings.list.emptyState.next.title" = "Noch keine bevorstehenden Meetings";
+"wireMeetings.list.emptyState.next.subtitle" = "Beginnen Sie ein Meeting mit Team-Mitgliedern, Gästen oder Externen.";
+"wireMeetings.list.emptyState.past.title" = "Noch keine vergangenen Meetings";
+"wireMeetings.list.emptyState.past.subtitle" = "Alle bisherigen Meetings finden Sie hier.";
+"wireMeetings.list.header.today" = "Heute";
+"wireMeetings.list.header.tomorrow" = "Morgen";
+"wireMeetings.list.header.yesterday" = "Gestern";
+"wireMeetings.list.header.ongoing" = "Ongoing";
+
+// MARK: - Schedule a meeting
+
+"wireMeetings.schedule.now.title" = "Meeting starten";
+"wireMeetings.schedule.future.title" = "Neues Meeting";
+"wireMeetings.schedule.cancel.button" = "Abbrechen";
+"wireMeetings.schedule.schedule.button" = "Planen";
+"wireMeetings.schedule.next.button" = "Weiter";
+"wireMeetings.schedule.setupTitle.header" = "Titel";
+"wireMeetings.schedule.setupTitle.placeholder" = "Meeting-Titel eingeben";
+"wireMeetings.schedule.setupParticipants.header" = "Teilnehmer";
+"wireMeetings.schedule.setupParticipants.placeholder" = "Teilnehmer hinzufügen";
+"wireMeetings.schedule.allowGuests.title" = "Gäste zulassen";
+"wireMeetings.schedule.disableGuestAccess.alert.title" = "Gastzugang deaktivieren?";
+"wireMeetings.schedule.disableGuestAccess.alert.subtitle" = "Aktuelle Gäste werden aus der Unterhaltung entfernt. Neue Gäste können nicht hinzugefügt werden.";
+"wireMeetings.schedule.disableGuestAccess.alert.disable" = "Deaktivieren";
+"wireMeetings.schedule.disableGuestAccess.alert.cancel" = "Abbrechen";
+"wireMeetings.schedule.setupPassword.header" = "Passwort (optional)";
+"wireMeetings.schedule.password.placeholder" = "Passwort eingeben";
+"wireMeetings.schedule.confirmedPassword.placeholder" = "Passwort bestätigen";
+"wireMeetings.schedule.confirmedPassword.error" = "Passwörter stimmen nicht überein";
+"wireMeetings.schedule.time.starts" = "Beginnt";
+"wireMeetings.schedule.time.ends" = "Endet";
+"wireMeetings.schedule.time.repeats" = "Wiederholt sich";
+"wireMeetings.schedule.time.never" = "Niemals";
+"wireMeetings.schedule.time.daily" = "Täglich";
+"wireMeetings.schedule.time.weekly" = "Wöchentlich";
+"wireMeetings.schedule.time.everyTwoWeeks" = "Alle 2 Wochen";
+"wireMeetings.schedule.time.monthly" = "Monatlich";
+"wireMeetings.schedule.time.yearly" = "Jährlich";

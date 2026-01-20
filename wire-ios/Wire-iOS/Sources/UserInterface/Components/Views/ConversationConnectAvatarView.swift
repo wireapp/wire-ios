@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -111,10 +111,10 @@ extension Mode {
         case (0, _):
             self = .none
         case (1, .group?):
-            let isServiceUser = users[0].isServiceUser
-            self = isServiceUser ? .one(serviceUser: isServiceUser) : .four
+            let isAppOrBot = users[0].isAppOrBot
+            self = isAppOrBot ? .one(serviceUser: isAppOrBot) : .four
         case (1, _):
-            self = .one(serviceUser: users[0].isServiceUser)
+            self = .one(serviceUser: users[0].isAppOrBot)
         default:
             self = .four
         }

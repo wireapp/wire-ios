@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,62 +28,112 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 package struct FilesView: FilesViewProtocol {
-    @ObservedObject package var viewModel: FilesViewModel
+    package var isBrowsing: Bool { false }
+    @StateObject package var viewModel: FilesViewModel
     @Environment(\.dismiss) var dismiss
+    @Environment(\.wireAccentColor) private var accentColor
 
-    package init(viewModel: FilesViewModel) {
-        self.viewModel = viewModel
+    let onOpenRecycleBin: () -> Void
+    let onDismissContainer: () -> Void
+
+    package init(
+        viewModel: @autoclosure @escaping () -> FilesViewModel,
+        onOpenRecycleBin: @escaping () -> Void = {},
+        onDismissContainer: @escaping () -> Void = {}
+    ) {
+        self._viewModel = StateObject(wrappedValue: viewModel())
+        self.onOpenRecycleBin = onOpenRecycleBin
+        self.onDismissContainer = onDismissContainer
     }
 
     package var body: some View {
-        NavigationStack {
-            ZStack {
-                ColorTheme.Backgrounds.background.color
-                    .ignoresSafeArea(.all)
+        ZStack {
+            ColorTheme.Backgrounds.background.color
+                .ignoresSafeArea(.all)
 
-                Group {
-                    switch viewModel.state {
-                    case .initial:
-                        Button(action: reloadTask) {
-                            Image(systemName: "arrow.trianglehead.clockwise")
-                                .wireTextStyle(.body3)
-                                .foregroundStyle(SemanticColors.Label.textDefault.color)
-
-                        }
-                    case .loading:
-                        ProgressView()
-                            .progressViewStyle(.circular)
-                    case let .received(items):
-                        if items.isEmpty {
-                            FilesInfoView(info: .noFilesFound(scope: .oneConversation))
-                        } else {
-                            filesList
-                                .listStyle(.plain)
-                                .refreshable { reloadTask() }
-                        }
-                    case .pending:
-                        FilesInfoView(info: .preparingFiles)
-                    case .error:
-                        FilesInfoView(info: .error, onReload: {
-                            reloadTask()
-                        })
-                    }
+            Group {
+                switch viewModel.state {
+                case .loading:
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                case .received, .pending:
+                    filesList
+                case .error:
+                    FilesInfoView(info: .error, onReload: {
+                        reloadTask()
+                    })
                 }
-                .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
-                .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
-                .toolbar { toolbarContent }
-                .onAppear { reloadTask() }
-                .alert(
-                    item: $viewModel.alert,
-                    title: { Text($0.title) },
-                    message: { Text($0.message) },
-                    actions: { _ in confirmButton }
+            }
+            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
+            .navigationTitle(viewModel.navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
+            .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
+            .toolbar { toolbarContent }
+            .if(viewModel.showSearchBar) { view in
+                view.searchable(
+                    text: $viewModel.searchText,
+                    placement: .navigationBarDrawer,
+                    prompt: Strings.Files.Search.title
                 )
             }
+            .onAppear { reloadTask() }
+            .onReceive(viewModel.triggerReload) { _ in
+                Task {
+                    await viewModel.reload()
+                }
+            }
+            .alert(
+                item: $viewModel.alert,
+                title: { Text($0.title) },
+                message: { Text($0.message) },
+                actions: { _ in confirmButton }
+            )
+            .sheet(
+                item: $viewModel.sheetNavigation,
+                onDismiss: {
+                    Task { await viewModel.onSheetDismissed() }
+                },
+                content: { navigationItem in
+                    switch navigationItem {
+                    case let .editTags(fileItem: fileItem):
+                        TagsEditView(
+                            fileItem: fileItem,
+                            useCases: .init(
+                                updateTags: viewModel.useCases.updateTags,
+                                getSuggestions: viewModel.useCases.getTagSuggestions
+                            ),
+                            postSaveAction: {
+                                await viewModel.reload()
+                            }
+                        )
+                    case let .shareLink(shareLinkView):
+                        shareLinkView
+                    case let .renameFile(fileRenameView):
+                        fileRenameView
+                    case let .createFolder(folderView):
+                        folderView
+                    case let .versionHistory(versionHistoryView):
+                        versionHistoryView
+                    case let .moveToFolder(fileItem):
+                        viewModel.moveToFolderView(item: fileItem)
+                    case .filters:
+                        EmptyView()
+                    }
+                }
+            )
+            .fullScreenCover(
+                item: $viewModel.isEditing,
+                onDismiss: {
+                    Task { await viewModel.reload() }
+                },
+                content: { item in
+                    viewModel.editFileView(item: item)
+                }
+            )
         }
     }
+
 }
 
 // MARK: - Toolbar
@@ -91,31 +141,91 @@ package struct FilesView: FilesViewProtocol {
 private extension FilesView {
 
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .principal) { titleView }
-        ToolbarItem(placement: .navigationBarTrailing) { closeButton }
+        if !viewModel.folderMenuOptions.isEmpty {
+            ToolbarTitleMenu {
+                toolBarTitleMenuContent()
+            }
+        }
+
+        if !viewModel.isRecycleBin {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                moreActionsButton
+            }
+        }
+
+        ToolbarItem(placement: .navigationBarTrailing) {
+            closeButton
+        }
     }
 
-    var titleView: some View {
-        Text(Strings.Files.navigationTitle)
-            .font(.system(size: 17, weight: .semibold))
-            .foregroundStyle(SemanticColors.Label.textDefault.color)
+    func toolBarTitleMenuContent() -> some View {
+        ForEach(viewModel.folderMenuOptions, id: \.self) { option in
+            Button(
+                option.title,
+                systemImage: option == .root ? "rectangle.stack" : "folder"
+            ) {
+                viewModel.selectFolderMenuOption(option)
+            }
+        }
     }
 
     var closeButton: some View {
         Button(
-            action: { dismiss() },
+            action: { onDismissContainer() },
             label: {
-                Image(.close)
-                    .foregroundStyle(SemanticColors.Icon.foregroundDefaultBlack.color)
-                    .frame(width: 44, height: 44, alignment: .trailing)
+                Image(systemName: "xmark")
             }
         )
         .accessibilityLabel(Accessibility.Files.close)
         .accessibilityIdentifier("close")
+        .tint(ColorTheme.Base.primary(accentColor).color)
+    }
+
+    var moreActionsButton: some View {
+        Menu {
+            Button {
+                viewModel.onCreateFolder()
+            } label: {
+                Label {
+                    Text(Strings.Files.List.newFolder)
+                } icon: {
+                    Image(systemName: "folder")
+                        .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                }
+            }
+
+            Button {
+                onOpenRecycleBin()
+            } label: {
+                Label {
+                    Text(Strings.Files.openRecycleBin)
+                } icon: {
+                    Image(systemName: "trash")
+                        .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                }
+            }
+        } label: {
+            Image(systemName: "ellipsis.circle")
+        }
+        .tint(ColorTheme.Base.primary(accentColor).color)
     }
 }
 
+private extension FilesViewModel.FolderMenuOption {
+
+    var title: String {
+        switch self {
+        case let .folder(_, title):
+            title
+        case .root:
+            Strings.Files.navigationTitle
+        }
+    }
+
+}
+
 #Preview {
-    FilesView(viewModel: .preview())
-        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    NavigationStack {
+        FilesView(viewModel: .preview())
+    }
 }

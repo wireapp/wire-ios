@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -332,7 +332,13 @@
 
 "conversation.connection_view.in_address_book" = "nos Contatos";
 "conversation.connection_view.encryption_info" = "A comunicação no Wire é sempre criptografada de ponta a ponta. Tudo o que você envia e recebe nessa conversa só é acessível para você e seu contato.";
+"conversation.connection_view.wire_cells.encryption_info" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.";
 "conversation.connection_view.sensitive_information_warning" = "Tenha cuidado com quem você compartilha informações confidenciais.";
+"conversation.connection_view.welcome.title.wire" = "Communication in Wire is always end-to-end encrypted.";
+"conversation.connection_view.welcome.message.wire" = "Everything you send and receive in this channel is only accessible to you and other group participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.title.wire_cells" = "Communication in Wire is always secured.";
+"conversation.connection_view.welcome.message.wire_cells" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.learn_more" = "Mais informação";
 
 "conversation.input_bar.shortcut.send" = "Enviar mensagem";
 "conversation.input_bar.shortcut.newline" = "Inserir Quebra de Linha";
@@ -353,6 +359,8 @@
 "conversation.create.guests.subtitle" = "Abra esta conversa para pessoas de fora da sua equipe.";
 "conversation.create.apps.title" = "Allow apps";
 "conversation.create.apps.subtitle" = "Open this conversation to apps.";
+"conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
+"conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
 "conversation.create.receipts.title" = "Recibos de Leitura";
 "conversation.create.receipts.subtitle" = "Quando isso está ativado, as pessoas podem ver quando suas mensagens nessa conversa são lidas.";
 "conversation.create.mls.title" = "Protocolo";
@@ -368,8 +376,9 @@
 "conversation.create.protocol_selection.mls_default" = "MLS (padrão)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (padrão)";
-"conversation.create.file_management.title" = "File collaboration";
-"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone.";
+"conversation.create.file_management.title" = "Shared Drive";
+"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
+"conversation.create.file_management.learnMore" = "Mais informação";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Chamada em curso";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Você não pode gravar uma mensagem de áudio durante uma chamada.";
@@ -397,7 +406,7 @@
 
 "conversation.action.search" = "Procurar";
 "conversation.action.conversationDetails" = "Detalhes da Conversa";
-"conversation.action.files" = "Arquivos";
+"conversation.action.files" = "Shared Drive";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Imagem";
@@ -604,7 +613,7 @@
 "content.system.message_timer_off" = "%@ desligou o tempo da mensagem";
 "content.system.message_timer_off-you" = "%@ desligou o tempo da mensagem";
 
-"content.system.message_timer_unavailable" = "Self-deleting messages are disabled for the conversations with Cells";
+"content.system.message_timer_unavailable" = "Self-deleting messages are off";
 
 "content.system.backends_stop_federating.self_backend" = "**Seu backend** parou de federar com **%@**. [Saiba mais](%@)";
 "content.system.backends_stop_federating.other_backends" = "Os backends **%@** e **%@** pararam de federar. [Saiba mais](%@)";
@@ -617,6 +626,8 @@
 
 "content.system.channel.guest.joined" = "%@ entrou no canal";
 "content.system.channel.guest.you_joined" = "Você entrou no canal";
+
+"content.system.file_collaboration.enabled" = "Shared Drive is on";
 
 // read receipt
 
@@ -655,7 +666,6 @@
 
 "content.system.cannot_decrypt.self" = "Uma mensagem sua não pôde ser descriptografada.";
 "content.system.cannot_decrypt.other" = "Uma mensagem de %@ não pôde ser descriptografada.";
-"content.system.cannot_decrypt.reset_session" = "Corrigir mensagens futuras";
 "content.system.cannot_decrypt.error_details" = "(Erro corrigido: %d ID: %@)";
 
 "content.system.cannot_decrypt_resolved.self" = "Agora você pode descriptografar mensagens de si mesmo. Para recuperar mensagens perdidas, você precisa reenviá-las.";
@@ -728,6 +738,8 @@
 "content.reactions_list.likers" = "Curtido por";
 
 "content.file.too_big" = "Você pode enviar arquivos de até %@";
+
+"content.message.reply.files.count" = "%@ files";
 
 // Reactions
 "content.reactions.title" = "Selecione reação";
@@ -1084,6 +1096,10 @@
 "group_details.receipt_options_cell.description" = "Quando isso está ativado, as pessoas podem ver quando suas mensagens nessa conversa são lidas.";
 "group_details.access_options_cell.title" = "Acesso ao canal";
 "group_details.channel_history_options_cell.title" = "Conversation history";
+"group_details.file_collaboration_cell.title" = "Shared Drive";
+"group_details.file_collaboration_cell.subtitle" = "Ligado";
+"group_details.file_collaboration_cell.footer" = "Permanently on for this conversation";
+"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with a shared Drive.";
 
 "group_details.message_protocol.section_tile" = "Detalhes do protocolo";
 "group_details.message_protocol.title" = "Protocolo";
@@ -1831,10 +1847,6 @@
 "databaseloadingfailure.alert.delete_database.continue" = "Continuar";
 "databaseloadingfailure.alert.retry" = "Tentar novamente";
 
-// Backend not supported alert
-"backend_not_supported.alert.title" = "Versão do servidor não suportada";
-"backend_not_supported.alert.message" = "A versão do servidor não é suportada por este aplicativo. Por favor, entre em contato com o administrador do sistema.";
-
 // Third Party
 "giphy.conversation.message" = "%@ · via giphy.com";
 "giphy.conversation.random_message" = "via giphy.com";
@@ -1860,6 +1872,10 @@
 
 "collections.search.field.placeholder" = "Buscar mensagens de texto";
 "collections.search.no_items" = "Não há resultados";
+
+"collections.section.searchFiles.description" = "Search files";
+"collections.section.searchFiles.alert.title" = "Wire Drive";
+"collections.section.searchFiles.alert.message" = "Find files in conversations with Shared Drive.";
 
 
 

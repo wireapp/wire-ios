@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,7 +39,6 @@ struct ZMUserSessionBuilder {
     private var contextStorage: (any LAContextStorable)?
     private var coreCryptoProvider: (any CoreCryptoProviderProtocol)?
     private var coreDataStack: CoreDataStack?
-    private var cryptoboxMigrationManager: (any CryptoboxMigrationManagerInterface)?
     private var dependencies: UserSessionDependencies?
     private var e2eiActivationDateRepository: (any E2EIActivationDateRepositoryProtocol)?
     private var earService: (any EARServiceInterface)?
@@ -58,6 +57,7 @@ struct ZMUserSessionBuilder {
     private var apiVersion: WireNetwork.APIVersion?
     private var journal: Journal?
     private var logFilesProvider: LogFilesProviding?
+    private var faultyMLSRemovalKeysByDomain: [String: [String]]?
 
     // MARK: - Initialize
 
@@ -75,7 +75,6 @@ struct ZMUserSessionBuilder {
             let contextStorage,
             let coreCryptoProvider,
             let coreDataStack,
-            let cryptoboxMigrationManager,
             let e2eiActivationDateRepository,
             let dependencies,
             let earService,
@@ -172,7 +171,6 @@ struct ZMUserSessionBuilder {
             coreDataStack: coreDataStack,
             earService: earService,
             mlsService: mlsService,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
             proteusToMLSMigrationCoordinator: proteusToMLSMigrationCoordinator,
             sharedUserDefaults: sharedUserDefaults,
             sharedContainerURL: sharedContainerURL,
@@ -187,7 +185,8 @@ struct ZMUserSessionBuilder {
             dependencies: dependencies,
             journal: journal,
             logFilesProvider: logFilesProvider,
-            cookieStorage: cookieStorage
+            cookieStorage: cookieStorage,
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain ?? [:]
         )
     }
 
@@ -199,7 +198,6 @@ struct ZMUserSessionBuilder {
         currentAppVersion: String,
         currentBuildNumber: String,
         application: any ZMApplication,
-        cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         coreDataStack: CoreDataStack,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         configuration: ZMUserSession.Configuration,
@@ -216,7 +214,8 @@ struct ZMUserSessionBuilder {
         userId: UUID,
         minTLSVersion: String?,
         journal: Journal,
-        logFilesProvider: LogFilesProviding
+        logFilesProvider: LogFilesProviding,
+        faultyMLSRemovalKeysByDomain: [String: [String]]
     ) {
         // reused dependencies
 
@@ -300,7 +299,6 @@ struct ZMUserSessionBuilder {
         self.contextStorage = contextStorage
         self.coreCryptoProvider = coreCryptoProvider
         self.coreDataStack = coreDataStack
-        self.cryptoboxMigrationManager = cryptoboxMigrationManager
         dependencies = buildUserSessionDependencies(coreDataStack: coreDataStack)
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
         self.earService = earService
@@ -319,6 +317,7 @@ struct ZMUserSessionBuilder {
         self.wireAPIBackendEnvironment = wireAPIBackendEnvironment
         self.journal = journal
         self.logFilesProvider = logFilesProvider
+        self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
     }
 
     // MARK: UserSesssionDependencies

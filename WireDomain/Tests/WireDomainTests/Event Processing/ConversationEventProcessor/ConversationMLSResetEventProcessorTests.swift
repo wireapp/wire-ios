@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
         conversationLocalStore
             .storeMLSConversationPendingJoinAfterResetNewMLSGroupIDConversation_MockMethod = { _, _ in }
-        conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_MockMethod = { _, _ in }
+        conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDEpochConversation_MockMethod = { _, _, _ in }
 
         mockResetLockRepository.removeResetInitiatedConversationID_MockMethod = { _ in }
         mockResetLockRepository.wasResetInitiatedConversationID_MockValue = false
@@ -116,8 +116,9 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
 
     func testProcessEvent_AlreadyReset() async throws {
         // GIVEN
+        let groupEpoch = UInt64(12)
         mlsService.conversationExistsGroupID_MockValue = true
-
+        mlsService.epochFor_MockValue = groupEpoch
         // When
 
         try await sut.processEvent(Scaffolding.event)
@@ -138,16 +139,17 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
             0
         )
         XCTAssertEqual(
-            conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_Invocations.count,
+            conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDEpochConversation_Invocations.count,
             1
         )
 
-        conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_Invocations
+        conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDEpochConversation_Invocations
             .forEach {
                 XCTAssertEqual(
                     $0.mlsGroupID,
                     MLSGroupID(Scaffolding.newMLSGroupIDData)
                 )
+                XCTAssertEqual($0.epoch, groupEpoch)
             }
     }
 

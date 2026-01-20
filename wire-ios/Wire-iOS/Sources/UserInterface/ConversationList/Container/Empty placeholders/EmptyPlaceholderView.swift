@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,11 @@
 
 import UIKit
 import WireDesign
+import WireFoundation
 
 final class EmptyPlaceholderView: UIView {
+
+    let wireAccentColor: WireAccentColor
 
     var titleLabel: DynamicFontLabel!
     var descriptionLabel: SubheadlineTextView!
@@ -34,7 +37,6 @@ final class EmptyPlaceholderView: UIView {
 
     let connectWithPeopleButton: DynamicFontButton = {
         let button = DynamicFontButton(style: .body1)
-        button.setTitleColor(ColorTheme.Base.primary, for: .normal)
         button.setBackgroundImageColor(ColorTheme.Backgrounds.background, for: .normal)
         button.layer.cornerRadius = 18
         button.layer.masksToBounds = true
@@ -48,7 +50,12 @@ final class EmptyPlaceholderView: UIView {
 
     // MARK: - Init
 
-    init(content: ConversationListViewController.EmptyPlaceholder, connectWithPeopleAction: UIAction) {
+    init(
+        wireAccentColor: WireAccentColor,
+        content: ConversationListViewController.EmptyPlaceholder,
+        connectWithPeopleAction: UIAction
+    ) {
+        self.wireAccentColor = wireAccentColor
         super.init(frame: .zero)
 
         setup(content, connectWithPeopleAction: connectWithPeopleAction)
@@ -84,6 +91,7 @@ final class EmptyPlaceholderView: UIView {
         stackView.axis = .vertical
         stackView.spacing = 2
 
+        connectWithPeopleButton.setTitleColor(ColorTheme.Base.primary(wireAccentColor), for: .normal)
         connectWithPeopleButton.isHidden = !content.showButton
         connectWithPeopleButton.addAction(connectWithPeopleAction, for: .touchUpInside)
 

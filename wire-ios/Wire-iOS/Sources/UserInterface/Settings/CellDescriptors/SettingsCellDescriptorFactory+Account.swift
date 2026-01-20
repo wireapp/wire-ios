@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -391,16 +391,8 @@ extension SettingsCellDescriptorFactory {
         // force-unwrapping should be fine, since we should have a session manager and an active user session here
         let sessionManager = SessionManager.shared!
         let selfUser = ZMUser.selfUser()!
-        let context = selfUser.managedObjectContext!.performAndWait {
-            selfUser.managedObjectContext!.zm_sync!
-        }
         let backupLocalStore = BackupLocalStore(
-            context: context,
-            processor: ConversationProtobufMessageProcessor(
-                context: context,
-                localDomain: localDomain,
-                isFederationEnabled: isFederationEnabled
-            )
+            contextProvider: sessionManager.activeUserSession!.contextProvider
         )
         let userSession = sessionManager.activeUserSession!
         let importBackupUseCaseFactory = ImportBackupUseCaseFactory { url in
@@ -437,7 +429,6 @@ extension SettingsCellDescriptorFactory {
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,
             importBackupLogger: WireLogger.backupImport,
-            wireAccentColorMapping: WireAccentColorMapping(),
             wireAccentColor: selfUser.accentColor ?? .default,
             isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
         )

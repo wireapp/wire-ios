@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -190,6 +190,20 @@ public extension MessageBackupModel.Content {
         )
     }
 
+    var isText: Bool {
+        if case .text = self { return true }
+        return false
+    }
+
+    var isLocation: Bool {
+        if case .location = self { return true }
+        return false
+    }
+
+    var isAsset: Bool {
+        if case .asset = self { return true }
+        return false
+    }
 }
 
 public extension MessageBackupModel.Content.AssetContent.Metadata {

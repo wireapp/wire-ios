@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,16 +30,20 @@ class UserHelper {
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
 
+    let apiVersion: APIVersion
+
     let authenticationAPI: AuthenticationAPI
     let teamsAPI: TeamsAPI
     let selfUserAPI: SelfUserAPI
     let conversationsAPI: ConversationsAPI
+    let connectionsAPI: ConnectionsAPI
+    let accountsAPI: AccountsAPI
 
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
 
-    init(apiVersion: APIVersion = .v8) {
-
+    init(apiVersion: APIVersion = APIVersion.productionVersions.max()!) {
+        self.apiVersion = apiVersion
         self.createdUsers = []
         self.networkStack = NetworkStack(
             backendEnvironment: BackendContext.backendEnvironment,
@@ -54,6 +58,8 @@ class UserHelper {
         self.teamsAPI = TeamsAPIBuilder(apiService: networkStack.apiService)
             .makeAPI(for: apiVersion)
         self.conversationsAPI = ConversationsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
+        self.connectionsAPI = ConnectionsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
+        self.accountsAPI = AccountsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
     }
 
     func basicAuth(_ backend: BackendTarget = BackendContext.current) -> String {
@@ -99,10 +105,15 @@ class UserHelper {
             verificationCode: nil,
             label: nil
         )
+
         authenticationManager.accessToken = accessToken
 
         // Set username
         try await selfUserAPI.updateHandle(handle: user.username)
+
+        // Store id in UserInfo
+        let selfUser = try await selfUserAPI.getSelfUser()
+        user.id = selfUser.id.uuidString
 
         createdUsers.append(user)
         return user
@@ -136,15 +147,18 @@ class UserHelper {
         )
     }
 
+    func upgradePersonalToTeam(teamName: String) async throws -> UUID {
+        let response = try await accountsAPI.upgradeToTeam(teamName: teamName)
+
+        return response.teamId
+    }
+
     func deleteCreatedUsers() async {
         for user in createdUsers {
             do {
-                if let teamID = try await BackendClient.getTeamIDFromSelfRequest(
-                    email: user.email,
-                    password: user.password
-                ) {
+                if let teamID = try await selfUserAPI.getSelfUser().teamID {
                     // If team exists, try deleting the team
-                    try await BackendClient.sendVerificationCode(email: user.email, password: user.password)
+                    try await authenticationAPI.requestVerificationCode(for: user.email)
                     let code = try await InbucketClient.getVerificationCode(email: user.email)
                     try await deleteTeam(teamID: teamID, password: user.password, code: code)
                 } else {
@@ -168,18 +182,29 @@ class UserHelper {
         )
 
         teamOwner.teamID = teamID
+
+        // Get activation code
+        let (activationCode, activationKey) = try await authenticationAPI.getActivationCode(
+            forEmail: teamOwner.email,
+            basicAuth: basicAuth()
+        )
+
+        // Activate user
+        try await authenticationAPI.activateUser(email: teamOwner.email, key: activationKey, code: activationCode)
+
+        authenticationManager.accessToken = try await fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+
+        // Set username
+        try await selfUserAPI.updateHandle(handle: teamOwner.username)
+
         createdUsers.append(teamOwner)
         return (qualifiedID: qualifiedId, owner: teamOwner)
     }
 
-    func fetchAccessToken(email: String, password: String) async throws -> String {
-        let (activationCode, activationKey) = try await authenticationAPI.getActivationCode(
-            forEmail: email,
-            basicAuth: basicAuth()
-        )
-
-        try await authenticationAPI.activateUser(email: email, key: activationKey, code: activationCode)
-
+    func fetchAccessToken(email: String, password: String) async throws -> AccessToken {
         let (_, accessToken) = try await authenticationAPI.login(
             email: email,
             password: password,
@@ -187,7 +212,7 @@ class UserHelper {
             label: nil
         )
 
-        return accessToken.token
+        return accessToken
     }
 
     func registerUsersAsTeamMember(
@@ -263,7 +288,7 @@ class UserHelper {
             unqualifiedUserIDs: [],
             name: groupName,
             accessMode: [.invite, .code],
-            accessRoles: [.teamMember, .guest, .service, .nonTeamMember],
+            accessRoles: [.teamMember, .guest, .app, .nonTeamMember],
             legacyAccessRole: nil,
             teamID: owner.teamID,
             isReadReceiptsEnabled: true
@@ -278,6 +303,57 @@ class UserHelper {
         authenticationManager.accessToken = accessToken
 
         _ = try await conversationsAPI.createGroupConversation(parameters: params)
+    }
+
+    /// Registers a set of teams for a specific owner.
+    ///
+    /// - Parameter teamOwner: The user information of the person who will own the teams.
+    /// - Returns: An array of members name.
+    func registerTeamWith2Members(teamOwner: UserInfo) async throws -> [String] {
+        guard let teamID = teamOwner.teamID else {
+            return []
+        }
+
+        let ownerAccessToken = try await fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+
+        let (_, teamMember1) = try await registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            teamID: teamID,
+        )
+
+        let (_, teamMember2) = try await registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            teamID: teamID,
+        )
+        return [teamMember1.name, teamMember2.name]
+    }
+
+    func sendConnectionRequestToUser(
+        domain: String,
+        userId: String
+    ) async throws {
+
+        _ = try await connectionsAPI.sendConnectionRequest(domain: domain, userId: userId)
+    }
+
+    func acceptConnectionRequestFromUser(
+        domain: String,
+        user1: UserInfo,
+        userId: String
+    ) async throws {
+
+        let (_, accessToken) = try await authenticationAPI.login(
+            email: user1.email,
+            password: user1.password,
+            verificationCode: nil,
+            label: nil
+        )
+        authenticationManager.accessToken = accessToken
+
+        try await connectionsAPI.acceptConnectionRequest(domain: domain, userId: userId)
     }
 }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import WireAccountImageUI
 import WireDesign
 import WireReusableUIComponents
 public import UIKit
+import WireLocators
 
 public class ConversationTitleView: UIView {
 
@@ -122,7 +123,7 @@ public class ConversationTitleView: UIView {
         addSubview(tapButton)
         tapButton.pin(to: self)
         tapButton.showsMenuAsPrimaryAction = true
-        tapButton.accessibilityIdentifier = "conversation_title_button"
+        tapButton.accessibilityIdentifier = Locators.ActiveConversationPage.conversationTitleButton.rawValue
     }
 
     public func updateSource(_ source: ConversationTitleSource) {

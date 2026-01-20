@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,11 @@
 //
 
 /// The type of the node.
-package enum WireCellsNodeType {
+public enum WireCellsNodeType: String, Hashable, Sendable {
 
     /// A file that is not a folder.
-    case leaf
+    case leaf = "LEAF"
 
-    /// A folder.
-    case collection
-
-    /// Any type of file, including folders.
-    case any
+    /// A collection such as a folder.
+    case collection = "COLLECTION"
 }

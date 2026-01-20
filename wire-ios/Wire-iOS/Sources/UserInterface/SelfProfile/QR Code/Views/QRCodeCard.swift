@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,12 +39,12 @@ struct QRCodeCard: View {
 
             VStack(alignment: .center) {
                 Text(handle)
-                    .font(.textStyle(.h2))
+                    .font(for: .h2)
                     .foregroundColor(.black)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
                 Text(profileLink)
-                    .font(.textStyle(.subline1))
+                    .font(for: .subline1)
                     .foregroundColor(.black)
                     .fixedSize(horizontal: false, vertical: true)
                     .multilineTextAlignment(.center)

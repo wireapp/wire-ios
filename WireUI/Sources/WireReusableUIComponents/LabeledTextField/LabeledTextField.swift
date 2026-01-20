@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,11 +54,11 @@ public struct LabeledTextField: View {
                     ) : Text(title)
                 )
                 .foregroundStyle(titleColor)
-                .wireTextStyle(.h4)
+                .font(for: .h4)
             }
             HStack(spacing: 0) {
                 TextField(placeholder ?? "", text: $string)
-                    .wireTextStyle(.body1)
+                    .font(for: .body1)
                     .focused($isFocused)
                     .foregroundStyle(labelColor)
                     .frame(height: fieldHeight)

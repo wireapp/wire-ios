@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import GenericMessageProtocol
+import WireTransport
 
 public struct MultipartAttachment {
 
@@ -85,7 +86,7 @@ extension MultipartAttachment {
     func toProto() -> Attachment {
         Attachment.with { attachment in
             attachment.cellAsset = CellAsset.with { asset in
-                asset.uuid = uuid.uuidString
+                asset.uuid = uuid.transportString()
                 asset.contentType = contentType
 
                 // Only set if values are not nil to avoid protobufs setting nonsense defaults.

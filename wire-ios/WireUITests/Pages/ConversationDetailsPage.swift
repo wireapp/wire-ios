@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class ConversationDetailsPage: PageModel {
@@ -25,16 +26,23 @@ class ConversationDetailsPage: PageModel {
     }
 
     var addParticipantsButton: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any).matching(identifier: "OtherUserMetaControllerLeftButton")
-        return elementsQuery.firstMatch
+        app.descendants(matching: .button)[Locators.ConversationDetailsPage.addParticipantsButton.rawValue].firstMatch
     }
 
     var closeConversationDetailsButton: XCUIElement {
-        app.buttons["close"]
+        app.buttons[Locators.ConversationDetailsPage.close.rawValue]
+    }
+
+    var moreOptionsConversationDetailsButton: XCUIElement {
+        app.buttons[Locators.ConversationDetailsPage.moreOptionsButton.rawValue]
+    }
+
+    var archiveOptionConversationDetailsButton: XCUIElement {
+        app.buttons.matching(identifier: Locators.ConversationDetailsActions.archive.rawValue).element(boundBy: 0)
     }
 
     var userCells: XCUIElementQuery {
-        app.staticTexts.matching(identifier: "user_cell.name")
+        app.staticTexts.matching(identifier: Locators.ConversationDetailsPage.userCellName.rawValue)
     }
 
     func openUserDetailsPage(byName name: String) throws -> UserDetailsPage {
@@ -46,6 +54,16 @@ class ConversationDetailsPage: PageModel {
     func closeConversationDetails() throws -> ActiveConversationPage {
         closeConversationDetailsButton.tap()
         return try ActiveConversationPage()
+    }
+
+    func moreOptionsConversationDetails() throws -> ConversationDetailsPage {
+        moreOptionsConversationDetailsButton.tap()
+        return try ConversationDetailsPage()
+    }
+
+    func archiveOptionsConversationDetails() throws -> ConversationsPage {
+        archiveOptionConversationDetailsButton.tap()
+        return try ConversationsPage()
     }
 
     func appParticipantToConversation() throws -> SelectParticipantsPage {

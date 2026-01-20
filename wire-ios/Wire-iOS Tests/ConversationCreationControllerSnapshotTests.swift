@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import XCTest
 
 @testable import Wire
 
+@MainActor
 final class ConversationCreationControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
@@ -47,14 +48,14 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
 
     // MARK: - Snapshot Tests
 
-    func testForEditingTextField() {
-        createSut(isTeamMember: false)
+    func testForEditingTextField() async {
+        await createSut(isTeamMember: false)
 
         snapshotHelper.verify(matching: sut)
     }
 
-    func testTeamGroupOptions() {
-        createSut(isTeamMember: true)
+    func testTeamGroupOptions() async {
+        await createSut(isTeamMember: true)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -77,15 +78,18 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
             )
     }
 
-    func testTeamGroupOptions_withoutServices() {
-        createSut(isTeamMember: true, messageProtocol: .mls)
+    func testTeamGroupOptions_withoutServices() async {
+        await createSut(isTeamMember: true, messageProtocol: .mls)
 
         snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Helper Method
 
-    private func createSut(isTeamMember: Bool, messageProtocol: Feature.MLS.Config.MessageProtocol = .proteus) {
+    private func createSut(
+        isTeamMember: Bool,
+        messageProtocol: Feature.MLS.Config.MessageProtocol = .proteus
+    ) async {
         let mockSelfUser = MockUserType.createSelfUser(name: "Alice", inTeam: isTeamMember ? UUID() : nil)
         let mockUserSession = UserSessionMock(mockUser: mockSelfUser)
         mockUserSession.isWireCellsEnabled = true
@@ -99,7 +103,9 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
 
         sut = ConversationCreationController(
             preSelectedParticipants: nil,
-            userSession: mockUserSession
+            userSession: mockUserSession,
+            isAppsFeatureEnabled: false,
+            areLegacyBotsAvailable: false
         )
     }
 }

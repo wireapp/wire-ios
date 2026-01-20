@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
     package let type: String?
     package let isRecycled: Bool
     package let isDraft: Bool
+    package let isEditable: Bool
     package let contentUrl: URL?
     package let contentHash: String?
     package let mimeType: String?
@@ -38,8 +39,9 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
     package let ownerUserId: String?
     package let ownerUserName: String?
     package let conversationId: String?
-    package let publicLinkId: String?
+    package let publicLinkID: String?
     package let downloadURL: URL?
+    package let tags: [String]
 
     package init(
         uuid: UUID,
@@ -50,6 +52,7 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
         type: String? = nil,
         isRecycled: Bool = false,
         isDraft: Bool = false,
+        isEditable: Bool = false,
         contentUrl: URL? = nil,
         contentHash: String? = nil,
         mimeType: String? = nil,
@@ -57,8 +60,9 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
         ownerUserId: String? = nil,
         ownerUserName: String?,
         conversationId: String? = nil,
-        publicLinkId: String? = nil,
-        downloadURL: URL? = nil
+        publicLinkID: String? = nil,
+        downloadURL: URL? = nil,
+        tags: [String] = []
     ) {
         self.uuid = uuid
         self.path = path
@@ -68,6 +72,7 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
         self.type = type
         self.isRecycled = isRecycled
         self.isDraft = isDraft
+        self.isEditable = isEditable
         self.contentUrl = contentUrl
         self.contentHash = contentHash
         self.mimeType = mimeType
@@ -75,8 +80,9 @@ package struct WireCellsNodeNetworkModel: Equatable, Hashable, Sendable {
         self.ownerUserId = ownerUserId
         self.ownerUserName = ownerUserName
         self.conversationId = conversationId
-        self.publicLinkId = publicLinkId
+        self.publicLinkID = publicLinkID
         self.downloadURL = downloadURL
+        self.tags = tags
     }
 }
 
@@ -88,9 +94,10 @@ package extension WireCellsNodeNetworkModel {
             modified: modified.map { Date(timeIntervalSince1970: Double($0)) },
             size: size,
             eTag: eTag,
-            type: type,
+            type: type.flatMap { WireCellsNodeType(rawValue: $0) },
             isRecycled: isRecycled,
             isDraft: isDraft,
+            isEditable: isEditable,
             contentUrl: contentUrl,
             contentHash: contentHash,
             mimeType: mimeType,
@@ -98,8 +105,9 @@ package extension WireCellsNodeNetworkModel {
             ownerUserID: ownerUserId.flatMap { QualifiedID(string: $0) },
             ownerUserName: ownerUserName,
             conversationID: conversationId.flatMap(QualifiedID.init(string:)),
-            publicLinkID: publicLinkId.map(WireCellsPublicLinkID.init(string:)),
-            downloadURL: downloadURL
+            publicLinkID: publicLinkID.map(WireCellsPublicLinkID.init(string:)),
+            downloadURL: downloadURL,
+            tags: tags
         )
     }
 }
@@ -112,17 +120,18 @@ package extension WireCellsNode {
             modified: modified.map { UInt64($0.timeIntervalSince1970) },
             size: size,
             eTag: eTag,
-            type: type,
+            type: type?.rawValue,
             isRecycled: isRecycled,
             isDraft: isDraft,
             contentUrl: contentUrl,
             contentHash: contentHash,
             mimeType: mimeType,
-            previews: previews.map { PreviewDTO(url: $0.url, dimension: $0.dimension) },
+            previews: previews.map { PreviewDTO(url: $0.url, dimension: $0.dimension, processing: $0.processing) },
             ownerUserId: ownerUserID?.transportString,
             ownerUserName: ownerUserName,
             conversationId: conversationID?.transportString,
-            publicLinkId: publicLinkID?.string
+            publicLinkID: publicLinkID?.string,
+            tags: tags
         )
     }
 }
@@ -140,46 +149,56 @@ package extension RestNode {
             type: type?.rawValue ?? "",
             isRecycled: isRecycled ?? false,
             isDraft: isDraft ?? false,
+            isEditable: editorURLsKeys?.contains("collabora") ?? false,
             contentUrl: preSignedGET?.url.flatMap(URL.init(string:)),
             contentHash: contentHash,
             mimeType: contentType,
             previews: previews?.compactMap { preview -> PreviewDTO? in
                 PreviewDTO(preview)
             } ?? [],
-            ownerUserId: userMetadata?
-                .first(where: { $0.namespace == "usermeta-owner-uuid" })?
-                .valueAsString,
-            ownerUserName: userMetadata?
-                .first(where: { $0.namespace == "usermeta-owner" })?
-                .valueAsString,
+            ownerUserId: metadataString("usermeta-owner-uuid"),
+            ownerUserName: metadataString("usermeta-owner"),
             conversationId: contextWorkspace?.uuid,
-            publicLinkId: shares?.first?.uuid,
-            downloadURL: preSignedGET?.url.flatMap(URL.init(string:))
+            publicLinkID: shares?.first?.uuid,
+            downloadURL: preSignedGET?.url.flatMap(URL.init(string:)),
+            tags: metadataString("usermeta-tags")?
+                .split(separator: ",").map { String($0) } ?? []
         )
+    }
+
+    private func metadataString(_ namespace: String) -> String? {
+        userMetadata?
+            .first { $0.namespace == namespace }?
+            .valueAsString
     }
 }
 
 package struct PreviewDTO: Equatable, Hashable, Sendable {
-    package let url: URL
+    package let url: URL?
     package let dimension: Int?
+    package let processing: Bool?
 
-    init(url: URL, dimension: Int?) {
+    init(url: URL?, dimension: Int?, processing: Bool?) {
         self.url = url
         self.dimension = dimension
+        self.processing = processing
     }
 
     init?(_ value: RestFilePreview) {
-        guard
-            let urlString = value.preSignedGET?.url,
-            let contentType = value.contentType,
-            let url = URL(string: urlString),
-            let type = UTType(mimeType: contentType),
-            type.conforms(to: .image) else {
-            return nil
+        var url: URL?
+
+        if let urlString = value.preSignedGET?.url, let contentType = value.contentType {
+            guard let previewURL = URL(string: urlString),
+                  let type = UTType(mimeType: contentType),
+                  type.conforms(to: .image) else {
+                return nil
+            }
+            url = previewURL
         }
 
         self.url = url
         self.dimension = value.dimension
+        self.processing = value.processing
     }
 
 }
@@ -188,7 +207,8 @@ package extension PreviewDTO {
     func toModel() -> WireCellsNodePreview {
         WireCellsNodePreview(
             url: url,
-            dimension: dimension ?? 0
+            dimension: dimension ?? 0,
+            processing: processing ?? false
         )
     }
 }
@@ -205,7 +225,7 @@ private extension WireFoundation.QualifiedID {
     }
 
     var transportString: String {
-        "\(id.uuidString.lowercased())@\(domain)"
+        "\(id.transportString())@\(domain)"
     }
 }
 

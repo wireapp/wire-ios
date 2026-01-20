@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ public enum LogAttributesKey: String, Comparable, Sendable {
     case selfUserId = "self_user_id"
     case recipientID = "recipient_id"
     case eventId = "event_id"
+    case eventType = "event_type"
     case eventEnvelopeID = "event_envelope_id"
     case ackMultipleEventsCount = "ack_events_count"
     case multipleEvents = "ack_multiple_events"
@@ -46,6 +47,7 @@ public enum LogAttributesKey: String, Comparable, Sendable {
     case duration
     case syncType = "sync_type"
     case syncVersion = "sync_version"
+    case workItemID = "work_item_id"
 
     public static func < (lhs: LogAttributesKey, rhs: LogAttributesKey) -> Bool {
         lhs.rawValue < rhs.rawValue

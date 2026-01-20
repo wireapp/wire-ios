@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ final class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(user.domain, domain)
         XCTAssertEqual(user.remoteIdentifier, uuid)
         XCTAssertEqual(user.zmAccentColor?.rawValue, 5)
-        XCTAssertFalse(user.isServiceUser)
+        XCTAssertFalse(user.isAppOrBot)
         XCTAssertTrue(user.canBeConnected)
     }
 
@@ -88,7 +88,7 @@ final class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         )!
 
         // then
-        XCTAssertTrue(user.isServiceUser)
+        XCTAssertTrue(user.isAppOrBot)
         XCTAssertEqual(user.summary, "Short summary")
         XCTAssertEqual(user.providerIdentifier, provider.transportString())
         XCTAssertEqual(user.serviceIdentifier, uuid.transportString())

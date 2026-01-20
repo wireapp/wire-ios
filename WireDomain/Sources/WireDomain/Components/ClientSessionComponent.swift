@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,6 +65,8 @@ public final class ClientSessionComponent {
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
     private let completionHandlers: CompletionHandlers
 
+    private let faultyMLSRemovalKeysByDomain: [String: [String]]
+
     public init(
         selfUserID: UUID,
         selfClientID: String,
@@ -81,7 +83,8 @@ public final class ClientSessionComponent {
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
-        completionHandlers: CompletionHandlers
+        completionHandlers: CompletionHandlers,
+        faultyMLSRemovalKeysByDomain: [String: [String]]
     ) {
         self.selfUserID = selfUserID
         self.selfClientID = selfClientID
@@ -99,6 +102,7 @@ public final class ClientSessionComponent {
         self.isMLSEnabled = isMLSEnabled
         self.coreCryptoProvider = coreCryptoProvider
         self.completionHandlers = completionHandlers
+        self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
     }
 
     public private(set) lazy var authenticationManager = AuthenticationManager(
@@ -776,7 +780,7 @@ public final class ClientSessionComponent {
         userLocalStore: userLocalStore
     )
 
-    private lazy var oneOnOneResolver = OneOnOneResolver(
+    public private(set) lazy var oneOnOneResolver = OneOnOneResolver(
         context: syncContext,
         userLocalStore: userLocalStore,
         conversationLocalStore: conversationLocalStore,
@@ -793,12 +797,22 @@ public final class ClientSessionComponent {
         userID: selfUserID
     )
 
+    public lazy var repairFaultyRemovalKeysUsecase = RepairRemovalKeysUseCase(
+        faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain,
+        context: syncContext,
+        mlsService: mlsService,
+        conversationsAPI: conversationsAPI,
+        conversationLocalStore: conversationLocalStore,
+        initiateResetUseCase: initiateResetMLSConversationUseCase
+    )
+
     public lazy var initiateResetMLSConversationUseCase = InitiateResetMLSConversationUseCase(
         api: mlsAPI,
         mlsService: mlsService,
         conversationLocalStore: conversationLocalStore,
         conversationRepository: conversationRepository,
-        lockRepository: resetMLSConversationLockRepository
+        lockRepository: resetMLSConversationLockRepository,
+        selfDomain: backendMetadata.domain
     )
 
     public lazy var mlsTransport: any WireCoreCryptoUniffi.MlsTransport = MLSTransportImpl(
@@ -806,12 +820,47 @@ public final class ClientSessionComponent {
         conversationEventProcessor: conversationEventProcessor
     )
 
-}
+    public lazy var workAgent: WorkAgent = .init(scheduler: PriorityOrderWorkItemScheduler())
 
-extension InitiateResetMLSConversationUseCase: ResetBrokenMLSConversationDelegate {
+    public lazy var conversationUpdatesGenerator: IncrementalGeneratorProtocol = ConversationUpdatesGenerator(
+        repository: conversationRepository,
+        context: syncContext,
+        onConversationUpdated: { [weak self] workItem in
 
-    public func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: Int64) async {
-        await invoke(groupID: groupID, epoch: epoch)
+            self?.workAgent.submitItem(workItem)
+        }
+    )
+
+    public lazy var commitPendingProposalsGenerator: LiveGeneratorProtocol = CommitPendingProposalsGenerator(
+        repository: conversationRepository,
+        mlsService: mlsService,
+        context: syncContext,
+        isMLSGroupBroken: { [weak self] groupID in
+            self?.isMLSGroupBroken(groupID: groupID) == true
+        },
+        onCommitPendingProposals: { [weak self] workItem in
+
+            self?.workAgent.submitItem(workItem)
+        }
+    )
+
+    public lazy var generatorsDirectory = GeneratorsDirectory(
+        generators: [
+            conversationUpdatesGenerator,
+            commitPendingProposalsGenerator
+        ],
+        syncStatePublisher: syncStateSubject.eraseToAnyPublisher()
+    )
+
+    private func isMLSGroupBroken(groupID: MLSGroupID) -> Bool {
+        let brokenGroupIds = journal[.brokenMLSGroupIDs]
+        return brokenGroupIds.contains(groupID.description)
     }
+
+    public lazy var repairFaultyMLSRemovalKeysGenerator = RepairFaultyMLSRemovalKeysGenerator(
+        journal: journal,
+        repairUseCase: repairFaultyRemovalKeysUsecase,
+        workAgent: workAgent
+    )
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -89,7 +89,11 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
     typealias Object = ZMClientMessage
 
-    func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
+    func insert(
+        object: ZMClientMessage,
+        isFresh: Bool,
+        completion: @escaping () -> Void
+    ) {
         // Temp fix for avoiding to send a large amount of last read
         // messages, see: [WPB-17439]
         if
@@ -110,6 +114,20 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             return
         }
 
+        if !isFresh {
+            // This message was not added in this runtime. Rather than send it
+            // which may no longer make sense after such as delay, we will
+            // expire it so the user can retry.
+            WireLogger.messaging.info(
+                "expiring stale client message",
+                attributes: [.nonce: object.nonce?.safeForLoggingDescription ?? "<nil>"],
+                .safePublic
+            )
+            object.expire(withReason: .timeout)
+            context.saveOrRollback()
+            completion()
+            return
+        }
         let logAttributesBuilder = MessageLogAttributesBuilder(context: context)
         let logAttributes = logAttributesBuilder.syncLogAttributes(object)
         WireLogger.messaging.debug("inserting message", attributes: logAttributes)

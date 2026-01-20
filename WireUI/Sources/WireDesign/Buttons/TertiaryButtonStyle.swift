@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ struct TertiaryButtonStyle: SwiftUI.ButtonStyle {
             .padding(8)
             .background(isEnabled ? Theme.enabled.color : Theme.disabled.color)
             .foregroundStyle(isEnabled ? Theme.onEnabled.color : Theme.onDisabled.color)
-            .wireTextStyle(.buttonSmall)
+            .font(for: .buttonSmall)
             .overlay {
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(isEnabled ? Theme.enabledOutline.color : Theme.disabledOutline.color, lineWidth: 1)

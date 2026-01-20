@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,22 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import SwiftUI
+import SwiftUI
 import WireCallingDomain
 import WireCallingDomainSupport
 import WireDesign
 
-package struct MeetingsView: View {
+struct MeetingsView: View {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
     @ObservedObject private var viewModel: MeetingsViewModel
 
-    package init(viewModel: MeetingsViewModel) {
+    init(viewModel: MeetingsViewModel) {
         self.viewModel = viewModel
     }
 
-    package var body: some View {
+    var body: some View {
         VStack {
             Picker("", selection: $viewModel.selectedTab) {
                 ForEach(MeetingsViewModel.Tab.allCases, id: \.self) { tab in
@@ -60,58 +60,86 @@ package struct MeetingsView: View {
     }
 
     @ViewBuilder private var content: some View {
-        List {
-            if viewModel.selectedTab == .next {
-                if !viewModel.ongoingMeetings.isEmpty {
-                    Section {
-                        ForEach(viewModel.ongoingMeetings, id: \.id) { meeting in
-                            MeetingRow(meeting: meeting)
-                        }
-                    } header: {
-                        SectionTitle(Strings.Header.ongoing)
-                    }
-                }
-                GroupedSections(
-                    groups: viewModel.groupedNextMeetings,
-                    formatDay: viewModel.formatDay(_:),
-                    formatTime: viewModel.formatTime(_:)
+        if viewModel.selectedTab == .next {
+            if viewModel.ongoingMeetings.isEmpty, viewModel.groupedNextMeetings.isEmpty {
+                MeetingsEmptyStateView(
+                    title: Strings.EmptyState.Next.title,
+                    subtitle: Strings.EmptyState.Next.subtitle
                 )
-
-                if viewModel.showMoreButton {
-                    Button {
-                        viewModel.showAll = true
-                    } label: {
-                        Text(Strings.Actions.showAll)
-                            .font(.textStyle(.buttonBig))
-                    }
-                    .wireButtonStyle(.secondary)
-                    .listRowBackground(Color.clear)
-                }
             } else {
-                GroupedSections(
-                    groups: viewModel.groupedPastMeetings,
-                    formatDay: viewModel.formatDay(_:),
-                    formatTime: viewModel.formatTime(_:)
+                nextTabContent
+            }
+        } else {
+            if viewModel.groupedPastMeetings.isEmpty {
+                MeetingsEmptyStateView(
+                    title: Strings.EmptyState.Past.title,
+                    subtitle: Strings.EmptyState.Past.subtitle
                 )
+            } else {
+                pastTabContent
+            }
+        }
+    }
+
+    @ViewBuilder private var nextTabContent: some View {
+        List {
+            if !viewModel.ongoingMeetings.isEmpty {
+                Section {
+                    ForEach(viewModel.ongoingMeetings, id: \.id) { meeting in
+                        MeetingRow(meeting: meeting)
+                    }
+                } header: {
+                    SectionTitle(Strings.Header.ongoing)
+                }
+            }
+            GroupedSections(
+                groups: viewModel.groupedNextMeetings,
+                formatDay: viewModel.formatDay(_:),
+                formatTime: viewModel.formatTime(_:)
+            )
+
+            if viewModel.showMoreButton {
+                Button {
+                    viewModel.showAll = true
+                } label: {
+                    Text(Strings.Actions.showAll)
+                        .font(for: .buttonBig)
+                }
+                .wireButtonStyle(.secondary)
+                .listRowBackground(Color.clear)
             }
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
-            if viewModel.selectedTab == .next {
-                viewModel.refreshOngoingMeetings()
-                viewModel.showAll = false
-            } else {
-                viewModel.refreshPastMeetings()
-            }
+            viewModel.refreshOngoingMeetings()
+            viewModel.showAll = false
+        }
+    }
+
+    @ViewBuilder private var pastTabContent: some View {
+        List {
+            GroupedSections(
+                groups: viewModel.groupedPastMeetings,
+                formatDay: viewModel.formatDay(_:),
+                formatTime: viewModel.formatTime(_:)
+            )
+        }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(ColorTheme.Backgrounds.surface.color)
+        .refreshable {
+            viewModel.refreshPastMeetings()
         }
     }
 }
 
+@ViewBuilder
+@MainActor
 private func SectionTitle(_ text: String) -> some View {
     Text(text)
-        .font(.textStyle(.body2))
+        .font(for: .body2)
         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
         .textCase(nil)
 }
@@ -130,7 +158,7 @@ private struct GroupedSections: View {
                         }
                     } header: {
                         Text(formatTime(slot.time))
-                            .font(.textStyle(.subline1))
+                            .font(for: .subline1)
                             .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                     }
                 }
@@ -161,17 +189,17 @@ private struct MeetingRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(meeting.title)
-                    .font(.textStyle(.body2))
+                    .font(for: .body2)
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                     .lineLimit(2)
 
                 Text("Meeting date")
-                    .font(.textStyle(.subline1))
+                    .font(for: .subline1)
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                 HStack(spacing: 6) {
                     Label("Design", systemImage: "person.3.fill")
-                        .font(.textStyle(.subline1))
+                        .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 }
                 .padding(.top, 2)

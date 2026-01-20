@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,9 +60,6 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 /// whether this is the self user
 @property (nonatomic, readonly) BOOL isSelfUser;
 
-/// return true if this user is a serviceUser
-@property (nonatomic, readonly) BOOL isServiceUser;
-
 @property (nonatomic, readonly, nullable) NSString *smallProfileImageCacheKey;
 @property (nonatomic, readonly, nullable) NSString *mediumProfileImageCacheKey;
 
@@ -90,7 +87,7 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 
 @interface ZMUser (Utilities)
 
-+ (ZMUser<ZMEditableUserType> *_Nonnull)selfUserInUserSession:(id<ContextProvider> _Nonnull)session;
++ (ZMUser<ZMEditableUserType> *_Nonnull)selfUserInUserSession:(id<ZMContextProvider> _Nonnull)session;
 
 @end
 

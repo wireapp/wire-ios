@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ final class NodesAPITests {
                 makeStream: { ObservableStream($0, bufferingPolicy: .unbounded) }
             ),
             restAPI: RestAPI(
-                serverURL: URL(string: "example.com")!,
+                serverURLResolver: { URL(string: "example.com")! },
                 accessToken: MockAccessTokenProvider()
             ),
         )
@@ -76,8 +76,8 @@ final class NodesAPITests {
         #expect(inputPutObject.key == "node-path")
         #expect(inputPutObject.metadata == [
             "Draft-Mode": "true",
-            "Create-Resource-UUID": node.id.uuidString,
-            "Create-Version-ID": versionID.uuidString
+            "Create-Resource-UUID": node.id.transportString(),
+            "Create-Version-ID": versionID.transportString()
         ])
     }
 

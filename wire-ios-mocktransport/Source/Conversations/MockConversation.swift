@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -109,13 +109,13 @@ public extension MockConversation {
     }
 
     @objc
-    func set(allowGuests: Bool, allowServices: Bool) {
+    func set(allowGuests: Bool, allowApps: Bool) {
         guard type == .group, team != nil else {
             return
         }
 
         accessRole = MockConversationAccessRole.value(forAllowGuests: allowGuests).rawValue
-        accessRoleV2 = MockConversationAccessRoleV2.value(forAllowGuests: allowGuests, forAllowServices: allowServices)
+        accessRoleV2 = MockConversationAccessRoleV2.value(forAllowGuests: allowGuests, forAllowServices: allowApps)
         accessMode = MockConversationAccessMode.value(forAllowGuests: allowGuests).stringValue
     }
 

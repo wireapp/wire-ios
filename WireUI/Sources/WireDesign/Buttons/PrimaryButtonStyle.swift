@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import WireFoundation
 
 struct PrimaryButtonStyle: SwiftUI.ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
@@ -32,7 +31,7 @@ struct PrimaryButtonStyle: SwiftUI.ButtonStyle {
             .frame(maxWidth: .infinity)
             .background(isEnabled ? PrimaryTheme.enabled.color : PrimaryTheme.disabled.color)
             .foregroundStyle(isEnabled ? PrimaryTheme.onEnabled.color : PrimaryTheme.onDisabled.color)
-            .wireTextStyle(.buttonBig)
+            .font(for: .buttonBig)
             .clipShape(.rect(cornerRadius: 16))
     }
 

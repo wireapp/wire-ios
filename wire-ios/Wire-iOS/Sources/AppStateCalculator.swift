@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -189,14 +189,6 @@ final class AppStateCalculator {
             return
         }
 
-        if !DeveloperFlag.multibackend.isOn {
-            // If app has been blacklisted due to api version, ignore new state.
-            if case .blacklisted = self.appState, BackendInfo.apiVersion == nil {
-                completion?()
-                return
-            }
-        }
-
         self.appState = appState
         pendingAppState = nil
 
@@ -274,6 +266,8 @@ extension AppStateCalculator: SessionManagerDelegate {
             transition(to: .blacklisted(reason: .networkError(code: code)))
         case .genericError:
             transition(to: .blacklisted(reason: .genericError))
+        case let .databaseError(error):
+            transition(to: .databaseFailure(reason: error))
         }
     }
 

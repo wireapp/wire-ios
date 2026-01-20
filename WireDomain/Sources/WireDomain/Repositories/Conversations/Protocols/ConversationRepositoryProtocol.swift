@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import WireNetwork
 
 // sourcery: AutoMockable
 /// Facilitate access to conversations related domain objects.
-public protocol ConversationRepositoryProtocol {
+public protocol ConversationRepositoryProtocol: Sendable {
 
     /// Fetches and persists a conversation with a given ID.
     /// - Parameters:
@@ -77,7 +77,7 @@ public protocol ConversationRepositoryProtocol {
     func pullMLSOneToOneConversation(
         userID: String,
         userDomain: String
-    ) async throws -> String
+    ) async throws -> (String, MLSPublicKeys?)
 
     /// Fetches a MLS conversation locally.
     ///
@@ -192,4 +192,10 @@ public protocol ConversationRepositoryProtocol {
         conversationID: String
     ) async throws -> String?
 
+    /// Checks if selfUser is still in a given conversation
+    /// - Parameter groupID: mlsGroupID of the conversation
+    /// - Returns: true if selfUser belongs to the conversation, false otherwise
+    func isSelfAnActiveMember(
+        in groupID: WireDataModel.MLSGroupID
+    ) async -> Bool
 }

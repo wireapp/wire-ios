@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -69,46 +69,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     }
 
     // MARK: - Request generation
-
-    func testThatRequestToFetchConversationIsGenerated_WhenNeedsToBeUpdatedFromBackendIsTrue() {
-        syncMOC.performGroupedAndWait {
-            // given
-            let apiVersion = APIVersion.v1
-            self.sut = self.createSUT(apiVersion: apiVersion)
-            let domain = "example.com"
-            let conversationID = self.groupConversation.remoteIdentifier!
-            self.groupConversation.domain = domain
-            self.groupConversation.needsToBeUpdatedFromBackend = true
-            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([self.groupConversation])) }
-
-            // when
-            let request = self.sut.nextRequest(for: apiVersion)!
-
-            // then
-            XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())")
-            XCTAssertEqual(request.method, .get)
-        }
-    }
-
-    func testThatLegacyRequestToFetchConversationIsGenerated_WhenDomainIsNotSet() {
-        syncMOC.performGroupedAndWait {
-            // given
-            let apiVersion = APIVersion.v0
-            self.sut = self.createSUT(apiVersion: apiVersion)
-            ZMUser.selfUser(in: self.syncMOC).domain = nil
-            let conversationID = self.groupConversation.remoteIdentifier!
-            self.groupConversation.domain = nil
-            self.groupConversation.needsToBeUpdatedFromBackend = true
-            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([self.groupConversation])) }
-
-            // when
-            let request = self.sut.nextRequest(for: apiVersion)!
-
-            // then
-            XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())")
-            XCTAssertEqual(request.method, .get)
-        }
-    }
 
     func testThatRequestToUpdateConversationNameIsGenerated_WhenModifiedKeyIsSet() {
         syncMOC.performGroupedAndWait {
@@ -365,10 +325,12 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         fetchConversation(groupConversation, with: response, apiVersion: apiVersion)
 
         // then
-        XCTAssertEqual(
-            mockRemoveLocalConversation.invokeCalls,
-            [groupConversation]
-        )
+        syncMOC.performAndWait {
+            XCTAssertEqual(
+                mockRemoveLocalConversation.invokeCalls,
+                [groupConversation]
+            )
+        }
     }
 
     func testThatSelfUserIsRemovedFromParticipantsList_WhenResponseIs_403() {
@@ -408,12 +370,14 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func fetchConversation(_ conversation: ZMConversation, with response: ZMTransportResponse, apiVersion: APIVersion) {
         syncMOC.performGroupedAndWait {
             // given
-            conversation.needsToBeUpdatedFromBackend = true
-            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([conversation])) }
+            self.sut.fetch([conversation], for: apiVersion)
 
             // when
-            let request = self.sut.nextRequest(for: apiVersion)!
-            request.complete(with: response)
+            if let request = self.sut.nextRequest(for: apiVersion) {
+                request.complete(with: response)
+            } else {
+                XCTFail("could not produce a request")
+            }
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }

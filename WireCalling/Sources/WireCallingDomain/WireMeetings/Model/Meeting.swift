@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,16 +35,20 @@ public struct Meeting: Equatable, Sendable {
 
     public let end: Date
 
+    public let repeatOption: RepeatOption
+
     public init(
         id: UUID,
         title: String,
         start: Date,
-        end: Date
+        end: Date,
+        repeatOption: RepeatOption = .never
     ) {
         self.id = id
         self.title = title
         self.start = start
         self.end = end
+        self.repeatOption = repeatOption
     }
 
 }

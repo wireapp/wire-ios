@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class SelectParticipantsPage: PageModel {
@@ -25,15 +26,15 @@ class SelectParticipantsPage: PageModel {
     }
 
     var searchByName: XCUIElement {
-        app.descendants(matching: .any)["textViewSearch"].firstMatch
+        app.descendants(matching: .any)[Locators.SelectParticipantsPage.searchByNameOrUsername.rawValue].firstMatch
     }
 
     var doneButton: XCUIElement {
-        app.descendants(matching: .any)["button.addpeople.create"].firstMatch
+        app.descendants(matching: .any)[Locators.SelectParticipantsPage.done.rawValue].firstMatch
     }
 
-    var addParticipantButton: XCUIElement {
-        app.buttons["Add Participants"]
+    var addParticipantsButton: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationDetailsPage.addParticipantsButton.rawValue].firstMatch
     }
 
     func tapMemberCells(withLabelPrefixes prefixes: [String]) -> SelectParticipantsPage {
@@ -49,8 +50,8 @@ class SelectParticipantsPage: PageModel {
         return try ActiveConversationPage()
     }
 
-    func addSelectedParticipant() throws -> GroupConversationPage {
-        addParticipantButton.tap()
-        return try GroupConversationPage()
+    func addSelectedParticipant() throws -> ActiveConversationPage {
+        addParticipantsButton.tap()
+        return try ActiveConversationPage()
     }
 }

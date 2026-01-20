@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import WireDesign
 import WireMessagingAssembly
+import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
 
@@ -64,12 +65,16 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     func setupSut() {
         sut = StartUIViewController(
+            areLegacyBotsAvailable: true,
             isAppsFeatureEnabled: true,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
             createGroupConversationUIBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),
-            channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory(),
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory(
+                conversationCreationRepository: MockConversationCreationRepositoryProtocol()
+            ),
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            conversationCreationRepository: MockConversationCreationRepositoryProtocol()
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
 

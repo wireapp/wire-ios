@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@ import Foundation
 
 package enum MessagesUpdate: Sendable {
 
-    case initiallyLoaded(MessagesSnapshot)
-    case messageAdded(MessagesSnapshot)
+    case initiallyLoaded(ConversationSnapshot)
+    case messageAdded(ConversationSnapshot)
     // later to be added more updates like:
     // loaded new messages, new or older
     // re-sent failed message

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,9 +60,9 @@ public extension ZMConversation {
         created: UnsafeMutablePointer<Bool>
     ) -> ZMConversation {
         // We must only ever call this on the sync context. Otherwise, there's a race condition
-        // where the UI and sync contexts could both insert the same user (same UUID) and we'd end up
-        // having two duplicates of that user, and we'd have a really hard time recovering from that.
-        require(context.zm_isSyncContext, "Users are only allowed to be created on sync context")
+        // where the UI and sync contexts could both insert the same conversation (same UUID) and we'd end up
+        // having two duplicates of that conversation, and we'd have a really hard time recovering from that.
+        require(context.zm_isSyncContext, "Conversations are only allowed to be created on sync context")
         let domain: String? = context.isFederationEnabled ? domain : nil
 
         if let conversation = fetch(with: remoteIdentifier, domain: domain, in: context) {
@@ -98,7 +98,7 @@ public extension ZMConversation {
         name: String? = nil,
         team: Team? = nil,
         allowGuests: Bool = true,
-        allowServices: Bool = true,
+        allowApps: Bool = true,
         readReceipts: Bool = false,
         participantsRole: Role? = nil
     ) -> ZMConversation? {
@@ -108,7 +108,7 @@ public extension ZMConversation {
             name: name,
             team: team,
             allowGuests: allowGuests,
-            allowServices: allowServices,
+            allowApps: allowApps,
             readReceipts: readReceipts,
             participantsRole: participantsRole
         )
@@ -124,7 +124,7 @@ public extension ZMConversation {
         name: String? = nil,
         team: Team? = nil,
         allowGuests: Bool = true,
-        allowServices: Bool = true,
+        allowApps: Bool = true,
         readReceipts: Bool = false,
         participantsRole: Role? = nil
     ) -> ZMConversation? {
@@ -134,7 +134,7 @@ public extension ZMConversation {
             name: name,
             team: team,
             allowGuests: allowGuests,
-            allowServices: allowServices,
+            allowApps: allowApps,
             readReceipts: readReceipts,
             participantsRole: participantsRole,
             type: .group
@@ -150,7 +150,7 @@ public extension ZMConversation {
         name: String? = nil,
         team: Team? = nil,
         allowGuests: Bool = true,
-        allowServices: Bool = true,
+        allowApps: Bool = true,
         readReceipts: Bool = false,
         participantsRole: Role? = nil,
         type: ZMConversationType,
@@ -172,7 +172,7 @@ public extension ZMConversation {
 
         if team != nil {
             conversation.allowGuests = allowGuests
-            conversation.allowServices = allowServices
+            conversation.allowApps = allowApps
             conversation.hasReadReceiptsEnabled = readReceipts
         }
 

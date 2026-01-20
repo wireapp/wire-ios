@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ public final class NetworkService: NSObject, NetworkServiceProtocol {
         guard let httpURLResponse = response as? HTTPURLResponse else {
             throw NetworkServiceError.notAHTTPURLResponse
         }
-        WireLogger.network.log(response: httpURLResponse)
+        WireLogger.network.log(response: httpURLResponse, body: data)
 
         return (data, httpURLResponse)
     }

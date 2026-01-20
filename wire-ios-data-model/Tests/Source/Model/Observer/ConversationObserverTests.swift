@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
             "clearedChanged",
             "securityLevelChanged",
             "allowGuestsChanged",
-            "allowServicesChanged",
+            "allowAppsChanged",
             "destructionTimeoutChanged",
             "languageChanged",
             "hasReadReceiptsEnabledChanged",
@@ -781,7 +781,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                 .guest
             ] },
             expectedChangedFields: [
-                "allowServicesChanged",
+                "allowAppsChanged",
                 "allowGuestsChanged"
             ],
             expectedChangedKeys: [#keyPath(ZMConversation.accessRoleStringsV2)]
@@ -1122,8 +1122,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         checkThatItNotifiesTheObserverOfAChange(
             conversation,
             modifier: { _, _ in
-                user.serviceIdentifier = UUID().uuidString
-                user.providerIdentifier = UUID().uuidString
+                user.type = .bot
             },
             expectedChangedFields: ["externalParticipantsStateChanged"],
             expectedChangedKeys: ["externalParticipantsState"]

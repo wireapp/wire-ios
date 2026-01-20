@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -82,18 +82,18 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
             let processedEnvelopeIDs: Set<UUID>
             do {
-                logger.debug("pulling pending update events", attributes: .incrementalSyncV2)
+                logger.info("pulling pending update events", attributes: .incrementalSyncV2, .safePublic)
                 syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
                 try await updateEventsSync.pull()
 
-                logger.debug("processing stored update events", attributes: .incrementalSyncV2)
+                logger.info("processing stored update events", attributes: .incrementalSyncV2, .safePublic)
                 syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
                 processedEnvelopeIDs = try await processStoredEvents()
             } catch {
                 func tearDown() async {
-                    logger.debug(
+                    logger.info(
                         "incremental sync interrupted, tearing down...",
-                        attributes: .incrementalSyncV2
+                        attributes: .incrementalSyncV2, .safePublic
                     )
                     await pushChannel.close()
                 }
@@ -121,7 +121,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             await mlsGroupRepairAgent.repairConversations()
 
             let liveEventTask = Task { @Sendable [self] in
-                logger.debug("handling live event stream", attributes: .incrementalSyncV2)
+                logger.info("handling live event stream", attributes: .incrementalSyncV2, .safePublic)
                 syncStateSubject.send(.liveSyncing(.ongoing))
 
                 do {
@@ -217,13 +217,13 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     do {
                         logger.debug(
                             "processing live event: \(event.name)",
-                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
+                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id, .eventType: event.name]
                         )
                         try await processor.processEvent(event)
                     } catch {
                         logger.error(
                             "failed to process live event: \(String(describing: error))",
-                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
+                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id, .eventType: event.name]
                         )
                     }
                 }

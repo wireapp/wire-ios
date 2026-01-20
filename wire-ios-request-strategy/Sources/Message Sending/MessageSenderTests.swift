@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -769,6 +769,111 @@ final class MessageSenderTests: MessagingTestBase {
         XCTAssertEqual(arrangement.mlsService.reEstablishPendingGroupGroupID_Invocations.count, 1)
     }
 
+    func testThatWhenSendingMlsMessageOnAnOutOfSyncGroup_ItAddsMissingUsersAndTriesAgain() async throws {
+        // Given
+        await syncMOC.perform {
+            self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
+            self.groupConversation.messageProtocol = .mls
+            self.groupConversation.mlsStatus = .ready
+        }
+
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil
+        )
+
+        // For failure.
+        let id1 = QualifiedID.randomID()
+        let id2 = QualifiedID.randomID()
+        let missingUsers = Set([id1, id2])
+
+        // For success.
+        let response = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: 0
+        )
+        let messageSendingStatus = Payload.MLSMessageSendingStatus(
+            time: Date(),
+            events: [],
+            failedToSend: nil
+        )
+
+        let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withIncrementalSyncObserverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(()))
+            .withApiVersionResolving(to: .v13)
+            .withMLServiceConfigured()
+            .withSendMlsMessageResults(returning: [
+                .failure(SendMLSMessageFailure.groupOutOfSync(missingUsers: missingUsers)),
+                .success((messageSendingStatus, response))
+            ])
+            .arrange()
+        arrangement.mlsService.commitPendingProposalsIn_MockMethod = { _ in }
+        arrangement.mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
+        arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
+            message + [000]
+        }
+
+        // When
+        try await messageSender.sendMessage(message: message)
+
+        // Then
+        // It tried to send once (but failed), then one more time after adding members.
+        let sendMessageInvocations = arrangement.messageApi
+            .sendMLSMessageMessageConversationIDExpirationDate_Invocations
+        XCTAssertEqual(sendMessageInvocations.count, 2)
+        XCTAssertEqual(arrangement.mlsService.addMembersToConversationWithFor_Invocations.count, 1)
+    }
+
+    func testThatWhenSendingMlsMessageOnAnOutOfSyncGroup_ItRetriesMax3Times() async throws {
+        // Given
+        await syncMOC.performGrouped {
+            self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
+            self.groupConversation.messageProtocol = .mls
+            self.groupConversation.mlsStatus = .ready
+        }
+
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil
+        )
+
+        let id1 = QualifiedID.randomID()
+        let id2 = QualifiedID.randomID()
+        let missingUsers = Set([id1, id2])
+
+        let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withIncrementalSyncObserverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(()))
+            .withApiVersionResolving(to: .v13)
+            .withMLServiceConfigured()
+            .withSendMlsMessage(returning: .failure(SendMLSMessageFailure.groupOutOfSync(missingUsers: missingUsers)))
+            .arrange()
+        arrangement.mlsService.commitPendingProposalsIn_MockMethod = { _ in }
+        arrangement.mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
+        arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
+            message + [000]
+        }
+
+        // When
+        await XCTAssertThrowsErrorAsync {
+            try await messageSender.sendMessage(message: message)
+        }
+
+        // Then
+        // It tried to send the message 4 times (initial + 3 retries)
+        let sendMessageInvocations = arrangement.messageApi
+            .sendMLSMessageMessageConversationIDExpirationDate_Invocations
+        XCTAssertEqual(sendMessageInvocations.count, 4)
+        XCTAssertEqual(arrangement.mlsService.addMembersToConversationWithFor_Invocations.count, 3)
+    }
+
     // MARK: - Helpers
 
     private func broadcastMessage() async -> GenericMessageEntity {
@@ -919,6 +1024,7 @@ final class MessageSenderTests: MessagingTestBase {
                     // success dumb data
                     ["test": Data()]
                 }
+                proteusService.sessionExistsId_MockValue = true
             }
             return self
         }
@@ -961,15 +1067,34 @@ final class MessageSenderTests: MessagingTestBase {
             return self
         }
 
-        func withSendMlsMessage(returning result: Result<
-            (Payload.MLSMessageSendingStatus, ZMTransportResponse), Error
-        >) -> Arrangement {
+        func withSendMlsMessage(
+            returning result: Result<(Payload.MLSMessageSendingStatus, ZMTransportResponse), Error>
+        ) -> Arrangement {
 
             switch result {
             case let .success(value):
                 messageApi.sendMLSMessageMessageConversationIDExpirationDate_MockValue = value
             case let .failure(error):
                 messageApi.sendMLSMessageMessageConversationIDExpirationDate_MockError = error
+            }
+            return self
+        }
+
+        func withSendMlsMessageResults(
+            returning results: [Result<(Payload.MLSMessageSendingStatus, ZMTransportResponse), Error>]
+        ) -> Arrangement {
+            var results = results
+            messageApi.sendMLSMessageMessageConversationIDExpirationDate_MockMethod = { _, _, _ in
+                guard !results.isEmpty else {
+                    fatalError("no mocks left for send mls message")
+                }
+
+                switch results.removeFirst() {
+                case let .success(value):
+                    return value
+                case let .failure(error):
+                    throw error
+                }
             }
             return self
         }
@@ -1019,5 +1144,5 @@ extension MessageSendError: @retroactive Equatable {
 }
 
 struct MockInitiateResetMLSConversationUseCase: WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {
-    func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {}
+    func invoke(groupID: WireDataModel.MLSGroupID, epoch: UInt64) async {}
 }

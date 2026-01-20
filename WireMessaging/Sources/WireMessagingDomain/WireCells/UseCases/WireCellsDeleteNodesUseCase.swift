@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ package enum WireCellsDeleteNodesError: Error {
     case serverFailedToDeleteNodes
 }
 
-/// Deletes `WireCellNodes`s from both the server and locally cached data.
+/// Deletes `WireCellNodes`s from both the server and locally cached data or moves them to the recycle bin.
 package struct WireCellsDeleteNodesUseCase: WireCellsDeleteNodesUseCaseProtocol {
 
     private let repository: any WireCellsNodesRepositoryProtocol
@@ -39,12 +39,14 @@ package struct WireCellsDeleteNodesUseCase: WireCellsDeleteNodesUseCaseProtocol 
         self.localAssetStore = localAssetStore
     }
 
-    package func invoke(nodeIDs: [UUID]) async throws {
+    package func invoke(nodeIDs: [UUID], deletePermanently: Bool) async throws {
         // First delete local assets as this is less likely to fail then deleting nodes on server and local assets can
         // be re-downloaded if needed.
         for nodeID in nodeIDs {
             guard let localAsset = try await localAssetStore.asset(nodeID: nodeID) else { continue }
 
+            // If the file is just moved to the recycle bin, the download cache still needs to be cleared because the
+            // cache key changes.
             switch localAsset.downloadState {
             case let .downloaded(cacheKey):
                 try await fileCache.deleteFile(forKey: cacheKey)
@@ -55,7 +57,7 @@ package struct WireCellsDeleteNodesUseCase: WireCellsDeleteNodesUseCaseProtocol 
         try await localAssetStore.deleteAssets(nodeIDs: nodeIDs)
 
         // Then delete nodes from server.
-        if try await repository.deleteNodes(nodeIDs: nodeIDs, permanently: true) == false {
+        if try await repository.deleteNodes(nodeIDs: nodeIDs, permanently: deletePermanently) == false {
             throw WireCellsDeleteNodesError.serverFailedToDeleteNodes
         }
     }

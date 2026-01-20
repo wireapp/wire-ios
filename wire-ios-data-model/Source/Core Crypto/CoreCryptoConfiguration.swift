@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ public class CoreCryptoConfigProvider {
     public func createInitialConfiguration(
         sharedContainerURL: URL,
         userID: UUID,
-        createKeyIfNeeded: Bool
+        allowKeyCreation: Bool
     ) async throws -> (path: String, key: Data) {
 
         let accountDirectory = CoreDataStack.accountDataFolder(
@@ -59,7 +59,7 @@ public class CoreCryptoConfigProvider {
 
         do {
             let key = try await coreCryptoKeyProvider.coreCryptoKey(
-                createIfNeeded: createKeyIfNeeded,
+                allowCreation: allowKeyCreation,
                 path: coreCryptoDirectory.path
             )
             return (

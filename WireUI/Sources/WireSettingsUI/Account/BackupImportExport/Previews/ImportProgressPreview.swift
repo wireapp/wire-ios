@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,10 +19,13 @@
 import SwiftUI
 
 @MainActor @ViewBuilder
-func ImportProgressPreview() -> some View {
+func ImportProgressPreview(isLoadingFile: Bool) -> some View {
     Color(uiColor: .systemBackground)
         .sheet(isPresented: .constant(true)) {
-            ImportProgressView(progressValues: (1, 4)) {}
+            ImportProgressView(
+                isLoadingFile: isLoadingFile,
+                progressValues: (1, 4)
+            ) {}
                 .interactiveDismissDisabled()
                 .presentationDetents([.medium])
         }

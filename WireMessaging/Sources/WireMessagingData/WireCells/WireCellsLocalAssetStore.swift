@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -114,7 +114,7 @@ package final class WireCellsLocalAssetStore: WireCellsLocalAssetStoreProtocol {
                     eTag: managed.eTag,
                     path: managed.path,
                     contentType: managed.contentType,
-                    size: UInt64(managed.size),
+                    size: managed.size >= 0 ? UInt64(managed.size) : nil,
                     downloadState: managed.isDownloaded ? .downloaded(cacheKey: cacheKey) : .pending
                 )
             }

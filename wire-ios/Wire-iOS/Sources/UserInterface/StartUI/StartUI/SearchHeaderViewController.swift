@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 
 protocol SearchHeaderViewControllerDelegate: AnyObject {
     func searchHeaderViewController(
@@ -71,7 +72,7 @@ final class SearchHeaderViewController: UIViewController {
         clearButton.isHidden = true
         clearButton.setIconColor(SemanticColors.SearchBar.backgroundButton, for: .normal)
 
-        tokenField.textView.accessibilityIdentifier = "textViewSearch"
+        tokenField.textView.accessibilityIdentifier = Locators.SelectParticipantsPage.searchByNameOrUsername.rawValue
         tokenField.tokenTitleColor = SemanticColors.SearchBar.textInputView.resolvedColor(with: traitCollection)
         tokenField.textView.placeholder = L10n.Localizable.Peoplepicker.searchPlaceholder
         tokenField.textView.keyboardAppearance = .default

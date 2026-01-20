@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -103,7 +103,6 @@
         ZM_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self performSelector:selector]);
     }
 
-    [self setupKeyStore];
     [self setupTimers];
     [self setupCaches];
 
@@ -116,16 +115,6 @@
         [self.syncMOC zm_createMessageObfuscationTimer];
     }];
     [self.uiMOC zm_createMessageDeletionTimer];
-}
-
-- (void)setupKeyStore
-{
-    [self performPretendingUiMocIsSyncMoc:^{
-        NSURL *url = [CoreDataStack accountDataFolderWithAccountIdentifier:self.userIdentifier
-                                                  applicationContainer:self.storageDirectory];
-        [self.uiMOC setupUserKeyStoreInAccountDirectory:url
-                                   applicationContainer:self.storageDirectory];
-    }];
 }
 
 - (void)tearDown;
@@ -255,11 +244,6 @@
     [moc saveOrRollback];
     
     return selfClient;
-}
-
-- (UserClient *)createClientForUser:(ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSelfUser
-{
-    return [self createClientForUser:user createSessionWithSelfUser:createSessionWithSelfUser onMOC:self.uiMOC];
 }
 
 @end

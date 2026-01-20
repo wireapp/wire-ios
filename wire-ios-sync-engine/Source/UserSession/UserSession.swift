@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -224,9 +224,9 @@ public protocol UserSession: AnyObject {
 
     var channelsFeature: Feature.Channels { get }
 
-    var isChatBubbleSimpleEnabled: Bool { get }
-
     var isWireCellsEnabled: Bool { get }
+
+    var wireCellsBackendURL: URL? { get }
 
     var isEnterpriseUser: Bool { get }
 
@@ -272,7 +272,7 @@ public protocol UserSession: AnyObject {
 
     func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol
 
-    func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol
+    func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol
 
     func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol
 
@@ -282,7 +282,7 @@ public protocol UserSession: AnyObject {
 
     func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol
 
-    func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol
+    func makeAppendLocationMessageUseCase() -> any AppendLocationMessageUseCaseProtocol
 
     func makeAppendFileMessageUseCase() -> any AppendFileMessageUseCaseProtocol
 
@@ -297,6 +297,9 @@ public protocol UserSession: AnyObject {
     func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol
 
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
+
+    func resolveOneOnOneConversation(with userID: WireDataModel
+        .QualifiedID) async throws -> OneOnOneConversationResolution
 
     func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol?
 

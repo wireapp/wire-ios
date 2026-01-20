@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import Down
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 
 protocol PasscodeSetupUserInterface: AnyObject {
     var createButtonEnabled: Bool { get set }
@@ -54,7 +55,7 @@ final class PasscodeSetupViewController: UIViewController {
 
     private lazy var createButton: LegacyButton = {
         let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
-        button.accessibilityIdentifier = "createPasscodeButton"
+        button.accessibilityIdentifier = Locators.SetPasscodePage.createPasscodeButton.rawValue
 
         button.setTitle(L10n.Localizable.CreatePasscode.CreateButton.title, for: .normal)
         button.isEnabled = false

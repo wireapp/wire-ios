@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCoreCrypto
+import WireDataModel
 import WireNetwork
 import XCTest
 
@@ -100,7 +101,9 @@ final class MLSTransportTests: XCTestCase {
         let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle.coreCryptoCommitBundle)
 
         // Then
-        XCTAssertEqual(result, MlsTransportResponse.abort(reason: try MLSAPIError.mlsStaleMessage.encodeAsString()))
+        let data = try JSONEncoder().encode(MLSTransportError.mlsStaleMessage)
+        let expectedReason = String(decoding: data, as: UTF8.self)
+        XCTAssertEqual(result, MlsTransportResponse.abort(reason: expectedReason))
     }
 
     enum Scaffolding {

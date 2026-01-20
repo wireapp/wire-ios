@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 import CoreData
 import GenericMessageProtocol
-import WireCryptobox
 import WireDataModel
 import WireLogging
 
@@ -40,6 +39,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
+    let assetTransferStateResolver: AssetTransferStateResolverProtocol
 
     // MARK: - Object lifecycle
 
@@ -47,6 +47,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         context: NSManagedObjectContext
     ) {
         self.context = context
+        self.assetTransferStateResolver = AssetTransferStateResolver()
     }
 
     // MARK: - Public
@@ -241,29 +242,11 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             // We assume received assets are V3 since backend no longer supports sending V2 assets.
             assetClientMessage.version = 3
 
-            if let assetData = genericMessage.assetData, let status = assetData.status {
-                switch status {
-                case let .uploaded(data) where data.hasAssetID:
-                    assetClientMessage.updateTransferState(
-                        .uploaded,
-                        synchronize: false
-                    )
-
-                case .notUploaded where assetClientMessage.transferState != .uploaded:
-                    switch assetData.notUploaded {
-                    case .cancelled:
-                        context.delete(assetClientMessage)
-                    case .failed:
-                        assetClientMessage.updateTransferState(
-                            .uploadingFailed,
-                            synchronize: false
-                        )
-                    }
-
-                default:
-                    break
-                }
-            }
+            assetTransferStateResolver.resolveTransferState(
+                assetMessage: assetClientMessage,
+                genericMessage: genericMessage,
+                context: context
+            )
 
             finalizeMessageUpdate(
                 message: assetClientMessage,
@@ -696,7 +679,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
                 let members = selfUserTeam.members.compactMap(\.user)
                 let guests = localParticipants.filter {
-                    !$0.isServiceUser && $0.membership == nil
+                    !$0.isAppOrBot && $0.membership == nil
                 }
 
                 newConversationMessage.allTeamUsersAdded = localParticipants.isSuperset(of: members)
@@ -1073,6 +1056,12 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             guard clientMessage.underlyingMessage?.compositeData != nil else { return false }
             genericMessage = GenericMessage(
                 content: newComposite,
+                nonce: messageNonce
+            )
+
+        case let .multipart(multipart):
+            genericMessage = GenericMessage(
+                content: multipart,
                 nonce: messageNonce
             )
         }

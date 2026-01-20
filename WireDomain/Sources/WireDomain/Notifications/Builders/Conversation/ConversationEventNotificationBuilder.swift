@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -127,10 +127,14 @@ extension ConversationEventNotificationBuilder {
                 domain: senderID.domain
             ).isSelfUser) ?? false
 
+            let isSelfConversation = await conversationLocalStore.isSelfConversation(conversation)
+            // Reject events from self user, except in self-conversation (e.g., calling "answered elsewhere")
+            let shouldAllowSender = isSenderSelfUser ? isSelfConversation : true
+
             let eventTimeStamp = time
             let lastReadTimestamp = await conversationLocalStore.lastReadServerTimestamp(conversation)
 
-            guard !isSenderSelfUser,
+            guard shouldAllowSender,
                   !isConversationMuted else {
                 return false
             }

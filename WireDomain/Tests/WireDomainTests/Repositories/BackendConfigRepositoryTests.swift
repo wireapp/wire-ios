@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,10 +49,9 @@ final class BackendConfigRepositoryTests: XCTestCase {
         mlsAPI.getBackendMLSPublicKeys_MockValue = BackendMLSPublicKeys(
             removal: .init(
                 ed25519: "YVAl3Nsu27aNpNbYlPB6fi",
-                ed448: nil,
                 p256: "BM036midcNiOMgny9m7N",
                 p384: "BPSlomkR8K4BcFLGTDOJx",
-                p512: "BAC3OmJi7rAPFAIXjU"
+                p521: "BAC3OmJi7rAPFAIXjU"
             )
         )
         backendConfigLocalStore.storeIsMLSEnabledStatusNewValue_MockMethod = { newValue in
@@ -73,10 +72,9 @@ final class BackendConfigRepositoryTests: XCTestCase {
         mlsAPI.getBackendMLSPublicKeys_MockValue = BackendMLSPublicKeys(
             removal: .init(
                 ed25519: nil,
-                ed448: nil,
                 p256: nil,
                 p384: nil,
-                p512: nil
+                p521: nil
             )
         )
         backendConfigLocalStore.storeIsMLSEnabledStatusNewValue_MockMethod = { newValue in

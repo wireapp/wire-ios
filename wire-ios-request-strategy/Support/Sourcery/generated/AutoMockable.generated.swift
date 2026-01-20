@@ -2,7 +2,7 @@
 // DO NOT EDIT
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -394,17 +394,17 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
 
     // MARK: - createGroupConversation
 
-    public var createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_Invocations: [(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowServices: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: (Result<ZMConversation, ConversationCreationFailure>) -> Void)] = []
-    public var createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_MockMethod: ((String?, Set<ZMUser>, Bool, Bool, Bool, MessageProtocol, @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void) -> Void)?
+    public var createGroupConversationNameUsersAllowGuestsAllowAppsEnableReceiptsMessageProtocolCompletion_Invocations: [(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowApps: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: (Result<ZMConversation, ConversationCreationFailure>) -> Void)] = []
+    public var createGroupConversationNameUsersAllowGuestsAllowAppsEnableReceiptsMessageProtocolCompletion_MockMethod: ((String?, Set<ZMUser>, Bool, Bool, Bool, MessageProtocol, @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void) -> Void)?
 
-    public func createGroupConversation(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowServices: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void) {
-        createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_Invocations.append((name: name, users: users, allowGuests: allowGuests, allowServices: allowServices, enableReceipts: enableReceipts, messageProtocol: messageProtocol, completion: completion))
+    public func createGroupConversation(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowApps: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void) {
+        createGroupConversationNameUsersAllowGuestsAllowAppsEnableReceiptsMessageProtocolCompletion_Invocations.append((name: name, users: users, allowGuests: allowGuests, allowApps: allowApps, enableReceipts: enableReceipts, messageProtocol: messageProtocol, completion: completion))
 
-        guard let mock = createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_MockMethod else {
-            fatalError("no mock for `createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion`")
+        guard let mock = createGroupConversationNameUsersAllowGuestsAllowAppsEnableReceiptsMessageProtocolCompletion_MockMethod else {
+            fatalError("no mock for `createGroupConversationNameUsersAllowGuestsAllowAppsEnableReceiptsMessageProtocolCompletion`")
         }
 
-        mock(name, users, allowGuests, allowServices, enableReceipts, messageProtocol, completion)
+        mock(name, users, allowGuests, allowApps, enableReceipts, messageProtocol, completion)
     }
 
     // MARK: - createTeamOneOnOneProteusConversation
@@ -665,10 +665,10 @@ public class MockInitiateResetMLSConversationUseCaseProtocol: InitiateResetMLSCo
 
     // MARK: - invoke
 
-    public var invokeGroupIDEpoch_Invocations: [(groupID: MLSGroupID, epoch: Int64)] = []
-    public var invokeGroupIDEpoch_MockMethod: ((MLSGroupID, Int64) async -> Void)?
+    public var invokeGroupIDEpoch_Invocations: [(groupID: MLSGroupID, epoch: UInt64)] = []
+    public var invokeGroupIDEpoch_MockMethod: ((MLSGroupID, UInt64) async -> Void)?
 
-    public func invoke(groupID: MLSGroupID, epoch: Int64) async {
+    public func invoke(groupID: MLSGroupID, epoch: UInt64) async {
         invokeGroupIDEpoch_Invocations.append((groupID: groupID, epoch: epoch))
 
         guard let mock = invokeGroupIDEpoch_MockMethod else {

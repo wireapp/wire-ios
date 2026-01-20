@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -284,7 +284,7 @@ struct FeatureConfigsPayloadProcessor {
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.E2EI.Config>.self, from: data)
             repository.storeE2EI(.init(status: response.status, config: response.config))
 
-        case .channels, .consumableNotifications, .chatBubblesSimple, .allowedGlobalOperations, .cells, .assetAuditLog:
+        case .channels, .consumableNotifications, .allowedGlobalOperations, .cells, .assetAuditLog, .cellsInternal:
             WireLogger.featureConfigs.warn(
                 "decoding unsupported feature config: \"\(featureName)\", this should not happen",
                 attributes: .safePublic

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,18 +21,6 @@ import Foundation
 /// Errors originating from `MLSAPI`.
 
 public enum MLSAPIError: Error, Equatable {
-
-    public init(from string: String) throws {
-        let error = try JSONDecoder().decode(MLSAPIV0Error.self, from: Data(string.utf8))
-        self = error.toAPIModel()
-    }
-
-    public func encodeAsString() throws -> String {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .sortedKeys
-        let encodableObject = toNetworkModel()
-        return String(decoding: try encoder.encode(encodableObject), as: UTF8.self)
-    }
 
     /// Request body is invalid
 
@@ -97,6 +85,12 @@ public enum MLSAPIError: Error, Equatable {
     /// Conversation not found
 
     case noConversation(message: String)
+
+    /// The MLS group is not in sync with the backend because
+    /// some users are missing.
+
+    case groupOutOfSync(missingUsers: Set<QualifiedID>)
+
 }
 
 enum MLSAPIV0Error: Error, Codable, Equatable {
@@ -152,47 +146,6 @@ extension MLSAPIV0Error: ToAPIModelConvertible {
             .invalidRequestBody
         case let .noConversation(message: message):
             .noConversation(message: message)
-        case .mlsInvalidLeafNodeIndex:
-            .mlsInvalidLeafNodeIndex
-        case .mlsInvalidLeafNodeSignature:
-            .mlsInvalidLeafNodeSignature
-        }
-    }
-}
-
-extension MLSAPIError: ToNetworkConvertible {
-
-    func toNetworkModel() -> MLSAPIV0Error {
-        switch self {
-
-        case .unsupportedEndpointForAPIVersion:
-            .unsupportedEndpointForAPIVersion
-        case .mlsNotEnabled:
-            .mlsNotEnabled
-        case .mlsStaleMessage:
-            .mlsStaleMessage
-        case .mlsClientMismatch:
-            .mlsClientMismatch
-        case .mlsCommitMissingReferences:
-            .mlsCommitMissingReferences
-        case let .mlsError(label, message):
-            .mlsError(label, message)
-        case let .mlsProtocolError(message: message):
-            .mlsProtocolError(message: message)
-        case let .mlsGroupIdNotSupported(message: message):
-            .mlsGroupIdNotSupported(message: message)
-        case let .mlsFederatedResetNotSupported(message: message):
-            .mlsFederatedResetNotSupported(message: message)
-        case let .actionDenied(message: message):
-            .actionDenied(message: message)
-        case let .invalidOperation(message: message):
-            .invalidOperation(message: message)
-        case let .noConversation(message: message):
-            .noConversation(message: message)
-        case .invalidRequestBody:
-            .invalidRequestBody
-        case let .accessDenied(message: message):
-            .accessDenied(message: message)
         case .mlsInvalidLeafNodeIndex:
             .mlsInvalidLeafNodeIndex
         case .mlsInvalidLeafNodeSignature:

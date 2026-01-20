@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireNetworkSupport
 import XCTest
+
 @testable import WireDomain
 @testable import WireNetwork
 
@@ -276,13 +277,14 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                     status: .enabled
                 )
             ),
-            .chatBubblesSimple(
-                .init(
-                    status: .enabled
-                )
-            ),
             .cells(
                 .init(status: .enabled)
+            ),
+            .cellsInternal(
+                .init(
+                    status: .enabled,
+                    backendURL: URL(string: "https://wire.com")!
+                )
             )
         ]
 

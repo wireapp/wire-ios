@@ -42,7 +42,7 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
 jobs:
   run-tests:
     name: Run tests
-    runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
+    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
     timeout-minutes: 90
     outputs:
       xcresult_files: ${{ steps.find-xcresults.outputs.xcresult_files }}
@@ -75,7 +75,7 @@ jobs:
           echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
         id: xcode-version
 
-      - uses: maxim-lobanov/setup-xcode@v1.5.1
+      - uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
           xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
 
@@ -135,10 +135,10 @@ jobs:
         run: |
           bundle exec fastlane generate_env
 
-      # - name: "Test new critical flows"
-      #   if: ${{ inputs.run_critical_flows }}
-      #   run: |
-      #     bundle exec fastlane run_uitests
+      - name: "Test new critical flows"
+        if: ${{ inputs.run_critical_flows }}
+        run: |
+          bundle exec fastlane run_uitests
 
       - name: "Test all selected frameworks"
         if: ${{ inputs.test_dependencies || inputs.all }}
@@ -193,6 +193,8 @@ jobs:
           path: |
             build/reports/*.junit
             artifacts/**/*.junit
+            app-group.zip
+            fastlane/app-group.zip
 
       - name: Prepare visual representation of test results
         uses: EnricoMi/publish-unit-test-result-action/macos@v2
@@ -212,10 +214,12 @@ jobs:
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
 
-      - name: Get Commit SHA
+      - name: Get Commit Info
         if: always()
         id: get_commit_sha
-        run: echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_ENV
+        run: |
+            echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_ENV
+            echo "commit_message=$(git log -1 --pretty=format:"%s")" >> $GITHUB_ENV
 
       - name: Notify on Wire for iOS Nightly 🤖
         uses: 8398a7/action-slack@v3
@@ -224,8 +228,9 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            **Tests for ${{ inputs.branch || github.head_ref }}**
+            **Tests for ${{ env.SANITIZED_BRANCH }}**
 
+            **Title:** ${{ env.commit_message }}
             **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -237,9 +242,10 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            **🚨 Tests for ${{ inputs.branch || github.head_ref }} failed 🆘**
+            **🚨 Tests for ${{ env.SANITIZED_BRANCH }} failed 🆘**
 
-            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
+            **Title:** ${{ env.commit_message }}
+            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 

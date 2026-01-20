@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ struct EmptyState: View {
             Spacer()
             Text("folder.picker.empty.hint", tableName: "Localizable", bundle: .module)
                 .foregroundColor(Color.primaryText)
-                .font(.textStyle(.subline1))
+                .font(for: .subline1)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
                 .accessibilityIdentifier("folder.picker.empty")

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@ public enum MockConversationAccessRoleV2: String {
     /// A service pseudo-user, aka a non-human bot.
     case service
 
-    public static func value(forAllowGuests allowGuests: Bool, forAllowServices allowServices: Bool) -> [String] {
-        switch (allowGuests, allowServices) {
+    public static func value(forAllowGuests allowGuests: Bool, forAllowServices allowApps: Bool) -> [String] {
+        switch (allowGuests, allowApps) {
         case (true, true):
             [teamMember.rawValue, nonTeamMember.rawValue, guest.rawValue, service.rawValue]
         case (false, false):

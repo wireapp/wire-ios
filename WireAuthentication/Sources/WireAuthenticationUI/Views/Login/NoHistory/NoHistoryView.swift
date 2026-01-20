@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,12 +37,12 @@ package struct NoHistoryView: View {
         VStack(spacing: 20) {
             Text(viewModel.didReauthenticate ? Strings.MissingHistory.title : Strings.NoHistory.title)
                 .multilineTextAlignment(.center)
-                .font(.textStyle(.h2))
+                .font(for: .h2)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
             Text(viewModel.didReauthenticate ? Strings.MissingHistory.message : Strings.NoHistory.message)
                 .multilineTextAlignment(.center)
-                .wireTextStyle(.body1)
+                .font(for: .body1)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -61,7 +61,7 @@ package struct NoHistoryView: View {
             .wireButtonStyle(.primary)
             .bold()
             .disabled(viewModel.isLoading)
-            .accessibilityIdentifier(String(describing: Locators.FirstTimePage.okButton))
+            .accessibilityIdentifier(Locators.FirstTimePage.okButton.rawValue)
 
         }
         .alert(

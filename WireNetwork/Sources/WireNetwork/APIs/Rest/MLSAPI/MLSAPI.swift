@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,5 +43,5 @@ public protocol MLSAPI {
     /// Available from ``APIVersion`` v9.
     ///
 
-    func resetMLSConversation(epoch: Int64, groupID: String) async throws
+    func resetMLSConversation(epoch: UInt64, groupID: String) async throws
 }

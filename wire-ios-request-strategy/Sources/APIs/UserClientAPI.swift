@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -109,6 +109,14 @@ class UserClientAPIV11: UserClientAPIV10 {
     override var apiVersion: APIVersion { .v11 }
 }
 
-final class UserClientAPIV12: UserClientAPIV11 {
+class UserClientAPIV12: UserClientAPIV11 {
     override var apiVersion: APIVersion { .v12 }
+}
+
+class UserClientAPIV13: UserClientAPIV12 {
+    override var apiVersion: APIVersion { .v13 }
+}
+
+final class UserClientAPIV14: UserClientAPIV13 {
+    override var apiVersion: APIVersion { .v14 }
 }

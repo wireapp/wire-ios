@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ package protocol WireCellsLocalAssetRepositoryProtocol: Sendable {
     /// metadata from the server, updates local metadata if it has changed and deletes any cached file if it's
     /// `eTag` has changed.
     @MainActor
-    func refreshAssetMetadata(nodeID: UUID) async throws
+    func refreshAssetMetadata(nodeID: UUID) async throws -> (node: WireCellsNode, asset: WireCellsLocalAsset)
 
     /// Downloads the asset for the given `nodeID`.
     ///

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import WireNetwork
 extension MLSPublicKeys {
 
     func hasValidKey() -> Bool {
-        [ed25519, ed448, p256, p384, p512].contains { key in
+        [ed25519, p256, p384, p521].contains { key in
             guard let key else { return false }
             return !key.isEmpty
         }

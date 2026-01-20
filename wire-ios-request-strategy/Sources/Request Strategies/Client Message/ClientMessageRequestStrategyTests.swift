@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -266,6 +266,28 @@ extension ClientMessageRequestStrategyTests {
         // THEN
         withExtendedLifetime(token) {
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        }
+    }
+
+    func testThatItExpiresStaleMessage() {
+        syncMOC.performGroupedAndWait {
+            // GIVEN
+            makeSut(hasMLSClient: true)
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let text = "Lorem ipsum"
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
+            self.syncMOC.saveOrRollback()
+            XCTAssertFalse(message.isExpired)
+
+            // WHEN
+            let didComplete = XCTestExpectation(description: "didComplete")
+            self.sut.insert(object: message, isFresh: false, completion: {
+                didComplete.fulfill()
+            })
+
+            wait(for: [didComplete])
+            XCTAssertTrue(message.isExpired)
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 0)
         }
     }
 }

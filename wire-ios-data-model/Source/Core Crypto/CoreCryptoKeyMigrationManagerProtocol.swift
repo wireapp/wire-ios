@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,10 @@
 
 // sourcery: AutoMockable
 public protocol CoreCryptoKeyMigrationManagerProtocol {
+
+    /// Wether there's any migration that is required
+
+    var isAnyMigrationRequired: Bool { get }
 
     /// Wether we need to update the database key from String to Data (bytes) format
 

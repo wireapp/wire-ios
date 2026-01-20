@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,118 +16,122 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CellsSDK
-package import Foundation
+import Foundation
 
-/// Fetches `WireCellNodes`s for the given parameters.
-package struct WireCellsFetchNodesUseCase: Sendable {
+/// Fetches nodes for a particular configuration, and mutating the injected WireCellsNodesCollection.
+package final class WireCellsFetchNodesUseCase: Sendable {
 
-    package struct Configuration: Sendable {
+    /// The type of request.
+    package enum Request {
 
-        /// The root container for the nodes. If `nil`, nodes for all conversations will be returned.
-        let root: WireCellsNodeLocator?
+        /// Reloads the nodes with an optional search term.
+        case reload(searchTerm: String?)
 
-        /// Specific nodes to fetch.
-        let nodeIDs: [UUID]?
-
-        /// Whether to fetch nodes recursively from the root container.
-        let isRecursive: Bool
-
-        /// The type of nodes to fetch.
-        let nodeType: WireCellsNodeType
-
-        /// The deletion status of the nodes to fetch.
-        let deletionStatus: WireCellsNodeDeletionStatus
-
-        /// The maximum number of nodes to fetch.
-        let pageSize: Int = 30
-
-        /// A `Configuration` suitable for the conversation file view.
-        package static func conversationFileView(root: WireCellsNodeLocator?) -> Configuration {
-            Configuration(
-                root: root,
-                nodeIDs: nil,
-                isRecursive: true,
-                nodeType: .leaf,
-                deletionStatus: .notDeleted
-            )
-        }
-
-        /// A `Configuration` suitable for the files browser view.
-        package static func filesBrowserView() -> Configuration {
-            Configuration(
-                root: nil,
-                nodeIDs: nil,
-                isRecursive: true,
-                nodeType: .leaf,
-                deletionStatus: .notDeleted
-            )
-        }
-
-        /// A `Configuration` for showing only specific nodes in the file view.
-        package static func nodesFileView(nodeIDs: [UUID]) -> Configuration {
-            Configuration(
-                root: nil,
-                nodeIDs: nodeIDs,
-                isRecursive: true,
-                nodeType: .leaf,
-                deletionStatus: .notDeleted
-            )
-        }
+        /// Loads more nodes.
+        case loadMore
 
     }
 
-    private let configuration: Configuration
+    private let configuration: WireCellsGetNodesRequest.Configuration
     private let repository: any WireCellsNodesRepositoryProtocol
+    private let state: WireCellsNodesCollection
+
+    @MainActor private var searchTerm: String?
+
+    @MainActor private var currentTask: Task<(nodes: [WireCellsNode], nextOffset: Int?), any Error>?
 
     /// Initializes the use case with the required parameters.
     /// - Parameters:
     ///   - configuration: The configuration for the use case.
     ///   - repository: The repository to use for fetching nodes.
     package init(
-        configuration: Configuration,
+        state: WireCellsNodesCollection,
+        configuration: WireCellsGetNodesRequest.Configuration,
         repository: any WireCellsNodesRepositoryProtocol
     ) {
+        self.state = state
         self.configuration = configuration
         self.repository = repository
     }
 
-    /// Fetches nodes based on the provided search term and pagination token.
-    ///
-    /// - Parameters:
-    ///   - searchTerm: An optional search term to filter nodes by their name.
-    ///   - token: An optional pagination token. If `nil`, the first page of results will be fetched.
-    /// - Returns: An array of `WireCellsNode` values and an optional pagination token for the next page of results. If
-    /// `nil`, there are no more pages to fetch.
+    /// Invokes the use case with the given `request` mutating the injected WireCellsNodesCollection.
     package func invoke(
-        searchTerm: String?,
-        offset: Int
-    ) async throws -> (nodes: [WireCellsNode], isLastPage: Bool) {
-        let request = WireCellsGetNodesRequest(
-            scope: WireCellsGetNodesRequest.Scope(
-                root: configuration.root,
-                isRecursive: configuration.isRecursive
-            ),
-            query: configuration.nodeIDs.map { WireCellsGetNodesRequest.Query(nodeIDs: $0) },
-            filter: WireCellsGetNodesRequest.Filter(
-                deletionStatus: configuration.deletionStatus,
-                text: searchTerm,
-                type: configuration.nodeType
-            ),
-            limit: configuration.pageSize,
-            offset: offset
-        )
-        var (nodes, nextOffset) = try await repository.getNodes(request)
-
-        // FIXME: [WPB-16311] Temporary fix to filter out recycled nodes.
-        // This is necessary because the backend doesn't filter out recycled nodes when we have requested specific
-        // nodes. Once we implement showing previews in a conversation this check should move there, if there is no
-        // backend fix.
-        if configuration.deletionStatus == .notDeleted, let nodeIDs = configuration.nodeIDs, !nodeIDs.isEmpty {
-            nodes = nodes.filter { !$0.isRecycled }
+        request: Request
+    ) async throws -> (nodes: [WireCellsNode], hasMore: Bool) {
+        switch request {
+        case let .reload(searchTerm):
+            await setSearchTerm(searchTerm)
+            await cancelCurrentTask()
+            await state.setNodes([])
+        case .loadMore:
+            break
         }
 
-        return (nodes, nextOffset == nil)
+        let task = await loadMoreTask()
+        let (newNodes, nextOffset) = try await task.value
+        let allNodes = await appendNodes(newNodes)
+
+        return (allNodes, nextOffset != nil)
+    }
+
+    @MainActor
+    private func loadMoreTask() -> Task<(nodes: [WireCellsNode], nextOffset: Int?), any Error> {
+        if let task = currentTask {
+            return task
+        }
+
+        let request = WireCellsGetNodesRequest(
+            searchTerm: searchTerm,
+            limit: 30,
+            offset: state.nodes.count,
+            configuration: configuration
+        )
+
+        let task = Task { try await repository.getNodes(request) }
+        currentTask = task
+
+        return task
+    }
+
+    @MainActor
+    private func cancelCurrentTask() {
+        currentTask?.cancel()
+        currentTask = nil
+    }
+
+    @MainActor
+    private func setSearchTerm(_ searchTerm: String?) {
+        self.searchTerm = searchTerm
+    }
+
+    @MainActor
+    private func appendNodes(_ nodes: [WireCellsNode]) -> [WireCellsNode] {
+        let newNodes = Self.processItems(state.nodes + nodes)
+        state.setNodes(newNodes)
+        return nodes
+    }
+
+    /// Removes items with duplicate IDs keeping the latest modified if known, otherwise the first.
+    private static func processItems(_ items: [WireCellsNode]) -> [WireCellsNode] {
+        var latestByID: [UUID: WireCellsNode] = [:]
+        for item in items {
+            if let existing = latestByID[item.id] {
+                let existingDate = existing.modified ?? .distantPast
+                let newDate = item.modified ?? .distantPast
+                if newDate > existingDate {
+                    latestByID[item.id] = item
+                }
+            } else {
+                latestByID[item.id] = item
+            }
+        }
+
+        var results: [WireCellsNode] = []
+        for item in items where item == latestByID[item.id] {
+            results.append(item)
+        }
+
+        return results
     }
 
 }

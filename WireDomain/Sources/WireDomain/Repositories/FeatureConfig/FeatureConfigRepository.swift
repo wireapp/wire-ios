@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -105,6 +105,13 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         )
     }
 
+    public func fetchCellsInternal() async throws -> LocalFeature<Feature.CellsInternal.Config> {
+        try await fetchFeatureConfig(
+            name: .cellsInternal,
+            type: Feature.CellsInternal.Config.self
+        )
+    }
+
     // MARK: - Private
 
     private func sendFeatureState(for featureConfig: FeatureConfig) async {
@@ -123,10 +130,10 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 isEnabled: appLockFeatureConfig.status == .enabled
             )
 
-        case let .apps(cellsConfig):
+        case let .apps(appsConfig):
             return FeatureState(
                 name: .apps,
-                isEnabled: cellsConfig.status == .enabled
+                isEnabled: appsConfig.status == .enabled
             )
 
         case let .assetAuditLog(config):
@@ -217,16 +224,16 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 isEnabled: config.status == .enabled
             )
 
-        case let .chatBubblesSimple(chatBubblesSimpleFeatureConfig):
-            return FeatureState(
-                name: .chatBubblesSimple,
-                isEnabled: chatBubblesSimpleFeatureConfig.status == .enabled
-            )
-
         case let .cells(cellsConfig):
             return FeatureState(
                 name: .cells,
                 isEnabled: cellsConfig.status == .enabled
+            )
+
+        case let .cellsInternal(cellsInternalConfig):
+            return FeatureState(
+                name: .cellsInternal,
+                isEnabled: cellsInternalConfig.status == .enabled
             )
 
         case let .unknown(featureName):

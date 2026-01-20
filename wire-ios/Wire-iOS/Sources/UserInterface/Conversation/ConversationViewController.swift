@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,12 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireDomain
+import WireFoundation
+import WireLocators
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
+import WireMessagingDomain
 import WireMessagingUI
 import WireSyncEngine
 
@@ -30,6 +33,7 @@ final class ConversationViewController: UIViewController {
 
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    let conversationCreationRepository: any ConversationCreationRepositoryProtocol
     private let visibleMessage: ZMConversationMessage?
     private let getParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
     var actionControllerForSelectedEmoji: ConversationMessageActionController?
@@ -110,28 +114,39 @@ final class ConversationViewController: UIViewController {
     var updateLeftNavigationBarItemsTask: Task<Void, Never>?
 
     var participantsController: UIViewController? {
+        get async {
 
-        var viewController: UIViewController?
+            let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
+                .isFeatureEnabled(.apps) ?? false
 
-        switch conversation.conversationType {
-        case .group:
-            viewController = GroupDetailsViewController(
-                conversation: conversation,
-                userSession: userSession,
-                mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder,
-                isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
-            )
-        case .`self`, .oneOnOne, .connection:
-            viewController = createUserDetailViewController()
-        case .invalid:
-            fatal("Trying to open invalid conversation")
-        default:
-            break
+            var viewController: UIViewController?
+
+            switch conversation.conversationType {
+            case .group:
+                viewController = GroupDetailsViewController(
+                    conversation: conversation,
+                    userSession: userSession,
+                    mainCoordinator: mainCoordinator,
+                    selfProfileUIBuilder: selfProfileUIBuilder,
+                    conversationCreationRepository: conversationCreationRepository,
+                    isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+                    areLegacyBotsAvailable: areLegacyBotsAvailable,
+                    isAppsFeatureEnabled: isAppsFeatureEnabled
+                )
+            case .`self`, .oneOnOne, .connection:
+                viewController = createUserDetailViewController()
+            case .invalid:
+                fatal("Trying to open invalid conversation")
+            default:
+                break
+            }
+            guard let viewController else { return nil }
+            return UINavigationController(rootViewController: viewController)
         }
-        guard let viewController else { return nil }
-        return UINavigationController(rootViewController: viewController)
     }
+
+    private let individualChangesFactory: MessagesIndividualUpdatesFactory
 
     required init(
         conversation: ZMConversation,
@@ -139,6 +154,7 @@ final class ConversationViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol,
         mediaPlaybackManager: MediaPlaybackManager?,
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable,
@@ -150,13 +166,21 @@ final class ConversationViewController: UIViewController {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
+
+        self.individualChangesFactory = MessagesIndividualUpdatesFactory(
+            context: userSession.contextProvider.viewContext
+        )
         self.exchangeableContentViewController = if DeveloperFlag.chatBubbles.isOn {
             WireMessagingAssembly.makeConversationScreen(
                 loadMessagesRepo: LoadConversationMessagesRepository(
                     conversationObjectID: conversation.objectID,
                     syncContext: userSession.contextProvider.syncContext,
                     backgroundContext: userSession.contextProvider.newBackgroundContext()
-                )
+                ),
+                senderNameObserverProvider: { [individualChangesFactory] model in
+                    individualChangesFactory.makeSenderNameObserver(user: model)
+                }
             )
         } else {
             ConversationContentViewController(
@@ -166,6 +190,7 @@ final class ConversationViewController: UIViewController {
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository,
                 wireMessagingFactory: wireMessagingFactory
             )
         }
@@ -280,7 +305,13 @@ final class ConversationViewController: UIViewController {
         updateInputBarVisibility()
 
         if let quote = conversation.draftMessage?.quote, !quote.hasBeenDeleted, let contentViewController {
-            inputBarController.addReplyComposingView(contentViewController.createReplyComposingView(for: quote))
+            let messageReplyAttachmentsViewModel = MessageReplyAttachmentsViewModel(
+                fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
+            )
+            inputBarController.addReplyComposingView(contentViewController.createReplyComposingView(
+                for: quote,
+                messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
+            ))
         }
 
         resolveConversationIfOneOnOne()
@@ -468,13 +499,16 @@ final class ConversationViewController: UIViewController {
                 )
             )
         }
-        actions.append(UIAction(
+        let conversationDetailsAction = UIAction(
             title: L10n.Localizable.Conversation.Action.conversationDetails,
             image: UIImage(systemName: "info.circle"),
             handler: { [weak self] _ in
                 self?.onConversationDetailsPressed()
             }
-        ))
+        )
+        conversationDetailsAction.accessibilityIdentifier = Locators.ActiveConversationPage.conversationDetailsButton
+            .rawValue
+        actions.append(conversationDetailsAction)
 
         let menu = UIMenu(title: "", children: actions)
 
@@ -539,7 +573,7 @@ final class ConversationViewController: UIViewController {
             return L10n.Localizable.Profile.Details.partner.uppercased()
         } else if user.isFederated {
             return L10n.Localizable.Profile.Details.federated.uppercased()
-        } else if !user.isTeamMember {
+        } else if user.isGuest(in: conversation) {
             return L10n.Localizable.Profile.Details.guest.uppercased()
         }
         return nil
@@ -556,27 +590,22 @@ final class ConversationViewController: UIViewController {
         }
 
         guard
+            let conversationID = conversation.remoteIdentifier,
             let otherUser = conversation.localParticipants.first(where: { !$0.isSelfUser }),
             let otherUserID = otherUser.qualifiedID,
             let viewContext = conversation.managedObjectContext,
             let syncContext = viewContext.zm_sync
         else {
-            WireLogger.conversation.warn("missing expected value to resolve 1-1 conversation!")
+            WireLogger.conversation.warn(
+                "missing expected value to resolve 1-1 conversation!",
+                attributes: [.conversationId: conversation.remoteIdentifier ?? "<nil>"]
+            )
             return
         }
 
         Task {
             do {
-                guard let mlsService = await syncContext.perform({ syncContext.mlsService }) else {
-                    assertionFailure("mlsService is missing")
-                    return
-                }
-                let mlsFeature = await userSession.makeGetMLSFeatureUseCase().invoke()
-                let resolver = LegacyOneOnOneResolver(
-                    migrator: OneOnOneMigrator(mlsService: mlsService),
-                    isMLSEnabled: mlsFeature.isEnabled
-                )
-                let resolvedState = try await resolver.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
+                let resolvedState = try await userSession.resolveOneOnOneConversation(with: otherUserID)
 
                 if case let .migratedToMLSGroup(identifier) = resolvedState {
                     await navigateToNewMLSConversation(mlsGroupIdentifier: identifier, in: viewContext)
@@ -584,7 +613,7 @@ final class ConversationViewController: UIViewController {
             } catch {
                 WireLogger.conversation.warn(
                     "resolution of proteus 1-1 conversation failed: \(error)",
-                    attributes: [.senderUserId: otherUserID.safeForLoggingDescription]
+                    attributes: [.senderUserId: otherUserID.safeForLoggingDescription, .conversationId: conversationID]
                 )
             }
         }
@@ -798,7 +827,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         contentViewController?.didFinishEditing(message)
         userSession.enqueue {
             if let newText,
-               !newText.isEmpty {
+               !newText.isEmpty || message.isMultipart {
                 let fetchLinkPreview = !Settings.disableLinkPreviews
                 message.textMessageData?.editText(newText, mentions: mentions, fetchLinkPreview: fetchLinkPreview)
             } else {
@@ -832,10 +861,13 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         }
     }
 
+    @MainActor
     @objc
     private func onConversationDetailsPressed() {
-        if let superview = titleView.superview, let participantsController {
-            presentParticipantsViewController(participantsController, from: superview)
+        Task {
+            if let superview = titleView.superview, let participantsController = await participantsController {
+                presentParticipantsViewController(participantsController, from: superview)
+            }
         }
     }
 
@@ -847,7 +879,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                 conversation: conversation,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                conversationCreationRepository: conversationCreationRepository
             )
             collections.delegate = self
 
@@ -869,14 +902,18 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     }
 
     @objc
-    private func onFilesButtonPressed(_ sender: AnyObject?) {
+    func onFilesButtonPressed(_ sender: AnyObject?) {
+        let selfUserColorRawValue = userSession.selfUser.accentColorValue
+
         let filesView = wireMessagingFactory
             .makeFilesView(
                 cellName: conversation.wireCellName,
-                isCellsStatePending: wireCellsState == .pending,
-                nodeIDs: []
-            )
+                isCellsStatePending: wireCellsState == .pending
+            ) {
+                WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
+            }
 
+        filesView.modalPresentationStyle = .fullScreen
         filesView.presentOverAll(animated: true)
     }
 

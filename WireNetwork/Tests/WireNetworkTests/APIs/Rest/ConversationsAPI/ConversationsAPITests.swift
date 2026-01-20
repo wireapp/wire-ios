@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -594,10 +594,93 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(conversation.addPermission, .everyone) // Can be decoded in API >= v8
     }
 
-    func testGetMLSOneToOneConversation_Success_Response_V5_And_Next_Versions() async throws {
+    // MARK: - GetMLSOneToOneConversation
+
+    func testGetMLSOneToOneConversation_Success_Response_V10_AndNext_Versions() async throws {
         // Given
 
-        let supportedVersions = APIVersion.v5.andNextVersions
+        let supportedVersions = APIVersion.v10.andNextVersions
+
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testGetMLSOneOnOneConversationV10SuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // When
+
+        for sut in suts {
+            let (mlsConversation, publicKeys) = try await sut.getMLSOneToOneConversation(
+                userID: Scaffolding.userID,
+                in: Scaffolding.domain
+            )
+
+            XCTAssertEqual(mlsConversation.id, Scaffolding.mlsConversationID)
+            XCTAssertEqual(publicKeys, Scaffolding.publicKeys)
+        }
+    }
+
+    func testGetMLSOneToOneConversation_Success_Response_V8_V9() async throws {
+        // Given
+
+        let supportedVersions = [APIVersion.v8, APIVersion.v9]
+
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testGetMLSOneOnOneConversationV8SuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // When
+
+        for sut in suts {
+            let (mlsConversation, publicKeys) = try await sut.getMLSOneToOneConversation(
+                userID: Scaffolding.userID,
+                in: Scaffolding.domain
+            )
+
+            XCTAssertEqual(mlsConversation.id, Scaffolding.mlsConversationID)
+            XCTAssertEqual(publicKeys, Scaffolding.publicKeys)
+        }
+    }
+
+    func testGetMLSOneToOneConversation_Success_Response_V6_V7() async throws {
+        // Given
+
+        let supportedVersions = [APIVersion.v6, APIVersion.v7]
+
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testGetMLSOneOnOneConversationV6SuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // When
+
+        for sut in suts {
+            let (mlsConversation, publicKeys) = try await sut.getMLSOneToOneConversation(
+                userID: Scaffolding.userID,
+                in: Scaffolding.domain
+            )
+
+            XCTAssertEqual(mlsConversation.id, Scaffolding.mlsConversationID)
+            XCTAssertEqual(publicKeys, Scaffolding.publicKeys)
+        }
+    }
+
+    func testGetMLSOneToOneConversation_Success_Response_V5() async throws {
+        // Given
+
+        let supportedVersions = [APIVersion.v5]
 
         let mocks: [MockAPIServiceProtocol.Response] = Array(
             repeating: (.ok, "testGetMLSOneOnOneConversationV5SuccessResponse200"),
@@ -611,12 +694,13 @@ final class ConversationsAPITests: XCTestCase {
         // When
 
         for sut in suts {
-            let mlsConversation = try await sut.getMLSOneToOneConversation(
+            let (mlsConversation, publicKeys) = try await sut.getMLSOneToOneConversation(
                 userID: Scaffolding.userID,
                 in: Scaffolding.domain
             )
 
             XCTAssertEqual(mlsConversation.id, Scaffolding.mlsConversationID)
+            XCTAssertNil(publicKeys)
         }
     }
 
@@ -1569,7 +1653,7 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(suts.count, supportedVersions.count)
 
         for sut in suts {
-            await XCTAssertThrowsErrorAsync(ConversationsAPIError.insufficienAuthorization) {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.insufficientAuthorization) {
                 try await sut.addChannelPermission(
                     conversationID: Scaffolding.conversationID.uuidString,
                     conversationDomain: Scaffolding.domain,
@@ -1789,6 +1873,7 @@ final class ConversationsAPITests: XCTestCase {
         static let userID = "99db9768-04e3-4b5d-9268-831b6a25c4ab"
         static let domain = "domain.com"
         static let mlsConversationID = UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
+        static let publicKeys = MLSPublicKeys(ed25519: "string", p256: "string", p384: "string", p521: "string")
         static let conversationID = UUID.mockID1
         static let guestLinkV0 = "https://exampleV0.com"
         static let guestLinkV4 = "https://exampleV4.com"
@@ -1820,61 +1905,6 @@ final class ConversationsAPITests: XCTestCase {
             teamID: .mockID1,
             isReadReceiptsEnabled: true
         )
-    }
-
-}
-
-extension ConversationsAPIError: Equatable {
-    public static func == (lhs: ConversationsAPIError, rhs: ConversationsAPIError) -> Bool {
-        switch (lhs, rhs) {
-        case (.notImplemented, .notImplemented):
-            true
-        case (.invalidBody, .invalidBody):
-            true
-        case (.unsupportedEndpointForAPIVersion, .unsupportedEndpointForAPIVersion):
-            true
-        case (.mlsNotEnabled, .mlsNotEnabled):
-            true
-        case (.usersNotConnected, .usersNotConnected):
-            true
-        case (.userAndDomainShouldNotBeEmpty, .userAndDomainShouldNotBeEmpty):
-            true
-        case (.accessDenied, .accessDenied):
-            true
-        case (.conversationNotFound, .conversationNotFound):
-            true
-        case (.conversationCodeNotFound, .conversationCodeNotFound):
-            true
-        case (.guestLinksDisabled, .guestLinksDisabled):
-            true
-        case (.invalidConversationID, .invalidConversationID):
-            true
-        case (.nonEmptyMemberList, .nonEmptyMemberList):
-            true
-        case (.missingLegalHoldConsent, .missingLegalHoldConsent):
-            true
-        case (.operationDenied, .operationDenied):
-            true
-        case (.noTeamMember, .noTeamMember):
-            true
-        case (.notConnected, .notConnected):
-            true
-        case (.unsupportedChannelCreationForAPIEndpoint, .unsupportedChannelCreationForAPIEndpoint):
-            true
-        case (.nonFederatingBackends, .nonFederatingBackends):
-            true
-        case (.unreachableBackends, .unreachableBackends):
-            true
-        case (.insufficienAuthorization, .insufficienAuthorization):
-            true
-        case (.insufficientPermissions, .insufficientPermissions):
-            true
-        case (.invalidOperation, .invalidOperation):
-            true
-        case (.teamNotFound, .teamNotFound):
-            true
-        default: false
-        }
     }
 
 }

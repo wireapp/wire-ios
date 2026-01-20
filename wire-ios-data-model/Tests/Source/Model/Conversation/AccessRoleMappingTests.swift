@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,21 +40,21 @@ class AccessRoleMappingTests: XCTestCase {
 
         // WHEN & THEN
         XCTAssertEqual(
-            ConversationAccessRole.fromAccessRoleV2([.teamMember, .nonTeamMember, .guest, .service]),
+            ConversationAccessRole.fromAccessRoleV2([.teamMember, .nonTeamMember, .guest, .app]),
             .nonActivated
         )
 
         // WHEN & THEN
-        XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.teamMember, .nonTeamMember, .service]), .activated)
+        XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.teamMember, .nonTeamMember, .app]), .activated)
 
         // WHEN & THEN
         XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.teamMember, .guest]), .nonActivated)
 
         // WHEN & THEN
-        XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.teamMember, .guest, .service]), .nonActivated)
+        XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.teamMember, .guest, .app]), .nonActivated)
 
         // WHEN & THEN
-        XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.teamMember, .service]), .activated)
+        XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.teamMember, .app]), .activated)
 
         // WHEN & THEN
         XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.nonTeamMember]), .activated)
@@ -63,19 +63,19 @@ class AccessRoleMappingTests: XCTestCase {
         XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.nonTeamMember, .guest]), .nonActivated)
 
         // WHEN & THEN
-        XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.nonTeamMember, .guest, .service]), .nonActivated)
+        XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.nonTeamMember, .guest, .app]), .nonActivated)
 
         // WHEN & THEN
-        XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.nonTeamMember, .service]), .activated)
+        XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.nonTeamMember, .app]), .activated)
 
         // WHEN & THEN
         XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.guest]), .nonActivated)
 
         // WHEN & THEN
-        XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.guest, .service]), .nonActivated)
+        XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.guest, .app]), .nonActivated)
 
         // WHEN & THEN
-        XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.service]), .activated)
+        XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.app]), .activated)
     }
 
     // MARK: Test Access Role Mapping from AccessRole to AccessRoleV2
@@ -90,7 +90,7 @@ class AccessRoleMappingTests: XCTestCase {
         // WHEN & THEN
         XCTAssertEqual(
             ConversationAccessRoleV2.fromLegacyAccessRole(.nonActivated),
-            [.teamMember, .nonTeamMember, .guest, .service]
+            [.teamMember, .nonTeamMember, .guest, .app]
         )
 
         // WHEN & THEN

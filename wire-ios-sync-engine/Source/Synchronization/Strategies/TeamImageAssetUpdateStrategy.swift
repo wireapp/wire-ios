@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         switch apiVersion {
         case .v0, .v1:
             path = "/assets/v3/\(assetId)"
-        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
             guard let localDomain else { return nil }
             path = "/assets/\(localDomain)/\(assetId)"
         }

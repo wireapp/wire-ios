@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,15 +22,15 @@ import WireDataModel
 final class ServicesSectionController: GroupDetailsSectionController {
 
     private weak var delegate: GroupDetailsSectionControllerDelegate?
-    private let serviceUsers: [UserType]
+    private let apps: [UserType]
     private let conversation: GroupDetailsConversationType
 
     init(
-        serviceUsers: [UserType],
+        apps: [UserType],
         conversation: GroupDetailsConversationType,
         delegate: GroupDetailsSectionControllerDelegate
     ) {
-        self.serviceUsers = serviceUsers
+        self.apps = apps
         self.conversation = conversation
         self.delegate = delegate
     }
@@ -42,7 +42,7 @@ final class ServicesSectionController: GroupDetailsSectionController {
     }
 
     override var sectionTitle: String {
-        L10n.Localizable.Participants.Section.apps(serviceUsers.count).localizedUppercase
+        L10n.Localizable.Participants.Section.apps(apps.count).localizedUppercase
     }
 
     override var sectionAccessibilityIdentifier: String {
@@ -50,14 +50,14 @@ final class ServicesSectionController: GroupDetailsSectionController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        serviceUsers.count
+        apps.count
     }
 
     override func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let user = serviceUsers[indexPath.row]
+        let user = apps[indexPath.row]
         let cell = collectionView.dequeueReusableCell(ofType: UserCell.self, for: indexPath)
         if let selfUser = ZMUser.selfUser() {
             cell.configure(
@@ -68,13 +68,13 @@ final class ServicesSectionController: GroupDetailsSectionController {
         } else {
             assertionFailure("ZMUser.selfUser() is nil")
         }
-        cell.showSeparator = (serviceUsers.count - 1) != indexPath.row
+        cell.showSeparator = (apps.count - 1) != indexPath.row
         cell.accessoryIconView.isHidden = false
         cell.accessibilityIdentifier = "participants.section.apps.cell"
         return cell
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        delegate?.presentDetails(for: serviceUsers[indexPath.row])
+        delegate?.presentDetails(for: apps[indexPath.row])
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 
 extension Notification.Name {
     static let conversationListItemDidScroll = Notification.Name("ConversationListItemDidScroll")
@@ -172,7 +173,7 @@ final class ConversationListItemView: UIView {
         labelsStack.distribution = UIStackView.Distribution.fill
         labelsStack.isAccessibilityElement = true
         labelsStack.accessibilityTraits = .button
-        labelsStack.accessibilityIdentifier = "title"
+        labelsStack.accessibilityIdentifier = Locators.ConversationsPage.conversationCell.rawValue
     }
 
     private func setupContentStack() {

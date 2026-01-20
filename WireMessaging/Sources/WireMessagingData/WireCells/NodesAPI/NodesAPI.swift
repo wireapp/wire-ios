@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,18 +22,26 @@ package import WireMessagingDomain
 
 package enum NodesAPIError: Error {
     case failedToCreateWriteStream
+    case moveFailed
 }
 
-package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol {
+package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol,
+    WireCellsEditingURLRepositoryProtocol {
     private let awsClient: AWSClient
     private let restAPI: RestAPI
     private let fileManager: FileManager
 
-    package init(serverURL: URL, accessToken: any AccessTokenProvider) {
+    package init(
+        serverURLResolver: @escaping @Sendable () throws -> URL,
+        accessToken: any AccessTokenProvider
+    ) {
         self.init(
-            awsClient: AWSClient(serverURL: serverURL, accessToken: accessToken),
+            awsClient: AWSClient(
+                serverURLResolver: serverURLResolver,
+                accessToken: accessToken
+            ),
             restAPI: RestAPI(
-                serverURL: serverURL.appendingPathComponent("/v2"),
+                serverURLResolver: serverURLResolver,
                 accessToken: accessToken
             )
         )
@@ -49,8 +57,12 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         self.fileManager = fileManager
     }
 
-    package func preCheck(nodePath: String) async throws -> WireCellsPreCheckResult {
-        let result = try await restAPI.preCheck(path: nodePath)
+    package func preCheck(nodePath: String, findAvailablePath: Bool) async throws -> WireCellsPreCheckResult {
+        let result = try await restAPI.preCheck(
+            path: nodePath,
+            findAvailablePath: findAvailablePath
+        )
+
         return result.fileExists
             ? .fileExists(nextPath: result.nextPath ?? nodePath)
             : .success
@@ -74,12 +86,35 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         try await restAPI.deleteNodes(nodeIDs: nodeIDs, permanently: permanently)
     }
 
+    package func restoreNodes(nodeIDs: [UUID]) async throws -> Bool {
+        try await restAPI.restoreNodes(nodeIDs: nodeIDs)
+    }
+
+    package func renameNode(nodeID: UUID, targetPath: String) async throws -> Bool {
+        try await restAPI.renameNode(nodeID: nodeID, targetPath: targetPath, targetIsParent: false)
+    }
+
+    package func moveNode(nodeID: UUID, newContainerPath: String) async throws {
+        guard try await restAPI.renameNode(nodeID: nodeID, targetPath: newContainerPath, targetIsParent: true) else {
+            throw NodesAPIError.moveFailed
+        }
+    }
+
     package func publishDraft(nodeID: UUID, versionID: UUID) async throws {
         try await restAPI.publishDraft(uuid: nodeID, versionID: versionID)
     }
 
     package func deleteVersion(nodeID: UUID, versionID: UUID) async throws {
         try await restAPI.deleteVersion(uuid: nodeID, versionID: versionID)
+    }
+
+    package func getVersions(nodeID: UUID) async throws -> [WireCellsNodeVersion] {
+        let versionsDTO = try await restAPI.getVersions(uuid: nodeID)
+        return versionsDTO.toDomainModel()
+    }
+
+    package func restoreVersion(nodeID: UUID, versionID: UUID) async throws {
+        try await restAPI.restoreVersion(uuid: nodeID, versionID: versionID)
     }
 
     package func downloadFile(
@@ -130,16 +165,55 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
         }
     }
 
-    package func createPublicLink(nodeID: UUID, fileName: String) async throws -> WireCellsPublicLink {
-        try await restAPI.createPublicLink(uuid: nodeID, fileName: fileName)
+    package func getEditorURL(id: UUID) async throws -> (url: URL, date: Date)? {
+        try await restAPI.getEditorURL(id: id)
     }
 
-    package func getPublicLink(linkUUID: UUID) async throws -> URL {
-        try await restAPI.getPublicLink(uuid: linkUUID)
+    package func createPublicLink(nodeID: UUID, label: String) async throws -> WireCellsPublicLink {
+        try await restAPI.createPublicLink(
+            uuid: nodeID,
+            label: label
+        )
     }
 
-    package func deletePublicLink(linkUUID: UUID) async throws {
-        try await restAPI.deletePublicLink(uuid: linkUUID)
+    package func getPublicLink(linkID: String) async throws -> WireCellsPublicLink {
+        try await restAPI.getPublicLink(linkID: linkID)
+    }
+
+    package func deletePublicLink(linkID: String) async throws {
+        try await restAPI.deletePublicLink(linkID: linkID)
+    }
+
+    package func updatePublicLinkExpiration(
+        linkID: String,
+        expiration: Date?
+    ) async throws -> WireCellsPublicLink {
+        try await restAPI.updatePublicLinkExpiration(
+            linkID: linkID,
+            expiration: expiration
+        )
+    }
+
+    package func updatePublicLinkPassword(
+        linkID: String,
+        password: String?
+    ) async throws -> WireCellsPublicLink {
+        try await restAPI.updatePublicLinkPassword(
+            linkID: linkID,
+            password: password
+        )
+    }
+
+    package func updateTags(nodeID: UUID, tags: [String]) async throws {
+        try await restAPI.updateTags(uuid: nodeID, tags: tags)
+    }
+
+    package func getAllTags() async throws -> [String] {
+        try await restAPI.getAllTags()
+    }
+
+    package func createFolder(at path: String) async throws {
+        try await restAPI.createFolder(at: path)
     }
 }
 

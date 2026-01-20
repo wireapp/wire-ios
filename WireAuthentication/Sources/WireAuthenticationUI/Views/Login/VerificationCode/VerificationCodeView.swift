@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ package struct VerificationCodeView: View {
     package var body: some View {
         VStack(spacing: 20) {
             Text(Strings.VerificationCode.message(viewModel.email))
-                .wireTextStyle(.body1)
+                .font(for: .body1)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.primaryText)
 
@@ -116,7 +116,7 @@ package struct VerificationCodeView: View {
                             )
                     )
                     .multilineTextAlignment(.center)
-                    .font(.textStyle(.h2))
+                    .font(for: .h2)
                     .keyboardType(.numberPad)
                     .foregroundColor(.primary)
                     .focused($focusedIndex, equals: index)

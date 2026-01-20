@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ public struct QualifiedID: Codable, Equatable, Hashable, CustomDebugStringConver
 
 extension QualifiedID: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        "\(uuid.safeForLoggingDescription) - \(domain.redactedAndTruncated(maxVisibleCharacters: 4, length: 7))"
+        "\(uuid.uuidString.lowercased()) - \(domain)"
     }
 }
 
@@ -64,9 +64,9 @@ public protocol HasQualifiedID {
     var qualifiedID: WireDataModel.QualifiedID? { get }
 }
 
-public extension ZMUser {
+extension ZMUser: HasQualifiedID {
 
-    var qualifiedID: QualifiedID? {
+    public var qualifiedID: QualifiedID? {
         guard
             let context = managedObjectContext,
             let uuid = remoteIdentifier,

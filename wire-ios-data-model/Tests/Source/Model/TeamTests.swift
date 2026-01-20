@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -82,9 +82,8 @@ final class TeamTests: ZMConversationTestsBase {
         // when
         let guest = ZMUser.insertNewObject(in: uiMOC)
         let bot = ZMUser.insertNewObject(in: uiMOC)
-        bot.serviceIdentifier = UUID.create().transportString()
-        bot.providerIdentifier = UUID.create().transportString()
-        XCTAssert(bot.isServiceUser)
+        bot.type = .bot
+        XCTAssert(bot.isAppOrBot)
         guard let conversation = ZMConversation.insertGroupConversation(
             moc: uiMOC,
             participants: [guest, bot],

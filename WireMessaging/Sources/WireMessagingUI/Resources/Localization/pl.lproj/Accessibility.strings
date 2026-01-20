@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// MARK: - Navigation
 
+"general.loading" = "Wczytuje…";
+"general.confirm" = "OK";
+"general.failure" = "Coś poszło nie tak";
+"general.save" = "Zapisz";
+"general.cancel" = "Anuluj";
+
+// MARK: Channel History
 "conversation.create.channel.back" = "Go back to new conversation overview";
 "conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";
 
@@ -30,3 +38,14 @@
 "conversation.wireCells.files.error.title" = "Can't load files";
 "conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
 "conversation.wireCells.files.error.reload" = "Reload";
+"conversation.wireCells.files.moreActionsButton" = "More";
+"conversation.wireCells.recycleBin.noData.message" = "You'll find all deleted files and folders here.";
+"conversation.wireCells.files.moveToFolder.move" = "Move here";
+
+// MARK: - File Tags View
+"conversation.wireCells.tags.removeTag" = "Remove tag {0}";
+"conversation.wireCells.tags.addTag" = "Add tag {0}";
+
+// MARK: - Share Link View
+"conversation.wireCells.shareLink.hidePassword" = "Hide password";
+"conversation.wireCells.shareLink.showPassword" = "Show password";

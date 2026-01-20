@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -245,7 +245,6 @@ private struct CornerButtonStyle: ButtonStyle {
             )
             .frame(height: 82)
             .background(Color.white)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         }
         Spacer(minLength: 500)
     }

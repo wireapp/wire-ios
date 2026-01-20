@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,10 +25,12 @@ struct WireCellsImageAttachmentPreview: View {
     let progress: Double?
     let isError: Bool
 
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
     var body: some View {
         WireCellsAttachmentPreview(
             progress: progress,
-            progressColor: isError ? ColorTheme.Base.error.color : ColorTheme.Base.primary.color
+            progressColor: isError ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
         ) {
             ZStack(alignment: .center) {
                 if let thumbnail {

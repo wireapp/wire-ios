@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -163,7 +163,7 @@ final class UserClientsAPITests: XCTestCase {
             model: "string",
             deviceClass: .phone,
             lastActiveDate: nil,
-            mlsPublicKeys: .init(ed25519: "ZXhhbXBsZQo=", ed448: nil, p256: nil, p384: nil, p512: nil),
+            mlsPublicKeys: .init(ed25519: "ZXhhbXBsZQo=", p256: nil, p384: nil, p521: nil),
             cookie: "string",
             capabilities: [.legalholdConsent]
         )

@@ -21,7 +21,10 @@ on:
       produce_changelog:
         type: boolean
         default: true
-      
+      notify_secret:
+        type: string
+        required: true
+
 
     secrets:
       KEYCHAIN_PASSWORD:
@@ -85,7 +88,7 @@ jobs:
     if: always()
     timeout-minutes: 60
     needs: changelog
-    runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
+    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
     env:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -114,7 +117,7 @@ jobs:
       COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
       COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
       ENABLE_COUNTLY: ${{ inputs.countly_enabled }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
+      SLACK_WEBHOOK_URL: ${{ secrets[inputs.notify_secret] }}
       SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       REPO_ROOT: ${{ github.workspace }}

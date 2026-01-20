@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ public struct FolderPicker: View {
             Picker(selection: $selected) {
                 ForEach(options) { option in
                     Text(option.title)
-                        .wireTextStyle(.body1)
+                        .font(for: .body1)
                         .lineLimit(1)
                         .foregroundStyle(option.id == selected?.id ? Color(accentColor) : .primaryText)
                         .tag(option)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -89,12 +89,15 @@ final class ConversationRepositoryTests: XCTestCase {
     func testPullMLSOneToOneConversation_It_Invokes_Local_Store_And_API_Methods() async throws {
         // Mock
 
-        conversationsAPI.getMLSOneToOneConversationUserIDIn_MockValue = Scaffolding.conversation
+        conversationsAPI.getMLSOneToOneConversationUserIDIn_MockValue = (
+            Scaffolding.conversation,
+            Scaffolding.mlsPublicKeys
+        )
         conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
 
         // When
 
-        let mlsGroupID = try await sut.pullMLSOneToOneConversation(
+        let (mlsGroupID, pubKeys) = try await sut.pullMLSOneToOneConversation(
             userID: Scaffolding.id.uuidString,
             userDomain: Scaffolding.domain
         )
@@ -102,6 +105,7 @@ final class ConversationRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(mlsGroupID, Scaffolding.conversation.mlsGroupID)
+        XCTAssertEqual(pubKeys, Scaffolding.mlsPublicKeys)
         XCTAssertEqual(conversationsAPI.getMLSOneToOneConversationUserIDIn_Invocations.count, 1)
         XCTAssertEqual(
             conversationsLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
@@ -508,6 +512,13 @@ final class ConversationRepositoryTests: XCTestCase {
 
         static let base64EncodedString =
             "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
+
+        static let mlsPublicKeys = WireNetwork.MLSPublicKeys(
+            ed25519: .randomAlphanumerical(length: 5),
+            p256: .randomAlphanumerical(length: 5),
+            p384: .randomAlphanumerical(length: 5),
+            p521: .randomAlphanumerical(length: 5)
+        )
     }
 
 }

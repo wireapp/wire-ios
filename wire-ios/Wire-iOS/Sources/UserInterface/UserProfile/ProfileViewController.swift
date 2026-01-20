@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,10 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingDomain
 import WireSyncEngine
 
 enum ProfileViewControllerTabBarIndex: Int {
@@ -57,6 +59,7 @@ final class ProfileViewController: UIViewController {
     private var tabsController: TabBarController?
     private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: any SelfProfileViewControllerBuilderProtocol
+    private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
 
     // MARK: - init
 
@@ -68,7 +71,8 @@ final class ProfileViewController: UIViewController {
         classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         let profileViewControllerContext: ProfileViewControllerContext = if let context {
             context
@@ -97,7 +101,8 @@ final class ProfileViewController: UIViewController {
         self.init(
             viewModel: viewModel,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
 
     }
@@ -105,11 +110,13 @@ final class ProfileViewController: UIViewController {
     required init(
         viewModel: some ProfileViewControllerViewModeling,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
+        conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.conversationCreationRepository = conversationCreationRepository
         super.init(nibName: nil, bundle: nil)
 
         viewModel.setConversationTransitionClosure { [weak self] conversation in
@@ -139,16 +146,28 @@ final class ProfileViewController: UIViewController {
     // MARK: - Actions
 
     private func bringUpConversationCreationFlow() {
+        Task {
+            let featureConfigRepository = viewModel.userSession.clientSessionComponent?.featureConfigRepository
+            let isAppsFeatureEnabled = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
+            let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+            let controller = ConversationCreationController(
+                preSelectedParticipants: viewModel.userSet,
+                userSession: viewModel.userSession,
+                isAppsFeatureEnabled: isAppsFeatureEnabled,
+                areLegacyBotsAvailable: areLegacyBotsAvailable
+            )
+            controller.delegate = self
 
-        let controller = ConversationCreationController(
-            preSelectedParticipants: viewModel.userSet,
-            userSession: viewModel.userSession
-        )
-        controller.delegate = self
-
-        let wrappedController = controller.wrapInNavigationController()
-        wrappedController.modalPresentationStyle = .formSheet
-        present(wrappedController, animated: true)
+            let wrappedController = controller.wrapInNavigationController()
+            wrappedController.modalPresentationStyle = .formSheet
+            if presentedViewController != nil {
+                dismiss(animated: true) {
+                    self.present(wrappedController, animated: true)
+                }
+            } else {
+                present(wrappedController, animated: true)
+            }
+        }
     }
 
     private func bringUpCancelConnectionRequestSheet(from targetView: UIView) {
@@ -414,7 +433,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             user: user,
             userSession: viewModel.userSession,
             mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder
+            selfProfileUIBuilder: selfProfileUIBuilder,
+            conversationCreationRepository: conversationCreationRepository
         )
     }
 
@@ -483,6 +503,10 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
                 }
             }
         }
+        removeAction.setValue(
+            Locators.UserDetailsPage.removeUserFromConversationConfirmation.rawValue,
+            forKey: "accessibilityIdentifier"
+        )
 
         controller.addAction(removeAction)
         controller.addAction(.cancel())

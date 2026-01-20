@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,28 +32,36 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.bottomBarSettingsButton.rawValue]
     }
 
+    var archivedButton: XCUIElement {
+        app.buttons[Locators.ConversationsPage.bottomBarArchivedButton.rawValue]
+    }
+
     var plusButtonToCreateGroup: XCUIElement {
-        app.descendants(matching: .any)["create_group_or_search_button"].firstMatch
+        app.descendants(matching: .any)[Locators.ConversationsPage.createGroupOrSearchButton.rawValue].firstMatch
     }
 
     var conversationCell: XCUIElement {
-        app.buttons["title"]
+        app.buttons[Locators.ConversationsPage.conversationCell.rawValue]
     }
 
     var blockButtonOnMoreOptions: XCUIElement {
-        app.buttons["Block…"]
+        app.buttons[Locators.ConversationsPage.blockOptionOnContextMenu.rawValue]
     }
 
     var blockButtonOnBottomSheet: XCUIElement {
-        app.buttons["Block"]
+        app.buttons[Locators.ConversationsPage.blockButtonOnBottomSheet.rawValue].firstMatch
     }
 
     var videoCallButton: XCUIElement {
-        app.descendants(matching: .any)["videoCallBarButton"].firstMatch
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoCallBarButton.rawValue].firstMatch
     }
 
     var acceptRequestButton: XCUIElement {
-        app.buttons["accept"]
+        app.buttons[Locators.ConnectionRequestsPage.connectRequestButton.rawValue]
+    }
+
+    var accountProfileImageView: XCUIElement {
+        app.buttons[Locators.ConversationsPage.accountProfileImageView.rawValue]
     }
 
     func openSettings() throws -> SettingsPage {
@@ -61,11 +69,17 @@ class ConversationsPage: PageModel {
         return try SettingsPage()
     }
 
-    func openUserAccountPageForUser(with input: String) throws -> UserAccountPage {
-        let predicate = NSPredicate(format: "value BEGINSWITH %@", input)
-        let button = app.buttons.containing(predicate).firstMatch
-        button.tap()
-        return try UserAccountPage()
+    func openArchived() throws -> ArchivedConversationsPage {
+        archivedButton.tap()
+        return try ArchivedConversationsPage()
+    }
+
+    func openUserProfilePage() throws -> UserProfilePage {
+
+        if accountProfileImageView.waitForExistence(timeout: 2), accountProfileImageView.isHittable {
+            accountProfileImageView.tap()
+        }
+        return try UserProfilePage()
     }
 
     func tapPlusButtonToCreateGroup() throws -> NewConversationPage {

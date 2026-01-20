@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,49 +41,79 @@ package protocol WireCellsNodesRepositoryProtocol: Sendable {
     ///  - permanently: A boolean indicating whether to delete the nodes permanently or move them to the recycle bin.
     func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool
 
+    /// Restores nodes with the specified IDs from the recycle bin.
+    ///
+    /// - Parameters:
+    ///  - nodeIDs: An array of UUIDs representing the IDs of the nodes to restore.
+    func restoreNodes(nodeIDs: [UUID]) async throws -> Bool
+
+    /// Creates a folder at the specified path.
+    ///
+    /// - Parameters:
+    ///  - path: The path of the new folder.
+    func createFolder(at path: String) async throws
+
+    /// Renames a node.
+    ///
+    /// - Parameters:
+    ///  - nodeID: The `UUID`s of the node to rename.
+    ///  - targetPath: The new path for the node.
+    /// - Returns: Whether the renaming was successful.
+    func renameNode(nodeID: UUID, targetPath: String) async throws -> Bool
+
+    /// Moves a node to a new container path.
+    ///
+    /// - Parameters:
+    ///  - nodeID: The `UUID` of the node to move.
+    ///  - newContainerPath: The new container path for the node.
+    func moveNode(nodeID: UUID, newContainerPath: String) async throws
+
+    /// Apply some pre-validation checks on node name before sending an upload
+    ///
+    /// - Parameters:
+    ///     - nodePath: The node path to pre-check.
+    ///     - findAvailablePath: Finds the next available path if path already exists.
+    /// - Returns: Whether a file already exists at this path and the next available path if any.
+    func preCheck(nodePath: String, findAvailablePath: Bool) async throws -> WireCellsPreCheckResult
+
+    /// Retrieves all available versions for a given node.
+    ///
+    /// - Parameter nodeID: The unique identifier of the node whose versions should be fetched.
+    /// - Returns: An array of `WireCellsNodeVersion` objects representing the node’s versions.
+    func getVersions(nodeID: UUID) async throws -> [WireCellsNodeVersion]
+
+    /// Restores a previous version of a node.
+    ///
+    /// - Parameters:
+    ///   - nodeID: The unique identifier of the file node to restore.
+    ///   - versionID: The unique identifier of the version to restore.
+    func restoreVersion(nodeID: UUID, versionID: UUID) async throws
+
 }
 
 package struct WireCellsGetNodesRequest: Equatable, Sendable {
 
-    /// Filters the results of the request.
-    package struct Filter: Equatable, Sendable {
+    /// The configuration for the request.
+    package enum Configuration: Equatable, Sendable {
 
-        /// The `DeletionStatus` of the node.
-        package let deletionStatus: WireCellsNodeDeletionStatus
+        /// A `Configuration` suitable for the conversation file view.
+        case conversationFileView(root: WireCellsNodeLocator)
 
-        /// An optional search text of a nodes file name.
-        package let text: String?
+        /// A `Configuration` suitable for the recycle bin, where deleted files are stored.
+        case recycleBinView(root: WireCellsNodeLocator)
 
-        /// The type of the node.
-        package let type: WireCellsNodeType
+        /// A `Configuration` suitable for the files browser view.
+        case filesBrowserView
+
+        /// A `Configuration` suitable for moving nodes to a folder.
+        case moveToFolder(root: String)
     }
 
-    /// The query to apply to the scope. `Query` is deprecated but it is necessary until we implement [WPB-16311].
-    package struct Query: Equatable, Sendable {
+    /// An optional search term to filter nodes by name.
+    package let searchTerm: String?
 
-        /// The IDs of the nodes to fetch. If provided, only nodes with these IDs will be returned.
-        package let nodeIDs: [UUID]?
-    }
-
-    /// The scope of the request.
-    package struct Scope: Equatable, Sendable {
-
-        /// The root locator for the search. If no root is provided, the search will return nodes for all conversations.
-        package let root: WireCellsNodeLocator?
-
-        /// Whether the search should be recursive or not. If true, it will return nodes from sub folders.
-        package let isRecursive: Bool
-    }
-
-    /// The scope of the request.
-    package let scope: Scope
-
-    // FIXME: [WPB-16311] Remove Query once previewing cells files in conversations is implemented.
-    /// The query to apply to the request.
-    package let query: Query?
-
-    /// The filter to apply to the results.
-    package let filter: Filter
+    /// Filter nodes by tags names.
+    package let tags: [String]
 
     /// The maximum number of nodes to return.
     package let limit: Int
@@ -91,11 +121,14 @@ package struct WireCellsGetNodesRequest: Equatable, Sendable {
     /// The pagination offset to start the results from.
     package let offset: Int
 
-    package init(scope: Scope, query: Query? = nil, filter: Filter, limit: Int, offset: Int) {
-        self.scope = scope
-        self.query = query
-        self.filter = filter
+    /// The configuration for the request.
+    package let configuration: Configuration
+
+    package init(searchTerm: String?, tags: [String] = [], limit: Int, offset: Int, configuration: Configuration) {
+        self.searchTerm = searchTerm
+        self.tags = tags
         self.limit = limit
         self.offset = offset
+        self.configuration = configuration
     }
 }

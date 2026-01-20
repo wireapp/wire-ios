@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCommonComponents
+import WireLocators
 import WireSyncEngine
 
 final class IncomingConnectionView: UIView {
@@ -83,10 +84,12 @@ final class IncomingConnectionView: UIView {
 
     private func setup() {
         acceptButton.accessibilityLabel = "accept"
+        acceptButton.accessibilityIdentifier = Locators.ConnectionRequestsPage.connectRequestButton.rawValue
         acceptButton.setTitle(ConnectionRequest.connectButtonTitle, for: .normal)
         acceptButton.addTarget(self, action: #selector(onAcceptButton), for: .touchUpInside)
 
         ignoreButton.accessibilityLabel = "ignore"
+        ignoreButton.accessibilityIdentifier = Locators.ConnectionRequestsPage.ignoreRequestButton.rawValue
         ignoreButton.setTitle(ConnectionRequest.ignoreButtonTitle, for: .normal)
         ignoreButton.addTarget(self, action: #selector(onIgnoreButton), for: .touchUpInside)
 

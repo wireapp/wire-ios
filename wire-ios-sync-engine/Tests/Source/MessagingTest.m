@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -134,9 +134,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     self.sharedContainerURL = [fm containerURLForSecurityApplicationGroupIdentifier:self.groupIdentifier];
     self.mockCallNotificationStyle = CallNotificationStylePushNotifications;
     
-    NSURL *otrFolder = [NSFileManager keyStoreURLForAccountInDirectory:self.accountDirectory createParentIfNeeded:NO];
-    [fm removeItemAtURL:otrFolder error: nil];
-    
     _application = [[ApplicationMock alloc] init];
     
     self.originalConversationLastReadTimestampTimerValue = ZMConversationDefaultLastReadTimestampSaveDelay;
@@ -157,9 +154,7 @@ static ZMReachability *sharedReachabilityMock = nil;
     }];
     Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
 
-    [self setupKeyStore];
     [self setupCaches];
-
 
     if (self.shouldUseRealKeychain) {
         [ZMPersistentCookieStorage setDoNotPersistToKeychain:NO];
@@ -183,16 +178,6 @@ static ZMReachability *sharedReachabilityMock = nil;
 
     self.lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.userIdentifier
                                                             sharedUserDefaults:self.sharedUserDefaults];
-}
-
-- (void)setupKeyStore
-{
-    [self performPretendingUiMocIsSyncMoc:^{
-        NSURL *url = [CoreDataStack accountDataFolderWithAccountIdentifier:self.userIdentifier
-                                                  applicationContainer:self.sharedContainerURL];
-        [self.uiMOC setupUserKeyStoreInAccountDirectory:url
-                                   applicationContainer:self.sharedContainerURL];
-    }];
 }
 
 - (void)setupCaches

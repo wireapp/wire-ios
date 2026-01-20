@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -120,6 +120,10 @@ final class ConversationInputBarViewController: UIViewController,
 
         button.setIcon(.hourglass, size: .tiny, for: UIControl.State.normal)
         button.accessibilityIdentifier = "ephemeralTimeSelectionButton"
+
+        if conversation.isSelfDeletingMessageSendingDisabled {
+            button.isEnabled = false
+        }
 
         configureEphemeralKeyboardButton(button)
 
@@ -269,9 +273,8 @@ final class ConversationInputBarViewController: UIViewController,
                 locationButton
             ]
         }
-        if !conversation.isSelfDeletingMessageSendingDisabled {
-            buttonsArray.insert(hourglassButton, at: buttonsArray.startIndex)
-        }
+
+        buttonsArray.insert(hourglassButton, at: buttonsArray.startIndex)
 
         if shouldExcludeLocationButton {
             if let index = buttonsArray.firstIndex(of: locationButton) {
@@ -1026,7 +1029,6 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
     }
 
     private func sketch() {
-        inputBar.textView.resignFirstResponder()
         let viewController = CanvasViewController()
         viewController.delegate = self
         viewController.setupNavigationBarTitle(conversation.displayNameWithFallback)
@@ -1143,7 +1145,6 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
                     }
                 }
             )
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         )
         addChild(carouselViewController)
         carouselViewController.view.translatesAutoresizingMaskIntoConstraints = false

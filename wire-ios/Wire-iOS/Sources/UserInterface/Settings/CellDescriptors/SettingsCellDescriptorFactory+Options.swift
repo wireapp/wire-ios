@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,8 +41,10 @@ extension SettingsCellDescriptorFactory {
             popularDemandSendButtonSection,
             popularDemandDarkThemeSection,
             isAppLockAvailable ? appLockSection : nil,
-            SecurityFlags.generateLinkPreviews.isEnabled ? linkPreviewSection : nil,
-            !isSimpleChatBubbleEnabled ? collapseSelfMessageSection : nil
+            SecurityFlags.generateLinkPreviews.isEnabled ? linkPreviewSection : nil
+            // temporarily hiding this section because it conflicts with chat bubbles.
+            // https://wearezeta.atlassian.net/browse/WPB-18939
+//            collapseSelfMessageSection
         ].compactMap(\.self)
 
         return SettingsGroupCellDescriptor(

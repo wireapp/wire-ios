@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
 //
 
 import Foundation
-import WireDataModel
+import GenericMessageProtocol
 import WireLinkPreview
+@testable import WireDataModel
 
 @testable import Wire
 
@@ -213,6 +214,33 @@ enum MockMessageFactory {
             .messageText = shouldIncludeRichMedia ?
             "Check this 500lb squirrel! -> https://www.youtube.com/watch?v=0so5er4X3dc" : text!
         message.backingTextMessageData = textMessageData
+
+        return message
+    }
+
+    static func multipartMessage<T: MockMessage>(
+        withText text: String? = nil,
+        attachments: [Attachment],
+        sender: UserType? = nil,
+        conversation: Conversation? = nil
+    ) -> T {
+        let message: T = MockMessageFactory.messageTemplate(
+            sender: sender,
+            conversation: conversation
+        )
+
+        if let text {
+            let textMessageData = MockTextMessageData()
+            textMessageData.messageText = text
+            message.backingTextMessageData = textMessageData
+        }
+        let multipart = Multipart.with {
+            $0.attachments = attachments
+            if let text {
+                $0.text = Text.with { $0.content = text }
+            }
+        }
+        message.multipartMessageData = MultipartMessageData(multipart: multipart)
 
         return message
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ protocol CoreDataMigratorProtocol {
     func migrateStore(at storeURL: URL, toVersion version: DatabaseVersion) throws
 }
 
-enum CoreDataMigratorError: Error {
+public enum CoreDataMigratorError: Error {
     case missingStoreURL
     case missingFiles(message: String)
     case unknownVersion
@@ -38,7 +38,7 @@ enum CoreDataMigratorError: Error {
 
 extension CoreDataMigratorError: LocalizedError {
 
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .missingStoreURL:
             return "missingStoreURL"

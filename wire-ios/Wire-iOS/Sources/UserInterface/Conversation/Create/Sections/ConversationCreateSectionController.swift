@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -130,6 +130,7 @@ extension ConversationCreateSectionController {
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForFooterInSection section: Int
     ) -> CGSize {
+        guard !footerText.isEmpty else { return .zero }
         footer.titleLabel.text = footerText
         footer.size(fittingWidth: collectionView.bounds.width)
         return footer.bounds.size

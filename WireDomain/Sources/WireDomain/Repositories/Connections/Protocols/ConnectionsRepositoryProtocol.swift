@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,4 +38,8 @@ public protocol ConnectionsRepositoryProtocol {
     func updateConnection(
         _ connection: Connection
     ) async throws
+
+    /// Mark the connection's conversation to be sync with backend
+    /// - Parameter connection: the conversation's connection
+    func scheduleToSyncConversation(with connection: Connection) async throws
 }
