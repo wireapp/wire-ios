@@ -1321,6 +1321,8 @@ extension ZMUserSession: SyncAgentDelegate {
                 WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
             }
 
+            // always check if need to upload key packages if needed
+            await mlsService.uploadKeyPackagesIfNeeded()
             await calculateSelfSupportedProtocolsIfNeeded()
             await resolveOneOnOneConversationsIfNeeded()
 
@@ -1399,12 +1401,12 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     private func resolveOneOnOneConversationsIfNeeded() async {
-        guard mlsFeature.isEnabled, !didAlreadyResolveAllOneOnOnes else { return }
+        guard let clientSessionComponent, mlsFeature.isEnabled, !didAlreadyResolveAllOneOnOnes else { return }
 
-        let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
+        let resolveOneOnOneUseCase = clientSessionComponent.oneOnOneResolver
         do {
-            let didResolve = try await resolveOneOnOneUseCase.invoke()
-            didAlreadyResolveAllOneOnOnes = didResolve
+            try await resolveOneOnOneUseCase.resolveAllOneOnOneConversations()
+            didAlreadyResolveAllOneOnOnes = true
         } catch {
             WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
         }
