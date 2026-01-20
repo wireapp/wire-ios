@@ -463,6 +463,31 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(fetchBackendMLSPublicKeysActionHandler.performedActions.count, 1)
     }
 
+    func test_itUploadKeyPackagesIfNeeded_AfterQuickSync() async throws {
+        // GIVEN
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        await syncMOC.perform { [self, syncMOC] in
+            let domain = "anta.com"
+            ZMUser.selfUser(in: syncMOC).domain = domain
+            let selfUserClient = createSelfClient()
+            // MLS client has been registered
+            selfUserClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "somekey")
+            selfUserClient.needsToUploadMLSPublicKeys = false
+            ZMUser.selfUser(in: self.syncMOC).domain = domain
+            sut.didRegisterSelfUserClient(selfUserClient)
+            syncMOC.saveOrRollback()
+
+            sut.setUpSyncAgent(clientID: selfUserClient.remoteIdentifier!)
+
+            // WHEN
+            sut.didFinishIncrementalSync(isRecovering: false)
+        }
+
+        // THEN
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.count, 1)
+    }
+
     func test_itCreatesMLSClientIfNeeded_AfterQuickSync() {
         // GIVEN
         DeveloperFlag.multibackend.enable(false, storage: .temporary())

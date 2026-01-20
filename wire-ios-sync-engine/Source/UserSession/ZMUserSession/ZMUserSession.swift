@@ -1297,6 +1297,8 @@ extension ZMUserSession: SyncAgentDelegate {
                 WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
             }
 
+            // always check if need to upload key packages if needed
+            await mlsService.uploadKeyPackagesIfNeeded()
             await calculateSelfSupportedProtocolsIfNeeded()
             await resolveOneOnOneConversationsIfNeeded()
 
