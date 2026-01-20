@@ -396,10 +396,12 @@ public protocol ConversationLocalStoreProtocol {
     /// Stores the conversation MLS group ID and marks the mls status as ready.
     /// - Parameters:
     ///     - mlsGroupID: The MLS group ID related to the conversation.
+    ///     - epoch: The epoch for the new MLS group
     ///     - conversation: The conversation to update the properties for.
 
     func storeMLSConversationEstablished(
         mlsGroupID: MLSGroupID,
+        epoch: UInt64,
         conversation: ZMConversation
     ) async
 

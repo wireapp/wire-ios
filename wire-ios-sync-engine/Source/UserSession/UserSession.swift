@@ -270,9 +270,9 @@ public protocol UserSession: AnyObject {
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol
 
-    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol
+    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol?
 
-    func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol
+    func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol?
 
     func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol
 
@@ -282,7 +282,7 @@ public protocol UserSession: AnyObject {
 
     func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol
 
-    func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol
+    func makeAppendLocationMessageUseCase() -> any AppendLocationMessageUseCaseProtocol
 
     func makeAppendFileMessageUseCase() -> any AppendFileMessageUseCaseProtocol
 

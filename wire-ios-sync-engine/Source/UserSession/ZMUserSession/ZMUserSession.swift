@@ -427,6 +427,9 @@ public final class ZMUserSession: NSObject {
     private(set) var userSessionComponent: UserSessionComponent!
     public private(set) var clientSessionComponent: ClientSessionComponent?
 
+    private let networkReachability = NetworkReachability()
+    private var isNetworkReachableCancellable: AnyCancellable?
+
     // MARK: - Initialize
 
     init(
@@ -494,6 +497,8 @@ public final class ZMUserSession: NSObject {
         self.logFilesProvider = logFilesProvider
 
         super.init()
+
+        observeNetworkInterfaceSwitch()
 
         self.userSessionComponent = UserSessionComponent(
             currentBuildNumber: currentBuildNumber,
@@ -874,6 +879,17 @@ public final class ZMUserSession: NSObject {
             observer: self,
             contextProvider: contextProvider
         )
+    }
+
+    private func observeNetworkInterfaceSwitch() {
+        isNetworkReachableCancellable = networkReachability.interfaceSwitchWhileOnlinePublisher
+            .sink { [weak self] _, _ in
+                guard let self else { return }
+
+                managedObjectContext.perform {
+                    self.callCenter?.avsWrapper.networkInterfaceChanged()
+                }
+            }
     }
 
     func trackAnalyticsEvent(_ event: AnalyticsEvent) {
@@ -1257,7 +1273,7 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     private func resolveOneOnOneConversationsIfNeeded() async {
-        guard mlsFeature.isEnabled, !didAlreadyResolveAllOneOnOnes else { return }
+        guard let clientSessionComponent, mlsFeature.isEnabled, !didAlreadyResolveAllOneOnOnes else { return }
 
         let resolveOneOnOneUseCase = clientSessionComponent?.oneOnOneResolver
         do {
@@ -1550,7 +1566,8 @@ extension ZMUserSession {
             AppVersionMigration_4_12_0(
                 journal: journal,
                 repairGenerator: clientSessionComponent?.repairFaultyMLSRemovalKeysGenerator
-            )
+            ),
+            AppVersionMigration_4_12_2(coreDataStack: coreDataStack, coreCryptoProvider: coreCryptoProvider)
         ]
 
         if let clientSessionComponent {

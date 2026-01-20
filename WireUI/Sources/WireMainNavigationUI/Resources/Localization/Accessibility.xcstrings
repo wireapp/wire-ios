@@ -889,8 +889,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "List of meetings"
+            "state" : "translated",
+            "value" : "Liste der Meetings"
           }
         },
         "en" : {
