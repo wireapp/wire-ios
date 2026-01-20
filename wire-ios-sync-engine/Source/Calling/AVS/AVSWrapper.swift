@@ -47,6 +47,7 @@ public protocol AVSWrapperType {
     /// This method should be called before processing with `isProcessingNotifications` set to `true` as well as
     /// after processing has been completed with `isProcessingNotifications` set to `false`.
     func notify(isProcessingNotifications isProcessing: Bool)
+    func networkInterfaceChanged()
 
     func setMLSConferenceInfo(conversationId: AVSIdentifier, info: MLSConferenceInfo)
     var isMuted: Bool { get set }
@@ -249,6 +250,10 @@ public final class AVSWrapper: AVSWrapperType {
 
     public func notify(isProcessingNotifications isProcessing: Bool) {
         wcall_process_notifications(handle, isProcessing ? 1 : 0)
+    }
+
+    public func networkInterfaceChanged() {
+        wcall_network_changed()
     }
 
     /// Set the MLS conference info for a given conversation.

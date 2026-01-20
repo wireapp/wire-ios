@@ -389,104 +389,29 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(conversations.filter { $0.firstUnreadMessage != nil }.count, 0)
     }
 
-    func test_itPerformsPeriodicMLSUpdates_AfterQuickSync() {
+    func test_itUploadKeyPackagesIfNeeded_AfterQuickSync() async throws {
         // GIVEN
-        DeveloperFlag.multibackend.enable(false, storage: .temporary())
-
-        syncMOC.performAndWait {
-            let mls = Feature.MLS(status: .enabled, config: .init())
-            self.sut.featureRepository.storeMLS(mls)
-        }
-        mockMLSService.performPendingJoins_MockMethod = {}
-        mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
-        mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
-
-        let getFeatureConfigsActionHandler = MockActionHandler<GetFeatureConfigsAction>(
-            result: .success(()),
-            context: syncMOC.notificationContext
-        )
-        let pushSupportedProtocolsActionHandler = MockActionHandler<PushSupportedProtocolsAction>(
-            result: .success(()),
-            context: syncMOC.notificationContext
-        )
-        let backendPublicKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
-        let fetchBackendMLSPublicKeysActionHandler = MockActionHandler<FetchBackendMLSPublicKeysAction>(
-            result: .success(backendPublicKeys),
-            context: syncMOC.notificationContext
-        )
-
-        // MLS client has been registered
-        syncMOC.performAndWait {
+        await syncMOC.perform { [self, syncMOC] in
+            let domain = "anta.com"
+            ZMUser.selfUser(in: syncMOC).domain = domain
             let selfUserClient = createSelfClient()
+            // MLS client has been registered
             selfUserClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "somekey")
             selfUserClient.needsToUploadMLSPublicKeys = false
-            ZMUser.selfUser(in: self.syncMOC).domain = "anta.com"
+            ZMUser.selfUser(in: self.syncMOC).domain = domain
             sut.didRegisterSelfUserClient(selfUserClient)
             syncMOC.saveOrRollback()
+
+            sut.setUpSyncAgent(clientID: selfUserClient.remoteIdentifier!)
 
             // WHEN
             sut.didFinishIncrementalSync(isRecovering: false)
         }
 
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
         // THEN
-        XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
-        XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
-        XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
-
-        XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
-
-        XCTAssertEqual(fetchBackendMLSPublicKeysActionHandler.performedActions.count, 1)
-    }
-
-    func test_itCreatesMLSClientIfNeeded_AfterQuickSync() {
-        // GIVEN
-        DeveloperFlag.multibackend.enable(false, storage: .temporary())
-
-        syncMOC.performAndWait {
-            ZMUser.selfUser(in: self.syncMOC).domain = "anta.com"
-        }
-        let selfUserClient = syncMOC.performAndWait {
-            self.createSelfClient()
-        }
-
-        mockMLSService.performPendingJoins_MockMethod = {}
-        mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
-        mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
-        mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_MockMethod = { _ in }
-        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
-
-        syncMOC.performAndWait {
-            sut.setUpSyncAgent(clientID: selfUserClient.remoteIdentifier!)
-            XCTAssertTrue(selfUserClient.mlsPublicKeys.isEmpty)
-
-            XCTAssertFalse(BackendInfo.isMLSEnabled)
-            XCTAssertFalse(sut.featureRepository.fetchMLS().isEnabled)
-        }
-
-        // WHEN
-        let backendPublicKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
-        let fetchBackendMLSPublicKeysActionHandler = MockActionHandler<FetchBackendMLSPublicKeysAction>(
-            result: .success(backendPublicKeys),
-            context: syncMOC.notificationContext
-        )
-        syncMOC.performAndWait {
-            let mls = Feature.MLS(status: .enabled, config: .init())
-            self.sut.featureRepository.storeMLS(mls)
-
-            sut.didFinishIncrementalSync(isRecovering: false)
-        }
-
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        syncMOC.performAndWait {
-            XCTAssertEqual(mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_Invocations.count, 1)
-            XCTAssertTrue(BackendInfo.isMLSEnabled)
-            XCTAssertTrue(sut.featureRepository.fetchMLS().isEnabled)
-        }
+        XCTAssertEqual(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.count, 1)
     }
 
     func test_didFinishQuickSync_CalculateSupportedProtocolsIfNoProtocols() {

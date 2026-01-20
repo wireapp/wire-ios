@@ -74,7 +74,8 @@ struct EditFileView<ViewModel>: View where ViewModel: EditFileViewModelProtocol 
             action: { dismiss() },
             label: {
                 Image(.close)
-                    .foregroundStyle(.black)
+                    .renderingMode(.template)
+                    .foregroundStyle(Color.primary)
                     .frame(width: 44, height: 44, alignment: .trailing)
             }
         )
