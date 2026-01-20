@@ -36,7 +36,7 @@ struct AddParticipantsViewModel {
         self.areLegacyBotsAvailable = areLegacyBotsAvailable
     }
 
-    var botCanBeAdded: Bool { // TODO: apps vs bots?
+    var botCanBeAdded: Bool { // TODO: [WPB-20362] apps vs bots?
         switch context {
         case .create:
             return false
