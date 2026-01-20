@@ -106,6 +106,8 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
         }
 
         wait(for: [expectation], timeout: 0.5)
+        withExtendedLifetime(mockHandler) {}
+
     }
 
     func testThatLinkGenerationSucceeds_LegacyMode() {
@@ -115,10 +117,6 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
 
         let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
             result: .success("www.test.com"),
-            context: syncContext.notificationContext
-        )
-        let setGuestAndAppsMockHandler = MockActionHandler<SetAllowGuestsAndAppsAction>(
-            result: .success(()),
             context: syncContext.notificationContext
         )
 
@@ -136,6 +134,8 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
         }
 
         wait(for: [expectation], timeout: 0.5)
+        withExtendedLifetime(mockHandler) {}
+
     }
 
     func testThatLinkGenerationFails() {

@@ -71,4 +71,10 @@ public protocol ConversationsAPI {
         permission: ChannelPermission
     ) async throws -> ChannelPermission
 
+    func updateConversationAccess(
+        conversationID: QualifiedID,
+        allowGuests: Bool,
+        allowApps: Bool
+    ) async throws
+
 }
