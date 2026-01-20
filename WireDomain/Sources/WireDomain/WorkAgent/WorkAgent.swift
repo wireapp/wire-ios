@@ -108,11 +108,7 @@ public actor WorkAgent {
                     )
                 } catch {
                     WireLogger.workAgent.error(
-<<<<<<< HEAD
-                        "item failed, dropping: \(String(describing: error))",
-=======
                         "item failed, dropping \(String(describing: error))",
->>>>>>> 16392daff4 (fix: upload keyPackages if needed every 24 hours - WPB-22902 (#4151))
                         attributes: .init(item)
                     )
                     continue
