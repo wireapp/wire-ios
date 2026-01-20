@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireLogging
 
 public enum ClientUpdatePhase {
     case done
