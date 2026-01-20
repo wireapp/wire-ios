@@ -173,11 +173,12 @@ final class FileRenameViewModel: ObservableObject {
             switch failure {
             case .tooLong:
                 errorMessage = inputTooLongErrorMessage
-            case .slashCharacter:
-                errorMessage = Strings.Files.RenameFile.wrongCharacterError
+            case .invalidCharacters(let characters):
+                let formattedCharacters = characters.map { String($0) }.joined(separator: " ")
+                errorMessage = Strings.Files.RenameFile.wrongCharacterError.replacingOccurrences(of: "{0}", with: formattedCharacters)
             case .dotPrefix:
                 errorMessage = Strings.Files.RenameFile.dotPrefix
-            case .empty:
+            case .empty, .whitespace:
                 errorMessage = nil
             }
         }

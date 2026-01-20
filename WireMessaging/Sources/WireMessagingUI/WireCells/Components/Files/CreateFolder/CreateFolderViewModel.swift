@@ -61,7 +61,7 @@ final class CreateFolderViewModel: ObservableObject {
 
             try await createFolderUseCase.invoke(
                 folderPath: folderPath,
-                folderName: folderNameInput
+                folderName: folderNameInput.trimmingCharacters(in: .whitespacesAndNewlines)
             )
 
             didCreate = true
@@ -110,11 +110,12 @@ final class CreateFolderViewModel: ObservableObject {
             switch failure {
             case .tooLong:
                 errorMessage = Strings.Files.NewFolder.folderNameTooLongError
-            case .slashCharacter:
-                errorMessage = Strings.Files.RenameFile.wrongCharacterError
+            case .invalidCharacters(let characters):
+                let formattedCharacters = characters.map { String($0) }.joined(separator: " ")
+                errorMessage = Strings.Files.NewFolder.wrongCharacterError.replacingOccurrences(of: "{0}", with: formattedCharacters)
             case .dotPrefix:
                 errorMessage = Strings.Files.RenameFile.dotPrefix
-            case .empty:
+            case .empty, .whitespace:
                 errorMessage = nil
             }
         }
