@@ -50,7 +50,7 @@ extension FilesViewProtocol {
         }
         .listStyle(.plain)
         .refreshable { reloadTask(refreshing: true) }
-        .background(listBackgroundView)
+        .overlay(listBackgroundView)
         .animation(.default, value: viewModel.state)
     }
 

@@ -433,6 +433,9 @@ public final class ZMUserSession: NSObject {
     private(set) var userSessionComponent: UserSessionComponent!
     public private(set) var clientSessionComponent: ClientSessionComponent?
 
+    private let networkReachability = NetworkReachability()
+    private var isNetworkReachableCancellable: AnyCancellable?
+
     // MARK: - Initialize
 
     init(
@@ -500,6 +503,8 @@ public final class ZMUserSession: NSObject {
         self.logFilesProvider = logFilesProvider
 
         super.init()
+
+        observeNetworkInterfaceSwitch()
 
         self.userSessionComponent = UserSessionComponent(
             currentBuildNumber: currentBuildNumber,
@@ -912,6 +917,17 @@ public final class ZMUserSession: NSObject {
         )
     }
 
+    private func observeNetworkInterfaceSwitch() {
+        isNetworkReachableCancellable = networkReachability.interfaceSwitchWhileOnlinePublisher
+            .sink { [weak self] _, _ in
+                guard let self else { return }
+
+                managedObjectContext.perform {
+                    self.callCenter?.avsWrapper.networkInterfaceChanged()
+                }
+            }
+    }
+
     func trackAnalyticsEvent(_ event: AnalyticsEvent) {
         guard let analyticsEventTracker else {
             pendingAnalyticsEvents.append(event)
@@ -1305,6 +1321,8 @@ extension ZMUserSession: SyncAgentDelegate {
                 WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
             }
 
+            // always check if need to upload key packages if needed
+            await mlsService.uploadKeyPackagesIfNeeded()
             await calculateSelfSupportedProtocolsIfNeeded()
             await resolveOneOnOneConversationsIfNeeded()
 
@@ -1383,12 +1401,12 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     private func resolveOneOnOneConversationsIfNeeded() async {
-        guard mlsFeature.isEnabled, !didAlreadyResolveAllOneOnOnes else { return }
+        guard let clientSessionComponent, mlsFeature.isEnabled, !didAlreadyResolveAllOneOnOnes else { return }
 
-        let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
+        let resolveOneOnOneUseCase = clientSessionComponent.oneOnOneResolver
         do {
-            let didResolve = try await resolveOneOnOneUseCase.invoke()
-            didAlreadyResolveAllOneOnOnes = didResolve
+            try await resolveOneOnOneUseCase.resolveAllOneOnOneConversations()
+            didAlreadyResolveAllOneOnOnes = true
         } catch {
             WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
         }
@@ -1715,7 +1733,8 @@ extension ZMUserSession {
             AppVersionMigration_4_12_0(
                 journal: journal,
                 repairGenerator: clientSessionComponent?.repairFaultyMLSRemovalKeysGenerator
-            )
+            ),
+            AppVersionMigration_4_12_2(coreDataStack: coreDataStack, coreCryptoProvider: coreCryptoProvider)
         ]
 
         if let clientSessionComponent {

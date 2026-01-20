@@ -155,6 +155,7 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     }
 
     func tearDown() {
+        unauthenticatedSession.removeAuthenticationModuleURLActionProcessors()
         loginObservers.removeAll()
         unauthenticatedSessionObserver = nil
         postLoginObservers.removeAll()
