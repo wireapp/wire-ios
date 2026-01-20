@@ -556,13 +556,14 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         guard
             let conversation = conversation as? ZMConversation,
             let userSession = ZMUserSession.shared(),
+            let createSecureGuestLinkUseCase = userSession.makeConversationSecureGuestLinkUseCase(),
             let navigationController
         else { return }
 
         let menu = ConversationGuestOptionsViewController(
             conversation: conversation,
             userSession: userSession,
-            createSecureGuestLinkUseCase: userSession.makeConversationSecureGuestLinkUseCase(),
+            createSecureGuestLinkUseCase: createSecureGuestLinkUseCase,
             areLegacyBotsAvailable: areLegacyBotsAvailable,
             isAppsFeatureEnabled: isAppsFeatureEnabled
         )
