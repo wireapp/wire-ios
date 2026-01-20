@@ -176,12 +176,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
                 isFederationEnabled: isFederationEnabled
             ),
             UpdateConversationProtocolActionHandler(context: managedObjectContext),
-            CreateConversationGuestLinkActionHandler(context: managedObjectContext),
-            SetAllowGuestsAndAppsActionHandler(
-                context: managedObjectContext,
-                localDomain: localDomain,
-                isFederationEnabled: isFederationEnabled
-            )
+            CreateConversationGuestLinkActionHandler(context: managedObjectContext)
         ])
 
         self.apiVersion = apiVersion
