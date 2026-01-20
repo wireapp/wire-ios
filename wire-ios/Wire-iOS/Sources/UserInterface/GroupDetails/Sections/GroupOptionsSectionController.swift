@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,6 +39,8 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         case services
         case timeout
         case fileCollaboration // keep at the last position
+
+        /// Returns `true` if the option is presented to the user or `false` otherwise.
 
         func accessible(
             in conversation: GroupDetailsConversationType,

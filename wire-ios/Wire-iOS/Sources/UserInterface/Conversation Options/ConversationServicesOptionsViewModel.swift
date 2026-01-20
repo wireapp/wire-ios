@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -99,7 +99,7 @@ final class ConversationServicesOptionsViewModel {
             // for MLS conversations consider the apps feature flag
             showAppsNotEnabledHint = false
         } else if configuration.messageProtocol == .proteus, configuration.areLegacyBotsAvailable {
-            // for MLS conversations consider the apps feature flag
+            // for Proteus conversations what matters is if bots are whitelisted for the team
             showAppsNotEnabledHint = false
         }
 
@@ -137,15 +137,18 @@ final class ConversationServicesOptionsViewModel {
             }
 
             configuration.setAllowApps(allowApps) { [weak self] result in
-                guard let self else { return }
-                item.cancel()
-                state.isLoading = false
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
 
-                switch result {
-                case .success:
-                    updateRows()
-                case let .failure(error):
-                    delegate?.conversationServicesOptionsViewModel(self, didReceiveError: error)
+                    item.cancel()
+                    state.isLoading = false
+
+                    switch result {
+                    case .success:
+                        updateRows()
+                    case let .failure(error):
+                        delegate?.conversationServicesOptionsViewModel(self, didReceiveError: error)
+                    }
                 }
             }
         }

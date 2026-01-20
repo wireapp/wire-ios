@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,5 +57,12 @@ extension XCUIElement {
         )
         let result = XCTWaiter().wait(for: [appearExpectation], timeout: timeout)
         return result == .completed
+    }
+
+    func waitAndTap(timeout: TimeInterval = 3) {
+        let predicate = NSPredicate(format: "exists == true && hittable == true")
+        let exp = XCTNSPredicateExpectation(predicate: predicate, object: self)
+        _ = XCTWaiter().wait(for: [exp], timeout: timeout)
+        tap()
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,9 +38,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case showUnreadConversationsFilter
     case skipMLSMessagesDecryption
     case useWireAuthentication
-    case wireCellsFolders
     case wireMeetings
-    case wireCellsCollabora
 
     public var description: String {
         switch self {
@@ -94,12 +92,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .wireMeetings:
             "Turn on to enable Wire meetings"
-
-        case .wireCellsFolders:
-            "Turn on to enable Wire Cells folders"
-
-        case .wireCellsCollabora:
-            "Turn on to enable Collabora file editing in Wire Cells"
         }
     }
 

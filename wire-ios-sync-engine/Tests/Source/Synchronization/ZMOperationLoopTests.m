@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@
 - (void)setUp
 {
     [super setUp];
-    [self disableMultibackend];
     
     self.cookieStorage = [[FakeCookieStorage alloc] init];
     self.mockTransportSesssion = [[RecordingMockTransportSession alloc] initWithCookieStorage:self.cookieStorage];
@@ -52,7 +51,7 @@
                                                          syncMOC:self.syncMOC
                                           isDeveloperModeEnabled:NO
                                                  isSyncV2Enabled:NO
-                                                      apiVersion:nil];
+                                                      apiVersion:@5];
 }
 
 - (void)tearDown;
@@ -104,7 +103,7 @@
 - (void)testThatItDoesNotSendARequestIfThereIsNoCurrentAPIVersion
 {
     // given
-    [self setBackendInfoAPIVersionNil];
+    [self.sut setApiVersion:nil];
     XCTAssertNil(self.sut.currentAPIVersion);
 
     self.mockRequestStrategy.mockRequest = [[ZMTransportRequest alloc] initWithPath:@"/test"

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -901,7 +901,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     }
 
     @objc
-    private func onFilesButtonPressed(_ sender: AnyObject?) {
+    func onFilesButtonPressed(_ sender: AnyObject?) {
         let selfUserColorRawValue = userSession.selfUser.accentColorValue
 
         let filesView = wireMessagingFactory

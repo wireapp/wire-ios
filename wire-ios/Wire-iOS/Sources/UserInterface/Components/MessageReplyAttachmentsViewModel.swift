@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ final class MessageReplyAttachmentsViewModel {
     ) async throws {
         guard let smallPreview = node.previews.min(by: {
             $0.dimension < $1.dimension
-        }) else { return }
+        }), let smallPreviewURL = smallPreview.url else { return }
 
         let cacheKey: NSString = {
             if let eTag = node.eTag {
@@ -87,7 +87,7 @@ final class MessageReplyAttachmentsViewModel {
 
         guard task?.isCancelled == false else { return }
 
-        let (data, _) = try await URLSession.shared.data(from: smallPreview.url)
+        let (data, _) = try await URLSession.shared.data(from: smallPreviewURL)
         guard let image = UIImage(data: data) else { return }
         cache.setObject(image, forKey: cacheKey)
         previewImageInfo = PreviewImageInfo(image: image, isVideo: isVideo)

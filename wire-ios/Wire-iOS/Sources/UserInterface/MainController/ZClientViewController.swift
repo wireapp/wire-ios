@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -296,24 +296,31 @@ final class ZClientViewController: UIViewController {
             .sink { [weak self] featureState in
                 guard let self else { return }
                 switch featureState.name {
-                case .cells where featureState.isEnabled:
-                    let filesBrowserView = wireMessagingFactory.makeFilesBrowserView { [weak self] in
-                        guard let self else { return .default }
-                        let selfUserColorRawValue = userSession.selfUser.accentColorValue
-                        return WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
-                    }
-                    if UIDevice.current.userInterfaceIdiom == .pad {
-                        guard !sidebarViewController.showFiles else { break }
-                        sidebarViewController.showFiles = true
-                        mainTabBarController.filesUI = filesBrowserView
-                    } else {
-                        guard mainTabBarController.filesUI == nil else { break }
-                        mainTabBarController.filesUI = filesBrowserView
-                    }
+                case .cells, .cellsInternal:
+                    setupWireCellsFilesTab()
                 default:
                     break
                 }
             }
+    }
+
+    private func setupWireCellsFilesTab() {
+        guard userSession.isWireCellsEnabled else { return }
+
+        let filesBrowserView = wireMessagingFactory.makeFilesBrowserView { [weak self] in
+            guard let self else { return .default }
+            let selfUserColorRawValue = userSession.selfUser.accentColorValue
+            return WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
+        }
+
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            guard !sidebarViewController.showFiles else { return }
+            sidebarViewController.showFiles = true
+            mainTabBarController.filesUI = filesBrowserView
+        } else {
+            guard mainTabBarController.filesUI == nil else { return }
+            mainTabBarController.filesUI = filesBrowserView
+        }
     }
 
     @discardableResult

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -395,7 +395,7 @@ extension SyncAgent: MLSSyncDelegate {
                         delegate?.syncAgentDidStartIncrementalSync(self)
                         incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
                             .perform()
-                        delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
+                        delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: true)
                     }
                 }
             } catch {

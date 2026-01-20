@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -247,9 +247,13 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (void)tearDown
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
+
     self.tornDown = YES;
-    
+
+    // Clear access token handlers to break retain cycles
+    [self.accessTokenHandler setAccessTokenRenewalFailureHandler:nil];
+    [self.accessTokenHandler setAccessTokenRenewalSuccessHandler:nil];
+
     self.reachabilityObserverToken = nil;
     [self.workGroup enter];
     [self.workQueue addOperationWithBlock:^{
@@ -257,7 +261,7 @@ static NSInteger const DefaultMaximumRequests = 6;
         [self.sessionsDirectory tearDown];
         [self.workGroup leave];
     }];
-    
+
     // Wait until all the requests have been cancelled
     [self.workQueue waitUntilAllOperationsAreFinished];
 }

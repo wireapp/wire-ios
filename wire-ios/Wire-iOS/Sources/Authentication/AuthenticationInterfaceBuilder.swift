@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -84,11 +84,7 @@ final class AuthenticationInterfaceBuilder {
     ) -> AuthenticationStepViewController? {
         switch step {
         case .wireAuthenticationModule:
-            let environment: BackendEnvironment2 = if DeveloperFlag.multibackend.isOn {
-                defaultEnvironment
-            } else {
-                BackendEnvironment2(BackendEnvironment.shared)
-            }
+            let environment: BackendEnvironment2 = defaultEnvironment
 
             let analyticsServiceConfiguration = AnalyticsServiceConfigurationBuilder.build()
             let registrationAnalyticsTracker = analyticsServiceConfiguration.map { analyticsServiceConfiguration in
@@ -118,7 +114,7 @@ final class AuthenticationInterfaceBuilder {
             landingViewController.configure(with: featureProvider)
             return landingViewController
 
-        case let .reauthenticate(credentials, environment, _, _) where DeveloperFlag.multibackend.isOn:
+        case let .reauthenticate(credentials, environment, _, _):
             let analyticsServiceConfiguration = AnalyticsServiceConfigurationBuilder.build()
             let registrationAnalyticsTracker = analyticsServiceConfiguration.map { analyticsServiceConfiguration in
                 RegistrationAnalyticsTracker(
@@ -130,7 +126,7 @@ final class AuthenticationInterfaceBuilder {
             }
 
             let authenticationType: WireAuthenticationAPI.AuthenticationType
-            if credentials?.usesCompanyLogin == true, credentials?.hasPassword == false {
+            if credentials?.usesCompanyLogin == true {
                 authenticationType = .reauthSSO
             } else if let email = credentials?.emailAddress {
                 authenticationType = .reauthEmail(email)
@@ -155,32 +151,6 @@ final class AuthenticationInterfaceBuilder {
                 authenticationCoordinator: authenticationCoordinator
             )
 
-        case let .reauthenticate(credentials, _, _, isSignedOut):
-            let viewController: AuthenticationStepController
-
-            if credentials?.usesCompanyLogin == true, credentials?.hasPassword == false {
-                // Is the user has SSO enabled, show the screen to log in with SSO
-                let companyLoginStep = ReauthenticateWithCompanyLoginStepDescription()
-                viewController = makeViewController(for: companyLoginStep)
-
-            } else {
-                let prefill: AuthenticationPrefilledCredentials? = if let credentials, credentials.emailAddress != nil {
-                    AuthenticationPrefilledCredentials(credentials: credentials, isExpired: isSignedOut)
-                } else {
-                    nil
-                }
-
-                viewController = makeCredentialsViewController(for: .reauthentication(prefill))
-            }
-
-            // Add the bar button item to sign out
-            viewController.setRightItem(
-                L10n.Localizable.Registration.Signin.TooManyDevices.SignOutButton.title,
-                withAction: .signOut(warn: true),
-                accessibilityID: "signOutButton"
-            )
-            return viewController
-
         case let .provideCredentials(prefill):
             return makeCredentialsViewController(for: .login(prefill))
 
@@ -188,7 +158,6 @@ final class AuthenticationInterfaceBuilder {
             let prefilledCredentials = AuthenticationPrefilledCredentials(
                 credentials: LoginCredentials(
                     emailAddress: user.unverifiedEmail,
-                    hasPassword: false,
                     usesCompanyLogin: false
                 ),
                 isExpired: false
@@ -357,7 +326,6 @@ final class AuthenticationInterfaceBuilder {
             ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
             appStoreURL: WireURLs.shared.appOnItunes,
             accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
-            isMultibackendEnabled: DeveloperFlag.multibackend.isOn,
             registrationAnalyticsTracker: registrationAnalyticsTracker
         )
     }

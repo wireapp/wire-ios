@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,8 @@ extension FilesViewItem {
         modifiedAt: Date? = nil,
         icon: FileIcon = .image,
         tags: [String] = [],
-        isEditable: Bool = false
+        isEditable: Bool = false,
+        publicLinkID: String? = nil
     ) -> FilesViewItem {
         FilesViewItem(
             id: id,
@@ -44,7 +45,8 @@ extension FilesViewItem {
             modifiedAt: modifiedAt,
             icon: icon,
             tags: tags,
-            isEditable: isEditable
+            isEditable: isEditable,
+            publicLinkID: publicLinkID
         )
     }
 

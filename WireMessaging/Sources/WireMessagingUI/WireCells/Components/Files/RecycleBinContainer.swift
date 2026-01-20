@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,6 @@ package struct RecycleBinContainer: View {
     private let nodeCache: any WireCellsNodeCacheProtocol
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
     private let fileCache: any FileCache
-    private let isFoldersEnabled: Bool
     private let accentColorProvider: () -> WireAccentColor
 
     package init(
@@ -48,7 +47,6 @@ package struct RecycleBinContainer: View {
         nodeCache: any WireCellsNodeCacheProtocol,
         nodeRenameNotifier: WireCellsNodeRenameNotifier,
         fileCache: any FileCache,
-        isFoldersEnabled: Bool,
         accentColorProvider: @escaping () -> WireAccentColor
     ) {
         self.cellName = cellName
@@ -60,7 +58,6 @@ package struct RecycleBinContainer: View {
         self.nodeCache = nodeCache
         self.nodeRenameNotifier = nodeRenameNotifier
         self.fileCache = fileCache
-        self.isFoldersEnabled = isFoldersEnabled
         self.accentColorProvider = accentColorProvider
     }
 
@@ -79,7 +76,6 @@ package struct RecycleBinContainer: View {
                 fetchNodes: WireCellsFetchNodesPageUseCase(
                     configuration: .recycleBinView(
                         root: path.last.map { .id($0.id) } ?? .path(cellName),
-                        isFoldersEnabled: isFoldersEnabled
                     ),
                     repository: nodesRepository
                 ),
@@ -112,7 +108,12 @@ package struct RecycleBinContainer: View {
                 getAssetUseCase: WireCellsGetAssetUseCase(
                     localAssetRepository: localAssetRepository,
                     fileCache: fileCache
-                )
+                ),
+                getPublicLinkData: WireCellsGetPublicLinkDataUseCase(nodesAPI: nodesAPI),
+                createPublicLink: WireCellsCreatePublicLinkUseCase(nodesAPI: nodesAPI),
+                deletePublicLink: WireCellsDeletePublicLinkUseCase(nodesAPI: nodesAPI),
+                updatePublicLinkExpiration: WireCellsUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
+                updatePublicLinkPassword: WireCellsUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI)
             ),
             title: path.last?.name,
             navigationPath: path,
@@ -124,8 +125,7 @@ package struct RecycleBinContainer: View {
             nodesRepository: nodesRepository,
             fileCache: fileCache,
             cellName: cellName,
-            isFoldersEnabled: isFoldersEnabled,
-            isCollaboraEnabled: false,
+            isBrowsing: false,
             isRecycleBin: true,
             accentColorProvider: accentColorProvider
         )

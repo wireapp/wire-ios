@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -350,7 +350,7 @@ final class UserSessionMock: UserSession {
         AppendKnockMessageUseCase(analyticsEventTracker: nil)
     }
 
-    func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol {
+    func makeAppendLocationMessageUseCase() -> any AppendLocationMessageUseCaseProtocol {
         AppendLocationMessageUseCase(analyticsEventTracker: nil)
     }
 
@@ -406,6 +406,8 @@ final class UserSessionMock: UserSession {
     )
 
     var isWireCellsEnabled: Bool = false
+
+    var wireCellsBackendURL: URL?
 
     var isEnterpriseUser: Bool = false
 

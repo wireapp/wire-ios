@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -105,6 +105,21 @@ final class ObservableStreamTests {
 
         // Then
         #expect(await progressesTask.value == [2, 5])
+    }
+
+    @Test
+    func cancellation() async throws {
+        // Given, When
+        sut.cancel()
+
+        // Then
+        #expect(try sut.read(upToCount: 1) == nil)
+        #expect(try await sut.readAsync(upToCount: 1) == nil)
+        #expect(try sut.readToEnd() == nil)
+        #expect(try await sut.readToEndAsync() == nil)
+        #expect(throws: CancellationError.self) {
+            try sut.seek(toOffset: 0)
+        }
     }
 
     private func makeObservationProgressTask(readingCount: Int) -> Task<[Int], Never> {

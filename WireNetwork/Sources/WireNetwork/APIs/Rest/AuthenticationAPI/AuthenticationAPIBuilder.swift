@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,6 +65,8 @@ public struct AuthenticationAPIBuilder {
             AuthenticationAPIV12(networkService: networkService)
         case .v13:
             AuthenticationAPIV13(networkService: networkService)
+        case .v14:
+            AuthenticationAPIV14(networkService: networkService)
         }
     }
 }

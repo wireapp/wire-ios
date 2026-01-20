@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -159,6 +159,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// - Throws: An error if the group cannot be wiped
 
     func wipeGroup(_ groupID: MLSGroupID) async throws
+
+    func externalSenderKey(groupID: MLSGroupID) async throws -> Data
 
     /// Checks if the group exists in core crypto's local storage
     ///
@@ -478,6 +480,11 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// - Parameter groupID: the mls GroupID of the conversation to re-establish
     func reEstablishPendingGroup(groupID: MLSGroupID) async throws
 
+    /// Epoch for given MLS group
+    /// - Parameter groupID: groupID of the MLS group
+    /// - Returns: epoch
+    func epoch(for groupID: MLSGroupID) async throws -> UInt64
+
     // MARK: - Sync delegate
 
     /// Set the MLS sync delegate.
@@ -487,4 +494,5 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     func setSyncDelegate(_ delegate: any MLSSyncDelegate)
 
     func setResetBrokenMLSConversationDelegate(_ delegate: any ResetBrokenMLSConversationDelegate)
+
 }

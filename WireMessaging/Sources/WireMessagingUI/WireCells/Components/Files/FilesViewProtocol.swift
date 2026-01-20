@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ extension FilesViewProtocol {
         }
         .listStyle(.plain)
         .refreshable { reloadTask(refreshing: true) }
-        .background(listBackgroundView)
+        .overlay(listBackgroundView)
         .animation(.default, value: viewModel.state)
     }
 
@@ -80,16 +80,7 @@ extension FilesViewProtocol {
 
     @ViewBuilder
     func itemRow(index: Int) -> some View {
-        FilesViewItemView(
-            viewModel: viewModel.itemViewModel(index: index),
-            // some actions are not allowed when browsing files
-            canRenameFile: !isBrowsing,
-            canEditTags: !isBrowsing,
-            canMoveToFolder: !isBrowsing && viewModel.isFoldersEnabled,
-            canOpenVersionHistory: !isBrowsing && viewModel.isCollaboraEnabled,
-            canEditFile: !isBrowsing,
-            canDeleteFiles: !isBrowsing
-        )
+        FilesItemView(viewModel: viewModel.itemViewModel(index: index))
     }
 
     var loadMoreRow: some View {

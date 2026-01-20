@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,15 +22,19 @@ public import Foundation
 /// - Parameters:
 ///   - url: URL of the preview.
 ///   - dimension: Max preview thumbnail dimension.
+///   - processing: Whether the preview is currently being processed.
 public struct WireCellsNodePreview: Equatable, Hashable, Sendable {
-    public let url: URL
+    public let url: URL?
     public let dimension: Int
+    public let processing: Bool
 
     package init(
-        url: URL,
-        dimension: Int
+        url: URL?,
+        dimension: Int,
+        processing: Bool
     ) {
         self.url = url
         self.dimension = dimension
+        self.processing = processing
     }
 }

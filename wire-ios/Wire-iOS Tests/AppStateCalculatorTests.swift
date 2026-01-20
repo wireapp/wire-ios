@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -317,23 +317,5 @@ final class AppStateCalculatorTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
-    }
-
-    func testThatItDoesntTransitionAwayFromBlacklisted_IfThereIsNoCurrentAPIVersion() {
-        // GIVEN
-        DeveloperFlag.multibackend.enable(false, storage: .temporary())
-
-        let userSession = UserSessionMock()
-        sut.applicationDidBecomeActive()
-        BackendInfo.apiVersion = nil
-
-        let blacklistState = AppState.blacklisted(reason: .clientAPIVersionObsolete)
-        sut.testHelper_setAppState(blacklistState)
-
-        // WHEN
-        sut.sessionManagerDidReportLockChange(forSession: userSession)
-
-        // THEN
-        XCTAssertEqual(sut.appState, blacklistState)
     }
 }

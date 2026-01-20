@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,6 @@ final class RootComponent: BootstrapComponent {
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
     public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
-    public let isMultibackendEnabled: Bool
     public let registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
 
     @MainActor public var bridge: WireAuthenticationBridge {
@@ -69,7 +68,6 @@ final class RootComponent: BootstrapComponent {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
-        isMultibackendEnabled: Bool,
         registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) {
         self.authenticationType = authenticationType
@@ -85,7 +83,6 @@ final class RootComponent: BootstrapComponent {
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.appStoreURL = appStoreURL
         self.accountsPublisher = accountsPublisher
-        self.isMultibackendEnabled = isMultibackendEnabled
         self.registrationAnalyticsTracker = registrationAnalyticsTracker
     }
 
@@ -119,7 +116,6 @@ extension RootComponent: RootViewModel.Factory {
                 bridge: bridge,
                 environment: environment,
                 authenticationType: authenticationType,
-                isMultibackendEnabled: isMultibackendEnabled,
                 hasOtherAccountsProvider: { [accountsPublisher] in
                     !accountsPublisher.value.isEmpty
                 }

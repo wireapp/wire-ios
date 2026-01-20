@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -67,6 +67,22 @@ final class FileRenameViewTests: XCTestCase {
         for kind in kinds {
             let (viewModel, view) = makeView(kind: kind)
             viewModel.filenameInput = "/"
+            let name = kind == .file ? ".file." : ".folder."
+
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: view, named: "\(name)" + "light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: view, named: "\(name)" + "dark")
+        }
+    }
+
+    @MainActor
+    func testFileRenameView_DotPrefixInputError() {
+        for kind in kinds {
+            let (viewModel, view) = makeView(kind: kind)
+            viewModel.filenameInput = "."
             let name = kind == .file ? ".file." : ".folder."
 
             snapshotHelper

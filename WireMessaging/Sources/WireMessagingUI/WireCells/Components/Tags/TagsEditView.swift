@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -311,7 +311,8 @@ struct TagsEditView: View {
         modifiedAt: nil,
         icon: .document,
         tags: ["Lorem", "Ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"],
-        isEditable: false
+        isEditable: false,
+        publicLinkID: nil
     )
 
     let mockAPI = {

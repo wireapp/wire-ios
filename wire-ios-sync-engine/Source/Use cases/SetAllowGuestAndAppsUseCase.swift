@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
+import WireNetwork
+
 public enum SetAllowGuestsAndAppsUseCaseError: Error {
 
     case invalidOperation
@@ -30,9 +33,9 @@ public protocol SetAllowGuestAndAppsUseCaseProtocol {
     func invoke(
         conversation: ZMConversation,
         allowGuests: Bool,
-        allowApps: Bool,
-        completion: @escaping (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void
-    )
+        allowApps: Bool
+    ) async throws
+
 }
 
 struct SetAllowGuestAndAppsUseCase: SetAllowGuestAndAppsUseCaseProtocol {
@@ -40,15 +43,19 @@ struct SetAllowGuestAndAppsUseCase: SetAllowGuestAndAppsUseCaseProtocol {
     func invoke(
         conversation: ZMConversation,
         allowGuests: Bool,
-        allowApps: Bool,
-        completion: @escaping (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void
-    ) {
-        guard conversation.canManageGuestsAccess else {
-            return completion(.failure(.invalidOperation))
-        }
+        allowApps: Bool
+    ) async throws {
 
         guard let context = conversation.managedObjectContext else {
-            return completion(.failure(.contextUnavailable))
+            throw SetAllowGuestsAndAppsUseCaseError.contextUnavailable
+        }
+
+        let canManageGuestsAccess = await context.perform {
+            conversation.canManageGuestsAccess
+        }
+
+        guard canManageGuestsAccess else {
+            throw SetAllowGuestsAndAppsUseCaseError.invalidOperation
         }
 
         var action = SetAllowGuestsAndAppsAction(
@@ -57,14 +64,16 @@ struct SetAllowGuestAndAppsUseCase: SetAllowGuestAndAppsUseCaseProtocol {
             conversationID: conversation.objectID
         )
 
-        action.perform(in: context.notificationContext) { result in
-            switch result {
-            case .success:
-                completion(.success(()))
-            case let .failure(error):
-                completion(.failure(.networkError(error)))
+        try await withCheckedThrowingContinuation { continuation in
+            action.perform(in: context.notificationContext) { result in
+                switch result {
+                case .success:
+                    continuation.resume()
+                case let .failure(error):
+                    continuation.resume(throwing: SetAllowGuestsAndAppsUseCaseError.networkError(error))
+                }
             }
-
         }
+
     }
 }

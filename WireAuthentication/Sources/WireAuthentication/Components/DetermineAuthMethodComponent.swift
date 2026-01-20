@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,8 +31,6 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
-    var isMultibackendEnabled: Bool { get }
-
 }
 
 final class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
@@ -97,8 +95,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             router: dependency.router,
             bridge: dependency.bridge,
             environment: networkStack.backendEnvironment,
-            existsAnotherAccount: existsAnotherAccount,
-            isMultibackendEnabled: dependency.isMultibackendEnabled
+            existsAnotherAccount: existsAnotherAccount
         )
     }
 
