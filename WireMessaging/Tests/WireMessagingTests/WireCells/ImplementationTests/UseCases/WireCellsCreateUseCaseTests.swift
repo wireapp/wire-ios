@@ -57,12 +57,17 @@ final class WireCellsCreateUseCaseTests {
         #expect(repository.preCheckNodePathFindAvailablePath_Invocations.count == 1)
         #expect(repository.createFolderAt_Invocations.count == 1)
     }
-    
+
     @Test
     func invoke_FileSuccess() async throws {
         let filepath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2"
         let filename = "test"
-        let template = WireCellsTemplate(kind: .document, editable: true, label: "Microsoft Word", UUID: "01-Microsoft Word.docx")
+        let template = WireCellsTemplate(
+            kind: .document,
+            editable: true,
+            label: "Microsoft Word",
+            UUID: "01-Microsoft Word.docx"
+        )
 
         // Mock
         repository.preCheckNodePathFindAvailablePath_MockValue = .success
