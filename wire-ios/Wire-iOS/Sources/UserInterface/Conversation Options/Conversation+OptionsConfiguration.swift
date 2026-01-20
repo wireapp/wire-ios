@@ -97,7 +97,7 @@ extension ZMConversation {
         }
 
         func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-            let setConversationGuestsAndAppsUseCase = userSession.makeSetConversationGuestsAndAppsUseCase()
+            let setConversationGuestsAndAppsUseCase = userSession.makeSetConversationGuestsAndAppsUseCase()!
             let context = conversation.managedObjectContext!
 
             Task { [conversation] in
@@ -117,7 +117,7 @@ extension ZMConversation {
         }
 
         func setAllowApps(_ allowApps: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-            let setConversationGuestsAndAppsUseCase = userSession.makeSetConversationGuestsAndAppsUseCase()
+            let setConversationGuestsAndAppsUseCase = userSession.makeSetConversationGuestsAndAppsUseCase()!
             let context = conversation.managedObjectContext!
 
             Task { [conversation] in
