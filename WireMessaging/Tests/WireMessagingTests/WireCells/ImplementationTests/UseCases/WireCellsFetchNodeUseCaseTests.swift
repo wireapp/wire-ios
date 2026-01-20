@@ -35,7 +35,7 @@ final class WireCellsFetchNodeUseCaseTests {
     }
 
     @Test
-    func invoke_whenNodeNoteFound() async throws {
+    func invoke_whenNodeNotFound() async throws {
         // Given
         let nodeID = UUID()
 
