@@ -45,7 +45,7 @@ struct FileVersionItemView: View {
                 VStack(alignment: .leading) {
                     HStack {
                         Text(viewModel.item.title)
-                        
+
                         if viewModel.item.isCurrent {
                             Text(Strings.FilesVersioning.currentFile)
                         }
