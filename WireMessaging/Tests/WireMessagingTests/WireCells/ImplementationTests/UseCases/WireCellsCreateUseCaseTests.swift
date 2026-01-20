@@ -32,11 +32,10 @@ final class WireCellsCreateUseCaseTests {
         self.sut = WireCellsCreateUseCase(
             nodesRepository: repository
         )
-
     }
 
     @Test
-    func invoke_Success() async throws {
+    func invoke_FolderSuccess() async throws {
         let folderPath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2"
         let folderName = "Folder-3"
 
@@ -44,21 +43,49 @@ final class WireCellsCreateUseCaseTests {
         repository.preCheckNodePathFindAvailablePath_MockValue = .success
         repository.createFolderAt_MockMethod = { targetPath in
             #expect(targetPath == "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2/Folder-3")
+            return WireCellsNode.fixture()
         }
 
         // When
-        try await sut.invoke(
-            folderPath: folderPath,
-            folderName: folderName
+        _ = try await sut.invoke(
+            creationTarget: .folder,
+            path: folderPath,
+            name: folderName
         )
 
         // Then
         #expect(repository.preCheckNodePathFindAvailablePath_Invocations.count == 1)
         #expect(repository.createFolderAt_Invocations.count == 1)
     }
+    
+    @Test
+    func invoke_FileSuccess() async throws {
+        let filepath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2"
+        let filename = "test"
+        let template = WireCellsTemplate(kind: .document, editable: true, label: "Microsoft Word", UUID: "01-Microsoft Word.docx")
+
+        // Mock
+        repository.preCheckNodePathFindAvailablePath_MockValue = .success
+        repository.createFileAtTemplateUuid_MockMethod = { targetPath, templateId in
+            #expect(targetPath == "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2/test.docx")
+            #expect(templateId == "01-Microsoft Word.docx")
+            return WireCellsNode.fixture()
+        }
+
+        // When
+        _ = try await sut.invoke(
+            creationTarget: .file(template),
+            path: filepath,
+            name: filename
+        )
+
+        // Then
+        #expect(repository.preCheckNodePathFindAvailablePath_Invocations.count == 1)
+        #expect(repository.createFileAtTemplateUuid_Invocations.count == 1)
+    }
 
     @Test
-    func invoke_FailureFolderAlreadyExists() async throws {
+    func invoke_FailureAlreadyExists() async throws {
         let folderPath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2"
         let folderName = "Folder-3"
 
@@ -66,17 +93,18 @@ final class WireCellsCreateUseCaseTests {
         repository.preCheckNodePathFindAvailablePath_MockValue = .fileExists(nextPath: "")
 
         // Then
-        await #expect(throws: WireCellsCreateFolderUseCaseError.folderAlreadyExists) {
+        await #expect(throws: WireCellsCreateUseCaseError.alreadyExists) {
             // When
-            try await sut.invoke(
-                folderPath: folderPath,
-                folderName: folderName
+            _ = try await sut.invoke(
+                creationTarget: .folder,
+                path: folderPath,
+                name: folderName
             )
         }
     }
 
     @Test
-    func invoke_FailureServerFailedToCreateFolder() async throws {
+    func invoke_FailureServerFailedToCreate() async throws {
         // Given
         let folderPath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2"
         let folderName = "Folder-3"
@@ -86,11 +114,12 @@ final class WireCellsCreateUseCaseTests {
         repository.createFolderAt_MockError = NSError(domain: "Server error", code: 0)
 
         // Then
-        await #expect(throws: WireCellsCreateFolderUseCaseError.serverFailedToCreateFolder) {
+        await #expect(throws: WireCellsCreateUseCaseError.serverFailedToCreate) {
             // When
-            try await sut.invoke(
-                folderPath: folderPath,
-                folderName: folderName
+            _ = try await sut.invoke(
+                creationTarget: .folder,
+                path: folderPath,
+                name: folderName
             )
         }
     }

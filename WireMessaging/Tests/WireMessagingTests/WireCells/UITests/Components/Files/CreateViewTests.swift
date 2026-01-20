@@ -27,17 +27,17 @@ import XCTest
 
 @testable import WireMessagingUI
 
-final class CreateFolderViewTests: XCTestCase {
+final class CreateViewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
-    private var createFolderUseCase: MockWireCellsCreateUseCaseProtocol!
+    private var createUseCase: MockWireCellsCreateUseCaseProtocol!
     private var viewModel: CreateViewModel!
 
     @MainActor
     override func setUp() async throws {
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
-        createFolderUseCase = MockWireCellsCreateUseCaseProtocol()
+        createUseCase = MockWireCellsCreateUseCaseProtocol()
 
         viewModel = CreateViewModel(
             creationTarget: .folder,
@@ -108,7 +108,7 @@ final class CreateFolderViewTests: XCTestCase {
     @MainActor
     func testCreateFolderView_FolderAlreadyExistsError() async {
         let view = makeView()
-        createFolderUseCase.invokePathName_MockError = WireCellsCreateUseCaseError
+        createFolderUseCase.invokeCreationTargetPathName_MockError = WireCellsCreateUseCaseError
             .alreadyExists
         _ = await viewModel.create()
 

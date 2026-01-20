@@ -18,24 +18,25 @@
 
 public struct WireCellsTemplate: Equatable, Hashable, Sendable {
 
-    public enum TemplateKind: Equatable, Hashable, Sendable {
+    // TODO: [WPB-22926] Reflect all template kind from the server when endpoint ready
+    public enum Kind: Equatable, Hashable, Sendable {
         case document
         case spreadsheet
         case presentation
     }
 
-    public let templateKind: TemplateKind
+    public let kind: Kind
     public let editable: Bool?
     public let label: String
     public let UUID: String
 
     package init(
-        templateKind: TemplateKind,
+        kind: Kind,
         editable: Bool?,
         label: String,
         UUID: String
     ) {
-        self.templateKind = templateKind
+        self.kind = kind
         self.editable = editable
         self.label = label
         self.UUID = UUID

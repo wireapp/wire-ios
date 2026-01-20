@@ -368,7 +368,7 @@ extension CreateViewModel {
 
         return CreateViewModel(
             creationTarget: .file(.init(
-                templateKind: .document,
+                kind: .document,
                 editable: true,
                 label: "Microsoft Word",
                 UUID: "01-Microsoft Word.docx"

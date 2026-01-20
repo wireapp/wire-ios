@@ -39,7 +39,7 @@ package extension WireCellsTemplateNetworkModel {
             }
 
             // TODO: [WPB-22926] Finish mapping when GET/ templates endpoint ready.
-            let templateKind: WireCellsTemplate.TemplateKind = switch label {
+            let kind: WireCellsTemplate.Kind = switch label {
             case "Microsoft Word":
                 .document
             case "Microsoft Excel":
@@ -51,7 +51,7 @@ package extension WireCellsTemplateNetworkModel {
             }
 
             return WireCellsTemplate(
-                templateKind: templateKind,
+                kind: kind,
                 editable: value.editable,
                 label: label,
                 UUID: UUID

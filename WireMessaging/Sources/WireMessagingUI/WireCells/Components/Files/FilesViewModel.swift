@@ -297,19 +297,19 @@ package final class FilesViewModel: ObservableObject {
             // Do `templates = try await WireCellsFetchTemplatesUseCase.invoke()`
             templates = [
                 .init(
-                    templateKind: .document,
+                    kind: .document,
                     editable: true,
                     label: "Microsoft Word",
                     UUID: "01-Microsoft Word.docx"
                 ),
                 .init(
-                    templateKind: .spreadsheet,
+                    kind: .spreadsheet,
                     editable: true,
                     label: "Microsoft Excel",
                     UUID: "02-Microsoft Excel.xlsx"
                 ),
                 .init(
-                    templateKind: .presentation,
+                    kind: .presentation,
                     editable: true,
                     label: "Microsoft PowerPoint",
                     UUID: "03-Microsoft PowerPoint.pptx"
@@ -778,7 +778,7 @@ package final class FilesViewModel: ObservableObject {
 
 }
 
-extension WireCellsTemplate.TemplateKind {
+extension WireCellsTemplate.Kind {
     var title: String {
         switch self {
         case .document:

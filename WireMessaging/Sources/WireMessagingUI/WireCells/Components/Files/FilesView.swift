@@ -200,9 +200,9 @@ private extension FilesView {
                         viewModel.onCreate(target: .file(template))
                     } label: {
                         Label {
-                            Text(template.templateKind.title)
+                            Text(template.kind.title)
                         } icon: {
-                            Image(systemName: template.templateKind.systemImage)
+                            Image(systemName: template.kind.systemImage)
                                 .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
                         }
                     }

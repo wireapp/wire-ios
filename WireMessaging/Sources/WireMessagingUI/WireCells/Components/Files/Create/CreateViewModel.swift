@@ -51,7 +51,7 @@ final class CreateViewModel: ObservableObject {
         case .folder:
             Strings.Files.NewFolder.navigationTitle
         case let .file(template):
-            switch template.templateKind {
+            switch template.kind {
             case .document:
                 Strings.Files.NewFile.navigationTitle(".docx")
             case .presentation:
