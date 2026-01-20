@@ -1275,9 +1275,9 @@ extension ZMUserSession: SyncAgentDelegate {
     private func resolveOneOnOneConversationsIfNeeded() async {
         guard let clientSessionComponent, mlsFeature.isEnabled, !didAlreadyResolveAllOneOnOnes else { return }
 
-        let resolveOneOnOneUseCase = clientSessionComponent?.oneOnOneResolver
+        let resolveOneOnOneUseCase = clientSessionComponent.oneOnOneResolver
         do {
-            try await resolveOneOnOneUseCase?.resolveAllOneOnOneConversations()
+            try await resolveOneOnOneUseCase.resolveAllOneOnOneConversations()
             didAlreadyResolveAllOneOnOnes = true
         } catch {
             WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
