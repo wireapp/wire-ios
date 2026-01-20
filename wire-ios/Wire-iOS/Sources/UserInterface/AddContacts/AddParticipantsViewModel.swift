@@ -27,12 +27,13 @@ struct AddParticipantsViewModel {
     let areLegacyBotsAvailable: Bool
 
     init(
-        context: AddParticipantsViewController.Context
+        context: AddParticipantsViewController.Context,
+        isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool
     ) {
         self.context = context
-        // TODO: fix
-        isAppsFeatureEnabled = false
-        areLegacyBotsAvailable = false
+        self.isAppsFeatureEnabled = isAppsFeatureEnabled
+        self.areLegacyBotsAvailable = areLegacyBotsAvailable
     }
 
     var botCanBeAdded: Bool { // TODO: apps vs bots?

@@ -153,11 +153,15 @@ final class AddParticipantsViewController: UIViewController {
 
     convenience init(
         conversation: GroupDetailsConversationType,
-        userSession: UserSession
+        userSession: UserSession,
+        isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool
     ) {
         self.init(
             context: .add(conversation),
-            userSession: userSession
+            userSession: userSession,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable
         )
     }
 
@@ -184,12 +188,15 @@ final class AddParticipantsViewController: UIViewController {
 
     init(
         context: Context,
-        userSession: UserSession
+        userSession: UserSession,
+        isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool
     ) {
         self.userSession = userSession
-
         self.viewModel = AddParticipantsViewModel(
-            context: context
+            context: context,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable
         )
 
         self.collectionViewLayout = UICollectionViewFlowLayout()
@@ -379,7 +386,9 @@ final class AddParticipantsViewController: UIViewController {
                 selfUser: userSession.selfUser
             )
             viewModel = AddParticipantsViewModel(
-                context: .create(updated)
+                context: .create(updated),
+                isAppsFeatureEnabled: values.isAppsFeatureEnabled,
+                areLegacyBotsAvailable: values.areLegacyBotsAvailable
             )
         }
 
