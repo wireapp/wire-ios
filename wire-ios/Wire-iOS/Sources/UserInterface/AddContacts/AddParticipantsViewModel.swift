@@ -45,9 +45,9 @@ struct AddParticipantsViewModel {
 
             switch conversation.messageProtocol {
             case .mls where isAppsFeatureEnabled:
-                return true
+                return conversation.allowApps
             case .proteus where areLegacyBotsAvailable:
-                return true
+                return conversation.allowApps
             default:
                 return false
             }
