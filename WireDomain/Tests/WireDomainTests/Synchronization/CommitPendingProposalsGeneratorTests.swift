@@ -30,7 +30,7 @@ class CommitPendingProposalsGeneratorTests {
     let coreDataStackHelper = CoreDataStackHelper()
     let coreDataStack: CoreDataStack
     var commitPendingProposalItemClosure: ((CommitPendingProposalItem) -> Void)?
-    var mockMLSService: MockMLSServiceInterface!
+    var mockMLSService: MockMLSServiceInterface
     var isMLSGroupBroken: (MLSGroupID) -> Bool = { _ in false }
 
     init() async throws {
@@ -53,6 +53,11 @@ class CommitPendingProposalsGeneratorTests {
                 self.commitPendingProposalItemClosure?(item)
             }
         )
+    }
+
+    deinit {
+        sut = nil
+        commitPendingProposalItemClosure = nil
     }
 
     @Test(
