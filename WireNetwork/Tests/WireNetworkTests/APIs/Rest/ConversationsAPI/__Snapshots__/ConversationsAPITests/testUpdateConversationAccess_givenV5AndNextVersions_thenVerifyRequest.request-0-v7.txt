@@ -1,0 +1,5 @@
+curl \
+	--request PUT \
+	--header "Content-Type: application/json" \
+	--data "{\"access\":[\"code\",\"invite\"],\"access_role\":[\"guest\",\"non_team_member\",\"team_member\"]}" \
+	"/v7/conversations/domain.com/213248A1-5499-418F-8173-5010D1C1E506/access"

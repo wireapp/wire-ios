@@ -20,6 +20,7 @@ import Foundation
 import Testing
 import WireDataModel
 import WireDataModelSupport
+import WireFoundation
 import WireNetwork
 
 @testable import WireDomain
@@ -258,6 +259,14 @@ final class MockConversationsAPIProtocol: ConversationsAPI {
         conversationDomain: String,
         permission: WireNetwork.ChannelPermission
     ) async throws -> WireNetwork.ChannelPermission {
+        fatalError("not implemented")
+    }
+
+    func updateConversationAccess(
+        conversationID: WireFoundation.QualifiedID,
+        allowGuests: Bool,
+        allowApps: Bool
+    ) async throws {
         fatalError("not implemented")
     }
 
