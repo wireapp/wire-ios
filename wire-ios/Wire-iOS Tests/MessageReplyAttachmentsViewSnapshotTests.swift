@@ -218,11 +218,13 @@ final class MessageReplyAttachmentsViewSnapshotTests: XCTestCase {
             attachments: attachments
         )
 
+        let fetchCachedNodeUseCase = MockWireCellsFetchCachedNodeUseCaseProtocol()
+        fetchCachedNodeUseCase.invokeNodeID_MockMethod = { _ in nil }
         let fetchNodeUseCase = MockWireCellsFetchNodeUseCaseProtocol()
-        fetchNodeUseCase.invokeNodeID_MockValue = AsyncThrowingStream { continuation in
-            continuation.finish()
-        }
+        fetchNodeUseCase.invokeNodeID_MockMethod = { _ in nil }
+
         let viewModel = MessageReplyAttachmentsViewModel(
+            fetchCachedNodeUseCase: fetchCachedNodeUseCase,
             fetchNodeUseCase: fetchNodeUseCase
         )
 

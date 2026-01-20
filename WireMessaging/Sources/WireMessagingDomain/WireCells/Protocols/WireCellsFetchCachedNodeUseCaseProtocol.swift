@@ -19,8 +19,9 @@
 public import Foundation
 
 // sourcery: AutoMockable
-public protocol WireCellsFetchNodeUseCaseProtocol: Sendable {
+public protocol WireCellsFetchCachedNodeUseCaseProtocol {
 
-    func invoke(nodeID: UUID) async throws -> WireCellsNode?
+    @MainActor
+    func invoke(nodeID: UUID) -> WireCellsNodeCacheItem?
 
 }
