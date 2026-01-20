@@ -40,6 +40,8 @@ public protocol SetAllowGuestAndAppsUseCaseProtocol {
 
 struct SetAllowGuestAndAppsUseCase: SetAllowGuestAndAppsUseCaseProtocol {
 
+    let api: any ConversationsAPI
+
     func invoke(
         conversation: ZMConversation,
         allowGuests: Bool,
@@ -50,30 +52,25 @@ struct SetAllowGuestAndAppsUseCase: SetAllowGuestAndAppsUseCaseProtocol {
             throw SetAllowGuestsAndAppsUseCaseError.contextUnavailable
         }
 
-        let canManageGuestsAccess = await context.perform {
-            conversation.canManageGuestsAccess
+        let (canManageGuestsAccess, conversationID) = await context.perform {
+            let canManageGuestsAccess = conversation.canManageGuestsAccess
+            let conversationID = WireFoundation.QualifiedID(conversation.qualifiedID!)
+            return (canManageGuestsAccess, conversationID)
         }
 
         guard canManageGuestsAccess else {
             throw SetAllowGuestsAndAppsUseCaseError.invalidOperation
         }
 
-        var action = SetAllowGuestsAndAppsAction(
+        try await api.updateConversationAccess(
+            conversationID: conversationID,
             allowGuests: allowGuests,
-            allowApps: allowApps,
-            conversationID: conversation.objectID
+            allowApps: allowApps
         )
 
-        try await withCheckedThrowingContinuation { continuation in
-            action.perform(in: context.notificationContext) { result in
-                switch result {
-                case .success:
-                    continuation.resume()
-                case let .failure(error):
-                    continuation.resume(throwing: SetAllowGuestsAndAppsUseCaseError.networkError(error))
-                }
-            }
+        await context.perform {
+            conversation.allowApps = allowApps
+            conversation.allowGuests = allowGuests
         }
-
     }
 }
