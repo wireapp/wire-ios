@@ -66,8 +66,14 @@ final class ConversationWarningSystemMessageCell<
 
     override func configureConstraints() {
         super.configureConstraints()
-        encryptionLabel.fitIn(view: topContentView)
-        sensitiveInfoLabel.fitIn(view: bottomContentView)
+        let padding: CGFloat = 6.0
+
+        encryptionLabel.fitIn(view: topContentView, insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: padding))
+        sensitiveInfoLabel.fitIn(
+            view: bottomContentView,
+            insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: padding)
+        )
+
         NSLayoutConstraint.activate([
             imageContainer.topAnchor.constraint(equalTo: bottomContentView.topAnchor).withPriority(.required)
         ])
