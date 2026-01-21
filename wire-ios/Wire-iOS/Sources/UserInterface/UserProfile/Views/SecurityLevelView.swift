@@ -207,12 +207,13 @@ private struct SecurityLevelViewRepresentable: UIViewRepresentable {
 }
 
 // MARK: Accessibility Strings
+
 extension SecurityLevelView {
-    
+
     static let prefix = String(describing: SecurityLevelView.self)
-    
+
     enum AccessibilityIdentifier {
         static let securityLevelLabel = "\(prefix)_securityLevelLabel"
     }
-    
+
 }
