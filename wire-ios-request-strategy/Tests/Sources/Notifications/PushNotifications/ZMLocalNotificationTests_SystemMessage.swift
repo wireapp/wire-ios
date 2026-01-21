@@ -89,6 +89,13 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
 
         // given, when
         try syncMOC.performGroupedAndWait {
+
+            // Remove self user from participants to simulate not being a member yet
+            self.groupConversation.removeParticipantAndUpdateConversationState(user: self.selfUser)
+            self.groupConversationWithoutName.removeParticipantAndUpdateConversationState(user: self.selfUser)
+            XCTAssertFalse(self.groupConversation.localParticipants.contains(self.selfUser))
+            XCTAssertFalse(self.groupConversationWithoutName.localParticipants.contains(self.selfUser))
+
             let note1 = try XCTUnwrap(self.noteForParticipantAdded(
                 self.groupConversation,
                 aSender: self.sender,
@@ -109,6 +116,24 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
             XCTAssertEqual(note1.body, "Super User added you")
             XCTAssertEqual(note2.body, "Super User added you to a conversation")
             XCTAssertEqual(note3.body, "Super User added you")
+        }
+    }
+
+    func testThatItDoesNotCreateANotificationForParticipantAdd_SelfAlreadyParticipant() {
+
+        syncMOC.performGroupedAndWait {
+            // given: self user is already in the conversation
+            XCTAssertTrue(self.groupConversation.localParticipants.contains(self.selfUser))
+
+            // when: receiving a memberJoin event that includes self user
+            let note = self.noteForParticipantAdded(
+                self.groupConversation,
+                aSender: self.sender,
+                otherUsers: [self.selfUser]
+            )
+
+            // then: no notification should be created
+            XCTAssertNil(note, "Should not create notification when self user is already a participant")
         }
     }
 
@@ -210,4 +235,5 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
             ))
         }
     }
+
 }
