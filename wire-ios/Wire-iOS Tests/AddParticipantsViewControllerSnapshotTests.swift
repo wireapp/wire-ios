@@ -88,13 +88,23 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
             selfUser: mockSelfUser
         )
 
-        sut = AddParticipantsViewController(context: .create(newValues), userSession: userSession)
+        sut = AddParticipantsViewController(
+            context: .create(newValues),
+            userSession: userSession,
+            isAppsFeatureEnabled: true,
+            areLegacyBotsAvailable: true
+        )
         snapshotHelper.verify(matching: sut)
     }
 
     func testForAddParticipantsButtonIsShown() {
         let conversation = MockGroupDetailsConversation()
-        sut = AddParticipantsViewController(context: .add(conversation), userSession: userSession)
+        sut = AddParticipantsViewController(
+            context: .add(conversation),
+            userSession: userSession,
+            isAppsFeatureEnabled: true,
+            areLegacyBotsAvailable: true
+        )
         let user = MockUserType.createUser(name: "Bill")
         sut.userSelection.add(user)
         sut.userSelection(UserSelection(), didAddUser: user)
@@ -112,7 +122,12 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
         mockConversation.allowApps = true
         mockConversation.messageProtocol = .proteus
 
-        sut = AddParticipantsViewController(context: .add(mockConversation), userSession: userSession)
+        sut = AddParticipantsViewController(
+            context: .add(mockConversation),
+            userSession: userSession,
+            isAppsFeatureEnabled: true,
+            areLegacyBotsAvailable: true
+        )
 
         // THEN
         XCTAssertTrue(mockConversation.botCanBeAdded)

@@ -76,7 +76,7 @@ struct WireCellsSmallVideoPreviewView: View {
                         }
                     }
             case .failure:
-                WireCellsAttachmentPreviewErrorCircle()
+                ProgressView()
             @unknown default:
                 EmptyView()
             }
