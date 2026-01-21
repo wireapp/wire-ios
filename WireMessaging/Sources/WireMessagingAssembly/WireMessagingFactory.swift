@@ -125,6 +125,10 @@ public struct WireMessagingFactory {
             cache: nodeCache
         )
     }
+
+    public func makeFetchCachedNodeUseCase() -> any WireCellsFetchCachedNodeUseCaseProtocol {
+        nodeCache
+    }
 }
 
 public extension WireMessagingFactory {
@@ -214,6 +218,7 @@ public extension WireMessagingFactory {
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProvider {
         ConversationCellProvider(
+            fetchCachedNodeUseCase: nodeCache,
             fetchNodeUseCase: WireCellsFetchNodeUseCase(
                 repository: nodesAPI,
                 cache: nodeCache
@@ -222,7 +227,6 @@ public extension WireMessagingFactory {
                 localAssetRepository: localAssetRepository,
                 fileCache: fileCache
             ),
-            nodeCache: nodeCache,
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
             nodeRenameNotifier: nodeRenameNotifier,
