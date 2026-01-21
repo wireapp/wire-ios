@@ -28,18 +28,19 @@ final class SearchAPIV15: SearchAPIV14 {
 
     override func searchContacts(
         query: String,
-        domain: String?,
-        size: Int?
+        domain: String,
+        fetchLimit: Int?
     ) async throws -> SearchContactsResult {
+
         var queryItems = [URLQueryItem]()
         queryItems.append(URLQueryItem(name: "q", value: query))
 
-        if let domain {
+        if !domain.isEmpty {
             queryItems.append(URLQueryItem(name: "domain", value: domain))
         }
 
-        if let size {
-            queryItems.append(URLQueryItem(name: "size", value: String(size)))
+        if let fetchLimit {
+            queryItems.append(URLQueryItem(name: "size", value: String(fetchLimit)))
         }
 
         var urlComponents = URLComponents()
@@ -63,11 +64,12 @@ final class SearchAPIV15: SearchAPIV14 {
             .success(code: .ok, type: SearchResultContactV15.self)
             .failure(code: .forbidden, error: SearchAPIError.insufficientPermissions)
             .parse(code: response.statusCode, data: data)
+
     }
 
 }
 
-struct SearchResultContactV15: Decodable, ToAPIModelConvertible {
+private struct SearchResultContactV15: Decodable, ToAPIModelConvertible {
 
     let documents: [ContactV15]
     let found: Int
@@ -100,7 +102,7 @@ struct SearchResultContactV15: Decodable, ToAPIModelConvertible {
     }
 }
 
-struct ContactV15: Decodable, ToAPIModelConvertible {
+private struct ContactV15: Decodable, ToAPIModelConvertible {
 
     let qualifiedID: QualifiedIDV0
     let name: String
@@ -118,8 +120,8 @@ struct ContactV15: Decodable, ToAPIModelConvertible {
         case type
     }
 
-    func toAPIModel() -> Contact {
-        Contact(
+    func toAPIModel() -> SearchContactsResult.Contact {
+        .init(
             qualifiedID: qualifiedID.toAPIModel(),
             name: name,
             handle: handle,

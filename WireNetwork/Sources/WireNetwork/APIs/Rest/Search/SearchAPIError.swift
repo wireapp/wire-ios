@@ -32,30 +32,4 @@ public enum SearchAPIError: Error {
 
     case insufficientPermissions
 
-    /*
-    /// A supplied team id is not valid.
-
-    case invalidTeamID
-
-    /// The requested team does not exist.
-
-    case teamNotFound
-
-    /// The self user is not part of a team.
-
-    case selfUserIsNotTeamMember
-
-    /// A requested team member could not be found.
-
-    case teamMemberNotFound
-
-    /// A request could not be generated.
-
-    case failedToGenerateRequest
-
-    /// An invalid query parameter was used.
-
-    case invalidQueryParmeter
-     */
-
 }
