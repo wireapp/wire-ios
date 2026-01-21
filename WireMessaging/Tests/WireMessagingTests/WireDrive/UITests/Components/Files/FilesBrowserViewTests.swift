@@ -65,7 +65,7 @@ final class FilesBrowserViewTests: XCTestCase {
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
 
         fetchNodesUseCase = WireDriveFetchNodesPageUseCase(
-            configuration: .conversationFileView(root: .id(.mockID1), isFoldersEnabled: false),
+            configuration: .conversationFileView(root: .id(.mockID1)),
             repository: nodesRepository
         )
         deleteNodeUseCase = WireDriveDeleteNodesUseCase(
@@ -226,8 +226,7 @@ final class FilesBrowserViewTests: XCTestCase {
             localAssetRepository: localAssetsRepository,
             nodesRepository: nodesRepository,
             fileCache: MockFileCache(),
-            isFoldersEnabled: false,
-            isCollaboraEnabled: false,
+            isBrowsing: true,
             accentColorProvider: { .default }
         )
 

@@ -181,7 +181,7 @@ public final class MainTabBarController<
                     image: .init(systemName: "archivebox"),
                     selectedImage: .init(systemName: "archivebox.fill")
                 )
-                tabBarItem.accessibilityIdentifier = "bottomBarArchivedButton"
+                tabBarItem.accessibilityIdentifier = Locators.ConversationsPage.bottomBarArchivedButton.rawValue
                 tabBarItem.accessibilityLabel = String(
                     localized: "tabBar.archived.description",
                     table: "Accessibility",

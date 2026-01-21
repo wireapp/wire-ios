@@ -150,7 +150,9 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
         let participantsController = AddParticipantsViewController(
             context: .create(values),
-            userSession: userSession
+            userSession: userSession,
+            isAppsFeatureEnabled: values.isAppsFeatureEnabled,
+            areLegacyBotsAvailable: values.areLegacyBotsAvailable
         )
 
         participantsController.conversationCreationDelegate = self

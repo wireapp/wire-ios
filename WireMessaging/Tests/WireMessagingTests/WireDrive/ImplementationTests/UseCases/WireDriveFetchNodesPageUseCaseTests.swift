@@ -30,7 +30,7 @@ struct WireDriveFetchNodesPageUseCaseTests {
 
     init() {
         self.sut = WireDriveFetchNodesPageUseCase(
-            configuration: .conversationFileView(root: WireDriveNodeLocator.path("some/path"), isFoldersEnabled: false),
+            configuration: .conversationFileView(root: WireDriveNodeLocator.path("some/path")),
             repository: repository
         )
         repository.getNodes_MockValue = (nodes: [WireDriveNode.fixture()], nextOffset: 30)
@@ -41,7 +41,7 @@ struct WireDriveFetchNodesPageUseCaseTests {
     func testInvoke_withConversationFileViewConfiguration() async throws {
         // Given
         let sut = WireDriveFetchNodesPageUseCase(
-            configuration: .conversationFileView(root: WireDriveNodeLocator.path("some/path"), isFoldersEnabled: false),
+            configuration: .conversationFileView(root: WireDriveNodeLocator.path("some/path")),
             repository: repository
         )
 
@@ -60,7 +60,7 @@ struct WireDriveFetchNodesPageUseCaseTests {
                     searchTerm: nil,
                     limit: 30,
                     offset: 0,
-                    configuration: .conversationFileView(root: .path("some/path"), isFoldersEnabled: false)
+                    configuration: .conversationFileView(root: .path("some/path"))
                 )
             ]
         )

@@ -18,7 +18,7 @@
 
 public import Foundation
 public import UIKit
-public import SwiftUI
+import SwiftUI
 public import WireData
 public import WireFoundation
 public import WireMessagingDomain
@@ -38,8 +38,6 @@ public struct WireMessagingFactory {
     private let filenameGenerator = FilenameGenerator()
     private let lastOpenRequest: WireDriveLastOpenRequest
     private let nodeCache: WireDriveNodeCache
-    private let isFoldersEnabled: Bool
-    private let isCollaboraEnabled: Bool
     private let nodeRenameNotifier: WireDriveNodeRenameNotifier
 
     @MainActor var lastOpenRequestNodeID: UUID?
@@ -49,9 +47,7 @@ public struct WireMessagingFactory {
         cellsURLResolver: @escaping CellsURLResolver,
         accessToken: any AccessTokenProvider,
         fileCache: any FileCache,
-        contextProvider: any ManagedObjectContextProvider,
-        isFoldersEnabled: Bool,
-        isCollaboraEnabled: Bool
+        contextProvider: any ManagedObjectContextProvider
     ) {
         self.nodeCache = WireDriveNodeCache()
         self.nodesAPI = NodesAPI(serverURLResolver: cellsURLResolver, accessToken: accessToken)
@@ -65,8 +61,6 @@ public struct WireMessagingFactory {
             store: localAssetStore
         )
         self.lastOpenRequest = WireDriveLastOpenRequest()
-        self.isFoldersEnabled = isFoldersEnabled
-        self.isCollaboraEnabled = isCollaboraEnabled
         self.nodeRenameNotifier = WireDriveNodeRenameNotifier()
     }
 
@@ -131,6 +125,10 @@ public struct WireMessagingFactory {
             cache: nodeCache
         )
     }
+
+    public func makeFetchCachedNodeUseCase() -> any WireDriveFetchCachedNodeUseCaseProtocol {
+        nodeCache
+    }
 }
 
 public extension WireMessagingFactory {
@@ -152,8 +150,6 @@ public extension WireMessagingFactory {
                 nodeCache: nodeCache,
                 nodeRenameNotifier: nodeRenameNotifier,
                 fileCache: fileCache,
-                isFoldersEnabled: isFoldersEnabled,
-                isCollaboraEnabled: isCollaboraEnabled,
                 accentColorProvider: accentColorProvider
             ).environment(\.wireAccentColor, accentColorProvider())
         )
@@ -211,9 +207,8 @@ public extension WireMessagingFactory {
                     localAssetRepository: localAssetRepository,
                     nodesRepository: nodesAPI,
                     fileCache: fileCache,
-                    isFoldersEnabled: false,
-                    isCollaboraEnabled: isCollaboraEnabled,
-                    accentColorProvider: accentColorProvider
+                    isBrowsing: true,
+                    accentColorProvider: accentColorProvider,
                 )
             )
         )
@@ -223,6 +218,7 @@ public extension WireMessagingFactory {
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProvider {
         ConversationCellProvider(
+            fetchCachedNodeUseCase: nodeCache,
             fetchNodeUseCase: WireDriveFetchNodeUseCase(
                 repository: nodesAPI,
                 cache: nodeCache
@@ -231,7 +227,6 @@ public extension WireMessagingFactory {
                 localAssetRepository: localAssetRepository,
                 fileCache: fileCache
             ),
-            nodeCache: nodeCache,
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
             nodeRenameNotifier: nodeRenameNotifier,

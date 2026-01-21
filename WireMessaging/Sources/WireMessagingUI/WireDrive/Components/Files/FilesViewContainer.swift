@@ -36,8 +36,6 @@ package struct FilesViewContainer: View {
     private let nodeCache: any WireDriveNodeCacheProtocol
     private let nodeRenameNotifier: WireDriveNodeRenameNotifier
     private let fileCache: any FileCache
-    private let isFoldersEnabled: Bool
-    private let isCollaboraEnabled: Bool
     private let accentColorProvider: () -> WireAccentColor
 
     private let triggerReloadFiles: PassthroughSubject<Void, Never> = .init()
@@ -60,8 +58,6 @@ package struct FilesViewContainer: View {
         nodeCache: any WireDriveNodeCacheProtocol,
         nodeRenameNotifier: WireDriveNodeRenameNotifier,
         fileCache: any FileCache,
-        isFoldersEnabled: Bool,
-        isCollaboraEnabled: Bool,
         accentColorProvider: @escaping () -> WireAccentColor
     ) {
         self.cellName = cellName
@@ -73,8 +69,6 @@ package struct FilesViewContainer: View {
         self.nodeCache = nodeCache
         self.nodeRenameNotifier = nodeRenameNotifier
         self.fileCache = fileCache
-        self.isFoldersEnabled = isFoldersEnabled
-        self.isCollaboraEnabled = isCollaboraEnabled
         self.accentColorProvider = accentColorProvider
     }
 
@@ -109,7 +103,6 @@ package struct FilesViewContainer: View {
                         nodeCache: nodeCache,
                         nodeRenameNotifier: nodeRenameNotifier,
                         fileCache: fileCache,
-                        isFoldersEnabled: isFoldersEnabled,
                         accentColorProvider: accentColorProvider
                     )
                 }
@@ -123,7 +116,6 @@ package struct FilesViewContainer: View {
                 fetchNodes: WireDriveFetchNodesPageUseCase(
                     configuration: .conversationFileView(
                         root: path.last.map { .id($0.id) } ?? .path(cellName),
-                        isFoldersEnabled: isFoldersEnabled
                     ),
                     repository: nodesRepository
                 ),
@@ -173,8 +165,7 @@ package struct FilesViewContainer: View {
             nodesRepository: nodesRepository,
             fileCache: fileCache,
             cellName: cellName,
-            isFoldersEnabled: isFoldersEnabled,
-            isCollaboraEnabled: isCollaboraEnabled,
+            isBrowsing: false,
             isRecycleBin: false,
             triggerReload: triggerReloadFiles,
             accentColorProvider: accentColorProvider

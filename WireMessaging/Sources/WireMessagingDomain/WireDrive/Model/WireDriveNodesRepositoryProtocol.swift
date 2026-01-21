@@ -97,10 +97,10 @@ package struct WireDriveGetNodesRequest: Equatable, Sendable {
     package enum Configuration: Equatable, Sendable {
 
         /// A `Configuration` suitable for the conversation file view.
-        case conversationFileView(root: WireDriveNodeLocator, isFoldersEnabled: Bool)
+        case conversationFileView(root: WireDriveNodeLocator)
 
         /// A `Configuration` suitable for the recycle bin, where deleted files are stored.
-        case recycleBinView(root: WireDriveNodeLocator, isFoldersEnabled: Bool)
+        case recycleBinView(root: WireDriveNodeLocator)
 
         /// A `Configuration` suitable for the files browser view.
         case filesBrowserView

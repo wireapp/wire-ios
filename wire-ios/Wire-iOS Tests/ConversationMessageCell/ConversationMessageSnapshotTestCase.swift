@@ -180,6 +180,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
         let context = (context ?? ConversationMessageContext.defaultContext)!
 
         let factory = MockWireMessagingFactoryProtocol()
+        factory.makeFetchCachedNodeUseCase_MockValue = MockWireDriveFetchCachedNodeUseCaseProtocol()
         factory.makeFetchNodeUseCase_MockValue = MockWireDriveFetchNodeUseCaseProtocol()
 
         let section = ConversationMessageSectionController(

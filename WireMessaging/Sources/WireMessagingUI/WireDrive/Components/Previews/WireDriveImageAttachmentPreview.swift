@@ -42,10 +42,6 @@ struct WireDriveImageAttachmentPreview: View {
                     }
                 }
 
-                if thumbnail == nil, !isError {
-                    ProgressView()
-                }
-
                 if isError {
                     WireDriveAttachmentPreviewErrorCircle()
                 }

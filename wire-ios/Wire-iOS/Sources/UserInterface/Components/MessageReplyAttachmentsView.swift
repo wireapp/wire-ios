@@ -20,6 +20,7 @@ import Combine
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLogging
 import WireMessagingDomain
 
 /// A lightweight view that renders a preview for one or more message attachments.
@@ -39,12 +40,28 @@ final class MessageReplyAttachmentsView: UIView {
 
     init(
         attachments: [MultipartMessageData.Attachment],
-        viewModel: MessageReplyAttachmentsViewModel
+        viewModel: MessageReplyAttachmentsViewModel,
+        onSizeChange: (() -> Void)? = nil
     ) {
         self.viewModel = viewModel
         super.init(frame: .zero)
 
-        setup(attachments: attachments)
+        let cachedVisibleAttachments = viewModel.cachedVisibleAttachments(attachments: attachments)
+        setup(attachments: cachedVisibleAttachments)
+
+        Task { @MainActor in
+            do {
+                let latestVisibleAttachments = try await viewModel.latestVisibleAttachments(attachments: attachments)
+                if latestVisibleAttachments != cachedVisibleAttachments {
+                    viewModel.cancel()
+                    removeSubviews()
+                    setup(attachments: latestVisibleAttachments)
+                    onSizeChange?()
+                }
+            } catch {
+                WireLogger.conversation.info("Error fetching latest visible attachments: \(error)")
+            }
+        }
     }
 
     @available(*, unavailable)
@@ -63,6 +80,12 @@ final class MessageReplyAttachmentsView: UIView {
 
     private func setup(attachments: [MultipartMessageData.Attachment]) {
         switch attachments.count {
+        case 0:
+            let image = UIImage(named: "ReplyPreviewFileNotAvailable")!
+                .withRenderingMode(.alwaysTemplate)
+                .withTintColor(ColorTheme.Backgrounds.onBackground)
+            let text = L10n.Localizable.Content.Message.Reply.Files.notAvailable
+            setupGenericView(icon: image, text: text)
         case 1 where attachments[0].isVideo || attachments[0].isImage:
             setupImagePreview(for: attachments[0])
         case 1:

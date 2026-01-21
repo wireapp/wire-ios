@@ -92,6 +92,8 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
                 await draftRepository.updateDraft(draft, for: cellName)
             }
 
+            if draft.status == .cancelled { return }
+
             // Set post upload values
             let latestNode = try await nodesAPI.getNode(nodeID: draft.nodeID)
             if let mimeTime = latestNode.mimeType {

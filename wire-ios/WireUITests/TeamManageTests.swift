@@ -27,14 +27,14 @@ final class TeamManageTests: WireUITestCase {
 
         let conversationPage = try app.loginUser(email: user.email, password: user.password)
             .acceptPopup(with: self)
-            .openUserAccountPageForUser(with: user.name)
+            .openUserProfilePage()
             .tapCreateTeamButton()
             .tapContinue()
             .typeTeamNameAndContinue(user.teamName)
             .acceptTheConfirmationAndContinue()
             .tapBackToWireButton()
 
-        let userProfilePage = try conversationPage.openUserAccountPageForUser(with: user.name)
+        let userProfilePage = try conversationPage.openUserProfilePage()
 
         let teamName = try XCTUnwrap(userProfilePage.getTeamName())
         XCTAssertEqual(teamName, user.teamName, "Team name didn't match expected value \(user.teamName)")
@@ -43,31 +43,28 @@ final class TeamManageTests: WireUITestCase {
 
     @MainActor
     func test_PersonalUser_InvitedToTeam() async throws {
-        let owner = try await userHelper.createPersonalUser()
-        let memberUser = UserGenerator.generateUniqueUserInfo()
-        let teamID = try await BackendClient.upgradePersonalToTeam(
-            email: owner.email,
-            password: owner.password,
-            teamName: owner.teamName
+        let teamOwner = try await userHelper.createPersonalUser()
+        let teamID = try await userHelper.upgradePersonalToTeam(
+            teamName: teamOwner.teamName
         )
 
-        let invitationID = try await BackendClient.inviteUserToTeam(
-            teamID: teamID,
-            email: owner.email,
-            password: owner.password,
-            memberName: memberUser.name,
-            memberEmail: memberUser.email
+        let ownerAccessToken = try await userHelper.fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
         )
-        let code = try await BackendClient.getInvitationCode(team: teamID, invitationID: invitationID)
-        try await BackendClient.registerTeamMember(memberUser, invitationCode: code)
+
+        let (_, memberUser) = try await userHelper.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            teamID: teamID
+        )
 
         let firstTimePage = try app.loginUser(email: memberUser.email, password: memberUser.password)
         let userProfilePage = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(memberUser.username)
-            .openUserAccountPageForUser(with: memberUser.username)
+            .openUserProfilePage()
 
         let teamName = try XCTUnwrap(userProfilePage.getTeamName())
-        XCTAssertEqual(teamName, owner.teamName, "Team name didn't match expected value \(owner.teamName)")
+        XCTAssertEqual(teamName, teamOwner.teamName, "Team name didn't match expected value \(teamOwner.teamName)")
 
         let conversationPage = try userProfilePage.closeAccountPage()
         _ = try conversationPage.openSettings()
@@ -84,28 +81,14 @@ final class TeamManageTests: WireUITestCase {
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
 
-        let teamID = try XCTUnwrap(teamOwner.teamID)
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
-            email: teamOwner.email,
-            password: teamOwner.password
-        )
-
-        let (_, teamMember1) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken.token,
-            teamID: teamID,
-        )
-
-        let (_, teamMember2) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken.token,
-            teamID: teamID,
-        )
+        let teamMemberNames = try await userHelper.registerTeamWith2Members(teamOwner: teamOwner)
 
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopup(with: self)
             .tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enterGroupName(groupName)
-            .tapMemberCells(withLabelPrefixes: [teamMember1.name, teamMember2.name])
+            .tapMemberCells(withLabelPrefixes: teamMemberNames)
             .doneSelectingMembers()
             .sendMessage(messageFromOwner)
 
@@ -175,5 +158,33 @@ final class TeamManageTests: WireUITestCase {
                 .waitForExistence(timeout: 5),
             "User \(teamMembers[0].name) is not present in group"
         )
+    }
+
+    /// [WPB-3772] Bug: Opening an archived conversation unarchives it
+    /// testiny: https://app.testiny.io/IOS/testcases/tc/8563
+    @MainActor
+    func test_ArchivedConversationUnarchivesWhenOpened() async throws {
+        let groupName = UserGenerator.generateRandomGroupName()
+
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+
+        let teamNames = try await userHelper.registerTeamWith2Members(teamOwner: teamOwner)
+
+        let archivedConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup(with: self)
+            .tapPlusButtonToCreateGroup()
+            .tapNewGroupButton()
+            .enterGroupName(groupName)
+            .tapMemberCells(withLabelPrefixes: teamNames)
+            .doneSelectingMembers()
+            .openConversationDetails()
+            .moreOptionsConversationDetails()
+            .archiveOptionsConversationDetails()
+            .openArchived()
+            .openConversation()
+            .goBackToConversationPage()
+            .openArchived()
+
+        XCTAssertTrue(archivedConversationPage.conversationExists(withName: groupName))
     }
 }

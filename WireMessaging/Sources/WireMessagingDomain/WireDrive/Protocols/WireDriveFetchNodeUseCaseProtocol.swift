@@ -20,5 +20,5 @@ public import Foundation
 
 // sourcery: AutoMockable
 public protocol WireDriveFetchNodeUseCaseProtocol: Sendable {
-    func invoke(nodeID: UUID) -> AsyncThrowingStream<WireDriveNode?, any Error>
+    func invoke(nodeID: UUID) async throws -> WireDriveNode?
 }

@@ -94,7 +94,7 @@ struct WireDriveLargeVideoPreviewView: View {
                             .disabled(false)
                     }
             case .failure:
-                errorView(text: Self.errorMessage)
+                loadingView(text: Self.loadingMessage)
             @unknown default:
                 EmptyView()
             }

@@ -29,6 +29,7 @@
 "general.error.noInternet.message." = "Похоже, возникла проблема с вашей сетью. Пожалуйста, попробуйте позже.";
 "general.create" = "Создать";
 "general.cancel" = "Отмена";
+"general.done" = "Готово";
 
 // MARK: - Channel Access level
 "channel_access_level.public" = "Публичный";
@@ -81,8 +82,8 @@
 
 "conversation.creationForm.readReceipts.toggle" = "Отчеты о прочтении";
 "conversation.creationForm.readReceipts.description" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
-"conversation.creationForm.wireCells.toggle" = "Совместная работа с файлами";
-"conversation.creationForm.wireCells.description" = "Предоставьте пользователям возможность управлять своими документами и медиафайлами. Используйте папки, теги и фильтры для более эффективной работы. Это невозможно отменить.";
+"conversation.creationForm.wireCells.toggle" = "Shared Drive";
+"conversation.creationForm.wireCells.description" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
 "conversation.creationForm.wireCells.learnMore" = "Подробнее";
 
 
@@ -110,11 +111,12 @@
 "conversation.draft.attachmentMenu.remove" = "Удалить файл";
 
 // MARK: - Conversation Files View
-"conversation.wireCells.files.navigationTitle" = "Файлы";
-"conversation.wireCells.allFiles.navigationTitle" = "Все файлы";
+"conversation.wireCells.files.navigationTitle" = "Shared Drive";
+"conversation.wireCells.allFiles.navigationTitle" = "Drive";
 "conversation.wireCells.files.item.subtitle" = "%@ от %@";
 "conversation.wireCells.files.loadMore.title" = "Загрузить еще";
 "conversation.wireCells.files.item.menu.open" = "Открыть";
+"conversation.wireCells.files.item.menu.shareLink" = "Поделится";
 "conversation.wireCells.files.item.menu.download" = "Скачать";
 "conversation.wireCells.files.item.menu.editFile" = "Изменить файл";
 "conversation.wireCells.files.item.menu.rename" = "Переименовать";
@@ -130,7 +132,10 @@
 "conversation.wireCells.files.item.deleteConfirmation.button" = "Удалить";
 "conversation.wireCells.files.noData.title" = "Файлов и папок пока нет";
 "conversation.wireCells.files.noData.message" = "Здесь вы найдете все файлы и папки, которыми поделились в этой беседе.";
-"conversation.wireCells.allFiles.noData.message" = "Здесь вы найдете все файлы и папки, которыми поделились в ваших беседах.";
+"conversation.wireCells.files.noData.learnMore" = "Learn more about Shared Drive";
+"conversation.wireCells.allFiles.noData.title" = "There are no files yet";
+"conversation.wireCells.allFiles.noData.message" = "For conversations that use shared Drive, you'll find all files here.";
+"conversation.wireCells.allFiles.noData.learnMore" = "Подробнее";
 "conversation.wireCells.files.pendingCells.title" = "Файлы загружаются";
 "conversation.wireCells.files.pendingCells.message" = "Ваши документы и медиафайлы будут доступны здесь после того, как мы загрузим все файлы и папки.";
 "conversation.wireCells.files.error.title" = "Невозможно загрузить файлы";
@@ -150,13 +155,15 @@
 "conversation.wireCells.files.renameFolder.navigationTitle" = "Переименовать папку";
 "conversation.wireCells.files.renameFile.filenameTooLongError" = "Используйте более короткое название файла (максимум 64 символа)";
 "conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Используйте более короткое название папки (максимум 64 символа)";
-"conversation.wireCells.files.renameFile.wrongCharacterError" = "Используйте название без \"/\" и не начинающееся с \".\"";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Используйте название без \"/\"";
+"conversation.wireCells.files.renameFile.dotPrefix" = "Don't start the name with \".\"";
 "conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "Файл с таким названием уже существует";
 "conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "Папка с таким названием уже существует";
 "conversation.wireCells.files.renameFile.placeholder" = "Введите название файла";
 "conversation.wireCells.files.renameFolder.placeholder" = "Введите название папки";
 "conversation.wireCells.files.openRecycleBin" = "Открыть корзину";
 "conversation.wireCells.recycleBin.navigationTitle" = "Корзина";
+"conversation.wireCells.recycleBin.noData.learnMore" = "Learn more about Recycle Bin";
 "conversation.wireCells.recycleBin.noData.message" = "Здесь вы найдете все удаленные файлы и папки.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Удалить навсегда";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Удалить навсегда";
@@ -189,6 +196,51 @@
 "conversation.wireCells.tags.error.retryButton" = "Повторить";
 "conversation.wireCells.files.moveToFolder.move" = "Переместить сюда";
 "conversation.wireCells.files.moveToFolder.noSubfolders" = "В этой папке нет подпапок.";
+
+// MARK: - Share Link View
+"conversation.wireCells.shareLink.title" = "Поделиться по ссылке";
+"conversation.wireCells.shareLink.description" = "Загрузите файл и поделитесь им с помощью общедоступной ссылки. Все получатели смогут просмотреть и скачать его.";
+"conversation.wireCells.shareLink.createLinkToogle" = "Создать публичную ссылку";
+"conversation.wireCells.shareLink.linkSection.title" = "НАСТРОЙКИ ССЫЛКИ (НЕОБЯЗАТЕЛЬНО)";
+"conversation.wireCells.shareLink.linkSection.passwordTitle" = "Пароль";
+"conversation.wireCells.shareLink.linkSection.expirationTitle" = "Срок действия";
+"conversation.wireCells.shareLink.linkSection.passwordDescription" = "Установить пароль для ограничения доступа.";
+"conversation.wireCells.shareLink.linkSection.expirationDescription" = "Ссылка истечет в выбранный день.";
+"conversation.wireCells.shareLink.shareLinkButton" = "Поделиться ссылкой";
+"conversation.wireCells.shareLink.preparingLinkButton" = "Подготовка ссылки…";
+"conversation.wireCells.shareLink.off" = "ВЫКЛ";
+"conversation.wireCells.shareLink.on" = "ВКЛ";
+"conversation.wireCells.shareLink.expired" = "ИСТЕКЛА";
+"conversation.wireCells.shareLink.linkExpiredOn" = "Ссылка истекла %@";
+
+// MARK: - Share Link Password View
+"conversation.wireCells.shareLink.password.title" = "Пароль";
+"conversation.wireCells.shareLink.password.description" = "Для получения доступа к контенту по ссылке, необходимо сначала ввести этот пароль.";
+"conversation.wireCells.shareLink.password.setPasswordToggle" = "Установить пароль";
+"conversation.wireCells.shareLink.password.generatePassword" = "Сгенерировать пароль";
+"conversation.wireCells.shareLink.password.textfieldTitle" = "Пароль";
+"conversation.wireCells.shareLink.password.textfieldPrompt" = "Введите пароль";
+"conversation.wireCells.shareLink.password.sharePassword" = "Поделиться паролем";
+"conversation.wireCells.shareLink.password.resetPassword" = "Сбросить пароль";
+"conversation.wireCells.shareLink.password.removeConfirmation.title" = "Удалить пароль?";
+"conversation.wireCells.shareLink.password.removeConfirmation.message" = "Любой, у кого есть ссылка, может открыть файл и просмотреть его содержимое.";
+"conversation.wireCells.shareLink.password.removeConfirmation.button" = "Удалить";
+"conversation.wireCells.shareLink.password.noAccessToExisting.title" = "Нет доступа к существующему паролю";
+"conversation.wireCells.shareLink.password.noAccessToExisting.message" = "После переустановки Wire вы не сможете скопировать установленный пароль. Тем не менее, он по-прежнему действителен.\n\nЕсли вы не сохранили пароль, измените его и повторно поделитесь обновленной ссылкой.";
+"conversation.wireCells.shareLink.password.noAccessToExisting.button" = "Изменить пароль";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.title" = "Не удается создать защищенную паролем ссылку";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.message" = "Проверьте подключение к сети и повторите попытку.";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.action" = "Повторить";
+
+// MARK: - Share Link Expiration View
+"conversation.wireCells.shareLink.expiration.title" = "Срок действия";
+"conversation.wireCells.shareLink.expiration.addExpirationToggle" = "Добавить срок действия";
+"conversation.wireCells.shareLink.expiration.description" = "Ссылка автоматически станет недействительной после установленной даты и времени. Пользователи больше не смогут получить доступ к контенту.";
+"conversation.wireCells.shareLink.expiration.datePickerTitle" = "Истекает";
+"conversation.wireCells.shareLink.expiration.dateNotSupported" = "Дата в прошлом не поддерживается";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.title" = "Невозможно добавить срок действия";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.message" = "Проверьте подключение к сети и повторите попытку.";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.action" = "Повторить";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "Файл недоступен";

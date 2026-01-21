@@ -79,6 +79,22 @@ final class FileRenameViewTests: XCTestCase {
     }
 
     @MainActor
+    func testFileRenameView_DotPrefixInputError() {
+        for kind in kinds {
+            let (viewModel, view) = makeView(kind: kind)
+            viewModel.filenameInput = "."
+            let name = kind == .file ? ".file." : ".folder."
+
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: view, named: "\(name)" + "light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: view, named: "\(name)" + "dark")
+        }
+    }
+
+    @MainActor
     func testFileRenameView_TooLongInputError() {
         for kind in kinds {
             let (viewModel, view) = makeView(kind: kind)

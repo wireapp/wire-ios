@@ -1875,6 +1875,24 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
         }
     }
 
+    // MARK: - makeFetchCachedNodeUseCase
+
+    var makeFetchCachedNodeUseCase_Invocations: [Void] = []
+    var makeFetchCachedNodeUseCase_MockMethod: (() -> WireCellsFetchCachedNodeUseCaseProtocol)?
+    var makeFetchCachedNodeUseCase_MockValue: WireCellsFetchCachedNodeUseCaseProtocol?
+
+    func makeFetchCachedNodeUseCase() -> WireCellsFetchCachedNodeUseCaseProtocol {
+        makeFetchCachedNodeUseCase_Invocations.append(())
+
+        if let mock = makeFetchCachedNodeUseCase_MockMethod {
+            return mock()
+        } else if let mock = makeFetchCachedNodeUseCase_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeFetchCachedNodeUseCase`")
+        }
+    }
+
     // MARK: - makeFilesView
 
     var makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_Invocations: [(cellName: String, isCellsStatePending: Bool, accentColorProvider: () -> WireAccentColor)] = []

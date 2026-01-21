@@ -22,15 +22,19 @@ public import Foundation
 /// - Parameters:
 ///   - url: URL of the preview.
 ///   - dimension: Max preview thumbnail dimension.
+///   - processing: Whether the preview is currently being processed.
 public struct WireDriveNodePreview: Equatable, Hashable, Sendable {
-    public let url: URL
+    public let url: URL?
     public let dimension: Int
+    public let processing: Bool
 
     package init(
-        url: URL,
-        dimension: Int
+        url: URL?,
+        dimension: Int,
+        processing: Bool
     ) {
         self.url = url
         self.dimension = dimension
+        self.processing = processing
     }
 }

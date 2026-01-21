@@ -76,7 +76,7 @@ struct WireDriveSmallVideoPreviewView: View {
                         }
                     }
             case .failure:
-                WireDriveAttachmentPreviewErrorCircle()
+                ProgressView()
             @unknown default:
                 EmptyView()
             }

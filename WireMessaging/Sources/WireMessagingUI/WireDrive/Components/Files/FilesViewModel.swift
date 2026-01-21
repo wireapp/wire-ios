@@ -219,9 +219,10 @@ package final class FilesViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
     private let navigationPath: [FilesViewItem]
     private let accentColorProvider: () -> WireAccentColor
-    let isFoldersEnabled: Bool
-    let isCollaboraEnabled: Bool
+
+    let isBrowsing: Bool
     let isRecycleBin: Bool
+
     let triggerReload: PassthroughSubject<Void, Never>
 
     @Published var hasMore = true
@@ -252,8 +253,7 @@ package final class FilesViewModel: ObservableObject {
         nodesRepository: any WireDriveNodesRepositoryProtocol,
         fileCache: any FileCache,
         cellName: String? = nil,
-        isFoldersEnabled: Bool,
-        isCollaboraEnabled: Bool,
+        isBrowsing: Bool,
         isRecycleBin: Bool = false,
         triggerReload: PassthroughSubject<Void, Never> = .init(),
         accentColorProvider: @escaping () -> WireAccentColor
@@ -267,8 +267,7 @@ package final class FilesViewModel: ObservableObject {
         self.fileCache = fileCache
         self.cellName = cellName
         self.state = isCellsStatePending ? .pending : .loading
-        self.isFoldersEnabled = isFoldersEnabled
-        self.isCollaboraEnabled = isCollaboraEnabled
+        self.isBrowsing = isBrowsing
         self.isRecycleBin = isRecycleBin
         self.triggerReload = triggerReload
         self.accentColorProvider = accentColorProvider
@@ -357,14 +356,14 @@ package final class FilesViewModel: ObservableObject {
                     sheetNavigation = .shareLink(view: makeShareLinkView(item: item))
                 case .moveToFolder:
                     sheetNavigation = .moveToFolder(fileItem: item)
-                case .onVersionHistory:
+                case .showVersionHistory:
                     sheetNavigation = .versionHistory(view: makeFileVersioningView(item: item))
                 case .edit:
                     isEditing = item
                 }
             },
+            isBrowsing: isBrowsing,
             isInRecycleBin: isRecycleBin,
-            isFoldersEnabled: isFoldersEnabled,
         )
     }
 

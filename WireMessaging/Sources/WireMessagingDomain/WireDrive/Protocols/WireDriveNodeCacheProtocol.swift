@@ -22,9 +22,15 @@ package import Foundation
 ///
 /// A `nil` value indicates that the node was not found on the server, for example it may have been deleted. This is
 /// different from the value never having been added to the cache.
-package struct WireDriveNodeCacheItem {
+public struct WireDriveNodeCacheItem: Equatable, Sendable {
 
-    package let node: WireDriveNode?
+    public let node: WireDriveNode?
+
+    /// Whether the node is deleted or in the recycle bin.
+    public var isDeletedOrRecycled: Bool {
+        guard let node else { return true }
+        return node.isRecycled
+    }
 
 }
 

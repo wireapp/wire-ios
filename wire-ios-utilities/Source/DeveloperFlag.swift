@@ -38,9 +38,8 @@ public enum DeveloperFlag: String, CaseIterable {
     case showUnreadConversationsFilter
     case skipMLSMessagesDecryption
     case useWireAuthentication
-    case wireCellsFolders
     case wireMeetings
-    case wireCellsCollabora
+    case lowKeyPackageCount
 
     public var description: String {
         switch self {
@@ -95,11 +94,8 @@ public enum DeveloperFlag: String, CaseIterable {
         case .wireMeetings:
             "Turn on to enable Wire meetings"
 
-        case .wireCellsFolders:
-            "Turn on to enable Wire Drive folders"
-
-        case .wireCellsCollabora:
-            "Turn on to enable Collabora file editing in Wire Drive"
+        case .lowKeyPackageCount:
+            "Turn on to set the minimum number of packages to 1"
         }
     }
 

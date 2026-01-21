@@ -333,6 +333,12 @@ public extension ZMConversation {
 
         return try context.fetch(request)
     }
+
+    static func fetchDeleted(in context: NSManagedObjectContext) -> [ZMConversation] {
+        let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+        request.predicate = NSPredicate(format: "%K == YES", #keyPath(ZMConversation.isDeletedRemotely))
+        return (try? context.fetch(request)) ?? []
+    }
 }
 
 // MARK: - NSPredicate Extensions

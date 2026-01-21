@@ -18,7 +18,7 @@
 
 package import Foundation
 
-/// Fetches cached and remote `WireDriveNodes` for a given node ID.
+/// Fetches remote `WireCellsNodes` for a given node ID.
 package struct WireDriveFetchNodeUseCase: WireDriveFetchNodeUseCaseProtocol {
 
     private let repository: any WireDriveNodesRepositoryProtocol
@@ -32,25 +32,12 @@ package struct WireDriveFetchNodeUseCase: WireDriveFetchNodeUseCaseProtocol {
         self.cache = cache
     }
 
-    /// Returns a stream that first yields a cached `WireDriveNode` if available, then fetches and yields the latest
-    /// `WireDriveNode` from the server.
-    package func invoke(nodeID: UUID) -> AsyncThrowingStream<WireDriveNode?, any Error> {
-        AsyncThrowingStream { [repository, cache] continuation in
-            Task {
-                if let cached = await cache.item(for: nodeID) {
-                    continuation.yield(cached.node)
-                }
+    /// Returns a `WireCellsNode` for a given nodeID or `nil` if not found. Caches the result in memory.
+    package func invoke(nodeID: UUID) async throws -> WireDriveNode? {
+        let node = try await repository.getNode(id: nodeID)
+        await cache.setItem(WireDriveNodeCacheItem(node: node), for: nodeID)
 
-                do {
-                    let latest = try await repository.getNode(id: nodeID)
-                    await cache.setItem(WireDriveNodeCacheItem(node: latest), for: nodeID)
-                    continuation.yield(latest)
-                    continuation.finish()
-                } catch {
-                    continuation.finish(throwing: error)
-                }
-            }
-        }
+        return node
     }
 
 }

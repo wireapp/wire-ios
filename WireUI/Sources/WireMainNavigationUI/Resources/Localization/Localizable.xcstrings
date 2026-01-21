@@ -254,122 +254,122 @@
       "localizations" : {
         "ar" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "ملفّات"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "da" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Filer"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dateien"
+            "value" : "Drive"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Files"
+            "value" : "Drive"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ficheros"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "et" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Failid"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "fi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tiedostot"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fichiers"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Allegati"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "ファイル"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "lt" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Failai"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "nl" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bestanden"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "pl" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pliki"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arquivos"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Файлы"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "sl" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zbirke"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "tr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dosyalar"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Файли"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "文件"
+            "state" : "new",
+            "value" : "Drive"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "檔案"
+            "state" : "new",
+            "value" : "Drive"
           }
         }
       }

@@ -49,6 +49,7 @@ final class ConversationCreationController: UIViewController {
     typealias CreateGroupName = L10n.Localizable.Conversation.Create.GroupName
 
     private let userSession: UserSession
+    private let isAppsFeatureEnabled: Bool
     private let areLegacyBotsAvailable: Bool
 
     private let collectionViewController = SectionCollectionViewController()
@@ -180,6 +181,7 @@ final class ConversationCreationController: UIViewController {
     ) {
         self.preSelectedParticipants = preSelectedParticipants
         self.userSession = userSession
+        self.isAppsFeatureEnabled = isAppsFeatureEnabled
         self.areLegacyBotsAvailable = areLegacyBotsAvailable
         self.values = ConversationCreationValues(
             isChannel: false,
@@ -289,7 +291,9 @@ final class ConversationCreationController: UIViewController {
 
             let participantsController = AddParticipantsViewController(
                 context: .create(values),
-                userSession: userSession
+                userSession: userSession,
+                isAppsFeatureEnabled: isAppsFeatureEnabled,
+                areLegacyBotsAvailable: areLegacyBotsAvailable
             )
 
             participantsController.conversationCreationDelegate = self

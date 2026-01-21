@@ -108,7 +108,7 @@ public actor WorkAgent {
                     )
                 } catch {
                     WireLogger.workAgent.error(
-                        "item failed, dropping",
+                        "item failed, dropping \(String(describing: error))",
                         attributes: .init(item)
                     )
                     continue
