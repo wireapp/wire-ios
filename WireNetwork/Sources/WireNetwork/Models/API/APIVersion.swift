@@ -39,6 +39,7 @@ public enum APIVersion: UInt, CaseIterable, Comparable, Sendable {
     case v12
     case v13
     case v14
+    case v15
 
     /// API versions considered production ready by the client.
     ///
@@ -78,7 +79,3 @@ public enum APIVersion: UInt, CaseIterable, Comparable, Sendable {
 }
 
 // swiftlint:enable identifier_name
-
-public extension APIVersion {
-    static let minimumSyncV2CompatibleVersion: APIVersion = .v5
-}

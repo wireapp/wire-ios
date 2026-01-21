@@ -550,66 +550,6 @@ public class MockIsE2EICertificateEnrollmentRequiredProtocol: IsE2EICertificateE
 
 }
 
-public class MockLegacyResolveOneOnOneConversationsUseCaseProtocol: LegacyResolveOneOnOneConversationsUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invoke_Invocations: [Void] = []
-    public var invoke_MockError: Error?
-    public var invoke_MockMethod: (() async throws -> Bool)?
-    public var invoke_MockValue: Bool?
-
-    @discardableResult
-    public func invoke() async throws -> Bool {
-        invoke_Invocations.append(())
-
-        if let error = invoke_MockError {
-            throw error
-        }
-
-        if let mock = invoke_MockMethod {
-            return try await mock()
-        } else if let mock = invoke_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `invoke`")
-        }
-    }
-
-}
-
-public class MockLegacySupportedProtocolsServiceInterface: LegacySupportedProtocolsServiceInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - calculateSupportedProtocols
-
-    public var calculateSupportedProtocols_Invocations: [Void] = []
-    public var calculateSupportedProtocols_MockMethod: (() -> Set<WireDataModel.MessageProtocol>)?
-    public var calculateSupportedProtocols_MockValue: Set<WireDataModel.MessageProtocol>?
-
-    public func calculateSupportedProtocols() -> Set<WireDataModel.MessageProtocol> {
-        calculateSupportedProtocols_Invocations.append(())
-
-        if let mock = calculateSupportedProtocols_MockMethod {
-            return mock()
-        } else if let mock = calculateSupportedProtocols_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `calculateSupportedProtocols`")
-        }
-    }
-
-}
-
 public class MockPasteboard: Pasteboard {
 
     // MARK: - Life cycle
@@ -1107,17 +1047,22 @@ public class MockSetAllowGuestAndAppsUseCaseProtocol: SetAllowGuestAndAppsUseCas
 
     // MARK: - invoke
 
-    public var invokeConversationAllowGuestsAllowAppsCompletion_Invocations: [(conversation: ZMConversation, allowGuests: Bool, allowApps: Bool, completion: (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void)] = []
-    public var invokeConversationAllowGuestsAllowAppsCompletion_MockMethod: ((ZMConversation, Bool, Bool, @escaping (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void) -> Void)?
+    public var invokeConversationAllowGuestsAllowApps_Invocations: [(conversation: ZMConversation, allowGuests: Bool, allowApps: Bool)] = []
+    public var invokeConversationAllowGuestsAllowApps_MockError: Error?
+    public var invokeConversationAllowGuestsAllowApps_MockMethod: ((ZMConversation, Bool, Bool) async throws -> Void)?
 
-    public func invoke(conversation: ZMConversation, allowGuests: Bool, allowApps: Bool, completion: @escaping (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void) {
-        invokeConversationAllowGuestsAllowAppsCompletion_Invocations.append((conversation: conversation, allowGuests: allowGuests, allowApps: allowApps, completion: completion))
+    public func invoke(conversation: ZMConversation, allowGuests: Bool, allowApps: Bool) async throws {
+        invokeConversationAllowGuestsAllowApps_Invocations.append((conversation: conversation, allowGuests: allowGuests, allowApps: allowApps))
 
-        guard let mock = invokeConversationAllowGuestsAllowAppsCompletion_MockMethod else {
-            fatalError("no mock for `invokeConversationAllowGuestsAllowAppsCompletion`")
+        if let error = invokeConversationAllowGuestsAllowApps_MockError {
+            throw error
         }
 
-        mock(conversation, allowGuests, allowApps, completion)
+        guard let mock = invokeConversationAllowGuestsAllowApps_MockMethod else {
+            fatalError("no mock for `invokeConversationAllowGuestsAllowApps`")
+        }
+
+        try await mock(conversation, allowGuests, allowApps)
     }
 
 }
