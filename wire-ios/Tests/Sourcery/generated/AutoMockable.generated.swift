@@ -1878,10 +1878,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makeFetchCachedNodeUseCase
 
     var makeFetchCachedNodeUseCase_Invocations: [Void] = []
-    var makeFetchCachedNodeUseCase_MockMethod: (() -> WireCellsFetchCachedNodeUseCaseProtocol)?
-    var makeFetchCachedNodeUseCase_MockValue: WireCellsFetchCachedNodeUseCaseProtocol?
+    var makeFetchCachedNodeUseCase_MockMethod: (() -> WireDriveFetchCachedNodeUseCaseProtocol)?
+    var makeFetchCachedNodeUseCase_MockValue: WireDriveFetchCachedNodeUseCaseProtocol?
 
-    func makeFetchCachedNodeUseCase() -> WireCellsFetchCachedNodeUseCaseProtocol {
+    func makeFetchCachedNodeUseCase() -> WireDriveFetchCachedNodeUseCaseProtocol {
         makeFetchCachedNodeUseCase_Invocations.append(())
 
         if let mock = makeFetchCachedNodeUseCase_MockMethod {
