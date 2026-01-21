@@ -46,6 +46,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
     convenience init(
         conversation: ZMConversation,
         userSession: ZMUserSession,
+        createSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol,
         areLegacyBotsAvailable: Bool,
         isAppsFeatureEnabled: Bool
     ) {
@@ -59,7 +60,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
             viewModel: .init(
                 configuration: configuration,
                 conversation: conversation,
-                createSecureGuestLinkUseCase: userSession.makeConversationSecureGuestLinkUseCase(),
+                createSecureGuestLinkUseCase: createSecureGuestLinkUseCase,
                 metadata: userSession.resolvedBackendMetadata
             )
         )

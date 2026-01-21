@@ -263,9 +263,7 @@ final class FilesItemViewModel: ObservableObject {
 
         if !isInRecycleBin {
             actions.insert(.open)
-            if item.kind == .file {
-                actions.insert(.shareLink)
-            }
+            actions.insert(.shareLink)
         }
 
         if !isBrowsing {

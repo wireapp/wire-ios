@@ -40,7 +40,6 @@
 
 ### Pending propoals
 
-- ``commitPendingProposalsIfNeeded()``
 - ``commitPendingProposals(in:)``
 
 ### Key material

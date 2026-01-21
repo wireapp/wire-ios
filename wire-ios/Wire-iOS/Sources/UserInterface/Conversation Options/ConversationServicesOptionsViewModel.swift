@@ -137,15 +137,18 @@ final class ConversationServicesOptionsViewModel {
             }
 
             configuration.setAllowApps(allowApps) { [weak self] result in
-                guard let self else { return }
-                item.cancel()
-                state.isLoading = false
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
 
-                switch result {
-                case .success:
-                    updateRows()
-                case let .failure(error):
-                    delegate?.conversationServicesOptionsViewModel(self, didReceiveError: error)
+                    item.cancel()
+                    state.isLoading = false
+
+                    switch result {
+                    case .success:
+                        updateRows()
+                    case let .failure(error):
+                        delegate?.conversationServicesOptionsViewModel(self, didReceiveError: error)
+                    }
                 }
             }
         }

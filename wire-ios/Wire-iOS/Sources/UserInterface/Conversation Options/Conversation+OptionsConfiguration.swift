@@ -97,16 +97,19 @@ extension ZMConversation {
         }
 
         func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+            let setConversationGuestsAndAppsUseCase = userSession.makeSetConversationGuestsAndAppsUseCase()!
+            let context = conversation.managedObjectContext!
 
-            userSession.makeSetConversationGuestsAndAppsUseCase().invoke(
-                conversation: conversation,
-                allowGuests: allowGuests,
-                allowApps: conversation.allowApps
-            ) { result in
-                switch result {
-                case .success:
+            Task { [conversation] in
+                do {
+                    let allowApps = await context.perform { conversation.allowApps }
+                    try await setConversationGuestsAndAppsUseCase.invoke(
+                        conversation: conversation,
+                        allowGuests: allowGuests,
+                        allowApps: allowApps
+                    )
                     completion(.success(()))
-                case let .failure(error):
+                } catch {
                     completion(.failure(error))
                 }
             }
@@ -114,16 +117,19 @@ extension ZMConversation {
         }
 
         func setAllowApps(_ allowApps: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+            let setConversationGuestsAndAppsUseCase = userSession.makeSetConversationGuestsAndAppsUseCase()!
+            let context = conversation.managedObjectContext!
 
-            userSession.makeSetConversationGuestsAndAppsUseCase().invoke(
-                conversation: conversation,
-                allowGuests: conversation.allowGuests,
-                allowApps: allowApps
-            ) { result in
-                switch result {
-                case .success:
+            Task { [conversation] in
+                do {
+                    let allowGuests = await context.perform { conversation.allowGuests }
+                    try await setConversationGuestsAndAppsUseCase.invoke(
+                        conversation: conversation,
+                        allowGuests: allowGuests,
+                        allowApps: allowApps
+                    )
                     completion(.success(()))
-                case let .failure(error):
+                } catch {
                     completion(.failure(error))
                 }
             }

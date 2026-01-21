@@ -326,11 +326,11 @@ final class UserSessionMock: UserSession {
         MockGetE2eIdentityCertificatesUseCaseProtocol()
     }
 
-    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+    func makeConversationSecureGuestLinkUseCase() -> (any CreateConversationGuestLinkUseCaseProtocol)? {
         MockCreateConversationGuestLinkUseCaseProtocol()
     }
 
-    func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol {
+    func makeSetConversationGuestsAndAppsUseCase() -> (any SetAllowGuestAndAppsUseCaseProtocol)? {
         MockSetAllowGuestAndAppsUseCaseProtocol()
     }
 
@@ -350,7 +350,7 @@ final class UserSessionMock: UserSession {
         AppendKnockMessageUseCase(analyticsEventTracker: nil)
     }
 
-    func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol {
+    func makeAppendLocationMessageUseCase() -> any AppendLocationMessageUseCaseProtocol {
         AppendLocationMessageUseCase(analyticsEventTracker: nil)
     }
 

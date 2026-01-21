@@ -260,6 +260,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         }
 
         return .unregistered
+
     }
 
     public var clientIsReadyForRequests: Bool {

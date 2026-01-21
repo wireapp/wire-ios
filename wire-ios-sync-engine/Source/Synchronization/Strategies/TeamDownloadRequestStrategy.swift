@@ -86,22 +86,17 @@ private extension Team {
 /// Responsible for downloading the team which the self user belongs to during the slow sync
 /// and for updating it when processing events or when manually requested.
 
-public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMEventConsumer,
-    ZMSingleRequestTranscoder, ZMDownstreamTranscoder {
+public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource,
+    ZMDownstreamTranscoder {
 
     private(set) var downstreamSync: ZMDownstreamObjectSync!
-    private(set) var slowSync: ZMSingleRequestSync!
 
-    fileprivate unowned var syncStatus: SyncStatus
-
-    public init(
+    public override init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        syncStatus: SyncStatus
     ) {
-        self.syncStatus = syncStatus
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
-        configuration = [.allowsRequestsWhileOnline, .allowsRequestsDuringSlowSync]
+        configuration = [.allowsRequestsWhileOnline]
         self.downstreamSync = ZMDownstreamObjectSync(
             transcoder: self,
             entityName: Team.entityName(),
@@ -109,146 +104,14 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
             filter: nil,
             managedObjectContext: managedObjectContext
         )
-        self.slowSync = ZMSingleRequestSync(
-            singleRequestTranscoder: self,
-            groupQueue: managedObjectContext
-        )
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        if isSyncing {
-            slowSync.readyForNextRequestIfNotBusy()
-            return slowSync.nextRequest(for: apiVersion)
-        } else {
-            return downstreamSync.nextRequest(for: apiVersion)
-        }
+        downstreamSync.nextRequest(for: apiVersion)
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         [downstreamSync]
-    }
-
-    fileprivate var expectedSyncPhase: SyncPhase {
-        .fetchingTeams
-    }
-
-    fileprivate var isSyncing: Bool {
-        syncStatus.currentSyncPhase == expectedSyncPhase
-    }
-
-    // MARK: - ZMEventConsumer
-
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        events.forEach(process)
-    }
-
-    private func process(_ event: ZMUpdateEvent) {
-        switch event.type {
-        case .teamCreate: createTeam(with: event)
-        case .teamDelete: deleteTeam(with: event)
-        case .teamMemberLeave: processRemovedMember(with: event)
-        case .teamMemberUpdate: processUpdatedMember(with: event)
-        default: break
-        }
-    }
-
-    private func createTeam(with event: ZMUpdateEvent) {
-        guard
-            let data = event.dataPayload,
-            let team = TeamPayload(data)
-        else {
-            WireLogger.updateEvent.error("failed to process team.create event")
-            return
-        }
-
-        _ = team.createOrUpdateTeam(in: managedObjectContext)
-    }
-
-    private func deleteTeam(with event: ZMUpdateEvent) {
-        deleteAccount()
-    }
-
-    private func processRemovedMember(with event: ZMUpdateEvent) {
-        guard let identifier = event.teamId, let data = event.dataPayload else { return }
-        guard let team = Team.fetch(with: identifier, in: managedObjectContext) else { return }
-        guard let removedUserId = (data[TeamEventPayloadKey.user.rawValue] as? String)
-            .flatMap(UUID.init(transportString:)) else { return }
-        guard let user = ZMUser.fetch(with: removedUserId, in: managedObjectContext) else { return }
-        if let member = user.membership {
-            if user.isSelfUser {
-                deleteAccount()
-            } else {
-                user.markAccountAsDeleted(at: event.timestamp ?? Date())
-            }
-            managedObjectContext.delete(member)
-        } else {
-            log.error("Trying to delete non existent membership of \(user) in \(team)")
-        }
-    }
-
-    private func processUpdatedMember(with event: ZMUpdateEvent) {
-        guard event.teamId != nil, let data = event.dataPayload else { return }
-        guard let userId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init(transportString:))
-        else { return }
-        guard let member = Member.fetch(with: userId, in: managedObjectContext) else { return }
-        member.needsToBeUpdatedFromBackend = true
-    }
-
-    private func deleteTeamAndConversations(_ team: Team) {
-        team.conversations.forEach(managedObjectContext.delete)
-        managedObjectContext.delete(team)
-    }
-
-    private func deleteAccount() {
-        let notification = AccountDeletedNotification(context: managedObjectContext)
-        notification.post(in: managedObjectContext.notificationContext)
-    }
-
-    // MARK: - ZMSingleRequestTranscoder
-
-    public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
-        switch apiVersion {
-        case .v0, .v1, .v2, .v3:
-            return TeamDownloadRequestFactory.getTeamsRequest(apiVersion: apiVersion)
-        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
-            guard let teamID = ZMUser.selfUser(in: managedObjectContext).teamIdentifier else {
-                syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
-                return nil
-            }
-
-            return TeamDownloadRequestFactory.getRequest(for: [teamID], apiVersion: apiVersion)
-        }
-    }
-
-    public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
-        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
-        switch apiVersion {
-        case .v0, .v1, .v2, .v3:
-            guard
-                let rawData = response.rawData,
-                let teamListPayload = TeamListPayload(rawData)
-            else {
-                syncStatus.failCurrentSyncPhase(phase: expectedSyncPhase)
-                return
-            }
-
-            _ = teamListPayload.teams.first?.createOrUpdateTeam(in: managedObjectContext)
-
-            syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
-
-        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
-            guard
-                let rawData = response.rawData,
-                let teamPayload = TeamPayload(rawData)
-            else {
-                syncStatus.failCurrentSyncPhase(phase: expectedSyncPhase)
-                return
-            }
-
-            _ = teamPayload.createOrUpdateTeam(in: managedObjectContext)
-
-            syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
-        }
     }
 
     // MARK: - ZMDownstreamTranscoder
@@ -329,5 +192,3 @@ extension TeamUpdateEventPayload {
     }
 
 }
-
-private let log = ZMSLog(tag: "Teams")
