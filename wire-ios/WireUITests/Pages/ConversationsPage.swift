@@ -129,7 +129,7 @@ class ConversationsPage: PageModel {
     func getNameLabel() -> String? {
         conversationCell.label
     }
-    
+
     // Problem: Opening the user profile can occasionally fail while a background sync is in progress.
     // Workaround: Assert the presence of stable UI elements to give the sync time to complete.
     func VerifyUserIsOnConversationsTab() throws {
