@@ -164,7 +164,7 @@ final class UploadDraftUseCaseTests {
         // Given
         let nodeID = UUID()
 
-        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture(
+        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireDriveDraft.fixture(
             nodeID: nodeID,
             status: .uploading(progress: 0.5)
         )
@@ -172,7 +172,7 @@ final class UploadDraftUseCaseTests {
         uploadManager
             .uploadNodeIDVersionIDAssetPathAssetSizeDestNodePath_MockValue
             = (
-                WireCellsNode(uuid: nodeID, path: "foo.txt"),
+                WireDriveNode(uuid: nodeID, path: "foo.txt"),
                 AsyncStream.make(
                     [
                         .uploading(progress: 0.5),
