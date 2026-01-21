@@ -343,7 +343,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    func testWireCellsEnabled() throws {
+    func testWireDriveEnabled() throws {
         // GIVEN
         setSelfUserInTeam()
         mockSelfUser.teamRole = .admin
@@ -352,7 +352,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
 
         mockConversation.sortedOtherParticipants = [mockSelfUser]
         mockConversation.displayName = "Empty group conversation"
-        mockConversation.isCellsEnabled = true
+        mockConversation.isWireDriveEnabled = true
 
         sut = GroupDetailsViewController(
             conversation: mockConversation,

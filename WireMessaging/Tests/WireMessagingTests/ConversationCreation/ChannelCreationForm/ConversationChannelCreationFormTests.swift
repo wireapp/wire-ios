@@ -43,7 +43,7 @@ class ConversationChannelCreationFormTests: XCTestCase {
             viewModel: ConversationChannelCreationFormViewModel(
                 channelName: "",
                 isUserPremium: true,
-                isWireCellsEnabled: true,
+                isWireDriveEnabled: true,
                 teamsURL: URL(string: "https://wire.com")!
             ) { _ in }
         )
@@ -64,7 +64,7 @@ class ConversationChannelCreationFormTests: XCTestCase {
             viewModel: ConversationChannelCreationFormViewModel(
                 channelName: "",
                 isUserPremium: true,
-                isWireCellsEnabled: true,
+                isWireDriveEnabled: true,
                 teamsURL: URL(string: "https://wire.com")!
             ) { _ in }
         )
@@ -85,7 +85,7 @@ class ConversationChannelCreationFormTests: XCTestCase {
         let viewModel = ConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            isWireCellsEnabled: true,
+            isWireDriveEnabled: true,
             teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
 
@@ -110,7 +110,7 @@ class ConversationChannelCreationFormTests: XCTestCase {
         let viewModel = ConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            isWireCellsEnabled: true,
+            isWireDriveEnabled: true,
             teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
 
@@ -135,7 +135,7 @@ class ConversationChannelCreationFormTests: XCTestCase {
         let viewModel = ConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            isWireCellsEnabled: true,
+            isWireDriveEnabled: true,
             teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
 
@@ -162,7 +162,7 @@ class ConversationChannelCreationFormTests: XCTestCase {
         let viewModel = ConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            isWireCellsEnabled: true,
+            isWireDriveEnabled: true,
             teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
 

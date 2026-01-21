@@ -27,15 +27,15 @@ import WireMessagingUI
 // sourcery: AutoMockable
 protocol WireMessagingFactoryProtocol {
 
-    func makeUploadDraftUseCase(cellName: String) -> WireCellsUploadDraftUseCaseProtocol
-    func makeObserveDraftsUseCase(cellName: String) -> WireCellsObserveDraftsUseCaseProtocol
-    func makePublishDraftsUseCase(cellName: String) -> WireCellsPublishDraftsUseCaseProtocol
-    func makeClearPublishedDraftsUseCase(cellName: String) -> WireCellsClearPublishedDraftsUseCaseProtocol
-    func makeDeleteDraftUseCase(cellName: String) -> WireCellsDeleteDraftUseCaseProtocol
-    func makeRetryUploadDraftUseCase(cellName: String) -> WireCellsRetryUploadDraftUseCaseProtocol
-    func makeDeleteNodesUseCase() -> WireCellsDeleteNodesUseCaseProtocol
-    func makeFetchNodeUseCase() -> WireCellsFetchNodeUseCaseProtocol
-    func makeFetchCachedNodeUseCase() -> WireCellsFetchCachedNodeUseCaseProtocol
+    func makeUploadDraftUseCase(cellName: String) -> WireDriveUploadDraftUseCaseProtocol
+    func makeObserveDraftsUseCase(cellName: String) -> WireDriveObserveDraftsUseCaseProtocol
+    func makePublishDraftsUseCase(cellName: String) -> WireDrivePublishDraftsUseCaseProtocol
+    func makeClearPublishedDraftsUseCase(cellName: String) -> WireDriveClearPublishedDraftsUseCaseProtocol
+    func makeDeleteDraftUseCase(cellName: String) -> WireDriveDeleteDraftUseCaseProtocol
+    func makeRetryUploadDraftUseCase(cellName: String) -> WireDriveRetryUploadDraftUseCaseProtocol
+    func makeDeleteNodesUseCase() -> WireDriveDeleteNodesUseCaseProtocol
+    func makeFetchNodeUseCase() -> WireDriveFetchNodeUseCaseProtocol
+    func makeFetchCachedNodeUseCase() -> WireDriveFetchCachedNodeUseCaseProtocol
 
     @MainActor
     func makeFilesView(

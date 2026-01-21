@@ -34,7 +34,7 @@ final class ZClientControllerBuilder {
     private(set) var trackingManager: TrackingManager?
     let legacyEnvironment: WireTransport.BackendEnvironment
     let newEnvironment: WireNetwork.BackendEnvironment2?
-    private lazy var wireCellsBackendURL: URL? = {
+    private lazy var wireDriveBackendURL: URL? = {
         let contextProvider = userSession.contextProvider
         let syncContext = contextProvider.syncContext
         let featureRepository = LegacyFeatureRepository(context: syncContext)
@@ -85,11 +85,11 @@ final class ZClientControllerBuilder {
                 case missingCellsBackendURL
             }
 
-            guard let self, let wireCellsBackendURL else {
+            guard let self, let wireDriveBackendURL else {
                 throw Failure.missingCellsBackendURL
             }
 
-            return wireCellsBackendURL
+            return wireDriveBackendURL
         }
 
         return WireMessagingFactory(
@@ -119,13 +119,13 @@ private struct DefaultAccessTokenProvider: AccessTokenProvider {
 
     let userSession: UserSession
 
-    func accessToken() async throws -> WireCellsAccessToken {
+    func accessToken() async throws -> WireDriveAccessToken {
         guard let authManager = userSession.clientSessionComponent?.authenticationManager else {
             throw Error.noAuthenticationManager
         }
 
         let token = try await authManager.getValidAccessToken()
-        return WireCellsAccessToken(
+        return WireDriveAccessToken(
             token: token.token,
             expirationDate: token.expirationDate
         )
