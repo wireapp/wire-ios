@@ -434,10 +434,13 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     }
 
     private func nameForFile(withUTI UTI: String, name: String?) -> String? {
-        if let fileExtension = UTType(UTI)?.preferredFilenameExtension {
+        if let name {
+            return name
+        } else if let fileExtension = UTType(UTI)?.preferredFilenameExtension {
             return "\(UUID().uuidString).\(fileExtension)"
+        } else {
+            return nil
         }
-        return name
     }
 
 }
