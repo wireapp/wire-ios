@@ -35,6 +35,8 @@ protocol WireMessagingFactoryProtocol {
     func makeRetryUploadDraftUseCase(cellName: String) -> WireCellsRetryUploadDraftUseCaseProtocol
     func makeDeleteNodesUseCase() -> WireCellsDeleteNodesUseCaseProtocol
     func makeFetchNodeUseCase() -> WireCellsFetchNodeUseCaseProtocol
+    func makeFetchCachedNodeUseCase() -> WireCellsFetchCachedNodeUseCaseProtocol
+
     @MainActor
     func makeFilesView(
         cellName: String,

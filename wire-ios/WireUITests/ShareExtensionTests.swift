@@ -61,7 +61,10 @@ final class ShareExtensionTests: WireUITestCase {
         try await userHelper.acceptConnectionRequestFromUser(domain: domain, user1: user1, userId: user2.id)
         let firstTimePage = try app.loginUser(email: user1.email, password: user1.password)
         let conversationsPage = try  firstTimePage.acceptPopup(with: self)
-
+        XCTAssertTrue(
+            conversationsPage.conversationCell.waitForExistence(timeout: 4.0),
+            "Conversation Cell did not show up after login"
+        )
         try await launchPhotosApp()
         try await shareFirstPhotoToWire(name: user2.name)
         try await switchBackToWireApp()

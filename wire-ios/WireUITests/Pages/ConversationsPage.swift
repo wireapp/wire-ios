@@ -75,10 +75,8 @@ class ConversationsPage: PageModel {
     }
 
     func openUserProfilePage() throws -> UserProfilePage {
-
-        if accountProfileImageView.waitForExistence(timeout: 2), accountProfileImageView.isHittable {
-            accountProfileImageView.tap()
-        }
+        try VerifyUserIsOnConversationsTab()
+        accountProfileImageView.waitAndTap()
         return try UserProfilePage()
     }
 
@@ -130,5 +128,13 @@ class ConversationsPage: PageModel {
 
     func getNameLabel() -> String? {
         conversationCell.label
+    }
+
+    // Problem: Opening the user profile can occasionally fail while sync is in progress after login
+    // Workaround: Assert the presence of some UI elements to give the sync time to complete.
+    func VerifyUserIsOnConversationsTab() throws {
+        XCTAssertTrue(plusButtonToCreateGroup.exists)
+        XCTAssertTrue(archivedButton.exists)
+        XCTAssert(settingsButton.exists)
     }
 }
