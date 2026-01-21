@@ -130,8 +130,8 @@ class ConversationsPage: PageModel {
         conversationCell.label
     }
 
-    // Problem: Opening the user profile can occasionally fail while a background sync is in progress.
-    // Workaround: Assert the presence of stable UI elements to give the sync time to complete.
+    // Problem: Opening the user profile can occasionally fail while sync is in progress after login
+    // Workaround: Assert the presence of some UI elements to give the sync time to complete.
     func VerifyUserIsOnConversationsTab() throws {
         XCTAssertTrue(plusButtonToCreateGroup.exists)
         XCTAssertTrue(archivedButton.exists)
