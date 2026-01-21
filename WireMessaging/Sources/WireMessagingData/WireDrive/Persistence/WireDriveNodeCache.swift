@@ -36,9 +36,9 @@ package final class WireDriveNodeCache: WireDriveNodeCacheProtocol {
 
 }
 
-extension WireCellsNodeCache: WireCellsFetchCachedNodeUseCaseProtocol {
+extension WireDriveNodeCache: WireDriveFetchCachedNodeUseCaseProtocol {
 
-    package func invoke(nodeID: UUID) -> WireCellsNodeCacheItem? {
+    package func invoke(nodeID: UUID) -> WireDriveNodeCacheItem? {
         item(for: nodeID)
     }
 

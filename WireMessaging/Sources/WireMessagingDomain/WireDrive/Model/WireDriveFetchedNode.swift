@@ -16,29 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireDesign
+/// The result of fetching a wire cells node.
+public enum WireDriveFetchedNode: Sendable, Equatable {
 
-struct CreateFolderCTA: View {
+    /// A `WireCellsNode` was found on the server.
+    case node(WireDriveNode)
 
-    let action: () -> Void
+    /// No `WireCellsNode` was found on the server - it may have been deleted or the user might not have permission to
+    /// access to it.
+    case notFound
 
-    var body: some View {
-        VStack(spacing: 0) {
-            Divider()
-
-            Button(action: action) {
-                HStack(alignment: .center, spacing: 20) {
-                    Image(systemName: "plus")
-
-                    Text(L10n.Localizable.Conversation.WireCells.Files.List.newFolder)
-                        .font(for: .body2)
-                    Spacer()
-                }
-            }
-            .tint(ColorTheme.Backgrounds.onSurface.color)
-            .padding()
+    public var isDeleted: Bool {
+        switch self {
+        case let .node(node):
+            node.isRecycled
+        case .notFound:
+            true
         }
-        .contentShape(Rectangle())
     }
 }

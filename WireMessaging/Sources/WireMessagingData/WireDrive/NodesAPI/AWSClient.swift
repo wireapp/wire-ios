@@ -201,14 +201,14 @@ final class AWSClient: Sendable {
                 _ = try await s3.putObject(input: input)
             } catch {
                 if Task.isCancelled {
-                    WireLogger.wireCells.info("Upload cancelled for node: \(node.path)")
+                    WireLogger.wireDrive.info("Upload cancelled for node: \(node.path)")
                     throw CancellationError()
                 }
 
                 throw error
             }
         } onCancel: {
-            WireLogger.wireCells.info("Cancelling upload for node: \(node.path)")
+            WireLogger.wireDrive.info("Cancelling upload for node: \(node.path)")
             stream.cancel()
         }
     }
