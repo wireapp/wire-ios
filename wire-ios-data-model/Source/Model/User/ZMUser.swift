@@ -300,6 +300,7 @@ public extension ZMUser {
     @NSManaged var usesCompanyLogin: Bool
 
     /// If `needsToRefetchLabels` is true we need to refetch the conversation labels (favorites & folders)
+    @available(*, deprecated, message: "not used, can be cleaned up")
     @NSManaged var needsToRefetchLabels: Bool
 
     /// The analytics identifier used for tag analytic events.

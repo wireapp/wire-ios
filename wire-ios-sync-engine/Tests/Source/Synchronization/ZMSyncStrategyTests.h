@@ -26,8 +26,6 @@
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 #import "MessagingTest.h"
 
-@class MockSyncStateDelegate;
-@class MockEventConsumer;
 @class MockContextChangeTracker;
 
 
@@ -35,10 +33,8 @@
 
 @property (nonatomic) ZMSyncStrategy *sut;
 
-@property (nonatomic) MockSyncStateDelegate *syncStateDelegate;
 @property (nonatomic) OperationStatus *operationStatus;
 
-@property (nonatomic) MockEventConsumer *mockEventConsumer;
 @property (nonatomic) MockContextChangeTracker *mockContextChangeTracker;
 
 @property (nonatomic) NSFetchRequest *fetchRequestForTrackedObjects1;

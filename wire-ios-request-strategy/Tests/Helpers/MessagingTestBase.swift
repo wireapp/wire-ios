@@ -149,75 +149,6 @@ class MessagingTestBase: ZMTBaseTest {
 
 extension MessagingTestBase {
 
-    /// Creates an update event with encrypted message from the other client, decrypts it and returns it
-    func decryptedUpdateEventFromOtherClient(
-        text: String,
-        conversation: ZMConversation? = nil,
-        source: ZMUpdateEventSource = .pushNotification,
-        eventDecoder: EventDecoder
-    ) async throws -> ZMUpdateEvent {
-        try await decryptedUpdateEventFromOtherClient(
-            message: GenericMessage(content: Text(content: text)),
-            conversation: conversation,
-            source: source,
-            eventDecoder: eventDecoder
-        )
-    }
-
-    /// Creates an update event with encrypted message from the other client, decrypts it and returns it
-    func decryptedUpdateEventFromOtherClient(
-        message: GenericMessage,
-        conversation: ZMConversation? = nil,
-        source: ZMUpdateEventSource = .pushNotification,
-        eventDecoder: EventDecoder
-    ) async throws -> ZMUpdateEvent {
-
-        let cyphertext = try await proteusClientSimulator.encryptedMessageToSelf(message: message, from: otherClient)
-        let innerPayload = await syncMOC.perform { [self] in
-            [
-                "recipient": selfClient.remoteIdentifier!,
-                "sender": otherClient.remoteIdentifier!,
-                "text": cyphertext.base64String()
-            ]
-        }
-
-        return try await decryptedUpdateEventFromOtherClient(
-            innerPayload: innerPayload,
-            conversation: conversation,
-            source: source,
-            type: "conversation.otr-message-add",
-            eventDecoder: eventDecoder
-        )
-    }
-
-    /// Creates an update event with encrypted message from the other client, decrypts it and returns it
-    func decryptedAssetUpdateEventFromOtherClient(
-        message: GenericMessage,
-        conversation: ZMConversation? = nil,
-        source: ZMUpdateEventSource = .pushNotification,
-        eventDecoder: EventDecoder
-    ) async throws -> ZMUpdateEvent {
-
-        let cyphertext = try await proteusClientSimulator.encryptedMessageToSelf(message: message, from: otherClient)
-        // Note: [F] added info to make it ZMSLog SafeTypes happy - this event conversation.otr-asset-add is deprecated
-        let innerPayload = await syncMOC.perform { [self] in
-            [
-                "recipient": selfClient.remoteIdentifier!,
-                "sender": otherClient.remoteIdentifier!,
-                "id": UUID.create().transportString(),
-                "key": cyphertext.base64String(),
-                "info": cyphertext.base64String()
-            ]
-        }
-        return try await decryptedUpdateEventFromOtherClient(
-            innerPayload: innerPayload,
-            conversation: conversation,
-            source: source,
-            type: "conversation.otr-asset-add",
-            eventDecoder: eventDecoder
-        )
-    }
-
     func encryptedUpdateEventToSelfFromOtherClient(
         message: GenericMessage,
         conversation: ZMConversation? = nil,
@@ -242,44 +173,6 @@ extension MessagingTestBase {
                 type: "conversation.otr-message-add"
             )
         }
-    }
-
-    /// Creates an update event with encrypted message from the other client, decrypts it and returns it
-    private func decryptedUpdateEventFromOtherClient(
-        innerPayload: [String: Any],
-        conversation: ZMConversation?,
-        source: ZMUpdateEventSource,
-        type: String,
-        eventDecoder: EventDecoder
-    ) async throws -> ZMUpdateEvent {
-        let context = try XCTUnwrap(syncMOC)
-
-        let event = await context.perform {
-            self.encryptedUpdateEventFromOtherClient(
-                innerPayload: innerPayload,
-                conversation: conversation,
-                source: source,
-                type: type
-            )
-        }
-
-        let proteusService = await context.perform { context.proteusService }
-
-        let decryptedEvent = await eventDecoder.decryptProteusEventAndAddClient(
-            event,
-            in: syncMOC
-        ) { sessionID, encryptedData in
-            guard let result = try await proteusService?.decrypt(
-                data: encryptedData,
-                forSession: sessionID,
-                context: nil
-            ) else {
-                return nil
-            }
-            return (didCreateNewSession: result.didCreateNewSession, decryptedData: result.decryptedData)
-        }
-
-        return try XCTUnwrap(decryptedEvent)
     }
 
     private func encryptedUpdateEventFromOtherClient(

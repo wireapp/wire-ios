@@ -234,7 +234,7 @@ enum WirelessRequestFactory {
 
         switch apiVersion {
 
-        case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
+        case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
             guard let domain else {
                 fatal("no domain associated with conversation, can't make the request")
