@@ -176,6 +176,10 @@ class UserHelper {
         return response.teamId
     }
 
+    func getVerificationCode(user: UserInfo) async throws -> String {
+        try await InbucketClient.getVerificationCode(email: user.email)
+    }
+    
     /// Delete  created test users
     func deleteCreatedUsers() async {
         for user in createdUsers {
@@ -246,11 +250,54 @@ class UserHelper {
         return accessToken
     }
 
-    /// Register user in team as member
-    /// - Parameters:
-    ///   - ownerAccessToken: ownerAccessToken
-    ///   - teamID: teamID
-    /// - Returns: qualifiedId and memberInfo
+
+    /// Disable GDPR consent popup
+    /// - Parameter user: userInfo
+    func disableConsentPopup(for user: UserInfo) async throws {
+
+        let baseURL = BackendContext.backendEnvironment.url
+        let versionedURL = baseURL
+            .appendingPathComponent(String(describing: apiVersion))
+            .appendingPathComponent("properties")
+            .appendingPathComponent("webapp")
+
+        let accessToken = try await fetchAccessToken(email: user.email, password: user.password)
+
+        let body: [String: Any] = [
+            "settings": [
+                "privacy": [
+                    "improve_wire": false,
+                    "marketing_consent": false,
+                    "telemetry_data_sharing": false
+                ]
+            ]
+        ]
+
+        var request = URLRequest(url: versionedURL)
+        request.httpMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("application/json;charset=UTF-8", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(accessToken.token)", forHTTPHeaderField: "Authorization")
+        request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
+
+        func send(_ url: URL) async throws -> HTTPURLResponse {
+            var r = request
+            r.url = url
+            let (data, response) = try await URLSession.shared.data(for: r)
+            return response as! HTTPURLResponse
+        }
+
+        let responseCode = try await send(versionedURL)
+        if responseCode.statusCode == 200 {
+            return
+        }
+    }
+
+        /// Register user in team as member
+        /// - Parameters:
+        ///   - ownerAccessToken: ownerAccessToken
+        ///   - teamID: teamID
+        /// - Returns: qualifiedId and memberInfo
     func registerUsersAsTeamMember(
         ownerAccessToken: String,
         teamID: UUID

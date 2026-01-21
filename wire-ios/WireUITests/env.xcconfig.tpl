@@ -25,3 +25,6 @@ ANTA_DEEPLINK_URL=op://Test Automation/BackendConnection anta/trimmedDeeplinkUrl
 ANTA_INBUCKET_URL=op://Test Automation/BackendConnection anta/trimmedInbucketUrl
 BASIC_AUTH_ANTA=op://Test Automation/BackendConnection anta/basicAuth
 BACKEND_URL_ANTA=op://Test Automation/BackendConnection anta/trimmedBackendURL
+CALLINGSERVICE_URL=op://Test Automation/CALLINGSERVICE_BASIC_AUTH/website
+CALLINGSERVICE_USERNAME=op://Test Automation/CALLINGSERVICE_BASIC_AUTH/username
+CALLINGSERVICE_PASSWORD=op://Test Automation/CALLINGSERVICE_BASIC_AUTH/password

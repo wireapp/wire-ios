@@ -10,6 +10,18 @@
             "value" : "$(INBUCKET_USERNAME)"
           },
           {
+            "key" : "CALLINGSERVICE_URL",
+            "value" : "$(CALLINGSERVICE_URL)"
+          },
+          {
+            "key" : "CALLINGSERVICE_USERNAME",
+            "value" : "$(CALLINGSERVICE_USERNAME)"
+          },
+          {
+            "key" : "CALLINGSERVICE_PASSWORD",
+            "value" : "$(CALLINGSERVICE_PASSWORD)"
+          },
+          {
             "key" : "BASIC_AUTH",
             "value" : "$(BASIC_AUTH)"
           },
