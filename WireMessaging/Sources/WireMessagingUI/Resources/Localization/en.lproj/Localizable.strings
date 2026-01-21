@@ -238,7 +238,7 @@
 "conversation.wireCells.shareLink.expiration.addExpirationToggle" = "Add expiration";
 "conversation.wireCells.shareLink.expiration.description" = "The link expires automatically after the set date and time. People can't access the content anymore.";
 "conversation.wireCells.shareLink.expiration.datePickerTitle" = "Expires";
-"conversation.wireCells.shareLink.expiration.dateNotSupported" = "Date in the past is not supported";
+"conversation.wireCells.shareLink.expiration.dateNotSupported" = "Date in the past";
 "conversation.wireCells.shareLink.expiration.unableToAddExpiration.title" = "Unable to add expiration date";
 "conversation.wireCells.shareLink.expiration.unableToAddExpiration.message" = "Please check your network connection and try again.";
 "conversation.wireCells.shareLink.expiration.unableToAddExpiration.action" = "Try again";
@@ -255,9 +255,8 @@
 "conversation.wireCells.filesVersioning.restoreAlertTitle" = "Restore version";
 "conversation.wireCells.filesVersioning.restoreAlertMessage" = "This copies the restored version and sets it as the current one. All previous versions remain available.";
 "conversation.wireCells.filesVersioning.restoreAlertAction" = "Restore";
-"conversation.wireCells.filesVersioning.restoreFailureAlertTitle" = "Restoring version failed";
-"conversation.wireCells.filesVersioning.restoreFailureAlertMessage" = "Something went wrong while restoring a version. Please retry.";
+"conversation.wireCells.filesVersioning.restoreFailureAlertTitle" = "Unable to restore version";
+"conversation.wireCells.filesVersioning.restoreFailureAlertMessage" = "Something went wrong while restoring this version. Please try again.";
 "conversation.wireCells.filesVersioning.downloadVersion" = "Download version";
 "conversation.wireCells.filesVersioning.retry" = "Retry";
 "conversation.wireCells.filesVersioning.restoringVersion" = "Restoring version...";
-"conversation.wireCells.filesVersioning.downloadingVersion" = "Downloading file version";

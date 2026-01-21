@@ -254,4 +254,3 @@
 "conversation.wireCells.filesVersioning.downloadVersion" = "Скачать версию";
 "conversation.wireCells.filesVersioning.retry" = "Повторить";
 "conversation.wireCells.filesVersioning.restoringVersion" = "Восстановление версии... ";
-"conversation.wireCells.filesVersioning.downloadingVersion" = "Загрузка версии файла";
