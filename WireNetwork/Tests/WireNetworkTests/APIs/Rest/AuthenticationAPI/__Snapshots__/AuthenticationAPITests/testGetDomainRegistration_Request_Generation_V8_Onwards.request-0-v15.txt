@@ -1,0 +1,5 @@
+curl \
+	--request POST \
+	--header "Content-Type: application/json" \
+	--data "{\"email\":\"email@example.com\"}" \
+	"/v15/get-domain-registration"
