@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class TeamsAPIV14: TeamsAPIV13 {
+class TeamsAPIV14: TeamsAPIV13 {
     override var apiVersion: APIVersion { .v14 }
 }
