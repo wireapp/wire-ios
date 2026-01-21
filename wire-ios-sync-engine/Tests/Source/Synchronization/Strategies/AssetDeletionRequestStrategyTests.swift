@@ -132,7 +132,7 @@ extension AssetDeletionRequestStrategyTests {
             "/assets/v3/\(identifier)"
         case .v1:
             "/v1/assets/v3/\(identifier)"
-        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             "/v\(apiVersion.rawValue)/assets/\(domain)/\(identifier)"
         }
         XCTAssertNotNil(request)

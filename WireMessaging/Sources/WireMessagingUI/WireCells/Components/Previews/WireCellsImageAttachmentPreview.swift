@@ -42,10 +42,6 @@ struct WireCellsImageAttachmentPreview: View {
                     }
                 }
 
-                if thumbnail == nil, !isError {
-                    ProgressView()
-                }
-
                 if isError {
                     WireCellsAttachmentPreviewErrorCircle()
                 }
