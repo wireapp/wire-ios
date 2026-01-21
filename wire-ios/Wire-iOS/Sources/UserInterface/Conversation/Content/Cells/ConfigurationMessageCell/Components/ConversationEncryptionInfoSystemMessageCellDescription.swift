@@ -36,9 +36,17 @@ final class ConversationEncryptionInfoSystemMessageCellDescription: Conversation
     init(isWireDriveEnabled: Bool) {
         typealias connectionView = L10n.Localizable.Conversation.ConnectionView
 
+        let encryptionText = NSAttributedString(
+            string: isWireCellsEnabled ? connectionView.WireCells.encryptionInfo : connectionView.encryptionInfo
+        )
+        let sensitiveInfoText = NSAttributedString(
+            string: connectionView.sensitiveInformationWarning
+        )
+
         self.configuration = View.Configuration(
-            topText: isWireDriveEnabled ? connectionView.WireCells.encryptionInfo : connectionView.encryptionInfo,
-            bottomText: connectionView.sensitiveInformationWarning
+            icon: .init(resource: .attention),
+            topText: encryptionText,
+            bottomText: sensitiveInfoText
         )
 
         self.accessibilityLabel = "\(connectionView.encryptionInfo), \(connectionView.sensitiveInformationWarning)"

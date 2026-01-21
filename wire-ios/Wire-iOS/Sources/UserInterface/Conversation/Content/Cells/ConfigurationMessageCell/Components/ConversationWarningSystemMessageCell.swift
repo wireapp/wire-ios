@@ -28,22 +28,26 @@ final class ConversationWarningSystemMessageCell<
     private typealias IconColors = SemanticColors.Icon
 
     struct Configuration: Equatable {
-        let topText: String
-        let bottomText: String
+        let icon: UIImage?
+        let topText: NSAttributedString
+        let bottomText: NSAttributedString
     }
 
     private let encryptionLabel = DynamicFontLabel(
+        attributedText: NSAttributedString(string: ""),
         style: .subline1,
         color: LabelColors.textDefault
     )
     private let sensitiveInfoLabel = DynamicFontLabel(
+        attributedText: NSAttributedString(string: ""),
         style: .subline1,
         color: LabelColors.textDefault
     )
 
     func configure(with object: Configuration, animated: Bool) {
-        encryptionLabel.text = object.topText
-        sensitiveInfoLabel.text = object.bottomText
+        encryptionLabel.attributedText = object.topText
+        sensitiveInfoLabel.attributedText = object.bottomText
+        imageView.image = object.icon
     }
 
     override func configureSubviews() {
@@ -57,7 +61,6 @@ final class ConversationWarningSystemMessageCell<
         bottomContentView.addSubview(sensitiveInfoLabel)
 
         lineView.isHidden = true
-        imageView.image = .init(resource: .attention)
         imageView.tintColor = IconColors.backgroundDefault
     }
 
