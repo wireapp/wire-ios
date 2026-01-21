@@ -176,12 +176,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
                 isFederationEnabled: isFederationEnabled
             ),
             UpdateConversationProtocolActionHandler(context: managedObjectContext),
-            CreateConversationGuestLinkActionHandler(context: managedObjectContext),
-            SetAllowGuestsAndAppsActionHandler(
-                context: managedObjectContext,
-                localDomain: localDomain,
-                isFederationEnabled: isFederationEnabled
-            )
+            CreateConversationGuestLinkActionHandler(context: managedObjectContext)
         ])
 
         self.apiVersion = apiVersion
@@ -216,7 +211,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         case .v0:
             conversationByIDSync.sync(identifiers: conversations.compactMap(\.remoteIdentifier))
 
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             if let qualifiedIDs = conversations.qualifiedIDs {
                 conversationByQualifiedIDSync.sync(identifiers: qualifiedIDs)
             } else if let localDomain {
@@ -249,7 +244,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
                 }
             }
 
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             conversationQualifiedIDsSync.fetch { [weak self] result in
                 switch result {
                 case let .success(qualifiedConversationIDList):
@@ -425,7 +420,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                     apiVersion: apiVersion.rawValue
                 )
 
-            case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
+            case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
                 let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
                 guard let domain else { return nil }
 
@@ -467,7 +462,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                     apiVersion: apiVersion.rawValue
                 )
 
-            case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
+            case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
                 let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { localDomain }
                 guard let domain else { return nil }
 

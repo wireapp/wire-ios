@@ -126,7 +126,7 @@ package extension WireCellsNode {
             contentUrl: contentUrl,
             contentHash: contentHash,
             mimeType: mimeType,
-            previews: previews.map { PreviewDTO(url: $0.url, dimension: $0.dimension) },
+            previews: previews.map { PreviewDTO(url: $0.url, dimension: $0.dimension, processing: $0.processing) },
             ownerUserId: ownerUserID?.transportString,
             ownerUserName: ownerUserName,
             conversationId: conversationID?.transportString,
@@ -174,26 +174,31 @@ package extension RestNode {
 }
 
 package struct PreviewDTO: Equatable, Hashable, Sendable {
-    package let url: URL
+    package let url: URL?
     package let dimension: Int?
+    package let processing: Bool?
 
-    init(url: URL, dimension: Int?) {
+    init(url: URL?, dimension: Int?, processing: Bool?) {
         self.url = url
         self.dimension = dimension
+        self.processing = processing
     }
 
     init?(_ value: RestFilePreview) {
-        guard
-            let urlString = value.preSignedGET?.url,
-            let contentType = value.contentType,
-            let url = URL(string: urlString),
-            let type = UTType(mimeType: contentType),
-            type.conforms(to: .image) else {
-            return nil
+        var url: URL?
+
+        if let urlString = value.preSignedGET?.url, let contentType = value.contentType {
+            guard let previewURL = URL(string: urlString),
+                  let type = UTType(mimeType: contentType),
+                  type.conforms(to: .image) else {
+                return nil
+            }
+            url = previewURL
         }
 
         self.url = url
         self.dimension = value.dimension
+        self.processing = value.processing
     }
 
 }
@@ -202,7 +207,8 @@ package extension PreviewDTO {
     func toModel() -> WireCellsNodePreview {
         WireCellsNodePreview(
             url: url,
-            dimension: dimension ?? 0
+            dimension: dimension ?? 0,
+            processing: processing ?? false
         )
     }
 }

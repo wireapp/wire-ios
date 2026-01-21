@@ -82,8 +82,8 @@
 
 "conversation.creationForm.readReceipts.toggle" = "Lesebestätigungen";
 "conversation.creationForm.readReceipts.description" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
-"conversation.creationForm.wireCells.toggle" = "Dateiverwaltung";
-"conversation.creationForm.wireCells.description" = "Ermöglichen Sie den Teilnehmern, ihre Dokumente und Mediendateien zu verwalten. Verwenden Sie Ordner, Tags und Filter, um effizienter zu arbeiten. Dieser Vorgang kann nicht rückgängig gemacht werden.";
+"conversation.creationForm.wireCells.toggle" = "Geteiltes Drive";
+"conversation.creationForm.wireCells.description" = "Ermöglichen Sie den Teilnehmern, ihre Dokumente und Mediendateien in einem geteilten Drive zu verwalten. Dieser Vorgang kann nicht rückgängig gemacht werden.";
 "conversation.creationForm.wireCells.learnMore" = "Mehr erfahren";
 
 
@@ -111,8 +111,8 @@
 "conversation.draft.attachmentMenu.remove" = "Datei löschen";
 
 // MARK: - Conversation Files View
-"conversation.wireCells.files.navigationTitle" = "Dateien";
-"conversation.wireCells.allFiles.navigationTitle" = "Alle Dateien";
+"conversation.wireCells.files.navigationTitle" = "Geteiltes Drive";
+"conversation.wireCells.allFiles.navigationTitle" = "Drive";
 "conversation.wireCells.files.item.subtitle" = "%@ von %@";
 "conversation.wireCells.files.loadMore.title" = "Weitere Objekte laden";
 "conversation.wireCells.files.item.menu.open" = "Öffnen";
@@ -132,7 +132,10 @@
 "conversation.wireCells.files.item.deleteConfirmation.button" = "Löschen";
 "conversation.wireCells.files.noData.title" = "Es gibt noch keine Dateien oder Ordner";
 "conversation.wireCells.files.noData.message" = "Hier finden Sie alle Dateien und Ordner, die in dieser Unterhaltung geteilt wurden.";
-"conversation.wireCells.allFiles.noData.message" = "Hier finden Sie alle Dateien und Ordner, die Sie in Ihren Unterhaltungen gemeinsam nutzen.";
+"conversation.wireCells.files.noData.learnMore" = "Erfahren Sie mehr über Geteiltes Drive";
+"conversation.wireCells.allFiles.noData.title" = "Es gibt noch keine Dateien";
+"conversation.wireCells.allFiles.noData.message" = "Bei Unterhaltungen mit Geteiltes Drive finden Sie hier die geteilten Dateien.";
+"conversation.wireCells.allFiles.noData.learnMore" = "Mehr erfahren";
 "conversation.wireCells.files.pendingCells.title" = "Dateien werden geladen";
 "conversation.wireCells.files.pendingCells.message" = "Ihre Dokumente und Mediendateien werden hier verfügbar sein, sobald wir alle Dateien und Ordner hochgeladen haben.";
 "conversation.wireCells.files.error.title" = "Dateien werden nicht geladen";
@@ -152,13 +155,15 @@
 "conversation.wireCells.files.renameFolder.navigationTitle" = "Ordner umbenennen";
 "conversation.wireCells.files.renameFile.filenameTooLongError" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
 "conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
-"conversation.wireCells.files.renameFile.wrongCharacterError" = "Verwenden Sie einen Namen ohne \"/\" und nicht mit \".\" beginnend";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Verwenden Sie einen Namen ohne \"/\"";
+"conversation.wireCells.files.renameFile.dotPrefix" = "Beginnen Sie den Namen nicht mit \".\"";
 "conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "Eine Datei mit diesem Namen existiert bereits";
 "conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "Ein Ordner mit dem Namen existiert bereits";
 "conversation.wireCells.files.renameFile.placeholder" = "Dateinamen eingeben";
 "conversation.wireCells.files.renameFolder.placeholder" = "Ordnernamen eingeben";
 "conversation.wireCells.files.openRecycleBin" = "Papierkorb öffnen";
 "conversation.wireCells.recycleBin.navigationTitle" = "Papierkorb";
+"conversation.wireCells.recycleBin.noData.learnMore" = "Erfahren Sie mehr über den Papierkorb";
 "conversation.wireCells.recycleBin.noData.message" = "Hier finden Sie alle gelöschten Dateien und Ordner.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Endgültig löschen";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Endgültig löschen";
@@ -202,7 +207,7 @@
 "conversation.wireCells.shareLink.linkSection.passwordDescription" = "Passwort festlegen, um den Zugriff zu beschränken.";
 "conversation.wireCells.shareLink.linkSection.expirationDescription" = "Link läuft an einem bestimmten Tag ab.";
 "conversation.wireCells.shareLink.shareLinkButton" = "Link teilen";
-"conversation.wireCells.shareLink.preparingLinkButton" = "Preparing Link…";
+"conversation.wireCells.shareLink.preparingLinkButton" = "Link vorbereiten…";
 "conversation.wireCells.shareLink.off" = "AUS";
 "conversation.wireCells.shareLink.on" = "EIN";
 "conversation.wireCells.shareLink.expired" = "ABGELAUFEN";
