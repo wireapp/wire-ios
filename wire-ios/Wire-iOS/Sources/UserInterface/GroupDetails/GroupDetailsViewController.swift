@@ -377,7 +377,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         case .invite:
             let addParticipantsViewController = AddParticipantsViewController(
                 conversation: conversation,
-                userSession: userSession
+                userSession: userSession,
+                isAppsFeatureEnabled: isAppsFeatureEnabled,
+                areLegacyBotsAvailable: areLegacyBotsAvailable
             )
             let navigationController = addParticipantsViewController.wrapInNavigationController()
             navigationController.modalPresentationStyle = .currentContext

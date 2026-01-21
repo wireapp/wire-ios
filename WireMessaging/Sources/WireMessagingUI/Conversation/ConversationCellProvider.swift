@@ -22,26 +22,26 @@ package import WireMessagingDomain
 
 public final class ConversationCellProvider {
 
+    private let fetchCachedNodeUseCase: any WireCellsFetchCachedNodeUseCaseProtocol
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
-    private let nodeCache: any WireCellsNodeCacheProtocol
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let lastOpenRequest: WireCellsLastOpenRequest
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
     private let insetsProvider: () -> ConversationCellInsets
 
     package init(
+        fetchCachedNodeUseCase: any WireCellsFetchCachedNodeUseCaseProtocol,
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
-        nodeCache: any WireCellsNodeCacheProtocol,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         lastOpenRequest: WireCellsLastOpenRequest,
         nodeRenameNotifier: WireCellsNodeRenameNotifier,
         insetsProvider: @escaping () -> ConversationCellInsets
     ) {
+        self.fetchCachedNodeUseCase = fetchCachedNodeUseCase
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
-        self.nodeCache = nodeCache
         self.localAssetRepository = localAssetRepository
         self.lastOpenRequest = lastOpenRequest
         self.insetsProvider = insetsProvider
@@ -84,9 +84,9 @@ public final class ConversationCellProvider {
             let viewModel = WireCellsAttachmentsPreviewViewModel(
                 attachments: model.attachments,
                 alignment: model.isSentBySelfUser ? .trailing : .leading,
+                fetchCachedNodeUseCase: fetchCachedNodeUseCase,
                 fetchNodeUseCase: fetchNodeUseCase,
                 getAssetUseCase: getAssetUseCase,
-                nodeCache: nodeCache,
                 localAssetRepository: localAssetRepository,
                 lastOpenRequest: lastOpenRequest,
                 nodeRenameNotifier: nodeRenameNotifier

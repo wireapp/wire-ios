@@ -43,10 +43,6 @@ struct WireCellsVideoAttachmentPreview: View {
                     }
                 }
 
-                if thumbnail == nil, !isError {
-                    ProgressView()
-                }
-
                 if thumbnail != nil, !isError {
                     PlayIcon()
                         .disabled(!canPlay)

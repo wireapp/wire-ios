@@ -25,9 +25,9 @@ import WireMessagingDomainSupport
 @MainActor
 package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
 
+    private let fetchCachedNodeUseCase: any WireCellsFetchCachedNodeUseCaseProtocol
     private let fetchNodeUseCase: WireCellsFetchNodeUseCase
     private let getAssetUseCase: WireCellsGetAssetUseCase
-    private let nodeCache: any WireCellsNodeCacheProtocol
     private let localAssetRepository: any WireCellsLocalAssetRepositoryProtocol
     private let lastOpenRequest: WireCellsLastOpenRequest
     private let nodeRenameNotifier: WireCellsNodeRenameNotifier
@@ -38,9 +38,9 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
     package init(
         attachments: [WireCellsMessageAttachment],
         alignment: HorizontalAlignment,
+        fetchCachedNodeUseCase: any WireCellsFetchCachedNodeUseCaseProtocol,
         fetchNodeUseCase: WireCellsFetchNodeUseCase,
         getAssetUseCase: WireCellsGetAssetUseCase,
-        nodeCache: any WireCellsNodeCacheProtocol,
         localAssetRepository: any WireCellsLocalAssetRepositoryProtocol,
         lastOpenRequest: WireCellsLastOpenRequest,
         nodeRenameNotifier: WireCellsNodeRenameNotifier
@@ -49,7 +49,7 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
         self.alignment = alignment
         self.fetchNodeUseCase = fetchNodeUseCase
         self.getAssetUseCase = getAssetUseCase
-        self.nodeCache = nodeCache
+        self.fetchCachedNodeUseCase = fetchCachedNodeUseCase
         self.localAssetRepository = localAssetRepository
         self.lastOpenRequest = lastOpenRequest
         self.nodeRenameNotifier = nodeRenameNotifier
@@ -60,9 +60,9 @@ package final class WireCellsAttachmentsPreviewViewModel: ObservableObject {
         WireCellsAttachmentsPreviewItemViewModel(
             attachment: attachments[index],
             alignment: alignment,
+            fetchCachedNodeUseCase: fetchCachedNodeUseCase,
             fetchNodeUseCase: fetchNodeUseCase,
             getAssetUseCase: getAssetUseCase,
-            nodeCache: nodeCache,
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
             nodeRenameNotifier: nodeRenameNotifier,
@@ -115,9 +115,13 @@ extension WireCellsAttachmentsPreviewViewModel {
         let fileCache = MockFileCache()
         fileCache.fileURLForKey_MockMethod = { _ in nil }
 
+        let fetchCachedNodeUseCase = MockWireCellsFetchCachedNodeUseCaseProtocol()
+        fetchCachedNodeUseCase.invokeNodeID_MockMethod = { _ in nil }
+
         return WireCellsAttachmentsPreviewViewModel(
             attachments: attachments,
             alignment: .leading,
+            fetchCachedNodeUseCase: fetchCachedNodeUseCase,
             fetchNodeUseCase: WireCellsFetchNodeUseCase(
                 repository: nodesRepository,
                 cache: nodeCache
@@ -126,7 +130,6 @@ extension WireCellsAttachmentsPreviewViewModel {
                 localAssetRepository: localAssetRepository,
                 fileCache: fileCache
             ),
-            nodeCache: nodeCache,
             localAssetRepository: localAssetRepository,
             lastOpenRequest: WireCellsLastOpenRequest(),
             nodeRenameNotifier: WireCellsNodeRenameNotifier()
