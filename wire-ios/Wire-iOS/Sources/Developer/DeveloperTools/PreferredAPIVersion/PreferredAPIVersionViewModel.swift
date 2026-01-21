@@ -44,16 +44,24 @@ final class PreferredAPIVersionViewModel: ObservableObject {
     enum Value: Equatable {
 
         case noPreference
-        case apiVersion(APIVersion)
+        case apiVersion(WireTransport.APIVersion)
 
-        init(apiVersion: APIVersion?) {
-            if let apiVersion {
-                self = .apiVersion(apiVersion)
+        init(apiVersion: WireNetwork.APIVersion?) {
+            if let apiVersion, let version = WireTransport.APIVersion(rawValue: Int32(apiVersion.rawValue)) {
+                self = .apiVersion(version)
             } else {
                 self = .noPreference
             }
         }
 
+        var apiVersion: WireTransport.APIVersion? {
+            switch self {
+            case .noPreference:
+                return nil
+            case .apiVersion(let version):
+                return version
+            }
+        }
     }
 
     enum Event {
@@ -83,7 +91,7 @@ final class PreferredAPIVersionViewModel: ObservableObject {
 
         // Initial selection
         let selectedItem = sections.flatMap(\.items).first { item in
-            item.value == Value(apiVersion: BackendInfo.preferredAPIVersion)
+            item.value.apiVersion == BackendInfo.preferredAPIVersion
         }!
 
         self.selectedItemID = selectedItem.id
@@ -100,7 +108,7 @@ final class PreferredAPIVersionViewModel: ObservableObject {
             case .noPreference:
                 BackendInfo.preferredAPIVersion = nil
             case let .apiVersion(version):
-                BackendInfo.preferredAPIVersion = version
+                BackendInfo.preferredAPIVersion = WireTransport.APIVersion(rawValue: Int32(version.rawValue))
             }
             // as the WireAuthentication module might have been loaded with wrong preferredAPIVersion
             // we force exit
