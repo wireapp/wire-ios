@@ -19,6 +19,7 @@
 import Foundation
 import WireSyncEngine
 import WireTransport
+import WireNetwork
 
 final class PreferredAPIVersionViewModel: ObservableObject {
 
@@ -72,10 +73,10 @@ final class PreferredAPIVersionViewModel: ObservableObject {
     init() {
         self.sections = [
             Section(header: "", items: [Item(title: "No preference", value: .noPreference)]),
-            Section(header: "Production versions", items: APIVersion.productionVersions.sorted().map {
+            Section(header: "Production versions", items: WireNetwork.APIVersion.productionVersions.sorted().map {
                 Item(title: String($0.rawValue), value: Value(apiVersion: $0))
             }),
-            Section(header: "Development versions", items: APIVersion.developmentVersions.sorted().map {
+            Section(header: "Development versions", items: WireNetwork.APIVersion.developmentVersions.sorted().map {
                 Item(title: String($0.rawValue), value: Value(apiVersion: $0))
             })
         ]
