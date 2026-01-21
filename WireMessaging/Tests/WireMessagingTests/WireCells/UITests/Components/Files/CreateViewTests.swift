@@ -142,11 +142,11 @@ final class CreateViewTests: XCTestCase {
                 .verify(matching: view, named: "\(name)" + "dark")
         }
     }
-    
+
     @MainActor
     func testCreateView_File_Navigation_Title() {
         let kinds = [WireCellsTemplate.Kind.document, .spreadsheet, .presentation]
-        
+
         for kind in kinds {
             let view = makeView(target: .file(.fixture(kind: kind)))
             viewModel.nameInput = ""
@@ -168,7 +168,7 @@ final class CreateViewTests: XCTestCase {
             path: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2",
             createUseCase: createUseCase
         )
-        
+
         let vm = viewModel!
 
         return CreateView(viewModel: vm)
