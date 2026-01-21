@@ -111,6 +111,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         didTriggerReplyingTo message: ZMConversationMessage
     ) {
         let messageReplyAttachmentsViewModel = MessageReplyAttachmentsViewModel(
+            fetchCachedNodeUseCase: wireMessagingFactory.makeFetchCachedNodeUseCase(),
             fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
         )
         let replyComposingView = contentViewController.createReplyComposingView(

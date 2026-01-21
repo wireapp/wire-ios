@@ -306,6 +306,7 @@ final class ConversationViewController: UIViewController {
 
         if let quote = conversation.draftMessage?.quote, !quote.hasBeenDeleted, let contentViewController {
             let messageReplyAttachmentsViewModel = MessageReplyAttachmentsViewModel(
+                fetchCachedNodeUseCase: wireMessagingFactory.makeFetchCachedNodeUseCase(),
                 fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
             )
             inputBarController.addReplyComposingView(contentViewController.createReplyComposingView(
