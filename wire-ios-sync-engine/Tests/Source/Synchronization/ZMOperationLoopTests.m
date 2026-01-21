@@ -35,18 +35,12 @@
     self.mockTransportSesssion = [[RecordingMockTransportSession alloc] initWithCookieStorage:self.cookieStorage];
             
     self.mockRequestStrategy = [[MockRequestStrategy alloc] init];
-    self.mockUpdateEventProcessor = [[MockUpdateEventProcessor alloc] init];
     self.mockRequestCancellation = [[MockRequestCancellation alloc] init];
 
     self.operationStatus = [[OperationStatus alloc] init];
-    self.syncStatus = [[SyncStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository isSyncV2Enabled:NO];
-    self.pushNotificationStatus = [[PushNotificationStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository];
     self.sut = [[ZMOperationLoop alloc] initWithTransportSession:self.mockTransportSesssion
                                                  requestStrategy:self.mockRequestStrategy
-                                            updateEventProcessor:self.mockUpdateEventProcessor
                                                  operationStatus:self.operationStatus
-                                                      syncStatus:self.syncStatus
-                                          pushNotificationStatus:self.pushNotificationStatus
                                                            uiMOC:self.uiMOC
                                                          syncMOC:self.syncMOC
                                           isDeveloperModeEnabled:NO
@@ -57,7 +51,6 @@
 - (void)tearDown;
 {
     WaitForAllGroupsToBeEmpty(0.5);
-    self.pushNotificationStatus = nil;
     self.applicationStatusDirectory = nil;
     self.mockTransportSesssion = nil;
     self.mockRequestStrategy = nil;

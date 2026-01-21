@@ -738,7 +738,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    public func addAccount(userInfo: [String: Any]? = nil) {
+    public func addAccount(userInfo: [String: Any]? = nil, completion: (() -> Void)? = nil) {
         confirmSwitchingAccount { [weak self] isConfirmed in
             guard isConfirmed else { return }
             let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
@@ -747,6 +747,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 error: error
             ) { [weak self] in
                 self?.activeUserSession = nil
+                completion?()
             }
         }
     }

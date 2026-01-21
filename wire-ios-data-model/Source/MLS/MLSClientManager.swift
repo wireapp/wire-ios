@@ -81,7 +81,6 @@ public final class MLSClientManager: MLSClientManagerProtocol {
         } catch {
             WireLogger.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
         }
-        await mlsService.uploadKeyPackagesIfNeeded()
         await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
         didPerformMLSClientUpdate = true
     }
