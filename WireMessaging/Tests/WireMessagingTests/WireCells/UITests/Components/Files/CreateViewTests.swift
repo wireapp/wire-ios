@@ -32,68 +32,72 @@ final class CreateViewTests: XCTestCase {
     private var snapshotHelper: SnapshotHelper!
     private var createUseCase: MockWireCellsCreateUseCaseProtocol!
     private var viewModel: CreateViewModel!
+    private let creationTargets = [CreationTarget.file(.fixture()), .folder]
 
     @MainActor
     override func setUp() async throws {
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
         createUseCase = MockWireCellsCreateUseCaseProtocol()
-
-        viewModel = CreateViewModel(
-            creationTarget: .folder,
-            path: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2",
-            createUseCase: createFolderUseCase
-        )
     }
 
     @MainActor
     override func tearDown() async throws {
         snapshotHelper = nil
-        createFolderUseCase = nil
+        createUseCase = nil
         viewModel = nil
     }
 
     @MainActor
-    func testCreateFolderView_WrongCharacterInputError() {
-        let view = makeView()
-        viewModel.nameInput = "/"
+    func testCreateView_WrongCharacterInputError() {
+        for creationTarget in creationTargets {
+            let view = makeView(target: creationTarget)
+            viewModel.nameInput = "/"
+            let name = creationTarget == .file(.fixture()) ? ".file." : ".folder."
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: view, named: "\(name)" + "light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: view, named: "\(name)" + "dark")
+        }
     }
 
     @MainActor
-    func testCreateFolderView_DotPrefixError() {
-        let view = makeView()
-        viewModel.nameInput = "."
+    func testCreateView_DotPrefixError() {
+        for creationTarget in creationTargets {
+            let view = makeView(target: creationTarget)
+            viewModel.nameInput = "."
+            let name = creationTarget == .file(.fixture()) ? ".file." : ".folder."
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: view, named: "\(name)" + "light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: view, named: "\(name)" + "dark")
+        }
     }
 
     @MainActor
-    func testCreateFolderView_TooLongInputError() {
-        let view = makeView()
-        viewModel.nameInput = Array(repeating: "r", count: 65).joined()
+    func testCreateView_TooLongInputError() {
+        for creationTarget in creationTargets {
+            let view = makeView(target: creationTarget)
+            viewModel.nameInput = Array(repeating: "r", count: 65).joined()
+            let name = creationTarget == .file(.fixture()) ? ".file." : ".folder."
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: view, named: "\(name)" + "light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: view, named: "\(name)" + "dark")
+        }
     }
 
     @MainActor
-    func testCreateFolderView_Loading() {
+    func testCreateView_Loading() {
         let view = makeView()
         viewModel.isLoading = true
 
@@ -106,39 +110,80 @@ final class CreateViewTests: XCTestCase {
     }
 
     @MainActor
-    func testCreateFolderView_FolderAlreadyExistsError() async {
-        let view = makeView()
-        createFolderUseCase.invokeCreationTargetPathName_MockError = WireCellsCreateUseCaseError
-            .alreadyExists
-        _ = await viewModel.create()
+    func testCreateView_alreadyExistsError() async {
+        for creationTarget in creationTargets {
+            let view = makeView(target: creationTarget)
+            createUseCase.invokeCreationTargetPathName_MockError = WireCellsCreateUseCaseError
+                .alreadyExists
+            _ = await viewModel.create()
+            let name = creationTarget == .file(.fixture()) ? ".file." : ".folder."
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: view, named: "\(name)" + "light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: view, named: "\(name)" + "dark")
+        }
     }
 
     @MainActor
-    func testCreateFolderView_EmptyInput() {
-        let view = makeView()
-        viewModel.nameInput = ""
+    func testCreateView_EmptyInput() {
+        for creationTarget in creationTargets {
+            let view = makeView(target: creationTarget)
+            viewModel.nameInput = ""
+            let name = creationTarget == .file(.fixture()) ? ".file." : ".folder."
 
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: view, named: "\(name)" + "light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: view, named: "\(name)" + "dark")
+        }
+    }
+    
+    @MainActor
+    func testCreateView_File_Navigation_Title() {
+        let kinds = [WireCellsTemplate.Kind.document, .spreadsheet, .presentation]
+        
+        for kind in kinds {
+            let view = makeView(target: .file(.fixture(kind: kind)))
+            viewModel.nameInput = ""
+            let name = String(describing: kind)
+
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: view, named: ".\(name)." + "light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: view, named: ".\(name)." + "dark")
+        }
     }
 
     @MainActor
-    private func makeView() -> some View {
-        let viewModel = viewModel!
+    private func makeView(target: CreationTarget = .folder) -> some View {
+        viewModel = CreateViewModel(
+            creationTarget: target,
+            path: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2",
+            createUseCase: createUseCase
+        )
+        
+        let vm = viewModel!
 
-        return CreateView(viewModel: viewModel)
+        return CreateView(viewModel: vm)
             .frame(width: 375, height: 667)
     }
 
+}
+
+private extension WireCellsTemplate {
+    static func fixture(kind: Self.Kind = .document) -> WireCellsTemplate {
+        WireCellsTemplate(
+            kind: kind,
+            editable: true,
+            label: "Microsoft Word",
+            UUID: "01-Microsoft Word.docx"
+        )
+    }
 }
