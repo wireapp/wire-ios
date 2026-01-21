@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import WireNetwork
 import WireSyncEngine
 import WireTransport
-import WireNetwork
 
 final class PreferredAPIVersionViewModel: ObservableObject {
 
@@ -57,9 +57,9 @@ final class PreferredAPIVersionViewModel: ObservableObject {
         var apiVersion: WireTransport.APIVersion? {
             switch self {
             case .noPreference:
-                return nil
-            case .apiVersion(let version):
-                return version
+                nil
+            case let .apiVersion(version):
+                version
             }
         }
     }
