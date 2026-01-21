@@ -30,7 +30,6 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
 
     private var mockApplicationStatus: MockApplicationStatus!
     private var mockCoreDataStack: CoreDataStack!
-    private var mockSyncStatus: MockSyncProgress!
 
     private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
 
@@ -41,11 +40,9 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
         mockCoreDataStack = try await coreDataHelper.createStack()
 
         mockApplicationStatus = MockApplicationStatus()
-        mockSyncStatus = MockSyncProgress()
     }
 
     override func tearDown() async throws {
-        mockSyncStatus = nil
         mockApplicationStatus = nil
 
         mockCoreDataStack = nil

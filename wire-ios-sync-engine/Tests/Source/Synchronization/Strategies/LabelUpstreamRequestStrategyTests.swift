@@ -22,8 +22,6 @@ import XCTest
 class LabelUpstreamRequestStrategyTests: MessagingTest {
 
     var sut: LabelUpstreamRequestStrategy!
-    var mockSyncStatus: MockSyncStatus!
-    var mockSyncStateDelegate: MockSyncStateDelegate!
     var mockApplicationStatus: MockApplicationStatus!
 
     var conversation1: ZMConversation!
@@ -46,9 +44,7 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
 
     override func tearDown() {
         sut = nil
-        mockSyncStatus = nil
         mockApplicationStatus = nil
-        mockSyncStateDelegate = nil
         conversation1 = nil
         conversation2 = nil
         super.tearDown()
