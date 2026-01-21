@@ -20,6 +20,18 @@
 
 public enum SearchAPIError: Error {
 
+    /// Unsupported endpoint for API version
+
+    case unsupportedEndpointForAPIVersion
+
+    /// A request was deemed invalid by the server.
+
+    case invalidRequest
+
+    /// Insufficient permissions to perform the request.
+
+    case insufficientPermissions
+
     /*
     /// A supplied team id is not valid.
 
@@ -44,10 +56,6 @@ public enum SearchAPIError: Error {
     /// An invalid query parameter was used.
 
     case invalidQueryParmeter
-
-    /// A request was deemed invalid by the server.
-
-    case invalidRequest
      */
 
 }

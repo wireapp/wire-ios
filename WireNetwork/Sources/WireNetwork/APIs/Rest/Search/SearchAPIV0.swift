@@ -28,14 +28,14 @@ class SearchAPIV0: SearchAPI, VersionedAPI {
         .v0
     }
 
-//    func basePath(for teamID: Team.ID) -> String {
-//        "\(pathPrefix)/search/contacts"
-//    }
+    // MARK: -
 
-    // MARK: - TODO
-
-    func searchContacts() async throws -> [Void] {
-        fatalError()
+    func searchContacts(
+        query: String,
+        domain: String?,
+        size: Int?
+    ) async throws -> SearchContactsResult {
+        throw SearchAPIError.unsupportedEndpointForAPIVersion
     }
 
 }

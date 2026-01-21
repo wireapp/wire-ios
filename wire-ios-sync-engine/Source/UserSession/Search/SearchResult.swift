@@ -59,7 +59,7 @@ extension SearchResult {
         contextProvider: ContextProvider,
         searchUsersCache: SearchUsersCache?
     ) {
-        guard let documents = payload["documents"] as? [[String: Any]] else {
+        guard let documents = payload["documents"] as? [[String: Any]] else { // TODO: compare with this code
             return nil
         }
 
