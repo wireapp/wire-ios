@@ -62,12 +62,12 @@ package extension WireCellsTemplateNetworkModel {
 
 package extension RestListTemplatesResponse {
     func toDTO() -> WireCellsTemplateNetworkModel? {
-        let templates = templates?.map {
-            WireCellsTemplateNetworkModel.Template(editable: $0.editable, label: $0.label, UUID: $0.UUID)
+        templates.map {
+            WireCellsTemplateNetworkModel(
+                templates: $0.map {
+                    .init(editable: $0.editable, label: $0.label, UUID: $0.UUID)
+                }
+            )
         }
-
-        guard let templates else { return nil }
-
-        return WireCellsTemplateNetworkModel(templates: templates)
     }
 }
