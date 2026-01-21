@@ -80,7 +80,10 @@ public final class MLSService: MLSServiceInterface {
         case keyPackageQueriedTime
     }
 
-    let targetUnclaimedKeyPackageCount = 100
+    var targetUnclaimedKeyPackageCount: Int {
+        DeveloperFlag.lowKeyPackageCount.isOn ? 1 : 100
+    }
+
     let actionsProvider: MLSActionsProviderProtocol
 
     private let subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface
@@ -180,6 +183,17 @@ public final class MLSService: MLSServiceInterface {
         _ delegate: any ResetBrokenMLSConversationDelegate
     ) {
         resetBrokenMLSConversationDelegate = delegate
+    }
+
+    public func epoch(for groupID: MLSGroupID) async throws -> UInt64 {
+        try await coreCrypto.perform {
+            let exists = try? await $0.conversationExists(conversationId: groupID.conversationId)
+            if exists == true {
+                return try await $0.conversationEpoch(conversationId: groupID.conversationId)
+            } else {
+                return 0
+            }
+        }
     }
 
     // MARK: - Conference info for subconversations
