@@ -116,3 +116,5 @@ allure-report/
 allure-results/
 .allure/ 
 
+# AI
+.claude

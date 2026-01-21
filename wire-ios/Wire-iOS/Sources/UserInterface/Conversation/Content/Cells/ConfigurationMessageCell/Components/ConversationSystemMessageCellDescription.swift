@@ -173,6 +173,12 @@ enum ConversationSystemMessageCellDescription {
 
         case .newConversation:
             var cells: [AnyConversationMessageCellDescription] = []
+
+            let welcomeCell = ConversationWelcomeSystemMessageCellDescription(
+                isWireCellsEnabled: conversation.isWireDriveEnabled
+            )
+            cells.append(AnyConversationMessageCellDescription(welcomeCell))
+
             let startedConversationCell = ConversationStartedSystemMessageCellDescription(message: message)
             cells.append(AnyConversationMessageCellDescription(startedConversationCell))
 
@@ -186,14 +192,14 @@ enum ConversationSystemMessageCellDescription {
                     )
                 )
             }
-            if conversation.isOpenGroup || conversation.isCellsEnabled {
+            if conversation.isOpenGroup || conversation.isWireDriveEnabled {
                 let encryptionInfoCell = ConversationEncryptionInfoSystemMessageCellDescription(
-                    isWireCellsEnabled: conversation.isCellsEnabled
+                    isWireDriveEnabled: conversation.isWireDriveEnabled
                 )
                 cells.append(AnyConversationMessageCellDescription(encryptionInfoCell))
             }
 
-            if conversation.isCellsEnabled {
+            if conversation.isWireDriveEnabled {
                 let fileCollaborationCell = ConversationFileCollaborationSystemMessageCellDescription()
                 cells.append(AnyConversationMessageCellDescription(fileCollaborationCell))
 

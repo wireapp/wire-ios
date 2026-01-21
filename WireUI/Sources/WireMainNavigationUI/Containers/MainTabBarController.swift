@@ -83,7 +83,7 @@ public final class MainTabBarController<
     private weak var archiveNavigationController: UINavigationController!
     private weak var meetingsNavigationController: UINavigationController?
     private weak var settingsNavigationController: UINavigationController!
-    private weak var filesNavigationController: UINavigationController? // shown conditionally - when wire cells is
+    private weak var filesNavigationController: UINavigationController? // shown conditionally - when wire drive is
     // enabled.
 
     private weak var _conversationListUI: ConversationListUI?
@@ -181,7 +181,7 @@ public final class MainTabBarController<
                     image: .init(systemName: "archivebox"),
                     selectedImage: .init(systemName: "archivebox.fill")
                 )
-                tabBarItem.accessibilityIdentifier = "bottomBarArchivedButton"
+                tabBarItem.accessibilityIdentifier = Locators.ConversationsPage.bottomBarArchivedButton.rawValue
                 tabBarItem.accessibilityLabel = String(
                     localized: "tabBar.archived.description",
                     table: "Accessibility",

@@ -382,14 +382,14 @@ public class MockConversationLike: ConversationLike {
 
     public var underlyingWireCellName: String!
 
-    // MARK: - isCellsEnabled
+    // MARK: - isWireDriveEnabled
 
-    public var isCellsEnabled: Bool {
-        get { return underlyingIsCellsEnabled }
-        set(value) { underlyingIsCellsEnabled = value }
+    public var isWireDriveEnabled: Bool {
+        get { return underlyingIsWireDriveEnabled }
+        set(value) { underlyingIsWireDriveEnabled = value }
     }
 
-    public var underlyingIsCellsEnabled: Bool!
+    public var underlyingIsWireDriveEnabled: Bool!
 
 
     // MARK: - localParticipantsContain
@@ -4808,6 +4808,29 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         try await mock(groupID)
+    }
+
+    // MARK: - epoch
+
+    public var epochFor_Invocations: [MLSGroupID] = []
+    public var epochFor_MockError: Error?
+    public var epochFor_MockMethod: ((MLSGroupID) async throws -> UInt64)?
+    public var epochFor_MockValue: UInt64?
+
+    public func epoch(for groupID: MLSGroupID) async throws -> UInt64 {
+        epochFor_Invocations.append(groupID)
+
+        if let error = epochFor_MockError {
+            throw error
+        }
+
+        if let mock = epochFor_MockMethod {
+            return try await mock(groupID)
+        } else if let mock = epochFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `epochFor`")
+        }
     }
 
     // MARK: - setSyncDelegate

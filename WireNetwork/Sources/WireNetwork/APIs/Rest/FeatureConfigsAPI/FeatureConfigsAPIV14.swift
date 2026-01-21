@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class FeatureConfigsAPIV14: FeatureConfigsAPIV13 {
+class FeatureConfigsAPIV14: FeatureConfigsAPIV13 {
 
     override var apiVersion: APIVersion { .v14 }
 

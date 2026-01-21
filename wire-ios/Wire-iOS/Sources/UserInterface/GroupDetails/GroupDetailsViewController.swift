@@ -300,7 +300,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 sections.append(optionsSectionController)
             }
 
-            if conversation.isCellsEnabled, let collectionView = collectionViewController.collectionView {
+            if conversation.isWireDriveEnabled, let collectionView = collectionViewController.collectionView {
                 let selfDeletingMessagesDisabledSectionController = SelfDeletingMessagesDisabledSectionController(
                     conversation: conversation,
                     collectionView: collectionView
@@ -377,7 +377,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         case .invite:
             let addParticipantsViewController = AddParticipantsViewController(
                 conversation: conversation,
-                userSession: userSession
+                userSession: userSession,
+                isAppsFeatureEnabled: isAppsFeatureEnabled,
+                areLegacyBotsAvailable: areLegacyBotsAvailable
             )
             let navigationController = addParticipantsViewController.wrapInNavigationController()
             navigationController.modalPresentationStyle = .currentContext
@@ -553,15 +555,21 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
     }
 
     func presentGuestOptions(animated: Bool) {
-        guard let conversation = conversation as? ZMConversation else { return }
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard
+            let conversation = conversation as? ZMConversation,
+            let userSession = ZMUserSession.shared(),
+            let createSecureGuestLinkUseCase = userSession.makeConversationSecureGuestLinkUseCase(),
+            let navigationController
+        else { return }
+
         let menu = ConversationGuestOptionsViewController(
             conversation: conversation,
             userSession: userSession,
+            createSecureGuestLinkUseCase: createSecureGuestLinkUseCase,
             areLegacyBotsAvailable: areLegacyBotsAvailable,
             isAppsFeatureEnabled: isAppsFeatureEnabled
         )
-        navigationController?.pushViewController(menu, animated: animated)
+        navigationController.pushViewController(menu, animated: animated)
     }
 
     func presentServicesOptions(animated: Bool) {

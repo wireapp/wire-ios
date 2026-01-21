@@ -334,6 +334,11 @@
 "conversation.connection_view.encryption_info" = "Wire'da tüm iletişim uçtan uca şifrelenmektedir. Bu sohbette gönderdiğiniz veya size gönderilen her şeye sadece siz ve karşıdaki kişi tarafından erişilebilir.";
 "conversation.connection_view.wire_cells.encryption_info" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.";
 "conversation.connection_view.sensitive_information_warning" = "Lütfen bu hassas bilgiyi paylaştığınız kişilerle ilgili dikkatli olun.";
+"conversation.connection_view.welcome.title.wire" = "Communication in Wire is always end-to-end encrypted.";
+"conversation.connection_view.welcome.message.wire" = "Everything you send and receive in this channel is only accessible to you and other group participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.title.wire_cells" = "Communication in Wire is always secured.";
+"conversation.connection_view.welcome.message.wire_cells" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.learn_more" = "Daha fazla bilgi";
 
 "conversation.input_bar.shortcut.send" = "Mesaj Gönder";
 "conversation.input_bar.shortcut.newline" = "Insert Line Break";
@@ -371,8 +376,9 @@
 "conversation.create.protocol_selection.mls_default" = "MLS (default)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (default)";
-"conversation.create.file_management.title" = "File collaboration";
-"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone.";
+"conversation.create.file_management.title" = "Shared Drive";
+"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
+"conversation.create.file_management.learnMore" = "Daha fazla bilgi";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Devam eden arama";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Görüşme sırasında sesli mesaj kaydedemezsiniz.";
@@ -400,7 +406,7 @@
 
 "conversation.action.search" = "Arama";
 "conversation.action.conversationDetails" = "Conversation Details";
-"conversation.action.files" = "Dosyalar";
+"conversation.action.files" = "Shared Drive";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Resim";
@@ -607,7 +613,7 @@
 "content.system.message_timer_off" = "%@ mesaj zamanlayıcısını kapattı";
 "content.system.message_timer_off-you" = "%@ mesaj zamanlayıcısını kapattı";
 
-"content.system.message_timer_unavailable" = "Self-deleting messages are off for conversations with Cells";
+"content.system.message_timer_unavailable" = "Self-deleting messages are off";
 
 "content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
 "content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
@@ -621,7 +627,7 @@
 "content.system.channel.guest.joined" = "%@ joined the channel";
 "content.system.channel.guest.you_joined" = "You joined the channel";
 
-"content.system.file_collaboration.enabled" = "File collaboration (Cells) is on";
+"content.system.file_collaboration.enabled" = "Shared Drive is on";
 
 // read receipt
 
@@ -1090,10 +1096,10 @@
 "group_details.receipt_options_cell.description" = "Bu açıkken, insanlar bu görüşmedeki mesajlarının ne zaman okunduğunu görebilir.";
 "group_details.access_options_cell.title" = "Channel access";
 "group_details.channel_history_options_cell.title" = "Conversation history";
-"group_details.file_collaboration_cell.title" = "File collaboration (Cells)";
+"group_details.file_collaboration_cell.title" = "Shared Drive";
 "group_details.file_collaboration_cell.subtitle" = "Açık";
 "group_details.file_collaboration_cell.footer" = "Permanently on for this conversation";
-"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with Cells.";
+"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with a shared Drive.";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
@@ -1866,6 +1872,10 @@
 
 "collections.search.field.placeholder" = "Yazılı mesajlarda arayın";
 "collections.search.no_items" = "Sonuç yok";
+
+"collections.section.searchFiles.description" = "Search files";
+"collections.section.searchFiles.alert.title" = "Wire Drive";
+"collections.section.searchFiles.alert.message" = "Find files in conversations with Shared Drive.";
 
 
 

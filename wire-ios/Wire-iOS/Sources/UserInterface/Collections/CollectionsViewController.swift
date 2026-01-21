@@ -112,7 +112,7 @@ final class CollectionsViewController: UIViewController {
 
         self.init(
             collection: holder,
-            isCellsEnabled: conversation.isCellsEnabled,
+            isCellsEnabled: conversation.isWireDriveEnabled,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder,

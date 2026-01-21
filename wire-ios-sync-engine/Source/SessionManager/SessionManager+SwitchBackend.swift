@@ -21,15 +21,15 @@ import Foundation
 public extension SessionManager {
 
     enum SwitchBackendError: Swift.Error {
-        case loggedInAccounts
+        case maxNumberAccountsReached
         case invalidBackend
     }
 
     typealias CompletedSwitch = (Result<BackendEnvironment, Error>) -> Void
 
     func canSwitchBackend() -> SwitchBackendError? {
-        guard DeveloperFlag.multibackend.isOn || !accountManager.hasAccounts else {
-            return .loggedInAccounts
+        guard accountManager.numberOfAccounts < maxNumberAccounts else {
+            return .maxNumberAccountsReached
         }
 
         return nil

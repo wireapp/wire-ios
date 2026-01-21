@@ -33,11 +33,11 @@ final class ConversationEncryptionInfoSystemMessageCellDescription: Conversation
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    init(isWireCellsEnabled: Bool) {
+    init(isWireDriveEnabled: Bool) {
         typealias connectionView = L10n.Localizable.Conversation.ConnectionView
 
         self.configuration = View.Configuration(
-            topText: isWireCellsEnabled ? connectionView.WireCells.encryptionInfo : connectionView.encryptionInfo,
+            topText: isWireDriveEnabled ? connectionView.WireCells.encryptionInfo : connectionView.encryptionInfo,
             bottomText: connectionView.sensitiveInformationWarning
         )
 
