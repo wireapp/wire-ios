@@ -76,8 +76,7 @@ final class SecurityLevelView: UIView {
             levelText
         ].joined(separator: " ")
 
-        accessibilityLabel = securityLevelLabel.text
-        accessibilityIdentifier = AccessibilityIdentifier.securityLevelLabel + classification.accessibilitySuffix
+        accessibilityIdentifier = "ClassificationBanner" + classification.accessibilitySuffix
     }
 
     func configure(
@@ -204,15 +203,4 @@ private struct SecurityLevelViewRepresentable: UIViewRepresentable {
     func updateUIView(_ view: SecurityLevelView, context: Context) {
         view.configure(with: classification)
     }
-}
-
-// MARK: Accessibility Strings
-extension SecurityLevelView {
-    
-    static let prefix = String(describing: SecurityLevelView.self)
-    
-    enum AccessibilityIdentifier {
-        static let securityLevelLabel = "\(prefix)_securityLevelLabel"
-    }
-    
 }
