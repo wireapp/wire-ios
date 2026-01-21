@@ -23,7 +23,6 @@
 @class ZMUpstreamModifiedObjectSync;
 @class ZMClientRegistrationStatus;
 @class ApplicationStatusDirectory;
-@class SyncStatus;
 
 @interface ZMSelfStrategy : ZMAbstractRequestStrategy <ZMContextChangeTrackerSource, TearDownCapable>
 
@@ -34,8 +33,7 @@
 
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
                            applicationStatus:(id<ZMApplicationStatus>)appplicationStatus
-                    clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                                  syncStatus:(SyncStatus *)syncStatus;
+                    clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus;
 
 - (void)tearDown;
 

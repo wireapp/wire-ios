@@ -86,61 +86,6 @@ public class LocalNotificationDispatcher: NSObject {
     }
 }
 
-extension LocalNotificationDispatcher: ZMEventConsumer {
-
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        // nop
-    }
-
-    public func processEventsWhileInBackground(_ events: [ZMUpdateEvent]) {
-        let eventsToForward = events.filter { $0.source.isOne(of: .pushNotification, .webSocket) }
-        didReceive(events: eventsToForward, conversationMap: [:])
-    }
-
-    func didReceive(events: [ZMUpdateEvent], conversationMap: [UUID: ZMConversation]) {
-        events.forEach { event in
-
-            var conversation: ZMConversation?
-            if let conversationID = event.conversationUUID {
-                // Fetch the conversation here to avoid refetching every time we try to create a notification
-                conversation = conversationMap[conversationID] ?? ZMConversation.fetch(
-                    with: conversationID,
-                    domain: event.conversationDomain,
-                    in: self.syncMOC
-                )
-            }
-
-            if let messageNonce = event.messageNonce {
-                if eventNotifications.notifications.contains(where: { $0.messageNonce == messageNonce }) {
-                    // ignore events which we already scheduled a notification for
-                    return
-                }
-            }
-
-            if let receivedMessage = GenericMessage(from: event, validate: true) {
-
-                if receivedMessage.hasReaction,
-                   receivedMessage.reaction.emoji.isEmpty,
-                   let messageID = UUID(uuidString: receivedMessage.reaction.messageID) {
-                    // if it's an "unlike" reaction event, cancel the previous "like" notification for this message
-                    eventNotifications.cancelCurrentNotifications(messageNonce: messageID)
-                }
-
-                if receivedMessage.hasHidden || receivedMessage.hasDeleted {
-                    // Cancel notification for message that was deleted or hidden
-                    cancelMessageForDeletedMessage(receivedMessage)
-                }
-            }
-
-            let note = ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: self.syncMOC)
-
-            note?.increaseEstimatedUnreadCount(on: conversation)
-            note.map(eventNotifications.addObject)
-            note.map(scheduleLocalNotification)
-        }
-    }
-}
-
 // MARK: - Failed messages
 
 extension LocalNotificationDispatcher: PushMessageHandler {

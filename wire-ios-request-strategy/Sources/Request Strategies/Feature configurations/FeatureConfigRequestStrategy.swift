@@ -23,18 +23,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
 
-    let mlsClientManager: MLSClientManagerProtocol
     private let apiVersion: WireTransport.APIVersion?
-
-    // Slow Sync
-
-    private unowned var syncStatus: SyncProgress
-
-    private let syncPhase: SyncPhase = .fetchingFeatureConfig
-
-    private var isSlowSyncing: Bool { syncStatus.currentSyncPhase == syncPhase }
-
-    private var slowSyncTask: Task<Void, Never>?
 
     // Action
 
@@ -46,114 +35,26 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        syncProgress: SyncProgress,
-        mlsClientManager: MLSClientManagerProtocol,
         apiVersion: WireTransport.APIVersion?
     ) {
+        // note this is only used in ZMClientRegistrationStatus
         self.actionHandler = GetFeatureConfigsActionHandler(context: managedObjectContext)
         self.actionSync = EntityActionSync(actionHandlers: [actionHandler])
-        self.syncStatus = syncProgress
-        self.mlsClientManager = mlsClientManager
         self.apiVersion = apiVersion
 
         super.init(
             withManagedObjectContext: managedObjectContext,
             applicationStatus: applicationStatus
         )
-
         configuration = [
-            .allowsRequestsWhileUnauthenticated,
-            .allowsRequestsWhileOnline,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsDuringSlowSync,
-            .allowsRequestsWhileWaitingForWebsocket,
-            .allowsRequestsWhileInBackground
+            // only useful while unauthenicated
+            .allowsRequestsWhileUnauthenticated
         ]
-    }
-
-    deinit {
-        slowSyncTask?.cancel()
     }
 
     // MARK: - Request
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        if isSlowSyncing, slowSyncTask == nil {
-            slowSyncTask = Task { [weak self, syncStatus, syncPhase] in
-                guard let self, !Task.isCancelled else { return }
-
-                WireLogger.featureConfigs.info("slow sync start fetch feature config!")
-
-                do {
-                    // perform action notifies the registered action handler `GetFeatureConfigsActionHandler`.
-                    // the action stay pending until in the operation loop creates and executes the next request.
-                    // Here the task waits for the result and then continues to report to syncStatus.
-
-                    var action = GetFeatureConfigsAction()
-                    try await action.perform(in: managedObjectContext.notificationContext)
-
-                    WireLogger.featureConfigs.info("slow sync finished fetch feature config!")
-
-                    await managedObjectContext.perform {
-                        syncStatus.finishCurrentSyncPhase(phase: syncPhase)
-                    }
-                } catch {
-                    WireLogger.featureConfigs.error("slow sync failed fetch feature config!")
-
-                    await managedObjectContext.perform {
-                        syncStatus.failCurrentSyncPhase(phase: syncPhase)
-                    }
-                }
-
-                slowSyncTask = nil
-            }
-        }
-
-        return actionSync.nextRequest(for: apiVersion)
+        actionSync.nextRequest(for: apiVersion)
     }
-}
-
-// MARK: - Event processing
-
-extension FeatureConfigRequestStrategy: ZMEventConsumer {
-
-    public func processEvents(
-        _ events: [ZMUpdateEvent],
-        liveEvents: Bool,
-        prefetchResult: ZMFetchRequestBatchResult?
-    ) {
-        events.forEach(processEvent)
-    }
-
-    private func processEvent(_ event: ZMUpdateEvent) {
-        guard
-            event.type == .featureConfigUpdate,
-            let name = event.payload["name"] as? String,
-            let featureName = Feature.Name(rawValue: name),
-            let data = event.payload["data"]
-        else {
-            return
-        }
-
-        do {
-            WireLogger.featureConfigs.info("Process update event '\(name)'")
-
-            let payloadData = try JSONSerialization.data(withJSONObject: data, options: [])
-            let repository = LegacyFeatureRepository(context: managedObjectContext)
-
-            let processor = FeatureConfigsPayloadProcessor(apiVersion: apiVersion)
-            try processor.processEventPayload(
-                data: payloadData,
-                featureName: featureName,
-                repository: repository,
-                mlsClientManager: mlsClientManager,
-                in: managedObjectContext
-            )
-
-            WireLogger.featureConfigs.info("Finished processing update event \(name)")
-        } catch {
-            WireLogger.featureConfigs.error("Failed processing update event \(name): \(error.localizedDescription)")
-        }
-    }
-
 }

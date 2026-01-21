@@ -113,7 +113,7 @@ class TypingEventQueue {
     }
 }
 
-public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventConsumer {
+public class TypingStrategy: AbstractRequestStrategy, TearDownCapable {
 
     fileprivate var typing: Typing!
     fileprivate let typingEventQueue = TypingEventQueue()
@@ -157,9 +157,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         super.init(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
         self.configuration = [
             .allowsRequestsWhileInBackground,
-            .allowsRequestsWhileOnline,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket
+            .allowsRequestsWhileOnline
         ]
 
         observers.append(
@@ -262,60 +260,6 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         typing = nil
         tornDown = true
         observers = []
-    }
-
-    // MARK: - ZMEventConsumer
-
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        guard liveEvents else { return }
-
-        events.forEach { event in
-            process(event: event, conversationsByID: prefetchResult?.conversationsByRemoteIdentifier)
-        }
-    }
-
-    func process(event: ZMUpdateEvent, conversationsByID: [UUID: ZMConversation]?) {
-        guard
-            event.type.isOne(of: [
-                .conversationTyping,
-                .conversationOtrMessageAdd,
-                .conversationMLSMessageAdd,
-                .conversationMemberLeave
-            ]),
-            let userID = event.senderUUID,
-            let conversationID = event.conversationUUID
-        else { return }
-
-        let user = ZMUser.fetchOrCreate(with: userID, domain: event.senderDomain, in: managedObjectContext)
-        let conversation = conversationsByID?[conversationID] ?? ZMConversation.fetchOrCreate(
-            with: conversationID,
-            domain: event.conversationDomain,
-            in: managedObjectContext
-        )
-
-        if event.type == .conversationTyping {
-            guard let payloadData = event.payload["data"] as? [String: String],
-                  let status = payloadData[StatusKey]
-            else { return }
-            processIsTypingUpdateEvent(for: user, in: conversation, with: status)
-        } else if event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) {
-            if let message = GenericMessage(from: event, validate: true), message.hasText || message.hasEdited {
-                typing.setIsTyping(false, for: user, in: conversation)
-            }
-        } else if event.type == .conversationMemberLeave {
-            let users = event.users(in: managedObjectContext, createIfNeeded: false)
-            users.forEach { user in
-                typing.setIsTyping(false, for: user, in: conversation)
-            }
-        }
-    }
-
-    func processIsTypingUpdateEvent(for user: ZMUser, in conversation: ZMConversation, with status: String) {
-        let startedTyping = (status == StartedKey)
-        let stoppedTyping = (status == StoppedKey)
-        if startedTyping || stoppedTyping {
-            typing.setIsTyping(startedTyping, for: user, in: conversation)
-        }
     }
 }
 

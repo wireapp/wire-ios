@@ -27,8 +27,6 @@
 
 @class ZMPersistentCookieStorage;
 @class OperationStatus;
-@class SyncStatus;
-@class PushNotificationStatus;
 @class ZMSyncStrategy;
 
 @interface ZMOperationLoop : NSObject <TearDownCapable>
@@ -43,10 +41,7 @@
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithTransportSession:(id<TransportSessionType>)transportSession
                          requestStrategy:(id<RequestStrategy>)requestStrategy
-                    updateEventProcessor:(id<UpdateEventProcessor>)updateEventProcessor
                          operationStatus:(OperationStatus *)operationStatus
-                              syncStatus:(SyncStatus *)syncStatus
-                  pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
                   isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled
