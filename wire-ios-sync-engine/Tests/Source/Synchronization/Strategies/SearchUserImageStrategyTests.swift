@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -307,7 +307,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
             "/assets/v3/\(assetID)"
         case .v1:
             "/v1/assets/v4/\(domain)/\(assetID)"
-        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetID)"
         }
 

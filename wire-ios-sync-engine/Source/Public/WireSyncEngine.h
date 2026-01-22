@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,5 @@
 #import <WireSyncEngine/ZMClientRegistrationStatusDelegate.h>
 #import <WireSyncEngine/ZMLoginTranscoder.h>
 #import <WireSyncEngine/ZMLoginCodeRequestTranscoder.h>
-#import <WireSyncEngine/ZMLastUpdateEventIDTranscoder.h>
 #import <WireSyncEngine/ZMSelfStrategy.h>
 #import <WireSyncEngine/ZMSyncStrategy.h>
-#import <WireSyncEngine/ZMMissingUpdateEventsTranscoder.h>

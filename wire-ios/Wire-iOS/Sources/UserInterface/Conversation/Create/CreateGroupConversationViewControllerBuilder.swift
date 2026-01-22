@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,9 +37,14 @@ final class CreateGroupConversationViewControllerBuilder: CreateGroupConversatio
 
     @MainActor
     func build() async -> UIViewController {
-        let viewController = await ConversationCreationController(
+        let featureConfigRepository = userSession.clientSessionComponent?.featureConfigRepository
+        let isAppsFeatureEnabled = await featureConfigRepository?.isFeatureEnabled(.apps) ?? false
+        let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+        let viewController = ConversationCreationController(
             preSelectedParticipants: nil,
-            userSession: userSession
+            userSession: userSession,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable
         )
         viewController.delegate = delegate
         return viewController

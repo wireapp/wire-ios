@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,6 +32,15 @@ struct MessageReactionMetadata: Equatable {
         lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting
     }
 
+}
+
+struct MessageReactionsCellConfiguration: Equatable {
+    let reactions: [MessageReactionMetadata]
+    let message: ZMConversationMessage // Include the message here
+
+    static func == (lhs: MessageReactionsCellConfiguration, rhs: MessageReactionsCellConfiguration) -> Bool {
+        lhs.reactions == rhs.reactions && lhs.message == rhs.message
+    }
 }
 
 // MARK: - MessageReactionsCell
@@ -77,25 +86,25 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     // MARK: - configure method
 
     func configure(
-        with reactions: [MessageReactionMetadata],
+        with object: MessageReactionsCellConfiguration,
         animated: Bool
     ) {
-        let reactionToggles = reactions.map { reaction in
+        let reactionToggles = object.reactions.map { reaction in
             ReactionToggle(
                 emoji: reaction.emoji,
                 count: reaction.count,
-                isToggled: reaction.isSelfUserReacting
-            ) { [weak self] in
+                isToggled: reaction.isSelfUserReacting,
+                message: object.message
+            ) { [weak self] tappedMessage in
                 guard
-                    let self,
-                    let message
+                    let self
                 else {
                     return
                 }
 
                 delegate?.perform(
                     action: .react(reaction.emoji),
-                    for: message,
+                    for: tappedMessage,
                     view: self
                 )
             }

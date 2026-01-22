@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,10 +54,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
 
 - (instancetype)initWithTransportSession:(id<TransportSessionType>)transportSession
                          requestStrategy:(id<RequestStrategy>)requestStrategy
-                    updateEventProcessor:(id<UpdateEventProcessor>)updateEventProcessor
               operationStatus:(OperationStatus *)operationStatus
-                              syncStatus:(SyncStatus *)syncStatus
-                  pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
                   isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled
@@ -70,11 +67,8 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
     self = [super init];
     if (self) {
         self.operationStatus = operationStatus;
-        self.syncStatus = syncStatus;
-        self.pushNotificationStatus = pushNotificationStatus;
         self.transportSession = transportSession;
         self.requestStrategy = requestStrategy;
-        self.updateEventProcessor = updateEventProcessor;
         self.syncMOC = syncMOC;
         self.shouldStopEnqueueing = NO;
         self.operationStatus.delegate = self;
@@ -135,10 +129,10 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         }
 
         ZMTransportRequest *request = [self.requestStrategy nextRequestForAPIVersion:apiVersion.value];
-
+        
         [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.syncMOC block:^(ZMTransportResponse *response) {
             ZM_STRONG(self);
-            
+        
             [self.syncMOC enqueueDelayedSaveWithGroup:response.dispatchGroup];
             
             // Check if there is something to do now and when the save completes

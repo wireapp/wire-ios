@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import WireTestingPackage
 import XCTest
+
 @testable import WireNetwork
 @testable import WireNetworkSupport
 
@@ -69,6 +70,146 @@ final class ConversationsAPITests: XCTestCase {
                 conversationID: Scaffolding.conversationID.uuidString,
                 conversationDomain: Scaffolding.domain,
                 permission: .everyone
+            )
+        }
+    }
+
+    // MARK: updateConversationAccess
+
+    func testUpdateConversationAccess_givenV5AndNextVersions_thenVerifyRequest() async throws {
+        // given
+        let apiVersions = APIVersion.v5.andNextVersions
+        let conversationID = QualifiedID(id: Scaffolding.conversationID, domain: Scaffolding.domain)
+
+        // when
+        // then
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+            try await sut.updateConversationAccess(
+                conversationID: conversationID,
+                allowGuests: true,
+                allowApps: false
+            )
+        }
+    }
+
+    func testUpdateConversationAccess_givenV5AndSuccessResponse200_thenSucceeds() async throws {
+        // given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "testUpdateConversationAccess_givenV5AndSuccessResponse200")
+        ])
+
+        let api = ConversationsAPIV5(apiService: apiService)
+        let conversationID = QualifiedID(id: Scaffolding.conversationID, domain: Scaffolding.domain)
+
+        // when
+        // then
+        try await api.updateConversationAccess(
+            conversationID: conversationID,
+            allowGuests: true,
+            allowApps: true
+        )
+    }
+
+    func testUpdateConversationAccess_givenV5AndSuccessResponse204_thenSucceeds() async throws {
+        // given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.noContent, "testUpdateConversationAccess_givenV5AndSuccessResponse204")
+        ])
+
+        let api = ConversationsAPIV5(apiService: apiService)
+        let conversationID = QualifiedID(id: Scaffolding.conversationID, domain: Scaffolding.domain)
+
+        // when
+        // then
+        try await api.updateConversationAccess(
+            conversationID: conversationID,
+            allowGuests: false,
+            allowApps: false
+        )
+    }
+
+    func testUpdateConversationAccess_givenV5AndFailureResponse403InvalidOp_thenThrowsInvalidOperation() async throws {
+        // given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "invalid-op"
+        )
+
+        let api = ConversationsAPIV5(apiService: apiService)
+        let conversationID = QualifiedID(id: Scaffolding.conversationID, domain: Scaffolding.domain)
+
+        // when
+        // then
+        await XCTAssertThrowsErrorAsync(ConversationsAPIError.invalidOperation) {
+            try await api.updateConversationAccess(
+                conversationID: conversationID,
+                allowGuests: true,
+                allowApps: false
+            )
+        }
+    }
+
+    func testUpdateConversationAccess_givenV5AndFailureResponse403AccessDenied_thenThrowsAccessDenied() async throws {
+        // given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "access-denied"
+        )
+
+        let api = ConversationsAPIV5(apiService: apiService)
+        let conversationID = QualifiedID(id: Scaffolding.conversationID, domain: Scaffolding.domain)
+
+        // when
+        // then
+        await XCTAssertThrowsErrorAsync(ConversationsAPIError.accessDenied) {
+            try await api.updateConversationAccess(
+                conversationID: conversationID,
+                allowGuests: true,
+                allowApps: false
+            )
+        }
+    }
+
+    func testUpdateConversationAccess_givenV5AndFailureResponse403ActionDenied_thenThrowsInsufficientAuthorization(
+    ) async throws {
+        // given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "action-denied"
+        )
+
+        let api = ConversationsAPIV5(apiService: apiService)
+        let conversationID = QualifiedID(id: Scaffolding.conversationID, domain: Scaffolding.domain)
+
+        // when
+        // then
+        await XCTAssertThrowsErrorAsync(ConversationsAPIError.insufficientAuthorization) {
+            try await api.updateConversationAccess(
+                conversationID: conversationID,
+                allowGuests: true,
+                allowApps: false
+            )
+        }
+    }
+
+    func testUpdateConversationAccess_givenV5AndFailureResponse404NoConversation_thenThrowsConversationNotFound(
+    ) async throws {
+        // given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .notFound,
+            label: "no-conversation"
+        )
+
+        let api = ConversationsAPIV5(apiService: apiService)
+        let conversationID = QualifiedID(id: Scaffolding.conversationID, domain: Scaffolding.domain)
+
+        // when
+        // then
+        await XCTAssertThrowsErrorAsync(ConversationsAPIError.conversationNotFound) {
+            try await api.updateConversationAccess(
+                conversationID: conversationID,
+                allowGuests: true,
+                allowApps: false
             )
         }
     }
@@ -1653,7 +1794,7 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(suts.count, supportedVersions.count)
 
         for sut in suts {
-            await XCTAssertThrowsErrorAsync(ConversationsAPIError.insufficienAuthorization) {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.insufficientAuthorization) {
                 try await sut.addChannelPermission(
                     conversationID: Scaffolding.conversationID.uuidString,
                     conversationDomain: Scaffolding.domain,
@@ -1905,61 +2046,6 @@ final class ConversationsAPITests: XCTestCase {
             teamID: .mockID1,
             isReadReceiptsEnabled: true
         )
-    }
-
-}
-
-extension ConversationsAPIError: Equatable {
-    public static func == (lhs: ConversationsAPIError, rhs: ConversationsAPIError) -> Bool {
-        switch (lhs, rhs) {
-        case (.notImplemented, .notImplemented):
-            true
-        case (.invalidBody, .invalidBody):
-            true
-        case (.unsupportedEndpointForAPIVersion, .unsupportedEndpointForAPIVersion):
-            true
-        case (.mlsNotEnabled, .mlsNotEnabled):
-            true
-        case (.usersNotConnected, .usersNotConnected):
-            true
-        case (.userAndDomainShouldNotBeEmpty, .userAndDomainShouldNotBeEmpty):
-            true
-        case (.accessDenied, .accessDenied):
-            true
-        case (.conversationNotFound, .conversationNotFound):
-            true
-        case (.conversationCodeNotFound, .conversationCodeNotFound):
-            true
-        case (.guestLinksDisabled, .guestLinksDisabled):
-            true
-        case (.invalidConversationID, .invalidConversationID):
-            true
-        case (.nonEmptyMemberList, .nonEmptyMemberList):
-            true
-        case (.missingLegalHoldConsent, .missingLegalHoldConsent):
-            true
-        case (.operationDenied, .operationDenied):
-            true
-        case (.noTeamMember, .noTeamMember):
-            true
-        case (.notConnected, .notConnected):
-            true
-        case (.unsupportedChannelCreationForAPIEndpoint, .unsupportedChannelCreationForAPIEndpoint):
-            true
-        case (.nonFederatingBackends, .nonFederatingBackends):
-            true
-        case (.unreachableBackends, .unreachableBackends):
-            true
-        case (.insufficienAuthorization, .insufficienAuthorization):
-            true
-        case (.insufficientPermissions, .insufficientPermissions):
-            true
-        case (.invalidOperation, .invalidOperation):
-            true
-        case (.teamNotFound, .teamNotFound):
-            true
-        default: false
-        }
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,35 +30,27 @@
 - (void)setUp
 {
     [super setUp];
-    [self disableMultibackend];
     
     self.cookieStorage = [[FakeCookieStorage alloc] init];
     self.mockTransportSesssion = [[RecordingMockTransportSession alloc] initWithCookieStorage:self.cookieStorage];
             
     self.mockRequestStrategy = [[MockRequestStrategy alloc] init];
-    self.mockUpdateEventProcessor = [[MockUpdateEventProcessor alloc] init];
     self.mockRequestCancellation = [[MockRequestCancellation alloc] init];
 
     self.operationStatus = [[OperationStatus alloc] init];
-    self.syncStatus = [[SyncStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository isSyncV2Enabled:NO];
-    self.pushNotificationStatus = [[PushNotificationStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository];
     self.sut = [[ZMOperationLoop alloc] initWithTransportSession:self.mockTransportSesssion
                                                  requestStrategy:self.mockRequestStrategy
-                                            updateEventProcessor:self.mockUpdateEventProcessor
                                                  operationStatus:self.operationStatus
-                                                      syncStatus:self.syncStatus
-                                          pushNotificationStatus:self.pushNotificationStatus
                                                            uiMOC:self.uiMOC
                                                          syncMOC:self.syncMOC
                                           isDeveloperModeEnabled:NO
                                                  isSyncV2Enabled:NO
-                                                      apiVersion:nil];
+                                                      apiVersion:@5];
 }
 
 - (void)tearDown;
 {
     WaitForAllGroupsToBeEmpty(0.5);
-    self.pushNotificationStatus = nil;
     self.applicationStatusDirectory = nil;
     self.mockTransportSesssion = nil;
     self.mockRequestStrategy = nil;
@@ -104,7 +96,7 @@
 - (void)testThatItDoesNotSendARequestIfThereIsNoCurrentAPIVersion
 {
     // given
-    [self setBackendInfoAPIVersionNil];
+    [self.sut setApiVersion:nil];
     XCTAssertNil(self.sut.currentAPIVersion);
 
     self.mockRequestStrategy.mockRequest = [[ZMTransportRequest alloc] initWithPath:@"/test"

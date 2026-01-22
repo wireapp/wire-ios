@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ final class ConversationViewController: UIViewController {
     private let getParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
     var actionControllerForSelectedEmoji: ConversationMessageActionController?
     let wireMessagingFactory: WireMessagingFactoryProtocol
-    private(set) var wireCellsState: CellsState = .disabled
+    private(set) var wireDriveState: CellsState = .disabled
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
 
     override var keyCommands: [UIKeyCommand]? {
@@ -114,28 +114,36 @@ final class ConversationViewController: UIViewController {
     var updateLeftNavigationBarItemsTask: Task<Void, Never>?
 
     var participantsController: UIViewController? {
+        get async {
 
-        var viewController: UIViewController?
+            let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
+                .isFeatureEnabled(.apps) ?? false
 
-        switch conversation.conversationType {
-        case .group:
-            viewController = GroupDetailsViewController(
-                conversation: conversation,
-                userSession: userSession,
-                mainCoordinator: mainCoordinator,
-                selfProfileUIBuilder: selfProfileUIBuilder,
-                conversationCreationRepository: conversationCreationRepository,
-                isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
-            )
-        case .`self`, .oneOnOne, .connection:
-            viewController = createUserDetailViewController()
-        case .invalid:
-            fatal("Trying to open invalid conversation")
-        default:
-            break
+            var viewController: UIViewController?
+
+            switch conversation.conversationType {
+            case .group:
+                viewController = GroupDetailsViewController(
+                    conversation: conversation,
+                    userSession: userSession,
+                    mainCoordinator: mainCoordinator,
+                    selfProfileUIBuilder: selfProfileUIBuilder,
+                    conversationCreationRepository: conversationCreationRepository,
+                    isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+                    areLegacyBotsAvailable: areLegacyBotsAvailable,
+                    isAppsFeatureEnabled: isAppsFeatureEnabled
+                )
+            case .`self`, .oneOnOne, .connection:
+                viewController = createUserDetailViewController()
+            case .invalid:
+                fatal("Trying to open invalid conversation")
+            default:
+                break
+            }
+            guard let viewController else { return nil }
+            return UINavigationController(rootViewController: viewController)
         }
-        guard let viewController else { return nil }
-        return UINavigationController(rootViewController: viewController)
     }
 
     private let individualChangesFactory: MessagesIndividualUpdatesFactory
@@ -214,7 +222,7 @@ final class ConversationViewController: UIViewController {
         )
 
         self.wireMessagingFactory = wireMessagingFactory
-        self.wireCellsState = userSession.contextProvider.syncContext.performAndWait {
+        self.wireDriveState = userSession.contextProvider.syncContext.performAndWait {
             conversation.cellsState
         }
 
@@ -298,6 +306,7 @@ final class ConversationViewController: UIViewController {
 
         if let quote = conversation.draftMessage?.quote, !quote.hasBeenDeleted, let contentViewController {
             let messageReplyAttachmentsViewModel = MessageReplyAttachmentsViewModel(
+                fetchCachedNodeUseCase: wireMessagingFactory.makeFetchCachedNodeUseCase(),
                 fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
             )
             inputBarController.addReplyComposingView(contentViewController.createReplyComposingView(
@@ -468,7 +477,7 @@ final class ConversationViewController: UIViewController {
         var actions = [UIAction]()
 
         // uncomment code when feature prod ready
-        if userSession.isWireCellsEnabled, conversation.isCellsEnabled {
+        if userSession.isWireDriveEnabled, conversation.isWireDriveEnabled {
             actions.append(
                 UIAction(
                     title: L10n.Localizable.Conversation.Action.files,
@@ -853,10 +862,13 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         }
     }
 
+    @MainActor
     @objc
     private func onConversationDetailsPressed() {
-        if let superview = titleView.superview, let participantsController {
-            presentParticipantsViewController(participantsController, from: superview)
+        Task {
+            if let superview = titleView.superview, let participantsController = await participantsController {
+                presentParticipantsViewController(participantsController, from: superview)
+            }
         }
     }
 
@@ -891,13 +903,13 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     }
 
     @objc
-    private func onFilesButtonPressed(_ sender: AnyObject?) {
+    func onFilesButtonPressed(_ sender: AnyObject?) {
         let selfUserColorRawValue = userSession.selfUser.accentColorValue
 
         let filesView = wireMessagingFactory
             .makeFilesView(
                 cellName: conversation.wireCellName,
-                isCellsStatePending: wireCellsState == .pending
+                isCellsStatePending: wireDriveState == .pending
             ) {
                 WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
             }
@@ -909,7 +921,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     /// If cells state is different than ready we need to sync it when view appears to ensure the value is up to date
     /// as it might have been updated to either a `pending` or `ready` state.
     func syncCellsState() {
-        guard wireCellsState != .ready else {
+        guard wireDriveState != .ready else {
             return
         }
 
@@ -925,7 +937,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         Task {
             do {
-                self.wireCellsState = try await syncCellsStateUseCase.invoke(
+                self.wireDriveState = try await syncCellsStateUseCase.invoke(
                     conversationObjectID: conversation.objectID
                 )
             } catch {

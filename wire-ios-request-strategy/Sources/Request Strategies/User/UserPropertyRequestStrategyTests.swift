@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,71 +58,6 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertNotNil(request)
-        }
-    }
-
-    func testThatItUpdatesPropertyFromUpdateEvent() {
-        syncMOC.performGroupedAndWait {
-            // given
-            let selfUser = ZMUser.selfUser(in: syncMOC)
-            selfUser.needsPropertiesUpdate = false
-
-            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: [
-                "type": "user.properties-set",
-                "key": "WIRE_RECEIPT_MODE",
-                "value": 1
-            ] as ZMTransportData, uuid: nil)!
-
-            // when
-            self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)
-
-            // then
-            XCTAssertTrue(selfUser.readReceiptsEnabled)
-            XCTAssertTrue(selfUser.readReceiptsEnabledChangedRemotely)
-        }
-    }
-
-    func testThatItUpdatesPropertyFromUpdateEvent_false() {
-        syncMOC.performGroupedAndWait {
-            // given
-            let selfUser = ZMUser.selfUser(in: syncMOC)
-            selfUser.needsPropertiesUpdate = false
-            selfUser.readReceiptsEnabled = true
-
-            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: [
-                "type": "user.properties-set",
-                "key": "WIRE_RECEIPT_MODE",
-                "value": 0
-            ] as ZMTransportData, uuid: nil)!
-
-            // when
-            self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)
-
-            // then
-            XCTAssertFalse(selfUser.readReceiptsEnabled)
-            XCTAssertTrue(selfUser.readReceiptsEnabledChangedRemotely)
-        }
-    }
-
-    func testThatItUpdatesPropertyFromUpdateEvent_delete() {
-        syncMOC.performGroupedAndWait {
-
-            // given
-            let selfUser = ZMUser.selfUser(in: syncMOC)
-            selfUser.needsPropertiesUpdate = false
-            selfUser.readReceiptsEnabled = true
-
-            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: [
-                "type": "user.properties-delete",
-                "key": "WIRE_RECEIPT_MODE"
-            ] as ZMTransportData, uuid: nil)!
-
-            // when
-            self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)
-
-            // then
-            XCTAssertFalse(selfUser.readReceiptsEnabled)
-            XCTAssertTrue(selfUser.readReceiptsEnabledChangedRemotely)
         }
     }
 }

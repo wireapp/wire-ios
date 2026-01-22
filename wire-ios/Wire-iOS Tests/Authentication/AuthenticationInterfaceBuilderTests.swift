@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -218,53 +218,6 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
     func testVerifyEmailLinkTests() {
         let credentials = UserEmailCredentials(email: "test@example.com", password: "12345678")
         runSnapshotTest(for: .pendingEmailLinkVerification(credentials))
-    }
-
-    @MainActor
-    func testReauthenticate_Email_TokenExpired() {
-        DeveloperFlag.multibackend.enable(false, storage: .temporary())
-        let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
-        runSnapshotTest(for: .reauthenticate(
-            credentials: credentials,
-            environment: nil,
-            numberOfAccounts: 1,
-            isSignedOut: true
-        ))
-    }
-
-    @MainActor
-    func testReauthenticate_Email_DuringLogin() {
-        DeveloperFlag.multibackend.enable(false, storage: .temporary())
-        let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
-        runSnapshotTest(for: .reauthenticate(
-            credentials: credentials,
-            environment: nil,
-            numberOfAccounts: 1,
-            isSignedOut: false
-        ))
-    }
-
-    @MainActor
-    func testReauthenticate_CompanyLogin() {
-        DeveloperFlag.multibackend.enable(false, storage: .temporary())
-        let credentials = LoginCredentials(emailAddress: nil, hasPassword: false, usesCompanyLogin: true)
-        runSnapshotTest(for: .reauthenticate(
-            credentials: credentials,
-            environment: nil,
-            numberOfAccounts: 1,
-            isSignedOut: true
-        ))
-    }
-
-    @MainActor
-    func testReauthenticate_NoCredentials() {
-        DeveloperFlag.multibackend.enable(false, storage: .temporary())
-        runSnapshotTest(for: .reauthenticate(
-            credentials: nil,
-            environment: nil,
-            numberOfAccounts: 1,
-            isSignedOut: true
-        ))
     }
 
     // MARK: - Helpers

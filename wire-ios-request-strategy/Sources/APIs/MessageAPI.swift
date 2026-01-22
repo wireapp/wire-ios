@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -420,7 +420,7 @@ class MessageAPIV12: MessageAPIV11 {
     override var apiVersion: APIVersion { .v12 }
 }
 
-final class MessageAPIV13: MessageAPIV12 {
+class MessageAPIV13: MessageAPIV12 {
     override var apiVersion: APIVersion { .v13 }
 
     override func sendMLSMessage(
@@ -478,4 +478,12 @@ final class MessageAPIV13: MessageAPIV12 {
         }
 
     }
+}
+
+class MessageAPIV14: MessageAPIV13 {
+    override var apiVersion: APIVersion { .v14 }
+}
+
+final class MessageAPIV15: MessageAPIV14 {
+    override var apiVersion: APIVersion { .v15 }
 }

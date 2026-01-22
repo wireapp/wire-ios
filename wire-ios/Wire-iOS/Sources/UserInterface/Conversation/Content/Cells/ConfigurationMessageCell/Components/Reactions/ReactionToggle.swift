@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireSyncEngine
 
 // MARK: - ReactionToggle
 
@@ -38,7 +39,9 @@ final class ReactionToggle: UIControl {
         color: SemanticColors.Label.textDefault
     )
 
-    private var onToggle: (() -> Void)?
+    private var onToggle: ((ZMConversationMessage) -> Void)?
+    private var accentColor: UIColor
+    private var message: ZMConversationMessage?
 
     var isToggled: Bool {
         didSet {
@@ -53,10 +56,13 @@ final class ReactionToggle: UIControl {
         emoji: Emoji.ID,
         count: UInt,
         isToggled: Bool = false,
-        onToggle: (() -> Void)? = nil
+        message: ZMConversationMessage?,
+        onToggle: ((ZMConversationMessage) -> Void)? = nil
     ) {
-        self.isToggled = isToggled
+        self.message = message
         self.onToggle = onToggle
+        self.accentColor = message?.senderUser?.accentColor ?? .blue
+        self.isToggled = isToggled
 
         super.init(frame: .zero)
 
@@ -107,9 +113,9 @@ final class ReactionToggle: UIControl {
 
     private func updateAppearance() {
         if isToggled {
-            backgroundColor = ButtonColors.backgroundReactionSelected
-            layer.borderColor = ButtonColors.borderReactionSelected.cgColor
-            counterLabel.textColor = SemanticColors.Label.textReactionCounterSelected
+            backgroundColor = accentColor.withAlphaComponent(0.5)
+            layer.borderColor = accentColor.cgColor
+            counterLabel.textColor = accentColor
         } else {
             backgroundColor = ButtonColors.backroundReactionNormal
             layer.borderColor = ButtonColors.borderReactionNormal.cgColor
@@ -121,7 +127,8 @@ final class ReactionToggle: UIControl {
 
     @objc
     private func didToggle() {
-        onToggle?()
+        guard let message else { return }
+        onToggle?(message)
     }
 
     // MARK: - Accessibility

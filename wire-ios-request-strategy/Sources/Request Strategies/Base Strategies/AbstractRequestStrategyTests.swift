@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -79,110 +79,6 @@ class AbstractRequestStrategyTests: MessagingTestBase {
         assertFail(
             withConfiguration: [.allowsRequestsWhileOnline],
             operationState: .foreground,
-            synchronizationState: .slowSyncing,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsWhileOnline],
-            operationState: .foreground,
-            synchronizationState: .quickSyncing,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsWhileOnline],
-            operationState: .foreground,
-            synchronizationState: .unauthenticated,
-            sut: sut
-        )
-
-        // slow sync
-
-        assertPass(
-            withConfiguration: [.allowsRequestsDuringSlowSync],
-            operationState: .foreground,
-            synchronizationState: .slowSyncing,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsDuringSlowSync],
-            operationState: .foreground,
-            synchronizationState: .online,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsDuringSlowSync],
-            operationState: .foreground,
-            synchronizationState: .unauthenticated,
-            sut: sut
-        )
-
-        // waiting for websocket
-
-        assertPass(
-            withConfiguration: [.allowsRequestsWhileWaitingForWebsocket],
-            operationState: .foreground,
-            synchronizationState: .establishingWebsocket,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsWhileWaitingForWebsocket],
-            operationState: .foreground,
-            synchronizationState: .quickSyncing,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsWhileWaitingForWebsocket],
-            operationState: .foreground,
-            synchronizationState: .online,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsWhileWaitingForWebsocket],
-            operationState: .foreground,
-            synchronizationState: .unauthenticated,
-            sut: sut
-        )
-
-        // quick sync
-
-        assertPass(
-            withConfiguration: [.allowsRequestsDuringQuickSync],
-            operationState: .foreground,
-            synchronizationState: .quickSyncing,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsDuringQuickSync],
-            operationState: .foreground,
-            synchronizationState: .establishingWebsocket,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsDuringQuickSync],
-            operationState: .foreground,
-            synchronizationState: .slowSyncing,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsDuringQuickSync],
-            operationState: .foreground,
-            synchronizationState: .online,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsDuringQuickSync],
-            operationState: .foreground,
             synchronizationState: .unauthenticated,
             sut: sut
         )
@@ -202,20 +98,6 @@ class AbstractRequestStrategyTests: MessagingTestBase {
             synchronizationState: .online,
             sut: sut
         )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsWhileUnauthenticated],
-            operationState: .foreground,
-            synchronizationState: .slowSyncing,
-            sut: sut
-        )
-
-        assertFail(
-            withConfiguration: [.allowsRequestsWhileUnauthenticated],
-            operationState: .foreground,
-            synchronizationState: .quickSyncing,
-            sut: sut
-        )
     }
 
     func checkRequirementsDependingOn_OperationState(on sut: RequestStrategy & TestableAbstractRequestStrategy) {
@@ -223,13 +105,6 @@ class AbstractRequestStrategyTests: MessagingTestBase {
             withConfiguration: [.allowsRequestsWhileOnline, .allowsRequestsWhileInBackground],
             operationState: .background,
             synchronizationState: .online,
-            sut: sut
-        )
-
-        assertPass(
-            withConfiguration: [.allowsRequestsDuringQuickSync, .allowsRequestsWhileInBackground],
-            operationState: .background,
-            synchronizationState: .quickSyncing,
             sut: sut
         )
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -218,11 +218,12 @@ final class MessageReplyAttachmentsViewSnapshotTests: XCTestCase {
             attachments: attachments
         )
 
-        let fetchNodeUseCase = MockWireCellsFetchNodeUseCaseProtocol()
-        fetchNodeUseCase.invokeNodeID_MockValue = AsyncThrowingStream { continuation in
-            continuation.finish()
-        }
+        let fetchCachedNodeUseCase = MockWireDriveFetchCachedNodeUseCaseProtocol()
+        fetchCachedNodeUseCase.invokeNodeID_MockMethod = { _ in nil }
+        let fetchNodeUseCase = MockWireDriveFetchNodeUseCaseProtocol()
+        fetchNodeUseCase.invokeNodeID_MockMethod = { _ in nil }
         let viewModel = MessageReplyAttachmentsViewModel(
+            fetchCachedNodeUseCase: fetchCachedNodeUseCase,
             fetchNodeUseCase: fetchNodeUseCase
         )
 

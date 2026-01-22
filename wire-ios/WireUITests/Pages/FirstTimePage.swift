@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,7 +48,13 @@ class FirstTimePage: PageModel {
     // Tap OK button on first time using Wire popup
     func acceptFirstTimeAlert() -> FirstTimePage {
         dismissSavePasswordAlertIfPresent()
-        okButton.tap()
+        _ = okButton.waitForExistence(timeout: 2)
+        if !okButton.isHittable {
+            dismissSavePasswordAlertIfPresent()
+        }
+        if okButton.isHittable {
+            okButton.tap()
+        }
         okButton.waitToDisappear()
         return self
     }
@@ -77,9 +83,9 @@ class FirstTimePage: PageModel {
     }
 
     private func dismissSavePasswordAlertIfPresent() {
-        if savePasswordSheet.waitForExistence(timeout: 2) {
+        if savePasswordSheet.waitForExistence(timeout: 4) {
             notNowOptionOnSavePasswordSheet.tap()
-            _ = savePasswordSheet.waitToDisappear(timeout: 2)
+            _ = savePasswordSheet.waitToDisappear(timeout: 4)
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,24 +20,49 @@ import WireCallingAssembly
 import WireCommonComponents
 import WireData
 @preconcurrency import WireDataModel
+import WireLogging
 import WireMessagingAssembly
 import WireMessagingDomain
 import WireNetwork
 @preconcurrency import WireSyncEngine
 import WireTransport
 
-struct ZClientControllerBuilder {
+final class ZClientControllerBuilder {
 
     private(set) var account: Account
     private(set) var userSession: UserSession
     private(set) var trackingManager: TrackingManager?
     let legacyEnvironment: WireTransport.BackendEnvironment
     let newEnvironment: WireNetwork.BackendEnvironment2?
+    private lazy var wireDriveBackendURL: URL? = {
+        let contextProvider = userSession.contextProvider
+        let syncContext = contextProvider.syncContext
+        let featureRepository = LegacyFeatureRepository(context: syncContext)
+
+        return syncContext.performAndWait {
+            featureRepository.fetchCellsInternal()?.config.backend.url
+        }
+    }()
+
+    init(
+        account: Account,
+        userSession: UserSession,
+        trackingManager: TrackingManager? = nil,
+        legacyEnvironment: WireTransport.BackendEnvironment,
+        newEnvironment: WireNetwork.BackendEnvironment2?
+    ) {
+        self.account = account
+        self.userSession = userSession
+        self.trackingManager = trackingManager
+        self.legacyEnvironment = legacyEnvironment
+        self.newEnvironment = newEnvironment
+    }
 
     @MainActor
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
         let viewController = ZClientViewController(
             account: account,
+            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
             selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
             trackingManager: trackingManager,
@@ -55,14 +80,24 @@ struct ZClientControllerBuilder {
 
     @MainActor
     private func buildWireMessagingFactory() -> any WireMessagingFactoryProtocol {
-        WireMessagingFactory(
-            serverURL: newEnvironment?.config.endpoints.restAPIURL ?? legacyEnvironment.backendURL,
+        let cellsURLResolver: @Sendable () throws -> URL = { [weak self] in
+            enum Failure: Error {
+                case missingCellsBackendURL
+            }
+
+            guard let self, let wireDriveBackendURL else {
+                throw Failure.missingCellsBackendURL
+            }
+
+            return wireDriveBackendURL
+        }
+
+        return WireMessagingFactory(
+            cellsURLResolver: cellsURLResolver,
             // TODO: [WPB-18798] Temporary fix, when multibackend is on we use new backend environment, when off we use the legacy one
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
-            contextProvider: DefaultContextProvider(contextProvider: userSession.contextProvider),
-            isFoldersEnabled: DeveloperFlag.wireCellsFolders.isOn,
-            isCollaboraEnabled: DeveloperFlag.wireCellsCollabora.isOn
+            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider)
         )
     }
 
@@ -84,13 +119,13 @@ private struct DefaultAccessTokenProvider: AccessTokenProvider {
 
     let userSession: UserSession
 
-    func accessToken() async throws -> WireCellsAccessToken {
+    func accessToken() async throws -> WireDriveAccessToken {
         guard let authManager = userSession.clientSessionComponent?.authenticationManager else {
             throw Error.noAuthenticationManager
         }
 
         let token = try await authManager.getValidAccessToken()
-        return WireCellsAccessToken(
+        return WireDriveAccessToken(
             token: token.token,
             expirationDate: token.expirationDate
         )
@@ -99,17 +134,3 @@ private struct DefaultAccessTokenProvider: AccessTokenProvider {
 }
 
 extension FileAssetCache: WireMessagingDomain.FileCache, @unchecked @retroactive Sendable {}
-
-private struct DefaultContextProvider: ManagedObjectContextProvider {
-
-    let contextProvider: any ContextProvider
-
-    var viewContext: NSManagedObjectContext {
-        contextProvider.viewContext
-    }
-
-    func newBackgroundContext() -> NSManagedObjectContext {
-        contextProvider.newBackgroundContext()
-    }
-
-}

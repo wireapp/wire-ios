@@ -1,0 +1,132 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Combine
+import QuickLook
+package import SwiftUI
+import WireDesign
+import WireFoundation
+import WireMessagingDomain
+import WireReusableUIComponents
+
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+
+/// Allows browsing files shared across all conversations
+package struct FilesBrowserView: FilesViewProtocol {
+    @StateObject package var viewModel: FilesViewModel
+    package var isBrowsing: Bool { true }
+
+    package init(
+        viewModel: @autoclosure @escaping () -> FilesViewModel,
+        onOpenRecycleBin: @escaping () -> Void = {},
+        onDismissContainer: @escaping () -> Void = {}
+    ) {
+        self._viewModel = StateObject(wrappedValue: viewModel())
+    }
+
+    package var body: some View {
+        ZStack {
+            ColorTheme.Backgrounds.surface.color
+                .ignoresSafeArea(.all)
+            Group {
+                switch viewModel.state {
+                case .loading:
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                case .received, .pending:
+                    filesList
+                case .error:
+                    FilesInfoView(info: .error, onReload: {
+                        reloadTask()
+                    })
+                }
+            }
+            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
+            .navigationTitle(Strings.AllFiles.navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
+            .toolbar { toolbarContent }
+            .if(viewModel.showSearchBar) { view in
+                view.searchable(
+                    text: $viewModel.searchText,
+                    placement: .navigationBarDrawer,
+                    prompt: Strings.Files.Search.title
+                )
+            }
+            .onAppear { reloadTask() }
+            .alert(
+                item: $viewModel.alert,
+                title: { Text($0.title) },
+                message: { Text($0.message) },
+                actions: { _ in confirmButton }
+            )
+            .sheet(item: $viewModel.sheetNavigation) {
+                Task { await viewModel.onSheetDismissed() }
+            } content: { navigationItem in
+                switch navigationItem {
+                case let .filters(filtersView):
+                    filtersView
+                case let .shareLink(shareLinkView):
+                    shareLinkView
+                default:
+                    EmptyView()
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Toolbar
+
+private extension FilesBrowserView {
+
+    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button {
+                viewModel.openFilters()
+            } label: {
+                Image(systemName: "line.3.horizontal.decrease.circle")
+            }
+
+        }
+    }
+
+}
+
+// MARK: - Helper
+
+extension View {
+    @ViewBuilder
+    func `if`(
+        _ condition: Bool,
+        transform: (Self) -> some View
+    ) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
+        }
+    }
+}
+
+#Preview {
+    NavigationStack {
+        FilesBrowserView(viewModel: .preview())
+    }
+}

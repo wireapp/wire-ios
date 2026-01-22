@@ -78,6 +78,7 @@ let package = Package(
                 "WireMessagingUI",
                 "WireMessagingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
+                .product(name: "WireFoundationSupport", package: "WireFoundation"),
                 "WireFoundation"
             ],
             resources: [

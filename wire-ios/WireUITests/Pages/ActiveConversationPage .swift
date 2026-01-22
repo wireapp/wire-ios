@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,6 +59,10 @@ class ActiveConversationPage: PageModel {
 
     var conversationDetailsButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.conversationDetailsButton.rawValue]
+    }
+
+    var imageCell: XCUIElement {
+        app.otherElements[Locators.ActiveConversationPage.imageCell.rawValue]
     }
 
     func fetchMessages() -> [String] {

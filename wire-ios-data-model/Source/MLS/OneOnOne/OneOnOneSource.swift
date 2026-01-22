@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ enum OneOnOneType: Hashable {
     case proteusPending
 }
 
-final class OneOnOneSource {
+public final class OneOnOneSource {
 
     struct Result {
         let candidate: ZMConversation
@@ -106,6 +106,46 @@ final class OneOnOneSource {
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "primaryKey", ascending: true)]
 
         return try context.fetch(fetchRequest)
+    }
+
+    public static func migrate(
+        toMLSConversation mlsConversation: ZMConversation,
+        for otherUser: ZMUser,
+        in context: NSManagedObjectContext
+    ) throws {
+
+        // Note on proteus, it's possible to have duplicate 1-1 conversations, so we need to fetch all relevant
+        // 1-1 conversations here.
+        let source = OneOnOneSource(context: context)
+        var proteusConversations: [ZMConversation] = []
+        // NOTE: querying for all types at once triggers a table scan which is very expensive
+        for type in [OneOnOneType.fake, OneOnOneType.proteus, OneOnOneType.proteusPending] {
+            let conversations = try source.fetchOneOnOnes(
+                user: otherUser,
+                types: [type]
+            )
+            proteusConversations.append(contentsOf: conversations)
+        }
+
+        // Move local messages from all proteus conversations
+        for proteusConversation in proteusConversations {
+            // Since ZMMessages only have a single conversation connected,
+            // forming this union also removes the relationship to the proteus conversation.
+            mlsConversation.migrateMessages(from: proteusConversation)
+        }
+
+        if !proteusConversations.isEmpty {
+            // insert system message that we moved from proteus to MLS
+            let sender = ZMUser.selfUser(in: context)
+            mlsConversation.appendMLSMigrationFinalizedSystemMessageIfNeeded(sender: sender, at: .now)
+
+            // update just to be sure
+            mlsConversation.needsToBeUpdatedFromBackend = true
+        }
+        // switch active conversation
+        otherUser.oneOnOneConversation = mlsConversation
+
+        mlsConversation.migratedToMLS = true
     }
 }
 

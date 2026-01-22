@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@
 @class ZMUpstreamModifiedObjectSync;
 @class ZMClientRegistrationStatus;
 @class ApplicationStatusDirectory;
-@class SyncStatus;
 
 @interface ZMSelfStrategy : ZMAbstractRequestStrategy <ZMContextChangeTrackerSource, TearDownCapable>
 
@@ -34,8 +33,7 @@
 
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
                            applicationStatus:(id<ZMApplicationStatus>)appplicationStatus
-                    clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus
-                                  syncStatus:(SyncStatus *)syncStatus;
+                    clientRegistrationStatus:(ZMClientRegistrationStatus *)clientRegistrationStatus;
 
 - (void)tearDown;
 

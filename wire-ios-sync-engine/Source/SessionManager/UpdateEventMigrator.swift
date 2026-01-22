@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -518,5 +518,25 @@ private struct DecryptedProteusMessageEvent: EventData, Codable {
     let external: String?
     let sender: String
     let recipient: String
+
+}
+
+private extension Payload {
+
+    /// The domain that the self domain has stopped federate with.
+    struct FederationDelete: Codable {
+
+        public let domain: String
+        public let type: String
+
+    }
+
+    /// The list of domains that have terminated federation with each other.
+    struct ConnectionRemoved: Codable {
+
+        public let domains: [String]
+        public let type: String
+
+    }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -334,6 +334,11 @@
 "conversation.connection_view.encryption_info" = "Wire 中的通信始终为端到端加密。您在此对话中发送和接收的所有内容只有您和您的联系人可以访问。";
 "conversation.connection_view.wire_cells.encryption_info" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.";
 "conversation.connection_view.sensitive_information_warning" = "请仍然谨慎选择与谁共享敏感信息。";
+"conversation.connection_view.welcome.title.wire" = "Communication in Wire is always end-to-end encrypted.";
+"conversation.connection_view.welcome.message.wire" = "Everything you send and receive in this channel is only accessible to you and other group participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.title.wire_cells" = "Communication in Wire is always secured.";
+"conversation.connection_view.welcome.message.wire_cells" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.learn_more" = "更多信息";
 
 "conversation.input_bar.shortcut.send" = "发送消息";
 "conversation.input_bar.shortcut.newline" = "插入断行";
@@ -371,8 +376,9 @@
 "conversation.create.protocol_selection.mls_default" = "MLS（默认）";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus（默认）";
-"conversation.create.file_management.title" = "File collaboration";
-"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone.";
+"conversation.create.file_management.title" = "Shared Drive";
+"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
+"conversation.create.file_management.learnMore" = "更多信息";
 
 "conversation.input_bar.ongoing_call_alert.title" = "正在呼叫";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "在通话时不能录制语音讯息。";
@@ -400,7 +406,7 @@
 
 "conversation.action.search" = "搜索";
 "conversation.action.conversationDetails" = "对话详情";
-"conversation.action.files" = "文件";
+"conversation.action.files" = "Shared Drive";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "图像";
@@ -607,7 +613,7 @@
 "content.system.message_timer_off" = "%@关闭了消息计时器";
 "content.system.message_timer_off-you" = "%@关闭了消息计时器";
 
-"content.system.message_timer_unavailable" = "Self-deleting messages are off for conversations with Cells";
+"content.system.message_timer_unavailable" = "Self-deleting messages are off";
 
 "content.system.backends_stop_federating.self_backend" = "**您的后端**已停止与 **%@** 联合。[进一步了解](%@)";
 "content.system.backends_stop_federating.other_backends" = "后端 **%@** 和 **%@** 已停止联合。[进一步了解](%@)";
@@ -621,7 +627,7 @@
 "content.system.channel.guest.joined" = "%@ 加入了频道";
 "content.system.channel.guest.you_joined" = "您加入了频道";
 
-"content.system.file_collaboration.enabled" = "File collaboration (Cells) is on";
+"content.system.file_collaboration.enabled" = "Shared Drive is on";
 
 // read receipt
 
@@ -660,7 +666,6 @@
 
 "content.system.cannot_decrypt.self" = "无法解密您发送的消息。";
 "content.system.cannot_decrypt.other" = "无法解密来自 %@ 的消息。";
-"content.system.cannot_decrypt.reset_session" = "修复未来的消息";
 "content.system.cannot_decrypt.error_details" = "（已修复错误：%d ID：%@）";
 
 "content.system.cannot_decrypt_resolved.self" = "您现在可以解密来自您自己的消息。要恢复丢失的消息，您需要重新发送它们。";
@@ -733,6 +738,8 @@
 "content.reactions_list.likers" = "赞好";
 
 "content.file.too_big" = "您可以发送最大%@的文件。";
+
+"content.message.reply.files.count" = "%@ files";
 
 // Reactions
 "content.reactions.title" = "选择反应";
@@ -1089,10 +1096,10 @@
 "group_details.receipt_options_cell.description" = "当这启用时, 参与者可以看到他们在此对话中的消息何时已阅读。";
 "group_details.access_options_cell.title" = "频道访问权限";
 "group_details.channel_history_options_cell.title" = "对话历史记录";
-"group_details.file_collaboration_cell.title" = "File collaboration (Cells)";
+"group_details.file_collaboration_cell.title" = "Shared Drive";
 "group_details.file_collaboration_cell.subtitle" = "开启";
 "group_details.file_collaboration_cell.footer" = "Permanently on for this conversation";
-"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with Cells.";
+"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with a shared Drive.";
 
 "group_details.message_protocol.section_tile" = "协议详细信息";
 "group_details.message_protocol.title" = "协议";
@@ -1840,10 +1847,6 @@
 "databaseloadingfailure.alert.delete_database.continue" = "继续";
 "databaseloadingfailure.alert.retry" = "重试";
 
-// Backend not supported alert
-"backend_not_supported.alert.title" = "不支持服务器版本";
-"backend_not_supported.alert.message" = "此应用不支持该服务器版本。请联系您的系统管理员。";
-
 // Third Party
 "giphy.conversation.message" = "%@ · 来源 giphy.com";
 "giphy.conversation.random_message" = "来源 giphy.com";
@@ -1869,6 +1872,10 @@
 
 "collections.search.field.placeholder" = "搜索文字信息";
 "collections.search.no_items" = "没有找到";
+
+"collections.section.searchFiles.description" = "Search files";
+"collections.section.searchFiles.alert.title" = "Wire Drive";
+"collections.section.searchFiles.alert.message" = "Find files in conversations with Shared Drive.";
 
 
 

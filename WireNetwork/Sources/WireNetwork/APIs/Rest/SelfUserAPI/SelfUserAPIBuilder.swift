@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -67,6 +67,10 @@ public struct SelfUserAPIBuilder {
             SelfUserAPIV12(apiService: apiService)
         case .v13:
             SelfUserAPIV13(apiService: apiService)
+        case .v14:
+            SelfUserAPIV14(apiService: apiService)
+        case .v15:
+            SelfUserAPIV15(apiService: apiService)
         }
     }
 

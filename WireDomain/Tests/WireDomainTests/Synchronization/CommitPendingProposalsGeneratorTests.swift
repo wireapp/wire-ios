@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ class CommitPendingProposalsGeneratorTests {
     let coreDataStackHelper = CoreDataStackHelper()
     let coreDataStack: CoreDataStack
     var commitPendingProposalItemClosure: ((CommitPendingProposalItem) -> Void)?
-    var mockMLSService: MockMLSServiceInterface!
+    var mockMLSService: MockMLSServiceInterface
     var isMLSGroupBroken: (MLSGroupID) -> Bool = { _ in false }
 
     init() async throws {
@@ -53,6 +53,11 @@ class CommitPendingProposalsGeneratorTests {
                 self.commitPendingProposalItemClosure?(item)
             }
         )
+    }
+
+    deinit {
+        sut = nil
+        commitPendingProposalItemClosure = nil
     }
 
     @Test(

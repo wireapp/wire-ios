@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ protocol ObservableSessionManager: SessionManagerType {
     func delete(account: Account, eraseData: Bool)
 
     /// Add a new account.
-    func addAccount(userInfo: [String: Any]?)
+    func addAccount(userInfo: [String: Any]?, completion: (() -> Void)?)
 }
 
 extension SessionManager: ObservableSessionManager {}

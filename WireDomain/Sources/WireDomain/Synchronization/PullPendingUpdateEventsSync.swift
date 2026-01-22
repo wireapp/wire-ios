@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -91,10 +91,11 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
             // We'll insert new events from this index.
             let currentIndex = try await store.indexOfLastEventEnvelope() + 1
 
+            var lastEnvelopeID: UUID?
+
             // We are decrypting the batch within one core crypto transaction
             try await coreCryptoProvider.coreCrypto().transaction { context in
 
-                var lastEnvelopeID: UUID?
                 var decryptedEnvelopes: [UpdateEventEnvelope] = []
 
                 for envelope in envelopes {
@@ -125,15 +126,18 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                     decryptedEnvelopes,
                     index: currentIndex
                 )
+            }
 
-                if let lastEnvelopeID {
-                    // We keep track of the last event id so next time we fetch
-                    // only new events. We don't track transient events because
-                    // these events aren't stored in the backend.
-                    WireLogger.sync.debug("storing last event id", attributes: [.eventEnvelopeID: lastEnvelopeID])
-                    store.storeLastEventID(id: lastEnvelopeID)
-                }
-
+            if let lastEnvelopeID {
+                // We keep track of the last event id so next time we fetch
+                // only new events. We don't track transient events because
+                // these events aren't stored in the backend.
+                //
+                // NOTE: it's important the we are updating the last event ID
+                // after the CC transaction has successfully completed,
+                // otherwise we risk data loss in case of a crash.
+                WireLogger.sync.debug("storing last event id", attributes: [.eventEnvelopeID: lastEnvelopeID])
+                store.storeLastEventID(id: lastEnvelopeID)
             }
         }
 

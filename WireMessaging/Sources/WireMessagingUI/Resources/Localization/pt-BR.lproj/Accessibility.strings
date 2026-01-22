@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,3 +45,7 @@
 // MARK: - File Tags View
 "conversation.wireCells.tags.removeTag" = "Remove tag {0}";
 "conversation.wireCells.tags.addTag" = "Add tag {0}";
+
+// MARK: - Share Link View
+"conversation.wireCells.shareLink.hidePassword" = "Ocultar senha";
+"conversation.wireCells.shareLink.showPassword" = "Mostrar senha";

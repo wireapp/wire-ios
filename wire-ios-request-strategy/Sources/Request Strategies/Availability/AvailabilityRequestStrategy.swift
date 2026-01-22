@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -73,25 +73,4 @@ extension AvailabilityRequestStrategy: ModifiedKeyObjectSyncTranscoder {
             }
         }
     }
-}
-
-extension AvailabilityRequestStrategy: ZMEventConsumer {
-
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        for event in events {
-            guard
-                let senderUUID = event.senderUUID, event.isGenericMessageEvent,
-                let message = GenericMessage(from: event, validate: true), message.hasAvailability
-            else {
-                continue
-            }
-
-            guard let user = ZMUser.fetch(with: senderUUID, in: context) else {
-                assertionFailure("User not found to updateAvailability")
-                continue
-            }
-            user.updateAvailability(from: message)
-        }
-    }
-
 }

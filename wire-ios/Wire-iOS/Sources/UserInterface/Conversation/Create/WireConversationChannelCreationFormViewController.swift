@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
     private lazy var viewModel = ConversationChannelCreationFormViewModel(
         channelName: "",
         isUserPremium: userSession.isEnterpriseUser,
-        isWireCellsEnabled: userSession.isWireCellsEnabled,
+        isWireDriveEnabled: userSession.isWireDriveEnabled,
         teamsURL: URL.manageTeam(source: .settings),
         onFormValidityUpdate: { formIsValid in
             Task { @MainActor [weak self] in
@@ -63,9 +63,11 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         self.userSession = userSession
         let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
             .isFeatureEnabled(.apps) ?? false
+        let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
         self.values = ConversationCreationValues(
             isChannel: true,
             isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable,
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )
@@ -148,7 +150,9 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
         let participantsController = AddParticipantsViewController(
             context: .create(values),
-            userSession: userSession
+            userSession: userSession,
+            isAppsFeatureEnabled: values.isAppsFeatureEnabled,
+            areLegacyBotsAvailable: values.areLegacyBotsAvailable
         )
 
         participantsController.conversationCreationDelegate = self
@@ -229,7 +233,7 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
                 teamID: teamID,
                 name: values.name,
                 historyDepth: channelHistoryDepth,
-                cells: userSession.isWireCellsEnabled ? values.enableFileManagement : nil,
+                cells: userSession.isWireDriveEnabled ? values.enableFileManagement : nil,
                 users: Set(users),
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),
