@@ -380,15 +380,6 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     /// - Parameter data: The data that might be a property list
     /// - Returns: A file URL if the data is a property list containing one, nil otherwise
     private func extractFileURLFromPropertyList(_ data: Data) -> URL? {
-        // Check if this is a binary property list (starts with "bplist")
-        guard
-            data.count > 6,
-            let header = String(data: data.prefix(6), encoding: .utf8),
-            header.hasPrefix("bplist")
-        else {
-            return nil
-        }
-
         do {
             let plist = try PropertyListSerialization.propertyList(from: data, format: nil)
 
