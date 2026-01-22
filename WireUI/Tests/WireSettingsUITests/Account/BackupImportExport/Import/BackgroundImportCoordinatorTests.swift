@@ -216,6 +216,9 @@ struct BackgroundImportCoordinatorTests {
         // When
         sut.cancelImport()
 
+        // Finish the stream to unblock the task
+        continuation.finish(throwing: CancellationError())
+
         // Wait for task to be cancelled
         _ = await task.result
 
