@@ -17,54 +17,54 @@
 //
 
 public class CoreCryptoMocksEnvelope {
-    
+
     // MARK: - Public attributes
-    
+
     public var coreCryptoContext: MockCoreCryptoContextProtocol
     public var coreCrypto: MockCoreCryptoProtocol
     public var coreCryptoProvider: MockCoreCryptoProviderProtocol
-    
+
     // MARK: - Private attributes
-    
+
     private var transactionContinuations: [CheckedContinuation<Void, Never>] = []
 
     // MARK: - Init
-    
+
     public init() {
-        coreCryptoContext = MockCoreCryptoContextProtocol()
-        coreCrypto = MockCoreCryptoProtocol()
-        coreCryptoProvider = MockCoreCryptoProviderProtocol()
-    
+        self.coreCryptoContext = MockCoreCryptoContextProtocol()
+        self.coreCrypto = MockCoreCryptoProtocol()
+        self.coreCryptoProvider = MockCoreCryptoProviderProtocol()
+
         coreCryptoProvider.coreCrypto_MockValue = coreCrypto
         coreCrypto.mockTransaction(context: coreCryptoContext)
     }
-    
+
     // MARK: - Public interface
-    
+
     public func setCompleteTransactionByDefault(_ completeTransactionByDefault: Bool) {
         coreCrypto.transaction_MockMethod = { [coreCryptoContext] block in
             let result = try await block(coreCryptoContext)
-            
+
             if !completeTransactionByDefault {
                 await withCheckedContinuation { continuation in
                     self.transactionContinuations.append(continuation)
                 }
             }
-            
+
             return result
         }
     }
-    
+
     public func waitUntilTransactionIsPending() async throws {
-         while transactionContinuations.isEmpty {
-             try await Task.sleep(nanoseconds: 1_000_000)
-         }
+        while transactionContinuations.isEmpty {
+            try await Task.sleep(nanoseconds: 1_000_000)
+        }
     }
-    
+
     public func completeAllTransactions() {
         transactionContinuations.forEach {
             $0.resume()
         }
     }
-    
+
 }

@@ -156,7 +156,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
 
         // complete all transaction
         envelope.completeAllTransactions()
-        
+
         _ = await pullingEventsTask.result
 
         // after allowing the transaction to complete we should we see
