@@ -63,7 +63,7 @@ extension FilesViewModel {
                 getTagSuggestions: WireDriveGetTagSuggestionsUseCase(
                     nodesAPI: previewTagsApi()
                 ),
-                createFolder: WireDriveCreateUseCase(
+                createUseCase: WireDriveCreateUseCase(
                     nodesRepository: previewNodesRepository()
                 ),
                 fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(

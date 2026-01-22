@@ -133,7 +133,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
                 repository: nodesRepository
             ),
             moveNodeUseCase: moveNodeUseCase,
-            createFolderUseCase: createFolderUseCase
+            createUseCase: createUseCase
         )
     }
 

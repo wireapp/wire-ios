@@ -237,7 +237,7 @@ final class RestAPI: Sendable {
     ///
     /// - Parameters:
     ///  - path: The path of the new folder.
-    func createFolder(at path: String) async throws -> WireCellsNodeNetworkModel {
+    func createFolder(at path: String) async throws -> WireDriveNodeNetworkModel {
         let request = RestCreateRequest(inputs: [
             RestIncomingNode(
                 locator: RestNodeLocator(
@@ -254,13 +254,13 @@ final class RestAPI: Sendable {
         )
 
         guard let dto = response.nodes?.first?.toDTO() else {
-            throw WireCellsNodesAPIError.failedToDecodeNode
+            throw WireDriveNodesAPIError.failedToDecodeNode
         }
 
         return dto
     }
 
-    func createFile(at path: String, templateUuid: String) async throws -> WireCellsNodeNetworkModel {
+    func createFile(at path: String, templateUuid: String) async throws -> WireDriveNodeNetworkModel {
         let request = RestCreateRequest(inputs: [
             RestIncomingNode(
                 locator: RestNodeLocator(
@@ -278,13 +278,13 @@ final class RestAPI: Sendable {
         )
 
         guard let dto = response.nodes?.first?.toDTO() else {
-            throw WireCellsNodesAPIError.failedToDecodeNode
+            throw WireDriveNodesAPIError.failedToDecodeNode
         }
 
         return dto
     }
 
-    func getTemplates() async throws -> WireCellsTemplateNetworkModel? {
+    func getTemplates() async throws -> WireDriveTemplateNetworkModel? {
         try await NodeServiceAPI
             .templates(apiConfiguration: makeConfiguration())
             .toDTO()

@@ -137,7 +137,7 @@ package struct FilesViewContainer: View {
                 ),
                 updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI),
                 getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
-                createFolder: WireDriveCreateUseCase(nodesRepository: nodesAPI),
+                createUseCase: WireDriveCreateUseCase(nodesRepository: nodesAPI),
                 fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesAPI),
                 restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
                     repository: nodesAPI,
