@@ -187,7 +187,7 @@ private extension WireDriveFileTemplate {
         case .spreadsheet:
             "02-Microsoft Excel.xlsx"
         }
-        
+
         let label = switch kind {
         case .document:
             "Microsoft Word"
@@ -196,7 +196,7 @@ private extension WireDriveFileTemplate {
         case .spreadsheet:
             "Microsoft Excel"
         }
-        
+
         return WireDriveFileTemplate(
             kind: kind,
             editable: true,
