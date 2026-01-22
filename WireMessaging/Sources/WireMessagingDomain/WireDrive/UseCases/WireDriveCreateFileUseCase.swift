@@ -26,7 +26,7 @@ package enum WireDriveCreateFileUseCaseError: Error {
 
 /// Creates a file or a folder on the server.
 package struct WireDriveCreateFileUseCase: WireDriveCreateFileUseCaseProtocol {
-    
+
     package enum Target: Equatable {
         case folder
         case file(WireDriveFileTemplate)
