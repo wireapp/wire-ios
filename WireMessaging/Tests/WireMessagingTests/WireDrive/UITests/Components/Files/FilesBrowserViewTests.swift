@@ -38,7 +38,7 @@ final class FilesBrowserViewTests: XCTestCase {
     private var renameNodeUseCase: WireDriveRenameNodeUseCase!
     private var updateTagsUseCase: (any WireDriveUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireDriveGetTagSuggestionsUseCaseProtocol)!
-    private var createUseCase: (any WireDriveCreateUseCaseProtocol)!
+    private var createFileUseCase: (any WireDriveCreateFileUseCaseProtocol)!
     private var fetchNodeVersionsUseCase: WireDriveFetchNodeVersionsUseCase!
     private var restoreNodeVersionUseCase: WireDriveRestoreNodeVersionUseCase!
     private var getEditingURLUseCase: WireDriveGetEditingURLUseCase!
@@ -91,7 +91,7 @@ final class FilesBrowserViewTests: XCTestCase {
             fileCache: MockFileCache()
         )
 
-        createUseCase = WireDriveCreateUseCase(
+        createUseCase = WireDriveCreateFileUseCase(
             nodesRepository: nodesRepository
         )
 
@@ -211,7 +211,7 @@ final class FilesBrowserViewTests: XCTestCase {
                 renameNode: renameNodeUseCase,
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
-                createUseCase: createUseCase,
+                createFileUseCase: createUseCase,
                 fetchNodeVersions: fetchNodeVersionsUseCase,
                 restoreNodeVersion: restoreNodeVersionUseCase,
                 getEditingURL: getEditingURLUseCase,

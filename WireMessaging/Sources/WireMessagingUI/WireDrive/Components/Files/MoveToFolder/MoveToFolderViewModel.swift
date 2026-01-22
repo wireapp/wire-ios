@@ -82,7 +82,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
     private let nodesRepository: any WireDriveNodesRepositoryProtocol
     private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
     private let moveNodeUseCase: WireDriveMoveNodeUseCase
-    private let createUseCase: any WireDriveCreateUseCaseProtocol
+    private let createFileUseCase: any WireDriveCreateFileUseCaseProtocol
 
     @Published var navigationPath: [FilesNavigationItem]
 
@@ -94,7 +94,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
         nodesRepository: any WireDriveNodesRepositoryProtocol,
         localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         moveNodeUseCase: WireDriveMoveNodeUseCase,
-        createUseCase: any WireDriveCreateUseCaseProtocol
+        createFileUseCase: any WireDriveCreateFileUseCaseProtocol
     ) {
         self.navigationPath = FilesNavigationItem.items(for: containerPath)
         self.rootPath = containerPath.components(separatedBy: "/").first ?? ""
@@ -104,7 +104,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
         self.onFinish = onFinish
         self.nodesRepository = nodesRepository
         self.moveNodeUseCase = moveNodeUseCase
-        self.createUseCase = createUseCase
+        self.createFileUseCase = createFileUseCase
         self.localAssetRepository = localAssetRepository
     }
 
@@ -133,7 +133,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
                 repository: nodesRepository
             ),
             moveNodeUseCase: moveNodeUseCase,
-            createUseCase: createUseCase
+            createFileUseCase: createFileUseCase
         )
     }
 

@@ -16,7 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-public protocol WireDriveFetchTemplatesUseCaseProtocol: Sendable {
-    func invoke() async throws -> [WireDriveTemplate]
+package import Foundation
+
+/// Fetches templates useable for document creation (.docx, .pptx, .xlsx. etc)
+package struct WireDriveFetchFileTemplatesUseCase: WireDriveFetchFileTemplatesUseCaseProtocol {
+
+    private let repository: any WireDriveNodesRepositoryProtocol
+
+    package init(
+        repository: any WireDriveNodesRepositoryProtocol,
+    ) {
+        self.repository = repository
+    }
+
+    package func invoke() async throws -> [WireDriveFileTemplate] {
+        try await repository.getTemplates()
+    }
+
 }

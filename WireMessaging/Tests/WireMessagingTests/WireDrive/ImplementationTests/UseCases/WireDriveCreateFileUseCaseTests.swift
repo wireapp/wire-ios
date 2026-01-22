@@ -23,13 +23,13 @@ import WireMessagingDomainSupport
 @testable import WireMessagingDomain
 
 @MainActor
-final class WireDriveCreateUseCaseTests {
+final class WireDriveCreateFileUseCaseTests {
 
     private let repository = MockWireDriveNodesRepositoryProtocol()
-    private let sut: WireDriveCreateUseCase
+    private let sut: WireDriveCreateFileUseCase
 
     init() {
-        self.sut = WireDriveCreateUseCase(
+        self.sut = WireDriveCreateFileUseCase(
             nodesRepository: repository
         )
     }
@@ -62,7 +62,7 @@ final class WireDriveCreateUseCaseTests {
     func invoke_FileSuccess() async throws {
         let filepath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2"
         let filename = "test"
-        let template = WireDriveTemplate(
+        let template = WireDriveFileTemplate(
             kind: .document,
             editable: true,
             label: "Microsoft Word",
@@ -98,7 +98,7 @@ final class WireDriveCreateUseCaseTests {
         repository.preCheckNodePathFindAvailablePath_MockValue = .fileExists(nextPath: "")
 
         // Then
-        await #expect(throws: WireDriveCreateUseCaseError.alreadyExists) {
+        await #expect(throws: WireDriveCreateFileUseCaseError.alreadyExists) {
             // When
             _ = try await sut.invoke(
                 creationTarget: .folder,
@@ -119,7 +119,7 @@ final class WireDriveCreateUseCaseTests {
         repository.createFolderAt_MockError = NSError(domain: "Server error", code: 0)
 
         // Then
-        await #expect(throws: WireDriveCreateUseCaseError.serverFailedToCreate) {
+        await #expect(throws: WireDriveCreateFileUseCaseError.serverFailedToCreate) {
             // When
             _ = try await sut.invoke(
                 creationTarget: .folder,

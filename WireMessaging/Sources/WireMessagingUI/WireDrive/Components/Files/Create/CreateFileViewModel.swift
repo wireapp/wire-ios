@@ -25,7 +25,7 @@ import WireMessagingDomain
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 @MainActor
-final class CreateViewModel: ObservableObject {
+final class CreateFileViewModel: ObservableObject {
 
     @Published var nameInput: String = ""
     @Published var errorMessage: String?
@@ -51,14 +51,7 @@ final class CreateViewModel: ObservableObject {
         case .folder:
             Strings.Files.NewFolder.navigationTitle
         case let .file(template):
-            switch template.kind {
-            case .document:
-                Strings.Files.NewFile.navigationTitle(".docx")
-            case .presentation:
-                Strings.Files.NewFile.navigationTitle(".pptx")
-            case .spreadsheet:
-                Strings.Files.NewFile.navigationTitle(".xlsx")
-            }
+            Strings.Files.NewFile.navigationTitle("." + template.fileExtension)
         }
     }
 
@@ -89,20 +82,20 @@ final class CreateViewModel: ObservableObject {
         }
     }
 
-    private let creationTarget: CreationTarget
-    private let createUseCase: any WireDriveCreateUseCaseProtocol
+    private let creationTarget: WireDriveCreateFileUseCase.Target
+    private let createFileUseCase: any WireDriveCreateFileUseCaseProtocol
     private let path: String
     private var subscriptions = Set<AnyCancellable>()
     private let filenameValidator = FilenameValidator()
     private var isInputValid = true
 
     init(
-        creationTarget: CreationTarget,
+        creationTarget: WireDriveCreateFileUseCase.Target,
         path: String,
-        createUseCase: any WireDriveCreateUseCaseProtocol,
+        createFileUseCase: any WireDriveCreateFileUseCaseProtocol,
     ) {
         self.creationTarget = creationTarget
-        self.createUseCase = createUseCase
+        self.createFileUseCase = createFileUseCase
         self.path = path
 
         bindTextInput()
@@ -114,7 +107,7 @@ final class CreateViewModel: ObservableObject {
         do {
             isLoading = true
 
-            createdNode = try await createUseCase.invoke(
+            createdNode = try await createFileUseCase.invoke(
                 creationTarget: creationTarget,
                 path: path,
                 name: nameInput
@@ -124,7 +117,7 @@ final class CreateViewModel: ObservableObject {
 
             return true
 
-        } catch let error as WireDriveCreateUseCaseError {
+        } catch let error as WireDriveCreateFileUseCaseError {
             isLoading = false
             switch error {
             case .serverFailedToCreate, .invalidPath:

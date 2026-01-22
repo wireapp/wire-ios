@@ -222,7 +222,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol
         return createdNode.toDomainModel()
     }
 
-    package func getTemplates() async throws -> [WireDriveTemplate] {
+    package func getTemplates() async throws -> [WireDriveFileTemplate] {
         try await restAPI.getTemplates()?.toDomainModel() ?? []
     }
 }

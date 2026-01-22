@@ -185,7 +185,7 @@ public extension WireMessagingFactory {
                         ),
                         updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI),
                         getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
-                        createUseCase: WireDriveCreateUseCase(nodesRepository: nodesAPI),
+                        createFileUseCase: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
                         fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesAPI),
                         restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
                             repository: nodesAPI,

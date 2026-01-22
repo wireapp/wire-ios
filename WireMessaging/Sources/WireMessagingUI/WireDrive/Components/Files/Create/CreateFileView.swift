@@ -23,13 +23,13 @@ import WireReusableUIComponents
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-struct CreateView: View {
-    @StateObject package var viewModel: CreateViewModel
+struct CreateFileView: View {
+    @StateObject package var viewModel: CreateFileViewModel
     @Environment(\.dismiss) var dismiss
 
     let id = UUID()
 
-    init(viewModel: @autoclosure @escaping () -> CreateViewModel) {
+    init(viewModel: @autoclosure @escaping () -> CreateFileViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
     }
 
@@ -78,7 +78,7 @@ struct CreateView: View {
 
 // MARK: - Toolbar
 
-private extension CreateView {
+private extension CreateFileView {
 
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) { cancelButton }
@@ -116,5 +116,5 @@ private extension CreateView {
 }
 
 #Preview {
-    CreateView(viewModel: .preview())
+    CreateFileView(viewModel: .preview())
 }

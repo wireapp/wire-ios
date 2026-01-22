@@ -83,7 +83,7 @@ struct MoveToFolderPage<ViewModel>: View where ViewModel: MoveToFolderPageViewMo
         .sheet(item: $viewModel.sheetNavigation) { navigationItem in
             switch navigationItem {
             case .createFolder:
-                viewModel.makeCreateFolderView()
+                viewModel.makeCreateFileView()
             }
         }
     }

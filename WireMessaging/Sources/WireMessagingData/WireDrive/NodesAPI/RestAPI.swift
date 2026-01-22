@@ -284,7 +284,7 @@ final class RestAPI: Sendable {
         return dto
     }
 
-    func getTemplates() async throws -> WireDriveTemplateNetworkModel? {
+    func getTemplates() async throws -> WireDriveFileTemplateNetworkModel? {
         try await NodeServiceAPI
             .templates(apiConfiguration: makeConfiguration())
             .toDTO()

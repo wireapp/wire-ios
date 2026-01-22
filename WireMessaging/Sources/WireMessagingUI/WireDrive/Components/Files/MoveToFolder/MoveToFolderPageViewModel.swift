@@ -27,7 +27,7 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 @MainActor
 protocol MoveToFolderPageViewModelProtocol: ObservableObject {
-    associatedtype CreateFolderView: View
+    associatedtype CreateFileView: View
 
     var title: String { get }
     var content: MoveToFolderPageViewModel.ContentState { get }
@@ -45,7 +45,7 @@ protocol MoveToFolderPageViewModelProtocol: ObservableObject {
     func createFolder()
     func navigateTo(option: NavigationMenuOption)
     func cancel()
-    func makeCreateFolderView() -> CreateFolderView
+    func makeCreateFileView() -> CreateFileView
 
 }
 
@@ -102,7 +102,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
     private let nodesCollection: WireDriveNodesCollection
     private let fetchNodesUseCase: WireDriveFetchNodesUseCase
     private let moveNodeUseCase: WireDriveMoveNodeUseCase
-    private let createUseCase: any WireDriveCreateUseCaseProtocol
+    private let createFileUseCase: any WireDriveCreateFileUseCaseProtocol
     private var subscriptions = Set<AnyCancellable>()
 
     let title: String
@@ -125,7 +125,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
         nodesCollection: WireDriveNodesCollection,
         fetchNodesUseCase: WireDriveFetchNodesUseCase,
         moveNodeUseCase: WireDriveMoveNodeUseCase,
-        createUseCase: any WireDriveCreateUseCaseProtocol
+        createFileUseCase: any WireDriveCreateFileUseCaseProtocol
     ) {
         self.title = Self.title(for: containerPath)
         self.nodeID = nodeID
@@ -137,7 +137,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
         self.nodesCollection = nodesCollection
         self.fetchNodesUseCase = fetchNodesUseCase
         self.moveNodeUseCase = moveNodeUseCase
-        self.createUseCase = createUseCase
+        self.createFileUseCase = createFileUseCase
 
         nodesCollection.observeNodes().sink { [weak self] nodes in
             self?.nodes = nodes.filter { $0.id != nodeID }
@@ -262,16 +262,16 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
         onFinish()
     }
 
-    func makeCreateFolderView() -> some View {
+    func makeCreateFileView() -> some View {
         // swiftformat:disable:next redundantSelf
-        WireMessagingUI.CreateView(viewModel: self.makeCreateFolderViewModel())
+        WireMessagingUI.CreateFileView(viewModel: self.makeCreateFileViewModel())
     }
 
-    private func makeCreateFolderViewModel() -> CreateViewModel {
-        let viewModel = CreateViewModel(
+    private func makeCreateFileViewModel() -> CreateFileViewModel {
+        let viewModel = CreateFileViewModel(
             creationTarget: .folder,
             path: containerPath,
-            createUseCase: createUseCase
+            createFileUseCase: createFileUseCase
         )
 
         viewModel.$createdNode
@@ -372,7 +372,7 @@ final class MockMoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
     func createFolder() {}
     func navigateTo(option: NavigationMenuOption) {}
     func cancel() {}
-    func makeCreateFolderView() -> some View {
+    func makeCreateFileView() -> some View {
         EmptyView()
     }
 

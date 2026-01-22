@@ -18,19 +18,19 @@
 
 import Foundation
 
-package enum CreationTarget: Equatable {
-    case folder
-    case file(WireDriveTemplate)
-}
-
-package enum WireDriveCreateUseCaseError: Error {
+package enum WireDriveCreateFileUseCaseError: Error {
     case serverFailedToCreate
     case alreadyExists
     case invalidPath
 }
 
 /// Creates a file or a folder on the server.
-package struct WireDriveCreateUseCase: WireDriveCreateUseCaseProtocol {
+package struct WireDriveCreateFileUseCase: WireDriveCreateFileUseCaseProtocol {
+    
+    package enum Target: Equatable {
+        case folder
+        case file(WireDriveFileTemplate)
+    }
 
     private let nodesRepository: any WireDriveNodesRepositoryProtocol
 
@@ -41,19 +41,19 @@ package struct WireDriveCreateUseCase: WireDriveCreateUseCaseProtocol {
     }
 
     package func invoke(
-        creationTarget: CreationTarget,
+        creationTarget: Target,
         path: String,
         name: String
     ) async throws -> WireDriveNode {
         guard let url = URL(string: path) else {
-            throw WireDriveCreateUseCaseError.invalidPath
+            throw WireDriveCreateFileUseCaseError.invalidPath
         }
 
         let targetPath = switch creationTarget {
         case .folder:
             url.appendingPathComponent(name)
         case let .file(template):
-            url.appendingPathComponent("\(name).\(URL(fileURLWithPath: template.UUID).pathExtension)")
+            url.appendingPathComponent("\(name).\(template.fileExtension)")
         }
 
         let path = targetPath.absoluteString
@@ -65,7 +65,7 @@ package struct WireDriveCreateUseCase: WireDriveCreateUseCaseProtocol {
         )
 
         guard preCheckResult == .success else {
-            throw WireDriveCreateUseCaseError.alreadyExists
+            throw WireDriveCreateFileUseCaseError.alreadyExists
         }
 
         do {
@@ -75,11 +75,11 @@ package struct WireDriveCreateUseCase: WireDriveCreateUseCaseProtocol {
                 try await nodesRepository.createFolder(at: path)
             case let .file(template):
                 // Creates a file from a template UUID on the server.
-                try await nodesRepository.createFile(at: path, templateUuid: template.UUID)
+                try await nodesRepository.createFile(at: path, templateUuid: template.id)
             }
 
         } catch {
-            throw WireDriveCreateUseCaseError.serverFailedToCreate
+            throw WireDriveCreateFileUseCaseError.serverFailedToCreate
         }
     }
 

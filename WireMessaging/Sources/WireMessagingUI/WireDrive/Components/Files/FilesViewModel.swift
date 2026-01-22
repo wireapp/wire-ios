@@ -96,7 +96,7 @@ package final class FilesViewModel: ObservableObject {
         case shareLink(view: ShareLinkView)
         case moveToFolder(fileItem: FilesViewItem)
         case renameFile(view: FileRenameView)
-        case create(view: CreateView)
+        case create(view: CreateFileView)
         case filters(view: FilesFiltersView)
         case versionHistory(view: FileVersioningView)
 
@@ -160,7 +160,7 @@ package final class FilesViewModel: ObservableObject {
             renameNode: any WireDriveRenameNodeUseCaseProtocol,
             updateTags: any WireDriveUpdateTagsUseCaseProtocol,
             getTagSuggestions: any WireDriveGetTagSuggestionsUseCaseProtocol,
-            createUseCase: any WireDriveCreateUseCaseProtocol,
+            createFileUseCase: any WireDriveCreateFileUseCaseProtocol,
             fetchNodeVersions: any WireDriveFetchNodeVersionsUseCaseProtocol,
             restoreNodeVersion: any WireDriveRestoreNodeVersionUseCaseProtocol,
             getEditingURL: WireDriveGetEditingURLUseCase,
@@ -178,7 +178,7 @@ package final class FilesViewModel: ObservableObject {
             self.renameNode = renameNode
             self.updateTags = updateTags
             self.getTagSuggestions = getTagSuggestions
-            self.createUseCase = createUseCase
+            self.createFileUseCase = createFileUseCase
             self.fetchNodeVersions = fetchNodeVersions
             self.restoreNodeVersion = restoreNodeVersion
             self.getEditingURL = getEditingURL
@@ -196,7 +196,7 @@ package final class FilesViewModel: ObservableObject {
         let renameNode: any WireDriveRenameNodeUseCaseProtocol
         let updateTags: any WireDriveUpdateTagsUseCaseProtocol
         let getTagSuggestions: any WireDriveGetTagSuggestionsUseCaseProtocol
-        let createUseCase: any WireDriveCreateUseCaseProtocol
+        let createFileUseCase: any WireDriveCreateFileUseCaseProtocol
         let fetchNodeVersions: any WireDriveFetchNodeVersionsUseCaseProtocol
         let restoreNodeVersion: any WireDriveRestoreNodeVersionUseCaseProtocol
         let getEditingURL: WireDriveGetEditingURLUseCase
@@ -253,10 +253,10 @@ package final class FilesViewModel: ObservableObject {
     @Published var viewingURL: URL?
     @Published var state: State
     @Published var sheetNavigation: SheetNavigation?
-    @Published var createView: CreateView?
+    @Published var createView: CreateFileView?
     @Published var fileRenameView: FileRenameView?
     @Published var isEditing: FilesViewItem?
-    @Published var templates: [WireDriveTemplate] = []
+    @Published var templates: [WireDriveFileTemplate] = []
 
     package init(
         useCases: UseCases,
@@ -429,7 +429,7 @@ package final class FilesViewModel: ObservableObject {
                 nodesRepository: nodesRepository,
                 localAssetRepository: assetRepository,
                 moveNodeUseCase: WireDriveMoveNodeUseCase(nodesRepository: nodesRepository),
-                createUseCase: useCases.createUseCase
+                createFileUseCase: useCases.createFileUseCase
             )
         )
     }
@@ -529,16 +529,16 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    func onCreate(target: CreationTarget) {
+    func onCreate(target: WireDriveCreateFileUseCase.Target) {
         guard let cellName else { return }
 
         // When navigation path is empty, file/folder is created at the root path (cell name)
         let path = navigationPath.last?.filePath ?? cellName
 
-        let viewModel = CreateViewModel(
+        let viewModel = CreateFileViewModel(
             creationTarget: target,
             path: path,
-            createUseCase: useCases.createUseCase
+            createFileUseCase: useCases.createFileUseCase
         )
 
         // to know whether we need to reload nodes.
@@ -554,11 +554,11 @@ package final class FilesViewModel: ObservableObject {
 
             }.store(in: &subscriptions)
 
-        let createFolderView = CreateView(
+        let createFileView = CreateFileView(
             viewModel: viewModel
         )
 
-        sheetNavigation = .create(view: createFolderView)
+        sheetNavigation = .create(view: createFileView)
     }
 
     // MARK: - Private
@@ -778,7 +778,7 @@ package final class FilesViewModel: ObservableObject {
 
 }
 
-extension WireDriveTemplate.Kind {
+extension WireDriveFileTemplate.Kind {
     var title: String {
         switch self {
         case .document:

@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct WireDriveTemplate: Equatable, Hashable, Sendable {
+import Foundation
+
+public struct WireDriveFileTemplate: Equatable, Hashable, Sendable {
 
     // TODO: [WPB-22926] Reflect all template kind from the server when endpoint ready
     public enum Kind: Equatable, Hashable, Sendable {
@@ -28,7 +30,7 @@ public struct WireDriveTemplate: Equatable, Hashable, Sendable {
     public let kind: Kind
     public let editable: Bool?
     public let label: String
-    public let UUID: String
+    public let id: String
 
     package init(
         kind: Kind,
@@ -39,6 +41,12 @@ public struct WireDriveTemplate: Equatable, Hashable, Sendable {
         self.kind = kind
         self.editable = editable
         self.label = label
-        self.UUID = UUID
+        self.id = UUID
+    }
+}
+
+public extension WireDriveFileTemplate {
+    var fileExtension: String {
+        URL(fileURLWithPath: id).pathExtension
     }
 }

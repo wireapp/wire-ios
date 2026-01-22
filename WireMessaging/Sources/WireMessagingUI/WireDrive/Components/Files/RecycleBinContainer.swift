@@ -97,7 +97,7 @@ package struct RecycleBinContainer: View {
                 ),
                 updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI),
                 getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
-                createUseCase: WireDriveCreateUseCase(nodesRepository: nodesAPI),
+                createFileUseCase: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
                 fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesRepository),
                 restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
                     repository: nodesRepository,

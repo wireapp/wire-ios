@@ -27,24 +27,24 @@ import XCTest
 
 @testable import WireMessagingUI
 
-final class CreateViewTests: XCTestCase {
+final class CreateFileViewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
-    private var createUseCase: MockWireCellsCreateUseCaseProtocol!
-    private var viewModel: CreateViewModel!
-    private let creationTargets = [CreationTarget.file(.fixture()), .folder]
+    private var createFileUseCase: MockWireDriveCreateFileUseCaseProtocol!
+    private var viewModel: CreateFileViewModel!
+    private let creationTargets = [WireDriveCreateFileUseCase.Target.file(.fixture()), .folder]
 
     @MainActor
     override func setUp() async throws {
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
-        createUseCase = MockWireCellsCreateUseCaseProtocol()
+        createFileUseCase = MockWireDriveCreateFileUseCaseProtocol()
     }
 
     @MainActor
     override func tearDown() async throws {
         snapshotHelper = nil
-        createUseCase = nil
+        createFileUseCase = nil
         viewModel = nil
     }
 
@@ -113,7 +113,7 @@ final class CreateViewTests: XCTestCase {
     func testCreateView_alreadyExistsError() async {
         for creationTarget in creationTargets {
             let view = makeView(target: creationTarget)
-            createUseCase.invokeCreationTargetPathName_MockError = WireCellsCreateUseCaseError
+            createFileUseCase.invokeCreationTargetPathName_MockError = WireDriveCreateFileUseCaseError
                 .alreadyExists
             _ = await viewModel.create()
             let name = creationTarget == .file(.fixture()) ? ".file." : ".folder."
@@ -145,7 +145,7 @@ final class CreateViewTests: XCTestCase {
 
     @MainActor
     func testCreateView_File_Navigation_Title() {
-        let kinds = [WireDriveTemplate.Kind.document, .spreadsheet, .presentation]
+        let kinds = [WireDriveFileTemplate.Kind.document, .spreadsheet, .presentation]
 
         for kind in kinds {
             let view = makeView(target: .file(.fixture(kind: kind)))
@@ -162,24 +162,24 @@ final class CreateViewTests: XCTestCase {
     }
 
     @MainActor
-    private func makeView(target: CreationTarget = .folder) -> some View {
-        viewModel = CreateViewModel(
+    private func makeView(target: WireDriveCreateFileUseCase.Target = .folder) -> some View {
+        viewModel = CreateFileViewModel(
             creationTarget: target,
             path: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2",
-            createUseCase: createUseCase
+            createFileUseCase: createFileUseCase
         )
 
         let vm = viewModel!
 
-        return CreateView(viewModel: vm)
+        return CreateFileView(viewModel: vm)
             .frame(width: 375, height: 667)
     }
 
 }
 
-private extension WireDriveTemplate {
-    static func fixture(kind: Self.Kind = .document) -> WireDriveTemplate {
-        WireDriveTemplate(
+private extension WireDriveFileTemplate {
+    static func fixture(kind: Self.Kind = .document) -> WireDriveFileTemplate {
+        WireDriveFileTemplate(
             kind: kind,
             editable: true,
             label: "Microsoft Word",

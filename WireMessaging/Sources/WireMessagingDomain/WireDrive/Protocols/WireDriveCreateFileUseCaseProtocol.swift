@@ -16,21 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+import Foundation
 
-/// Fetches templates useable for document creation (.docx, .pptx, .xlsx. etc)
-package struct WireDriveFetchTemplatesUseCase: WireDriveFetchTemplatesUseCaseProtocol {
+// sourcery: AutoMockable
+package protocol WireDriveCreateFileUseCaseProtocol: Sendable {
 
-    private let repository: any WireDriveNodesRepositoryProtocol
-
-    package init(
-        repository: any WireDriveNodesRepositoryProtocol,
-    ) {
-        self.repository = repository
-    }
-
-    package func invoke() async throws -> [WireDriveTemplate] {
-        try await repository.getTemplates()
-    }
+    /// Creates a new file or folder on the server.
+    ///
+    /// This method sends a request to create a folder at the specified path.
+    ///
+    /// - Parameters:
+    ///   - creationTarget: Whether a folder or a specific file (document, spreadsheet, presentation..).
+    ///   - path: The path of the file/folder.
+    ///   - name: The name of the file/folder to create.
+    /// - Returns: The created node.
+    func invoke(
+        creationTarget: WireDriveCreateFileUseCase.Target,
+        path: String,
+        name: String
+    ) async throws -> WireDriveNode
 
 }

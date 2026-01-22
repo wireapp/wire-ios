@@ -53,7 +53,7 @@ package protocol WireDriveNodesRepositoryProtocol: Sendable {
     ///  - path: The path of the new folder.
     func createFolder(at path: String) async throws -> WireDriveNode
 
-    /// Creates a folder at the specified path.
+    /// Creates a file at the specified path.
     ///
     /// - Parameters:
     ///  - path: The path of the new file.
@@ -97,8 +97,8 @@ package protocol WireDriveNodesRepositoryProtocol: Sendable {
     func restoreVersion(nodeID: UUID, versionID: UUID) async throws
 
     /// Retrieves a list of file templates that can be created using their UUID's.
-    /// - Returns: An array of `WireDriveTemplate` objects representing the templates that can be created.
-    func getTemplates() async throws -> [WireDriveTemplate]
+    /// - Returns: An array of `WireDriveFileTemplate` objects representing the templates that can be created.
+    func getTemplates() async throws -> [WireDriveFileTemplate]
 
 }
 

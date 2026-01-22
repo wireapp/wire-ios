@@ -19,7 +19,7 @@
 import CellsSDK
 package import WireMessagingDomain
 
-package struct WireDriveTemplateNetworkModel: Equatable, Hashable, Sendable {
+package struct WireDriveFileTemplateNetworkModel: Equatable, Hashable, Sendable {
     package let templates: [Template]?
 
     package struct Template: Equatable, Hashable, Sendable {
@@ -30,16 +30,16 @@ package struct WireDriveTemplateNetworkModel: Equatable, Hashable, Sendable {
 
 }
 
-package extension WireDriveTemplateNetworkModel {
-    func toDomainModel() -> [WireDriveTemplate]? {
-        templates?.compactMap { value -> WireDriveTemplate? in
+package extension WireDriveFileTemplateNetworkModel {
+    func toDomainModel() -> [WireDriveFileTemplate]? {
+        templates?.compactMap { value -> WireDriveFileTemplate? in
             guard let label = value.label,
                   let UUID = value.UUID else {
                 return nil
             }
 
             // TODO: [WPB-22926] Finish mapping when GET/ templates endpoint ready.
-            let kind: WireDriveTemplate.Kind = switch label {
+            let kind: WireDriveFileTemplate.Kind = switch label {
             case "Microsoft Word":
                 .document
             case "Microsoft Excel":
@@ -50,7 +50,7 @@ package extension WireDriveTemplateNetworkModel {
                 .document
             }
 
-            return WireDriveTemplate(
+            return WireDriveFileTemplate(
                 kind: kind,
                 editable: value.editable,
                 label: label,
@@ -61,9 +61,9 @@ package extension WireDriveTemplateNetworkModel {
 }
 
 package extension RestListTemplatesResponse {
-    func toDTO() -> WireDriveTemplateNetworkModel? {
+    func toDTO() -> WireDriveFileTemplateNetworkModel? {
         templates.map {
-            WireDriveTemplateNetworkModel(
+            WireDriveFileTemplateNetworkModel(
                 templates: $0.map {
                     .init(editable: $0.editable, label: $0.label, UUID: $0.UUID)
                 }
