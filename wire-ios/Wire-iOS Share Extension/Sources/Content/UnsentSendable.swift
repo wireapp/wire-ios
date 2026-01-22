@@ -394,11 +394,11 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
             func decodeURL(from value: Any) -> URL? {
                 if let string = value as? String, let url = URL(string: string), url.isFileURL {
-                    return url
+                    url
                 } else if let url = value as? URL, url.isFileURL {
-                    return url
+                    url
                 } else {
-                    return nil
+                    nil
                 }
             }
 
