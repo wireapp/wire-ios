@@ -50,7 +50,7 @@ extension SearchAPI {
             query: query,
             domain: domain,
             type: type,
-            fetchLimit: .none
+            fetchLimit: 10
         )
     }
 
@@ -59,20 +59,20 @@ extension SearchAPI {
 public struct SearchContactsResult {
 
     public let documents: [Contact]
-    public let found: Int
-    public let returned: Int
-    public let took: Int
-    public let hasMore: Bool
-    public let pagingState: String?
-    public let searchPolicy: String
+//    public let found: Int
+//    public let returned: Int
+//    public let took: Int
+//    public let hasMore: Bool
+//    public let pagingState: String?
+//    public let searchPolicy: String
 
     public struct Contact {
-        public let qualifiedID: QualifiedID
+        public let qualifiedID: QualifiedID?
         public let name: String
         public let handle: String?
         public let accentID: Int?
         public let team: UUID?
-        public let type: String
+        public let type: UserType
     }
 
 }

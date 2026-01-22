@@ -466,6 +466,7 @@ extension SearchTask {
 
         _Concurrency.Task {
             do {
+                try? await _Concurrency.Task.sleep(for: .seconds(5)) // TODO: delete
                 let todo = try await searchAPI.searchContacts(
                     query: searchRequest.query.string,
                     domain: searchRequest.searchDomain ?? "",

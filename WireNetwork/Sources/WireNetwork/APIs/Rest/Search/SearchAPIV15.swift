@@ -47,7 +47,7 @@ final class SearchAPIV15: SearchAPIV14 {
         }
 
         var urlComponents = URLComponents()
-        urlComponents.path = "/search/contacts"
+        urlComponents.path = "\(pathPrefix)\(basePath)"
         urlComponents.queryItems = queryItems
 
         guard let path = urlComponents.string?.replacingOccurrences(of: "+", with: "%2B") else {
@@ -95,12 +95,12 @@ private struct SearchResultContactV15: Decodable, ToAPIModelConvertible {
     func toAPIModel() -> SearchContactsResult {
         SearchContactsResult(
             documents: documents.map { $0.toAPIModel() },
-            found: found,
-            returned: returned,
-            took: took,
-            hasMore: hasMore,
-            pagingState: pagingState,
-            searchPolicy: searchPolicy
+//            found: found,
+//            returned: returned,
+//            took: took,
+//            hasMore: hasMore,
+//            pagingState: pagingState,
+//            searchPolicy: searchPolicy
         )
     }
 }
@@ -112,7 +112,7 @@ private struct ContactV15: Decodable, ToAPIModelConvertible {
     let handle: String?
     let accentID: Int?
     let team: UUID?
-    let type: String
+    let type: UserTypeV15
 
     enum CodingKeys: String, CodingKey {
         case qualifiedID = "qualified_id"
@@ -130,7 +130,37 @@ private struct ContactV15: Decodable, ToAPIModelConvertible {
             handle: handle,
             accentID: accentID,
             team: team,
-            type: type
+            type: type.toAPIModel()
         )
     }
+}
+
+private enum UserTypeV15: String, Codable {
+
+    case regular
+    case app
+    case bot
+
+    init(_ apiModel: UserType) {
+        switch apiModel {
+        case .regular:
+            self = .regular
+        case .app:
+            self = .app
+        case .bot:
+            self = .bot
+        }
+    }
+
+    func toAPIModel() -> UserType {
+        switch self {
+        case .regular:
+            .regular
+        case .app:
+            .app
+        case .bot:
+            .bot
+        }
+    }
+
 }

@@ -24,6 +24,10 @@ class SearchAPIV1: SearchAPIV0 {
         .v1
     }
 
+    var basePath: String {
+        "/search/contacts"
+    }
+
     // MARK: -
 
     override func searchContacts(
@@ -48,7 +52,7 @@ class SearchAPIV1: SearchAPIV0 {
         }
 
         var urlComponents = URLComponents()
-        urlComponents.path = "/search/contacts"
+        urlComponents.path = "\(pathPrefix)\(basePath)"
         urlComponents.queryItems = queryItems
 
         guard let path = urlComponents.string?.replacingOccurrences(of: "+", with: "%2B") else {
@@ -112,22 +116,20 @@ private struct SearchResultContactV1: Decodable, ToAPIModelConvertible {
     }
 
     func toAPIModel() -> SearchContactsResult {
-        fatalError()
-//        SearchContactsResult(
-//            documents: documents.map { $0.toAPIModel() }
-//        )
+        SearchContactsResult(
+            documents: documents.map { $0.toAPIModel() }
+        )
     }
 
 }
 
 private struct ContactV1: Decodable, ToAPIModelConvertible {
 
-    let qualifiedID: QualifiedIDV0
+    let qualifiedID: QualifiedIDV0?
     let name: String
     let handle: String?
     let accentID: Int?
     let team: UUID?
-    let type: String
 
     enum CodingKeys: String, CodingKey {
         case qualifiedID = "qualified_id"
@@ -135,17 +137,16 @@ private struct ContactV1: Decodable, ToAPIModelConvertible {
         case handle
         case accentID = "accent_id"
         case team
-        case type
     }
 
     func toAPIModel() -> SearchContactsResult.Contact {
         .init(
-            qualifiedID: qualifiedID.toAPIModel(),
+            qualifiedID: qualifiedID?.toAPIModel(),
             name: name,
             handle: handle,
             accentID: accentID,
             team: team,
-            type: type
+            type: .regular
         )
     }
 
