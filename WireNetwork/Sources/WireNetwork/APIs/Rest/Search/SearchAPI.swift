@@ -1,0 +1,74 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+public import Foundation
+
+// sourcery: AutoMockable
+/// An API access object for endpoints concerning people and apps search.
+public protocol SearchAPI {
+
+    func searchContacts(
+        query: String,
+        domain: String
+    ) async throws -> SearchContactsResult
+
+    /// - Parameters:
+    ///   - fetchLimit: min: 1, max: 500, default 15 on API side
+    func searchContacts(
+        query: String,
+        domain: String,
+        fetchLimit: Int?
+    ) async throws -> SearchContactsResult
+
+}
+
+extension SearchAPI {
+
+    public func searchContacts(
+        query: String,
+        domain: String
+    ) async throws -> SearchContactsResult {
+        try await searchContacts(
+            query: query,
+            domain: domain,
+            fetchLimit: .none
+        )
+    }
+
+}
+
+public struct SearchContactsResult {
+
+    public let documents: [Contact]
+    public let found: Int
+    public let returned: Int
+    public let took: Int
+    public let hasMore: Bool
+    public let pagingState: String?
+    public let searchPolicy: String
+
+    public struct Contact {
+        public let qualifiedID: QualifiedID
+        public let name: String
+        public let handle: String?
+        public let accentID: Int?
+        public let team: UUID?
+        public let type: String
+    }
+
+}
