@@ -469,17 +469,19 @@ final class AddParticipantsViewController: UIViewController {
         emptyResultView.updateStatus(searchingForServices: searchingForServices, hasFilter: hasFilter)
 
         switch (searchResultsViewController.searchGroup, hasFilter) {
-        case (.services, _):
+        case (.apps, _):
+            searchResultsViewController.mode = .search // TODO: searching apps is more similar to searching people
+            fatalError() // TODO: searchForApps?
+            // searchResultsViewController.searchForServices(withQuery: searchHeaderViewController.tokenField.filterText)
+        case (.bots, _):
             searchResultsViewController.mode = .search
-            searchResultsViewController.searchForServices(withQuery: searchHeaderViewController.tokenField.filterText)
+            searchResultsViewController.searchForServices(withQuery: searchHeaderViewController.tokenField.filterText) // TODO: rename searchForBots?
         case (.people, false):
             searchResultsViewController.mode = .list
             searchResultsViewController.searchContactList()
         case (.people, true):
             searchResultsViewController.mode = .search
             searchResultsViewController.searchForLocalUsers(withQuery: searchHeaderViewController.tokenField.filterText)
-        default:
-            fatalError("TODO") // TODO: implement correctly
         }
     }
 
