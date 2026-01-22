@@ -186,7 +186,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func epoch(for groupID: MLSGroupID) async throws -> UInt64 {
-        try await coreCrypto.perform {
+        try await coreCrypto.transaction {
             let exists = try? await $0.conversationExists(conversationId: groupID.conversationId)
             if exists == true {
                 return try await $0.conversationEpoch(conversationId: groupID.conversationId)
@@ -767,7 +767,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func externalSenderKey(groupID: MLSGroupID) async throws -> Data {
-        try await coreCrypto.perform { coreCrypto in
+        try await coreCrypto.transaction { coreCrypto in
             try await coreCrypto.getExternalSender(conversationId: groupID.conversationId)
         }.copyBytes()
     }
