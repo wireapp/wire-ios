@@ -61,8 +61,11 @@ final class SearchUserViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        if let session = ZMUserSession.shared() {
-            self.searchDirectory = SearchDirectory(userSession: session)
+        if let session = ZMUserSession.shared(), let searchAPI = session.clientSessionComponent?.searchAPI {
+            self.searchDirectory = SearchDirectory(
+                userSession: session,
+                searchAPI: searchAPI
+            )
         }
 
         view.backgroundColor = SemanticColors.View.backgroundDefault

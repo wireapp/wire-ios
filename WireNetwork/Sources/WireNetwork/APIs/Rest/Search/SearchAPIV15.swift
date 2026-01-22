@@ -29,11 +29,14 @@ final class SearchAPIV15: SearchAPIV14 {
     override func searchContacts(
         query: String,
         domain: String,
+        type: UserType,
         fetchLimit: Int?
     ) async throws -> SearchContactsResult {
 
         var queryItems = [URLQueryItem]()
         queryItems.append(URLQueryItem(name: "q", value: query))
+
+        fatalError("TODO: user type")
 
         if !domain.isEmpty {
             queryItems.append(URLQueryItem(name: "domain", value: domain))

@@ -24,7 +24,8 @@ public protocol SearchAPI {
 
     func searchContacts(
         query: String,
-        domain: String
+        domain: String,
+        type: UserType
     ) async throws -> SearchContactsResult
 
     /// - Parameters:
@@ -32,6 +33,7 @@ public protocol SearchAPI {
     func searchContacts(
         query: String,
         domain: String,
+        type: UserType,
         fetchLimit: Int?
     ) async throws -> SearchContactsResult
 
@@ -41,11 +43,13 @@ extension SearchAPI {
 
     public func searchContacts(
         query: String,
-        domain: String
+        domain: String,
+        type: UserType
     ) async throws -> SearchContactsResult {
         try await searchContacts(
             query: query,
             domain: domain,
+            type: type,
             fetchLimit: .none
         )
     }

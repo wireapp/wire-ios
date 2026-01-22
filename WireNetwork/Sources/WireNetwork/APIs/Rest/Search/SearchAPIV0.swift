@@ -33,6 +33,7 @@ class SearchAPIV0: SearchAPI, VersionedAPI {
     func searchContacts(
         query: String,
         domain: String,
+        type: UserType,
         fetchLimit: Int?
     ) async throws -> SearchContactsResult {
         throw SearchAPIError.unsupportedEndpointForAPIVersion
