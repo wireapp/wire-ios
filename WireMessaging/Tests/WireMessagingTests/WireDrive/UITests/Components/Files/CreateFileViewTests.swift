@@ -49,7 +49,7 @@ final class CreateFileViewTests: XCTestCase {
     }
 
     @MainActor
-    func testCreateView_WrongCharacterInputError() {
+    func testCreateFileView_WrongCharacterInputError() {
         for creationTarget in creationTargets {
             let view = makeView(target: creationTarget)
             viewModel.nameInput = "/"
@@ -65,7 +65,7 @@ final class CreateFileViewTests: XCTestCase {
     }
 
     @MainActor
-    func testCreateView_DotPrefixError() {
+    func testCreateFileView_DotPrefixError() {
         for creationTarget in creationTargets {
             let view = makeView(target: creationTarget)
             viewModel.nameInput = "."
@@ -81,7 +81,7 @@ final class CreateFileViewTests: XCTestCase {
     }
 
     @MainActor
-    func testCreateView_TooLongInputError() {
+    func testCreateFileView_TooLongInputError() {
         for creationTarget in creationTargets {
             let view = makeView(target: creationTarget)
             viewModel.nameInput = Array(repeating: "r", count: 65).joined()
@@ -97,7 +97,7 @@ final class CreateFileViewTests: XCTestCase {
     }
 
     @MainActor
-    func testCreateView_Loading() {
+    func testCreateFileView_Loading() {
         let view = makeView()
         viewModel.isLoading = true
 
@@ -110,7 +110,7 @@ final class CreateFileViewTests: XCTestCase {
     }
 
     @MainActor
-    func testCreateView_alreadyExistsError() async {
+    func testCreateFileView_alreadyExistsError() async {
         for creationTarget in creationTargets {
             let view = makeView(target: creationTarget)
             createFileUseCase.invokeCreationTargetPathName_MockError = WireDriveCreateFileUseCaseError
@@ -128,7 +128,7 @@ final class CreateFileViewTests: XCTestCase {
     }
 
     @MainActor
-    func testCreateView_EmptyInput() {
+    func testCreateFileView_EmptyInput() {
         for creationTarget in creationTargets {
             let view = makeView(target: creationTarget)
             viewModel.nameInput = ""
@@ -144,7 +144,7 @@ final class CreateFileViewTests: XCTestCase {
     }
 
     @MainActor
-    func testCreateView_File_Navigation_Title() {
+    func testCreateFileView_File_Navigation_Title() {
         let kinds = [WireDriveFileTemplate.Kind.document, .spreadsheet, .presentation]
 
         for kind in kinds {
@@ -179,11 +179,29 @@ final class CreateFileViewTests: XCTestCase {
 
 private extension WireDriveFileTemplate {
     static func fixture(kind: Self.Kind = .document) -> WireDriveFileTemplate {
-        WireDriveFileTemplate(
+        let uuid = switch kind {
+        case .document:
+            "01-Microsoft Word.docx"
+        case .presentation:
+            "3-Microsoft PowerPoint.pptx"
+        case .spreadsheet:
+            "02-Microsoft Excel.xlsx"
+        }
+        
+        let label = switch kind {
+        case .document:
+            "Microsoft Word"
+        case .presentation:
+            "Microsoft PowerPoint"
+        case .spreadsheet:
+            "Microsoft Excel"
+        }
+        
+        return WireDriveFileTemplate(
             kind: kind,
             editable: true,
-            label: "Microsoft Word",
-            UUID: "01-Microsoft Word.docx"
+            label: label,
+            UUID: uuid
         )
     }
 }

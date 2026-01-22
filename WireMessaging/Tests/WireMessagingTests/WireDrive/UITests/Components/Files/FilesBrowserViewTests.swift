@@ -91,7 +91,7 @@ final class FilesBrowserViewTests: XCTestCase {
             fileCache: MockFileCache()
         )
 
-        createUseCase = WireDriveCreateFileUseCase(
+        createFileUseCase = WireDriveCreateFileUseCase(
             nodesRepository: nodesRepository
         )
 
@@ -122,7 +122,7 @@ final class FilesBrowserViewTests: XCTestCase {
         fetchNodesUseCase = nil
         localAssetsRepository = nil
         fetchNodeVersionsUseCase = nil
-        createUseCase = nil
+        createFileUseCase = nil
         getTagSuggestionsUseCase = nil
         updateTagsUseCase = nil
         renameNodeUseCase = nil
@@ -211,7 +211,7 @@ final class FilesBrowserViewTests: XCTestCase {
                 renameNode: renameNodeUseCase,
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
-                createFileUseCase: createUseCase,
+                createFileUseCase: createFileUseCase,
                 fetchNodeVersions: fetchNodeVersionsUseCase,
                 restoreNodeVersion: restoreNodeVersionUseCase,
                 getEditingURL: getEditingURLUseCase,
