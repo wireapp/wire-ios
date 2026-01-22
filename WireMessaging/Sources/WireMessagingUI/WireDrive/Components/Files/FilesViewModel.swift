@@ -294,25 +294,25 @@ package final class FilesViewModel: ObservableObject {
     private func fetchTemplates() {
         Task {
             // TODO: [WPB-22926] Replace hard coded values with server values when GET/ templates endpoint ready.
-            // Do `templates = try await WireCellsFetchTemplatesUseCase.invoke()`
+            // Do `templates = try await WireDriveFetchFileTemplatesUseCase.invoke()`
             templates = [
                 .init(
                     kind: .document,
                     editable: true,
                     label: "Microsoft Word",
-                    UUID: "01-Microsoft Word.docx"
+                    id: "01-Microsoft Word.docx"
                 ),
                 .init(
                     kind: .spreadsheet,
                     editable: true,
                     label: "Microsoft Excel",
-                    UUID: "02-Microsoft Excel.xlsx"
+                    id: "02-Microsoft Excel.xlsx"
                 ),
                 .init(
                     kind: .presentation,
                     editable: true,
                     label: "Microsoft PowerPoint",
-                    UUID: "03-Microsoft PowerPoint.pptx"
+                    id: "03-Microsoft PowerPoint.pptx"
                 )
             ]
         }

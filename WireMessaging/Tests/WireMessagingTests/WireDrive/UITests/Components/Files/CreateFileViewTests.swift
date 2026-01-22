@@ -201,7 +201,7 @@ private extension WireDriveFileTemplate {
             kind: kind,
             editable: true,
             label: label,
-            UUID: uuid
+            id: uuid
         )
     }
 }

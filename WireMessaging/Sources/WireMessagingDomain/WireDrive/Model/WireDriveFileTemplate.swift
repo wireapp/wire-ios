@@ -36,12 +36,12 @@ public struct WireDriveFileTemplate: Equatable, Hashable, Sendable {
         kind: Kind,
         editable: Bool?,
         label: String,
-        UUID: String
+        id: String
     ) {
         self.kind = kind
         self.editable = editable
         self.label = label
-        self.id = UUID
+        self.id = id
     }
 }
 

@@ -66,7 +66,7 @@ final class WireDriveCreateFileUseCaseTests {
             kind: .document,
             editable: true,
             label: "Microsoft Word",
-            UUID: "01-Microsoft Word.docx"
+            id: "01-Microsoft Word.docx"
         )
 
         // Mock

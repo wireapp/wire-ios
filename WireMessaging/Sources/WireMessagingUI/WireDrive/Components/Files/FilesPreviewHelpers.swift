@@ -371,7 +371,7 @@ extension CreateFileViewModel {
                 kind: .document,
                 editable: true,
                 label: "Microsoft Word",
-                UUID: "01-Microsoft Word.docx"
+                id: "01-Microsoft Word.docx"
             )),
             path: "Test-1/Test-2",
             createFileUseCase: createFileUseCase

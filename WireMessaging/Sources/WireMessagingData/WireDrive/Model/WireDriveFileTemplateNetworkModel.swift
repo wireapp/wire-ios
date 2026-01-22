@@ -54,7 +54,7 @@ package extension WireDriveFileTemplateNetworkModel {
                 kind: kind,
                 editable: value.editable,
                 label: label,
-                UUID: UUID
+                id: UUID
             )
         }
     }
