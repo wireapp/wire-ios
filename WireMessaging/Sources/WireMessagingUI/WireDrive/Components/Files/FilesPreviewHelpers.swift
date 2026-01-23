@@ -149,7 +149,9 @@ extension FilesItemViewModel {
                 tags: tags,
                 isEditable: false,
                 publicLinkID: nil,
+                conversationName: "Conversation 1",
             ),
+            conversationName: "Test",
             localAssetRepository: PreviewLocalAssetRepository(),
             onItemAction: { _, _ in },
             isBrowsing: false,
@@ -231,6 +233,7 @@ private func previewNodesRepository() -> any WireDriveNodesRepositoryProtocol {
     let nodes = (0 ... 150).map { index in
         WireDriveNode(
             uuid: UUID(),
+            conversation: .init(id: UUID().uuidString, name: "Conversation 1", participants: []),
             path: "root/foo-\(index).jpg",
             modified: Date().addingTimeInterval(Double(-index * 60)),
             mimeType: "image/jpeg",
@@ -305,7 +308,15 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
     func refreshAssetMetadata(
         nodeID: UUID
     ) async throws -> (node: WireDriveNode, asset: WireDriveLocalAsset) {
-        let node = WireDriveNode(uuid: .init(), path: "")
+        let node = WireDriveNode(
+            uuid: .init(),
+            conversation: .init(
+                id: UUID().uuidString,
+                name: "Conversation 1",
+                participants: []
+            ),
+            path: ""
+        )
 
         let localAsset = WireDriveLocalAsset(
             nodeID: nodeID,

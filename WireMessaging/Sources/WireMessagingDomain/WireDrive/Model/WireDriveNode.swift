@@ -29,6 +29,7 @@ public struct WireDrivePublicLinkID: Codable, Equatable, Hashable, Sendable {
 
 public struct WireDriveNode: Equatable, Identifiable, Sendable {
     public let id: UUID
+    public let conversation: WireDriveConversation?
     public let path: String
     public let modified: Date?
     public let size: UInt64?
@@ -53,6 +54,7 @@ public struct WireDriveNode: Equatable, Identifiable, Sendable {
 
     package init(
         uuid: UUID,
+        conversation: WireDriveConversation?,
         path: String,
         modified: Date? = nil,
         size: UInt64? = nil,
@@ -73,6 +75,7 @@ public struct WireDriveNode: Equatable, Identifiable, Sendable {
         tags: [String] = []
     ) {
         self.id = uuid
+        self.conversation = conversation
         self.path = path
         self.modified = modified
         self.size = size

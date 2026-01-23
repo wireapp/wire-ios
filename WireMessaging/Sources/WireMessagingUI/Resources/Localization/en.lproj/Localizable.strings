@@ -115,6 +115,7 @@
 "conversation.wireCells.files.navigationTitle" = "Shared Drive";
 "conversation.wireCells.allFiles.navigationTitle" = "Drive";
 "conversation.wireCells.files.item.subtitle" = "%@ by %@";
+"conversation.wireCells.allFiles.item.subtitle" = "%@ in %@";
 "conversation.wireCells.files.loadMore.title" = "Load more";
 "conversation.wireCells.files.item.menu.open" = "Open";
 "conversation.wireCells.files.item.menu.shareLink" = "Share";

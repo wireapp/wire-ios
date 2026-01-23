@@ -150,6 +150,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
                 id: node.id,
                 name: node.name,
                 subtitle: FilesItemViewModel.subtitle(
+                    conversationName: nil,
                     modifiedAt: node.modified,
                     ownedBy: node.ownerUserName,
                     locale: .autoupdatingCurrent,

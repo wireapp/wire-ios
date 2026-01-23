@@ -176,7 +176,8 @@ final class FilesViewModelTests {
                 icon: .other,
                 tags: [],
                 isEditable: false,
-                publicLinkID: nil
+                publicLinkID: nil,
+                conversationName: "Conversation 1"
             )],
             [], // Clears items
             [FilesViewItem(
@@ -190,7 +191,8 @@ final class FilesViewModelTests {
                 icon: .other,
                 tags: [],
                 isEditable: false,
-                publicLinkID: nil
+                publicLinkID: nil,
+                conversationName: "Conversation 1"
             )]
         ])
     }
@@ -241,7 +243,8 @@ final class FilesViewModelTests {
                 icon: .image,
                 tags: [],
                 isEditable: false,
-                publicLinkID: nil
+                publicLinkID: nil,
+                conversationName: "Conversation 1"
             ),
             FilesViewItem(
                 id: node2.id,
@@ -254,7 +257,8 @@ final class FilesViewModelTests {
                 icon: .other,
                 tags: [],
                 isEditable: false,
-                publicLinkID: nil
+                publicLinkID: nil,
+                conversationName: "Conversation 1"
             )
         ])
     }
@@ -295,7 +299,8 @@ final class FilesViewModelTests {
                 icon: .other,
                 tags: [],
                 isEditable: false,
-                publicLinkID: nil
+                publicLinkID: nil,
+                conversationName: "Conversation 1"
             ),
             FilesViewItem(
                 id: node2.id,
@@ -308,7 +313,8 @@ final class FilesViewModelTests {
                 icon: .other,
                 tags: [],
                 isEditable: false,
-                publicLinkID: nil
+                publicLinkID: nil,
+                conversationName: "Conversation 1"
             ),
             FilesViewItem(
                 id: node3.id,
@@ -321,7 +327,8 @@ final class FilesViewModelTests {
                 icon: .other,
                 tags: [],
                 isEditable: false,
-                publicLinkID: nil
+                publicLinkID: nil,
+                conversationName: "Conversation 1"
             )
         ])
     }
@@ -446,7 +453,8 @@ final class FilesViewModelTests {
                     icon: .other,
                     tags: [],
                     isEditable: false,
-                    publicLinkID: nil
+                    publicLinkID: nil,
+                    conversationName: "Conversation 1"
                 ),
                 FilesViewItem(
                     id: nodeC.id,
@@ -459,7 +467,8 @@ final class FilesViewModelTests {
                     icon: .other,
                     tags: [],
                     isEditable: false,
-                    publicLinkID: nil
+                    publicLinkID: nil,
+                    conversationName: "Conversation 1"
                 ),
                 FilesViewItem(
                     id: nodeD.id,
@@ -472,7 +481,8 @@ final class FilesViewModelTests {
                     icon: .other,
                     tags: [],
                     isEditable: false,
-                    publicLinkID: nil
+                    publicLinkID: nil,
+                    conversationName: "Conversation 1"
                 ),
                 FilesViewItem(
                     id: nodeA.id,
@@ -485,7 +495,8 @@ final class FilesViewModelTests {
                     icon: .other,
                     tags: [],
                     isEditable: false,
-                    publicLinkID: nil
+                    publicLinkID: nil,
+                    conversationName: "Conversation 1"
                 )
             ]
         )

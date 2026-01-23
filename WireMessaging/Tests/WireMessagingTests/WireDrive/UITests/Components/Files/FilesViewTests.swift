@@ -125,7 +125,8 @@ final class FilesViewTests: XCTestCase {
             icon: .image,
             tags: [],
             isEditable: false,
-            publicLinkID: nil
+            publicLinkID: nil,
+            conversationName: "Conversation 1"
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -152,7 +153,8 @@ final class FilesViewTests: XCTestCase {
             icon: .spreadsheet,
             tags: [],
             isEditable: false,
-            publicLinkID: nil
+            publicLinkID: nil,
+            conversationName: "Conversation 1"
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -179,7 +181,8 @@ final class FilesViewTests: XCTestCase {
             icon: .image,
             tags: ["important"],
             isEditable: false,
-            publicLinkID: nil
+            publicLinkID: nil,
+            conversationName: "Conversation 1"
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -206,7 +209,8 @@ final class FilesViewTests: XCTestCase {
             icon: .image,
             tags: ["tag1", "tag2", "abcdef"],
             isEditable: false,
-            publicLinkID: nil
+            publicLinkID: nil,
+            conversationName: "Conversation 1"
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -233,7 +237,8 @@ final class FilesViewTests: XCTestCase {
             icon: .spreadsheet,
             tags: [],
             isEditable: false,
-            publicLinkID: nil
+            publicLinkID: nil,
+            conversationName: "Conversation 1"
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -262,7 +267,8 @@ final class FilesViewTests: XCTestCase {
             icon: .image,
             tags: [],
             isEditable: false,
-            publicLinkID: nil
+            publicLinkID: nil,
+            conversationName: "Conversation 1"
         )
         let asset = WireDriveLocalAsset(
             nodeID: item.id,
@@ -297,7 +303,8 @@ final class FilesViewTests: XCTestCase {
             icon: .image,
             tags: [],
             isEditable: false,
-            publicLinkID: nil
+            publicLinkID: nil,
+            conversationName: "Conversation 1"
         )
         let asset = WireDriveLocalAsset(
             nodeID: item.id,
@@ -432,6 +439,7 @@ private extension FilesItemViewModel {
 
         return FilesItemViewModel(
             item: item,
+            conversationName: "Conversation 1",
             localAssetRepository: localAssetRepository,
             onItemAction: { _, _ in },
             locale: Locale(identifier: "en_US_POSIX"),
