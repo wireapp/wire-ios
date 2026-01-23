@@ -98,10 +98,10 @@ class PhotosAppPage: PageModel {
 
         let conversationToSend = selectConversation(name: name)
         XCTAssertTrue(conversationToSend.waitForExistence(timeout: timeout))
-        conversationToSend.tap()
+        conversationToSend.waitAndTap()
 
         XCTAssertTrue(sendButton.waitForExistence(timeout: timeout))
-        sendButton.tap()
+        sendButton.waitAndTap()
 
         XCTAssertTrue(shareButton.waitForExistence(timeout: timeout))
     }

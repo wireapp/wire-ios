@@ -1734,10 +1734,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makeUploadDraftUseCase
 
     var makeUploadDraftUseCaseCellName_Invocations: [String] = []
-    var makeUploadDraftUseCaseCellName_MockMethod: ((String) -> WireCellsUploadDraftUseCaseProtocol)?
-    var makeUploadDraftUseCaseCellName_MockValue: WireCellsUploadDraftUseCaseProtocol?
+    var makeUploadDraftUseCaseCellName_MockMethod: ((String) -> WireDriveUploadDraftUseCaseProtocol)?
+    var makeUploadDraftUseCaseCellName_MockValue: WireDriveUploadDraftUseCaseProtocol?
 
-    func makeUploadDraftUseCase(cellName: String) -> WireCellsUploadDraftUseCaseProtocol {
+    func makeUploadDraftUseCase(cellName: String) -> WireDriveUploadDraftUseCaseProtocol {
         makeUploadDraftUseCaseCellName_Invocations.append(cellName)
 
         if let mock = makeUploadDraftUseCaseCellName_MockMethod {
@@ -1752,10 +1752,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makeObserveDraftsUseCase
 
     var makeObserveDraftsUseCaseCellName_Invocations: [String] = []
-    var makeObserveDraftsUseCaseCellName_MockMethod: ((String) -> WireCellsObserveDraftsUseCaseProtocol)?
-    var makeObserveDraftsUseCaseCellName_MockValue: WireCellsObserveDraftsUseCaseProtocol?
+    var makeObserveDraftsUseCaseCellName_MockMethod: ((String) -> WireDriveObserveDraftsUseCaseProtocol)?
+    var makeObserveDraftsUseCaseCellName_MockValue: WireDriveObserveDraftsUseCaseProtocol?
 
-    func makeObserveDraftsUseCase(cellName: String) -> WireCellsObserveDraftsUseCaseProtocol {
+    func makeObserveDraftsUseCase(cellName: String) -> WireDriveObserveDraftsUseCaseProtocol {
         makeObserveDraftsUseCaseCellName_Invocations.append(cellName)
 
         if let mock = makeObserveDraftsUseCaseCellName_MockMethod {
@@ -1770,10 +1770,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makePublishDraftsUseCase
 
     var makePublishDraftsUseCaseCellName_Invocations: [String] = []
-    var makePublishDraftsUseCaseCellName_MockMethod: ((String) -> WireCellsPublishDraftsUseCaseProtocol)?
-    var makePublishDraftsUseCaseCellName_MockValue: WireCellsPublishDraftsUseCaseProtocol?
+    var makePublishDraftsUseCaseCellName_MockMethod: ((String) -> WireDrivePublishDraftsUseCaseProtocol)?
+    var makePublishDraftsUseCaseCellName_MockValue: WireDrivePublishDraftsUseCaseProtocol?
 
-    func makePublishDraftsUseCase(cellName: String) -> WireCellsPublishDraftsUseCaseProtocol {
+    func makePublishDraftsUseCase(cellName: String) -> WireDrivePublishDraftsUseCaseProtocol {
         makePublishDraftsUseCaseCellName_Invocations.append(cellName)
 
         if let mock = makePublishDraftsUseCaseCellName_MockMethod {
@@ -1788,10 +1788,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makeClearPublishedDraftsUseCase
 
     var makeClearPublishedDraftsUseCaseCellName_Invocations: [String] = []
-    var makeClearPublishedDraftsUseCaseCellName_MockMethod: ((String) -> WireCellsClearPublishedDraftsUseCaseProtocol)?
-    var makeClearPublishedDraftsUseCaseCellName_MockValue: WireCellsClearPublishedDraftsUseCaseProtocol?
+    var makeClearPublishedDraftsUseCaseCellName_MockMethod: ((String) -> WireDriveClearPublishedDraftsUseCaseProtocol)?
+    var makeClearPublishedDraftsUseCaseCellName_MockValue: WireDriveClearPublishedDraftsUseCaseProtocol?
 
-    func makeClearPublishedDraftsUseCase(cellName: String) -> WireCellsClearPublishedDraftsUseCaseProtocol {
+    func makeClearPublishedDraftsUseCase(cellName: String) -> WireDriveClearPublishedDraftsUseCaseProtocol {
         makeClearPublishedDraftsUseCaseCellName_Invocations.append(cellName)
 
         if let mock = makeClearPublishedDraftsUseCaseCellName_MockMethod {
@@ -1806,10 +1806,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makeDeleteDraftUseCase
 
     var makeDeleteDraftUseCaseCellName_Invocations: [String] = []
-    var makeDeleteDraftUseCaseCellName_MockMethod: ((String) -> WireCellsDeleteDraftUseCaseProtocol)?
-    var makeDeleteDraftUseCaseCellName_MockValue: WireCellsDeleteDraftUseCaseProtocol?
+    var makeDeleteDraftUseCaseCellName_MockMethod: ((String) -> WireDriveDeleteDraftUseCaseProtocol)?
+    var makeDeleteDraftUseCaseCellName_MockValue: WireDriveDeleteDraftUseCaseProtocol?
 
-    func makeDeleteDraftUseCase(cellName: String) -> WireCellsDeleteDraftUseCaseProtocol {
+    func makeDeleteDraftUseCase(cellName: String) -> WireDriveDeleteDraftUseCaseProtocol {
         makeDeleteDraftUseCaseCellName_Invocations.append(cellName)
 
         if let mock = makeDeleteDraftUseCaseCellName_MockMethod {
@@ -1824,10 +1824,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makeRetryUploadDraftUseCase
 
     var makeRetryUploadDraftUseCaseCellName_Invocations: [String] = []
-    var makeRetryUploadDraftUseCaseCellName_MockMethod: ((String) -> WireCellsRetryUploadDraftUseCaseProtocol)?
-    var makeRetryUploadDraftUseCaseCellName_MockValue: WireCellsRetryUploadDraftUseCaseProtocol?
+    var makeRetryUploadDraftUseCaseCellName_MockMethod: ((String) -> WireDriveRetryUploadDraftUseCaseProtocol)?
+    var makeRetryUploadDraftUseCaseCellName_MockValue: WireDriveRetryUploadDraftUseCaseProtocol?
 
-    func makeRetryUploadDraftUseCase(cellName: String) -> WireCellsRetryUploadDraftUseCaseProtocol {
+    func makeRetryUploadDraftUseCase(cellName: String) -> WireDriveRetryUploadDraftUseCaseProtocol {
         makeRetryUploadDraftUseCaseCellName_Invocations.append(cellName)
 
         if let mock = makeRetryUploadDraftUseCaseCellName_MockMethod {
@@ -1842,10 +1842,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makeDeleteNodesUseCase
 
     var makeDeleteNodesUseCase_Invocations: [Void] = []
-    var makeDeleteNodesUseCase_MockMethod: (() -> WireCellsDeleteNodesUseCaseProtocol)?
-    var makeDeleteNodesUseCase_MockValue: WireCellsDeleteNodesUseCaseProtocol?
+    var makeDeleteNodesUseCase_MockMethod: (() -> WireDriveDeleteNodesUseCaseProtocol)?
+    var makeDeleteNodesUseCase_MockValue: WireDriveDeleteNodesUseCaseProtocol?
 
-    func makeDeleteNodesUseCase() -> WireCellsDeleteNodesUseCaseProtocol {
+    func makeDeleteNodesUseCase() -> WireDriveDeleteNodesUseCaseProtocol {
         makeDeleteNodesUseCase_Invocations.append(())
 
         if let mock = makeDeleteNodesUseCase_MockMethod {
@@ -1860,10 +1860,10 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
     // MARK: - makeFetchNodeUseCase
 
     var makeFetchNodeUseCase_Invocations: [Void] = []
-    var makeFetchNodeUseCase_MockMethod: (() -> WireCellsFetchNodeUseCaseProtocol)?
-    var makeFetchNodeUseCase_MockValue: WireCellsFetchNodeUseCaseProtocol?
+    var makeFetchNodeUseCase_MockMethod: (() -> WireDriveFetchNodeUseCaseProtocol)?
+    var makeFetchNodeUseCase_MockValue: WireDriveFetchNodeUseCaseProtocol?
 
-    func makeFetchNodeUseCase() -> WireCellsFetchNodeUseCaseProtocol {
+    func makeFetchNodeUseCase() -> WireDriveFetchNodeUseCaseProtocol {
         makeFetchNodeUseCase_Invocations.append(())
 
         if let mock = makeFetchNodeUseCase_MockMethod {
@@ -1872,6 +1872,24 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
             return mock
         } else {
             fatalError("no mock for `makeFetchNodeUseCase`")
+        }
+    }
+
+    // MARK: - makeFetchCachedNodeUseCase
+
+    var makeFetchCachedNodeUseCase_Invocations: [Void] = []
+    var makeFetchCachedNodeUseCase_MockMethod: (() -> WireDriveFetchCachedNodeUseCaseProtocol)?
+    var makeFetchCachedNodeUseCase_MockValue: WireDriveFetchCachedNodeUseCaseProtocol?
+
+    func makeFetchCachedNodeUseCase() -> WireDriveFetchCachedNodeUseCaseProtocol {
+        makeFetchCachedNodeUseCase_Invocations.append(())
+
+        if let mock = makeFetchCachedNodeUseCase_MockMethod {
+            return mock()
+        } else if let mock = makeFetchCachedNodeUseCase_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeFetchCachedNodeUseCase`")
         }
     }
 

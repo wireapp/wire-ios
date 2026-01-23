@@ -34,8 +34,6 @@
 #import "MockModelObjectContextFactory.h"
 
 #import "ZMSelfStrategy.h"
-#import "ZMMissingUpdateEventsTranscoder.h"
-#import "ZMLastUpdateEventIDTranscoder.h"
 #import "ZMLoginTranscoder.h"
 #import "ZMLoginCodeRequestTranscoder.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>

@@ -47,6 +47,7 @@ public protocol AVSWrapperType {
     /// This method should be called before processing with `isProcessingNotifications` set to `true` as well as
     /// after processing has been completed with `isProcessingNotifications` set to `false`.
     func notify(isProcessingNotifications isProcessing: Bool)
+    func networkInterfaceChanged()
 
     /// Inform AVS that the app is being in the background.
     /// This method should be invoked with `true` when the app enters the background or loses network connectivity,
@@ -259,6 +260,10 @@ public final class AVSWrapper: AVSWrapperType {
     public func setBackground(isBackground: Bool) {
         wcall_set_background(handle, isBackground ? 1 : 0)
         print("🤪 isBackground: \(isBackground)")
+    }
+
+    public func networkInterfaceChanged() {
+        wcall_network_changed()
     }
 
     /// Set the MLS conference info for a given conversation.

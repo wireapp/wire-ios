@@ -69,10 +69,10 @@ public extension ZMUserSession {
             guard let self else { return }
             let hasActiveCalls = callCenter?.activeCalls.isEmpty == false
 
-//            if !hasActiveCalls {
+            if !hasActiveCalls {
                 await syncAgent?.suspend()
-//            }
-           // updateAVSBackgroundState()
+            }
+            self.callCenter?.avsWrapper.setBackground(isBackground: false)
         }
 
         stopEphemeralTimers()
@@ -96,17 +96,8 @@ public extension ZMUserSession {
         mergeChangesFromStoredSaveNotificationsIfNeeded()
         startEphemeralTimers()
         deleteOldEphemeralMessages()
-        processPendingEvents()
-//        managedObjectContext.perform { [weak self] in
-//            self?.callCenter?.avsWrapper.setBackground(isBackground: false)
-//        }
-//        updateAVSBackgroundState()
-    }
-
-    internal func processPendingEvents() {
-        guard !journal[.isSyncV2Enabled] else { return }
-        syncContext.performGroupedBlock {
-            self.processLegacyEvents()
+        managedObjectContext.perform { [weak self] in
+            self?.callCenter?.avsWrapper.setBackground(isBackground: false)
         }
     }
 

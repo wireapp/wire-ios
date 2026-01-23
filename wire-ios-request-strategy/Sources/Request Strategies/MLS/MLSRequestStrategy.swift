@@ -60,10 +60,7 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
         )
 
         configuration = [
-            .allowsRequestsDuringSlowSync,
-            .allowsRequestsWhileOnline,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket
+            .allowsRequestsWhileOnline
         ]
     }
 
