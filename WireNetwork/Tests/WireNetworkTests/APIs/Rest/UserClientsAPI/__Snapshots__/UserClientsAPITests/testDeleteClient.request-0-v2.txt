@@ -1,0 +1,5 @@
+curl \
+	--request DELETE \
+	--header "Content-Type: application/json" \
+	--data "{\"password\":\"strongPassword123\"}" \
+	"/v2/clients/60f85e4b15ad3786"

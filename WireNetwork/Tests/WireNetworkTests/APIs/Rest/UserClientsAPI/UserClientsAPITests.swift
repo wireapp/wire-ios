@@ -70,6 +70,24 @@ final class UserClientsAPITests: XCTestCase {
         }
     }
 
+    func testDeleteClient() async throws {
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+            _ = try await sut.deleteClient(
+                id: "60f85e4b15ad3786",
+                password: "strongPassword123"
+            )
+        }
+    }
+
+    func testDeleteClientWithoutPassword() async throws {
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+            _ = try await sut.deleteClient(
+                id: "60f85e4b15ad3786",
+                password: nil
+            )
+        }
+    }
+
     // MARK: - Response handling
 
     // MARK: - V0
@@ -165,6 +183,33 @@ final class UserClientsAPITests: XCTestCase {
             // When/Then
             await XCTAssertThrowsErrorAsync(UserClientsAPIError.endpointUnavailable) {
                 try await sut.registerClient(newClient: Scaffolding.newClient)
+            }
+        }
+    }
+
+    func testDeleteClient_SuccessResponse_200_V0_And_Next_Versions() async throws {
+        try await withThrowingTaskGroup(of: Void.self) { taskGroup in
+            let testedVersions = APIVersion.v0.andNextVersions
+
+            for version in testedVersions {
+                // Given
+                let apiService = MockAPIServiceProtocol.withResponses([
+                    (.ok, nil)
+                ])
+
+                let sut = version.buildAPI(apiService: apiService)
+
+                taskGroup.addTask {
+                    // When
+                    try await sut.deleteClient(
+                        id: "60f85e4b15ad3786",
+                        password: "strongPassword123"
+                    )
+                }
+
+                for try await _ in taskGroup {
+                    // Then - no assertion needed, just checking it doesn't throw
+                }
             }
         }
     }
