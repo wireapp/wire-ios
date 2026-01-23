@@ -25,30 +25,78 @@ import WireMessagingDomain
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 @MainActor
-final class CreateFolderViewModel: ObservableObject {
+final class CreateFileViewModel: ObservableObject {
 
-    @Published var folderNameInput: String = ""
+    @Published var nameInput: String = ""
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     @Published var isFocused: Bool = true
-    @Published var didCreate: Bool = false
+    @Published var createdNode: WireDriveNode?
 
     var isCreateDisabled: Bool {
         errorMessage != nil || !isInputValid
     }
 
-    private let createFolderUseCase: any WireDriveCreateFolderUseCaseProtocol
-    private let folderPath: String
+    var title: String {
+        switch creationTarget {
+        case .folder:
+            Strings.Files.NewFolder.title
+        case .file:
+            Strings.Files.FileName.title
+        }
+    }
+
+    var navigationTitle: String {
+        switch creationTarget {
+        case .folder:
+            Strings.Files.NewFolder.navigationTitle
+        case let .file(template):
+            Strings.Files.NewFile.navigationTitle("." + template.fileExtension)
+        }
+    }
+
+    var placeholder: String {
+        switch creationTarget {
+        case .folder:
+            Strings.Files.RenameFolder.placeholder
+        case .file:
+            Strings.Files.RenameFile.placeholder
+        }
+    }
+
+    private var inputTooLongErrorMessage: String {
+        switch creationTarget {
+        case .folder:
+            Strings.Files.RenameFolder.folderNameTooLongError
+        case .file:
+            Strings.Files.RenameFile.filenameTooLongError
+        }
+    }
+
+    private var alreadyExistsErrorMessage: String {
+        switch creationTarget {
+        case .folder:
+            Strings.Files.RenameFolder.folderAlreadyExistsError
+        case .file:
+            Strings.Files.RenameFile.fileAlreadyExistsError
+        }
+    }
+
+    private let creationTarget: WireDriveCreateFileUseCase.Target
+    private let createFileUseCase: any WireDriveCreateFileUseCaseProtocol
+    private let path: String
     private var subscriptions = Set<AnyCancellable>()
     private let filenameValidator = FilenameValidator()
     private var isInputValid = true
 
     init(
-        createFolderUseCase: any WireDriveCreateFolderUseCaseProtocol,
-        folderPath: String
+        creationTarget: WireDriveCreateFileUseCase.Target,
+        path: String,
+        createFileUseCase: any WireDriveCreateFileUseCaseProtocol,
     ) {
-        self.createFolderUseCase = createFolderUseCase
-        self.folderPath = folderPath
+        self.creationTarget = creationTarget
+        self.createFileUseCase = createFileUseCase
+        self.path = path
 
         bindTextInput()
     }
@@ -59,30 +107,30 @@ final class CreateFolderViewModel: ObservableObject {
         do {
             isLoading = true
 
-            try await createFolderUseCase.invoke(
-                folderPath: folderPath,
-                folderName: folderNameInput
+            createdNode = try await createFileUseCase.invoke(
+                creationTarget: creationTarget,
+                path: path,
+                name: nameInput
             )
 
-            didCreate = true
             isLoading = false
 
             return true
 
-        } catch let error as WireDriveCreateFolderUseCaseError {
+        } catch let error as WireDriveCreateFileUseCaseError {
             isLoading = false
             switch error {
-            case .serverFailedToCreateFolder:
+            case .serverFailedToCreate, .invalidPath:
                 errorMessage = L10n.Localizable.General.failure
-            case .folderAlreadyExists:
-                errorMessage = Strings.Files.NewFolder.folderAlreadyExistsError
+            case .alreadyExists:
+                errorMessage = alreadyExistsErrorMessage
             }
 
             return false
         } catch {
             isLoading = false
             errorMessage = L10n.Localizable.General.failure
-            WireLogger.wireDrive.error("Creating folder failed: \(error)")
+            WireLogger.wireDrive.error("Creating file or folder failed: \(error)")
             return false
         }
     }
@@ -90,7 +138,7 @@ final class CreateFolderViewModel: ObservableObject {
     // MARK: - Private
 
     private func bindTextInput() {
-        $folderNameInput
+        $nameInput
             .compactMap { [weak self] input in
                 self?.filenameValidator.validate(input)
             }
@@ -109,7 +157,7 @@ final class CreateFolderViewModel: ObservableObject {
             isInputValid = false
             switch failure {
             case .tooLong:
-                errorMessage = Strings.Files.NewFolder.folderNameTooLongError
+                errorMessage = inputTooLongErrorMessage
             case .slashCharacter:
                 errorMessage = Strings.Files.RenameFile.wrongCharacterError
             case .dotPrefix:
