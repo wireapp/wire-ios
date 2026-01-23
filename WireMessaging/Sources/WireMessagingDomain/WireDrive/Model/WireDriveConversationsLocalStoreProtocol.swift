@@ -19,7 +19,7 @@
 import Foundation
 
 // sourcery: AutoMockable
-/// A local store related to "Wire drive" enabled conversations.
+/// A local Core Data–backed store for conversations with Wire Drive enabled.
 public protocol WireDriveConversationsLocalStoreProtocol: Sendable {
     func fetchDriveConversations() async -> [WireDriveConversation]
 }
