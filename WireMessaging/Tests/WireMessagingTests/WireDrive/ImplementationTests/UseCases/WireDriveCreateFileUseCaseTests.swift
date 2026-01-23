@@ -23,20 +23,19 @@ import WireMessagingDomainSupport
 @testable import WireMessagingDomain
 
 @MainActor
-final class WireDriveCreateFolderUseCaseTests {
+final class WireDriveCreateFileUseCaseTests {
 
     private let repository = MockWireDriveNodesRepositoryProtocol()
-    private let sut: WireDriveCreateFolderUseCase
+    private let sut: WireDriveCreateFileUseCase
 
     init() {
-        self.sut = WireDriveCreateFolderUseCase(
+        self.sut = WireDriveCreateFileUseCase(
             nodesRepository: repository
         )
-
     }
 
     @Test
-    func invoke_Success() async throws {
+    func invoke_FolderSuccess() async throws {
         let folderPath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2"
         let folderName = "Folder-3"
 
@@ -44,12 +43,14 @@ final class WireDriveCreateFolderUseCaseTests {
         repository.preCheckNodePathFindAvailablePath_MockValue = .success
         repository.createFolderAt_MockMethod = { targetPath in
             #expect(targetPath == "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2/Folder-3")
+            return WireDriveNode.fixture()
         }
 
         // When
-        try await sut.invoke(
-            folderPath: folderPath,
-            folderName: folderName
+        _ = try await sut.invoke(
+            creationTarget: .folder,
+            path: folderPath,
+            name: folderName
         )
 
         // Then
@@ -58,7 +59,38 @@ final class WireDriveCreateFolderUseCaseTests {
     }
 
     @Test
-    func invoke_FailureFolderAlreadyExists() async throws {
+    func invoke_FileSuccess() async throws {
+        let filepath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2"
+        let filename = "test"
+        let template = WireDriveFileTemplate(
+            kind: .document,
+            editable: true,
+            label: "Microsoft Word",
+            id: "01-Microsoft Word.docx"
+        )
+
+        // Mock
+        repository.preCheckNodePathFindAvailablePath_MockValue = .success
+        repository.createFileAtTemplateUuid_MockMethod = { targetPath, templateId in
+            #expect(targetPath == "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2/test.docx")
+            #expect(templateId == "01-Microsoft Word.docx")
+            return WireDriveNode.fixture()
+        }
+
+        // When
+        _ = try await sut.invoke(
+            creationTarget: .file(template),
+            path: filepath,
+            name: filename
+        )
+
+        // Then
+        #expect(repository.preCheckNodePathFindAvailablePath_Invocations.count == 1)
+        #expect(repository.createFileAtTemplateUuid_Invocations.count == 1)
+    }
+
+    @Test
+    func invoke_FailureAlreadyExists() async throws {
         let folderPath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2"
         let folderName = "Folder-3"
 
@@ -66,17 +98,18 @@ final class WireDriveCreateFolderUseCaseTests {
         repository.preCheckNodePathFindAvailablePath_MockValue = .fileExists(nextPath: "")
 
         // Then
-        await #expect(throws: WireDriveCreateFolderUseCaseError.folderAlreadyExists) {
+        await #expect(throws: WireDriveCreateFileUseCaseError.alreadyExists) {
             // When
-            try await sut.invoke(
-                folderPath: folderPath,
-                folderName: folderName
+            _ = try await sut.invoke(
+                creationTarget: .folder,
+                path: folderPath,
+                name: folderName
             )
         }
     }
 
     @Test
-    func invoke_FailureServerFailedToCreateFolder() async throws {
+    func invoke_FailureServerFailedToCreate() async throws {
         // Given
         let folderPath = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Folder-1/Folder-2"
         let folderName = "Folder-3"
@@ -86,11 +119,12 @@ final class WireDriveCreateFolderUseCaseTests {
         repository.createFolderAt_MockError = NSError(domain: "Server error", code: 0)
 
         // Then
-        await #expect(throws: WireDriveCreateFolderUseCaseError.serverFailedToCreateFolder) {
+        await #expect(throws: WireDriveCreateFileUseCaseError.serverFailedToCreate) {
             // When
-            try await sut.invoke(
-                folderPath: folderPath,
-                folderName: folderName
+            _ = try await sut.invoke(
+                creationTarget: .folder,
+                path: folderPath,
+                name: folderName
             )
         }
     }

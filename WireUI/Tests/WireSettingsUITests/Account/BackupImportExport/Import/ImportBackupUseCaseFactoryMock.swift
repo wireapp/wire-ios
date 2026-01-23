@@ -17,20 +17,23 @@
 //
 
 import Foundation
+import WireFoundation
+import WireSettingsUI
 
-// sourcery: AutoMockable
-package protocol WireDriveCreateFolderUseCaseProtocol: Sendable {
+final class ImportBackupUseCaseFactoryMock: ImportBackupUseCaseFactoryProtocol {
+    var useCase: any ImportBackupUseCaseProtocol
+    var invokedURLs: [URL] = []
+    var errorToThrow: (any Error)?
 
-    /// Creates a new folder on the server.
-    ///
-    /// This method sends a request to create a folder at the specified path.
-    ///
-    /// - Parameters:
-    ///   - folderPath: The path of the folder.
-    ///   - folderName: The name of the folder to create.
-    func invoke(
-        folderPath: String,
-        folderName: String
-    ) async throws
+    init(useCase: any ImportBackupUseCaseProtocol) {
+        self.useCase = useCase
+    }
 
+    func importBackupUseCase(for url: URL) throws -> any ImportBackupUseCaseProtocol {
+        invokedURLs.append(url)
+        if let error = errorToThrow {
+            throw error
+        }
+        return useCase
+    }
 }
