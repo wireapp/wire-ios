@@ -226,10 +226,19 @@ final class UserClientsAPITests: XCTestCase {
 
         static let newClient = NewClient(
             prekeys: [
-                .init(id: 0, base64EncodedKey: "pQABARn//wKhAFggwO2Any+CjiGP8XFYrY67zHPvLgp+ysY5k7vci57aaLwDoQChAFggQU/vrXc9MrQxPNubQz4NI0uNtF6qdJ0J0mF9XB2f/GEEY="),
-                .init(id: 1, base64EncodedKey: "pQABARn//wKhAFgg0C2BN+Mxl7dLoDHNx7ZgUE7MR6hEqTmhoQrLmR5MQqYDoQChAFggJQvUqsCdqZ8o4s+OkSlRDPAf8DPQW25uG0+MvxWZxF4E=")
+                .init(
+                    id: 0,
+                    base64EncodedKey: "pQABARn//wKhAFggwO2Any+CjiGP8XFYrY67zHPvLgp+ysY5k7vci57aaLwDoQChAFggQU/vrXc9MrQxPNubQz4NI0uNtF6qdJ0J0mF9XB2f/GEEY="
+                ),
+                .init(
+                    id: 1,
+                    base64EncodedKey: "pQABARn//wKhAFgg0C2BN+Mxl7dLoDHNx7ZgUE7MR6hEqTmhoQrLmR5MQqYDoQChAFggJQvUqsCdqZ8o4s+OkSlRDPAf8DPQW25uG0+MvxWZxF4E="
+                )
             ],
-            lastkey: .init(id: 65535, base64EncodedKey: "pQABARn//wKhAFgg3ULpZ5zKDp0p+b4SaV0eQa4YqqRVZkrsjn5EwgcbBdQDoQChAFggEHDNP6QHM4VD0JF0wFQlkc7AXQ/qQAR5kXmxFIuSnqYE="),
+            lastkey: .init(
+                id: 65_535,
+                base64EncodedKey: "pQABARn//wKhAFgg3ULpZ5zKDp0p+b4SaV0eQa4YqqRVZkrsjn5EwgcbBdQDoQChAFggEHDNP6QHM4VD0JF0wFQlkc7AXQ/qQAR5kXmxFIuSnqYE="
+            ),
             type: .permanent,
             capabilities: [.legalholdConsent],
             deviceClass: .phone,
@@ -238,7 +247,12 @@ final class UserClientsAPITests: XCTestCase {
             model: "iPhone 12",
             password: nil,
             verificationCode: nil,
-            mlsPublicKeys: .init(ed25519: "gRNvFYReriXbzsGu7z6OOr6FxITm/L6WhB8HUmcXG7E=", p256: nil, p384: nil, p521: nil)
+            mlsPublicKeys: .init(
+                ed25519: "gRNvFYReriXbzsGu7z6OOr6FxITm/L6WhB8HUmcXG7E=",
+                p256: nil,
+                p384: nil,
+                p521: nil
+            )
         )
 
         static let registeredClient = SelfUserClient(
@@ -249,7 +263,12 @@ final class UserClientsAPITests: XCTestCase {
             model: "iPhone 12",
             deviceClass: .phone,
             lastActiveDate: nil,
-            mlsPublicKeys: .init(ed25519: "gRNvFYReriXbzsGu7z6OOr6FxITm/L6WhB8HUmcXG7E=", p256: nil, p384: nil, p521: nil),
+            mlsPublicKeys: .init(
+                ed25519: "gRNvFYReriXbzsGu7z6OOr6FxITm/L6WhB8HUmcXG7E=",
+                p256: nil,
+                p384: nil,
+                p521: nil
+            ),
             cookie: "zbRsaJkNdE6OwZRvqPrhTKod5rIimeYRRWKHSMCvsGU=",
             capabilities: [.legalholdConsent]
         )
