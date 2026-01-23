@@ -64,6 +64,12 @@ final class UserClientsAPITests: XCTestCase {
         }
     }
 
+    func testRegisterClient() async throws {
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+            _ = try await sut.registerClient(newClient: Scaffolding.newClient)
+        }
+    }
+
     // MARK: - Response handling
 
     // MARK: - V0
@@ -123,6 +129,31 @@ final class UserClientsAPITests: XCTestCase {
         }
     }
 
+    func testRegisterClient_SuccessResponse_201_V0_to_V6() async throws {
+        try await withThrowingTaskGroup(of: SelfUserClient.self) { taskGroup in
+            let testedVersions = [APIVersion.v0, .v1, .v2, .v3, .v4, .v5, .v6]
+
+            for version in testedVersions {
+                // Given
+                let apiService = MockAPIServiceProtocol.withResponses([
+                    (.created, "RegisterClientSuccessResponseV0")
+                ])
+
+                let sut = version.buildAPI(apiService: apiService)
+
+                taskGroup.addTask {
+                    // When
+                    try await sut.registerClient(newClient: Scaffolding.newClient)
+                }
+
+                for try await value in taskGroup {
+                    // Then
+                    XCTAssertEqual(value, Scaffolding.registeredClient)
+                }
+            }
+        }
+    }
+
     // MARK: - V7
 
     func testGetSelfUserClients_SuccessResponse_200_V7_And_Next_Versions() async throws {
@@ -152,6 +183,31 @@ final class UserClientsAPITests: XCTestCase {
         }
     }
 
+    func testRegisterClient_SuccessResponse_201_V7_And_Next_Versions() async throws {
+        try await withThrowingTaskGroup(of: SelfUserClient.self) { taskGroup in
+            let testedVersions = APIVersion.v7.andNextVersions
+
+            for version in testedVersions {
+                // Given
+                let apiService = MockAPIServiceProtocol.withResponses([
+                    (.created, "RegisterClientSuccessResponseV7")
+                ])
+
+                let sut = version.buildAPI(apiService: apiService)
+
+                taskGroup.addTask {
+                    // When
+                    try await sut.registerClient(newClient: Scaffolding.newClient)
+                }
+
+                for try await value in taskGroup {
+                    // Then
+                    XCTAssertEqual(value, Scaffolding.registeredClient)
+                }
+            }
+        }
+    }
+
     // MARK: -
 
     enum Scaffolding {
@@ -165,6 +221,36 @@ final class UserClientsAPITests: XCTestCase {
             lastActiveDate: nil,
             mlsPublicKeys: .init(ed25519: "ZXhhbXBsZQo=", p256: nil, p384: nil, p521: nil),
             cookie: "string",
+            capabilities: [.legalholdConsent]
+        )
+
+        static let newClient = NewClient(
+            prekeys: [
+                .init(id: 0, base64EncodedKey: "pQABARn//wKhAFggwO2Any+CjiGP8XFYrY67zHPvLgp+ysY5k7vci57aaLwDoQChAFggQU/vrXc9MrQxPNubQz4NI0uNtF6qdJ0J0mF9XB2f/GEEY="),
+                .init(id: 1, base64EncodedKey: "pQABARn//wKhAFgg0C2BN+Mxl7dLoDHNx7ZgUE7MR6hEqTmhoQrLmR5MQqYDoQChAFggJQvUqsCdqZ8o4s+OkSlRDPAf8DPQW25uG0+MvxWZxF4E=")
+            ],
+            lastkey: .init(id: 65535, base64EncodedKey: "pQABARn//wKhAFgg3ULpZ5zKDp0p+b4SaV0eQa4YqqRVZkrsjn5EwgcbBdQDoQChAFggEHDNP6QHM4VD0JF0wFQlkc7AXQ/qQAR5kXmxFIuSnqYE="),
+            type: .permanent,
+            capabilities: [.legalholdConsent],
+            deviceClass: .phone,
+            cookie: nil,
+            label: "iPhone 12",
+            model: "iPhone 12",
+            password: nil,
+            verificationCode: nil,
+            mlsPublicKeys: .init(ed25519: "gRNvFYReriXbzsGu7z6OOr6FxITm/L6WhB8HUmcXG7E=", p256: nil, p384: nil, p521: nil)
+        )
+
+        static let registeredClient = SelfUserClient(
+            id: "60f85e4b15ad3786",
+            type: .permanent,
+            activationDate: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            label: "iPhone 12",
+            model: "iPhone 12",
+            deviceClass: .phone,
+            lastActiveDate: nil,
+            mlsPublicKeys: .init(ed25519: "gRNvFYReriXbzsGu7z6OOr6FxITm/L6WhB8HUmcXG7E=", p256: nil, p384: nil, p521: nil),
+            cookie: "zbRsaJkNdE6OwZRvqPrhTKod5rIimeYRRWKHSMCvsGU=",
             capabilities: [.legalholdConsent]
         )
 

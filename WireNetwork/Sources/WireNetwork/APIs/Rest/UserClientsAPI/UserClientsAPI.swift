@@ -22,6 +22,12 @@ public typealias UserClientID = String
 /// An API access object for endpoints concerning user clients.
 public protocol UserClientsAPI {
 
+    /// Register a new client
+    /// - Parameter newClient: payload containing properties for the new client.
+    /// - Returns: The newly registered client.
+
+    func registerClient(newClient: NewClient) async throws -> SelfUserClient
+
     /// Get self user registered clients
     /// - returns: A list of self user clients.
 
@@ -40,4 +46,5 @@ public protocol UserClientsAPI {
     ///   - clientUpdate: payload containing properties to update
 
     func updateClient(id: UserClientID, clientUpdate: ClientUpdate) async throws
+
 }

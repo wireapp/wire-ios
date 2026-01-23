@@ -38,6 +38,61 @@ class UserClientsAPIV7: UserClientsAPIV6 {
             .success(code: .ok, type: ListUserClientV7.self)
             .parse(code: response.statusCode, data: data)
     }
+
+    override func registerClient(newClient: NewClient) async throws -> SelfUserClient {
+        let body = try JSONEncoder.defaultEncoder.encode(newClient.toNetworkModel())
+
+        let path = "\(pathPrefix)/clients"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(
+                code: .created,
+                type: SelfUserClientV7.self
+            )
+            .failure(
+                code: .badRequest,
+                error: UserClientsAPIError.invalidBody
+            )
+            .failure(
+                code: .badRequest,
+                label: "bad-request",
+                error: UserClientsAPIError.malformedPrekeysUploaded
+            )
+            .failure(
+                code: .forbidden,
+                label: "code-authentication-required",
+                error: UserClientsAPIError.codeAuthenticationRequired
+            )
+            .failure(
+                code: .forbidden,
+                label: "code-authentication-failed",
+                error: UserClientsAPIError.codeAuthenticationFailed
+            )
+            .failure(
+                code: .forbidden,
+                label: "missing-auth",
+                error: UserClientsAPIError.missingAuth
+            )
+            .failure(
+                code: .forbidden,
+                label: "too-many-clients",
+                error: UserClientsAPIError.tooManyClients
+            )
+            .parse(
+                code: response.statusCode,
+                data: data
+            )
+    }
 }
 
 // SelfUserClientV7.capabilities is now a list and not nested within another object anymore.
