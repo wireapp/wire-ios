@@ -20,26 +20,29 @@ import Combine
 
 struct FilenameValidator {
 
-    private enum Constants {
+    enum Constants {
         static let maxInputLength = 64
+        static let invalidCharacters: [Character] = ["/", "\\", "\""]
     }
 
     enum Failure: Error {
         case tooLong
         case dotPrefix
-        case slashCharacter
+        case invalidCharacters
         case empty
     }
 
     func validate(_ input: String) -> AnyPublisher<Result<Void, Failure>, Never> {
-        let result: Result<Void, Failure> = if input.isEmpty {
+        let trimmedInput = input.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let result: Result<Void, Failure> = if trimmedInput.isEmpty {
             .failure(.empty)
-        } else if input.hasPrefix(".") {
+        } else if trimmedInput.hasPrefix(".") {
             .failure(.dotPrefix)
-        } else if input.count > Constants.maxInputLength {
+        } else if trimmedInput.count > Constants.maxInputLength {
             .failure(.tooLong)
-        } else if input.contains("/") || input.contains("\\") {
-            .failure(.slashCharacter)
+        } else if trimmedInput.contains(where: { Constants.invalidCharacters.contains($0) }) {
+            .failure(.invalidCharacters)
         } else {
             .success(())
         }
