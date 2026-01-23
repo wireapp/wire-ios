@@ -63,7 +63,7 @@ extension FilesViewModel {
                 getTagSuggestions: WireDriveGetTagSuggestionsUseCase(
                     nodesAPI: previewTagsApi()
                 ),
-                createFolder: WireDriveCreateFolderUseCase(
+                createFileUseCase: WireDriveCreateFileUseCase(
                     nodesRepository: previewNodesRepository()
                 ),
                 fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(
@@ -361,14 +361,20 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
 
 }
 
-extension CreateFolderViewModel {
-    /// A stubbed instance of `CreateFolderViewModel` for SwiftUI previews.
-    static func preview() -> CreateFolderViewModel {
-        let createFolderUseCase = MockWireDriveCreateFolderUseCaseProtocol()
+extension CreateFileViewModel {
+    /// A stubbed instance of `CreateFileViewModel` for SwiftUI previews.
+    static func preview() -> CreateFileViewModel {
+        let createFileUseCase = MockWireDriveCreateFileUseCaseProtocol()
 
-        return CreateFolderViewModel(
-            createFolderUseCase: createFolderUseCase,
-            folderPath: "Test-1/Test-2"
+        return CreateFileViewModel(
+            creationTarget: .file(.init(
+                kind: .document,
+                editable: true,
+                label: "Microsoft Word",
+                id: "01-Microsoft Word.docx"
+            )),
+            path: "Test-1/Test-2",
+            createFileUseCase: createFileUseCase
         )
     }
 }

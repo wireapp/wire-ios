@@ -23,13 +23,13 @@ import WireReusableUIComponents
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-struct CreateFolderView: View {
-    @StateObject package var viewModel: CreateFolderViewModel
+struct CreateFileView: View {
+    @StateObject package var viewModel: CreateFileViewModel
     @Environment(\.dismiss) var dismiss
 
     let id = UUID()
 
-    init(viewModel: @autoclosure @escaping () -> CreateFolderViewModel) {
+    init(viewModel: @autoclosure @escaping () -> CreateFileViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
     }
 
@@ -41,9 +41,9 @@ struct CreateFolderView: View {
 
                 VStack {
                     ValidationTextField(
-                        title: Strings.Files.NewFolder.title,
-                        placeholder: Strings.Files.NewFolder.placeholder,
-                        textInput: $viewModel.folderNameInput,
+                        title: viewModel.title,
+                        placeholder: viewModel.placeholder,
+                        textInput: $viewModel.nameInput,
                         errorMessage: $viewModel.errorMessage,
                         isFocused: $viewModel.isFocused
                     )
@@ -58,7 +58,7 @@ struct CreateFolderView: View {
                     Spacer()
                 }
             }
-            .navigationTitle(Strings.Files.NewFolder.navigationTitle)
+            .navigationTitle(viewModel.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
             .toolbar { toolbarContent }
@@ -78,7 +78,7 @@ struct CreateFolderView: View {
 
 // MARK: - Toolbar
 
-private extension CreateFolderView {
+private extension CreateFileView {
 
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) { cancelButton }
@@ -116,5 +116,5 @@ private extension CreateFolderView {
 }
 
 #Preview {
-    CreateFolderView(viewModel: .preview())
+    CreateFileView(viewModel: .preview())
 }

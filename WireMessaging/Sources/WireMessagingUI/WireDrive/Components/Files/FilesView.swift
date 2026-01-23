@@ -111,7 +111,7 @@ package struct FilesView: FilesViewProtocol {
                         shareLinkView
                     case let .renameFile(fileRenameView):
                         fileRenameView
-                    case let .createFolder(folderView):
+                    case let .create(folderView):
                         folderView
                     case let .versionHistory(versionHistoryView):
                         versionHistoryView
@@ -184,12 +184,35 @@ private extension FilesView {
     var moreActionsButton: some View {
         Menu {
             Button {
-                viewModel.onCreateFolder()
+                viewModel.onCreate(target: .folder)
             } label: {
                 Label {
-                    Text(Strings.Files.List.newFolder)
+                    Text(Strings.Files.List.createFolder)
                 } icon: {
-                    Image(systemName: "folder")
+                    Image(systemName: "folder.badge.plus")
+                        .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                }
+            }
+
+            Menu {
+                ForEach(viewModel.templates, id: \.self) { template in
+                    Button {
+                        viewModel.onCreate(target: .file(template))
+                    } label: {
+                        Label {
+                            Text(template.kind.title)
+                        } icon: {
+                            Image(systemName: template.kind.systemImage)
+                                .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                        }
+                    }
+                }
+
+            } label: {
+                Label {
+                    Text(Strings.Files.List.createFile)
+                } icon: {
+                    Image(systemName: "document.badge.plus")
                         .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
                 }
             }
