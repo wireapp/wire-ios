@@ -54,7 +54,7 @@ public struct WireDriveNode: Equatable, Identifiable, Sendable {
 
     package init(
         uuid: UUID,
-        conversation: WireDriveConversation?,
+        conversation: WireDriveConversation? = nil,
         path: String,
         modified: Date? = nil,
         size: UInt64? = nil,
