@@ -67,7 +67,7 @@ final class FilesViewModelTests {
                 ),
                 updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesApi),
                 getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesApi),
-                createFolder: WireDriveCreateFolderUseCase(nodesRepository: nodesRepository),
+                createFileUseCase: WireDriveCreateFileUseCase(nodesRepository: nodesRepository),
                 fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesRepository),
                 restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
                     repository: nodesRepository,

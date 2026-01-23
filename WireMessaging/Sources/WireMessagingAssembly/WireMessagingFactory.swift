@@ -190,7 +190,7 @@ public extension WireMessagingFactory {
                         ),
                         updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI),
                         getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
-                        createFolder: WireDriveCreateFolderUseCase(nodesRepository: nodesAPI),
+                        createFileUseCase: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
                         fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesAPI),
                         restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
                             repository: nodesAPI,
