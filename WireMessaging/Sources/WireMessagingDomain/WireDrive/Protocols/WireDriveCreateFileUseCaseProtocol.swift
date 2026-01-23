@@ -16,29 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireDesign
+import Foundation
 
-struct CreateFolderCTA: View {
+// sourcery: AutoMockable
+package protocol WireDriveCreateFileUseCaseProtocol: Sendable {
 
-    let action: () -> Void
+    /// Creates a new file or folder on the server.
+    ///
+    /// This method sends a request to create a folder at the specified path.
+    ///
+    /// - Parameters:
+    ///   - creationTarget: Whether a folder or a specific file (document, spreadsheet, presentation..).
+    ///   - path: The path of the file/folder.
+    ///   - name: The name of the file/folder to create.
+    /// - Returns: The created node.
+    func invoke(
+        creationTarget: WireDriveCreateFileUseCase.Target,
+        path: String,
+        name: String
+    ) async throws -> WireDriveNode
 
-    var body: some View {
-        VStack(spacing: 0) {
-            Divider()
-
-            Button(action: action) {
-                HStack(alignment: .center, spacing: 20) {
-                    Image(systemName: "plus")
-
-                    Text(L10n.Localizable.Conversation.WireCells.Files.List.newFolder)
-                        .font(for: .body2)
-                    Spacer()
-                }
-            }
-            .tint(ColorTheme.Backgrounds.onSurface.color)
-            .padding()
-        }
-        .contentShape(Rectangle())
-    }
 }

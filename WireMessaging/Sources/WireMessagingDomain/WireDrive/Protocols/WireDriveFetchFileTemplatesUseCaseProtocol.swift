@@ -16,21 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 // sourcery: AutoMockable
-package protocol WireDriveCreateFolderUseCaseProtocol: Sendable {
-
-    /// Creates a new folder on the server.
-    ///
-    /// This method sends a request to create a folder at the specified path.
-    ///
-    /// - Parameters:
-    ///   - folderPath: The path of the folder.
-    ///   - folderName: The name of the folder to create.
-    func invoke(
-        folderPath: String,
-        folderName: String
-    ) async throws
-
+public protocol WireDriveFetchFileTemplatesUseCaseProtocol: Sendable {
+    func invoke() async throws -> [WireDriveFileTemplate]
 }
