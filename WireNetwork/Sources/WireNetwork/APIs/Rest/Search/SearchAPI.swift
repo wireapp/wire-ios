@@ -67,11 +67,12 @@ public struct SearchContactsResult {
 //    public let searchPolicy: String
 
     public struct Contact {
+        public let id: UUID?
         public let qualifiedID: QualifiedID?
         public let name: String
         public let handle: String?
-        public let accentID: Int?
         public let team: UUID?
+        public let accentID: Int?
         public let type: UserType
     }
 

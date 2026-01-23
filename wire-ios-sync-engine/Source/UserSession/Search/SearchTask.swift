@@ -467,13 +467,47 @@ extension SearchTask {
         _Concurrency.Task {
             do {
                 try? await _Concurrency.Task.sleep(for: .seconds(5)) // TODO: delete
-                let todo = try await searchAPI.searchContacts(
-                    query: searchRequest.query.string,
+
+                let contacts = try await searchAPI.searchContacts(
+                    query: searchRequest.query.string.lowercased(),
                     domain: searchRequest.searchDomain ?? "",
                     type: .regular // TODO: correct?
+                ).documents
+
+                let queryLowercased = searchRequest.query.string.lowercased()
+                let filteredContacts = contacts.filter { contact in
+                    return !searchRequest.query.isHandleQuery ||
+                    contact.name.hasPrefix("@") ||
+                    (contact.handle?.lowercased().contains(queryLowercased) ?? false)
+                }
+
+                let searchUsers = filteredContacts.map { filteredContact in
+                TODO: searchUsersCache
+                    ZMSearchUser(
+                        contextProvider: contextProvider,
+                        name: filteredContact.name,
+                        handle: filteredContact.handle,
+                        accentColor: filteredContact.accentID,
+                        remoteIdentifier: filteredContact.id,
+                        domain: filteredContact.qualifiedID?.domain,
+                        teamIdentifier: <#T##UUID?#>,
+                        user: <#T##ZMUser?#>,
+                        searchUsersCache: searchUsersCache
+                    )
+                }
+
+                let searchOptions = searchRequest.searchOptions
+                let includeActiveTeamMembers = searchOptions.contains(.teamMembers) &&
+                    searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
+                let searchResult = SearchResult(
+                    context: contextProvider.viewContext,
+                    contacts: [],
+                    teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
+                    directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
+                    conversations: [],
+                    services: [],
+                    searchUsersCache: searchUsersCache
                 )
-                print(todo)
-                // let result = SearchResult( // TODO: finish
             } catch {
                 fatalError(error.localizedDescription) // TODO: fix
             }
