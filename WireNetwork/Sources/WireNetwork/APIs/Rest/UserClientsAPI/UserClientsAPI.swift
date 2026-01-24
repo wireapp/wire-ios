@@ -53,7 +53,7 @@ public protocol UserClientsAPI {
     /// Delete a client
     ///
     /// - Parameters:
-    ///   - id: id of User client to delete
+    ///   - id: id of user client to delete
     ///   - password: The password of the authenticated user for verification.
     ///     Not required for deleting temporary clients.
 
