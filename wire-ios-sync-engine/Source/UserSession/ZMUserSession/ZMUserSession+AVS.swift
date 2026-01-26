@@ -20,14 +20,14 @@ import Foundation
 
 extension ZMUserSession {
 
-    func didStartProcessingEvents() {
+    func notifyAVSWillProcessEvents() {
         managedObjectContext.perform { [weak self] in
             guard let self else { return }
             callCenter?.avsWrapper.notify(isProcessingNotifications: true)
         }
     }
 
-    func didFinishProcessingEvents() {
+    func notifyAVSDidProcessEvents() {
         managedObjectContext.perform { [weak self] in
             guard let self else { return }
             callCenter?.avsWrapper.notify(isProcessingNotifications: false)

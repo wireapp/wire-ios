@@ -1225,7 +1225,7 @@ extension ZMUserSession: SyncAgentDelegate {
         Task {
             await showSyncBar(true)
         }
-        didStartProcessingEvents()
+        notifyAVSWillProcessEvents()
     }
 
     @MainActor
@@ -1272,7 +1272,7 @@ extension ZMUserSession: SyncAgentDelegate {
         }
 
         performPostQuickSyncE2EIActions()
-        didFinishProcessingEvents()
+        notifyAVSDidProcessEvents()
     }
 
     private func makeInitiateResetMLSConversationUseCase(

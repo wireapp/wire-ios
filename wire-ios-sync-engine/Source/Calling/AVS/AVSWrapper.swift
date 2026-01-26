@@ -53,7 +53,7 @@ public protocol AVSWrapperType {
     ///
     /// Pass `true` when the app is active but live syncing is not ongoing
     /// (for example, when the app is in the background or network connectivity is lost),
-    /// and `false` when the app is active and live syncing can resume.
+    /// and `false` when the app is active and live syncing is ongoing.
     func setLiveSyncPaused(_ paused: Bool)
 
     func setMLSConferenceInfo(conversationId: AVSIdentifier, info: MLSConferenceInfo)
