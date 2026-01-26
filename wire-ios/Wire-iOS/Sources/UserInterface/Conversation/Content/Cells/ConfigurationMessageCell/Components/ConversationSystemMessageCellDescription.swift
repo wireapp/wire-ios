@@ -174,10 +174,18 @@ enum ConversationSystemMessageCellDescription {
         case .newConversation:
             var cells: [AnyConversationMessageCellDescription] = []
 
-            let welcomeCell = ConversationWelcomeSystemMessageCellDescription(
-                isWireCellsEnabled: conversation.isCellsEnabled
-            )
-            cells.append(AnyConversationMessageCellDescription(welcomeCell))
+            let hideWelcomeBanner = conversation.conversationType == .oneOnOne && conversation.isCellsEnabled
+            
+            if !hideWelcomeBanner {
+                let welcomeCell = ConversationWelcomeSystemMessageCellDescription(
+                    variant: (
+                        wireCells: conversation.isCellsEnabled,
+                        is1on1: conversation.conversationType == .oneOnOne,
+                        isChannel: conversation.isChannel,
+                    )
+                )
+                cells.append(AnyConversationMessageCellDescription(welcomeCell))
+            }
 
             let startedConversationCell = ConversationStartedSystemMessageCellDescription(message: message)
             cells.append(AnyConversationMessageCellDescription(startedConversationCell))

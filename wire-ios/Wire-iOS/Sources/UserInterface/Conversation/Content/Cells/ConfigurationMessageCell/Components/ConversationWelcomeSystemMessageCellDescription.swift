@@ -36,12 +36,24 @@ final class ConversationWelcomeSystemMessageCellDescription: ConversationMessage
     let containsHighlightableContent: Bool = false
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
+    
+    typealias Variant = (wireCells: Bool, is1on1: Bool, isChannel: Bool)
 
-    init(isWireCellsEnabled: Bool) {
-        let title = isWireCellsEnabled ? L10n.Localizable.Conversation.ConnectionView.Welcome.Title.wireCells : L10n
+    init(variant: Variant) {
+        let title = variant.wireCells ? L10n.Localizable.Conversation.ConnectionView.Welcome.Title.wireCells : L10n
             .Localizable.Conversation.ConnectionView.Welcome.Title.wire
-        let message = isWireCellsEnabled ? L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireCells : L10n
-            .Localizable.Conversation.ConnectionView.Welcome.Message.wire
+
+        let message: String = switch variant {
+        case (wireCells: false, is1on1: false, isChannel: false):
+            L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireGroup
+        case (wireCells: false, is1on1: true, isChannel: false):
+            L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireOneOnOne
+        case (wireCells: false, is1on1: _, isChannel: true):
+            L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireChannel
+        case (wireCells: true, is1on1: _, isChannel: _):
+            L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireCells
+        }
+
         let linkLabel = L10n.Localizable.Conversation.ConnectionView.Welcome.learnMore
         let linkUrl = URL(string: "https://support.wire.com/hc/articles/10898523878173")!
 
