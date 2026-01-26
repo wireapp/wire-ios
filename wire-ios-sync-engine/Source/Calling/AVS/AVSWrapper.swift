@@ -49,10 +49,12 @@ public protocol AVSWrapperType {
     func notify(isProcessingNotifications isProcessing: Bool)
     func networkInterfaceChanged()
 
-    /// Inform AVS that the app is being in the background.
-    /// This method should be invoked with `true` when the app enters the background or loses network connectivity,
-    /// and with `false` when the app returns to the foreground with an active network connection.
-    func setBackground(isBackground: Bool)
+    /// Inform AVS whether live syncing is paused.
+    ///
+    /// Pass `true` when the app is active but live syncing is not ongoing
+    /// (for example, when the app is in the background or network connectivity is lost),
+    /// and `false` when the app is active and live syncing can resume.
+    func setLiveSyncPaused(_ paused: Bool)
 
     func setMLSConferenceInfo(conversationId: AVSIdentifier, info: MLSConferenceInfo)
     var isMuted: Bool { get set }
@@ -257,8 +259,8 @@ public final class AVSWrapper: AVSWrapperType {
         wcall_process_notifications(handle, isProcessing ? 1 : 0)
     }
 
-    public func setBackground(isBackground: Bool) {
-        wcall_set_background(handle, isBackground ? 1 : 0)
+    public func setLiveSyncPaused(_ paused: Bool) {
+        wcall_set_background(handle, paused ? 1 : 0)
     }
 
     public func networkInterfaceChanged() {

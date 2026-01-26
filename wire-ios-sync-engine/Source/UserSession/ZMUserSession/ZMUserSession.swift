@@ -51,13 +51,11 @@ public final class ZMUserSession: NSObject {
     public private(set) var isTornDown = false
 
     private(set) var isNetworkOnline = true
-    //var isInBackground = false
-    //var currentSyncState: SyncState = .idle
     private var syncStateCancellable: AnyCancellable?
-    private var isSocketOpen = false {
+    private var isLiveSyncOngoing = false {
         didSet {
-            if oldValue != isSocketOpen {
-                updateAVSBackgroundState()
+            if oldValue != isLiveSyncOngoing {
+                notifyAVSOfLiveSyncState()
             }
         }
     }
@@ -1139,14 +1137,14 @@ extension ZMUserSession: ZMNetworkStateDelegate {
         syncStateCancellable = clientSessionComponent.syncStateSubject
             .sink { [weak self] syncState in
                 guard let self else { return }
-                isSocketOpen = syncState == .liveSyncing(.ongoing)
+                isLiveSyncOngoing = syncState == .liveSyncing(.ongoing)
             }
     }
 
-    private func updateAVSBackgroundState() {
+    private func notifyAVSOfLiveSyncState() {
         managedObjectContext.perform { [weak self] in
             guard let self else { return }
-            callCenter?.avsWrapper.setBackground(isBackground: !isSocketOpen)
+            callCenter?.avsWrapper.setLiveSyncPaused(!isLiveSyncOngoing)
         }
     }
 }
