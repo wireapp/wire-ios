@@ -349,9 +349,3 @@ extension NewClient {
     }
 
 }
-
-struct DeleteClientV0: Equatable, Sendable, Encodable {
-
-    let password: String?
-
-}
