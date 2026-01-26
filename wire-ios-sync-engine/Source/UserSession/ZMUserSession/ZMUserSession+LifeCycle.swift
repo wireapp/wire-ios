@@ -64,7 +64,6 @@ public extension ZMUserSession {
 
     @objc
     func applicationDidEnterBackground(_ note: Notification?) {
-        isInBackground = true
         Task { @MainActor [weak self] in
             guard let self else { return }
             let hasActiveCalls = callCenter?.activeCalls.isEmpty == false
@@ -72,7 +71,6 @@ public extension ZMUserSession {
             if !hasActiveCalls {
                 await syncAgent?.suspend()
             }
-            self.callCenter?.avsWrapper.setBackground(isBackground: false)
         }
 
         stopEphemeralTimers()
@@ -84,21 +82,14 @@ public extension ZMUserSession {
         } catch {
             WireLogger.assets.error("failed to purge temporary assets: \(error)")
         }
-        managedObjectContext.perform { [weak self] in
-            self?.callCenter?.avsWrapper.setBackground(isBackground: true)
-        }
     }
 
     @objc
     func applicationWillEnterForeground(_ note: Notification?) {
-        isInBackground = false
         syncAgent?.resume()
         mergeChangesFromStoredSaveNotificationsIfNeeded()
         startEphemeralTimers()
         deleteOldEphemeralMessages()
-        managedObjectContext.perform { [weak self] in
-            self?.callCenter?.avsWrapper.setBackground(isBackground: false)
-        }
     }
 
     internal func deleteOldEphemeralMessages() {

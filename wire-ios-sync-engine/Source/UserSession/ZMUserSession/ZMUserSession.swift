@@ -51,9 +51,16 @@ public final class ZMUserSession: NSObject {
     public private(set) var isTornDown = false
 
     private(set) var isNetworkOnline = true
-    var isInBackground = false
-    var currentSyncState: SyncState = .idle
+    //var isInBackground = false
+    //var currentSyncState: SyncState = .idle
     private var syncStateCancellable: AnyCancellable?
+    private var isSocketOpen = false {
+        didSet {
+            if oldValue != isSocketOpen {
+                updateAVSBackgroundState()
+            }
+        }
+    }
 
     public private(set) var coreDataStack: CoreDataStack!
 
@@ -1132,20 +1139,17 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
         syncStateCancellable = clientSessionComponent.syncStateSubject
             .sink { [weak self] syncState in
-                self?.currentSyncState = syncState
-//                let isSocketClosed = self?.currentSyncState == .suspended
-//                self?.updateAVSBackgroundState()
+                guard let self else { return }
+                isSocketOpen = syncState == .liveSyncing(.ongoing)
             }
     }
 
-//    func updateAVSBackgroundState() {
-//        managedObjectContext.perform { [weak self] in
-//            let isSocketClosed = self?.currentSyncState == .suspended
-//            let shouldBeInBackground = self!.isInBackground && isSocketClosed
-//            print("🙈 isSocketClosed: \(isSocketClosed), isInBackground: \(self?.isInBackground)")
-//            self?.callCenter?.avsWrapper.setBackground(isBackground: shouldBeInBackground)
-//        }
-//    }
+    private func updateAVSBackgroundState() {
+        managedObjectContext.perform { [weak self] in
+            guard let self else { return }
+            callCenter?.avsWrapper.setBackground(isBackground: !isSocketOpen)
+        }
+    }
 }
 
 // MARK: - SyncAgent delegate
@@ -1233,7 +1237,7 @@ extension ZMUserSession: SyncAgentDelegate {
         Task {
             await showSyncBar(true)
         }
-        NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
+        //NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
     }
 
     @MainActor
@@ -1280,7 +1284,7 @@ extension ZMUserSession: SyncAgentDelegate {
         }
 
         performPostQuickSyncE2EIActions()
-        NotificationCenter.default.post(name: .eventProcessorDidFinishProcessingEventsNotification, object: self)
+        //NotificationCenter.default.post(name: .eventProcessorDidFinishProcessingEventsNotification, object: self)
     }
 
     private func makeInitiateResetMLSConversationUseCase(
