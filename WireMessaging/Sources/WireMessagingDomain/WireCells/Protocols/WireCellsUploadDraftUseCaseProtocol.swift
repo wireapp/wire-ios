@@ -30,6 +30,8 @@ public protocol WireCellsUploadDraftUseCaseProtocol: Sendable {
     /// Creates a file using `imageData` and uploads it to the cells server.
 
     func invoke(data: Data, type: UTType) async throws
+
+    var charactersToReplace: [Character] { get }
 }
 
 public enum WireCellsUploadDraftUseCaseError: Error, Sendable {
