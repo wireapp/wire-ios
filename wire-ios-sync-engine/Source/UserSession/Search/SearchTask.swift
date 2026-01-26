@@ -19,6 +19,7 @@
 import Foundation
 import WireUtilities
 import WireNetwork
+import WireFoundation
 
 public class SearchTask {
 
@@ -464,55 +465,6 @@ extension SearchTask {
 
         // TODO: use new API
 
-        _Concurrency.Task {
-            do {
-                try? await _Concurrency.Task.sleep(for: .seconds(5)) // TODO: delete
-
-                let contacts = try await searchAPI.searchContacts(
-                    query: searchRequest.query.string.lowercased(),
-                    domain: searchRequest.searchDomain ?? "",
-                    type: .regular // TODO: correct?
-                ).documents
-
-                let queryLowercased = searchRequest.query.string.lowercased()
-                let filteredContacts = contacts.filter { contact in
-                    return !searchRequest.query.isHandleQuery ||
-                    contact.name.hasPrefix("@") ||
-                    (contact.handle?.lowercased().contains(queryLowercased) ?? false)
-                }
-
-                let searchUsers = filteredContacts.map { filteredContact in
-                TODO: searchUsersCache
-                    ZMSearchUser(
-                        contextProvider: contextProvider,
-                        name: filteredContact.name,
-                        handle: filteredContact.handle,
-                        accentColor: filteredContact.accentID,
-                        remoteIdentifier: filteredContact.id,
-                        domain: filteredContact.qualifiedID?.domain,
-                        teamIdentifier: <#T##UUID?#>,
-                        user: <#T##ZMUser?#>,
-                        searchUsersCache: searchUsersCache
-                    )
-                }
-
-                let searchOptions = searchRequest.searchOptions
-                let includeActiveTeamMembers = searchOptions.contains(.teamMembers) &&
-                    searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
-                let searchResult = SearchResult(
-                    context: contextProvider.viewContext,
-                    contacts: [],
-                    teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
-                    directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
-                    conversations: [],
-                    services: [],
-                    searchUsersCache: searchUsersCache
-                )
-            } catch {
-                fatalError(error.localizedDescription) // TODO: fix
-            }
-        }
-
         tasksRemaining += 1
 
         searchContext.performGroupedBlock { [self] in
@@ -535,6 +487,11 @@ extension SearchTask {
                     return
                 }
 
+                self!.tmp_searchNewAndCompare(
+                    searchRequest: searchRequest,
+                    result: result
+                )
+
                 if searchRequest.searchOptions.contains(.teamMembers) {
                     self?.performTeamMembershipLookup(on: result, searchRequest: searchRequest)
                 } else {
@@ -547,6 +504,86 @@ extension SearchTask {
             })
 
             transportSession.enqueueOneTime(request)
+        }
+    }
+
+    private func tmp_searchNewAndCompare( // TODO: delete
+        searchRequest: SearchRequest,
+        result: SearchResult
+    ) {
+        _Concurrency.Task { @MainActor in
+            do {
+                try? await _Concurrency.Task.sleep(for: .seconds(5)) // TODO: delete
+
+                let contacts = try await searchAPI.searchContacts(
+                    query: searchRequest.query.string.lowercased(),
+                    domain: searchRequest.searchDomain ?? "",
+                    type: .regular // TODO: correct?
+                ).documents
+
+                let queryLowercased = searchRequest.query.string.lowercased()
+                let filteredContacts = contacts.filter { contact in
+                    return !searchRequest.query.isHandleQuery ||
+                    contact.name.hasPrefix("@") ||
+                    (contact.handle?.lowercased().contains(queryLowercased) ?? false)
+                }
+
+                let searchUsers = filteredContacts.compactMap { filteredContact in
+                    guard let id = filteredContact.id else { return ZMSearchUser?.none }
+                    let accentColor = if let accentID = filteredContact.accentID, let rawValue = Int16(exactly: accentID), let accentColor = AccentColor(
+                        rawValue: rawValue
+                    ) { accentColor } else { AccentColor.default }
+                    let localUser = ZMUser.fetch(
+                        with: id,
+                        domain: filteredContact.qualifiedID?.domain,
+                        in: contextProvider.viewContext
+                    )
+                    if let searchUser = searchUsersCache?.object(forKey: id as NSUUID) {
+                        searchUser.user = localUser
+                        return searchUser
+                    } else {
+                        return ZMSearchUser(
+                            contextProvider: contextProvider,
+                            name: filteredContact.name,
+                            handle: filteredContact.handle,
+                            accentColor: .from(accentColor: accentColor),
+                            remoteIdentifier: filteredContact.id,
+                            domain: filteredContact.qualifiedID?.domain,
+                            teamIdentifier: filteredContact.team,
+                            user: localUser,
+                            searchUsersCache: searchUsersCache
+                        )
+                    }
+                }
+
+                let searchOptions = searchRequest.searchOptions
+                let includeActiveTeamMembers = searchOptions.contains(.teamMembers) &&
+                    searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
+                let searchResult = SearchResult(
+                    context: contextProvider.viewContext,
+                    contacts: [],
+                    teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
+                    directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
+                    conversations: [],
+                    services: [],
+                    searchUsersCache: searchUsersCache
+                )
+
+                precondition(searchResult.context === result.context)
+                precondition(searchResult.contacts.count == result.contacts.count)
+                precondition(searchResult.teamMembers.count == result.teamMembers.count)
+                precondition(searchResult.directory.count == result.directory.count)
+                precondition(searchResult.conversations.count == result.conversations.count)
+                precondition(searchResult.services.count == result.services.count)
+                precondition(searchResult.searchUsersCache === result.searchUsersCache)
+
+                // TODO: compare searchResult and result
+                print(result)
+                print(searchResult)
+
+            } catch {
+                fatalError(error.localizedDescription) // TODO: fix
+            }
         }
     }
 
