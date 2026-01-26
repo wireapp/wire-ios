@@ -1115,11 +1115,9 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
     public func didGoOffline() {
         managedObjectContext.performGroupedBlock { [weak self] in
-            //self?.callCenter?.avsWrapper.setBackground(isBackground: true)
             self?.isNetworkOnline = false
             self?.updateNetworkState()
             self?.saveOrRollbackChanges()
-//            self?.updateAVSBackgroundState()
         }
     }
 
@@ -1237,7 +1235,7 @@ extension ZMUserSession: SyncAgentDelegate {
         Task {
             await showSyncBar(true)
         }
-        //NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
+        NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
     }
 
     @MainActor
@@ -1284,7 +1282,7 @@ extension ZMUserSession: SyncAgentDelegate {
         }
 
         performPostQuickSyncE2EIActions()
-        //NotificationCenter.default.post(name: .eventProcessorDidFinishProcessingEventsNotification, object: self)
+        NotificationCenter.default.post(name: .eventProcessorDidFinishProcessingEventsNotification, object: self)
     }
 
     private func makeInitiateResetMLSConversationUseCase(

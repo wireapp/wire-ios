@@ -259,7 +259,6 @@ public final class AVSWrapper: AVSWrapperType {
 
     public func setBackground(isBackground: Bool) {
         wcall_set_background(handle, isBackground ? 1 : 0)
-        print("🤪 isBackground: \(isBackground)")
     }
 
     public func networkInterfaceChanged() {
