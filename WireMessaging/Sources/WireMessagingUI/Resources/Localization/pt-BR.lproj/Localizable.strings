@@ -254,4 +254,3 @@
 "conversation.wireCells.filesVersioning.downloadVersion" = "Download version";
 "conversation.wireCells.filesVersioning.retry" = "Tentar novamente";
 "conversation.wireCells.filesVersioning.restoringVersion" = "Restoring version...";
-"conversation.wireCells.filesVersioning.downloadingVersion" = "Downloading file version";

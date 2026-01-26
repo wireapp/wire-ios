@@ -334,8 +334,10 @@ extension ConversationTextMessageCellDescription {
 
         // Quote
         if let quotedMessage = textMessageData.quoteMessage {
-            let viewModel = MessageReplyAttachmentsViewModel(fetchNodeUseCase: wireMessagingFactory
-                .makeFetchNodeUseCase())
+            let viewModel = MessageReplyAttachmentsViewModel(
+                fetchCachedNodeUseCase: wireMessagingFactory.makeFetchCachedNodeUseCase(),
+                fetchNodeUseCase: wireMessagingFactory.makeFetchNodeUseCase()
+            )
 
             let quoteCell = ConversationReplyCellDescription(
                 quotedMessage: quotedMessage,
