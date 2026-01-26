@@ -232,7 +232,7 @@ extension NewClient {
             mlsPublicKeys: mlsPublicKeys?.toNetworkModel()
         )
     }
-  
+
 }
 
 struct DeleteClientV5: Equatable, Sendable, Encodable {
