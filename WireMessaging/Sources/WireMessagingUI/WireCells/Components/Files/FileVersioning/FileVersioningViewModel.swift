@@ -28,6 +28,7 @@ struct FileVersionItem: Identifiable, Hashable {
     let id: UUID
     let title: String
     let subtitle: String
+    var isCurrent: Bool = false
 }
 
 /// View model for the `FileVersioningView`.
@@ -195,11 +196,7 @@ final class FileVersioningViewModel: ObservableObject {
         guard var firstSection = sections.first,
               var firstItem = firstSection.items.first else { return sections }
 
-        firstItem = .init(
-            id: firstItem.id,
-            title: firstItem.title + " " + Strings.FilesVersioning.currentFile,
-            subtitle: firstItem.subtitle
-        )
+        firstItem.isCurrent = true
 
         firstSection.items[0] = firstItem
         sections[0] = firstSection
