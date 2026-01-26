@@ -43,9 +43,15 @@ struct FileVersionItemView: View {
                 Image(systemName: "arrow.trianglehead.counterclockwise")
 
                 VStack(alignment: .leading) {
-                    Text(viewModel.item.title)
-                        .font(for: .body1)
-                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                    HStack {
+                        Text(viewModel.item.title)
+
+                        if viewModel.item.isCurrent {
+                            Text(Strings.FilesVersioning.currentFile)
+                        }
+                    }
+                    .font(for: .body1)
+                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                     Text(viewModel.item.subtitle)
                         .font(for: .h4)
@@ -56,17 +62,19 @@ struct FileVersionItemView: View {
 
                 Spacer()
 
-                Menu {
-                    restoreButton
-                } label: {
-                    ZStack {
-                        Color.clear
-                            .frame(width: 44, height: 44)
-                        Image(systemName: "ellipsis")
-                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                if !viewModel.item.isCurrent {
+                    Menu {
+                        restoreButton
+                    } label: {
+                        ZStack {
+                            Color.clear
+                                .frame(width: 44, height: 44)
+                            Image(systemName: "ellipsis")
+                                .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                        }
                     }
+                    .padding(.trailing, -14)
                 }
-                .padding(.trailing, -14)
             }
         }
         .alert(
