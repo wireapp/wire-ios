@@ -38,7 +38,7 @@ final class FilesBrowserViewTests: XCTestCase {
     private var renameNodeUseCase: WireDriveRenameNodeUseCase!
     private var updateTagsUseCase: (any WireDriveUpdateTagsUseCaseProtocol)!
     private var getTagSuggestionsUseCase: (any WireDriveGetTagSuggestionsUseCaseProtocol)!
-    private var createFolderUseCase: (any WireDriveCreateFolderUseCaseProtocol)!
+    private var createFileUseCase: (any WireDriveCreateFileUseCaseProtocol)!
     private var fetchNodeVersionsUseCase: WireDriveFetchNodeVersionsUseCase!
     private var restoreNodeVersionUseCase: WireDriveRestoreNodeVersionUseCase!
     private var getEditingURLUseCase: WireDriveGetEditingURLUseCase!
@@ -91,7 +91,7 @@ final class FilesBrowserViewTests: XCTestCase {
             fileCache: MockFileCache()
         )
 
-        createFolderUseCase = WireDriveCreateFolderUseCase(
+        createFileUseCase = WireDriveCreateFileUseCase(
             nodesRepository: nodesRepository
         )
 
@@ -122,7 +122,7 @@ final class FilesBrowserViewTests: XCTestCase {
         fetchNodesUseCase = nil
         localAssetsRepository = nil
         fetchNodeVersionsUseCase = nil
-        createFolderUseCase = nil
+        createFileUseCase = nil
         getTagSuggestionsUseCase = nil
         updateTagsUseCase = nil
         renameNodeUseCase = nil
@@ -211,7 +211,7 @@ final class FilesBrowserViewTests: XCTestCase {
                 renameNode: renameNodeUseCase,
                 updateTags: updateTagsUseCase,
                 getTagSuggestions: getTagSuggestionsUseCase,
-                createFolder: createFolderUseCase,
+                createFileUseCase: createFileUseCase,
                 fetchNodeVersions: fetchNodeVersionsUseCase,
                 restoreNodeVersion: restoreNodeVersionUseCase,
                 getEditingURL: getEditingURLUseCase,
