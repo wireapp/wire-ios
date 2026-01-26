@@ -222,12 +222,14 @@ package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol
 
     package func createFolder(at path: String) async throws -> WireDriveNode {
         let createdNode = try await restAPI.createFolder(at: path)
-        return createdNode.toDomainModel()
+        let conversations = await localStore.fetchDriveConversations()
+        return createdNode.toDomainModel(conversations: conversations)
     }
 
     package func createFile(at path: String, templateUuid: String) async throws -> WireDriveNode {
         let createdNode = try await restAPI.createFile(at: path, templateUuid: templateUuid)
-        return createdNode.toDomainModel()
+        let conversations = await localStore.fetchDriveConversations()
+        return createdNode.toDomainModel(conversations: conversations)
     }
 
     package func getTemplates() async throws -> [WireDriveFileTemplate] {
