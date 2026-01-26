@@ -22,23 +22,6 @@ class UserClientsAPIV7: UserClientsAPIV6 {
 
     override var apiVersion: APIVersion { .v7 }
 
-    override func getSelfClients() async throws -> [SelfUserClient] {
-        let path = "\(pathPrefix)/clients"
-
-        let request = try URLRequestBuilder(path: path)
-            .withMethod(.get)
-            .build()
-
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: true
-        )
-
-        return try ResponseParser()
-            .success(code: .ok, type: ListUserClientV7.self)
-            .parse(code: response.statusCode, data: data)
-    }
-
     override func registerClient(newClient: NewClient) async throws -> SelfUserClient {
         let body = try JSONEncoder.defaultEncoder.encode(newClient.toNetworkModel())
 
@@ -57,7 +40,7 @@ class UserClientsAPIV7: UserClientsAPIV6 {
         return try ResponseParser()
             .success(
                 code: .created,
-                type: SelfUserClientV7.self
+                type: SelfUserClientV7.self // Changed
             )
             .failure(
                 code: .badRequest,
@@ -93,6 +76,24 @@ class UserClientsAPIV7: UserClientsAPIV6 {
                 data: data
             )
     }
+
+    override func getSelfClients() async throws -> [SelfUserClient] {
+        let path = "\(pathPrefix)/clients"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: ListUserClientV7.self)
+            .parse(code: response.statusCode, data: data)
+    }
+
 }
 
 // SelfUserClientV7.capabilities is now a list and not nested within another object anymore.

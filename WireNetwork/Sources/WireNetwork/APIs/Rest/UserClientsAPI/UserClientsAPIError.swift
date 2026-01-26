@@ -49,4 +49,8 @@ public enum UserClientsAPIError: Error {
 
     case tooManyClients
 
+    /// The endpoint is unavailable in this API version
+
+    case endpointUnavailable
+
 }

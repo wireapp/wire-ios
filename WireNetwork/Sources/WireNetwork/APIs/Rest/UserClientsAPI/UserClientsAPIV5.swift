@@ -24,4 +24,110 @@ class UserClientsAPIV5: UserClientsAPIV4 {
         .v5
     }
 
+    override func registerClient(newClient: NewClient) async throws -> SelfUserClient {
+        let body = try JSONEncoder.defaultEncoder.encode(newClient.toNetworkModel())
+
+        let path = "\(pathPrefix)/clients"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(
+                code: .created,
+                type: SelfUserClientV5.self
+            )
+            .failure(
+                code: .badRequest,
+                error: UserClientsAPIError.invalidBody
+            )
+            .failure(
+                code: .badRequest,
+                label: "bad-request",
+                error: UserClientsAPIError.malformedPrekeysUploaded
+            )
+            .failure(
+                code: .forbidden,
+                label: "code-authentication-required",
+                error: UserClientsAPIError.codeAuthenticationRequired
+            )
+            .failure(
+                code: .forbidden,
+                label: "code-authentication-failed",
+                error: UserClientsAPIError.codeAuthenticationFailed
+            )
+            .failure(
+                code: .forbidden,
+                label: "missing-auth",
+                error: UserClientsAPIError.missingAuth
+            )
+            .failure(
+                code: .forbidden,
+                label: "too-many-clients",
+                error: UserClientsAPIError.tooManyClients
+            )
+            .parse(
+                code: response.statusCode,
+                data: data
+            )
+    }
+
+}
+
+struct SelfUserClientV5: Decodable, ToAPIModelConvertible {
+
+    let id: String
+    let type: UserClientTypeV0
+    let activationDate: UTCTime?
+    let label: String?
+    let model: String?
+    let deviceClass: DeviceClassV0?
+    let lastActiveDate: UTCTime?
+    let mlsPublicKeys: MLSPublicKeysV0?
+    let cookie: String?
+    let capabilities: CapabilitiesList?
+
+    struct CapabilitiesList: Decodable {
+
+        let capabilities: [UserClientCapabilityV0]
+
+    }
+
+    enum CodingKeys: String, CodingKey {
+
+        case id
+        case type
+        case activationDate = "time"
+        case label
+        case model
+        case deviceClass = "class"
+        case lastActiveDate = "last_active"
+        case mlsPublicKeys = "mls_public_keys"
+        case cookie
+        case capabilities
+
+    }
+
+    func toAPIModel() -> SelfUserClient {
+        SelfUserClient(
+            id: id,
+            type: type.toAPIModel(),
+            activationDate: activationDate?.date,
+            label: label,
+            model: model,
+            deviceClass: deviceClass?.toAPIModel(),
+            lastActiveDate: lastActiveDate?.date,
+            mlsPublicKeys: mlsPublicKeys?.toAPIModel(),
+            cookie: cookie,
+            capabilities: capabilities?.capabilities.map { $0.toAPIModel() } ?? []
+        )
+    }
+
 }

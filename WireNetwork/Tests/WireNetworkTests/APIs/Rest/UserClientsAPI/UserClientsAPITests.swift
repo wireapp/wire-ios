@@ -65,7 +65,7 @@ final class UserClientsAPITests: XCTestCase {
     }
 
     func testRegisterClient() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        try await apiSnapshotHelper.verifyRequest(for: APIVersion.v5.andNextVersions) { sut in
             _ = try await sut.registerClient(newClient: Scaffolding.newClient)
         }
     }
@@ -129,14 +129,14 @@ final class UserClientsAPITests: XCTestCase {
         }
     }
 
-    func testRegisterClient_SuccessResponse_201_V0_to_V6() async throws {
+    func testRegisterClient_SuccessResponse_201_V5_to_V6() async throws {
         try await withThrowingTaskGroup(of: SelfUserClient.self) { taskGroup in
-            let testedVersions = [APIVersion.v0, .v1, .v2, .v3, .v4, .v5, .v6]
+            let testedVersions = [APIVersion.v5, .v6]
 
             for version in testedVersions {
                 // Given
                 let apiService = MockAPIServiceProtocol.withResponses([
-                    (.created, "RegisterClientSuccessResponseV0")
+                    (.created, "RegisterClientSuccessResponseV5")
                 ])
 
                 let sut = version.buildAPI(apiService: apiService)
@@ -150,6 +150,21 @@ final class UserClientsAPITests: XCTestCase {
                     // Then
                     XCTAssertEqual(value, Scaffolding.registeredClient)
                 }
+            }
+        }
+    }
+
+    func testRegisterClient_ThrowsEndpointUnavailable_V0_to_V4() async throws {
+        let testedVersions = [APIVersion.v0, .v1, .v2, .v3, .v4]
+
+        for version in testedVersions {
+            // Given
+            let apiService = MockAPIServiceProtocol()
+            let sut = version.buildAPI(apiService: apiService)
+
+            // When/Then
+            await XCTAssertThrowsErrorAsync(UserClientsAPIError.endpointUnavailable) {
+                try await sut.registerClient(newClient: Scaffolding.newClient)
             }
         }
     }
