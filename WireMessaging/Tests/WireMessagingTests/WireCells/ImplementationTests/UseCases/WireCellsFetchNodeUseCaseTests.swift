@@ -35,54 +35,36 @@ final class WireCellsFetchNodeUseCaseTests {
     }
 
     @Test
-    func invoke_whenNothingCached() async throws {
+    func invoke_whenNodeNotFound() async throws {
+        // Given
+        let nodeID = UUID()
+
+        repository.getNodeId_MockMethod = { _ in nil }
+
+        // When
+        let node = try await sut.invoke(nodeID: nodeID)
+
+        // Then
+        #expect(node == nil)
+        #expect(cache.setItemFor_Invocations.map(\.value) == [WireCellsNodeCacheItem(node: nil)])
+        #expect(cache.setItemFor_Invocations.map(\.nodeID) == [nodeID])
+    }
+
+    @Test
+    func invoke_whenNodeFound() async throws {
         // Given
         let nodeID = UUID()
         let remoteNode = WireCellsNode.fixture(uuid: nodeID)
 
-        cache.itemFor_MockMethod = { _ in nil }
         repository.getNodeId_MockValue = remoteNode
 
         // When
-        let stream = sut.invoke(nodeID: nodeID)
+        let node = try await sut.invoke(nodeID: nodeID)
 
         // Then
-        let nodes = try await stream.collect()
-        #expect(nodes == [remoteNode])
-    }
-
-    @Test
-    func invoke_whenSomethingCached() async throws {
-        // Given
-        let nodeID = UUID()
-        let cachedNode = WireCellsNode.fixture(uuid: nodeID, path: "foo/version 1.png")
-        let remoteNode = WireCellsNode.fixture(uuid: nodeID, path: "foo/version 2.png")
-
-        cache.itemFor_MockMethod = { _ in WireCellsNodeCacheItem(node: cachedNode) }
-        repository.getNodeId_MockValue = remoteNode
-
-        // When
-        let stream = sut.invoke(nodeID: nodeID)
-
-        // Then
-        let nodes = try await stream.collect()
-        #expect(nodes == [cachedNode, remoteNode])
-    }
-
-    @Test
-    func invoke_whenNodeUnavailable() async throws {
-        // Given
-        let nodeID = UUID()
-
-        cache.itemFor_MockMethod = { _ in WireCellsNodeCacheItem(node: nil) }
-        repository.getNodeId_MockMethod = { _ in nil }
-
-        // When
-        let stream = sut.invoke(nodeID: nodeID)
-
-        // Then
-        let nodes = try await stream.collect()
-        #expect(nodes == [nil, nil])
+        #expect(node == remoteNode)
+        #expect(cache.setItemFor_Invocations.map(\.value) == [WireCellsNodeCacheItem(node: remoteNode)])
+        #expect(cache.setItemFor_Invocations.map(\.nodeID) == [nodeID])
     }
 
 }

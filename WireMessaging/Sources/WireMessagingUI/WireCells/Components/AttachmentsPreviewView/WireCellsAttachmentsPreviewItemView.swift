@@ -45,7 +45,7 @@ struct WireCellsAttachmentsPreviewItemView: View {
                     isAssetDownloadError: viewModel.isAssetDownloadError,
                     canShowNoPreviewMessage: false
                 )
-                .frame(width: 74, height: 74)
+                .frame(width: 120, height: 120)
             case (.image, .large):
                 WireCellsImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
