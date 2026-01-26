@@ -59,12 +59,6 @@ extension SearchAPI {
 public struct SearchContactsResult {
 
     public let documents: [Contact]
-//    public let found: Int
-//    public let returned: Int
-//    public let took: Int
-//    public let hasMore: Bool
-//    public let pagingState: String?
-//    public let searchPolicy: String
 
     public struct Contact {
         public let id: UUID?

@@ -64,6 +64,10 @@ public class SearchTask {
             }
         }
         set {
+            if newValue < 0 { // TODO: delete
+                print("todo")
+            }
+            print("###  tasksRemaining: \(newValue)")
             let oldValue = tasksRemainingLock.withLock {
                 let oldValue = _tasksRemaining
                 _tasksRemaining = newValue
@@ -514,7 +518,7 @@ extension SearchTask {
 
                 let searchOptions = searchRequest.searchOptions
                 let includeActiveTeamMembers = searchOptions.contains(.teamMembers) &&
-                    searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
+                searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
                 let searchResult = SearchResult(
                     context: contextProvider.viewContext,
                     contacts: [],
@@ -533,8 +537,14 @@ extension SearchTask {
                     completeRemoteSearch(searchResult: searchResult)
                 }
 
+            } catch let error as URLError where error.code == .cancelled {
+                WireLogger.search.debug("cancelled remote search", attributes: .safePublic)
+                completeRemoteSearch()
+            } catch is CancellationError {
+                WireLogger.search.debug("cancelled remote search", attributes: .safePublic)
+                completeRemoteSearch()
             } catch {
-                let errorName = String(describing: error) // TODO: verify
+                let errorName = String(describing: type(of: error))
                 WireLogger.search.error("failed to perform remote search: \(errorName)", attributes: .safePublic)
                 completeRemoteSearch()
             }
