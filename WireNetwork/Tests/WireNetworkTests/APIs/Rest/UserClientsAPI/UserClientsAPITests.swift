@@ -71,7 +71,7 @@ final class UserClientsAPITests: XCTestCase {
     }
 
     func testDeleteClient() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        try await apiSnapshotHelper.verifyRequest(for: APIVersion.v5.andNextVersions) { sut in
             _ = try await sut.deleteClient(
                 id: "60f85e4b15ad3786",
                 password: "strongPassword123"
@@ -80,7 +80,7 @@ final class UserClientsAPITests: XCTestCase {
     }
 
     func testDeleteClientWithoutPassword() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        try await apiSnapshotHelper.verifyRequest(for: APIVersion.v5.andNextVersions) { sut in
             _ = try await sut.deleteClient(
                 id: "60f85e4b15ad3786",
                 password: nil
@@ -187,9 +187,9 @@ final class UserClientsAPITests: XCTestCase {
         }
     }
 
-    func testDeleteClient_SuccessResponse_200_V0_And_Next_Versions() async throws {
+    func testDeleteClient_SuccessResponse_200_V5_And_Next_Versions() async throws {
         try await withThrowingTaskGroup(of: Void.self) { taskGroup in
-            let testedVersions = APIVersion.v0.andNextVersions
+            let testedVersions = APIVersion.v5.andNextVersions
 
             for version in testedVersions {
                 // Given
@@ -210,6 +210,24 @@ final class UserClientsAPITests: XCTestCase {
                 for try await _ in taskGroup {
                     // Then - no assertion needed, just checking it doesn't throw
                 }
+            }
+        }
+    }
+
+    func testDeleteClient_ThrowsEndpointUnavailable_V0_to_V4() async throws {
+        let testedVersions = [APIVersion.v0, .v1, .v2, .v3, .v4]
+
+        for version in testedVersions {
+            // Given
+            let apiService = MockAPIServiceProtocol()
+            let sut = version.buildAPI(apiService: apiService)
+
+            // When/Then
+            await XCTAssertThrowsErrorAsync(UserClientsAPIError.endpointUnavailable) {
+                try await sut.deleteClient(
+                    id: "60f85e4b15ad3786",
+                    password: "strongPassword123"
+                )
             }
         }
     }

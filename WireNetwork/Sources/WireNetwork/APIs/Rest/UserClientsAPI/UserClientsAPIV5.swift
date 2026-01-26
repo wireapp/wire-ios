@@ -79,6 +79,27 @@ class UserClientsAPIV5: UserClientsAPIV4 {
             )
     }
 
+    override func deleteClient(id: UserClientID, password: String?) async throws {
+        let deleteClientBody = DeleteClientV5(password: password)
+        let body = try JSONEncoder.defaultEncoder.encode(deleteClientBody)
+
+        let path = "\(pathPrefix)/clients/\(id)"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.delete)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok)
+            .parse(code: response.statusCode, data: data)
+    }
+
 }
 
 struct SelfUserClientV5: Decodable, ToAPIModelConvertible {
@@ -129,5 +150,11 @@ struct SelfUserClientV5: Decodable, ToAPIModelConvertible {
             capabilities: capabilities?.capabilities.map { $0.toAPIModel() } ?? []
         )
     }
+
+}
+
+struct DeleteClientV5: Equatable, Sendable, Encodable {
+
+    let password: String?
 
 }
