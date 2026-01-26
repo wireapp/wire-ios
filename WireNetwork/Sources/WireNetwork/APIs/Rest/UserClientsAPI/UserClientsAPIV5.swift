@@ -131,3 +131,85 @@ struct SelfUserClientV5: Decodable, ToAPIModelConvertible {
     }
 
 }
+
+struct NewClientV5: Equatable, Sendable, Encodable {
+
+    enum CodingKeys: String, CodingKey {
+        case prekeys
+        case lastkey
+        case type
+        case capabilities
+        case deviceClass = "class"
+        case cookie
+        case label
+        case model
+        case password
+        case verificationCode = "verification_code"
+        case mlsPublicKeys = "mls_public_keys"
+    }
+
+    let prekeys: [PrekeyV0]
+    let lastkey: PrekeyV0
+    let type: UserClientTypeV0
+    let capabilities: [UserClientCapabilityV0]?
+    let deviceClass: DeviceClassV0?
+    let cookie: String?
+    let label: String?
+    let model: String?
+    let password: String?
+    let verificationCode: String?
+    let mlsPublicKeys: MLSPublicKeysV0?
+
+}
+
+extension UserClientType: ToNetworkConvertible {
+
+    func toNetworkModel() -> UserClientTypeV0 {
+        switch self {
+        case .permanent:
+            .permanent
+        case .temporary:
+            .temporary
+        case .legalhold:
+            .legalhold
+        }
+    }
+
+}
+
+extension DeviceClass: ToNetworkConvertible {
+
+    func toNetworkModel() -> DeviceClassV0 {
+        switch self {
+        case .phone:
+            .phone
+        case .tablet:
+            .tablet
+        case .desktop:
+            .desktop
+        case .legalhold:
+            .legalhold
+        }
+    }
+
+}
+
+extension NewClient {
+
+    func toNetworkModel() -> NewClientV5 {
+        NewClientV5(
+            prekeys: prekeys.map { $0.toNetworkModel() },
+            lastkey: lastkey.toNetworkModel(),
+            type: type.toNetworkModel(),
+            capabilities: capabilities?.map { $0.toNetworkModel() },
+            deviceClass: deviceClass?.toNetworkModel(),
+            cookie: cookie,
+            label: label,
+            model: model,
+            password: password,
+            verificationCode: verificationCode,
+            mlsPublicKeys: mlsPublicKeys?.toNetworkModel()
+        )
+    }
+
+}
