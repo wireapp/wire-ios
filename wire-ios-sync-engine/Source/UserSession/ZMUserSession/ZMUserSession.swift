@@ -52,7 +52,7 @@ public final class ZMUserSession: NSObject {
 
     private(set) var isNetworkOnline = true
     private var syncStateCancellable: AnyCancellable?
-    private var isLiveSyncOngoing = false {
+    var isLiveSyncOngoing = false {
         didSet {
             if oldValue != isLiveSyncOngoing {
                 notifyAVSOfLiveSyncState()
@@ -896,10 +896,7 @@ public final class ZMUserSession: NSObject {
         isNetworkReachableCancellable = networkReachability.interfaceSwitchWhileOnlinePublisher
             .sink { [weak self] _, _ in
                 guard let self else { return }
-
-                managedObjectContext.perform {
-                    self.callCenter?.avsWrapper.networkInterfaceChanged()
-                }
+                notifyAVSOfNetworkInterfaceChanged()
             }
     }
 
@@ -1141,12 +1138,6 @@ extension ZMUserSession: ZMNetworkStateDelegate {
             }
     }
 
-    private func notifyAVSOfLiveSyncState() {
-        managedObjectContext.perform { [weak self] in
-            guard let self else { return }
-            callCenter?.avsWrapper.setLiveSyncPaused(!isLiveSyncOngoing)
-        }
-    }
 }
 
 // MARK: - SyncAgent delegate
@@ -1234,7 +1225,7 @@ extension ZMUserSession: SyncAgentDelegate {
         Task {
             await showSyncBar(true)
         }
-        NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
+        didStartProcessingEvents()
     }
 
     @MainActor
@@ -1281,7 +1272,7 @@ extension ZMUserSession: SyncAgentDelegate {
         }
 
         performPostQuickSyncE2EIActions()
-        NotificationCenter.default.post(name: .eventProcessorDidFinishProcessingEventsNotification, object: self)
+        didFinishProcessingEvents()
     }
 
     private func makeInitiateResetMLSConversationUseCase(
