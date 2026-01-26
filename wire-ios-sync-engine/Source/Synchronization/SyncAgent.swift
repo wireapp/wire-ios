@@ -354,7 +354,9 @@ extension SyncAgent: MLSSyncDelegate {
         WireLogger.sync.info("performing recovery incremental sync")
 
         // Recovery means to restart any existing sync.
-        await suspend()
+        if isLive {
+            await suspend()
+        }
 
         do {
             try await incrementalSyncTaskManager.performIfNeeded { [weak self] in

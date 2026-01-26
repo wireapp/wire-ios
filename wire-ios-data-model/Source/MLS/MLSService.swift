@@ -459,7 +459,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws {
-        try await commitPendingProposals(in: groupID)
+        try await commitPendingProposals(in: groupID) // safe to remove
         try await retryOnCommitFailure(for: groupID) { [weak self] in
             try await self?.internalAddMembersToConversation(with: users, for: groupID)
         }
@@ -1267,12 +1267,13 @@ public final class MLSService: MLSServiceInterface {
         parentID: MLSGroupID,
         subgroupIDAndType: (MLSGroupID, SubgroupType)? = nil
     ) async throws {
-        try await retryOnCommitFailure(for: parentID, operation: { [weak self] in
+        // retry 3 times
+        //try await retryOnCommitFailure(for: parentID, operation: { [weak self] in
             try await self?.internalJoinByExternalCommit(
                 parentID: parentID,
                 subgroupIDAndType: subgroupIDAndType
             )
-        })
+        //})
     }
 
     enum MLSServiceError: Error {
@@ -1491,7 +1492,7 @@ public final class MLSService: MLSServiceInterface {
             case .mlsClientMismatch, .mlsCommitMissingReferences:
                 self = .retryAfterQuickSync
             case .mlsStaleMessage:
-                self = .retryAfterRepairingGroup
+                self = .retryAfterRepairingGroup // should just retry as a backoff (wait and try again)
             case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
                 self = .resetBrokenMLSConversation
             case let .groupOutOfSync(missingUsers):
