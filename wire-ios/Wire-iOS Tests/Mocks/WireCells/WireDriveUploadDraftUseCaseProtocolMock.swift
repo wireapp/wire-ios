@@ -30,4 +30,5 @@ final class WireDriveUploadDraftUseCaseProtocolMock: WireDriveUploadDraftUseCase
         fatalError("Implement")
     }
 
+    let charactersToReplace: [Character] = ["\\", "\""]
 }
