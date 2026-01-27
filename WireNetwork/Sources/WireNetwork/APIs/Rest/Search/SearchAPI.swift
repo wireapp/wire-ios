@@ -37,9 +37,9 @@ public protocol SearchAPI {
 
 }
 
-extension SearchAPI {
+public extension SearchAPI {
 
-    public func searchContacts(
+    func searchContacts(
         query: String,
         domain: String,
         type: UserType

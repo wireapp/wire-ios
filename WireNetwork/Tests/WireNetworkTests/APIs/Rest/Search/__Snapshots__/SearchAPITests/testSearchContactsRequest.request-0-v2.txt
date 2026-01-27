@@ -1,2 +1,0 @@
-curl \
-	"/v2/search/contacts?q=lorem&type=regular"

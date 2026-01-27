@@ -562,7 +562,7 @@ final class TeamsAPITests: XCTestCase {
                 provider: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
                 handle: "some-handle",
                 teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab"),
-                accentID: 2147483647,
+                accentID: 2_147_483_647,
                 assets: [],
                 isDeleted: false
             ),

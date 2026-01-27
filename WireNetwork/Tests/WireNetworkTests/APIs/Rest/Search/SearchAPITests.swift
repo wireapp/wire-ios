@@ -38,104 +38,107 @@ final class SearchAPITests: XCTestCase {
         apiSnapshotHelper = nil
     }
 
-    // MARK: - Request generation
-
-    func testSearchContactsRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
-            _ = try await sut.searchContacts(query: "lorem", domain: "", type: .regular)
-        }
-    }
-
     // MARK: - Response handling
 
     // MARK: - V1
 
-    func testSearchContacts_SuccessResponse_200_V1_Then_Verify_Request() async throws {
-        // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetSearchContactsSuccessResponseV1")
-        ])
-        let sut = SearchAPIBuilder(apiService: apiService)
-            .makeAPI(for: .v1)
+    func testSearchContacts_SuccessResponse_200_V1ToV14_Then_Verify_Request() async throws {
 
-        // When
-        let contacts = try await sut.searchContacts(query: "lorem", domain: "", type: .app).documents
+        let v1To14 = Set(APIVersion.allCasesUpTo(.v15)).subtracting([.v0])
+        for apiVersion in v1To14 {
 
-        // Then
-        XCTAssertEqual(
-            contacts,
-            [
-                .init(
-                    id: UUID(uuidString: "3e90c8f5-80d7-4e42-b188-8679a58b7a8f"),
-                    qualifiedID: .init(
-                        id: UUID(uuidString: "3e90c8f5-80d7-4e42-b188-8679a58b7a8f")!,
-                        domain: "staging.zinfra.io"
-                    ),
-                    name: "Poll App",
-                    handle: nil,
-                    team: UUID(uuidString: "169685e3-c5e5-45a3-9f3c-1485bb9dcba9"),
-                    accentID: 0,
-                    type: .regular // v1 has no type field, `regular` is assumed
-                ),
-                .init(
-                    id: UUID(uuidString: "aca5dddd-59a0-411e-803d-df64d4c93c44"),
-                    qualifiedID: .init(
-                        id: UUID(uuidString: "aca5dddd-59a0-411e-803d-df64d4c93c44")!,
-                        domain: "staging.zinfra.io"
-                    ),
-                    name: "Lorem Ipsum",
-                    handle: "loremipsum",
-                    team: nil,
-                    accentID: 5,
-                    type: .regular // v1 has no type field, `regular` is assumed
+            // Given
+            let apiService = MockAPIServiceProtocol.withResponses([
+                (.ok, "GetSearchContactsSuccessResponseV1")
+            ])
+
+            // When
+            try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
+                let contacts = try await sut.searchContacts(query: "lorem", domain: "", type: .app).documents
+
+                // Then
+                XCTAssertEqual(
+                    contacts,
+                    [
+                        .init(
+                            id: UUID(uuidString: "3e90c8f5-80d7-4e42-b188-8679a58b7a8f"),
+                            qualifiedID: .init(
+                                id: UUID(uuidString: "3e90c8f5-80d7-4e42-b188-8679a58b7a8f")!,
+                                domain: "staging.zinfra.io"
+                            ),
+                            name: "Poll App",
+                            handle: nil,
+                            team: UUID(uuidString: "169685e3-c5e5-45a3-9f3c-1485bb9dcba9"),
+                            accentID: 0,
+                            type: .regular // v1 has no type field, `regular` is assumed
+                        ),
+                        .init(
+                            id: UUID(uuidString: "aca5dddd-59a0-411e-803d-df64d4c93c44"),
+                            qualifiedID: .init(
+                                id: UUID(uuidString: "aca5dddd-59a0-411e-803d-df64d4c93c44")!,
+                                domain: "staging.zinfra.io"
+                            ),
+                            name: "Lorem Ipsum",
+                            handle: "loremipsum",
+                            team: nil,
+                            accentID: 5,
+                            type: .regular // v1 has no type field, `regular` is assumed
+                        )
+                    ],
+                    "failed for version \(apiVersion)"
                 )
-            ]
-        )
+            }
+        }
     }
 
     // MARK: - V15
 
-    func testSearchContacts_SuccessResponse_200_V15_Then_Verify_Request() async throws {
-        // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetSearchContactsSuccessResponseV15")
-        ])
-        let sut = SearchAPIBuilder(apiService: apiService)
-            .makeAPI(for: .v15)
+    func testSearchContacts_SuccessResponse_200_V15AndAbove_Then_Verify_Request() async throws {
 
-        // When
-        let contacts = try await sut.searchContacts(query: "lorem", domain: "", type: .app).documents
+        for apiVersion in APIVersion.v15.andNextVersions {
 
-        // Then
-        XCTAssertEqual(
-            contacts,
-            [
-                .init(
-                    id: UUID(uuidString: "3e90c8f5-80d7-4e42-b188-8679a58b7a8f"),
-                    qualifiedID: .init(
-                        id: UUID(uuidString: "3e90c8f5-80d7-4e42-b188-8679a58b7a8f")!,
-                        domain: "staging.zinfra.io"
-                    ),
-                    name: "Poll App",
-                    handle: nil,
-                    team: UUID(uuidString: "169685e3-c5e5-45a3-9f3c-1485bb9dcba9"),
-                    accentID: 0,
-                    type: .app // v15 knows the `type` field
-                ),
-                .init(
-                    id: UUID(uuidString: "aca5dddd-59a0-411e-803d-df64d4c93c44"),
-                    qualifiedID: .init(
-                        id: UUID(uuidString: "aca5dddd-59a0-411e-803d-df64d4c93c44")!,
-                        domain: "staging.zinfra.io"
-                    ),
-                    name: "Lorem Ipsum",
-                    handle: "loremipsum",
-                    team: nil,
-                    accentID: 5,
-                    type: .regular
+            // Given
+            let apiService = MockAPIServiceProtocol.withResponses([
+                (.ok, "GetSearchContactsSuccessResponseV15")
+            ])
+
+            // When
+            try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
+                let contacts = try await sut.searchContacts(query: "lorem", domain: "", type: .app).documents
+
+                // Then
+                XCTAssertEqual(
+                    contacts,
+                    [
+                        .init(
+                            id: UUID(uuidString: "3e90c8f5-80d7-4e42-b188-8679a58b7a8f"),
+                            qualifiedID: .init(
+                                id: UUID(uuidString: "3e90c8f5-80d7-4e42-b188-8679a58b7a8f")!,
+                                domain: "staging.zinfra.io"
+                            ),
+                            name: "Poll App",
+                            handle: nil,
+                            team: UUID(uuidString: "169685e3-c5e5-45a3-9f3c-1485bb9dcba9"),
+                            accentID: 0,
+                            type: .app // v15 knows the `type` field
+                        ),
+                        .init(
+                            id: UUID(uuidString: "aca5dddd-59a0-411e-803d-df64d4c93c44"),
+                            qualifiedID: .init(
+                                id: UUID(uuidString: "aca5dddd-59a0-411e-803d-df64d4c93c44")!,
+                                domain: "staging.zinfra.io"
+                            ),
+                            name: "Lorem Ipsum",
+                            handle: "loremipsum",
+                            team: nil,
+                            accentID: 5,
+                            type: .regular
+                        )
+                    ],
+                    "failed for version \(apiVersion)"
                 )
-            ]
-        )
+            }
+        }
     }
 
 }

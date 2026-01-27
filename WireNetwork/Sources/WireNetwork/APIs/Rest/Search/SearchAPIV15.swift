@@ -65,7 +65,7 @@ final class SearchAPIV15: SearchAPIV14 {
         )
 
         return try ResponseParser()
-            .success(code: .ok, type: SearchResultContactV15.self)
+            .success(code: .ok, type: SearchResultContactV15.self) // the v15 payload contains a `type` property
             .failure(code: .forbidden, error: SearchAPIError.insufficientPermissions)
             .parse(code: response.statusCode, data: data)
 
