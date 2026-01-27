@@ -52,13 +52,6 @@ public final class ZMUserSession: NSObject {
 
     private(set) var isNetworkOnline = true
     private var syncStateCancellable: AnyCancellable?
-    var isLiveSyncOngoing = false {
-        didSet {
-            if oldValue != isLiveSyncOngoing {
-                notifyAVSOfLiveSyncState()
-            }
-        }
-    }
 
     public private(set) var coreDataStack: CoreDataStack!
 
@@ -1132,9 +1125,11 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
     private func observeSyncStateForAVS(syncStateSubject: CurrentValueSubject<SyncState, Never>) {
         syncStateCancellable = syncStateSubject
-            .sink { [weak self] syncState in
+            .map { $0 == .liveSyncing(.ongoing) }
+            .removeDuplicates()
+            .sink { [weak self] isOngoing in
                 guard let self else { return }
-                isLiveSyncOngoing = syncState == .liveSyncing(.ongoing)
+                notifyAVSOfLiveSyncState(isLiveSyncOngoing: isOngoing)
             }
     }
 

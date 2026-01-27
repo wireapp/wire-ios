@@ -41,7 +41,7 @@ extension ZMUserSession {
         }
     }
 
-    func notifyAVSOfLiveSyncState() {
+    func notifyAVSOfLiveSyncState(isLiveSyncOngoing: Bool) {
         managedObjectContext.perform { [weak self] in
             guard let self else { return }
             callCenter?.avsWrapper.setLiveSyncPaused(!isLiveSyncOngoing)
