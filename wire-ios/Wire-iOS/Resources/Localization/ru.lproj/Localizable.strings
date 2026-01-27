@@ -740,6 +740,7 @@
 "content.file.too_big" = "Вы можете отправлять файлы до %@";
 
 "content.message.reply.files.count" = "%@ файлов";
+"content.message.reply.files.notAvailable" = "Файл недоступен";
 
 // Reactions
 "content.reactions.title" = "Выбрать реакцию";
@@ -1874,8 +1875,8 @@
 "collections.search.no_items" = "Нет результатов";
 
 "collections.section.searchFiles.description" = "Поиск файлов";
-"collections.section.searchFiles.alert.title" = "Wire Drive";
-"collections.section.searchFiles.alert.message" = "Find files in conversations with Shared Drive.";
+"collections.section.searchFiles.alert.title" = "Общий диск";
+"collections.section.searchFiles.alert.message" = "Найди любой файл или папку в этой беседе";
 
 
 
