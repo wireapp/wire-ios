@@ -28,7 +28,6 @@ final class TeamsAPITests: XCTestCase {
     // MARK: - Setup
 
     override func setUp() {
-        super.setUp()
         apiSnapshotHelper = APIServiceSnapshotHelper { apiService, apiVersion in
             let builder = TeamsAPIBuilder(apiService: apiService)
             return builder.makeAPI(for: apiVersion)
@@ -37,7 +36,6 @@ final class TeamsAPITests: XCTestCase {
 
     override func tearDown() {
         apiSnapshotHelper = nil
-        super.tearDown()
     }
 
     // MARK: - Request generation
@@ -63,6 +61,13 @@ final class TeamsAPITests: XCTestCase {
     func testGetLegalholdInfoRequest() async throws {
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getLegalholdInfo(for: .mockID1, userID: .mockID2)
+        }
+    }
+
+    func testGetWhitelistedBotsRequest() async throws {
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+            let paginator = try sut.getWhitelistedBots(for: .mockID1, with: "prefix")
+            for try await _ in paginator {}
         }
     }
 

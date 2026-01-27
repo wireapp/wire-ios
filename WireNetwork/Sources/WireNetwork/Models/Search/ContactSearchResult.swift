@@ -16,27 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class SearchAPIV0: SearchAPI, VersionedAPI {
+public import Foundation
 
-    let apiService: any APIServiceProtocol
+public struct ContactSearchResult: Equatable, Sendable {
 
-    init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
-    }
+    public let documents: [Contact]
 
-    var apiVersion: APIVersion {
-        .v0
-    }
-
-    // MARK: -
-
-    func searchContacts(
-        query: String,
-        domain: String,
-        type: UserType,
-        fetchLimit: Int?
-    ) async throws -> ContactSearchResult {
-        throw SearchAPIError.unsupportedEndpointForAPIVersion
+    public struct Contact: Equatable, Sendable {
+        public let id: UUID?
+        public let qualifiedID: QualifiedID?
+        public let name: String
+        public let handle: String?
+        public let team: UUID?
+        public let accentID: Int?
+        public let type: UserType
     }
 
 }
