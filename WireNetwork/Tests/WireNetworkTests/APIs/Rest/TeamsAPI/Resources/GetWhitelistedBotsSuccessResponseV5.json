@@ -17,7 +17,7 @@
             },
             "enabled": true,
             "tags": ["integration"],
-            "isDeleted": false
+            "deleted": false
         },
         {
             "summary": "Sends alarms",

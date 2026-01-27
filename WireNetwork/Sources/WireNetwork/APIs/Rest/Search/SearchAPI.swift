@@ -50,7 +50,7 @@ extension SearchAPI {
             query: query,
             domain: domain,
             type: type,
-            fetchLimit: 10
+            fetchLimit: nil
         )
     }
 
