@@ -66,7 +66,7 @@ public protocol ConversationLike: AnyObject {
     /// Whether Wire Drive is enabled for this conversation.
     var isWireDriveEnabled: Bool { get }
 
-    var isGuest: Bool { get }
+    var areGuestsAllowed: Bool { get }
 }
 
 // Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another
@@ -128,7 +128,7 @@ extension ZMConversation: ConversationLike {
         return "\(qualifiedID.uuid.uuidString.lowercased())@\(qualifiedID.domain)"
     }
 
-    public var isGuest: Bool {
+    public var areGuestsAllowed: Bool {
         accessRoles.contains(.guest)
     }
 }

@@ -87,7 +87,7 @@ public extension ZMUser {
 
         let isPublicChannelAccessNoGuest = conversation.isChannel
             && conversation.privateChannelPermission == .everyone
-            && !conversation.isGuest
+            && !conversation.areGuestsAllowed
 
         return hasAddPermission || isAdmin || isPublicChannelAccessNoGuest
     }
