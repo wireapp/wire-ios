@@ -215,7 +215,7 @@ final class SearchResultsViewController: UIViewController {
         self.mode = .list
         self.shouldIncludeGuests = shouldIncludeGuests
         self.isFederationEnabled = isFederationEnabled
-        self.searchUsersUseCase = userSession.makeSearchUsersUseCase()
+        self.searchUsersUseCase = userSession.makeSearchUsersUseCase()!
 
         let team = userSession.selfUser.membership?.team
         let teamName = team?.name

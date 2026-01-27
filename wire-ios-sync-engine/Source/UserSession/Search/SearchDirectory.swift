@@ -17,6 +17,9 @@
 //
 
 import Foundation
+import WireNetwork
+import WireDataModel
+import WireTransport
 
 @objcMembers
 public class SearchDirectory: NSObject {
@@ -25,6 +28,7 @@ public class SearchDirectory: NSObject {
     let contextProvider: ContextProvider
     let transportSession: TransportSessionType
     private let apiVersion: WireTransport.APIVersion?
+    private let searchAPI: any SearchAPI
 
     var isTornDown = false
 
@@ -37,7 +41,10 @@ public class SearchDirectory: NSObject {
         assert(isTornDown, "`tearDown` must be called before SearchDirectory is deinitialized")
     }
 
-    public convenience init(userSession: ZMUserSession) {
+    public convenience init(
+        userSession: ZMUserSession,
+        searchAPI: some SearchAPI
+    ) {
         self.init(
             searchContext: userSession.searchManagedObjectContext,
             contextProvider: userSession,
@@ -45,7 +52,8 @@ public class SearchDirectory: NSObject {
             searchUsersCache: userSession.searchUsersCache,
             refreshUsersMissingMetadataAction: userSession.refreshUsersMissingMetadataAction,
             refreshConversationsMissingMetadataAction: userSession.refreshConversationsMissingMetadataAction,
-            apiVersion: userSession.resolvedBackendMetadata.apiVersion
+            apiVersion: userSession.resolvedBackendMetadata.apiVersion,
+            searchAPI: searchAPI
         )
     }
 
@@ -56,13 +64,15 @@ public class SearchDirectory: NSObject {
         searchUsersCache: SearchUsersCache?,
         refreshUsersMissingMetadataAction: RecurringAction,
         refreshConversationsMissingMetadataAction: RecurringAction,
-        apiVersion: WireTransport.APIVersion?
+        apiVersion: WireTransport.APIVersion?,
+        searchAPI: some SearchAPI
     ) {
         self.searchContext = searchContext
         self.contextProvider = contextProvider
         self.transportSession = transportSession
         self.searchUsersCache = searchUsersCache
         self.apiVersion = apiVersion
+        self.searchAPI = searchAPI
 
         self.refreshUsersMissingMetadataAction = refreshUsersMissingMetadataAction
         self.refreshConversationsMissingMetadataAction = refreshConversationsMissingMetadataAction
@@ -78,7 +88,8 @@ public class SearchDirectory: NSObject {
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            searchAPI: searchAPI
         )
 
         task.addResultHandler { [weak self] result, _ in
@@ -93,14 +104,15 @@ public class SearchDirectory: NSObject {
     /// an empty directory result is returned.
     ///
     /// Returns a SearchTask which should be retained until the results arrive.
-    public func lookup(qualifiedID: QualifiedID) -> SearchTask {
+    public func lookup(qualifiedID: WireDataModel.QualifiedID) -> SearchTask {
         let task = SearchTask(
             task: .lookup(qualifiedID: qualifiedID),
             searchContext: searchContext,
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            searchAPI: searchAPI
         )
 
         task.addResultHandler { [weak self] result, _ in
