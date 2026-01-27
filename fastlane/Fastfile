@@ -121,6 +121,12 @@ platform :ios do
         end
     end
 
+    desc "List all Testiny test cases"
+    lane :list_testiny_cases do
+        UI.message("🔎 Listing Testiny test case references")
+        sh "cd .. && grep -Rn \"testiny:\" . "
+    end
+
 
     desc "Test one framework only"
     lane :select_framework do |options|
