@@ -63,7 +63,7 @@ extension FilesViewModel {
                 getTagSuggestions: WireDriveGetTagSuggestionsUseCase(
                     nodesAPI: previewTagsApi()
                 ),
-                createFolder: WireDriveCreateFolderUseCase(
+                createFileUseCase: WireDriveCreateFileUseCase(
                     nodesRepository: previewNodesRepository()
                 ),
                 fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(
@@ -135,20 +135,25 @@ extension FileRenameViewModel {
 extension FilesItemViewModel {
 
     /// A stubbed instance of `FilesItemViewModel` for SwiftUI previews.
-    static func preview(tags: [String] = []) -> FilesItemViewModel {
+    static func preview(
+        kind: FilesViewItem.Kind = .file,
+        icon: FileIcon = .image,
+        tags: [String] = [],
+        publicLinkID: String? = nil
+    ) -> FilesItemViewModel {
         FilesItemViewModel(
             item: FilesViewItem(
                 id: UUID(),
                 eTag: "eTag",
-                kind: .file,
+                kind: kind,
                 name: "foo.jpg",
                 filePath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image foo.jpg",
                 ownedBy: "Viola",
                 modifiedAt: Date(),
-                icon: .image,
+                icon: icon,
                 tags: tags,
                 isEditable: false,
-                publicLinkID: nil,
+                publicLinkID: publicLinkID,
             ),
             localAssetRepository: PreviewLocalAssetRepository(),
             onItemAction: { _, _ in },
@@ -361,14 +366,20 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
 
 }
 
-extension CreateFolderViewModel {
-    /// A stubbed instance of `CreateFolderViewModel` for SwiftUI previews.
-    static func preview() -> CreateFolderViewModel {
-        let createFolderUseCase = MockWireDriveCreateFolderUseCaseProtocol()
+extension CreateFileViewModel {
+    /// A stubbed instance of `CreateFileViewModel` for SwiftUI previews.
+    static func preview() -> CreateFileViewModel {
+        let createFileUseCase = MockWireDriveCreateFileUseCaseProtocol()
 
-        return CreateFolderViewModel(
-            createFolderUseCase: createFolderUseCase,
-            folderPath: "Test-1/Test-2"
+        return CreateFileViewModel(
+            creationTarget: .file(.init(
+                kind: .document,
+                editable: true,
+                label: "Microsoft Word",
+                id: "01-Microsoft Word.docx"
+            )),
+            path: "Test-1/Test-2",
+            createFileUseCase: createFileUseCase
         )
     }
 }

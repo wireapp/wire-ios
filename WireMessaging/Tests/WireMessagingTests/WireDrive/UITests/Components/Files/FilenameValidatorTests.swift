@@ -76,7 +76,35 @@ final class FilenameValidatorTests {
         let input = "filename/"
 
         // then
-        await #expect(throws: FilenameValidator.Failure.slashCharacter) {
+        await #expect(throws: FilenameValidator.Failure.invalidCharacters) {
+            // when
+            var iterator = sut.validate(input).values.makeAsyncIterator()
+            let result = await iterator.next()!
+            try result.get()
+        }
+    }
+
+    @Test
+    func `When input has backslash character it throws error`() async {
+        // given
+        let input = "filename\\"
+
+        // then
+        await #expect(throws: FilenameValidator.Failure.invalidCharacters) {
+            // when
+            var iterator = sut.validate(input).values.makeAsyncIterator()
+            let result = await iterator.next()!
+            try result.get()
+        }
+    }
+
+    @Test
+    func `When input has quote character it throws error`() async {
+        // given
+        let input = "filename\""
+
+        // then
+        await #expect(throws: FilenameValidator.Failure.invalidCharacters) {
             // when
             var iterator = sut.validate(input).values.makeAsyncIterator()
             let result = await iterator.next()!
@@ -88,6 +116,20 @@ final class FilenameValidatorTests {
     func `When input is empty it throws error`() async {
         // given
         let input = ""
+
+        // then
+        await #expect(throws: FilenameValidator.Failure.empty) {
+            // when
+            var iterator = sut.validate(input).values.makeAsyncIterator()
+            let result = await iterator.next()!
+            try result.get()
+        }
+    }
+
+    @Test
+    func `When input is only whitespace it throws error`() async {
+        // given
+        let input = "   "
 
         // then
         await #expect(throws: FilenameValidator.Failure.empty) {

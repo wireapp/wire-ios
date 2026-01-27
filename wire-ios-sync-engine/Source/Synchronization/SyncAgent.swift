@@ -359,7 +359,6 @@ extension SyncAgent: MLSSyncDelegate {
         do {
             try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                 guard let self else { return }
-
                 if isConsumableNotificationsEnabled {
                     incrementalSyncToken = try await incrementalSyncProvider.provideLiveSync(delegate: self)
                         .perform()
