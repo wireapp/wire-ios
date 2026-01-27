@@ -124,10 +124,16 @@ class TeamsAPIV5: TeamsAPIV4 {
 
         let path = "\(basePath(for: teamID))/services/whitelisted"
 
-        return PayloadPager(start: nil) { nextSince in // TODO: fix pagination
+        return PayloadPager { nextSince in
+
+            // pagination seems to not be properly implemented for this endpoint
+            guard nextSince == nil else {
+                return .init(element: [], hasMore: false, nextStart: "")
+            }
 
             var requestBuilder = try URLRequestBuilder(path: path)
                 .withMethod(.get)
+                .withQueryItem(name: "size", value: "100") // use the max. page size and don't paginate, since pagination seems to be broken here
 
             if let nextSince {
                 requestBuilder = requestBuilder.withQueryItem(name: "since", value: nextSince)
