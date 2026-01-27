@@ -38,6 +38,8 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
     private let intermediaryFilesDirectory: URL
     private let filenameGenerator: FilenameGenerator
 
+    package let charactersToReplace: [Character] = ["\\", "\""]
+
     package init(
         cellName: String,
         draftRepository: any DraftsRepositoryProtocol,
@@ -127,13 +129,19 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
             throw WireDriveUploadDraftUseCaseError.missingFileSize
         }
 
+        var filename = fileURL.lastPathComponent
+
+        for characterToReplace in charactersToReplace {
+            filename = filename.replacingOccurrences(of: String(characterToReplace), with: "_")
+        }
+
         let draft = WireDriveDraft(
             nodeID: UUID(),
             versionID: UUID(),
             assetURL: fileURL,
             fileType: resourceValues.contentType,
             status: .uploading(progress: 0),
-            name: fileURL.lastPathComponent,
+            name: filename,
             bytes: fileSize,
             mimeType: nil,
             requiresCleanup: requiresCleanup,
