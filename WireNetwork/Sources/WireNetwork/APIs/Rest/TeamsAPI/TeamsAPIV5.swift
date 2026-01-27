@@ -121,11 +121,65 @@ class TeamsAPIV5: TeamsAPIV4 {
         for teamID: Team.ID,
         with prefix: String
     ) async throws -> WhitelistedBotProfile {
+        let path = "\(basePath(for: teamID))/services/whitelisted"
 
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
 
-        fatalError("TODO")
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
+        return try ResponseParser()
+            .success(code: .ok, type: WhitelistedBotProfileResponseV5.self)
+            .parse(code: response.statusCode, data: data)
+    }
 
+}
+
+private struct WhitelistedBotProfileResponseV5: Decodable, ToAPIModelConvertible {
+
+    var id: UUID
+    var qualifiedID: QualifiedIDV0?
+    var name: String?
+    var summary: String?
+    var provider: UUID
+    var handle: String?
+    var teamID: UUID?
+    var accentID: Int
+    var assets: [UserAssetV0]
+    var isDeleted: Bool?
+
+    enum CodingKeys: String, CodingKey {
+
+        case id
+        case qualifiedID = "qualified_id"
+        case name
+        case summary
+        case provider
+        case handle
+        case teamID = "team"
+        case accentID = "accent_id"
+        case assets
+        case isDeleted = "deleted"
+
+    }
+
+    func toAPIModel() -> WhitelistedBotProfile {
+        WhitelistedBotProfile(
+            id: id,
+            qualifiedID: qualifiedID?.toAPIModel(),
+            name: name ?? "",
+            summary: summary ?? "",
+            provider: provider,
+            handle: handle ?? "",
+            teamID: teamID,
+            accentID: accentID,
+            assets: assets.map { $0.toAPIModel() },
+            isDeleted: isDeleted ?? false
+        )
     }
 
 }

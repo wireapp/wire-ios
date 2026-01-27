@@ -16,4 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct WhitelistedBotProfile {}
+public import Foundation
+
+public struct WhitelistedBotProfile: Equatable, Sendable {
+
+    public var id: UUID
+    public var qualifiedID: UserID?
+    public var name: String
+    public var summary: String
+    public var provider: UUID
+    public let handle: String
+    public var teamID: UUID?
+    public var accentID: Int
+    public var assets: [UserAsset]
+    public var isDeleted: Bool
+
+}
