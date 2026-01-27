@@ -38,10 +38,17 @@ public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, T
     @objc(attemptToEnqueueSyncRequestWithGenerator:)
     func attemptToEnqueueSyncRequest(generator: ZMTransportRequestGenerator) -> ZMTransportEnqueueResult
 
+    @objc(setAccessTokenRenewalFailureHandler:)
+    func setAccessTokenRenewalFailureHandler(_ handler: @escaping ZMCompletionHandlerBlock)
+
     func setNetworkStateDelegate(_ delegate: ZMNetworkStateDelegate?)
 
     @objc(addCompletionHandlerForBackgroundSessionWithIdentifier:handler:)
     func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void)
+
+    @objc(renewAccessTokenWithClientID:)
+    func renewAccessToken(with clientID: String)
+
 }
 
 extension ZMTransportSession: TransportSessionType {}

@@ -124,6 +124,9 @@ extern NSString * const ZMTransportSessionReachabilityIsEnabled;
 
 @property (nonatomic, readonly, nullable) ZMAccessToken *accessToken;
 
+/// Sets the access token failure callback. This can be called only before the first request is fired
+- (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler NS_SWIFT_NAME(setAccessTokenRenewalFailureHandler(_:));
+
 /// Renews the access token passing the client ID as query parameter
 - (void)renewAccessTokenWithClientID:(NSString *)clientID NS_SWIFT_NAME(renewAccessToken(with:));
 

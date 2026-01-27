@@ -799,7 +799,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     public func logout(account: Account, error: Error? = nil) {
-        WireLogger.session.debug("Logging out account \(account.userIdentifier)...")
         WireLogger.sessionManager.debug("Logging out account \(account.userIdentifier)...")
 
         if let session = backgroundUserSessions[account.userIdentifier] {

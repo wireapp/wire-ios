@@ -755,6 +755,24 @@ public final class ZMUserSession: NSObject {
 
     private func configureTransportSession() {
         transportSession.setNetworkStateDelegate(self)
+        transportSession.setAccessTokenRenewalFailureHandler { [weak self] response in
+            self?.transportSessionAccessTokenDidFail(response: response)
+        }
+    }
+    
+    private func transportSessionAccessTokenDidFail(response: ZMTransportResponse) {
+        WireLogger.authentication.error("access token renewal failed: response status: \(response.errorInfo)")
+
+                managedObjectContext.performGroupedBlock { [weak self] in
+                    guard let self else { return }
+                    let selfUser = ZMUser.selfUser(in: managedObjectContext)
+                    let error = NSError.userSessionError(
+                        code: .accessTokenExpired,
+                        userInfo: selfUser.loginCredentials.dictionaryRepresentation
+                    )
+                    notifyAuthenticationInvalidated(error)
+                }
+
     }
 
     private func createStrategyDirectory() -> StrategyDirectoryProtocol {
