@@ -740,6 +740,7 @@
 "content.file.too_big" = "Puedes enviar archivos de hasta %@";
 
 "content.message.reply.files.count" = "%@ files";
+"content.message.reply.files.notAvailable" = "Archivo no disponible";
 
 // Reactions
 "content.reactions.title" = "Seleccionar reacción";
@@ -1873,9 +1874,9 @@
 "collections.search.field.placeholder" = "Buscar mensajes";
 "collections.search.no_items" = "Ningún resultado";
 
-"collections.section.searchFiles.description" = "Search files";
-"collections.section.searchFiles.alert.title" = "Wire Drive";
-"collections.section.searchFiles.alert.message" = "Find files in conversations with Shared Drive.";
+"collections.section.searchFiles.description" = "Search Files";
+"collections.section.searchFiles.alert.title" = "Shared Drive";
+"collections.section.searchFiles.alert.message" = "Find any file or folder in this conversation.";
 
 
 
