@@ -59,7 +59,6 @@ public protocol TeamsAPI {
     /// - Returns: The legalhold of the member.
 
 // TODO: get-members-by-ids-using-post?
-// TODO: whitelisted
 
     func getLegalholdInfo(
         for teamID: Team.ID,
@@ -86,6 +85,6 @@ public protocol TeamsAPI {
     func getWhitelistedBots(
         for teamID: Team.ID,
         with prefix: String
-    ) async throws -> WhitelistedBotProfile
+    ) throws -> PayloadPager<[WhitelistedBotProfile]>
 
 }

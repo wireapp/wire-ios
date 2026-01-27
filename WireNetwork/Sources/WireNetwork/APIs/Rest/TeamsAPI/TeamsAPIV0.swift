@@ -163,7 +163,7 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
     func getWhitelistedBots(
         for teamID: Team.ID,
         with prefix: String
-    ) async throws -> WhitelistedBotProfile {
+    ) throws -> PayloadPager<[WhitelistedBotProfile]> {
         throw TeamsAPIError.unsupportedEndpointForAPIVersion
     }
 

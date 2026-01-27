@@ -417,6 +417,26 @@ final class TeamsAPITests: XCTestCase {
         )
     }
 
+    func testGetWhitelistedBots_givenV0_To_V4_AndFailure_Unsupported_Endpoint_For_API_Version() async throws {
+
+        // Given
+        let unsupportedVersions = APIVersion.allCasesUpTo(.v5)
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
+        let suts = unsupportedVersions.map { apiVersion in
+            TeamsAPIBuilder(apiService: apiService)
+                .makeAPI(for: apiVersion)
+        }
+
+        // When & Then
+        XCTAssertEqual(suts.count, unsupportedVersions.count)
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(TeamsAPIError.unsupportedEndpointForAPIVersion) {
+                try await sut.getWhitelistedBots(for: Scaffolding.teamID, with: "")
+            }
+        }
+
+    }
+
     // MARK: - V5
 
     func testGetTeamForID_FailureResponse_InvalidID_V5() async throws {
@@ -469,6 +489,32 @@ final class TeamsAPITests: XCTestCase {
                 userID: UUID()
             )
         }
+    }
+
+    func testGetWhitelistedBots_givenV5AndSuccessResponse200_thenSucceeds() async throws {
+
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetWhitelistedBotsSuccessResponseV5")
+        ])
+        let sut = TeamsAPIBuilder(apiService: apiService)
+            .makeAPI(for: .v5)
+
+        // When
+        let pager = try sut.getWhitelistedBots(for: Scaffolding.teamID, with: "")
+        for try await bots in pager {
+            print(bots)
+        }
+
+        // Then
+        fatalError("TODO")
+
+    }
+
+    // MARK: -
+
+    private enum Scaffolding {
+        static let teamID = UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
     }
 
 }

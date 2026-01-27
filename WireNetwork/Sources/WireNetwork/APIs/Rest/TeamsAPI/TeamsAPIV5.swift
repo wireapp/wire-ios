@@ -120,7 +120,8 @@ class TeamsAPIV5: TeamsAPIV4 {
     override func getWhitelistedBots(
         for teamID: Team.ID,
         with prefix: String
-    ) async throws -> WhitelistedBotProfile {
+    ) -> PayloadPager<[WhitelistedBotProfile]> {
+        /*
         let path = "\(basePath(for: teamID))/services/whitelisted"
 
         let request = try URLRequestBuilder(path: path)
@@ -135,6 +136,54 @@ class TeamsAPIV5: TeamsAPIV4 {
         return try ResponseParser()
             .success(code: .ok, type: WhitelistedBotProfileResponseV5.self)
             .parse(code: response.statusCode, data: data)
+         */
+
+
+        let path = "\(basePath(for: teamID))/services/whitelisted"
+
+        return PayloadPager(start: nil) { nextSince in // TODO: fix pagination
+
+            var requestBuilder = try URLRequestBuilder(path: path)
+                .withMethod(.get)
+
+            if let nextSince {
+                requestBuilder = requestBuilder.withQueryItem(name: "since", value: nextSince)
+            }
+
+            let request = requestBuilder.build()
+
+            let (data, response) = try await self.apiService.executeRequest(
+                request,
+                requiringAccessToken: true
+            )
+
+            return try ResponseParser()
+                .success(code: .ok, type: PaginatedWhitelistedBotProfileResponseV5.self)
+                .parse(code: response.statusCode, data: data)
+
+        }
+    }
+
+}
+
+private struct PaginatedWhitelistedBotProfileResponseV5: Decodable, ToAPIModelConvertible {
+
+    let services: [WhitelistedBotProfileResponseV5]
+    let hasMore: Bool?
+
+    enum CodingKeys: String, CodingKey {
+
+        case services
+        case hasMore = "has_more"
+
+    }
+
+    func toAPIModel() -> PayloadPager<[WhitelistedBotProfile]>.Page {
+        .init(
+            element: services.map { $0.toAPIModel() },
+            hasMore: hasMore ?? false,
+            nextStart: services.last?.id.uuidString ?? ""
+        )
     }
 
 }
@@ -148,7 +197,7 @@ private struct WhitelistedBotProfileResponseV5: Decodable, ToAPIModelConvertible
     var provider: UUID
     var handle: String?
     var teamID: UUID?
-    var accentID: Int
+    var accentID: Int?
     var assets: [UserAssetV0]
     var isDeleted: Bool?
 

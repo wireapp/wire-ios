@@ -27,7 +27,7 @@ public struct WhitelistedBotProfile: Equatable, Sendable {
     public var provider: UUID
     public let handle: String
     public var teamID: UUID?
-    public var accentID: Int
+    public var accentID: Int?
     public var assets: [UserAsset]
     public var isDeleted: Bool
 
