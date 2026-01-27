@@ -356,6 +356,42 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
+    func testGetMembersByIDs_SuccessResponse_200_V2_Then_Verify_Request() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetTeamMembersByIDsSuccessResponseV0")
+        ])
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: [.v2], apiService: apiService) { sut in
+            // When
+            let result = try await sut.getTeamMembers(
+                for: .mockID1,
+                maxResults: 2000
+            )
+
+            // Then
+            XCTAssertEqual(
+                result,
+                [
+                    TeamMember(
+                        userID: try XCTUnwrap(UUID(uuidString: "849f56b9-5c9f-4682-ad76-c580b5724464")),
+                        creationDate: try XCTUnwrap(
+                            ISO8601DateFormatter.fractionalInternetDateTime
+                                .date(from: "2024-05-14T08:55:04.779Z")
+                        ),
+                        creatorID: try XCTUnwrap(UUID(uuidString: "c57d68c8-1ed4-41c7-b0a8-33026b7381fc")),
+                        legalholdStatus: .pending,
+                        permissions: TeamMemberPermissions(
+                            copyPermissions: 123,
+                            selfPermissions: 456
+                        )
+                    )
+                ]
+            )
+        }
+    }
+
     // MARK: - V4
 
     func testGetTeamForID_FailureResponse_InvalidID_V4() async throws {
@@ -431,8 +467,10 @@ final class TeamsAPITests: XCTestCase {
         // When & Then
         XCTAssertEqual(suts.count, unsupportedVersions.count)
         for sut in suts {
-            await XCTAssertThrowsErrorAsync(TeamsAPIError.unsupportedEndpointForAPIVersion) {
-                try await sut.getWhitelistedBots(for: Scaffolding.teamID, with: "")
+            XCTAssertThrowsError(try sut.getWhitelistedBots(for: Scaffolding.teamID, with: "")) { error in
+                guard case TeamsAPIError.unsupportedEndpointForAPIVersion = error else {
+                    return XCTFail("unexpected error type: \(error)")
+                }
             }
         }
 
