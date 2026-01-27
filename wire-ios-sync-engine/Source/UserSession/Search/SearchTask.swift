@@ -76,7 +76,7 @@ public class SearchTask {
             // only trigger handles if decrement to 0
             if oldValue > newValue {
                 let isCompleted = newValue == 0
-                resultHandlers.forEach { $0(result, isCompleted) }
+                resultHandlers.forEach { $0(result, isCompleted) } // TODO: [WPB-23110] too fragile, replace!
 
                 if isCompleted {
                     resultHandlers.removeAll()
