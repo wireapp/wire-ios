@@ -55,7 +55,8 @@ package struct WireCellsFetchNodesPageUseCase: Sendable {
             offset: offset,
             configuration: configuration
         )
-        let (nodes, nextOffset) = try await repository.getNodes(request)
+        var (nodes, nextOffset) = try await repository.getNodes(request)
+        nodes = nodes.filter { !$0.isDraft }
 
         return (nodes, nextOffset == nil)
     }
