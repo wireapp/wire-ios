@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireNetwork
 @testable import WireNetworkSupport
 
@@ -417,6 +418,26 @@ final class TeamsAPITests: XCTestCase {
         )
     }
 
+    func testGetWhitelistedBots_givenV0_To_V4_AndFailure_Unsupported_Endpoint_For_API_Version() async throws {
+
+        // Given
+        let unsupportedVersions = APIVersion.allCasesUpTo(.v5)
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
+        let suts = unsupportedVersions.map { apiVersion in
+            TeamsAPIBuilder(apiService: apiService)
+                .makeAPI(for: apiVersion)
+        }
+
+        // When & Then
+        XCTAssertEqual(suts.count, unsupportedVersions.count)
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(TeamsAPIError.unsupportedEndpointForAPIVersion) {
+                try await sut.getWhitelistedBots(for: Scaffolding.teamID, with: "")
+            }
+        }
+
+    }
+
     // MARK: - V5
 
     func testGetTeamForID_FailureResponse_InvalidID_V5() async throws {
@@ -469,6 +490,72 @@ final class TeamsAPITests: XCTestCase {
                 userID: UUID()
             )
         }
+    }
+
+    func testGetWhitelistedBots_givenV5AndSuccessResponse200_thenSucceeds() async throws {
+
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetWhitelistedBotsSuccessResponseV5")
+        ])
+        let sut = TeamsAPIBuilder(apiService: apiService)
+            .makeAPI(for: .v5)
+
+        // When
+        let pager = try sut.getWhitelistedBots(for: Scaffolding.teamID, with: "")
+        let bots = try await pager.reduce(into: []) { $0 += $1 }
+
+        // Then
+        let expectedBots = [
+            WhitelistedBotProfile(
+                id: UUID(uuidString: "cc0702a4-e126-48a1-87cd-8325835ac071")!,
+                qualifiedID: .init(
+                    id: UUID(uuidString: "cc0702a4-e126-48a1-87cd-8325835ac071")!,
+                    domain: "example.com"
+                ),
+                name: "Google Calendar",
+                summary: "Calendar",
+                description: "Google Calendar integration for Wire",
+                provider: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
+                handle: "some-handle",
+                teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab"),
+                accentID: 2147483647,
+                assets: [],
+                isDeleted: false
+            ),
+            WhitelistedBotProfile(
+                id: UUID(uuidString: "d554c310-8237-4f85-b3cc-b7ae5ec1e6cd")!,
+                qualifiedID: nil,
+                name: "Secure Alert",
+                summary: "Sends alarms",
+                description: "for Alarms",
+                provider: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
+                handle: "",
+                teamID: nil,
+                accentID: nil,
+                assets: [
+                    UserAsset(
+                        key: "lorem-ipsum",
+                        size: .complete,
+                        type: .image
+                    ),
+                    UserAsset(
+                        key: "dolor",
+                        size: .preview,
+                        type: .image
+                    )
+                ],
+                isDeleted: false
+            )
+        ]
+        XCTAssertEqual(bots, expectedBots)
+
+    }
+
+    // MARK: -
+
+    private enum Scaffolding {
+        static let teamID = UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
     }
 
 }

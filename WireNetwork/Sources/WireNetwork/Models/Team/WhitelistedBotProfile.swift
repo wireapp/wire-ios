@@ -16,40 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Errors originating from `TeamsAPI`.
+public import Foundation
 
-public enum TeamsAPIError: Error {
+public struct WhitelistedBotProfile: Equatable, Sendable {
 
-    /// Unsupported endpoint for API version
-
-    case unsupportedEndpointForAPIVersion
-
-    /// A supplied team id is not valid.
-
-    case invalidTeamID
-
-    /// The requested team does not exist.
-
-    case teamNotFound
-
-    /// The self user is not part of a team.
-
-    case selfUserIsNotTeamMember
-
-    /// A requested team member could not be found.
-
-    case teamMemberNotFound
-
-    /// A request could not be generated.
-
-    case failedToGenerateRequest
-
-    /// An invalid query parameter was used.
-
-    case invalidQueryParmeter
-
-    /// A request was deemed invalid by the server.
-
-    case invalidRequest
+    public var id: UUID
+    public var qualifiedID: UserID?
+    public var name: String
+    public var summary: String
+    public var description: String
+    public var provider: UUID
+    public let handle: String
+    public var teamID: UUID?
+    public var accentID: Int?
+    public var assets: [UserAsset]
+    public var isDeleted: Bool
 
 }

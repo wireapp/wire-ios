@@ -1,0 +1,44 @@
+{
+    "has_more": false,
+    "services": [
+        {
+            "accent_id": 2147483647,
+            "summary": "Calendar",
+            "handle": "some-handle",
+            "team": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
+            "assets": [],
+            "provider": "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c",
+            "name": "Google Calendar",
+            "description": "Google Calendar integration for Wire",
+            "id": "cc0702a4-e126-48a1-87cd-8325835ac071",
+            "qualified_id": {
+                "domain": "example.com",
+                "id": "cc0702a4-e126-48a1-87cd-8325835ac071"
+            },
+            "enabled": true,
+            "tags": ["integration"],
+            "isDeleted": false
+        },
+        {
+            "summary": "Sends alarms",
+            "assets": [
+                {
+                    "size": "complete",
+                    "type": "image",
+                    "key": "lorem-ipsum"
+                },
+                {
+                    "size": "preview",
+                    "type": "image",
+                    "key": "dolor"
+                }
+            ],
+            "provider": "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c",
+            "name": "Secure Alert",
+            "description": "for Alarms",
+            "id": "d554c310-8237-4f85-b3cc-b7ae5ec1e6cd",
+            "enabled": true,
+            "tags": ["integration"]
+        }
+    ]
+}

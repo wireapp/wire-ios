@@ -115,4 +115,113 @@ class TeamsAPIV5: TeamsAPIV4 {
             .parse(code: response.statusCode, data: data)
     }
 
+    // MARK: - Get whitelisted bots
+
+    override func getWhitelistedBots(
+        for teamID: Team.ID,
+        with prefix: String
+    ) -> PayloadPager<[WhitelistedBotProfile]> {
+
+        let path = "\(basePath(for: teamID))/services/whitelisted"
+
+        return PayloadPager { nextSince in
+
+            // There is no documentation about getting the next page in case there is a next page,
+            // so choose a large page size (100) and stop after the first page.
+            guard nextSince == nil else {
+                return .init(element: [], hasMore: false, nextStart: "")
+            }
+
+            var requestBuilder = try URLRequestBuilder(path: path)
+                .withMethod(.get)
+                .withQueryItem(name: "size", value: "100")
+
+            if let nextSince {
+                requestBuilder = requestBuilder.withQueryItem(name: "since", value: nextSince)
+            }
+
+            let request = requestBuilder.build()
+
+            let (data, response) = try await self.apiService.executeRequest(
+                request,
+                requiringAccessToken: true
+            )
+
+            return try ResponseParser()
+                .success(code: .ok, type: PaginatedWhitelistedBotProfileResponseV5.self)
+                .parse(code: response.statusCode, data: data)
+
+        }
+    }
+
+}
+
+private struct PaginatedWhitelistedBotProfileResponseV5: Decodable, ToAPIModelConvertible {
+
+    let services: [WhitelistedBotProfileResponseV5]
+    let hasMore: Bool?
+
+    enum CodingKeys: String, CodingKey {
+
+        case services
+        case hasMore = "has_more"
+
+    }
+
+    func toAPIModel() -> PayloadPager<[WhitelistedBotProfile]>.Page {
+        .init(
+            element: services.map { $0.toAPIModel() },
+            hasMore: hasMore ?? false,
+            nextStart: services.last?.id.uuidString ?? ""
+        )
+    }
+
+}
+
+private struct WhitelistedBotProfileResponseV5: Decodable, ToAPIModelConvertible {
+
+    var id: UUID
+    var qualifiedID: QualifiedIDV0?
+    var name: String?
+    var summary: String?
+    var description: String?
+    var provider: UUID
+    var handle: String?
+    var teamID: UUID?
+    var accentID: Int?
+    var assets: [UserAssetV0]
+    var isDeleted: Bool?
+
+    enum CodingKeys: String, CodingKey {
+
+        case id
+        case qualifiedID = "qualified_id"
+        case name
+        case summary
+        case description
+        case provider
+        case handle
+        case teamID = "team"
+        case accentID = "accent_id"
+        case assets
+        case isDeleted = "deleted"
+
+    }
+
+    func toAPIModel() -> WhitelistedBotProfile {
+        WhitelistedBotProfile(
+            id: id,
+            qualifiedID: qualifiedID?.toAPIModel(),
+            name: name ?? "",
+            summary: summary ?? "",
+            description: description ?? "",
+            provider: provider,
+            handle: handle ?? "",
+            teamID: teamID,
+            accentID: accentID,
+            assets: assets.map { $0.toAPIModel() },
+            isDeleted: isDeleted ?? false
+        )
+    }
+
 }
