@@ -121,23 +121,6 @@ class TeamsAPIV5: TeamsAPIV4 {
         for teamID: Team.ID,
         with prefix: String
     ) -> PayloadPager<[WhitelistedBotProfile]> {
-        /*
-        let path = "\(basePath(for: teamID))/services/whitelisted"
-
-        let request = try URLRequestBuilder(path: path)
-            .withMethod(.get)
-            .build()
-
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: true
-        )
-
-        return try ResponseParser()
-            .success(code: .ok, type: WhitelistedBotProfileResponseV5.self)
-            .parse(code: response.statusCode, data: data)
-         */
-
 
         let path = "\(basePath(for: teamID))/services/whitelisted"
 
