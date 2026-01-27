@@ -135,20 +135,25 @@ extension FileRenameViewModel {
 extension FilesItemViewModel {
 
     /// A stubbed instance of `FilesItemViewModel` for SwiftUI previews.
-    static func preview(tags: [String] = []) -> FilesItemViewModel {
+    static func preview(
+        kind: FilesViewItem.Kind = .file,
+        icon: FileIcon = .image,
+        tags: [String] = [],
+        publicLinkID: String? = nil
+    ) -> FilesItemViewModel {
         FilesItemViewModel(
             item: FilesViewItem(
                 id: UUID(),
                 eTag: "eTag",
-                kind: .file,
+                kind: kind,
                 name: "foo.jpg",
                 filePath: "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image foo.jpg",
                 ownedBy: "Viola",
                 modifiedAt: Date(),
-                icon: .image,
+                icon: icon,
                 tags: tags,
                 isEditable: false,
-                publicLinkID: nil,
+                publicLinkID: publicLinkID,
                 conversationName: "Conversation 1",
             ),
             conversationName: "Test",

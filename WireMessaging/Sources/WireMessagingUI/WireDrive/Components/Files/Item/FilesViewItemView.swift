@@ -28,7 +28,9 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 struct FilesItemView: View {
 
     @StateObject private var viewModel: FilesItemViewModel
-    @ScaledMetric private var imageHeight: CGFloat = 28
+
+    @ScaledMetric private var iconSpaceWidth: CGFloat = 56
+    @ScaledMetric private var iconSpaceHeight: CGFloat = 28
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -39,11 +41,7 @@ struct FilesItemView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
-                Image(viewModel.icon.resource)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 56, height: imageHeight)
-                    .padding(.horizontal, 4)
+                icon()
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(viewModel.fileName)
@@ -150,6 +148,20 @@ struct FilesItemView: View {
             Divider()
         }
         .contentShape(Rectangle()) // Tap area
+    }
+
+    @ViewBuilder
+    private func icon() -> some View {
+        Image(viewModel.icon.resource)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .overlay(alignment: .bottomTrailing) {
+                if viewModel.item.publicLinkID != nil {
+                    PublicLinkBadge(forIcon: viewModel.item.icon)
+                }
+            }
+            .frame(width: iconSpaceWidth, height: iconSpaceHeight)
+            .padding(.horizontal, 4)
     }
 
     @ViewBuilder
@@ -275,6 +287,46 @@ struct FilesItemView: View {
     }
 }
 
+extension FilesItemView {
+    struct PublicLinkBadge: View {
+        @ScaledMetric private var size: CGFloat = 10
+        @ScaledMetric private var innerPadding: CGFloat = 2
+        @ScaledMetric private var borderThickness: CGFloat = 1
+        @ScaledMetric private var offsetX: CGFloat
+        @ScaledMetric private var offsetY: CGFloat
+
+        init(forIcon icon: FileIcon) {
+            switch icon {
+            case .folder:
+                _offsetX = .init(wrappedValue: 5)
+                _offsetY = .init(wrappedValue: 1)
+            default:
+                _offsetX = .init(wrappedValue: 5)
+                _offsetY = .init(wrappedValue: 4)
+            }
+        }
+
+        var body: some View {
+            Image(systemName: "link")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .fontWeight(.semibold)
+                .frame(width: size, height: size)
+                .padding(innerPadding)
+                .background {
+                    Circle()
+                        .stroke(lineWidth: borderThickness)
+                        .foregroundStyle(ColorTheme.Strokes.outline.color)
+                }
+                .background {
+                    Circle()
+                        .foregroundStyle(ColorTheme.Backgrounds.backgroundVariant.color)
+                }
+                .offset(x: offsetX, y: offsetY)
+        }
+    }
+}
+
 private extension View {
     @ViewBuilder
     func deletionConfirmationDialog(
@@ -321,6 +373,9 @@ private extension View {
 #Preview {
     VStack(spacing: 0) {
         FilesItemView(viewModel: .preview())
+        FilesItemView(viewModel: .preview(publicLinkID: "link"))
+        FilesItemView(viewModel: .preview(icon: .audio, publicLinkID: "link"))
+        FilesItemView(viewModel: .preview(kind: .folder, icon: .folder, publicLinkID: "link"))
         FilesItemView(viewModel: .preview(tags: ["urgent"]))
         FilesItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]))
     }
