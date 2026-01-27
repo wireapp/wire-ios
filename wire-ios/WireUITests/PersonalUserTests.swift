@@ -20,6 +20,7 @@ import XCTest
 
 final class PersonalUsersTests: WireUITestCase {
 
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8587
     @MainActor
     func test_Register_asPersonalUser() async throws {
         let user = UserGenerator.generateUniqueUserInfo()
@@ -57,6 +58,7 @@ final class PersonalUsersTests: WireUITestCase {
         XCTAssertEqual(accountPage.getEmail(), user.email, "Email didn't contain \(user.email)")
     }
 
+    /// testiny:  https://app.testiny.io/IOS/testcases/tcf/1286/tc/8799
     @MainActor
     func test_Login_asExistingPersonalUser() async throws {
         let user = try await userHelper.createPersonalUser()
@@ -69,6 +71,7 @@ final class PersonalUsersTests: WireUITestCase {
             .enterPassword(user.password)
     }
 
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8798
     @MainActor
     func test_PersonalAccountLifecycle() async throws {
         let userA = try await userHelper.createPersonalUser()
