@@ -77,11 +77,19 @@ public extension ZMUser {
     @objc(canAddUserToConversation:)
     func canAddUser(to conversation: ConversationLike) -> Bool {
         guard conversation.conversationType == .group else { return false }
-        return hasRoleWithAction(
+        
+        let hasAddPermission = hasRoleWithAction(
             actionName: ConversationAction.addConversationMember.name,
             conversation: conversation
-        ) || isChannelAdmin(conversation)
-            || (conversation.privateChannelPermission == .everyone && conversation.isChannel)
+        )
+        
+        let isAdmin = isChannelAdmin(conversation)
+        
+        let isPublicChannelAccessNoGuest = conversation.isChannel
+            && conversation.privateChannelPermission == .everyone
+            && !conversation.isGuest
+        
+        return hasAddPermission || isAdmin || isPublicChannelAccessNoGuest
     }
 
     @objc(canRemoveUserFromConversation:)

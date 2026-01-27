@@ -391,6 +391,15 @@ public class MockConversationLike: ConversationLike {
 
     public var underlyingIsWireDriveEnabled: Bool!
 
+    // MARK: - isGuest
+
+    public var isGuest: Bool {
+        get { return underlyingIsGuest }
+        set(value) { underlyingIsGuest = value }
+    }
+
+    public var underlyingIsGuest: Bool!
+
 
     // MARK: - localParticipantsContain
 

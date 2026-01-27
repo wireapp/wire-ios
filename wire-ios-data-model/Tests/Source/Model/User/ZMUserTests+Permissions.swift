@@ -401,6 +401,18 @@ extension ZMUserTests_Permissions {
 
         XCTAssertFalse(user.canAddUser(to: conversation))
         conversation.privateChannelPermission = .everyone
+        conversation.accessRoles.remove(.guest)
+        XCTAssertTrue(user.canAddUser(to: conversation))
+    }
+    
+    func testCanAddParticipantsInChannelIfAddParticipantsIsAdminAndMemberButGuest() {
+        let user = updateConversationToChannelWithUserToBecomeTeamAdmin()
+
+        conversation.privateChannelPermission = .everyone
+        conversation.accessRoles.insert(.guest)
+        XCTAssertFalse(user.canAddUser(to: conversation))
+        
+        conversation.accessRoles.remove(.guest)
         XCTAssertTrue(user.canAddUser(to: conversation))
     }
 
