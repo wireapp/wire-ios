@@ -1038,11 +1038,11 @@ public final class MLSService: MLSServiceInterface {
                 attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
             )
 
-            if shouldPerformIncrementalSync {
-                // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
-                // This ensures we're on the latest state.
-                try await mlsSyncDelegate?.recoverWithIncrementalSync()
-            }
+//            if shouldPerformIncrementalSync {
+//                // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
+//                // This ensures we're on the latest state.
+//                try await mlsSyncDelegate?.recoverWithIncrementalSync()
+//            }
 
             guard let conversationInfo = await fetchConversationInfo(
                 with: groupID,
@@ -1490,12 +1490,15 @@ public final class MLSService: MLSServiceInterface {
 
             switch error {
             case .mlsClientMismatch, .mlsCommitMissingReferences:
-                self = .retryAfterQuickSync
+                // mlsClientMismatch race condition when user A is adding a client while you're adding all his clients
+                
+                // just backoff for both cases
+                self = .retryAfterQuickSync // to remove
             case .mlsStaleMessage:
                 self = .retryAfterRepairingGroup // should just retry as a backoff (wait and try again)
             case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
                 self = .resetBrokenMLSConversation
-            case let .groupOutOfSync(missingUsers):
+            case let .groupOutOfSync(missingUsers): // new case when an admin add users to a group remotely
                 self = .retryAfterAddingMissingUsers(missingUsers)
             default:
                 self = .giveUp
@@ -1615,11 +1618,11 @@ public final class MLSService: MLSServiceInterface {
                     epoch = await fetchConversationInfo(with: groupID, in: context)?.epoch ?? 0
                 }
                 await resetBrokenMLSConversationDelegate?.didCatchBrokenMLSConversation(groupID: groupID, epoch: epoch)
-                brokenGroupIDs.remove(groupID)
+                brokenGroupIDs.remove(groupID) // to delete
 
             case .giveUp:
                 logger.warn(
-                    "failed to send commit, giving up...",
+                    "failed to send commit, giving up...: \(reason)",
                     attributes: logAttributes
                 )
                 throw MLSRetryError.nonRecoverableError(reason)

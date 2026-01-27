@@ -43,40 +43,40 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
     case malformedResponse
 
     // 400
-    case mlsWelcomeMismatch(message: String)
-    case mlsGroupConversationMismatch(message: String)
-    case mlsClientSenderUserMismatch(message: String)
-    case mlsSelfRemovalNotAllowed(message: String)
-    case mlsCommitMissingReferences(message: String)
-    case mlsProtocolError(message: String)
+    case mlsWelcomeMismatch(message: String) // no recovery - prog error
+    case mlsGroupConversationMismatch(message: String) // recovery sync conversation and resend
+    case mlsClientSenderUserMismatch(message: String) // no recovery - prog error
+    case mlsSelfRemovalNotAllowed(message: String) // no recovery - prog error - will result in faulty client
+    case mlsCommitMissingReferences(message: String) // only on commit bundle - recovery retry -> ask Backend if it should be on /mls/messages
+    case mlsProtocolError(message: String) // mix of errors under the protocol, see message - diagnostic
     case invalidRequestBody(message: String)
-    case mlsInvalidLeafNodeIndex(message: String)
-    case mlsInvalidLeafNodeSignature(message: String)
+    case mlsInvalidLeafNodeIndex(message: String) // reset mls group
+    case mlsInvalidLeafNodeSignature(message: String) // reset mls group
 
     // 403
-    case missingLegalHoldConsent(message: String)
-    case mlsMissingSenderClient(message: String)
-    case legalHoldNotEnabled(message: String)
-    case accessDenied(message: String)
+    case missingLegalHoldConsent(message: String) // might become deprecated
+    case mlsMissingSenderClient(message: String) // recover : access token must be renewed with client id
+    case legalHoldNotEnabled(message: String) // might become deprecated
+    case accessDenied(message: String) // no access, no recovery - diagnostic
 
     // 404
-    case mlsProposalNotFound(message: String)
-    case mlsKeyPackageRefNotFound(message: String)
-    case noConversation(message: String)
-    case noConversationMember(message: String)
+    case mlsProposalNotFound(message: String) // diagnostic
+    case mlsKeyPackageRefNotFound(message: String) // refetch keypackage - try again - edge case
+    case noConversation(message: String) // no access, no recovery - diagnostic
+    case noConversationMember(message: String) // no access, no recovery - diagnostic
 
     // 409
-    case mlsStaleMessage
-    case mlsClientMismatch
-    case unreachableDomains(Set<String>)
-    case groupOutOfSync(missingUsers: Set<QualifiedID>)
+    case mlsStaleMessage // both endpoint, recovery retry
+    case mlsClientMismatch // only on commit Bundle could happen theoritacly on POST /mls/messages but no clients do
+    case unreachableDomains(Set<String>) // information:  could not adding / removing users because fed backend not reachable
+    case groupOutOfSync(missingUsers: Set<QualifiedID>) // recovery on both endpoints
 
     // 422
-    case mlsUnsupportedProposal(message: String)
-    case mlsUnsupportedMessage(message: String)
+    case mlsUnsupportedProposal(message: String) // no recover
+    case mlsUnsupportedMessage(message: String) // no recover
 
     // 503
-    case nonFederatingDomains(Set<String>)
+    case nonFederatingDomains(Set<String>) // inform user but not in sending message or POST /commit/bundle
 
     case unknown(status: Int, label: String, message: String)
 
