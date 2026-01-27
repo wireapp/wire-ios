@@ -37,20 +37,18 @@ final class ConversationWelcomeSystemMessageCellDescription: ConversationMessage
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    typealias Variant = (wireCells: Bool, is1on1: Bool, isChannel: Bool)
+    typealias Variant = (wireCells: Bool, isChannel: Bool)
 
     init(variant: Variant) {
         let title = variant.wireCells ? L10n.Localizable.Conversation.ConnectionView.Welcome.Title.wireCells : L10n
             .Localizable.Conversation.ConnectionView.Welcome.Title.wire
 
         let message: String = switch variant {
-        case (wireCells: false, is1on1: false, isChannel: false):
+        case (wireCells: false, isChannel: false):
             L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireGroup
-        case (wireCells: false, is1on1: true, isChannel: false):
-            L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireOneOnOne
-        case (wireCells: false, is1on1: _, isChannel: true):
+        case (wireCells: false, isChannel: true):
             L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireChannel
-        case (wireCells: true, is1on1: _, isChannel: _):
+        case (wireCells: true, isChannel: _):
             L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireCells
         }
 
