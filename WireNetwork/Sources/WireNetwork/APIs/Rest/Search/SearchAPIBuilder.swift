@@ -65,4 +65,5 @@ public struct SearchAPIBuilder {
             SearchAPIV15(apiService: apiService)
         }
     }
+
 }
