@@ -634,7 +634,9 @@ public final class ZMUserSession: NSObject {
             )
         )
         self.clientSessionComponent = clientSessionComponent
-        observeSyncStateForAVS()
+        if let syncStateSubject = self.clientSessionComponent?.syncStateSubject {
+            observeSyncStateForAVS(syncStateSubject: syncStateSubject)
+        }
 
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
 
@@ -1128,10 +1130,8 @@ extension ZMUserSession: ZMNetworkStateDelegate {
         }
     }
 
-    private func observeSyncStateForAVS() {
-        guard let clientSessionComponent else { return }
-
-        syncStateCancellable = clientSessionComponent.syncStateSubject
+    private func observeSyncStateForAVS(syncStateSubject: CurrentValueSubject<SyncState, Never>) {
+        syncStateCancellable = syncStateSubject
             .sink { [weak self] syncState in
                 guard let self else { return }
                 isLiveSyncOngoing = syncState == .liveSyncing(.ongoing)
@@ -1243,7 +1243,7 @@ extension ZMUserSession: SyncAgentDelegate {
         Task {
             await showSyncBar(false)
         }
-
+        notifyAVSDidProcessEvents()
         WaitingGroupTask(context: syncContext) { [weak self] in
             guard let self else { return }
             await fetchAndStoreFeatureConfig()
@@ -1272,7 +1272,6 @@ extension ZMUserSession: SyncAgentDelegate {
         }
 
         performPostQuickSyncE2EIActions()
-        notifyAVSDidProcessEvents()
     }
 
     private func makeInitiateResetMLSConversationUseCase(
