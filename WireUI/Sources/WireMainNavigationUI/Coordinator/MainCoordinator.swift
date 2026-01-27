@@ -532,6 +532,11 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             splitViewController.conversationUI != nil
         }
     }
+
+    public func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
+        guard .oneOverSecondary == displayMode else { return }
+        splitViewController.view.endEditing(true)
+    }
 }
 
 // MARK: - MainSidebarMenuItem + MainConversationFilter
