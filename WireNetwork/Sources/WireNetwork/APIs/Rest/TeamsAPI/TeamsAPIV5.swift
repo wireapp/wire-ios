@@ -115,4 +115,17 @@ class TeamsAPIV5: TeamsAPIV4 {
             .parse(code: response.statusCode, data: data)
     }
 
+    // MARK: - Get whitelisted bots
+
+    override func getWhitelistedBots(
+        for teamID: Team.ID,
+        with prefix: String
+    ) async throws -> WhitelistedBotProfile {
+
+
+        fatalError("TODO")
+
+
+    }
+
 }

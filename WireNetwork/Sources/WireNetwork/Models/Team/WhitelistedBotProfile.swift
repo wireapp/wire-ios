@@ -16,40 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Errors originating from `TeamsAPI`.
-
-public enum TeamsAPIError: Error {
-
-    /// Unsupported endpoint for API version
-
-    case unsupportedEndpointForAPIVersion
-
-    /// A supplied team id is not valid.
-
-    case invalidTeamID
-
-    /// The requested team does not exist.
-
-    case teamNotFound
-
-    /// The self user is not part of a team.
-
-    case selfUserIsNotTeamMember
-
-    /// A requested team member could not be found.
-
-    case teamMemberNotFound
-
-    /// A request could not be generated.
-
-    case failedToGenerateRequest
-
-    /// An invalid query parameter was used.
-
-    case invalidQueryParmeter
-
-    /// A request was deemed invalid by the server.
-
-    case invalidRequest
-
-}
+public struct WhitelistedBotProfile {}
