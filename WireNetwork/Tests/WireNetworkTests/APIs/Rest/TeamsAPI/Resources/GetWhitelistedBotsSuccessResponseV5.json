@@ -4,7 +4,7 @@
         {
             "accent_id": 2147483647,
             "summary": "Calendar",
-            "handle": "somecal",
+            "handle": "some-handle",
             "team": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
             "assets": [],
             "provider": "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c",
@@ -35,7 +35,7 @@
             ],
             "provider": "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c",
             "name": "Secure Alert",
-            "description": "You know.. for Alarms",
+            "description": "for Alarms",
             "id": "d554c310-8237-4f85-b3cc-b7ae5ec1e6cd",
             "enabled": true,
             "tags": ["integration"]

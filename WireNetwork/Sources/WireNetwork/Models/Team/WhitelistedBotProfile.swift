@@ -24,6 +24,7 @@ public struct WhitelistedBotProfile: Equatable, Sendable {
     public var qualifiedID: UserID?
     public var name: String
     public var summary: String
+    public var description: String
     public var provider: UUID
     public let handle: String
     public var teamID: UUID?

@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireNetwork
 @testable import WireNetworkSupport
 
@@ -508,26 +509,43 @@ final class TeamsAPITests: XCTestCase {
         let expectedBots = [
             WhitelistedBotProfile(
                 id: UUID(uuidString: "cc0702a4-e126-48a1-87cd-8325835ac071")!,
-                qualifiedID: <#T##UserID?#>,
-                name: <#T##String#>,
-                summary: <#T##String#>,
+                qualifiedID: .init(
+                    id: UUID(uuidString: "cc0702a4-e126-48a1-87cd-8325835ac071")!,
+                    domain: "example.com"
+                ),
+                name: "Google Calendar",
+                summary: "Calendar",
+                description: "Google Calendar integration for Wire",
+                provider: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
+                handle: "some-handle",
+                teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab"),
+                accentID: 2147483647,
+                assets: [],
+                isDeleted: false
+            ),
+            WhitelistedBotProfile(
+                id: UUID(uuidString: "d554c310-8237-4f85-b3cc-b7ae5ec1e6cd")!,
+                qualifiedID: nil,
+                name: "Secure Alert",
+                summary: "Sends alarms",
+                description: "for Alarms",
                 provider: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
                 handle: "",
                 teamID: nil,
                 accentID: nil,
                 assets: [
                     UserAsset(
-                        key: "l",
+                        key: "lorem-ipsum",
                         size: .complete,
                         type: .image
                     ),
                     UserAsset(
-                        key: "l",
+                        key: "dolor",
                         size: .preview,
                         type: .image
                     )
                 ],
-                isDeleted: <#T##Bool#>
+                isDeleted: false
             )
         ]
         XCTAssertEqual(bots, expectedBots)

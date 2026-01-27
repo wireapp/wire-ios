@@ -183,6 +183,7 @@ private struct WhitelistedBotProfileResponseV5: Decodable, ToAPIModelConvertible
     var qualifiedID: QualifiedIDV0?
     var name: String?
     var summary: String?
+    var description: String?
     var provider: UUID
     var handle: String?
     var teamID: UUID?
@@ -196,6 +197,7 @@ private struct WhitelistedBotProfileResponseV5: Decodable, ToAPIModelConvertible
         case qualifiedID = "qualified_id"
         case name
         case summary
+        case description
         case provider
         case handle
         case teamID = "team"
@@ -211,6 +213,7 @@ private struct WhitelistedBotProfileResponseV5: Decodable, ToAPIModelConvertible
             qualifiedID: qualifiedID?.toAPIModel(),
             name: name ?? "",
             summary: summary ?? "",
+            description: description ?? "",
             provider: provider,
             handle: handle ?? "",
             teamID: teamID,
