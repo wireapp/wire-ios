@@ -155,7 +155,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireCellsNodesRepositoryProtocol
     ) async throws -> (nodes: [WireCellsNode], nextOffset: Int?) {
         do {
             let (nodes, nextOffset) = try await restAPI.getNodes(request)
-            return (nodes: nodes.map { $0.toDomainModel() }, nextOffset: nextOffset)
+            return (nodes: nodes.filter { !$0.isDraft }.map { $0.toDomainModel() }, nextOffset: nextOffset)
             // user not yet created, wire users are "lazily" sync to pydio users the first time they are part of a cells
             // conversation
         } catch let error as CellsSDK.ErrorResponse where error.httpStatusCode == 401 {
