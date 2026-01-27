@@ -365,10 +365,10 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         callerName: String,
         hasVideo: Bool
     ) {
-        logger.info("report incoming call preemptively")
+        logger.info("report incoming call preemptively", attributes: .safePublic)
 
         guard !callRegister.callExists(for: handle) else {
-            logger.critical("fail: report incoming call preemptively: call doesn't exist")
+            logger.critical("fail: report incoming call preemptively: call doesn't exist", attributes: .safePublic)
             return
         }
 
@@ -401,10 +401,10 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         handle: CallHandle,
         reason: CXCallEndedReason
     ) {
-        logger.info("report call ended preemptively")
+        logger.info("report call ended preemptively", attributes: .safePublic)
 
         guard let call = callRegister.lookupCall(by: handle) else {
-            logger.critical("fail: report call ended preemptively: call doesn't exist")
+            logger.critical("fail: report call ended preemptively: call doesn't exist", attributes: .safePublic)
             return
         }
 
