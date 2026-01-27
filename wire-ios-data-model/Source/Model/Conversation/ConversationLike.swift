@@ -65,7 +65,7 @@ public protocol ConversationLike: AnyObject {
 
     /// Whether Wire Drive is enabled for this conversation.
     var isWireDriveEnabled: Bool { get }
-    
+
     var isGuest: Bool { get }
 }
 
