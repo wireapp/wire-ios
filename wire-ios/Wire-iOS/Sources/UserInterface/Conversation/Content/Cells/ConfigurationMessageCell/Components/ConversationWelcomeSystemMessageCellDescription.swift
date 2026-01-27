@@ -36,7 +36,7 @@ final class ConversationWelcomeSystemMessageCellDescription: ConversationMessage
     let containsHighlightableContent: Bool = false
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
-    
+
     typealias Variant = (wireCells: Bool, is1on1: Bool, isChannel: Bool)
 
     init(variant: Variant) {

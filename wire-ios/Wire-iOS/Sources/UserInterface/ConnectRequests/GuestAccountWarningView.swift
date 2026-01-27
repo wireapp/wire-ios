@@ -63,30 +63,30 @@ final class GuestAccountWarningView: UIView {
 
         stackView.alignment = .fill
         stackView.spacing = 16
-        
+
         let title = L10n.Localizable.Conversation.ConnectionView.Welcome.Title.wire
-        
+
         titleLabel.numberOfLines = 0
         titleLabel.text = title
-        
+
         stackView.addArrangedSubview(titleLabel)
-        
+
         messageLabel.numberOfLines = 0
         messageLabel.text = L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireOneOnOne
-        
+
         stackView.addArrangedSubview(messageLabel)
-        
+
         let linkText = L10n.Localizable.Conversation.ConnectionView.Welcome.learnMore
         let linkUrl = URL(string: "https://support.wire.com/hc/articles/10898523878173")!
-        
+
         let linkAttributes: [NSAttributedString.Key: AnyObject] = [
             .font: UIFont.mediumSemiboldFont,
             .foregroundColor: SemanticColors.Label.textDefault,
             .link: linkUrl as AnyObject,
             .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,
-            .underlineColor: SemanticColors.Label.textDefault,
+            .underlineColor: SemanticColors.Label.textDefault
         ]
-        
+
         linkLabel.attributedText = .init(string: linkText, attributes: linkAttributes)
         linkLabel.linkTextAttributes = linkAttributes
         linkLabel.textContainerInset = .zero
@@ -96,7 +96,7 @@ final class GuestAccountWarningView: UIView {
         linkLabel.isEditable = false
         linkLabel.isScrollEnabled = false
         linkLabel.backgroundColor = .clear
-        
+
         stackView.addArrangedSubview(linkLabel)
     }
 
@@ -110,7 +110,7 @@ final class GuestAccountWarningView: UIView {
             imageView.widthAnchor.constraint(equalToConstant: 18.0),
             imageView.heightAnchor.constraint(equalToConstant: 18.0),
             imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            imageView.bottomAnchor.constraint(equalTo: titleLabel.firstBaselineAnchor, constant: 2),
+            imageView.bottomAnchor.constraint(equalTo: titleLabel.firstBaselineAnchor, constant: 2)
         ])
     }
 }

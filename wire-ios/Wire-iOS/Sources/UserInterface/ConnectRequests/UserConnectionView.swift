@@ -75,14 +75,14 @@ final class UserConnectionView: UIView, Copyable {
         userImageView.user = user
 
         [labelContainer, userImageView, guestIndicator, guestWarningContainer].forEach(addSubview)
-        
+
         guestWarningContainer.addSubview(guestWarningView)
         guestWarningContainer.backgroundColor = SemanticColors.View.backgroundGreen
-        
+
         [firstLabel, secondLabel].forEach(labelContainer.addArrangedSubview)
-        
+
         guestIndicator.isHidden = true
-        
+
         updateLabels()
         updateGuestAccountViews()
     }
@@ -130,7 +130,7 @@ final class UserConnectionView: UIView, Copyable {
             labelContainer,
             guestIndicator,
             guestWarningView,
-            guestWarningContainer,
+            guestWarningContainer
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([

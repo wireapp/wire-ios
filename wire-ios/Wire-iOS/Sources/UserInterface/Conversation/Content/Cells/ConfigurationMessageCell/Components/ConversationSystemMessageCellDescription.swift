@@ -175,7 +175,7 @@ enum ConversationSystemMessageCellDescription {
             var cells: [AnyConversationMessageCellDescription] = []
 
             let hideWelcomeBanner = conversation.conversationType == .oneOnOne && conversation.isCellsEnabled
-            
+
             if !hideWelcomeBanner {
                 let welcomeCell = ConversationWelcomeSystemMessageCellDescription(
                     variant: (
