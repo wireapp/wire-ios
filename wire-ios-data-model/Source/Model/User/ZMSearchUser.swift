@@ -436,7 +436,7 @@ public class ZMSearchUser: NSObject, UserType {
         remoteIdentifier?.hashValue ?? super.hash
     }
 
-    public static func searchUsers( // TODO: delete?
+    public static func searchUsers(
         from payloadArray: [[String: Any]],
         contextProvider: ContextProvider,
         searchUsersCache: SearchUsersCache?
@@ -450,7 +450,7 @@ public class ZMSearchUser: NSObject, UserType {
         }
     }
 
-    public static func searchUser( // TODO: delete?
+    public static func searchUser(
         from payload: [String: Any],
         contextProvider: ContextProvider,
         searchUsersCache: SearchUsersCache?
