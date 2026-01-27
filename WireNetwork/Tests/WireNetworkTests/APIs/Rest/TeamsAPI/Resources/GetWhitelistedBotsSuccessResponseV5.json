@@ -8,12 +8,24 @@
             "name": "Google Calendar",
             "description": "Google Calendar integration for Wire",
             "id": "cc0702a4-e126-48a1-87cd-8325835ac071",
+            qual
             "enabled": true,
             "tags": ["integration"]
         },
         {
             "summary": "Sends alarms",
-            "assets": [],
+            "assets": [
+                {
+                    "size": "complete",
+                    "type": "image",
+                    "key": "lorem-ipsum"
+                },
+                {
+                    "size": "preview",
+                    "type": "image",
+                    "key": "dolor"
+                }
+            ],
             "provider": "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c",
             "name": "Secure Alert",
             "description": "You know.. for Alarms",

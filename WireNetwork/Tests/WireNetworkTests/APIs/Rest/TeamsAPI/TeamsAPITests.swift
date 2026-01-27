@@ -502,12 +502,35 @@ final class TeamsAPITests: XCTestCase {
 
         // When
         let pager = try sut.getWhitelistedBots(for: Scaffolding.teamID, with: "")
-        for try await bots in pager {
-            print(bots)
-        }
+        let bots = try await pager.reduce(into: []) { $0 += $1 }
 
         // Then
-        fatalError("TODO")
+        let expectedBots = [
+            WhitelistedBotProfile(
+                id: UUID(uuidString: "cc0702a4-e126-48a1-87cd-8325835ac071")!,
+                qualifiedID: <#T##UserID?#>,
+                name: <#T##String#>,
+                summary: <#T##String#>,
+                provider: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
+                handle: "",
+                teamID: nil,
+                accentID: nil,
+                assets: [
+                    UserAsset(
+                        key: "l",
+                        size: .complete,
+                        type: .image
+                    ),
+                    UserAsset(
+                        key: "l",
+                        size: .preview,
+                        type: .image
+                    )
+                ],
+                isDeleted: <#T##Bool#>
+            )
+        ]
+        XCTAssertEqual(bots, expectedBots)
 
     }
 
