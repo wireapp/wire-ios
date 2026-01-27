@@ -533,8 +533,11 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         }
     }
 
-    public func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
-        guard .oneOverSecondary == displayMode else { return }
+    public func splitViewController(
+        _ svc: UISplitViewController,
+        willChangeTo displayMode: UISplitViewController.DisplayMode
+    ) {
+        guard displayMode == .oneOverSecondary else { return }
         splitViewController.view.endEditing(true)
     }
 }
