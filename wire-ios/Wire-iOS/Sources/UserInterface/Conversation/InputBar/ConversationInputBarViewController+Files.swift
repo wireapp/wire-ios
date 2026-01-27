@@ -51,9 +51,6 @@ extension ConversationInputBarViewController {
     func uploadFiles(at urls: [URL]) {
         guard !urls.isEmpty else { return }
 
-<<<<<<< HEAD
-        if userSession.isWireDriveEnabled, conversation.isWireDriveEnabled {
-=======
         let charactersToReplace = uploadDraftUseCase.charactersToReplace
 
         if urls.contains(where: { $0.lastPathComponent.contains(where: { charactersToReplace.contains($0) }) }) {
@@ -64,8 +61,7 @@ extension ConversationInputBarViewController {
     }
 
     private func continueUploadFiles(at urls: [URL]) {
-        if userSession.isWireCellsEnabled, conversation.isCellsEnabled {
->>>>>>> c66ff2dd31 (feat: file upload dialog for autorename - WPB-22584 (#4177))
+        if userSession.isWireDriveEnabled, conversation.isWireDriveEnabled {
             for url in urls {
                 Task.detached { [uploadDraftUseCase] in
                     // We don't care about the result of the operation here as we will be observing changes.

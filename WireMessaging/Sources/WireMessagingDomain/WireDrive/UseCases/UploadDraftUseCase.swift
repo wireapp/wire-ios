@@ -129,17 +129,13 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
             throw WireDriveUploadDraftUseCaseError.missingFileSize
         }
 
-<<<<<<< HEAD:WireMessaging/Sources/WireMessagingDomain/WireDrive/UseCases/UploadDraftUseCase.swift
-        let draft = WireDriveDraft(
-=======
         var filename = fileURL.lastPathComponent
 
         for characterToReplace in charactersToReplace {
             filename = filename.replacingOccurrences(of: String(characterToReplace), with: "_")
         }
 
-        let draft = WireCellsDraft(
->>>>>>> c66ff2dd31 (feat: file upload dialog for autorename - WPB-22584 (#4177)):WireMessaging/Sources/WireMessagingDomain/WireCells/UseCases/UploadDraftUseCase.swift
+        let draft = WireDriveDraft(
             nodeID: UUID(),
             versionID: UUID(),
             assetURL: fileURL,
