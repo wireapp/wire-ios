@@ -630,14 +630,14 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
             // Verify self user is not in conversation
             XCTAssertFalse(self.oneOnOneConversation.localParticipants.contains(self.selfUser))
-            
+
             // Create memberJoin event
             let event = self.createMemberJoinUpdateEvent(
                 UUID.create(),
                 conversationID: self.oneOnOneConversation.remoteIdentifier!,
                 users: [self.selfUser]
             )
-            
+
             var note: ZMLocalNotification?
 
             // when
