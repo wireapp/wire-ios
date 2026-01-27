@@ -2514,6 +2514,20 @@ internal enum L10n {
           internal static let body = L10n.tr("Localizable", "content.system.unknown_message_received.body", fallback: "You have received a message that can't be displayed. You may be using an older version of Wire.")
         }
       }
+      internal enum UploadedFileNeedsRename {
+        /// Cancel
+        internal static let cancelButton = L10n.tr("Localizable", "content.uploaded_file_needs_rename.cancelButton", fallback: "Cancel")
+        /// Replace
+        internal static let confirmButton = L10n.tr("Localizable", "content.uploaded_file_needs_rename.confirmButton", fallback: "Replace")
+        /// %@ characters are not allowed.
+        /// 
+        /// Tap Replace to exchange them with accepted characters or Cancel to rename the file yourself.
+        internal static func message(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "content.uploaded_file_needs_rename.message", String(describing: p1), fallback: "%@ characters are not allowed.\n\nTap Replace to exchange them with accepted characters or Cancel to rename the file yourself.")
+        }
+        /// File name incompatible
+        internal static let title = L10n.tr("Localizable", "content.uploaded_file_needs_rename.title", fallback: "File name incompatible")
+      }
     }
     internal enum Conversation {
       internal enum Action {

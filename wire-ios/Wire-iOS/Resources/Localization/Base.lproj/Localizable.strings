@@ -744,6 +744,12 @@
 "content.message.reply.files.count" = "%@ files";
 "content.message.reply.files.notAvailable" = "File not available";
 
+// Uploaded file needs rename
+"content.uploaded_file_needs_rename.title" = "File name incompatible";
+"content.uploaded_file_needs_rename.message" = "%@ characters are not allowed.\n\nTap Replace to exchange them with accepted characters or Cancel to rename the file yourself.";
+"content.uploaded_file_needs_rename.confirmButton" = "Replace";
+"content.uploaded_file_needs_rename.cancelButton" = "Cancel";
+
 // Reactions
 "content.reactions.title" = "Select reaction";
 "content.reactions.search" = "Search for emoji";

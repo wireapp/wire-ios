@@ -30,4 +30,5 @@ final class WireCellsUploadDraftUseCaseProtocolMock: WireCellsUploadDraftUseCase
         fatalError("Implement")
     }
 
+    let charactersToReplace: [Character] = ["\\", "\""]
 }
