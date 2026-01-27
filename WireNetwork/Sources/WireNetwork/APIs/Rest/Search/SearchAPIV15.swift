@@ -36,7 +36,7 @@ final class SearchAPIV15: SearchAPIV14 {
         var queryItems = [URLQueryItem]()
         queryItems.append(URLQueryItem(name: "q", value: query))
 
-        fatalError("TODO: user type")
+        fatalError("TODO: user type") // TODO: fix
 
         if !domain.isEmpty {
             queryItems.append(URLQueryItem(name: "domain", value: domain))
@@ -75,34 +75,13 @@ final class SearchAPIV15: SearchAPIV14 {
 private struct SearchResultContactV15: Decodable, ToAPIModelConvertible {
 
     let documents: [ContactV15]
-    let found: Int
-    let returned: Int
-    let took: Int
-    let hasMore: Bool
-    let pagingState: String?
-    let searchPolicy: String
-
-    enum CodingKeys: String, CodingKey {
-        case documents
-        case found
-        case returned
-        case took
-        case hasMore = "has_more"
-        case pagingState = "paging_state"
-        case searchPolicy = "search_policy"
-    }
 
     func toAPIModel() -> SearchContactsResult {
         SearchContactsResult(
-            documents: documents.map { $0.toAPIModel() },
-            found: found,
-            returned: returned,
-            took: took,
-            hasMore: hasMore,
-            pagingState: pagingState,
-            searchPolicy: searchPolicy
+            documents: documents.map { $0.toAPIModel() }
         )
     }
+
 }
 
 private struct ContactV15: Decodable, ToAPIModelConvertible {
