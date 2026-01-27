@@ -126,14 +126,15 @@ class TeamsAPIV5: TeamsAPIV4 {
 
         return PayloadPager { nextSince in
 
-            // pagination seems to not be properly implemented for this endpoint
+            // There is no documentation about getting the next page in case there is a next page,
+            // so choose a large page size (100) and stop after the first page.
             guard nextSince == nil else {
                 return .init(element: [], hasMore: false, nextStart: "")
             }
 
             var requestBuilder = try URLRequestBuilder(path: path)
                 .withMethod(.get)
-                .withQueryItem(name: "size", value: "100") // use the max. page size and don't paginate, since pagination seems to be broken here
+                .withQueryItem(name: "size", value: "100")
 
             if let nextSince {
                 requestBuilder = requestBuilder.withQueryItem(name: "since", value: nextSince)
