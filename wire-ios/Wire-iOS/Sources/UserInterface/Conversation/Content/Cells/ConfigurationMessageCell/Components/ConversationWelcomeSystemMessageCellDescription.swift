@@ -63,12 +63,12 @@ final class ConversationWelcomeSystemMessageCellDescription: ConversationMessage
         ]
 
         let messageAttributes: [NSAttributedString.Key: AnyObject] = [
-            .font: FontSpec(.header, .regular).font!,
+            .font: UIFont.mediumFont,
             .foregroundColor: LabelColors.textDefault
         ]
 
         let linkAttributes: [NSAttributedString.Key: AnyObject] = [
-            .font: FontSpec(.header, .semibold).font!,
+            .font: UIFont.mediumSemiboldFont,
             .foregroundColor: LabelColors.textDefault,
             .link: linkUrl as AnyObject,
             .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,
