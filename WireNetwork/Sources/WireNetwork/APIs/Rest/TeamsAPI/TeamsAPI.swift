@@ -51,14 +51,28 @@ public protocol TeamsAPI {
         maxResults: UInt
     ) async throws -> [TeamMember]
 
+    /// Get members of a specific team with the specified ids.
+    ///
+    /// Note: non-existent ids will be ignored.
+    ///
+    /// - Parameters:
+    ///   - teamID: The id of the team.
+    ///   - userIDs: A list of user ids to match team members.
+    ///   - maxResults: The maximum number of members to retrieve.
+    ///
+    /// - Returns: A list of members.
+
+    func getTeamMembers(
+        of teamID: Team.ID,
+        for userIDs: [UUID]
+    ) async throws -> [TeamMember]
+
     /// Get the legalhold of a team member.
     ///
     /// - Parameters:
     ///   - teamID: The id of the team.
     ///   - userID: The id of the member.
     /// - Returns: The legalhold of the member.
-
-// TODO: get-members-by-ids-using-post?
 
     func getLegalholdInfo(
         for teamID: Team.ID,

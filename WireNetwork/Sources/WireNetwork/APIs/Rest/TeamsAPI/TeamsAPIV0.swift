@@ -100,6 +100,15 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
+    // MARK: - Get team members for ids
+
+    func getTeamMembers(
+        of teamID: Team.ID,
+        for userIDs: [UUID]
+    ) async throws -> [TeamMember] {
+        throw TeamsAPIError.unsupportedEndpointForAPIVersion
+    }
+
     // MARK: - Get team member legalhold
 
     func getLegalholdInfo(

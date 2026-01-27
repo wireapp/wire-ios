@@ -36,7 +36,8 @@ final class SearchAPIV15: SearchAPIV14 {
         var queryItems = [URLQueryItem]()
         queryItems.append(URLQueryItem(name: "q", value: query))
 
-        fatalError("TODO: user type") // TODO: fix
+        let userType = UserTypeV15(type)
+        queryItems.append(URLQueryItem(name: "type", value: userType.rawValue))
 
         if !domain.isEmpty {
             queryItems.append(URLQueryItem(name: "domain", value: domain))
