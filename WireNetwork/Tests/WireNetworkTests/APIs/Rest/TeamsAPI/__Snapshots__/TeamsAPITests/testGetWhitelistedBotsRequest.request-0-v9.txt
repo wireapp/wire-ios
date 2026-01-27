@@ -1,2 +1,0 @@
-curl \
-	"/v9/teams/213248a1-5499-418f-8173-5010d1c1e506/services/whitelisted?prefix=prefix&size=100"
