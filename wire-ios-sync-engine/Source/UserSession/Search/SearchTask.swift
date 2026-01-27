@@ -18,12 +18,15 @@
 
 import Foundation
 import WireUtilities
+import WireNetwork
+import WireFoundation
+import WireLogging
 
 public class SearchTask {
 
     public enum Task {
         case search(searchRequest: SearchRequest)
-        case lookup(qualifiedID: QualifiedID)
+        case lookup(qualifiedID: WireDataModel.QualifiedID)
     }
 
     public typealias ResultHandler = (_ result: SearchResult, _ isCompleted: Bool) -> Void
@@ -33,10 +36,11 @@ public class SearchTask {
     private let searchContext: NSManagedObjectContext
     private let contextProvider: ContextProvider
     private let searchUsersCache: SearchUsersCache?
+    private let searchAPI: any SearchAPI
 
     private let task: Task
     private var userLookupTaskIdentifier: ZMTaskIdentifier?
-    private var directoryTaskIdentifier: ZMTaskIdentifier?
+    private var performRemoteSearchTask: _Concurrency.Task<Void, any Error>?
     private var teamMembershipTaskIdentifier: ZMTaskIdentifier?
     private var handleTaskIdentifier: ZMTaskIdentifier?
     private var servicesTaskIdentifier: ZMTaskIdentifier?
@@ -60,6 +64,10 @@ public class SearchTask {
             }
         }
         set {
+            if newValue < 0 { // TODO: delete
+                print("todo")
+            }
+            print("###  tasksRemaining: \(newValue)")
             let oldValue = tasksRemainingLock.withLock {
                 let oldValue = _tasksRemaining
                 _tasksRemaining = newValue
@@ -68,7 +76,7 @@ public class SearchTask {
             // only trigger handles if decrement to 0
             if oldValue > newValue {
                 let isCompleted = newValue == 0
-                resultHandlers.forEach { $0(result, isCompleted) }
+                resultHandlers.forEach { $0(result, isCompleted) } // TODO: [WPB-23110] too fragile, replace!
 
                 if isCompleted {
                     resultHandlers.removeAll()
@@ -83,7 +91,8 @@ public class SearchTask {
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
-        apiVersion: WireTransport.APIVersion?
+        apiVersion: WireTransport.APIVersion?,
+        searchAPI: some SearchAPI
     ) {
         self.init(
             task: .search(searchRequest: request),
@@ -91,17 +100,19 @@ public class SearchTask {
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            searchAPI: searchAPI
         )
     }
 
     convenience init(
-        qualifiedID: QualifiedID,
+        qualifiedID: WireDataModel.QualifiedID,
         searchContext: NSManagedObjectContext,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
-        apiVersion: WireTransport.APIVersion?
+        apiVersion: WireTransport.APIVersion?,
+        searchAPI: some SearchAPI
     ) {
         self.init(
             task: .lookup(qualifiedID: qualifiedID),
@@ -109,7 +120,8 @@ public class SearchTask {
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            searchAPI: searchAPI
         )
     }
 
@@ -119,7 +131,8 @@ public class SearchTask {
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
-        apiVersion: WireTransport.APIVersion?
+        apiVersion: WireTransport.APIVersion?,
+        searchAPI: some SearchAPI
     ) {
         self.task = task
         self.transportSession = transportSession
@@ -127,6 +140,7 @@ public class SearchTask {
         self.contextProvider = contextProvider
         self.searchUsersCache = searchUsersCache
         self.apiVersion = apiVersion
+        self.searchAPI = searchAPI
     }
 
     public func addResultHandler(_ resultHandler: @escaping ResultHandler) {
@@ -139,7 +153,7 @@ public class SearchTask {
 
         teamMembershipTaskIdentifier.map(transportSession.cancelTask)
         userLookupTaskIdentifier.map(transportSession.cancelTask)
-        directoryTaskIdentifier.map(transportSession.cancelTask)
+        performRemoteSearchTask?.cancel()
         servicesTaskIdentifier.map(transportSession.cancelTask)
         handleTaskIdentifier.map(transportSession.cancelTask)
 
@@ -229,9 +243,9 @@ extension SearchTask {
 
         searchContext.performGroupedBlock { [self] in
 
-            var team: Team?
+            var team: WireDataModel.Team?
             if let teamObjectID = request.team?.objectID {
-                team = (try? searchContext.existingObject(with: teamObjectID)) as? Team
+                team = (try? searchContext.existingObject(with: teamObjectID)) as? WireDataModel.Team
             }
 
             let selfUser = ZMUser.selfUser(in: searchContext)
@@ -306,7 +320,11 @@ extension SearchTask {
         }
     }
 
-    func teamMembers(matchingQuery query: String, team: Team?, searchOptions: SearchOptions) -> [Member] {
+    func teamMembers(
+        matchingQuery query: String,
+        team: WireDataModel.Team?,
+        searchOptions: SearchOptions
+    ) -> [Member] {
         var result = team?.members(matchingQuery: query) ?? []
 
         if searchOptions.contains(.excludeNonActiveTeamMembers) {
@@ -423,7 +441,10 @@ extension SearchTask {
     // GET /users/:id has been removed in v1.
     // We should use the qualified endpoint GET /users/:domain/:id instead.
     // https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/603095166/API+changes+v1+v2
-    static func searchRequestForUser(qualifiedID: QualifiedID, apiVersion: APIVersion) -> ZMTransportRequest {
+    static func searchRequestForUser(
+        qualifiedID: WireDataModel.QualifiedID,
+        apiVersion: WireTransport.APIVersion
+    ) -> ZMTransportRequest {
         (apiVersion <= .v1)
             ? .init(getFromPath: "/users/\(qualifiedID.uuid.transportString())", apiVersion: apiVersion.rawValue)
             : .init(
@@ -443,44 +464,90 @@ extension SearchTask {
             case let .search(searchRequest) = task,
             !searchRequest.searchOptions.contains(.localResultsOnly),
             !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated])
-        else {
-            return
-        }
+        else { return }
 
         tasksRemaining += 1
 
-        searchContext.performGroupedBlock { [self] in
-            let request = Self.searchRequestInDirectory(withRequest: searchRequest, apiVersion: apiVersion)
+        performRemoteSearchTask?.cancel()
+        performRemoteSearchTask = _Concurrency.Task { @MainActor in
+            do {
+                let contacts = try await searchAPI.searchContacts(
+                    query: searchRequest.query.string.lowercased(),
+                    domain: searchRequest.searchDomain ?? "",
+                    type: .regular // TODO: correct?
+                ).documents
 
-            request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
+                try _Concurrency.Task.checkCancellation()
 
-                guard
-                    let contextProvider = self?.contextProvider,
-                    let payload = response.payload?.asDictionary(),
-                    let result = SearchResult(
-                        payload: payload,
-                        query: searchRequest.query,
-                        searchOptions: searchRequest.searchOptions,
-                        contextProvider: contextProvider,
-                        searchUsersCache: self?.searchUsersCache
-                    )
-                else {
-                    self?.completeRemoteSearch()
-                    return
+                let queryLowercased = searchRequest.query.string.lowercased()
+                let filteredContacts = contacts.filter { contact in
+                    return !searchRequest.query.isHandleQuery ||
+                    contact.name.hasPrefix("@") ||
+                    (contact.handle?.lowercased().contains(queryLowercased) ?? false)
                 }
+
+                let searchUsers = filteredContacts.compactMap { filteredContact in
+                    guard let id = filteredContact.id else { return ZMSearchUser?.none }
+                    let accentColor = if let accentID = filteredContact.accentID, let rawValue = Int16(exactly: accentID), let accentColor = AccentColor(
+                        rawValue: rawValue
+                    ) { accentColor } else { AccentColor.default }
+                    let localUser = ZMUser.fetch(
+                        with: id,
+                        domain: filteredContact.qualifiedID?.domain,
+                        in: contextProvider.viewContext
+                    )
+                    if let searchUser = searchUsersCache?.object(forKey: id as NSUUID) {
+                        searchUser.user = localUser
+                        return searchUser
+                    } else {
+                        return ZMSearchUser(
+                            contextProvider: contextProvider,
+                            name: filteredContact.name,
+                            handle: filteredContact.handle,
+                            accentColor: .from(accentColor: accentColor),
+                            remoteIdentifier: filteredContact.id,
+                            domain: filteredContact.qualifiedID?.domain,
+                            teamIdentifier: filteredContact.team,
+                            user: localUser,
+                            searchUsersCache: searchUsersCache
+                        )
+                    }
+                }
+
+                try _Concurrency.Task.checkCancellation()
+
+                let searchOptions = searchRequest.searchOptions
+                let includeActiveTeamMembers = searchOptions.contains(.teamMembers) &&
+                searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
+                let searchResult = SearchResult(
+                    context: contextProvider.viewContext,
+                    contacts: [],
+                    teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
+                    directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
+                    conversations: [],
+                    services: [],
+                    searchUsersCache: searchUsersCache
+                )
+
+                try _Concurrency.Task.checkCancellation()
 
                 if searchRequest.searchOptions.contains(.teamMembers) {
-                    self?.performTeamMembershipLookup(on: result, searchRequest: searchRequest)
+                    performTeamMembershipLookup(on: searchResult, searchRequest: searchRequest)
                 } else {
-                    self?.completeRemoteSearch(searchResult: result)
+                    completeRemoteSearch(searchResult: searchResult)
                 }
-            })
 
-            request.add(ZMTaskCreatedHandler(on: searchContext) { [weak self] taskIdentifier in
-                self?.directoryTaskIdentifier = taskIdentifier
-            })
-
-            transportSession.enqueueOneTime(request)
+            } catch let error as URLError where error.code == .cancelled {
+                WireLogger.search.debug("cancelled remote search", attributes: .safePublic)
+                completeRemoteSearch()
+            } catch is CancellationError {
+                WireLogger.search.debug("cancelled remote search", attributes: .safePublic)
+                completeRemoteSearch()
+            } catch {
+                let errorName = String(describing: type(of: error))
+                WireLogger.search.error("failed to perform remote search: \(errorName)", attributes: .safePublic)
+                completeRemoteSearch()
+            }
         }
     }
 
@@ -544,7 +611,7 @@ extension SearchTask {
     static func searchRequestInDirectory(
         withRequest searchRequest: SearchRequest,
         fetchLimit: Int = 10,
-        apiVersion: APIVersion
+        apiVersion: WireTransport.APIVersion
     ) -> ZMTransportRequest {
         var queryItems = [URLQueryItem]()
         queryItems.append(URLQueryItem(name: "q", value: searchRequest.query.string))
@@ -566,7 +633,7 @@ extension SearchTask {
     static func fetchTeamMembershipRequest(
         teamID: UUID,
         teamMemberIDs: [UUID],
-        apiVersion: APIVersion
+        apiVersion: WireTransport.APIVersion
     ) -> ZMTransportRequest {
 
         let path = "/teams/\(teamID.transportString())/get-members-by-ids-using-post"
@@ -667,7 +734,10 @@ extension SearchTask {
         }
     }
 
-    static func searchRequestInDirectory(withHandle handle: String, apiVersion: APIVersion) -> ZMTransportRequest {
+    static func searchRequestInDirectory(
+        withHandle handle: String,
+        apiVersion: WireTransport.APIVersion
+    ) -> ZMTransportRequest {
         var handle = handle.lowercased()
 
         if handle.hasPrefix("@") {
@@ -739,7 +809,7 @@ extension SearchTask {
     static func servicesSearchRequest(
         teamIdentifier: UUID,
         query: String,
-        apiVersion: APIVersion
+        apiVersion: WireTransport.APIVersion
     ) -> ZMTransportRequest {
         var url = URLComponents()
         url.path = "/teams/\(teamIdentifier.transportString())/services/whitelisted"

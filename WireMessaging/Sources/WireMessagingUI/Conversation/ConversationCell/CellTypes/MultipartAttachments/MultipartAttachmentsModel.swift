@@ -20,11 +20,11 @@ public import WireMessagingDomain
 
 public struct MultipartAttachmentsModel: Hashable, Sendable {
 
-    let attachments: [WireCellsMessageAttachment]
+    let attachments: [WireDriveMessageAttachment]
     let isSentBySelfUser: Bool
 
     public init(
-        attachments: [WireCellsMessageAttachment],
+        attachments: [WireDriveMessageAttachment],
         isSentBySelfUser: Bool,
     ) {
         self.attachments = attachments

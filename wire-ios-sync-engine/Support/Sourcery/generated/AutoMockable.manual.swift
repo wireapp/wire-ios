@@ -510,9 +510,9 @@ public class MockUserSession: UserSession {
 
     public var underlyingMlsFeature: Feature.MLS!
 
-    public var isWireCellsEnabled: Bool = false
+    public var isWireDriveEnabled: Bool = false
     
-    public var wireCellsBackendURL: URL? = nil
+    public var wireDriveBackendURL: URL? = nil
 
     public var isEnterpriseUser: Bool = false
     
@@ -1294,10 +1294,10 @@ public class MockUserSession: UserSession {
     // MARK: - makeSearchUsersUseCase
 
     public var makeSearchUsersUseCase_Invocations: [Void] = []
-    public var makeSearchUsersUseCase_MockMethod: (() -> SearchUsersUseCaseProtocol)?
-    public var makeSearchUsersUseCase_MockValue: SearchUsersUseCaseProtocol?
+    public var makeSearchUsersUseCase_MockMethod: (() -> SearchUsersUseCaseProtocol?)?
+    public var makeSearchUsersUseCase_MockValue: SearchUsersUseCaseProtocol??
 
-    public func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol {
+    public func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol? {
         makeSearchUsersUseCase_Invocations.append(())
 
         if let mock = makeSearchUsersUseCase_MockMethod {

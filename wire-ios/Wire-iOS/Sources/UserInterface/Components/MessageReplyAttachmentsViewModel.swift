@@ -22,8 +22,8 @@ import WireMessagingDomain
 import WireMessagingUI
 
 final class MessageReplyAttachmentsViewModel {
-    private let fetchCachedNodeUseCase: any WireCellsFetchCachedNodeUseCaseProtocol
-    private let fetchNodeUseCase: any WireCellsFetchNodeUseCaseProtocol
+    private let fetchCachedNodeUseCase: any WireDriveFetchCachedNodeUseCaseProtocol
+    private let fetchNodeUseCase: any WireDriveFetchNodeUseCaseProtocol
     private var task: Task<Void, Error>?
     private var fetchVisibleNodeIDsTask: Task<Set<UUID>, Error>?
     private let cache = UIImage.defaultUserImageCache.cache
@@ -36,8 +36,8 @@ final class MessageReplyAttachmentsViewModel {
     @Published var previewImageInfo: PreviewImageInfo?
 
     init(
-        fetchCachedNodeUseCase: any WireCellsFetchCachedNodeUseCaseProtocol,
-        fetchNodeUseCase: any WireCellsFetchNodeUseCaseProtocol
+        fetchCachedNodeUseCase: any WireDriveFetchCachedNodeUseCaseProtocol,
+        fetchNodeUseCase: any WireDriveFetchNodeUseCaseProtocol
     ) {
         self.fetchCachedNodeUseCase = fetchCachedNodeUseCase
         self.fetchNodeUseCase = fetchNodeUseCase
@@ -83,7 +83,7 @@ final class MessageReplyAttachmentsViewModel {
         attachments: [MultipartMessageData.Attachment]
     ) async throws -> [MultipartMessageData.Attachment] {
         let task = Task { [fetchNodeUseCase] in
-            try await withThrowingTaskGroup(of: WireCellsNode?.self, returning: Set<UUID>.self) { group in
+            try await withThrowingTaskGroup(of: WireDriveNode?.self, returning: Set<UUID>.self) { group in
                 for attachment in attachments {
                     group.addTask { try await fetchNodeUseCase.invoke(nodeID: attachment.nodeID) }
                 }
@@ -104,7 +104,7 @@ final class MessageReplyAttachmentsViewModel {
     // MARK: - Private
 
     private func downloadImage(
-        from node: WireCellsNode,
+        from node: WireDriveNode,
         isVideo: Bool
     ) async throws {
         guard let smallPreview = node.previews.min(by: {

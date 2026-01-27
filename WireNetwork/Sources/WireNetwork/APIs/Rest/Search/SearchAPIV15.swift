@@ -29,11 +29,14 @@ final class SearchAPIV15: SearchAPIV14 {
     override func searchContacts(
         query: String,
         domain: String,
+        type: UserType,
         fetchLimit: Int?
     ) async throws -> SearchContactsResult {
 
         var queryItems = [URLQueryItem]()
         queryItems.append(URLQueryItem(name: "q", value: query))
+
+        fatalError("TODO: user type")
 
         if !domain.isEmpty {
             queryItems.append(URLQueryItem(name: "domain", value: domain))
@@ -44,7 +47,7 @@ final class SearchAPIV15: SearchAPIV14 {
         }
 
         var urlComponents = URLComponents()
-        urlComponents.path = "/search/contacts"
+        urlComponents.path = "\(pathPrefix)\(basePath)"
         urlComponents.queryItems = queryItems
 
         guard let path = urlComponents.string?.replacingOccurrences(of: "+", with: "%2B") else {
@@ -104,14 +107,16 @@ private struct SearchResultContactV15: Decodable, ToAPIModelConvertible {
 
 private struct ContactV15: Decodable, ToAPIModelConvertible {
 
+    let id: UUID
     let qualifiedID: QualifiedIDV0
     let name: String
     let handle: String?
     let accentID: Int?
     let team: UUID?
-    let type: String
+    let type: UserTypeV15
 
     enum CodingKeys: String, CodingKey {
+        case id
         case qualifiedID = "qualified_id"
         case name
         case handle
@@ -122,12 +127,43 @@ private struct ContactV15: Decodable, ToAPIModelConvertible {
 
     func toAPIModel() -> SearchContactsResult.Contact {
         .init(
+            id: id,
             qualifiedID: qualifiedID.toAPIModel(),
             name: name,
             handle: handle,
-            accentID: accentID,
             team: team,
-            type: type
+            accentID: accentID,
+            type: type.toAPIModel()
         )
     }
+}
+
+private enum UserTypeV15: String, Codable {
+
+    case regular
+    case app
+    case bot
+
+    init(_ apiModel: UserType) {
+        switch apiModel {
+        case .regular:
+            self = .regular
+        case .app:
+            self = .app
+        case .bot:
+            self = .bot
+        }
+    }
+
+    func toAPIModel() -> UserType {
+        switch self {
+        case .regular:
+            .regular
+        case .app:
+            .app
+        case .bot:
+            .bot
+        }
+    }
+
 }

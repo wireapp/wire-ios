@@ -24,4 +24,133 @@ class SearchAPIV1: SearchAPIV0 {
         .v1
     }
 
+    var basePath: String {
+        "/search/contacts"
+    }
+
+    // MARK: -
+
+    override func searchContacts(
+        query: String,
+        domain: String,
+        type: UserType,
+        fetchLimit: Int?
+    ) async throws -> SearchContactsResult {
+
+        var queryItems = [URLQueryItem]()
+        queryItems.append(URLQueryItem(name: "q", value: query))
+
+        let userType = UserTypeV1(type)
+        queryItems.append(URLQueryItem(name: "type", value: userType.rawValue))
+
+        if !domain.isEmpty {
+            queryItems.append(URLQueryItem(name: "domain", value: domain))
+        }
+
+        if let fetchLimit {
+            queryItems.append(URLQueryItem(name: "size", value: String(fetchLimit)))
+        }
+
+        var urlComponents = URLComponents()
+        urlComponents.path = "\(pathPrefix)\(basePath)"
+        urlComponents.queryItems = queryItems
+
+        guard let path = urlComponents.string?.replacingOccurrences(of: "+", with: "%2B") else {
+            throw SearchAPIError.invalidRequest
+        }
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: SearchResultContactV1.self)
+            .failure(code: .forbidden, error: SearchAPIError.insufficientPermissions)
+            .parse(code: response.statusCode, data: data)
+
+    }
+
+}
+
+private enum UserTypeV1: String, Codable {
+
+    case regular
+    case app
+    case bot
+
+    init(_ apiModel: UserType) {
+        switch apiModel {
+        case .regular:
+            self = .regular
+        case .app:
+            self = .app
+        case .bot:
+            self = .bot
+        }
+    }
+
+    func toAPIModel() -> UserType {
+        switch self {
+        case .regular:
+            .regular
+        case .app:
+            .app
+        case .bot:
+            .bot
+        }
+    }
+
+}
+
+private struct SearchResultContactV1: Decodable, ToAPIModelConvertible {
+
+    let documents: [ContactV1]
+
+    enum CodingKeys: String, CodingKey {
+        case documents
+    }
+
+    func toAPIModel() -> SearchContactsResult {
+        SearchContactsResult(
+            documents: documents.map { $0.toAPIModel() }
+        )
+    }
+
+}
+
+private struct ContactV1: Decodable, ToAPIModelConvertible {
+
+    let id: UUID
+    let qualifiedID: QualifiedIDV0?
+    let name: String
+    let handle: String?
+    let team: UUID?
+    let accentID: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case qualifiedID = "qualified_id"
+        case name
+        case handle
+        case accentID = "accent_id"
+        case team
+    }
+
+    func toAPIModel() -> SearchContactsResult.Contact {
+        .init(
+            id: id,
+            qualifiedID: qualifiedID?.toAPIModel(),
+            name: name,
+            handle: handle,
+            team: team,
+            accentID: accentID,
+            type: .regular
+        )
+    }
+
 }

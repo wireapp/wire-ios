@@ -131,7 +131,7 @@ public final class ClientSessionComponent {
         networkService: restNetworkService
     ).makeAPI()
 
-    public lazy var conversationsAPI = ConversationsAPIBuilder(
+    public private(set) lazy var conversationsAPI = ConversationsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -149,6 +149,10 @@ public final class ClientSessionComponent {
 
     private lazy var pushChannelV2API = PushChannelV2APIBuilder(
         pushChannelService: pushChannelService
+    ).makeAPI(for: apiVersion)
+
+    public private(set) lazy var searchAPI = SearchAPIBuilder(
+        apiService: apiService
     ).makeAPI(for: apiVersion)
 
     private lazy var selfUserAPI = SelfUserAPIBuilder(

@@ -24,7 +24,8 @@ public protocol SearchAPI {
 
     func searchContacts(
         query: String,
-        domain: String
+        domain: String,
+        type: UserType
     ) async throws -> SearchContactsResult
 
     /// - Parameters:
@@ -32,6 +33,7 @@ public protocol SearchAPI {
     func searchContacts(
         query: String,
         domain: String,
+        type: UserType,
         fetchLimit: Int?
     ) async throws -> SearchContactsResult
 
@@ -41,11 +43,13 @@ extension SearchAPI {
 
     public func searchContacts(
         query: String,
-        domain: String
+        domain: String,
+        type: UserType
     ) async throws -> SearchContactsResult {
         try await searchContacts(
             query: query,
             domain: domain,
+            type: type,
             fetchLimit: .none
         )
     }
@@ -55,20 +59,15 @@ extension SearchAPI {
 public struct SearchContactsResult {
 
     public let documents: [Contact]
-    public let found: Int
-    public let returned: Int
-    public let took: Int
-    public let hasMore: Bool
-    public let pagingState: String?
-    public let searchPolicy: String
 
     public struct Contact {
-        public let qualifiedID: QualifiedID
+        public let id: UUID?
+        public let qualifiedID: QualifiedID?
         public let name: String
         public let handle: String?
-        public let accentID: Int?
         public let team: UUID?
-        public let type: String
+        public let accentID: Int?
+        public let type: UserType
     }
 
 }

@@ -224,9 +224,9 @@ public protocol UserSession: AnyObject {
 
     var channelsFeature: Feature.Channels { get }
 
-    var isWireCellsEnabled: Bool { get }
+    var isWireDriveEnabled: Bool { get }
 
-    var wireCellsBackendURL: URL? { get }
+    var wireDriveBackendURL: URL? { get }
 
     var isEnterpriseUser: Bool { get }
 
@@ -294,7 +294,7 @@ public protocol UserSession: AnyObject {
 
     func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCase
 
-    func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol
+    func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol?
 
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 

@@ -34,7 +34,7 @@ final class GroupDetailsTimeoutOptionsCell: GroupDetailsDisclosureOptionsCell {
     }
 
     func configure(with conversation: GroupDetailsConversationType) {
-        if conversation.isCellsEnabled {
+        if conversation.isWireDriveEnabled {
             setDisabledCell()
         } else {
             let timeout = MessageDestructionTimeoutValue(rawValue: conversation.syncedMessageDestructionTimeout)
