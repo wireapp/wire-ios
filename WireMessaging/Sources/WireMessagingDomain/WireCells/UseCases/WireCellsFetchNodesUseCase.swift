@@ -87,11 +87,7 @@ package final class WireCellsFetchNodesUseCase: Sendable {
             configuration: configuration
         )
 
-        let task = Task {
-            var (nodes, nextOffset) = try await repository.getNodes(request)
-            nodes = nodes.filter { !$0.isDraft }
-            return (nodes: nodes, nextOffset: nextOffset)
-        }
+        let task = Task { try await repository.getNodes(request) }
         currentTask = task
 
         return task
