@@ -21,6 +21,7 @@ import XCTest
 
 final class BackupRestoreHistoryTests: WireUITestCase {
 
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8582
     @MainActor
     func test_CreateBackupAndRestoreHistory() async throws {
         let groupName = UserGenerator.generateRandomGroupName()
