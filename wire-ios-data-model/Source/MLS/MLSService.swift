@@ -893,7 +893,6 @@ public final class MLSService: MLSServiceInterface {
                         }
                         let conversationExists = try await self.conversationExists(
                             groupID: mlsGroupID
-                        )
                         let shouldEstablishGroup = epoch == 0 && !conversationExists
 
                         if shouldEstablishGroup {
@@ -984,7 +983,7 @@ public final class MLSService: MLSServiceInterface {
         let outOfSyncConversationInfos = try await outOfSyncConversations(in: context)
 
         logger.info("found \(outOfSyncConversationInfos.count) conversations out of sync")
-
+        // TODO: add epoch local and remote
         for conversationInfo in outOfSyncConversationInfos {
 
             await launchGroupRepairTaskIfNotInProgress(for: conversationInfo.mlsGroupId) {

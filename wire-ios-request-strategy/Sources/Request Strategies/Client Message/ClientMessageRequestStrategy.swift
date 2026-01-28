@@ -114,22 +114,20 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             return
         }
 
+        let logAttributesBuilder = MessageLogAttributesBuilder(context: context)
+        let logAttributes = logAttributesBuilder.syncLogAttributes(object)
+        
         if !isFresh {
             // This message was not added in this runtime. Rather than send it
             // which may no longer make sense after such as delay, we will
             // expire it so the user can retry.
-            WireLogger.messaging.info(
-                "expiring stale client message",
-                attributes: [.nonce: object.nonce?.safeForLoggingDescription ?? "<nil>"],
-                .safePublic
-            )
+
+            WireLogger.messaging.info("expiring stale client message", attributes: logAttributes)
             object.expire(withReason: .timeout)
             context.saveOrRollback()
             completion()
             return
         }
-        let logAttributesBuilder = MessageLogAttributesBuilder(context: context)
-        let logAttributes = logAttributesBuilder.syncLogAttributes(object)
         WireLogger.messaging.debug("inserting message", attributes: logAttributes)
 
         // Enter groups to enable waiting for message sending to complete in tests

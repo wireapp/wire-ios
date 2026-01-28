@@ -398,7 +398,7 @@ public final class MessageSender: MessageSenderInterface {
                 try await mlsService.reEstablishPendingGroup(groupID: groupID)
             }
 
-            try await mlsService.commitPendingProposals(in: groupID)
+            try await mlsService.commitPendingProposals(in: groupID) // TODO: keep it not implicit
             let encryptedData = try await encryptMlsMessage(message, groupID: groupID)
 
             // set expiration so request can be expired later
