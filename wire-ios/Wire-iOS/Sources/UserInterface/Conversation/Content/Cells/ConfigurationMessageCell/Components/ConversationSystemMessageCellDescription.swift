@@ -175,7 +175,10 @@ enum ConversationSystemMessageCellDescription {
             var cells: [AnyConversationMessageCellDescription] = []
 
             let welcomeCell = ConversationWelcomeSystemMessageCellDescription(
-                isWireCellsEnabled: conversation.isWireDriveEnabled
+                variant: (
+                    wireCells: conversation.isWireDriveEnabled,
+                    isChannel: conversation.isChannel
+                )
             )
             cells.append(AnyConversationMessageCellDescription(welcomeCell))
 
