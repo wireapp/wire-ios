@@ -152,10 +152,12 @@ struct FilesInfoView: View {
         case .recycleBin:
             Strings.RecycleBin.NoData.learnMore
         }
-
-        return Link(linkTitle, destination: scope.learnMoreURL)
-            .foregroundColor(SemanticColors.Label.baseSecondaryText.color)
-            .underline()
+        
+        return Link(destination: scope.learnMoreURL) {
+            Text(linkTitle)
+                .foregroundColor(SemanticColors.Label.baseSecondaryText.color)
+                .underline()
+        }
     }
 
     private var reloadButton: some View {
