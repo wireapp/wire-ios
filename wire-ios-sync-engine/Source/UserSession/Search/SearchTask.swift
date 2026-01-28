@@ -30,7 +30,6 @@ public class SearchTask {
 
     private let apiVersion: WireTransport.APIVersion?
     private let transportSession: TransportSessionType
-    private let searchContext: NSManagedObjectContext
     private let contextProvider: ContextProvider
     private let searchUsersCache: SearchUsersCache?
 
@@ -79,7 +78,6 @@ public class SearchTask {
 
     convenience init(
         request: SearchRequest,
-        searchContext: NSManagedObjectContext,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
@@ -87,7 +85,6 @@ public class SearchTask {
     ) {
         self.init(
             task: .search(searchRequest: request),
-            searchContext: searchContext,
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
@@ -97,7 +94,6 @@ public class SearchTask {
 
     convenience init(
         qualifiedID: QualifiedID,
-        searchContext: NSManagedObjectContext,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
@@ -105,7 +101,6 @@ public class SearchTask {
     ) {
         self.init(
             task: .lookup(qualifiedID: qualifiedID),
-            searchContext: searchContext,
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
@@ -115,7 +110,6 @@ public class SearchTask {
 
     public init(
         task: Task,
-        searchContext: NSManagedObjectContext,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
@@ -123,7 +117,6 @@ public class SearchTask {
     ) {
         self.task = task
         self.transportSession = transportSession
-        self.searchContext = searchContext
         self.contextProvider = contextProvider
         self.searchUsersCache = searchUsersCache
         self.apiVersion = apiVersion
@@ -173,8 +166,8 @@ extension SearchTask {
 
         tasksRemaining += 1
 
-        searchContext.performGroupedBlock { [self] in
-            let selfUser = ZMUser.selfUser(in: searchContext)
+        contextProvider.searchContext.performGroupedBlock { [self] in
+            let selfUser = ZMUser.selfUser(in: contextProvider.searchContext)
 
             var options = SearchOptions()
 
@@ -227,14 +220,14 @@ extension SearchTask {
 
         tasksRemaining += 1
 
-        searchContext.performGroupedBlock { [self] in
+        contextProvider.searchContext.performGroupedBlock { [self] in
 
             var team: Team?
             if let teamObjectID = request.team?.objectID {
-                team = (try? searchContext.existingObject(with: teamObjectID)) as? Team
+                team = (try? contextProvider.searchContext.existingObject(with: teamObjectID)) as? Team
             }
 
-            let selfUser = ZMUser.selfUser(in: searchContext)
+            let selfUser = ZMUser.selfUser(in: contextProvider.searchContext)
             let connectedUsers = request.searchOptions
                 .contains(.contacts) ? connectedUsers(
                     matchingQuery: request.normalizedQuery,
@@ -263,7 +256,7 @@ extension SearchTask {
                             searchUsersCache: searchUsersCache
                         )
                     }
-                    .filter { !$0.hasEmptyName }
+                    .filter { $0.name?.isEmpty == false }
 
                 let copiedteamMembers = teamMembers.compactMap {
                     contextProvider.viewContext.object(with: $0.objectID) as? Member
@@ -296,9 +289,9 @@ extension SearchTask {
     }
 
     private func filterNonActiveTeamMembers(members: [Member]) -> [Member] {
-        let activeConversations = ZMUser.selfUser(in: searchContext).activeConversations
+        let activeConversations = ZMUser.selfUser(in: contextProvider.searchContext).activeConversations
         let activeContacts = Set(activeConversations.flatMap(\.localParticipants))
-        let selfUser = ZMUser.selfUser(in: searchContext)
+        let selfUser = ZMUser.selfUser(in: contextProvider.searchContext)
 
         return members.filter {
             guard let user = $0.user else { return false }
@@ -315,8 +308,8 @@ extension SearchTask {
 
         if searchOptions.contains(.excludeNonActivePartners) {
             let query = query.strippingLeadingAtSign()
-            let selfUser = ZMUser.selfUser(in: searchContext)
-            let activeConversations = ZMUser.selfUser(in: searchContext).activeConversations
+            let selfUser = ZMUser.selfUser(in: contextProvider.searchContext)
+            let activeConversations = ZMUser.selfUser(in: contextProvider.searchContext).activeConversations
             let activeContacts = Set(activeConversations.flatMap(\.localParticipants))
 
             result = result.filter { membership in
@@ -342,7 +335,7 @@ extension SearchTask {
             ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(withSearch: query))
         }
 
-        return searchContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] ?? []
+        return contextProvider.searchContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] ?? []
     }
 
     func conversations(matchingQuery query: SearchRequest.Query, selfUser: ZMUser) -> [ZMConversation] {
@@ -354,7 +347,7 @@ extension SearchTask {
         ))
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: ZMNormalizedUserDefinedNameKey, ascending: true)]
 
-        var conversations = searchContext.fetchOrAssert(request: fetchRequest) as? [ZMConversation] ?? []
+        var conversations = contextProvider.searchContext.fetchOrAssert(request: fetchRequest) as? [ZMConversation] ?? []
 
         if query.isHandleQuery {
             // if we are searching for a username only include conversations with matching displayName
@@ -389,7 +382,7 @@ extension SearchTask {
 
         tasksRemaining += 1
 
-        searchContext.performGroupedBlock { [self] in
+        contextProvider.searchContext.performGroupedBlock { [self] in
             let request = type(of: self).searchRequestForUser(qualifiedID: qualifiedID, apiVersion: apiVersion)
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
                 defer {
@@ -411,7 +404,7 @@ extension SearchTask {
                 }
             })
 
-            request.add(ZMTaskCreatedHandler(on: searchContext) { [weak self] taskIdentifier in
+            request.add(ZMTaskCreatedHandler(on: contextProvider.searchContext) { [weak self] taskIdentifier in
                 self?.userLookupTaskIdentifier = taskIdentifier
             })
 
@@ -449,7 +442,7 @@ extension SearchTask {
 
         tasksRemaining += 1
 
-        searchContext.performGroupedBlock { [self] in
+        contextProvider.searchContext.performGroupedBlock { [self] in
             let request = Self.searchRequestInDirectory(withRequest: searchRequest, apiVersion: apiVersion)
 
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
@@ -476,7 +469,7 @@ extension SearchTask {
                 }
             })
 
-            request.add(ZMTaskCreatedHandler(on: searchContext) { [weak self] taskIdentifier in
+            request.add(ZMTaskCreatedHandler(on: contextProvider.searchContext) { [weak self] taskIdentifier in
                 self?.directoryTaskIdentifier = taskIdentifier
             })
 
@@ -524,7 +517,7 @@ extension SearchTask {
 
         })
 
-        request.add(ZMTaskCreatedHandler(on: searchContext) { [weak self] taskIdentifier in
+        request.add(ZMTaskCreatedHandler(on: contextProvider.searchContext) { [weak self] taskIdentifier in
             self?.teamMembershipTaskIdentifier = taskIdentifier
         })
 
@@ -599,7 +592,7 @@ extension SearchTask {
 
         tasksRemaining += 1
 
-        searchContext.performGroupedBlock { [self] in
+        contextProvider.searchContext.performGroupedBlock { [self] in
             let request = type(of: self).searchRequestInDirectory(
                 withHandle: searchRequest.query.string,
                 apiVersion: apiVersion
@@ -659,7 +652,7 @@ extension SearchTask {
                 }
             })
 
-            request.add(ZMTaskCreatedHandler(on: searchContext) { [weak self] taskIdentifier in
+            request.add(ZMTaskCreatedHandler(on: contextProvider.searchContext) { [weak self] taskIdentifier in
                 self?.handleTaskIdentifier = taskIdentifier
             })
 
@@ -685,7 +678,9 @@ extension SearchTask {
 extension SearchTask {
 
     func performRemoteSearchForServices() {
-        let teamIdentifier = searchContext.performAndWait { ZMUser.selfUser(in: searchContext).team?.remoteIdentifier }
+        let teamIdentifier = contextProvider.searchContext.performAndWait {
+            ZMUser.selfUser(in: contextProvider.searchContext).team?.remoteIdentifier
+        }
         guard
             let apiVersion,
             let teamIdentifier,
@@ -696,7 +691,7 @@ extension SearchTask {
 
         tasksRemaining += 1
 
-        searchContext.performGroupedBlock { [self] in
+        contextProvider.searchContext.performGroupedBlock { [self] in
 
             let request = type(of: self).servicesSearchRequest(
                 teamIdentifier: teamIdentifier,
@@ -728,7 +723,7 @@ extension SearchTask {
                 }
             })
 
-            request.add(ZMTaskCreatedHandler(on: searchContext) { [weak self] taskIdentifier in
+            request.add(ZMTaskCreatedHandler(on: contextProvider.searchContext) { [weak self] taskIdentifier in
                 self?.servicesTaskIdentifier = taskIdentifier
             })
 
@@ -751,15 +746,4 @@ extension SearchTask {
         let urlStr = url.string?.replacingOccurrences(of: "+", with: "%2B") ?? ""
         return ZMTransportRequest(getFromPath: urlStr, apiVersion: apiVersion.rawValue)
     }
-}
-
-public extension ZMSearchUser {
-
-    var hasEmptyName: Bool {
-        guard let name else {
-            return true
-        }
-        return name.isEmpty
-    }
-
 }
