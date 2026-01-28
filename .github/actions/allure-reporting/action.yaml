@@ -1,0 +1,37 @@
+name: "Add Allure report"
+
+inputs:
+  xcresult_search_path:
+    required: false
+    default: "artifacts"
+  allure_artifact_name:
+    required: false
+    default: "html-report-${{ github.run_number }}"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node.js
+      if: always()
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Generate Allure Report
+      if: always()
+      shell: bash
+      run: bash ./scripts/run-generate-allure-report.sh "${{ inputs.xcresult_search_path }}"
+        
+    - name: Upload Allure Report Artifact
+      if: ${{ env.ALLURE_REPORT_AVAILABLE == 'true' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.allure_artifact_name }}
+        path: allure-reports/
+
+    - name: Patch Allure link into the Test Results comment
+      if: always()
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: bash ./scripts/run-update-comment.sh "Test Results" "${{ inputs.allure_artifact_name }}"
