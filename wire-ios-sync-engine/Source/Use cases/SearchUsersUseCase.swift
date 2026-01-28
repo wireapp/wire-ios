@@ -72,7 +72,7 @@ public final class SearchUsersUseCase: SearchUsersUseCaseProtocol {
             team: team
         )
 
-        let task = searchDirectory.createTask(with: request)
+        let task = searchDirectory.createSearchTask(with: request)
         activeSearchTask = task
         defer {
             if activeSearchTask === task {

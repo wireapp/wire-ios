@@ -91,7 +91,7 @@ public final class SearchTask {
         self.apiVersion = apiVersion
     }
 
-    public func addResultHandler(_ resultHandler: @escaping ResultHandler) {
+    /*private*/ func addResultHandler(_ resultHandler: @escaping ResultHandler) { // TODO: make private
         resultHandlers.append(resultHandler)
     }
 

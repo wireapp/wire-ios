@@ -103,12 +103,12 @@ final class SearchUserViewController: UIViewController {
         guard let searchDirectory else { return }
 
         Task {
-            let task = searchDirectory.lookup(qualifiedID: qualifiedID)
+            let task = searchDirectory.createLookupTask(with: qualifiedID)
             pendingSearchTask = task
             let searchResult = await task.start()
             pendingSearchTask = nil
             activityIndicator.stop()
-            handleSearchResult(searchResult: searchResult) // TODO: remove isCompleted?
+            handleSearchResult(searchResult: searchResult)
         }
     }
 
