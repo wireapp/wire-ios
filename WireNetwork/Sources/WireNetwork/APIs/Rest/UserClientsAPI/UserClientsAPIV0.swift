@@ -30,6 +30,10 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
         .v0
     }
 
+    func registerClient(newClient: NewClient) async throws -> SelfUserClient {
+        throw UserClientsAPIError.endpointUnavailable
+    }
+
     func getSelfClients() async throws -> [SelfUserClient] {
         let path = "\(pathPrefix)/clients"
 
@@ -92,6 +96,7 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
             .failure(code: .notFound, error: UserClientsAPIError.clientNotFound)
             .parse(code: response.statusCode, data: data)
     }
+
 }
 
 struct ListUserClientV0: Decodable, ToAPIModelConvertible {
