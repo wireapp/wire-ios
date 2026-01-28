@@ -520,7 +520,7 @@ extension SearchTask {
         url.path = "/search/contacts"
         url.queryItems = queryItems
 
-        let path = url.string?.replacingOccurrences(of: "+", with: "%2B") ?? ""
+        let path = url.string ?? ""
         return ZMTransportRequest(getFromPath: path, apiVersion: apiVersion.rawValue)
     }
 
@@ -638,7 +638,7 @@ extension SearchTask {
         var url = URLComponents()
         url.path = "/users"
         url.queryItems = [URLQueryItem(name: "handles", value: handle)]
-        let urlStr = url.string?.replacingOccurrences(of: "+", with: "%2B") ?? ""
+        let urlStr = url.string ?? "" // TODO: manually verify it's correct
         return ZMTransportRequest(getFromPath: urlStr, apiVersion: apiVersion.rawValue)
     }
 }
@@ -711,7 +711,7 @@ extension SearchTask {
         if !trimmedQuery.isEmpty {
             url.queryItems = [URLQueryItem(name: "prefix", value: trimmedQuery)]
         }
-        let urlStr = url.string?.replacingOccurrences(of: "+", with: "%2B") ?? ""
+        let urlStr = url.string ?? ""
         return ZMTransportRequest(getFromPath: urlStr, apiVersion: apiVersion.rawValue)
     }
 }
