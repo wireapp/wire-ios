@@ -77,6 +77,7 @@ final class SecurityLevelView: UIView {
         ].joined(separator: " ")
 
         accessibilityIdentifier = "ClassificationBanner" + classification.accessibilitySuffix
+        accessibilityLabel = securityLevelLabel.text
     }
 
     func configure(
