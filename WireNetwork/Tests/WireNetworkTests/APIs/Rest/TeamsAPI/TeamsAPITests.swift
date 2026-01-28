@@ -28,7 +28,6 @@ final class TeamsAPITests: XCTestCase {
     // MARK: - Setup
 
     override func setUp() {
-        super.setUp()
         apiSnapshotHelper = APIServiceSnapshotHelper { apiService, apiVersion in
             let builder = TeamsAPIBuilder(apiService: apiService)
             return builder.makeAPI(for: apiVersion)
@@ -37,7 +36,6 @@ final class TeamsAPITests: XCTestCase {
 
     override func tearDown() {
         apiSnapshotHelper = nil
-        super.tearDown()
     }
 
     // MARK: - Request generation
@@ -337,7 +335,7 @@ final class TeamsAPITests: XCTestCase {
 
         let teamID = try XCTUnwrap(Team.ID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506"))
 
-        try await apiSnapshotHelper.verifyRequest(for: [.v2], apiService: apiService) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: APIVersion.v2.andNextVersions, apiService: apiService) { sut in
             // When
             let result = try await sut.getTeam(for: teamID)
 
@@ -363,7 +361,7 @@ final class TeamsAPITests: XCTestCase {
         ])
 
         // Then
-        try await apiSnapshotHelper.verifyRequest(for: [.v2], apiService: apiService) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: APIVersion.v2.andNextVersions, apiService: apiService) { sut in
             // When
             let result = try await sut.getTeamMembers(
                 for: .mockID1,
@@ -530,63 +528,66 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
-    func testGetWhitelistedBots_givenV5AndSuccessResponse200_thenSucceeds() async throws {
+    func testGetWhitelistedBots_givenV5AndAbove_AndSuccessResponse200_thenSucceeds() async throws {
 
-        // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetWhitelistedBotsSuccessResponseV5")
-        ])
-        let sut = TeamsAPIBuilder(apiService: apiService)
-            .makeAPI(for: .v5)
+        for apiVersion in APIVersion.v5.andNextVersions {
 
-        // When
-        let pager = try sut.getWhitelistedBots(for: Scaffolding.teamID, with: "")
-        let bots = try await pager.reduce(into: []) { $0 += $1 }
+            // Given
+            let apiService = MockAPIServiceProtocol.withResponses([
+                (.ok, "GetWhitelistedBotsSuccessResponseV5")
+            ])
 
-        // Then
-        let expectedBots = [
-            WhitelistedBotProfile(
-                id: UUID(uuidString: "cc0702a4-e126-48a1-87cd-8325835ac071")!,
-                qualifiedID: .init(
-                    id: UUID(uuidString: "cc0702a4-e126-48a1-87cd-8325835ac071")!,
-                    domain: "example.com"
-                ),
-                name: "Google Calendar",
-                summary: "Calendar",
-                description: "Google Calendar integration for Wire",
-                provider: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
-                handle: "some-handle",
-                teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab"),
-                accentID: 2147483647,
-                assets: [],
-                isDeleted: false
-            ),
-            WhitelistedBotProfile(
-                id: UUID(uuidString: "d554c310-8237-4f85-b3cc-b7ae5ec1e6cd")!,
-                qualifiedID: nil,
-                name: "Secure Alert",
-                summary: "Sends alarms",
-                description: "for Alarms",
-                provider: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
-                handle: "",
-                teamID: nil,
-                accentID: nil,
-                assets: [
-                    UserAsset(
-                        key: "lorem-ipsum",
-                        size: .complete,
-                        type: .image
+            // When
+            try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
+                let pager = try sut.getWhitelistedBots(for: Scaffolding.teamID, with: "")
+                let bots = try await pager.reduce(into: []) { $0 += $1 }
+
+                // Then
+                let expectedBots = [
+                    WhitelistedBotProfile(
+                        id: UUID(uuidString: "cc0702a4-e126-48a1-87cd-8325835ac071")!,
+                        qualifiedID: .init(
+                            id: UUID(uuidString: "cc0702a4-e126-48a1-87cd-8325835ac071")!,
+                            domain: "example.com"
+                        ),
+                        name: "Google Calendar",
+                        summary: "Calendar",
+                        description: "Google Calendar integration for Wire",
+                        provider: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
+                        handle: "some-handle",
+                        teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab"),
+                        accentID: 2_147_483_647,
+                        assets: [],
+                        isDeleted: false
                     ),
-                    UserAsset(
-                        key: "dolor",
-                        size: .preview,
-                        type: .image
+                    WhitelistedBotProfile(
+                        id: UUID(uuidString: "d554c310-8237-4f85-b3cc-b7ae5ec1e6cd")!,
+                        qualifiedID: nil,
+                        name: "Secure Alert",
+                        summary: "Sends alarms",
+                        description: "for Alarms",
+                        provider: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
+                        handle: "",
+                        teamID: nil,
+                        accentID: nil,
+                        assets: [
+                            UserAsset(
+                                key: "lorem-ipsum",
+                                size: .complete,
+                                type: .image
+                            ),
+                            UserAsset(
+                                key: "dolor",
+                                size: .preview,
+                                type: .image
+                            )
+                        ],
+                        isDeleted: false
                     )
-                ],
-                isDeleted: false
-            )
-        ]
-        XCTAssertEqual(bots, expectedBots)
+                ]
+                XCTAssertEqual(bots, expectedBots, "failed for apiVersion \(apiVersion)")
+            }
+        }
 
     }
 

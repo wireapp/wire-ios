@@ -35,7 +35,7 @@ class SearchAPIV0: SearchAPI, VersionedAPI {
         domain: String,
         type: UserType,
         fetchLimit: Int?
-    ) async throws -> SearchContactsResult {
+    ) async throws -> ContactSearchResult {
         throw SearchAPIError.unsupportedEndpointForAPIVersion
     }
 

@@ -35,7 +35,7 @@ class SearchAPIV1: SearchAPIV0 {
         domain: String,
         type: UserType,
         fetchLimit: Int?
-    ) async throws -> SearchContactsResult {
+    ) async throws -> ContactSearchResult {
 
         var queryItems = [URLQueryItem]()
         queryItems.append(URLQueryItem(name: "q", value: query))
@@ -115,8 +115,8 @@ private struct SearchResultContactV1: Decodable, ToAPIModelConvertible {
         case documents
     }
 
-    func toAPIModel() -> SearchContactsResult {
-        SearchContactsResult(
+    func toAPIModel() -> ContactSearchResult {
+        ContactSearchResult(
             documents: documents.map { $0.toAPIModel() }
         )
     }
@@ -141,7 +141,7 @@ private struct ContactV1: Decodable, ToAPIModelConvertible {
         case team
     }
 
-    func toAPIModel() -> SearchContactsResult.Contact {
+    func toAPIModel() -> ContactSearchResult.Contact {
         .init(
             id: id,
             qualifiedID: qualifiedID?.toAPIModel(),

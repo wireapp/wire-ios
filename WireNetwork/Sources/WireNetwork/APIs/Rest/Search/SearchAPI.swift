@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-
 // sourcery: AutoMockable
 /// An API access object for endpoints concerning people and apps search.
 public protocol SearchAPI {
@@ -26,7 +24,7 @@ public protocol SearchAPI {
         query: String,
         domain: String,
         type: UserType
-    ) async throws -> SearchContactsResult
+    ) async throws -> ContactSearchResult
 
     /// - Parameters:
     ///   - fetchLimit: min: 1, max: 500, default 15 on API side
@@ -35,39 +33,23 @@ public protocol SearchAPI {
         domain: String,
         type: UserType,
         fetchLimit: Int?
-    ) async throws -> SearchContactsResult
+    ) async throws -> ContactSearchResult
 
 }
 
-extension SearchAPI {
+public extension SearchAPI {
 
-    public func searchContacts(
+    func searchContacts(
         query: String,
         domain: String,
         type: UserType
-    ) async throws -> SearchContactsResult {
+    ) async throws -> ContactSearchResult {
         try await searchContacts(
             query: query,
             domain: domain,
             type: type,
-            fetchLimit: .none
+            fetchLimit: nil
         )
-    }
-
-}
-
-public struct SearchContactsResult {
-
-    public let documents: [Contact]
-
-    public struct Contact {
-        public let id: UUID?
-        public let qualifiedID: QualifiedID?
-        public let name: String
-        public let handle: String?
-        public let team: UUID?
-        public let accentID: Int?
-        public let type: UserType
     }
 
 }

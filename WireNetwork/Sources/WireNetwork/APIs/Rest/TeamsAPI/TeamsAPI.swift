@@ -58,7 +58,6 @@ public protocol TeamsAPI {
     /// - Parameters:
     ///   - teamID: The id of the team.
     ///   - userIDs: A list of user ids to match team members.
-    ///   - maxResults: The maximum number of members to retrieve.
     ///
     /// - Returns: A list of members.
 

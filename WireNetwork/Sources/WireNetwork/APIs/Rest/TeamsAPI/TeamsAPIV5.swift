@@ -134,6 +134,7 @@ class TeamsAPIV5: TeamsAPIV4 {
 
             var requestBuilder = try URLRequestBuilder(path: path)
                 .withMethod(.get)
+                .withQueryItem(name: "prefix", value: prefix)
                 .withQueryItem(name: "size", value: "100")
 
             if let nextSince {

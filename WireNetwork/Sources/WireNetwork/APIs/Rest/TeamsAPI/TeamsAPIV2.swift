@@ -51,7 +51,8 @@ class TeamsAPIV2: TeamsAPIV1 {
         for userIDs: [UUID]
     ) async throws -> [TeamMember] {
 
-        guard userIDs.count <= 2000 else {
+        let maxResults = 2000 // backend-side limit
+        guard userIDs.count <= maxResults else {
             throw TeamsAPIError.invalidRequest
         }
 
@@ -63,7 +64,7 @@ class TeamsAPIV2: TeamsAPIV1 {
 
         let request = try URLRequestBuilder(path: path)
             .withMethod(.post)
-            .withQueryItem(name: "maxResults", value: "2000") // backend-side limit
+            .withQueryItem(name: "maxResults", value: "\(maxResults)")
             .withBody(body, contentType: .json)
             .withAcceptType(.json)
             .build()
