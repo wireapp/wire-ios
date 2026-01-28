@@ -23,15 +23,24 @@ final class GuestAccountWarningView: UIView {
 
     private let stackView = UIStackView(axis: .vertical)
 
-    private let encryptionLabel = DynamicFontLabel(
+    private let titleLabel = DynamicFontLabel(
+        style: .h3,
+        color: SemanticColors.Label.textSecurityEnabled
+    )
+    private let messageLabel = DynamicFontLabel(
         style: .subline1,
         color: SemanticColors.Label.textDefault
     )
-    private let sensitiveInfoLabel = DynamicFontLabel(
-        style: .subline1,
-        color: SemanticColors.Label.textDefault
+    private let linkLabel = UITextView()
+    private let imageView = UIImageView(
+        image: {
+            var image = UIImage(systemName: "shield.righthalf.filled")
+            image = image?.resizeMaintainingAspectRatio(targetSize: .init(width: 18, height: 18))
+            return image?
+                .withRenderingMode(.alwaysOriginal)
+                .withTintColor(SemanticColors.Label.textSecurityEnabled)
+        }()
     )
-    private let imageView = UIImageView(image: UIImage(named: "Info"))
 
     // MARK: - Setup
 
@@ -47,21 +56,48 @@ final class GuestAccountWarningView: UIView {
     }
 
     private func setupViews() {
-        typealias connectionView = L10n.Localizable.Conversation.ConnectionView
-
         stackView.translatesAutoresizingMaskIntoConstraints = false
         imageView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
         addSubview(imageView)
-        imageView.tintColor = SemanticColors.Icon.foregroundPlainDownArrow
+
         stackView.alignment = .fill
-        stackView.spacing = 30
-        encryptionLabel.numberOfLines = 0
-        encryptionLabel.text = connectionView.encryptionInfo
-        stackView.addArrangedSubview(encryptionLabel)
-        sensitiveInfoLabel.numberOfLines = 0
-        sensitiveInfoLabel.text = connectionView.sensitiveInformationWarning
-        stackView.addArrangedSubview(sensitiveInfoLabel)
+        stackView.spacing = 16
+
+        let title = L10n.Localizable.Conversation.ConnectionView.Welcome.Title.wire
+
+        titleLabel.numberOfLines = 0
+        titleLabel.text = title
+
+        stackView.addArrangedSubview(titleLabel)
+
+        messageLabel.numberOfLines = 0
+        messageLabel.text = L10n.Localizable.Conversation.ConnectionView.Welcome.Message.wireOneOnOne
+
+        stackView.addArrangedSubview(messageLabel)
+
+        let linkText = L10n.Localizable.Conversation.ConnectionView.Welcome.learnMore
+        let linkUrl = URL(string: "https://support.wire.com/hc/articles/10898523878173")!
+
+        let linkAttributes: [NSAttributedString.Key: AnyObject] = [
+            .font: UIFont.mediumSemiboldFont,
+            .foregroundColor: SemanticColors.Label.textDefault,
+            .link: linkUrl as AnyObject,
+            .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,
+            .underlineColor: SemanticColors.Label.textDefault
+        ]
+
+        linkLabel.attributedText = .init(string: linkText, attributes: linkAttributes)
+        linkLabel.linkTextAttributes = linkAttributes
+        linkLabel.textContainerInset = .zero
+        linkLabel.textContainer.lineFragmentPadding = 0
+        linkLabel.adjustsFontForContentSizeCategory = true
+        linkLabel.contentInset = .zero
+        linkLabel.isEditable = false
+        linkLabel.isScrollEnabled = false
+        linkLabel.backgroundColor = .clear
+
+        stackView.addArrangedSubview(linkLabel)
     }
 
     private func setupConstraints() {
@@ -69,11 +105,12 @@ final class GuestAccountWarningView: UIView {
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 16.0),
-            imageView.widthAnchor.constraint(equalToConstant: 16.0),
-            imageView.heightAnchor.constraint(equalToConstant: 16.0),
+            stackView.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 12.0),
+
+            imageView.widthAnchor.constraint(equalToConstant: 18.0),
+            imageView.heightAnchor.constraint(equalToConstant: 18.0),
             imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            imageView.topAnchor.constraint(equalTo: sensitiveInfoLabel.topAnchor)
+            imageView.bottomAnchor.constraint(equalTo: titleLabel.firstBaselineAnchor, constant: 2)
         ])
     }
 }
