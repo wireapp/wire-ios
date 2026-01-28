@@ -85,11 +85,11 @@ public extension ZMUser {
 
         let isAdmin = isChannelAdmin(conversation)
 
-        let isPublicChannelAccessNoGuest = conversation.isChannel
+        let canAddUsersToChannel = conversation.isChannel
             && conversation.privateChannelPermission == .everyone
-            && !conversation.areGuestsAllowed
+            && !isGuest(in: conversation)
 
-        return hasAddPermission || isAdmin || isPublicChannelAccessNoGuest
+        return hasAddPermission || isAdmin || canAddUsersToChannel
     }
 
     @objc(canRemoveUserFromConversation:)

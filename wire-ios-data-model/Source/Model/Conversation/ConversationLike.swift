@@ -65,8 +65,6 @@ public protocol ConversationLike: AnyObject {
 
     /// Whether Wire Drive is enabled for this conversation.
     var isWireDriveEnabled: Bool { get }
-
-    var areGuestsAllowed: Bool { get }
 }
 
 // Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another
