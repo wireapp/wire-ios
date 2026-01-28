@@ -26,7 +26,7 @@ public final class SearchTask {
         case lookup(qualifiedID: QualifiedID)
     }
 
-    public typealias ResultHandler = (_ result: SearchResult, _ isCompleted: Bool) -> Void
+    public typealias ResultHandler = (_ incrementalResult: SearchResult, _ isCompleted: Bool) -> Void
 
     private let apiVersion: WireTransport.APIVersion?
     private let transportSession: TransportSessionType
@@ -74,38 +74,6 @@ public final class SearchTask {
                 }
             }
         }
-    }
-
-    convenience init(
-        request: SearchRequest,
-        contextProvider: ContextProvider,
-        transportSession: TransportSessionType,
-        searchUsersCache: SearchUsersCache?,
-        apiVersion: WireTransport.APIVersion?
-    ) {
-        self.init(
-            type: .search(searchRequest: request),
-            contextProvider: contextProvider,
-            transportSession: transportSession,
-            searchUsersCache: searchUsersCache,
-            apiVersion: apiVersion
-        )
-    }
-
-    convenience init(
-        qualifiedID: QualifiedID,
-        contextProvider: ContextProvider,
-        transportSession: TransportSessionType,
-        searchUsersCache: SearchUsersCache?,
-        apiVersion: WireTransport.APIVersion?
-    ) {
-        self.init(
-            type: .lookup(qualifiedID: qualifiedID),
-            contextProvider: contextProvider,
-            transportSession: transportSession,
-            searchUsersCache: searchUsersCache,
-            apiVersion: apiVersion
-        )
     }
 
     public init(
@@ -215,7 +183,7 @@ extension SearchTask {
         }
     }
 
-    func performLocalSearch() {
+    /*private*/ func performLocalSearch() { // TODO: make private
         guard case let .search(request) = type else { return }
 
         tasksRemaining += 1
@@ -299,7 +267,7 @@ extension SearchTask {
         }
     }
 
-    func teamMembers(matchingQuery query: String, team: Team?, searchOptions: SearchOptions) -> [Member] {
+    private func teamMembers(matchingQuery query: String, team: Team?, searchOptions: SearchOptions) -> [Member] {
         var result = team?.members(matchingQuery: query) ?? []
 
         if searchOptions.contains(.excludeNonActiveTeamMembers) {
@@ -325,7 +293,7 @@ extension SearchTask {
         return result
     }
 
-    func connectedUsers(matchingQuery query: String, hostedOnDomain: String?) -> [ZMUser] {
+    private func connectedUsers(matchingQuery query: String, hostedOnDomain: String?) -> [ZMUser] {
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = if let hostedOnDomain {
             ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(
                 withSearch: query,
@@ -338,7 +306,7 @@ extension SearchTask {
         return contextProvider.searchContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] ?? []
     }
 
-    func conversations(matchingQuery query: SearchRequest.Query, selfUser: ZMUser) -> [ZMConversation] {
+    private func conversations(matchingQuery query: SearchRequest.Query, selfUser: ZMUser) -> [ZMConversation] {
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: use the interface with team param?
         let fetchRequest = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(
@@ -374,7 +342,7 @@ extension SearchTask {
 
 extension SearchTask {
 
-    func performUserLookup() {
+    /*private*/ func performUserLookup() { // TODO: make private
         guard
             case let .lookup(qualifiedID) = type,
             let apiVersion
@@ -416,7 +384,7 @@ extension SearchTask {
     // GET /users/:id has been removed in v1.
     // We should use the qualified endpoint GET /users/:domain/:id instead.
     // https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/603095166/API+changes+v1+v2
-    static func searchRequestForUser(qualifiedID: QualifiedID, apiVersion: APIVersion) -> ZMTransportRequest {
+    private static func searchRequestForUser(qualifiedID: QualifiedID, apiVersion: APIVersion) -> ZMTransportRequest {
         (apiVersion <= .v1)
             ? .init(getFromPath: "/users/\(qualifiedID.uuid.transportString())", apiVersion: apiVersion.rawValue)
             : .init(
@@ -429,7 +397,7 @@ extension SearchTask {
 
 extension SearchTask {
 
-    func performRemoteSearch() {
+    /*private*/ func performRemoteSearch() { // TODO: make private
         guard
             let apiVersion,
             apiVersion >= .v1,
@@ -477,7 +445,7 @@ extension SearchTask {
         }
     }
 
-    func performTeamMembershipLookup(on searchResult: SearchResult, searchRequest: SearchRequest) {
+    private func performTeamMembershipLookup(on searchResult: SearchResult, searchRequest: SearchRequest) {
         let teamMembersIDs = searchResult.teamMembers.compactMap(\.remoteIdentifier)
 
         guard
@@ -524,7 +492,7 @@ extension SearchTask {
         transportSession.enqueueOneTime(request)
     }
 
-    func completeRemoteSearch(searchResult: SearchResult? = nil) {
+    private func completeRemoteSearch(searchResult: SearchResult? = nil) {
         defer {
             tasksRemaining -= 1
         }
@@ -534,7 +502,7 @@ extension SearchTask {
         }
     }
 
-    static func searchRequestInDirectory(
+    private static func searchRequestInDirectory(
         withRequest searchRequest: SearchRequest,
         fetchLimit: Int = 10,
         apiVersion: APIVersion
@@ -556,7 +524,7 @@ extension SearchTask {
         return ZMTransportRequest(getFromPath: path, apiVersion: apiVersion.rawValue)
     }
 
-    static func fetchTeamMembershipRequest(
+    private static func fetchTeamMembershipRequest(
         teamID: UUID,
         teamMemberIDs: [UUID],
         apiVersion: APIVersion
@@ -581,7 +549,7 @@ extension SearchTask {
 
 extension SearchTask {
 
-    func performRemoteSearchForTeamUser() {
+    /*private*/ func performRemoteSearchForTeamUser() { // TODO: make private
         guard
             let apiVersion,
             apiVersion <= .v1,
@@ -660,7 +628,7 @@ extension SearchTask {
         }
     }
 
-    static func searchRequestInDirectory(withHandle handle: String, apiVersion: APIVersion) -> ZMTransportRequest {
+    private static func searchRequestInDirectory(withHandle handle: String, apiVersion: APIVersion) -> ZMTransportRequest {
         var handle = handle.lowercased()
 
         if handle.hasPrefix("@") {
@@ -677,7 +645,7 @@ extension SearchTask {
 
 extension SearchTask {
 
-    func performRemoteSearchForServices() {
+    /*private*/ func performRemoteSearchForServices() { // TODO: make private
         let teamIdentifier = contextProvider.searchContext.performAndWait {
             ZMUser.selfUser(in: contextProvider.searchContext).team?.remoteIdentifier
         }
@@ -731,7 +699,7 @@ extension SearchTask {
         }
     }
 
-    static func servicesSearchRequest(
+    /*private*/ static func servicesSearchRequest( // TODO: make private
         teamIdentifier: UUID,
         query: String,
         apiVersion: APIVersion
