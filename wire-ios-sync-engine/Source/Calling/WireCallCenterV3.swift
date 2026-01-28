@@ -450,10 +450,10 @@ extension WireCallCenterV3 {
             previousParticipants: callSnapshots[conversationId]?.callParticipants.members.array ?? [],
             newParticipants: participants
         )
-        guard !shouldEndCall else {
-            endAllCalls()
-            return
-        }
+//        guard !shouldEndCall else {
+//            endAllCalls()
+//            return
+//        }
 
         callSnapshots[conversationId]?.callParticipants.callParticipantsChanged(participants: participants)
 
@@ -493,7 +493,7 @@ extension WireCallCenterV3 {
                   domain: conversationId.domain,
                   in: context
               ),
-              conversation.conversationType == .oneOnOne,
+              getAVSConversationType(for: conversation) == .oneToOne,
               callSnapshots[conversationId]?.callState == .established
         else {
             return false
