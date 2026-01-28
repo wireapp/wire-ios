@@ -152,7 +152,7 @@ struct FilesInfoView: View {
         case .recycleBin:
             Strings.RecycleBin.NoData.learnMore
         }
-        
+
         return Link(destination: scope.learnMoreURL) {
             Text(linkTitle)
                 .foregroundColor(SemanticColors.Label.baseSecondaryText.color)
