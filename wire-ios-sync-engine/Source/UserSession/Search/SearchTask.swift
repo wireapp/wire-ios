@@ -19,9 +19,9 @@
 import Foundation
 import WireUtilities
 
-public class SearchTask {
+public final class SearchTask {
 
-    public enum Task {
+    public enum `Type` {
         case search(searchRequest: SearchRequest)
         case lookup(qualifiedID: QualifiedID)
     }
@@ -33,7 +33,7 @@ public class SearchTask {
     private let contextProvider: ContextProvider
     private let searchUsersCache: SearchUsersCache?
 
-    private let task: Task
+    private let type: `Type`
     private var userLookupTaskIdentifier: ZMTaskIdentifier?
     private var directoryTaskIdentifier: ZMTaskIdentifier?
     private var teamMembershipTaskIdentifier: ZMTaskIdentifier?
@@ -84,7 +84,7 @@ public class SearchTask {
         apiVersion: WireTransport.APIVersion?
     ) {
         self.init(
-            task: .search(searchRequest: request),
+            type: .search(searchRequest: request),
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
@@ -100,7 +100,7 @@ public class SearchTask {
         apiVersion: WireTransport.APIVersion?
     ) {
         self.init(
-            task: .lookup(qualifiedID: qualifiedID),
+            type: .lookup(qualifiedID: qualifiedID),
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
@@ -109,13 +109,13 @@ public class SearchTask {
     }
 
     public init(
-        task: Task,
+        type: `Type`,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
         apiVersion: WireTransport.APIVersion?
     ) {
-        self.task = task
+        self.type = type
         self.transportSession = transportSession
         self.contextProvider = contextProvider
         self.searchUsersCache = searchUsersCache
@@ -162,7 +162,7 @@ extension SearchTask {
 
     /// look up a user ID from contacts and teamMembers locally.
     private func performLocalLookup() {
-        guard case let .lookup(qualifiedID) = task else { return }
+        guard case let .lookup(qualifiedID) = type else { return }
 
         tasksRemaining += 1
 
@@ -216,7 +216,7 @@ extension SearchTask {
     }
 
     func performLocalSearch() {
-        guard case let .search(request) = task else { return }
+        guard case let .search(request) = type else { return }
 
         tasksRemaining += 1
 
@@ -376,14 +376,14 @@ extension SearchTask {
 
     func performUserLookup() {
         guard
-            case let .lookup(qualifiedID) = task,
+            case let .lookup(qualifiedID) = type,
             let apiVersion
         else { return }
 
         tasksRemaining += 1
 
         contextProvider.searchContext.performGroupedBlock { [self] in
-            let request = type(of: self).searchRequestForUser(qualifiedID: qualifiedID, apiVersion: apiVersion)
+            let request = Self.searchRequestForUser(qualifiedID: qualifiedID, apiVersion: apiVersion)
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
                 defer {
                     self?.tasksRemaining -= 1
@@ -433,7 +433,7 @@ extension SearchTask {
         guard
             let apiVersion,
             apiVersion >= .v1,
-            case let .search(searchRequest) = task,
+            case let .search(searchRequest) = type,
             !searchRequest.searchOptions.contains(.localResultsOnly),
             !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated])
         else {
@@ -489,7 +489,7 @@ extension SearchTask {
             return
         }
 
-        let request = type(of: self).fetchTeamMembershipRequest(
+        let request = Self.fetchTeamMembershipRequest(
             teamID: teamID,
             teamMemberIDs: teamMembersIDs,
             apiVersion: apiVersion
@@ -585,7 +585,7 @@ extension SearchTask {
         guard
             let apiVersion,
             apiVersion <= .v1,
-            case let .search(searchRequest) = task,
+            case let .search(searchRequest) = type,
             !searchRequest.searchOptions.contains(.localResultsOnly),
             searchRequest.searchOptions.contains(.directory)
         else { return }
@@ -593,7 +593,7 @@ extension SearchTask {
         tasksRemaining += 1
 
         contextProvider.searchContext.performGroupedBlock { [self] in
-            let request = type(of: self).searchRequestInDirectory(
+            let request = Self.searchRequestInDirectory(
                 withHandle: searchRequest.query.string,
                 apiVersion: apiVersion
             )
@@ -684,7 +684,7 @@ extension SearchTask {
         guard
             let apiVersion,
             let teamIdentifier,
-            case let .search(searchRequest) = task,
+            case let .search(searchRequest) = type,
             !searchRequest.searchOptions.contains(.localResultsOnly),
             searchRequest.searchOptions.contains(.services)
         else { return }
@@ -693,7 +693,7 @@ extension SearchTask {
 
         contextProvider.searchContext.performGroupedBlock { [self] in
 
-            let request = type(of: self).servicesSearchRequest(
+            let request = Self.servicesSearchRequest(
                 teamIdentifier: teamIdentifier,
                 query: searchRequest.query.string,
                 apiVersion: apiVersion

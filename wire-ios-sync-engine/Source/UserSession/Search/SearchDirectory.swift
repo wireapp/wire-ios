@@ -68,7 +68,7 @@ public final class SearchDirectory {
     /// Returns a SearchTask which should be retained until the results arrive.
     public func perform(_ request: SearchRequest) -> SearchTask {
         let task = SearchTask(
-            task: .search(searchRequest: request),
+            type: .search(searchRequest: request),
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
@@ -89,7 +89,7 @@ public final class SearchDirectory {
     /// Returns a SearchTask which should be retained until the results arrive.
     public func lookup(qualifiedID: QualifiedID) -> SearchTask {
         let task = SearchTask(
-            task: .lookup(qualifiedID: qualifiedID),
+            type: .lookup(qualifiedID: qualifiedID),
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
