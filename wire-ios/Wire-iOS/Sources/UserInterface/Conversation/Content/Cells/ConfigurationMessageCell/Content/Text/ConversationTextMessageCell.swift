@@ -383,15 +383,8 @@ extension ConversationTextMessageCellDescription {
             isObfuscated: message.isObfuscated,
             accentColor: (selfUser.zmAccentColor ?? .default).accentColor
         )
-
-        let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue |
-            NSTextCheckingResult.CheckingType.phoneNumber.rawValue |
-            NSTextCheckingResult.CheckingType.address.rawValue)
-        let detectedLinks = detector.matches(
-            in: messageText.string,
-            options: [],
-            range: NSRange(location: 0, length: messageText.length)
-        )
+        
+        let detectedLinks = findDetectedLinks(in: messageText)
 
         // Search queries
         if !searchQueries.isEmpty {
@@ -449,6 +442,24 @@ extension ConversationTextMessageCellDescription {
         }
 
         return cells
+    }
+    
+
+    static func findDetectedLinks(in messageText: NSAttributedString) -> [NSTextCheckingResult] {
+        let checkingTypes: NSTextCheckingResult.CheckingType = [.link, .phoneNumber, .address]
+        guard let detector = try? NSDataDetector(types: checkingTypes.rawValue) else {
+            return []
+        }
+        
+        let textToScan = messageText.string
+        let scanRange = NSRange(location: 0, length: textToScan.utf16.count)
+        
+        let detectedLinks = detector.matches(
+            in: textToScan,
+            options: [],
+            range: scanRange
+        )
+        return detectedLinks
     }
 
 }
