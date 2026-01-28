@@ -69,6 +69,7 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
             .success(code: .ok, type: ListUsersResponseV0.self)
             .parse(code: response.statusCode, data: data)
     }
+
 }
 
 struct UserResponseV0: Decodable, ToAPIModelConvertible {

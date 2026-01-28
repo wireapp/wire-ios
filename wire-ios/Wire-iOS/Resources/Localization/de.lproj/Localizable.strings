@@ -740,6 +740,7 @@
 "content.file.too_big" = "Sie können Dateien bis zu %@ senden";
 
 "content.message.reply.files.count" = "%@ Dateien";
+"content.message.reply.files.notAvailable" = "Datei nicht verfügbar";
 
 // Reactions
 "content.reactions.title" = "Reaktion auswählen";
@@ -1874,8 +1875,8 @@
 "collections.search.no_items" = "Keine Ergebnisse";
 
 "collections.section.searchFiles.description" = "Dateien suchen";
-"collections.section.searchFiles.alert.title" = "Wire Drive";
-"collections.section.searchFiles.alert.message" = "Finden Sie Dateien in Unterhaltungen mit Geteiltes Drive.";
+"collections.section.searchFiles.alert.title" = "Geteiltes Drive";
+"collections.section.searchFiles.alert.message" = "Finden Sie alle Dateien oder Ordner in dieser Unterhaltung.";
 
 
 
