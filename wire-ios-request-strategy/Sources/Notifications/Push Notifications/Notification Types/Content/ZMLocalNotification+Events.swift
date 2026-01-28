@@ -394,60 +394,14 @@ private class NewSystemMessageNotificationBuilder: EventNotificationBuilder {
 
     override func shouldCreateNotification() -> Bool {
         // we don't want to create notifications when other people join or leave conversation
-        let selfUser = ZMUser.selfUser(in: moc)
-        let concernsSelfUser = event.userIDs.contains(selfUser.remoteIdentifier)
+        let concernsSelfUser = event.userIDs.contains(ZMUser.selfUser(in: moc).remoteIdentifier)
 
         switch contentType {
         case .participantsAdded where concernsSelfUser == false, .participantsRemoved where concernsSelfUser == false:
-            logSkippingNotification(
-                reason: "user isn't in the added members list",
-                conversationID: conversation?.qualifiedID
-            )
             return false
-
-        case .participantsAdded where concernsSelfUser == true:
-            // Check if conversation exists
-            guard let conversation else {
-                logSkippingNotification(
-                    reason: "conversation doesn't exist",
-                    conversationID: nil
-                )
-                return false
-            }
-
-            // Check if self user is already a participant
-            guard !conversation.localParticipants.contains(selfUser) else {
-                logSkippingNotification(
-                    reason: "self user is already a participant",
-                    conversationID: conversation.qualifiedID
-                )
-                return false
-            }
-
-            WireLogger.notifications.info(
-                "Creating memberJoin notification: self user is being added",
-                attributes: [
-                    .conversationId: conversation.qualifiedID?.safeForLoggingDescription
-                ],
-                .safePublic
-            )
-
         default:
             break
         }
         return super.shouldCreateNotification()
-    }
-
-    private func logSkippingNotification(
-        reason: String,
-        conversationID: QualifiedID?
-    ) {
-        WireLogger.notifications.info(
-            "Skipping memberJoin notification: \(reason)",
-            attributes: [
-                .conversationId: conversationID?.safeForLoggingDescription
-            ],
-            .safePublic
-        )
     }
 }
