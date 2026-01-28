@@ -23,6 +23,7 @@ final class AccountManagementTests: WireUITestCase {
 
     var teamMember: UserInfo!
 
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8588
     @MainActor
     func test_Account_Management_Lock_With_Passcode() async throws {
 
@@ -47,6 +48,7 @@ final class AccountManagementTests: WireUITestCase {
 
     }
 
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8796
     @MainActor
     func test_Account_Management_Update_Email_Reset_password() async throws {
 
