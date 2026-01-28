@@ -2519,14 +2519,13 @@ internal enum L10n {
         internal static let cancelButton = L10n.tr("Localizable", "content.uploaded_file_needs_rename.cancelButton", fallback: "Cancel")
         /// Replace
         internal static let confirmButton = L10n.tr("Localizable", "content.uploaded_file_needs_rename.confirmButton", fallback: "Replace")
-        /// %@ characters are not allowed.
-        /// 
-        /// Tap Replace to exchange them with accepted characters or Cancel to rename the file yourself.
-        internal static func message(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "content.uploaded_file_needs_rename.message", String(describing: p1), fallback: "%@ characters are not allowed.\n\nTap Replace to exchange them with accepted characters or Cancel to rename the file yourself.")
+        /// You can't use the characters %@ and %@.
+        /// Replace them automatically or rename the file manually.
+        internal static func message(_ p1: Any, _ p2: Any) -> String {
+          return L10n.tr("Localizable", "content.uploaded_file_needs_rename.message", String(describing: p1), String(describing: p2), fallback: "You can't use the characters %@ and %@.\nReplace them automatically or rename the file manually.")
         }
-        /// File name incompatible
-        internal static let title = L10n.tr("Localizable", "content.uploaded_file_needs_rename.title", fallback: "File name incompatible")
+        /// Replace incompatible characters
+        internal static let title = L10n.tr("Localizable", "content.uploaded_file_needs_rename.title", fallback: "Replace incompatible characters")
       }
     }
     internal enum Conversation {
@@ -2595,10 +2594,10 @@ internal enum L10n {
           /// Learn more
           internal static let learnMore = L10n.tr("Localizable", "conversation.connection_view.welcome.learn_more", fallback: "Learn more")
           internal enum Message {
-            /// Everything you send and receive in this channel is only accessible to you and other group participants.
+            /// Everything you send and receive in this channel is only accessible to you and other participants.
             /// 
             /// Please still be careful with who you share sensitive information.
-            internal static let wire = L10n.tr("Localizable", "conversation.connection_view.welcome.message.wire", fallback: "Everything you send and receive in this channel is only accessible to you and other group participants.\n\nPlease still be careful with who you share sensitive information.")
+            internal static let wire = L10n.tr("Localizable", "conversation.connection_view.welcome.message.wire", fallback: "Everything you send and receive in this channel is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.")
             /// Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.
             /// 
             /// Please still be careful with who you share sensitive information.
