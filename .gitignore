@@ -103,10 +103,11 @@ vendor/*
 SnapshotResults
 artifacts/
 
-# Automation Config
-wire-ios-automation/ios/backendConnections.json
-**/backendConnections.json
-**/.project
+# Allure Report
+allure-report/
+allure-results/
+.allure/ 
 
-# Automation Output
-wire-ios-automation/out/
+# AI
+.claude
+>>>>>>> ab6c8d8438 (chore: critical flow html reporting - WPB-22537 (#4050))
