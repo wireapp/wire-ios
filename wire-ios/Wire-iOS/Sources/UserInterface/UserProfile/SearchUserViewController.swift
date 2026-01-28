@@ -83,16 +83,7 @@ final class SearchUserViewController: UIViewController {
         super.viewDidLoad()
 
         activityIndicator.start()
-
-        if let task = searchDirectory?.lookup(qualifiedID: qualifiedID) {
-            task.addResultHandler { [weak self] in
-                self?.activityIndicator.stop()
-                self?.handleSearchResult(searchResult: $0, isCompleted: $1)
-            }
-            task.start()
-
-            pendingSearchTask = task
-        }
+        startLookup()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -107,6 +98,19 @@ final class SearchUserViewController: UIViewController {
     }
 
     // MARK: - Methods
+
+    private func startLookup() {
+        guard let searchDirectory else { return }
+
+        Task {
+            let task = searchDirectory.lookup(qualifiedID: qualifiedID)
+            pendingSearchTask = task
+            let searchResult = await task.start()
+            pendingSearchTask = nil
+            activityIndicator.stop()
+            handleSearchResult(searchResult: searchResult, isCompleted: true) // TODO: remove isCompleted?
+        }
+    }
 
     private func handleSearchResult(searchResult: SearchResult, isCompleted: Bool) {
         guard !resultHandled, isCompleted else { return }
@@ -137,7 +141,7 @@ final class SearchUserViewController: UIViewController {
 
             navigationController?.setViewControllers([profileViewController], animated: true)
             resultHandled = true
-        } else if isCompleted {
+        } else if isCompleted { // TODO: ??
             let alert = UIAlertController(
                 title: L10n.Localizable.UrlAction.InvalidUser.title,
                 message: L10n.Localizable.UrlAction.InvalidUser.message,

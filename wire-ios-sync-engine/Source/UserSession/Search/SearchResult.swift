@@ -52,6 +52,16 @@ public struct SearchResult {
 
 extension SearchResult {
 
+    init() {
+        self.context = .init(concurrencyType: .privateQueueConcurrencyType)
+        self.contacts = []
+        self.teamMembers = []
+        self.directory = []
+        self.conversations = []
+        self.services = []
+        searchUsersCache = nil
+    }
+
     public init?(
         payload: [AnyHashable: Any],
         query: SearchRequest.Query,

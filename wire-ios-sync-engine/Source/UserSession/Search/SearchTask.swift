@@ -26,6 +26,15 @@ public final class SearchTask {
         case lookup(qualifiedID: QualifiedID)
     }
 
+    enum Status {
+        case pending
+        case running
+        case cancelled
+        case completed
+    }
+
+    private var status = Status.pending
+
     public typealias ResultHandler = (_ incrementalResult: SearchResult, _ isCompleted: Bool) -> Void
 
     private let apiVersion: WireTransport.APIVersion?
@@ -40,15 +49,7 @@ public final class SearchTask {
     private var handleTaskIdentifier: ZMTaskIdentifier?
     private var servicesTaskIdentifier: ZMTaskIdentifier?
     private var resultHandlers: [ResultHandler] = []
-    private var result = SearchResult(
-        context: .init(concurrencyType: .privateQueueConcurrencyType),
-        contacts: [],
-        teamMembers: [],
-        directory: [],
-        conversations: [],
-        services: [],
-        searchUsersCache: nil
-    )
+    private var result = SearchResult()
 
     private let tasksRemainingLock = NSRecursiveLock()
     private var _tasksRemaining = 0
@@ -76,7 +77,7 @@ public final class SearchTask {
         }
     }
 
-    public init(
+    init(
         type: `Type`,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
@@ -96,7 +97,11 @@ public final class SearchTask {
 
     /// Cancel a previously started task
     public func cancel() {
-        resultHandlers.removeAll()
+        guard status == .running else { return assertionFailure() }
+
+        status = .cancelled
+
+        resultHandlers.removeAll() // TODO: delete
 
         teamMembershipTaskIdentifier.map(transportSession.cancelTask)
         userLookupTaskIdentifier.map(transportSession.cancelTask)
@@ -107,22 +112,41 @@ public final class SearchTask {
         tasksRemaining = 0
     }
 
-    /// Start the search task. Results will be sent to the result handlers
-    /// added via the `onResult()` method.
-    public func start() {
-        // search services
-        performRemoteSearchForServices()
+    /// Start the search task. Errors will not be thrown.
+    public func start() async -> SearchResult {
+        guard status == .pending else {
+            assertionFailure()
+            return SearchResult()
+        }
 
-        // search People or groups
-        performLocalLookup()
-        performLocalSearch()
+        status = .running
+        defer { status = .completed }
 
-        // v1
-        performRemoteSearchForTeamUser()
+        // TODO: [WPB-23110] SWIFT TASK CONTINUATION MISUSE: invoke(query:options:messageProtocol:) leaked its continuation without resuming it. This may cause tasks waiting on it to remain suspended forever.
 
-        // v2+
-        performRemoteSearch()
-        performUserLookup()
+        return await withCheckedContinuation { continuation in
+
+            // search services
+            performRemoteSearchForServices()
+
+            // search People or groups
+            performLocalLookup()
+            performLocalSearch()
+
+            // v1
+            performRemoteSearchForTeamUser()
+
+            // v2+
+            performRemoteSearch()
+            performUserLookup()
+
+            addResultHandler { incrementalResult, isCompleted in
+                if isCompleted {
+                    continuation.resume(returning: SearchResult()) // TODO: fix, aggregate results!
+                }
+            }
+
+        }
     }
 }
 

@@ -63,10 +63,7 @@ public final class SearchDirectory {
         self.refreshConversationsMissingMetadataAction = refreshConversationsMissingMetadataAction
     }
 
-    /// Perform a search request.
-    ///
-    /// Returns a SearchTask which should be retained until the results arrive.
-    public func perform(_ request: SearchRequest) -> SearchTask {
+    public func createTask(with request: SearchRequest) -> SearchTask {
         let task = SearchTask(
             type: .search(searchRequest: request),
             contextProvider: contextProvider,
