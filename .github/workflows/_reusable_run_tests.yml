@@ -44,6 +44,10 @@ jobs:
     name: Run tests
     runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
     timeout-minutes: 90
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
     outputs:
       xcresult_files: ${{ steps.find-xcresults.outputs.xcresult_files }}
     env:
@@ -82,7 +86,7 @@ jobs:
       - name: Load .env file
         uses: xom9ikk/dotenv@v2
         with:
-            path: fastlane/
+          path: fastlane/
 
       - name: Restore Carthage Cache
         uses: actions/cache@v3
@@ -166,7 +170,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: XCResults for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
-          path: artifacts/**/*.xcresult  # Adjust this if necessary
+          path: artifacts/**/*.xcresult
 
       # Scripts
       - name: Test Scripts
@@ -196,14 +200,51 @@ jobs:
             app-group.zip
             fastlane/app-group.zip
 
-      - name: Prepare visual representation of test results
-        uses: EnricoMi/publish-unit-test-result-action/macos@v2
+      - name: Publish Test Results Summary
         if: always()
+        uses: EnricoMi/publish-unit-test-result-action/macos@v2
         with:
           files: |
             build/reports/*.junit
             artifacts/**/*.junit
           compare_to_earlier_commit: false
+          comment_title: "Test Results"
+
+      - name: Publish test results + Allure report
+        if: always()
+        uses: ./.github/actions/allure-reporting
+        with:
+          allure_artifact_name: "html-report-${{ github.run_number }}"
+          xcresult_search_path: "artifacts"
+
+      - name: Add Allure Report to Job Summary
+        if: ${{ always() && env.ALLURE_REPORT_AVAILABLE == 'true' }}
+        shell: bash
+        run: |
+          {
+            echo "## 📊 Allure Report Generated Successfully";
+            echo "";
+            echo "**Artifact Name:** \`html-report-${{ github.run_number }}\`";
+            echo "";
+            echo "### 📥 How to View the Report";
+            echo "";
+            echo "1. Download and extract the ZIP file";
+            echo "2. **Double-click index.html** to open in your browser";
+            echo "";
+            echo "---";
+            echo "";
+            echo "_Report retention depends on repository artifact settings_";
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Add Allure Report Not Generated to Job Summary
+        if: ${{ always() && env.ALLURE_REPORT_AVAILABLE != 'true' }}
+        shell: bash
+        run: |
+          {
+            echo "## 📊 Allure Report";
+            echo "";
+            echo "⚠️ No \`.xcresult\` found under \`artifacts\`. Allure report was not generated.";
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Archiving DerivedData Logs
         uses: actions/upload-artifact@v4
