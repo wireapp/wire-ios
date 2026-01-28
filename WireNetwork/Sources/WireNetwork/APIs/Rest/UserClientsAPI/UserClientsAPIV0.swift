@@ -97,6 +97,10 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
+    func deleteClient(id: UserClientID, password: String?) async throws {
+        throw UserClientsAPIError.endpointUnavailable
+    }
+
 }
 
 struct ListUserClientV0: Decodable, ToAPIModelConvertible {
