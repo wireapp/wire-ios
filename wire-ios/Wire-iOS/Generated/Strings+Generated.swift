@@ -2595,10 +2595,10 @@ internal enum L10n {
           /// Learn more
           internal static let learnMore = L10n.tr("Localizable", "conversation.connection_view.welcome.learn_more", fallback: "Learn more")
           internal enum Message {
-            /// Everything you send and receive in this channel is only accessible to you and other group participants.
+            /// Everything you send and receive in this channel is only accessible to you and other participants.
             /// 
             /// Please still be careful with who you share sensitive information.
-            internal static let wire = L10n.tr("Localizable", "conversation.connection_view.welcome.message.wire", fallback: "Everything you send and receive in this channel is only accessible to you and other group participants.\n\nPlease still be careful with who you share sensitive information.")
+            internal static let wire = L10n.tr("Localizable", "conversation.connection_view.welcome.message.wire", fallback: "Everything you send and receive in this channel is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.")
             /// Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.
             /// 
             /// Please still be careful with who you share sensitive information.
