@@ -18,14 +18,13 @@
 
 import Foundation
 
-@objcMembers
-public class SearchDirectory: NSObject {
+public final class SearchDirectory {
 
-    let contextProvider: ContextProvider
-    let transportSession: TransportSessionType
+    private let contextProvider: ContextProvider
+    private let transportSession: TransportSessionType
     private let apiVersion: WireTransport.APIVersion?
 
-    var isTornDown = false
+    private var isTornDown = false
 
     private let refreshUsersMissingMetadataAction: RecurringAction
     private let refreshConversationsMissingMetadataAction: RecurringAction
@@ -104,7 +103,7 @@ public class SearchDirectory: NSObject {
         return task
     }
 
-    func observeSearchUsers(_ result: SearchResult) {
+    private func observeSearchUsers(_ result: SearchResult) {
         let searchUserObserverCenter = contextProvider.viewContext.searchUserObserverCenter
         result.directory.forEach(searchUserObserverCenter.addSearchUser)
         result.services.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
@@ -116,7 +115,7 @@ public class SearchDirectory: NSObject {
     }
 }
 
-extension SearchDirectory: TearDownCapable {
+extension SearchDirectory {
 
     /// Tear down the SearchDirectory.
     ///
