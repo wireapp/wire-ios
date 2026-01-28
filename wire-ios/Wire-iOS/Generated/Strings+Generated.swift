@@ -2595,14 +2595,22 @@ internal enum L10n {
           /// Learn more
           internal static let learnMore = L10n.tr("Localizable", "conversation.connection_view.welcome.learn_more", fallback: "Learn more")
           internal enum Message {
-            /// Everything you send and receive in this channel is only accessible to you and other participants.
-            /// 
-            /// Please still be careful with who you share sensitive information.
-            internal static let wire = L10n.tr("Localizable", "conversation.connection_view.welcome.message.wire", fallback: "Everything you send and receive in this channel is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.")
             /// Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.
             /// 
             /// Please still be careful with who you share sensitive information.
             internal static let wireCells = L10n.tr("Localizable", "conversation.connection_view.welcome.message.wire_cells", fallback: "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.\n\nPlease still be careful with who you share sensitive information.")
+            /// Everything you send and receive in this channel is only accessible to you and other participants.
+            /// 
+            /// Please still be careful with who you share sensitive information.
+            internal static let wireChannel = L10n.tr("Localizable", "conversation.connection_view.welcome.message.wire_channel", fallback: "Everything you send and receive in this channel is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.")
+            /// Everything you send and receive in this conversation is only accessible to you and other participants.
+            /// 
+            /// Please still be careful with who you share sensitive information.
+            internal static let wireGroup = L10n.tr("Localizable", "conversation.connection_view.welcome.message.wire_group", fallback: "Everything you send and receive in this conversation is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.")
+            /// Everything you send and receive in this conversation is only accessible to you and your contact.
+            /// 
+            /// Please still be careful with who you share sensitive information.
+            internal static let wireOneOnOne = L10n.tr("Localizable", "conversation.connection_view.welcome.message.wire_one_on_one", fallback: "Everything you send and receive in this conversation is only accessible to you and your contact.\n\nPlease still be careful with who you share sensitive information.")
           }
           internal enum Title {
             /// Communication in Wire is always end-to-end encrypted.
