@@ -51,6 +51,7 @@ public final class ZMUserSession: NSObject {
     public private(set) var isTornDown = false
 
     private(set) var isNetworkOnline = true
+    private var syncStateCancellable: AnyCancellable?
 
     public private(set) var coreDataStack: CoreDataStack!
 
@@ -632,6 +633,9 @@ public final class ZMUserSession: NSObject {
             )
         )
         self.clientSessionComponent = clientSessionComponent
+        if let syncStateSubject = self.clientSessionComponent?.syncStateSubject {
+            observeSyncStateForAVS(syncStateSubject: syncStateSubject)
+        }
 
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
 
@@ -707,6 +711,8 @@ public final class ZMUserSession: NSObject {
 
     deinit {
         userSessionComponent = nil
+        syncStateCancellable?.cancel()
+        syncStateCancellable = nil
         require(isTornDown, "tearDown must be called before the ZMUserSession is deallocated")
     }
 
@@ -891,10 +897,7 @@ public final class ZMUserSession: NSObject {
         isNetworkReachableCancellable = networkReachability.interfaceSwitchWhileOnlinePublisher
             .sink { [weak self] _, _ in
                 guard let self else { return }
-
-                managedObjectContext.perform {
-                    self.callCenter?.avsWrapper.networkInterfaceChanged()
-                }
+                notifyAVSOfNetworkInterfaceChanged()
             }
 
         isNetworkReachableCancellable1 = networkReachability.isOnlinePublisher.sink { [weak self] value in
@@ -1133,6 +1136,17 @@ extension ZMUserSession: ZMNetworkStateDelegate {
             .offline
         }
     }
+
+    private func observeSyncStateForAVS(syncStateSubject: CurrentValueSubject<SyncState, Never>) {
+        syncStateCancellable = syncStateSubject
+            .map { $0 == .liveSyncing(.ongoing) }
+            .removeDuplicates()
+            .sink { [weak self] isOngoing in
+                guard let self else { return }
+                notifyAVSOfLiveSyncState(isLiveSyncOngoing: isOngoing)
+            }
+    }
+
 }
 
 // MARK: - SyncAgent delegate
@@ -1220,6 +1234,7 @@ extension ZMUserSession: SyncAgentDelegate {
         Task {
             await showSyncBar(true)
         }
+        notifyAVSWillProcessEvents()
     }
 
     @MainActor
@@ -1237,7 +1252,7 @@ extension ZMUserSession: SyncAgentDelegate {
         Task {
             await showSyncBar(false)
         }
-
+        notifyAVSDidProcessEvents()
         WaitingGroupTask(context: syncContext) { [weak self] in
             guard let self else { return }
             await fetchAndStoreFeatureConfig()

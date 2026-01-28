@@ -740,6 +740,7 @@
 "content.file.too_big" = "您可以發送最大%@的檔案。";
 
 "content.message.reply.files.count" = "%@ files";
+"content.message.reply.files.notAvailable" = "File not available";
 
 // Reactions
 "content.reactions.title" = "Select reaction";
@@ -1873,9 +1874,9 @@
 "collections.search.field.placeholder" = "搜尋訊息中的文字";
 "collections.search.no_items" = "沒有找到";
 
-"collections.section.searchFiles.description" = "Search files";
-"collections.section.searchFiles.alert.title" = "Wire Drive";
-"collections.section.searchFiles.alert.message" = "Find files in conversations with Shared Drive.";
+"collections.section.searchFiles.description" = "Search Files";
+"collections.section.searchFiles.alert.title" = "Shared Drive";
+"collections.section.searchFiles.alert.message" = "Find any file or folder in this conversation.";
 
 
 
