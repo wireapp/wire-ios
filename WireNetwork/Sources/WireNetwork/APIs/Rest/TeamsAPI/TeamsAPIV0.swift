@@ -100,6 +100,15 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
+    // MARK: - Get team members for ids
+
+    func getTeamMembers(
+        of teamID: Team.ID,
+        for userIDs: [UUID]
+    ) async throws -> [TeamMember] {
+        throw TeamsAPIError.unsupportedEndpointForAPIVersion
+    }
+
     // MARK: - Get team member legalhold
 
     func getLegalholdInfo(
@@ -157,6 +166,16 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
 
         return payload.id
     }
+
+    // MARK: - Get whitelisted bots
+
+    func getWhitelistedBots(
+        for teamID: Team.ID,
+        with prefix: String
+    ) throws -> PayloadPager<[WhitelistedBotProfile]> {
+        throw TeamsAPIError.unsupportedEndpointForAPIVersion
+    }
+
 }
 
 struct TeamResponseV0: Decodable, ToAPIModelConvertible {

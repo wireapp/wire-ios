@@ -112,7 +112,7 @@ public struct SharingSessionLoader {
             throw Failure.buildIsBlacklisted(buildNumber: buildNumber)
         }
 
-        guard !journal[.isSyncV2Enabled] else {
+        guard journal[.isSyncV2Enabled] else {
             throw Failure.mainAppRequired(message: "sync v2 should be enabled")
         }
 

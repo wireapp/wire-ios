@@ -122,7 +122,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol
         cellPath: String,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
-        guard let stream = OutputStream(url: out, append: true) else {
+        guard OutputStream(url: out, append: true) != nil else {
             throw NodesAPIError.failedToCreateWriteStream
         }
         // Create an empty file at the destination URL
@@ -155,7 +155,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol
     ) async throws -> (nodes: [WireDriveNode], nextOffset: Int?) {
         do {
             let (nodes, nextOffset) = try await restAPI.getNodes(request)
-            return (nodes: nodes.map { $0.toDomainModel() }, nextOffset: nextOffset)
+            return (nodes: nodes.filter { !$0.isDraft }.map { $0.toDomainModel() }, nextOffset: nextOffset)
             // user not yet created, wire users are "lazily" sync to pydio users the first time they are part of a cells
             // conversation
         } catch let error as CellsSDK.ErrorResponse where error.httpStatusCode == 401 {
@@ -212,8 +212,18 @@ package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol
         try await restAPI.getAllTags()
     }
 
-    package func createFolder(at path: String) async throws {
-        try await restAPI.createFolder(at: path)
+    package func createFolder(at path: String) async throws -> WireDriveNode {
+        let createdNode = try await restAPI.createFolder(at: path)
+        return createdNode.toDomainModel()
+    }
+
+    package func createFile(at path: String, templateUuid: String) async throws -> WireDriveNode {
+        let createdNode = try await restAPI.createFile(at: path, templateUuid: templateUuid)
+        return createdNode.toDomainModel()
+    }
+
+    package func getTemplates() async throws -> [WireDriveFileTemplate] {
+        try await restAPI.getTemplates()?.toDomainModel() ?? []
     }
 }
 

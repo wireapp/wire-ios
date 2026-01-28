@@ -21,6 +21,7 @@ import XCTest
 
 final class TeamManageTests: WireUITestCase {
 
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1299/tc/8625
     @MainActor
     func test_Migrate_PersonalUserToTeam() async throws {
         let user = try await userHelper.createPersonalUser()
@@ -41,6 +42,7 @@ final class TeamManageTests: WireUITestCase {
         XCTAssertTrue(userProfilePage.manageTeamButton.exists, "Manage Team button is not visible")
     }
 
+    /// testiny:  https://app.testiny.io/IOS/testcases/tcf/1287/tc/8800
     @MainActor
     func test_PersonalUser_InvitedToTeam() async throws {
         let teamOwner = try await userHelper.createPersonalUser()
@@ -73,6 +75,7 @@ final class TeamManageTests: WireUITestCase {
             .enterPassword(memberUser.password)
     }
 
+    ///  testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8579
     @MainActor
     func test_TeamOwner_GroupCreatedAndSendMessage() async throws {
 
@@ -102,6 +105,7 @@ final class TeamManageTests: WireUITestCase {
         )
     }
 
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1302/tc/8656
     @MainActor
     func test_GroupAdmin_RemoveAndAddParticipantFromGroup() async throws {
 

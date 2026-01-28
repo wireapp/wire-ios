@@ -51,6 +51,16 @@ extension ConversationInputBarViewController {
     func uploadFiles(at urls: [URL]) {
         guard !urls.isEmpty else { return }
 
+        let charactersToReplace = uploadDraftUseCase.charactersToReplace
+
+        if urls.contains(where: { $0.lastPathComponent.contains(where: { charactersToReplace.contains($0) }) }) {
+            showAlertForFileNeedsRename(urls: urls)
+        } else {
+            continueUploadFiles(at: urls)
+        }
+    }
+
+    private func continueUploadFiles(at urls: [URL]) {
         if userSession.isWireDriveEnabled, conversation.isWireDriveEnabled {
             for url in urls {
                 Task.detached { [uploadDraftUseCase] in
@@ -152,6 +162,33 @@ extension ConversationInputBarViewController {
             title: L10n.Localizable.General.ok,
             style: .cancel
         ))
+
+        present(alert, animated: true)
+    }
+
+    private func showAlertForFileNeedsRename(urls: [URL]) {
+        let formattedCharacters = uploadDraftUseCase.charactersToReplace.map { String($0) }.joined(separator: " ")
+
+        let alert = UIAlertController(
+            title: L10n.Localizable.Content.UploadedFileNeedsRename.title,
+            message: L10n.Localizable.Content.UploadedFileNeedsRename.message(formattedCharacters),
+            preferredStyle: .alert
+        )
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.Localizable.Content.UploadedFileNeedsRename.cancelButton,
+                style: .cancel
+            )
+        )
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.Localizable.Content.UploadedFileNeedsRename.confirmButton,
+                style: .default,
+                handler: { [weak self] _ in
+                    self?.continueUploadFiles(at: urls)
+                }
+            )
+        )
 
         present(alert, animated: true)
     }

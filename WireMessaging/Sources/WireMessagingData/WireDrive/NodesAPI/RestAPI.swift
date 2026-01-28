@@ -237,7 +237,7 @@ final class RestAPI: Sendable {
     ///
     /// - Parameters:
     ///  - path: The path of the new folder.
-    func createFolder(at path: String) async throws {
+    func createFolder(at path: String) async throws -> WireDriveNodeNetworkModel {
         let request = RestCreateRequest(inputs: [
             RestIncomingNode(
                 locator: RestNodeLocator(
@@ -248,10 +248,46 @@ final class RestAPI: Sendable {
             )
         ])
 
-        _ = try await NodeServiceAPI.create(
+        let response = try await NodeServiceAPI.create(
             body: request,
             apiConfiguration: makeConfiguration()
         )
+
+        guard let dto = response.nodes?.first?.toDTO() else {
+            throw WireDriveNodesAPIError.failedToDecodeNode
+        }
+
+        return dto
+    }
+
+    func createFile(at path: String, templateUuid: String) async throws -> WireDriveNodeNetworkModel {
+        let request = RestCreateRequest(inputs: [
+            RestIncomingNode(
+                locator: RestNodeLocator(
+                    path: path
+                ),
+                resourceUuid: UUID().transportString(),
+                templateUuid: templateUuid,
+                type: .leaf
+            )
+        ])
+
+        let response = try await NodeServiceAPI.create(
+            body: request,
+            apiConfiguration: makeConfiguration()
+        )
+
+        guard let dto = response.nodes?.first?.toDTO() else {
+            throw WireDriveNodesAPIError.failedToDecodeNode
+        }
+
+        return dto
+    }
+
+    func getTemplates() async throws -> WireDriveFileTemplateNetworkModel? {
+        try await NodeServiceAPI
+            .templates(apiConfiguration: makeConfiguration())
+            .toDTO()
     }
 
     func preCheck(path: String, findAvailablePath: Bool = true) async throws -> WireDrivePreCheckResultDTO {
@@ -473,7 +509,7 @@ private extension WireDriveGetNodesRequest {
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
                     deleted: .not,
-                    isDraft: false
+                    isDraft: false // Backend filtering is not available; filtering is handled on the client side.
                 ),
                 text: lookupFilterTextSearch,
                 type: .unknown // .unknown includes files (leafs) & folders (collections)
@@ -486,7 +522,7 @@ private extension WireDriveGetNodesRequest {
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
                     deleted: .only,
-                    isDraft: false
+                    isDraft: false // Backend filtering is not available; filtering is handled on the client side.
                 ),
                 type: .unknown // .unknown includes files (leafs) & folders (collections)
             )
@@ -501,7 +537,7 @@ private extension WireDriveGetNodesRequest {
                     term: tags.joined(separator: ",")
                 )], status: LookupFilterStatusFilter(
                     deleted: .not,
-                    isDraft: false
+                    isDraft: false // // Backend filtering is not available; filtering is handled on the client side.
                 ),
                 text: LookupFilterTextSearch(searchIn: .baseName, term: searchTerm ?? "*"),
                 type: .leaf
@@ -516,7 +552,7 @@ private extension WireDriveGetNodesRequest {
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
                     deleted: .not,
-                    isDraft: false
+                    isDraft: false // Backend filtering is not available; filtering is handled on the client side.
                 ),
                 type: .collection
             )

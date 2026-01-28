@@ -1,0 +1,32 @@
+{
+    "took": 17,
+    "found": 861,
+    "search_policy": "full_search",
+    "documents": [
+        {
+            "name": "Poll App",
+            "accent_id": 0,
+            "handle": null,
+            "qualified_id": {
+                "domain": "staging.zinfra.io",
+                "id": "3e90c8f5-80d7-4e42-b188-8679a58b7a8f"
+            },
+            "id": "3e90c8f5-80d7-4e42-b188-8679a58b7a8f",
+            "team": "169685e3-c5e5-45a3-9f3c-1485bb9dcba9",
+            "type": "app"
+        },
+        {
+            "name": "Lorem Ipsum",
+            "accent_id": 5,
+            "handle": "loremipsum",
+            "qualified_id": {
+                "domain": "staging.zinfra.io",
+                "id": "aca5dddd-59a0-411e-803d-df64d4c93c44"
+            },
+            "id": "aca5dddd-59a0-411e-803d-df64d4c93c44",
+            "team": null,
+            "type": "regular"
+        }
+    ],
+    "returned": 2
+}
