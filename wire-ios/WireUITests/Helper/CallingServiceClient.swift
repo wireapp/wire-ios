@@ -21,24 +21,36 @@ import WireNetwork
 
 final class CallingServiceClient {
 
-    private var callingServiceURL = ProcessInfo.processInfo.environment["CALLINGSERVICE_URL"]!
+    private let userHelper = UserHelper()
 
-    let CONNECT_TIMEOUT: TimeInterval = 600_000
-    let RESPONSE_TIMEOUT: TimeInterval = 600_000
+    private let callingServiceURL: URL
+    private let callingServiceUsername: String
+    private let callingServicePassword: String
+
+    init() {
+        do {
+            let envVariables = try EnvironmentVariables()
+            self.callingServiceURL = envVariables.callingServiceURL
+            self.callingServiceUsername = envVariables.callingServiceUsername
+            self.callingServicePassword = envVariables.callingServicePassword
+        } catch {
+            preconditionFailure("CallingServiceClient failed to fetch EnvVariables: \(error)")
+        }
+    }
+
+    private enum Constants {
+        static let CONNECT_TIMEOUT: TimeInterval = 600_000
+        static let RESPONSE_TIMEOUT: TimeInterval = 600_000
+        static let CALLING_RESPONSE_TIMEOUT: TimeInterval = 3_600_000
+
+    }
 
     private lazy var session: URLSession = {
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForResource = RESPONSE_TIMEOUT
+        config.timeoutIntervalForRequest = Constants.CONNECT_TIMEOUT
+        config.timeoutIntervalForResource = Constants.RESPONSE_TIMEOUT
         return URLSession(configuration: config)
     }()
-
-    private var callingServiceUsername = ProcessInfo.processInfo.environment["CALLINGSERVICE_USERNAME"]!
-
-    private var callingServicePassword = ProcessInfo.processInfo.environment["CALLINGSERVICE_PASSWORD"]!
-
-    private(set) var callingServiceServerIdCookieByInstanceId: [String: HTTPCookie] = [:]
-
-    private let userHelper = UserHelper()
 
     private func basicAuthHeader() -> String? {
         guard !callingServiceUsername.isEmpty,
@@ -52,14 +64,13 @@ final class CallingServiceClient {
 
     private func sendHttpRequest(
         endpoint: URL,
-        body: some Encodable,
-        method: String,
-        extraHeaders: [String: String] = [:]
+        body: (some Encodable)?,
+        method: String
     ) async throws -> (Data, HTTPURLResponse) {
 
         var request = URLRequest(url: endpoint)
         request.httpMethod = method
-        request.timeoutInterval = CONNECT_TIMEOUT
+        request.timeoutInterval = Constants.CONNECT_TIMEOUT
 
         request.setValue("application/json;charset=UTF-8", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -68,43 +79,43 @@ final class CallingServiceClient {
             request.setValue(auth, forHTTPHeaderField: "Authorization")
         }
 
-        for (k, v) in extraHeaders {
-            request.setValue(v, forHTTPHeaderField: k)
+        if let body {
+            request.httpBody = try JSONEncoder().encode(body)
         }
 
-        request.httpBody = try JSONEncoder().encode(body)
-
         let (data, response) = try await session.data(for: request)
-        guard let http = response as? HTTPURLResponse else {
+        guard let code = response as? HTTPURLResponse else {
             throw RuntimeError("Non-HTTP response")
         }
 
-        return (data, http)
+        return (data, code)
     }
 
-    private func callingServiceBaseURL() -> URL {
-        let raw = callingServiceURL
-        return URL(string: raw)!
-    }
-
+    /// Creat callingService instance
+    /// - Parameters:
+    ///   - name: name of instance
+    ///   - userInfo: userInfo
+    ///   - backend: for which backend
+    /// - Returns: instance id and status
     func createInstance(
-        id: String = "",
         name: String,
         userInfo: UserInfo,
         backend: String,
         beta: Bool,
         instanceTypeName: String,
-        instanceTypeVersion: String? = nil
+        instanceTypeVersion: String
+
     ) async throws -> CallingServiceInstance {
 
         try await userHelper.disableConsentPopup(for: userInfo)
 
-        let endpoint = callingServiceBaseURL().appendingPathComponent("api")
+        let endpoint = callingServiceURL
+            .appendingPathComponent("api")
             .appendingPathComponent("v1")
-            .appendingPathComponent("instance").appendingPathComponent("create")
+            .appendingPathComponent("instance")
+            .appendingPathComponent("create")
 
         let body = CreateInstanceBody(
-            id: id,
             name: name,
             email: userInfo.email,
             password: userInfo.password,
@@ -112,53 +123,32 @@ final class CallingServiceClient {
             beta: beta,
             instanceType: .init(
                 name: instanceTypeName,
-                version: (instanceTypeVersion?.isEmpty == false) ? instanceTypeVersion : nil
-            )
+                version: instanceTypeVersion
+            ),
+            timeout: Constants.RESPONSE_TIMEOUT
         )
 
         let (data, http) = try await sendHttpRequest(endpoint: endpoint, body: body, method: "POST")
 
         guard http.statusCode == 200 else {
             throw RuntimeError(
-                "CallingService createInstance: HTTP \(http.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+                "CallingService failed to createInstance: HTTP \(http.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
 
-        let instance = try JSONDecoder().decode(CallingServiceInstance.self, from: data)
-        if let instanceId = instance.id {
-            let setCookieStrings: [String] = http.allHeaderFields.flatMap { k, v -> [String] in
-                guard String(describing: k).lowercased() == "set-cookie" else { return [] }
-
-                if let s = v as? String { return [s] }
-                if let arr = v as? [String] { return arr }
-                if let arrAny = v as? [Any] {
-                    return arrAny.compactMap { $0 as? String }
-                }
-                return [String(describing: v)]
-            }
-
-            for setCookie in setCookieStrings {
-                let cookies = HTTPCookie.cookies(
-                    withResponseHeaderFields: ["Set-Cookie": setCookie],
-                    for: endpoint
-                )
-                if let serverId = cookies.first(where: { $0.name == "SERVERID" }) {
-                    callingServiceServerIdCookieByInstanceId[instanceId] = serverId
-                    break
-                }
-            }
-        }
-
-        return instance
+        return try JSONDecoder().decode(CallingServiceInstance.self, from: data)
     }
 
+    /// Initiate a call from callingservice
+    /// - Parameters:
+    ///   - instanceId: instanceId
+    ///   - conversationId: conversationId where call need to point
     func startCall(
         instanceId: String,
-        conversationId: String,
-        timeoutMillis: Int = 3_600_000
+        conversationId: String
     ) async throws {
 
-        let endpoint = callingServiceBaseURL()
+        let endpoint = callingServiceURL
             .appendingPathComponent("api")
             .appendingPathComponent("v1")
             .appendingPathComponent("instance")
@@ -166,59 +156,41 @@ final class CallingServiceClient {
             .appendingPathComponent("call")
             .appendingPathComponent("start")
 
-        struct StartCallBody: Encodable {
-            let conversationId: String
-            let timeout: Int
-        }
+        let body = StartCallBody(conversationId: conversationId, timeout: Constants.CALLING_RESPONSE_TIMEOUT)
 
-        var extraHeaders: [String: String] = [:]
-
-        if let cookie = callingServiceServerIdCookieByInstanceId[instanceId] {
-            let cookieHeaders = HTTPCookie.requestHeaderFields(with: [cookie])
-            for (k, v) in cookieHeaders {
-                extraHeaders[k] = v
-            }
-        }
-
-        let body = StartCallBody(conversationId: conversationId, timeout: timeoutMillis)
-
-        let (data, http) = try await sendHttpRequest(
+        let (_, code) = try await sendHttpRequest(
             endpoint: endpoint,
             body: body,
-            method: "POST",
-            extraHeaders: extraHeaders
+            method: "POST"
         )
 
-        guard (200 ..< 300).contains(http.statusCode) else {
-            throw RuntimeError(
-                "RunTimeError-NotImplementedYet"
-            )
+        guard (200 ..< 300).contains(code.statusCode) else {
+            throw RuntimeError("CallingService failed to startCall: HTTP \(code.statusCode)")
         }
     }
 }
 
 struct InstanceType: Encodable {
     let name: String
-    let version: String?
+    let version: String
 }
 
 struct CallingServiceInstance: Decodable {
     let id: String?
-    let status: String?
+    let instanceStatus: String?
 }
 
 struct CreateInstanceBody: Encodable {
-    let id: String
     let name: String
     let email: String
     let password: String
     let backend: String
     let beta: Bool
     let instanceType: InstanceType
+    let timeout: Double
 }
 
-struct CustomBackend: Codable {
-    let webappUrl: String
-    let backendUrl: String
-    let websocketUrl: String
+struct StartCallBody: Encodable {
+    let conversationId: String
+    let timeout: Double
 }

@@ -25,62 +25,32 @@ final class CallingTests: WireUITestCase {
     func test_CallingInGroupConversation() async throws {
 
         let groupName = UserGenerator.generateRandomGroupName()
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
-            email: teamOwner.email,
-            password: teamOwner.password
+        let (teamOwner: teamOwner, teamMembers: teamMembers, conversationId: conversationId) = try await  userHelper
+            .setupTeamWith2MembersAndGroupConversation(groupName: groupName)
+
+        let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
+        _ = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)
+            .setUsername(teamMembers[0].username)
+
+        // create instance
+        let instance = try await callingServiceClient.createInstance(
+            name: CallingTestDefaults.testName,
+            userInfo: teamOwner,
+            backend: CallingTestDefaults.backend,
+            beta: CallingTestDefaults.isBeta,
+            instanceTypeName: CallingTestDefaults.instanceTypeName,
+            instanceTypeVersion: CallingTestDefaults.instanceTypeVersion
         )
+        XCTAssertNotNil(instance.id)
 
-        let countOfMembers = 2
-
-        var qualifiedIds: [QualifiedID] = []
-        var teamMembers: [UserInfo] = []
-
-        for _ in 0 ..< countOfMembers {
-            let (qualifiedId, teamMember) = try await userHelper.registerUsersAsTeamMember(
-                ownerAccessToken: ownerAccessToken.token,
-                teamID: teamOwner.teamID!
-            )
-            qualifiedIds.append(qualifiedId)
-            teamMembers.append(teamMember)
-        }
-
-        try await userHelper.createGroupConversations(
-            qualifiedIds: qualifiedIds,
-            owner: teamOwner,
-            groupName: groupName
+        // start group call
+        let instanceId = instance.id ?? ""
+        try await callingServiceClient.startCall(
+            instanceId: instanceId,
+            conversationId: conversationId.uuidString.lowercased()
         )
-        let (conversationId, _) = try await userHelper.getConversationId(matching: .groupName(groupName))
-        guard let conversationId else {
-            XCTFail("Failed to resolve conversationId for group \(groupName)")
-            return
-        }
-
-        let conversationDetailsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopup(with: self)
-
-//        try await userHelper.disableConsentPopup(for: teamMembers[0])
-
-        do {
-            let instance = try await callingServiceClient.createInstance(
-                name: "Test",
-                userInfo: teamMembers[0],
-                backend: "MASTER",
-                beta: true,
-                instanceTypeName: "chrome",
-                instanceTypeVersion: "103.0.5060.53"
-            )
-            XCTAssertNotNil(instance.id)
-            let instanceId = instance.id ?? ""
-            try await callingServiceClient.startCall(
-                instanceId: instanceId,
-                conversationId: conversationId.uuidString,
-                timeoutMillis: 3_600_000
-            )
-
-        } catch {
-            XCTFail("CallingService flow failed: \(error)")
-            throw error
-        }
+        
+        print()
+        // button with label Accept
     }
 }
