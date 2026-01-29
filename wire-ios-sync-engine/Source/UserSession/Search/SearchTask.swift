@@ -101,15 +101,13 @@ public final class SearchTask {
 
         status = .cancelled
 
-        resultHandlers.removeAll() // TODO: delete
-
         teamMembershipTaskIdentifier.map(transportSession.cancelTask)
         userLookupTaskIdentifier.map(transportSession.cancelTask)
         directoryTaskIdentifier.map(transportSession.cancelTask)
         servicesTaskIdentifier.map(transportSession.cancelTask)
         handleTaskIdentifier.map(transportSession.cancelTask)
 
-        tasksRemaining = 0
+        // tasksRemaining is supposed to reach 0 eventually
     }
 
     /// Start the search task. Errors will not be thrown.
