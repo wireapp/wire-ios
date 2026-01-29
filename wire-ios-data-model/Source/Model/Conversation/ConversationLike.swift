@@ -125,8 +125,4 @@ extension ZMConversation: ConversationLike {
 
         return "\(qualifiedID.uuid.uuidString.lowercased())@\(qualifiedID.domain)"
     }
-
-    public var areGuestsAllowed: Bool {
-        accessRoles.contains(.guest)
-    }
 }
