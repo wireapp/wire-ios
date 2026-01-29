@@ -986,6 +986,13 @@ public final class SessionManager: NSObject, SessionManagerType {
         processPendingURLActionRequiresAuthentication()
     }
 
+    /// Currently active `Tasks` loading sessions by user ID
+    ///
+    /// Used by `withSession(for:newEnvironment:notifyAboutMigration:)` to avoid creating & loading multiple sessions
+    /// for the same account concurrently.
+    @MainActor
+    private var inFlightWithSessionTasks: [UUID: Task<ZMUserSession?, Never>] = [:]
+
     @MainActor
     func withSession(
         for account: Account,
@@ -993,109 +1000,122 @@ public final class SessionManager: NSObject, SessionManagerType {
         notifyAboutMigration: Bool = false
     ) async -> ZMUserSession? {
         WireLogger.sessionManager.debug("Request to load session for \(account)")
-        if let session = backgroundUserSessions[account.userIdentifier] {
-            WireLogger.sessionManager.debug("Session for \(account) is already loaded")
-            return session
-        } else {
-            do {
-                let loader = try UserSessionLoader(
-                    account: account,
-                    accountManager: accountManager,
-                    sharedContainerURL: sharedContainerURL,
-                    legacyEnvironment: environment,
-                    minTLSVersion: minTLSVersion,
-                    dispatchGroup: dispatchGroup,
-                    sharedUserDefaults: sharedUserDefaults,
-                    application: application,
-                    appVersion: currentAppVersion,
-                    buildNumber: currentBuildNumber,
-                    mediaManager: authenticatedSessionFactory.mediaManager,
-                    flowManager: authenticatedSessionFactory.flowManager,
-                    logFilesProvider: logFilesProvider,
-                    isDeveloperModeEnabled: isDeveloperModeEnabled,
-                    faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain
-                )
 
-                let userSession = try await loader.load(newEnvironment: newEnvironment)
-                finishSettingUpUserSession(
-                    account: account,
-                    newSession: userSession,
-                    coreDataStack: userSession.coreDataStack
-                )
-                return userSession
+        if let inFlightTask = inFlightWithSessionTasks[account.userIdentifier] {
+            WireLogger.sessionManager.debug("There is already a task loading session for \(account), awaiting it")
+            return await inFlightTask.value
+        }
 
-            } catch UserSessionLoader.Failure.buildIsBlacklisted {
-                WireLogger.sessionManager.warn(
-                    "build is blacklisted: \(currentBuildNumber)",
-                    attributes: .safePublic
-                )
-                delegate?.sessionManagerDidFailToLoadSession(
-                    for: account,
-                    error: .buildIsBlacklisted
-                )
-                return nil
-            } catch NetworkStackError.backendAPIVersionObsolete {
-                WireLogger.sessionManager.warn(
-                    "backend API version is obsolete",
-                    attributes: .safePublic
-                )
-                delegate?.sessionManagerDidFailToLoadSession(
-                    for: account,
-                    error: .backendIsObsolete
-                )
-                return nil
-            } catch NetworkStackError.clientAPIVersionObsolete {
-                WireLogger.sessionManager.warn(
-                    "client API version is obsolete",
-                    attributes: .safePublic
-                )
-                delegate?.sessionManagerDidFailToLoadSession(
-                    for: account,
-                    error: .clientIsObsolete
-                )
-                return nil
-            } catch let error as URLError {
-                WireLogger.sessionManager.error(
-                    "failed to load user session due to url error code: \(error.errorCode)",
-                    attributes: .safePublic
-                )
-                delegate?.sessionManagerDidFailToLoadSession(
-                    for: account,
-                    error: .networkError(code: error.errorCode)
-                )
-                return nil
-            } catch let UserSessionLoader.Failure.failedToLoadPersistenceStack(error) {
-                WireLogger.sessionManager.error(
-                    "failed to load user session: \(String(describing: error))",
-                    attributes: .safePublic
-                )
-                delegate?.sessionManagerDidFailToLoadSession(
-                    for: account,
-                    error: .databaseError(error)
-                )
-                return nil
-            } catch let error as SafeForLoggingStringConvertible {
-                WireLogger.sessionManager.error(
-                    "failed to load user session: \(error.safeForLoggingDescription)",
-                    attributes: .safePublic
-                )
-                delegate?.sessionManagerDidFailToLoadSession(
-                    for: account,
-                    error: .genericError
-                )
-                return nil
-            } catch {
-                WireLogger.sessionManager.error(
-                    "failed to load user session",
-                    attributes: .safePublic
-                )
-                delegate?.sessionManagerDidFailToLoadSession(
-                    for: account,
-                    error: .genericError
-                )
-                return nil
+        let task = Task<ZMUserSession?, Never> { @MainActor in
+            if let session = backgroundUserSessions[account.userIdentifier] {
+                WireLogger.sessionManager.debug("Session for \(account) is already loaded")
+                return session
+            } else {
+                do {
+                    let loader = try UserSessionLoader(
+                        account: account,
+                        accountManager: accountManager,
+                        sharedContainerURL: sharedContainerURL,
+                        legacyEnvironment: environment,
+                        minTLSVersion: minTLSVersion,
+                        dispatchGroup: dispatchGroup,
+                        sharedUserDefaults: sharedUserDefaults,
+                        application: application,
+                        appVersion: currentAppVersion,
+                        buildNumber: currentBuildNumber,
+                        mediaManager: authenticatedSessionFactory.mediaManager,
+                        flowManager: authenticatedSessionFactory.flowManager,
+                        logFilesProvider: logFilesProvider,
+                        isDeveloperModeEnabled: isDeveloperModeEnabled,
+                        faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain
+                    )
+
+                    let userSession = try await loader.load(newEnvironment: newEnvironment)
+                    finishSettingUpUserSession(
+                        account: account,
+                        newSession: userSession,
+                        coreDataStack: userSession.coreDataStack
+                    )
+                    return userSession
+
+                } catch UserSessionLoader.Failure.buildIsBlacklisted {
+                    WireLogger.sessionManager.warn(
+                        "build is blacklisted: \(currentBuildNumber)",
+                        attributes: .safePublic
+                    )
+                    delegate?.sessionManagerDidFailToLoadSession(
+                        for: account,
+                        error: .buildIsBlacklisted
+                    )
+                    return nil
+                } catch NetworkStackError.backendAPIVersionObsolete {
+                    WireLogger.sessionManager.warn(
+                        "backend API version is obsolete",
+                        attributes: .safePublic
+                    )
+                    delegate?.sessionManagerDidFailToLoadSession(
+                        for: account,
+                        error: .backendIsObsolete
+                    )
+                    return nil
+                } catch NetworkStackError.clientAPIVersionObsolete {
+                    WireLogger.sessionManager.warn(
+                        "client API version is obsolete",
+                        attributes: .safePublic
+                    )
+                    delegate?.sessionManagerDidFailToLoadSession(
+                        for: account,
+                        error: .clientIsObsolete
+                    )
+                    return nil
+                } catch let error as URLError {
+                    WireLogger.sessionManager.error(
+                        "failed to load user session due to url error code: \(error.errorCode)",
+                        attributes: .safePublic
+                    )
+                    delegate?.sessionManagerDidFailToLoadSession(
+                        for: account,
+                        error: .networkError(code: error.errorCode)
+                    )
+                    return nil
+                } catch let UserSessionLoader.Failure.failedToLoadPersistenceStack(error) {
+                    WireLogger.sessionManager.error(
+                        "failed to load user session: \(String(describing: error))",
+                        attributes: .safePublic
+                    )
+                    delegate?.sessionManagerDidFailToLoadSession(
+                        for: account,
+                        error: .databaseError(error)
+                    )
+                    return nil
+                } catch let error as SafeForLoggingStringConvertible {
+                    WireLogger.sessionManager.error(
+                        "failed to load user session: \(error.safeForLoggingDescription)",
+                        attributes: .safePublic
+                    )
+                    delegate?.sessionManagerDidFailToLoadSession(
+                        for: account,
+                        error: .genericError
+                    )
+                    return nil
+                } catch {
+                    WireLogger.sessionManager.error(
+                        "failed to load user session",
+                        attributes: .safePublic
+                    )
+                    delegate?.sessionManagerDidFailToLoadSession(
+                        for: account,
+                        error: .genericError
+                    )
+                    return nil
+                }
             }
         }
+
+        inFlightWithSessionTasks[account.userIdentifier] = task
+        let userSession = await task.value
+        inFlightWithSessionTasks[account.userIdentifier] = nil
+        return userSession
     }
 
     public func retryStart() {
