@@ -25,6 +25,7 @@ package enum WireDriveFileCategory {
     case audio
     case document
 
+<<<<<<< HEAD:WireMessaging/Sources/WireMessagingDomain/WireDrive/Model/WireDriveFileCategory.swift
     package init(_ fileType: UTType?) {
         guard let fileType else {
             self = .document
@@ -39,6 +40,23 @@ package enum WireDriveFileCategory {
             self = .video
         } else {
             self = .document
+=======
+    var body: some View {
+        VStack(spacing: 0) {
+            Divider()
+
+            Button(action: action) {
+                HStack(alignment: .center, spacing: 20) {
+                    Image(systemName: "plus")
+
+                    Text(L10n.Localizable.Conversation.WireCells.Files.List.createFolder)
+                        .font(for: .body2)
+                    Spacer()
+                }
+            }
+            .tint(ColorTheme.Backgrounds.onSurface.color)
+            .padding()
+>>>>>>> e61291a897 (chore: cherry pick missing localizations from `develop` to `4.14` - WPB-22722 (#4224)):WireMessaging/Sources/WireMessagingUI/WireCells/Components/Files/CreateFolder/CreateFolderCTA.swift
         }
     }
 

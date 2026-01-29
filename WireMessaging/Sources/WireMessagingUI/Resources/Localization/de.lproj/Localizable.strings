@@ -143,10 +143,13 @@
 "conversation.wireCells.files.error.reload" = "Erneut laden";
 "conversation.wireCells.files.search.title" = "Dateien suchen";
 "conversation.wireCells.files.list.createFolder" = "Ordner erstellen";
+<<<<<<< HEAD
 "conversation.wireCells.files.list.createFile" = "Datei erstellen";
 "conversation.wireCells.files.list.createFile.presentation" = "Präsentation";
 "conversation.wireCells.files.list.createFile.spreadsheet" = "Tabelle";
 "conversation.wireCells.files.list.createFile.document" = "Dokument";
+=======
+>>>>>>> e61291a897 (chore: cherry pick missing localizations from `develop` to `4.14` - WPB-22722 (#4224))
 "conversation.wireCells.files.newFolder.title" = "Ordnername";
 "conversation.wireCells.files.newFolder.placeholder" = "Ordnernamen eingeben";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Ordner erstellen";
@@ -195,7 +198,7 @@
 "conversation.wireCells.tags.error.nameTooLong" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
 "conversation.wireCells.tags.error.specialCharacters" = "Verwenden Sie ein Tag ohne Sonderzeichen {0}";
 "conversation.wireCells.tags.error.saveFailedTitle" = "Tags können nicht bearbeitet werden";
-"conversation.wireCells.tags.error.saveFailedMessage" = "Due to an error your tags could not be edited.";
+"conversation.wireCells.tags.error.saveFailedMessage" = "Beim Bearbeiten der Tags ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
 "conversation.wireCells.tags.error.retryButton" = "Erneut versuchen";
 "conversation.wireCells.files.moveToFolder.move" = "Hierhin verschieben";
 "conversation.wireCells.files.moveToFolder.noSubfolders" = "Es gibt keine Unterordner in diesem Ordner.";

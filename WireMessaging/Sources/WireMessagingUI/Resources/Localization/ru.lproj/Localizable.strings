@@ -143,10 +143,13 @@
 "conversation.wireCells.files.error.reload" = "Перезагрузить";
 "conversation.wireCells.files.search.title" = "Поиск файлов";
 "conversation.wireCells.files.list.createFolder" = "Создать папку";
+<<<<<<< HEAD
 "conversation.wireCells.files.list.createFile" = "Создать файл";
 "conversation.wireCells.files.list.createFile.presentation" = "Презентация";
 "conversation.wireCells.files.list.createFile.spreadsheet" = "Электронная таблица";
 "conversation.wireCells.files.list.createFile.document" = "Документ";
+=======
+>>>>>>> e61291a897 (chore: cherry pick missing localizations from `develop` to `4.14` - WPB-22722 (#4224))
 "conversation.wireCells.files.newFolder.title" = "Название папки";
 "conversation.wireCells.files.newFolder.placeholder" = "Введите название папки";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Создать папку";
@@ -195,7 +198,7 @@
 "conversation.wireCells.tags.error.nameTooLong" = "Используйте более короткое название тега (не более 30 символов)";
 "conversation.wireCells.tags.error.specialCharacters" = "Использовать тег без специальных символов {0}";
 "conversation.wireCells.tags.error.saveFailedTitle" = "Не удается изменить теги";
-"conversation.wireCells.tags.error.saveFailedMessage" = "Из-за ошибки ваши теги не удалось отредактировать.";
+"conversation.wireCells.tags.error.saveFailedMessage" = "Что-то пошло не так при редактировании тегов. Повторите попытку.";
 "conversation.wireCells.tags.error.retryButton" = "Повторить";
 "conversation.wireCells.files.moveToFolder.move" = "Переместить сюда";
 "conversation.wireCells.files.moveToFolder.noSubfolders" = "В этой папке нет подпапок.";

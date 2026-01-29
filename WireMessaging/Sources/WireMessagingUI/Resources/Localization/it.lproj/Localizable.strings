@@ -143,10 +143,13 @@
 "conversation.wireCells.files.error.reload" = "Reload";
 "conversation.wireCells.files.search.title" = "Search files";
 "conversation.wireCells.files.list.createFolder" = "Create folder";
+<<<<<<< HEAD
 "conversation.wireCells.files.list.createFile" = "Create file";
 "conversation.wireCells.files.list.createFile.presentation" = "Presentation";
 "conversation.wireCells.files.list.createFile.spreadsheet" = "Spreadsheet";
 "conversation.wireCells.files.list.createFile.document" = "Document";
+=======
+>>>>>>> e61291a897 (chore: cherry pick missing localizations from `develop` to `4.14` - WPB-22722 (#4224))
 "conversation.wireCells.files.newFolder.title" = "Nome cartella";
 "conversation.wireCells.files.newFolder.placeholder" = "Enter folder name";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Create folder";
@@ -195,7 +198,7 @@
 "conversation.wireCells.tags.error.nameTooLong" = "Use a shorter tag name (at most 30 characters)";
 "conversation.wireCells.tags.error.specialCharacters" = "Use a tag without special characters {0}";
 "conversation.wireCells.tags.error.saveFailedTitle" = "Unable to edit tags";
-"conversation.wireCells.tags.error.saveFailedMessage" = "Due to an error your tags could not be edited.";
+"conversation.wireCells.tags.error.saveFailedMessage" = "Something went wrong while editing the tags. Please try again.";
 "conversation.wireCells.tags.error.retryButton" = "Try again";
 "conversation.wireCells.files.moveToFolder.move" = "Move here";
 "conversation.wireCells.files.moveToFolder.noSubfolders" = "There are no subfolders in this folder.";
