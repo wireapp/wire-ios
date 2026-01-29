@@ -1216,7 +1216,6 @@ extension WireCallCenterV3 {
         else {
             return false
         }
-
         return config.useSFTForOneToOneCalls
     }
 
