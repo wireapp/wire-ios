@@ -20,6 +20,7 @@ import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 final class SecurityLevelView: UIView {
@@ -76,7 +77,9 @@ final class SecurityLevelView: UIView {
             levelText
         ].joined(separator: " ")
 
-        accessibilityIdentifier = "ClassificationBanner" + classification.accessibilitySuffix
+        accessibilityIdentifier = Locators.SecurityLevelView.classificationBanner.rawValue + classification
+            .accessibilitySuffix
+        accessibilityLabel = securityLevelLabel.text
     }
 
     func configure(
