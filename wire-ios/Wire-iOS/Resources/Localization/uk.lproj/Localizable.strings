@@ -740,6 +740,7 @@
 "content.file.too_big" = "Ви можете надсилати файли до %@";
 
 "content.message.reply.files.count" = "%@ files";
+"content.message.reply.files.notAvailable" = "File not available";
 
 // Reactions
 "content.reactions.title" = "Select reaction";
@@ -1873,9 +1874,9 @@
 "collections.search.field.placeholder" = "Шукайте текстові повідомлення";
 "collections.search.no_items" = "Нічого не знайдено";
 
-"collections.section.searchFiles.description" = "Search files";
-"collections.section.searchFiles.alert.title" = "Wire Drive";
-"collections.section.searchFiles.alert.message" = "Find files in conversations with Shared Drive.";
+"collections.section.searchFiles.description" = "Search Files";
+"collections.section.searchFiles.alert.title" = "Shared Drive";
+"collections.section.searchFiles.alert.message" = "Find any file or folder in this conversation.";
 
 
 

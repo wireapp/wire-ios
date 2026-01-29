@@ -22,7 +22,15 @@ public typealias UserClientID = String
 /// An API access object for endpoints concerning user clients.
 public protocol UserClientsAPI {
 
+    /// Register a new client
+    ///
+    /// - Parameter newClient: payload containing properties for the new client.
+    /// - Returns: The newly registered client.
+
+    func registerClient(newClient: NewClient) async throws -> SelfUserClient
+
     /// Get self user registered clients
+    ///
     /// - returns: A list of self user clients.
 
     func getSelfClients() async throws -> [SelfUserClient]
@@ -35,9 +43,20 @@ public protocol UserClientsAPI {
     func getClients(for userIDs: Set<UserID>) async throws -> [OtherUserClients]
 
     /// Update client with id
+    ///
     /// - Parameters:
     ///   - id: id of User client
     ///   - clientUpdate: payload containing properties to update
 
     func updateClient(id: UserClientID, clientUpdate: ClientUpdate) async throws
+
+    /// Delete a client
+    ///
+    /// - Parameters:
+    ///   - id: id of user client to delete
+    ///   - password: The password of the authenticated user for verification.
+    ///     Not required for deleting temporary clients.
+
+    func deleteClient(id: UserClientID, password: String?) async throws
+
 }

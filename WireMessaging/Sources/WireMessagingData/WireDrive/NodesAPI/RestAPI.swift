@@ -509,7 +509,7 @@ private extension WireDriveGetNodesRequest {
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
                     deleted: .not,
-                    isDraft: false
+                    isDraft: false // Backend filtering is not available; filtering is handled on the client side.
                 ),
                 text: lookupFilterTextSearch,
                 type: .unknown // .unknown includes files (leafs) & folders (collections)
@@ -522,7 +522,7 @@ private extension WireDriveGetNodesRequest {
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
                     deleted: .only,
-                    isDraft: false
+                    isDraft: false // Backend filtering is not available; filtering is handled on the client side.
                 ),
                 type: .unknown // .unknown includes files (leafs) & folders (collections)
             )
@@ -537,7 +537,7 @@ private extension WireDriveGetNodesRequest {
                     term: tags.joined(separator: ",")
                 )], status: LookupFilterStatusFilter(
                     deleted: .not,
-                    isDraft: false
+                    isDraft: false // // Backend filtering is not available; filtering is handled on the client side.
                 ),
                 text: LookupFilterTextSearch(searchIn: .baseName, term: searchTerm ?? "*"),
                 type: .leaf
@@ -552,7 +552,7 @@ private extension WireDriveGetNodesRequest {
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
                     deleted: .not,
-                    isDraft: false
+                    isDraft: false // Backend filtering is not available; filtering is handled on the client side.
                 ),
                 type: .collection
             )
