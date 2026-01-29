@@ -149,6 +149,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         userClient.user = selfUser
         userClient.model = model
         userClient.label = label
+        userClient.type = .permanent
         userClient.deviceClass = model.hasPrefix("iPad") ? .tablet : .phone
 
         return userClient
