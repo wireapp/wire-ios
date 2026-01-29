@@ -268,13 +268,16 @@ final class MLSAPITests: XCTestCase {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .badRequest,
-            label: "mls-protocol-error"
+            label: "mls-protocol-error",
+            message: "something went wrong"
         )
 
         let api = MLSAPIV5(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsErrorAsync(MLSAPIError.mlsProtocolError(message: "")) {
+        await XCTAssertThrowsErrorAsync(
+            MLSAPIError.mlsProtocolError(message: "something went wrong")
+        ) {
             // When
             try await api.uploadKeyPackages(
                 clientID: Scaffolding.clientID,

@@ -111,7 +111,7 @@ class MLSAPIV5: MLSAPIV4 {
             .failure(
                 code: .badRequest,
                 label: "mls-protocol-error",
-                error: MLSAPIError.mlsProtocolError(message: "")
+                wrappingMessage: { MLSAPIError.mlsProtocolError(message: $0) }
             )
             .failure(
                 code: .forbidden,
