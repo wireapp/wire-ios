@@ -27,6 +27,8 @@ struct Member {
 }
 
 class UserHelper {
+
+    let backendURL = BackendContext.backendEnvironment.url
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
 
@@ -202,6 +204,7 @@ class UserHelper {
     /// Register a team owner
     /// - Returns: qualifiedId of the owner and ownerInfo
     func registerUserAsTeamOwner() async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
+
         let teamOwner = UserGenerator.generateUniqueUserInfo()
 
         let (teamID, qualifiedId) = try await authenticationAPI.registerTeamOwner(
@@ -422,6 +425,55 @@ class UserHelper {
             teamID: teamID,
         )
         return [teamMember1.name, teamMember2.name]
+    }
+
+    func setupTeamWith2MembersAndGroupConversation(
+        groupName: String
+    ) async throws -> (teamOwner: UserInfo, teamMembers: [UserInfo], conversationId: UUID) {
+
+        let (_, teamOwner) = try await registerUserAsTeamOwner()
+        guard let teamID = teamOwner.teamID else {
+            throw RuntimeError("setupTeamWith2MembersAndGroupConversation: teamOwner.teamID is nil")
+        }
+
+        let ownerAccessToken = try await fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+
+        var qualifiedIds: [QualifiedID] = []
+        var teamMembers: [UserInfo] = []
+
+        for _ in 0 ..< 2 {
+            let (qualifiedId, teamMember) = try await registerUsersAsTeamMember(
+                ownerAccessToken: ownerAccessToken.token,
+                teamID: teamID
+            )
+            qualifiedIds.append(qualifiedId)
+            teamMembers.append(teamMember)
+        }
+
+        try await createGroupConversations(
+            qualifiedIds: qualifiedIds,
+            owner: teamOwner,
+            groupName: groupName
+        )
+
+        let (conversationId, _) = try await getConversationId(matching: .groupName(groupName))
+        guard let conversationId else {
+            throw RuntimeError(
+                "setupTeamWith2MembersAndGroupConversation: Failed to resolve conversationId for group \(groupName)"
+            )
+        }
+
+        let backOffice = BackOffice(backendURL: backendURL)
+        try await backOffice.unlockConferenceCallingFeature(teamId: teamID.uuidString, basicAuth: basicAuth())
+        try await backOffice.enableConferenceCallingBackdoorViaBackendTeam(
+            teamId: teamID.uuidString,
+            basicAuth: basicAuth()
+        )
+
+        return (teamOwner: teamOwner, teamMembers: teamMembers, conversationId: conversationId)
     }
 
     func sendConnectionRequestToUser(
