@@ -375,7 +375,7 @@ public struct SharingSessionLoader {
             syncContext: coreDataStack.syncContext,
             eventContext: coreDataStack.eventContext,
             mlsService: mlsService,
-            mlsDecryptionService: mlsService,
+            // TODO: check why does the sharing session needs mlsService, shouldn't it be just the encryption part
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider,
             faultyMLSRemovalKeysByDomain: [:] // not relevant

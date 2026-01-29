@@ -89,6 +89,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 logger.info("processing stored update events", attributes: .incrementalSyncV2, .safePublic)
                 syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
                 processedEnvelopeIDs = try await processStoredEvents()
+                // TODO: check with John why we process stored events
             } catch {
                 func tearDown() async {
                     logger.info(

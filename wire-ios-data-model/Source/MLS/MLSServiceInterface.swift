@@ -17,7 +17,7 @@
 //
 
 // sourcery: AutoMockable
-public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionServiceInterface {
+public protocol MLSServiceInterface: MLSEncryptionServiceInterface {
 
     // MARK: - Managing groups
 

@@ -39,7 +39,6 @@ public final class UserSessionComponent {
     private let eventContext: NSManagedObjectContext
 
     private let mlsService: any MLSServiceInterface
-    private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
@@ -59,7 +58,6 @@ public final class UserSessionComponent {
         syncContext: NSManagedObjectContext,
         eventContext: NSManagedObjectContext,
         mlsService: any MLSServiceInterface,
-        mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         faultyMLSRemovalKeysByDomain: [String: [String]]
@@ -76,7 +74,6 @@ public final class UserSessionComponent {
         self.syncContext = syncContext
         self.eventContext = eventContext
         self.mlsService = mlsService
-        self.mlsDecryptionService = mlsDecryptionService
         self.proteusService = proteusService
         self.coreCryptoProvider = coreCryptoProvider
         self.sharedContainerURL = sharedContainerURL
@@ -104,7 +101,6 @@ public final class UserSessionComponent {
             syncContext: syncContext,
             eventContext: eventContext,
             mlsService: mlsService,
-            mlsDecryptionService: mlsDecryptionService,
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider,
             completionHandlers: completionHandlers,

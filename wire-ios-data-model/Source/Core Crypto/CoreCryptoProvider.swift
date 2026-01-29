@@ -68,8 +68,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let allowCreation: Bool
     private var coreCrypto: SafeCoreCrypto?
     private var loadingCoreCrypto = false
-    private var initialisatingMLS = false
-    private var hasInitialisedMLS = false
     private var hasRegisteredMlsTransport = false
     private var hasRegisteredEpochObserver = false
     private var coreCryptoContinuations: [CheckedContinuation<SafeCoreCrypto, Error>] = []

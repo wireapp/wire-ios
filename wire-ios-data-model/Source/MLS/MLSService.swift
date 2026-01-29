@@ -56,8 +56,6 @@ public final class MLSService: MLSServiceInterface {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
 
     private let encryptionService: MLSEncryptionServiceInterface
-    private let decryptionService: MLSDecryptionServiceInterface
-
     private let mlsActionExecutor: MLSActionExecutorProtocol
     private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
     private let userDefaults: PrivateUserDefaults<Keys>
@@ -128,7 +126,6 @@ public final class MLSService: MLSServiceInterface {
         notificationContext: any NotificationContext,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         encryptionService: MLSEncryptionServiceInterface? = nil,
-        decryptionService: MLSDecryptionServiceInterface? = nil,
         mlsActionExecutor: MLSActionExecutorProtocol? = nil,
         staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol,
         userDefaults: UserDefaults,
@@ -157,13 +154,6 @@ public final class MLSService: MLSServiceInterface {
         self.encryptionService = encryptionService ?? MLSEncryptionService(
             coreCryptoProvider: coreCryptoProvider
         )
-
-        self.decryptionService = decryptionService ?? MLSDecryptionService(
-            context: context,
-            mlsActionExecutor: self.mlsActionExecutor,
-            subconversationGroupIDRepository: subconversationGroupIDRepository
-        )
-
         self.localDomain = localDomain
         schedulePeriodicKeyMaterialUpdateCheck()
         startObservingEpochs()
@@ -330,11 +320,11 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func updateKeyMaterialForAllStaleGroups() async {
-        WireLogger.mls.info("beginning to update key material for all stale groups")
+        logger.info("beginning to update key material for all stale groups")
 
         let staleGroups = staleKeyMaterialDetector.groupsWithStaleKeyingMaterial
 
-        WireLogger.mls.info("found \(staleGroups.count) groups with stale key material")
+        logger.info("found \(staleGroups.count) groups with stale key material")
 
         for staleGroup in staleGroups {
             try? await updateKeyMaterial(for: staleGroup)
@@ -350,11 +340,11 @@ public final class MLSService: MLSServiceInterface {
 
     private func internalUpdateKeyMaterial(for groupID: MLSGroupID) async throws {
         do {
-            WireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))")
+            logger.info("updating key material for group (\(groupID.safeForLoggingDescription))")
             try await mlsActionExecutor.updateKeyMaterial(for: groupID)
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
         } catch {
-            WireLogger.mls
+            logger
                 .warn(
                     "failed to update key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
                 )
@@ -662,7 +652,8 @@ public final class MLSService: MLSServiceInterface {
             let estimatedLocalKeyPackageCount = try await coreCrypto.perform {
                 try await $0.clientValidKeypackagesCount(ciphersuite: ciphersuite, credentialType: .basic)
             }
-            let shouldCountRemainingKeyPackages = estimatedLocalKeyPackageCount < halfOfTargetUnclaimedKeyPackageCount
+            // fix issue where half limit (0) testing is not equal
+            let shouldCountRemainingKeyPackages = estimatedLocalKeyPackageCount <= halfOfTargetUnclaimedKeyPackageCount
 
             guard hasMoreThan24HoursPassedSinceLastCheck || shouldCountRemainingKeyPackages else {
                 logger.info("last check was recent and there are enough unclaimed key packages. not uploading.")
@@ -782,16 +773,6 @@ public final class MLSService: MLSServiceInterface {
         return result
     }
 
-    public func processWelcomeMessage(
-        welcomeMessage: String,
-        context: CoreCryptoContextProtocol?
-    ) async throws -> MLSGroupID {
-        try await decryptionService.processWelcomeMessage(
-            welcomeMessage: welcomeMessage,
-            context: context
-        )
-    }
-
     // MARK: - Joining conversations
 
     public func joinNewGroup(with groupID: MLSGroupID) async throws {
@@ -799,8 +780,8 @@ public final class MLSService: MLSServiceInterface {
             logger.warn("MLSService is missing sync context")
             return
         }
-
-        // TODO: [WPB-9029] jacob this looks wrong,
+        // TODO: to remove for sure
+        // TODO: [WPB-9029] jacob this looks wrong, here
         // why would we create the MLS group if doesn't exist? We are about
         // to join it via external commit.
         if try await !conversationExists(groupID: groupID) {
@@ -812,6 +793,7 @@ public final class MLSService: MLSServiceInterface {
             return MLSUser(from: selfUser, localDomain: self.localDomain)
         }
 
+        // put this in one transaction
         try await joinGroup(with: groupID)
         try await addMembersToConversation(with: [mlsUser], for: groupID)
     }
@@ -892,7 +874,7 @@ public final class MLSService: MLSServiceInterface {
                             pendingGroup.epoch
                         }
                         let conversationExists = try await self.conversationExists(
-                            groupID: mlsGroupID
+                            groupID: mlsGroupID)
                         let shouldEstablishGroup = epoch == 0 && !conversationExists
 
                         if shouldEstablishGroup {
@@ -907,7 +889,7 @@ public final class MLSService: MLSServiceInterface {
                             return false
                         }
                     } catch {
-                        WireLogger.mls.error(
+                        self.logger.error(
                             "Failed to join pending group: \(error)",
                             attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
                         )
@@ -1267,12 +1249,12 @@ public final class MLSService: MLSServiceInterface {
         subgroupIDAndType: (MLSGroupID, SubgroupType)? = nil
     ) async throws {
         // retry 3 times
-        //try await retryOnCommitFailure(for: parentID, operation: { [weak self] in
-            try await self?.internalJoinByExternalCommit(
-                parentID: parentID,
-                subgroupIDAndType: subgroupIDAndType
-            )
-        //})
+        // try await retryOnCommitFailure(for: parentID, operation: { [weak self] in
+        try await internalJoinByExternalCommit(
+            parentID: parentID,
+            subgroupIDAndType: subgroupIDAndType
+        )
+        // })
     }
 
     enum MLSServiceError: Error {
@@ -1368,37 +1350,6 @@ public final class MLSService: MLSServiceInterface {
         )
     }
 
-    // MARK: - Decrypting Message
-
-    public func decrypt(
-        message: String,
-        for groupID: MLSGroupID,
-        subconversationType: SubgroupType?,
-        context: CoreCryptoContextProtocol?
-    ) async throws -> [MLSDecryptResult] {
-        typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
-
-        do {
-            return try await decryptionService.decrypt(
-                message: message,
-                for: groupID,
-                subconversationType: subconversationType,
-                context: context
-            )
-        } catch DecryptionError.wrongEpoch {
-            Task.detached { [self] in
-                // ⚠️ Important:
-                // Run in detached Task to avoid deadlock:
-                // `fetchAndRepairGroupIfPossible` internally triggers quick sync via `recoverWithQuickSync()`.
-                // If this is called during an ongoing quick sync, awaiting it directly would deadlock.
-                await fetchAndRepairGroupIfPossible(with: groupID)
-            }
-            throw DecryptionError.wrongEpoch
-        } catch {
-            throw error
-        }
-    }
-
     // MARK: - Pending proposals
 
     public func commitPendingProposals(in groupID: MLSGroupID) async throws {
@@ -1490,7 +1441,7 @@ public final class MLSService: MLSServiceInterface {
             switch error {
             case .mlsClientMismatch, .mlsCommitMissingReferences:
                 // mlsClientMismatch race condition when user A is adding a client while you're adding all his clients
-                
+
                 // just backoff for both cases
                 self = .retryAfterQuickSync // to remove
             case .mlsStaleMessage:
@@ -1913,14 +1864,6 @@ public final class MLSService: MLSServiceInterface {
     public func generateNewEpoch(groupID: MLSGroupID) async throws {
         logger.info("generating new epoch in subconveration (\(groupID.safeForLoggingDescription))")
         try await updateKeyMaterial(for: groupID)
-    }
-
-    // MARK: - CRLs distribution points
-
-    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
-        decryptionService.onNewCRLsDistributionPoints()
-            .merge(with: mlsActionExecutor.onNewCRLsDistributionPoints())
-            .eraseToAnyPublisher()
     }
 
     // MARK: - Proteus to MLS Migration

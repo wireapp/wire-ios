@@ -153,10 +153,6 @@ public final class SharingSession {
 
             let mlsFeature = LegacyFeatureRepository(context: coreDataStack.syncContext).fetchMLS()
             if mlsFeature.isEnabled {
-                if coreDataStack.syncContext.mlsDecryptionService == nil {
-                    coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
-                }
-
                 if coreDataStack.syncContext.mlsService == nil {
                     coreDataStack.syncContext.mlsService = mlsService
                 }
@@ -311,7 +307,6 @@ public final class SharingSession {
             syncContext: coreDataStack.syncContext,
             eventContext: coreDataStack.eventContext,
             mlsService: mlsService,
-            mlsDecryptionService: mlsService,
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider,
             faultyMLSRemovalKeysByDomain: [:] // not relevant
@@ -325,7 +320,6 @@ public final class SharingSession {
             onProcessedTypingUsers: { _ in }
         )
 
-        let selfClient = ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()
         let clientUserSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: selfClientID,
             completionHandlers: completionHandlers

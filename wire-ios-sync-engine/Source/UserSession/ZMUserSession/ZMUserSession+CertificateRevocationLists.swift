@@ -22,6 +22,11 @@ import WireLogging
 extension ZMUserSession {
 
     func setupCertificateRevocationLists() {
+        guard let clientSessionComponent else {
+            WireLogger.e2ei.error("requires 'mlsDecryptionService' to setup 'cRLsChecker'!", attributes: .safePublic)
+            assertionFailure("requires mlsService from clientSessionComponent")
+            return
+        }
         guard let mlsGroupVerification else {
             WireLogger.e2ei.error("requires 'mlsGroupVerification' to setup 'cRLsChecker'!", attributes: .safePublic)
             assertionFailure("requires 'mlsGroupVerification' to setup 'cRLsChecker'!")
@@ -44,9 +49,11 @@ extension ZMUserSession {
         )
         self.cRLsChecker = cRLsChecker
 
+        let mlsDecryptionService = clientSessionComponent.mlsDecryptionService
+
         let cRLsDistributionPointsObserver = CRLsDistributionPointsObserver(cRLsChecker: cRLsChecker)
         cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
-            from: mlsService.onNewCRLsDistributionPoints()
+            from: mlsDecryptionService.onNewCRLsDistributionPoints()
         )
         self.cRLsDistributionPointsObserver = cRLsDistributionPointsObserver
     }

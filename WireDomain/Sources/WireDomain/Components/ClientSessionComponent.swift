@@ -60,7 +60,6 @@ public final class ClientSessionComponent {
     private let eventContext: NSManagedObjectContext
 
     private let mlsService: any MLSServiceInterface
-    private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
     private let completionHandlers: CompletionHandlers
@@ -80,7 +79,6 @@ public final class ClientSessionComponent {
         syncContext: NSManagedObjectContext,
         eventContext: NSManagedObjectContext,
         mlsService: any MLSServiceInterface,
-        mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         completionHandlers: CompletionHandlers,
@@ -97,7 +95,6 @@ public final class ClientSessionComponent {
         self.syncContext = syncContext
         self.eventContext = eventContext
         self.mlsService = mlsService
-        self.mlsDecryptionService = mlsDecryptionService
         self.proteusService = proteusService
         self.isMLSEnabled = isMLSEnabled
         self.coreCryptoProvider = coreCryptoProvider
@@ -793,6 +790,19 @@ public final class ClientSessionComponent {
         isMLSEnabled: isMLSEnabled
     )
 
+    public lazy var mlsDecryptionService: MLSDecryptionServiceInterface = MLSDecryptionService(
+        context: syncContext,
+        mlsActionExecutor: MLSActionExecutor(
+            coreCryptoProvider: coreCryptoProvider,
+            featureRepository: LegacyFeatureRepository(context: syncContext)
+        )
+    )
+
+    public lazy var mlsTransport: any WireCoreCryptoUniffi.MlsTransport = MLSTransportImpl(
+        mlsAPI: mlsAPI,
+        conversationEventProcessor: conversationEventProcessor
+    )
+
     private lazy var resetMLSConversationLockRepository = ResetMLSConversationLockRepository(
         userID: selfUserID
     )
@@ -813,11 +823,6 @@ public final class ClientSessionComponent {
         conversationRepository: conversationRepository,
         lockRepository: resetMLSConversationLockRepository,
         selfDomain: backendMetadata.domain
-    )
-
-    public lazy var mlsTransport: any WireCoreCryptoUniffi.MlsTransport = MLSTransportImpl(
-        mlsAPI: mlsAPI,
-        conversationEventProcessor: conversationEventProcessor
     )
 
     public lazy var workAgent: WorkAgent = .init(scheduler: PriorityOrderWorkItemScheduler())

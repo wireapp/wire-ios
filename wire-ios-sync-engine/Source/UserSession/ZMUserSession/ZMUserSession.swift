@@ -257,7 +257,7 @@ public final class ZMUserSession: NSObject {
     }
 
     // To prevent too eagerly resolving all conversations.
-    var didAlreadyResolveAllOneOnOnes = false
+    var didAlreadyResolveAllOneOnOnes = false // TODO: skip if from initialSync
 
     private lazy var networkStateSubject: CurrentValueSubject<NetworkState, Never> = .init(networkState)
 
@@ -514,7 +514,6 @@ public final class ZMUserSession: NSObject {
             syncContext: coreDataStack.syncContext,
             eventContext: coreDataStack.eventContext,
             mlsService: mlsService,
-            mlsDecryptionService: mlsService,
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider,
             faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain

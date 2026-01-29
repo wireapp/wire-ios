@@ -116,7 +116,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
         let logAttributesBuilder = MessageLogAttributesBuilder(context: context)
         let logAttributes = logAttributesBuilder.syncLogAttributes(object)
-        
+
         if !isFresh {
             // This message was not added in this runtime. Rather than send it
             // which may no longer make sense after such as delay, we will

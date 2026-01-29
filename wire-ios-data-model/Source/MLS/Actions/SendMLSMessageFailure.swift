@@ -47,7 +47,8 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
     case mlsGroupConversationMismatch(message: String) // recovery sync conversation and resend
     case mlsClientSenderUserMismatch(message: String) // no recovery - prog error
     case mlsSelfRemovalNotAllowed(message: String) // no recovery - prog error - will result in faulty client
-    case mlsCommitMissingReferences(message: String) // only on commit bundle - recovery retry -> ask Backend if it should be on /mls/messages
+    case mlsCommitMissingReferences(message: String) // only on commit bundle - recovery retry -> ask Backend if it
+    // should be on /mls/messages
     case mlsProtocolError(message: String) // mix of errors under the protocol, see message - diagnostic
     case invalidRequestBody(message: String)
     case mlsInvalidLeafNodeIndex(message: String) // reset mls group
@@ -68,7 +69,9 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
     // 409
     case mlsStaleMessage // both endpoint, recovery retry
     case mlsClientMismatch // only on commit Bundle could happen theoritacly on POST /mls/messages but no clients do
-    case unreachableDomains(Set<String>) // information:  could not adding / removing users because fed backend not reachable
+    case unreachableDomains(Set<
+        String
+    >) // information:  could not adding / removing users because fed backend not reachable
     case groupOutOfSync(missingUsers: Set<QualifiedID>) // recovery on both endpoints
 
     // 422

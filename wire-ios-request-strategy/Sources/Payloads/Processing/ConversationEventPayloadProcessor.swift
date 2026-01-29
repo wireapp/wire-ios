@@ -51,32 +51,6 @@ struct ConversationEventPayloadProcessor {
 
     // MARK: - Conversation creation
 
-    func updateOrCreateConversations(
-        from payload: Payload.ConversationList,
-        in context: NSManagedObjectContext
-    ) async {
-        for payload in payload.conversations {
-            await updateOrCreateConversation(
-                from: payload,
-                source: .slowSync,
-                in: context
-            )
-        }
-    }
-
-    func updateOrCreateConverations(
-        from payload: Payload.QualifiedConversationList,
-        in context: NSManagedObjectContext
-    ) async {
-        for payload in payload.found {
-            await updateOrCreateConversation(
-                from: payload,
-                source: .slowSync,
-                in: context
-            )
-        }
-    }
-
     func processPayload(
         _ payload: Payload.ConversationEvent<Payload.CreatedConversation>,
         in context: NSManagedObjectContext
