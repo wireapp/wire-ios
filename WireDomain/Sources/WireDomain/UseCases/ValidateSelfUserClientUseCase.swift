@@ -70,6 +70,7 @@ public struct ValidateSelfUserClientUseCase: ValidateSelfUserClientUseCaseProtoc
     private let context: NSManagedObjectContext
     private let proteusService: any ProteusServiceInterface
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
+    private let selfUserSync: any PullSelfUserSyncProtocol
     private let userClientsAPI: any UserClientsAPI
     private let mlsService: any MLSServiceInterface
 
@@ -77,9 +78,15 @@ public struct ValidateSelfUserClientUseCase: ValidateSelfUserClientUseCaseProtoc
     private let apiVersion: WireNetwork.APIVersion
 
     public func invoke() async throws {
-        // Ensure user is registered.
-        guard let userID = await fetchUserID() else {
+        let userInfo = try await fetchUserInfo()
+
+        // Ensure user meets requirements.
+        guard let userID = userInfo.id else {
             throw ValidateSelfUserClientUseCaseError.userNotRegistered
+        }
+
+        guard userInfo.username != nil else {
+            throw ValidateSelfUserClientUseCaseError.usernameRequired
         }
 
         // Ensure client exists locally.
@@ -124,6 +131,15 @@ public struct ValidateSelfUserClientUseCase: ValidateSelfUserClientUseCaseProtoc
     }
 
     // MARK: - Helpers
+
+    private func fetchUserInfo() async throws -> (id: UUID?, username: String?) {
+        // Make sure the metadata is up to date first.
+        try await selfUserSync.pull()
+        return await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+            return (id: selfUser.remoteIdentifier, username: selfUser.handle)
+        }
+    }
 
     private func fetchUserID() async -> UUID? {
         await context.perform { [context] in
