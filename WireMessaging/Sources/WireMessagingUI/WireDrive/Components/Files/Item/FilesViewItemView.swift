@@ -29,8 +29,9 @@ struct FilesItemView: View {
 
     @StateObject private var viewModel: FilesItemViewModel
 
-    @ScaledMetric private var iconSpaceWidth: CGFloat = 56
+    private let iconSpaceWidth: CGFloat = 56 // this is explicitly not supposed to scale.
     @ScaledMetric private var iconSpaceHeight: CGFloat = 28
+    @ScaledMetric private var iconHorizontalPadding: CGFloat = 7
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -160,8 +161,9 @@ struct FilesItemView: View {
                     PublicLinkBadge(forIcon: viewModel.item.icon)
                 }
             }
-            .frame(width: iconSpaceWidth, height: iconSpaceHeight)
-            .padding(.horizontal, 4)
+            .padding(.horizontal, iconHorizontalPadding)
+            .frame(minWidth: iconSpaceWidth)
+            .frame(height: iconSpaceHeight)
     }
 
     @ViewBuilder
@@ -371,12 +373,14 @@ private extension View {
 }
 
 #Preview {
-    VStack(spacing: 0) {
-        FilesItemView(viewModel: .preview())
-        FilesItemView(viewModel: .preview(publicLinkID: "link"))
-        FilesItemView(viewModel: .preview(icon: .audio, publicLinkID: "link"))
-        FilesItemView(viewModel: .preview(kind: .folder, icon: .folder, publicLinkID: "link"))
-        FilesItemView(viewModel: .preview(tags: ["urgent"]))
-        FilesItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]))
+    ScrollView {
+        VStack(spacing: 0) {
+            FilesItemView(viewModel: .preview())
+            FilesItemView(viewModel: .preview(publicLinkID: "link"))
+            FilesItemView(viewModel: .preview(icon: .audio, publicLinkID: "link"))
+            FilesItemView(viewModel: .preview(kind: .folder, icon: .folder, publicLinkID: "link"))
+            FilesItemView(viewModel: .preview(tags: ["urgent"]))
+            FilesItemView(viewModel: .preview(tags: ["urgent", "funny", "important"]))
+        }
     }
 }
