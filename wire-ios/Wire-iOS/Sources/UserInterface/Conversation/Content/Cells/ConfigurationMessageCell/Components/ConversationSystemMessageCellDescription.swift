@@ -195,12 +195,6 @@ enum ConversationSystemMessageCellDescription {
                     )
                 )
             }
-            if conversation.isOpenGroup || conversation.isWireDriveEnabled {
-                let encryptionInfoCell = ConversationEncryptionInfoSystemMessageCellDescription(
-                    isWireDriveEnabled: conversation.isWireDriveEnabled
-                )
-                cells.append(AnyConversationMessageCellDescription(encryptionInfoCell))
-            }
 
             if conversation.isWireDriveEnabled {
                 let fileCollaborationCell = ConversationFileCollaborationSystemMessageCellDescription()
