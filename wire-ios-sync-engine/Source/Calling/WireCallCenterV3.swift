@@ -450,10 +450,10 @@ extension WireCallCenterV3 {
             previousParticipants: callSnapshots[conversationId]?.callParticipants.members.array ?? [],
             newParticipants: participants
         )
-//        guard !shouldEndCall else {
-//            endAllCalls()
-//            return
-//        }
+        guard !shouldEndCall else {
+            endAllCalls()
+            return
+        }
 
         callSnapshots[conversationId]?.callParticipants.callParticipantsChanged(participants: participants)
 
@@ -493,7 +493,8 @@ extension WireCallCenterV3 {
                   domain: conversationId.domain,
                   in: context
               ),
-              getAVSConversationType(for: conversation) == .oneToOne,
+              conversation.conversationType == .oneOnOne,
+              isSFTEnabledForOneToOneCalls(context: context),
               callSnapshots[conversationId]?.callState == .established
         else {
             return false
@@ -1195,8 +1196,7 @@ extension WireCallCenterV3 {
     private func getAVSConversationTypeForOneOnOne(_ conversation: ZMConversation) -> AVSConversationType {
         guard
             let context = conversation.managedObjectContext,
-            let featureConfig = LegacyFeatureRepository(context: context).fetchConferenceCalling().config,
-            featureConfig.useSFTForOneToOneCalls
+            isSFTEnabledForOneToOneCalls(context: context)
         else {
             return .oneToOne
         }
@@ -1207,6 +1207,17 @@ extension WireCallCenterV3 {
         case .proteus, .mixed:
             return .conference
         }
+    }
+
+    private func isSFTEnabledForOneToOneCalls(context: NSManagedObjectContext) -> Bool {
+        guard let config = LegacyFeatureRepository(context: context)
+            .fetchConferenceCalling()
+            .config
+        else {
+            return false
+        }
+
+        return config.useSFTForOneToOneCalls
     }
 
 }

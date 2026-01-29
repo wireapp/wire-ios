@@ -432,10 +432,6 @@ public final class ZMUserSession: NSObject {
     private var networkInterfaceSwitchCancellable: AnyCancellable?
     private var isNetworkReachableCancellable: AnyCancellable?
 
-    /// ToDo:
-    /// 1. shouldEnd the call
-
-
     // MARK: - Initialize
 
     init(
