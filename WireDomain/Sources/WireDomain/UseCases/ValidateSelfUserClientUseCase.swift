@@ -66,7 +66,6 @@ public struct ValidateSelfUserClientUseCase: ValidateSelfUserClientUseCaseProtoc
     private let shouldRegisterMLSClient: Bool
     private let canRegisterMLSClient: Bool
     private let isE2EIRequired: Bool
-    private let isE2EIEnrolled: Bool
 
     private let context: NSManagedObjectContext
     private let proteusService: any ProteusServiceInterface
@@ -98,7 +97,7 @@ public struct ValidateSelfUserClientUseCase: ValidateSelfUserClientUseCaseProtoc
         if shouldRegisterMLSClient && canRegisterMLSClient {
             // Ensure MLS client is initialized locally.
             if try await !isMLSClientInitialized(localClientID: localID) {
-                if isE2EIRequired && !isE2EIEnrolled {
+                if isE2EIRequired {
                     // Initialization happens in E2EI enrollment flow.
                     throw ValidateSelfUserClientUseCaseError.endToEndIdentityEnrollmentRequired
                 } else {
