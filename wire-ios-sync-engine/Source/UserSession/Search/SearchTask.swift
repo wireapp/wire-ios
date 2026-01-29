@@ -91,7 +91,7 @@ public final class SearchTask {
         self.apiVersion = apiVersion
     }
 
-    /*private*/ func addResultHandler(_ resultHandler: @escaping ResultHandler) { // TODO: make private
+    private func addResultHandler(_ resultHandler: @escaping ResultHandler) {
         resultHandlers.append(resultHandler)
     }
 
@@ -122,9 +122,20 @@ public final class SearchTask {
         status = .running
         defer { status = .completed }
 
-        // TODO: [WPB-23110] SWIFT TASK CONTINUATION MISUSE: invoke(query:options:messageProtocol:) leaked its continuation without resuming it. This may cause tasks waiting on it to remain suspended forever.
-
         return await withCheckedContinuation { continuation in
+
+            addResultHandler { result, isCompleted in
+
+                // add to search users cache
+                let searchUserObserverCenter = self.contextProvider.viewContext.searchUserObserverCenter
+                result.directory.forEach(searchUserObserverCenter.addSearchUser)
+                result.services.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
+
+                if isCompleted {
+                    continuation.resume(returning: self.result)
+                }
+
+            }
 
             // search services
             performRemoteSearchForServices()
@@ -139,12 +150,6 @@ public final class SearchTask {
             // v2+
             performRemoteSearch()
             performUserLookup()
-
-            addResultHandler { incrementalResult, isCompleted in
-                if isCompleted {
-                    continuation.resume(returning: SearchResult()) // TODO: fix, aggregate results!
-                }
-            }
 
         }
     }

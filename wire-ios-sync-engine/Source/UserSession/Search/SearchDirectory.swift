@@ -64,44 +64,26 @@ public final class SearchDirectory {
     }
 
     public func createSearchTask(with request: SearchRequest) -> SearchTask {
-        let task = SearchTask(
+        SearchTask(
             type: .search(searchRequest: request),
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
             apiVersion: apiVersion
         )
-
-        task.addResultHandler { [weak self] result, _ in
-            self?.observeSearchUsers(result)
-        }
-
-        return task
     }
 
     /// Lookup a user by user Id and domain (qualifiedID), returns a search user in the directory results. If the user
     /// doesn't exists
     /// an empty directory result is returned.
     public func createLookupTask(with qualifiedID: QualifiedID) -> SearchTask {
-        let task = SearchTask(
+        SearchTask(
             type: .lookup(qualifiedID: qualifiedID),
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
             apiVersion: apiVersion
         )
-
-        task.addResultHandler { [weak self] result, _ in
-            self?.observeSearchUsers(result)
-        }
-
-        return task
-    }
-
-    private func observeSearchUsers(_ result: SearchResult) {
-        let searchUserObserverCenter = contextProvider.viewContext.searchUserObserverCenter
-        result.directory.forEach(searchUserObserverCenter.addSearchUser)
-        result.services.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
     }
 
     public func updateIncompleteMetadataIfNeeded() async {
