@@ -187,7 +187,7 @@ private extension FilesView {
                 viewModel.onCreateFolder()
             } label: {
                 Label {
-                    Text(Strings.Files.List.newFolder)
+                    Text(Strings.Files.List.createFolder)
                 } icon: {
                     Image(systemName: "folder")
                         .tint(SemanticColors.Icon.foregroundDefaultBlack.color)

@@ -143,7 +143,7 @@
 "conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
 "conversation.wireCells.files.error.reload" = "Reload";
 "conversation.wireCells.files.search.title" = "Search files";
-"conversation.wireCells.files.list.newFolder" = "New folder";
+"conversation.wireCells.files.list.createFolder" = "Create folder";
 "conversation.wireCells.files.newFolder.title" = "Folder name";
 "conversation.wireCells.files.newFolder.placeholder" = "Enter folder name";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Create folder";

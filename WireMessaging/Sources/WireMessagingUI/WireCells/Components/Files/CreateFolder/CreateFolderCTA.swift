@@ -31,7 +31,7 @@ struct CreateFolderCTA: View {
                 HStack(alignment: .center, spacing: 20) {
                     Image(systemName: "plus")
 
-                    Text(L10n.Localizable.Conversation.WireCells.Files.List.newFolder)
+                    Text(L10n.Localizable.Conversation.WireCells.Files.List.createFolder)
                         .font(for: .body2)
                     Spacer()
                 }

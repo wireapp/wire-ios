@@ -82,8 +82,8 @@
 
 "conversation.creationForm.readReceipts.toggle" = "Отчеты о прочтении";
 "conversation.creationForm.readReceipts.description" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
-"conversation.creationForm.wireCells.toggle" = "Совместная работа с файлами";
-"conversation.creationForm.wireCells.description" = "Предоставьте пользователям возможность управлять своими документами и медиафайлами. Используйте папки, теги и фильтры для более эффективной работы. Это невозможно отменить.";
+"conversation.creationForm.wireCells.toggle" = "Shared Drive";
+"conversation.creationForm.wireCells.description" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
 "conversation.creationForm.wireCells.learnMore" = "Подробнее";
 
 
@@ -111,8 +111,8 @@
 "conversation.draft.attachmentMenu.remove" = "Удалить файл";
 
 // MARK: - Conversation Files View
-"conversation.wireCells.files.navigationTitle" = "Файлы";
-"conversation.wireCells.allFiles.navigationTitle" = "Все файлы";
+"conversation.wireCells.files.navigationTitle" = "Shared Drive";
+"conversation.wireCells.allFiles.navigationTitle" = "Drive";
 "conversation.wireCells.files.item.subtitle" = "%@ от %@";
 "conversation.wireCells.files.loadMore.title" = "Загрузить еще";
 "conversation.wireCells.files.item.menu.open" = "Открыть";
@@ -132,19 +132,21 @@
 "conversation.wireCells.files.item.deleteConfirmation.button" = "Удалить";
 "conversation.wireCells.files.noData.title" = "Файлов и папок пока нет";
 "conversation.wireCells.files.noData.message" = "Здесь вы найдете все файлы и папки, которыми поделились в этой беседе.";
-"conversation.wireCells.allFiles.noData.message" = "Здесь вы найдете все файлы и папки, которыми поделились в ваших беседах.";
+"conversation.wireCells.files.noData.learnMore" = "Learn more about Shared Drive";
+"conversation.wireCells.allFiles.noData.title" = "There are no files yet";
+"conversation.wireCells.allFiles.noData.message" = "For conversations that use shared Drive, you'll find all files here.";
+"conversation.wireCells.allFiles.noData.learnMore" = "Подробнее";
 "conversation.wireCells.files.pendingCells.title" = "Файлы загружаются";
 "conversation.wireCells.files.pendingCells.message" = "Ваши документы и медиафайлы будут доступны здесь после того, как мы загрузим все файлы и папки.";
 "conversation.wireCells.files.error.title" = "Невозможно загрузить файлы";
 "conversation.wireCells.files.error.message" = "Не удалось загрузить ваши файлы и папки. Пожалуйста, попробуйте еще раз.";
 "conversation.wireCells.files.error.reload" = "Перезагрузить";
 "conversation.wireCells.files.search.title" = "Поиск файлов";
-"conversation.wireCells.files.list.newFolder" = "Новая папка";
+"conversation.wireCells.files.list.createFolder" = "Создать папку";
 "conversation.wireCells.files.newFolder.title" = "Название папки";
 "conversation.wireCells.files.newFolder.placeholder" = "Введите название папки";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Создать папку";
 "conversation.wireCells.files.newFolder.folderNameTooLongError" = "Используйте более короткое название папки (максимум 64 символа)";
-"conversation.wireCells.files.newFolder.wrongCharacterError" = "Используйте название без \"/\"";
 "conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "Папка с таким названием уже существует";
 "conversation.wireCells.files.fileName.title" = "Имя файла";
 "conversation.wireCells.files.folderName.title" = "Название папки";
@@ -152,13 +154,14 @@
 "conversation.wireCells.files.renameFolder.navigationTitle" = "Переименовать папку";
 "conversation.wireCells.files.renameFile.filenameTooLongError" = "Используйте более короткое название файла (максимум 64 символа)";
 "conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Используйте более короткое название папки (максимум 64 символа)";
-"conversation.wireCells.files.renameFile.wrongCharacterError" = "Используйте название без \"/\" и не начинающееся с \".\"";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Не начинайте с . и не используйте {0}";
 "conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "Файл с таким названием уже существует";
 "conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "Папка с таким названием уже существует";
 "conversation.wireCells.files.renameFile.placeholder" = "Введите название файла";
 "conversation.wireCells.files.renameFolder.placeholder" = "Введите название папки";
 "conversation.wireCells.files.openRecycleBin" = "Открыть корзину";
 "conversation.wireCells.recycleBin.navigationTitle" = "Корзина";
+"conversation.wireCells.recycleBin.noData.learnMore" = "Learn more about Recycle Bin";
 "conversation.wireCells.recycleBin.noData.message" = "Здесь вы найдете все удаленные файлы и папки.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Удалить навсегда";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Удалить навсегда";
@@ -187,7 +190,7 @@
 "conversation.wireCells.tags.error.nameTooLong" = "Используйте более короткое название тега (не более 30 символов)";
 "conversation.wireCells.tags.error.specialCharacters" = "Использовать тег без специальных символов {0}";
 "conversation.wireCells.tags.error.saveFailedTitle" = "Не удается изменить теги";
-"conversation.wireCells.tags.error.saveFailedMessage" = "Из-за ошибки ваши теги не удалось отредактировать.";
+"conversation.wireCells.tags.error.saveFailedMessage" = "Что-то пошло не так при редактировании тегов. Повторите попытку.";
 "conversation.wireCells.tags.error.retryButton" = "Повторить";
 "conversation.wireCells.files.moveToFolder.move" = "Переместить сюда";
 "conversation.wireCells.files.moveToFolder.noSubfolders" = "В этой папке нет подпапок.";
@@ -232,7 +235,7 @@
 "conversation.wireCells.shareLink.expiration.addExpirationToggle" = "Добавить срок действия";
 "conversation.wireCells.shareLink.expiration.description" = "Ссылка автоматически станет недействительной после установленной даты и времени. Пользователи больше не смогут получить доступ к контенту.";
 "conversation.wireCells.shareLink.expiration.datePickerTitle" = "Истекает";
-"conversation.wireCells.shareLink.expiration.dateNotSupported" = "Дата в прошлом не поддерживается";
+"conversation.wireCells.shareLink.expiration.dateNotSupported" = "Дата в прошлом";
 "conversation.wireCells.shareLink.expiration.unableToAddExpiration.title" = "Невозможно добавить срок действия";
 "conversation.wireCells.shareLink.expiration.unableToAddExpiration.message" = "Проверьте подключение к сети и повторите попытку.";
 "conversation.wireCells.shareLink.expiration.unableToAddExpiration.action" = "Повторить";
@@ -249,8 +252,8 @@
 "conversation.wireCells.filesVersioning.restoreAlertTitle" = "Восстановить версию";
 "conversation.wireCells.filesVersioning.restoreAlertMessage" = "При этом будет скопирована восстановленная версия и установлена в качестве текущей. Все предыдущие версии останутся доступными.";
 "conversation.wireCells.filesVersioning.restoreAlertAction" = "Восстановить";
-"conversation.wireCells.filesVersioning.restoreFailureAlertTitle" = "Не удалось восстановить версию";
-"conversation.wireCells.filesVersioning.restoreFailureAlertMessage" = "Что-то пошло не так при восстановлении версии. Повторите попытку.";
+"conversation.wireCells.filesVersioning.restoreFailureAlertTitle" = "Невозможно восстановить версию";
+"conversation.wireCells.filesVersioning.restoreFailureAlertMessage" = "Что-то пошло не так при восстановлении этой версии. Повторите попытку.";
 "conversation.wireCells.filesVersioning.downloadVersion" = "Скачать версию";
 "conversation.wireCells.filesVersioning.retry" = "Повторить";
 "conversation.wireCells.filesVersioning.restoringVersion" = "Восстановление версии... ";
