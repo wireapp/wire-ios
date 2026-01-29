@@ -143,14 +143,9 @@
 "conversation.wireCells.files.error.reload" = "Перезагрузить";
 "conversation.wireCells.files.search.title" = "Поиск файлов";
 "conversation.wireCells.files.list.createFolder" = "Создать папку";
-"conversation.wireCells.files.list.createFile" = "Создать файл";
-"conversation.wireCells.files.list.createFile.presentation" = "Презентация";
-"conversation.wireCells.files.list.createFile.spreadsheet" = "Электронная таблица";
-"conversation.wireCells.files.list.createFile.document" = "Документ";
 "conversation.wireCells.files.newFolder.title" = "Название папки";
 "conversation.wireCells.files.newFolder.placeholder" = "Введите название папки";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Создать папку";
-"conversation.wireCells.files.newFile.navigationTitle" = "Создать файл %@";
 "conversation.wireCells.files.newFolder.folderNameTooLongError" = "Используйте более короткое название папки (максимум 64 символа)";
 "conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "Папка с таким названием уже существует";
 "conversation.wireCells.files.fileName.title" = "Имя файла";

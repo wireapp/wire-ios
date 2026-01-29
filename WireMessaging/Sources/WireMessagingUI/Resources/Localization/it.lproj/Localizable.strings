@@ -143,14 +143,9 @@
 "conversation.wireCells.files.error.reload" = "Reload";
 "conversation.wireCells.files.search.title" = "Search files";
 "conversation.wireCells.files.list.createFolder" = "Create folder";
-"conversation.wireCells.files.list.createFile" = "Create file";
-"conversation.wireCells.files.list.createFile.presentation" = "Presentation";
-"conversation.wireCells.files.list.createFile.spreadsheet" = "Spreadsheet";
-"conversation.wireCells.files.list.createFile.document" = "Document";
 "conversation.wireCells.files.newFolder.title" = "Nome cartella";
 "conversation.wireCells.files.newFolder.placeholder" = "Enter folder name";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Create folder";
-"conversation.wireCells.files.newFile.navigationTitle" = "Create %@ file";
 "conversation.wireCells.files.newFolder.folderNameTooLongError" = "Use a shorter folder name (most 64 characters)";
 "conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "A folder with that name already exists";
 "conversation.wireCells.files.fileName.title" = "File name";

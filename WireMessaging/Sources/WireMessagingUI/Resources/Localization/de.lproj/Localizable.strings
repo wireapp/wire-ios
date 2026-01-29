@@ -143,14 +143,9 @@
 "conversation.wireCells.files.error.reload" = "Erneut laden";
 "conversation.wireCells.files.search.title" = "Dateien suchen";
 "conversation.wireCells.files.list.createFolder" = "Ordner erstellen";
-"conversation.wireCells.files.list.createFile" = "Datei erstellen";
-"conversation.wireCells.files.list.createFile.presentation" = "Präsentation";
-"conversation.wireCells.files.list.createFile.spreadsheet" = "Tabelle";
-"conversation.wireCells.files.list.createFile.document" = "Dokument";
 "conversation.wireCells.files.newFolder.title" = "Ordnername";
 "conversation.wireCells.files.newFolder.placeholder" = "Ordnernamen eingeben";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Ordner erstellen";
-"conversation.wireCells.files.newFile.navigationTitle" = "%@ Datei erstellen";
 "conversation.wireCells.files.newFolder.folderNameTooLongError" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
 "conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "Ein Ordner mit dem Namen existiert bereits";
 "conversation.wireCells.files.fileName.title" = "Dateiname";
