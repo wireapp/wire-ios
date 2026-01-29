@@ -381,6 +381,13 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let sharedUserDefaults: UserDefaults
 
+    /// Currently active `Tasks` loading sessions by user ID
+    ///
+    /// Used by `withSession(for:newEnvironment:notifyAboutMigration:)` to avoid creating & loading multiple sessions
+    /// for the same account concurrently.
+    @MainActor
+    private var inFlightWithSessionTasks: [UUID: Task<ZMUserSession?, Never>] = [:]
+
     // MARK: - Life cycle
 
     public override init() {
@@ -985,13 +992,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         guard session.lock == .none else { return }
         processPendingURLActionRequiresAuthentication()
     }
-
-    /// Currently active `Tasks` loading sessions by user ID
-    ///
-    /// Used by `withSession(for:newEnvironment:notifyAboutMigration:)` to avoid creating & loading multiple sessions
-    /// for the same account concurrently.
-    @MainActor
-    private var inFlightWithSessionTasks: [UUID: Task<ZMUserSession?, Never>] = [:]
 
     @MainActor
     func withSession(
