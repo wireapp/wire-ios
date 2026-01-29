@@ -78,6 +78,8 @@ public struct ValidateSelfUserClientUseCase: ValidateSelfUserClientUseCaseProtoc
     private let apiVersion: WireNetwork.APIVersion
 
     public func invoke() async throws {
+        // TODO: ensure EAR needs to be on.
+
         let userInfo = try await fetchUserInfo()
 
         // Ensure user meets requirements.
@@ -296,7 +298,7 @@ public struct ValidateSelfUserClientUseCase: ValidateSelfUserClientUseCaseProtoc
     }
 
     private func uploadMLSKeyPackagesIfNeeded() async throws {
-        // Extract to use case.
+        // TODO: Extract to use case.
         await mlsService.uploadKeyPackagesIfNeeded()
     }
 
