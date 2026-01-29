@@ -195,7 +195,7 @@
 "conversation.wireCells.tags.error.nameTooLong" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
 "conversation.wireCells.tags.error.specialCharacters" = "Verwenden Sie ein Tag ohne Sonderzeichen {0}";
 "conversation.wireCells.tags.error.saveFailedTitle" = "Tags können nicht bearbeitet werden";
-"conversation.wireCells.tags.error.saveFailedMessage" = "Due to an error your tags could not be edited.";
+"conversation.wireCells.tags.error.saveFailedMessage" = "Beim Bearbeiten der Tags ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
 "conversation.wireCells.tags.error.retryButton" = "Erneut versuchen";
 "conversation.wireCells.files.moveToFolder.move" = "Hierhin verschieben";
 "conversation.wireCells.files.moveToFolder.noSubfolders" = "Es gibt keine Unterordner in diesem Ordner.";
