@@ -429,12 +429,11 @@ public final class ZMUserSession: NSObject {
     public private(set) var clientSessionComponent: ClientSessionComponent?
 
     private let networkReachability = NetworkReachability()
+    private var networkInterfaceSwitchCancellable: AnyCancellable?
     private var isNetworkReachableCancellable: AnyCancellable?
-    private var isNetworkReachableCancellable1: AnyCancellable?
 
     /// ToDo:
     /// 1. shouldEnd the call
-    /// 2. Add isNetworkReachableCancellable1 and call network_changed
 
 
     // MARK: - Initialize
@@ -713,6 +712,10 @@ public final class ZMUserSession: NSObject {
         userSessionComponent = nil
         syncStateCancellable?.cancel()
         syncStateCancellable = nil
+        networkInterfaceSwitchCancellable?.cancel()
+        networkInterfaceSwitchCancellable = nil
+        isNetworkReachableCancellable?.cancel()
+        isNetworkReachableCancellable = nil
         require(isTornDown, "tearDown must be called before the ZMUserSession is deallocated")
     }
 
@@ -894,18 +897,15 @@ public final class ZMUserSession: NSObject {
     }
 
     private func observeNetworkInterfaceSwitch() {
-        isNetworkReachableCancellable = networkReachability.interfaceSwitchWhileOnlinePublisher
+        networkInterfaceSwitchCancellable = networkReachability.interfaceSwitchWhileOnlinePublisher
             .sink { [weak self] _, _ in
                 guard let self else { return }
                 notifyAVSOfNetworkInterfaceChanged()
             }
 
-        isNetworkReachableCancellable1 = networkReachability.isOnlinePublisher.sink { [weak self] value in
+        isNetworkReachableCancellable = networkReachability.isOnlinePublisher.sink { [weak self] _ in
             guard let self else { return }
-            managedObjectContext.perform {
-                //print("🙈 isNetworkOnline \(value)")
-                self.callCenter?.avsWrapper.networkInterfaceChanged()
-            }
+            notifyAVSOfNetworkInterfaceChanged()
         }
     }
 
