@@ -404,6 +404,31 @@ extension ZMUserTests_Permissions {
         XCTAssertTrue(user.canAddUser(to: conversation))
     }
 
+    func testThatGuestCannotAddParticipantsToChannel() {
+        // given
+
+        // setup the self user
+        makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
+
+        // create guest user and add it to the conversation
+        let guest = ModelHelper().createUser(qualifiedID: .random(), in: uiMOC)
+        conversation.addParticipantAndUpdateConversationState(user: guest)
+
+        // add another user to the conversation (otherwise the `conversationType` will be `.oneOnOne`)
+        _ = createUserAndAddInConversation()
+
+        // set the conversation as a channel with permissions set to `.everyone`
+        conversation.conversationType = .group
+        conversation.groupType = .channel
+        conversation.privateChannelPermission = .everyone
+
+        // assert the user is a guest in the conversation
+        XCTAssertTrue(guest.isGuest(in: conversation))
+
+        // when / then
+        XCTAssertFalse(guest.canAddUser(to: conversation))
+    }
+
     func testThatGroupParticipantCanAddAnotherMemberToTheConversation() {
         // given
         makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
