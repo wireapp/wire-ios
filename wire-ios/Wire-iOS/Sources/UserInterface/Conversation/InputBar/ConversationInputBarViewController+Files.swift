@@ -167,11 +167,13 @@ extension ConversationInputBarViewController {
     }
 
     private func showAlertForFileNeedsRename(urls: [URL]) {
-        let formattedCharacters = uploadDraftUseCase.charactersToReplace.map { String($0) }.joined(separator: " ")
+        let characters = uploadDraftUseCase.charactersToReplace.map(String.init)
+        let formattedCharacters = characters.dropLast().joined(separator: " ")
+        let lastCharacter = characters.last ?? ""
 
         let alert = UIAlertController(
             title: L10n.Localizable.Content.UploadedFileNeedsRename.title,
-            message: L10n.Localizable.Content.UploadedFileNeedsRename.message(formattedCharacters),
+            message: L10n.Localizable.Content.UploadedFileNeedsRename.message(formattedCharacters, lastCharacter),
             preferredStyle: .alert
         )
         alert.addAction(
