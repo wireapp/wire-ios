@@ -288,9 +288,15 @@ public struct ValidateSelfUserClientUseCase: ValidateSelfUserClientUseCaseProtoc
             id: remoteID,
             clientUpdate: clientUpdate
         )
+        try await context.perform { [context] in
+            let localClient = try context.existingObject(with: localID) as! UserClient
+            localClient.needsToUploadMLSPublicKeys = false
+            try context.save()
+        }
     }
 
     private func uploadMLSKeyPackagesIfNeeded() async throws {
+        // Extract to use case.
         await mlsService.uploadKeyPackagesIfNeeded()
     }
 
