@@ -143,7 +143,19 @@ public final class SearchTask {
                 await self.performLocalSearch()
             }
 
+            // v1
             taskGroup.addTask {
+                await self.performRemoteSearchForTeamUser()
+            }
+
+            // v2+
+            taskGroup.addTask {
+//                self.performRemoteSearch()
+//                self.performUserLookup()
+                fatalError() // TODO: fix
+            }
+
+            taskGroup.addTask { // TODO: delete
                 await withCheckedContinuation { continuation in
 
                     self.addResultHandler { result, isCompleted in
@@ -158,13 +170,6 @@ public final class SearchTask {
                         }
 
                     }
-
-                    // v1
-                    self.performRemoteSearchForTeamUser() // TODO: test manually
-
-                    // v2+
-                    self.performRemoteSearch() // TODO: test manually
-                    self.performUserLookup() // TODO: test manually
 
                 }
             }
@@ -622,18 +627,17 @@ extension SearchTask {
 
 extension SearchTask {
 
-    /*private*/ func performRemoteSearchForTeamUser() { // TODO: make private
+    /*private*/ func performRemoteSearchForTeamUser() async -> SearchResultAggregator { // TODO: make private
         guard
             let apiVersion,
             apiVersion <= .v1,
             case let .search(searchRequest) = type,
             !searchRequest.searchOptions.contains(.localResultsOnly),
             searchRequest.searchOptions.contains(.directory)
-        else { return }
+        else { return { _ in } }
 
-        tasksRemaining += 1
+        return await withCheckedContinuation { continuation in
 
-        contextProvider.searchContext.performGroupedBlock { [self] in
             let request = Self.searchRequestInDirectory(
                 withHandle: searchRequest.query.string,
                 apiVersion: apiVersion
@@ -641,16 +645,12 @@ extension SearchTask {
 
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
 
-                defer {
-                    self?.tasksRemaining -= 1
-                }
-
                 guard
                     let contextProvider = self?.contextProvider,
                     let payload = response.payload?.asArray(),
                     let userPayload = (payload.first as? ZMTransportData)?.asDictionary()
                 else {
-                    return
+                    return continuation.resume(returning: { _ in })
                 }
 
                 guard
@@ -658,7 +658,7 @@ extension SearchTask {
                     let name = userPayload["name"] as? String,
                     let id = userPayload["id"] as? String
                 else {
-                    return
+                    return continuation.resume(returning: { _ in })
                 }
 
                 let document = ["handle": handle, "name": name, "id": id]
@@ -670,14 +670,14 @@ extension SearchTask {
                     contextProvider: contextProvider,
                     searchUsersCache: self?.searchUsersCache
                 ) else {
-                    return
+                    return continuation.resume(returning: { _ in })
                 }
 
                 if let user = result.directory.first, !user.isSelfUser {
                     if let prevResult = self?.result {
                         // prepend result to prevResult only if it doesn't contain it
                         if !prevResult.directory.contains(user) {
-                            self?.result = SearchResult(
+                            let result = SearchResult(
                                 context: prevResult.context,
                                 contacts: prevResult.contacts,
                                 teamMembers: prevResult.teamMembers,
@@ -686,22 +686,26 @@ extension SearchTask {
                                 services: prevResult.services,
                                 searchUsersCache: self?.searchUsersCache
                             )
+                            continuation.resume(returning: { $0 = result })
+                        } else {
+                            continuation.resume(returning: { _ in })
                         }
                     } else {
-                        self?.result = result
+                        continuation.resume(returning: { $0 = result })
                     }
+                } else {
+                    continuation.resume(returning: { _ in })
                 }
-            })
-
-            request.add(ZMTaskCreatedHandler(on: contextProvider.searchContext) { [weak self] taskIdentifier in
-                self?.handleTaskIdentifier = taskIdentifier
             })
 
             transportSession.enqueueOneTime(request)
         }
     }
 
-    private static func searchRequestInDirectory(withHandle handle: String, apiVersion: APIVersion) -> ZMTransportRequest {
+    private static func searchRequestInDirectory(
+        withHandle handle: String,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest {
         var handle = handle.lowercased()
 
         if handle.hasPrefix("@") {
