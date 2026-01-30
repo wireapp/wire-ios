@@ -93,7 +93,7 @@ class SwiftMockConversation: NSObject, Conversation {
 
     var hasMoreHistory: Bool = false
 
-    var wireDriveName: String = ""
+    var wireDriveCellName: String = ""
 
     var isWireDriveEnabled: Bool = false
 }

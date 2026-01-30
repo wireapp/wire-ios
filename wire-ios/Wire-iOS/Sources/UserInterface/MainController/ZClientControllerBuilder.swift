@@ -154,7 +154,7 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                 let participants = conversation.participants.compactMap(\.name)
                 if let name = conversation.name {
                     result.append(WireDriveConversation(
-                        id: conversation.wireDriveName,
+                        id: conversation.wireDriveCellName,
                         name: name,
                         participants: participants
                     ))

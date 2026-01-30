@@ -908,7 +908,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         let filesView = wireMessagingFactory
             .makeFilesView(
-                cellName: conversation.wireDriveName,
+                cellName: conversation.wireDriveCellName,
                 isCellsStatePending: wireDriveState == .pending
             ) {
                 WireAccentColor(rawValue: selfUserColorRawValue) ?? .default

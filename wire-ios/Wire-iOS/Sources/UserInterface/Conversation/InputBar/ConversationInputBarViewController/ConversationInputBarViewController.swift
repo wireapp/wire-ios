@@ -372,22 +372,22 @@ final class ConversationInputBarViewController: UIViewController,
         self.networkStatusObservable = networkStatusObservable
         self.fileMetaDataGenerator = FileMetaDataGenerator.shared
         self.uploadDraftUseCase = wireMessagingFactory.makeUploadDraftUseCase(
-            cellName: conversation.wireDriveName
+            cellName: conversation.wireDriveCellName
         )
         self.observeDraftsUseCase = wireMessagingFactory.makeObserveDraftsUseCase(
-            cellName: conversation.wireDriveName
+            cellName: conversation.wireDriveCellName
         )
         self.clearPublishedDraftsUseCase = wireMessagingFactory.makeClearPublishedDraftsUseCase(
-            cellName: conversation.wireDriveName
+            cellName: conversation.wireDriveCellName
         )
         self.publishDraftsUseCase = wireMessagingFactory.makePublishDraftsUseCase(
-            cellName: conversation.wireDriveName
+            cellName: conversation.wireDriveCellName
         )
         self.deleteDraftUseCase = wireMessagingFactory.makeDeleteDraftUseCase(
-            cellName: conversation.wireDriveName
+            cellName: conversation.wireDriveCellName
         )
         self.retryUploadDraftUseCase = wireMessagingFactory.makeRetryUploadDraftUseCase(
-            cellName: conversation.wireDriveName
+            cellName: conversation.wireDriveCellName
         )
 
         super.init(nibName: nil, bundle: nil)
