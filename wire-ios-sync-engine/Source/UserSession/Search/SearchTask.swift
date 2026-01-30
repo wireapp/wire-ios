@@ -120,37 +120,52 @@ public final class SearchTask {
         status = .running
         defer { status = .completed }
 
-        return await withCheckedContinuation { continuation in
+        /// Updates the passed search result.
+        typealias Aggregator = (inout SearchResult) -> Void
+        return await withTaskGroup(of: Aggregator.self, returning: SearchResult.self) { taskGroup in
 
-            addResultHandler { result, isCompleted in
-
-                // add to search users cache
-                let searchUserObserverCenter = self.contextProvider.viewContext.searchUserObserverCenter
-                result.directory.forEach(searchUserObserverCenter.addSearchUser)
-                result.services.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
-
-                if isCompleted {
-                    continuation.resume(returning: self.result)
-                }
-
+            taskGroup.addTask {
+                { $0 = SearchResult() }
             }
 
-            manually test
+            taskGroup.addTask {
+                await withCheckedContinuation { continuation in
 
-            // search services
-            performRemoteSearchForServices()
+                    self.addResultHandler { result, isCompleted in
 
-            // search People or groups
-            performLocalLookup()
-            performLocalSearch()
+                        // add to search users cache
+                        let searchUserObserverCenter = self.contextProvider.viewContext.searchUserObserverCenter
+                        result.directory.forEach(searchUserObserverCenter.addSearchUser)
+                        result.services.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
 
-            // v1
-            performRemoteSearchForTeamUser()
+                        if isCompleted {
+                            continuation.resume(returning: { _ in result })
+                        }
 
-            // v2+
-            performRemoteSearch()
-            performUserLookup()
+                    }
 
+                    // search services
+                    self.performRemoteSearchForServices() // TODO: test manually
+
+                    // search People or groups
+                    self.performLocalLookup() // TODO: test manually
+                    self.performLocalSearch() // TODO: test manually
+
+                    // v1
+                    self.performRemoteSearchForTeamUser() // TODO: test manually
+
+                    // v2+
+                    self.performRemoteSearch() // TODO: test manually
+                    self.performUserLookup() // TODO: test manually
+
+                }
+            }
+
+            while let aggregator = await taskGroup.next() {
+                aggregator(&self.result)
+            }
+
+            return SearchResult()
         }
     }
 }
