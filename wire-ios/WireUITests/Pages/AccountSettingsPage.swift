@@ -53,8 +53,8 @@ class AccountSettingsPage: PageModel {
         app.buttons[Locators.AccountSettingsPage.ok.rawValue]
     }
 
-    var backToPreviousPage: XCUIElement {
-        app.navigationBars.buttons.element(boundBy: 0)
+    var backButton: XCUIElement {
+        app.buttons[Locators.AccountSettingsPage.backButton.rawValue]
     }
 
     var backupOrRestoreButton: XCUIElement {
@@ -86,7 +86,9 @@ class AccountSettingsPage: PageModel {
     }
 
     func backToSettings() throws -> SettingsPage {
-        backToPreviousPage.tap()
+        if !app.iPadOnly() {
+            backButton.tap()
+        }
         return try SettingsPage()
     }
 
@@ -117,7 +119,7 @@ class AccountSettingsPage: PageModel {
         if app.iPadOnly() {
             return try SettingsPage()
         }
-        backToPreviousPage.tap()
+        backButton.tap()
         return try SettingsPage()
     }
 

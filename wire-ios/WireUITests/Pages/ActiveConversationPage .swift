@@ -88,6 +88,9 @@ class ActiveConversationPage: PageModel {
         if conversationBackButton.exists {
             conversationBackButton.tap()
         }
+        app.iPadOnly {
+            self.app.dismissSidePanel()
+        }
         return try ConversationsPage()
     }
 

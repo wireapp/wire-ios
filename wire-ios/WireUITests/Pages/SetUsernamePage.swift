@@ -48,6 +48,9 @@ class SetUsernamePage: PageModel {
         _ = app.keyboards.firstMatch.waitForExistence(timeout: 2)
         usernameField.typeText(username)
         confirmUsernameButton.tap()
+        if app.iPadOnly() {
+            app.dismissSidePanel()
+        }
         return try ConversationsPage()
     }
 }

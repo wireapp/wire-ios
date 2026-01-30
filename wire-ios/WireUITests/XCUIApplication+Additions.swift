@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import WireUtilities
 import XCTest
 
@@ -40,6 +41,30 @@ extension XCUIApplication {
     func iPadOnly(_ block: (() -> Void)? = nil) -> Bool {
         guard UIDevice.current.userInterfaceIdiom == .pad else { return false }
         block?()
+        return true
+    }
+
+    var sidePanelDismissRegion: XCUIElement {
+        otherElements[Locators.SidePanelOnIPadPage.sidePanelDismissRegion.rawValue]
+    }
+
+    var sideBarToggleButton: XCUIElement {
+        buttons[Locators.SidePanelOnIPadPage.sideBarToggleButton.rawValue]
+    }
+
+    @discardableResult
+    func dismissSidePanel(timeout: TimeInterval = 1.0) -> Bool {
+        guard sidePanelDismissRegion.waitForExistence(timeout: timeout),
+              sidePanelDismissRegion.isHittable else { return false }
+        sidePanelDismissRegion.tap()
+        return true
+    }
+
+    @discardableResult
+    func openSidePanel(timeout: TimeInterval = 1.0) -> Bool {
+        guard sideBarToggleButton.waitForExistence(timeout: timeout),
+              sideBarToggleButton.isHittable else { return false }
+        sideBarToggleButton.tap()
         return true
     }
 }

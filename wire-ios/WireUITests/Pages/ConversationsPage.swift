@@ -52,32 +52,20 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConnectionRequestsPage.connectRequestButton.rawValue]
     }
 
-    var sidePanel: XCUIElement {
-        app.otherElements["PopoverDismissRegion"]
-    }
-
-    var sideBarPanel: XCUIElement {
-        app.buttons["ToggleSidebar"]
-    }
-
     func openSettings() throws -> SettingsPage {
         app.iPadOnly {
-            if self.sideBarPanel.exists {
-                self.sideBarPanel.tap()
-            }
+            self.app.openSidePanel()
         }
         settingsButton.tap()
         return try SettingsPage()
     }
-    
+
     func openUserAccountPageForUser(with input: String) throws -> UserProfilePage {
         app.iPadOnly {
-            if self.sideBarPanel.exists {
-                self.sideBarPanel.tap()
-            }
+            self.app.openSidePanel()
         }
         let predicate = NSPredicate(format: "value BEGINSWITH %@", input)
-        let button = app.buttons.containing(predicate).firstMatch
+        let button = app.descendants(matching: .any).matching(predicate).firstMatch
         if button.waitForExistence(timeout: 2), button.isHittable {
             button.tap()
         }
@@ -86,9 +74,7 @@ class ConversationsPage: PageModel {
 
     func tapPlusButtonToCreateGroup() throws -> NewConversationPage {
         app.iPadOnly {
-            if self.sidePanel.exists {
-                self.sidePanel.tap()
-            }
+            self.app.dismissSidePanel()
         }
         plusButtonToCreateGroupOrSearch.tap()
         return try NewConversationPage()
@@ -96,40 +82,40 @@ class ConversationsPage: PageModel {
 
     func openPendingRequest() throws -> ConnectionRequestsPage {
         app.iPadOnly {
-            if self.sidePanel.exists {
-                self.sidePanel.tap()
-            }
+            self.app.dismissSidePanel()
         }
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
+        conversationCell.tap()
 
-        let maxDuration: TimeInterval = 10
-        let start = Date()
+        if !acceptRequestButton.exists {
+            let maxDuration: TimeInterval = 10
+            let start = Date()
+            let pollInterval: TimeInterval = 0.5
 
-        while !acceptRequestButton.exists, Date().timeIntervalSince(start) < maxDuration {
-            if conversationCell.isHittable {
-                conversationCell.tap()
-            }
-            RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+            repeat {
+                if acceptRequestButton.exists { break }
+                _ = acceptRequestButton.waitForExistence(timeout: pollInterval)
+            } while Date().timeIntervalSince(start) < maxDuration
         }
         return try ConnectionRequestsPage()
     }
 
     func openConversation() throws -> ActiveConversationPage {
         app.iPadOnly {
-            if self.sidePanel.exists {
-                self.sidePanel.tap()
-            }
+            self.app.dismissSidePanel()
         }
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
+        conversationCell.tap()
 
-        let maxDuration: TimeInterval = 10
-        let start = Date()
+        if !videoCallButton.exists {
+            let maxDuration: TimeInterval = 10
+            let start = Date()
+            let pollInterval: TimeInterval = 0.5
 
-        while !videoCallButton.exists, Date().timeIntervalSince(start) < maxDuration {
-            if conversationCell.isHittable {
-                conversationCell.tap()
-            }
-            RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+            repeat {
+                if videoCallButton.exists { break }
+                _ = videoCallButton.waitForExistence(timeout: pollInterval)
+            } while Date().timeIntervalSince(start) < maxDuration
         }
         return try ActiveConversationPage()
     }
@@ -147,9 +133,7 @@ class ConversationsPage: PageModel {
 
     func getNameLabel() -> String? {
         app.iPadOnly {
-            if self.sidePanel.exists {
-                self.sidePanel.tap()
-            }
+            self.app.dismissSidePanel()
         }
         return conversationCell.label
     }

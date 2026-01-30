@@ -33,10 +33,29 @@ class VerifyEmailPage: PageModel {
         app.navigationBars.buttons.element(boundBy: 0)
     }
 
-    func goBacktoAccountSetting() throws -> AccountSettingsPage {
-        backToPreviousPage.tap()
-        backToPreviousPage.tap()
-        return try AccountSettingsPage()
+    var backToEmailPage: XCUIElement {
+        app.buttons["BackButton"]
     }
 
+    var backToAccountPage: XCUIElement {
+        app.buttons["BackButton"]
+    }
+
+    var sidePanel: XCUIElement {
+        app.otherElements["PopoverDismissRegion"]
+    }
+
+    var accountSettingsMenu: XCUIElement {
+        app.cells[Locators.SettingsPage.accountCell.rawValue].firstMatch
+    }
+
+    func goBacktoAccountSetting() throws -> AccountSettingsPage {
+        backToEmailPage.tap()
+        backToPreviousPage.tap()
+        app.iPadOnly {
+            self.app.dismissSidePanel()
+            self.accountSettingsMenu.tap()
+        }
+        return try AccountSettingsPage()
+    }
 }

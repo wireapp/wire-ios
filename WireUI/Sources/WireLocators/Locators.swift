@@ -86,6 +86,7 @@ public enum Locators {
         case deleteAccountField = "Delete AccountField"
         case logOut = "Log Out"
         case ok = "OK"
+        case backButton = "BackButton"
 
     }
 
@@ -264,6 +265,13 @@ public enum Locators {
     public enum FileVersioningPage: String {
 
         case closeButton
+    }
+
+    public enum SidePanelOnIPadPage: String {
+
+        case sidePanelDismissRegion = "PopoverDismissRegion"
+        case sideBarToggleButton = "ToggleSidebar"
+        case all = "All"
     }
 
 }

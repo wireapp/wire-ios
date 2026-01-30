@@ -37,12 +37,8 @@ class SettingsPage: PageModel {
         app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
     }
 
-    var sideBarPanel: XCUIElement {
-        app.buttons["ToggleSidebar"]
-    }
-
     var allConversations: XCUIElement {
-        app.buttons["All"]
+        app.buttons[Locators.SidePanelOnIPadPage.all.rawValue]
     }
 
     func openAccountSettings() throws -> AccountSettingsPage {
@@ -60,9 +56,7 @@ class SettingsPage: PageModel {
             conversationsTab.tap()
         } else {
             app.iPadOnly { [self] in
-                if sideBarPanel.exists {
-                    sideBarPanel.tap()
-                }
+                app.openSidePanel()
 
                 if allConversations.exists {
                     allConversations.tap()
