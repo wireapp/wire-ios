@@ -373,14 +373,14 @@ public class MockConversationLike: ConversationLike {
 
     public var underlyingHasMoreHistory: Bool!
 
-    // MARK: - wireCellName
+    // MARK: - wireDriveCellName
 
-    public var wireCellName: String {
-        get { return underlyingWireCellName }
-        set(value) { underlyingWireCellName = value }
+    public var wireDriveCellName: String {
+        get { return underlyingWireDriveCellName }
+        set(value) { underlyingWireDriveCellName = value }
     }
 
-    public var underlyingWireCellName: String!
+    public var underlyingWireDriveCellName: String!
 
     // MARK: - isWireDriveEnabled
 
