@@ -405,7 +405,8 @@ final class FilesViewModelTests {
         await sut.reload()
 
         // then
-        #expect(sut.state == .error)
+        let isConnectionError = error.isURLError(.notConnectedToInternet) || error.isURLError(.networkConnectionLost)
+        #expect(sut.state == .error(isConnectionError: isConnectionError))
         #expect(sut.isLoading == false)
     }
 
