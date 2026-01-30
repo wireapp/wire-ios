@@ -143,13 +143,10 @@
 "conversation.wireCells.files.error.reload" = "Reload";
 "conversation.wireCells.files.search.title" = "Search files";
 "conversation.wireCells.files.list.createFolder" = "Create folder";
-<<<<<<< HEAD
 "conversation.wireCells.files.list.createFile" = "Create file";
 "conversation.wireCells.files.list.createFile.presentation" = "Presentation";
 "conversation.wireCells.files.list.createFile.spreadsheet" = "Spreadsheet";
 "conversation.wireCells.files.list.createFile.document" = "Document";
-=======
->>>>>>> e61291a897 (chore: cherry pick missing localizations from `develop` to `4.14` - WPB-22722 (#4224))
 "conversation.wireCells.files.newFolder.title" = "Folder name";
 "conversation.wireCells.files.newFolder.placeholder" = "Enter folder name";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Create folder";

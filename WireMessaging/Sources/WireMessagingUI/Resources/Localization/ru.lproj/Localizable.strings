@@ -143,13 +143,10 @@
 "conversation.wireCells.files.error.reload" = "Перезагрузить";
 "conversation.wireCells.files.search.title" = "Поиск файлов";
 "conversation.wireCells.files.list.createFolder" = "Создать папку";
-<<<<<<< HEAD
 "conversation.wireCells.files.list.createFile" = "Создать файл";
 "conversation.wireCells.files.list.createFile.presentation" = "Презентация";
 "conversation.wireCells.files.list.createFile.spreadsheet" = "Электронная таблица";
 "conversation.wireCells.files.list.createFile.document" = "Документ";
-=======
->>>>>>> e61291a897 (chore: cherry pick missing localizations from `develop` to `4.14` - WPB-22722 (#4224))
 "conversation.wireCells.files.newFolder.title" = "Название папки";
 "conversation.wireCells.files.newFolder.placeholder" = "Введите название папки";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Создать папку";
