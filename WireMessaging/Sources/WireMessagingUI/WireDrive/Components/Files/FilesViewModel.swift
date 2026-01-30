@@ -74,6 +74,9 @@ package struct FilesViewItem: Identifiable, Hashable {
 
     /// The public link identifier if the item has a public link.
     let publicLinkID: String?
+
+    /// The name of the conversation the node is attached to.
+    let conversationName: String?
 }
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -392,6 +395,7 @@ package final class FilesViewModel: ObservableObject {
     func itemViewModel(index: Int) -> FilesItemViewModel {
         FilesItemViewModel(
             item: state.items[index],
+            conversationName: isBrowsing ? state.items[index].conversationName : nil,
             localAssetRepository: localAssetRepository,
             onItemAction: { [weak self] action, item in
                 guard let self else { return }
@@ -685,7 +689,8 @@ package final class FilesViewModel: ObservableObject {
             ),
             tags: node.tags,
             isEditable: node.isEditable,
-            publicLinkID: node.publicLinkID?.string
+            publicLinkID: node.publicLinkID?.string,
+            conversationName: node.conversation?.name
         )
     }
 

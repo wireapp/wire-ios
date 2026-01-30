@@ -335,8 +335,10 @@
 "conversation.connection_view.wire_cells.encryption_info" = "Сообщения и звонки всегда зашифрованы сквозным шифрованием, при этом файлы и папки защищены в состоянии передачи и зашифрованы в состоянии покоя.";
 "conversation.connection_view.sensitive_information_warning" = "Пожалуйста, будьте осторожны со всеми с кем делитесь конфиденциальной информацией.";
 "conversation.connection_view.welcome.title.wire" = "Коммуникации в Wire всегда зашифрованы сквозным шифрованием.";
-"conversation.connection_view.welcome.message.wire" = "Все, что вы отправляете и получаете на этом канале, доступно только вам и другим участникам группы.\n\nПожалуйста, по-прежнему будьте осторожны с тем, кому вы передаете конфиденциальную информацию.";
 "conversation.connection_view.welcome.title.wire_cells" = "Коммуникации в Wire всегда защищены.";
+"conversation.connection_view.welcome.message.wire_channel" = "Все, что вы отправляете и получаете на этом канале, доступно только вам и другим участникам.\n\nПожалуйста, по-прежнему будьте осторожны с тем, кому вы передаете конфиденциальную информацию.";
+"conversation.connection_view.welcome.message.wire_group" = "Все, что вы отправляете и получаете в этой беседе, доступно только вам и другим участникам.\n\nПожалуйста, по-прежнему будьте осторожны с тем, кому вы передаете конфиденциальную информацию.";
+"conversation.connection_view.welcome.message.wire_one_on_one" = "Все, что вы отправляете и получаете в этой беседе, доступно только вам и вашим контактам.\n\nПожалуйста, по-прежнему будьте осторожны с тем, кому вы передаете конфиденциальную информацию.";
 "conversation.connection_view.welcome.message.wire_cells" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.\n\nPlease still be careful with who you share sensitive information.";
 "conversation.connection_view.welcome.learn_more" = "Подробнее";
 
@@ -741,6 +743,12 @@
 
 "content.message.reply.files.count" = "%@ файлов";
 "content.message.reply.files.notAvailable" = "Файл недоступен";
+
+// Uploaded file needs rename
+"content.uploaded_file_needs_rename.title" = "Заменить несовместимые символы";
+"content.uploaded_file_needs_rename.message" = "Вы не можете использовать символы %@ и %@.\n\\Замените их автоматически или переименуйте файл вручную.";
+"content.uploaded_file_needs_rename.confirmButton" = "Заменить";
+"content.uploaded_file_needs_rename.cancelButton" = "Отмена";
 
 // Reactions
 "content.reactions.title" = "Выбрать реакцию";
