@@ -1,0 +1,3 @@
+curl \
+	--header "Accept: application/json" \
+	"/v6/mls/key-packages/self/60f85e4b15ad3786/count?ciphersuite=0x0001"

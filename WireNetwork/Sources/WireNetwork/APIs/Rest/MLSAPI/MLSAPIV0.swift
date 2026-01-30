@@ -46,7 +46,12 @@ class MLSAPIV0: MLSAPI, VersionedAPI {
         throw MLSAPIError.unsupportedEndpointForAPIVersion
     }
 
+    func countKeyPackages(clientID: String, ciphersuite: MLSCipherSuite) async throws -> Int {
+        throw MLSAPIError.unsupportedEndpointForAPIVersion
+    }
+
     func resetMLSConversation(epoch: UInt64, groupID: String) async throws {
         throw MLSAPIError.unsupportedEndpointForAPIVersion
     }
+
 }

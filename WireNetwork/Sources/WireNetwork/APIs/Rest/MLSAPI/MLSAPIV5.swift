@@ -124,6 +124,27 @@ class MLSAPIV5: MLSAPIV4 {
             )
     }
 
+    override func countKeyPackages(clientID: String, ciphersuite: MLSCipherSuite) async throws -> Int {
+        let path = "\(pathPrefix)/mls/key-packages/self/\(clientID)/count"
+        let ciphersuiteHexString = String(format: "0x%04X", ciphersuite.toNetworkModel().rawValue)
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .withQueryItem(name: "ciphersuite", value: ciphersuiteHexString)
+            .withAcceptType(.json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: CountKeyPackagesResponseV5.self)
+            .failure(code: .notFound, error: MLSAPIError.clientNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
+
 }
 
 private struct BackendMLSPublicKeysResponseV5: Decodable, ToAPIModelConvertible {
@@ -147,6 +168,16 @@ struct CommitBundleResponseV5: Decodable, ToAPIModelConvertible {
 
 }
 
+private struct CountKeyPackagesResponseV5: Decodable, ToAPIModelConvertible {
+
+    let count: Int
+
+    func toAPIModel() -> Int {
+        count
+    }
+
+}
+
 struct KeyPackageUploadV0: Equatable, Sendable, Encodable {
 
     enum CodingKeys: String, CodingKey {
@@ -163,6 +194,29 @@ extension KeyPackageUpload {
         KeyPackageUploadV0(
             keyPackages: keyPackages.map(\.base64EncodedData)
         )
+    }
+
+}
+
+extension MLSCipherSuite {
+
+    func toNetworkModel() -> MLSCipherSuiteV0 {
+        switch self {
+        case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519:
+            .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+        case .MLS_128_DHKEMP256_AES128GCM_SHA256_P256:
+            .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
+        case .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519:
+            .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
+        case .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448:
+            .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448
+        case .MLS_256_DHKEMP521_AES256GCM_SHA512_P521:
+            .MLS_256_DHKEMP521_AES256GCM_SHA512_P521
+        case .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448:
+            .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448
+        case .MLS_256_DHKEMP384_AES256GCM_SHA384_P384:
+            .MLS_256_DHKEMP384_AES256GCM_SHA384_P384
+        }
     }
 
 }

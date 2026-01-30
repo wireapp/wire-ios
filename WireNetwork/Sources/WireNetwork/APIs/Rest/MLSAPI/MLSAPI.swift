@@ -46,6 +46,17 @@ public protocol MLSAPI {
 
     func uploadKeyPackages(clientID: String, keyPackages: KeyPackageUpload) async throws
 
+    /// Count unclaimed key packages for a client.
+    ///
+    /// - Parameters:
+    ///   - clientID: The client ID to count key packages for.
+    ///   - ciphersuite: The ciphersuite to filter by.
+    ///
+    /// Available from ``APIVersion`` v5.
+    ///
+
+    func countKeyPackages(clientID: String, ciphersuite: MLSCipherSuite) async throws -> Int
+
     /// Reset an MLS Conversation to epoch 0
     /// - Parameters:
     ///   - epoch: current epoch
@@ -55,4 +66,5 @@ public protocol MLSAPI {
     ///
 
     func resetMLSConversation(epoch: UInt64, groupID: String) async throws
+
 }

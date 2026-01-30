@@ -305,6 +305,67 @@ final class MLSAPITests: XCTestCase {
         }
     }
 
+    // MARK: - Count key packages
+
+    func testCountKeyPackagesRequest() async throws {
+        // Given
+        let apiVersions = APIVersion.v5.andNextVersions
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+            // When
+            _ = try await sut.countKeyPackages(
+                clientID: Scaffolding.clientID,
+                ciphersuite: Scaffolding.ciphersuite
+            )
+        }
+    }
+
+    func testCountKeyPackages_SuccessResponse_200_V5_And_Next_Versions() async throws {
+        // Given
+        try await withThrowingTaskGroup(of: Int.self) { taskGroup in
+            let testedVersions = APIVersion.v5.andNextVersions
+
+            for version in testedVersions {
+                let apiService = MockAPIServiceProtocol.withResponses([
+                    (.ok, "CountKeyPackagesSuccessResponse1")
+                ])
+                let sut = version.buildAPI(apiService: apiService)
+
+                taskGroup.addTask {
+                    // When
+                    try await sut.countKeyPackages(
+                        clientID: Scaffolding.clientID,
+                        ciphersuite: Scaffolding.ciphersuite
+                    )
+                }
+
+                for try await count in taskGroup {
+                    // Then
+                    XCTAssertEqual(count, 42)
+                }
+            }
+        }
+    }
+
+    func testCountKeyPackages_givenV5AndClientNotFoundErrorResponse() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .notFound
+        )
+
+        let api = MLSAPIV5(apiService: apiService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(MLSAPIError.clientNotFound) {
+            // When
+            try await api.countKeyPackages(
+                clientID: Scaffolding.clientID,
+                ciphersuite: Scaffolding.ciphersuite
+            )
+        }
+    }
+
 }
 
 private extension APIVersion {
@@ -334,6 +395,8 @@ private enum Scaffolding {
     ]
 
     static let clientID = "60f85e4b15ad3786"
+
+    static let ciphersuite = MLSCipherSuite.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
 
     static let keyPackageUpload = KeyPackageUpload(
         keyPackages: [

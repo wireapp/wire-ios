@@ -95,6 +95,10 @@ public enum MLSAPIError: Error, Equatable {
 
     case groupOutOfSync(missingUsers: Set<QualifiedID>)
 
+    /// Client not found
+
+    case clientNotFound
+
 }
 
 enum MLSAPIV0Error: Error, Codable, Equatable {
