@@ -441,11 +441,7 @@ extension SearchTask {
                     )
                 else { return continuation.resume(returning: { _ in }) }
 
-                if let updatedResult = self?.result.union(withDirectoryResult: result) {
-                    continuation.resume(returning: { $0 = $0.union(withDirectoryResult: result) })
-                } else {
-                    continuation.resume(returning: { _ in })
-                }
+                continuation.resume(returning: { $0 = $0.union(withDirectoryResult: result) })
             })
 
             transportSession.enqueueOneTime(request)
