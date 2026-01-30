@@ -121,13 +121,6 @@ public protocol ConversationLocalStoreProtocol {
         domain: String?
     ) async -> ZMConversation?
 
-    /// Wipes MLS group conversation.
-    /// - parameter id: The MLS group ID.
-
-    func wipeMLSGroup(
-        groupID: WireDataModel.MLSGroupID
-    ) async throws
-
     /// Removes a given user from all group conversations.
     ///
     /// - parameters:

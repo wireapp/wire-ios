@@ -98,6 +98,9 @@ extension ConversationLocalStore {
 
         let conversationExists: Bool
 
+        let mlsService = await context.perform { [context] in
+            context.mlsService
+        }
         guard let mlsService else {
             return mlsLogger.error(
                 "Cannot update conversation MLS status: MLS service is missing"

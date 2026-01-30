@@ -181,7 +181,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 let decryptionEventsResult = await decryptor.decryptEvents(in: envelope, context: nil)
 
                 envelope.events = decryptionEventsResult.events
-
+                // TODO: broken (wrongEpoch) groups are not repaired directly -> ask Jacob
+                // add system to catch these as they are detected? generator
                 let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
                 if !brokenMLSGroupIDs.isEmpty {
                     journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)

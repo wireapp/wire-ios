@@ -127,6 +127,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             isFederationEnabled: isFederationEnabled,
             isMLSEnabled: isMLSEnabled
         )
+        // TODO: move mls group setup on repository level?
     }
 
     public func pullMLSOneToOneConversation(
@@ -238,8 +239,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
         if let mlsGroupID {
 
-            try await conversationsLocalStore.wipeMLSGroup(groupID: mlsGroupID)
-
+            try await mlsProvider.service.wipeGroup(mlsGroupID)
+            
             await conversationsLocalStore.deleteConversation(
                 conversation
             )
