@@ -21,6 +21,7 @@ public protocol JournalProtocol {
     subscript(_ key: JournalKey<Bool>) -> Bool { get nonmutating set }
     subscript(_ key: JournalKey<String?>) -> String? { get nonmutating set }
     subscript(_ key: JournalKey<Set<String>>) -> Set<String> { get nonmutating set }
+    subscript(_ key: JournalKey<KeyPackageCheckDates>) -> KeyPackageCheckDates { get nonmutating set }
     nonmutating func erase()
 
 }

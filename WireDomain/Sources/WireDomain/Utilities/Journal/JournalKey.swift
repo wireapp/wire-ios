@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireFoundation
 
 /// A key that pairs a raw string with a specific value in
@@ -119,6 +120,43 @@ public extension JournalKey where Value == Set<String> {
     static let brokenMLSGroupIDs = Self(
         "brokenMLSGroupIDs",
         defaultValue: []
+    )
+
+}
+
+extension JournalKey where Value == Date {
+
+    /// The last time key packages were counted
+
+    static let lastKeyPackageCountTime = Self(
+        "lastKeyPackageCountTime",
+        defaultValue: .distantPast
+    )
+
+}
+
+// MARK: - KeyPackageCheckDates
+
+/// Stores the last time key packages were checked for different ciphersuites.
+/// The dictionary key is the MLSCipherSuite raw value.
+
+public struct KeyPackageCheckDates: Codable, Sendable {
+
+    public let values: [Int: Date]
+
+    public init(values: [Int: Date] = [:]) {
+        self.values = values
+    }
+
+}
+
+extension JournalKey where Value == KeyPackageCheckDates {
+
+    /// The last time key packages were checked, indexed by MLSCipherSuite raw value
+
+    static let lastKeyPackageCheckDates = Self(
+        "lastKeyPackageCheckDates",
+        defaultValue: KeyPackageCheckDates()
     )
 
 }

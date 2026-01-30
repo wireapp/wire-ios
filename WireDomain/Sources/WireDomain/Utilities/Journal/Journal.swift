@@ -89,6 +89,24 @@ public struct Journal: JournalProtocol {
         }
     }
 
+    /// Get or set a KeyPackageCheckDates value.
+
+    public subscript(_ key: JournalKey<KeyPackageCheckDates>) -> KeyPackageCheckDates {
+        get {
+            if let data = storage.data(forKey: rawKey(for: key)),
+               let decoded = try? JSONDecoder().decode(KeyPackageCheckDates.self, from: data) {
+                decoded
+            } else {
+                key.defaultValue
+            }
+        }
+        nonmutating set {
+            if let data = try? JSONEncoder().encode(newValue) {
+                storage.set(data, forKey: rawKey(for: key))
+            }
+        }
+    }
+
     /// Delete all values in the journal.
 
     public func erase() {
