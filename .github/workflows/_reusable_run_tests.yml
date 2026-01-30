@@ -214,7 +214,7 @@ jobs:
         if: always()
         uses: ./.github/actions/allure-reporting
         with:
-          allure_artifact_name: "html-report-${{ github.run_number }}"
+          allure_artifact_name: "html-report-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}"
           xcresult_search_path: "artifacts"
 
       - name: Add Allure Report to Job Summary
