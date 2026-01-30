@@ -153,8 +153,7 @@ public final class SearchTask {
                 await self.performRemoteSearch()
             }
             taskGroup.addTask {
-//                self.performUserLookup()
-                fatalError() // TODO: fix
+                await self.performUserLookup()
             }
 
             taskGroup.addTask { // TODO: delete
@@ -421,20 +420,16 @@ extension SearchTask {
 
 extension SearchTask {
 
-    /*private*/ func performUserLookup() { // TODO: make private
+    /*private*/ func performUserLookup() async -> SearchResultAggregator { // TODO: make private
         guard
             case let .lookup(qualifiedID) = type,
             let apiVersion
-        else { return }
+        else { return { _ in } }
 
-        tasksRemaining += 1
+        return await withCheckedContinuation { continuation in
 
-        contextProvider.searchContext.performGroupedBlock { [self] in
             let request = Self.searchRequestForUser(qualifiedID: qualifiedID, apiVersion: apiVersion)
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
-                defer {
-                    self?.tasksRemaining -= 1
-                }
 
                 guard
                     let contextProvider = self?.contextProvider,
@@ -444,15 +439,13 @@ extension SearchTask {
                         contextProvider: contextProvider,
                         searchUsersCache: self?.searchUsersCache
                     )
-                else { return }
+                else { return continuation.resume(returning: { _ in }) }
 
                 if let updatedResult = self?.result.union(withDirectoryResult: result) {
-                    self?.result = updatedResult
+                    continuation.resume(returning: { $0 = $0.union(withDirectoryResult: result) })
+                } else {
+                    continuation.resume(returning: { _ in })
                 }
-            })
-
-            request.add(ZMTaskCreatedHandler(on: contextProvider.searchContext) { [weak self] taskIdentifier in
-                self?.userLookupTaskIdentifier = taskIdentifier
             })
 
             transportSession.enqueueOneTime(request)
