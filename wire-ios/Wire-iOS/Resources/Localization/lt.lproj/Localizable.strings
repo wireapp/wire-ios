@@ -335,8 +335,10 @@
 "conversation.connection_view.wire_cells.encryption_info" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.";
 "conversation.connection_view.sensitive_information_warning" = "Please still be careful with who you share sensitive information.";
 "conversation.connection_view.welcome.title.wire" = "Communication in Wire is always end-to-end encrypted.";
-"conversation.connection_view.welcome.message.wire" = "Everything you send and receive in this channel is only accessible to you and other group participants.\n\nPlease still be careful with who you share sensitive information.";
 "conversation.connection_view.welcome.title.wire_cells" = "Communication in Wire is always secured.";
+"conversation.connection_view.welcome.message.wire_channel" = "Everything you send and receive in this channel is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_group" = "Everything you send and receive in this conversation is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_one_on_one" = "Everything you send and receive in this conversation is only accessible to you and your contact.\n\nPlease still be careful with who you share sensitive information.";
 "conversation.connection_view.welcome.message.wire_cells" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.\n\nPlease still be careful with who you share sensitive information.";
 "conversation.connection_view.welcome.learn_more" = "Sužinoti daugiau";
 
@@ -741,6 +743,12 @@
 
 "content.message.reply.files.count" = "%@ files";
 "content.message.reply.files.notAvailable" = "File not available";
+
+// Uploaded file needs rename
+"content.uploaded_file_needs_rename.title" = "Replace incompatible characters";
+"content.uploaded_file_needs_rename.message" = "You can't use the characters %@ and %@.\n\\Replace them automatically or rename the file manually.";
+"content.uploaded_file_needs_rename.confirmButton" = "Replace";
+"content.uploaded_file_needs_rename.cancelButton" = "Atsisakyti";
 
 // Reactions
 "content.reactions.title" = "Select reaction";
