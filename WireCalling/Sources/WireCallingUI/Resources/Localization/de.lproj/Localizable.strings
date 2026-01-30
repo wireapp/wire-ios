@@ -31,7 +31,7 @@
 "wireMeetings.list.header.today" = "Heute";
 "wireMeetings.list.header.tomorrow" = "Morgen";
 "wireMeetings.list.header.yesterday" = "Gestern";
-"wireMeetings.list.header.ongoing" = "Ongoing";
+"wireMeetings.list.header.ongoing" = "Aktuell";
 
 // MARK: - Schedule a meeting
 
