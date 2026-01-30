@@ -150,7 +150,9 @@ public final class SearchTask {
 
             // v2+
             taskGroup.addTask {
-//                self.performRemoteSearch()
+                await self.performRemoteSearch()
+            }
+            taskGroup.addTask {
 //                self.performUserLookup()
                 fatalError() // TODO: fix
             }
@@ -474,7 +476,7 @@ extension SearchTask {
 
 extension SearchTask {
 
-    /*private*/ func performRemoteSearch() { // TODO: make private
+    /*private*/ func performRemoteSearch() async -> SearchResultAggregator { // TODO: make private
         guard
             let apiVersion,
             apiVersion >= .v1,
@@ -483,12 +485,11 @@ extension SearchTask {
             !searchRequest.searchOptions.contains(.localResultsOnly),
             !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated])
         else {
-            return
+            return { _ in }
         }
 
-        tasksRemaining += 1
+        return await withCheckedContinuation { continuation in
 
-        contextProvider.searchContext.performGroupedBlock { [self] in
             let request = Self.searchRequestInDirectory(withRequest: searchRequest, apiVersion: apiVersion)
 
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
@@ -504,26 +505,34 @@ extension SearchTask {
                         searchUsersCache: self?.searchUsersCache
                     )
                 else {
-                    self?.completeRemoteSearch()
-                    return
+                    return continuation.resume(returning: { _ in })
                 }
 
                 if searchRequest.searchOptions.contains(.teamMembers) {
-                    self?.performTeamMembershipLookup(on: result, searchRequest: searchRequest)
+                    Task {
+                        if let aggregator = await self?.performTeamMembershipLookup(
+                            on: result,
+                            searchRequest: searchRequest
+                        ) {
+                            continuation.resume(returning: aggregator)
+                        } else {
+                            continuation.resume(returning: { _ in })
+                        }
+                    }
                 } else {
-                    self?.completeRemoteSearch(searchResult: result)
+                    continuation.resume(returning: { $0 = $0.union(withDirectoryResult: result) })
                 }
-            })
-
-            request.add(ZMTaskCreatedHandler(on: contextProvider.searchContext) { [weak self] taskIdentifier in
-                self?.directoryTaskIdentifier = taskIdentifier
             })
 
             transportSession.enqueueOneTime(request)
         }
     }
 
-    private func performTeamMembershipLookup(on searchResult: SearchResult, searchRequest: SearchRequest) {
+    private func performTeamMembershipLookup(
+        on searchResult: SearchResult,
+        searchRequest: SearchRequest
+    ) async -> SearchResultAggregator {
+
         let teamMembersIDs = searchResult.teamMembers.compactMap(\.remoteIdentifier)
 
         guard
@@ -531,8 +540,7 @@ extension SearchTask {
             let teamID = ZMUser.selfUser(in: contextProvider.viewContext).team?.remoteIdentifier,
             !teamMembersIDs.isEmpty
         else {
-            completeRemoteSearch(searchResult: searchResult)
-            return
+            return { $0 = $0.union(withDirectoryResult: searchResult) }
         }
 
         let request = Self.fetchTeamMembershipRequest(
@@ -541,43 +549,31 @@ extension SearchTask {
             apiVersion: apiVersion
         )
 
-        request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
-            guard
-                let contextProvider = self?.contextProvider,
-                let rawData = response.rawData,
-                let payload = MembershipListPayload(rawData)
-            else {
-                self?.completeRemoteSearch()
-                return
-            }
+        return await withCheckedContinuation { continuation in
 
-            var updatedResult = searchResult
-            updatedResult.extendWithMembershipPayload(payload: payload)
-            updatedResult.filterBy(
-                searchOptions: searchRequest.searchOptions,
-                query: searchRequest.query.string,
-                contextProvider: contextProvider
-            )
+            request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
+                guard
+                    let contextProvider = self?.contextProvider,
+                    let rawData = response.rawData,
+                    let payload = MembershipListPayload(rawData)
+                else { return continuation.resume(returning: { _ in }) }
 
-            self?.completeRemoteSearch(searchResult: updatedResult)
+                var updatedResult = searchResult
+                updatedResult.extendWithMembershipPayload(payload: payload)
+                updatedResult.filterBy(
+                    searchOptions: searchRequest.searchOptions,
+                    query: searchRequest.query.string,
+                    contextProvider: contextProvider
+                )
 
-        })
+                continuation.resume(returning: { $0 = $0.union(withDirectoryResult: searchResult) })
 
-        request.add(ZMTaskCreatedHandler(on: contextProvider.searchContext) { [weak self] taskIdentifier in
-            self?.teamMembershipTaskIdentifier = taskIdentifier
-        })
+            })
 
-        transportSession.enqueueOneTime(request)
-    }
+            transportSession.enqueueOneTime(request)
 
-    private func completeRemoteSearch(searchResult: SearchResult? = nil) {
-        defer {
-            tasksRemaining -= 1
         }
 
-        if let searchResult {
-            result = result.union(withDirectoryResult: searchResult)
-        }
     }
 
     private static func searchRequestInDirectory(
