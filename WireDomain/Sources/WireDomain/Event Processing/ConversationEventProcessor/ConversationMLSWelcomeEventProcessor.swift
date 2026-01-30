@@ -61,6 +61,7 @@ struct ConversationMLSWelcomeEventProcessor: ConversationMLSWelcomeEventProcesso
         )
 
         // Ensures we have MLS valid key packages published otherwise the user can’t be added to any new groups.
+        // TODO: invoke ReplenishKeyPackagesUseCase
         await mlsService.uploadKeyPackagesIfNeeded()
 
         do {

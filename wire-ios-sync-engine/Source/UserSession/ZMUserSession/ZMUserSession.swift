@@ -1261,6 +1261,7 @@ extension ZMUserSession: SyncAgentDelegate {
             }
 
             // always check if need to upload key packages if needed
+            // TODO: invoke ReplenishKeyPackagesUseCase
             await mlsService.uploadKeyPackagesIfNeeded()
             await resolveOneOnOneConversationsIfNeeded()
             await recurringActionService.performActionsIfNeeded()

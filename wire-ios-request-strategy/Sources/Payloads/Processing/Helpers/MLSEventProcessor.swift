@@ -216,6 +216,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         }) else { return }
 
         staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
+        // TODO: invoke ReplenishKeyPackagesUseCase
         await mlsService.uploadKeyPackagesIfNeeded()
         await conversationService.syncConversationIfMissing(qualifiedID: conversationID)
 
