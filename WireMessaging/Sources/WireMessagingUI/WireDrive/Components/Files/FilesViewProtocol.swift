@@ -116,3 +116,17 @@ extension FilesViewProtocol {
         Task { await viewModel.loadMoreIfNeeded(index: lastRowIndex) }
     }
 }
+
+// MARK: - Offline bar
+
+extension FilesViewProtocol {
+
+    var offlineBar: some View {
+        FilesOfflineBarView()
+            .transition(
+                .move(edge: .top)
+                    .combined(with: .opacity)
+            )
+    }
+
+}
