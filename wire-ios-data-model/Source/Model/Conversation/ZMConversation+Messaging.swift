@@ -258,6 +258,12 @@ public extension ZMConversation {
         return context.fetchOrAssert(request: request)
     }
 
+    static func fetchDriveConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
+        let request = NSFetchRequest<Self>(entityName: Self.entityName())
+        request.predicate = .isDriveConversation
+        return context.fetchOrAssert(request: request)
+    }
+
     func joinNewMLSGroup(id mlsGroupID: MLSGroupID, completion: ((Error?) -> Void)?) {
         guard let syncContext = managedObjectContext?.zm_sync else {
             completion?(JoinNewMLSGroupError.couldNotFindSyncContext)
@@ -344,6 +350,14 @@ public extension ZMConversation {
 // MARK: - NSPredicate Extensions
 
 private extension NSPredicate {
+
+    static var isDriveConversation: NSPredicate {
+        NSPredicate(
+            format: "%K == %d",
+            "cellsState",
+            CellsState.ready.rawValue
+        )
+    }
 
     static var isMLSConversation: NSPredicate {
         NSPredicate(
