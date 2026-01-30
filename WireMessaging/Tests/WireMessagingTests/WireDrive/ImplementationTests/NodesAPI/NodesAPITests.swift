@@ -38,6 +38,8 @@ final class NodesAPITests {
         try smallFile.write(to: smallFileURL)
 
         self.s3 = MockS3ClientProtocol()
+        let localStore = MockWireDriveConversationsLocalStoreProtocol()
+        localStore.fetchDriveConversations_MockValue = []
 
         self.smallFileHandle = try FileHandle(forReadingFrom: smallFileURL)
         self.sut = NodesAPI(
@@ -45,6 +47,7 @@ final class NodesAPITests {
                 s3: s3,
                 makeStream: { ObservableStream($0, bufferingPolicy: .unbounded) }
             ),
+            localStore: localStore,
             restAPI: RestAPI(
                 serverURLResolver: { URL(string: "example.com")! },
                 accessToken: MockAccessTokenProvider()
