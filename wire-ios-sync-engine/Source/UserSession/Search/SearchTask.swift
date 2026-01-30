@@ -37,6 +37,14 @@ public final class SearchTask {
 
     public typealias ResultHandler = (_ incrementalResult: SearchResult, _ isCompleted: Bool) -> Void
 
+    /// A closure which modifies the passed search result in order to unite the existing and the newly found results.
+    ///
+    /// The closure is used because there are three different ways of aggregating search results:
+    /// - union(withLocalResult:)
+    /// - union(withServiceResult:)
+    /// - union(withDirectoryResult:)
+    /*private*/ typealias SearchResultAggregator = (inout SearchResult) -> Void // TODO: make private
+
     private let apiVersion: WireTransport.APIVersion?
     private let transportSession: TransportSessionType
     private let contextProvider: ContextProvider
@@ -47,12 +55,12 @@ public final class SearchTask {
     private var directoryTaskIdentifier: ZMTaskIdentifier?
     private var teamMembershipTaskIdentifier: ZMTaskIdentifier?
     private var handleTaskIdentifier: ZMTaskIdentifier?
-    private var servicesTaskIdentifier: ZMTaskIdentifier?
     private var resultHandlers: [ResultHandler] = []
     private var result = SearchResult()
 
     private let tasksRemainingLock = NSRecursiveLock()
     private var _tasksRemaining = 0
+    @available(*, deprecated, message: "to be deleted!")
     private var tasksRemaining: Int {
         get {
             tasksRemainingLock.withLock {
@@ -104,14 +112,13 @@ public final class SearchTask {
         teamMembershipTaskIdentifier.map(transportSession.cancelTask)
         userLookupTaskIdentifier.map(transportSession.cancelTask)
         directoryTaskIdentifier.map(transportSession.cancelTask)
-        servicesTaskIdentifier.map(transportSession.cancelTask)
         handleTaskIdentifier.map(transportSession.cancelTask)
 
         // tasksRemaining is supposed to reach 0 eventually and trigger the continuation of `start`.
     }
 
     /// Start the search task. Errors will not be thrown.
-    public func start() async -> SearchResult {
+    public func start() async -> SearchResult { // TODO: test manually with two clients, develop and this code
         guard status == .pending else {
             assertionFailure()
             return SearchResult()
@@ -120,12 +127,11 @@ public final class SearchTask {
         status = .running
         defer { status = .completed }
 
-        /// Updates the passed search result.
-        typealias Aggregator = (inout SearchResult) -> Void
-        return await withTaskGroup(of: Aggregator.self, returning: SearchResult.self) { taskGroup in
+        return await withTaskGroup(of: SearchResultAggregator.self, returning: SearchResult.self) { taskGroup in
 
+                // search services
             taskGroup.addTask {
-                { $0 = SearchResult() }
+                await self.performRemoteSearchForServices()
             }
 
             taskGroup.addTask {
@@ -139,13 +145,10 @@ public final class SearchTask {
                         result.services.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
 
                         if isCompleted {
-                            continuation.resume(returning: { _ in result })
+                            continuation.resume(returning: { _ in })
                         }
 
                     }
-
-                    // search services
-                    self.performRemoteSearchForServices() // TODO: test manually
 
                     // search People or groups
                     self.performLocalLookup() // TODO: test manually
@@ -690,21 +693,22 @@ extension SearchTask {
 
 extension SearchTask {
 
-    /*private*/ func performRemoteSearchForServices() { // TODO: make private
-        let teamIdentifier = contextProvider.searchContext.performAndWait {
-            ZMUser.selfUser(in: contextProvider.searchContext).team?.remoteIdentifier
+    /*private*/ func performRemoteSearchForServices() async -> SearchResultAggregator { // TODO: create subtask struct
+
+        let searchContext = contextProvider.searchContext
+        let teamIdentifier = await searchContext.perform {
+            ZMUser.selfUser(in: searchContext).team?.remoteIdentifier
         }
+
         guard
             let apiVersion,
             let teamIdentifier,
             case let .search(searchRequest) = type,
             !searchRequest.searchOptions.contains(.localResultsOnly),
             searchRequest.searchOptions.contains(.services)
-        else { return }
+        else { return { _ in } }
 
-        tasksRemaining += 1
-
-        contextProvider.searchContext.performGroupedBlock { [self] in
+        return await withCheckedContinuation { continuation in
 
             let request = Self.servicesSearchRequest(
                 teamIdentifier: teamIdentifier,
@@ -713,10 +717,6 @@ extension SearchTask {
             )
 
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
-
-                defer {
-                    self?.tasksRemaining -= 1
-                }
 
                 guard
                     let contextProvider = self?.contextProvider,
@@ -727,20 +727,14 @@ extension SearchTask {
                         contextProvider: contextProvider,
                         searchUsersCache: self?.searchUsersCache
                     )
-                else {
-                    return
-                }
+                else { return continuation.resume(returning: { _ in }) }
 
-                if let updatedResult = self?.result.union(withServiceResult: result) {
-                    self?.result = updatedResult
-                }
-            })
+                continuation.resume { $0 = $0.union(withServiceResult: result) }
 
-            request.add(ZMTaskCreatedHandler(on: contextProvider.searchContext) { [weak self] taskIdentifier in
-                self?.servicesTaskIdentifier = taskIdentifier
             })
 
             transportSession.enqueueOneTime(request)
+
         }
     }
 
