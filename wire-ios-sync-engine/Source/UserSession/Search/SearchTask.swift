@@ -36,8 +36,6 @@ public final class SearchTask {
 
     private var status = Status.pending
 
-    public typealias ResultHandler = (_ incrementalResult: SearchResult, _ isCompleted: Bool) -> Void
-
     /// A closure which modifies the passed search result in order to unite the existing and the newly found results.
     ///
     /// The closure is used because there are three different ways of aggregating search results:
@@ -52,12 +50,6 @@ public final class SearchTask {
     private let searchUsersCache: SearchUsersCache?
 
     private let type: `Type`
-    private var userLookupTaskIdentifier: ZMTaskIdentifier?
-    private var directoryTaskIdentifier: ZMTaskIdentifier?
-    private var teamMembershipTaskIdentifier: ZMTaskIdentifier?
-    private var handleTaskIdentifier: ZMTaskIdentifier?
-    private var resultHandlers: [ResultHandler] = []
-    private var result = SearchResult()
 
     init(
         type: `Type`,
@@ -75,16 +67,11 @@ public final class SearchTask {
 
     /// Cancel a previously started task
     public func cancel() {
-        guard status == .running else { return assertionFailure() }
+        guard status == .running else {
+            return assertionFailure()
+        }
 
         status = .cancelled
-
-        teamMembershipTaskIdentifier.map(transportSession.cancelTask)
-        userLookupTaskIdentifier.map(transportSession.cancelTask)
-        directoryTaskIdentifier.map(transportSession.cancelTask)
-        handleTaskIdentifier.map(transportSession.cancelTask)
-
-        // tasksRemaining is supposed to reach 0 eventually and trigger the continuation of `start`.
     }
 
     /// Start the search task. Errors will not be thrown.
@@ -99,34 +86,35 @@ public final class SearchTask {
 
         return await withTaskGroup(of: SearchResultAggregator.self, returning: SearchResult.self) { taskGroup in
 
-                // search services
+            // search services
             taskGroup.addTask {
-                await self.performRemoteSearchForServices()
+                await self.performRemoteSearchForServices() manually test each call
             }
 
             // search People or groups
             taskGroup.addTask {
-                await self.performLocalLookup()
+                await self.performLocalLookup() manually test each call
             }
             taskGroup.addTask {
-                await self.performLocalSearch()
+                await self.performLocalSearch() manually test each call
             }
 
             // v1
             taskGroup.addTask {
-                await self.performRemoteSearchForTeamUser()
+                await self.performRemoteSearchForTeamUser() manually test each call
             }
 
             // v2+
             taskGroup.addTask {
-                await self.performRemoteSearch()
+                await self.performRemoteSearch() manually test each call
             }
             taskGroup.addTask {
-                await self.performUserLookup()
+                await self.performUserLookup() manually test each call
             }
 
+            var result = SearchResult()
             while let aggregator = await taskGroup.next() {
-                aggregator(&self.result)
+                aggregator(&result)
             }
 
             // add to search users cache
@@ -586,7 +574,8 @@ extension SearchTask {
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
 
                 guard
-                    let contextProvider = self?.contextProvider,
+                    let self,
+                    let contextProvider = contextProvider,
                     let payload = response.payload?.asArray(),
                     let userPayload = (payload.first as? ZMTransportData)?.asDictionary()
                 else {
@@ -608,30 +597,27 @@ extension SearchTask {
                     query: searchRequest.query,
                     searchOptions: searchRequest.searchOptions,
                     contextProvider: contextProvider,
-                    searchUsersCache: self?.searchUsersCache
+                    searchUsersCache: searchUsersCache
                 ) else {
                     return continuation.resume(returning: { _ in })
                 }
 
                 if let user = result.directory.first, !user.isSelfUser {
-                    if let prevResult = self?.result {
-                        // prepend result to prevResult only if it doesn't contain it
-                        if !prevResult.directory.contains(user) {
-                            let result = SearchResult(
-                                context: prevResult.context,
-                                contacts: prevResult.contacts,
-                                teamMembers: prevResult.teamMembers,
-                                directory: result.directory + prevResult.directory,
-                                conversations: prevResult.conversations,
-                                services: prevResult.services,
-                                searchUsersCache: self?.searchUsersCache
-                            )
-                            continuation.resume(returning: { $0 = result })
-                        } else {
-                            continuation.resume(returning: { _ in })
-                        }
-                    } else {
+                    let prevResult = self.result TODO: check behavior on develop
+                    // prepend result to prevResult only if it doesn't contain it
+                    if !prevResult.directory.contains(user) {
+                        let result = SearchResult(
+                            context: prevResult.context,
+                            contacts: prevResult.contacts,
+                            teamMembers: prevResult.teamMembers,
+                            directory: result.directory + prevResult.directory,
+                            conversations: prevResult.conversations,
+                            services: prevResult.services,
+                            searchUsersCache: searchUsersCache
+                        )
                         continuation.resume(returning: { $0 = result })
+                    } else {
+                        continuation.resume(returning: { _ in })
                     }
                 } else {
                     continuation.resume(returning: { _ in })
