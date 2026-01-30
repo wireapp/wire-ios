@@ -16,21 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+import Foundation
+import WireDataModel
 
-public enum WireDriveNodeConversationRepositoryError: Error {
-    case cellNameNotFound
-    case genericError(any Error)
-}
+/// An extension that encapsulates storage operations related to "Wire Drive" enabled conversations.
 
-public protocol WireDriveNodeConversationRepository {
-    func getCellName(conversationID: QualifiedID) async throws(WireDriveNodeConversationRepositoryError)
-        -> String
+public extension ConversationLocalStore {
 
-    func setWireCell(
-        conversationID: QualifiedID,
-        cellName: String
-    ) async throws(WireDriveNodeConversationRepositoryError)
-
-    func getConversationNames() async throws(WireDriveNodeConversationRepositoryError) -> [WireDriveConversation]
+    func fetchDriveConversations() async -> [ZMConversation] {
+        await context.perform { [self] in
+            ZMConversation.fetchDriveConversations(
+                in: context
+            )
+        }
+    }
 }

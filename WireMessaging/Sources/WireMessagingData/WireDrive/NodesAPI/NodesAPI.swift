@@ -28,11 +28,13 @@ package enum NodesAPIError: Error {
 package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol,
     WireDriveEditingURLRepositoryProtocol {
     private let awsClient: AWSClient
+    private let localStore: any WireDriveConversationsLocalStoreProtocol
     private let restAPI: RestAPI
     private let fileManager: FileManager
 
     package init(
         serverURLResolver: @escaping @Sendable () throws -> URL,
+        localStore: any WireDriveConversationsLocalStoreProtocol,
         accessToken: any AccessTokenProvider
     ) {
         self.init(
@@ -40,6 +42,7 @@ package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol
                 serverURLResolver: serverURLResolver,
                 accessToken: accessToken
             ),
+            localStore: localStore,
             restAPI: RestAPI(
                 serverURLResolver: serverURLResolver,
                 accessToken: accessToken
@@ -49,12 +52,14 @@ package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol
 
     init(
         awsClient: AWSClient,
+        localStore: any WireDriveConversationsLocalStoreProtocol,
         restAPI: RestAPI,
         fileManager: FileManager = .default
     ) {
         self.awsClient = awsClient
         self.restAPI = restAPI
         self.fileManager = fileManager
+        self.localStore = localStore
     }
 
     package func preCheck(nodePath: String, findAvailablePath: Bool) async throws -> WireDrivePreCheckResult {
@@ -139,7 +144,8 @@ package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol
 
     package func getNode(nodeID: UUID) async throws -> WireDriveNode {
         let dto = try await restAPI.getNode(uuid: nodeID)
-        return dto.toDomainModel()
+        let conversations = await localStore.fetchDriveConversations()
+        return dto.toDomainModel(conversations: conversations)
     }
 
     package func getNode(id: UUID) async throws -> WireDriveNode? {
@@ -155,7 +161,11 @@ package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol
     ) async throws -> (nodes: [WireDriveNode], nextOffset: Int?) {
         do {
             let (nodes, nextOffset) = try await restAPI.getNodes(request)
-            return (nodes: nodes.filter { !$0.isDraft }.map { $0.toDomainModel() }, nextOffset: nextOffset)
+            let conversations = await localStore.fetchDriveConversations()
+            return (
+                nodes: nodes.filter { !$0.isDraft }.map { $0.toDomainModel(conversations: conversations) },
+                nextOffset: nextOffset
+            )
             // user not yet created, wire users are "lazily" sync to pydio users the first time they are part of a cells
             // conversation
         } catch let error as CellsSDK.ErrorResponse where error.httpStatusCode == 401 {
@@ -214,12 +224,14 @@ package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol
 
     package func createFolder(at path: String) async throws -> WireDriveNode {
         let createdNode = try await restAPI.createFolder(at: path)
-        return createdNode.toDomainModel()
+        let conversations = await localStore.fetchDriveConversations()
+        return createdNode.toDomainModel(conversations: conversations)
     }
 
     package func createFile(at path: String, templateUuid: String) async throws -> WireDriveNode {
         let createdNode = try await restAPI.createFile(at: path, templateUuid: templateUuid)
-        return createdNode.toDomainModel()
+        let conversations = await localStore.fetchDriveConversations()
+        return createdNode.toDomainModel(conversations: conversations)
     }
 
     package func getTemplates() async throws -> [WireDriveFileTemplate] {
