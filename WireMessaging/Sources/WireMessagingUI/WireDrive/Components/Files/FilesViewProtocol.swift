@@ -122,37 +122,11 @@ extension FilesViewProtocol {
 extension FilesViewProtocol {
 
     var offlineBar: some View {
-        OfflineBarView()
+        FilesOfflineBarView()
             .transition(
                 .move(edge: .top)
                     .combined(with: .opacity)
             )
     }
 
-}
-
-private struct OfflineBarView: View {
-    var body: some View {
-        Group {
-            Text(
-                L10n.Localizable.General.NoInternet.title.uppercased()
-            )
-            .font(for: .subline2)
-            .foregroundColor(.white)
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: 25)
-        .background(Color(
-            red: 254.0 / 255.0,
-            green: 191.0 / 255.0,
-            blue: 2.0 / 255.0,
-            opacity: 1
-        ))
-        .cornerRadius(6)
-        .padding(.horizontal, 16)
-    }
-}
-
-#Preview {
-    OfflineBarView()
 }
