@@ -59,33 +59,6 @@ public final class SearchTask {
     private var resultHandlers: [ResultHandler] = []
     private var result = SearchResult()
 
-    private let tasksRemainingLock = NSRecursiveLock()
-    private var _tasksRemaining = 0
-    @available(*, deprecated, message: "to be deleted!")
-    private var tasksRemaining: Int {
-        get {
-            tasksRemainingLock.withLock {
-                _tasksRemaining
-            }
-        }
-        set {
-            let oldValue = tasksRemainingLock.withLock {
-                let oldValue = _tasksRemaining
-                _tasksRemaining = newValue
-                return oldValue
-            }
-            // only trigger handles if decrement to 0
-            if oldValue > newValue {
-                let isCompleted = newValue == 0
-                resultHandlers.forEach { $0(result, isCompleted) }
-
-                if isCompleted {
-                    resultHandlers.removeAll()
-                }
-            }
-        }
-    }
-
     init(
         type: `Type`,
         contextProvider: ContextProvider,
@@ -98,10 +71,6 @@ public final class SearchTask {
         self.contextProvider = contextProvider
         self.searchUsersCache = searchUsersCache
         self.apiVersion = apiVersion
-    }
-
-    private func addResultHandler(_ resultHandler: @escaping ResultHandler) {
-        resultHandlers.append(resultHandler)
     }
 
     /// Cancel a previously started task
@@ -156,30 +125,16 @@ public final class SearchTask {
                 await self.performUserLookup()
             }
 
-            taskGroup.addTask { // TODO: delete
-                await withCheckedContinuation { continuation in
-
-                    self.addResultHandler { result, isCompleted in
-
-                        // add to search users cache
-                        let searchUserObserverCenter = self.contextProvider.viewContext.searchUserObserverCenter
-                        result.directory.forEach(searchUserObserverCenter.addSearchUser)
-                        result.services.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
-
-                        if isCompleted {
-                            continuation.resume(returning: { _ in })
-                        }
-
-                    }
-
-                }
-            }
-
             while let aggregator = await taskGroup.next() {
                 aggregator(&self.result)
             }
 
-            return SearchResult()
+            // add to search users cache
+            let searchUserObserverCenter = self.contextProvider.viewContext.searchUserObserverCenter
+            result.directory.forEach(searchUserObserverCenter.addSearchUser)
+            result.services.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
+
+            return result
         }
     }
 }
