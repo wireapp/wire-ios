@@ -107,7 +107,7 @@ public final class SearchTask {
         servicesTaskIdentifier.map(transportSession.cancelTask)
         handleTaskIdentifier.map(transportSession.cancelTask)
 
-        // tasksRemaining is supposed to reach 0 eventually
+        // tasksRemaining is supposed to reach 0 eventually and trigger the continuation of `start`.
     }
 
     /// Start the search task. Errors will not be thrown.
@@ -134,6 +134,8 @@ public final class SearchTask {
                 }
 
             }
+
+            manually test
 
             // search services
             performRemoteSearchForServices()
