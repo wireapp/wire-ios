@@ -140,8 +140,7 @@ public final class SearchTask {
                 await self.performLocalLookup()
             }
             taskGroup.addTask {
-                // await self.performLocalSearch() // TODO: fix
-                fatalError()
+                await self.performLocalSearch()
             }
 
             taskGroup.addTask {
@@ -243,21 +242,20 @@ extension SearchTask {
 
     }
 
-    /*private*/ func performLocalSearch() { // TODO: make private
-        guard case let .search(request) = type else { return }
+    /*private*/ func performLocalSearch() async -> SearchResultAggregator { // TODO: make private
+        guard case let .search(request) = type else {
+            return { _ in }
+        }
 
         let searchContext = contextProvider.searchContext
-
-        tasksRemaining += 1
-
-        searchContext.performGroupedBlock { [self] in
+        let (connectedUserIDs, teamMemberIDs, conversationIDs) = await searchContext.perform { [self] in
 
             var team: Team?
             if let teamObjectID = request.team?.objectID {
-                team = (try? contextProvider.searchContext.existingObject(with: teamObjectID)) as? Team
+                team = (try? searchContext.existingObject(with: teamObjectID)) as? Team
             }
 
-            let selfUser = ZMUser.selfUser(in: contextProvider.searchContext)
+            let selfUser = ZMUser.selfUser(in: searchContext)
             let connectedUsers = request.searchOptions
                 .contains(.contacts) ? connectedUsers(
                     matchingQuery: request.normalizedQuery,
@@ -275,47 +273,54 @@ extension SearchTask {
                 selfUser: selfUser
             ) : []
 
-            contextProvider.viewContext.performGroupedBlock { [self] in
+            return (
+                connectedUsers.map(\.objectID),
+                teamMembers.map(\.objectID),
+                conversations.map(\.objectID)
+            )
 
-                let copiedConnectedUsers = connectedUsers
-                    .compactMap { contextProvider.viewContext.object(with: $0.objectID) as? ZMUser }
-                let searchConnectedUsers = copiedConnectedUsers
-                    .map {
-                        ZMSearchUser(
-                            contextProvider: contextProvider,
-                            user: $0,
-                            searchUsersCache: searchUsersCache
-                        )
-                    }
-                    .filter { $0.name?.isEmpty == false }
+        }
 
-                let copiedteamMembers = teamMembers.compactMap {
-                    contextProvider.viewContext.object(with: $0.objectID) as? Member
+        let viewContext = contextProvider.viewContext
+        return await viewContext.perform { [self] in
+
+            let copiedConnectedUsers = connectedUserIDs
+                .compactMap { viewContext.object(with: $0) as? ZMUser }
+            let searchConnectedUsers = copiedConnectedUsers
+                .map {
+                    ZMSearchUser(
+                        contextProvider: contextProvider,
+                        user: $0,
+                        searchUsersCache: searchUsersCache
+                    )
                 }
-                let searchTeamMembers = copiedteamMembers
-                    .compactMap(\.user)
-                    .map {
-                        ZMSearchUser(
-                            contextProvider: contextProvider,
-                            user: $0,
-                            searchUsersCache: searchUsersCache
-                        )
-                    }
+                .filter { $0.name?.isEmpty == false }
 
-                let result = SearchResult(
-                    context: contextProvider.viewContext,
-                    contacts: searchConnectedUsers,
-                    teamMembers: searchTeamMembers,
-                    directory: [],
-                    conversations: conversations,
-                    services: [],
-                    searchUsersCache: searchUsersCache
-                )
-
-                self.result = self.result.union(withLocalResult: result.copy(on: contextProvider.viewContext))
-
-                tasksRemaining -= 1
+            let copiedteamMembers = teamMemberIDs.compactMap {
+                contextProvider.viewContext.object(with: $0) as? Member
             }
+            let searchTeamMembers = copiedteamMembers
+                .compactMap(\.user)
+                .map {
+                    ZMSearchUser(
+                        contextProvider: contextProvider,
+                        user: $0,
+                        searchUsersCache: searchUsersCache
+                    )
+                }
+
+            let result = SearchResult(
+                context: contextProvider.viewContext,
+                contacts: searchConnectedUsers,
+                teamMembers: searchTeamMembers,
+                directory: [],
+                conversations: conversationIDs.compactMap { viewContext.object(with: $0) as? ZMConversation },
+                services: [],
+                searchUsersCache: searchUsersCache
+            )
+
+            return { $0 = $0.union(withLocalResult: result.copy(on: viewContext)) }
+
         }
     }
 
