@@ -45,7 +45,21 @@ class DynamicFontLabel: UILabel, DynamicTypeCapable {
         self.adjustsFontForContentSizeCategory = true
     }
 
-    @available(*, deprecated, message: "Use `init(text:style:color)` instead")
+    init(
+        attributedText: NSAttributedString,
+        style: WireTextStyle = .body1,
+        color: UIColor
+    ) {
+        // Not needed when we use a font style.
+        self.onRedrawFont = { nil }
+        super.init(frame: .zero)
+        self.attributedText = attributedText
+        self.textColor = color
+        self.font = .font(for: style)
+        self.adjustsFontForContentSizeCategory = true
+    }
+
+    @available(*, deprecated, message: "Use `init(text:style:color)` or `init(attributedText:style:color)` instead")
     init(
         text: String? = nil,
         fontSpec: FontSpec = .normalRegularFont,
