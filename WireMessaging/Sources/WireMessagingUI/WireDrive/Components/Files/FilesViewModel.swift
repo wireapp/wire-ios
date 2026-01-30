@@ -131,7 +131,7 @@ package final class FilesViewModel: ObservableObject {
         case loading
         case received(items: [FilesViewItem])
         case pending // drive is not ready yet
-        case error
+        case error(isConnectionError: Bool)
 
         var items: [FilesViewItem] {
             switch self {
@@ -226,7 +226,12 @@ package final class FilesViewModel: ObservableObject {
     var filterWithTags: [String] = []
     let title: String?
     var showSearchBar: Bool {
-        state != .error && state != .pending
+        switch state {
+        case .loading, .received:
+            true
+        case .pending, .error:
+            false
+        }
     }
 
     var navigationTitle: String {
@@ -246,6 +251,11 @@ package final class FilesViewModel: ObservableObject {
         loadMoreTask != nil
     }
 
+    enum ConnectionState {
+        case offline
+        case online
+    }
+
     @Published var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
     @Published var searchText = ""
@@ -257,6 +267,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var fileRenameView: FileRenameView?
     @Published var isEditing: FilesViewItem?
     @Published var templates: [WireDriveFileTemplate] = []
+    @Published var connectionState: ConnectionState = .online
 
     package init(
         useCases: UseCases,
@@ -288,6 +299,7 @@ package final class FilesViewModel: ObservableObject {
         self.accentColorProvider = accentColorProvider
 
         bindSearch()
+        bindNetworkConnection()
         fetchTemplates()
     }
 
@@ -316,6 +328,24 @@ package final class FilesViewModel: ObservableObject {
                 )
             ]
         }
+    }
+
+    private func bindNetworkConnection() {
+        NetworkMonitor.shared.statusPublisher
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] status in
+                guard let self, !state.items.isEmpty else { return }
+
+                switch status {
+                case .connected:
+                    guard connectionState == .offline else { return }
+                    connectionState = .online
+                case .disconnected:
+                    connectionState = .offline
+                }
+            }
+            .store(in: &subscriptions)
     }
 
     private func bindSearch() {
@@ -583,14 +613,18 @@ package final class FilesViewModel: ObservableObject {
         } catch is CancellationError {
             return // developer-driven error, discard
         } catch {
-            if state.items.isEmpty {
-                state = .error
-            } else {
-                let urlError = (error as? URLError)?.code
-                let isNoInternetError = urlError == .notConnectedToInternet || urlError == .networkConnectionLost
-                alert = isNoInternetError ? .noInternet : .unknownError
-            }
+            let urlError = (error as? URLError)?.code
+            let isNoInternetError = urlError == .notConnectedToInternet || urlError == .networkConnectionLost
 
+            if state.items.isEmpty {
+                state = .error(isConnectionError: isNoInternetError)
+            } else {
+                if isNoInternetError {
+                    // no-op, offline bar is dynamically shown/hidden on top of the list (see `bindNetworkConnection()`)
+                } else {
+                    alert = .unknownError
+                }
+            }
             hasMore = state.items.isEmpty ? true : hasMore
         }
         loadMoreTask = nil
