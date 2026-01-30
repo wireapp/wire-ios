@@ -364,7 +364,7 @@ final class FilesViewTests: XCTestCase {
 
     @MainActor
     func testFilesView_ErrorState() async {
-        let view = makeFilesView(state: .error)
+        let view = makeFilesView(state: .error(isConnectionError: false))
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
