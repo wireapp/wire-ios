@@ -215,7 +215,8 @@ extension SearchTask {
                     searchUsersCache: searchUsersCache
                 )
 
-                self.aggregatedResult = self.aggregatedResult.union(withLocalResult: partialResult.copy(on: contextProvider.viewContext))
+                aggregatedResult = aggregatedResult
+                    .union(withLocalResult: partialResult.copy(on: contextProvider.viewContext))
 
                 tasksRemaining -= 1
             }
@@ -288,7 +289,8 @@ extension SearchTask {
                     searchUsersCache: searchUsersCache
                 )
 
-                self.aggregatedResult = self.aggregatedResult.union(withLocalResult: partialResult.copy(on: contextProvider.viewContext))
+                aggregatedResult = aggregatedResult
+                    .union(withLocalResult: partialResult.copy(on: contextProvider.viewContext))
 
                 tasksRemaining -= 1
             }
@@ -402,12 +404,12 @@ extension SearchTask {
                     let partialResult = SearchResult(
                         userLookupPayload: payload,
                         contextProvider: contextProvider,
-                        searchUsersCache: self.searchUsersCache
+                        searchUsersCache: searchUsersCache
                     )
                 else { return }
 
-                let updatedResult = self.aggregatedResult.union(withDirectoryResult: partialResult)
-                self.aggregatedResult = updatedResult
+                let updatedResult = aggregatedResult.union(withDirectoryResult: partialResult)
+                aggregatedResult = updatedResult
             })
 
             request.add(ZMTaskCreatedHandler(on: searchContext) { [weak self] taskIdentifier in
@@ -461,17 +463,17 @@ extension SearchTask {
                         query: searchRequest.query,
                         searchOptions: searchRequest.searchOptions,
                         contextProvider: contextProvider,
-                        searchUsersCache: self.searchUsersCache
+                        searchUsersCache: searchUsersCache
                     )
                 else {
-                    self.completeRemoteSearch()
+                    completeRemoteSearch()
                     return
                 }
 
                 if searchRequest.searchOptions.contains(.teamMembers) {
-                    self.performTeamMembershipLookup(on: partialResult, searchRequest: searchRequest)
+                    performTeamMembershipLookup(on: partialResult, searchRequest: searchRequest)
                 } else {
-                    self.completeRemoteSearch(searchResult: partialResult)
+                    completeRemoteSearch(searchResult: partialResult)
                 }
             })
 
@@ -508,7 +510,7 @@ extension SearchTask {
                 let rawData = response.rawData,
                 let payload = MembershipListPayload(rawData)
             else {
-                self.completeRemoteSearch()
+                completeRemoteSearch()
                 return
             }
 
@@ -520,7 +522,7 @@ extension SearchTask {
                 contextProvider: contextProvider
             )
 
-            self.completeRemoteSearch(searchResult: updatedResult)
+            completeRemoteSearch(searchResult: updatedResult)
 
         })
 
@@ -634,25 +636,25 @@ extension SearchTask {
                     query: searchRequest.query,
                     searchOptions: searchRequest.searchOptions,
                     contextProvider: contextProvider,
-                    searchUsersCache: self.searchUsersCache
+                    searchUsersCache: searchUsersCache
                 ) else {
                     return
                 }
 
                 if let user = partialResult.directory.first, !user.isSelfUser {
-                    let prevResult = self.aggregatedResult
-                        // prepend result to prevResult only if it doesn't contain it
-                        if !prevResult.directory.contains(user) {
-                            self.aggregatedResult = SearchResult(
-                                context: prevResult.context,
-                                contacts: prevResult.contacts,
-                                teamMembers: prevResult.teamMembers,
-                                directory: partialResult.directory + prevResult.directory,
-                                conversations: prevResult.conversations,
-                                services: prevResult.services,
-                                searchUsersCache: self.searchUsersCache
-                            )
-                        }
+                    let prevResult = aggregatedResult
+                    // prepend result to prevResult only if it doesn't contain it
+                    if !prevResult.directory.contains(user) {
+                        aggregatedResult = SearchResult(
+                            context: prevResult.context,
+                            contacts: prevResult.contacts,
+                            teamMembers: prevResult.teamMembers,
+                            directory: partialResult.directory + prevResult.directory,
+                            conversations: prevResult.conversations,
+                            services: prevResult.services,
+                            searchUsersCache: searchUsersCache
+                        )
+                    }
                 }
             })
 
@@ -714,14 +716,14 @@ extension SearchTask {
                         servicesPayload: payload,
                         query: searchRequest.query.string,
                         contextProvider: contextProvider,
-                        searchUsersCache: self.searchUsersCache
+                        searchUsersCache: searchUsersCache
                     )
                 else {
                     return
                 }
 
-                let updatedResult = self.aggregatedResult.union(withServiceResult: partialResult)
-                self.aggregatedResult = updatedResult
+                let updatedResult = aggregatedResult.union(withServiceResult: partialResult)
+                aggregatedResult = updatedResult
             })
 
             request.add(ZMTaskCreatedHandler(on: searchContext) { [weak self] taskIdentifier in
