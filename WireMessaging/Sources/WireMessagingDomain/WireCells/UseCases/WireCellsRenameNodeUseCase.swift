@@ -67,7 +67,7 @@ package struct WireCellsRenameNodeUseCase: WireCellsRenameNodeUseCaseProtocol {
             let directory = url.deletingLastPathComponent()
             targetPath = directory.appendingPathComponent("\(newFilename).\(pathExtension)")
         }
-        
+
         let path = targetPath.absoluteString.removingPercentEncoding ?? targetPath.absoluteString
 
         // Checks whether the path doesn't already exist.
