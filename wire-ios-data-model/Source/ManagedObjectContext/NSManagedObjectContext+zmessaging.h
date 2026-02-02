@@ -25,7 +25,6 @@
 
 extern NSString * _Nonnull const IsUserInterfaceContextKey;
 extern NSString * _Nonnull const IsSyncContextKey;
-extern NSString * _Nonnull const IsSearchContextKey;
 extern NSString * _Nonnull const IsEventContextKey;
 
 @interface NSManagedObjectContext (zmessaging)
@@ -36,9 +35,6 @@ extern NSString * _Nonnull const IsEventContextKey;
 @property (readonly) BOOL zm_isSyncContext;
 /// Inverse of @c zm_isSyncContext
 @property (readonly) BOOL zm_isUserInterfaceContext;
-
-/// Returns @c YES if the receiver is a context that is used for searching.
-@property (readonly) BOOL zm_isSearchContext;
 
 /// Returns @c YES if the context should refresh objects following the policy for the sync context
 @property (readonly) BOOL zm_shouldRefreshObjectsWithSyncContextPolicy;

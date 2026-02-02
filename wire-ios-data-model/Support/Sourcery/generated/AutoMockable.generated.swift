@@ -2137,15 +2137,6 @@ public class MockCoreDataStackProtocol: CoreDataStackProtocol {
 
     public var underlyingSyncContext: NSManagedObjectContext!
 
-    // MARK: - searchContext
-
-    public var searchContext: NSManagedObjectContext {
-        get { return underlyingSearchContext }
-        set(value) { underlyingSearchContext = value }
-    }
-
-    public var underlyingSearchContext: NSManagedObjectContext!
-
     // MARK: - eventContext
 
     public var eventContext: NSManagedObjectContext {

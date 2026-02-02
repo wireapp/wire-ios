@@ -40,10 +40,6 @@ class DatabaseTest: ZMTBaseTest {
         coreDataStack!.syncContext
     }
 
-    var searchMOC: NSManagedObjectContext {
-        coreDataStack!.searchContext
-    }
-
     var sharedContainerURL: URL? {
         let bundleIdentifier = Bundle.main.bundleIdentifier
         let groupIdentifier = "group." + bundleIdentifier!

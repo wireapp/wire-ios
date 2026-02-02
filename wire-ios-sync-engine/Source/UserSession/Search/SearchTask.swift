@@ -30,7 +30,6 @@ public class SearchTask {
 
     private let apiVersion: WireTransport.APIVersion?
     private let transportSession: TransportSessionType
-    private let searchContext: NSManagedObjectContext
     private let contextProvider: ContextProvider
     private let searchUsersCache: SearchUsersCache?
 
@@ -79,7 +78,6 @@ public class SearchTask {
 
     convenience init(
         request: SearchRequest,
-        searchContext: NSManagedObjectContext,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
@@ -87,7 +85,6 @@ public class SearchTask {
     ) {
         self.init(
             task: .search(searchRequest: request),
-            searchContext: searchContext,
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
@@ -97,7 +94,6 @@ public class SearchTask {
 
     convenience init(
         qualifiedID: QualifiedID,
-        searchContext: NSManagedObjectContext,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
@@ -105,7 +101,6 @@ public class SearchTask {
     ) {
         self.init(
             task: .lookup(qualifiedID: qualifiedID),
-            searchContext: searchContext,
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
@@ -115,7 +110,6 @@ public class SearchTask {
 
     public init(
         task: Task,
-        searchContext: NSManagedObjectContext,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
@@ -123,7 +117,6 @@ public class SearchTask {
     ) {
         self.task = task
         self.transportSession = transportSession
-        self.searchContext = searchContext
         self.contextProvider = contextProvider
         self.searchUsersCache = searchUsersCache
         self.apiVersion = apiVersion
@@ -173,6 +166,7 @@ extension SearchTask {
 
         tasksRemaining += 1
 
+        let searchContext = contextProvider.newBackgroundContext()
         searchContext.performGroupedBlock { [self] in
             let selfUser = ZMUser.selfUser(in: searchContext)
 
@@ -228,6 +222,7 @@ extension SearchTask {
 
         tasksRemaining += 1
 
+        let searchContext = contextProvider.newBackgroundContext()
         searchContext.performGroupedBlock { [self] in
 
             var team: Team?
@@ -298,6 +293,7 @@ extension SearchTask {
     }
 
     private func filterNonActiveTeamMembers(members: [Member]) -> [Member] {
+        let searchContext = contextProvider.newBackgroundContext()
         let activeConversations = ZMUser.selfUser(in: searchContext).activeConversations
         let activeContacts = Set(activeConversations.flatMap(\.localParticipants))
         let selfUser = ZMUser.selfUser(in: searchContext)
@@ -317,6 +313,7 @@ extension SearchTask {
 
         if searchOptions.contains(.excludeNonActivePartners) {
             let query = query.strippingLeadingAtSign()
+            let searchContext = contextProvider.newBackgroundContext()
             let selfUser = ZMUser.selfUser(in: searchContext)
             let activeConversations = ZMUser.selfUser(in: searchContext).activeConversations
             let activeContacts = Set(activeConversations.flatMap(\.localParticipants))
@@ -344,6 +341,7 @@ extension SearchTask {
             ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(withSearch: query))
         }
 
+        let searchContext = contextProvider.newBackgroundContext()
         return searchContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] ?? []
     }
 
@@ -356,6 +354,7 @@ extension SearchTask {
         ))
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: ZMNormalizedUserDefinedNameKey, ascending: true)]
 
+        let searchContext = contextProvider.newBackgroundContext()
         var conversations = searchContext.fetchOrAssert(request: fetchRequest) as? [ZMConversation] ?? []
 
         if query.isHandleQuery {
@@ -391,6 +390,7 @@ extension SearchTask {
 
         tasksRemaining += 1
 
+        let searchContext = contextProvider.newBackgroundContext()
         searchContext.performGroupedBlock { [self] in
             let request = type(of: self).searchRequestForUser(qualifiedID: qualifiedID, apiVersion: apiVersion)
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
@@ -450,6 +450,7 @@ extension SearchTask {
 
         tasksRemaining += 1
 
+        let searchContext = contextProvider.newBackgroundContext()
         searchContext.performGroupedBlock { [self] in
             let request = Self.searchRequestInDirectory(withRequest: searchRequest, apiVersion: apiVersion)
 
@@ -526,6 +527,7 @@ extension SearchTask {
 
         })
 
+        let searchContext = contextProvider.newBackgroundContext()
         request.add(ZMTaskCreatedHandler(on: searchContext) { [weak self] taskIdentifier in
             self?.teamMembershipTaskIdentifier = taskIdentifier
         })
@@ -601,6 +603,7 @@ extension SearchTask {
 
         tasksRemaining += 1
 
+        let searchContext = contextProvider.newBackgroundContext()
         searchContext.performGroupedBlock { [self] in
             let request = type(of: self).searchRequestInDirectory(
                 withHandle: searchRequest.query.string,
@@ -684,7 +687,10 @@ extension SearchTask {
 extension SearchTask {
 
     func performRemoteSearchForServices() {
-        let teamIdentifier = searchContext.performAndWait { ZMUser.selfUser(in: searchContext).team?.remoteIdentifier }
+        let searchContext = contextProvider.newBackgroundContext()
+        let teamIdentifier = searchContext.performAndWait {
+            ZMUser.selfUser(in: searchContext).team?.remoteIdentifier
+        }
         guard
             let apiVersion,
             let teamIdentifier,

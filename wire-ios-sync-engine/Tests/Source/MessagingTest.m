@@ -211,11 +211,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     return self.coreDataStack.syncContext;
 }
 
-- (NSManagedObjectContext *)searchMOC
-{
-    return self.coreDataStack.searchContext;
-}
-
 - (NSManagedObjectContext *)eventMOC
 {
     return self.coreDataStack.eventContext;
