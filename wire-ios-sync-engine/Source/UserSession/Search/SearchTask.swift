@@ -561,6 +561,7 @@ extension SearchTask {
             searchRequest.searchOptions.contains(.directory)
         else { return { _ in } }
 
+        let viewContext = contextProvider.viewContext
         return await withCheckedContinuation { continuation in
 
             let request = Self.searchRequestInDirectory(
@@ -568,7 +569,7 @@ extension SearchTask {
                 apiVersion: apiVersion
             )
 
-            request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
+            request.add(ZMCompletionHandler(on: viewContext) { [weak self] response in
 
                 guard
                     let self,
@@ -600,7 +601,7 @@ extension SearchTask {
 
                 if let user = partialResult.directory.first, !user.isSelfUser {
                     let partialResult = SearchResult(
-                        context: contextProvider.viewContext,
+                        context: viewContext,
                         contacts: [],
                         teamMembers: [],
                         directory: partialResult.directory,
