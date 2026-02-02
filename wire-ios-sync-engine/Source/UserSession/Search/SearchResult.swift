@@ -233,4 +233,16 @@ extension SearchResult {
         )
     }
 
+    func union(prependingDirectory result: SearchResult) -> SearchResult {
+        SearchResult(
+            context: context,
+            contacts: contacts,
+            teamMembers: teamMembers,
+            directory: result.directory + directory,
+            conversations: conversations,
+            services: services,
+            searchUsersCache: searchUsersCache
+        )
+    }
+
 }

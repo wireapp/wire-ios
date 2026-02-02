@@ -572,7 +572,6 @@ extension SearchTask {
 
                 guard
                     let self,
-                    let contextProvider = contextProvider,
                     let payload = response.payload?.asArray(),
                     let userPayload = (payload.first as? ZMTransportData)?.asDictionary()
                 else {
@@ -600,22 +599,20 @@ extension SearchTask {
                 }
 
                 if let user = partialResult.directory.first, !user.isSelfUser {
-                    let prevResult = aggregatedResult
-                    // prepend result to prevResult only if it doesn't contain it
-                    if !prevResult.directory.contains(user) {
-                        let result = SearchResult(
-                            context: prevResult.context,
-                            contacts: prevResult.contacts,
-                            teamMembers: prevResult.teamMembers,
-                            directory: partialResult.directory + prevResult.directory,
-                            conversations: prevResult.conversations,
-                            services: prevResult.services,
-                            searchUsersCache: searchUsersCache
-                        )
-                        continuation.resume(returning: { $0 = result })
-                    } else {
-                        continuation.resume(returning: { _ in })
-                    }
+                    let partialResult = SearchResult(
+                        context: contextProvider.viewContext,
+                        contacts: [],
+                        teamMembers: [],
+                        directory: partialResult.directory,
+                        conversations: [],
+                        services: [],
+                        searchUsersCache: searchUsersCache
+                    )
+                    continuation.resume(returning: { aggregatedResult in
+                        if !aggregatedResult.directory.contains(user) {
+                            aggregatedResult = aggregatedResult.union(prependingDirectory: partialResult)
+                        }
+                    })
                 } else {
                     continuation.resume(returning: { _ in })
                 }
