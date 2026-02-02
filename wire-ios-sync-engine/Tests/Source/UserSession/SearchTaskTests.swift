@@ -17,9 +17,9 @@
 //
 
 import XCTest
-
 import WireMockTransport
 import WireTransport
+
 @testable import WireSyncEngine
 
 final class SearchTaskTests: DatabaseTest {
@@ -85,11 +85,9 @@ final class SearchTaskTests: DatabaseTest {
         return conversation
     }
 
-    func testThatItFindsASingleUnconnectedUserByHandle() {
+    func testThatItFindsASingleUnconnectedUserByHandle() async throws {
 
         // given
-        let remoteResultArrived = customExpectation(description: "received remote result")
-
         mockTransportSession.performRemoteChanges { remoteChanges in
             let mockUser = remoteChanges.insertUser(withName: "Dale Cooper")
             mockUser.handle = "bob"
@@ -98,18 +96,16 @@ final class SearchTaskTests: DatabaseTest {
         let request = SearchRequest(query: "bob", searchOptions: [.directory])
         let task = makeSearchTask(request: request)
 
-        // expect
-        task.addResultHandler { result, _ in
-            remoteResultArrived.fulfill()
-            XCTAssertEqual(result.directory.count, 1)
-            let user = result.directory.first
-            XCTAssertEqual(user?.name, "Dale Cooper")
-            XCTAssertEqual(user?.handle, "bob")
-        }
-
         // when
-        task.performRemoteSearchForTeamUser()
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        var result = SearchResult()
+        let resultAggregator = await task.performRemoteSearchForTeamUser()
+        resultAggregator(&result)
+
+        // then
+        XCTAssertEqual(result.directory.count, 1)
+        let user = result.directory.first
+        XCTAssertEqual(user?.name, "Dale Cooper")
+        XCTAssertEqual(user?.handle, "bob")
 
     }
 
@@ -1440,4 +1436,5 @@ final class SearchTaskTests: DatabaseTest {
             apiVersion: apiVersion
         )
     }
+
 }
