@@ -88,28 +88,28 @@ public final class SearchTask {
 
             // search services
             taskGroup.addTask {
-                await self.performRemoteSearchForServices() manually test each call
+                await self.performRemoteSearchForServices() // TODO: manually test each call
             }
 
             // search People or groups
             taskGroup.addTask {
-                await self.performLocalLookup() manually test each call
+                await self.performLocalLookup() // TODO: manually test each call
             }
             taskGroup.addTask {
-                await self.performLocalSearch() manually test each call
+                await self.performLocalSearch() // TODO: manually test each call
             }
 
             // v1
             taskGroup.addTask {
-                await self.performRemoteSearchForTeamUser() manually test each call
+                await self.performRemoteSearchForTeamUser() // TODO: manually test each call
             }
 
             // v2+
             taskGroup.addTask {
-                await self.performRemoteSearch() manually test each call
+                await self.performRemoteSearch() // TODO: manually test each call
             }
             taskGroup.addTask {
-                await self.performUserLookup() manually test each call
+                await self.performUserLookup() // TODO: manually test each call
             }
 
             var result = SearchResult()
@@ -285,7 +285,7 @@ extension SearchTask {
     }
 
     private func teamMembers(matchingQuery query: String, team: Team?, searchOptions: SearchOptions) -> [Member] {
-        var result = team?.members(matchingQuery: query) ?? []
+        var partialResult = team?.members(matchingQuery: query) ?? []
 
         if searchOptions.contains(.excludeNonActiveTeamMembers) {
             partialResult = filterNonActiveTeamMembers(members: partialResult)
@@ -384,7 +384,7 @@ extension SearchTask {
                     )
                 else { return continuation.resume(returning: { _ in }) }
 
-                continuation.resume(returning: { $0 = $0.union(withDirectoryResult: result) })
+                continuation.resume(returning: { $0 = $0.union(withDirectoryResult: partialResult) })
             })
 
             transportSession.enqueueOneTime(request)
@@ -442,17 +442,14 @@ extension SearchTask {
 
                 if searchRequest.searchOptions.contains(.teamMembers) {
                     Task {
-                        if let aggregator = await self?.performTeamMembershipLookup(
-                            on: result,
+                        let aggregator = await self.performTeamMembershipLookup(
+                            on: partialResult,
                             searchRequest: searchRequest
-                        ) {
-                            continuation.resume(returning: aggregator)
-                        } else {
-                            continuation.resume(returning: { _ in })
-                        }
+                        )
+                        continuation.resume(returning: aggregator)
                     }
                 } else {
-                    continuation.resume(returning: { $0 = $0.union(withDirectoryResult: result) })
+                    continuation.resume(returning: { $0 = $0.union(withDirectoryResult: partialResult) })
                 }
             })
 
@@ -602,15 +599,15 @@ extension SearchTask {
                     return continuation.resume(returning: { _ in })
                 }
 
-                if let user = result.directory.first, !user.isSelfUser {
-                    let prevResult = self.result TODO: check behavior on develop
+                if let user = partialResult.directory.first, !user.isSelfUser {
+                    let prevResult = aggregatedResult
                     // prepend result to prevResult only if it doesn't contain it
                     if !prevResult.directory.contains(user) {
                         let result = SearchResult(
                             context: prevResult.context,
                             contacts: prevResult.contacts,
                             teamMembers: prevResult.teamMembers,
-                            directory: result.directory + prevResult.directory,
+                            directory: partialResult.directory + prevResult.directory,
                             conversations: prevResult.conversations,
                             services: prevResult.services,
                             searchUsersCache: searchUsersCache
@@ -684,7 +681,7 @@ extension SearchTask {
                     )
                 else { return continuation.resume(returning: { _ in }) }
 
-                continuation.resume { $0 = $0.union(withServiceResult: result) }
+                continuation.resume { $0 = $0.union(withServiceResult: partialResult) }
 
             })
 
