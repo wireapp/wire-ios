@@ -486,88 +486,89 @@ extension SearchTask {
             transportSession.enqueueOneTime(request)
         }
 
+    // TODO: replace code above with this
 
-performRemoteSearchTask?.cancel()
-performRemoteSearchTask = _Concurrency.Task { @MainActor in
-do {
-let contacts = try await searchAPI.searchContacts(
-query: searchRequest.query.string.lowercased(),
-domain: searchRequest.searchDomain ?? "",
-type: .regular // TODO: correct?
-).documents
+        performRemoteSearchTask?.cancel()
+        performRemoteSearchTask = _Concurrency.Task { @MainActor in
+            do {
+                let contacts = try await searchAPI.searchContacts(
+                    query: searchRequest.query.string.lowercased(),
+                    domain: searchRequest.searchDomain ?? "",
+                    type: .regular // TODO: correct?
+                ).documents
 
-try _Concurrency.Task.checkCancellation()
+                try _Concurrency.Task.checkCancellation()
 
-let queryLowercased = searchRequest.query.string.lowercased()
-let filteredContacts = contacts.filter { contact in
-return !searchRequest.query.isHandleQuery ||
-contact.name.hasPrefix("@") ||
-(contact.handle?.lowercased().contains(queryLowercased) ?? false)
-}
+                let queryLowercased = searchRequest.query.string.lowercased()
+                let filteredContacts = contacts.filter { contact in
+                    return !searchRequest.query.isHandleQuery ||
+                    contact.name.hasPrefix("@") ||
+                    (contact.handle?.lowercased().contains(queryLowercased) ?? false)
+                }
 
-let searchUsers = filteredContacts.compactMap { filteredContact in
-guard let id = filteredContact.id else { return ZMSearchUser?.none }
-let accentColor = if let accentID = filteredContact.accentID, let rawValue = Int16(exactly: accentID), let accentColor = AccentColor(
-rawValue: rawValue
-) { accentColor } else { AccentColor.default }
-let localUser = ZMUser.fetch(
-with: id,
-domain: filteredContact.qualifiedID?.domain,
-in: contextProvider.viewContext
-)
-if let searchUser = searchUsersCache?.object(forKey: id as NSUUID) {
-searchUser.user = localUser
-return searchUser
-} else {
-return ZMSearchUser(
-contextProvider: contextProvider,
-name: filteredContact.name,
-handle: filteredContact.handle,
-accentColor: .from(accentColor: accentColor),
-remoteIdentifier: filteredContact.id,
-domain: filteredContact.qualifiedID?.domain,
-teamIdentifier: filteredContact.team,
-user: localUser,
-searchUsersCache: searchUsersCache
-)
-}
-}
+                let searchUsers = filteredContacts.compactMap { filteredContact in
+                    guard let id = filteredContact.id else { return ZMSearchUser?.none }
+                    let accentColor = if let accentID = filteredContact.accentID, let rawValue = Int16(exactly: accentID), let accentColor = AccentColor(
+                        rawValue: rawValue
+                    ) { accentColor } else { AccentColor.default }
+                    let localUser = ZMUser.fetch(
+                        with: id,
+                        domain: filteredContact.qualifiedID?.domain,
+                        in: contextProvider.viewContext
+                    )
+                    if let searchUser = searchUsersCache?.object(forKey: id as NSUUID) {
+                        searchUser.user = localUser
+                        return searchUser
+                    } else {
+                        return ZMSearchUser(
+                            contextProvider: contextProvider,
+                            name: filteredContact.name,
+                            handle: filteredContact.handle,
+                            accentColor: .from(accentColor: accentColor),
+                            remoteIdentifier: filteredContact.id,
+                            domain: filteredContact.qualifiedID?.domain,
+                            teamIdentifier: filteredContact.team,
+                            user: localUser,
+                            searchUsersCache: searchUsersCache
+                        )
+                    }
+                }
 
-try _Concurrency.Task.checkCancellation()
+                try _Concurrency.Task.checkCancellation()
 
-let searchOptions = searchRequest.searchOptions
-let includeActiveTeamMembers = searchOptions.contains(.teamMembers) &&
-searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
-let searchResult = SearchResult(
-context: contextProvider.viewContext,
-contacts: [],
-teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
-directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
-conversations: [],
-services: [],
-searchUsersCache: searchUsersCache
-)
+                let searchOptions = searchRequest.searchOptions
+                let includeActiveTeamMembers = searchOptions.contains(.teamMembers) &&
+                searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
+                let searchResult = SearchResult(
+                    context: contextProvider.viewContext,
+                    contacts: [],
+                    teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
+                    directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
+                    conversations: [],
+                    services: [],
+                    searchUsersCache: searchUsersCache
+                )
 
-try _Concurrency.Task.checkCancellation()
+                try _Concurrency.Task.checkCancellation()
 
-if searchRequest.searchOptions.contains(.teamMembers) {
-performTeamMembershipLookup(on: searchResult, searchRequest: searchRequest)
-} else {
-completeRemoteSearch(searchResult: searchResult)
-}
+                if searchRequest.searchOptions.contains(.teamMembers) {
+                    performTeamMembershipLookup(on: searchResult, searchRequest: searchRequest)
+                } else {
+                    completeRemoteSearch(searchResult: searchResult)
+                }
 
-} catch let error as URLError where error.code == .cancelled {
-WireLogger.search.debug("cancelled remote search", attributes: .safePublic)
-completeRemoteSearch()
-} catch is CancellationError {
-WireLogger.search.debug("cancelled remote search", attributes: .safePublic)
-completeRemoteSearch()
-} catch {
-let errorName = String(describing: type(of: error))
-WireLogger.search.error("failed to perform remote search: \(errorName)", attributes: .safePublic)
-completeRemoteSearch()
-}
-}
+            } catch let error as URLError where error.code == .cancelled {
+                WireLogger.search.debug("cancelled remote search", attributes: .safePublic)
+                completeRemoteSearch()
+            } catch is CancellationError {
+                WireLogger.search.debug("cancelled remote search", attributes: .safePublic)
+                completeRemoteSearch()
+            } catch {
+                let errorName = String(describing: type(of: error))
+                WireLogger.search.error("failed to perform remote search: \(errorName)", attributes: .safePublic)
+                completeRemoteSearch()
+            }
+        }
 
 
     }
