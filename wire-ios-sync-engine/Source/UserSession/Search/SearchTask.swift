@@ -41,7 +41,7 @@ public class SearchTask {
     private var handleTaskIdentifier: ZMTaskIdentifier?
     private var servicesTaskIdentifier: ZMTaskIdentifier?
     private var resultHandlers: [ResultHandler] = []
-    private var result = SearchResult(
+    private var aggregatedResult = SearchResult(
         context: .init(concurrencyType: .privateQueueConcurrencyType),
         contacts: [],
         teamMembers: [],
@@ -68,7 +68,7 @@ public class SearchTask {
             // only trigger handles if decrement to 0
             if oldValue > newValue {
                 let isCompleted = newValue == 0
-                resultHandlers.forEach { $0(result, isCompleted) }
+                resultHandlers.forEach { $0(aggregatedResult, isCompleted) }
 
                 if isCompleted {
                     resultHandlers.removeAll()
@@ -215,7 +215,7 @@ extension SearchTask {
                     searchUsersCache: searchUsersCache
                 )
 
-                self.result = self.result.union(withLocalResult: partialResult.copy(on: contextProvider.viewContext))
+                self.aggregatedResult = self.aggregatedResult.union(withLocalResult: partialResult.copy(on: contextProvider.viewContext))
 
                 tasksRemaining -= 1
             }
@@ -288,7 +288,7 @@ extension SearchTask {
                     searchUsersCache: searchUsersCache
                 )
 
-                self.result = self.result.union(withLocalResult: partialResult.copy(on: contextProvider.viewContext))
+                self.aggregatedResult = self.aggregatedResult.union(withLocalResult: partialResult.copy(on: contextProvider.viewContext))
 
                 tasksRemaining -= 1
             }
@@ -406,8 +406,8 @@ extension SearchTask {
                     )
                 else { return }
 
-                if let updatedResult = self?.result.union(withDirectoryResult: partialResult) {
-                    self?.result = updatedResult
+                if let updatedResult = self?.aggregatedResult.union(withDirectoryResult: partialResult) {
+                    self?.aggregatedResult = updatedResult
                 }
             })
 
@@ -537,7 +537,7 @@ extension SearchTask {
         }
 
         if let searchResult {
-            result = result.union(withDirectoryResult: searchResult)
+            aggregatedResult = aggregatedResult.union(withDirectoryResult: searchResult)
         }
     }
 
@@ -640,10 +640,10 @@ extension SearchTask {
                 }
 
                 if let user = partialResult.directory.first, !user.isSelfUser {
-                    if let prevResult = self?.result {
+                    if let prevResult = self?.aggregatedResult {
                         // prepend result to prevResult only if it doesn't contain it
                         if !prevResult.directory.contains(user) {
-                            self?.result = SearchResult(
+                            self?.aggregatedResult = SearchResult(
                                 context: prevResult.context,
                                 contacts: prevResult.contacts,
                                 teamMembers: prevResult.teamMembers,
@@ -654,7 +654,7 @@ extension SearchTask {
                             )
                         }
                     } else {
-                        self?.result = partialResult
+                        self?.aggregatedResult = partialResult
                     }
                 }
             })
@@ -723,8 +723,8 @@ extension SearchTask {
                     return
                 }
 
-                if let updatedResult = self?.result.union(withServiceResult: partialResult) {
-                    self?.result = updatedResult
+                if let updatedResult = self?.aggregatedResult.union(withServiceResult: partialResult) {
+                    self?.aggregatedResult = updatedResult
                 }
             })
 
