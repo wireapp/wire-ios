@@ -24,7 +24,7 @@ import Foundation
 /// at any given time, regardless how many times the block is enqueued.
 /// Repeated invocations don't result in repeated executions.
 
-public actor NonReentrantTaskManager<Success, Failure>: Sendable where Success: Sendable, Failure: Error {
+public actor NonReentrantTaskManager<Success, Failure> where Success: Sendable, Failure: Error {
 
     private var state: TaskState = .idle
 
