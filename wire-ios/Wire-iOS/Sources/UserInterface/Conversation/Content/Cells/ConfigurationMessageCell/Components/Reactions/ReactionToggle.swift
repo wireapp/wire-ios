@@ -40,7 +40,7 @@ final class ReactionToggle: UIControl {
     )
 
     private var onToggle: ((ZMConversationMessage) -> Void)?
-    private var accentColor: UIColor
+    private var accentColor: UIColor?
     private var message: ZMConversationMessage?
 
     var isToggled: Bool {
@@ -61,7 +61,7 @@ final class ReactionToggle: UIControl {
     ) {
         self.message = message
         self.onToggle = onToggle
-        self.accentColor = message?.senderUser?.accentColor ?? .blue
+        self.accentColor = ZMUserSession.shared()?.selfUser.accentColor
         self.isToggled = isToggled
 
         super.init(frame: .zero)
@@ -113,9 +113,9 @@ final class ReactionToggle: UIControl {
 
     private func updateAppearance() {
         if isToggled {
-            backgroundColor = accentColor.withAlphaComponent(0.5)
-            layer.borderColor = accentColor.cgColor
-            counterLabel.textColor = accentColor
+            backgroundColor = accentColor?.withAlphaComponent(0.5) ?? ButtonColors.backgroundReactionSelected
+            layer.borderColor = accentColor?.cgColor ?? ButtonColors.reactionBorderSelected.cgColor
+            counterLabel.textColor = accentColor ?? SemanticColors.Label.textReactionCounterSelected
         } else {
             backgroundColor = ButtonColors.backroundReactionNormal
             layer.borderColor = ButtonColors.borderReactionNormal.cgColor
