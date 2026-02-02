@@ -42,7 +42,7 @@ public final class SearchTask {
     /// - union(withLocalResult:)
     /// - union(withServiceResult:)
     /// - union(withDirectoryResult:)
-    /*private*/ typealias SearchResultAggregator = (inout SearchResult) -> Void // TODO: make private
+    /* private */ typealias SearchResultAggregator = (inout SearchResult) -> Void // TODO: make private
 
     private let apiVersion: WireTransport.APIVersion?
     private let transportSession: TransportSessionType
@@ -52,7 +52,7 @@ public final class SearchTask {
     private let type: `Type`
 
     init(
-        type: `Type`,
+        type: Type,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
@@ -191,7 +191,7 @@ extension SearchTask {
 
     }
 
-    /*private*/ func performLocalSearch() async -> SearchResultAggregator { // TODO: make private
+    /* private */ func performLocalSearch() async -> SearchResultAggregator { // TODO: make private
         guard case let .search(request) = type else {
             return { _ in }
         }
@@ -336,7 +336,8 @@ extension SearchTask {
         ))
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: ZMNormalizedUserDefinedNameKey, ascending: true)]
 
-        var conversations = contextProvider.searchContext.fetchOrAssert(request: fetchRequest) as? [ZMConversation] ?? []
+        var conversations = contextProvider.searchContext
+            .fetchOrAssert(request: fetchRequest) as? [ZMConversation] ?? []
 
         if query.isHandleQuery {
             // if we are searching for a username only include conversations with matching displayName
@@ -363,7 +364,7 @@ extension SearchTask {
 
 extension SearchTask {
 
-    /*private*/ func performUserLookup() async -> SearchResultAggregator { // TODO: make private
+    /* private */ func performUserLookup() async -> SearchResultAggregator { // TODO: make private
         guard
             case let .lookup(qualifiedID) = type,
             let apiVersion
@@ -408,7 +409,7 @@ extension SearchTask {
 
 extension SearchTask {
 
-    /*private*/ func performRemoteSearch() async -> SearchResultAggregator { // TODO: make private
+    /* private */ func performRemoteSearch() async -> SearchResultAggregator { // TODO: make private
         guard
             let apiVersion,
             apiVersion >= .v1,
@@ -558,7 +559,7 @@ extension SearchTask {
 
 extension SearchTask {
 
-    /*private*/ func performRemoteSearchForTeamUser() async -> SearchResultAggregator { // TODO: make private
+    /* private */ func performRemoteSearchForTeamUser() async -> SearchResultAggregator { // TODO: make private
         guard
             let apiVersion,
             apiVersion <= .v1,
@@ -649,7 +650,7 @@ extension SearchTask {
 
 extension SearchTask {
 
-    /*private*/ func performRemoteSearchForServices() async -> SearchResultAggregator { // TODO: create subtask struct
+    /* private */ func performRemoteSearchForServices() async -> SearchResultAggregator { // TODO: create subtask struct
 
         let searchContext = contextProvider.searchContext
         let teamIdentifier = await searchContext.perform {
@@ -694,7 +695,7 @@ extension SearchTask {
         }
     }
 
-    /*private*/ static func servicesSearchRequest( // TODO: make private
+    /* private */ static func servicesSearchRequest( // TODO: make private
         teamIdentifier: UUID,
         query: String,
         apiVersion: APIVersion

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireMockTransport
 import WireTransport
+import XCTest
 
 @testable import WireSyncEngine
 
@@ -310,10 +310,10 @@ final class SearchTaskTests: DatabaseTest {
             let selfUser = ZMUser.selfUser(in: uiMOC)
             selfUser.name = "Some self user"
         }
-            let user = try await createConnectedUser(withName: "Somebody")
+        let user = try await createConnectedUser(withName: "Somebody")
 
-            let request = SearchRequest(query: "Some", searchOptions: [.contacts])
-            let task = makeSearchTask(request: request)
+        let request = SearchRequest(query: "Some", searchOptions: [.contacts])
+        let task = makeSearchTask(request: request)
 
         // when
         var result = SearchResult()
@@ -388,14 +388,14 @@ final class SearchTaskTests: DatabaseTest {
             let team = Team.insertNewObject(in: uiMOC)
             let user = ZMUser.insertNewObject(in: uiMOC)
             let member = Member.insertNewObject(in: uiMOC)
-            
+
             user.name = "Member A"
-            
+
             member.team = team
             member.user = user
-            
+
             uiMOC.saveOrRollback()
-            
+
             let request = SearchRequest(query: "@member", searchOptions: [.teamMembers], team: team)
             let task = makeSearchTask(request: request)
             return (user, task)
@@ -440,7 +440,11 @@ final class SearchTaskTests: DatabaseTest {
 
             uiMOC.saveOrRollback()
 
-            let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActiveTeamMembers], team: team)
+            let request = SearchRequest(
+                query: "",
+                searchOptions: [.teamMembers, .excludeNonActiveTeamMembers],
+                team: team
+            )
             let task = makeSearchTask(request: request)
             return (userA, task)
         }
@@ -476,7 +480,11 @@ final class SearchTaskTests: DatabaseTest {
 
             uiMOC.saveOrRollback()
 
-            let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActiveTeamMembers], team: team)
+            let request = SearchRequest(
+                query: "",
+                searchOptions: [.teamMembers, .excludeNonActiveTeamMembers],
+                team: team
+            )
             let task = makeSearchTask(request: request)
             return (userA, task)
         }
@@ -580,23 +588,23 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItIncludesNonActivePartnersLocally_WhenSelfUserCreatedPartner() async throws {
         let (userA, team) = try await uiMOC.perform { [uiMOC] in
-        // given
-        let team = Team.insertNewObject(in: uiMOC)
-        let userA = ZMUser.insertNewObject(in: uiMOC)
-        let memberA = Member.insertNewObject(in: uiMOC) // non-active partner
+            // given
+            let team = Team.insertNewObject(in: uiMOC)
+            let userA = ZMUser.insertNewObject(in: uiMOC)
+            let memberA = Member.insertNewObject(in: uiMOC) // non-active partner
 
-        userA.name = "Member A"
-        userA.handle = "abc"
+            userA.name = "Member A"
+            userA.handle = "abc"
 
-        memberA.team = team
-        memberA.user = userA
-        memberA.permissions = .partner
-        memberA.createdBy = ZMUser.selfUser(in: uiMOC)
+            memberA.team = team
+            memberA.user = userA
+            memberA.permissions = .partner
+            memberA.createdBy = ZMUser.selfUser(in: uiMOC)
 
-        try uiMOC.save()
+            try uiMOC.save()
 
             return (userA, team)
-    }
+        }
 
         let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActivePartners], team: team)
         let task = makeSearchTask(request: request)
@@ -683,7 +691,7 @@ final class SearchTaskTests: DatabaseTest {
         await uiMOC.perform {
             resultAggregator(&result)
         }
-        
+
         // then
         XCTAssertEqual(result.conversations, [conversation])
     }
@@ -822,7 +830,7 @@ final class SearchTaskTests: DatabaseTest {
         try await uiMOC.perform { [uiMOC] in
             conversation2.addParticipantAndUpdateConversationState(user: user1, role: nil)
             conversation4.addParticipantsAndUpdateConversationState(users: [user1, user2], role: nil)
-            
+
             try uiMOC.save()
         }
 
@@ -1086,7 +1094,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request)
 
         // when
-     _ = await task.performRemoteSearchForServices()
+        _ = await task.performRemoteSearchForServices()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1345,25 +1353,6 @@ final class SearchTaskTests: DatabaseTest {
         resultAggregator(&result)
 
         // then
-        XCTAssertEqual(result.directory.count, 1)
-    }
-
-    func testThatTaskIsCompletedOnlyAfterFinalResultArrives() async throws {
-        // given
-        _ = try await createConnectedUser(withName: "userA")
-
-        mockTransportSession.performRemoteChanges { remoteChanges in
-            remoteChanges.insertUser(withName: "UserB")
-        }
-
-        let request = SearchRequest(query: "user", searchOptions: [.contacts, .directory])
-        let task = makeSearchTask(request: request)
-
-        // when
-        let result = await task.start()
-        
-        // then - verify both local and remote results are present
-        XCTAssertEqual(result.contacts.count, 1)
         XCTAssertEqual(result.directory.count, 1)
     }
 

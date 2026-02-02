@@ -59,7 +59,7 @@ extension SearchResult {
         self.directory = []
         self.conversations = []
         self.services = []
-        searchUsersCache = nil
+        self.searchUsersCache = nil
     }
 
     public init?(
