@@ -54,7 +54,7 @@ final class SearchAPITests: XCTestCase {
 
             // When
             try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
-                let contacts = try await sut.searchContacts(query: "lorem", domain: "", type: .app).documents
+                let contacts = try await sut.searchContacts(query: "lorem ipsum", domain: "", type: .app).documents
 
                 // Then
                 XCTAssertEqual(
@@ -104,7 +104,7 @@ final class SearchAPITests: XCTestCase {
 
             // When
             try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
-                let contacts = try await sut.searchContacts(query: "lorem", domain: "", type: .app).documents
+                let contacts = try await sut.searchContacts(query: "lorem ipsum", domain: "", type: .app).documents
 
                 // Then
                 XCTAssertEqual(
