@@ -51,7 +51,7 @@ final class SearchAPIV15: SearchAPIV14 {
         urlComponents.path = "\(pathPrefix)\(basePath)"
         urlComponents.queryItems = queryItems
 
-        guard let path = urlComponents.string else { // TODO: manually verify the change is correct
+        guard let path = urlComponents.string else {
             throw SearchAPIError.invalidRequest
         }
 

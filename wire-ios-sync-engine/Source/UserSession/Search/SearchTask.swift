@@ -636,7 +636,7 @@ extension SearchTask {
         var url = URLComponents()
         url.path = "/users"
         url.queryItems = [URLQueryItem(name: "handles", value: handle)]
-        let urlStr = url.string ?? "" // TODO: manually verify it's correct
+        let urlStr = url.string ?? ""
         return ZMTransportRequest(getFromPath: urlStr, apiVersion: apiVersion.rawValue)
     }
 }
