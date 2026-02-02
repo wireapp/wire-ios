@@ -42,17 +42,29 @@ public enum ValidateSelfUserClientUseCaseError: Error {
 
     case userNotRegistered
 
+    /// Encryption at rest is required.
+    ///
+    /// Enabled it and retry the use case.
+
+    case encryptionAtRestRequired
+
     /// The user needs to set a username before client
     /// registration can begin.
+    ///
+    /// Choose a usename and retry the use case.
 
     case usernameRequired
 
     /// The user needs to delete one of their existing clients
     /// before registering the self client.
+    ///
+    /// Delete a client and retry the use case.
 
     case tooManyClients
 
     /// The self client require a valid E2EI certificate.
+    ///
+    /// Enroll for E2EI and retry the use case.
 
     case endToEndIdentityEnrollmentRequired
 
@@ -63,6 +75,7 @@ public struct ValidateSelfUserClientUseCase: ValidateSelfUserClientUseCaseProtoc
     private let deviceName: String
     private let deviceLabel: String
 
+    private let isEncryptionAtRestRequired: Bool
     private let shouldRegisterMLSClient: Bool
     private let canRegisterMLSClient: Bool
     private let isE2EIRequired: Bool
@@ -78,11 +91,14 @@ public struct ValidateSelfUserClientUseCase: ValidateSelfUserClientUseCaseProtoc
     private let apiVersion: WireNetwork.APIVersion
 
     public func invoke() async throws {
-        // TODO: ensure EAR needs to be on.
-
-        let userInfo = try await fetchUserInfo()
+        // Ensure EAR is setup.
+        if await !isEncryptionAtRestEnabled() && isEncryptionAtRestRequired {
+            throw ValidateSelfUserClientUseCaseError.encryptionAtRestRequired
+        }
 
         // Ensure user meets requirements.
+        let userInfo = try await fetchUserInfo()
+
         guard let userID = userInfo.id else {
             throw ValidateSelfUserClientUseCaseError.userNotRegistered
         }
@@ -133,6 +149,12 @@ public struct ValidateSelfUserClientUseCase: ValidateSelfUserClientUseCaseProtoc
     }
 
     // MARK: - Helpers
+
+    private func isEncryptionAtRestEnabled () async -> Bool {
+        await context.perform { [context] in
+            context.encryptMessagesAtRest
+        }
+    }
 
     private func fetchUserInfo() async throws -> (id: UUID?, username: String?) {
         // Make sure the metadata is up to date first.
