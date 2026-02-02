@@ -545,7 +545,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         )
 
         let validator = ConversationMemberJoinEventNotificationBuilder.Validator(
-            userLocalStore: userLocalStore
+            userLocalStore: userLocalStore,
+            conversationLocalStore: conversationLocalStore
         )
 
         return ConversationMemberJoinEventNotificationBuilder(
