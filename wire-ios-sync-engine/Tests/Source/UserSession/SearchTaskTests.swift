@@ -885,7 +885,6 @@ final class SearchTaskTests: DatabaseTest {
         // then
         XCTAssertEqual(Set(result.conversations), Set([conversationInTeam, conversationNotInTeam]))
     }
-    /*
 
     // MARK: Directory Search
 
@@ -895,7 +894,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request, apiVersion: .v2)
 
         // when
-        task.performRemoteSearch()
+        _ = await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -911,7 +910,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request)
 
         // when
-        task.performRemoteSearch()
+        _ = await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -924,7 +923,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request)
 
         // when
-        task.performRemoteSearch()
+        _ = await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -937,7 +936,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request, apiVersion: .v2)
 
         // when
-        task.performRemoteSearch()
+        _ = await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -958,7 +957,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request, apiVersion: .v2)
 
         // when
-        task.performRemoteSearch()
+        _ = await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1002,7 +1001,7 @@ final class SearchTaskTests: DatabaseTest {
         }
 
         // when
-        task.performRemoteSearch()
+        _ = await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1028,7 +1027,7 @@ final class SearchTaskTests: DatabaseTest {
         }
 
         // when
-        task.performRemoteSearch()
+        _ = await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1069,7 +1068,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request)
 
         // when
-        task.performRemoteSearchForServices()
+        _ = await task.performRemoteSearchForServices()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
         // wait again to fix flaky test so second group is entered
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
@@ -1087,7 +1086,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request)
 
         // when
-        task.performRemoteSearchForServices()
+     _ = await task.performRemoteSearchForServices()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1149,7 +1148,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(lookupUserId: userId)
 
         // when
-        task.performUserLookup()
+        _ = await task.performUserLookup()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1163,7 +1162,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(lookupUserId: userId, domain: domain, apiVersion: .v2)
 
         // when
-        task.performUserLookup()
+        _ = await task.performUserLookup()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1199,7 +1198,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: searchRequest, apiVersion: .v3)
 
         // when
-        task.performRemoteSearch()
+        _ = await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1212,7 +1211,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: searchRequest, apiVersion: .v3)
 
         // when
-        task.performRemoteSearch()
+        _ = await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1363,15 +1362,12 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request)
 
         // when
-        var result = SearchResult()
-        let resultAggregator = await task.start()
-        resultAggregator(&result)
-
+        let result = await task.start()
+        
         // then - verify both local and remote results are present
         XCTAssertEqual(result.contacts.count, 1)
         XCTAssertEqual(result.directory.count, 1)
     }
-     */
 
     // MARK: - Helpers
 
