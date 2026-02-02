@@ -23,6 +23,7 @@ import WireMessagingDomain
 extension WireDriveNode {
     static func fixture(
         uuid: UUID = UUID(),
+        conversation: WireDriveConversation? = nil,
         path: String = "some/path",
         modified: Date? = nil,
         size: UInt64? = nil,
@@ -42,6 +43,7 @@ extension WireDriveNode {
     ) -> WireDriveNode {
         WireDriveNode(
             uuid: uuid,
+            conversation: conversation,
             path: path,
             modified: modified,
             size: size,
