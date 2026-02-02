@@ -82,9 +82,9 @@ final class SearchTaskTests: DatabaseTest {
             conversation.userDefinedName = name
             conversation.conversationType = .group
             conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
-            
+
             try uiMOC.save()
-            
+
             return conversation
         }
     }
@@ -158,7 +158,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertTrue(result.contacts.compactMap(\.user).contains(user))
@@ -174,7 +176,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.contacts.count, 1)
@@ -190,7 +194,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertTrue(result.contacts.compactMap(\.user).contains(user))
@@ -208,7 +214,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.contacts.compactMap(\.user), [user1])
@@ -226,7 +234,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.contacts.compactMap(\.user), [user1, user2])
@@ -242,7 +252,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.contacts.compactMap(\.user), [user1])
@@ -258,7 +270,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.contacts.compactMap(\.user), [user1])
@@ -267,9 +281,13 @@ final class SearchTaskTests: DatabaseTest {
     func testThatUserSearchOnlyReturnsConnectedUsers() async throws {
         // given
         let user1 = try await createConnectedUser(withName: "Somebody Blocked")
-        user1.connection?.status = .blocked
+        await uiMOC.perform {
+            user1.connection?.status = .blocked
+        }
         let user2 = try await createConnectedUser(withName: "Somebody Pending")
-        user2.connection?.status = .pending
+        await uiMOC.perform {
+            user2.connection?.status = .pending
+        }
         let user3 = try await createConnectedUser(withName: "Somebody")
 
         let request = SearchRequest(query: "Some", searchOptions: [.contacts])
@@ -278,7 +296,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.contacts.compactMap(\.user), [user3])
@@ -286,17 +306,21 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItDoesNotReturnTheSelfUser() async throws {
         // given
-        let selfUser = ZMUser.selfUser(in: uiMOC)
-        selfUser.name = "Some self user"
-        let user = try await createConnectedUser(withName: "Somebody")
+        await uiMOC.perform { [self] in
+            let selfUser = ZMUser.selfUser(in: uiMOC)
+            selfUser.name = "Some self user"
+        }
+            let user = try await createConnectedUser(withName: "Somebody")
 
-        let request = SearchRequest(query: "Some", searchOptions: [.contacts])
-        let task = makeSearchTask(request: request)
+            let request = SearchRequest(query: "Some", searchOptions: [.contacts])
+            let task = makeSearchTask(request: request)
 
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.contacts.compactMap(\.user), [user])
@@ -304,7 +328,7 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItDoesNotFindUsersWithOtherDomainsIfSearchDomainIsRequired() async throws {
         // given
-        let user = try await createConnectedUser(withName: "userA", domain: "bella.com")
+        _ = try await createConnectedUser(withName: "userA", domain: "bella.com")
 
         let request = SearchRequest(query: "userA@bella.com", searchDomain: "anta.com", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
@@ -312,7 +336,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.contacts.count, 0)
@@ -328,7 +354,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertTrue(result.contacts.compactMap(\.user).contains(user))
@@ -344,7 +372,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertTrue(result.contacts.compactMap(\.user).contains(user))
@@ -353,176 +383,203 @@ final class SearchTaskTests: DatabaseTest {
     // MARK: Team member local search
 
     func testThatItCanSearchForTeamMembersLocally() async throws {
-        // given
-        let team = Team.insertNewObject(in: uiMOC)
-        let user = ZMUser.insertNewObject(in: uiMOC)
-        let member = Member.insertNewObject(in: uiMOC)
-
-        user.name = "Member A"
-
-        member.team = team
-        member.user = user
-
-        uiMOC.saveOrRollback()
-
-        let request = SearchRequest(query: "@member", searchOptions: [.teamMembers], team: team)
-        let task = makeSearchTask(request: request)
+        let (user, task) = await uiMOC.perform { [self] in
+            // given
+            let team = Team.insertNewObject(in: uiMOC)
+            let user = ZMUser.insertNewObject(in: uiMOC)
+            let member = Member.insertNewObject(in: uiMOC)
+            
+            user.name = "Member A"
+            
+            member.team = team
+            member.user = user
+            
+            uiMOC.saveOrRollback()
+            
+            let request = SearchRequest(query: "@member", searchOptions: [.teamMembers], team: team)
+            let task = makeSearchTask(request: request)
+            return (user, task)
+        }
 
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.teamMembers.compactMap(\.user), [user])
     }
 
     func testThatItCanExcludeNonActiveTeamMembersLocally() async throws {
-        // given
-        let team = Team.insertNewObject(in: uiMOC)
-        let userA = ZMUser.insertNewObject(in: uiMOC)
-        let userB = ZMUser.insertNewObject(in: uiMOC)
-        let memberA = Member.insertNewObject(in: uiMOC)
-        let memberB = Member.insertNewObject(in: uiMOC) // non-active team-member
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        let (userA, task) = await uiMOC.perform { [self] in
+            // given
+            let team = Team.insertNewObject(in: uiMOC)
+            let userA = ZMUser.insertNewObject(in: uiMOC)
+            let userB = ZMUser.insertNewObject(in: uiMOC)
+            let memberA = Member.insertNewObject(in: uiMOC)
+            let memberB = Member.insertNewObject(in: uiMOC) // non-active team-member
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
-        conversation.conversationType = .group
-        conversation.remoteIdentifier = UUID()
-        conversation.addParticipantsAndUpdateConversationState(
-            users: Set([userA, ZMUser.selfUser(in: uiMOC)]),
-            role: nil
-        )
+            conversation.conversationType = .group
+            conversation.remoteIdentifier = UUID()
+            conversation.addParticipantsAndUpdateConversationState(
+                users: Set([userA, ZMUser.selfUser(in: uiMOC)]),
+                role: nil
+            )
 
-        userA.name = "Member A"
-        userB.name = "Member B"
+            userA.name = "Member A"
+            userB.name = "Member B"
 
-        memberA.team = team
-        memberA.user = userA
+            memberA.team = team
+            memberA.user = userA
 
-        memberB.team = team
-        memberB.user = userB
+            memberB.team = team
+            memberB.user = userB
 
-        uiMOC.saveOrRollback()
+            uiMOC.saveOrRollback()
 
-        let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActiveTeamMembers], team: team)
-        let task = makeSearchTask(request: request)
+            let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActiveTeamMembers], team: team)
+            let task = makeSearchTask(request: request)
+            return (userA, task)
+        }
 
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.teamMembers.compactMap(\.user), [userA])
     }
 
     func testThatItIncludesNonActiveTeamMembersLocally_WhenSelfUserWasCreatedByThem() async throws {
-        // given
-        let team = Team.insertNewObject(in: uiMOC)
-        let userA = ZMUser.insertNewObject(in: uiMOC)
-        let memberA = Member.insertNewObject(in: uiMOC) // non-active team-member
-        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let (userA, task) = await uiMOC.perform { [self] in
+            // given
+            let team = Team.insertNewObject(in: uiMOC)
+            let userA = ZMUser.insertNewObject(in: uiMOC)
+            let memberA = Member.insertNewObject(in: uiMOC) // non-active team-member
+            let selfUser = ZMUser.selfUser(in: uiMOC)
 
-        userA.name = "Member A"
-        userA.handle = "abc"
+            userA.name = "Member A"
+            userA.handle = "abc"
 
-        selfUser.membership?.permissions = .partner
-        selfUser.membership?.createdBy = userA
+            selfUser.membership?.permissions = .partner
+            selfUser.membership?.createdBy = userA
 
-        memberA.team = team
-        memberA.user = userA
-        memberA.permissions = .admin
+            memberA.team = team
+            memberA.user = userA
+            memberA.permissions = .admin
 
-        uiMOC.saveOrRollback()
+            uiMOC.saveOrRollback()
 
-        let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActiveTeamMembers], team: team)
-        let task = makeSearchTask(request: request)
+            let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActiveTeamMembers], team: team)
+            let task = makeSearchTask(request: request)
+            return (userA, task)
+        }
 
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.teamMembers.compactMap(\.user), [userA])
     }
 
     func testThatItCanExcludeNonActivePartnersLocally() async throws {
-        // given
-        let team = Team.insertNewObject(in: uiMOC)
-        let userA = ZMUser.insertNewObject(in: uiMOC)
-        let userB = ZMUser.insertNewObject(in: uiMOC)
-        let userC = ZMUser.insertNewObject(in: uiMOC)
-        let memberA = Member.insertNewObject(in: uiMOC)
-        let memberB = Member.insertNewObject(in: uiMOC) // active partner
-        let memberC = Member.insertNewObject(in: uiMOC) // non-active partner
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        let (userA, userB, task) = try await uiMOC.perform { [self] in
+            // given
+            let team = Team.insertNewObject(in: uiMOC)
+            let userA = ZMUser.insertNewObject(in: uiMOC)
+            let userB = ZMUser.insertNewObject(in: uiMOC)
+            let userC = ZMUser.insertNewObject(in: uiMOC)
+            let memberA = Member.insertNewObject(in: uiMOC)
+            let memberB = Member.insertNewObject(in: uiMOC) // active partner
+            let memberC = Member.insertNewObject(in: uiMOC) // non-active partner
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
-        conversation.conversationType = .group
-        conversation.remoteIdentifier = UUID()
-        conversation.addParticipantsAndUpdateConversationState(
-            users: Set([userA, userB, ZMUser.selfUser(in: uiMOC)]),
-            role: nil
-        )
+            conversation.conversationType = .group
+            conversation.remoteIdentifier = UUID()
+            conversation.addParticipantsAndUpdateConversationState(
+                users: Set([userA, userB, ZMUser.selfUser(in: uiMOC)]),
+                role: nil
+            )
 
-        userA.name = "Member A"
-        userB.name = "Member B"
-        userC.name = "Member C"
+            userA.name = "Member A"
+            userB.name = "Member B"
+            userC.name = "Member C"
 
-        memberA.team = team
-        memberA.user = userA
-        memberA.permissions = .member
+            memberA.team = team
+            memberA.user = userA
+            memberA.permissions = .member
 
-        memberB.team = team
-        memberB.user = userB
-        memberB.permissions = .partner
+            memberB.team = team
+            memberB.user = userB
+            memberB.permissions = .partner
 
-        memberC.team = team
-        memberC.user = userC
-        memberC.permissions = .partner
+            memberC.team = team
+            memberC.user = userC
+            memberC.permissions = .partner
 
-        uiMOC.saveOrRollback()
+            try uiMOC.save()
 
-        let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActivePartners], team: team)
-        let task = makeSearchTask(request: request)
+            let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActivePartners], team: team)
+            let task = makeSearchTask(request: request)
+            return (userA, userB, task)
+        }
 
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.teamMembers.compactMap(\.user), [userA, userB])
     }
 
     func testThatItIncludesNonActivePartnersLocally_WhenSearchingWithExactHandle() async throws {
-        // given
-        let team = Team.insertNewObject(in: uiMOC)
-        let userA = ZMUser.insertNewObject(in: uiMOC)
-        let memberA = Member.insertNewObject(in: uiMOC) // non-active partner
+        let (userA, task) = await uiMOC.perform { [self] in
+            // given
+            let team = Team.insertNewObject(in: uiMOC)
+            let userA = ZMUser.insertNewObject(in: uiMOC)
+            let memberA = Member.insertNewObject(in: uiMOC) // non-active partner
 
-        userA.name = "Member A"
-        userA.handle = "abc"
+            userA.name = "Member A"
+            userA.handle = "abc"
 
-        memberA.team = team
-        memberA.user = userA
-        memberA.permissions = .partner
+            memberA.team = team
+            memberA.user = userA
+            memberA.permissions = .partner
 
-        uiMOC.saveOrRollback()
+            uiMOC.saveOrRollback()
 
-        let request = SearchRequest(query: "@abc", searchOptions: [.teamMembers, .excludeNonActivePartners], team: team)
-        let task = makeSearchTask(request: request)
+            let searchOptions: SearchOptions = [.teamMembers, .excludeNonActivePartners]
+            let request = SearchRequest(query: "@abc", searchOptions: searchOptions, team: team)
+            let task = makeSearchTask(request: request)
+            return (userA, task)
+        }
 
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.teamMembers.compactMap(\.user), [userA])
     }
 
     func testThatItIncludesNonActivePartnersLocally_WhenSelfUserCreatedPartner() async throws {
+        let (userA, team) = try await uiMOC.perform { [uiMOC] in
         // given
         let team = Team.insertNewObject(in: uiMOC)
         let userA = ZMUser.insertNewObject(in: uiMOC)
@@ -536,7 +593,10 @@ final class SearchTaskTests: DatabaseTest {
         memberA.permissions = .partner
         memberA.createdBy = ZMUser.selfUser(in: uiMOC)
 
-        uiMOC.saveOrRollback()
+        try uiMOC.save()
+
+            return (userA, team)
+    }
 
         let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActivePartners], team: team)
         let task = makeSearchTask(request: request)
@@ -544,7 +604,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.teamMembers.compactMap(\.user), [userA])
@@ -554,7 +616,7 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItFindsASingleConversation() async throws {
         // given
-        let conversation = createGroupConversation(withName: "Somebody")
+        let conversation = try await createGroupConversation(withName: "Somebody")
 
         let request = SearchRequest(query: "Somebody", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
@@ -562,7 +624,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.conversations, [conversation])
@@ -570,7 +634,7 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItDoesFindConversationsUsingPartialNames() async throws {
         // given
-        let conversation = createGroupConversation(withName: "Somebody")
+        let conversation = try await createGroupConversation(withName: "Somebody")
 
         let request = SearchRequest(query: "mebo", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
@@ -578,7 +642,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.conversations, [conversation])
@@ -586,9 +652,9 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItFindsSeveralConversations() async throws {
         // given
-        let conversation1 = createGroupConversation(withName: "Candy Apple Records")
-        let conversation2 = createGroupConversation(withName: "Landspeed Records")
-        _ = createGroupConversation(withName: "New Day Rising")
+        let conversation1 = try await createGroupConversation(withName: "Candy Apple Records")
+        let conversation2 = try await createGroupConversation(withName: "Landspeed Records")
+        _ = try await createGroupConversation(withName: "New Day Rising")
 
         let request = SearchRequest(query: "Records", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
@@ -596,7 +662,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.conversations, [conversation1, conversation2])
@@ -604,7 +672,7 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatConversationSearchIsCaseInsensitive() async throws {
         // given
-        let conversation = createGroupConversation(withName: "SoMEBody")
+        let conversation = try await createGroupConversation(withName: "SoMEBody")
 
         let request = SearchRequest(query: "someBodY", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
@@ -612,15 +680,17 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
-
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
+        
         // then
         XCTAssertEqual(result.conversations, [conversation])
     }
 
     func testThatConversationSearchIsInsensitiveToDiacritics() async throws {
         // given
-        let conversation = createGroupConversation(withName: "Sömëbodÿ")
+        let conversation = try await createGroupConversation(withName: "Sömëbodÿ")
 
         let request = SearchRequest(query: "Sømebôdy", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
@@ -628,7 +698,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.conversations, [conversation])
@@ -636,13 +708,17 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItOnlyFindsGroupConversations() async throws {
         // given
-        let groupConversation = createGroupConversation(withName: "Group Conversation")
-        let oneOnOneConversation = createGroupConversation(withName: "OneOnOne Conversation")
-        oneOnOneConversation.conversationType = .oneOnOne
-        let selfConversation = createGroupConversation(withName: "Self Conversation")
-        selfConversation.conversationType = .self
+        let groupConversation = try await createGroupConversation(withName: "Group Conversation")
+        let oneOnOneConversation = try await createGroupConversation(withName: "OneOnOne Conversation")
+        await uiMOC.perform {
+            oneOnOneConversation.conversationType = .oneOnOne
+        }
+        let selfConversation = try await createGroupConversation(withName: "Self Conversation")
 
-        uiMOC.saveOrRollback()
+        try await uiMOC.perform { [uiMOC] in
+            selfConversation.conversationType = .self
+            try uiMOC.save()
+        }
 
         let request = SearchRequest(query: "Conversation", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
@@ -650,7 +726,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.conversations, [groupConversation])
@@ -658,16 +736,20 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItFindsConversationsThatDoNotHaveAUserDefinedName() async throws {
         // given
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.conversationType = .group
+        let conversation = await uiMOC.perform { [uiMOC] in
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.conversationType = .group
+            return conversation
+        }
 
         let user1 = try await createConnectedUser(withName: "Shinji")
         let user2 = try await createConnectedUser(withName: "Asuka")
         let user3 = try await createConnectedUser(withName: "Rëï")
 
-        conversation.addParticipantsAndUpdateConversationState(users: [user1, user2, user3], role: nil)
-
-        uiMOC.saveOrRollback()
+        try await uiMOC.perform { [uiMOC] in
+            conversation.addParticipantsAndUpdateConversationState(users: [user1, user2, user3], role: nil)
+            try uiMOC.save()
+        }
 
         let request = SearchRequest(query: "Rei", searchOptions: [.conversations, .contacts])
         let task = makeSearchTask(request: request)
@@ -675,7 +757,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.conversations, [conversation])
@@ -684,11 +768,12 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItFindsConversationsThatContainsSearchTermOnlyInParticipantName() async throws {
         // given
-        let conversation = createGroupConversation(withName: "Summertime")
+        let conversation = try await createGroupConversation(withName: "Summertime")
         let user = try await createConnectedUser(withName: "Rëï")
-        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
-
-        uiMOC.saveOrRollback()
+        try await uiMOC.perform { [uiMOC] in
+            conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
+            try uiMOC.save()
+        }
 
         let request = SearchRequest(query: "Rei", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
@@ -696,7 +781,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.conversations, [conversation])
@@ -704,9 +791,9 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItOrdersConversationsByUserDefinedName() async throws {
         // given
-        let conversation1 = createGroupConversation(withName: "FooA")
-        let conversation2 = createGroupConversation(withName: "FooC")
-        let conversation3 = createGroupConversation(withName: "FooB")
+        let conversation1 = try await createGroupConversation(withName: "FooA")
+        let conversation2 = try await createGroupConversation(withName: "FooC")
+        let conversation3 = try await createGroupConversation(withName: "FooB")
 
         let request = SearchRequest(query: "Foo", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
@@ -714,7 +801,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.conversations, [conversation1, conversation3, conversation2])
@@ -725,15 +814,17 @@ final class SearchTaskTests: DatabaseTest {
         let user1 = try await createConnectedUser(withName: "Bla")
         let user2 = try await createConnectedUser(withName: "FooB")
 
-        let conversation1 = createGroupConversation(withName: "FooA")
-        let conversation2 = createGroupConversation(withName: "Bar")
-        let conversation3 = createGroupConversation(withName: "FooB")
-        let conversation4 = createGroupConversation(withName: "Bar")
+        let conversation1 = try await createGroupConversation(withName: "FooA")
+        let conversation2 = try await createGroupConversation(withName: "Bar")
+        let conversation3 = try await createGroupConversation(withName: "FooB")
+        let conversation4 = try await createGroupConversation(withName: "Bar")
 
-        conversation2.addParticipantAndUpdateConversationState(user: user1, role: nil)
-        conversation4.addParticipantsAndUpdateConversationState(users: [user1, user2], role: nil)
-
-        uiMOC.saveOrRollback()
+        try await uiMOC.perform { [uiMOC] in
+            conversation2.addParticipantAndUpdateConversationState(user: user1, role: nil)
+            conversation4.addParticipantsAndUpdateConversationState(users: [user1, user2], role: nil)
+            
+            try uiMOC.save()
+        }
 
         let request = SearchRequest(query: "Foo", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
@@ -741,7 +832,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.conversations, [conversation1, conversation3, conversation4])
@@ -749,8 +842,8 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItFiltersConversationWhenTheQueryStartsWithAtSymbol() async throws {
         // given
-        _ = createGroupConversation(withName: "New Day Rising")
-        _ = createGroupConversation(withName: "Landspeed Records")
+        _ = try await createGroupConversation(withName: "New Day Rising")
+        _ = try await createGroupConversation(withName: "Landspeed Records")
 
         let request = SearchRequest(query: "@records", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
@@ -758,7 +851,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(result.conversations, [])
@@ -766,13 +861,16 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItReturnsAllConversationsWhenPassingTeamParameter() async throws {
         // given
-        let team = Team.insertNewObject(in: uiMOC)
-        let conversationInTeam = createGroupConversation(withName: "Beach Club")
-        let conversationNotInTeam = createGroupConversation(withName: "Beach Club")
+        let team = await uiMOC.perform { [uiMOC] in
+            Team.insertNewObject(in: uiMOC)
+        }
+        let conversationInTeam = try await createGroupConversation(withName: "Beach Club")
+        let conversationNotInTeam = try await createGroupConversation(withName: "Beach Club")
 
-        conversationInTeam.team = team
-
-        uiMOC.saveOrRollback()
+        try await uiMOC.perform { [uiMOC] in
+            conversationInTeam.team = team
+            try uiMOC.save()
+        }
 
         let request = SearchRequest(query: "Beach", searchOptions: [.conversations], team: team)
         let task = makeSearchTask(request: request)
@@ -780,7 +878,9 @@ final class SearchTaskTests: DatabaseTest {
         // when
         var result = SearchResult()
         let resultAggregator = await task.performLocalSearch()
-        resultAggregator(&result)
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
 
         // then
         XCTAssertEqual(Set(result.conversations), Set([conversationInTeam, conversationNotInTeam]))
