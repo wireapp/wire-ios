@@ -67,10 +67,7 @@ public final class SearchTask {
 
     /// Cancel a previously started task
     public func cancel() {
-        guard status == .running else {
-            return assertionFailure()
-        }
-
+        guard status == .running else { return assertionFailure() }
         status = .cancelled
     }
 

@@ -109,7 +109,7 @@ final class SearchTaskTests: DatabaseTest {
 
     }
 
-    func testThatItReturnsNothingWhenSearchingForSelfUserByHandle() {
+    func testThatItReturnsNothingWhenSearchingForSelfUserByHandle() async throws {
 
         // given
         var selfUserID: UUID!
@@ -144,7 +144,7 @@ final class SearchTaskTests: DatabaseTest {
 
     // MARK: Contacts Search
 
-    func testThatItFindsASingleUser() {
+    func testThatItFindsASingleUser() async throws {
 
         // given
         let resultArrived = customExpectation(description: "received result")
@@ -164,7 +164,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItDoesFindUsersContainingButNotBeginningWithSearchString() {
+    func testThatItDoesFindUsersContainingButNotBeginningWithSearchString() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         _ = createConnectedUser(withName: "userA")
@@ -183,7 +183,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItFindsUsersBeginningWithSearchString() {
+    func testThatItFindsUsersBeginningWithSearchString() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let user = createConnectedUser(withName: "userA")
@@ -202,7 +202,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItUsesAllQueryComponentsToFindAUser() {
+    func testThatItUsesAllQueryComponentsToFindAUser() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let user1 = createConnectedUser(withName: "Some Body")
@@ -223,7 +223,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItFindsSeveralUsers() {
+    func testThatItFindsSeveralUsers() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let user1 = createConnectedUser(withName: "Grant")
@@ -244,7 +244,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatUserSearchIsCaseInsensitive() {
+    func testThatUserSearchIsCaseInsensitive() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let user1 = createConnectedUser(withName: "Somebody")
@@ -263,7 +263,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatUserSearchIsInsensitiveToDiacritics() {
+    func testThatUserSearchIsInsensitiveToDiacritics() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let user1 = createConnectedUser(withName: "Sömëbodÿ")
@@ -282,7 +282,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatUserSearchOnlyReturnsConnectedUsers() {
+    func testThatUserSearchOnlyReturnsConnectedUsers() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let user1 = createConnectedUser(withName: "Somebody Blocked")
@@ -305,7 +305,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItDoesNotReturnTheSelfUser() {
+    func testThatItDoesNotReturnTheSelfUser() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let selfUser = ZMUser.selfUser(in: uiMOC)
@@ -326,7 +326,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItDoesNotFindUsersWithOtherDomainsIfSearchDomainIsRequired() {
+    func testThatItDoesNotFindUsersWithOtherDomainsIfSearchDomainIsRequired() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let user = createConnectedUser(withName: "userA", domain: "bella.com")
@@ -345,7 +345,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItFindsUsersWithSameDomainAsSelfUser() {
+    func testThatItFindsUsersWithSameDomainAsSelfUser() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let user = createConnectedUser(withName: "userA", domain: "anta.com")
@@ -364,7 +364,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItFindsUsersWithOtherDomainsIfSearchDomainIsNotRequired() {
+    func testThatItFindsUsersWithOtherDomainsIfSearchDomainIsNotRequired() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let user = createConnectedUser(withName: "userA", domain: "bella.com")
@@ -385,7 +385,7 @@ final class SearchTaskTests: DatabaseTest {
 
     // MARK: Team member local search
 
-    func testThatItCanSearchForTeamMembersLocally() {
+    func testThatItCanSearchForTeamMembersLocally() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let team = Team.insertNewObject(in: uiMOC)
@@ -413,7 +413,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItCanExcludeNonActiveTeamMembersLocally() {
+    func testThatItCanExcludeNonActiveTeamMembersLocally() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let team = Team.insertNewObject(in: uiMOC)
@@ -455,7 +455,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItIncludesNonActiveTeamMembersLocally_WhenSelfUserWasCreatedByThem() {
+    func testThatItIncludesNonActiveTeamMembersLocally_WhenSelfUserWasCreatedByThem() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let team = Team.insertNewObject(in: uiMOC)
@@ -489,7 +489,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItCanExcludeNonActivePartnersLocally() {
+    func testThatItCanExcludeNonActivePartnersLocally() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let team = Team.insertNewObject(in: uiMOC)
@@ -540,7 +540,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItIncludesNonActivePartnersLocally_WhenSearchingWithExactHandle() {
+    func testThatItIncludesNonActivePartnersLocally_WhenSearchingWithExactHandle() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let team = Team.insertNewObject(in: uiMOC)
@@ -570,7 +570,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItIncludesNonActivePartnersLocally_WhenSelfUserCreatedPartner() {
+    func testThatItIncludesNonActivePartnersLocally_WhenSelfUserCreatedPartner() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let team = Team.insertNewObject(in: uiMOC)
@@ -603,7 +603,7 @@ final class SearchTaskTests: DatabaseTest {
 
     // MARK: Conversation Search
 
-    func testThatItFindsASingleConversation() {
+    func testThatItFindsASingleConversation() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let conversation = createGroupConversation(withName: "Somebody")
@@ -622,7 +622,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItDoesFindConversationsUsingPartialNames() {
+    func testThatItDoesFindConversationsUsingPartialNames() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let conversation = createGroupConversation(withName: "Somebody")
@@ -641,7 +641,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItFindsSeveralConversations() {
+    func testThatItFindsSeveralConversations() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let conversation1 = createGroupConversation(withName: "Candy Apple Records")
@@ -662,7 +662,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatConversationSearchIsCaseInsensitive() {
+    func testThatConversationSearchIsCaseInsensitive() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let conversation = createGroupConversation(withName: "SoMEBody")
@@ -681,7 +681,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatConversationSearchIsInsensitiveToDiacritics() {
+    func testThatConversationSearchIsInsensitiveToDiacritics() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let conversation = createGroupConversation(withName: "Sömëbodÿ")
@@ -700,7 +700,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItOnlyFindsGroupConversations() {
+    func testThatItOnlyFindsGroupConversations() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let groupConversation = createGroupConversation(withName: "Group Conversation")
@@ -725,7 +725,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItFindsConversationsThatDoNotHaveAUserDefinedName() {
+    func testThatItFindsConversationsThatDoNotHaveAUserDefinedName() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
@@ -754,7 +754,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItFindsConversationsThatContainsSearchTermOnlyInParticipantName() {
+    func testThatItFindsConversationsThatContainsSearchTermOnlyInParticipantName() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let conversation = createGroupConversation(withName: "Summertime")
@@ -777,7 +777,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItOrdersConversationsByUserDefinedName() {
+    func testThatItOrdersConversationsByUserDefinedName() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let conversation1 = createGroupConversation(withName: "FooA")
@@ -798,7 +798,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItOrdersConversationsByUserDefinedNameFirstAndByParticipantNameSecond() {
+    func testThatItOrdersConversationsByUserDefinedNameFirstAndByParticipantNameSecond() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let user1 = createConnectedUser(withName: "Bla")
@@ -828,7 +828,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItFiltersConversationWhenTheQueryStartsWithAtSymbol() {
+    func testThatItFiltersConversationWhenTheQueryStartsWithAtSymbol() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         _ = createGroupConversation(withName: "New Day Rising")
@@ -848,7 +848,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItReturnsAllConversationsWhenPassingTeamParameter() {
+    func testThatItReturnsAllConversationsWhenPassingTeamParameter() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let team = Team.insertNewObject(in: uiMOC)
@@ -875,7 +875,7 @@ final class SearchTaskTests: DatabaseTest {
 
     // MARK: Directory Search
 
-    func testThatItSendsASearchRequest() {
+    func testThatItSendsASearchRequest() async throws {
         // given
         let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.directory])
         let task = makeSearchTask(request: request, apiVersion: .v2)
@@ -891,7 +891,7 @@ final class SearchTaskTests: DatabaseTest {
         )
     }
 
-    func testThatItDoesNotSendASearchRequestIfSeachingLocally() {
+    func testThatItDoesNotSendASearchRequestIfSeachingLocally() async throws {
         // given
         let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
@@ -904,7 +904,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 0)
     }
 
-    func testThatItDoesNotSendASearchRequestIfLocalResultsOnly() {
+    func testThatItDoesNotSendASearchRequestIfLocalResultsOnly() async throws {
         // given
         let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.directory, .localResultsOnly])
         let task = makeSearchTask(request: request)
@@ -917,7 +917,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 0)
     }
 
-    func testThatItEncodesAPlusCharacterInTheSearchURL() {
+    func testThatItEncodesAPlusCharacterInTheSearchURL() async throws {
         // given
         let request = SearchRequest(query: "foo+bar@example.com", searchOptions: [.directory])
         let task = makeSearchTask(request: request, apiVersion: .v2)
@@ -933,7 +933,7 @@ final class SearchTaskTests: DatabaseTest {
         )
     }
 
-    func testThatItEncodesUnsafeCharactersInRequest() {
+    func testThatItEncodesUnsafeCharactersInRequest() async throws {
         // RFC 3986 Section 3.4 "Query"
         // <https://tools.ietf.org/html/rfc3986#section-3.4>
         //
@@ -954,7 +954,7 @@ final class SearchTaskTests: DatabaseTest {
         )
     }
 
-    func testThatItCallsCompletionHandlerForDirectorySearch() {
+    func testThatItCallsCompletionHandlerForDirectorySearch() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let request = SearchRequest(query: "User", searchOptions: [.directory])
@@ -977,7 +977,7 @@ final class SearchTaskTests: DatabaseTest {
 
     // MARK: Directory Search - Membership lookup
 
-    func testThatItMakesRequestToFetchTeamMembershipMetadata() {
+    func testThatItMakesRequestToFetchTeamMembershipMetadata() async throws {
         // given
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
         let task = makeSearchTask(request: request, apiVersion: .v2)
@@ -1003,7 +1003,7 @@ final class SearchTaskTests: DatabaseTest {
         )
     }
 
-    func testThatItDoesNotMakeRequestToFetchTeamMembershipMetadata_WhenLocalResultsOnly() {
+    func testThatItDoesNotMakeRequestToFetchTeamMembershipMetadata_WhenLocalResultsOnly() async throws {
         // given
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers, .localResultsOnly])
         let task = makeSearchTask(request: request, apiVersion: .v2)
@@ -1024,7 +1024,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(mockTransportSession.receivedRequests().isEmpty)
     }
 
-    func testThatItCallsCompletionHandlerForTeamMemberDirectorySearch() {
+    func testThatItCallsCompletionHandlerForTeamMemberDirectorySearch() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
@@ -1055,7 +1055,7 @@ final class SearchTaskTests: DatabaseTest {
 
     // MARK: Services search
 
-    func testThatItSendsASearchServicesRequest() {
+    func testThatItSendsASearchServicesRequest() async throws {
         // given
         let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.services])
         let task = makeSearchTask(request: request)
@@ -1073,7 +1073,7 @@ final class SearchTaskTests: DatabaseTest {
         )
     }
 
-    func testThatItDoesNotSendASearchServicesRequest_WhenLocalResultsOnly() {
+    func testThatItDoesNotSendASearchServicesRequest_WhenLocalResultsOnly() async throws {
         // given
         let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.services, .localResultsOnly])
         let task = makeSearchTask(request: request)
@@ -1086,7 +1086,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(mockTransportSession.receivedRequests().isEmpty)
     }
 
-    func testThatItCallsCompletionHandlerForServicesSearch() {
+    func testThatItCallsCompletionHandlerForServicesSearch() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         let request = SearchRequest(query: "Service", searchOptions: [.services])
@@ -1138,7 +1138,7 @@ final class SearchTaskTests: DatabaseTest {
 
     // MARK: User lookup
 
-    func testThatItSendsAUserLookupRequest() {
+    func testThatItSendsAUserLookupRequest() async throws {
         // given
         let userId = UUID()
         let task = makeSearchTask(lookupUserId: userId)
@@ -1151,7 +1151,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/users/\(userId.transportString())")
     }
 
-    func testThatItSendsAUserLookupRequest_IfApiVersionIsV2AndAbove() {
+    func testThatItSendsAUserLookupRequest_IfApiVersionIsV2AndAbove() async throws {
         // given
         let userId = UUID()
         let domain = "wire.com"
@@ -1168,7 +1168,7 @@ final class SearchTaskTests: DatabaseTest {
         )
     }
 
-    func testThatItCallsCompletionHandlerForUserLookup() {
+    func testThatItCallsCompletionHandlerForUserLookup() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
 
@@ -1192,7 +1192,7 @@ final class SearchTaskTests: DatabaseTest {
 
     // MARK: Federated search
 
-    func testThatItDoesNotSendAFederatedUserSearchRequest__WhenLocalSearchOnly() throws {
+    func testThatItDoesNotSendAFederatedUserSearchRequest__WhenLocalSearchOnly() async throws {
         // given
         let searchRequest = SearchRequest(query: "john@example.com", searchOptions: [.federated, .localResultsOnly])
         let task = makeSearchTask(request: searchRequest, apiVersion: .v3)
@@ -1205,7 +1205,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(mockTransportSession.receivedRequests().isEmpty)
     }
 
-    func testThatItSendsAFederatedUserSearchRequest() throws {
+    func testThatItSendsAFederatedUserSearchRequest() async throws {
         // given
         let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated)
         let task = makeSearchTask(request: searchRequest, apiVersion: .v3)
@@ -1220,7 +1220,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(request.path, "/v3/search/contacts?q=john&domain=example.com&size=10")
     }
 
-    func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserExists() {
+    func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserExists() async throws {
         // given
         let federatedDomain = "example.com"
         let resultArrived = customExpectation(description: "received result")
@@ -1246,7 +1246,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserDoesntExist() {
+    func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserDoesntExist() async throws {
         // given
         let resultArrived = customExpectation(description: "received result")
         mockTransportSession.federatedDomains = ["example.com"]
@@ -1267,7 +1267,7 @@ final class SearchTaskTests: DatabaseTest {
 
     // MARK: Combined results
 
-    func testThatRemoteResultsIncludePreviousLocalResults() {
+    func testThatRemoteResultsIncludePreviousLocalResults() async throws {
         // given
         let localResultArrived = customExpectation(description: "received local result")
         let user = createConnectedUser(withName: "userA")
@@ -1303,7 +1303,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatLocalResultsIncludePreviousRemoteResults() {
+    func testThatLocalResultsIncludePreviousRemoteResults() async throws {
         // given
         let remoteResultArrived = customExpectation(description: "received remote result")
         _ = createConnectedUser(withName: "userA")
@@ -1339,7 +1339,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatTaskIsCompletedAfterLocalResult() {
+    func testThatTaskIsCompletedAfterLocalResult() async throws {
         // given
         let localResultArrived = customExpectation(description: "received local result")
         let user = createConnectedUser(withName: "userA")
@@ -1358,7 +1358,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatTaskIsCompletedAfterRemoteResults() {
+    func testThatTaskIsCompletedAfterRemoteResults() async throws {
         // given
         let remoteResultArrived = customExpectation(description: "received remote result")
         mockTransportSession.performRemoteChanges { remoteChanges in
@@ -1380,7 +1380,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatTaskIsCompletedOnlyAfterFinalResultArrives() {
+    func testThatTaskIsCompletedOnlyAfterFinalResultArrives() async throws {
         // given
         let intermediateResultArrived = customExpectation(description: "received intermediate result")
         let finalResultsArrived = customExpectation(description: "received final result")
