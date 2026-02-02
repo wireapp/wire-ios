@@ -30,6 +30,7 @@
 "general.create" = "Create";
 "general.cancel" = "Cancel";
 "general.done" = "Done";
+"general.noInternet.title" = "No Internet";
 
 // MARK: - Channel Access level
 "channel_access_level.public" = "Public";
@@ -115,6 +116,7 @@
 "conversation.wireCells.files.navigationTitle" = "Shared Drive";
 "conversation.wireCells.allFiles.navigationTitle" = "Drive";
 "conversation.wireCells.files.item.subtitle" = "%@ by %@";
+"conversation.wireCells.allFiles.item.subtitle" = "%@ in %@";
 "conversation.wireCells.files.loadMore.title" = "Load more";
 "conversation.wireCells.files.item.menu.open" = "Open";
 "conversation.wireCells.files.item.menu.shareLink" = "Share";
@@ -140,8 +142,11 @@
 "conversation.wireCells.files.pendingCells.title" = "Files are loading";
 "conversation.wireCells.files.pendingCells.message" = "Your documents and media files will be available here once we've uploaded all files and folders.";
 "conversation.wireCells.files.error.title" = "Can't load files";
-"conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
-"conversation.wireCells.files.error.reload" = "Reload";
+"conversation.wireCells.files.error.message" = "Something went wrong while loading. Please try again.";
+"conversation.wireCells.files.error.retry" = "Retry";
+"conversation.wireCells.files.error.noConnection.title" = "Unable to load files";
+"conversation.wireCells.files.error.noConnection.message" = "Your list of files could not be loaded. Please check your Internet connection and try again.";
+"conversation.wireCells.files.error.noConnection.retry" = "Try again";
 "conversation.wireCells.files.search.title" = "Search files";
 "conversation.wireCells.files.list.createFolder" = "Create folder";
 "conversation.wireCells.files.list.createFile" = "Create file";
@@ -196,7 +201,7 @@
 "conversation.wireCells.tags.error.nameTooLong" = "Use a shorter tag name (at most 30 characters)";
 "conversation.wireCells.tags.error.specialCharacters" = "Use a tag without special characters {0}";
 "conversation.wireCells.tags.error.saveFailedTitle" = "Unable to edit tags";
-"conversation.wireCells.tags.error.saveFailedMessage" = "Due to an error your tags could not be edited.";
+"conversation.wireCells.tags.error.saveFailedMessage" = "Something went wrong while editing the tags. Please try again.";
 "conversation.wireCells.tags.error.retryButton" = "Try again";
 "conversation.wireCells.files.moveToFolder.move" = "Move here";
 "conversation.wireCells.files.moveToFolder.noSubfolders" = "There are no subfolders in this folder.";

@@ -27,7 +27,7 @@ public import WireMessagingUI
 
 public struct WireMessagingFactory {
 
-    public typealias CellsURLResolver = @Sendable () throws -> URL
+    public typealias DriveURLResolver = @Sendable () throws -> URL
 
     private let nodesAPI: NodesAPI
     private let uploadManager: WireDriveNodeUploadManager
@@ -44,13 +44,18 @@ public struct WireMessagingFactory {
 
     @MainActor
     public init(
-        cellsURLResolver: @escaping CellsURLResolver,
+        driveURLResolver: @escaping DriveURLResolver,
+        driveConversationLocalStore: any WireDriveConversationsLocalStoreProtocol,
         accessToken: any AccessTokenProvider,
         fileCache: any FileCache,
         contextProvider: any ManagedObjectContextProvider
     ) {
         self.nodeCache = WireDriveNodeCache()
-        self.nodesAPI = NodesAPI(serverURLResolver: cellsURLResolver, accessToken: accessToken)
+        self.nodesAPI = NodesAPI(
+            serverURLResolver: driveURLResolver,
+            localStore: driveConversationLocalStore,
+            accessToken: accessToken
+        )
         self.uploadManager = WireDriveNodeUploadManager(nodesAPI: nodesAPI)
         self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
         self.fileCache = fileCache
@@ -208,7 +213,7 @@ public extension WireMessagingFactory {
                     nodesRepository: nodesAPI,
                     fileCache: fileCache,
                     isBrowsing: true,
-                    accentColorProvider: accentColorProvider,
+                    accentColorProvider: accentColorProvider
                 )
             )
         )

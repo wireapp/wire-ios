@@ -1420,8 +1420,7 @@ final class SearchTaskTests: DatabaseTest {
         apiVersion: APIVersion = .v0
     ) -> SearchTask {
         SearchTask(
-            request: request,
-            searchContext: searchMOC,
+            type: .search(searchRequest: request),
             contextProvider: coreDataStack!,
             transportSession: mockTransportSession,
             searchUsersCache: mockCache,
@@ -1435,9 +1434,9 @@ final class SearchTaskTests: DatabaseTest {
         domain: String = "wire.com",
         apiVersion: APIVersion = .v0
     ) -> SearchTask {
-        SearchTask(
-            qualifiedID: QualifiedID(uuid: lookupUserId, domain: domain),
-            searchContext: searchMOC,
+        let qualifiedID = QualifiedID(uuid: lookupUserId, domain: domain)
+        return SearchTask(
+            type: .lookup(qualifiedID: qualifiedID),
             contextProvider: coreDataStack!,
             transportSession: mockTransportSession,
             searchUsersCache: mockCache,

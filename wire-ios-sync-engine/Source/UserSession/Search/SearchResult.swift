@@ -52,6 +52,16 @@ public struct SearchResult {
 
 extension SearchResult {
 
+    init() {
+        self.context = .init(concurrencyType: .privateQueueConcurrencyType)
+        self.contacts = []
+        self.teamMembers = []
+        self.directory = []
+        self.conversations = []
+        self.services = []
+        searchUsersCache = nil
+    }
+
     public init?(
         payload: [AnyHashable: Any],
         query: SearchRequest.Query,
@@ -217,6 +227,18 @@ extension SearchResult {
             contacts: contacts,
             teamMembers: Array(Set(teamMembers).union(result.teamMembers)),
             directory: result.directory,
+            conversations: conversations,
+            services: services,
+            searchUsersCache: searchUsersCache
+        )
+    }
+
+    func union(prependingDirectory result: SearchResult) -> SearchResult {
+        SearchResult(
+            context: context,
+            contacts: contacts,
+            teamMembers: teamMembers,
+            directory: result.directory + directory,
             conversations: conversations,
             services: services,
             searchUsersCache: searchUsersCache

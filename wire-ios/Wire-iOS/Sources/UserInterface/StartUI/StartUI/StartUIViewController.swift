@@ -434,7 +434,7 @@ extension StartUIViewController: UISearchResultsUpdating, UISearchBarDelegate {
             object: nil
         )
 
-        perform(#selector(performSearch), with: nil, afterDelay: 0.2)
+        perform(#selector(performSearch), with: nil, afterDelay: 0.25)
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
