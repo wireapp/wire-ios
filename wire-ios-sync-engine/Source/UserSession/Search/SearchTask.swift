@@ -392,23 +392,22 @@ extension SearchTask {
         searchContext.performGroupedBlock { [self] in
             let request = type(of: self).searchRequestForUser(qualifiedID: qualifiedID, apiVersion: apiVersion)
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
+
                 defer {
                     self?.tasksRemaining -= 1
                 }
 
                 guard
-                    let contextProvider = self?.contextProvider,
+                    let self,
                     let payload = response.payload?.asDictionary(),
                     let result = SearchResult(
                         userLookupPayload: payload,
                         contextProvider: contextProvider,
-                        searchUsersCache: self?.searchUsersCache
+                        searchUsersCache: searchUsersCache
                     )
                 else { return }
 
-                if let updatedResult = self?.result.union(withDirectoryResult: result) {
-                    self?.result = updatedResult
-                }
+                self.result = self.result.union(withDirectoryResult: result)
             })
 
             request.add(ZMTaskCreatedHandler(on: searchContext) { [weak self] taskIdentifier in
@@ -453,26 +452,26 @@ extension SearchTask {
             let request = Self.searchRequestInDirectory(withRequest: searchRequest, apiVersion: apiVersion)
 
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
+                guard let self else { return }
 
                 guard
-                    let contextProvider = self?.contextProvider,
                     let payload = response.payload?.asDictionary(),
                     let result = SearchResult(
                         payload: payload,
                         query: searchRequest.query,
                         searchOptions: searchRequest.searchOptions,
                         contextProvider: contextProvider,
-                        searchUsersCache: self?.searchUsersCache
+                        searchUsersCache: searchUsersCache
                     )
                 else {
-                    self?.completeRemoteSearch()
+                    completeRemoteSearch()
                     return
                 }
 
                 if searchRequest.searchOptions.contains(.teamMembers) {
-                    self?.performTeamMembershipLookup(on: result, searchRequest: searchRequest)
+                    performTeamMembershipLookup(on: result, searchRequest: searchRequest)
                 } else {
-                    self?.completeRemoteSearch(searchResult: result)
+                    completeRemoteSearch(searchResult: result)
                 }
             })
 
@@ -503,12 +502,13 @@ extension SearchTask {
         )
 
         request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
+            guard let self else { return }
+
             guard
-                let contextProvider = self?.contextProvider,
                 let rawData = response.rawData,
                 let payload = MembershipListPayload(rawData)
             else {
-                self?.completeRemoteSearch()
+                completeRemoteSearch()
                 return
             }
 
@@ -520,7 +520,7 @@ extension SearchTask {
                 contextProvider: contextProvider
             )
 
-            self?.completeRemoteSearch(searchResult: updatedResult)
+            completeRemoteSearch(searchResult: updatedResult)
 
         })
 
@@ -612,7 +612,7 @@ extension SearchTask {
                 }
 
                 guard
-                    let contextProvider = self?.contextProvider,
+                    let self,
                     let payload = response.payload?.asArray(),
                     let userPayload = (payload.first as? ZMTransportData)?.asDictionary()
                 else {
@@ -634,27 +634,24 @@ extension SearchTask {
                     query: searchRequest.query,
                     searchOptions: searchRequest.searchOptions,
                     contextProvider: contextProvider,
-                    searchUsersCache: self?.searchUsersCache
+                    searchUsersCache: searchUsersCache
                 ) else {
                     return
                 }
 
                 if let user = result.directory.first, !user.isSelfUser {
-                    if let prevResult = self?.result {
-                        // prepend result to prevResult only if it doesn't contain it
-                        if !prevResult.directory.contains(user) {
-                            self?.result = SearchResult(
-                                context: prevResult.context,
-                                contacts: prevResult.contacts,
-                                teamMembers: prevResult.teamMembers,
-                                directory: result.directory + prevResult.directory,
-                                conversations: prevResult.conversations,
-                                services: prevResult.services,
-                                searchUsersCache: self?.searchUsersCache
-                            )
-                        }
-                    } else {
-                        self?.result = result
+                    let prevResult = self.result
+                    // prepend result to prevResult only if it doesn't contain it
+                    if !prevResult.directory.contains(user) {
+                        self.result = SearchResult(
+                            context: prevResult.context,
+                            contacts: prevResult.contacts,
+                            teamMembers: prevResult.teamMembers,
+                            directory: result.directory + prevResult.directory,
+                            conversations: prevResult.conversations,
+                            services: prevResult.services,
+                            searchUsersCache: searchUsersCache
+                        )
                     }
                 }
             })
@@ -711,21 +708,20 @@ extension SearchTask {
                 }
 
                 guard
-                    let contextProvider = self?.contextProvider,
+                    let self,
                     let payload = response.payload?.asDictionary(),
                     let result = SearchResult(
                         servicesPayload: payload,
                         query: searchRequest.query.string,
                         contextProvider: contextProvider,
-                        searchUsersCache: self?.searchUsersCache
+                        searchUsersCache: searchUsersCache
                     )
                 else {
                     return
                 }
 
-                if let updatedResult = self?.result.union(withServiceResult: result) {
-                    self?.result = updatedResult
-                }
+                let updatedResult = self.result.union(withServiceResult: result)
+                self.result = updatedResult
             })
 
             request.add(ZMTaskCreatedHandler(on: searchContext) { [weak self] taskIdentifier in
