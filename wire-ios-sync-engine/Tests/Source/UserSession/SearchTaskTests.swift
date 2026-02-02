@@ -1273,20 +1273,19 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request, apiVersion: .v2)
 
         // when - perform local search
-        var localResult = SearchResult()
+        var result = SearchResult()
         let localResultAggregator = await task.performLocalSearch()
-        localResultAggregator(&localResult)
+        localResultAggregator(&result)
 
         // then - local result contains user
-        XCTAssertTrue(localResult.contacts.compactMap(\.user).contains(user))
+        XCTAssertTrue(result.contacts.compactMap(\.user).contains(user))
 
         // when - perform remote search
-        var remoteResult = SearchResult()
         let remoteResultAggregator = await task.performRemoteSearch()
-        remoteResultAggregator(&remoteResult)
+        remoteResultAggregator(&result)
 
         // then - remote result still contains local user
-        XCTAssertTrue(remoteResult.contacts.compactMap(\.user).contains(user))
+        XCTAssertTrue(result.contacts.compactMap(\.user).contains(user))
     }
 
     func testThatLocalResultsIncludePreviousRemoteResults() async throws {
@@ -1301,20 +1300,19 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request, apiVersion: .v2)
 
         // when - perform remote search
-        var remoteResult = SearchResult()
+        var result = SearchResult()
         let remoteResultAggregator = await task.performRemoteSearch()
-        remoteResultAggregator(&remoteResult)
+        remoteResultAggregator(&result)
 
         // then - remote result contains directory user
-        XCTAssertEqual(remoteResult.directory.count, 1)
+        XCTAssertEqual(result.directory.count, 1)
 
         // when - perform local search
-        var localResult = SearchResult()
         let localResultAggregator = await task.performLocalSearch()
-        localResultAggregator(&localResult)
+        localResultAggregator(&result)
 
         // then - local result still contains directory user
-        XCTAssertEqual(localResult.directory.count, 1)
+        XCTAssertEqual(result.directory.count, 1)
     }
 
     func testThatTaskIsCompletedAfterLocalResult() async throws {
