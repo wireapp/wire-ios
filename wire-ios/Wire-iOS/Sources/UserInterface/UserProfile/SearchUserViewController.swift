@@ -137,7 +137,7 @@ final class SearchUserViewController: UIViewController {
 
             navigationController?.setViewControllers([profileViewController], animated: true)
             resultHandled = true
-        } else if isCompleted {
+        } else {
             let alert = UIAlertController(
                 title: L10n.Localizable.UrlAction.InvalidUser.title,
                 message: L10n.Localizable.UrlAction.InvalidUser.message,
