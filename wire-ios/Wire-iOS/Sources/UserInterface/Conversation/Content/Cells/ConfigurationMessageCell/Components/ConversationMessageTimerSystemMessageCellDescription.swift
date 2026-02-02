@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationMessageTimerSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell<ConversationMessageTimerSystemMessageCellDescription>
+    typealias View = ConversationWarningSystemMessageCell<ConversationMessageTimerSystemMessageCellDescription>
     typealias LabelColors = SemanticColors.Label
     typealias IconColors = SemanticColors.Icon
 
@@ -82,7 +82,11 @@ final class ConversationMessageTimerSystemMessageCellDescription: ConversationMe
 
         typealias LabelColors = SemanticColors.Label
         let icon = StyleKitIcon.hourglass.makeImage(size: 16, color: IconColors.backgroundDefault)
-        self.configuration = View.Configuration(icon: icon, attributedText: updateText, showLine: false)
+        self.configuration = View.Configuration(
+            icon: icon,
+            topText: NSAttributedString(string: ""),
+            bottomText: updateText ?? NSAttributedString(string: "")
+        )
         self.accessibilityLabel = updateText?.string
         self.actionController = nil
     }

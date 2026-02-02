@@ -27,7 +27,7 @@ public final class SearchTask {
         case lookup(qualifiedID: QualifiedID)
     }
 
-    enum Status {
+    private enum Status {
         case pending
         case running
         case cancelled
@@ -288,7 +288,7 @@ extension SearchTask {
         var result = team?.members(matchingQuery: query) ?? []
 
         if searchOptions.contains(.excludeNonActiveTeamMembers) {
-            result = filterNonActiveTeamMembers(members: result)
+            partialResult = filterNonActiveTeamMembers(members: partialResult)
         }
 
         if searchOptions.contains(.excludeNonActivePartners) {
@@ -297,7 +297,7 @@ extension SearchTask {
             let activeConversations = ZMUser.selfUser(in: contextProvider.searchContext).activeConversations
             let activeContacts = Set(activeConversations.flatMap(\.localParticipants))
 
-            result = result.filter { membership in
+            partialResult = partialResult.filter { membership in
                 if let user = membership.user {
                     user.teamRole != .partner || user.handle == query || membership
                         .createdBy == selfUser || activeContacts.contains(user)
@@ -307,7 +307,7 @@ extension SearchTask {
             }
         }
 
-        return result
+        return partialResult
     }
 
     private func connectedUsers(
@@ -375,12 +375,12 @@ extension SearchTask {
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
 
                 guard
-                    let contextProvider = self?.contextProvider,
+                    let self,
                     let payload = response.payload?.asDictionary(),
-                    let result = SearchResult(
+                    let partialResult = SearchResult(
                         userLookupPayload: payload,
                         contextProvider: contextProvider,
-                        searchUsersCache: self?.searchUsersCache
+                        searchUsersCache: searchUsersCache
                     )
                 else { return continuation.resume(returning: { _ in }) }
 
@@ -425,16 +425,16 @@ extension SearchTask {
             let request = Self.searchRequestInDirectory(withRequest: searchRequest, apiVersion: apiVersion)
 
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
+                guard let self else { return }
 
                 guard
-                    let contextProvider = self?.contextProvider,
                     let payload = response.payload?.asDictionary(),
-                    let result = SearchResult(
+                    let partialResult = SearchResult(
                         payload: payload,
                         query: searchRequest.query,
                         searchOptions: searchRequest.searchOptions,
                         contextProvider: contextProvider,
-                        searchUsersCache: self?.searchUsersCache
+                        searchUsersCache: searchUsersCache
                     )
                 else {
                     return continuation.resume(returning: { _ in })
@@ -592,7 +592,7 @@ extension SearchTask {
 
                 let document = ["handle": handle, "name": name, "id": id]
                 let documentPayload = ["documents": [document]]
-                guard let result = SearchResult(
+                guard let partialResult = SearchResult(
                     payload: documentPayload,
                     query: searchRequest.query,
                     searchOptions: searchRequest.searchOptions,
@@ -674,13 +674,13 @@ extension SearchTask {
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
 
                 guard
-                    let contextProvider = self?.contextProvider,
+                    let self,
                     let payload = response.payload?.asDictionary(),
-                    let result = SearchResult(
+                    let partialResult = SearchResult(
                         servicesPayload: payload,
                         query: searchRequest.query.string,
                         contextProvider: contextProvider,
-                        searchUsersCache: self?.searchUsersCache
+                        searchUsersCache: searchUsersCache
                     )
                 else { return continuation.resume(returning: { _ in }) }
 

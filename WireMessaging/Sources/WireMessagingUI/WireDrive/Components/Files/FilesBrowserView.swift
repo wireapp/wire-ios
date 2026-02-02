@@ -49,13 +49,22 @@ package struct FilesBrowserView: FilesViewProtocol {
                     ProgressView()
                         .progressViewStyle(.circular)
                 case .received, .pending:
-                    filesList
-                case .error:
-                    FilesInfoView(info: .error, onReload: {
+                    VStack {
+                        if viewModel.connectionState == .offline {
+                            Spacer()
+                            offlineBar.id(UUID())
+                            Spacer()
+                        }
+
+                        filesList
+                    }
+                case let .error(isConnectionError):
+                    FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
                         reloadTask()
                     })
                 }
             }
+            .animation(.easeInOut(duration: 0.25), value: viewModel.connectionState)
             .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
             .navigationTitle(Strings.AllFiles.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)

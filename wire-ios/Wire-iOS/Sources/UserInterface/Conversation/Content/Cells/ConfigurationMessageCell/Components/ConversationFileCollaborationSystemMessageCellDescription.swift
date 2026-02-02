@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationFileCollaborationSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell<ConversationFileCollaborationSystemMessageCellDescription>
+    typealias View = ConversationWarningSystemMessageCell<ConversationFileCollaborationSystemMessageCellDescription>
     typealias LabelColors = SemanticColors.Label
     typealias IconColors = SemanticColors.Icon
 
@@ -59,7 +59,11 @@ final class ConversationFileCollaborationSystemMessageCellDescription: Conversat
             attributedText.addAttribute(.font, value: UIFont.mediumSemiboldFont, range: nsRange)
         }
 
-        self.configuration = View.Configuration(icon: icon, attributedText: attributedText, showLine: false)
+        self.configuration = View.Configuration(
+            icon: icon,
+            topText: NSAttributedString(string: ""),
+            bottomText: attributedText,
+        )
         self.accessibilityLabel = attributedText.string
         self.actionController = nil
     }
