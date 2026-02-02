@@ -67,10 +67,12 @@ package struct WireCellsRenameNodeUseCase: WireCellsRenameNodeUseCaseProtocol {
             let directory = url.deletingLastPathComponent()
             targetPath = directory.appendingPathComponent("\(newFilename).\(pathExtension)")
         }
+        
+        let path = targetPath.absoluteString.removingPercentEncoding ?? targetPath.absoluteString
 
         // Checks whether the path doesn't already exist.
         let preCheckResult = try await nodesRepository.preCheck(
-            nodePath: targetPath.absoluteString,
+            nodePath: path,
             findAvailablePath: false
         )
 
@@ -81,7 +83,7 @@ package struct WireCellsRenameNodeUseCase: WireCellsRenameNodeUseCaseProtocol {
         // Renames the file on the server.
         let didRenameFile = try await nodesRepository.renameNode(
             nodeID: nodeID,
-            targetPath: targetPath.absoluteString
+            targetPath: path
         )
 
         guard didRenameFile else {
