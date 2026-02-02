@@ -20,6 +20,8 @@ import CoreData
 import Foundation
 import WireUtilities
 
+TODO: use new networking code
+
 public final class SearchTask {
 
     public enum `Type` {
