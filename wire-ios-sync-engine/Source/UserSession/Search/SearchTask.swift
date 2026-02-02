@@ -81,7 +81,10 @@ public final class SearchTask {
         status = .running
         defer { status = .completed }
 
-        return await withTaskGroup(of: SearchResultAggregator.self, returning: SearchResult.self) { taskGroup in
+        return await withTaskGroup(
+            of: SearchResultAggregator.self,
+            returning: SearchResult.self
+        ) { @MainActor taskGroup in
 
             // search services
             taskGroup.addTask {
@@ -459,11 +462,16 @@ extension SearchTask {
         searchRequest: SearchRequest
     ) async -> SearchResultAggregator {
 
-        let teamMembersIDs = searchResult.teamMembers.compactMap(\.remoteIdentifier)
+        let viewContext = contextProvider.viewContext
+        let (teamMembersIDs, teamID) = await contextProvider.viewContext.perform { [viewContext] in
+            let teamMembersIDs = searchResult.teamMembers.compactMap(\.remoteIdentifier)
+            let teamID = ZMUser.selfUser(in: viewContext).team?.remoteIdentifier
+            return (teamMembersIDs, teamID)
+        }
 
         guard
             let apiVersion,
-            let teamID = ZMUser.selfUser(in: contextProvider.viewContext).team?.remoteIdentifier,
+            let teamID,
             !teamMembersIDs.isEmpty
         else {
             return { $0 = $0.union(withDirectoryResult: searchResult) }
@@ -478,8 +486,9 @@ extension SearchTask {
         return await withCheckedContinuation { continuation in
 
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
+
                 guard
-                    let contextProvider = self?.contextProvider,
+                    let self,
                     let rawData = response.rawData,
                     let payload = MembershipListPayload(rawData)
                 else { return continuation.resume(returning: { _ in }) }
