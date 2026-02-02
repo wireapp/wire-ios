@@ -335,8 +335,10 @@
 "conversation.connection_view.wire_cells.encryption_info" = "Nachrichten und Anrufe sind immer Ende-zu-Ende verschlüsselt, während Dateien und Ordner bei der Übertragung gesichert und im Ruhezustand verschlüsselt werden.";
 "conversation.connection_view.sensitive_information_warning" = "Bitte seien Sie dennoch vorsichtig, mit wem Sie vertrauliche Informationen teilen.";
 "conversation.connection_view.welcome.title.wire" = "Kommunikation in Wire ist immer Ende-zu-Ende-verschlüsselt.";
-"conversation.connection_view.welcome.message.wire" = "Everything you send and receive in this channel is only accessible to you and other group participants.\n\nPlease still be careful with who you share sensitive information.";
 "conversation.connection_view.welcome.title.wire_cells" = "Kommunikation in Wire ist immer sicher.";
+"conversation.connection_view.welcome.message.wire_channel" = "Alles, was Sie in diesem Channel senden und empfangen, ist nur für Sie und andere Teilnehmer zugänglich.\n\nBitte seien Sie dennoch vorsichtig, mit wem Sie vertrauliche Informationen teilen.";
+"conversation.connection_view.welcome.message.wire_group" = "Alles, was Sie in dieser Unterhaltung senden und empfangen, ist nur für Sie und andere Teilnehmer zugänglich.\n\nBitte seien Sie dennoch vorsichtig, mit wem Sie vertrauliche Informationen teilen.";
+"conversation.connection_view.welcome.message.wire_one_on_one" = "Alles, was Sie in dieser Unterhaltung senden und empfangen, ist nur für Sie und Ihren Kontakt zugänglich.\n\nBitte seien Sie dennoch vorsichtig, mit wem Sie vertrauliche Informationen teilen.";
 "conversation.connection_view.welcome.message.wire_cells" = "Nachrichten und Anrufe sind immer Ende-zu-Ende verschlüsselt, während Dateien und Ordner bei der Übertragung gesichert und im Ruhezustand verschlüsselt werden.\n\nBitte seien Sie dennoch vorsichtig, mit wem Sie vertrauliche Informationen teilen.\n\n";
 "conversation.connection_view.welcome.learn_more" = "Mehr erfahren";
 
@@ -740,6 +742,13 @@
 "content.file.too_big" = "Sie können Dateien bis zu %@ senden";
 
 "content.message.reply.files.count" = "%@ Dateien";
+"content.message.reply.files.notAvailable" = "Datei nicht verfügbar";
+
+// Uploaded file needs rename
+"content.uploaded_file_needs_rename.title" = "Inkompatible Zeichen ersetzen";
+"content.uploaded_file_needs_rename.message" = "Sie können die Zeichen %@ und %@nicht verwenden.\nErsetzen Sie sie automatisch oder benennen Sie die Datei manuell um.";
+"content.uploaded_file_needs_rename.confirmButton" = "Ersetzen";
+"content.uploaded_file_needs_rename.cancelButton" = "Abbrechen";
 
 // Reactions
 "content.reactions.title" = "Reaktion auswählen";
@@ -1874,8 +1883,8 @@
 "collections.search.no_items" = "Keine Ergebnisse";
 
 "collections.section.searchFiles.description" = "Dateien suchen";
-"collections.section.searchFiles.alert.title" = "Wire Drive";
-"collections.section.searchFiles.alert.message" = "Finden Sie Dateien in Unterhaltungen mit Geteiltes Drive.";
+"collections.section.searchFiles.alert.title" = "Geteiltes Drive";
+"collections.section.searchFiles.alert.message" = "Finden Sie alle Dateien oder Ordner in dieser Unterhaltung.";
 
 
 

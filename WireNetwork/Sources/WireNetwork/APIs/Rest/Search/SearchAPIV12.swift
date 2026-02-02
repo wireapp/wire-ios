@@ -16,21 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+class SearchAPIV12: SearchAPIV11 {
 
-public enum WireDriveNodeConversationRepositoryError: Error {
-    case cellNameNotFound
-    case genericError(any Error)
-}
+    override var apiVersion: APIVersion {
+        .v12
+    }
 
-public protocol WireDriveNodeConversationRepository {
-    func getCellName(conversationID: QualifiedID) async throws(WireDriveNodeConversationRepositoryError)
-        -> String
-
-    func setWireCell(
-        conversationID: QualifiedID,
-        cellName: String
-    ) async throws(WireDriveNodeConversationRepositoryError)
-
-    func getConversationNames() async throws(WireDriveNodeConversationRepositoryError) -> [WireDriveConversation]
 }

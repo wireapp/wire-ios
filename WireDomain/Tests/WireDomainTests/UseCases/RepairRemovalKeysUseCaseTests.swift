@@ -217,11 +217,11 @@ struct RepairRemovalKeysUseCaseTests {
 // TODO: [WPB-22478] Remove this mock when we generate it in WireNetwork
 final class MockConversationsAPIProtocol: ConversationsAPI {
 
-    func getLegacyConversationIdentifiers() async throws -> WireNetwork.PayloadPager<[UUID]> {
+    func getLegacyConversationIdentifiers() throws -> WireNetwork.PayloadPager<[UUID]> {
         fatalError("not implemented")
     }
 
-    func getConversationIdentifiers() async throws -> WireNetwork.PayloadPager<[WireNetwork.QualifiedID]> {
+    func getConversationIdentifiers() throws -> WireNetwork.PayloadPager<[WireNetwork.QualifiedID]> {
         fatalError("not implemented")
     }
 

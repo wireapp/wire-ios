@@ -33,7 +33,8 @@ extension FilesViewItem {
         icon: FileIcon = .image,
         tags: [String] = [],
         isEditable: Bool = false,
-        publicLinkID: String? = nil
+        publicLinkID: String? = nil,
+        conversationName: String? = "Conversation 1"
     ) -> FilesViewItem {
         FilesViewItem(
             id: id,
@@ -46,7 +47,8 @@ extension FilesViewItem {
             icon: icon,
             tags: tags,
             isEditable: isEditable,
-            publicLinkID: publicLinkID
+            publicLinkID: publicLinkID,
+            conversationName: conversationName
         )
     }
 

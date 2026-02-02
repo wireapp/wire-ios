@@ -51,6 +51,21 @@ public protocol TeamsAPI {
         maxResults: UInt
     ) async throws -> [TeamMember]
 
+    /// Get members of a specific team with the specified ids.
+    ///
+    /// Note: non-existent ids will be ignored.
+    ///
+    /// - Parameters:
+    ///   - teamID: The id of the team.
+    ///   - userIDs: A list of user ids to match team members.
+    ///
+    /// - Returns: A list of members.
+
+    func getTeamMembers(
+        of teamID: Team.ID,
+        for userIDs: [UUID]
+    ) async throws -> [TeamMember]
+
     /// Get the legalhold of a team member.
     ///
     /// - Parameters:
@@ -79,5 +94,10 @@ public protocol TeamsAPI {
             memberEmail: String
         ) async throws -> UUID
     #endif
+
+    func getWhitelistedBots(
+        for teamID: Team.ID,
+        with prefix: String
+    ) throws -> PayloadPager<[WhitelistedBotProfile]>
 
 }

@@ -30,6 +30,8 @@ public protocol WireDriveUploadDraftUseCaseProtocol: Sendable {
     /// Creates a file using `imageData` and uploads it to the drive server.
 
     func invoke(data: Data, type: UTType) async throws
+
+    var charactersToReplace: [Character] { get }
 }
 
 public enum WireDriveUploadDraftUseCaseError: Error, Sendable {

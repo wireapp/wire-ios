@@ -168,7 +168,7 @@ final class FilesBrowserViewTests: XCTestCase {
 
     @MainActor
     func testFilesBrowserView_ErrorState() async {
-        let view = makeFilesBrowserView(state: .error)
+        let view = makeFilesBrowserView(state: .error(isConnectionError: false))
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
