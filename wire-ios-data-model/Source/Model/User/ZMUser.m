@@ -719,6 +719,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 @implementation ZMUser (Utilities)
 
+// TODO: consider deleting
 + (ZMUser<ZMEditableUserType> *)selfUserInUserSession:(id<ZMContextProvider>)session
 {
     VerifyReturnNil(session != nil);

@@ -87,6 +87,7 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 
 @interface ZMUser (Utilities)
 
+// TODO: consider deleting
 + (ZMUser<ZMEditableUserType> *_Nonnull)selfUserInUserSession:(id<ZMContextProvider> _Nonnull)session;
 
 @end

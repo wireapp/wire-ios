@@ -105,7 +105,7 @@ public class ZMSearchUser: NSObject, UserType {
         user?.objectId ?? remoteIdentifier!
     }
 
-    fileprivate weak var contextProvider: ContextProvider?
+    fileprivate weak var contextProvider: ContextProvider? // TODO: remove, we seem to only access the viewContext
     private let searchUsersCache: SearchUsersCache?
 
     fileprivate var internalDomain: String?
