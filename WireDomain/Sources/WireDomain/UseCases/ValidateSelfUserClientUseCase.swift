@@ -213,22 +213,13 @@ public struct ValidateSelfUserClientUseCase: ValidateSelfUserClientUseCaseProtoc
         let newClient = try await context.perform { [context] in
             let client = try context.existingObject(with: localClientID) as! UserClient
 
-            // Note on the cookie label:
-            // A random UUID() label should be generated for each log in
-            // which should be stored with the account.
-
-            // If there's a hard logout (data wiped)
-            // the label should also be deleted.
-
-            // We should use the same label when registering the client.
-
             return NewClient(
                 prekeys: prekeys,
                 lastkey: lastResortPrekey,
                 type: client.type.toNetwork(),
                 capabilities: capabilities,
                 deviceClass: client.deviceClass?.toNetwork(),
-                cookie: nil, // TODO: check what this is used for
+                cookie: nil,
                 label: client.label,
                 model: client.model,
                 password: nil,
@@ -246,7 +237,6 @@ public struct ValidateSelfUserClientUseCase: ValidateSelfUserClientUseCaseProtoc
 
             localClient.remoteIdentifier = remoteClient.id
             localClient.numberOfKeysRemaining = Int32(newClient.prekeys.count)
-            // TODO: check if other properties need storing
             localClient.activationDate = remoteClient.activationDate
             localClient.lastActiveDate = remoteClient.lastActiveDate
             localClient.isConsumableNotificationsCapable = remoteClient.capabilities.contains(.consumableNotifications)
@@ -264,7 +254,6 @@ public struct ValidateSelfUserClientUseCase: ValidateSelfUserClientUseCaseProtoc
             localClient.markAsSelfClient()
             try context.save()
 
-            // TODO: Set client id in WireLoger.authentication
             return remoteClient.id
         }
     }
