@@ -764,12 +764,13 @@ public extension WireCallCenterV3 {
 
             Task {
                 do {
+                    // TODO: [WPB-23157] make sure to use usecase to join subgroup with retry max 3
                     // Join the subgroup or create it if it doesn't exist
                     let subgroupID = try await mlsService.createOrJoinSubgroup(
                         parentQualifiedID: parentQualifiedID,
                         parentID: parentGroupID
                     )
-
+                    
                     try avsCallHandler()
 
                     // Generate and set the conference information for the subgroup
@@ -822,9 +823,10 @@ public extension WireCallCenterV3 {
                         snapshot.groupIDs = (parentGroupID, subgroupID)
                         snapshot.updateConferenceInfoTask = updateConferenceInfoTask
                         snapshot.mlsConferenceStaleParticipantsRemover = staleParticipantsRemover
-                        self.callSnapshots[conversationID] = snapshot
+                        self.callSnapshots[conversationID] = snapshot // TODO: not thread safe
                     }
                 } catch {
+                    // TODO: check with Katerina if closing the call if we failed to join the subgroup is ok for avs - no side effect
                     Self.logger.error("failed to set up MLS conference: \(String(describing: error))")
                     self.onMLSConferenceFailure(id: conversationID)
                     assertionFailure(String(reflecting: error))

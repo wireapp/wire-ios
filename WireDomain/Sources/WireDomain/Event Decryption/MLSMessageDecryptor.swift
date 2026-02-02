@@ -33,7 +33,9 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
     ) async throws {
         let welcomeMessage = eventData.welcomeMessage
         let conversationID = eventData.conversationID
-
+        
+        WireLogger.mls.info("processing welcome message", attributes: [.conversationId: conversationID.id.safeForLoggingDescription])
+        
         let groupID = try await mlsDecryptionService.processWelcomeMessage(
             welcomeMessage: welcomeMessage,
             context: context

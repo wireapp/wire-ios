@@ -656,7 +656,7 @@ public final class MLSService: MLSServiceInterface {
             let shouldCountRemainingKeyPackages = estimatedLocalKeyPackageCount <= halfOfTargetUnclaimedKeyPackageCount
 
             guard hasMoreThan24HoursPassedSinceLastCheck || shouldCountRemainingKeyPackages else {
-                logger.info("last check was recent and there are enough unclaimed key packages. not uploading.")
+                logger.info("last check was recent and there are enough unclaimed key packages. not uploading.") // TODO: add keypackages
                 return false
             }
 

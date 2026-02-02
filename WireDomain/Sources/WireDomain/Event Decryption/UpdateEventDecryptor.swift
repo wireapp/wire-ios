@@ -157,7 +157,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     )
                 } catch {
                     WireLogger.updateEvent.error(
-                        "failed to decrypt MLS welcome message event, dropping: \(error.localizedDescription)",
+                        "failed to decrypt MLS welcome message event, dropping: \(String(describing: error))",
                         attributes: logAttributes
                     )
                 }

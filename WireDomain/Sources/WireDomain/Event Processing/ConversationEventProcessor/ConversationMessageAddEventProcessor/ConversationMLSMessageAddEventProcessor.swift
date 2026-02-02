@@ -42,7 +42,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         let decryptedMessages = event.decryptedMessages
 
         guard !decryptedMessages.isEmpty else {
-            return WireLogger.proteus.warn(
+            return WireLogger.mls.warn(
                 "failed to add MLS message: there are no decrypted messages to process"
             )
         }
