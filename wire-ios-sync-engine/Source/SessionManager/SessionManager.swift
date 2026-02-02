@@ -381,12 +381,9 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let sharedUserDefaults: UserDefaults
 
-    /// Currently active `Tasks` loading sessions by user ID
-    ///
     /// Used by `withSession(for:newEnvironment:notifyAboutMigration:)` to avoid creating & loading multiple sessions
     /// for the same account concurrently.
-    @MainActor
-    private var inFlightWithSessionTasks: [UUID: Task<ZMUserSession?, Never>] = [:]
+    private let withSessionTaskManager = NonReentrantTaskManager<ZMUserSession?, Never>()
 
     // MARK: - Life cycle
 
@@ -1006,12 +1003,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             return session
         }
 
-        if let inFlightTask = inFlightWithSessionTasks[account.userIdentifier] {
-            WireLogger.sessionManager.debug("Session is already loading for \(account), awaiting it")
-            return await inFlightTask.value
-        }
-
-        let task = Task<ZMUserSession?, Never> { @MainActor in
+        return await withSessionTaskManager.performIfNeeded { @MainActor [self] in
             do {
                 let loader = try UserSessionLoader(
                     account: account,
@@ -1111,11 +1103,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                 return nil
             }
         }
-
-        inFlightWithSessionTasks[account.userIdentifier] = task
-        let userSession = await task.value
-        inFlightWithSessionTasks[account.userIdentifier] = nil
-        return userSession
     }
 
     public func retryStart() {
