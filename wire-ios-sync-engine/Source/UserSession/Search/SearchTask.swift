@@ -42,7 +42,7 @@ public final class SearchTask {
     /// - union(withLocalResult:)
     /// - union(withServiceResult:)
     /// - union(withDirectoryResult:)
-    /* private */ typealias SearchResultAggregator = (inout SearchResult) -> Void // TODO: make private
+    typealias SearchResultAggregator = (inout SearchResult) -> Void
 
     private let apiVersion: WireTransport.APIVersion?
     private let transportSession: TransportSessionType
@@ -196,7 +196,7 @@ extension SearchTask {
             return { _ in }
         }
 
-        let searchContext = contextProvider.searchContext
+        let searchContext = contextProvider.newBackgroundContext()
         let (connectedUserIDs, teamMemberIDs, conversationIDs) = await searchContext.perform { [self] in
 
             var team: Team?
@@ -274,9 +274,10 @@ extension SearchTask {
     }
 
     private func filterNonActiveTeamMembers(members: [Member]) -> [Member] {
-        let activeConversations = ZMUser.selfUser(in: contextProvider.searchContext).activeConversations
+        let searchContext = contextProvider.newBackgroundContext()
+        let activeConversations = ZMUser.selfUser(in: searchContext).activeConversations
         let activeContacts = Set(activeConversations.flatMap(\.localParticipants))
-        let selfUser = ZMUser.selfUser(in: contextProvider.searchContext)
+        let selfUser = ZMUser.selfUser(in: searchContext)
 
         return members.filter {
             guard let user = $0.user else { return false }
@@ -293,8 +294,9 @@ extension SearchTask {
 
         if searchOptions.contains(.excludeNonActivePartners) {
             let query = query.strippingLeadingAtSign()
-            let selfUser = ZMUser.selfUser(in: contextProvider.searchContext)
-            let activeConversations = ZMUser.selfUser(in: contextProvider.searchContext).activeConversations
+            let searchContext = contextProvider.newBackgroundContext() // TODO: which context to work on actually? test also manually
+            let selfUser = ZMUser.selfUser(in: searchContext)
+            let activeConversations = ZMUser.selfUser(in: searchContext).activeConversations
             let activeContacts = Set(activeConversations.flatMap(\.localParticipants))
 
             partialResult = partialResult.filter { membership in
@@ -336,7 +338,8 @@ extension SearchTask {
         ))
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: ZMNormalizedUserDefinedNameKey, ascending: true)]
 
-        var conversations = contextProvider.searchContext
+        let searchContext = contextProvider.newBackgroundContext()
+        var conversations = searchContext
             .fetchOrAssert(request: fetchRequest) as? [ZMConversation] ?? []
 
         if query.isHandleQuery {
@@ -652,7 +655,7 @@ extension SearchTask {
 
     /* private */ func performRemoteSearchForServices() async -> SearchResultAggregator { // TODO: create subtask struct
 
-        let searchContext = contextProvider.searchContext
+        let searchContext = contextProvider.newBackgroundContext()
         let teamIdentifier = await searchContext.perform {
             ZMUser.selfUser(in: searchContext).team?.remoteIdentifier
         }

@@ -48,7 +48,6 @@ public protocol ContextProvider {
     var viewContext: NSManagedObjectContext { get }
     func newBackgroundContext() -> NSManagedObjectContext
     var syncContext: NSManagedObjectContext { get }
-    var searchContext: NSManagedObjectContext { get } // TODO: delete
     var eventContext: NSManagedObjectContext { get }
 
 }
