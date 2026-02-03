@@ -19,7 +19,6 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireSyncEngine
 
 // MARK: - ReactionToggle
 
@@ -39,9 +38,7 @@ final class ReactionToggle: UIControl {
         color: SemanticColors.Label.textDefault
     )
 
-    private var onToggle: ((ZMConversationMessage) -> Void)?
-    private var accentColor: UIColor
-    private var message: ZMConversationMessage?
+    private var onToggle: (() -> Void)?
 
     var isToggled: Bool {
         didSet {
@@ -56,13 +53,10 @@ final class ReactionToggle: UIControl {
         emoji: Emoji.ID,
         count: UInt,
         isToggled: Bool = false,
-        message: ZMConversationMessage?,
-        onToggle: ((ZMConversationMessage) -> Void)? = nil
+        onToggle: (() -> Void)? = nil
     ) {
-        self.message = message
-        self.onToggle = onToggle
-        self.accentColor = message?.senderUser?.accentColor ?? .blue
         self.isToggled = isToggled
+        self.onToggle = onToggle
 
         super.init(frame: .zero)
 
@@ -113,9 +107,9 @@ final class ReactionToggle: UIControl {
 
     private func updateAppearance() {
         if isToggled {
-            backgroundColor = accentColor.withAlphaComponent(0.5)
-            layer.borderColor = accentColor.cgColor
-            counterLabel.textColor = accentColor
+            backgroundColor = ButtonColors.backgroundReactionSelected
+            layer.borderColor = ButtonColors.borderReactionSelected.cgColor
+            counterLabel.textColor = SemanticColors.Label.textReactionCounterSelected
         } else {
             backgroundColor = ButtonColors.backroundReactionNormal
             layer.borderColor = ButtonColors.borderReactionNormal.cgColor
@@ -127,8 +121,7 @@ final class ReactionToggle: UIControl {
 
     @objc
     private func didToggle() {
-        guard let message else { return }
-        onToggle?(message)
+        onToggle?()
     }
 
     // MARK: - Accessibility

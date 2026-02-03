@@ -34,15 +34,6 @@ struct MessageReactionMetadata: Equatable {
 
 }
 
-struct MessageReactionsCellConfiguration: Equatable {
-    let reactions: [MessageReactionMetadata]
-    let message: ZMConversationMessage // Include the message here
-
-    static func == (lhs: MessageReactionsCellConfiguration, rhs: MessageReactionsCellConfiguration) -> Bool {
-        lhs.reactions == rhs.reactions && lhs.message == rhs.message
-    }
-}
-
 // MARK: - MessageReactionsCell
 
 final class MessageReactionsCell: UIView, ConversationMessageCell {
@@ -86,25 +77,25 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     // MARK: - configure method
 
     func configure(
-        with object: MessageReactionsCellConfiguration,
+        with reactions: [MessageReactionMetadata],
         animated: Bool
     ) {
-        let reactionToggles = object.reactions.map { reaction in
+        let reactionToggles = reactions.map { reaction in
             ReactionToggle(
                 emoji: reaction.emoji,
                 count: reaction.count,
-                isToggled: reaction.isSelfUserReacting,
-                message: object.message
-            ) { [weak self] tappedMessage in
+                isToggled: reaction.isSelfUserReacting
+            ) { [weak self] in
                 guard
-                    let self
+                    let self,
+                    let message
                 else {
                     return
                 }
 
                 delegate?.perform(
                     action: .react(reaction.emoji),
-                    for: tappedMessage,
+                    for: message,
                     view: self
                 )
             }
