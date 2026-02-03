@@ -26,16 +26,15 @@ struct CommitPendingProposalItem: WorkItem, CustomStringConvertible {
     private let mlsService: MLSServiceInterface
 
     let _internalID = UUID()
-    
+
     var id: String {
         "commitPendingProposalItem_\(_internalID)_\(groupID)_\(conversationID)"
     }
-    
+
     var description: String {
         "CommitPendingProposalItem: \(_internalID), mlsGroupID: \(groupID), conversationID: \(conversationID)"
     }
 
-    let id = UUID()
     var priority: WorkItemPriority {
         .medium
     }

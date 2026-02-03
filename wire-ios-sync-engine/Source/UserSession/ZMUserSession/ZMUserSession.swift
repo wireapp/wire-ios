@@ -431,6 +431,7 @@ public final class ZMUserSession: NSObject {
     private let networkReachability = NetworkReachability()
     private var networkInterfaceSwitchCancellable: AnyCancellable?
     private var isNetworkReachableCancellable: AnyCancellable?
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Initialize
 
@@ -667,7 +668,6 @@ public final class ZMUserSession: NSObject {
                 flowManager: flowManager,
                 incrementalSyncObserver: incrementalSyncObserver,
                 initiateResetMLSConversationUseCase: clientSessionComponent.initiateResetMLSConversationUseCase,
-                commitPendingProposalUseCase: clientSessionComponent.commitPendingProposalsUseCase,
                 metadata: resolvedBackendMetadata
             )
             syncStrategy?.updateClientContextChangeTrackers()
@@ -676,7 +676,14 @@ public final class ZMUserSession: NSObject {
             await clientSessionComponent.workAgent.setAutoStartEnabled(true)
             await clientSessionComponent.workAgent.start()
             clientSessionComponent.generatorsDirectory.observeSyncState()
-
+            clientSessionComponent.syncStateSubject.sink { state in
+                if state == .suspended {
+                    Task {
+                        // clear all items, those will be regenerated when sync is resumed
+                        await clientSessionComponent.workAgent.clearSchedulerQueue()
+                    }
+                }
+            }.store(in: &cancellables)
             // Initialize the generator to enqueue repair work item if needed
             clientSessionComponent.repairFaultyMLSRemovalKeysGenerator.submitWorkItemIfNeeded()
         }

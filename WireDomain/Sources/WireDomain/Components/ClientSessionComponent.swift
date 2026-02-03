@@ -784,13 +784,7 @@ public final class ClientSessionComponent {
             selfDomain: backendMetadata.domain
         )
     }
-    
-    public func createCommitPendingProposalsUseCase() -> some CommitPendingProposalUseCaseProtocol {
-        CommitPendingProposalUseCase(mlsService: mlsService,
-                                     coreCryptoProvider: coreCryptoProvider,
-                                     context: syncContext
-        )
-    }
+
     // MARK: - Other
 
     public private(set) lazy var conversationProtobufMessageProcessor = ConversationProtobufMessageProcessor(
@@ -834,20 +828,12 @@ public final class ClientSessionComponent {
         selfDomain: backendMetadata.domain
     )
 
-    public lazy var commitPendingProposalsUseCase = CommitPendingProposalUseCase(mlsService: mlsService,
-                                                                                 coreCryptoProvider: coreCryptoProvider,
-                                                                                 context: syncContext)
-    
     public lazy var mlsTransport: any WireCoreCryptoUniffi.MlsTransport = MLSTransportImpl(
         mlsAPI: mlsAPI,
         conversationEventProcessor: conversationEventProcessor
     )
 
-    public lazy var workAgent: WorkAgent = {
-        let scheduler = PriorityOrderWorkItemScheduler()
-        scheduler.subscribe(syncStatePublisher: syncStateSubject.eraseToAnyPublisher())
-        return .init(scheduler: scheduler)
-    }()
+    public lazy var workAgent: WorkAgent = .init(scheduler: PriorityOrderWorkItemScheduler())
 
     public lazy var conversationUpdatesGenerator: IncrementalGeneratorProtocol = ConversationUpdatesGenerator(
         repository: conversationRepository,
@@ -861,7 +847,6 @@ public final class ClientSessionComponent {
     public lazy var commitPendingProposalsGenerator: LiveGeneratorProtocol = CommitPendingProposalsGenerator(
         repository: conversationRepository,
         mlsService: mlsService,
-        commitPendingProposalUseCase: commitPendingProposalsUseCase,
         context: syncContext,
         isMLSGroupBroken: { [weak self] groupID in
             self?.isMLSGroupBroken(groupID: groupID) == true

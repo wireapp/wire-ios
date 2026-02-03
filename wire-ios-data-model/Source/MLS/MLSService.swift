@@ -67,7 +67,6 @@ public final class MLSService: MLSServiceInterface {
     private weak var mlsSyncDelegate: (any MLSSyncDelegate)?
     private weak var resetBrokenMLSConversationDelegate: (any ResetBrokenMLSConversationDelegate)?
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
-    private var brokenGroupIDs: Set<MLSGroupID> = []
     private let localDomain: String?
 
     private var coreCrypto: SafeCoreCryptoProtocol {
@@ -1556,7 +1555,6 @@ public final class MLSService: MLSServiceInterface {
                         "no need to apply recovery strategy for reset broken MLS conversation, FF is OFF",
                         attributes: logAttributes
                     )
-                    brokenGroupIDs.insert(groupID)
                     throw MLSRetryError.nonRecoverableError(reason)
                 }
 
@@ -1569,7 +1567,6 @@ public final class MLSService: MLSServiceInterface {
                     epoch = await fetchConversationInfo(with: groupID, in: context)?.epoch ?? 0
                 }
                 await resetBrokenMLSConversationDelegate?.didCatchBrokenMLSConversation(groupID: groupID, epoch: epoch)
-                brokenGroupIDs.remove(groupID)
 
             case .giveUp:
                 logger.warn(

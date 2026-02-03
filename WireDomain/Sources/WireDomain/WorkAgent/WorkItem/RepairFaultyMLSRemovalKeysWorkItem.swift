@@ -30,7 +30,7 @@ struct RepairFaultyMLSRemovalKeysWorkItem: WorkItem {
     var id: String {
         "repairFaultyMLSRemovalKeys_\(UUID().uuidString)"
     }
-    
+
     var priority: WorkItemPriority {
         .low
     }

@@ -136,6 +136,9 @@ public actor WorkAgent {
         task = nil
     }
 
+    public func clearSchedulerQueue() async {
+        await scheduler.clearAllItems()
+    }
 }
 
 extension LogAttributes {

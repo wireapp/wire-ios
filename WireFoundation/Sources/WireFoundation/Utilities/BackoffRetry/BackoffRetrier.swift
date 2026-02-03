@@ -25,7 +25,7 @@ public actor BackoffRetrier {
         _ seconds: Double
     ) async throws -> Void
 
-    enum Failure: Error {
+    public enum Failure: Error {
         case exceededMaxAttempts(latestError: any Error)
     }
 
