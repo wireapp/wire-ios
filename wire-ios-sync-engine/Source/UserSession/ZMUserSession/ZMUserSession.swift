@@ -424,6 +424,7 @@ public final class ZMUserSession: NSObject {
     public private(set) var clientSessionComponent: ClientSessionComponent?
 
     private let networkReachability = NetworkReachability()
+    private var networkInterfaceSwitchCancellable: AnyCancellable?
     private var isNetworkReachableCancellable: AnyCancellable?
 
     // MARK: - Initialize
@@ -883,11 +884,16 @@ public final class ZMUserSession: NSObject {
     }
 
     private func observeNetworkInterfaceSwitch() {
-        isNetworkReachableCancellable = networkReachability.interfaceSwitchWhileOnlinePublisher
+        networkInterfaceSwitchCancellable = networkReachability.interfaceSwitchWhileOnlinePublisher
             .sink { [weak self] _, _ in
                 guard let self else { return }
                 notifyAVSOfNetworkInterfaceChanged()
             }
+
+        isNetworkReachableCancellable = networkReachability.isOnlinePublisher.sink { [weak self] _ in
+            guard let self else { return }
+            notifyAVSOfNetworkInterfaceChanged()
+        }
     }
 
     func trackAnalyticsEvent(_ event: AnalyticsEvent) {
