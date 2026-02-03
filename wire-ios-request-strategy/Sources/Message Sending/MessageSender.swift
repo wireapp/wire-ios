@@ -477,11 +477,7 @@ public final class MessageSender: MessageSenderInterface {
         operation: () async throws -> Void
     ) async throws {
         do {
-            await mlsService.fetchAndRepairGroup(
-                with: groupID,
-                shouldPerformIncrementalSync: true
-            )
-
+            await mlsService.fetchAndRepairGroup(with: groupID)
             try await operation()
         } catch let error as MessageSendError {
             guard retryCount < maxRetryAttempts else {

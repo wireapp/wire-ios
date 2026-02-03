@@ -1006,28 +1006,19 @@ public final class MLSService: MLSServiceInterface {
 
     public func fetchAndRepairGroupIfPossible(with groupID: MLSGroupID) async {
         await launchGroupRepairTaskIfNotInProgress(for: groupID) {
-            await self.fetchAndRepairGroup(with: groupID, shouldPerformIncrementalSync: true)
+            await self.fetchAndRepairGroup(with: groupID)
         }
     }
 
-    public func fetchAndRepairGroup(
-        with groupID: MLSGroupID,
-        shouldPerformIncrementalSync: Bool
-    ) async {
+    public func fetchAndRepairGroup(with groupID: MLSGroupID) async {
         if let subgroupInfo = await subconversationGroupIDRepository.findSubgroupTypeAndParentID(for: groupID) {
             await fetchAndRepairSubgroup(parentGroupID: subgroupInfo.parentID)
         } else {
-            await fetchAndRepairParentGroup(
-                with: groupID,
-                shouldPerformIncrementalSync: shouldPerformIncrementalSync
-            )
+            await fetchAndRepairParentGroup(with: groupID)
         }
     }
 
-    private func fetchAndRepairParentGroup(
-        with groupID: MLSGroupID,
-        shouldPerformIncrementalSync: Bool
-    ) async {
+    private func fetchAndRepairParentGroup(with groupID: MLSGroupID) async {
         guard let context else {
             return
         }
@@ -1037,12 +1028,6 @@ public final class MLSService: MLSServiceInterface {
                 "repairing out of sync conversation...",
                 attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
             )
-
-            if shouldPerformIncrementalSync {
-                // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
-                // This ensures we're on the latest state.
-                try await mlsSyncDelegate?.recoverWithIncrementalSync()
-            }
 
             guard let conversationInfo = await fetchConversationInfo(
                 with: groupID,
@@ -1534,10 +1519,7 @@ public final class MLSService: MLSServiceInterface {
                     "failed to send commit, repairing group then retrying operation...",
                     attributes: logAttributes
                 )
-                await fetchAndRepairGroup(
-                    with: groupID,
-                    shouldPerformIncrementalSync: true
-                )
+                await fetchAndRepairGroup(with: groupID)
 
                 logger.info(
                     "repair finished, retrying operation...",
