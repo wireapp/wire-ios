@@ -39,9 +39,9 @@ final class ReactionToggle: UIControl {
         color: SemanticColors.Label.textDefault
     )
 
-    private var onToggle: ((ZMConversationMessage) -> Void)?
+    private var onToggle: (() -> Void)?
     private var accentColor: UIColor?
-    private var message: ZMConversationMessage?
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     var isToggled: Bool {
         didSet {
@@ -56,10 +56,8 @@ final class ReactionToggle: UIControl {
         emoji: Emoji.ID,
         count: UInt,
         isToggled: Bool = false,
-        message: ZMConversationMessage?,
-        onToggle: ((ZMConversationMessage) -> Void)? = nil
+        onToggle: (() -> Void)? = nil
     ) {
-        self.message = message
         self.onToggle = onToggle
         self.accentColor = ZMUserSession.shared()?.selfUser.accentColor
         self.isToggled = isToggled
@@ -97,6 +95,7 @@ final class ReactionToggle: UIControl {
             value: emoji,
             count: count
         )
+        addAccentColorChangeObserver(userSession: ZMUserSession.shared())
     }
 
     @available(*, unavailable)
@@ -111,7 +110,16 @@ final class ReactionToggle: UIControl {
         layer.cornerRadius = rect.height / 2.0
     }
 
+    private func addAccentColorChangeObserver(userSession: UserSession?) {
+        guard accentColorChangeHandler == nil, let userSession else { return }
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(userSession: userSession) { [weak self] _ in
+                self?.updateAppearance()
+            }
+    }
+
     private func updateAppearance() {
+        accentColor = ZMUserSession.shared()?.selfUser.accentColor
         if isToggled {
             backgroundColor = accentColor?.withAlphaComponent(0.5) ?? ButtonColors.backgroundReactionSelected
             layer.borderColor = accentColor?.cgColor ?? ButtonColors.reactionBorderSelected.cgColor
@@ -127,8 +135,7 @@ final class ReactionToggle: UIControl {
 
     @objc
     private func didToggle() {
-        guard let message else { return }
-        onToggle?(message)
+        onToggle?()
     }
 
     // MARK: - Accessibility
