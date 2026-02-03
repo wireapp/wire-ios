@@ -29,7 +29,6 @@ extension ZClientViewController {
         await mainCoordinator.presentViewController(navigationController)
     }
 
-    @MainActor
     func showConnectionRequest(qualifiedID: QualifiedID) {
         let searchUserViewController = SearchUserViewController(
             qualifiedID: qualifiedID,
@@ -40,7 +39,7 @@ extension ZClientViewController {
             conversationCreationRepository: conversationCreationRepository
         )
 
-        Task {
+        Task { @MainActor in
             await wrapInNavigationControllerAndPresent(viewController: searchUserViewController)
         }
     }
