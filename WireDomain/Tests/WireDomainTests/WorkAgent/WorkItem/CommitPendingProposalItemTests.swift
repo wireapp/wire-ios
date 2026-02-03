@@ -76,6 +76,23 @@ class CommitPendingProposalItemTests {
         #expect(mlsService.commitPendingProposalsIn_Invocations.isEmpty)
     }
 
+    @Test("It does not call commitPendingProposal when mlsGroup does not exist")
+    func startDoesNotCommitWhenMLSGroupDoesNotExist() async throws {
+        // Given
+        repository.clearPendingProposalsIn_MockMethod = { _ in }
+        mlsService.conversationExistsGroupID_MockValue = false
+
+        sut = makeProposalItem()
+
+        // When
+        try await sut.start()
+
+        // Then
+        #expect(mlsService.commitPendingProposalsIn_Invocations.isEmpty)
+        #expect(repository.clearPendingProposalsIn_Invocations.count == 1)
+    }
+
+    
     @Test("It logs properly")
     func loggingDescription() {
         // Given
