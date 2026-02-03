@@ -493,7 +493,7 @@ private extension WireCellsGetNodesRequest {
                 request.sortField = "mtime"
                 request.sortDirDesc = true
             }
-            
+
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
                     deleted: .only,
