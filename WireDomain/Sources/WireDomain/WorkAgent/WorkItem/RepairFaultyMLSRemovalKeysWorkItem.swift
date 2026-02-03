@@ -27,7 +27,10 @@ import WireLogging
 
 struct RepairFaultyMLSRemovalKeysWorkItem: WorkItem {
 
-    let id = UUID()
+    var id: String {
+        "repairFaultyMLSRemovalKeys_\(UUID().uuidString)"
+    }
+    
     var priority: WorkItemPriority {
         .low
     }

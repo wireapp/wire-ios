@@ -92,7 +92,7 @@ struct WorkAgentTests {
 
 private actor MockWorkItem: WorkItem {
 
-    let id = UUID()
+    let id = UUID().uuidString
     let priority: WorkItemPriority
 
     var startCalls = 0

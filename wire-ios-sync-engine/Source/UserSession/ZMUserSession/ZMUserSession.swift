@@ -666,6 +666,8 @@ public final class ZMUserSession: NSObject {
                 pushMessageHandler: localNotificationDispatcher,
                 flowManager: flowManager,
                 incrementalSyncObserver: incrementalSyncObserver,
+                initiateResetMLSConversationUseCase: clientSessionComponent.initiateResetMLSConversationUseCase,
+                commitPendingProposalUseCase: clientSessionComponent.commitPendingProposalsUseCase,
                 metadata: resolvedBackendMetadata
             )
             syncStrategy?.updateClientContextChangeTrackers()
@@ -785,16 +787,6 @@ public final class ZMUserSession: NSObject {
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
             searchUsersCache: dependencies.caches.searchUsers,
-            initiateResetMLSConversationUseCaseFactory: { [weak self] context in
-                guard let self, let repo = clientSessionComponent?.conversationRepository else {
-                    fatal("userSession not reachable")
-                }
-                // Passing useCase from WireDomain to WireRequestStrategy's MessageSender
-                return makeInitiateResetMLSConversationUseCase(
-                    context: context,
-                    conversationRepository: repo
-                )
-            },
             metadata: resolvedBackendMetadata
         )
     }

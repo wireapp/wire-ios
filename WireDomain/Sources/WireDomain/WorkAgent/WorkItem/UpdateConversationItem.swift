@@ -24,7 +24,16 @@ import WireNetwork
 struct UpdateConversationItem: WorkItem {
     private let repository: ConversationRepositoryProtocol
 
-    let id = UUID()
+    let _internalID = UUID()
+    
+    var id: String {
+        "updateConversationItem_\(_internalID.uuidString)_\(conversationID)"
+    }
+    
+    var description: String {
+        "UpdateConversationItem: \(_internalID.uuidString), conversationID: \(conversationID)"
+    }
+    
     var priority: WorkItemPriority {
         .medium
     }
