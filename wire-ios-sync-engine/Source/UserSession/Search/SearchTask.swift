@@ -194,7 +194,7 @@ extension SearchTask {
                     .compactMap { viewContext.object(with: $0.objectID) as? ZMUser }
 
                 if !copiedTeamMembers.isEmpty {
-                    print("#### \(#function):\(#line) copiedTeamMembers: \(copiedTeamMembers)")
+                    print("#### \(#function):\(#line) copiedTeamMembers: \(copiedTeamMembers)") // TODO: revert d03e77adff1bf197fd56a3a9e91d364922c74654
                 }
                 if !copiedConnectedUsers.isEmpty {
                     print("#### \(#function):\(#line) copiedConnectedUsers: \(copiedConnectedUsers)")
