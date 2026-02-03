@@ -708,10 +708,6 @@ public final class ZMUserSession: NSObject {
         userSessionComponent = nil
         syncStateCancellable?.cancel()
         syncStateCancellable = nil
-        networkInterfaceSwitchCancellable?.cancel()
-        networkInterfaceSwitchCancellable = nil
-        isNetworkReachableCancellable?.cancel()
-        isNetworkReachableCancellable = nil
         require(isTornDown, "tearDown must be called before the ZMUserSession is deallocated")
     }
 
