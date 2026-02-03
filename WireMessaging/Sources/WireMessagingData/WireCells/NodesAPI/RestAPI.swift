@@ -483,15 +483,27 @@ private extension WireCellsGetNodesRequest {
                 root: RestNodeLocator(root)
             )
         case let .recycleBinView(root: root):
+            let lookupFilterTextSearch: LookupFilterTextSearch? = if let searchTerm {
+                LookupFilterTextSearch(searchIn: .baseName, term: searchTerm)
+            } else {
+                nil
+            }
+
+            if searchTerm != nil {
+                request.sortField = "mtime"
+                request.sortDirDesc = true
+            }
+            
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
                     deleted: .only,
                     isDraft: false // Backend filtering is not available; filtering is handled on the client side.
                 ),
+                text: lookupFilterTextSearch,
                 type: .unknown // .unknown includes files (leafs) & folders (collections)
             )
             request.scope = RestLookupScope(
-                recursive: false,
+                recursive: searchTerm?.isEmpty == false,
                 root: RestNodeLocator(root)
             )
         case .filesBrowserView:

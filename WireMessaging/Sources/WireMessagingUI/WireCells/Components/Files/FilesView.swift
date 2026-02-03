@@ -189,7 +189,7 @@ private extension FilesView {
                 Label {
                     Text(Strings.Files.List.createFolder)
                 } icon: {
-                    Image(systemName: "folder")
+                    Image(systemName: "folder.badge.plus")
                         .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
                 }
             }
