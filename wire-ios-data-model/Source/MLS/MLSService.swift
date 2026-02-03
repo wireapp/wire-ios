@@ -1004,12 +1004,6 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    public func fetchAndRepairGroupIfPossible(with groupID: MLSGroupID) async {
-        await launchGroupRepairTaskIfNotInProgress(for: groupID) {
-            await self.fetchAndRepairGroup(with: groupID)
-        }
-    }
-
     public func fetchAndRepairGroup(with groupID: MLSGroupID) async {
         if let subgroupInfo = await subconversationGroupIDRepository.findSubgroupTypeAndParentID(for: groupID) {
             await fetchAndRepairSubgroup(parentGroupID: subgroupInfo.parentID)
