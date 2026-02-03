@@ -39,6 +39,7 @@ class CommitPendingProposalItemTests {
         self.mlsGroupID = .random()
         self.mlsService = .init()
         mlsService.commitPendingProposalsIn_MockMethod = { _ in }
+        mlsService.conversationExistsGroupID_MockValue = true
         repository.isSelfAnActiveMemberIn_MockValue = true
     }
 
