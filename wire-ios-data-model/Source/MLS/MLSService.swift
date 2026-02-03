@@ -1376,27 +1376,12 @@ public final class MLSService: MLSServiceInterface {
         subconversationType: SubgroupType?,
         context: CoreCryptoContextProtocol?
     ) async throws -> [MLSDecryptResult] {
-        typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
-
-        do {
-            return try await decryptionService.decrypt(
-                message: message,
-                for: groupID,
-                subconversationType: subconversationType,
-                context: context
-            )
-        } catch DecryptionError.wrongEpoch {
-            Task.detached { [self] in
-                // ⚠️ Important:
-                // Run in detached Task to avoid deadlock:
-                // `fetchAndRepairGroupIfPossible` internally triggers quick sync via `recoverWithQuickSync()`.
-                // If this is called during an ongoing quick sync, awaiting it directly would deadlock.
-                await fetchAndRepairGroupIfPossible(with: groupID)
-            }
-            throw DecryptionError.wrongEpoch
-        } catch {
-            throw error
-        }
+        try await decryptionService.decrypt(
+            message: message,
+            for: groupID,
+            subconversationType: subconversationType,
+            context: context
+        )
     }
 
     // MARK: - Pending proposals
