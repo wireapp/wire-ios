@@ -494,6 +494,7 @@ extension WireCallCenterV3 {
                   in: context
               ),
               conversation.conversationType == .oneOnOne,
+              isSFTEnabledForOneToOneCalls(context: context),
               callSnapshots[conversationId]?.callState == .established
         else {
             return false
@@ -1195,8 +1196,7 @@ extension WireCallCenterV3 {
     private func getAVSConversationTypeForOneOnOne(_ conversation: ZMConversation) -> AVSConversationType {
         guard
             let context = conversation.managedObjectContext,
-            let featureConfig = LegacyFeatureRepository(context: context).fetchConferenceCalling().config,
-            featureConfig.useSFTForOneToOneCalls
+            isSFTEnabledForOneToOneCalls(context: context)
         else {
             return .oneToOne
         }
@@ -1207,6 +1207,16 @@ extension WireCallCenterV3 {
         case .proteus, .mixed:
             return .conference
         }
+    }
+
+    private func isSFTEnabledForOneToOneCalls(context: NSManagedObjectContext) -> Bool {
+        guard let config = LegacyFeatureRepository(context: context)
+            .fetchConferenceCalling()
+            .config
+        else {
+            return false
+        }
+        return config.useSFTForOneToOneCalls
     }
 
 }
