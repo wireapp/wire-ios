@@ -193,6 +193,13 @@ extension SearchTask {
                 let copiedConnectedUsers = connectedUsers
                     .compactMap { viewContext.object(with: $0.objectID) as? ZMUser }
 
+                if !copiedTeamMembers.isEmpty {
+                    print("#### \(#function):\(#line) copiedTeamMembers: \(copiedTeamMembers)")
+                }
+                if !copiedConnectedUsers.isEmpty {
+                    print("#### \(#function):\(#line) copiedConnectedUsers: \(copiedConnectedUsers)")
+                }
+
                 let partialResult = SearchResult(
                     context: viewContext,
                     contacts: copiedConnectedUsers.map {
@@ -284,6 +291,19 @@ extension SearchTask {
                         )
                     }
 
+                if !copiedConnectedUsers.isEmpty {
+                    print("### \(#function):\(#line) copiedConnectedUsers: \(copiedConnectedUsers)")
+                }
+                if !searchConnectedUsers.isEmpty {
+                    print("### \(#function):\(#line) searchConnectedUsers: \(searchConnectedUsers)")
+                }
+                if !copiedteamMembers.isEmpty {
+                    print("### \(#function):\(#line) copiedteamMembers: \(copiedteamMembers)")
+                }
+                if !searchTeamMembers.isEmpty {
+                    print("### \(#function):\(#line) searchTeamMembers: \(searchTeamMembers)")
+                }
+
                 let partialResult = SearchResult(
                     context: viewContext,
                     contacts: searchConnectedUsers,
@@ -323,12 +343,18 @@ extension SearchTask {
         in context: NSManagedObjectContext
     ) -> [Member] {
         var partialResult = team?.members(matchingQuery: query) ?? []
+        if !partialResult.isEmpty {
+            print("### \(#function):\(#line) partialResult: \(partialResult)")
+        }
 
         if searchOptions.contains(.excludeNonActiveTeamMembers) {
             partialResult = filterNonActiveTeamMembers(
                 members: partialResult,
                 in: context
             )
+            if !partialResult.isEmpty {
+                print("### \(#function):\(#line) partialResult: \(partialResult)")
+            }
         }
 
         if searchOptions.contains(.excludeNonActivePartners) {
@@ -344,6 +370,9 @@ extension SearchTask {
                 } else {
                     false
                 }
+            }
+            if !partialResult.isEmpty {
+                print("### \(#function):\(#line) partialResult: \(partialResult)")
             }
         }
 
@@ -381,10 +410,16 @@ extension SearchTask {
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: ZMNormalizedUserDefinedNameKey, ascending: true)]
 
         var conversations = context.fetchOrAssert(request: fetchRequest) as? [ZMConversation] ?? []
+        if !conversations.isEmpty {
+            print("### \(#function):\(#line) conversations: \(conversations)")
+        }
 
         if query.isHandleQuery {
             // if we are searching for a username only include conversations with matching displayName
             conversations = conversations.filter { ($0.displayName ?? "").contains(query.string) }
+        }
+        if !conversations.isEmpty {
+            print("### \(#function):\(#line) conversations: \(conversations)")
         }
 
         let matchingPredicate = ZMConversation.userDefinedNamePredicate(forSearch: query.string)
@@ -398,6 +433,12 @@ extension SearchTask {
             } else {
                 nonMatching.append(conversation)
             }
+        }
+        if !matching.isEmpty {
+            print("### \(#function):\(#line) matching: \(matching)")
+        }
+        if !nonMatching.isEmpty {
+            print("### \(#function):\(#line) nonMatching: \(nonMatching)")
         }
 
         return matching + nonMatching
@@ -432,6 +473,8 @@ extension SearchTask {
                         searchUsersCache: searchUsersCache
                     )
                 else { return }
+
+                print("### \(#function):\(#line) partialResult: \(partialResult)")
 
                 let updatedResult = aggregatedResult.union(withDirectoryResult: partialResult)
                 aggregatedResult = updatedResult
@@ -496,6 +539,8 @@ extension SearchTask {
                     return
                 }
 
+                print("### \(#function):\(#line) partialResult: \(partialResult)")
+
                 if searchRequest.searchOptions.contains(.teamMembers) {
                     performTeamMembershipLookup(on: partialResult, searchRequest: searchRequest)
                 } else {
@@ -541,12 +586,15 @@ extension SearchTask {
             }
 
             var updatedResult = searchResult
+            print("### \(#function):\(#line) updatedResult: \(updatedResult)")
             updatedResult.extendWithMembershipPayload(payload: payload)
+            print("### \(#function):\(#line) updatedResult: \(updatedResult)")
             updatedResult.filterBy(
                 searchOptions: searchRequest.searchOptions,
                 query: searchRequest.query.string,
                 contextProvider: contextProvider
             )
+            print("### \(#function):\(#line) updatedResult: \(updatedResult)")
 
             completeRemoteSearch(searchResult: updatedResult)
 
@@ -669,6 +717,8 @@ extension SearchTask {
                     return
                 }
 
+                print("### \(#function):\(#line) partialResult: \(partialResult)")
+
                 if let user = partialResult.directory.first, !user.isSelfUser {
                     let prevResult = aggregatedResult
                     // prepend result to prevResult only if it doesn't contain it
@@ -682,6 +732,7 @@ extension SearchTask {
                             services: prevResult.services,
                             searchUsersCache: searchUsersCache
                         )
+                        print("### \(#function):\(#line) aggregatedResult: \(aggregatedResult)")
                     }
                 }
             })
@@ -754,6 +805,7 @@ extension SearchTask {
                 }
 
                 let updatedResult = aggregatedResult.union(withServiceResult: partialResult)
+                print("### \(#function):\(#line) updatedResult: \(updatedResult)")
                 aggregatedResult = updatedResult
             })
 
