@@ -176,8 +176,8 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 
     func navigate(to destination: NavigationDestination) {
         switch destination {
-        case let .conversation(converation, message):
-            _zClientViewController?.showConversation(converation, at: message)
+        case let .conversation(conversation, message):
+            _zClientViewController?.showConversation(conversation, at: message)
         case let .connectionRequest(qualifiedID):
             _zClientViewController?.showConnectionRequest(qualifiedID: qualifiedID)
         case .conversationList:
