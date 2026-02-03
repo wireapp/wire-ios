@@ -168,7 +168,7 @@ extension SearchTask {
 
         let searchContext = contextProvider.newBackgroundContext()
         let viewContext = contextProvider.viewContext
-        searchContext.performGroupedBlock { [self] in
+        searchContext.perform { [self] in
             let selfUser = ZMUser.selfUser(in: searchContext)
 
             var options = SearchOptions()
@@ -230,7 +230,7 @@ extension SearchTask {
 
         let searchContext = contextProvider.newBackgroundContext()
         let viewContext = contextProvider.viewContext
-        searchContext.performGroupedBlock { [self] in
+        searchContext.perform { [self] in
 
             var team: Team?
             if let teamObjectID = request.team?.objectID {
@@ -416,7 +416,7 @@ extension SearchTask {
         tasksRemaining += 1
 
         let searchContext = contextProvider.newBackgroundContext()
-        searchContext.performGroupedBlock { [self] in
+        searchContext.perform { [self] in
             let request = type(of: self).searchRequestForUser(qualifiedID: qualifiedID, apiVersion: apiVersion)
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
                 defer {
@@ -476,7 +476,7 @@ extension SearchTask {
         tasksRemaining += 1
 
         let searchContext = contextProvider.newBackgroundContext()
-        searchContext.performGroupedBlock { [self] in
+        searchContext.perform { [self] in
             let request = Self.searchRequestInDirectory(withRequest: searchRequest, apiVersion: apiVersion)
 
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
@@ -629,7 +629,7 @@ extension SearchTask {
         tasksRemaining += 1
 
         let searchContext = contextProvider.newBackgroundContext()
-        searchContext.performGroupedBlock { [self] in
+        searchContext.perform { [self] in
             let request = type(of: self).searchRequestInDirectory(
                 withHandle: searchRequest.query.string,
                 apiVersion: apiVersion
@@ -726,7 +726,7 @@ extension SearchTask {
 
         tasksRemaining += 1
 
-        searchContext.performGroupedBlock { [self] in
+        searchContext.perform { [self] in
 
             let request = type(of: self).servicesSearchRequest(
                 teamIdentifier: teamIdentifier,
