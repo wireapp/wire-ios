@@ -79,7 +79,7 @@ public final class SearchUsersUseCase: SearchUsersUseCaseProtocol {
                 activeSearchTask = nil
             }
         }
-        return await task.start()
+        return try await task.start()
     }
 
     // MARK: - Private methods
