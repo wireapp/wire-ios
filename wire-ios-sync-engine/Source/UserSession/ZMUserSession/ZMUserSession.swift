@@ -1274,17 +1274,6 @@ extension ZMUserSession: SyncAgentDelegate {
         performPostQuickSyncE2EIActions()
     }
 
-    private func makePullSelfUserClients(context: NSManagedObjectContext) -> PullSelfUserClientsSyncProtocol {
-        guard let clientSessionComponent else {
-            fatalError()
-        }
-
-        return PullSelfUserClientsSync(
-            api: clientSessionComponent.userClientsAPI,
-            store: clientSessionComponent.userClientsLocalStore
-        )
-    }
-
     private func resolveOneOnOneConversationsIfNeeded() async {
         guard let clientSessionComponent, mlsFeature.isEnabled, !didAlreadyResolveAllOneOnOnes else { return }
 
