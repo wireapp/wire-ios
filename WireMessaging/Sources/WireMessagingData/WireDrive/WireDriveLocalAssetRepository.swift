@@ -130,20 +130,20 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
             }
 
             let (tempURL, _) = try await download.value
-            
+
             let filename = node.path.split(separator: "/").last.flatMap(String.init) ?? "-"
-            
+
             var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
-            
+
             let extensionComponents = asset.cacheKey.split(separator: ".")
-            let path: String = if extensionComponents.count > 1 {
+            let pathWithoutExtension: String = if extensionComponents.count > 1 {
                 String(extensionComponents.dropLast().joined(separator: "."))
             } else {
                 asset.cacheKey
             }
 
-            let key = path + "/" + filename
-            
+            let key = pathWithoutExtension + "/" + filename
+
             try await fileCache.saveFile(at: tempURL, key: key)
 
             asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
