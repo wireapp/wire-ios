@@ -38,7 +38,7 @@ final class ConversationViewController: UIViewController {
     private let getParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
     var actionControllerForSelectedEmoji: ConversationMessageActionController?
     let wireMessagingFactory: WireMessagingFactoryProtocol
-    private(set) var wireCellsState: CellsState = .disabled
+    private(set) var wireDriveState: CellsState = .disabled
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
 
     override var keyCommands: [UIKeyCommand]? {
@@ -222,7 +222,7 @@ final class ConversationViewController: UIViewController {
         )
 
         self.wireMessagingFactory = wireMessagingFactory
-        self.wireCellsState = userSession.contextProvider.syncContext.performAndWait {
+        self.wireDriveState = userSession.contextProvider.syncContext.performAndWait {
             conversation.cellsState
         }
 
@@ -477,7 +477,7 @@ final class ConversationViewController: UIViewController {
         var actions = [UIAction]()
 
         // uncomment code when feature prod ready
-        if userSession.isWireCellsEnabled, conversation.isCellsEnabled {
+        if userSession.isWireDriveEnabled, conversation.isWireDriveEnabled {
             actions.append(
                 UIAction(
                     title: L10n.Localizable.Conversation.Action.files,
@@ -908,8 +908,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         let filesView = wireMessagingFactory
             .makeFilesView(
-                cellName: conversation.wireCellName,
-                isCellsStatePending: wireCellsState == .pending
+                cellName: conversation.wireDriveCellName,
+                isCellsStatePending: wireDriveState == .pending
             ) {
                 WireAccentColor(rawValue: selfUserColorRawValue) ?? .default
             }
@@ -921,7 +921,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     /// If cells state is different than ready we need to sync it when view appears to ensure the value is up to date
     /// as it might have been updated to either a `pending` or `ready` state.
     func syncCellsState() {
-        guard wireCellsState != .ready else {
+        guard wireDriveState != .ready else {
             return
         }
 
@@ -937,7 +937,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         Task {
             do {
-                self.wireCellsState = try await syncCellsStateUseCase.invoke(
+                self.wireDriveState = try await syncCellsStateUseCase.invoke(
                     conversationObjectID: conversation.objectID
                 )
             } catch {

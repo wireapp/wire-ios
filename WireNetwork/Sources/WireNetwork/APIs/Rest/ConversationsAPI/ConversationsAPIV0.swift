@@ -42,7 +42,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         self.apiService = apiService
     }
 
-    func getLegacyConversationIdentifiers() async throws -> PayloadPager<[UUID]> {
+    func getLegacyConversationIdentifiers() throws -> PayloadPager<[UUID]> {
         // This function needs to be used in APIVersion.v0 instead of `getConversationIdentifiers`,
         // because the backend API returns only `UUID`s instead of `QualifiedID`s in later versions.
         // We are missing the related domain to map the UUID to a valid `QualifiedID` object.
@@ -76,7 +76,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         }
     }
 
-    func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]> {
+    func getConversationIdentifiers() throws -> PayloadPager<[QualifiedID]> {
         throw ConversationsAPIError.notImplemented
     }
 

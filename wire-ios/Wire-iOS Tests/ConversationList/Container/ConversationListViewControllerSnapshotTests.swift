@@ -555,7 +555,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
     }
 
     @MainActor
-    func testForShowingFilesTabWhenWireCellsEnabled() async {
+    func testForShowingFilesTabWhenWireDriveEnabled() async {
         // GIVEN
         userSession.mockConversationDirectory.mockUnarchivedConversations = []
 

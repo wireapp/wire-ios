@@ -44,7 +44,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             rhs: ConversationTextMessageCell.Configuration
         ) -> Bool {
             lhs.isObfuscated == rhs.isObfuscated &&
-                lhs.attributedText.description == rhs.attributedText.description
+                lhs.attributedText.isEqual(to: rhs.attributedText)
         }
     }
 
