@@ -198,7 +198,7 @@ public protocol ConversationRepositoryProtocol: Sendable {
     func isSelfAnActiveMember(
         in groupID: WireDataModel.MLSGroupID
     ) async -> Bool
-    
+
     /// Reset the pendingProposalDate for the conversation
     /// - Parameter groupID: mlsGroupID of the conversation
     func clearPendingProposals(in groupID: WireDataModel.MLSGroupID) async

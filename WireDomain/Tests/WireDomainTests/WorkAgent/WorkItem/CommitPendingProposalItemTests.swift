@@ -92,7 +92,6 @@ class CommitPendingProposalItemTests {
         #expect(repository.clearPendingProposalsIn_Invocations.count == 1)
     }
 
-    
     @Test("It logs properly")
     func loggingDescription() {
         // Given

@@ -1274,23 +1274,14 @@ extension ZMUserSession: SyncAgentDelegate {
         performPostQuickSyncE2EIActions()
     }
 
-    private func makeInitiateResetMLSConversationUseCase(
-        context: NSManagedObjectContext,
-        conversationRepository: ConversationRepositoryProtocol
-    ) -> WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {
+    private func makePullSelfUserClients(context: NSManagedObjectContext) -> PullSelfUserClientsSyncProtocol {
         guard let clientSessionComponent else {
             fatalError()
         }
 
-        return InitiateResetMLSConversationUseCase(
-            api: clientSessionComponent.mlsAPI,
-            mlsService: mlsService,
-            conversationLocalStore: clientSessionComponent.conversationLocalStore,
-            conversationRepository: clientSessionComponent.conversationRepository,
-            lockRepository: ResetMLSConversationLockRepository(
-                userID: userId
-            ),
-            selfDomain: resolvedBackendMetadata.domain
+        return PullSelfUserClientsSync(
+            api: clientSessionComponent.userClientsAPI,
+            store: clientSessionComponent.userClientsLocalStore
         )
     }
 

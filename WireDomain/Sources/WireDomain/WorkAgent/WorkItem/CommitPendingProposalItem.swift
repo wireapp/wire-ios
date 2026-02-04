@@ -59,7 +59,7 @@ struct CommitPendingProposalItem: WorkItem, CustomStringConvertible {
         let logAttributes: LogAttributes = [.mlsGroupID: groupID.safeForLoggingDescription] + LogAttributes.safePublic
 
         let isSelfAnActiveMember = await repository.isSelfAnActiveMember(in: groupID)
-        
+
         guard isSelfAnActiveMember else {
             logger.info("cancelling commit as the user is no longer a member", attributes: logAttributes)
             return
@@ -70,7 +70,7 @@ struct CommitPendingProposalItem: WorkItem, CustomStringConvertible {
             await repository.clearPendingProposals(in: groupID)
             return
         }
-        
+
         logger.info("committing pending proposals now...", attributes: logAttributes)
         try await mlsService.commitPendingProposals(in: groupID)
     }
