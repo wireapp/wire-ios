@@ -51,6 +51,7 @@ public final class ZMUserSession: NSObject {
     public private(set) var isTornDown = false
 
     private(set) var isNetworkOnline = true
+    private var syncStateCancellable: AnyCancellable?
 
     public private(set) var coreDataStack: CoreDataStack!
 
@@ -157,19 +158,19 @@ public final class ZMUserSession: NSObject {
         return featureRepository.fetchChannels()
     }
 
-    public var wireCellsFeature: Feature.Cells {
+    public var wireDriveFeature: Feature.Cells {
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchCells()
     }
 
-    public var wireCellsBackendURL: URL? {
+    public var wireDriveBackendURL: URL? {
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchCellsInternal()?.config.backend.url
     }
 
-    public var isWireCellsEnabled: Bool {
-        let isFeatureEnabled = wireCellsFeature.status == .enabled
-        let hasBackendURL = wireCellsBackendURL != nil
+    public var isWireDriveEnabled: Bool {
+        let isFeatureEnabled = wireDriveFeature.status == .enabled
+        let hasBackendURL = wireDriveBackendURL != nil
 
         return isFeatureEnabled && hasBackendURL
     }
@@ -428,6 +429,7 @@ public final class ZMUserSession: NSObject {
     public private(set) var clientSessionComponent: ClientSessionComponent?
 
     private let networkReachability = NetworkReachability()
+    private var networkInterfaceSwitchCancellable: AnyCancellable?
     private var isNetworkReachableCancellable: AnyCancellable?
 
     // MARK: - Initialize
@@ -626,6 +628,9 @@ public final class ZMUserSession: NSObject {
             )
         )
         self.clientSessionComponent = clientSessionComponent
+        if let syncStateSubject = self.clientSessionComponent?.syncStateSubject {
+            observeSyncStateForAVS(syncStateSubject: syncStateSubject)
+        }
 
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
 
@@ -701,6 +706,8 @@ public final class ZMUserSession: NSObject {
 
     deinit {
         userSessionComponent = nil
+        syncStateCancellable?.cancel()
+        syncStateCancellable = nil
         require(isTornDown, "tearDown must be called before the ZMUserSession is deallocated")
     }
 
@@ -882,14 +889,16 @@ public final class ZMUserSession: NSObject {
     }
 
     private func observeNetworkInterfaceSwitch() {
-        isNetworkReachableCancellable = networkReachability.interfaceSwitchWhileOnlinePublisher
+        networkInterfaceSwitchCancellable = networkReachability.interfaceSwitchWhileOnlinePublisher
             .sink { [weak self] _, _ in
                 guard let self else { return }
-
-                managedObjectContext.perform {
-                    self.callCenter?.avsWrapper.networkInterfaceChanged()
-                }
+                notifyAVSOfNetworkInterfaceChanged()
             }
+
+        isNetworkReachableCancellable = networkReachability.isOnlinePublisher.sink { [weak self] _ in
+            guard let self else { return }
+            notifyAVSOfNetworkInterfaceChanged()
+        }
     }
 
     func trackAnalyticsEvent(_ event: AnalyticsEvent) {
@@ -1119,6 +1128,17 @@ extension ZMUserSession: ZMNetworkStateDelegate {
             .offline
         }
     }
+
+    private func observeSyncStateForAVS(syncStateSubject: CurrentValueSubject<SyncState, Never>) {
+        syncStateCancellable = syncStateSubject
+            .map { $0 == .liveSyncing(.ongoing) }
+            .removeDuplicates()
+            .sink { [weak self] isOngoing in
+                guard let self else { return }
+                notifyAVSOfLiveSyncState(isLiveSyncOngoing: isOngoing)
+            }
+    }
+
 }
 
 // MARK: - SyncAgent delegate
@@ -1206,6 +1226,7 @@ extension ZMUserSession: SyncAgentDelegate {
         Task {
             await showSyncBar(true)
         }
+        notifyAVSWillProcessEvents()
     }
 
     @MainActor
@@ -1223,7 +1244,7 @@ extension ZMUserSession: SyncAgentDelegate {
         Task {
             await showSyncBar(false)
         }
-
+        notifyAVSDidProcessEvents()
         WaitingGroupTask(context: syncContext) { [weak self] in
             guard let self else { return }
             await fetchAndStoreFeatureConfig()

@@ -73,7 +73,7 @@ final class SearchDirectoryTests: DatabaseTest {
 
     private func insertSearchUser(remoteIdentifier: UUID) {
         _ = ZMSearchUser(
-            contextProvider: coreDataStack!,
+            viewContext: coreDataStack!.viewContext,
             name: "John Doe",
             handle: "john",
             accentColor: .amber,

@@ -103,5 +103,10 @@ vendor/*
 SnapshotResults
 artifacts/
 
+# Allure Report
+allure-report/
+allure-results/
+.allure/ 
+
 # AI
 .claude

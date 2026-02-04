@@ -34,7 +34,7 @@ final class FilePreviewGeneratorTests: XCTestCase {
 
         // When
         do {
-            _ = try await sut.generatePreviewForFile(at: pdfURL)
+            _ = try sut.generatePreviewForFile(at: pdfURL)
             XCTFail("Unexpected success")
         } catch PDFFilePreviewGenerator.Error.failedToCreatePreview {
             // Then
@@ -49,7 +49,7 @@ final class FilePreviewGeneratorTests: XCTestCase {
 
         // When
         do {
-            _ = try await sut.generatePreviewForFile(at: pdfURL)
+            _ = try sut.generatePreviewForFile(at: pdfURL)
             XCTFail("Unexpected success")
         } catch PDFFilePreviewGenerator.Error.failedToCreatePreview {
             // Then

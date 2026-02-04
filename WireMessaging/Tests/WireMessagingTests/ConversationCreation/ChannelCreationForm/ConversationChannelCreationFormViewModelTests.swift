@@ -29,7 +29,7 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
         let sut = ConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            isWireCellsEnabled: true,
+            isWireDriveEnabled: true,
             teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
         let value = ""
@@ -48,7 +48,7 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
         let sut = ConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            isWireCellsEnabled: true,
+            isWireDriveEnabled: true,
             teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
         let value = String(
@@ -70,7 +70,7 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
         let sut = ConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            isWireCellsEnabled: true,
+            isWireDriveEnabled: true,
             teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
         let value = String(
@@ -92,7 +92,7 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
         let sut = ConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            isWireCellsEnabled: true,
+            isWireDriveEnabled: true,
             teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
         let value = String(
@@ -114,7 +114,7 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
         let sut = ConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            isWireCellsEnabled: true,
+            isWireDriveEnabled: true,
             teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
         let value = " " +
@@ -141,7 +141,7 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
         let sut = ConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            isWireCellsEnabled: true,
+            isWireDriveEnabled: true,
             teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
         let value = "a"
@@ -161,7 +161,7 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
         let sut = ConversationChannelCreationFormViewModel(
             channelName: "Test",
             isUserPremium: true,
-            isWireCellsEnabled: true,
+            isWireDriveEnabled: true,
             teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
 

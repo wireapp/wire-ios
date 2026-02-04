@@ -20,6 +20,7 @@ import WireCallingAssembly
 import WireCommonComponents
 import WireData
 @preconcurrency import WireDataModel
+import WireDomain
 import WireLogging
 import WireMessagingAssembly
 import WireMessagingDomain
@@ -34,7 +35,7 @@ final class ZClientControllerBuilder {
     private(set) var trackingManager: TrackingManager?
     let legacyEnvironment: WireTransport.BackendEnvironment
     let newEnvironment: WireNetwork.BackendEnvironment2?
-    private lazy var wireCellsBackendURL: URL? = {
+    private lazy var wireDriveBackendURL: URL? = {
         let contextProvider = userSession.contextProvider
         let syncContext = contextProvider.syncContext
         let featureRepository = LegacyFeatureRepository(context: syncContext)
@@ -80,21 +81,30 @@ final class ZClientControllerBuilder {
 
     @MainActor
     private func buildWireMessagingFactory() -> any WireMessagingFactoryProtocol {
-        let cellsURLResolver: @Sendable () throws -> URL = { [weak self] in
+        let driveURLResolver: @Sendable () throws -> URL = { [weak self] in
             enum Failure: Error {
-                case missingCellsBackendURL
+                case missingDriveBackendURL
             }
 
-            guard let self, let wireCellsBackendURL else {
-                throw Failure.missingCellsBackendURL
+            guard let self, let wireDriveBackendURL else {
+                throw Failure.missingDriveBackendURL
             }
 
-            return wireCellsBackendURL
+            return wireDriveBackendURL
         }
 
+        let context = userSession.contextProvider.syncContext
+        let driveConversationLocalStore = ConversationLocalStore(
+            context: context,
+            mlsService: nil,
+            messageLocalStore: MessageLocalStore(context: context),
+            localDomain: userSession.resolvedBackendMetadata.domain,
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
+        )
+
         return WireMessagingFactory(
-            cellsURLResolver: cellsURLResolver,
-            // TODO: [WPB-18798] Temporary fix, when multibackend is on we use new backend environment, when off we use the legacy one
+            driveURLResolver: driveURLResolver,
+            driveConversationLocalStore: driveConversationLocalStore,
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
             contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider)
@@ -119,13 +129,13 @@ private struct DefaultAccessTokenProvider: AccessTokenProvider {
 
     let userSession: UserSession
 
-    func accessToken() async throws -> WireCellsAccessToken {
+    func accessToken() async throws -> WireDriveAccessToken {
         guard let authManager = userSession.clientSessionComponent?.authenticationManager else {
             throw Error.noAuthenticationManager
         }
 
         let token = try await authManager.getValidAccessToken()
-        return WireCellsAccessToken(
+        return WireDriveAccessToken(
             token: token.token,
             expirationDate: token.expirationDate
         )
@@ -134,3 +144,22 @@ private struct DefaultAccessTokenProvider: AccessTokenProvider {
 }
 
 extension FileAssetCache: WireMessagingDomain.FileCache, @unchecked @retroactive Sendable {}
+extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreProtocol,
+    @unchecked @retroactive Sendable {
+    public func fetchDriveConversations() async -> [WireMessagingDomain.WireDriveConversation] {
+        let driveEnabledConversations: [ZMConversation] = await fetchDriveConversations()
+
+        return await context.perform {
+            driveEnabledConversations.reduce(into: [WireDriveConversation]()) { result, conversation in
+                let participants = conversation.participants.compactMap(\.name)
+                if let name = conversation.name {
+                    result.append(WireDriveConversation(
+                        id: conversation.wireDriveCellName,
+                        name: name,
+                        participants: participants
+                    ))
+                }
+            }
+        }
+    }
+}

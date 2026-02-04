@@ -92,7 +92,7 @@ final class MessageReplyAttachmentsView: UIView {
             let (icon, filename) = attachments[0].filePreviewInfo
             setupGenericView(icon: icon, text: filename)
         default:
-            let image = UIImage(named: "WireCellsFilesIcon")!
+            let image = UIImage(named: "WireDriveFilesIcon")!
                 .withRenderingMode(.alwaysTemplate)
                 .withTintColor(ColorTheme.Backgrounds.onBackground)
             let text = L10n.Localizable.Content.Message.Reply.Files.count("\(attachments.count)")

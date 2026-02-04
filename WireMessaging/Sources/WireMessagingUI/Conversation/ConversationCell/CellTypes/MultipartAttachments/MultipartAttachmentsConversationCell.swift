@@ -23,7 +23,7 @@ final class MultipartAttachmentsConversationCell: UITableViewCell {
     private var height: CGFloat?
 
     func configure(
-        content: WireCellsAttachmentsPreviewView,
+        content: WireDriveAttachmentsPreviewView,
         insets: EdgeInsets,
         onLongPress: @escaping (UITableViewCell) -> Void,
         onSizeChange: @escaping () -> Void

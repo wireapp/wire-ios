@@ -1173,7 +1173,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     fileprivate func registerObservers(account: Account, session: ZMUserSession) {
 
-        let selfUser = ZMUser.selfUser(inUserSession: session)
+        let selfUser = ZMUser.selfUser(in: session.viewContext)
         let teamObserver = TeamChangeInfo.add(
             observer: self,
             for: nil,

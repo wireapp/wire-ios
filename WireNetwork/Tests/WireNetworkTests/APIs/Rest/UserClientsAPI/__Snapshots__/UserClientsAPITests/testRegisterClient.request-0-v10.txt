@@ -1,0 +1,5 @@
+curl \
+	--request POST \
+	--header "Content-Type: application/json" \
+	--data "{\"capabilities\":[\"legalhold-implicit-consent\"],\"class\":\"phone\",\"label\":\"iPhone 12\",\"lastkey\":{\"id\":65535,\"key\":\"pQABARn\/\/wKhAFgg3ULpZ5zKDp0p+b4SaV0eQa4YqqRVZkrsjn5EwgcbBdQDoQChAFggEHDNP6QHM4VD0JF0wFQlkc7AXQ\/qQAR5kXmxFIuSnqYE=\"},\"mls_public_keys\":{\"ed25519\":\"gRNvFYReriXbzsGu7z6OOr6FxITm\/L6WhB8HUmcXG7E=\"},\"model\":\"iPhone 12\",\"prekeys\":[{\"id\":0,\"key\":\"pQABARn\/\/wKhAFggwO2Any+CjiGP8XFYrY67zHPvLgp+ysY5k7vci57aaLwDoQChAFggQU\/vrXc9MrQxPNubQz4NI0uNtF6qdJ0J0mF9XB2f\/GEEY=\"},{\"id\":1,\"key\":\"pQABARn\/\/wKhAFgg0C2BN+Mxl7dLoDHNx7ZgUE7MR6hEqTmhoQrLmR5MQqYDoQChAFggJQvUqsCdqZ8o4s+OkSlRDPAf8DPQW25uG0+MvxWZxF4E=\"}],\"type\":\"permanent\"}" \
+	"/v10/clients"

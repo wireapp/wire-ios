@@ -73,6 +73,7 @@ public final class SearchUsersUseCase: SearchUsersUseCaseProtocol {
         )
 
         return try await withCheckedThrowingContinuation { continuation in
+            // TODO: [WPB-23110] SWIFT TASK CONTINUATION MISUSE: invoke(query:options:messageProtocol:) leaked its continuation without resuming it. This may cause tasks waiting on it to remain suspended forever.
             guard !Task.isCancelled else {
                 continuation.resume(throwing: CancellationError())
                 self.activeSearchTask = nil
