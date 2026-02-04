@@ -74,6 +74,7 @@ package final class FilesFiltersViewModel: ObservableObject {
             if !isRefreshing { isLoading = true }
             defer { isLoading = false }
             let tags = try await fetchTagsUseCase.invoke()
+            if isRefreshing { presentedTags = [] }
             self.tags = tags
                 .filter { !$0.isEmpty }
                 .map { .init(name: $0, isSelected: savedTags.contains($0)) }
