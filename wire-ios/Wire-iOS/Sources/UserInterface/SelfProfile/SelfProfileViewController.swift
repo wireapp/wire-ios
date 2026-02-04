@@ -288,8 +288,7 @@ final class SelfProfileViewController: UIViewController {
     private func onTeamCreationBannerInteraction(
         apiVersion: WireNetwork.APIVersion
     ) {
-        let sessionContextProvider = userSession.contextProvider
-        let user = ZMUser.selfUser(inUserSession: sessionContextProvider)
+        let user = ZMUser.selfUser(in: userSession.contextProvider.viewContext)
         guard let userName = user.normalizedName,
               let useCase = SessionManager.shared?.activeUserSession?
               .createIndividualToTeamMigrationUseCase() else {
