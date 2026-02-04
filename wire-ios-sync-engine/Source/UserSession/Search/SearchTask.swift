@@ -131,7 +131,7 @@ public final class SearchTask {
 extension SearchTask {
 
     /// Look up a user ID from contacts and teamMembers locally.
-    private func performLocalLookup() async -> SearchResultAggregator { // TODO: create subtask struct
+    private func performLocalLookup() async -> SearchResultAggregator {
 
         guard case let .lookup(qualifiedID) = type else {
             return { _ in }
@@ -197,7 +197,7 @@ extension SearchTask {
 
     }
 
-    /* private */ func performLocalSearch() async -> SearchResultAggregator { // TODO: make private
+    func performLocalSearch() async -> SearchResultAggregator {
         guard case let .search(request) = type else {
             return { _ in }
         }
@@ -386,7 +386,7 @@ extension SearchTask {
 
 extension SearchTask {
 
-    /* private */ func performUserLookup() async -> SearchResultAggregator { // TODO: make private
+    func performUserLookup() async -> SearchResultAggregator {
         guard
             case let .lookup(qualifiedID) = type,
             let apiVersion
@@ -431,7 +431,7 @@ extension SearchTask {
 
 extension SearchTask {
 
-    /* private */ func performRemoteSearch() async -> SearchResultAggregator { // TODO: make private
+    func performRemoteSearch() async -> SearchResultAggregator {
         guard
             let apiVersion,
             apiVersion >= .v1,
@@ -581,7 +581,7 @@ extension SearchTask {
 
 extension SearchTask {
 
-    /* private */ func performRemoteSearchForTeamUser() async -> SearchResultAggregator { // TODO: make private
+    func performRemoteSearchForTeamUser() async -> SearchResultAggregator {
         guard
             let apiVersion,
             apiVersion <= .v1,
@@ -672,7 +672,7 @@ extension SearchTask {
 
 extension SearchTask {
 
-    /* private */ func performRemoteSearchForServices() async -> SearchResultAggregator { // TODO: create subtask struct
+    func performRemoteSearchForServices() async -> SearchResultAggregator {
 
         let searchContext = contextProvider.newBackgroundContext()
         let teamIdentifier = await searchContext.perform {
@@ -717,7 +717,7 @@ extension SearchTask {
         }
     }
 
-    /* private */ static func servicesSearchRequest( // TODO: make private
+    static func servicesSearchRequest(
         teamIdentifier: UUID,
         query: String,
         apiVersion: APIVersion
