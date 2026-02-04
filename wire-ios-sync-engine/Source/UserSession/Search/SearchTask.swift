@@ -214,12 +214,14 @@ extension SearchTask {
             let teamMembers = request.searchOptions.contains(.teamMembers) ? teamMembers(
                 matchingQuery: request.normalizedQuery,
                 team: team,
-                searchOptions: request.searchOptions
+                searchOptions: request.searchOptions,
+                in: searchContext
             ) : []
 
             let conversations = request.searchOptions.contains(.conversations) ? conversations(
                 matchingQuery: request.query,
-                selfUser: selfUser
+                selfUser: selfUser,
+                in: searchContext
             ) : []
 
             return (
@@ -277,7 +279,7 @@ extension SearchTask {
         let searchContext = contextProvider.newBackgroundContext()
         let activeConversations = ZMUser.selfUser(in: searchContext).activeConversations
         let activeContacts = Set(activeConversations.flatMap(\.localParticipants))
-        let selfUser = ZMUser.selfUser(in: searchContext)
+        let selfUser = ZMUser.selfUser(in: context)
 
         return members.filter {
             guard let user = $0.user else { return false }
@@ -289,7 +291,10 @@ extension SearchTask {
         var partialResult = team?.members(matchingQuery: query) ?? []
 
         if searchOptions.contains(.excludeNonActiveTeamMembers) {
-            partialResult = filterNonActiveTeamMembers(members: partialResult)
+            partialResult = filterNonActiveTeamMembers(
+                members: partialResult,
+                in: context
+            )
         }
 
         if searchOptions.contains(.excludeNonActivePartners) {

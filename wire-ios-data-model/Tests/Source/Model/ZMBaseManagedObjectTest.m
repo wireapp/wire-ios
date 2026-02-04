@@ -138,11 +138,6 @@
     return self.coreDataStack.syncContext;
 }
 
-- (NSManagedObjectContext *)searchMOC
-{
-    return self.coreDataStack.searchContext;
-}
-
 - (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistentStore
 {
     self.coreDataStack = nil;

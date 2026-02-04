@@ -44,7 +44,6 @@
 @property (nonatomic, readonly, nonnull) CoreDataStack *coreDataStack;
 @property (nonatomic, readonly, nonnull) NSManagedObjectContext *uiMOC;
 @property (nonatomic, readonly, nonnull) NSManagedObjectContext *syncMOC;
-@property (nonatomic, readonly, nonnull) NSManagedObjectContext *searchMOC;
 
 @property (nonatomic, readonly) BOOL shouldUseRealKeychain;
 @property (nonatomic, readonly) BOOL shouldUseInMemoryStore;

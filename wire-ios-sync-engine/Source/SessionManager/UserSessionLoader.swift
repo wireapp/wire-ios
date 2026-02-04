@@ -469,8 +469,7 @@ final class UserSessionLoader {
             accountID: accountID,
             databaseContexts: [
                 coreDataStack.viewContext,
-                coreDataStack.syncContext,
-                coreDataStack.searchContext
+                coreDataStack.syncContext
             ],
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults,
