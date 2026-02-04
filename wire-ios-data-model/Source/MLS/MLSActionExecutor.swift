@@ -257,7 +257,8 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
             } catch {
                 WireLogger.mls
                     .info(
-                        "failed: adding members to group: \(String(describing: error))", attributes: groupID.safeAttributes
+                        "failed: adding members to group: \(String(describing: error))",
+                        attributes: groupID.safeAttributes
                     )
                 throw error
             }
@@ -277,7 +278,8 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
             } catch {
                 WireLogger.mls
                     .info(
-                        "error: removing clients from group: \(String(describing: error))", attributes: groupID.safeAttributes
+                        "error: removing clients from group: \(String(describing: error))",
+                        attributes: groupID.safeAttributes
                     )
                 throw error
             }
@@ -294,7 +296,8 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
             } catch {
                 WireLogger.mls
                     .info(
-                        "error: updating key material for group: \(String(describing: error))", attributes: groupID.safeAttributes
+                        "error: updating key material for group: \(String(describing: error))",
+                        attributes: groupID.safeAttributes
                     )
                 throw error
             }
@@ -313,7 +316,8 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
             } catch {
                 WireLogger.mls
                     .info(
-                        "error: committing pending proposals for group: \(String(describing: error))", attributes: groupID.safeAttributes
+                        "error: committing pending proposals for group: \(String(describing: error))",
+                        attributes: groupID.safeAttributes
                     )
                 throw error
             }
@@ -342,7 +346,8 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
             } catch {
                 WireLogger.mls
                     .info(
-                        "error: joining group via external commit: \(String(describing: error))", attributes: groupID.safeAttributes
+                        "error: joining group via external commit: \(String(describing: error))",
+                        attributes: groupID.safeAttributes
                     )
                 throw error
             }
@@ -421,6 +426,6 @@ extension MLSActionExecutor.Action: CustomDebugStringConvertible {
 
 private extension MLSGroupID {
     var safeAttributes: LogAttributes {
-        [.mlsGroupID: self.safeForLoggingDescription, .public: true]
+        [.mlsGroupID: safeForLoggingDescription, .public: true]
     }
 }

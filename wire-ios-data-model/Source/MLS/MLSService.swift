@@ -1401,8 +1401,16 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Pending proposals
 
     public func commitPendingProposals(in groupID: MLSGroupID) async throws {
-        try await retryOnCommitFailure(for: groupID) { [weak self] in
-            try await self?.internalCommitPendingProposals(in: groupID)
+        try await commitPendingProposals(in: groupID, skipRetry: false)
+    }
+
+    public func commitPendingProposals(in groupID: MLSGroupID, skipRetry: Bool) async throws {
+        if skipRetry {
+            try await internalCommitPendingProposals(in: groupID)
+        } else {
+            try await retryOnCommitFailure(for: groupID) { [weak self] in
+                try await self?.internalCommitPendingProposals(in: groupID)
+            }
         }
     }
 
@@ -1506,7 +1514,7 @@ public final class MLSService: MLSServiceInterface {
             switch RecoveryStrategy(from: reason) {
             case .retryAfterBackoff:
 
-                try await BackoffRetrier(policy: .init(maxRetries: 2)).retry { [logger] in
+                try await BackoffRetrier(policy: .init(maxRetries: 2), monitoringNetwork: false).retry { [logger] in
                     logger.warn(
                         "failed to send commit due to \(reason). retrying operation with backoff - attempt: \(retryCount)...",
                         attributes: logAttributes
