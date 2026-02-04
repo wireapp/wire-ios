@@ -45,4 +45,7 @@ struct FakeReloginViaSSOFactory: ReloginViaSSOFactory, LoginViaSSOUseCaseFactory
         try await MockDependencies().loginViaSSOUseCase(environment: environment)
     }
 
+    func validateSSOCodeUseCase() -> any ValidateSSOCodeUseCaseProtocol {
+        MockDependencies().validateSSOCodeUseCase()
+    }
 }

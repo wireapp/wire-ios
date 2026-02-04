@@ -65,16 +65,15 @@ package final class ReloginViaSSOViewModel: ObservableObject {
     // MARK: - Actions
 
     func login() async {
-        var code: UUID?
-        if isSSOCodeRequired {
-            guard let ssoCode = UUID(uuidString: rawSSOCode) else {
-                router.presentAlert(.incorrectSSOCode)
-                return
-            }
-            code = ssoCode
-        }
 
         do {
+            var code: UUID?
+            
+            if isSSOCodeRequired {
+                let validateSSOCode = factory.validateSSOCodeUseCase()
+                code = try validateSSOCode.invoke(ssoCode: rawSSOCode)
+            }
+            
             let loginViaSSO = try await factory.loginViaSSOUseCase(environment: environment)
             let authResult = try await loginViaSSO.invoke(code: code)
             router.navigate(to: ReloginViaSSODestination.noHistory(authResult))
@@ -82,7 +81,7 @@ package final class ReloginViaSSOViewModel: ObservableObject {
             // No op
         } catch LoginViaSSOUseCaseError.noDefaultCodeAvailable {
             isSSOCodeRequired = true
-        } catch LoginViaSSOUseCaseError.invalidCode {
+        } catch LoginViaSSOUseCaseError.invalidCode, ValidateSSOCodeFailure.invalidCode {
             router.presentAlert(.incorrectSSOCode)
         } catch LoginViaSSOUseCaseError.invalidURL {
             router.presentAlert(.invalidSSOLink)

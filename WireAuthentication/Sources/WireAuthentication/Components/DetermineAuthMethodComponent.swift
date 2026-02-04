@@ -172,4 +172,9 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
     }
 
+    @MainActor
+    func validateSSOCodeUseCase() -> any ValidateSSOCodeUseCaseProtocol {
+        return ValidataSSOCodeUseCase()
+    }
+    
 }

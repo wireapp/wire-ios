@@ -61,5 +61,8 @@ public protocol LoginViaSSOUseCaseFactory {
 
     @MainActor
     func loginViaSSOUseCase(environment: BackendEnvironment2?) async throws -> any LoginViaSSOUseCaseProtocol
-
+    
+    @MainActor
+    func validateSSOCodeUseCase() -> any ValidateSSOCodeUseCaseProtocol
+    
 }
