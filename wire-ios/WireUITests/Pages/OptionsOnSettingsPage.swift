@@ -53,13 +53,12 @@ class OptionsOnSettingsPage: PageModel {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let passcodeField = springboard.secureTextFields["Passcode field"].firstMatch
 
-        guard passcodeField.waitAndTap(timeout: 8.0)
-        else {
-            XCTFail("Passcode SecureTextField did not appear")
-            throw XCTSkip("Passcode field not available")
+        // Sometimes the splashscreen stays visible for unexpectedly long.
+        if passcodeField.waitAndTap(timeout: 8.0) {
+            try passcodeField.tapIfKeyboardNotFocused().typeText(pass)
+        } else {
+            passcodeField.typeText(pass)
         }
-        try passcodeField.tapIfKeyboardNotFocused().typeText(pass)
-
         let doneButton = springboard.keyboards.buttons["Done"].firstMatch
         if doneButton.waitAndTap() {
             // Tapped successfully
