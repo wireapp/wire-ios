@@ -199,7 +199,6 @@ private extension FilesView {
                     Text(Strings.Files.List.createFolder)
                 } icon: {
                     Image(systemName: "folder.badge.plus")
-<<<<<<< HEAD:WireMessaging/Sources/WireMessagingUI/WireDrive/Components/Files/FilesView.swift
                         .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
                 }
             }
@@ -223,8 +222,6 @@ private extension FilesView {
                     Text(Strings.Files.List.createFile)
                 } icon: {
                     Image(systemName: "document.badge.plus")
-=======
->>>>>>> 7a21673b87 (fix: search not working in recycle bin - WPB-23202 (#4249)):WireMessaging/Sources/WireMessagingUI/WireCells/Components/Files/FilesView.swift
                         .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
                 }
             }
