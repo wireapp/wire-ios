@@ -38,10 +38,11 @@ public final class SearchTask {
 
     /// A closure which modifies the passed search result in order to unite the existing and the newly found results.
     ///
-    /// The closure is used because there are three different ways of aggregating search results:
+    /// The closure is used because there are four different ways of aggregating search results:
     /// - union(withLocalResult:)
     /// - union(withServiceResult:)
     /// - union(withDirectoryResult:)
+    /// - union(prependingDirectory:)
     typealias SearchResultAggregator = (inout SearchResult) -> Void
 
     private let apiVersion: WireTransport.APIVersion?
