@@ -270,9 +270,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     if (self.syncMOC != nil) {
         [result addObject:self.syncMOC];
     }
-    if (self.searchMOC != nil) {
-        [result addObject:self.searchMOC];
-    }
     if (self.mockTransportSession.managedObjectContext != nil) {
         [result addObject:self.mockTransportSession.managedObjectContext];
     }
