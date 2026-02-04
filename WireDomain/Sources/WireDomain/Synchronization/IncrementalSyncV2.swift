@@ -374,6 +374,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
         if !brokenMLSGroupIDs.isEmpty {
             journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
+            // TODO: ping MLSGroupRepairAgent to repair conversations
         }
         return decryptionEventsResult.events
     }

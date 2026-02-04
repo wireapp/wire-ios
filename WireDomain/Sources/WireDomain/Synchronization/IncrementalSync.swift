@@ -184,6 +184,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
                 if !brokenMLSGroupIDs.isEmpty {
                     journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
+                    // TODO: ping MLSGroupRepairAgent to repair conversations
                 }
 
                 let index: Int64
