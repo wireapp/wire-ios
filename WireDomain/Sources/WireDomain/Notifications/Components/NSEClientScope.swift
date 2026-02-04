@@ -364,6 +364,16 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             )
         }
     }
+    
+    private var earService: EARService {
+        shared {
+            EARService(
+                accountID: dependency.accountID,
+                sharedUserDefaults: dependency.sharedUserDefaults,
+                authenticationContext: AuthenticationContext(storage: LAContextStorage())
+            )
+        }
+    }
 
     // MARK: - Generate notifications
 

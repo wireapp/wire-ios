@@ -21,6 +21,7 @@ import Foundation
 import WireLogging
 import WireNetwork
 import WireSystem
+import WireDataModel
 import WireUtilities
 
 public struct IncrementalSync: IncrementalSyncProtocol {
@@ -42,7 +43,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let logger = WireLogger.sync
     private let journal: Journal
     private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
-
+    private let earService: EARServiceInterface
+    
     public init(
         selfClientID: String,
         pushChannelAPI: any PushChannelAPI,
@@ -55,7 +57,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>,
         journal: Journal,
-        mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
+        mlsGroupRepairAgent: MLSGroupRepairAgentProtocol,
+        earService: EARServiceInterface
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -69,6 +72,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.liveBrokenGroupSubject = liveBrokenGroupSubject
         self.journal = journal
         self.mlsGroupRepairAgent = mlsGroupRepairAgent
+        self.earService = earService
     }
 
     public func perform() async throws -> Token {

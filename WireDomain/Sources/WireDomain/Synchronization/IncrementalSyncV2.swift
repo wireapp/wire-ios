@@ -51,6 +51,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let syncMarkerGenerator: SyncMarkerGenerator
     private let createPushChannelState: CreatePushChannelStateClosure
     private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
+    private let earService: EARServiceInterface
 
     weak var delegate: (any LiveSyncDelegate)?
 
@@ -68,6 +69,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         journal: Journal,
         mlsGroupRepairAgent: MLSGroupRepairAgentProtocol,
+        earService: EARServiceInterface,
         createPushChannelState: @escaping CreatePushChannelStateClosure,
         syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
@@ -84,6 +86,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.coreCryptoProvider = coreCryptoProvider
         self.journal = journal
         self.mlsGroupRepairAgent = mlsGroupRepairAgent
+        self.earService = earService
         self.syncMarkerGenerator = syncMarkerGenerator
         self.createPushChannelState = createPushChannelState
     }
