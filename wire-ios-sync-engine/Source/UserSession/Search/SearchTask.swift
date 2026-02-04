@@ -358,9 +358,7 @@ extension SearchTask {
         ))
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: ZMNormalizedUserDefinedNameKey, ascending: true)]
 
-        let searchContext = contextProvider.newBackgroundContext()
-        var conversations = searchContext
-            .fetchOrAssert(request: fetchRequest) as? [ZMConversation] ?? []
+        var conversations = context.fetchOrAssert(request: fetchRequest) as? [ZMConversation] ?? []
 
         if query.isHandleQuery {
             // if we are searching for a username only include conversations with matching displayName
