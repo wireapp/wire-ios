@@ -145,7 +145,12 @@ extension SearchTask {
             options.updateForSelfUserTeamRole(selfUser: selfUser)
 
             /// search for the local user with matching user ID and active
-            let activeMembers = self.teamMembers(matchingQuery: "", team: selfUser.team, searchOptions: options)
+            let activeMembers = self.teamMembers(
+                matchingQuery: "",
+                team: selfUser.team,
+                searchOptions: options,
+                in: searchContext
+            )
             let teamMembers = activeMembers
                 .filter { $0.remoteIdentifier == qualifiedID.uuid }
                 .compactMap(\.user)
@@ -275,9 +280,11 @@ extension SearchTask {
         }
     }
 
-    private func filterNonActiveTeamMembers(members: [Member]) -> [Member] {
-        let searchContext = contextProvider.newBackgroundContext()
-        let activeConversations = ZMUser.selfUser(in: searchContext).activeConversations
+    private func filterNonActiveTeamMembers(
+        members: [Member],
+        in context: NSManagedObjectContext
+    ) -> [Member] {
+        let activeConversations = ZMUser.selfUser(in: context).activeConversations
         let activeContacts = Set(activeConversations.flatMap(\.localParticipants))
         let selfUser = ZMUser.selfUser(in: context)
 
@@ -287,7 +294,12 @@ extension SearchTask {
         }
     }
 
-    private func teamMembers(matchingQuery query: String, team: Team?, searchOptions: SearchOptions) -> [Member] {
+    private func teamMembers(
+        matchingQuery query: String,
+        team: Team?,
+        searchOptions: SearchOptions,
+        in context: NSManagedObjectContext
+    ) -> [Member] {
         var partialResult = team?.members(matchingQuery: query) ?? []
 
         if searchOptions.contains(.excludeNonActiveTeamMembers) {
@@ -299,9 +311,8 @@ extension SearchTask {
 
         if searchOptions.contains(.excludeNonActivePartners) {
             let query = query.strippingLeadingAtSign()
-            let searchContext = contextProvider.newBackgroundContext() // TODO: which context to work on actually? test also manually
-            let selfUser = ZMUser.selfUser(in: searchContext)
-            let activeConversations = ZMUser.selfUser(in: searchContext).activeConversations
+            let selfUser = ZMUser.selfUser(in: context)
+            let activeConversations = ZMUser.selfUser(in: context).activeConversations
             let activeContacts = Set(activeConversations.flatMap(\.localParticipants))
 
             partialResult = partialResult.filter { membership in
@@ -334,7 +345,11 @@ extension SearchTask {
         return context.fetchOrAssert(request: fetchRequest) as? [ZMUser] ?? []
     }
 
-    private func conversations(matchingQuery query: SearchRequest.Query, selfUser: ZMUser) -> [ZMConversation] {
+    private func conversations(
+        matchingQuery query: SearchRequest.Query,
+        selfUser: ZMUser,
+        in context: NSManagedObjectContext
+    ) -> [ZMConversation] {
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: use the interface with team param?
         let fetchRequest = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(
