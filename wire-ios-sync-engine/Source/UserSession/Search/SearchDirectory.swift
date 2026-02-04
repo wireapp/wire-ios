@@ -87,7 +87,7 @@ public final class SearchDirectory {
     /// Lookup a user by user Id and domain (qualifiedID), returns a search user in the directory results. If the user
     /// doesn't exists
     /// an empty directory result is returned.
-    public func createLookupTask(with qualifiedID: QualifiedID) -> SearchTask {
+    public func createLookupTask(with qualifiedID: WireDataModel.QualifiedID) -> SearchTask {
         SearchTask(
             type: .lookup(qualifiedID: qualifiedID),
             contextProvider: contextProvider,

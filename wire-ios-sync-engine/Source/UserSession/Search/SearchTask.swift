@@ -113,7 +113,21 @@ public final class SearchTask {
 
             // v2+
             taskGroup.addTask {
-                await self.performRemoteSearch()
+                // await self.performRemoteSearch() // TODO: clean up
+                let result = await SearchContactsSubtask()
+                    .perform()
+                let partialResult = SearchResult(
+                    context: contextProvider.viewContext,
+                    contacts: [],
+                    teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
+                    directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
+                    conversations: [],
+                    services: [],
+                    searchUsersCache: searchUsersCache
+                )
+                return { aggregatedResult in
+                    aggregatedResult.union(withDirectoryResult: partialResult) // TODO: replace, put code here?
+                }
             }
             taskGroup.addTask {
                 await self.performUserLookup()
