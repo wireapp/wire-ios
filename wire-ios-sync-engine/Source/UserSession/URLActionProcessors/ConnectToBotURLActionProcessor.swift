@@ -44,7 +44,7 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
 
         let providerIdentifier = serviceUserData.provider.transportString()
         let serviceUser = ZMSearchUser(
-            contextProvider: contextProvider,
+            viewContext: contextProvider.viewContext,
             name: "",
             handle: nil,
             accentColor: .blue,
