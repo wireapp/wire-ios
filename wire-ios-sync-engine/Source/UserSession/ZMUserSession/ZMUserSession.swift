@@ -672,15 +672,16 @@ public final class ZMUserSession: NSObject {
             )
             syncStrategy?.updateClientContextChangeTrackers()
         }
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             await clientSessionComponent.workAgent.setAutoStartEnabled(true)
             await clientSessionComponent.workAgent.start()
             clientSessionComponent.generatorsDirectory.observeSyncState()
-            clientSessionComponent.syncStateSubject.sink { state in
+            clientSessionComponent.syncStateSubject.sink { [weak clientSessionComponent] state in
                 if state == .suspended {
                     Task {
                         // clear all items, those will be regenerated when sync is resumed
-                        await clientSessionComponent.workAgent.clearSchedulerQueue()
+                        await clientSessionComponent?.workAgent.clearSchedulerQueue()
                     }
                 }
             }.store(in: &cancellables)
@@ -724,6 +725,7 @@ public final class ZMUserSession: NSObject {
         guard !isTornDown else { return }
 
         Task {
+            await clientSessionComponent?.workAgent.clearSchedulerQueue()
             await clientSessionComponent?.workAgent.stop()
         }
         tearDownMLSGroupVerification()
