@@ -215,7 +215,7 @@ final class WireDriveLocalAssetRepositoryTests {
                 path: "path/file.png",
                 contentType: "image/png",
                 size: 1234,
-                downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc.png")
+                downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/file.png")
             )
         )
 
@@ -251,7 +251,7 @@ final class WireDriveLocalAssetRepositoryTests {
                     path: "path/file.png",
                     contentType: "image/png",
                     size: 1234,
-                    downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc.png")
+                    downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/file.png")
                 )
             ]
         )
@@ -314,7 +314,7 @@ final class WireDriveLocalAssetRepositoryTests {
                     path: "path/file.png",
                     contentType: "image/png",
                     size: 1234,
-                    downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc.png")
+                    downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/file.png")
                 )
             }
         )
@@ -351,7 +351,7 @@ final class WireDriveLocalAssetRepositoryTests {
                     path: "path/file.png",
                     contentType: "image/png",
                     size: 1234,
-                    downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc.png")
+                    downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/file.png")
                 )
             ]
         )
