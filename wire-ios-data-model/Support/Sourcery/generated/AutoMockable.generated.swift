@@ -4678,17 +4678,17 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     // MARK: - fetchAndRepairGroup
 
-    public var fetchAndRepairGroupWithShouldPerformIncrementalSync_Invocations: [(groupID: MLSGroupID, shouldPerformIncrementalSync: Bool)] = []
-    public var fetchAndRepairGroupWithShouldPerformIncrementalSync_MockMethod: ((MLSGroupID, Bool) async -> Void)?
+    public var fetchAndRepairGroupWith_Invocations: [MLSGroupID] = []
+    public var fetchAndRepairGroupWith_MockMethod: ((MLSGroupID) async -> Void)?
 
-    public func fetchAndRepairGroup(with groupID: MLSGroupID, shouldPerformIncrementalSync: Bool) async {
-        fetchAndRepairGroupWithShouldPerformIncrementalSync_Invocations.append((groupID: groupID, shouldPerformIncrementalSync: shouldPerformIncrementalSync))
+    public func fetchAndRepairGroup(with groupID: MLSGroupID) async {
+        fetchAndRepairGroupWith_Invocations.append(groupID)
 
-        guard let mock = fetchAndRepairGroupWithShouldPerformIncrementalSync_MockMethod else {
-            fatalError("no mock for `fetchAndRepairGroupWithShouldPerformIncrementalSync`")
+        guard let mock = fetchAndRepairGroupWith_MockMethod else {
+            fatalError("no mock for `fetchAndRepairGroupWith`")
         }
 
-        await mock(groupID, shouldPerformIncrementalSync)
+        await mock(groupID)
     }
 
     // MARK: - generateNewEpoch
