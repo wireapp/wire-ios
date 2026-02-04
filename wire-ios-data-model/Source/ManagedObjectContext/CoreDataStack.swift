@@ -48,7 +48,6 @@ public protocol ContextProvider {
     var viewContext: NSManagedObjectContext { get }
     func newBackgroundContext() -> NSManagedObjectContext
     var syncContext: NSManagedObjectContext { get }
-    var searchContext: NSManagedObjectContext { get } // TODO: delete
     var eventContext: NSManagedObjectContext { get }
 
 }
@@ -137,8 +136,6 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
         context.markAsSyncContext()
         return context
     }()
-
-    public lazy var searchContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
 
     public lazy var eventContext: NSManagedObjectContext = eventsContainer.newBackgroundContext()
 
@@ -253,7 +250,6 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
 
         viewContext.tearDown()
         syncContext.tearDown()
-        searchContext.tearDown()
         eventContext.tearDown()
         closeStores()
     }
@@ -311,7 +307,6 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
             await configureContextReferences()
             await configureViewContext(viewContext)
             await configureSyncContext(syncContext)
-            await configureSearchContext(searchContext)
 
         } catch {
             WireLogger.localStorage.critical(
@@ -410,19 +405,6 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
             context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
 
             LegacyFeatureRepository(context: context).createDefaultConfigsIfNeeded()
-        }
-    }
-
-    func configureSearchContext(_ context: NSManagedObjectContext) async {
-        context.markAsSearch()
-        await context.perform {
-            context.localDomain = self.localDomain
-            context.isFederationEnabled = self.isFederationEnabled
-            context.createDispatchGroups()
-            self.dispatchGroup.map(context.addGroup(_:))
-            context.setupLocalCachedSessionAndSelfUser()
-            context.undoManager = nil
-            context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
         }
     }
 

@@ -123,15 +123,15 @@ extension ZMUserSession: UserSession {
     }
 
     public var selfUser: any UserType {
-        ZMUser.selfUser(inUserSession: self)
+        ZMUser.selfUser(in: viewContext)
     }
 
     public var selfUserLegalHoldSubject: any SelfUserLegalHoldable {
-        ZMUser.selfUser(inUserSession: self)
+        ZMUser.selfUser(in: viewContext)
     }
 
     public var editableSelfUser: any EditableUserType & UserType {
-        ZMUser.selfUser(inUserSession: self)
+        ZMUser.selfUser(in: viewContext)
     }
 
     public func addUserObserver(

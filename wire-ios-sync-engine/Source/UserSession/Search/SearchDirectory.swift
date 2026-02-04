@@ -104,13 +104,13 @@ public final class SearchDirectory {
     }
 }
 
-extension SearchDirectory {
+public extension SearchDirectory {
 
     /// Tear down the SearchDirectory.
     ///
     /// NOTE: this must be called before releasing the instance
 
-    public func tearDown() {
+    func tearDown() {
         let tearDown = { [self] in
             // Evict all cached search users
             searchUsersCache?.removeAllObjects()

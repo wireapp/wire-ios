@@ -55,7 +55,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
 
     func createSearchUser() -> ZMSearchUser {
         ZMSearchUser(
-            contextProvider: coreDataStack,
+            viewContext: coreDataStack.viewContext,
             name: "Foo",
             handle: "foo",
             accentColor: .amber,

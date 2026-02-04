@@ -31,9 +31,9 @@ extension SessionManager {
     public func backupActiveAccount(password: String) async throws -> URL {
         guard
             let userId = accountManager.selectedAccount?.userIdentifier,
-            let clientId = activeUserSession?.selfUserClient?.remoteIdentifier,
-            let handle = activeUserSession.flatMap(ZMUser.selfUser)?.handle,
-            let activeUserSession
+            let activeUserSession,
+            let clientId = activeUserSession.selfUserClient?.remoteIdentifier,
+            let handle = ZMUser.selfUser(in: activeUserSession.viewContext).handle
         else {
             throw CreateLegacyBackupError.noActiveAccountForExport
         }

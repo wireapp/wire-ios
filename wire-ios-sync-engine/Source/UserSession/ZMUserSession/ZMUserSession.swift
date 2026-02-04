@@ -231,11 +231,6 @@ public final class ZMUserSession: NSObject {
     }
 
     // swiftlint:disable:next todo_requires_jira_link
-    public var searchManagedObjectContext: NSManagedObjectContext { // TODO: jacob we don't want this to be public
-        coreDataStack.searchContext
-    }
-
-    // swiftlint:disable:next todo_requires_jira_link
     public var sharedContainerURL: URL { // TODO: jacob we don't want this to be public
         coreDataStack.applicationContainer
     }
@@ -429,6 +424,7 @@ public final class ZMUserSession: NSObject {
     public private(set) var clientSessionComponent: ClientSessionComponent?
 
     private let networkReachability = NetworkReachability()
+    private var networkInterfaceSwitchCancellable: AnyCancellable?
     private var isNetworkReachableCancellable: AnyCancellable?
 
     // MARK: - Initialize
@@ -888,11 +884,16 @@ public final class ZMUserSession: NSObject {
     }
 
     private func observeNetworkInterfaceSwitch() {
-        isNetworkReachableCancellable = networkReachability.interfaceSwitchWhileOnlinePublisher
+        networkInterfaceSwitchCancellable = networkReachability.interfaceSwitchWhileOnlinePublisher
             .sink { [weak self] _, _ in
                 guard let self else { return }
                 notifyAVSOfNetworkInterfaceChanged()
             }
+
+        isNetworkReachableCancellable = networkReachability.isOnlinePublisher.sink { [weak self] _ in
+            guard let self else { return }
+            notifyAVSOfNetworkInterfaceChanged()
+        }
     }
 
     func trackAnalyticsEvent(_ event: AnalyticsEvent) {
@@ -1443,10 +1444,6 @@ extension ZMUserSession: ContextProvider {
 
     public var syncContext: NSManagedObjectContext {
         coreDataStack.syncContext
-    }
-
-    public var searchContext: NSManagedObjectContext {
-        coreDataStack.searchContext
     }
 
     public var eventContext: NSManagedObjectContext {
