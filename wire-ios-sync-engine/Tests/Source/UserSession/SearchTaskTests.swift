@@ -18,6 +18,7 @@
 
 import WireMockTransport
 import WireTransport
+import WireNetworkSupport
 import XCTest
 
 @testable import WireSyncEngine
@@ -28,6 +29,7 @@ final class SearchTaskTests: DatabaseTest {
 
     private var mockTransportSession: MockTransportSession!
     private var mockCache: SearchUsersCache!
+    private var searchAPIMock: MockSearchAPI!
 
     override func setUp() {
         super.setUp()
@@ -1367,7 +1369,8 @@ final class SearchTaskTests: DatabaseTest {
             contextProvider: coreDataStack!,
             transportSession: mockTransportSession,
             searchUsersCache: mockCache,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            searchAPI: searchAPIMock
         )
     }
 
@@ -1382,7 +1385,8 @@ final class SearchTaskTests: DatabaseTest {
             contextProvider: coreDataStack!,
             transportSession: mockTransportSession,
             searchUsersCache: mockCache,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            searchAPI: searchAPIMock
         )
     }
 

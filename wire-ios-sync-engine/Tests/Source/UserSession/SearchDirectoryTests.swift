@@ -18,6 +18,7 @@
 
 import Foundation
 import WireMockTransport
+import WireNetworkSupport
 
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
@@ -26,6 +27,7 @@ final class SearchDirectoryTests: DatabaseTest {
 
     private var mockCache: SearchUsersCache!
     private var mockTransport: MockTransportSession!
+    private var searchAPIMock: MockSearchAPI!
 
     override func setUp() {
         super.setUp()
@@ -35,6 +37,7 @@ final class SearchDirectoryTests: DatabaseTest {
     }
 
     override func tearDown() {
+        searchAPIMock = nil
         mockCache = nil
         mockTransport = nil
 
@@ -66,7 +69,8 @@ final class SearchDirectoryTests: DatabaseTest {
             searchUsersCache: mockCache,
             refreshUsersMissingMetadataAction: .dummy,
             refreshConversationsMissingMetadataAction: .dummy,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            searchAPI: searchAPIMock
         )
     }
 

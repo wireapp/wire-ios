@@ -17,12 +17,16 @@
 //
 
 import Foundation
+import WireNetwork
+import WireDataModel
+import WireTransport
 
 public final class SearchDirectory {
 
     private let contextProvider: ContextProvider
     private let transportSession: TransportSessionType
     private let apiVersion: WireTransport.APIVersion?
+    private let searchAPI: any SearchAPI
 
     private var isTornDown = false
 
@@ -35,14 +39,18 @@ public final class SearchDirectory {
         assert(isTornDown, "`tearDown` must be called before SearchDirectory is deinitialized")
     }
 
-    public convenience init(userSession: ZMUserSession) {
+    public convenience init(
+        userSession: ZMUserSession,
+        searchAPI: some SearchAPI
+    ) {
         self.init(
             contextProvider: userSession,
             transportSession: userSession.transportSession,
             searchUsersCache: userSession.searchUsersCache,
             refreshUsersMissingMetadataAction: userSession.refreshUsersMissingMetadataAction,
             refreshConversationsMissingMetadataAction: userSession.refreshConversationsMissingMetadataAction,
-            apiVersion: userSession.resolvedBackendMetadata.apiVersion
+            apiVersion: userSession.resolvedBackendMetadata.apiVersion,
+            searchAPI: searchAPI
         )
     }
 
@@ -52,12 +60,14 @@ public final class SearchDirectory {
         searchUsersCache: SearchUsersCache?,
         refreshUsersMissingMetadataAction: RecurringAction,
         refreshConversationsMissingMetadataAction: RecurringAction,
-        apiVersion: WireTransport.APIVersion?
+        apiVersion: WireTransport.APIVersion?,
+        searchAPI: some SearchAPI
     ) {
         self.contextProvider = contextProvider
         self.transportSession = transportSession
         self.searchUsersCache = searchUsersCache
         self.apiVersion = apiVersion
+        self.searchAPI = searchAPI
 
         self.refreshUsersMissingMetadataAction = refreshUsersMissingMetadataAction
         self.refreshConversationsMissingMetadataAction = refreshConversationsMissingMetadataAction
@@ -69,7 +79,8 @@ public final class SearchDirectory {
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            searchAPI: searchAPI
         )
     }
 
@@ -82,7 +93,8 @@ public final class SearchDirectory {
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            searchAPI: searchAPI
         )
     }
 

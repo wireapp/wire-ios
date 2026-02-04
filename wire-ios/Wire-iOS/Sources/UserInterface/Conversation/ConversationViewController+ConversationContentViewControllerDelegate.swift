@@ -144,7 +144,6 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         })
     }
 
-    @MainActor
     func conversationContentViewController(
         _ controller: ConversationContentViewController,
         presentGuestOptionsFrom sourceView: UIView
@@ -154,7 +153,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             return
         }
 
-        Task {
+        Task { @MainActor in
             let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
             let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
                 .isFeatureEnabled(.apps) ?? false
@@ -175,13 +174,12 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         }
     }
 
-    @MainActor
     func conversationContentViewController(
         _ controller: ConversationContentViewController,
         presentParticipantsDetailsWithSelectedUsers selectedUsers: [UserType],
         from sourceView: UIView
     ) {
-        Task {
+        Task { @MainActor in
             if let groupDetailsViewController = (await participantsController as? UINavigationController)?
                 .topViewController as? GroupDetailsViewController {
                 groupDetailsViewController.presentParticipantsDetails(
