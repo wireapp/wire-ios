@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireSyncEngine
 
 // MARK: - ReactionToggle
 
@@ -39,6 +40,8 @@ final class ReactionToggle: UIControl {
     )
 
     private var onToggle: (() -> Void)?
+    private var accentColor: UIColor?
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     var isToggled: Bool {
         didSet {
@@ -57,6 +60,7 @@ final class ReactionToggle: UIControl {
     ) {
         self.isToggled = isToggled
         self.onToggle = onToggle
+        self.accentColor = ZMUserSession.shared()?.selfUser.accentColor
 
         super.init(frame: .zero)
 
@@ -86,6 +90,7 @@ final class ReactionToggle: UIControl {
 
         updateAppearance()
         addTarget(self, action: #selector(didToggle), for: .touchUpInside)
+        addAccentColorChangeObserver(userSession: ZMUserSession.shared())
 
         setupAccessibility(
             value: emoji,
@@ -105,11 +110,20 @@ final class ReactionToggle: UIControl {
         layer.cornerRadius = rect.height / 2.0
     }
 
+    private func addAccentColorChangeObserver(userSession: UserSession?) {
+        guard accentColorChangeHandler == nil, let userSession else { return }
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(userSession: userSession) { [weak self] _ in
+                self?.updateAppearance()
+            }
+    }
+
     private func updateAppearance() {
+        accentColor = ZMUserSession.shared()?.selfUser.accentColor
         if isToggled {
-            backgroundColor = ButtonColors.backgroundReactionSelected
-            layer.borderColor = ButtonColors.borderReactionSelected.cgColor
-            counterLabel.textColor = SemanticColors.Label.textReactionCounterSelected
+            backgroundColor = accentColor?.withAlphaComponent(0.5) ?? ButtonColors.backgroundReactionSelected
+            layer.borderColor = accentColor?.cgColor ?? ButtonColors.reactionBorderSelected.cgColor
+            counterLabel.textColor = accentColor ?? SemanticColors.Label.textReactionCounterSelected
         } else {
             backgroundColor = ButtonColors.backroundReactionNormal
             layer.borderColor = ButtonColors.borderReactionNormal.cgColor
