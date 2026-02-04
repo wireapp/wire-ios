@@ -73,7 +73,7 @@ public final class SearchTask {
     }
 
     /// Start the search task. Errors will not be thrown.
-    public func start() async -> SearchResult { // TODO: test manually with two clients, develop and this code
+    public func start() async -> SearchResult {
         guard status == .pending else {
             assertionFailure()
             return SearchResult()
@@ -89,28 +89,28 @@ public final class SearchTask {
 
             // search services
             taskGroup.addTask {
-                await self.performRemoteSearchForServices() // TODO: manually test each call
+                await self.performRemoteSearchForServices()
             }
 
             // search People or groups
             taskGroup.addTask {
-                await self.performLocalLookup() // TODO: manually test each call
+                await self.performLocalLookup()
             }
             taskGroup.addTask {
-                await self.performLocalSearch() // TODO: manually test each call
+                await self.performLocalSearch()
             }
 
             // v1
             taskGroup.addTask {
-                await self.performRemoteSearchForTeamUser() // TODO: manually test each call
+                await self.performRemoteSearchForTeamUser()
             }
 
             // v2+
             taskGroup.addTask {
-                await self.performRemoteSearch() // TODO: manually test each call
+                await self.performRemoteSearch()
             }
             taskGroup.addTask {
-                await self.performUserLookup() // TODO: manually test each call
+                await self.performUserLookup()
             }
 
             var result = SearchResult()
