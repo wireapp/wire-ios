@@ -36,6 +36,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let messageStore: any MessageLocalStoreProtocol
     private let processor: any UpdateEventProcessorProtocol
     private let databaseSaver: any DatabaseSaverProtocol
+    private let liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
     private let logger = WireLogger.sync
     private let journal: Journal
@@ -51,6 +52,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         processor: any UpdateEventProcessorProtocol,
         databaseSaver: any DatabaseSaverProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
+        liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>,
         journal: Journal,
         mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
     ) {
@@ -63,6 +65,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.processor = processor
         self.databaseSaver = databaseSaver
         self.syncStateSubject = syncStateSubject
+        self.liveBrokenGroupSubject = liveBrokenGroupSubject
         self.journal = journal
         self.mlsGroupRepairAgent = mlsGroupRepairAgent
     }
@@ -183,8 +186,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
                 let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
                 if !brokenMLSGroupIDs.isEmpty {
-                    journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
-                    // TODO: ping MLSGroupRepairAgent to repair conversations
+                    journal.addValues(brokenMLSGroupIDs, for: .brokenMLSGroupIDs)
+                    liveBrokenGroupSubject.send(brokenMLSGroupIDs)
                 }
 
                 let index: Int64

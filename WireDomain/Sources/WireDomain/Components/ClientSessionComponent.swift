@@ -21,6 +21,7 @@ import Foundation
 import WireCoreCrypto
 import WireDataModel
 import WireNetwork
+import WireLogging
 
 public final class ClientSessionComponent {
 
@@ -350,6 +351,7 @@ public final class ClientSessionComponent {
     // MARK: High level syncs
 
     public private(set) lazy var syncStateSubject = CurrentValueSubject<SyncState, Never>(.idle)
+    private(set) lazy var liveBrokenGroupSubject = PassthroughSubject<Set<String>, Never>()
 
     public private(set) lazy var initialSync = {
         let pullResourcesSync = PullResourcesSync(
@@ -397,6 +399,7 @@ public final class ClientSessionComponent {
         processor: updateEventProcessor,
         databaseSaver: databaseSaver,
         syncStateSubject: syncStateSubject,
+        liveBrokenGroupSubject: liveBrokenGroupSubject,
         journal: journal,
         mlsGroupRepairAgent: mlsGroupRepairAgent
     )
@@ -412,6 +415,7 @@ public final class ClientSessionComponent {
             processor: updateEventProcessor,
             databaseSaver: databaseSaver,
             syncStateSubject: syncStateSubject,
+            liveBrokenGroupSubject: liveBrokenGroupSubject,
             coreCryptoProvider: coreCryptoProvider,
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
@@ -863,4 +867,14 @@ public final class ClientSessionComponent {
         workAgent: workAgent
     )
 
+    public func setupLiveMLSBrokenGroups() -> AnyCancellable {
+        liveBrokenGroupSubject.sink { [weak self]  liveMLSBrokenGroups in
+            guard let self else { return }
+            WireLogger.mls.debug("detected during live sync \(liveMLSBrokenGroups.count) broken MLS groups")
+            let item = RepairBrokenMLSGroupsItem(repairAgent: mlsGroupRepairAgent)
+            Task { [weak self] in
+                await self?.workAgent.submitItem(item)
+            }
+        }
+    }
 }
