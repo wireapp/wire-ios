@@ -19,7 +19,7 @@
 import Foundation
 import WireAuthenticationAPI
 
-package struct ValidataSSOCodeUseCase: ValidateSSOCodeUseCaseProtocol {
+package struct ValidateSSOCodeUseCase: ValidateSSOCodeUseCaseProtocol {
     
     package init() { }
     

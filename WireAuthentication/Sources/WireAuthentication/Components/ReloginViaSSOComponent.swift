@@ -102,7 +102,7 @@ extension ReloginViaSSOComponent: ReloginViaSSOViewModel.Factory {
     
     @MainActor
     func validateSSOCodeUseCase() -> any ValidateSSOCodeUseCaseProtocol {
-        return ValidataSSOCodeUseCase()
+        return ValidateSSOCodeUseCase()
     }
 
     @MainActor
