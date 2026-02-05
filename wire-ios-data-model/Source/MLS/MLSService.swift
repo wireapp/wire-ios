@@ -1140,7 +1140,11 @@ public final class MLSService: MLSServiceInterface {
             let allMLSConversations = await context.perform { ZMConversation.fetchMLSConversations(in: context) }
 
             var outOfSyncConversations = [ZMConversation]()
-            for conversation in allMLSConversations where await self.isConversationOutOfSync(conversation, coreCrypto: coreCrypto, context: context) {
+            for conversation in allMLSConversations where await self.isConversationOutOfSync(
+                conversation,
+                coreCrypto: coreCrypto,
+                context: context
+            ) {
                 outOfSyncConversations.append(conversation)
             }
             return outOfSyncConversations

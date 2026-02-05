@@ -1777,7 +1777,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
         }
 
-
         // When
         try await sut.updateKeyMaterial(for: groupID)
 

@@ -27,9 +27,9 @@ struct RepairBrokenMLSGroupsItem: WorkItem {
     var id: String {
         "RepairBrokenMLSGroupsItem_\(_internalID.uuidString)"
     }
-    
+
     let _internalID = UUID()
-    
+
     var priority: WorkItemPriority {
         .medium
     }

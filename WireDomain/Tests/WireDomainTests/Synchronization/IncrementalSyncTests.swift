@@ -39,7 +39,7 @@ final class IncrementalSyncTests: XCTestCase {
     var liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>!
     var mlsGroupRepairAgent: MockMLSGroupRepairAgentProtocol!
     var cancellables: Set<AnyCancellable>!
-    
+
     override func setUp() {
         journal = Journal(
             userID: UUID(),
@@ -56,7 +56,7 @@ final class IncrementalSyncTests: XCTestCase {
         liveBrokenGroupSubject = PassthroughSubject()
         mlsGroupRepairAgent = MockMLSGroupRepairAgentProtocol()
         cancellables = Set<AnyCancellable>()
-        
+
         sut = IncrementalSync(
             selfClientID: Scaffolding.selfClientID,
             pushChannelAPI: pushChannelAPI,
@@ -226,20 +226,15 @@ final class IncrementalSyncTests: XCTestCase {
         // and once after processing each live event.
         XCTAssertEqual(databaseSaver.save_Invocations.count, 3)
     }
-    
+
     func test_perform_OutOfSyncLiveEventsAreNotified() async throws {
         // Mock
         // Pending events are pulled.
         updateEventsSync.pull_MockMethod = { AsyncStream { [] } }
 
-        // Some pending events.
-        let managedObjectID1 = NSManagedObjectID()
-        let managedObjectID2 = NSManagedObjectID()
-        let managedObjectID3 = NSManagedObjectID()
-
         // Pending events are stored in batches.
         updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
-            return []
+            []
         }
 
         // Pending events are deleted in batches.
@@ -247,10 +242,12 @@ final class IncrementalSyncTests: XCTestCase {
 
         // Some live events, some of which were already pulled.
         let pushChannel = MockPushChannelProtocol()
+        let mlsEvent = Scaffolding.createMLSEvent(message: "hello 1", timeIntervalSinceNow: .oneSecond)
+        let mlsOutOfSyncEvent = Scaffolding.createMLSEvent(message: "hello 2", timeIntervalSinceNow: .oneMinute)
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             Task {
-                continuation.yield(Scaffolding.createMLSEvent(message: "hello 1", timeIntervalSinceNow: .oneSecond))
-                continuation.yield(Scaffolding.createMLSEvent(message: "hello 2", timeIntervalSinceNow: .oneMinute))
+                continuation.yield(mlsEvent)
+                continuation.yield(mlsOutOfSyncEvent)
                 continuation.finish()
             }
         }
@@ -267,7 +264,11 @@ final class IncrementalSyncTests: XCTestCase {
 
         // Live events are decrypted.
         decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
-            EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
+            if envelope.id == mlsOutOfSyncEvent.id {
+                EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
+            } else {
+                EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [])
+            }
         }
 
         // Last event is being updated.
@@ -286,25 +287,22 @@ final class IncrementalSyncTests: XCTestCase {
         mlsGroupRepairAgent.repairConversations_MockMethod = {}
 
         // When
-        let expectation = self.expectation(description: "one mls broken group should be detected live")
-        liveBrokenGroupSubject.sink {
-            XCTAssertTrue($0.contains(Scaffolding.mlsGroupID))
+        let expectation = expectation(description: "one mls broken group should be detected live")
+        liveBrokenGroupSubject.sink { value in
+            print(value)
+            XCTAssertTrue(value.contains(Scaffolding.mlsGroupID))
             expectation.fulfill()
         }.store(in: &cancellables)
-
 
         let token = try await sut.perform()
         await token.task.value
         wait(for: [expectation])
-        
+
         // Then live events were decrypted (duplicates skipped).
         XCTAssertEqual(
             decryptor.decryptEventsInContext_Invocations.count,
             2
         )
-
-
-
 
         // Broken conversation IDs are stored
         XCTAssertEqual(journal[.brokenMLSGroupIDs].first, Scaffolding.mlsGroupID)
@@ -472,7 +470,6 @@ private enum Scaffolding {
         )
     }
 
-    
     static func createMLSEvent(
         message: String,
         timeIntervalSinceNow: TimeInterval,
