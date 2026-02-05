@@ -29,7 +29,7 @@ struct ValidateSSOCodeUseCaseTests {
     let testUUIDString = "648e79cb-88b9-42a8-8ea7-dd93e97f4da1"
 
     init() {
-        sut = ValidateSSOCodeUseCase()
+        self.sut = ValidateSSOCodeUseCase()
     }
 
     // MARK: - Valid SSO Codes
