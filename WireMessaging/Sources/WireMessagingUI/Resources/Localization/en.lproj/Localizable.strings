@@ -109,6 +109,7 @@
 "conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "An error occurred while fetching channel history depth options.";
 "conversation.channelHistory.updateHistoryDepth.error" = "An error occurred while updating channel history depth.";
 "conversation.file.preview.open" = "Open preview";
+"conversation.draft.attachmentMenu.errorTitle" = "Unable to load file";
 "conversation.draft.attachmentMenu.retry" = "Retry";
 "conversation.draft.attachmentMenu.remove" = "Remove File";
 
