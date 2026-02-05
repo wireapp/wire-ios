@@ -17,23 +17,20 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
-// sourcery: AutoMockable
-public protocol ValidateSSOCodeUseCaseProtocol: Sendable {
+extension MockDependencies: ValidateSSOCodeUseCaseFactory {
 
-    func invoke(ssoCode: String) throws -> UUID
-
-}
-
-public enum ValidateSSOCodeFailure: Error {
-
-    case invalidCode
+    func validateSSOCodeUseCase() -> any ValidateSSOCodeUseCaseProtocol {
+        MockValidateSSOCodeUseCase()
+    }
 
 }
 
-public protocol ValidateSSOCodeUseCaseFactory {
+struct MockValidateSSOCodeUseCase: ValidateSSOCodeUseCaseProtocol {
 
-    @MainActor
-    func validateSSOCodeUseCase() -> any ValidateSSOCodeUseCaseProtocol
+    func invoke(ssoCode: String) throws -> UUID {
+        UUID()
+    }
 
 }

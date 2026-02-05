@@ -69,12 +69,12 @@ package final class ReloginViaSSOViewModel: ObservableObject {
 
         do {
             var code: UUID?
-            
+
             if isSSOCodeRequired {
                 let validateSSOCode = factory.validateSSOCodeUseCase()
                 code = try validateSSOCode.invoke(ssoCode: rawSSOCode)
             }
-            
+
             let loginViaSSO = try await factory.loginViaSSOUseCase(environment: environment)
             let authResult = try await loginViaSSO.invoke(code: code)
             router.navigate(to: ReloginViaSSODestination.noHistory(authResult))

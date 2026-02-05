@@ -171,5 +171,5 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             createAuthResultUseCase: CreateAuthenticationResultUseCase(networkStack: networkStack)
         )
     }
-    
+
 }

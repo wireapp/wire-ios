@@ -20,9 +20,9 @@ import Foundation
 import WireAuthenticationAPI
 
 package struct ValidateSSOCodeUseCase: ValidateSSOCodeUseCaseProtocol {
-    
-    package init() { }
-    
+
+    package init() {}
+
     package func invoke(ssoCode: String) throws -> UUID {
 
         if let uuid = SSOCodeValidator.validate(

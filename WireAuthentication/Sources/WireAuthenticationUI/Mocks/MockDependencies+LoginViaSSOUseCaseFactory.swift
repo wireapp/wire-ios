@@ -30,19 +30,6 @@ extension MockDependencies: LoginViaSSOUseCaseFactory {
         )
     }
 
-    @MainActor
-    func validateSSOCodeUseCase() -> any ValidateSSOCodeUseCaseProtocol {
-        MockValidateSSOCodeUseCase()
-    }
-    
-}
-
-struct MockValidateSSOCodeUseCase: ValidateSSOCodeUseCaseProtocol {
-    
-    func invoke(ssoCode: String) throws -> UUID {
-        return UUID()
-    }
-    
 }
 
 struct MockLoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
