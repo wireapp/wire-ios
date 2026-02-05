@@ -38,4 +38,22 @@ public extension WireLogger {
         return result
     }
 
+    func measureTime<T, E: Error>(
+        label: String,
+        attributes: LogAttributes = [:],
+        block: () throws(E) -> T
+    ) throws(E) -> T {
+        let startMessage = "starting \(label)"
+        info(startMessage, attributes: attributes)
+        let start = Date.now
+        let result = try block()
+        let durationInSeconds = start.timeIntervalSinceNow.magnitude
+        var updatedAttributes = attributes
+        let formattedDuration = String(format: "%.2f", durationInSeconds)
+        updatedAttributes[.duration] = formattedDuration
+        let completedMessage = "completed \(label)"
+        info(completedMessage, attributes: updatedAttributes)
+        return result
+    }
+
 }
