@@ -659,15 +659,19 @@ public final class ZMUserSession: NSObject {
                 syncAgent: syncAgent,
                 notificationContext: notificationContext
             )
-            strategyDirectory.makeClientRelatedStategies(
-                applicationStatusDirectory: applicationStatusDirectory,
-                syncContext: syncContext,
-                transportSession: transportSession,
-                pushMessageHandler: localNotificationDispatcher,
-                flowManager: flowManager,
-                incrementalSyncObserver: incrementalSyncObserver,
-                metadata: resolvedBackendMetadata
-            )
+
+            // TODO: [WPB-22986] Remove logging - added this logging temporarily to investigate a hang.
+            WireLogger.session.measureTime(label: "make client strategies") {
+                strategyDirectory.makeClientRelatedStrategies(
+                    applicationStatusDirectory: applicationStatusDirectory,
+                    syncContext: syncContext,
+                    transportSession: transportSession,
+                    pushMessageHandler: localNotificationDispatcher,
+                    flowManager: flowManager,
+                    incrementalSyncObserver: incrementalSyncObserver,
+                    metadata: resolvedBackendMetadata
+                )
+            }
             syncStrategy?.updateClientContextChangeTrackers()
         }
         Task {
