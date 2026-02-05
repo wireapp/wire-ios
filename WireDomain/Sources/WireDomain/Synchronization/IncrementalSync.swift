@@ -21,6 +21,7 @@ import Foundation
 import WireLogging
 import WireNetwork
 import WireSystem
+import WireUtilities
 
 public struct IncrementalSync: IncrementalSyncProtocol {
 
@@ -169,6 +170,14 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 if processedEnvelopeIDs.contains(envelope.id) {
                     logger.debug(
                         "live event already processed, skipping...",
+                        attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
+                    )
+                    continue
+                }
+
+                if DeveloperFlag.ignoreIncomingEvents.isOn {
+                    logger.warn(
+                        "ignore incoming events",
                         attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                     )
                     continue

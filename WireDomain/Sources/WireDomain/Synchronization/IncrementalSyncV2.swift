@@ -323,6 +323,16 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         // decrypt
         try await coreCryptoProvider.coreCrypto().perform { coreCryptoContext in
             for envelope in envelopes {
+
+                if DeveloperFlag.ignoreIncomingEvents.isOn {
+                    logger.warn(
+                        "ignore incoming events",
+                        attributes: .incrementalSyncV3 + [.eventEnvelopeID: envelope.id]
+                    )
+                    await acknowledgeUntilEnvelope(envelope, through: pushChannel, batchSize: 1)
+                    continue
+                }
+
                 var envelope = envelope
                 envelope.events = await decryptEnvelope(envelope, in: coreCryptoContext)
 

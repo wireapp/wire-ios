@@ -81,6 +81,11 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         var decryptedEvents = [UpdateEvent]()
         var brokenMLSGroupIDs = Set<String>()
 
+        if DeveloperFlag.ignoreIncomingEvents.isOn {
+            WireLogger.updateEvent.warn("debugging out of sync - ignore decrypting events")
+            return EventDecryptorResult(events: decryptedEvents, brokenMLSGroupIDs: brokenMLSGroupIDs)
+        }
+
         for event in eventEnvelope.events {
             logAttributes[.messageType] = event.name
             switch event {
