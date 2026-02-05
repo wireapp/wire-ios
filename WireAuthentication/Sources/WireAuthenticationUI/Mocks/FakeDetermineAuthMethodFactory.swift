@@ -84,8 +84,5 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
     func validateEmailOrSSOCodeUseCase() -> any WireAuthenticationAPI.ValidateEmailOrSSOCodeUseCaseProtocol {
         mockDependencies.validateEmailOrSSOCodeUseCase()
     }
-    
-    func validateSSOCodeUseCase() -> any ValidateSSOCodeUseCaseProtocol {
-        mockDependencies.validateSSOCodeUseCase()
-    }
+
 }

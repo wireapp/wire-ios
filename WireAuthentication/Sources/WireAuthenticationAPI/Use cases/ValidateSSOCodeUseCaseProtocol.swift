@@ -30,3 +30,10 @@ public enum ValidateSSOCodeFailure: Error {
     case invalidCode
 
 }
+
+public protocol ValidateSSOCodeUseCaseFactory {
+    
+    @MainActor
+    func validateSSOCodeUseCase() -> any ValidateSSOCodeUseCaseProtocol
+
+}

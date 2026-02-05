@@ -171,10 +171,5 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             createAuthResultUseCase: CreateAuthenticationResultUseCase(networkStack: networkStack)
         )
     }
-
-    @MainActor
-    func validateSSOCodeUseCase() -> any ValidateSSOCodeUseCaseProtocol {
-        return ValidataSSOCodeUseCase()
-    }
     
 }

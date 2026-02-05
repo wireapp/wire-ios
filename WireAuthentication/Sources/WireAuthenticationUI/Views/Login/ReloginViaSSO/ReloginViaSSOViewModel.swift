@@ -26,7 +26,8 @@ package final class ReloginViaSSOViewModel: ObservableObject {
 
     package typealias Factory =
         LoginViaSSOUseCaseFactory &
-        ReloginViaSSOFactory
+        ReloginViaSSOFactory &
+        ValidateSSOCodeUseCaseFactory
 
     // MARK: - View state
 
