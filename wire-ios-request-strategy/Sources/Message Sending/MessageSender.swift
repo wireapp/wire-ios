@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCoreCrypto
 import WireDataModel
 import WireLogging
 
@@ -398,7 +399,7 @@ public final class MessageSender: MessageSenderInterface {
                 try await mlsService.reEstablishPendingGroup(groupID: groupID)
             }
 
-            try await mlsService.commitPendingProposals(in: groupID)
+            try await mlsService.commitPendingProposals(in: groupID, skipRetry: true)
             let encryptedData = try await encryptMlsMessage(message, groupID: groupID)
 
             // set expiration so request can be expired later
@@ -423,51 +424,84 @@ public final class MessageSender: MessageSenderInterface {
                 message.delivered(with: response)
             }
         } catch let error as SendMLSMessageFailure {
-            switch error {
-            case .mlsStaleMessage:
-                // We should try to repair the conversation for the `mlsStaleMessage` error.
-                // This error indicates that the message was not encrypted in the latest epoch.
-                let operation: () async throws -> Void = { [weak self] in
-                    try await self?.sendMessage(message: message)
-                }
 
-                try await handleMLSStaleMessageError(
+            try await handleSendMLSMessageFailure(error, message: message, groupID: groupID, mlsService: mlsService)
+        } catch let CoreCryptoError.Mls(.MessageRejected(reason: reason)) {
+
+            if let supportedError = SendMLSMessageFailure(from: reason) {
+                try await handleSendMLSMessageFailure(
+                    supportedError,
+                    message: message,
                     groupID: groupID,
-                    mlsService: mlsService,
-                    operation: operation
+                    mlsService: mlsService
                 )
-            case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
-                let feature = await featureRepository.fetchAllowedGlobalOperations()
-                guard feature.status == .enabled,
-                      feature.config.mlsConversationReset == true
-                else {
-                    WireLogger.messaging.debug(
-                        "No need to initiate reset broken MLS conversation, FF is OFF"
-                    )
-                    throw error
-                }
+            } else {
+                throw CoreCryptoError.Mls(.MessageRejected(reason: reason))
+            }
 
-                let epoch = await context.perform { message.conversation?.epoch }
+        }
+    }
 
-                await initiateResetMLSConversationUseCase
-                    .invoke(
-                        groupID: groupID,
-                        epoch: epoch ?? 0
-                    )
-            case let .groupOutOfSync(missingUsers):
-                guard retryCount < maxRetryAttempts else {
-                    retryCount = 0
-                    throw error
-                }
+    private func handleSendMLSMessageFailure(
+        _ error: SendMLSMessageFailure,
+        message: any SendableMessage,
+        groupID: MLSGroupID,
+        mlsService: MLSServiceInterface
+    ) async throws {
+        switch error {
+        case .mlsStaleMessage:
+            // We should try to repair the conversation for the `mlsStaleMessage` error.
+            // This error indicates that the message was not encrypted in the latest epoch.
+            let operation: () async throws -> Void = { [weak self] in
+                try await self?.sendMessage(message: message)
+            }
 
-                retryCount += 1
-
-                let users = missingUsers.map { MLSUser($0) }
-                try await mlsService.addMembersToConversation(with: users, for: groupID)
-                try await sendMessage(message: message)
-            default:
+            try await handleMLSStaleMessageError(
+                groupID: groupID,
+                mlsService: mlsService,
+                operation: operation
+            )
+        case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
+            let feature = await featureRepository.fetchAllowedGlobalOperations()
+            guard feature.status == .enabled,
+                  feature.config.mlsConversationReset == true
+            else {
+                WireLogger.messaging.debug(
+                    "No need to initiate reset broken MLS conversation, FF is OFF"
+                )
                 throw error
             }
+
+            let epoch = await context.perform { message.conversation?.epoch }
+
+            await initiateResetMLSConversationUseCase
+                .invoke(
+                    groupID: groupID,
+                    epoch: epoch ?? 0
+                )
+        case let .groupOutOfSync(missingUsers):
+            guard retryCount < maxRetryAttempts else {
+                retryCount = 0
+                throw error
+            }
+
+            retryCount += 1
+
+            let users = missingUsers.map { MLSUser($0) }
+            try await mlsService.addMembersToConversation(with: users, for: groupID)
+            try await sendMessage(message: message)
+        case .mlsCommitMissingReferences, .mlsClientMismatch:
+            // here a simple retry is used but as an optim we could use a backoff
+            guard retryCount < maxRetryAttempts else {
+                retryCount = 0
+                throw error
+            }
+
+            retryCount += 1
+
+            try await sendMessage(message: message)
+        default:
+            throw error
         }
     }
 
@@ -527,4 +561,33 @@ private extension Payload.ClientListByQualifiedUserID {
         return qualifiedClientIDs
     }
 
+}
+
+private extension SendMLSMessageFailure {
+
+    init?(from reason: String) {
+        guard let error = try? JSONDecoder().decode(
+            MLSTransportError.self,
+            from: Data(reason.utf8)
+        ) else {
+            return nil
+        }
+
+        switch error {
+        case .mlsClientMismatch:
+            self = .mlsClientMismatch
+        case .mlsCommitMissingReferences:
+            self = .mlsCommitMissingReferences(message: "")
+        case .mlsStaleMessage:
+            self = .mlsStaleMessage
+        case .mlsInvalidLeafNodeIndex:
+            self = .mlsInvalidLeafNodeIndex(message: "")
+        case .mlsInvalidLeafNodeSignature:
+            self = .mlsInvalidLeafNodeSignature(message: "")
+        case let .groupOutOfSync(missingUsers):
+            self = .groupOutOfSync(missingUsers: missingUsers)
+        default:
+            return nil
+        }
+    }
 }

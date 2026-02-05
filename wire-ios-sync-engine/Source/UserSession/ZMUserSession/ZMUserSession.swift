@@ -432,6 +432,7 @@ public final class ZMUserSession: NSObject {
     private var networkInterfaceSwitchCancellable: AnyCancellable?
     private var isNetworkReachableCancellable: AnyCancellable?
     private var liveMLSBrokenGroupsCancellable: AnyCancellable?
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Initialize
 
@@ -669,14 +670,24 @@ public final class ZMUserSession: NSObject {
                 pushMessageHandler: localNotificationDispatcher,
                 flowManager: flowManager,
                 incrementalSyncObserver: incrementalSyncObserver,
+                initiateResetMLSConversationUseCase: clientSessionComponent.initiateResetMLSConversationUseCase,
                 metadata: resolvedBackendMetadata
             )
             syncStrategy?.updateClientContextChangeTrackers()
         }
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             await clientSessionComponent.workAgent.setAutoStartEnabled(true)
             await clientSessionComponent.workAgent.start()
             clientSessionComponent.generatorsDirectory.observeSyncState()
+            clientSessionComponent.syncStateSubject.sink { [weak clientSessionComponent] state in
+                if state == .suspended {
+                    Task {
+                        // clear all items, those will be regenerated when sync is resumed
+                        await clientSessionComponent?.workAgent.clearSchedulerQueue()
+                    }
+                }
+            }.store(in: &cancellables)
             // Initialize the generator to enqueue repair work item if needed
             clientSessionComponent.repairFaultyMLSRemovalKeysGenerator.submitWorkItemIfNeeded()
 
@@ -718,6 +729,7 @@ public final class ZMUserSession: NSObject {
         guard !isTornDown else { return }
 
         Task {
+            await clientSessionComponent?.workAgent.clearSchedulerQueue()
             await clientSessionComponent?.workAgent.stop()
         }
         tearDownMLSGroupVerification()
@@ -788,16 +800,6 @@ public final class ZMUserSession: NSObject {
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
             searchUsersCache: dependencies.caches.searchUsers,
-            initiateResetMLSConversationUseCaseFactory: { [weak self] context in
-                guard let self, let repo = clientSessionComponent?.conversationRepository else {
-                    fatal("userSession not reachable")
-                }
-                // Passing useCase from WireDomain to WireRequestStrategy's MessageSender
-                return makeInitiateResetMLSConversationUseCase(
-                    context: context,
-                    conversationRepository: repo
-                )
-            },
             metadata: resolvedBackendMetadata
         )
     }
@@ -1276,26 +1278,6 @@ extension ZMUserSession: SyncAgentDelegate {
         }
 
         performPostQuickSyncE2EIActions()
-    }
-
-    private func makeInitiateResetMLSConversationUseCase(
-        context: NSManagedObjectContext,
-        conversationRepository: ConversationRepositoryProtocol
-    ) -> WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {
-        guard let clientSessionComponent else {
-            fatalError()
-        }
-
-        return InitiateResetMLSConversationUseCase(
-            api: clientSessionComponent.mlsAPI,
-            mlsService: mlsService,
-            conversationLocalStore: clientSessionComponent.conversationLocalStore,
-            conversationRepository: clientSessionComponent.conversationRepository,
-            lockRepository: ResetMLSConversationLockRepository(
-                userID: userId
-            ),
-            selfDomain: resolvedBackendMetadata.domain
-        )
     }
 
     private func resolveOneOnOneConversationsIfNeeded() async {

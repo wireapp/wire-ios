@@ -20,9 +20,9 @@ import Combine
 import Foundation
 import WireCoreCrypto
 import WireFoundation
-import WireNetwork
 import WireTesting
 import XCTest
+@testable import WireNetwork
 
 @testable @preconcurrency import WireDataModel
 @testable import WireDataModelSupport
@@ -1798,17 +1798,11 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
         }
 
-        // Mock incremental sync.
-        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
-
         // When
         try await sut.updateKeyMaterial(for: groupID)
 
         // Then it attempted to update key material twice.
         XCTAssertEqual(mockUpdateKeyMaterialCount, 2)
-
-        // Then it performed an incremental sync once.
-        XCTAssertEqual(mockSyncDelegate.recoverWithIncrementalSync_Invocations.count, 1)
     }
 
     func test_RetryOnCommitFailure_MultipleRetries() async throws {
@@ -1840,9 +1834,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then it attempted to update key material 4 times (3 failed, 1 success).
         XCTAssertEqual(mockUpdateKeyMaterialCount, 4)
-
-        // Then it performed an incremental sync 3 times (for 3 failures).
-        XCTAssertEqual(mockSyncDelegate.recoverWithIncrementalSync_Invocations.count, 3)
     }
 
     func test_RetryOnCommitFailure_Keep_Throwing_Commit_Error_Prevents_Infinite_Loop() async throws {
@@ -1865,15 +1856,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             ))
         }
 
-        // Mock incremental sync.
-        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
-
         do {
             // When
             try await sut.updateKeyMaterial(for: groupID)
-        } catch let error as MLSService.MLSRetryError {
+        } catch is BackoffRetrier.Failure {
             // Then, infinite loop is broken after a few attempts, it throws an error
-            XCTAssertEqual(error, .retryLimitReached)
+        } catch {
+            XCTFail("failed with unexpected error: \(error)")
         }
     }
 
@@ -1903,9 +1892,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         do {
             // When
             try await sut.updateKeyMaterial(for: groupID)
-        } catch let error as MLSService.MLSRetryError {
+        } catch let error as BackoffRetrier.Failure {
             // Then, infinite loop is broken after a few attempts, it throws an error
-            XCTAssertEqual(error, .retryLimitReached)
+        } catch {
+            XCTFail("failed with unexpected error: \(error)")
         }
     }
 
@@ -1952,9 +1942,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then it attempted to update key material 4 times (3 failed, 1 success).
         XCTAssertEqual(mockUpdateKeyMaterialCount, 4)
-
-        // Then it performed an incremental sync 5 times (for 2 + 3 failures).
-        XCTAssertEqual(mockSyncDelegate.recoverWithIncrementalSync_Invocations.count, 5)
     }
 
     func test_RetryOnCommitFailure_GroupOutOfSync() async throws {
@@ -2034,9 +2021,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockUpdateKeyMaterialCount += 1
         }
 
-        // Mock incremental sync.
-        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
-
         // Mock no subgroup
         mockSubconversationGroupIDRepository.findSubgroupTypeAndParentIDFor_MockMethod = { _ in
             nil
@@ -2050,9 +2034,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then it attempted to update key material once.
         XCTAssertEqual(mockUpdateKeyMaterialCount, 1)
-
-        // Then it performed an incremental sync once.
-        XCTAssertEqual(mockSyncDelegate.recoverWithIncrementalSync_Invocations.count, 1)
     }
 
     func test_RetryOnCommitFailure_ItGivesUp() async throws {
@@ -2072,9 +2053,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             ))
         }
 
-        // Mock incremental sync.
-        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
-
         // Then
         await assertItThrows(
             error: try MLSService.MLSRetryError
@@ -2086,9 +2064,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then it attempted to update key material once.
         XCTAssertEqual(mockUpdateKeyMaterialCount, 1)
-
-        // Then it didn't perform an incremental sync.
-        XCTAssertEqual(mockSyncDelegate.recoverWithIncrementalSync_Invocations.count, 0)
     }
 
     func test_UpdateKeyMaterial_ContinuesOnFailureForSomeGroups() async throws {

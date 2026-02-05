@@ -332,6 +332,14 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws
 
+    /// Commits pending proposals for a group.
+    /// - Parameters:
+    ///   - groupID: The group ID to commit pending proposals for
+    ///   - skipRetry: true to skip internal recovery strategy. False otherwise
+    ///
+    /// If skipRetry is false it's up to the caller to handle errors
+    func commitPendingProposals(in groupID: MLSGroupID, skipRetry: Bool) async throws
+
     // MARK: - Key material
 
     /// Updates the key material for all stale groups if it hasn't been done in the past day.
