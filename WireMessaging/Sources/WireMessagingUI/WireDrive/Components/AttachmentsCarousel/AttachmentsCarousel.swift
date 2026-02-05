@@ -67,6 +67,8 @@ private struct AttachmentsCarouselItemView: View {
         static let buttonCornerRadius: CGFloat = 24
     }
 
+    @State private var showErrorAlert = false
+
     let item: AttachmentsCarouselItem
     let onTap: () -> Void
     let onRemove: () -> Void
@@ -83,7 +85,15 @@ private struct AttachmentsCarouselItemView: View {
             .padding(.trailing, Constants.trailingPadding)
 
             cornerButton
-        }
+        }.alert(
+            L10n.Localizable.Conversation.Draft.AttachmentMenu.errorTitle,
+            isPresented: $showErrorAlert,
+            actions: {
+                Button(L10n.Localizable.Conversation.Draft.AttachmentMenu.remove, action: { onRemove() })
+                Button(L10n.Localizable.Conversation.Draft.AttachmentMenu.retry, action: { onRetry() })
+
+            }
+        )
     }
 
     @ViewBuilder var content: some View {
@@ -119,9 +129,8 @@ private struct AttachmentsCarouselItemView: View {
                 Spacer()
 
                 if item.state.isFailed {
-                    Menu {
-                        Button(L10n.Localizable.Conversation.Draft.AttachmentMenu.retry, action: onRetry)
-                        Button(L10n.Localizable.Conversation.Draft.AttachmentMenu.remove, action: onRemove)
+                    Button {
+                        showErrorAlert = true
                     } label: {
                         Image(systemName: "ellipsis.circle.fill")
                             .resizable()
