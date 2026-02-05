@@ -24,8 +24,12 @@ import WireLogging
 /// This work item triggers repairing conversations which are within the journal values `brokenMLSGroupIDs`
 /// Note: this item is cleared when sync is suspended
 struct RepairBrokenMLSGroupsItem: WorkItem {
-
-    let id = UUID()
+    var id: String {
+        "RepairBrokenMLSGroupsItem_\(_internalID.uuidString)"
+    }
+    
+    let _internalID = UUID()
+    
     var priority: WorkItemPriority {
         .medium
     }

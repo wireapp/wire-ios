@@ -424,7 +424,7 @@ extension MLSActionExecutor.Action: CustomDebugStringConvertible {
 
 }
 
-private extension MLSGroupID {
+extension MLSGroupID {
     var safeAttributes: LogAttributes {
         [.mlsGroupID: safeForLoggingDescription, .public: true]
     }

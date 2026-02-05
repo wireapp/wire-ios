@@ -36,6 +36,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
     var processor: MockUpdateEventProcessorProtocol!
     var databaseSaver: MockDatabaseSaverProtocol!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
+    var liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>!
     var liveDelegate: MockLiveSyncDelegate!
     var coreCrypto: MockSafeCoreCrypto!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
@@ -73,6 +74,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             processor: processor,
             databaseSaver: databaseSaver,
             syncStateSubject: syncStateSubject,
+            liveBrokenGroupSubject: liveBrokenGroupSubject,
             coreCryptoProvider: coreCryptoProvider,
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
@@ -103,6 +105,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         processor = nil
         databaseSaver = nil
         syncStateSubject = nil
+        liveBrokenGroupSubject = nil
         journal = nil
         liveDelegate = nil
         coreCrypto = nil

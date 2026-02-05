@@ -490,13 +490,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// - Returns: epoch
     func epoch(for groupID: MLSGroupID) async throws -> UInt64
 
-    // MARK: - Sync delegate
-
-    /// Set the MLS sync delegate.
-    ///
-    /// - Parameter delegate: The sync delegate to set.
-
-    func setSyncDelegate(_ delegate: any MLSSyncDelegate)
+    // MARK: - delegate
 
     func setResetBrokenMLSConversationDelegate(_ delegate: any ResetBrokenMLSConversationDelegate)
 
