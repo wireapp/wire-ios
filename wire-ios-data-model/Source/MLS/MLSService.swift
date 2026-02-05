@@ -1513,10 +1513,14 @@ public final class MLSService: MLSServiceInterface {
         } catch let CoreCryptoError.Mls(.MessageRejected(reason: reason)) {
             switch RecoveryStrategy(from: reason) {
             case .retryAfterBackoff:
-
+                var attempt = 1
+                
                 try await BackoffRetrier(policy: .init(maxRetries: 2), monitoringNetwork: false).retry { [logger] in
+                    defer {
+                        attempt += 1
+                    }
                     logger.warn(
-                        "failed to send commit due to \(reason). retrying operation with backoff - attempt: \(retryCount)...",
+                        "failed to send commit due to \(reason). retrying operation with backoff - attempt: \(attempt)...",
                         attributes: logAttributes
                     )
                     try await operation()
