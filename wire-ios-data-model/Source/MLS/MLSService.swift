@@ -1514,7 +1514,7 @@ public final class MLSService: MLSServiceInterface {
             switch RecoveryStrategy(from: reason) {
             case .retryAfterBackoff:
                 var attempt = 1
-                
+
                 try await BackoffRetrier(policy: .init(maxRetries: 2), monitoringNetwork: false).retry { [logger] in
                     defer {
                         attempt += 1
