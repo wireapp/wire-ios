@@ -137,6 +137,12 @@ extension FeatureConfigLocalStoreProtocol {
                 isEnabled: config.status == .enabled,
                 config: nil
             )
+        case let .simplifiedUserConnectionRequestQRCode(config):
+            await storeFeature(
+                name: .simplifiedUserConnectionRequestQRCode,
+                isEnabled: config.status == .enabled,
+                config: nil
+            )
         case let .cells(config):
             await storeFeature(
                 name: .cells,

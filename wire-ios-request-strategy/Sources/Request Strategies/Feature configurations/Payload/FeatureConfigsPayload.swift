@@ -50,6 +50,13 @@ struct FeatureConfigsPayloadAPIV6: Decodable {
     let channels: FeatureStatusWithConfig<Feature.Channels.Config>?
     let consumableNotifications: FeatureStatus?
     let chatBubbles: FeatureStatus?
+    let simplifiedUserConnectionRequestQRCode: LockableFeatureStatus?
+}
+
+struct LockableFeatureStatus: Decodable {
+    let status: Feature.Status
+    let lockStatus: Feature.LockStatus
+    let ttl: UInt
 }
 
 struct FeatureStatus: Decodable {

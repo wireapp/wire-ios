@@ -373,6 +373,7 @@
 		D55272EA2062732100F542BE /* AssetDeletionStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55272E92062732100F542BE /* AssetDeletionStatusTests.swift */; };
 		D55272EC2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55272EB2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift */; };
 		D5D10DA4203AE43200145497 /* Conversation+AccessMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D10DA3203AE43200145497 /* Conversation+AccessMode.swift */; };
+		D88B4E542F39EE50006CAA64 /* UserSession+FeatureFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88B4E532F39EE50006CAA64 /* UserSession+FeatureFlag.swift */; };
 		E60579D62C1C3E3D003D4A98 /* ZMNetworkAvailabilityChangeNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60579D52C1C3E3D003D4A98 /* ZMNetworkAvailabilityChangeNotification.swift */; };
 		E623B6382BD688D400F91B37 /* Caches.swift in Sources */ = {isa = PBXBuildFile; fileRef = E623B6372BD688D400F91B37 /* Caches.swift */; };
 		E623B63A2BD68DAE00F91B37 /* UserSessionDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = E623B6392BD68DAE00F91B37 /* UserSessionDependencies.swift */; };
@@ -958,6 +959,7 @@
 		D55272E92062732100F542BE /* AssetDeletionStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDeletionStatusTests.swift; sourceTree = "<group>"; };
 		D55272EB2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDeletionRequestStrategyTests.swift; sourceTree = "<group>"; };
 		D5D10DA3203AE43200145497 /* Conversation+AccessMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conversation+AccessMode.swift"; sourceTree = "<group>"; };
+		D88B4E532F39EE50006CAA64 /* UserSession+FeatureFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserSession+FeatureFlag.swift"; sourceTree = "<group>"; };
 		E60579D52C1C3E3D003D4A98 /* ZMNetworkAvailabilityChangeNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMNetworkAvailabilityChangeNotification.swift; sourceTree = "<group>"; };
 		E623B6372BD688D400F91B37 /* Caches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Caches.swift; sourceTree = "<group>"; };
 		E623B6392BD68DAE00F91B37 /* UserSessionDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSessionDependencies.swift; sourceTree = "<group>"; };
@@ -2165,6 +2167,7 @@
 				06FBF22E2CFD84FC00DA13EC /* UserSession+Federation.swift */,
 				3450BB112E719141007DE8F3 /* BackendMetadataProvider.swift */,
 				0649567D2F27CAF100E3BBF3 /* ZMUserSession+AVS.swift */,
+				D88B4E532F39EE50006CAA64 /* UserSession+FeatureFlag.swift */,
 			);
 			path = ZMUserSession;
 			sourceTree = "<group>";
@@ -3023,6 +3026,7 @@
 				E998FE8E2C184C9800EAA672 /* UserCredentials.swift in Sources */,
 				165BB94C2004D6490077EFD5 /* SessionManager+UserActivity.swift in Sources */,
 				165D3A151E1D3EF30052E654 /* WireCallCenterV3.swift in Sources */,
+				D88B4E542F39EE50006CAA64 /* UserSession+FeatureFlag.swift in Sources */,
 				554FEE2122AFF20600B1A8A1 /* ZMUserSession+LegalHold.swift in Sources */,
 				EE5D9B60290A7CEE007D78D6 /* VoIPPushManager.swift in Sources */,
 				01D7FA2F2EF2BB2200452764 /* NotificationNames.swift in Sources */,

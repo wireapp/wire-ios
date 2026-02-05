@@ -3676,6 +3676,39 @@ public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterf
         mock(consumableNotifications)
     }
 
+    // MARK: - fetchUserProfileQRCode
+
+    public var fetchUserProfileQRCode_Invocations: [Void] = []
+    public var fetchUserProfileQRCode_MockMethod: (() -> Feature.SimplifiedUserConnectionRequestQRCode)?
+    public var fetchUserProfileQRCode_MockValue: Feature.SimplifiedUserConnectionRequestQRCode?
+
+    public func fetchUserProfileQRCode() -> Feature.SimplifiedUserConnectionRequestQRCode {
+        fetchUserProfileQRCode_Invocations.append(())
+
+        if let mock = fetchUserProfileQRCode_MockMethod {
+            return mock()
+        } else if let mock = fetchUserProfileQRCode_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchUserProfileQRCode`")
+        }
+    }
+
+    // MARK: - storeUserProfileQRCode
+
+    public var storeUserProfileQRCode_Invocations: [Feature.SimplifiedUserConnectionRequestQRCode] = []
+    public var storeUserProfileQRCode_MockMethod: ((Feature.SimplifiedUserConnectionRequestQRCode) -> Void)?
+
+    public func storeUserProfileQRCode(_ userProfileQRCode: Feature.SimplifiedUserConnectionRequestQRCode) {
+        storeUserProfileQRCode_Invocations.append(userProfileQRCode)
+
+        guard let mock = storeUserProfileQRCode_MockMethod else {
+            fatalError("no mock for `storeUserProfileQRCode`")
+        }
+
+        mock(userProfileQRCode)
+    }
+
     // MARK: - fetchCells
 
     public var fetchCells_Invocations: [Void] = []

@@ -199,7 +199,7 @@ extension URLActionRouter: PresentationDelegate {
         typealias UrlAction = L10n.Localizable.UrlAction
         switch action {
         case .connectBot:
-            presentConfirmationAlert(
+            presentAlert(
                 title: UrlAction.title,
                 message: UrlAction.ConnectToBot.message,
                 decisionHandler: decisionHandler
@@ -227,8 +227,32 @@ extension URLActionRouter: PresentationDelegate {
                 decisionHandler(false)
                 switchBackend(configURL: url)
             }
+        case .openUserProfile:
+            openUserProfileIfNeeded(decisionHandler)
         default:
             decisionHandler(true)
+        }
+    }
+
+    private func openUserProfileIfNeeded( _ decisionHandler: @escaping (Bool) -> Void) {
+        guard let userSession = self.sessionManager?.activeUserSession, !userSession.isLocked else {
+            return
+        }
+        typealias UrlAction = L10n.Localizable.UrlAction
+        Task {
+            let shouldShowUserProfile = await userSession.isSimplifiedUserConnectionRequestQRCode()
+            await MainActor.run {
+                if shouldShowUserProfile {
+                    decisionHandler(shouldShowUserProfile)
+                } else {
+                    presentAlert(
+                        title: nil,
+                        message: UrlAction.UserProfileQrFeatureFlag.message,
+                        showCancelAction: false,
+                        decisionHandler: decisionHandler
+                    )
+                }
+            }
         }
     }
 
@@ -239,7 +263,7 @@ extension URLActionRouter: PresentationDelegate {
     ) {
         switch action {
         case .joinConversation:
-            presentConfirmationAlert(
+            presentAlert(
                 title: nil,
                 message: L10n.Localizable.UrlAction.JoinConversation.Confirmation.message(message),
                 decisionHandler: decisionHandler
@@ -271,19 +295,23 @@ extension URLActionRouter: PresentationDelegate {
         NotificationCenter.default.post(name: .companyLoginDidFinish, object: self)
     }
 
-    private func presentConfirmationAlert(title: String?, message: String, decisionHandler: @escaping (Bool) -> Void) {
+    private func presentAlert(
+        title: String?,
+        message: String,
+        showCancelAction: Bool = true,
+        decisionHandler: @escaping (Bool) -> Void
+    ) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-        let alert = UIAlertController(
-            title: title,
-            message: message,
-            preferredStyle: .alert
-        )
-
-        let agreeAction = UIAlertAction.confirm(style: .default) { _ in decisionHandler(true) }
+        let agreeAction = UIAlertAction.confirm(style: .default) { _ in
+            decisionHandler(showCancelAction)
+        }
         alert.addAction(agreeAction)
 
-        let cancelAction = UIAlertAction.cancel { decisionHandler(false) }
-        alert.addAction(cancelAction)
+        if showCancelAction {
+            let cancelAction = UIAlertAction.cancel { decisionHandler(!showCancelAction) }
+            alert.addAction(cancelAction)
+        }
 
         presentAlert(alert)
     }

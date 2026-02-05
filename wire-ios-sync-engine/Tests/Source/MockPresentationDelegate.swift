@@ -34,7 +34,10 @@ class MockPresentationDelegate: PresentationDelegate {
         failedToPerformActionCalls.append((action, error))
     }
 
-    func shouldPerformAction(_ action: URLAction, decisionHandler: @escaping (Bool) -> Void) {
+    func shouldPerformAction(
+        _ action: WireSyncEngine.URLAction,
+        decisionHandler: @escaping (Bool) -> Void
+    ) {
         shouldPerformActionCalls.append(action)
         decisionHandler(isPerformingActions)
     }

@@ -25,6 +25,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case channelsHistory
     case chatBubbles
     case consumableNotifications
+    case simplifiedUserConnectionRequestQRCode
     case createLegacyBackups
     case debugDuplicateObjects
     case decryptAndStoreEventsSleep
@@ -90,6 +91,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .consumableNotifications:
             "Turn on to enable consumable notifications"
+
+        case .simplifiedUserConnectionRequestQRCode:
+            "Turn on to use a simplified user connection request QR code"
 
         case .wireMeetings:
             "Turn on to enable Wire meetings"

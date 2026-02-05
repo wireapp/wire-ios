@@ -56,6 +56,8 @@ public enum FeatureConfig: Equatable, Sendable {
 
     case consumableNotifications(ConsumableNotificationsFeatureConfig)
 
+    case simplifiedUserConnectionRequestQRCode(SimplifiedUserConnectionRequestQRCodeConfig)
+
     /// Config for the *Conversation Guest Links* feature.`
     ///
     /// *Conversation Guest Links* enable a group admin to create

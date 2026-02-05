@@ -40,6 +40,7 @@ public class Feature: ZMManagedObject {
         case classifiedDomains
         case conferenceCalling
         case consumableNotifications
+        case simplifiedUserConnectionRequestQRCode
         case conversationGuestLinks
         case digitalSignature
         case e2ei = "mlsE2EId"
@@ -54,6 +55,13 @@ public class Feature: ZMManagedObject {
 
         case enabled
         case disabled
+
+    }
+
+    public enum LockStatus: String, Codable {
+
+        case locked
+        case unlocked
 
     }
 
@@ -236,6 +244,7 @@ public class Feature: ZMManagedObject {
              .classifiedDomains,
              .conferenceCalling,
              .consumableNotifications,
+             .simplifiedUserConnectionRequestQRCode,
              .conversationGuestLinks,
              .digitalSignature,
              .e2ei,

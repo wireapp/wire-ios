@@ -64,10 +64,13 @@ public extension SessionManager {
     }
 
     internal func process(urlAction action: URLAction, on processor: URLActionProcessor) {
-        presentationDelegate?.shouldPerformAction(action, decisionHandler: { [weak self] shouldPerformAction in
-            guard shouldPerformAction, let self else { return }
-            processor.process(urlAction: action, delegate: presentationDelegate)
-        })
+        presentationDelegate?.shouldPerformAction(
+            action,
+            decisionHandler: { [weak self] shouldPerformAction in
+                guard shouldPerformAction, let self else { return }
+                processor.process(urlAction: action, delegate: presentationDelegate)
+            }
+        )
     }
 
     func processPendingURLActionRequiresAuthentication() {

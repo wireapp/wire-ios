@@ -51,6 +51,8 @@ public protocol LegacyFeatureRepositoryInterface {
     func storeChannels(_ channels: Feature.Channels)
     func fetchConsumableNotifications() -> Feature.ConsumableNotifications
     func storeConsumableNotifications(_ consumableNotifications: Feature.ConsumableNotifications)
+    func fetchUserProfileQRCode() -> Feature.SimplifiedUserConnectionRequestQRCode
+    func storeUserProfileQRCode(_ userProfileQRCode: Feature.SimplifiedUserConnectionRequestQRCode)
     func fetchCells() -> Feature.Cells
     func storeCells(_ cells: Feature.Cells)
     func fetchAssetAuditLog() -> Feature.AssetAuditLog
@@ -541,6 +543,19 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
         }
     }
 
+    public func fetchUserProfileQRCode() -> Feature.SimplifiedUserConnectionRequestQRCode {
+        guard let feature = Feature.fetch(name: .simplifiedUserConnectionRequestQRCode, context: context) else {
+            return .init()
+        }
+        return .init(status: feature.status)
+    }
+
+    public func storeUserProfileQRCode(_ userProfileQRCode: Feature.SimplifiedUserConnectionRequestQRCode) {
+        Feature.updateOrCreate(havingName: .simplifiedUserConnectionRequestQRCode, in: context) {
+            $0.status = userProfileQRCode.status
+        }
+    }
+
     // MARK: Cells
 
     public func fetchCells() -> Feature.Cells {
@@ -632,6 +647,9 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
 
             case .consumableNotifications:
                 storeConsumableNotifications(.init())
+
+            case .simplifiedUserConnectionRequestQRCode:
+                storeUserProfileQRCode(.init())
 
             case .cells:
                 storeCells(.init())
