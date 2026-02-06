@@ -104,32 +104,6 @@ extension SearchResult {
     }
 
     public init?(
-        servicesPayload servicesFullPayload: [AnyHashable: Any],
-        query: String,
-        contextProvider: ContextProvider,
-        searchUsersCache: SearchUsersCache?
-    ) {
-        guard let servicesPayload = servicesFullPayload["services"] as? [[String: Any]] else {
-            return nil
-        }
-
-        let searchUsersServices = ZMSearchUser.searchUsers(
-            from: servicesPayload,
-            contextProvider: contextProvider,
-            searchUsersCache: searchUsersCache
-        )
-
-        self.context = contextProvider.viewContext
-        self.contacts = []
-        self.teamMembers = []
-        self.directory = []
-        self.conversations = []
-        self.apps = []
-        self.bots = searchUsersServices
-        self.searchUsersCache = searchUsersCache
-    }
-
-    public init?(
         userLookupPayload: [AnyHashable: Any],
         contextProvider: ContextProvider,
         searchUsersCache: SearchUsersCache?

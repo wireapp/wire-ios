@@ -719,36 +719,57 @@ extension SearchTask {
             return { _ in }
         }
 
-        // usersAPI.
+        let viewContext = contextProvider.viewContext
+        var partialResult = SearchResult(
+            context: viewContext,
+            contacts: [],
+            teamMembers: [],
+            directory: [],
+            conversations: [],
+            apps: [],
+            bots: [],
+            searchUsersCache: searchUsersCache
+        )
 
-        return await withCheckedContinuation { continuation in
+        let prefix = searchRequest.query.string.trimmingCharacters(in: .whitespacesAndNewlines)
+        for try await profiles in try teamsAPI.getWhitelistedBots(for: teamIdentifier, with: prefix) {
+            partialResult.bots += profiles.compactMap { profile in
 
-            let request = Self.servicesSearchRequest(
-                teamIdentifier: teamIdentifier,
-                query: searchRequest.query.string,
-                apiVersion: apiVersion
-            )
+                let localUser = ZMUser.fetch(
+                    with: profile.id,
+                    domain: profile.qualifiedID?.domain,
+                    in: viewContext
+                )
 
-            request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
+                if let searchUser = searchUsersCache?.object(forKey: profile.id as NSUUID) {
+                    searchUser.user = localUser
+                    return searchUser
+                } else {
 
-                guard
-                    let self,
-                    let payload = response.payload?.asDictionary(),
-                    let partialResult = SearchResult(
-                        servicesPayload: payload,
-                        query: searchRequest.query.string,
-                        contextProvider: contextProvider,
-                        searchUsersCache: searchUsersCache
+                    let accentColorRawValue = profile.accentID.flatMap(Int16.init(exactly:))
+                    let accentColor = accentColorRawValue.flatMap(AccentColor.init(rawValue:)) ?? .default
+                    let searchUser = ZMSearchUser(
+                        viewContext: viewContext,
+                        name: profile.name,
+                        handle: profile.handle,
+                        accentColor: .from(accentColor: accentColor),
+                        remoteIdentifier: profile.id,
+                        domain: profile.qualifiedID?.domain,
+                        teamIdentifier: teamIdentifier,
+                        user: localUser,
+                        searchUsersCache: searchUsersCache,
+                        isDeleted: profile.isDeleted
                     )
-                else { return continuation.resume(returning: { _ in }) }
+                    searchUser.providerIdentifier = profile.provider.uuidString
+                    searchUser.summary = profile.summary
+                    // searchUser.assetKeys = profile.assets // SearchUserAssetKeys(payload: payload) // TODO: fix
+                    return searchUser
 
-                continuation.resume { $0 = $0.union(withBotResult: partialResult) }
-
-            })
-
-            transportSession.enqueueOneTime(request)
-
+                }
+            }
         }
+
+        return { $0 = $0.union(withBotResult: partialResult) }
     }
 
     static func servicesSearchRequest(

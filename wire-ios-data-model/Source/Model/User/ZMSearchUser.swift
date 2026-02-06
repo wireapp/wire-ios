@@ -476,6 +476,32 @@ public class ZMSearchUser: NSObject, UserType {
         }
     }
 
+    public convenience init(
+        viewContext: NSManagedObjectContext,
+        name: String,
+        handle: String?,
+        accentColor: ZMAccentColor?,
+        remoteIdentifier: UUID?,
+        domain: String? = nil,
+        teamIdentifier: UUID? = nil,
+        user existingUser: ZMUser? = nil,
+        searchUsersCache: SearchUsersCache?,
+        isDeleted: Bool
+    ) {
+        self.init(
+            viewContext: viewContext,
+            name: name,
+            handle: handle,
+            accentColor: accentColor,
+            remoteIdentifier: remoteIdentifier,
+            domain: domain,
+            teamIdentifier: teamIdentifier,
+            user: existingUser,
+            searchUsersCache: searchUsersCache
+        )
+        internalIsAccountDeleted = isDeleted
+    }
+
     @objc
     public required init(
         viewContext: NSManagedObjectContext,
@@ -532,7 +558,7 @@ public class ZMSearchUser: NSObject, UserType {
         )
     }
 
-    convenience init?(
+    convenience init?( // TODO: delete?
         from payload: [String: Any],
         contextProvider: ContextProvider,
         user: ZMUser? = nil,
