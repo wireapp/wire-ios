@@ -282,4 +282,14 @@ public enum Locators {
         case continueButton = "Continue"
     }
 
+    public enum IncomingCallPage: String {
+
+        case acceptCall = "Accept"
+    }
+
+    public enum OngoingCallPage: String {
+
+        case endOngoingCall = "End call"
+    }
+
 }

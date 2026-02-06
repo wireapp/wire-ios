@@ -51,16 +51,15 @@ final class BackOffice {
     }
 
     func unlockConferenceCallingFeature(teamId: String, basicAuth: String) async throws {
-        
+
         let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        let headerValue: String
-        if trimmed.lowercased().hasPrefix("basic ") {
-            headerValue = trimmed
+        let headerValue: String = if trimmed.lowercased().hasPrefix("basic ") {
+            trimmed
         } else {
-            headerValue = "Basic \(trimmed)"
+            "Basic \(trimmed)"
         }
-        
+
         let endpoint = backendURL
             .appendingPathComponent("i")
             .appendingPathComponent("teams")
@@ -83,17 +82,16 @@ final class BackOffice {
         }
     }
 
-    func enableConferenceCallingBackdoorViaBackendTeam(teamId: String, basicAuth: String) async throws {
-        
+    func enableConferenceCallingFeature(teamId: String, basicAuth: String) async throws {
+
         let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        let headerValue: String
-        if trimmed.lowercased().hasPrefix("basic ") {
-            headerValue = trimmed
+        let headerValue: String = if trimmed.lowercased().hasPrefix("basic ") {
+            trimmed
         } else {
-            headerValue = "Basic \(trimmed)"
+            "Basic \(trimmed)"
         }
-        
+
         let endpoint = backendURL
             .appendingPathComponent("i")
             .appendingPathComponent("teams")

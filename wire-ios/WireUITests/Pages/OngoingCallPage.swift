@@ -16,10 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum CallingTestDefaults {
-    static let backend = "DEV" // temp on DEV as staging is down
-    static let isBeta = true
+import WireLocators
+import XCTest
 
-    static let instanceTypeName = "chrome"
-    static let instanceTypeVersion = "103.0.5060.53"
+class OngoingCallPage: PageModel {
+
+    override var pageMainElement: XCUIElement {
+        endCallButton
+    }
+
+    var endCallButton: XCUIElement {
+        app.buttons[Locators.OngoingCallPage.endOngoingCall.rawValue]
+    }
+
+    func endOngoingCall() throws -> ConversationsPage {
+        endCallButton.tap()
+        return try ConversationsPage()
+    }
+
 }
