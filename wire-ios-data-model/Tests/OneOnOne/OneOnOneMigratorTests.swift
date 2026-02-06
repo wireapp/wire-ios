@@ -58,7 +58,8 @@ final class OneOnOneMigratorTests: XCTestCase {
         let sut = OneOnOneMigrator(mlsService: mockMLSService)
         let userID = QualifiedID.random()
         let mlsGroupID = MLSGroupID.random()
-
+        var conversationID: QualifiedID?
+        
         let mlsConversation = await syncContext.perform { [self] in
             let user = ZMUser.insertNewObject(in: syncContext)
             user.remoteIdentifier = userID.uuid
@@ -66,13 +67,14 @@ final class OneOnOneMigratorTests: XCTestCase {
 
             let mlsConversation = createMLSConversation(with: mlsGroupID, in: syncContext)
             mlsConversation.oneOnOneUser = user
+            conversationID = mlsConversation.qualifiedID
 
             return mlsConversation
         }
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success((mlsGroupID, nil)),
+            result: .success((try XCTUnwrap(conversationID), mlsGroupID, nil)),
             context: syncContext.notificationContext
         )
 
