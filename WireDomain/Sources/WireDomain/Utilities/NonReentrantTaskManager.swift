@@ -39,6 +39,11 @@ public actor NonReentrantTaskManager<Success, Failure> where Success: Sendable, 
 
 }
 
+// MARK: - Public API
+
+/// Due to limitations of `Task` - initializers are constrained to either `any Error` or `Never` type Failures - we need
+/// to provide two separate APIs for throwing and non-throwing implementations.
+
 public extension NonReentrantTaskManager where Failure == any Error {
 
     /// Perform a non-reentrant async block that cannot throw.
