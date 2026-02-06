@@ -106,11 +106,8 @@ public extension ZMUserSession {
 
 // MARK: - UNUserNotificationCenterDelegate
 
-// Note: Although ZMUserSession conforms to UNUserNotificationCenterDelegate,
-// it should not actually be assigned as the delegate of UNUserNotificationCenter.
-// Instead, the delegate should be the SessionManager, whose repsonsibility it is
-// to forward the method calls to the appropriate user session.
-extension ZMUserSession: UNUserNotificationCenterDelegate {
+// The `SessionManager` forwards `UNUserNotificationCenterDelegate` calls to a suitable `ZMUserSession` instance.
+extension ZMUserSession {
 
     // Called by the SessionManager when a notification is received while the app
     // is in the foreground.
