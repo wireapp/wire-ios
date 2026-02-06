@@ -49,21 +49,19 @@ class OptionsOnSettingsPage: PageModel {
         return self
     }
 
-    func enterPasscode(_ pass: String) throws -> ConversationsPage {
+    func enterPasscode(_ passcode: String) throws -> ConversationsPage {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let passcodeField = springboard.secureTextFields["Passcode field"].firstMatch
 
         // Sometimes the splashscreen stays visible for unexpectedly long.
         if passcodeField.waitAndTap(timeout: 8.0) {
-            try passcodeField.tapIfKeyboardNotFocused().typeText(pass)
-        } else {
-            passcodeField.typeText(pass)
-        }
-        let doneButton = springboard.keyboards.buttons["Done"].firstMatch
-        if doneButton.waitAndTap() {
-            // Tapped successfully
-        } else {
-            springboard.typeText(XCUIKeyboardKey.return.rawValue)
+            try passcodeField.tapIfKeyboardNotFocused().typeText(passcode)
+            let doneButton = springboard.keyboards.buttons["Done"].firstMatch
+            if doneButton.waitAndTap() {
+                // Tapped successfully
+            } else {
+                springboard.typeText(XCUIKeyboardKey.return.rawValue)
+            }
         }
         return try ConversationsPage()
     }

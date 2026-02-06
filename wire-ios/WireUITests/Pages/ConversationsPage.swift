@@ -76,21 +76,7 @@ class ConversationsPage: PageModel {
 
     func openUserProfilePage() throws -> UserProfilePage {
         try VerifyUserIsOnConversationsTab()
-
-        if accountProfileImageView.waitAndTap() {
-            return try UserProfilePage()
-        }
-
-        // Fallback: Sometimes observed on CI that accountProfileImageView isn't tappable after login.
-        let userAccountButton = app.buttons
-            .containing(NSPredicate(format: "value CONTAINS[c] %@", "account"))
-            .firstMatch
-
-        if userAccountButton.waitAndTap(timeout: 5.0) {
-            return try UserProfilePage()
-        }
-
-        XCTFail("Could not open user profile: neither profile image nor account button was tappable")
+        accountProfileImageView.waitAndTap()
         return try UserProfilePage()
     }
 
