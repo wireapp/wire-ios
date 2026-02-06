@@ -490,12 +490,12 @@ extension SearchTask {
 
             } else {
                 let accentColorRawValue = filteredContact.accentID.flatMap(Int16.init(exactly:))
-                let accentColor = accentColorRawValue.flatMap(AccentColor.init(rawValue:)) ?? .default
+                let accentColor = accentColorRawValue.flatMap(AccentColor.init(rawValue:))
                 return ZMSearchUser(
                     viewContext: viewContext,
                     name: filteredContact.name,
                     handle: filteredContact.handle,
-                    accentColor: .from(accentColor: accentColor),
+                    accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
                     remoteIdentifier: filteredContact.id,
                     domain: domain,
                     teamIdentifier: filteredContact.team,
@@ -710,7 +710,6 @@ extension SearchTask {
         }
 
         guard
-            let apiVersion,
             let teamIdentifier,
             case let .search(searchRequest) = type,
             !searchRequest.searchOptions.contains(.localResultsOnly),
@@ -733,38 +732,40 @@ extension SearchTask {
 
         let prefix = searchRequest.query.string.trimmingCharacters(in: .whitespacesAndNewlines)
         for try await profiles in try teamsAPI.getWhitelistedBots(for: teamIdentifier, with: prefix) {
-            partialResult.bots += profiles.compactMap { profile in
+            await viewContext.perform { [searchUsersCache] in
+                partialResult.bots += profiles.compactMap { profile in
 
-                let localUser = ZMUser.fetch(
-                    with: profile.id,
-                    domain: profile.qualifiedID?.domain,
-                    in: viewContext
-                )
-
-                if let searchUser = searchUsersCache?.object(forKey: profile.id as NSUUID) {
-                    searchUser.user = localUser
-                    return searchUser
-                } else {
-
-                    let accentColorRawValue = profile.accentID.flatMap(Int16.init(exactly:))
-                    let accentColor = accentColorRawValue.flatMap(AccentColor.init(rawValue:)) ?? .default
-                    let searchUser = ZMSearchUser(
-                        viewContext: viewContext,
-                        name: profile.name,
-                        handle: profile.handle,
-                        accentColor: .from(accentColor: accentColor),
-                        remoteIdentifier: profile.id,
+                    let localUser = ZMUser.fetch(
+                        with: profile.id,
                         domain: profile.qualifiedID?.domain,
-                        teamIdentifier: teamIdentifier,
-                        user: localUser,
-                        searchUsersCache: searchUsersCache,
-                        isDeleted: profile.isDeleted
+                        in: viewContext
                     )
-                    searchUser.providerIdentifier = profile.provider.uuidString
-                    searchUser.summary = profile.summary
-                    // searchUser.assetKeys = profile.assets // SearchUserAssetKeys(payload: payload) // TODO: fix
-                    return searchUser
 
+                    if let searchUser = searchUsersCache?.object(forKey: profile.id as NSUUID) {
+                        searchUser.user = localUser
+                        return searchUser
+                    } else {
+
+                        let accentColorRawValue = profile.accentID.flatMap(Int16.init(exactly:))
+                        let accentColor = accentColorRawValue.flatMap(AccentColor.init(rawValue:))
+                        let searchUser = ZMSearchUser(
+                            viewContext: viewContext,
+                            name: profile.name,
+                            handle: profile.handle,
+                            accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
+                            remoteIdentifier: profile.id,
+                            domain: profile.qualifiedID?.domain,
+                            teamIdentifier: teamIdentifier,
+                            user: localUser,
+                            searchUsersCache: searchUsersCache,
+                            isDeleted: profile.isDeleted
+                        )
+                        searchUser.providerIdentifier = profile.provider.uuidString
+                        searchUser.summary = profile.summary
+                        // searchUser.assetKeys = profile.assets // SearchUserAssetKeys(payload: payload) // TODO: fix
+                        return searchUser
+
+                    }
                 }
             }
         }
