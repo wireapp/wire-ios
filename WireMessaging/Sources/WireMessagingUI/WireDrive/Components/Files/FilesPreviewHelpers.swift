@@ -190,11 +190,10 @@ extension FilterByTagsView.ViewModel {
         nodesAPI.getAllTags_MockValue = mockTags
 
         return FilterByTagsView.ViewModel(
-            fetchTagsUseCase:
-            WireDriveGetTagSuggestionsUseCase(
+            fetchTagsUseCase: WireDriveGetTagSuggestionsUseCase(
                 nodesAPI: nodesAPI
             ),
-            savedTags: nil
+            selectedTags: []
         )
     }
 

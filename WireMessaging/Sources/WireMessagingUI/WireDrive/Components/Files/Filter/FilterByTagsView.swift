@@ -29,11 +29,11 @@ struct FilterByTagsView: View {
     
     @StateObject package var viewModel: ViewModel
     
-    let onApply: ([String]) -> ()
+    let onApply: (Set<String>) -> ()
 
     package init(
         viewModel: @autoclosure @escaping () -> ViewModel,
-        onApply: @escaping ([String]) -> ()
+        onApply: @escaping (Set<String>) -> ()
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
         self.onApply = onApply
@@ -47,8 +47,6 @@ struct FilterByTagsView: View {
 
                 ScrollView {
                     tagsView
-                }.refreshable {
-                    await viewModel.fetch(isRefreshing: true)
                 }
             }
             .toolbar { toolbarContent }
@@ -60,7 +58,6 @@ struct FilterByTagsView: View {
             }
             .safeAreaInset(edge: .bottom, spacing: 0) { applyButton } // floating button
             .overlay { if viewModel.isLoading { ProgressView() } }
-            .task { await viewModel.fetch() }
         }
     }
 }
@@ -88,31 +85,21 @@ private extension FilterByTagsView {
             }
 
             FlowLayout(spacing: 16, alignment: .leading) {
-                ForEach(viewModel.presentedTags) { tag in
+                ForEach(viewModel.presentedTags, id: \.self) { tag in
                     TagPill(
-                        text: tag.name,
-                        isSelected: tag.isSelected
+                        text: tag,
+                        isSelected: viewModel.isTagSelected(tag)
                     )
                     .onTapGesture {
                         viewModel.selectTag(tag)
                     }
                 }
-            }.frame(maxWidth: .infinity, alignment: .leading)
-
-            if viewModel.hasMore {
-                Button {
-                    withAnimation {
-                        viewModel.showMore()
-                    }
-                } label: {
-                    Text(Strings.AllFiles.Filters.Tags.loadMore)
-                        .accessibilityIdentifier("loadMoreButton")
-                }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             Divider()
-
-        }.padding()
+        }
+        .padding()
     }
 
     private struct TagPill: View {
@@ -169,7 +156,7 @@ private extension FilterByTagsView {
     var applyButton: some View {
         Button {
             Task {
-                onApply(viewModel.selectedTags.map(\.name))
+                onApply(viewModel.selectedTags)
                 dismiss()
             }
         } label: {

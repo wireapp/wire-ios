@@ -93,10 +93,10 @@ package struct FilesBrowserView: FilesViewProtocol {
                     FilterByTagsView(
                         viewModel: FilterByTagsView.ViewModel(
                             fetchTagsUseCase: viewModel.useCases.getTagSuggestions,
-                            savedTags: viewModel.filterWithTags
+                            selectedTags: viewModel.filterWithTags
                         ),
                         onApply: { selectedTags in
-                            viewModel.filterWithTags = selectedTags
+                            viewModel.filterWithTags = [String](selectedTags)
                             viewModel.shouldReload = true
                         }
                     )

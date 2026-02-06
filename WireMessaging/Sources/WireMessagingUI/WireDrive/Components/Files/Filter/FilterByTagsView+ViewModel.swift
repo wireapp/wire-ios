@@ -26,74 +26,61 @@ extension FilterByTagsView {
     @MainActor
     package final class ViewModel: ObservableObject {
 
-        struct TagModel: Identifiable, Hashable {
-            let id = UUID()
-            let name: String
-            var isSelected: Bool
-        }
-
         private let tagsBatchCount = 7
-        private var tags: [TagModel] = []
-
-        var selectedTags: [TagModel] {
-            tags.filter(\.isSelected)
-        }
-
-        var hasMore: Bool {
-            presentedTags.count < tags.count
-        }
+        private var tags: Set<String> = []
 
         var navigationTitle: String {
             let selectedTagsCount = selectedTags.count
             return selectedTagsCount == 0 ? Strings.AllFiles.Filters.navigationTitle : "\(Strings.AllFiles.Filters.navigationTitle) (\(selectedTagsCount))"
         }
 
-        @Published var presentedTags: [TagModel] = []
+        @Published var presentedTags: [String] = []
+        @Published var selectedTags: Set<String>
         @Published var isLoading: Bool = false
-        @Published var savedTags: [String]
         @Published var showError: Bool = false
 
         private let fetchTagsUseCase: any WireDriveGetTagSuggestionsUseCaseProtocol
 
         init(
             fetchTagsUseCase: any WireDriveGetTagSuggestionsUseCaseProtocol,
-            savedTags: [String]?
+            selectedTags: some Collection<String>
         ) {
             self.fetchTagsUseCase = fetchTagsUseCase
-            self.savedTags = savedTags ?? []
+            self.selectedTags = Set(selectedTags)
+            
+            Task {
+                await fetch()
+            }
+        }
+        
+        func isTagSelected(_ tag: String) -> Bool {
+            selectedTags.contains { $0.localizedCaseInsensitiveCompare(tag) == .orderedSame }
         }
 
         // MARK: - Actions
 
-        func fetch(isRefreshing: Bool = false) async {
+        private func fetch() async {
             do {
-                if !isRefreshing { isLoading = true }
+                isLoading = true
                 defer { isLoading = false }
                 let tags = try await fetchTagsUseCase.invoke()
-                if isRefreshing { presentedTags = [] }
-                self.tags = tags
-                    .filter { !$0.isEmpty }
-                    .map { .init(name: $0, isSelected: savedTags.contains($0)) }
-                    .sorted { $0.isSelected && !$1.isSelected }
-                showMore()
+                self.tags = Set(tags.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty })
+                self.presentedTags = tags.sorted { isTagSelected($0) && !isTagSelected($1) }
             } catch {
                 showError = true
             }
         }
 
-        func selectTag(_ tag: TagModel) {
-            guard let tagIndex = tags.firstIndex(where: { tag.id == $0.id }) else { return }
-            tags[tagIndex].isSelected.toggle()
-            presentedTags[tagIndex].isSelected.toggle()
-        }
-
-        func showMore() {
-            presentedTags += Array(tags[presentedTags.count...].prefix(tagsBatchCount))
+        func selectTag(_ tag: String) {
+            if isTagSelected(tag) {
+                selectedTags = selectedTags.filter { $0.localizedCaseInsensitiveCompare(tag) != .orderedSame }
+            } else {
+                selectedTags.insert(tag)
+            }
         }
 
         func clearAll() async {
-            tags.indices.forEach { tags[$0].isSelected = false }
-            presentedTags.indices.forEach { presentedTags[$0].isSelected = false }
+            selectedTags = []
         }
     }
 }
