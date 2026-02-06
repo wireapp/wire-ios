@@ -41,7 +41,7 @@ public final class SearchTask {
     ///
     /// The closure is used because there are four different ways of aggregating search results:
     /// - union(withLocalResult:)
-    /// - union(withServiceResult:)
+    /// - union(withBotResult:)
     /// - union(withDirectoryResult:)
     /// - union(prependingDirectory:)
     typealias SearchResultAggregator = (inout SearchResult) -> Void
@@ -144,7 +144,7 @@ public final class SearchTask {
             // add to search users cache
             let searchUserObserverCenter = self.contextProvider.viewContext.searchUserObserverCenter
             result.directory.forEach(searchUserObserverCenter.addSearchUser)
-            result.services.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
+            result.bots.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
 
             return result
         }
@@ -210,7 +210,8 @@ extension SearchTask {
                 },
                 directory: [],
                 conversations: [],
-                services: [],
+                apps: [],
+                bots: [],
                 searchUsersCache: self.searchUsersCache
             )
 
@@ -295,7 +296,8 @@ extension SearchTask {
                 teamMembers: searchTeamMembers,
                 directory: [],
                 conversations: conversationIDs.compactMap { viewContext.object(with: $0) as? ZMConversation },
-                services: [],
+                apps: [],
+                bots: [],
                 searchUsersCache: searchUsersCache
             )
 
@@ -457,7 +459,7 @@ extension SearchTask {
 
 extension SearchTask {
 
-    func performRemoteSearch() async -> SearchResultAggregator {
+    func performRemoteSearch() async throws -> SearchResultAggregator {
         guard
             let apiVersion,
             apiVersion >= .v1,
@@ -471,8 +473,6 @@ extension SearchTask {
 
         // TODO: similar to this
         /*
-        performRemoteSearchTask?.cancel()
-        performRemoteSearchTask = _Concurrency.Task { @MainActor in
             do {
                 let contacts = try await searchAPI.searchContacts(
                     query: searchRequest.query.string.lowercased(),
@@ -539,19 +539,6 @@ extension SearchTask {
                 } else {
                     completeRemoteSearch(searchResult: searchResult)
                 }
-
-            } catch let error as URLError where error.code == .cancelled {
-                WireLogger.search.debug("cancelled remote search", attributes: .safePublic)
-                completeRemoteSearch()
-            } catch is CancellationError {
-                WireLogger.search.debug("cancelled remote search", attributes: .safePublic)
-                completeRemoteSearch()
-            } catch {
-                let errorName = String(describing: type(of: error))
-                WireLogger.search.error("failed to perform remote search: \(errorName)", attributes: .safePublic)
-                completeRemoteSearch()
-            }
-        }
          */
 
         return await withCheckedContinuation { continuation in
@@ -746,7 +733,8 @@ extension SearchTask {
                         teamMembers: [],
                         directory: partialResult.directory,
                         conversations: [],
-                        services: [],
+                        apps: [],
+                        bots: [],
                         searchUsersCache: searchUsersCache
                     )
                     continuation.resume(returning: { aggregatedResult in
@@ -795,7 +783,7 @@ extension SearchTask {
             let teamIdentifier,
             case let .search(searchRequest) = type,
             !searchRequest.searchOptions.contains(.localResultsOnly),
-            searchRequest.searchOptions.contains(.services)
+            searchRequest.searchOptions.contains(.bots)
         else { return { _ in } }
 
         return await withCheckedContinuation { continuation in
@@ -819,7 +807,7 @@ extension SearchTask {
                     )
                 else { return continuation.resume(returning: { _ in }) }
 
-                continuation.resume { $0 = $0.union(withServiceResult: partialResult) }
+                continuation.resume { $0 = $0.union(withBotResult: partialResult) }
 
             })
 
