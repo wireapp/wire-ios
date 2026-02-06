@@ -271,3 +271,12 @@
 "conversation.wireCells.filesVersioning.downloadVersion" = "Download version";
 "conversation.wireCells.filesVersioning.retry" = "Retry";
 "conversation.wireCells.filesVersioning.restoringVersion" = "Restoring version...";
+
+// MARK: - Sorting
+"conversation.wireCells.sorting.title" = "Sort by";
+"conversation.wireCells.sorting.key.lastModified" = "Last modified";
+"conversation.wireCells.sorting.key.name" = "Name";
+"conversation.wireCells.sorting.key.size" = "Size";
+"conversation.wireCells.sorting.key.owner" = "Owner";
+"conversation.wireCells.sorting.order.ascending" = "Ascending";
+"conversation.wireCells.sorting.order.descending" = "Descending";
