@@ -300,8 +300,8 @@ final class SearchResultsViewController: UIViewController {
         performSearch(query: query, options: [.contacts, .teamMembers])
     }
 
-    func searchForServices(withQuery query: String) {
-        performSearch(query: query, options: [.services])
+    func searchForServices(withQuery query: String) { // TODO: rename
+        performSearch(query: query, options: [.bots])
     }
 
     func searchContactList() {
@@ -402,7 +402,7 @@ final class SearchResultsViewController: UIViewController {
 
         directorySection.suggestions = searchResult.directory.filter { !$0.isFederated }
         conversationsSection.groupConversations = searchResult.conversations
-        servicesSection.services = searchResult.services
+        servicesSection.services = searchResult.bots
         federationSection.users = searchResult.directory.filter(\.isFederated)
 
         sectionController.collectionView?.reloadData()
