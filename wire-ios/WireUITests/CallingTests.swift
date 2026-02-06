@@ -20,8 +20,8 @@ import WireFoundation
 import XCTest
 
 final class CallingTests: WireUITestCase {
-    
-    ///Testiny : https://app.testiny.io/IOS/testcases/tc/8801
+
+    /// Testiny : https://app.testiny.io/IOS/testcases/tc/8801
     @MainActor
     func test_MultipleUsersJoiningGroupCall() async throws {
 
@@ -81,19 +81,14 @@ final class CallingTests: WireUITestCase {
         XCTAssertTrue(app.staticTexts[groupName].waitForExistence(timeout: 10), "Conversation title mismatch")
 
         for user in allParticipants {
-            let predicate = NSPredicate(
-                format: "identifier CONTAINS %@ AND identifier CONTAINS %@",
-                "audioView.\(user.name)",
-                ".minimized.inactive"
-            )
+            let participantIdentifier = "audioView.\(user.name).minimized.inactive"
+            let participantTile = app.buttons[participantIdentifier]
 
             XCTAssertTrue(
-                app.descendants(matching: .button).matching(predicate).firstMatch.exists,
+                participantTile.waitForExistence(timeout: 15),
                 "Expected \(user.name) to be in the call"
             )
         }
-
         _ = try ongoingCallPage.endOngoingCall()
     }
-
 }
