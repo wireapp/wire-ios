@@ -169,6 +169,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
             default:
                 // No decryption needed.
+                WireLogger.updateEvent.debug("event without decryption needed", attributes: logAttributes)
                 decryptedEvents.append(event)
             }
         }

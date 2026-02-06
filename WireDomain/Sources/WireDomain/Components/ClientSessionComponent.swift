@@ -885,8 +885,8 @@ public final class ClientSessionComponent {
             guard let self else { return }
             WireLogger.mls.debug("detected during live sync \(liveMLSBrokenGroups.count) broken MLS groups")
             let item = RepairBrokenMLSGroupsItem(repairAgent: mlsGroupRepairAgent)
-            Task { [weak self] in
-                await self?.workAgent.submitItem(item)
+            Task {
+                await self.workAgent.submitItem(item)
             }
         }
     }
