@@ -98,7 +98,7 @@ extension SessionManager: UNUserNotificationCenterDelegate {
             return nil
         }
 
-        return await withSession(for: account)
+        return try? await withSession(for: account)
     }
 
     fileprivate func activateAccount(for session: ZMUserSession, completion: @escaping () -> Void) {

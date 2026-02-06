@@ -40,7 +40,7 @@ extension SessionManager: CallKitManagerDelegate {
 
         Task { @MainActor in
             guard
-                let userSession = await withSession(for: account),
+                let userSession = try? await withSession(for: account),
                 let conversation = ZMConversation.fetch(
                     with: handle.conversationID,
                     in: userSession.managedObjectContext
@@ -65,7 +65,7 @@ extension SessionManager: CallKitManagerDelegate {
 
         Task { @MainActor in
             guard
-                let userSession = await withSession(for: account),
+                let userSession = try? await withSession(for: account),
                 let conversation = ZMConversation.fetch(
                     with: handle.conversationID,
                     in: userSession.managedObjectContext

@@ -138,7 +138,7 @@ extension SessionManager: APIVersionResolverDelegate {
 
                 } else {
                     Task {
-                        _ = await self.withSession(for: account)
+                        _ = try? await self.withSession(for: account)
                         dispatchGroup.leave()
                     }
                 }
