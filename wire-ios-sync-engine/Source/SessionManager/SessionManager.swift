@@ -825,13 +825,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: nil)
     }
 
-    #if DEBUG
-        /// This method is only used in tests and should be deleted. See [WPB-10404].
-        func logoutCurrentSessionWithoutDeletingCookie() {
-            logoutCurrentSession(deleteCookie: false, deleteAccount: false, error: nil)
-        }
-    #endif
-
     fileprivate func deleteTemporaryData() {
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: [F] replace with TemporaryFileServiceInterface
