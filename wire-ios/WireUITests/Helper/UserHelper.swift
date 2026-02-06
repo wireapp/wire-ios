@@ -330,8 +330,49 @@ class UserHelper {
         return (qualifiedID, teamMember)
     }
 
-    /// fetch qualified id from conversations
-    /// - Returns: qualifiedID object
+
+    func registerUsersAsTeamMemberWithUserHandleSet(
+        ownerAccessToken: String,
+        teamID: UUID
+    ) async throws -> (qualifiedID: QualifiedID, member: UserInfo) {
+
+        let teamMember = UserGenerator.generateUniqueUserInfo()
+
+        let invitationID = try await teamsAPI.inviteMemberToTeam(
+            access_token: ownerAccessToken,
+            teamID: teamID,
+            memberName: teamMember.name,
+            memberEmail: teamMember.email
+        )
+
+        let invitationCode = try await authenticationAPI.getInvitationCode(
+            teamID: teamID,
+            invitationID: invitationID
+        )
+
+        let qualifiedID = try await authenticationAPI.registerTeamMember(
+            email: teamMember.email,
+            password: teamMember.password,
+            name: teamMember.name,
+            invitationCode: invitationCode
+        )
+
+        // get access token
+        authenticationManager.accessToken = try await fetchAccessToken(
+            email: teamMember.email,
+            password: teamMember.password
+        )
+
+        // Set handle
+        try await selfUserAPI.updateHandle(handle: teamMember.username)
+
+        createdUsers.append(teamMember)
+
+        return (qualifiedID, teamMember)
+    }
+
+        /// fetch qualified id from conversations
+        /// - Returns: qualifiedID object
     func getQualifiedIdsFromConversationList() async throws -> [QualifiedID] {
         var conversationIDs = [QualifiedID]()
 
@@ -427,13 +468,20 @@ class UserHelper {
         return [teamMember1.name, teamMember2.name]
     }
 
-    func setupTeamWith2MembersAndGroupConversation(
-        groupName: String
-    ) async throws -> (teamOwner: UserInfo, teamMembers: [UserInfo], conversationId: UUID) {
+    /// Registers number of members..
+    /// - Parameters:
+    ///   - teamOwner: team owner
+    ///   - memberCount: count of members
+    /// - Returns: 
+    func registerTeamWithXMembersAndOptionalGroup(
+        memberCount: Int,
+        groupName: String? = nil
+    ) async throws
+        -> (teamOwner: UserInfo, teamMembers: [UserInfo], qualifiedIDs: [QualifiedID], conversationId: UUID?) {
 
         let (_, teamOwner) = try await registerUserAsTeamOwner()
         guard let teamID = teamOwner.teamID else {
-            throw RuntimeError("setupTeamWith2MembersAndGroupConversation: teamOwner.teamID is nil")
+            throw RuntimeError("registerTeamWithMembersAndOptionalGroup: teamOwner.teamID is nil")
         }
 
         let ownerAccessToken = try await fetchAccessToken(
@@ -441,39 +489,53 @@ class UserHelper {
             password: teamOwner.password
         )
 
-        var qualifiedIds: [QualifiedID] = []
-        var teamMembers: [UserInfo] = []
+        var qualifiedIDs: [QualifiedID] = []
+        qualifiedIDs.reserveCapacity(memberCount)
 
-        for _ in 0 ..< 2 {
-            let (qualifiedId, teamMember) = try await registerUsersAsTeamMember(
+        var teamMembers: [UserInfo] = []
+        teamMembers.reserveCapacity(memberCount)
+
+        for _ in 0 ..< memberCount {
+            let (qualifiedId, teamMember) = try await registerUsersAsTeamMemberWithUserHandleSet(
                 ownerAccessToken: ownerAccessToken.token,
                 teamID: teamID
             )
-            qualifiedIds.append(qualifiedId)
+            qualifiedIDs.append(qualifiedId)
             teamMembers.append(teamMember)
         }
 
-        try await createGroupConversations(
-            qualifiedIds: qualifiedIds,
-            owner: teamOwner,
-            groupName: groupName
-        )
-
-        let (conversationId, _) = try await getConversationId(matching: .groupName(groupName))
-        guard let conversationId else {
-            throw RuntimeError(
-                "setupTeamWith2MembersAndGroupConversation: Failed to resolve conversationId for group \(groupName)"
+        // if group conversation passed
+        var conversationId: UUID?
+        if let groupName {
+            try await createGroupConversations(
+                qualifiedIds: qualifiedIDs,
+                owner: teamOwner,
+                groupName: groupName
             )
+
+            let (resolvedConversationId, _) = try await getConversationId(matching: .groupName(groupName))
+            guard let resolvedConversationId else {
+                throw RuntimeError(
+                    "registerTeamWithMembersAndOptionalGroup: Failed to resolve conversationId for group \(groupName)"
+                )
+            }
+            conversationId = resolvedConversationId
         }
 
+        // unlock and enable ConferenceCalling
         let backOffice = BackOffice(backendURL: backendURL)
         try await backOffice.unlockConferenceCallingFeature(teamId: teamID.uuidString, basicAuth: basicAuth())
-        try await backOffice.enableConferenceCallingBackdoorViaBackendTeam(
+        try await backOffice.enableConferenceCallingFeature(
             teamId: teamID.uuidString,
             basicAuth: basicAuth()
         )
 
-        return (teamOwner: teamOwner, teamMembers: teamMembers, conversationId: conversationId)
+        return (
+            teamOwner: teamOwner,
+            teamMembers: teamMembers,
+            qualifiedIDs: qualifiedIDs,
+            conversationId: conversationId
+        )
     }
 
     func sendConnectionRequestToUser(

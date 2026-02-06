@@ -22,35 +22,62 @@ import XCTest
 final class CallingTests: WireUITestCase {
 
     @MainActor
-    func test_CallingInGroupConversation() async throws {
+    func test_MultipleUsersJoiningGroupCall() async throws {
 
         let groupName = UserGenerator.generateRandomGroupName()
-        let (teamOwner: teamOwner, teamMembers: teamMembers, conversationId: conversationId) = try await  userHelper
-            .setupTeamWith2MembersAndGroupConversation(groupName: groupName)
 
-        let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
-        _ = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)
-            .setUsername(teamMembers[0].username)
+        let (teamOwner, teamMembers, _, conversationId) = try await userHelper.registerTeamWithXMembersAndOptionalGroup(
+            memberCount: 5,
+            groupName: groupName
+        )
+        guard let conversationId else {
+            XCTFail("conversationId is nil")
+            return
+        }
+        let convId = conversationId.uuidString.lowercased()
 
-        // create instance
-        let instance = try await callingServiceClient.createInstance(
-            name: CallingTestDefaults.testName,
-            userInfo: teamOwner,
+        let appCallee = teamMembers.last!
+        let httpMembers = Array(teamMembers.dropLast(1))
+        let allParticipantInstanceUsers = [teamOwner] + httpMembers
+
+        let firstTimePage = try app.loginUser(email: appCallee.email, password: appCallee.password)
+        _ = try firstTimePage.acceptPopup(with: self)
+
+        let instances = try await callingServiceClient.createInstances(
+            users: allParticipantInstanceUsers,
             backend: CallingTestDefaults.backend,
             beta: CallingTestDefaults.isBeta,
             instanceTypeName: CallingTestDefaults.instanceTypeName,
             instanceTypeVersion: CallingTestDefaults.instanceTypeVersion
         )
-        XCTAssertNotNil(instance.id)
 
-        // start group call
-        let instanceId = instance.id ?? ""
-        try await callingServiceClient.startCall(
-            instanceId: instanceId,
-            conversationId: conversationId.uuidString.lowercased()
+        guard let ownerAsCallerInstanceId = instances.first?.id, !ownerAsCallerInstanceId.isEmpty else {
+            XCTFail("Owner instance id is nil")
+            return
+        }
+
+        _ = try await callingServiceClient.startCall(
+            instanceId: ownerAsCallerInstanceId,
+            conversationId: convId
         )
-        
-        print()
-        // button with label Accept
+
+        let acceptingCalleeMembersInstanceIds = instances.dropFirst().compactMap(\.id).filter { !$0.isEmpty }
+
+        let responsesByInstanceId = try await callingServiceClient.acceptNextCalls(
+            instanceIds: acceptingCalleeMembersInstanceIds,
+            conversationId: convId
+        )
+
+        XCTAssertEqual(responsesByInstanceId.count, acceptingCalleeMembersInstanceIds.count)
+
+        let incomingCallPage = try IncomingCallPage()
+        XCTAssertTrue(incomingCallPage.acceptButton.exists, "Expected call not received")
+
+        let ongoingCallPage = try incomingCallPage.acceptIncommingCall()
+        _ = try ongoingCallPage.endOngoingCall()
+
+        let allInstanceIds = instances.compactMap(\.id).filter { !$0.isEmpty }
+        _ = try await callingServiceClient.destroyInstances(instanceIds: allInstanceIds)
     }
+
 }

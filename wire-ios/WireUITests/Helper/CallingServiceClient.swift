@@ -38,7 +38,7 @@ final class CallingServiceClient {
         }
     }
 
-    private enum Constants {
+    enum Constants {
         static let CONNECT_TIMEOUT: TimeInterval = 600_000
         static let RESPONSE_TIMEOUT: TimeInterval = 600_000
         static let CALLING_RESPONSE_TIMEOUT: TimeInterval = 3_600_000
@@ -62,7 +62,17 @@ final class CallingServiceClient {
         return "Basic \(encoded)"
     }
 
-    private func sendHttpRequest(
+    func instanceEndpoint(instanceId: String, path: String) -> URL {
+        let cleanPath = path.hasPrefix("/") ? String(path.dropFirst()) : path
+        return callingServiceURL
+            .appendingPathComponent("api")
+            .appendingPathComponent("v1")
+            .appendingPathComponent("instance")
+            .appendingPathComponent(instanceId)
+            .appendingPathComponent(cleanPath)
+    }
+
+    func sendHttpRequest(
         endpoint: URL,
         body: (some Encodable)?,
         method: String
@@ -104,7 +114,6 @@ final class CallingServiceClient {
         beta: Bool,
         instanceTypeName: String,
         instanceTypeVersion: String
-
     ) async throws -> CallingServiceInstance {
 
         try await userHelper.disableConsentPopup(for: userInfo)
@@ -135,37 +144,213 @@ final class CallingServiceClient {
                 "CallingService failed to createInstance: HTTP \(http.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
-
         return try JSONDecoder().decode(CallingServiceInstance.self, from: data)
     }
 
-    /// Initiate a call from callingservice
+    /// Create multiple callingService instances
     /// - Parameters:
-    ///   - instanceId: instanceId
-    ///   - conversationId: conversationId where call need to point
+    ///   - users: users
+    ///   - backend: backend
+    ///   - beta: true
+    ///   - instanceTypeName: instanceTypeName
+    ///   - instanceTypeVersion: instanceTypeVersion
+    /// - Returns: created Instances
+    func createInstances(
+        users: [UserInfo],
+        backend: String,
+        beta: Bool,
+        instanceTypeName: String,
+        instanceTypeVersion: String
+    ) async throws -> [CallingServiceInstance] {
+
+        guard !users.isEmpty else { return [] }
+
+        return try await withThrowingTaskGroup(of: (Int, CallingServiceInstance).self) { group in
+            for (index, user) in users.enumerated() {
+                group.addTask { [self] in
+                    let baseName = user.name.isEmpty ? user.email : user.name
+                    let instanceName = if index == 0 {
+                        "Owner \(baseName)"
+                    } else {
+                        "Member\(index) \(baseName)"
+                    }
+                    let instance = try await createInstance(
+                        name: instanceName,
+                        userInfo: user,
+                        backend: backend,
+                        beta: beta,
+                        instanceTypeName: instanceTypeName,
+                        instanceTypeVersion: instanceTypeVersion
+                    )
+                    return (index, instance)
+                }
+            }
+
+            var results = [CallingServiceInstance?](repeating: nil, count: users.count)
+            while let (index, instance) = try await group.next() {
+                results[index] = instance
+            }
+            return results.compactMap(\.self)
+        }
+    }
+
+    /// fetch callingService instance status
+    /// - Parameter instanceId
+    /// - Returns: instance id and status
+    func getInstanceStatus(instanceIds: [String]) async throws -> [CallingServiceInstance] {
+        var results: [CallingServiceInstance] = []
+
+        for id in instanceIds {
+            let endpoint = instanceEndpoint(instanceId: id, path: "status")
+            let (data, http) = try await sendHttpRequest(
+                endpoint: endpoint,
+                body: CallingServiceEmptyBody?.none,
+                method: "GET"
+            )
+
+            guard http.statusCode == 200 else {
+                throw RuntimeError(
+                    "CallingService failed to getInstanceStatus for \(id): HTTP \(http.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+                )
+            }
+
+            let instance = try JSONDecoder().decode(CallingServiceInstance.self, from: data)
+            results.append(instance)
+        }
+        return results
+    }
+
+    /// Destroy  instance
+    /// - Parameter instanceId
+    /// - Returns: Instance id and status
+    func destroyInstances(instanceIds: [String]) async throws -> [CallingServiceInstance] {
+        var results: [CallingServiceInstance] = []
+
+        for id in instanceIds {
+            let endpoint = instanceEndpoint(instanceId: id, path: "destroy")
+            let (data, http) = try await sendHttpRequest(
+                endpoint: endpoint,
+                body: CallingServiceEmptyBody(),
+                method: "PUT"
+            )
+
+            guard http.statusCode == 200 else {
+                throw RuntimeError(
+                    "CallingService failed to destroyStatus for \(id): HTTP \(http.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+                )
+            }
+
+            let instance = try JSONDecoder().decode(CallingServiceInstance.self, from: data)
+            results.append(instance)
+        }
+
+        return results
+    }
+
+    private func performCall<T: Decodable>(
+        instanceId: String,
+        path: String,
+        request: some Encodable
+    ) async throws -> T {
+        let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
+        let (data, http) = try await sendHttpRequest(endpoint: endpoint, body: request, method: "POST")
+        guard http.statusCode == 200 else {
+            throw RuntimeError(
+                "CallingService call failed: POST \(path) HTTP \(http.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+        return try JSONDecoder().decode(T.self, from: data)
+    }
+
+    private func performCallGet<T: Decodable>(
+        instanceId: String,
+        path: String
+    ) async throws -> T {
+        let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
+        let (data, http) = try await sendHttpRequest(
+            endpoint: endpoint,
+            body: CallingServiceEmptyBody?.none,
+            method: "GET"
+        )
+        guard http.statusCode == 200 else {
+            throw RuntimeError(
+                "CallingService call failed: GET \(path) HTTP \(http.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+        return try JSONDecoder().decode(T.self, from: data)
+    }
+
+    private func performCallPut<T: Decodable>(
+        instanceId: String,
+        path: String
+    ) async throws -> T {
+        let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
+        let (data, http) = try await sendHttpRequest(endpoint: endpoint, body: CallingServiceEmptyBody(), method: "PUT")
+        guard http.statusCode == 200 else {
+            throw RuntimeError(
+                "CallingService call failed: PUT \(path) HTTP \(http.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+        return try JSONDecoder().decode(T.self, from: data)
+    }
+
+    func start(instanceId: String, request: StartCallBody) async throws -> CallReponse {
+        try await performCall(instanceId: instanceId, path: "/call/start", request: request)
+    }
+
+    func startVideo(instanceId: String, request: StartCallBody) async throws -> CallReponse {
+        try await performCall(instanceId: instanceId, path: "/call/startVideo", request: request)
+    }
+
+    func acceptNext(instanceId: String, request: CallRequest) async throws -> CallReponse {
+        try await performCall(instanceId: instanceId, path: "/call/acceptNext", request: request)
+    }
+
     func startCall(
         instanceId: String,
         conversationId: String
-    ) async throws {
-
-        let endpoint = callingServiceURL
-            .appendingPathComponent("api")
-            .appendingPathComponent("v1")
-            .appendingPathComponent("instance")
-            .appendingPathComponent(instanceId)
-            .appendingPathComponent("call")
-            .appendingPathComponent("start")
-
-        let body = StartCallBody(conversationId: conversationId, timeout: Constants.CALLING_RESPONSE_TIMEOUT)
-
-        let (_, code) = try await sendHttpRequest(
-            endpoint: endpoint,
-            body: body,
-            method: "POST"
+    ) async throws -> CallReponse {
+        let request = StartCallBody(
+            conversationId: conversationId,
+            timeout: Constants.CALLING_RESPONSE_TIMEOUT
         )
+        return try await start(instanceId: instanceId, request: request)
+    }
 
-        guard (200 ..< 300).contains(code.statusCode) else {
-            throw RuntimeError("CallingService failed to startCall: HTTP \(code.statusCode)")
+    func startVideoCall(
+        instanceId: String,
+        conversationId: String
+    ) async throws -> CallReponse {
+        let request = StartCallBody(
+            conversationId: conversationId,
+            timeout: Constants.CALLING_RESPONSE_TIMEOUT
+        )
+        return try await startVideo(instanceId: instanceId, request: request)
+    }
+
+    func acceptNextCalls(
+        instanceIds: [String],
+        conversationId: String
+    ) async throws -> [String: CallReponse] {
+        precondition(!instanceIds.isEmpty, "No instance IDs provided")
+
+        return try await withThrowingTaskGroup(of: (String, CallReponse).self) { group in
+            for instanceId in instanceIds {
+                group.addTask {
+                    let request = CallRequest(
+                        conversationId: conversationId,
+                        timeout: Constants.CALLING_RESPONSE_TIMEOUT
+                    )
+                    let response = try await self.acceptNext(instanceId: instanceId, request: request)
+                    return (instanceId, response)
+                }
+            }
+
+            var results: [String: CallReponse] = [:]
+            for try await (id, response) in group {
+                results[id] = response
+            }
+            return results
         }
     }
 }
@@ -193,4 +378,12 @@ struct CreateInstanceBody: Encodable {
 struct StartCallBody: Encodable {
     let conversationId: String
     let timeout: Double
+}
+
+typealias CallRequest = StartCallBody
+
+struct CallingServiceEmptyBody: Encodable {}
+
+struct CallReponse: Decodable {
+    let id: String?
 }
