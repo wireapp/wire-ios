@@ -1185,7 +1185,7 @@ public final class MLSService: MLSServiceInterface {
             let localEpoch = try await coreCrypto.conversationEpoch(conversationId: groupID.conversationId)
 
             logger.info(
-                "remote epoch: \(epoch)) - local epoch: \(localEpoch))",
+                "remote epoch: \(epoch) - local epoch: \(localEpoch)",
                 attributes: groupID.safeAttributes,
                 [.conversationId: conversationID?.safeForLoggingDescription ?? "<nil>"]
             )
