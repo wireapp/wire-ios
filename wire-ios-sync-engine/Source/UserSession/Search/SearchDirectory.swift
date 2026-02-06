@@ -21,7 +21,7 @@ import WireNetwork
 import WireDataModel
 import WireTransport
 
-public final class SearchDirectory {
+public final class SearchDirectory: NSObject {
 
     private let contextProvider: ContextProvider
     private let transportSession: TransportSessionType
@@ -104,13 +104,13 @@ public final class SearchDirectory {
     }
 }
 
-public extension SearchDirectory {
+extension SearchDirectory: TearDownCapable {
 
     /// Tear down the SearchDirectory.
     ///
     /// NOTE: this must be called before releasing the instance
 
-    func tearDown() {
+    public func tearDown() {
         let tearDown = { [self] in
             // Evict all cached search users
             searchUsersCache?.removeAllObjects()
