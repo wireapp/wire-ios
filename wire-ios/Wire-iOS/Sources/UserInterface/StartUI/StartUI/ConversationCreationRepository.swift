@@ -31,12 +31,12 @@ struct ConversationCreationRepository: ConversationCreationRepositoryProtocol {
         // search for any old-style services/bots whitelisted in the team
         let result = try await searchUsersUseCase.invoke(
             query: "",
-            options: .services,
+            options: .bots,
             messageProtocol: .proteus
         )
 
         return await result.context.perform {
-            !result.services.isEmpty
+            !result.bots.isEmpty
         }
 
     }

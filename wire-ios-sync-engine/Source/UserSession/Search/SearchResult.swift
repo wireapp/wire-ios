@@ -40,9 +40,9 @@ public struct SearchResult {
 
     public var conversations: [ZMConversation]
 
-    /// Bots.
+    public var apps: [ServiceUser]
 
-    public var services: [ServiceUser] // TODO: [WPB-20362] add `apps`
+    public var bots: [ServiceUser]
 
     /// Cache for search users.
 
@@ -58,7 +58,8 @@ extension SearchResult {
         self.teamMembers = []
         self.directory = []
         self.conversations = []
-        self.services = []
+        self.apps = []
+        self.bots = []
         self.searchUsersCache = nil
     }
 
@@ -90,7 +91,8 @@ extension SearchResult {
         self.contacts = []
         self.directory = searchUsers.filter { !$0.isConnected && !$0.isTeamMember }
         self.conversations = []
-        self.services = []
+        self.apps = []
+        self.bots = []
         self.searchUsersCache = searchUsersCache
 
         if searchOptions.contains(.teamMembers),
@@ -122,7 +124,8 @@ extension SearchResult {
         self.teamMembers = []
         self.directory = []
         self.conversations = []
-        self.services = searchUsersServices
+        self.apps = []
+        self.bots = searchUsersServices
         self.searchUsersCache = searchUsersCache
     }
 
@@ -149,7 +152,8 @@ extension SearchResult {
         self.teamMembers = []
         self.directory = [searchUser]
         self.conversations = []
-        self.services = []
+        self.apps = []
+        self.bots = []
         self.searchUsersCache = searchUsersCache
     }
 
@@ -192,7 +196,8 @@ extension SearchResult {
             teamMembers: teamMembers,
             directory: directory,
             conversations: copiedConversations,
-            services: services,
+            apps: apps, // TODO: check correctness
+            bots: bots, // TODO: check correctness
             searchUsersCache: searchUsersCache
         )
     }
@@ -204,19 +209,21 @@ extension SearchResult {
             teamMembers: result.teamMembers,
             directory: directory,
             conversations: result.conversations,
-            services: services,
+            apps: apps, // TODO: check correctness
+            bots: bots, // TODO: check correctness
             searchUsersCache: searchUsersCache
         )
     }
 
-    func union(withServiceResult result: SearchResult) -> SearchResult {
+    func union(withBotResult result: SearchResult) -> SearchResult {
         SearchResult(
             context: context,
             contacts: contacts,
             teamMembers: teamMembers,
             directory: directory,
             conversations: conversations,
-            services: result.services,
+            apps: result.apps, // TODO: check correctness
+            bots: result.bots, // TODO: check correctness
             searchUsersCache: searchUsersCache
         )
     }
@@ -228,7 +235,8 @@ extension SearchResult {
             teamMembers: Array(Set(teamMembers).union(result.teamMembers)),
             directory: result.directory,
             conversations: conversations,
-            services: services,
+            apps: apps, // TODO: check correctness
+            bots: bots, // TODO: check correctness
             searchUsersCache: searchUsersCache
         )
     }
@@ -240,7 +248,8 @@ extension SearchResult {
             teamMembers: teamMembers,
             directory: result.directory + directory,
             conversations: conversations,
-            services: services,
+            apps: apps, // TODO: check correctness
+            bots: bots, // TODO: check correctness
             searchUsersCache: searchUsersCache
         )
     }

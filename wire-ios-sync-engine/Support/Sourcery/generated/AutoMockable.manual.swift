@@ -1294,10 +1294,10 @@ public class MockUserSession: UserSession {
     // MARK: - makeSearchUsersUseCase
 
     public var makeSearchUsersUseCase_Invocations: [Void] = []
-    public var makeSearchUsersUseCase_MockMethod: (() -> SearchUsersUseCaseProtocol?)?
-    public var makeSearchUsersUseCase_MockValue: SearchUsersUseCaseProtocol??
+    public var makeSearchUsersUseCase_MockMethod: (() -> (any SearchUsersUseCaseProtocol)?)?
+    public var makeSearchUsersUseCase_MockValue: (any SearchUsersUseCaseProtocol)??
 
-    public func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol? {
+    public func makeSearchUsersUseCase() -> (any SearchUsersUseCaseProtocol)? {
         makeSearchUsersUseCase_Invocations.append(())
 
         if let mock = makeSearchUsersUseCase_MockMethod {
