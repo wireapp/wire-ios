@@ -46,7 +46,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) NSManagedObjectContext *uiMOC;
 @property (nonatomic, readonly) NSManagedObjectContext *syncMOC;
-@property (nonatomic, readonly) NSManagedObjectContext *searchMOC;
 @property (nonatomic, readonly) NSManagedObjectContext *eventMOC;
 @property (nonatomic, readonly) CoreDataStack *coreDataStack;
 @property (nonatomic, readonly) ApplicationMock<ZMApplication> *application;

@@ -61,7 +61,6 @@ final class SearchDirectoryTests: DatabaseTest {
 
     private func makeSearchDirectory(apiVersion: APIVersion) -> SearchDirectory {
         SearchDirectory(
-            searchContext: searchMOC,
             contextProvider: coreDataStack!,
             transportSession: mockTransport,
             searchUsersCache: mockCache,
@@ -73,7 +72,7 @@ final class SearchDirectoryTests: DatabaseTest {
 
     private func insertSearchUser(remoteIdentifier: UUID) {
         _ = ZMSearchUser(
-            contextProvider: coreDataStack!,
+            viewContext: coreDataStack!.viewContext,
             name: "John Doe",
             handle: "john",
             accentColor: .amber,
