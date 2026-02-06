@@ -20,6 +20,7 @@ import UIKit
 import WireDesign
 import WireLogging
 import WireSystem
+import WireLocators
 
 enum NetworkStatusViewState {
     case online
@@ -106,8 +107,9 @@ final class NetworkStatusView: UIView {
 
     override init(frame: CGRect) {
         self.connectingView = BreathLoadingBar.withDefaultAnimationDuration()
-        connectingView.accessibilityIdentifier = "LoadBar"
+        connectingView.accessibilityIdentifier = Locators.ConversationsPage.loadBar.rawValue
         self.offlineView = OfflineBar()
+        offlineView.accessibilityIdentifier = "offlineLoadbar"
 
         super.init(frame: frame)
 

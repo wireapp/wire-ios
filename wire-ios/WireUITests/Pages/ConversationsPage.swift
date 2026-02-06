@@ -63,6 +63,10 @@ class ConversationsPage: PageModel {
     var accountProfileImageView: XCUIElement {
         app.buttons[Locators.ConversationsPage.accountProfileImageView.rawValue]
     }
+    
+    var loadBar: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationsPage.loadBar.rawValue]
+    }
 
     func openSettings() throws -> SettingsPage {
         settingsButton.tap()
@@ -75,7 +79,7 @@ class ConversationsPage: PageModel {
     }
 
     func openUserProfilePage() throws -> UserProfilePage {
-        try VerifyUserIsOnConversationsTab()
+        try letTheSyncfinish()
         accountProfileImageView.waitAndTap()
         return try UserProfilePage()
     }
@@ -86,6 +90,7 @@ class ConversationsPage: PageModel {
     }
 
     func openPendingRequest() throws -> ConnectionRequestsPage {
+        try letTheSyncfinish()
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
 
         let maxDuration: TimeInterval = 10
@@ -101,6 +106,7 @@ class ConversationsPage: PageModel {
     }
 
     func openConversation() throws -> ActiveConversationPage {
+        try letTheSyncfinish()
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
 
         let maxDuration: TimeInterval = 10
@@ -130,11 +136,7 @@ class ConversationsPage: PageModel {
         conversationCell.label
     }
 
-    // Problem: Opening the user profile can occasionally fail while sync is in progress after login
-    // Workaround: Assert the presence of some UI elements to give the sync time to complete.
-    func VerifyUserIsOnConversationsTab() throws {
-        XCTAssertTrue(plusButtonToCreateGroup.exists)
-        XCTAssertTrue(archivedButton.exists)
-        XCTAssert(settingsButton.exists)
+    func letTheSyncfinish() throws {
+        loadBar.waitToDisappear()
     }
 }
