@@ -26,16 +26,18 @@ final class CallingTests: WireUITestCase {
 
         let groupName = UserGenerator.generateRandomGroupName()
 
-        let (teamOwner, teamMembers, _, conversationId) = try await userHelper.registerTeamWithXMembersAndOptionalGroup(
-            memberCount: 5,
-            groupName: groupName
-        )
+        let (teamOwner, teamMembers, _, conversationId) = try await userHelper
+            .registerTeamWithXMembersAndOptionalGroupConversation(
+                memberCount: 5,
+                groupName: groupName
+            )
         guard let conversationId else {
             XCTFail("conversationId is nil")
             return
         }
-        let convId = conversationId.uuidString.lowercased()
 
+        let convId = conversationId.uuidString.lowercased()
+        let allParticipants = [teamOwner] + teamMembers
         let appCallee = teamMembers.last!
         let httpMembers = Array(teamMembers.dropLast(1))
         let allParticipantInstanceUsers = [teamOwner] + httpMembers
@@ -52,7 +54,7 @@ final class CallingTests: WireUITestCase {
         )
 
         guard let ownerAsCallerInstanceId = instances.first?.id, !ownerAsCallerInstanceId.isEmpty else {
-            XCTFail("Owner instance id is nil")
+            XCTFail("Owner instanceId is nil")
             return
         }
 
@@ -74,10 +76,23 @@ final class CallingTests: WireUITestCase {
         XCTAssertTrue(incomingCallPage.acceptButton.exists, "Expected call not received")
 
         let ongoingCallPage = try incomingCallPage.acceptIncommingCall()
-        _ = try ongoingCallPage.endOngoingCall()
 
-        let allInstanceIds = instances.compactMap(\.id).filter { !$0.isEmpty }
-        _ = try await callingServiceClient.destroyInstances(instanceIds: allInstanceIds)
+        XCTAssertTrue(app.staticTexts[groupName].waitForExistence(timeout: 10), "Conversation title mismatch")
+
+        for user in allParticipants {
+            let predicate = NSPredicate(
+                format: "identifier CONTAINS %@ AND identifier CONTAINS %@",
+                "audioView.\(user.name)",
+                ".minimized.inactive"
+            )
+
+            XCTAssertTrue(
+                app.descendants(matching: .button).matching(predicate).firstMatch.exists,
+                "Expected \(user.name) to be in the call"
+            )
+        }
+
+        _ = try ongoingCallPage.endOngoingCall()
     }
 
 }

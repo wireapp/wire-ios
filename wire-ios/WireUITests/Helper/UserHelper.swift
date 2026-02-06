@@ -472,8 +472,8 @@ class UserHelper {
     /// - Parameters:
     ///   - teamOwner: team owner
     ///   - memberCount: count of members
-    /// - Returns: 
-    func registerTeamWithXMembersAndOptionalGroup(
+    /// - Returns: ([QualifiedID], [UserInfo])
+    func registerTeamWithXMembersAndOptionalGroupConversation(
         memberCount: Int,
         groupName: String? = nil
     ) async throws
@@ -537,7 +537,7 @@ class UserHelper {
             conversationId: conversationId
         )
     }
-    
+
     /// Send connection request
     /// - Parameters:
     ///   - domain: domain info
