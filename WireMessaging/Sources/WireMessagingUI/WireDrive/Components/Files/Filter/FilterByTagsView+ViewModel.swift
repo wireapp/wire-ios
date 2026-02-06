@@ -25,19 +25,13 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 extension FilterByTagsView {
     @MainActor
     package final class ViewModel: ObservableObject {
-
-        private let tagsBatchCount = 7
-        private var tags: Set<String> = []
-
-        var navigationTitle: String {
-            let selectedTagsCount = selectedTags.count
-            return selectedTagsCount == 0 ? Strings.AllFiles.Filters.navigationTitle : "\(Strings.AllFiles.Filters.navigationTitle) (\(selectedTagsCount))"
-        }
-
+        
         @Published var presentedTags: [String] = []
         @Published var selectedTags: Set<String>
         @Published var isLoading: Bool = false
         @Published var showError: Bool = false
+
+        private var availableTags: Set<String> = []
 
         private let fetchTagsUseCase: any WireDriveGetTagSuggestionsUseCaseProtocol
 
@@ -53,6 +47,11 @@ extension FilterByTagsView {
             }
         }
         
+        var navigationTitle: String {
+            let selectedTagsCount = selectedTags.count
+            return selectedTagsCount == 0 ? Strings.AllFiles.Filters.navigationTitle : "\(Strings.AllFiles.Filters.navigationTitle) (\(selectedTagsCount))"
+        }
+        
         func isTagSelected(_ tag: String) -> Bool {
             selectedTags.contains { $0.localizedCaseInsensitiveCompare(tag) == .orderedSame }
         }
@@ -63,9 +62,14 @@ extension FilterByTagsView {
             do {
                 isLoading = true
                 defer { isLoading = false }
+                
                 let tags = try await fetchTagsUseCase.invoke()
-                self.tags = Set(tags.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty })
-                self.presentedTags = tags.sorted { isTagSelected($0) && !isTagSelected($1) }
+                
+                self.availableTags = Set(tags.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty })
+                
+                self.presentedTags = availableTags
+                    .sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
+                    .sorted { isTagSelected($0) && !isTagSelected($1) }
             } catch {
                 showError = true
             }
