@@ -28,6 +28,10 @@ extension UserType {
     var accentColor: UIColor {
         (zmAccentColor?.accentColor ?? .default).uiColor
     }
+    
+    var wireAccentColor: WireAccentColor {
+        zmAccentColor?.accentColor ?? .default
+    }
 }
 
 extension UnregisteredUser {

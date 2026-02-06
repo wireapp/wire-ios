@@ -24,7 +24,7 @@ final class NoConversationPlaceholderViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = ColorTheme.Backgrounds.backgroundVariant
+        view.backgroundColor = ColorTheme.Backgrounds.chatBackground
 
         let image = WireStyleKit.imageOfShield()
             .withRenderingMode(.alwaysTemplate)

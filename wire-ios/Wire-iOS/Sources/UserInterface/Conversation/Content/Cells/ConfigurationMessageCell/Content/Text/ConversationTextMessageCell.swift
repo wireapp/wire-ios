@@ -21,6 +21,7 @@ import WireDesign
 import WireLocators
 import WireMessagingDomain
 import WireSyncEngine
+import SwiftUIIntrospect
 
 final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
@@ -79,8 +80,9 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         didSet {
             guard let message else { return }
             let isOwnMessage = message.isSentBySelfUser
-            let userColor = message.senderUser?.accentColor ?? .clear
-            container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
+            let userColor = message.senderUser?.wireAccentColor ?? .default
+            let ownMessageColor = ColorTheme.Base.primaryVariant(userColor)
+            container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: ownMessageColor) : .otherMessage
             configureTextColor(forOwnMessage: isOwnMessage)
         }
     }
@@ -185,8 +187,9 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     private func updateContainerStyle() {
         guard let message else { return }
         let isOwnMessage = message.isSentBySelfUser
-        let userColor = message.senderUser?.accentColor ?? .clear
-        container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
+        let userColor = message.senderUser?.wireAccentColor ?? .default
+        let ownMessageColor = ColorTheme.Base.primaryVariant(userColor)
+        container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: ownMessageColor) : .otherMessage
     }
 
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
