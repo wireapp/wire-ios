@@ -23,6 +23,7 @@ import WireMainNavigationUI
 import WireMessagingDomain
 import WireReusableUIComponents
 import WireSyncEngine
+import WireLogging
 
 final class SearchUserViewController: UIViewController {
 
@@ -106,12 +107,17 @@ final class SearchUserViewController: UIViewController {
         guard let searchDirectory else { return }
 
         Task {
-            let task = searchDirectory.createLookupTask(with: qualifiedID)
-            pendingSearchTask = task
-            let searchResult = await task.start()
-            pendingSearchTask = nil
-            activityIndicator.stop()
-            handleSearchResult(searchResult: searchResult)
+            do {
+                let task = searchDirectory.createLookupTask(with: qualifiedID)
+                pendingSearchTask = task
+                let searchResult = try await task.start()
+                pendingSearchTask = nil
+                activityIndicator.stop()
+                handleSearchResult(searchResult: searchResult)
+            } catch {
+                let errorType = type(of: error)
+                WireLogger.search.error("starting lookup failed: \(String(describing: errorType))")
+            }
         }
     }
 

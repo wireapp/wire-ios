@@ -32,7 +32,7 @@ public final class SearchTask {
 
     private enum Status {
         case pending
-        case started(taskGroup: TaskGroup<SearchTask.SearchResultAggregator>)
+        case started(taskGroup: ThrowingTaskGroup<SearchTask.SearchResultAggregator, any Error>)
     }
 
     private var status = Status.pending
@@ -41,7 +41,7 @@ public final class SearchTask {
     ///
     /// The closure is used because there are four different ways of aggregating search results:
     /// - union(withLocalResult:)
-    /// - union(withServiceResult:)
+    /// - union(withBotResult:)
     /// - union(withDirectoryResult:)
     /// - union(prependingDirectory:)
     typealias SearchResultAggregator = (inout SearchResult) -> Void
@@ -81,13 +81,13 @@ public final class SearchTask {
     }
 
     /// Start the search task. Errors will not be thrown.
-    public func start() async -> SearchResult {
+    public func start() async throws -> SearchResult {
         guard case .pending = status else {
             assertionFailure()
             return SearchResult()
         }
 
-        return await withTaskGroup(
+        return try await withThrowingTaskGroup(
             of: SearchResultAggregator.self,
             returning: SearchResult.self
         ) { @MainActor taskGroup in
@@ -96,25 +96,26 @@ public final class SearchTask {
 
             // search services
             taskGroup.addTask {
-                await self.performRemoteSearchForServices()
+                try await self.performRemoteSearchForServices()
             }
 
             // search People or groups
             taskGroup.addTask {
-                await self.performLocalLookup()
+                try await self.performLocalLookup()
             }
             taskGroup.addTask {
-                await self.performLocalSearch()
+                try await self.performLocalSearch()
             }
 
             // v1
             taskGroup.addTask {
-                await self.performRemoteSearchForTeamUser()
+                try await self.performRemoteSearchForTeamUser()
             }
 
             // v2+
             taskGroup.addTask {
-                // await self.performRemoteSearch() // TODO: clean up
+                try await self.performRemoteSearch() // TODO: clean up
+                /*
                 let result = await SearchContactsSubtask()
                     .perform()
                 let partialResult = SearchResult(
@@ -129,24 +130,21 @@ public final class SearchTask {
                 return { aggregatedResult in
                     aggregatedResult.union(withDirectoryResult: partialResult) // TODO: replace, put code here?
                 }
+                 */
             }
             taskGroup.addTask {
-                await self.performUserLookup()
+                try await self.performUserLookup()
             }
 
             var result = SearchResult()
-            while let aggregator = await taskGroup.next() {
+            while let aggregator = try await taskGroup.next() {
                 aggregator(&result)
-            }
-
-            if Task.isCancelled { // TODO: [WPB-20362] make this code throwing
-                return SearchResult()
             }
 
             // add to search users cache
             let searchUserObserverCenter = self.contextProvider.viewContext.searchUserObserverCenter
             result.directory.forEach(searchUserObserverCenter.addSearchUser)
-            result.services.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
+            result.bots.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
 
             return result
         }
@@ -212,7 +210,8 @@ extension SearchTask {
                 },
                 directory: [],
                 conversations: [],
-                services: [],
+                apps: [],
+                bots: [],
                 searchUsersCache: self.searchUsersCache
             )
 
@@ -297,7 +296,8 @@ extension SearchTask {
                 teamMembers: searchTeamMembers,
                 directory: [],
                 conversations: conversationIDs.compactMap { viewContext.object(with: $0) as? ZMConversation },
-                services: [],
+                apps: [],
+                bots: [],
                 searchUsersCache: searchUsersCache
             )
 
@@ -459,7 +459,7 @@ extension SearchTask {
 
 extension SearchTask {
 
-    func performRemoteSearch() async -> SearchResultAggregator {
+    func performRemoteSearch() async throws -> SearchResultAggregator {
         guard
             let apiVersion,
             apiVersion >= .v1,
@@ -471,63 +471,8 @@ extension SearchTask {
             return { _ in }
         }
 
-        return await withCheckedContinuation { continuation in
-
-            let request = Self.searchRequestInDirectory(withRequest: searchRequest, apiVersion: apiVersion)
-
-            request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
-                guard let self else { return }
-
-                guard
-                    let payload = response.payload?.asDictionary(),
-                    let partialResult = SearchResult(
-                        payload: payload,
-                        query: searchRequest.query,
-                        searchOptions: searchRequest.searchOptions,
-                        contextProvider: contextProvider,
-                        searchUsersCache: searchUsersCache
-                    )
-                else {
-                    return continuation.resume(returning: { _ in })
-                }
-
-                try _Concurrency.Task.checkCancellation()
-
-                let searchOptions = searchRequest.searchOptions
-                let includeActiveTeamMembers = searchOptions.contains(.teamMembers) &&
-                searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
-                let searchResult = SearchResult(
-                    context: contextProvider.viewContext,
-                    contacts: [],
-                    teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
-                    directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
-                    conversations: [],
-                    services: [],
-                    searchUsersCache: searchUsersCache
-                )
-
-                try _Concurrency.Task.checkCancellation()
-
-                if searchRequest.searchOptions.contains(.teamMembers) {
-                    Task {
-                        let aggregator = await self.performTeamMembershipLookup(
-                            on: partialResult,
-                            searchRequest: searchRequest
-                        )
-                        continuation.resume(returning: aggregator)
-                    }
-                } else {
-                    continuation.resume(returning: { $0 = $0.union(withDirectoryResult: partialResult) })
-                }
-            })
-
-            transportSession.enqueueOneTime(request)
-        }
-
-    // TODO: replace code above with this
-
-        performRemoteSearchTask?.cancel()
-        performRemoteSearchTask = _Concurrency.Task { @MainActor in
+        // TODO: similar to this
+        /*
             do {
                 let contacts = try await searchAPI.searchContacts(
                     query: searchRequest.query.string.lowercased(),
@@ -594,21 +539,43 @@ extension SearchTask {
                 } else {
                     completeRemoteSearch(searchResult: searchResult)
                 }
+         */
 
-            } catch let error as URLError where error.code == .cancelled {
-                WireLogger.search.debug("cancelled remote search", attributes: .safePublic)
-                completeRemoteSearch()
-            } catch is CancellationError {
-                WireLogger.search.debug("cancelled remote search", attributes: .safePublic)
-                completeRemoteSearch()
-            } catch {
-                let errorName = String(describing: type(of: error))
-                WireLogger.search.error("failed to perform remote search: \(errorName)", attributes: .safePublic)
-                completeRemoteSearch()
-            }
+        return await withCheckedContinuation { continuation in
+
+            let request = Self.searchRequestInDirectory(withRequest: searchRequest, apiVersion: apiVersion)
+
+            request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
+                guard let self else { return }
+
+                guard
+                    let payload = response.payload?.asDictionary(),
+                    let partialResult = SearchResult(
+                        payload: payload,
+                        query: searchRequest.query,
+                        searchOptions: searchRequest.searchOptions,
+                        contextProvider: contextProvider,
+                        searchUsersCache: searchUsersCache
+                    )
+                else {
+                    return continuation.resume(returning: { _ in })
+                }
+
+                if searchRequest.searchOptions.contains(.teamMembers) {
+                    Task {
+                        let aggregator = await self.performTeamMembershipLookup(
+                            on: partialResult,
+                            searchRequest: searchRequest
+                        )
+                        continuation.resume(returning: aggregator)
+                    }
+                } else {
+                    continuation.resume(returning: { $0 = $0.union(withDirectoryResult: partialResult) })
+                }
+            })
+
+            transportSession.enqueueOneTime(request)
         }
-
-
     }
 
     private func performTeamMembershipLookup(
@@ -766,7 +733,8 @@ extension SearchTask {
                         teamMembers: [],
                         directory: partialResult.directory,
                         conversations: [],
-                        services: [],
+                        apps: [],
+                        bots: [],
                         searchUsersCache: searchUsersCache
                     )
                     continuation.resume(returning: { aggregatedResult in
@@ -785,7 +753,7 @@ extension SearchTask {
 
     private static func searchRequestInDirectory(
         withHandle handle: String,
-        apiVersion: APIVersion
+        apiVersion: WireDataModel.APIVersion
     ) -> ZMTransportRequest {
         var handle = handle.lowercased()
 
@@ -815,7 +783,7 @@ extension SearchTask {
             let teamIdentifier,
             case let .search(searchRequest) = type,
             !searchRequest.searchOptions.contains(.localResultsOnly),
-            searchRequest.searchOptions.contains(.services)
+            searchRequest.searchOptions.contains(.bots)
         else { return { _ in } }
 
         return await withCheckedContinuation { continuation in
@@ -839,7 +807,7 @@ extension SearchTask {
                     )
                 else { return continuation.resume(returning: { _ in }) }
 
-                continuation.resume { $0 = $0.union(withServiceResult: partialResult) }
+                continuation.resume { $0 = $0.union(withBotResult: partialResult) }
 
             })
 

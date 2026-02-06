@@ -904,7 +904,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request, apiVersion: .v2)
 
         // when
-        _ = await task.performRemoteSearch()
+        _ = try await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -920,7 +920,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request)
 
         // when
-        _ = await task.performRemoteSearch()
+        _ = try await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -933,7 +933,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request)
 
         // when
-        _ = await task.performRemoteSearch()
+        _ = try await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -946,7 +946,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request, apiVersion: .v2)
 
         // when
-        _ = await task.performRemoteSearch()
+        _ = try await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -967,7 +967,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request, apiVersion: .v2)
 
         // when
-        _ = await task.performRemoteSearch()
+        _ = try await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -988,7 +988,7 @@ final class SearchTaskTests: DatabaseTest {
 
         // when
         var result = SearchResult()
-        let resultAggregator = await task.performRemoteSearch()
+        let resultAggregator = try await task.performRemoteSearch()
         resultAggregator(&result)
 
         // then
@@ -1011,7 +1011,7 @@ final class SearchTaskTests: DatabaseTest {
         }
 
         // when
-        _ = await task.performRemoteSearch()
+        _ = try await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1037,7 +1037,7 @@ final class SearchTaskTests: DatabaseTest {
         }
 
         // when
-        _ = await task.performRemoteSearch()
+        _ = try await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1062,7 +1062,7 @@ final class SearchTaskTests: DatabaseTest {
 
         // when
         var result = SearchResult()
-        let resultAggregator = await task.performRemoteSearch()
+        let resultAggregator = try await task.performRemoteSearch()
         resultAggregator(&result)
 
         // then
@@ -1070,11 +1070,11 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(result.teamMembers.first?.teamRole, .admin)
     }
 
-    // MARK: Services search
+    // MARK: Bots search
 
     func testThatItSendsASearchServicesRequest() async throws {
         // given
-        let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.services])
+        let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.bots])
         let task = makeSearchTask(request: request)
 
         // when
@@ -1092,7 +1092,7 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItDoesNotSendASearchServicesRequest_WhenLocalResultsOnly() async throws {
         // given
-        let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.services, .localResultsOnly])
+        let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.bots, .localResultsOnly])
         let task = makeSearchTask(request: request)
 
         // when
@@ -1105,7 +1105,7 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItCallsCompletionHandlerForServicesSearch() async throws {
         // given
-        let request = SearchRequest(query: "Service", searchOptions: [.services])
+        let request = SearchRequest(query: "Service", searchOptions: [.bots])
         let task = makeSearchTask(request: request)
 
         mockTransportSession.performRemoteChanges { remoteChanges in
@@ -1122,7 +1122,7 @@ final class SearchTaskTests: DatabaseTest {
         resultAggregator(&result)
 
         // then
-        XCTAssertEqual(result.services.first?.name, "Service A")
+        XCTAssertEqual(result.bots.first?.name, "Service A")
     }
 
     func testThatItTrimsThePrefixQuery() throws {
@@ -1208,7 +1208,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: searchRequest, apiVersion: .v3)
 
         // when
-        _ = await task.performRemoteSearch()
+        _ = try await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1221,7 +1221,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: searchRequest, apiVersion: .v3)
 
         // when
-        _ = await task.performRemoteSearch()
+        _ = try await task.performRemoteSearch()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1246,7 +1246,7 @@ final class SearchTaskTests: DatabaseTest {
 
         // when
         var result = SearchResult()
-        let resultAggregator = await task.performRemoteSearch()
+        let resultAggregator = try await task.performRemoteSearch()
         resultAggregator(&result)
 
         // then
@@ -1262,7 +1262,7 @@ final class SearchTaskTests: DatabaseTest {
 
         // when
         var result = SearchResult()
-        let resultAggregator = await task.performRemoteSearch()
+        let resultAggregator = try await task.performRemoteSearch()
         resultAggregator(&result)
 
         // then
@@ -1291,7 +1291,7 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(result.contacts.compactMap(\.user).contains(user))
 
         // when - perform remote search
-        let remoteResultAggregator = await task.performRemoteSearch()
+        let remoteResultAggregator = try await task.performRemoteSearch()
         remoteResultAggregator(&result)
 
         // then - remote result still contains local user
@@ -1311,7 +1311,7 @@ final class SearchTaskTests: DatabaseTest {
 
         // when - perform remote search
         var result = SearchResult()
-        let remoteResultAggregator = await task.performRemoteSearch()
+        let remoteResultAggregator = try await task.performRemoteSearch()
         remoteResultAggregator(&result)
 
         // then - remote result contains directory user
@@ -1351,7 +1351,7 @@ final class SearchTaskTests: DatabaseTest {
 
         // when
         var result = SearchResult()
-        let resultAggregator = await task.performRemoteSearch()
+        let resultAggregator = try await task.performRemoteSearch()
         resultAggregator(&result)
 
         // then

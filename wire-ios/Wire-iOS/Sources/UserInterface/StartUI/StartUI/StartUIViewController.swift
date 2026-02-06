@@ -120,7 +120,8 @@ final class StartUIViewController: UIViewController {
     /// - the team's default protocol is MLS and the `apps` feature flag is enabled.
     var showsGroupSelector: Bool {
         guard
-            SearchGroup.all(for: userSession.defaultProtocol).count > 1,
+            // SearchGroup.all(for: userSession.defaultProtocol).count > 1,
+            SearchGroup.all.count > 1,
             userSession.selfUser.canSeeServices
         else { return false }
 
