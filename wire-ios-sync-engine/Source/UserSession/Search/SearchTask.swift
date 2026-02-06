@@ -29,9 +29,7 @@ public final class SearchTask {
 
     private enum Status {
         case pending
-        case running
-        case cancelled
-        case completed
+        case started(taskGroup: TaskGroup<SearchTask.SearchResultAggregator>)
     }
 
     private var status = Status.pending
@@ -68,24 +66,27 @@ public final class SearchTask {
 
     /// Cancel a previously started task
     public func cancel() {
-        guard status == .running else { return assertionFailure() }
-        status = .cancelled
+        guard case let .started(taskGroup) = status else {
+            assertionFailure()
+            return
+        }
+
+        taskGroup.cancelAll()
     }
 
     /// Start the search task. Errors will not be thrown.
     public func start() async -> SearchResult {
-        guard status == .pending else {
+        guard case .pending = status else {
             assertionFailure()
             return SearchResult()
         }
-
-        status = .running
-        defer { status = .completed }
 
         return await withTaskGroup(
             of: SearchResultAggregator.self,
             returning: SearchResult.self
         ) { @MainActor taskGroup in
+
+            status = .started(taskGroup: taskGroup)
 
             // search services
             taskGroup.addTask {
@@ -116,6 +117,10 @@ public final class SearchTask {
             var result = SearchResult()
             while let aggregator = await taskGroup.next() {
                 aggregator(&result)
+            }
+
+            if Task.isCancelled { // TODO: [WPB-20362] make this code throwing
+                return SearchResult()
             }
 
             // add to search users cache
