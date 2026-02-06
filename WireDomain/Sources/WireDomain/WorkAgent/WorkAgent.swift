@@ -40,7 +40,7 @@ public actor WorkAgent {
 
     private var task: Task<Void, Never>?
     private let scheduler: any WorkItemScheduler
-    private let nonReentrantTaskManager = NonReentrantTaskManager()
+    private let nonReentrantTaskManager = NonReentrantTaskManager<Void, any Error>()
 
     init(scheduler: any WorkItemScheduler) {
         self.scheduler = scheduler
