@@ -374,7 +374,7 @@ final class UserSessionMock: UserSession {
         CreateConversationFolderUseCase(context: syncContext)
     }
 
-    func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol {
+    func makeSearchUsersUseCase() -> (any SearchUsersUseCaseProtocol)? {
         let mock = MockSearchUsersUseCaseProtocol()
         mock.invokeQueryOptionsMessageProtocol_MockMethod = { _, _, _ in
             let payload = ["documents": [

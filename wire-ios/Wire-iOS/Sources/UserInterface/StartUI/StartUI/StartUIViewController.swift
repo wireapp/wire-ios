@@ -41,7 +41,7 @@ final class StartUIViewController: UIViewController {
 
     let searchController = UISearchController(searchResultsController: nil)
 
-    let groupSelector: SearchGroupSelector
+    let groupSelector = SearchGroupSelector()
 
     lazy var conversationTypePicker: UIViewController = {
         let canCreateChannels = userSession.channelsFeature.canCreateChannels(
@@ -119,11 +119,7 @@ final class StartUIViewController: UIViewController {
     /// - the team's default protocol is Proteus the team has been using bots
     /// - the team's default protocol is MLS and the `apps` feature flag is enabled.
     var showsGroupSelector: Bool {
-        guard
-            // SearchGroup.all(for: userSession.defaultProtocol).count > 1,
-            SearchGroup.all.count > 1,
-            userSession.selfUser.canSeeServices
-        else { return false }
+        guard SearchGroup.all.count > 1, userSession.selfUser.canSeeServices else { return false }
 
         switch userSession.defaultProtocol {
         case .mls:
@@ -171,7 +167,6 @@ final class StartUIViewController: UIViewController {
             selfProfileUIBuilder: selfProfileUIBuilder,
             conversationCreationRepository: conversationCreationRepository
         )
-        groupSelector = SearchGroupSelector(for: userSession.defaultProtocol)
         super.init(nibName: nil, bundle: nil)
 
         configGroupSelector()
