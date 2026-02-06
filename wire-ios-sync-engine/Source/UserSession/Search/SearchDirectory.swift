@@ -27,6 +27,8 @@ public final class SearchDirectory: NSObject {
     private let transportSession: TransportSessionType
     private let apiVersion: WireTransport.APIVersion?
     private let searchAPI: any SearchAPI
+    private let teamsAPI: any TeamsAPI
+    private let usersAPI: any UsersAPI
 
     private var isTornDown = false
 
@@ -41,7 +43,9 @@ public final class SearchDirectory: NSObject {
 
     public convenience init(
         userSession: ZMUserSession,
-        searchAPI: some SearchAPI
+        searchAPI: some SearchAPI,
+        teamsAPI: some TeamsAPI,
+        usersAPI: some UsersAPI
     ) {
         self.init(
             contextProvider: userSession,
@@ -50,7 +54,9 @@ public final class SearchDirectory: NSObject {
             refreshUsersMissingMetadataAction: userSession.refreshUsersMissingMetadataAction,
             refreshConversationsMissingMetadataAction: userSession.refreshConversationsMissingMetadataAction,
             apiVersion: userSession.resolvedBackendMetadata.apiVersion,
-            searchAPI: searchAPI
+            searchAPI: searchAPI,
+            teamsAPI: teamsAPI,
+            usersAPI: usersAPI
         )
     }
 
@@ -61,13 +67,17 @@ public final class SearchDirectory: NSObject {
         refreshUsersMissingMetadataAction: RecurringAction,
         refreshConversationsMissingMetadataAction: RecurringAction,
         apiVersion: WireTransport.APIVersion?,
-        searchAPI: some SearchAPI
+        searchAPI: some SearchAPI,
+        teamsAPI: some TeamsAPI,
+        usersAPI: some UsersAPI
     ) {
         self.contextProvider = contextProvider
         self.transportSession = transportSession
         self.searchUsersCache = searchUsersCache
         self.apiVersion = apiVersion
         self.searchAPI = searchAPI
+        self.teamsAPI = teamsAPI
+        self.usersAPI = usersAPI
 
         self.refreshUsersMissingMetadataAction = refreshUsersMissingMetadataAction
         self.refreshConversationsMissingMetadataAction = refreshConversationsMissingMetadataAction
@@ -80,7 +90,9 @@ public final class SearchDirectory: NSObject {
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
             apiVersion: apiVersion,
-            searchAPI: searchAPI
+            searchAPI: searchAPI,
+            teamsAPI: teamsAPI,
+            usersAPI: usersAPI
         )
     }
 
@@ -94,7 +106,9 @@ public final class SearchDirectory: NSObject {
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
             apiVersion: apiVersion,
-            searchAPI: searchAPI
+            searchAPI: searchAPI,
+            teamsAPI: teamsAPI,
+            usersAPI: usersAPI
         )
     }
 

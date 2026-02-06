@@ -30,6 +30,8 @@ final class SearchTaskTests: DatabaseTest {
     private var mockTransportSession: MockTransportSession!
     private var mockCache: SearchUsersCache!
     private var searchAPIMock: MockSearchAPI!
+    private var teamsAPIMock: MockTeamsAPI!
+    private var usersAPIMock: MockUsersAPI!
 
     override func setUp() {
         super.setUp()
@@ -52,6 +54,9 @@ final class SearchTaskTests: DatabaseTest {
     }
 
     override func tearDown() {
+        usersAPIMock = nil
+        teamsAPIMock = nil
+        searchAPIMock = nil
         teamIdentifier = nil
         mockTransportSession = nil
         mockCache = nil
@@ -1078,7 +1083,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request)
 
         // when
-        _ = await task.performRemoteSearchForServices()
+        _ = try await task.performRemoteSearchForServices()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
         // wait again to fix flaky test so second group is entered
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
@@ -1096,7 +1101,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request)
 
         // when
-        _ = await task.performRemoteSearchForServices()
+        _ = try await task.performRemoteSearchForServices()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1118,7 +1123,7 @@ final class SearchTaskTests: DatabaseTest {
 
         // when
         var result = SearchResult()
-        let resultAggregator = await task.performRemoteSearchForServices()
+        let resultAggregator = try await task.performRemoteSearchForServices()
         resultAggregator(&result)
 
         // then
@@ -1370,7 +1375,9 @@ final class SearchTaskTests: DatabaseTest {
             transportSession: mockTransportSession,
             searchUsersCache: mockCache,
             apiVersion: apiVersion,
-            searchAPI: searchAPIMock
+            searchAPI: searchAPIMock,
+            teamsAPI: teamsAPIMock,
+            usersAPI: usersAPIMock
         )
     }
 
@@ -1386,7 +1393,9 @@ final class SearchTaskTests: DatabaseTest {
             transportSession: mockTransportSession,
             searchUsersCache: mockCache,
             apiVersion: apiVersion,
-            searchAPI: searchAPIMock
+            searchAPI: searchAPIMock,
+            teamsAPI: teamsAPIMock,
+            usersAPI: usersAPIMock
         )
     }
 

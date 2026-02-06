@@ -25,17 +25,21 @@ import WireLogging
 
 public final class SearchTask {
 
+    private let type: `Type`
+    private let apiVersion: WireTransport.APIVersion?
+    private let transportSession: TransportSessionType
+    private let contextProvider: ContextProvider
+    private let searchUsersCache: SearchUsersCache?
+    private let searchAPI: any SearchAPI
+    private let teamsAPI: any TeamsAPI
+    private let usersAPI: any UsersAPI
+
+    private var status = Status.pending
+
     public enum `Type` {
         case search(searchRequest: SearchRequest)
         case lookup(qualifiedID: WireDataModel.QualifiedID)
     }
-
-    private enum Status {
-        case pending
-        case started(taskGroup: ThrowingTaskGroup<SearchTask.SearchResultAggregator, any Error>)
-    }
-
-    private var status = Status.pending
 
     /// A closure which modifies the passed search result in order to unite the existing and the newly found results.
     ///
@@ -46,13 +50,10 @@ public final class SearchTask {
     /// - union(prependingDirectory:)
     typealias SearchResultAggregator = (inout SearchResult) -> Void
 
-    private let apiVersion: WireTransport.APIVersion?
-    private let transportSession: TransportSessionType
-    private let contextProvider: ContextProvider
-    private let searchUsersCache: SearchUsersCache?
-    private let searchAPI: any SearchAPI
-
-    private let type: `Type`
+    private enum Status {
+        case pending
+        case started(taskGroup: ThrowingTaskGroup<SearchTask.SearchResultAggregator, any Error>)
+    }
 
     init(
         type: Type,
@@ -60,7 +61,9 @@ public final class SearchTask {
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
         apiVersion: WireTransport.APIVersion?,
-        searchAPI: some SearchAPI
+        searchAPI: some SearchAPI,
+        teamsAPI: some TeamsAPI,
+        usersAPI: some UsersAPI
     ) {
         self.type = type
         self.transportSession = transportSession
@@ -68,6 +71,8 @@ public final class SearchTask {
         self.searchUsersCache = searchUsersCache
         self.apiVersion = apiVersion
         self.searchAPI = searchAPI
+        self.teamsAPI = teamsAPI
+        self.usersAPI = usersAPI
     }
 
     /// Cancel a previously started task
@@ -697,7 +702,7 @@ extension SearchTask {
 
 extension SearchTask {
 
-    func performRemoteSearchForServices() async -> SearchResultAggregator {
+    func performRemoteSearchForServices() async throws -> SearchResultAggregator {
 
         let searchContext = contextProvider.newBackgroundContext()
         let teamIdentifier = await searchContext.perform {
@@ -710,7 +715,11 @@ extension SearchTask {
             case let .search(searchRequest) = type,
             !searchRequest.searchOptions.contains(.localResultsOnly),
             searchRequest.searchOptions.contains(.bots)
-        else { return { _ in } }
+        else {
+            return { _ in }
+        }
+
+        // usersAPI.
 
         return await withCheckedContinuation { continuation in
 
