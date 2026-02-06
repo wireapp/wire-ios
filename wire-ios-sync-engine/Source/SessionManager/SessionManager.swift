@@ -936,7 +936,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         guard let session = await withSession(
             for: account,
             newEnvironment: newEnvironment,
-            notifyAboutMigration: true
         ) else {
             return nil
         }
@@ -991,8 +990,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     @MainActor
     func withSession(
         for account: Account,
-        newEnvironment: NewEnvironment? = nil,
-        notifyAboutMigration: Bool = false
+        newEnvironment: NewEnvironment? = nil
     ) async -> ZMUserSession? {
         WireLogger.sessionManager.debug("Request to load session for \(account)")
 
