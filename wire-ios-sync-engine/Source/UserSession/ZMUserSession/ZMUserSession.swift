@@ -612,12 +612,12 @@ public final class ZMUserSession: NSObject {
 
             // Create and perform sync if there is a self client.
             if let selfClientID = selfUserClient.remoteIdentifier {
-                setUpSyncAgent(clientID: selfClientID)
+                setUpSyncAgent(clientID: selfClientID, isNewClient: false)
             }
         }
     }
 
-    func setUpSyncAgent(clientID: String) {
+    func setUpSyncAgent(clientID: String, isNewClient: Bool) {
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
             completionHandlers: .init(
@@ -661,7 +661,7 @@ public final class ZMUserSession: NSObject {
             )
 
             // TODO: [WPB-22986] Remove logging - added this logging temporarily to investigate a hang.
-            WireLogger.session.measureTime(label: "make client strategies") {
+            WireLogger.session.measureTime(label: "make client strategies", attributes: [.isNewClient: isNewClient]) {
                 strategyDirectory.makeClientRelatedStrategies(
                     applicationStatusDirectory: applicationStatusDirectory,
                     syncContext: syncContext,
@@ -1393,7 +1393,7 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
         // The client was just registered and still needs to perform the
         // initial sync.
         if let selfClientID = userClient.remoteIdentifier {
-            setUpSyncAgent(clientID: selfClientID)
+            setUpSyncAgent(clientID: selfClientID, isNewClient: true)
             // no migration needed from last sync system as it's a new client
             if userClient.isConsumableNotificationsCapable {
                 // activate new sync with consumable notifications
