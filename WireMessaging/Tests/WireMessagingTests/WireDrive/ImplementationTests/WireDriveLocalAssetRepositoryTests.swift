@@ -256,7 +256,7 @@ final class WireDriveLocalAssetRepositoryTests {
             ]
         )
     }
-    
+
     @Test
     func downloadAsset_withoutFileExtension() async throws {
         // given
