@@ -289,7 +289,7 @@ public enum Locators {
 
     public enum OngoingCallPage: String {
 
-        case endOngoingCall = "End call"
+        case endOngoingCallButton = "End call"
     }
 
 }

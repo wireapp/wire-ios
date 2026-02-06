@@ -27,6 +27,31 @@ final class CallingServiceClient {
     private let callingServiceUsername: String
     private let callingServicePassword: String
 
+    // MARK: - Created instances log
+
+    private actor CreatedInstancesTracker {
+        private var ids: [String] = []
+
+        func add(_ id: String?) {
+            guard let id, !id.isEmpty else { return }
+            ids.append(id)
+        }
+
+        func drain() -> [String] {
+            defer { ids.removeAll() }
+            return ids
+        }
+    }
+
+    private let createdInstances = CreatedInstancesTracker()
+
+    /// Destroys any instances created
+    func destroyCreatedInstances() async {
+        let ids = await createdInstances.drain()
+        guard !ids.isEmpty else { return }
+        _ = try? await destroyInstances(instanceIds: ids)
+    }
+
     init() {
         do {
             let envVariables = try EnvironmentVariables()
@@ -144,7 +169,9 @@ final class CallingServiceClient {
                 "CallingService failed to createInstance: HTTP \(http.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
-        return try JSONDecoder().decode(CallingServiceInstance.self, from: data)
+        let instance = try JSONDecoder().decode(CallingServiceInstance.self, from: data)
+        await createdInstances.add(instance.id)
+        return instance
     }
 
     /// Create multiple callingService instances

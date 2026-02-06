@@ -26,7 +26,7 @@ class OngoingCallPage: PageModel {
     }
 
     var endCallButton: XCUIElement {
-        app.buttons[Locators.OngoingCallPage.endOngoingCall.rawValue]
+        app.buttons[Locators.OngoingCallPage.endOngoingCallButton.rawValue]
     }
 
     func endOngoingCall() throws -> ConversationsPage {
