@@ -310,7 +310,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         ]
     }
 
-    func makeClientRelatedStategies(
+    func makeClientRelatedStrategies(
         applicationStatusDirectory: ApplicationStatusDirectory,
         syncContext: NSManagedObjectContext,
         transportSession: TransportSessionType,
