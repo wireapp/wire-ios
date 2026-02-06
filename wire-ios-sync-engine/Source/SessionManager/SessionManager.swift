@@ -1375,7 +1375,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    func checkJailbreakIfNeeded() {
+    private func checkJailbreakIfNeeded() {
         guard configuration.blockOnJailbreakOrRoot || configuration.wipeOnJailbreakOrRoot else { return }
 
         if jailbreakDetector?.isJailbroken() == true {
@@ -1392,7 +1392,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    func shouldPerformPostRebootLogout() -> Bool {
+    private func shouldPerformPostRebootLogout() -> Bool {
         guard configuration.authenticateAfterReboot,
               accountManager.selectedAccount != nil,
               let systemBootTime = ProcessInfo.processInfo.bootTime(),
@@ -1407,7 +1407,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         return true
     }
 
-    func performPostRebootLogout() {
+    private func performPostRebootLogout() {
         let error = NSError(
             userSessionErrorCode: .needsAuthenticationAfterReboot,
             userInfo: accountManager.selectedAccount?.loginCredentials?.dictionaryRepresentation
@@ -1416,7 +1416,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         WireLogger.sessionManager.debug("Logout caused by device reboot.")
     }
 
-    func updateSystemBootTimeIfNeeded() {
+    private func updateSystemBootTimeIfNeeded() {
         guard configuration.authenticateAfterReboot, let bootTime = ProcessInfo.processInfo.bootTime() else {
             return
         }
