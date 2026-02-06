@@ -537,7 +537,11 @@ class UserHelper {
             conversationId: conversationId
         )
     }
-
+    
+    /// Send connection request
+    /// - Parameters:
+    ///   - domain: domain info
+    ///   - userId: userId info
     func sendConnectionRequestToUser(
         domain: String,
         userId: String
