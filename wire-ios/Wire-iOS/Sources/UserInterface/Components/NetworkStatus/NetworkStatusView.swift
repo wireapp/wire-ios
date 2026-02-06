@@ -18,9 +18,9 @@
 
 import UIKit
 import WireDesign
+import WireLocators
 import WireLogging
 import WireSystem
-import WireLocators
 
 enum NetworkStatusViewState {
     case online

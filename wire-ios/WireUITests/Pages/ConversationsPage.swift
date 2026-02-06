@@ -63,7 +63,7 @@ class ConversationsPage: PageModel {
     var accountProfileImageView: XCUIElement {
         app.buttons[Locators.ConversationsPage.accountProfileImageView.rawValue]
     }
-    
+
     var loadBar: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.loadBar.rawValue]
     }
