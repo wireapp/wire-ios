@@ -231,11 +231,6 @@ public final class ZMUserSession: NSObject {
     }
 
     // swiftlint:disable:next todo_requires_jira_link
-    public var searchManagedObjectContext: NSManagedObjectContext { // TODO: jacob we don't want this to be public
-        coreDataStack.searchContext
-    }
-
-    // swiftlint:disable:next todo_requires_jira_link
     public var sharedContainerURL: URL { // TODO: jacob we don't want this to be public
         coreDataStack.applicationContainer
     }
@@ -1449,10 +1444,6 @@ extension ZMUserSession: ContextProvider {
 
     public var syncContext: NSManagedObjectContext {
         coreDataStack.syncContext
-    }
-
-    public var searchContext: NSManagedObjectContext {
-        coreDataStack.searchContext
     }
 
     public var eventContext: NSManagedObjectContext {
