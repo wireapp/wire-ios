@@ -529,7 +529,7 @@ extension SearchTask {
                     contextProvider: contextProvider
                 )
 
-                continuation.resume(returning: { $0 = $0.union(withDirectoryResult: searchResult) })
+                continuation.resume(returning: { $0 = $0.union(withDirectoryResult: updatedResult) })
 
             })
 
