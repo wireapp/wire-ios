@@ -505,13 +505,14 @@ extension SearchTask {
         let searchOptions = searchRequest.searchOptions
         let includeActiveTeamMembers = searchOptions.contains(.teamMembers) &&
         searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
+        // TODO: [WPB-20362] fix for searching apps
         let partialResult = SearchResult(
             context: contextProvider.viewContext,
             contacts: [],
             teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
             directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
             conversations: [],
-            apps: [], // TODO: fix
+            apps: searchForApps ? [] : [],
             bots: [],
             searchUsersCache: searchUsersCache
         )
@@ -531,7 +532,7 @@ extension SearchTask {
     ) async -> SearchResultAggregator {
 
         let viewContext = contextProvider.viewContext
-        let (teamMembersIDs, teamID) = await contextProvider.viewContext.perform { [viewContext] in
+        let (teamMembersIDs, teamID) = await viewContext.perform { [viewContext] in
             let teamMembersIDs = searchResult.teamMembers.compactMap(\.remoteIdentifier)
             let teamID = ZMUser.selfUser(in: viewContext).team?.remoteIdentifier
             return (teamMembersIDs, teamID)
