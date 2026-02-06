@@ -256,6 +256,83 @@ final class WireDriveLocalAssetRepositoryTests {
             ]
         )
     }
+    
+    @Test
+    func downloadAsset_withoutFileExtension() async throws {
+        // given
+        storeBacking[nodeID] = nil
+
+        let node = WireDriveNode.fixture(
+            uuid: nodeID,
+            path: "path/fileWithoutExtension",
+            size: 1234,
+            eTag: "abc",
+            mimeType: "image/png",
+            downloadURL: URL(string: "https://example.com/fileWithoutExtension")!
+        )
+        nodesAPI.getNodeNodeID_MockValue = node
+
+        let (progressStream, progressContinuation) = AsyncStream.makeStream(of: Double.self)
+        fileDownloader.downloadFrom_MockValue = (progress: progressStream, download: Task.fixture())
+
+        Task {
+            progressContinuation.yield(0.5)
+            progressContinuation.yield(1)
+            progressContinuation.finish()
+        }
+
+        // when
+        try await sut.downloadAsset(nodeID: nodeID)
+
+        // then
+        #expect(
+            try store.asset(nodeID: nodeID) == WireDriveLocalAsset(
+                nodeID: nodeID,
+                eTag: "abc",
+                path: "path/fileWithoutExtension",
+                contentType: "image/png",
+                size: 1234,
+                downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/fileWithoutExtension")
+            )
+        )
+
+        #expect(
+            store.upsertAsset_Invocations == [
+                WireDriveLocalAsset(
+                    nodeID: nodeID,
+                    eTag: "abc",
+                    path: "path/fileWithoutExtension",
+                    contentType: "image/png",
+                    size: 1234,
+                    downloadState: .pending,
+                ),
+                WireDriveLocalAsset(
+                    nodeID: nodeID,
+                    eTag: "abc",
+                    path: "path/fileWithoutExtension",
+                    contentType: "image/png",
+                    size: 1234,
+                    downloadState: .downloading(progress: 0.5)
+                ),
+                WireDriveLocalAsset(
+                    nodeID: nodeID,
+                    eTag: "abc",
+                    path: "path/fileWithoutExtension",
+                    contentType: "image/png",
+                    size: 1234,
+                    downloadState: .downloading(progress: 1.0)
+                ),
+                WireDriveLocalAsset(
+                    nodeID: nodeID,
+                    eTag: "abc",
+                    path: "path/fileWithoutExtension",
+                    contentType: "image/png",
+                    size: 1234,
+                    downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc/fileWithoutExtension")
+                )
+            ]
+        )
+    }
 
     @Test
     func downloadAsset_whenDownloadInProgress() async throws {
