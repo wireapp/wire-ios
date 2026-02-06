@@ -751,7 +751,7 @@ extension SearchTask {
                             viewContext: viewContext,
                             name: profile.name,
                             handle: profile.handle,
-                            accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
+                            accentColor: accentColor.map(ZMAccentColor.from(accentColor:)), TODO: why do bots now appear with blue accent color?
                             remoteIdentifier: profile.id,
                             domain: profile.qualifiedID?.domain,
                             teamIdentifier: teamIdentifier,
