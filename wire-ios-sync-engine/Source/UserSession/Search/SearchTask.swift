@@ -745,7 +745,6 @@ extension SearchTask {
                         searchUser.user = localUser
                         return searchUser
                     } else {
-
                         let accentColorRawValue = profile.accentID.flatMap(Int16.init(exactly:))
                         let accentColor = accentColorRawValue.flatMap(AccentColor.init(rawValue:))
                         let searchUser = ZMSearchUser(
@@ -764,7 +763,6 @@ extension SearchTask {
                         searchUser.summary = profile.summary
                         // searchUser.assetKeys = profile.assets // SearchUserAssetKeys(payload: payload) // TODO: fix
                         return searchUser
-
                     }
                 }
             }
