@@ -100,7 +100,7 @@ package final class FilesViewModel: ObservableObject {
         case moveToFolder(fileItem: FilesViewItem)
         case renameFile(view: FileRenameView)
         case create(view: CreateFileView)
-        case filters(view: FilterByTagsView)
+        case filterByTagsOld
         case versionHistory(view: FileVersioningView)
 
         var id: String {
@@ -115,8 +115,8 @@ package final class FilesViewModel: ObservableObject {
                 "create(\(view.id))"
             case let .renameFile(view):
                 "renameFile(\(view.id))"
-            case let .filters(view):
-                "filters(\(view.id))"
+            case .filterByTagsOld:
+                "filterByTagsOld"
             case let .versionHistory(view):
                 "versionHistory(\(view.id))"
             }
@@ -428,21 +428,7 @@ package final class FilesViewModel: ObservableObject {
     }
 
     func openFilters() {
-        let filesFiltersViewModel = FilterByTagsView.ViewModel(
-            fetchTagsUseCase: useCases.getTagSuggestions,
-            savedTags: filterWithTags
-        )
-
-        filesFiltersViewModel.$savedTags
-            .sink { [weak self] tags in
-                guard let self else { return }
-                shouldReload = filterWithTags != tags
-                filterWithTags = tags
-            }.store(in: &subscriptions)
-
-        sheetNavigation = .filters(
-            view: FilterByTagsView(viewModel: filesFiltersViewModel)
-        )
+        sheetNavigation = .filterByTagsOld
     }
 
     func moveToFolderView(item: FilesViewItem) -> some View {

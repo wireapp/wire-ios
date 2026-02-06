@@ -24,16 +24,19 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct FilterByTagsView: View {
-    @StateObject package var viewModel: ViewModel
     @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.dismiss) private var dismiss
-
-    let id = UUID()
+    
+    @StateObject package var viewModel: ViewModel
+    
+    let onApply: ([String]) -> ()
 
     package init(
-        viewModel: @autoclosure @escaping () -> ViewModel
+        viewModel: @autoclosure @escaping () -> ViewModel,
+        onApply: @escaping ([String]) -> ()
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
+        self.onApply = onApply
     }
 
     var body: some View {
@@ -89,7 +92,6 @@ private extension FilterByTagsView {
                     TagPill(
                         text: tag.name,
                         isSelected: tag.isSelected
-                        //accentColor: viewModel.accentColorProvider()
                     )
                     .onTapGesture {
                         viewModel.selectTag(tag)
@@ -167,7 +169,7 @@ private extension FilterByTagsView {
     var applyButton: some View {
         Button {
             Task {
-                await viewModel.apply()
+                onApply(viewModel.selectedTags.map(\.name))
                 dismiss()
             }
         } label: {
@@ -189,8 +191,8 @@ private extension FilterByTagsView {
         } label: {
             Text(Strings.AllFiles.Filters.clearAll)
                 .accessibilityIdentifier("clearAllButton")
-        }.disabled(viewModel.selectedTags.isEmpty)
-
+        }
+        .disabled(viewModel.selectedTags.isEmpty)
     }
 
     var closeButton: some View {
@@ -208,5 +210,5 @@ private extension FilterByTagsView {
 }
 
 #Preview {
-    FilterByTagsView(viewModel: .preview())
+    FilterByTagsView(viewModel: .preview()) { tags in }
 }

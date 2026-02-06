@@ -91,10 +91,6 @@ extension FilterByTagsView {
             presentedTags += Array(tags[presentedTags.count...].prefix(tagsBatchCount))
         }
 
-        func apply() async {
-            savedTags = selectedTags.map(\.name)
-        }
-
         func clearAll() async {
             tags.indices.forEach { tags[$0].isSelected = false }
             presentedTags.indices.forEach { presentedTags[$0].isSelected = false }

@@ -89,8 +89,17 @@ package struct FilesBrowserView: FilesViewProtocol {
                 Task { await viewModel.onSheetDismissed() }
             } content: { navigationItem in
                 switch navigationItem {
-                case let .filters(filtersView):
-                    filtersView
+                case .filterByTagsOld:
+                    FilterByTagsView(
+                        viewModel: FilterByTagsView.ViewModel(
+                            fetchTagsUseCase: viewModel.useCases.getTagSuggestions,
+                            savedTags: viewModel.filterWithTags
+                        ),
+                        onApply: { selectedTags in
+                            viewModel.filterWithTags = selectedTags
+                            viewModel.shouldReload = true
+                        }
+                    )
                 case let .shareLink(shareLinkView):
                     shareLinkView
                 default:
