@@ -23,16 +23,20 @@ import WireFoundation
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-struct FilesFiltersView: View {
-    @StateObject package var viewModel: FilesFiltersViewModel
-    @Environment(\.dismiss) var dismiss
-
-    let id = UUID()
+struct FilterByTagsView: View {
+    @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.dismiss) private var dismiss
+    
+    @StateObject package var viewModel: ViewModel
+    
+    let onApply: (Set<String>) -> ()
 
     package init(
-        viewModel: @autoclosure @escaping () -> FilesFiltersViewModel
+        viewModel: @autoclosure @escaping () -> ViewModel,
+        onApply: @escaping (Set<String>) -> ()
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
+        self.onApply = onApply
     }
 
     var body: some View {
@@ -43,8 +47,6 @@ struct FilesFiltersView: View {
 
                 ScrollView {
                     tagsView
-                }.refreshable {
-                    await viewModel.fetch(isRefreshing: true)
                 }
             }
             .toolbar { toolbarContent }
@@ -56,14 +58,13 @@ struct FilesFiltersView: View {
             }
             .safeAreaInset(edge: .bottom, spacing: 0) { applyButton } // floating button
             .overlay { if viewModel.isLoading { ProgressView() } }
-            .task { await viewModel.fetch() }
         }
     }
 }
 
 // MARK: - Tags
 
-private extension FilesFiltersView {
+private extension FilterByTagsView {
     var tagsViewSpacing: CGFloat {
         viewModel.presentedTags.isEmpty ? 0 : 20
     }
@@ -84,44 +85,34 @@ private extension FilesFiltersView {
             }
 
             FlowLayout(spacing: 16, alignment: .leading) {
-                ForEach(viewModel.presentedTags) { tag in
+                ForEach(viewModel.presentedTags, id: \.self) { tag in
                     TagPill(
-                        text: tag.name,
-                        isSelected: tag.isSelected,
-                        accentColor: viewModel.accentColorProvider()
+                        text: tag,
+                        isSelected: viewModel.isTagSelected(tag)
                     )
                     .onTapGesture {
                         viewModel.selectTag(tag)
                     }
                 }
-            }.frame(maxWidth: .infinity, alignment: .leading)
-
-            if viewModel.hasMore {
-                Button {
-                    withAnimation {
-                        viewModel.showMore()
-                    }
-                } label: {
-                    Text(Strings.AllFiles.Filters.Tags.loadMore)
-                        .accessibilityIdentifier("loadMoreButton")
-                }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             Divider()
-
-        }.padding()
+        }
+        .padding()
     }
 
     private struct TagPill: View {
+        @Environment(\.wireAccentColor) private var wireAccentColor
+        
         let text: String
         let isSelected: Bool
-        let accentColor: WireAccentColor
 
         var body: some View {
             Text(text)
                 .foregroundStyle(
                     isSelected
-                        ? ColorTheme.Base.primary(accentColor).color
+                        ? ColorTheme.Base.primary(wireAccentColor).color
                         : ColorTheme.Backgrounds.onSurface.color
                 )
                 .font(for: .h4)
@@ -130,7 +121,7 @@ private extension FilesFiltersView {
                 .padding(.vertical, 4)
                 .background(
                     isSelected
-                        ? ColorTheme.Base.primaryVariant(accentColor).color
+                        ? ColorTheme.Base.primaryVariant(wireAccentColor).color
                         : ColorTheme.Backgrounds.surface.color
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -138,7 +129,7 @@ private extension FilesFiltersView {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(
                             isSelected
-                                ? ColorTheme.Base.primary(accentColor).color
+                                ? ColorTheme.Base.primary(wireAccentColor).color
                                 : .clear,
                             lineWidth: 1
                         )
@@ -150,7 +141,7 @@ private extension FilesFiltersView {
 
 // MARK: - Toolbar
 
-private extension FilesFiltersView {
+private extension FilterByTagsView {
 
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) { clearAllButton }
@@ -161,11 +152,11 @@ private extension FilesFiltersView {
 
 // MARK: - Buttons
 
-private extension FilesFiltersView {
+private extension FilterByTagsView {
     var applyButton: some View {
         Button {
             Task {
-                await viewModel.apply()
+                onApply(viewModel.selectedTags)
                 dismiss()
             }
         } label: {
@@ -176,7 +167,7 @@ private extension FilesFiltersView {
         .buttonStyle(.borderedProminent)
         .controlSize(.large)
         .buttonBorderShape(.roundedRectangle(radius: 16))
-        .tint(Color(viewModel.accentColorProvider()))
+        .tint(wireAccentColor.color)
         .font(for: .buttonBig)
         .padding()
     }
@@ -187,8 +178,8 @@ private extension FilesFiltersView {
         } label: {
             Text(Strings.AllFiles.Filters.clearAll)
                 .accessibilityIdentifier("clearAllButton")
-        }.disabled(viewModel.selectedTags.isEmpty)
-
+        }
+        .disabled(viewModel.selectedTags.isEmpty)
     }
 
     var closeButton: some View {
@@ -206,5 +197,5 @@ private extension FilesFiltersView {
 }
 
 #Preview {
-    FilesFiltersView(viewModel: .preview())
+    FilterByTagsView(viewModel: .preview()) { tags in }
 }
