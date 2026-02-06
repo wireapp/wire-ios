@@ -18,7 +18,7 @@
 
 import Foundation
 
-public final class SearchDirectory {
+public final class SearchDirectory: NSObject {
 
     private let contextProvider: ContextProvider
     private let transportSession: TransportSessionType
