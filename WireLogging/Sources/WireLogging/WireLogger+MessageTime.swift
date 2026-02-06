@@ -25,7 +25,7 @@ public extension WireLogger {
         attributes: LogAttributes = [:],
         block: () async throws -> T
     ) async throws -> T {
-        let context = measureTimeStart(label: label)
+        let context = measureTimeStart(label: label, attributes: attributes)
         let result = try await block()
         measureTimeEnd(context: context)
         return result
@@ -36,7 +36,7 @@ public extension WireLogger {
         attributes: LogAttributes = [:],
         block: () throws(E) -> T
     ) throws(E) -> T {
-        let context = measureTimeStart(label: label)
+        let context = measureTimeStart(label: label, attributes: attributes)
         let result = try block()
         measureTimeEnd(context: context)
         return result
@@ -52,7 +52,7 @@ public extension WireLogger {
 
     private func measureTimeStart(
         label: String,
-        attributes: LogAttributes = [:]
+        attributes: LogAttributes
     ) -> Context {
         let startMessage = "starting \(label)"
         info(startMessage, attributes: attributes)
