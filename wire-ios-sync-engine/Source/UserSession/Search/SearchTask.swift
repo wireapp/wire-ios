@@ -114,23 +114,7 @@ public final class SearchTask {
 
             // v2+
             taskGroup.addTask {
-                try await self.performRemoteSearch() // TODO: clean up
-                /*
-                let result = await SearchContactsSubtask()
-                    .perform()
-                let partialResult = SearchResult(
-                    context: contextProvider.viewContext,
-                    contacts: [],
-                    teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
-                    directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
-                    conversations: [],
-                    services: [],
-                    searchUsersCache: searchUsersCache
-                )
-                return { aggregatedResult in
-                    aggregatedResult.union(withDirectoryResult: partialResult) // TODO: replace, put code here?
-                }
-                 */
+                try await self.performRemoteSearch()
             }
             taskGroup.addTask {
                 try await self.performUserLookup()
@@ -471,110 +455,73 @@ extension SearchTask {
             return { _ in }
         }
 
-        // TODO: similar to this
-        /*
-            do {
-                let contacts = try await searchAPI.searchContacts(
-                    query: searchRequest.query.string.lowercased(),
-                    domain: searchRequest.searchDomain ?? "",
-                    type: .regular // TODO: correct?
-                ).documents
+        let queryLowercased = searchRequest.query.string.lowercased()
+        let searchDomain = searchRequest.searchDomain ?? ""
+        let searchForApps = searchRequest.searchOptions.contains(.apps)
+        let contacts = try await searchAPI.searchContacts(
+            query: queryLowercased,
+            domain: searchDomain,
+            type: searchForApps ? .app : .regular
+        ).documents
 
-                try _Concurrency.Task.checkCancellation()
+        let filteredContacts = contacts.filter { contact in
+            return !searchRequest.query.isHandleQuery ||
+            contact.name.hasPrefix("@") ||
+            (contact.handle?.lowercased().contains(queryLowercased) ?? false)
+        }
 
-                let queryLowercased = searchRequest.query.string.lowercased()
-                let filteredContacts = contacts.filter { contact in
-                    return !searchRequest.query.isHandleQuery ||
-                    contact.name.hasPrefix("@") ||
-                    (contact.handle?.lowercased().contains(queryLowercased) ?? false)
-                }
+        try Task.checkCancellation()
 
-                let searchUsers = filteredContacts.compactMap { filteredContact in
-                    guard let id = filteredContact.id else { return ZMSearchUser?.none }
-                    let accentColor = if let accentID = filteredContact.accentID, let rawValue = Int16(exactly: accentID), let accentColor = AccentColor(
-                        rawValue: rawValue
-                    ) { accentColor } else { AccentColor.default }
-                    let localUser = ZMUser.fetch(
-                        with: id,
-                        domain: filteredContact.qualifiedID?.domain,
-                        in: contextProvider.viewContext
-                    )
-                    if let searchUser = searchUsersCache?.object(forKey: id as NSUUID) {
-                        searchUser.user = localUser
-                        return searchUser
-                    } else {
-                        return ZMSearchUser(
-                            contextProvider: contextProvider,
-                            name: filteredContact.name,
-                            handle: filteredContact.handle,
-                            accentColor: .from(accentColor: accentColor),
-                            remoteIdentifier: filteredContact.id,
-                            domain: filteredContact.qualifiedID?.domain,
-                            teamIdentifier: filteredContact.team,
-                            user: localUser,
-                            searchUsersCache: searchUsersCache
-                        )
-                    }
-                }
+        let viewContext = contextProvider.viewContext
+        let searchUsers = filteredContacts.compactMap { filteredContact in
+            guard let id = filteredContact.id else { return ZMSearchUser?.none }
 
-                try _Concurrency.Task.checkCancellation()
+            let domain = filteredContact.qualifiedID?.domain
+            let localUser = ZMUser.fetch(with: id, domain: domain, in: viewContext)
 
-                let searchOptions = searchRequest.searchOptions
-                let includeActiveTeamMembers = searchOptions.contains(.teamMembers) &&
-                searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
-                let searchResult = SearchResult(
-                    context: contextProvider.viewContext,
-                    contacts: [],
-                    teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
-                    directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
-                    conversations: [],
-                    services: [],
+            if let cachedSearchUser = searchUsersCache?.object(forKey: id as NSUUID) {
+                cachedSearchUser.user = localUser
+                return cachedSearchUser
+
+            } else {
+                let accentColorRawValue = filteredContact.accentID.flatMap(Int16.init(exactly:))
+                let accentColor = accentColorRawValue.flatMap(AccentColor.init(rawValue:)) ?? .default
+                return ZMSearchUser(
+                    viewContext: viewContext,
+                    name: filteredContact.name,
+                    handle: filteredContact.handle,
+                    accentColor: .from(accentColor: accentColor),
+                    remoteIdentifier: filteredContact.id,
+                    domain: domain,
+                    teamIdentifier: filteredContact.team,
+                    user: localUser,
                     searchUsersCache: searchUsersCache
                 )
+            }
+        }
 
-                try _Concurrency.Task.checkCancellation()
+        try Task.checkCancellation()
 
-                if searchRequest.searchOptions.contains(.teamMembers) {
-                    performTeamMembershipLookup(on: searchResult, searchRequest: searchRequest)
-                } else {
-                    completeRemoteSearch(searchResult: searchResult)
-                }
-         */
+        let searchOptions = searchRequest.searchOptions
+        let includeActiveTeamMembers = searchOptions.contains(.teamMembers) &&
+        searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
+        let partialResult = SearchResult(
+            context: contextProvider.viewContext,
+            contacts: [],
+            teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
+            directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
+            conversations: [],
+            apps: [], // TODO: fix
+            bots: [],
+            searchUsersCache: searchUsersCache
+        )
 
-        return await withCheckedContinuation { continuation in
+        try Task.checkCancellation()
 
-            let request = Self.searchRequestInDirectory(withRequest: searchRequest, apiVersion: apiVersion)
-
-            request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
-                guard let self else { return }
-
-                guard
-                    let payload = response.payload?.asDictionary(),
-                    let partialResult = SearchResult(
-                        payload: payload,
-                        query: searchRequest.query,
-                        searchOptions: searchRequest.searchOptions,
-                        contextProvider: contextProvider,
-                        searchUsersCache: searchUsersCache
-                    )
-                else {
-                    return continuation.resume(returning: { _ in })
-                }
-
-                if searchRequest.searchOptions.contains(.teamMembers) {
-                    Task {
-                        let aggregator = await self.performTeamMembershipLookup(
-                            on: partialResult,
-                            searchRequest: searchRequest
-                        )
-                        continuation.resume(returning: aggregator)
-                    }
-                } else {
-                    continuation.resume(returning: { $0 = $0.union(withDirectoryResult: partialResult) })
-                }
-            })
-
-            transportSession.enqueueOneTime(request)
+        if searchRequest.searchOptions.contains(.teamMembers) {
+            return await self.performTeamMembershipLookup(on: partialResult, searchRequest: searchRequest)
+        } else {
+            return { $0 = $0.union(withDirectoryResult: partialResult) }
         }
     }
 
@@ -630,28 +577,6 @@ extension SearchTask {
 
         }
 
-    }
-
-    private static func searchRequestInDirectory(
-        withRequest searchRequest: SearchRequest,
-        fetchLimit: Int = 10,
-        apiVersion: WireTransport.APIVersion
-    ) -> ZMTransportRequest {
-        var queryItems = [URLQueryItem]()
-        queryItems.append(URLQueryItem(name: "q", value: searchRequest.query.string))
-
-        if let searchDomain = searchRequest.searchDomain {
-            queryItems.append(URLQueryItem(name: "domain", value: searchDomain))
-        }
-
-        queryItems.append(URLQueryItem(name: "size", value: String(fetchLimit)))
-
-        var url = URLComponents()
-        url.path = "/search/contacts"
-        url.queryItems = queryItems
-
-        let path = url.string?.replacingOccurrences(of: "+", with: "%2B") ?? ""
-        return ZMTransportRequest(getFromPath: path, apiVersion: apiVersion.rawValue)
     }
 
     private static func fetchTeamMembershipRequest(
