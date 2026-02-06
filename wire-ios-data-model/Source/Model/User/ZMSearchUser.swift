@@ -105,7 +105,7 @@ public class ZMSearchUser: NSObject, UserType {
         user?.objectId ?? remoteIdentifier!
     }
 
-    fileprivate weak var contextProvider: ContextProvider?
+    fileprivate weak var viewContext: NSManagedObjectContext?
     private let searchUsersCache: SearchUsersCache?
 
     fileprivate var internalDomain: String?
@@ -162,16 +162,12 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var isFederated: Bool {
-        guard let contextProvider else {
-            return false
-        }
-
-        return ZMUser.selfUser(inUserSession: contextProvider).isFederating(with: self)
+        guard let viewContext else { return false }
+        return ZMUser.selfUser(in: viewContext).isFederating(with: self)
     }
 
     public var isSelfUser: Bool {
         guard let user else { return false }
-
         return user.isSelfUser
     }
 
@@ -265,8 +261,8 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var oneToOneConversation: ZMConversation? {
-        if isTeamMember, let uiContext = contextProvider?.viewContext {
-            materialize(in: uiContext)?.oneToOneConversation
+        if isTeamMember, let viewContext {
+            materialize(in: viewContext)?.oneToOneConversation
         } else {
             user?.oneToOneConversation
         }
@@ -482,7 +478,7 @@ public class ZMSearchUser: NSObject, UserType {
 
     @objc
     public required init(
-        contextProvider: ContextProvider,
+        viewContext: NSManagedObjectContext,
         name: String,
         handle: String?,
         accentColor: ZMAccentColor?,
@@ -503,10 +499,10 @@ public class ZMSearchUser: NSObject, UserType {
         self.internalDomain = domain
         self.remoteIdentifier = existingUser?.remoteIdentifier ?? remoteIdentifier
         self.teamIdentifier = existingUser?.teamIdentifier ?? teamIdentifier
-        self.contextProvider = contextProvider
+        self.viewContext = viewContext
         self.searchUsersCache = searchUsersCache
 
-        let selfUser = ZMUser.selfUser(inUserSession: contextProvider)
+        let selfUser = ZMUser.selfUser(in: viewContext)
         self.internalIsTeamMember = teamIdentifier != nil && selfUser.teamIdentifier == teamIdentifier
         self.internalIsConnected = internalIsTeamMember
 
@@ -524,7 +520,7 @@ public class ZMSearchUser: NSObject, UserType {
         searchUsersCache: SearchUsersCache?
     ) {
         self.init(
-            contextProvider: contextProvider,
+            viewContext: contextProvider.viewContext,
             name: user.name ?? "",
             handle: user.handle,
             accentColor: user.zmAccentColor,
@@ -556,7 +552,7 @@ public class ZMSearchUser: NSObject, UserType {
         let accentColorRawValue = (payload["accent_id"] as? NSNumber)?.int16Value ?? 0
 
         self.init(
-            contextProvider: contextProvider,
+            viewContext: contextProvider.viewContext,
             name: name,
             handle: handle,
             accentColor: .from(rawValue: accentColorRawValue) ?? .default,
@@ -611,7 +607,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public func connect(completion: @escaping (Error?) -> Void) {
-        let selfUser = ZMUser.selfUser(inUserSession: contextProvider!)
+        let selfUser = ZMUser.selfUser(in: viewContext!)
         selfUser.sendConnectionRequest(to: self) { [weak self] result in
             switch result {
             case .success:
@@ -628,7 +624,7 @@ public class ZMSearchUser: NSObject, UserType {
     private func updateLocalUser() {
         guard
             let userID = remoteIdentifier,
-            let viewContext = contextProvider?.viewContext
+            let viewContext
         else {
             return
         }
@@ -637,7 +633,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     private func notifySearchUserChanged() {
-        contextProvider?.viewContext.searchUserObserverCenter.notifyUpdatedSearchUser(self)
+        viewContext?.searchUserObserverCenter.notifyUpdatedSearchUser(self)
     }
 
     public func accept(completion: @escaping (Error?) -> Void) {
@@ -671,7 +667,7 @@ public class ZMSearchUser: NSObject, UserType {
 
         if let user {
             user.requestPreviewProfileImage()
-        } else if let notificationContext = contextProvider?.viewContext.notificationContext {
+        } else if let notificationContext = viewContext?.notificationContext {
             NotificationInContext(
                 name: .searchUserDidRequestPreviewAsset,
                 context: notificationContext,
@@ -686,7 +682,7 @@ public class ZMSearchUser: NSObject, UserType {
 
         if let user {
             user.requestCompleteProfileImage()
-        } else if let notificationContext = contextProvider?.viewContext.notificationContext {
+        } else if let notificationContext = viewContext?.notificationContext {
             NotificationInContext(
                 name: .searchUserDidRequestCompleteAsset,
                 context: notificationContext,
@@ -731,7 +727,7 @@ public class ZMSearchUser: NSObject, UserType {
             internalCompleteImageData = imageData
         }
 
-        contextProvider?.viewContext.searchUserObserverCenter.notifyUpdatedSearchUser(self)
+        viewContext?.searchUserObserverCenter.notifyUpdatedSearchUser(self)
     }
 
     public func update(from payload: [String: Any]) {

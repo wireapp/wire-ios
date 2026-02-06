@@ -22,7 +22,6 @@
 @interface NSManagedObjectContext (zmessagingTests)
 
 - (void)markAsSyncContext;
-- (void)markAsSearchContext;
 - (void)markAsUIContext;
 - (void)disableObjectRefresh;
 
