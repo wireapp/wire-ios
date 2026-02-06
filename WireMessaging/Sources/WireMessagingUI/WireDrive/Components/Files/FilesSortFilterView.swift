@@ -27,7 +27,7 @@ struct FilesSortFilterView: View {
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
     }
-    
+
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 5) {
@@ -39,30 +39,28 @@ struct FilesSortFilterView: View {
         }
         .padding(.horizontal, -5)
     }
-    
+
     @ViewBuilder
     private func capsule(for queryOption: FilesSortFilterViewModel.QueryOptions) -> some View {
         switch queryOption {
-        case .sorting(let sorting):
+        case let .sorting(sorting):
             menuCapsule(sorting)
-        case .filtering(let filters):
+        case let .filtering(filters):
             buttonCapsule(filters)
         }
     }
-    
+
     @ViewBuilder
     private func buttonCapsule(_ filters: [FilesSortFilterViewModel.QueryOptions.Filtering]) -> some View {
         let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
-        
+
         ForEach(filters, id: \.self) { filter in
             Button {
-                withAnimation {
-                    
-                }
+                withAnimation {}
             } label: {
                 HStack {
                     Text(viewModel.title(for: filter))
-                    
+
                     Image(systemName: "chevron.down")
                         .font(.system(size: 14, weight: .semibold))
                 }
@@ -82,43 +80,39 @@ struct FilesSortFilterView: View {
         }
 
     }
-    
+
     @ViewBuilder
     private func menuCapsule(_ sorting: FilesSortFilterViewModel.QueryOptions.Sorting) -> some View {
         let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
-        
+
         Menu {
             ForEach(sorting.sortKey, id: \.self) { sortKey in
-                Button {
-                    
-                } label: {
+                Button {} label: {
                     Label(
                         viewModel.title(for: sortKey.key),
                         systemImage: sortKey.isSelected ? "checkmark" : ""
                     )
                 }
             }
-            
+
             Divider()
-            
+
             ForEach(sorting.sortOrder, id: \.self) { sortOrder in
-                Button {
-                    
-                } label: {
+                Button {} label: {
                     Label(
                         viewModel.title(for: sortOrder.order),
                         systemImage: sortOrder.isSelected ? "checkmark" : ""
                     )
                 }
             }
-            
+
         } label: {
             HStack {
                 Image(systemName: "arrow.up.arrow.down")
                     .font(.system(size: 14, weight: .semibold))
-                
+
                 Text(viewModel.title(for: sorting))
-                
+
                 Image(systemName: "chevron.down")
                     .font(.system(size: 14, weight: .semibold))
             }

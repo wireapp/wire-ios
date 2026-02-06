@@ -23,14 +23,15 @@ import WireFoundation
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-struct FilesFiltersView: View {
-    @StateObject package var viewModel: FilesFiltersViewModel
-    @Environment(\.dismiss) var dismiss
+struct FilterByTagsView: View {
+    @StateObject package var viewModel: ViewModel
+    @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.dismiss) private var dismiss
 
     let id = UUID()
 
     package init(
-        viewModel: @autoclosure @escaping () -> FilesFiltersViewModel
+        viewModel: @autoclosure @escaping () -> ViewModel
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
     }
@@ -63,7 +64,7 @@ struct FilesFiltersView: View {
 
 // MARK: - Tags
 
-private extension FilesFiltersView {
+private extension FilterByTagsView {
     var tagsViewSpacing: CGFloat {
         viewModel.presentedTags.isEmpty ? 0 : 20
     }
@@ -87,8 +88,8 @@ private extension FilesFiltersView {
                 ForEach(viewModel.presentedTags) { tag in
                     TagPill(
                         text: tag.name,
-                        isSelected: tag.isSelected,
-                        accentColor: viewModel.accentColorProvider()
+                        isSelected: tag.isSelected
+                        //accentColor: viewModel.accentColorProvider()
                     )
                     .onTapGesture {
                         viewModel.selectTag(tag)
@@ -113,15 +114,16 @@ private extension FilesFiltersView {
     }
 
     private struct TagPill: View {
+        @Environment(\.wireAccentColor) private var wireAccentColor
+        
         let text: String
         let isSelected: Bool
-        let accentColor: WireAccentColor
 
         var body: some View {
             Text(text)
                 .foregroundStyle(
                     isSelected
-                        ? ColorTheme.Base.primary(accentColor).color
+                        ? ColorTheme.Base.primary(wireAccentColor).color
                         : ColorTheme.Backgrounds.onSurface.color
                 )
                 .font(for: .h4)
@@ -130,7 +132,7 @@ private extension FilesFiltersView {
                 .padding(.vertical, 4)
                 .background(
                     isSelected
-                        ? ColorTheme.Base.primaryVariant(accentColor).color
+                        ? ColorTheme.Base.primaryVariant(wireAccentColor).color
                         : ColorTheme.Backgrounds.surface.color
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -138,7 +140,7 @@ private extension FilesFiltersView {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(
                             isSelected
-                                ? ColorTheme.Base.primary(accentColor).color
+                                ? ColorTheme.Base.primary(wireAccentColor).color
                                 : .clear,
                             lineWidth: 1
                         )
@@ -150,7 +152,7 @@ private extension FilesFiltersView {
 
 // MARK: - Toolbar
 
-private extension FilesFiltersView {
+private extension FilterByTagsView {
 
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) { clearAllButton }
@@ -161,7 +163,7 @@ private extension FilesFiltersView {
 
 // MARK: - Buttons
 
-private extension FilesFiltersView {
+private extension FilterByTagsView {
     var applyButton: some View {
         Button {
             Task {
@@ -176,7 +178,7 @@ private extension FilesFiltersView {
         .buttonStyle(.borderedProminent)
         .controlSize(.large)
         .buttonBorderShape(.roundedRectangle(radius: 16))
-        .tint(Color(viewModel.accentColorProvider()))
+        .tint(wireAccentColor.color)
         .font(for: .buttonBig)
         .padding()
     }
@@ -206,5 +208,5 @@ private extension FilesFiltersView {
 }
 
 #Preview {
-    FilesFiltersView(viewModel: .preview())
+    FilterByTagsView(viewModel: .preview())
 }

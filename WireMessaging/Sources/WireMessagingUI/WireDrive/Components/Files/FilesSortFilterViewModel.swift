@@ -16,70 +16,70 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMessagingDomain
 import Foundation
+import WireMessagingDomain
 
 package final class FilesSortFilterViewModel: ObservableObject {
     enum QueryOptions: Hashable, Equatable {
         case sorting(Sorting)
         case filtering([Filtering])
-        
+
         struct Sorting: Hashable, Equatable {
             let sortKey: [SortKey]
             let sortOrder: [SortOrder]
-            
+
             struct SortOrder: Hashable, Equatable {
                 enum Order: Hashable, Equatable {
                     case ascending
                     case descending
                 }
-                
+
                 let order: Order
                 let isSelected: Bool
             }
-            
+
             struct SortKey: Hashable, Equatable {
                 enum Key: Hashable, Equatable {
                     case lastModified
                     case name
                     case size
                 }
-                
+
                 let key: Key
                 let isSelected: Bool
             }
         }
-        
+
         enum Filtering: Hashable, Equatable {
             case tags([Tag])
             case type
             case conversation([Conversation])
             case owner([Owner])
-            
+
             struct Tag: Hashable, Equatable {
                 let name: String
                 let isSelected: Bool
             }
-            
+
             struct Conversation: Hashable, Equatable {
                 let name: String
                 let isSelected: Bool
             }
-            
+
             struct Owner: Hashable, Equatable {
                 let name: String
                 let isSelected: Bool
             }
         }
     }
-    
+
     struct Model {
         let operation: Operation
         let hidden: Bool
     }
-    
+
     @Published var queryOptions: [QueryOptions]
-    
+
     init() {
         let sorting: QueryOptions.Sorting = .init(
             sortKey: [
@@ -92,20 +92,20 @@ package final class FilesSortFilterViewModel: ObservableObject {
                 .init(order: .descending, isSelected: false)
             ]
         )
-        
+
         let filtering: [QueryOptions.Filtering] = [
             .tags([]),
             .conversation([])
         ]
-        
+
         self.queryOptions = [
             .sorting(sorting),
             .filtering(filtering)
         ]
     }
-    
+
     // MARK: UI
-    
+
     func title(for sortKey: QueryOptions.Sorting.SortKey.Key) -> String {
         switch sortKey {
         case .lastModified:
@@ -116,7 +116,7 @@ package final class FilesSortFilterViewModel: ObservableObject {
             "Size"
         }
     }
-    
+
     func title(for sortOrder: QueryOptions.Sorting.SortOrder.Order) -> String {
         switch sortOrder {
         case .ascending:
@@ -125,7 +125,7 @@ package final class FilesSortFilterViewModel: ObservableObject {
             "Descending"
         }
     }
-    
+
     func title(for filtering: QueryOptions.Filtering) -> String {
         switch filtering {
         case .tags:
@@ -138,10 +138,10 @@ package final class FilesSortFilterViewModel: ObservableObject {
             "Owner name"
         }
     }
-    
+
     func title(for sorting: QueryOptions.Sorting) -> String {
         let sortingKey = sorting.sortKey.first(where: \.isSelected)?.key
         return title(for: sortingKey ?? .lastModified)
     }
-    
+
 }

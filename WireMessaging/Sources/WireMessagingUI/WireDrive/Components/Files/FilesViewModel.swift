@@ -100,7 +100,7 @@ package final class FilesViewModel: ObservableObject {
         case moveToFolder(fileItem: FilesViewItem)
         case renameFile(view: FileRenameView)
         case create(view: CreateFileView)
-        case filters(view: FilesFiltersView)
+        case filters(view: FilterByTagsView)
         case versionHistory(view: FileVersioningView)
 
         var id: String {
@@ -428,10 +428,9 @@ package final class FilesViewModel: ObservableObject {
     }
 
     func openFilters() {
-        let filesFiltersViewModel = FilesFiltersViewModel(
+        let filesFiltersViewModel = FilterByTagsView.ViewModel(
             fetchTagsUseCase: useCases.getTagSuggestions,
-            savedTags: filterWithTags,
-            accentColorProvider: accentColorProvider
+            savedTags: filterWithTags
         )
 
         filesFiltersViewModel.$savedTags
@@ -442,7 +441,7 @@ package final class FilesViewModel: ObservableObject {
             }.store(in: &subscriptions)
 
         sheetNavigation = .filters(
-            view: FilesFiltersView(viewModel: filesFiltersViewModel)
+            view: FilterByTagsView(viewModel: filesFiltersViewModel)
         )
     }
 
