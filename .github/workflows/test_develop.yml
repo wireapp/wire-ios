@@ -14,7 +14,7 @@ jobs:
   trigger_tests:
     strategy:
       matrix:
-        branch: [develop, release/cycle-4.14, release/cycle-4.15]  # List other branches here
+        branch: [develop, release/cycle-4.15]  # List other branches here
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: true
