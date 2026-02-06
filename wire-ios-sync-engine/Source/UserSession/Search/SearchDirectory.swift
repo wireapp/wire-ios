@@ -21,7 +21,6 @@ import Foundation
 @objcMembers
 public class SearchDirectory: NSObject {
 
-    let searchContext: NSManagedObjectContext
     let contextProvider: ContextProvider
     let transportSession: TransportSessionType
     private let apiVersion: WireTransport.APIVersion?
@@ -39,7 +38,6 @@ public class SearchDirectory: NSObject {
 
     public convenience init(userSession: ZMUserSession) {
         self.init(
-            searchContext: userSession.searchManagedObjectContext,
             contextProvider: userSession,
             transportSession: userSession.transportSession,
             searchUsersCache: userSession.searchUsersCache,
@@ -50,7 +48,6 @@ public class SearchDirectory: NSObject {
     }
 
     init(
-        searchContext: NSManagedObjectContext,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
@@ -58,7 +55,6 @@ public class SearchDirectory: NSObject {
         refreshConversationsMissingMetadataAction: RecurringAction,
         apiVersion: WireTransport.APIVersion?
     ) {
-        self.searchContext = searchContext
         self.contextProvider = contextProvider
         self.transportSession = transportSession
         self.searchUsersCache = searchUsersCache
@@ -74,7 +70,6 @@ public class SearchDirectory: NSObject {
     public func perform(_ request: SearchRequest) -> SearchTask {
         let task = SearchTask(
             task: .search(searchRequest: request),
-            searchContext: searchContext,
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
@@ -96,7 +91,6 @@ public class SearchDirectory: NSObject {
     public func lookup(qualifiedID: QualifiedID) -> SearchTask {
         let task = SearchTask(
             task: .lookup(qualifiedID: qualifiedID),
-            searchContext: searchContext,
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
