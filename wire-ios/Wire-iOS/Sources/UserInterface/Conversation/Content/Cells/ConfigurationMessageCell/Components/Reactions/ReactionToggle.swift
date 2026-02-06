@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 import WireSyncEngine
 
 // MARK: - ReactionToggle
@@ -40,13 +41,14 @@ final class ReactionToggle: UIControl {
     )
 
     private var onToggle: (() -> Void)?
-    private var accentColor: UIColor?
+    private var accentColor: WireAccentColor?
+    private var userSession: UserSession
     private var accentColorChangeHandler: AccentColorChangeHandler?
 
     var isToggled: Bool {
         didSet {
             guard oldValue != isToggled else { return }
-            updateAppearance()
+            updateAppearance(accentColor: accentColor)
         }
     }
 
@@ -56,10 +58,12 @@ final class ReactionToggle: UIControl {
         emoji: Emoji.ID,
         count: UInt,
         isToggled: Bool = false,
+        userSession: UserSession,
         onToggle: (() -> Void)? = nil
     ) {
         self.onToggle = onToggle
-        self.accentColor = ZMUserSession.shared()?.selfUser.accentColor
+        self.accentColor = userSession.selfUser.wireAccentColor
+        self.userSession = userSession
         self.isToggled = isToggled
 
         super.init(frame: .zero)
@@ -88,14 +92,14 @@ final class ReactionToggle: UIControl {
         layer.borderWidth = 1
         layer.masksToBounds = true
 
-        updateAppearance()
+        updateAppearance(accentColor: accentColor)
         addTarget(self, action: #selector(didToggle), for: .touchUpInside)
 
         setupAccessibility(
             value: emoji,
             count: count
         )
-        addAccentColorChangeObserver(userSession: ZMUserSession.shared())
+        addAccentColorChangeObserver(userSession: userSession)
     }
 
     @available(*, unavailable)
@@ -113,17 +117,16 @@ final class ReactionToggle: UIControl {
     private func addAccentColorChangeObserver(userSession: UserSession?) {
         guard accentColorChangeHandler == nil, let userSession else { return }
         accentColorChangeHandler = AccentColorChangeHandler
-            .addObserver(userSession: userSession) { [weak self] _ in
-                self?.updateAppearance()
+            .addObserver(userSession: userSession) { [weak self] color in
+                self?.updateAppearance(accentColor: color?.accentColor)
             }
     }
 
-    private func updateAppearance() {
-        accentColor = ZMUserSession.shared()?.selfUser.accentColor
+    private func updateAppearance(accentColor: WireAccentColor?) {
         if isToggled {
-            backgroundColor = accentColor?.withAlphaComponent(0.5) ?? ButtonColors.backgroundReactionSelected
-            layer.borderColor = accentColor?.cgColor ?? ButtonColors.reactionBorderSelected.cgColor
-            counterLabel.textColor = accentColor ?? SemanticColors.Label.textReactionCounterSelected
+            backgroundColor = ColorTheme.Base.primaryVariant(accentColor ?? .default)
+            layer.borderColor = ColorTheme.Base.primary(accentColor ?? .default).cgColor
+            counterLabel.textColor = SemanticColors.Label.textDefault
         } else {
             backgroundColor = ButtonColors.backroundReactionNormal
             layer.borderColor = ButtonColors.borderReactionNormal.cgColor
