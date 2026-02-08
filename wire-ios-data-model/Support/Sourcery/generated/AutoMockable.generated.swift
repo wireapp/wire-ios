@@ -4617,6 +4617,26 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         try await mock(groupID)
     }
 
+    // MARK: - commitPendingProposals
+
+    public var commitPendingProposalsInSkipRetry_Invocations: [(groupID: MLSGroupID, skipRetry: Bool)] = []
+    public var commitPendingProposalsInSkipRetry_MockError: Error?
+    public var commitPendingProposalsInSkipRetry_MockMethod: ((MLSGroupID, Bool) async throws -> Void)?
+
+    public func commitPendingProposals(in groupID: MLSGroupID, skipRetry: Bool) async throws {
+        commitPendingProposalsInSkipRetry_Invocations.append((groupID: groupID, skipRetry: skipRetry))
+
+        if let error = commitPendingProposalsInSkipRetry_MockError {
+            throw error
+        }
+
+        guard let mock = commitPendingProposalsInSkipRetry_MockMethod else {
+            fatalError("no mock for `commitPendingProposalsInSkipRetry`")
+        }
+
+        try await mock(groupID, skipRetry)
+    }
+
     // MARK: - updateKeyMaterialForAllStaleGroupsIfNeeded
 
     public var updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations: [Void] = []
