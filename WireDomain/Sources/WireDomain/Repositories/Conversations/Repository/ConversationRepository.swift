@@ -390,6 +390,13 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         return isSelfAnActiveMember
     }
 
+    public func clearPendingProposals(in groupID: WireDataModel.MLSGroupID) async {
+        await conversationsLocalStore.execute(identifier: groupID) { conversation, context in
+            conversation?.commitPendingProposalDate = nil
+            context.saveOrRollback()
+        }
+    }
+
     // MARK: - Private
 
     private func addSystemMessage(

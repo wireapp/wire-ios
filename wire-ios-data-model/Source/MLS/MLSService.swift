@@ -67,7 +67,6 @@ public final class MLSService: MLSServiceInterface {
     private weak var mlsSyncDelegate: (any MLSSyncDelegate)?
     private weak var resetBrokenMLSConversationDelegate: (any ResetBrokenMLSConversationDelegate)?
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
-    private var brokenGroupIDs: Set<MLSGroupID> = []
     private let localDomain: String?
 
     private var coreCrypto: SafeCoreCryptoProtocol {
@@ -1402,8 +1401,16 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Pending proposals
 
     public func commitPendingProposals(in groupID: MLSGroupID) async throws {
-        try await retryOnCommitFailure(for: groupID) { [weak self] in
-            try await self?.internalCommitPendingProposals(in: groupID)
+        try await commitPendingProposals(in: groupID, skipRetry: false)
+    }
+
+    public func commitPendingProposals(in groupID: MLSGroupID, skipRetry: Bool) async throws {
+        if skipRetry {
+            try await internalCommitPendingProposals(in: groupID)
+        } else {
+            try await retryOnCommitFailure(for: groupID) { [weak self] in
+                try await self?.internalCommitPendingProposals(in: groupID)
+            }
         }
     }
 
@@ -1442,19 +1449,9 @@ public final class MLSService: MLSServiceInterface {
 
     enum RecoveryStrategy: Equatable {
 
-        /// Perform a quick sync, then retry the action in its entirety.
+        /// Retry the action in its entirety.
         ///
-        /// Core Crypto can not automatically recover by itself. It needs
-        /// to process incoming handshake messages then generate a new commit.
-
-        case retryAfterQuickSync
-
-        /// Repair (re-join) the group and retry the action
-        ///
-        /// We may have missed a few commits so we will rejoin the group
-        /// and try again.
-
-        case retryAfterRepairingGroup
+        case retryAfterBackoff
 
         /// Add the missing users to the group, then retry the action in
         /// its entirety.
@@ -1488,10 +1485,8 @@ public final class MLSService: MLSServiceInterface {
             }
 
             switch error {
-            case .mlsClientMismatch, .mlsCommitMissingReferences:
-                self = .retryAfterQuickSync
-            case .mlsStaleMessage:
-                self = .retryAfterRepairingGroup
+            case .mlsClientMismatch, .mlsCommitMissingReferences, .mlsStaleMessage:
+                self = .retryAfterBackoff
             case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
                 self = .resetBrokenMLSConversation
             case let .groupOutOfSync(missingUsers):
@@ -1517,48 +1512,19 @@ public final class MLSService: MLSServiceInterface {
             try await operation()
         } catch let CoreCryptoError.Mls(.MessageRejected(reason: reason)) {
             switch RecoveryStrategy(from: reason) {
-            case .retryAfterQuickSync:
-                logger.warn(
-                    "failed to send commit, syncing then retrying operation...",
-                    attributes: logAttributes
-                )
-                try await mlsSyncDelegate?.recoverWithIncrementalSync()
-                logger.info(
-                    "sync finished, retrying operation...",
-                    attributes: logAttributes
-                )
+            case .retryAfterBackoff:
+                var attempt = 1
 
-                guard retryCount <= maxRetryAttempts else {
-                    // If MLS conversation reset is DISABLED we quarantine the group to avoid repeated commit attempts
-                    // otherwise assume that things will sort themselves out through conversation reset.
-                    let feature = await featureRepository.fetchAllowedGlobalOperations()
-                    if feature.status == .disabled || feature.config.mlsConversationReset == false {
-                        brokenGroupIDs.insert(groupID)
+                try await BackoffRetrier(policy: .init(maxRetries: 2), monitoringNetwork: false).retry { [logger] in
+                    defer {
+                        attempt += 1
                     }
-
-                    throw MLSRetryError.retryLimitReached
+                    logger.warn(
+                        "failed to send commit due to \(reason). retrying operation with backoff - attempt: \(attempt)...",
+                        attributes: logAttributes
+                    )
+                    try await operation()
                 }
-
-                var currentRetryCount = retryCount
-                currentRetryCount += 1
-
-                try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
-
-            case .retryAfterRepairingGroup:
-                logger.warn(
-                    "failed to send commit, repairing group then retrying operation...",
-                    attributes: logAttributes
-                )
-                await fetchAndRepairGroup(
-                    with: groupID,
-                    shouldPerformIncrementalSync: true
-                )
-
-                logger.info(
-                    "repair finished, retrying operation...",
-                    attributes: logAttributes
-                )
-                try await operation()
 
             case let .retryAfterAddingMissingUsers(missingUsers):
                 guard retryCount <= maxRetryAttempts else {
@@ -1601,7 +1567,6 @@ public final class MLSService: MLSServiceInterface {
                         "no need to apply recovery strategy for reset broken MLS conversation, FF is OFF",
                         attributes: logAttributes
                     )
-                    brokenGroupIDs.insert(groupID)
                     throw MLSRetryError.nonRecoverableError(reason)
                 }
 
@@ -1614,7 +1579,6 @@ public final class MLSService: MLSServiceInterface {
                     epoch = await fetchConversationInfo(with: groupID, in: context)?.epoch ?? 0
                 }
                 await resetBrokenMLSConversationDelegate?.didCatchBrokenMLSConversation(groupID: groupID, epoch: epoch)
-                brokenGroupIDs.remove(groupID)
 
             case .giveUp:
                 logger.warn(
