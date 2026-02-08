@@ -62,8 +62,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let featureConfigRepository: any FeatureConfigRepositoryProtocol
     private let pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol
     private let networkStatePublisher: AnyPublisher<NetworkState, Never>
-    private let incrementalSyncTaskManager = NonReentrantTaskManager()
-    private let initialSyncTaskManager = NonReentrantTaskManager()
+    private let incrementalSyncTaskManager = NonReentrantTaskManager<Void, any Error>()
+    private let initialSyncTaskManager = NonReentrantTaskManager<Void, any Error>()
     private var incrementalSyncToken: IncrementalSync.Token?
     private var ongoingSyncTask: Task<Void, Never>?
     private var cancellables: Set<AnyCancellable> = .init()
