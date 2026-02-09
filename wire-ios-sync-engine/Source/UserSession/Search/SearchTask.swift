@@ -99,9 +99,14 @@ public final class SearchTask {
 
             status = .started(taskGroup: taskGroup)
 
-            // search services
+            // search apps
             taskGroup.addTask {
-                try await self.performRemoteSearchForServices()
+                try await self.performRemoteSearchForApps()
+            }
+
+            // search bots
+            taskGroup.addTask {
+                try await self.performRemoteSearchForBots()
             }
 
             // search People or groups
@@ -669,7 +674,40 @@ extension SearchTask {
 
 extension SearchTask {
 
-    func performRemoteSearchForServices() async throws -> SearchResultAggregator {
+    private func performRemoteSearchForApps() async throws -> SearchResultAggregator {
+
+        guard
+            case let .search(searchRequest) = type,
+            !searchRequest.searchOptions.contains(.localResultsOnly),
+            searchRequest.searchOptions.contains(.apps)
+        else {
+            return { _ in }
+        }
+
+        let viewContext = contextProvider.viewContext
+        // TODO: search for apps
+        try await searchAPI.searchContacts(
+            query: <#T##String#>,
+            domain: <#T##String#>,
+            type: .app
+        )
+
+        let partialResult = SearchResult(
+            context: viewContext,
+            contacts: [],
+            teamMembers: [],
+            directory: [],
+            conversations: [],
+            apps: [],
+            bots: [],
+            searchUsersCache: searchUsersCache
+        )
+
+        return { $0 = $0.union(withAppsResult: partialResult) }
+
+    }
+
+    func performRemoteSearchForBots() async throws -> SearchResultAggregator {
 
         let searchContext = contextProvider.newBackgroundContext()
         let teamIdentifier = await searchContext.perform {
@@ -735,7 +773,7 @@ extension SearchTask {
             }
         }
 
-        return { $0 = $0.union(withBotResult: partialResult) }
+        return { $0 = $0.union(withBotsResult: partialResult) }
     }
 
 }

@@ -161,15 +161,28 @@ extension SearchResult {
         )
     }
 
-    func union(withBotResult result: SearchResult) -> SearchResult {
+    func union(withAppsResult result: SearchResult) -> SearchResult {
         SearchResult(
             context: context,
             contacts: contacts,
             teamMembers: teamMembers,
             directory: directory,
             conversations: conversations,
-            apps: result.apps,
-            bots: result.bots,
+            apps: apps + result.apps,
+            bots: bots,
+            searchUsersCache: searchUsersCache
+        )
+    }
+
+    func union(withBotsResult result: SearchResult) -> SearchResult {
+        SearchResult(
+            context: context,
+            contacts: contacts,
+            teamMembers: teamMembers,
+            directory: directory,
+            conversations: conversations,
+            apps: apps,
+            bots: bots + result.bots,
             searchUsersCache: searchUsersCache
         )
     }

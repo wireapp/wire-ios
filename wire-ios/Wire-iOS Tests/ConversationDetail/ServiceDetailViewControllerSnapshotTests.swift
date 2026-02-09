@@ -32,6 +32,7 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     @MainActor
     override func setUp() async throws {
         try await super.setUp()
+
         snapshotHelper = SnapshotHelper()
         bot = .createBot(name: "AppUser")
         groupConversation = createGroupConversation()
