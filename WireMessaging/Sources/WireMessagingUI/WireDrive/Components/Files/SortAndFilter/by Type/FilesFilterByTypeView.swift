@@ -24,7 +24,17 @@ struct FilesFilterByTypeView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.dismiss) private var dismiss
     
-    @StateObject package var viewModel: ViewModel = .init()
+    @StateObject package var viewModel: ViewModel
+    
+    let onApply: (Set<FileType>) -> ()
+    
+    package init(
+        selectedTypes: some Collection<FileType>,
+        onApply: @escaping (Set<FileType>) -> ()
+    ) {
+        self.onApply = onApply
+        self._viewModel = .init(wrappedValue: .init(selectedTypes: selectedTypes))
+    }
     
     var body: some View {
         Text("Hello, World!")
@@ -46,7 +56,7 @@ private extension FilesFilterByTypeView {
     var saveButton: some View {
         Button {
             Task {
-                //onApply(viewModel.selectedTags)
+                onApply(viewModel.selectedTypes)
                 dismiss()
             }
         } label: {
@@ -64,7 +74,7 @@ private extension FilesFilterByTypeView {
             Text(Strings.Filter.removeFilter)
         }
         .accessibilityIdentifier("removeFilterButton")
-        //.disabled(viewModel.selectedTags.isEmpty)
+        .disabled(viewModel.selectedTypes.isEmpty)
     }
 
     var closeButton: some View {
@@ -79,5 +89,8 @@ private extension FilesFilterByTypeView {
 }
 
 #Preview {
-    FilesFilterByTypeView()
+    FilesFilterByTypeView(
+        selectedTypes: [.audio, .video],
+        onApply: { types in }
+    )
 }
