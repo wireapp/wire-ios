@@ -262,7 +262,7 @@ extension ProfileImageSize: CustomDebugStringConvertible {
     }
 }
 
-extension ZMUser: ServiceUser {
+extension ZMUser: Bot {
     @NSManaged public var providerIdentifier: String?
     @NSManaged public var serviceIdentifier: String?
 }

@@ -31,7 +31,8 @@ public struct ServiceUserData: Equatable {
     }
 }
 
-extension ServiceUser {
+extension Bot {
+
     var serviceUserData: ServiceUserData? {
         guard let providerIdentifier,
               let serviceIdentifier,
@@ -142,7 +143,7 @@ private extension ServiceUserData {
     }
 }
 
-public extension ServiceUser {
+public extension Bot {
 
     func fetchProvider(in userSession: ZMUserSession, completion: @escaping (ServiceProvider?) -> Void) {
         guard let serviceUserData else {
@@ -300,12 +301,12 @@ extension AddBotError {
 public extension ZMConversation {
 
     func add(
-        serviceUser: ServiceUser,
+        bot: any Bot,
         in userSession: ZMUserSession,
         completionHandler: @escaping (Result<Void, Error>) -> Void
     ) {
-        guard let serviceUserData = serviceUser.serviceUserData else {
-            fatal("Not a service user")
+        guard let serviceUserData = bot.serviceUserData else {
+            fatal("Not a bot")
         }
 
         add(serviceUser: serviceUserData, in: userSession, completionHandler: completionHandler)

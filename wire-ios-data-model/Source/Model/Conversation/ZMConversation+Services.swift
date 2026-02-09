@@ -19,13 +19,14 @@
 import Foundation
 
 public extension ZMConversation {
+
     class func existingConversation(
         in moc: NSManagedObjectContext,
-        service: ServiceUser,
+        bot: any Bot,
         team: Team?
     ) -> ZMConversation? {
         guard let team else { return nil }
-        guard let serviceID = service.serviceIdentifier else { return nil }
+        guard let serviceID = bot.serviceIdentifier else { return nil }
         let sameTeam = predicateForConversations(in: team)
         let groupConversation = NSPredicate(
             format: "%K == %d",
@@ -61,4 +62,5 @@ public extension ZMConversation {
 
         return result.first as? ZMConversation
     }
+
 }

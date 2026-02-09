@@ -40,9 +40,9 @@ public struct SearchResult {
 
     public var conversations: [ZMConversation]
 
-    public var apps: [ServiceUser]
+    public var apps: [any Bot] // TODO: different type!
 
-    public var bots: [ServiceUser]
+    public var bots: [any Bot]
 
     /// Cache for search users.
 

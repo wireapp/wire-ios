@@ -184,7 +184,7 @@ private extension UserType {
     var userIdentifier: UUID? {
         if let user = self as? ZMUser {
             return user.remoteIdentifier
-        } else if let user = self as? ServiceUser {
+        } else if let user = self as? any Bot {
             return user.userIdentifier
         }
 

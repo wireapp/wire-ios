@@ -44,7 +44,7 @@ class ParticipantRoleTests: ZMBaseManagedObjectTest {
     func testThatServicesBelongToOneToOneConversations() throws {
         // GIVEN
         let selfUser = ZMUser.selfUser(in: uiMOC)
-        let service = createService(in: uiMOC, named: "Bob the Robot")
+        let bot = createBot(in: uiMOC, named: "Bob the Robot")
 
         let team = Team.insertNewObject(in: uiMOC)
         team.remoteIdentifier = UUID.create()
@@ -54,11 +54,11 @@ class ParticipantRoleTests: ZMBaseManagedObjectTest {
         conversation.conversationType = .group
         conversation.team = team
 
-        let serviceUser = try XCTUnwrap(service as? ZMUser)
-        conversation.oneOnOneUser = serviceUser
+        let botUser = try XCTUnwrap(bot as? ZMUser)
+        conversation.oneOnOneUser = botUser
 
         // WHEN
-        conversation.addParticipantAndUpdateConversationState(user: serviceUser, role: nil)
+        conversation.addParticipantAndUpdateConversationState(user: botUser, role: nil)
         conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
 
         // THEN

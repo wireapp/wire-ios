@@ -27,7 +27,7 @@ public protocol BotSearchResult: Bot {
     var summary: String? { get }
 }
 
-public typealias ServiceUser = Bot
+// TODO: delete
 public typealias SearchServiceUser = BotSearchResult
 
 extension ZMUser {

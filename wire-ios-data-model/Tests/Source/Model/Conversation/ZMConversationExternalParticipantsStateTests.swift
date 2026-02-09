@@ -226,8 +226,8 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
                 conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
 
             case .service:
-                let service = createService(in: uiMOC, named: "Bob the Robot")
-                conversation.addParticipantAndUpdateConversationState(user: service as! ZMUser, role: nil)
+                let bot = createBot(in: uiMOC, named: "Bob the Robot")
+                conversation.addParticipantAndUpdateConversationState(user: bot as! ZMUser, role: nil)
 
             case .external:
                 let external = createExternal(in: uiMOC)
