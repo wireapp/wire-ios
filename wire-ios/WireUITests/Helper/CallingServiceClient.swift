@@ -221,7 +221,7 @@ final class CallingServiceClient {
         }
     }
 
-    /// fetch callingService instance status
+    /// Fetch callingService instance status
     /// - Parameter instanceId
     /// - Returns: instance id and status
     func getInstanceStatus(instanceIds: [String]) async throws -> [CallingServiceInstance] {
