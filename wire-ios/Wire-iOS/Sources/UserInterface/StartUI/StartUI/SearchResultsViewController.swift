@@ -108,7 +108,8 @@ enum SearchResultsViewControllerSection: Int {
     case teamMembers
     case conversations
     case directory
-    case services
+    // TODO: apps?
+    case bots
     case federation
 }
 
@@ -179,7 +180,7 @@ final class SearchResultsViewController: UIViewController {
     }()
 
     let appsSection: SearchAppsSectionController
-    let servicesSection: SearchServicesSectionController
+    let botsSection: SearchBotsSectionController
     // TODO: [WPB-20362] add apps section?
     let inviteTeamMemberSection: InviteTeamMemberSection
 
@@ -227,7 +228,7 @@ final class SearchResultsViewController: UIViewController {
         teamMemberAndContactsSection.selection = userSelection
         teamMemberAndContactsSection.title = L10n.Localizable.Peoplepicker.Header.contacts
         self.appsSection = SearchAppsSectionController()
-        self.servicesSection = SearchServicesSectionController(
+        self.botsSection = SearchBotsSectionController(
             canSelfUserManageTeam: userSession.selfUser.canManageTeam
         )
         conversationsSection.title = team != nil ? L10n.Localizable.Peoplepicker.Header
@@ -241,7 +242,7 @@ final class SearchResultsViewController: UIViewController {
         directorySection.delegate = self
         topPeopleSection.delegate = self
         conversationsSection.delegate = self
-        servicesSection.delegate = self
+        botsSection.delegate = self
         inviteTeamMemberSection.delegate = self
         federationSection.delegate = self
     }
@@ -342,7 +343,7 @@ final class SearchResultsViewController: UIViewController {
         case (.apps, _):
             sections = [appsSection]
         case (.bots, _):
-            sections = [servicesSection]
+            sections = [botsSection]
         case (.people, true):
             switch (mode, team != nil) {
             case (.search, false):
@@ -419,7 +420,7 @@ final class SearchResultsViewController: UIViewController {
 
         directorySection.suggestions = searchResult.directory.filter { !$0.isFederated }
         conversationsSection.groupConversations = searchResult.conversations
-        servicesSection.services = searchResult.bots
+        botsSection.bots = searchResult.bots
         federationSection.users = searchResult.directory.filter(\.isFederated)
 
         sectionController.collectionView?.reloadData()
@@ -436,8 +437,8 @@ final class SearchResultsViewController: UIViewController {
             .conversations
         } else if controller === directorySection {
             .directory
-        } else if controller === servicesSection {
-            .services
+        } else if controller === botsSection {
+            .bots
         } else if controller === federationSection {
             .federation
         } else {
@@ -496,8 +497,8 @@ extension SearchResultsViewController: InviteTeamMemberSectionDelegate {
     }
 }
 
-extension SearchResultsViewController: SearchServicesSectionDelegate {
-    func addServicesSectionDidRequestOpenServicesAdmin() {
+extension SearchResultsViewController: SearchBotsSectionDelegate {
+    func addBotsSectionDidRequestOpenBotsAdmin() {
         URL.manageTeam(source: .settings).open(from: self)
     }
 }

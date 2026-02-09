@@ -16,12 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-
-final class SearchAppsSectionController: SearchSectionController {
-
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        0 // TODO: fix
-    }
-
+protocol SearchBotsSectionDelegate: SearchSectionControllerDelegate {
+    func addBotsSectionDidRequestOpenBotsAdmin()
 }
