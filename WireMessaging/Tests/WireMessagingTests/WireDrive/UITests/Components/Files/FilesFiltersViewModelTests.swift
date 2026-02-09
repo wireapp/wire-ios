@@ -28,15 +28,14 @@ import WireMessagingDomain
 final class FilesFiltersViewModelTests {
 
     private let nodesRepository = MockWireDriveNodesRepositoryProtocol()
-    private let sut: FilesFiltersViewModel!
+    private let sut: FilterByTagsView.ViewModel!
 
     init() {
         let nodesApi = MockNodesAPIProtocol()
         nodesApi.getAllTags_MockMethod = { mockTags }
-        self.sut = FilesFiltersViewModel(
+        self.sut = FilterByTagsView.ViewModel(
             fetchTagsUseCase: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesApi),
-            savedTags: [Scaffolding.savedTag],
-            accentColorProvider: { .default }
+            selectedTags: [Scaffolding.savedTag]
         )
     }
 
@@ -46,19 +45,7 @@ final class FilesFiltersViewModelTests {
         await sut.fetch()
 
         // then
-        #expect(sut.presentedTags.map(\.name) == Scaffolding.expectedTagsFirstBatch)
-    }
-
-    @Test
-    func morePresentedTags() async throws {
-        // given
-        await sut.fetch()
-
-        // when
-        sut.showMore()
-
-        // then
-        #expect(sut.presentedTags.map(\.name) == Scaffolding.expectedTagsSecondBatch)
+        #expect(sut.presentedTags == Scaffolding.expectedTags)
     }
 
     @Test
@@ -81,16 +68,7 @@ final class FilesFiltersViewModelTests {
 
         // then
         let presentedTags = [sut.presentedTags[0], sut.presentedTags[1]]
-        #expect(sut.selectedTags == presentedTags)
-    }
-
-    @Test
-    func hasMore() async throws {
-        // when
-        await sut.fetch()
-
-        // then
-        #expect(sut.hasMore)
+        #expect(sut.selectedTags == Set(presentedTags))
     }
 
     @Test
@@ -109,9 +87,7 @@ final class FilesFiltersViewModelTests {
     }
 
     private enum Scaffolding {
-        static let batchCount = 7
-        static let expectedTagsFirstBatch = Array(mockTags.filter { !$0.isEmpty }.prefix(batchCount))
-        static let expectedTagsSecondBatch = Array(mockTags.filter { !$0.isEmpty }.prefix(batchCount * 2))
+        static let expectedTags = Array(mockTags.filter { !$0.isEmpty })
         static let savedTag = "Urgent"
         static let selectedTag = "Marketing"
     }

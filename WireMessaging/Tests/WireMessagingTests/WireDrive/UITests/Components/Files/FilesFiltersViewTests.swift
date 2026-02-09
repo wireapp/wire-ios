@@ -51,7 +51,7 @@ final class FilesFiltersViewTests: XCTestCase {
     @MainActor
     func testFilterTagsEmptyTags() async {
         let viewModel = await makeViewModel(tags: [])
-        let view = FilterByTagsView(viewModel: viewModel)
+        let view = FilterByTagsView(viewModel: viewModel) { tags in }
             .frame(width: 375, height: 667)
 
         snapshotHelper
@@ -65,7 +65,7 @@ final class FilesFiltersViewTests: XCTestCase {
     @MainActor
     func testFilterTagsLimitedItems() async {
         let viewModel = await makeViewModel(tags: Array(mockTags.prefix(7)))
-        let view = FilterByTagsView(viewModel: viewModel)
+        let view = FilterByTagsView(viewModel: viewModel) { tags in }
             .frame(width: 375, height: 667)
 
         snapshotHelper
@@ -83,27 +83,8 @@ final class FilesFiltersViewTests: XCTestCase {
             savedTags: [mockTags[2], mockTags[4], mockTags[6]]
         )
 
-        let view = FilterByTagsView(viewModel: viewModel)
+        let view = FilterByTagsView(viewModel: viewModel) { tags in }
             .frame(width: 375, height: 667)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
-    @MainActor
-    func testFilterTagsMoreItemsLoaded() async {
-        let viewModel = await makeViewModel(
-            tags: mockTags
-        )
-
-        let view = FilterByTagsView(viewModel: viewModel)
-            .frame(width: 375, height: 667)
-
-        viewModel.showMore()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -117,13 +98,12 @@ final class FilesFiltersViewTests: XCTestCase {
     private func makeViewModel(
         tags: [String],
         savedTags: [String] = []
-    ) async -> FilesFiltersViewModel {
+    ) async -> FilterByTagsView.ViewModel {
         nodesAPI.getAllTags_MockMethod = { tags }
 
-        let viewModel = FilesFiltersViewModel(
+        let viewModel = FilterByTagsView.ViewModel(
             fetchTagsUseCase: fetchTagsUseCase,
-            savedTags: savedTags,
-            accentColorProvider: { .default }
+            selectedTags: savedTags
         )
 
         await viewModel.fetch()
