@@ -56,7 +56,6 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             .conversationId: conversationID.id.safeForLoggingDescription,
             .nonce: UUID(uuidString: message.messageID) ?? "<nil>"
         ]
-        WireLogger.eventProcessing.debug("Processing:\n\(message)")
         WireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
 
         // Message content types: https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages

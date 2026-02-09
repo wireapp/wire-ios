@@ -17,10 +17,17 @@
 //
 
 import Foundation
+import WireDataModel
 
-// sourcery: AutoMockable
-public protocol MLSSyncDelegate: AnyObject {
+/// An extension that encapsulates storage operations related to "Wire Drive" enabled conversations.
 
-    func recoverWithIncrementalSync() async throws
+public extension ConversationLocalStore {
 
+    func fetchDriveConversations() async -> [ZMConversation] {
+        await context.perform { [self] in
+            ZMConversation.fetchDriveConversations(
+                in: context
+            )
+        }
+    }
 }

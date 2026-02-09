@@ -16,21 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+import Foundation
+import WireAuthenticationAPI
 
-public enum WireDriveNodeConversationRepositoryError: Error {
-    case cellNameNotFound
-    case genericError(any Error)
+extension MockDependencies: ValidateSSOCodeUseCaseFactory {
+
+    func validateSSOCodeUseCase() -> any ValidateSSOCodeUseCaseProtocol {
+        MockValidateSSOCodeUseCase()
+    }
+
 }
 
-public protocol WireDriveNodeConversationRepository {
-    func getCellName(conversationID: QualifiedID) async throws(WireDriveNodeConversationRepositoryError)
-        -> String
+struct MockValidateSSOCodeUseCase: ValidateSSOCodeUseCaseProtocol {
 
-    func setWireCell(
-        conversationID: QualifiedID,
-        cellName: String
-    ) async throws(WireDriveNodeConversationRepositoryError)
+    func invoke(ssoCode: String) throws -> UUID {
+        UUID()
+    }
 
-    func getConversationNames() async throws(WireDriveNodeConversationRepositoryError) -> [WireDriveConversation]
 }
