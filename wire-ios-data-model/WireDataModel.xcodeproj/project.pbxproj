@@ -90,6 +90,7 @@
 		012C016C2F3A8E4F004A4957 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Resources/Info.plist,
 				TestPlans/AllTests.xctestplan,
 				TestPlans/SecurityTests.xctestplan,
 				WireDataModelTestTarget/AppDelegate.m,
@@ -773,7 +774,8 @@
 			baseConfigurationReferenceAnchor = 012CEC7C2F3A85E9004A4957 /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/ios-test-target.xcconfig";
 			buildSettings = {
-				INFOPLIST_FILE = "$(SRCROOT)/Tests/Resources/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDataModelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Tests/Resources/Test-Bridging-Header.h";
@@ -786,7 +788,8 @@
 			baseConfigurationReferenceAnchor = 012CEC7C2F3A85E9004A4957 /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/ios-test-target.xcconfig";
 			buildSettings = {
-				INFOPLIST_FILE = "$(SRCROOT)/Tests/Resources/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDataModelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Tests/Resources/Test-Bridging-Header.h";
