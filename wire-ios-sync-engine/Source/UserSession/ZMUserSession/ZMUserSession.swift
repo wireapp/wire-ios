@@ -424,6 +424,7 @@ public final class ZMUserSession: NSObject {
     private let networkReachability = NetworkReachability()
     private var networkInterfaceSwitchCancellable: AnyCancellable?
     private var isNetworkReachableCancellable: AnyCancellable?
+    private var liveMLSBrokenGroupsCancellable: AnyCancellable?
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Initialize
@@ -621,6 +622,8 @@ public final class ZMUserSession: NSObject {
             )
         )
         self.clientSessionComponent = clientSessionComponent
+        liveMLSBrokenGroupsCancellable = clientSessionComponent.setupLiveMLSBrokenGroups()
+
         if let syncStateSubject = self.clientSessionComponent?.syncStateSubject {
             observeSyncStateForAVS(syncStateSubject: syncStateSubject)
         }
@@ -641,7 +644,6 @@ public final class ZMUserSession: NSObject {
         self.syncAgent = syncAgent
         syncAgent.delegate = self
 
-        mlsService.setSyncDelegate(syncAgent)
         mlsService.setResetBrokenMLSConversationDelegate(clientSessionComponent.initiateResetMLSConversationUseCase)
 
         // Finish setting up the final strategies.
@@ -683,6 +685,7 @@ public final class ZMUserSession: NSObject {
             }.store(in: &cancellables)
             // Initialize the generator to enqueue repair work item if needed
             clientSessionComponent.repairFaultyMLSRemovalKeysGenerator.submitWorkItemIfNeeded()
+
         }
     }
 
