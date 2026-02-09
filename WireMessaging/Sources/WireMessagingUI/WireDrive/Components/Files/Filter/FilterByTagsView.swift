@@ -84,7 +84,7 @@ private extension FilterByTagsView {
                 Spacer()
             }
 
-            FlowLayout(spacing: 16, alignment: .leading) {
+            FlowLayout(spacing: 14, alignment: .leading) {
                 ForEach(viewModel.presentedTags, id: \.self) { tag in
                     TagPill(
                         text: tag,
@@ -96,6 +96,7 @@ private extension FilterByTagsView {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .animation(.easeInOut.speed(1.5), value: viewModel.selectedTags)
 
             Divider()
         }
@@ -109,32 +110,38 @@ private extension FilterByTagsView {
         let isSelected: Bool
 
         var body: some View {
-            Text(text)
-                .foregroundStyle(
-                    isSelected
-                        ? ColorTheme.Base.primary(wireAccentColor).color
-                        : ColorTheme.Backgrounds.onSurface.color
-                )
-                .font(for: .h4)
-                .fontWeight(.semibold)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(
-                    isSelected
-                        ? ColorTheme.Base.primaryVariant(wireAccentColor).color
-                        : ColorTheme.Backgrounds.surface.color
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(
-                            isSelected
-                                ? ColorTheme.Base.primary(wireAccentColor).color
-                                : .clear,
-                            lineWidth: 1
-                        )
-                )
-                .shadow(color: Color.black.opacity(0.05), radius: 1, y: 1)
+            HStack(spacing: 6) {
+                Text(text)
+                
+                if isSelected {
+                    Image(systemName: "xmark")
+                }
+            }
+            .foregroundStyle(
+                isSelected
+                    ? ColorTheme.Base.primary(wireAccentColor).color
+                    : ColorTheme.Backgrounds.onSurface.color
+            )
+            .font(for: .h4)
+            .fontWeight(.semibold)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(
+                isSelected
+                    ? ColorTheme.Base.primaryVariant(wireAccentColor).color
+                    : ColorTheme.Backgrounds.surface.color
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(
+                        isSelected
+                            ? ColorTheme.Base.primary(wireAccentColor).color
+                            : .clear,
+                        lineWidth: 1
+                    )
+            )
+            .shadow(color: Color.black.opacity(0.05), radius: 1, y: 1)
         }
     }
 }
