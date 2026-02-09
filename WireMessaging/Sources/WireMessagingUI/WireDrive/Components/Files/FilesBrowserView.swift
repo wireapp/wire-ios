@@ -90,8 +90,8 @@ package struct FilesBrowserView: FilesViewProtocol {
             } content: { navigationItem in
                 switch navigationItem {
                 case .filterByTagsOld:
-                    FilterByTagsView(
-                        viewModel: FilterByTagsView.ViewModel(
+                    FilesFilterByTagsView(
+                        viewModel: FilesFilterByTagsView.ViewModel(
                             fetchTagsUseCase: viewModel.useCases.getTagSuggestions,
                             selectedTags: viewModel.filterWithTags
                         ),

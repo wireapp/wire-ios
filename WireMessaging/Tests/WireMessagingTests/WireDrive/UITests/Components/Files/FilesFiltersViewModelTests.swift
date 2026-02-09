@@ -28,12 +28,12 @@ import WireMessagingDomain
 final class FilesFiltersViewModelTests {
 
     private let nodesRepository = MockWireDriveNodesRepositoryProtocol()
-    private let sut: FilterByTagsView.ViewModel!
+    private let sut: FilesFilterByTagsView.ViewModel!
 
     init() {
         let nodesApi = MockNodesAPIProtocol()
         nodesApi.getAllTags_MockMethod = { mockTags }
-        self.sut = FilterByTagsView.ViewModel(
+        self.sut = FilesFilterByTagsView.ViewModel(
             fetchTagsUseCase: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesApi),
             selectedTags: [Scaffolding.savedTag]
         )

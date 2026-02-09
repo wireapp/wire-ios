@@ -51,7 +51,7 @@ final class FilesFiltersViewTests: XCTestCase {
     @MainActor
     func testFilterTagsEmptyTags() async {
         let viewModel = await makeViewModel(tags: [])
-        let view = FilterByTagsView(viewModel: viewModel) { tags in }
+        let view = FilesFilterByTagsView(viewModel: viewModel) { tags in }
             .frame(width: 375, height: 667)
 
         snapshotHelper
@@ -65,7 +65,7 @@ final class FilesFiltersViewTests: XCTestCase {
     @MainActor
     func testFilterTagsLimitedItems() async {
         let viewModel = await makeViewModel(tags: Array(mockTags.prefix(7)))
-        let view = FilterByTagsView(viewModel: viewModel) { tags in }
+        let view = FilesFilterByTagsView(viewModel: viewModel) { tags in }
             .frame(width: 375, height: 667)
 
         snapshotHelper
@@ -83,7 +83,7 @@ final class FilesFiltersViewTests: XCTestCase {
             savedTags: [mockTags[2], mockTags[4], mockTags[6]]
         )
 
-        let view = FilterByTagsView(viewModel: viewModel) { tags in }
+        let view = FilesFilterByTagsView(viewModel: viewModel) { tags in }
             .frame(width: 375, height: 667)
 
         snapshotHelper
@@ -98,10 +98,10 @@ final class FilesFiltersViewTests: XCTestCase {
     private func makeViewModel(
         tags: [String],
         savedTags: [String] = []
-    ) async -> FilterByTagsView.ViewModel {
+    ) async -> FilesFilterByTagsView.ViewModel {
         nodesAPI.getAllTags_MockMethod = { tags }
 
-        let viewModel = FilterByTagsView.ViewModel(
+        let viewModel = FilesFilterByTagsView.ViewModel(
             fetchTagsUseCase: fetchTagsUseCase,
             selectedTags: savedTags
         )

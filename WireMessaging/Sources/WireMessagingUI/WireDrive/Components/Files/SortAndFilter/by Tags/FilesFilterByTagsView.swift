@@ -23,7 +23,7 @@ import WireFoundation
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-struct FilterByTagsView: View {
+struct FilesFilterByTagsView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.dismiss) private var dismiss
     
@@ -72,7 +72,7 @@ struct FilterByTagsView: View {
 
 // MARK: - Tags
 
-private extension FilterByTagsView {
+private extension FilesFilterByTagsView {
     var tagsViewSpacing: CGFloat {
         viewModel.presentedTags.isEmpty ? 0 : 20
     }
@@ -106,7 +106,7 @@ private extension FilterByTagsView {
     }
 }
 
-private extension FilterByTagsView {
+private extension FilesFilterByTagsView {
     struct TagPill: View {
         @Environment(\.wireAccentColor) private var wireAccentColor
         
@@ -152,7 +152,7 @@ private extension FilterByTagsView {
 
 // MARK: - Toolbar
 
-private extension FilterByTagsView {
+private extension FilesFilterByTagsView {
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) { closeButton }
         ToolbarItem(placement: .topBarTrailing) { saveButton }
@@ -161,7 +161,7 @@ private extension FilterByTagsView {
 
 // MARK: - Buttons
 
-private extension FilterByTagsView {
+private extension FilesFilterByTagsView {
     var saveButton: some View {
         Button {
             Task {
@@ -198,5 +198,5 @@ private extension FilterByTagsView {
 }
 
 #Preview {
-    FilterByTagsView(viewModel: .preview()) { tags in }
+    FilesFilterByTagsView(viewModel: .preview()) { tags in }
 }
