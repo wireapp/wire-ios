@@ -49,6 +49,7 @@ public enum LogAttributesKey: String, Comparable, Sendable {
     case syncVersion = "sync_version"
     case workItemID = "work_item_id"
     case isNewClient = "is_new_client"
+    case timeInterval = "time_interval"
 
     public static func < (lhs: LogAttributesKey, rhs: LogAttributesKey) -> Bool {
         lhs.rawValue < rhs.rawValue
