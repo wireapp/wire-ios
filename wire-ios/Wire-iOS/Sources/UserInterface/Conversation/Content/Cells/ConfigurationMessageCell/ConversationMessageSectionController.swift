@@ -487,7 +487,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         func addReactions() {
             if !message.isSystem, !message.isEphemeral, message.hasReactions() {
-                let description = MessageReactionsCellDescription(message: message)
+                let description = MessageReactionsCellDescription(message: message, userSession: userSession)
                 cellDescriptions.append(AnyConversationMessageCellDescription(description))
             }
         }
