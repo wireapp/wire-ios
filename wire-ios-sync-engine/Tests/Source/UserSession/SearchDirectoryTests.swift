@@ -28,6 +28,8 @@ final class SearchDirectoryTests: DatabaseTest {
     private var mockCache: SearchUsersCache!
     private var mockTransport: MockTransportSession!
     private var searchAPIMock: MockSearchAPI!
+    private var teamsAPIMock: MockTeamsAPI!
+    private var usersAPIMock: MockUsersAPI!
 
     override func setUp() {
         super.setUp()
@@ -37,6 +39,8 @@ final class SearchDirectoryTests: DatabaseTest {
     }
 
     override func tearDown() {
+        usersAPIMock = nil
+        teamsAPIMock = nil
         searchAPIMock = nil
         mockCache = nil
         mockTransport = nil
@@ -70,7 +74,9 @@ final class SearchDirectoryTests: DatabaseTest {
             refreshUsersMissingMetadataAction: .dummy,
             refreshConversationsMissingMetadataAction: .dummy,
             apiVersion: apiVersion,
-            searchAPI: searchAPIMock
+            searchAPI: searchAPIMock,
+            teamsAPI: teamsAPIMock,
+            usersAPI: usersAPIMock
         )
     }
 

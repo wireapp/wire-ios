@@ -19,11 +19,11 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLogging
 import WireMainNavigationUI
 import WireMessagingDomain
 import WireReusableUIComponents
 import WireSyncEngine
-import WireLogging
 
 final class SearchUserViewController: UIViewController {
 
@@ -62,10 +62,15 @@ final class SearchUserViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        if let session = ZMUserSession.shared(), let searchAPI = session.clientSessionComponent?.searchAPI {
+        if let session = ZMUserSession.shared(),
+           let searchAPI = session.clientSessionComponent?.searchAPI,
+           let teamsAPI = session.clientSessionComponent?.teamsAPI,
+           let usersAPI = session.clientSessionComponent?.usersAPI {
             self.searchDirectory = SearchDirectory(
                 userSession: session,
-                searchAPI: searchAPI
+                searchAPI: searchAPI,
+                teamsAPI: teamsAPI,
+                usersAPI: usersAPI
             )
         }
 

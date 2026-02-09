@@ -53,6 +53,11 @@ public struct SearchUserAssetKeys {
     public let preview: String?
     public let complete: String?
 
+    public init(preview: String?, complete: String?) {
+        self.preview = preview
+        self.complete = complete
+    }
+
     init?(payload: [String: Any]) {
         if let assetsPayload = payload[ResponseKey.assets.rawValue] as? [[String: Any]], !assetsPayload.isEmpty {
             var previewKey: String?, completeKey: String?
@@ -476,6 +481,32 @@ public class ZMSearchUser: NSObject, UserType {
         }
     }
 
+    public convenience init(
+        viewContext: NSManagedObjectContext,
+        name: String,
+        handle: String?,
+        accentColor: ZMAccentColor?,
+        remoteIdentifier: UUID?,
+        domain: String? = nil,
+        teamIdentifier: UUID? = nil,
+        user existingUser: ZMUser? = nil,
+        searchUsersCache: SearchUsersCache?,
+        isDeleted: Bool
+    ) {
+        self.init(
+            viewContext: viewContext,
+            name: name,
+            handle: handle,
+            accentColor: accentColor,
+            remoteIdentifier: remoteIdentifier,
+            domain: domain,
+            teamIdentifier: teamIdentifier,
+            user: existingUser,
+            searchUsersCache: searchUsersCache
+        )
+        self.internalIsAccountDeleted = isDeleted
+    }
+
     @objc
     public required init(
         viewContext: NSManagedObjectContext,
@@ -532,7 +563,7 @@ public class ZMSearchUser: NSObject, UserType {
         )
     }
 
-    convenience init?(
+    convenience init?( // TODO: delete?
         from payload: [String: Any],
         contextProvider: ContextProvider,
         user: ZMUser? = nil,

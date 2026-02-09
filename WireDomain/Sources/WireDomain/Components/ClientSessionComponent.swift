@@ -159,7 +159,7 @@ public final class ClientSessionComponent {
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    private lazy var teamsAPI = TeamsAPIBuilder(
+    public private(set) lazy var teamsAPI = TeamsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -175,7 +175,7 @@ public final class ClientSessionComponent {
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
-    private lazy var usersAPI = UsersAPIBuilder(
+    public private(set) lazy var usersAPI = UsersAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 

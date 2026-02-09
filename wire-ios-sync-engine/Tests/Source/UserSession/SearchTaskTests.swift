@@ -17,8 +17,8 @@
 //
 
 import WireMockTransport
-import WireTransport
 import WireNetworkSupport
+import WireTransport
 import XCTest
 
 @testable import WireSyncEngine
@@ -30,6 +30,8 @@ final class SearchTaskTests: DatabaseTest {
     private var mockTransportSession: MockTransportSession!
     private var mockCache: SearchUsersCache!
     private var searchAPIMock: MockSearchAPI!
+    private var teamsAPIMock: MockTeamsAPI!
+    private var usersAPIMock: MockUsersAPI!
 
     override func setUp() {
         super.setUp()
@@ -52,6 +54,9 @@ final class SearchTaskTests: DatabaseTest {
     }
 
     override func tearDown() {
+        usersAPIMock = nil
+        teamsAPIMock = nil
+        searchAPIMock = nil
         teamIdentifier = nil
         mockTransportSession = nil
         mockCache = nil
@@ -1078,7 +1083,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request)
 
         // when
-        _ = await task.performRemoteSearchForServices()
+        _ = try await task.performRemoteSearchForServices()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
         // wait again to fix flaky test so second group is entered
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
@@ -1096,7 +1101,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request)
 
         // when
-        _ = await task.performRemoteSearchForServices()
+        _ = try await task.performRemoteSearchForServices()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1118,36 +1123,11 @@ final class SearchTaskTests: DatabaseTest {
 
         // when
         var result = SearchResult()
-        let resultAggregator = await task.performRemoteSearchForServices()
+        let resultAggregator = try await task.performRemoteSearchForServices()
         resultAggregator(&result)
 
         // then
         XCTAssertEqual(result.bots.first?.name, "Service A")
-    }
-
-    func testThatItTrimsThePrefixQuery() throws {
-        // when
-        let task = SearchTask.servicesSearchRequest(
-            teamIdentifier: teamIdentifier,
-            query: "Search query ",
-            apiVersion: .v0
-        )
-        // then
-        let components = URLComponents(url: task.URL, resolvingAgainstBaseURL: false)
-
-        XCTAssertEqual(components?.queryItems?.count, 1)
-        let queryItem = components?.queryItems?.first
-        XCTAssertEqual(queryItem?.name, "prefix")
-        XCTAssertEqual(queryItem?.value, "Search query")
-    }
-
-    func testThatItDoesNotAddPrefixQueryIfItIsEmpty() {
-        // when
-        let task = SearchTask.servicesSearchRequest(teamIdentifier: teamIdentifier, query: "", apiVersion: .v0)
-        // then
-        let components = URLComponents(url: task.URL, resolvingAgainstBaseURL: false)
-
-        XCTAssertNil(components?.queryItems)
     }
 
     // MARK: User lookup
@@ -1158,7 +1138,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(lookupUserId: userId)
 
         // when
-        _ = await task.performUserLookup()
+        _ = try await task.performUserLookup()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1172,7 +1152,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(lookupUserId: userId, domain: domain, apiVersion: .v2)
 
         // when
-        _ = await task.performUserLookup()
+        _ = try await task.performUserLookup()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1193,7 +1173,7 @@ final class SearchTaskTests: DatabaseTest {
 
         // when
         var result = SearchResult()
-        let resultAggregator = await task.performUserLookup()
+        let resultAggregator = try await task.performUserLookup()
         resultAggregator(&result)
 
         // then
@@ -1370,7 +1350,9 @@ final class SearchTaskTests: DatabaseTest {
             transportSession: mockTransportSession,
             searchUsersCache: mockCache,
             apiVersion: apiVersion,
-            searchAPI: searchAPIMock
+            searchAPI: searchAPIMock,
+            teamsAPI: teamsAPIMock,
+            usersAPI: usersAPIMock
         )
     }
 
@@ -1386,7 +1368,9 @@ final class SearchTaskTests: DatabaseTest {
             transportSession: mockTransportSession,
             searchUsersCache: mockCache,
             apiVersion: apiVersion,
-            searchAPI: searchAPIMock
+            searchAPI: searchAPIMock,
+            teamsAPI: teamsAPIMock,
+            usersAPI: usersAPIMock
         )
     }
 
