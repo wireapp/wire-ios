@@ -45,51 +45,51 @@ private enum UserNotificationHandlingError: Error {
 @objc
 extension SessionManager: UNUserNotificationCenterDelegate {
 
-    // Called by the OS when the app receieves a notification while in the
+    // Called by the OS when the app receives a notification while in the
     // foreground.
     public func userNotificationCenter(
         _ center: UNUserNotificationCenter,
-        willPresent notification: UNNotification,
-        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions)
-            -> Void
-    ) {
+        willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
         // route to user session
-        Task {
-            do {
-                let userSession = try await loadSession(userInfo: notification.userInfo)
+        do {
+            let userSession = try await loadSession(userInfo: notification.userInfo)
+            return await withCheckedContinuation { continuation in
                 userSession.userNotificationCenter(
                     center,
                     willPresent: notification,
-                    withCompletionHandler: completionHandler
+                    withCompletionHandler: { options in
+                        continuation.resume(returning: options)
+                    }
                 )
-            } catch {
-                WireLogger.notifications.error("Will present notification failed: \(error)")
-                completionHandler([])
             }
+        } catch {
+            WireLogger.notifications.error("Will present notification failed: \(error)")
+            return []
         }
     }
 
     // Called when the user engages a notification action.
     public func userNotificationCenter(
         _ center: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @escaping () -> Void
-    ) {
+        didReceive response: UNNotificationResponse
+    ) async {
         // Resume background task creation.
         BackgroundActivityFactory.shared.resume()
         // route to user session
-        Task { @MainActor in
-            do {
-                let userSession = try await loadSession(userInfo: response.notification.userInfo)
+        do {
+            let userSession = try await loadSession(userInfo: response.notification.userInfo)
+            await withCheckedContinuation { continuation in
                 userSession.userNotificationCenter(
                     center,
                     didReceive: response,
-                    withCompletionHandler: completionHandler
+                    withCompletionHandler: {
+                        continuation.resume()
+                    }
                 )
-            } catch {
-                WireLogger.notifications.error("Did receive notification response failed: \(error)")
-                completionHandler()
             }
+        } catch {
+            WireLogger.notifications.error("Did receive notification response failed: \(error)")
         }
     }
 
