@@ -137,7 +137,7 @@ extension MultipartMessageData.Attachment {
         let fileType = contentType.flatMap { UTType(mimeType: $0) }
         let fileURL = initialName.flatMap(URL.init(string:))
 
-        let icon = FileIcon.make(
+        let icon = FileType.make(
             type: fileType,
             fileExtension: fileURL?.pathExtension
         ).image

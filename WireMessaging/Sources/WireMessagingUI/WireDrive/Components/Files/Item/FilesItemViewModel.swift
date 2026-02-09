@@ -61,7 +61,7 @@ final class FilesItemViewModel: ObservableObject {
 
     let fileName: String
     let subtitle: String?
-    let icon: FileIcon
+    let icon: FileType
 
     let isBrowsing: Bool
     let isInRecycleBin: Bool

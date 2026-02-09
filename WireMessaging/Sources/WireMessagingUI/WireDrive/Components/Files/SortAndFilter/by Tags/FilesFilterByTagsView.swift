@@ -21,7 +21,6 @@ import WireDesign
 import WireFoundation
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
-private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct FilesFilterByTagsView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor

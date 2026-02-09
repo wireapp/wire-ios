@@ -42,21 +42,21 @@ final class WireDriveDocumentAttachmentPreviewTests: XCTestCase {
         let testCases: [(headerIcon: Image, headerText: String, labelText: String, progress: Double?, isError: Bool)] =
             [
                 (
-                    headerIcon: Image(FileIcon.pdf.resource),
+                    headerIcon: Image(FileType.pdf.resource),
                     headerText: "PDF (336 KB)",
                     labelText: "short file name",
                     progress: nil,
                     isError: false
                 ),
                 (
-                    headerIcon: Image(FileIcon.pdf.resource),
+                    headerIcon: Image(FileType.pdf.resource),
                     headerText: "PDF (336 KB)",
                     labelText: "this is a file with a medium name that wraps",
                     progress: 0.5,
                     isError: false
                 ),
                 (
-                    headerIcon: Image(FileIcon.pdf.resource),
+                    headerIcon: Image(FileType.pdf.resource),
                     headerText: "PDF (336 KB)",
                     labelText: "this is a file with a long name that wraps and doesn't fit into the two lines of text",
                     progress: 1,

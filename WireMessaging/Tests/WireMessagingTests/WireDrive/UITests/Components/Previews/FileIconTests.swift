@@ -24,68 +24,68 @@ import UniformTypeIdentifiers
 struct FileIconTests {
 
     @Test(arguments: [
-        (type: UTType.archive, expected: FileIcon.archive),
-        (type: UTType.audio, expected: FileIcon.audio),
-        (type: UTType.script, expected: FileIcon.code),
-        (type: UTType.sourceCode, expected: FileIcon.code),
-        (type: UTType.xml, expected: FileIcon.code),
-        (type: UTType.html, expected: FileIcon.code),
-        (type: UTType.json, expected: FileIcon.code),
-        (type: UTType.image, expected: FileIcon.image),
-        (type: UTType.pdf, expected: FileIcon.pdf),
-        (type: UTType.presentation, expected: FileIcon.presentation),
-        (type: UTType.spreadsheet, expected: FileIcon.spreadsheet),
-        (type: UTType.movie, expected: FileIcon.video),
-        (type: UTType.text, expected: FileIcon.other)
+        (type: UTType.archive, expected: FileType.archive),
+        (type: UTType.audio, expected: FileType.audio),
+        (type: UTType.script, expected: FileType.code),
+        (type: UTType.sourceCode, expected: FileType.code),
+        (type: UTType.xml, expected: FileType.code),
+        (type: UTType.html, expected: FileType.code),
+        (type: UTType.json, expected: FileType.code),
+        (type: UTType.image, expected: FileType.image),
+        (type: UTType.pdf, expected: FileType.pdf),
+        (type: UTType.presentation, expected: FileType.presentation),
+        (type: UTType.spreadsheet, expected: FileType.spreadsheet),
+        (type: UTType.movie, expected: FileType.video),
+        (type: UTType.text, expected: FileType.other)
     ])
-    func makeFileIconWithUTType(type: UTType, expectedIcon: FileIcon) {
-        #expect(FileIcon.make(type: type, fileExtension: nil) == expectedIcon)
+    func makeFileIconWithUTType(type: UTType, expectedIcon: FileType) {
+        #expect(FileType.make(type: type, fileExtension: nil) == expectedIcon)
     }
 
     @Test(arguments: [
         // Test document extensions
-        (extension: "doc", expected: FileIcon.document),
-        (extension: "docx", expected: FileIcon.document),
-        (extension: "dot", expected: FileIcon.document),
-        (extension: "dotx", expected: FileIcon.document),
-        (extension: "odt", expected: FileIcon.document),
-        (extension: "ott", expected: FileIcon.document),
-        (extension: "rtf", expected: FileIcon.document),
+        (extension: "doc", expected: FileType.document),
+        (extension: "docx", expected: FileType.document),
+        (extension: "dot", expected: FileType.document),
+        (extension: "dotx", expected: FileType.document),
+        (extension: "odt", expected: FileType.document),
+        (extension: "ott", expected: FileType.document),
+        (extension: "rtf", expected: FileType.document),
         // Test code extensions
-        (extension: "css", expected: FileIcon.code),
-        (extension: "phtml", expected: FileIcon.code),
-        (extension: "sparql", expected: FileIcon.code),
-        (extension: "cs", expected: FileIcon.code),
-        (extension: "java", expected: FileIcon.code),
-        (extension: "jsp", expected: FileIcon.code),
-        (extension: "sql", expected: FileIcon.code),
-        (extension: "cgi", expected: FileIcon.code),
-        (extension: "pl", expected: FileIcon.code),
-        (extension: "inc", expected: FileIcon.code),
-        (extension: "xsl", expected: FileIcon.code),
+        (extension: "css", expected: FileType.code),
+        (extension: "phtml", expected: FileType.code),
+        (extension: "sparql", expected: FileType.code),
+        (extension: "cs", expected: FileType.code),
+        (extension: "java", expected: FileType.code),
+        (extension: "jsp", expected: FileType.code),
+        (extension: "sql", expected: FileType.code),
+        (extension: "cgi", expected: FileType.code),
+        (extension: "pl", expected: FileType.code),
+        (extension: "inc", expected: FileType.code),
+        (extension: "xsl", expected: FileType.code),
         // Test case insensitivity
-        (extension: "DOCX", expected: FileIcon.document),
-        (extension: "Java", expected: FileIcon.code),
+        (extension: "DOCX", expected: FileType.document),
+        (extension: "Java", expected: FileType.code),
         // Test unknown extension (should default to .other)
-        (extension: "foo", expected: FileIcon.other)
+        (extension: "foo", expected: FileType.other)
     ])
-    func makeFileIconWithExtension(fileExtension: String, expectedIcon: FileIcon) {
-        #expect(FileIcon.make(type: nil, fileExtension: fileExtension) == expectedIcon)
+    func makeFileIconWithExtension(fileExtension: String, expectedIcon: FileType) {
+        #expect(FileType.make(type: nil, fileExtension: fileExtension) == expectedIcon)
     }
 
     @Test
     func makeFileIconPrecedence() {
         // Test that type takes precedence over extension
-        #expect(FileIcon.make(type: .audio, fileExtension: "doc") == .audio)
-        #expect(FileIcon.make(type: .image, fileExtension: "java") == .image)
+        #expect(FileType.make(type: .audio, fileExtension: "doc") == .audio)
+        #expect(FileType.make(type: .image, fileExtension: "java") == .image)
 
         // Test fallback to extension when type doesn't match
         let customType = UTType(filenameExtension: "custom")
-        #expect(FileIcon.make(type: customType, fileExtension: "doc") == .document)
+        #expect(FileType.make(type: customType, fileExtension: "doc") == .document)
 
         // Test fallback to .other when neither matches
-        #expect(FileIcon.make(type: customType, fileExtension: "unknown") == .other)
-        #expect(FileIcon.make(type: nil, fileExtension: nil) == .other)
+        #expect(FileType.make(type: customType, fileExtension: "unknown") == .other)
+        #expect(FileType.make(type: nil, fileExtension: nil) == .other)
     }
 
 }

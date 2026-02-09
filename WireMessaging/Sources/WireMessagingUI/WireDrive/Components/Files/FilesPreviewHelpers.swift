@@ -137,7 +137,7 @@ extension FilesItemViewModel {
     /// A stubbed instance of `FilesItemViewModel` for SwiftUI previews.
     static func preview(
         kind: FilesViewItem.Kind = .file,
-        icon: FileIcon = .image,
+        icon: FileType = .image,
         tags: [String] = [],
         publicLinkID: String? = nil
     ) -> FilesItemViewModel {

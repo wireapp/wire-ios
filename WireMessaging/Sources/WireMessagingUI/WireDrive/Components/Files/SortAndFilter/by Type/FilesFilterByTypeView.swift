@@ -18,9 +18,63 @@
 
 import SwiftUI
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+
 struct FilesFilterByTypeView: View {
+    @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.dismiss) private var dismiss
+    
+    @StateObject package var viewModel: ViewModel = .init()
+    
     var body: some View {
         Text("Hello, World!")
+    }
+}
+
+// MARK: - Toolbar
+
+private extension FilesFilterByTypeView {
+    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) { closeButton }
+        ToolbarItem(placement: .topBarTrailing) { saveButton }
+    }
+}
+
+// MARK: - Buttons
+
+private extension FilesFilterByTypeView {
+    var saveButton: some View {
+        Button {
+            Task {
+                //onApply(viewModel.selectedTags)
+                dismiss()
+            }
+        } label: {
+            Text(L10n.Localizable.General.save)
+                .fontWeight(.semibold)
+                .accessibilityIdentifier("saveButton")
+        }
+        .disabled(!viewModel.hasChanges)
+    }
+
+    var removeFilterButton: some View {
+        Button {
+            Task { viewModel.clearAll() }
+        } label: {
+            Text(Strings.Filter.removeFilter)
+        }
+        .accessibilityIdentifier("removeFilterButton")
+        //.disabled(viewModel.selectedTags.isEmpty)
+    }
+
+    var closeButton: some View {
+        Button(
+            action: { dismiss() },
+            label: {
+                Text(L10n.Localizable.General.cancel)
+            }
+        )
+        .accessibilityIdentifier("cancelButton")
     }
 }
 

@@ -17,3 +17,17 @@
 //
 
 import Foundation
+
+extension FilesFilterByTypeView {
+    @MainActor
+    package final class ViewModel: ObservableObject {
+        
+        var hasChanges: Bool {
+            true //TODO: ...
+        }
+        
+        func clearAll() {
+            //TODO: ...
+        }
+    }
+}

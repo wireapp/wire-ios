@@ -20,8 +20,6 @@ import Foundation
 import WireFoundation
 import WireMessagingDomain
 
-private typealias Strings = L10n.Localizable.Conversation.WireCells
-
 extension FilesFilterByTagsView {
     @MainActor
     package final class ViewModel: ObservableObject {

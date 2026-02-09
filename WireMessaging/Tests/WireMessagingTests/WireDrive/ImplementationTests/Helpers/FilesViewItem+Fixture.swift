@@ -30,7 +30,7 @@ extension FilesViewItem {
         filePath: String = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image filename.png",
         ownedBy: String? = nil,
         modifiedAt: Date? = nil,
-        icon: FileIcon = .image,
+        icon: FileType = .image,
         tags: [String] = [],
         isEditable: Bool = false,
         publicLinkID: String? = nil,

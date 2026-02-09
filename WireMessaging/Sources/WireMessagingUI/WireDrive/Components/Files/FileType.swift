@@ -20,8 +20,7 @@ import Foundation
 public import SwiftUI
 public import UniformTypeIdentifiers
 
-public enum FileIcon: Sendable {
-
+public enum FileType: Hashable, Sendable {
     case archive
     case audio
     case code
@@ -33,27 +32,25 @@ public enum FileIcon: Sendable {
     case spreadsheet
     case video
     case folder
-
 }
 
-extension FileIcon {
+extension FileType {
 
     // MARK: - Factory
 
-    /// Creates a `FileIcon` based on the provided optional type and file extension.
-
-    public static func make(type: UTType?, fileExtension: String?) -> FileIcon {
-        if let type, let icon = FileIcon.make(type: type) {
+    /// Creates an instance based on the provided optional type and file extension.
+    public static func make(type: UTType?, fileExtension: String?) -> FileType {
+        if let type, let icon = FileType.make(type: type) {
             icon
-        } else if let fileExtension, let icon = FileIcon.make(fileExtension: fileExtension) {
+        } else if let fileExtension, let icon = FileType.make(fileExtension: fileExtension) {
             icon
         } else {
             .other
         }
     }
 
-    private static func make(type: UTType) -> FileIcon? {
-        func icon(type: UTType) -> FileIcon? {
+    private static func make(type: UTType) -> FileType? {
+        func icon(type: UTType) -> FileType? {
             switch type {
             case .archive:
                 .archive
@@ -87,7 +84,7 @@ extension FileIcon {
         return nil
     }
 
-    private static func make(fileExtension: String) -> FileIcon? {
+    private static func make(fileExtension: String) -> FileType? {
         switch fileExtension.lowercased() {
         case "docx", "doc", "dotx", "dot", "odt", "ott", "rtf":
             .document
@@ -100,7 +97,7 @@ extension FileIcon {
 
     // MARK: - Resource
 
-    var resource: ImageResource {
+    var imageResource: ImageResource {
         switch self {
         case .archive:
             .fileIconArchive
@@ -128,7 +125,7 @@ extension FileIcon {
     }
 
     public var image: UIImage {
-        UIImage(resource: resource)
+        UIImage(resource: imageResource)
     }
 
 }

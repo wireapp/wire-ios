@@ -232,7 +232,7 @@ private struct MoveToFolderItemView: View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
 
-                Image(FileIcon.folder.resource)
+                Image(FileType.folder.imageResource)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 56, height: imageHeight)

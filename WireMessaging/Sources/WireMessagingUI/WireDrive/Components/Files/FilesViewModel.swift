@@ -64,7 +64,7 @@ package struct FilesViewItem: Identifiable, Hashable {
     let modifiedAt: Date?
 
     /// The icon representing the item's type.
-    let icon: FileIcon
+    let icon: FileType
 
     /// The tags that users have added for that file.
     let tags: [String]

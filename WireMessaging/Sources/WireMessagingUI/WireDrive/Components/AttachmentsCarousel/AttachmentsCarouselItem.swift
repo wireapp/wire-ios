@@ -39,6 +39,6 @@ public struct AttachmentsCarouselItem: Identifiable, Sendable, Equatable {
     public var name: String
     public var fileExtension: String?
     public var size: String
-    var fileIcon: FileIcon
+    var fileIcon: FileType
 
 }

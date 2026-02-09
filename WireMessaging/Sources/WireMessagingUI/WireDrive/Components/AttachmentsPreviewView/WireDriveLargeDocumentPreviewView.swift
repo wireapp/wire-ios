@@ -126,7 +126,7 @@ struct WireDriveLargeDocumentPreviewView: View {
 
 #Preview {
     WireDriveLargeDocumentPreviewView(
-        headerIcon: Image(FileIcon.pdf.resource),
+        headerIcon: Image(FileType.pdf.imageResource),
         headerText: "PDF (336 KB)",
         labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
         progress: 0.7,

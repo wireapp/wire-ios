@@ -114,7 +114,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         } else {
             let fileType = contentType.flatMap { UTType(mimeType: $0) }
             let fileExtension = pathURL?.pathExtension
-            return FileIcon.make(type: fileType, fileExtension: fileExtension).resource
+            return FileType.make(type: fileType, fileExtension: fileExtension).imageResource
         }
     }
 
