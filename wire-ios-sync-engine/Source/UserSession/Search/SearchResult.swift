@@ -70,7 +70,7 @@ extension SearchResult {
         contextProvider: ContextProvider,
         searchUsersCache: SearchUsersCache?
     ) {
-        guard let documents = payload["documents"] as? [[String: Any]] else { // TODO: compare with this code
+        guard let documents = payload["documents"] as? [[String: Any]] else {
             return nil
         }
 
@@ -103,35 +103,7 @@ extension SearchResult {
         }
     }
 
-    public init?( // TODO: delete
-        userLookupPayload: [AnyHashable: Any],
-        contextProvider: ContextProvider,
-        searchUsersCache: SearchUsersCache?
-    ) {
-        guard
-            let userLookupPayload = userLookupPayload as? [String: Any],
-            let searchUser = ZMSearchUser.searchUser(
-                from: userLookupPayload,
-                contextProvider: contextProvider,
-                searchUsersCache: searchUsersCache
-            ),
-            searchUser.user == nil
-            || searchUser.user?.isTeamMember == false
-        else {
-            return nil
-        }
-
-        self.context = contextProvider.viewContext
-        self.contacts = []
-        self.teamMembers = []
-        self.directory = [searchUser]
-        self.conversations = []
-        self.apps = []
-        self.bots = []
-        self.searchUsersCache = searchUsersCache
-    }
-
-    mutating func extendWithMembershipPayload(payload: MembershipListPayload) { // TODO: delete?
+    mutating func extendWithMembershipPayload(payload: MembershipListPayload) {
         payload.members.forEach { membershipPayload in
             let searchUser = teamMembers.first(where: { $0.remoteIdentifier == membershipPayload.userID })
             let permissions = membershipPayload.permissions.flatMap { Permissions(rawValue: $0.selfPermissions) }
@@ -170,8 +142,8 @@ extension SearchResult {
             teamMembers: teamMembers,
             directory: directory,
             conversations: copiedConversations,
-            apps: apps, // TODO: check correctness
-            bots: bots, // TODO: check correctness
+            apps: apps,
+            bots: bots,
             searchUsersCache: searchUsersCache
         )
     }
@@ -183,8 +155,8 @@ extension SearchResult {
             teamMembers: result.teamMembers,
             directory: directory,
             conversations: result.conversations,
-            apps: apps, // TODO: check correctness
-            bots: bots, // TODO: check correctness
+            apps: apps,
+            bots: bots,
             searchUsersCache: searchUsersCache
         )
     }
@@ -196,8 +168,8 @@ extension SearchResult {
             teamMembers: teamMembers,
             directory: directory,
             conversations: conversations,
-            apps: result.apps, // TODO: check correctness
-            bots: result.bots, // TODO: check correctness
+            apps: result.apps,
+            bots: result.bots,
             searchUsersCache: searchUsersCache
         )
     }
@@ -209,8 +181,8 @@ extension SearchResult {
             teamMembers: Array(Set(teamMembers).union(result.teamMembers)),
             directory: result.directory,
             conversations: conversations,
-            apps: apps, // TODO: check correctness
-            bots: bots, // TODO: check correctness
+            apps: apps,
+            bots: bots,
             searchUsersCache: searchUsersCache
         )
     }
@@ -222,8 +194,8 @@ extension SearchResult {
             teamMembers: teamMembers,
             directory: result.directory + directory,
             conversations: conversations,
-            apps: apps, // TODO: check correctness
-            bots: bots, // TODO: check correctness
+            apps: apps,
+            bots: bots,
             searchUsersCache: searchUsersCache
         )
     }
