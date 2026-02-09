@@ -664,7 +664,7 @@ public final class ZMUserSession: NSObject {
             // TODO: [WPB-22986] Remove logging - added this logging temporarily to investigate a hang.
             WireLogger.session.measureTime(
                 label: "make client strategies",
-                durationAttributeKey: .timeInterval,
+                durationKey: .timeInterval,
                 attributes: [.isNewClient: isNewClient]
             ) {
                 strategyDirectory.makeClientRelatedStrategies(

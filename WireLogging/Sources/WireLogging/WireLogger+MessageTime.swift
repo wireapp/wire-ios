@@ -22,11 +22,11 @@ public extension WireLogger {
 
     func measureTime<T>(
         label: String,
-        durationAttributeKey: LogAttributesKey = .syncDuration,
+        durationKey: LogAttributesKey = .syncDuration,
         attributes: LogAttributes = [:],
         block: () async throws -> T
     ) async throws -> T {
-        let context = measureTimeStart(label: label, durationAttributeKey: durationAttributeKey, attributes: attributes)
+        let context = measureTimeStart(label: label, durationKey: durationKey, attributes: attributes)
         let result = try await block()
         measureTimeEnd(context: context)
         return result
@@ -34,11 +34,11 @@ public extension WireLogger {
 
     func measureTime<T, E: Error>(
         label: String,
-        durationAttributeKey: LogAttributesKey = .syncDuration,
+        durationKey: LogAttributesKey = .syncDuration,
         attributes: LogAttributes = [:],
         block: () throws(E) -> T
     ) throws(E) -> T {
-        let context = measureTimeStart(label: label, durationAttributeKey: durationAttributeKey, attributes: attributes)
+        let context = measureTimeStart(label: label, durationKey: durationKey, attributes: attributes)
         let result = try block()
         measureTimeEnd(context: context)
         return result
@@ -49,13 +49,13 @@ public extension WireLogger {
     private struct Context {
         let start: Date
         let label: String
-        let durationAttributeKey: LogAttributesKey
+        let durationKey: LogAttributesKey
         let attributes: LogAttributes
     }
 
     private func measureTimeStart(
         label: String,
-        durationAttributeKey: LogAttributesKey,
+        durationKey: LogAttributesKey,
         attributes: LogAttributes
     ) -> Context {
         let startMessage = "starting \(label)"
@@ -64,7 +64,7 @@ public extension WireLogger {
         return Context(
             start: Date.now,
             label: label,
-            durationAttributeKey: durationAttributeKey,
+            durationKey: durationKey,
             attributes: attributes
         )
     }
@@ -73,7 +73,7 @@ public extension WireLogger {
         let durationInSeconds = context.start.timeIntervalSinceNow.magnitude
         var updatedAttributes = context.attributes
         let formattedDuration = String(format: "%.2f", durationInSeconds)
-        updatedAttributes[context.durationAttributeKey] = formattedDuration
+        updatedAttributes[context.durationKey] = formattedDuration
         let completedMessage = "completed \(context.label)"
         info(completedMessage, attributes: updatedAttributes)
     }
