@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
-extension UserSession {
-  public func isSimplifiedUserConnectionRequestQRCode() async -> Bool {
+public extension UserSession {
+    func isSimplifiedUserConnectionRequestQRCode() async -> Bool {
         guard let clientSessionComponent else {
             return Feature.SimplifiedUserConnectionRequestQRCode().status == .enabled
         }

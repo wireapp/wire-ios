@@ -58,13 +58,6 @@ public class Feature: ZMManagedObject {
 
     }
 
-    public enum LockStatus: String, Codable {
-
-        case locked
-        case unlocked
-
-    }
-
     // MARK: - Properties
 
     @NSManaged private var nameValue: String

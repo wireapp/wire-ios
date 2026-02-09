@@ -234,8 +234,8 @@ extension URLActionRouter: PresentationDelegate {
         }
     }
 
-    private func openUserProfileIfNeeded( _ decisionHandler: @escaping (Bool) -> Void) {
-        guard let userSession = self.sessionManager?.activeUserSession, !userSession.isLocked else {
+    private func openUserProfileIfNeeded(_ decisionHandler: @escaping (Bool) -> Void) {
+        guard let userSession = sessionManager?.activeUserSession, !userSession.isLocked else {
             return
         }
         typealias UrlAction = L10n.Localizable.UrlAction
