@@ -106,7 +106,7 @@ public final class SearchTask {
 
             // search People or groups
             taskGroup.addTask {
-                try await self.performLocalLookup()
+                await self.performLocalLookup()
             }
             taskGroup.addTask {
                 try await self.performLocalSearch()
@@ -775,19 +775,4 @@ extension SearchTask {
         return { $0 = $0.union(withBotResult: partialResult) }
     }
 
-    static func servicesSearchRequest(
-        teamIdentifier: UUID,
-        query: String,
-        apiVersion: WireTransport.APIVersion
-    ) -> ZMTransportRequest {
-        var url = URLComponents()
-        url.path = "/teams/\(teamIdentifier.transportString())/services/whitelisted"
-
-        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !trimmedQuery.isEmpty {
-            url.queryItems = [URLQueryItem(name: "prefix", value: trimmedQuery)]
-        }
-        let urlStr = url.string?.replacingOccurrences(of: "+", with: "%2B") ?? ""
-        return ZMTransportRequest(getFromPath: urlStr, apiVersion: apiVersion.rawValue)
-    }
 }

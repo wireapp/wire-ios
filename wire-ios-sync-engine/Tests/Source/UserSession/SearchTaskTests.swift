@@ -1130,31 +1130,6 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(result.bots.first?.name, "Service A")
     }
 
-    func testThatItTrimsThePrefixQuery() throws {
-        // when
-        let task = SearchTask.servicesSearchRequest(
-            teamIdentifier: teamIdentifier,
-            query: "Search query ",
-            apiVersion: .v0
-        )
-        // then
-        let components = URLComponents(url: task.URL, resolvingAgainstBaseURL: false)
-
-        XCTAssertEqual(components?.queryItems?.count, 1)
-        let queryItem = components?.queryItems?.first
-        XCTAssertEqual(queryItem?.name, "prefix")
-        XCTAssertEqual(queryItem?.value, "Search query")
-    }
-
-    func testThatItDoesNotAddPrefixQueryIfItIsEmpty() {
-        // when
-        let task = SearchTask.servicesSearchRequest(teamIdentifier: teamIdentifier, query: "", apiVersion: .v0)
-        // then
-        let components = URLComponents(url: task.URL, resolvingAgainstBaseURL: false)
-
-        XCTAssertNil(components?.queryItems)
-    }
-
     // MARK: User lookup
 
     func testThatItSendsAUserLookupRequest() async throws {
