@@ -178,7 +178,7 @@ jobs:
       - name: Install ImageMagick
         uses: gerlero/brew-install@v1
         with:
-          packages: imagemagick
+          packages: imagemagick ghostscript
           
       - name: Run setup
         run: sh ./setup.sh
