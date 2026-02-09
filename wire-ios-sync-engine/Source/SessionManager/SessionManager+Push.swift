@@ -21,8 +21,7 @@ import PushKit
 import UserNotifications
 import WireDomain
 import WireRequestStrategy
-
-private let pushLog = ZMSLog(tag: "Push")
+import WireLogging
 
 protocol PushRegistry {
 
@@ -37,6 +36,12 @@ extension PKPushRegistry: PushRegistry {}
 
 // MARK: - UNUserNotificationCenterDelegate
 
+private enum UserNotificationHandlingError: Error {
+    case missingSelfID
+    case missingAccount
+}
+
+
 @objc
 extension SessionManager: UNUserNotificationCenterDelegate {
 
@@ -50,12 +55,17 @@ extension SessionManager: UNUserNotificationCenterDelegate {
     ) {
         // route to user session
         Task {
-            let userSession = await loadSession(userInfo: notification.userInfo)
-            userSession?.userNotificationCenter(
-                center,
-                willPresent: notification,
-                withCompletionHandler: completionHandler
-            )
+            do {
+                let userSession = try await loadSession(userInfo: notification.userInfo)
+                userSession.userNotificationCenter(
+                    center,
+                    willPresent: notification,
+                    withCompletionHandler: completionHandler
+                )
+            } catch {
+                WireLogger.notifications.error("Will present notification failed: \(error)")
+                completionHandler([])
+            }
         }
     }
 
@@ -69,12 +79,17 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         BackgroundActivityFactory.shared.resume()
         // route to user session
         Task { @MainActor in
-            let userSession = await loadSession(userInfo: response.notification.userInfo)
-            userSession?.userNotificationCenter(
-                center,
-                didReceive: response,
-                withCompletionHandler: completionHandler
-            )
+            do {
+                let userSession = try await loadSession(userInfo: response.notification.userInfo)
+                userSession.userNotificationCenter(
+                    center,
+                    didReceive: response,
+                    withCompletionHandler: completionHandler
+                )
+            } catch {
+                WireLogger.notifications.error("Did receive notification response failed: \(error)")
+                completionHandler()
+            }
         }
     }
 
@@ -90,15 +105,16 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         notificationCenter.delegate = self
     }
 
-    func loadSession(userInfo: NotificationUserInfo) async -> ZMUserSession? {
-        guard
-            let selfID = userInfo.selfUserID,
-            let account = accountManager.account(with: selfID)
-        else {
-            return nil
+    func loadSession(userInfo: NotificationUserInfo) async throws -> ZMUserSession {
+        guard let selfID = userInfo.selfUserID else {
+            WireLogger.notifications.critical("userInfo has no self ID")
+            throw UserNotificationHandlingError.missingSelfID
+        }
+        guard let account = accountManager.account(with: selfID) else {
+            throw UserNotificationHandlingError.missingAccount
         }
 
-        return try? await withSession(for: account)
+        return try await withSession(for: account)
     }
 
     fileprivate func activateAccount(for session: ZMUserSession, completion: @escaping () -> Void) {
