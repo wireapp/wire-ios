@@ -91,11 +91,11 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(
         _ searchResultsViewController: SearchResultsViewController,
-        didTapOnSeviceUser user: ServiceUser
+        didTapOnSeviceUser user: any Bot
     ) {
 
         let detail = ServiceDetailViewController(
-            serviceUser: user,
+            bot: user,
             actionType: .openConversation,
             userSession: userSession
         ) { [weak self] result in

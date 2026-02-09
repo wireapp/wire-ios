@@ -27,14 +27,14 @@ extension ConversationLike where Self: GroupDetailsConversationType {
 }
 
 struct Service {
-    let serviceUser: ServiceUser
+    let bot: any Bot
     var serviceUserDetails: ServiceDetails?
     var provider: ServiceProvider?
 }
 
 extension Service {
-    init(serviceUser: ServiceUser) {
-        self.serviceUser = serviceUser
+    init(bot: any Bot) {
+        self.bot = bot
         self.serviceUserDetails = nil
         self.provider = nil
     }
@@ -70,18 +70,18 @@ final class ServiceDetailViewController: UIViewController {
     /// init method with ServiceUser, destination conversation and customized UI.
     ///
     /// - Parameters:
-    ///   - serviceUser: a ServiceUser to show
+    ///   - bot: a bot user to show
     ///   - destinationConversation: the destination conversation of the serviceUser
-    ///   - actionType: Enum ActionType to choose the actiion add or remove the service user
+    ///   - actionType: Enum ActionType to choose the action add or remove the service user
     ///   - selfUser: self user, for inject mock user for testing
     ///   - completion: completion handler
     init(
-        serviceUser: ServiceUser,
+        bot: any Bot,
         actionType: ActionType,
         userSession: UserSession,
         completion: Completion? = nil
     ) {
-        self.service = Service(serviceUser: serviceUser)
+        self.service = Service(bot: bot)
         self.completion = completion
         self.userSession = userSession
 
@@ -116,7 +116,7 @@ final class ServiceDetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if let title = service.serviceUser.name {
+        if let title = service.bot.name {
             setupNavigationBarTitle(title)
         }
 
@@ -150,11 +150,11 @@ final class ServiceDetailViewController: UIViewController {
             return
         }
 
-        service.serviceUser.fetchProvider(in: userSession) { [weak self] provider in
+        service.bot.fetchProvider(in: userSession) { [weak self] provider in
             self?.detailView.service.provider = provider
         }
 
-        service.serviceUser.fetchDetails(in: userSession) { [weak self] details in
+        service.bot.fetchDetails(in: userSession) { [weak self] details in
             self?.detailView.service.serviceUserDetails = details
         }
     }
@@ -195,11 +195,11 @@ final class ServiceDetailViewController: UIViewController {
             guard let `self`, let userSession = userSession as? ZMUserSession else {
                 return
             }
-            let serviceUser = service.serviceUser
+            let bot = service.bot
             switch type {
 
             case let .addService(conversation):
-                conversation.add(serviceUser: serviceUser, in: userSession) { result in
+                conversation.add(bot: bot, in: userSession) { result in
 
                     switch result {
                     case .success:
@@ -211,7 +211,7 @@ final class ServiceDetailViewController: UIViewController {
 
             case let .removeService(conversation):
                 presentRemoveDialogue(
-                    for: serviceUser,
+                    for: bot,
                     from: conversation,
                     sender: sender
                 )
@@ -219,12 +219,12 @@ final class ServiceDetailViewController: UIViewController {
             case .openConversation:
                 if let existingConversation = ZMConversation.existingConversation(
                     in: userSession.managedObjectContext,
-                    service: serviceUser,
+                    bot: bot,
                     team: userSession.selfUser.membership?.team
                 ) {
                     completion?(.success(conversation: existingConversation))
                 } else {
-                    serviceUser.createConversation(in: userSession, completionHandler: { result in
+                    bot.createConversation(in: userSession, completionHandler: { result in
                         switch result {
                         case let .success(conversation):
                             completion?(.success(conversation: conversation))

@@ -24,7 +24,7 @@ import XCTest
 final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     private var sut: ServiceDetailViewController!
-    private var serviceUser: MockServiceUserType!
+    private var bot: MockServiceUserType!
     private var groupConversation: ZMConversation!
     private var mockSelfUser: MockUserType!
     private var snapshotHelper: SnapshotHelper!
@@ -33,7 +33,7 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     override func setUp() async throws {
         try await super.setUp()
         snapshotHelper = SnapshotHelper()
-        serviceUser = .createServiceUser(name: "AppUser")
+        bot = .createBot(name: "AppUser")
         groupConversation = createGroupConversation()
         mockSelfUser = .createSelfUser(name: "Bob")
     }
@@ -41,7 +41,7 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
-        serviceUser = nil
+        bot = nil
         groupConversation = nil
         mockSelfUser = nil
 
@@ -50,7 +50,7 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     func createSut() {
         sut = ServiceDetailViewController(
-            serviceUser: serviceUser,
+            bot: bot,
             actionType: .removeService(groupConversation),
             userSession: UserSessionMock(mockUser: mockSelfUser)
         )

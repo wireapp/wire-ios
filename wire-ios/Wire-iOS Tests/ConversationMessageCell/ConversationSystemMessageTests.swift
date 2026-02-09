@@ -68,7 +68,7 @@ final class ConversationSystemMessageTests: ConversationMessageSnapshotTestCase 
         )!
         message.senderUser = SwiftMockLoader.mockUsers().last
         message.backingSystemMessageData?
-            .userTypes = Set<AnyHashable>([MockServiceUserType.createServiceUser(name: "GitHub")])
+            .userTypes = Set<AnyHashable>([MockServiceUserType.createBot(name: "GitHub")])
 
         verify(message: message)
     }

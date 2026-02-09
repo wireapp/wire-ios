@@ -159,7 +159,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
 
     // MARK: - mock service user
 
-    func createServiceUser() -> ZMUser {
+    func createBot() -> ZMUser {
         let serviceUser = ZMUser.insertNewObject(in: uiMOC)
         serviceUser.remoteIdentifier = UUID()
         serviceUser.name = "ServiceUser"
@@ -168,7 +168,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         serviceUser.serviceIdentifier = UUID.create().transportString()
         serviceUser.providerIdentifier = UUID.create().transportString()
         uiMOC.saveOrRollback()
-
         return serviceUser
     }
+
 }

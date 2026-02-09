@@ -572,13 +572,13 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(
         _ searchResultsViewController: SearchResultsViewController,
-        didTapOnSeviceUser user: ServiceUser
+        didTapOnSeviceUser user: any Bot
     ) {
 
         guard case let .add(conversation) = viewModel.context else { return }
 
         let detail = ServiceDetailViewController(
-            serviceUser: user,
+            bot: user,
             actionType: .addService(conversation as! ZMConversation),
             userSession: userSession
         ) { [weak self] result in

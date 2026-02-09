@@ -91,7 +91,7 @@ protocol SearchResultsViewControllerDelegate: AnyObject {
     )
     func searchResultsViewController(
         _ searchResultsViewController: SearchResultsViewController,
-        didTapOnSeviceUser user: ServiceUser
+        didTapOnSeviceUser user: any Bot // TODO: rename and fix typo
     )
 }
 
@@ -462,8 +462,8 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
                 indexPath: indexPath,
                 section: sectionFor(controller: searchSectionController)
             )
-        } else if let service = user as? ServiceUser, service.isAppOrBot {
-            delegate?.searchResultsViewController(self, didTapOnSeviceUser: service)
+        } else if let bot = user as? any Bot, bot.isAppOrBot {
+            delegate?.searchResultsViewController(self, didTapOnSeviceUser: bot)
         } else if let searchUser = user as? ZMSearchUser {
             delegate?.searchResultsViewController(
                 self,

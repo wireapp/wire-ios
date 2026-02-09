@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class MockServiceUserType: MockUserType, ServiceUser {
+final class MockServiceUserType: MockUserType, Bot {
 
     var providerIdentifier: String?
 
