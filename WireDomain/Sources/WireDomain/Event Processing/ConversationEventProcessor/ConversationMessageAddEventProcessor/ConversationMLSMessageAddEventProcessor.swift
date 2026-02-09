@@ -43,7 +43,8 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
 
         guard !decryptedMessages.isEmpty else {
             return WireLogger.mls.info(
-                "no decrypted messages to process, it should be a handshake message: commit or proposal", attributes: [.conversationId: event.conversationID.id.safeForLoggingDescription]
+                "no decrypted messages to process, it should be a handshake message: commit or proposal",
+                attributes: [.conversationId: event.conversationID.id.safeForLoggingDescription]
             )
         }
 
