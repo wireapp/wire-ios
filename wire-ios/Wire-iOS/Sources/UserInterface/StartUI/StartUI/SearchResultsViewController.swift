@@ -300,7 +300,7 @@ final class SearchResultsViewController: UIViewController {
         performSearch(query: query, options: [.contacts, .teamMembers])
     }
 
-    func searchForServices(withQuery query: String) { // TODO: rename
+    func searchForServices(withQuery query: String) {
         performSearch(query: query, options: [.bots])
     }
 
