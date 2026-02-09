@@ -266,10 +266,10 @@ extension SearchTask {
                 }
                 .filter { $0.name?.isEmpty == false }
 
-            let copiedteamMembers = teamMemberIDs.compactMap {
+            let copiedTeamMembers = teamMemberIDs.compactMap {
                 contextProvider.viewContext.object(with: $0) as? Member
             }
-            let searchTeamMembers = copiedteamMembers
+            let searchTeamMembers = copiedTeamMembers
                 .compactMap(\.user)
                 .map {
                     ZMSearchUser(
@@ -728,7 +728,7 @@ extension SearchTask {
                         )
                         searchUser.providerIdentifier = profile.provider.uuidString
                         searchUser.summary = profile.summary
-                        // searchUser.assetKeys = profile.assets // SearchUserAssetKeys(payload: payload) // TODO: fix
+                        searchUser.assetKeys = SearchUserAssetKeys(profile.assets)
                         return searchUser
                     }
                 }
@@ -748,6 +748,36 @@ private extension SearchResult {
             let permissions = remoteTeamMember.permissions.flatMap { Permissions(rawValue: $0.selfPermissions) }
             searchUser?.updateWithTeamMembership(permissions: permissions, createdBy: remoteTeamMember.creatorID)
         }
+    }
+
+}
+
+private extension SearchUserAssetKeys {
+
+    init?(_ userAssets: [UserAsset]) {
+        guard !userAssets.isEmpty else { return nil }
+
+        var preview = String?.none
+        var complete = String?.none
+
+        for userAsset in userAssets {
+            guard userAsset.type == .image else { continue }
+
+            switch userAsset.size {
+            case .preview:
+                preview = userAsset.key
+            case .complete:
+                complete = userAsset.key
+            }
+        }
+
+        guard preview != nil || complete != nil else { return nil }
+
+        self.init(
+            preview: preview,
+            complete: complete
+        )
+
     }
 
 }

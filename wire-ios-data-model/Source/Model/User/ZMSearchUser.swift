@@ -53,6 +53,11 @@ public struct SearchUserAssetKeys {
     public let preview: String?
     public let complete: String?
 
+    public init(preview: String?, complete: String?) {
+        self.preview = preview
+        self.complete = complete
+    }
+
     init?(payload: [String: Any]) {
         if let assetsPayload = payload[ResponseKey.assets.rawValue] as? [[String: Any]], !assetsPayload.isEmpty {
             var previewKey: String?, completeKey: String?
