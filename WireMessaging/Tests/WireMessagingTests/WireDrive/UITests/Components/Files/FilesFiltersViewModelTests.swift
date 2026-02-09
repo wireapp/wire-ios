@@ -64,7 +64,7 @@ final class FilesFiltersViewModelTests {
         await sut.fetch()
 
         // when
-        sut.selectTag(sut.presentedTags[1])
+        sut.toggleTag(sut.presentedTags[1])
 
         // then
         let presentedTags = [sut.presentedTags[0], sut.presentedTags[1]]
@@ -75,8 +75,8 @@ final class FilesFiltersViewModelTests {
     func clearAll() async throws {
         // given
         await sut.fetch()
-        sut.selectTag(sut.presentedTags[1])
-        sut.selectTag(sut.presentedTags[2])
+        sut.toggleTag(sut.presentedTags[1])
+        sut.toggleTag(sut.presentedTags[2])
         #expect(sut.selectedTags.count == 3)
 
         // when

@@ -25,14 +25,14 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 struct FilesFilterByTagsView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.dismiss) private var dismiss
-    
+
     @StateObject package var viewModel: ViewModel
-    
-    let onApply: (Set<String>) -> ()
+
+    let onApply: (Set<String>) -> Void
 
     package init(
         viewModel: @autoclosure @escaping () -> ViewModel,
-        onApply: @escaping (Set<String>) -> ()
+        onApply: @escaping (Set<String>) -> Void
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
         self.onApply = onApply
@@ -55,14 +55,15 @@ struct FilesFilterByTagsView: View {
                 .searchable(text: $viewModel.searchText, prompt: Strings.Filter.Tags.searchPrompt)
         }
     }
-    
-    @ViewBuilder private func content() -> some View {
+
+    @ViewBuilder
+    private func content() -> some View {
         VStack {
             ScrollView {
                 tagsView
                     .padding()
             }
-            
+
             removeFilterButton
                 .padding(10)
         }
@@ -75,27 +76,29 @@ private extension FilesFilterByTagsView {
     var tagsViewSpacing: CGFloat {
         viewModel.presentedTags.isEmpty ? 0 : 20
     }
-    
+
     var tagsView: some View {
         VStack(alignment: .leading, spacing: tagsViewSpacing) {
             if viewModel.presentedTags.isEmpty {
                 Spacer()
-                
-                Text(viewModel.searchText.isEmpty ? Strings.Filter.Tags.emptyTitle : Strings.Filter.Tags.notFoundBySearch)
+
+                Text(viewModel.searchText.isEmpty ? Strings.Filter.Tags.emptyTitle : Strings.Filter.Tags
+                    .notFoundBySearch)
                     .font(for: .h4)
                     .padding([.top, .bottom])
-                
+
                 Spacer()
             }
-            
+
             FlowLayout(spacing: 14, alignment: .leading) {
                 ForEach(viewModel.presentedTags, id: \.self) { tag in
-                    TagPill(
-                        text: tag,
-                        isSelected: viewModel.isTagSelected(tag)
-                    )
-                    .onTapGesture {
-                        viewModel.selectTag(tag)
+                    Button {
+                        viewModel.toggleTag(tag)
+                    } label: {
+                        TagPill(
+                            text: tag,
+                            isSelected: viewModel.isTagSelected(tag)
+                        )
                     }
                 }
             }
@@ -108,14 +111,14 @@ private extension FilesFilterByTagsView {
 private extension FilesFilterByTagsView {
     struct TagPill: View {
         @Environment(\.wireAccentColor) private var wireAccentColor
-        
+
         let text: String
         let isSelected: Bool
 
         var body: some View {
             HStack(spacing: 6) {
                 Text(text)
-                
+
                 if isSelected {
                     Image(systemName: "xmark")
                 }
@@ -197,5 +200,5 @@ private extension FilesFilterByTagsView {
 }
 
 #Preview {
-    FilesFilterByTagsView(viewModel: .preview()) { tags in }
+    FilesFilterByTagsView(viewModel: .preview()) { _ in }
 }

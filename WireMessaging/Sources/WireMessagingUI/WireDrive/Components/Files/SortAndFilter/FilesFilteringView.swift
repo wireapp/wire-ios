@@ -21,13 +21,13 @@ import WireDesign
 
 struct FilesFilteringView: View {
     @StateObject package var viewModel: FilesFilteringViewModel
-    
+
     package init(
         viewModel: @autoclosure @escaping () -> FilesFilteringViewModel,
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
     }
-    
+
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 5) {
@@ -39,15 +39,15 @@ struct FilesFilteringView: View {
         }
         .padding(.horizontal, -5)
     }
-    
+
     @ViewBuilder
     private func capsule(for filter: FilesFilteringViewModel.Filtering) -> some View {
         let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
-        
+
         HStack {
             Text(filter.title)
                 .foregroundStyle(filter == .removeAllFilters ? ColorTheme.Buttons.Primary.enabled.color : .primary)
-            
+
             if filter != .removeAllFilters {
                 Image(systemName: "chevron.down")
                     .font(.system(size: 14, weight: .semibold))
@@ -67,7 +67,7 @@ struct FilesFilteringView: View {
             (filter == .removeAllFilters && shouldShowRemoveFilters) || filter != .removeAllFilters ? 1 : 0
         )
     }
-    
+
     private func capsuleFillColor(for filter: FilesFilteringViewModel.Filtering) -> Color {
         if viewModel.isFilterSelected(filter) {
             ColorTheme.Base.onPrimaryVariant.color
@@ -75,7 +75,7 @@ struct FilesFilteringView: View {
             ColorTheme.Backgrounds.backgroundVariant.color
         }
     }
-    
+
     private func capsuleStrokeColor(for filter: FilesFilteringViewModel.Filtering) -> Color {
         if viewModel.isFilterSelected(filter) {
             ColorTheme.Base.onPrimaryVariant.color
@@ -83,7 +83,7 @@ struct FilesFilteringView: View {
             ColorTheme.Base.secondaryText.color
         }
     }
-    
+
     private var shouldShowRemoveFilters: Bool {
         viewModel.filtersSelection.hasFilterSelected
     }

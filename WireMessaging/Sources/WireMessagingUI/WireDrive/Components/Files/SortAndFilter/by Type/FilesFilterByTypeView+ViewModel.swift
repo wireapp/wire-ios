@@ -20,9 +20,9 @@ import Foundation
 
 extension FilesFilterByTypeView {
     @MainActor
-    package final class ViewModel: ObservableObject {
+    final class ViewModel: ObservableObject {
         @Published var selectedTypes: Set<FileType> = []
-        
+
         let presentedTypes: [FileType] = [
             .pdf,
             .document,
@@ -34,21 +34,33 @@ extension FilesFilterByTypeView {
             .code,
             .archive,
             .folder,
-            .other,
+            .other
         ]
-        
+
         private let initiallySelectedTypes: Set<FileType>
-        
+
         package init(selectedTypes: some Collection<FileType>) {
             let types = Set(selectedTypes)
             self.selectedTypes = types
             self.initiallySelectedTypes = types
         }
-        
+
         var hasChanges: Bool {
             selectedTypes != initiallySelectedTypes
         }
-        
+
+        func isTypeSelected(_ type: FileType) -> Bool {
+            selectedTypes.contains(type)
+        }
+
+        func toggleTypeSelection(_ type: FileType) {
+            if selectedTypes.contains(type) {
+                selectedTypes.remove(type)
+            } else {
+                selectedTypes.insert(type)
+            }
+        }
+
         func clearAll() {
             selectedTypes = []
         }

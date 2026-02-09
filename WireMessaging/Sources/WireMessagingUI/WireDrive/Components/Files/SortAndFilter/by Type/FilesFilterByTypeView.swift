@@ -17,27 +17,72 @@
 //
 
 import SwiftUI
+import WireDesign
+import WireFoundation
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 struct FilesFilterByTypeView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.dismiss) private var dismiss
-    
+
     @StateObject package var viewModel: ViewModel
-    
-    let onApply: (Set<FileType>) -> ()
-    
+
+    let onApply: (Set<FileType>) -> Void
+
     package init(
         selectedTypes: some Collection<FileType>,
-        onApply: @escaping (Set<FileType>) -> ()
+        onApply: @escaping (Set<FileType>) -> Void
     ) {
         self.onApply = onApply
         self._viewModel = .init(wrappedValue: .init(selectedTypes: selectedTypes))
     }
-    
+
     var body: some View {
-        Text("Hello, World!")
+        NavigationStack {
+            content()
+                .background {
+                    ColorTheme.Backgrounds.background.color
+                        .ignoresSafeArea(.all)
+                }
+                .toolbar { toolbarContent }
+                .navigationTitle(Strings.Filter.FileType.navigationTitle)
+                .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+
+    @ViewBuilder
+    private func content() -> some View {
+        VStack {
+            Form {
+                ForEach(viewModel.presentedTypes, id: \.self) { fileType in
+                    Button {
+                        viewModel.toggleTypeSelection(fileType)
+                    } label: {
+                        Label {
+                            HStack {
+                                Text(fileType.localizedName())
+
+                                Spacer()
+
+                                if viewModel.isTypeSelected(fileType) {
+                                    Image(systemName: "checkmark")
+                                        .foregroundStyle(wireAccentColor)
+                                }
+                            }
+                        } icon: {
+                            Image(fileType.imageResource)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                        }
+                    }
+                }
+            }
+            .scrollContentBackground(.hidden)
+
+            removeFilterButton
+                .padding(10)
+        }
     }
 }
 
@@ -88,9 +133,33 @@ private extension FilesFilterByTypeView {
     }
 }
 
+// MARK: Localization
+
+private extension FileType {
+    typealias name = Strings.Filter.FileType.TypeName
+    
+    func localizedName() -> String {
+        return switch self {
+        case .audio:            name.audio
+        case .video:            name.video
+        case .image:            name.image
+        case .other:            name.other
+        case .archive:          name.archive
+        case .code:             name.code
+        case .document:         name.doc
+        case .folder:           name.folder
+        case .pdf:              name.pdf
+        case .presentation:     name.presentation
+        case .spreadsheet:      name.spreadsheet
+        }
+    }
+}
+
+// MARK: Preview
+
 #Preview {
     FilesFilterByTypeView(
         selectedTypes: [.audio, .video],
-        onApply: { types in }
+        onApply: { _ in }
     )
 }

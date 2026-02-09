@@ -22,8 +22,8 @@ import WireMessagingDomain
 
 extension FilesFilterByTagsView {
     @MainActor
-    package final class ViewModel: ObservableObject {
-        
+    final class ViewModel: ObservableObject {
+
         @Published var presentedTags: [String] = []
         @Published var selectedTags: Set<String>
         @Published var searchText = "" {
@@ -31,6 +31,7 @@ extension FilesFilterByTagsView {
                 applySearchFilter()
             }
         }
+
         @Published var isLoading: Bool = false
         @Published var showError: Bool = false
 
@@ -44,21 +45,21 @@ extension FilesFilterByTagsView {
             selectedTags: some Collection<String>
         ) {
             self.fetchTagsUseCase = fetchTagsUseCase
-            
+
             let selectedtagsSet = Set(selectedTags)
-            
+
             self.selectedTags = selectedtagsSet
             self.initiallySelectedTags = selectedtagsSet
-            
+
             Task {
                 await fetch()
             }
         }
-        
+
         var hasChanges: Bool {
             selectedTags != initiallySelectedTags
         }
-        
+
         func isTagSelected(_ tag: String) -> Bool {
             selectedTags.contains { $0.localizedCaseInsensitiveCompare(tag) == .orderedSame }
         }
@@ -69,20 +70,20 @@ extension FilesFilterByTagsView {
             do {
                 isLoading = true
                 defer { isLoading = false }
-                
+
                 let tags = try await fetchTagsUseCase.invoke()
-                
-                self.availableTags = tags
+
+                availableTags = tags
                     .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
                     .sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
                     .sorted { isTagSelected($0) && !isTagSelected($1) }
-                
+
                 applySearchFilter()
             } catch {
                 showError = true
             }
         }
-        
+
         private func applySearchFilter() {
             presentedTags = availableTags.filter { tag in
                 let cleanSearchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -94,7 +95,7 @@ extension FilesFilterByTagsView {
             }
         }
 
-        func selectTag(_ tag: String) {
+        func toggleTag(_ tag: String) {
             if isTagSelected(tag) {
                 selectedTags = selectedTags.filter { $0.localizedCaseInsensitiveCompare(tag) != .orderedSame }
             } else {

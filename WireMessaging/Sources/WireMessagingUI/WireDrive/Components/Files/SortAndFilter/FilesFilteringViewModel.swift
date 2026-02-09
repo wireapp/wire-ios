@@ -20,9 +20,9 @@ import Foundation
 import WireMessagingDomain
 
 final class FilesFilteringViewModel: ObservableObject {
-    
+
     typealias ID = String
-    
+
     enum Filtering: CaseIterable {
         case tags
         case type
@@ -30,7 +30,7 @@ final class FilesFilteringViewModel: ObservableObject {
         case owner
         case sharedByMe
         case removeAllFilters
-        
+
         var title: String {
             switch self {
             case .tags:
@@ -48,23 +48,23 @@ final class FilesFilteringViewModel: ObservableObject {
             }
         }
     }
-    
+
     struct FiltersSelection {
         let tags: Set<ID>
         let types: Set<ID>
         let conversations: Set<ID>
         let owners: Set<ID>
         let sharedByMe: Bool
-        
+
         var hasFilterSelected: Bool {
             !tags.isEmpty || !types.isEmpty || !conversations.isEmpty || !owners.isEmpty || sharedByMe
         }
     }
-    
+
     @Published var filtersSelection: FiltersSelection
-    
+
     init() {
-        filtersSelection = .init(
+        self.filtersSelection = .init(
             tags: [UUID().uuidString],
             types: [],
             conversations: [],
@@ -72,15 +72,15 @@ final class FilesFilteringViewModel: ObservableObject {
             sharedByMe: false
         )
     }
-    
+
     var hasFiltersSelected: Bool {
         filtersSelection.hasFilterSelected
     }
-    
+
     func isFilterSelected(_ filter: Filtering) -> Bool {
         switch filter {
         case .tags:
-           !filtersSelection.tags.isEmpty
+            !filtersSelection.tags.isEmpty
         case .type:
             !filtersSelection.types.isEmpty
         case .conversation:
@@ -93,7 +93,7 @@ final class FilesFilteringViewModel: ObservableObject {
             false
         }
     }
-    
+
     func filtersCount(for filter: Filtering) -> Int? {
         switch filter {
         case .tags:
@@ -110,5 +110,5 @@ final class FilesFilteringViewModel: ObservableObject {
             nil
         }
     }
-    
+
 }
