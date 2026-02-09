@@ -109,7 +109,7 @@ public final class SearchTask {
                 await self.performLocalLookup()
             }
             taskGroup.addTask {
-                try await self.performLocalSearch()
+                await self.performLocalSearch()
             }
 
             // v1
@@ -400,39 +400,59 @@ extension SearchTask {
 
 extension SearchTask {
 
-    func performUserLookup() async -> SearchResultAggregator {
-        guard
-            case let .lookup(qualifiedID) = type,
-            let apiVersion
-        else { return { _ in } }
-
-        return await withCheckedContinuation { continuation in
-
-            let request = Self.searchRequestForUser(qualifiedID: qualifiedID, apiVersion: apiVersion)
-            request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
-
-                guard
-                    let self,
-                    let payload = response.payload?.asDictionary(),
-                    let partialResult = SearchResult(
-                        userLookupPayload: payload,
-                        contextProvider: contextProvider,
-                        searchUsersCache: searchUsersCache
-                    )
-                else { return continuation.resume(returning: { _ in }) }
-
-                continuation.resume(returning: { $0 = $0.union(withDirectoryResult: partialResult) })
-            })
-
-            transportSession.enqueueOneTime(request)
+    func performUserLookup() async throws -> SearchResultAggregator {
+        guard case var .lookup(qualifiedID) = type else {
+            return { _ in }
         }
+
+        let result = try await usersAPI.getUser(for: UserID(qualifiedID))
+        qualifiedID = .init(uuid: result.id.id, domain: result.id.domain)
+
+        let viewContext = contextProvider.viewContext
+        let localUser = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: viewContext)
+
+        let searchUser: ZMSearchUser
+        if let cachedSearchUser = searchUsersCache?.object(forKey: qualifiedID.uuid as NSUUID) {
+            cachedSearchUser.user = localUser
+            searchUser = cachedSearchUser
+        } else {
+            let accentColor = Int16(exactly: result.accentID).flatMap(AccentColor.init(rawValue:))
+            searchUser = ZMSearchUser(
+                viewContext: viewContext,
+                name: result.name,
+                handle: result.handle,
+                accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
+                remoteIdentifier: qualifiedID.uuid,
+                domain: qualifiedID.domain,
+                teamIdentifier: result.teamID,
+                user: localUser,
+                searchUsersCache: searchUsersCache,
+                isDeleted: result.deleted ?? false
+            )
+        }
+
+        guard searchUser.user == nil, searchUser.user?.isTeamMember == false else {
+            return { _ in }
+        }
+
+        let partialResult = SearchResult(
+            context: viewContext,
+            contacts: [],
+            teamMembers: [],
+            directory: [searchUser],
+            conversations: [],
+            apps: [],
+            bots: [],
+            searchUsersCache: searchUsersCache
+        )
+        return { $0 = $0.union(withDirectoryResult: partialResult) }
 
     }
 
     // GET /users/:id has been removed in v1.
     // We should use the qualified endpoint GET /users/:domain/:id instead.
     // https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/603095166/API+changes+v1+v2
-    private static func searchRequestForUser(
+    private static func searchRequestForUser( // TODO: delete
         qualifiedID: WireDataModel.QualifiedID,
         apiVersion: WireTransport.APIVersion
     ) -> ZMTransportRequest {

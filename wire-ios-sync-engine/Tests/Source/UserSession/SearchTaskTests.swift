@@ -1138,7 +1138,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(lookupUserId: userId)
 
         // when
-        _ = await task.performUserLookup()
+        _ = try await task.performUserLookup()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1152,7 +1152,7 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(lookupUserId: userId, domain: domain, apiVersion: .v2)
 
         // when
-        _ = await task.performUserLookup()
+        _ = try await task.performUserLookup()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -1173,7 +1173,7 @@ final class SearchTaskTests: DatabaseTest {
 
         // when
         var result = SearchResult()
-        let resultAggregator = await task.performUserLookup()
+        let resultAggregator = try await task.performUserLookup()
         resultAggregator(&result)
 
         // then

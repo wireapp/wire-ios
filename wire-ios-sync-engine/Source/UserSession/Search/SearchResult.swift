@@ -103,7 +103,7 @@ extension SearchResult {
         }
     }
 
-    public init?(
+    public init?( // TODO: delete
         userLookupPayload: [AnyHashable: Any],
         contextProvider: ContextProvider,
         searchUsersCache: SearchUsersCache?
