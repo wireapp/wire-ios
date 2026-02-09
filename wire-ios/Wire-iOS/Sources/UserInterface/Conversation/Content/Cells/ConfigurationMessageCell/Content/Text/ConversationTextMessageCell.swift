@@ -383,7 +383,6 @@ extension ConversationTextMessageCellDescription {
             isObfuscated: message.isObfuscated,
             accentColor: (selfUser.zmAccentColor ?? .default).accentColor
         )
-        
         let detectedLinks = findDetectedLinks(in: messageText)
 
         // Search queries
@@ -442,20 +441,16 @@ extension ConversationTextMessageCellDescription {
             )
             cells.append(AnyConversationMessageCellDescription(linkPreviewCell))
         }
-
         return cells
     }
     
-
     static func findDetectedLinks(in messageText: NSAttributedString) -> [NSTextCheckingResult] {
         let checkingTypes: NSTextCheckingResult.CheckingType = [.link, .phoneNumber, .address]
         guard let detector = try? NSDataDetector(types: checkingTypes.rawValue) else {
             return []
         }
-        
         let textToScan = messageText.string
         let scanRange = NSRange(location: 0, length: textToScan.utf16.count)
-        
         let detectedLinks = detector.matches(
             in: textToScan,
             options: [],
@@ -463,11 +458,9 @@ extension ConversationTextMessageCellDescription {
         )
         return detectedLinks
     }
-
 }
 
 extension URL {
-
     // FIXME: [WPB-16311]: Remove once file previews are working in conversations.
     /// A temporary means to open the Files View from a message cell link for Beta testing.
     static let openFilesViewLink: URL = .init(string: "cells://open-files-view")!
