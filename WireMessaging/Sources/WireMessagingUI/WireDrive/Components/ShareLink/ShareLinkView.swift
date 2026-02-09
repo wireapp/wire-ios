@@ -230,7 +230,7 @@ struct ShareLinkView: View {
     private func shareLinkButton(_ link: URL?) -> some View {
         VStack {
             if let link {
-                ShareLink(item: link) {
+                ShareLink(item: Strings.ShareLink.sharedMessage(link.absoluteString)) {
                     shareLinkContent()
                 }
             } else {

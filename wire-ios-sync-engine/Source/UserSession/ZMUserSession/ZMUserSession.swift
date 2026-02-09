@@ -231,11 +231,6 @@ public final class ZMUserSession: NSObject {
     }
 
     // swiftlint:disable:next todo_requires_jira_link
-    public var searchManagedObjectContext: NSManagedObjectContext { // TODO: jacob we don't want this to be public
-        coreDataStack.searchContext
-    }
-
-    // swiftlint:disable:next todo_requires_jira_link
     public var sharedContainerURL: URL { // TODO: jacob we don't want this to be public
         coreDataStack.applicationContainer
     }
@@ -612,12 +607,12 @@ public final class ZMUserSession: NSObject {
 
             // Create and perform sync if there is a self client.
             if let selfClientID = selfUserClient.remoteIdentifier {
-                setUpSyncAgent(clientID: selfClientID)
+                setUpSyncAgent(clientID: selfClientID, isNewClient: false)
             }
         }
     }
 
-    func setUpSyncAgent(clientID: String) {
+    func setUpSyncAgent(clientID: String, isNewClient: Bool) {
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
             completionHandlers: .init(
@@ -659,15 +654,19 @@ public final class ZMUserSession: NSObject {
                 syncAgent: syncAgent,
                 notificationContext: notificationContext
             )
-            strategyDirectory.makeClientRelatedStategies(
-                applicationStatusDirectory: applicationStatusDirectory,
-                syncContext: syncContext,
-                transportSession: transportSession,
-                pushMessageHandler: localNotificationDispatcher,
-                flowManager: flowManager,
-                incrementalSyncObserver: incrementalSyncObserver,
-                metadata: resolvedBackendMetadata
-            )
+
+            // TODO: [WPB-22986] Remove logging - added this logging temporarily to investigate a hang.
+            WireLogger.session.measureTime(label: "make client strategies", attributes: [.isNewClient: isNewClient]) {
+                strategyDirectory.makeClientRelatedStrategies(
+                    applicationStatusDirectory: applicationStatusDirectory,
+                    syncContext: syncContext,
+                    transportSession: transportSession,
+                    pushMessageHandler: localNotificationDispatcher,
+                    flowManager: flowManager,
+                    incrementalSyncObserver: incrementalSyncObserver,
+                    metadata: resolvedBackendMetadata
+                )
+            }
             syncStrategy?.updateClientContextChangeTrackers()
         }
         Task {
@@ -1389,7 +1388,7 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
         // The client was just registered and still needs to perform the
         // initial sync.
         if let selfClientID = userClient.remoteIdentifier {
-            setUpSyncAgent(clientID: selfClientID)
+            setUpSyncAgent(clientID: selfClientID, isNewClient: true)
             // no migration needed from last sync system as it's a new client
             if userClient.isConsumableNotificationsCapable {
                 // activate new sync with consumable notifications
@@ -1449,10 +1448,6 @@ extension ZMUserSession: ContextProvider {
 
     public var syncContext: NSManagedObjectContext {
         coreDataStack.syncContext
-    }
-
-    public var searchContext: NSManagedObjectContext {
-        coreDataStack.searchContext
     }
 
     public var eventContext: NSManagedObjectContext {
