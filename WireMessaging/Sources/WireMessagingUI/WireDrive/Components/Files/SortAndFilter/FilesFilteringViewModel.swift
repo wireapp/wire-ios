@@ -19,6 +19,8 @@
 import Foundation
 import WireMessagingDomain
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells.Filtering
+
 final class FilesFilteringViewModel: ObservableObject {
 
     typealias ID = String
@@ -34,17 +36,17 @@ final class FilesFilteringViewModel: ObservableObject {
         var title: String {
             switch self {
             case .tags:
-                "Tags"
+                Strings.tags
             case .type:
-                "Type"
+                Strings.type
             case .conversation:
-                "Conversation"
+                Strings.conversation
             case .owner:
-                "Owner"
+                Strings.owner
             case .sharedByMe:
-                "Shared by me"
+                Strings.sharedByMe
             case .removeAllFilters:
-                "Remove all filters"
+                Strings.removeAllFilters
             }
         }
     }

@@ -292,3 +292,11 @@
 "conversation.wireCells.sorting.key.owner" = "Owner";
 "conversation.wireCells.sorting.order.ascending" = "Ascending";
 "conversation.wireCells.sorting.order.descending" = "Descending";
+
+// MARK: - Filtering
+"conversation.wireCells.filtering.tags" = "Tags";
+"conversation.wireCells.filtering.type" = "Type";
+"conversation.wireCells.filtering.conversation" = "Conversation";
+"conversation.wireCells.filtering.owner" = "Owner";
+"conversation.wireCells.filtering.sharedByMe" = "Shared by me";
+"conversation.wireCells.filtering.removeAllFilters" = "Remove all filters";
