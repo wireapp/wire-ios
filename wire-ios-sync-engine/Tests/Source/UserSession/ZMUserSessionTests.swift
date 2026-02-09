@@ -419,7 +419,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             sut.didRegisterSelfUserClient(selfUserClient)
             syncMOC.saveOrRollback()
 
-            sut.setUpSyncAgent(clientID: selfUserClient.remoteIdentifier!)
+            sut.setUpSyncAgent(clientID: selfUserClient.remoteIdentifier!, isNewClient: false)
 
             // WHEN
             sut.didFinishIncrementalSync(isRecovering: false)
