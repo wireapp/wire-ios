@@ -40,8 +40,8 @@ final class CallingTests: WireUITestCase {
         let convId = conversationId.uuidString.lowercased()
         let allParticipants = [teamOwner] + teamMembers
         let appCallee = teamMembers.last!
-        let httpMembers = Array(teamMembers.dropLast(1))
-        let allParticipantInstanceUsers = [teamOwner] + httpMembers
+        let callingServiceAcceptingMembers = Array(teamMembers.dropLast(1))
+        let allParticipantInstanceUsers = [teamOwner] + callingServiceAcceptingMembers
 
         let firstTimePage = try app.loginUser(email: appCallee.email, password: appCallee.password)
         _ = try firstTimePage.acceptPopup(with: self)
