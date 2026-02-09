@@ -114,7 +114,7 @@ public final class SearchTask {
 
             // v1
             taskGroup.addTask {
-                try await self.performRemoteSearchForTeamUser()
+                await self.performRemoteSearchForTeamUser()
             }
 
             // v2+
@@ -449,21 +449,6 @@ extension SearchTask {
 
     }
 
-    // GET /users/:id has been removed in v1.
-    // We should use the qualified endpoint GET /users/:domain/:id instead.
-    // https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/603095166/API+changes+v1+v2
-    private static func searchRequestForUser( // TODO: delete
-        qualifiedID: WireDataModel.QualifiedID,
-        apiVersion: WireTransport.APIVersion
-    ) -> ZMTransportRequest {
-        (apiVersion <= .v1)
-            ? .init(getFromPath: "/users/\(qualifiedID.uuid.transportString())", apiVersion: apiVersion.rawValue)
-            : .init(
-                getFromPath: "/users/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())",
-                apiVersion: apiVersion.rawValue
-            )
-    }
-
 }
 
 extension SearchTask {
@@ -549,7 +534,7 @@ extension SearchTask {
         try Task.checkCancellation()
 
         if searchRequest.searchOptions.contains(.teamMembers) {
-            return await performTeamMembershipLookup(on: partialResult, searchRequest: searchRequest)
+            return try await performTeamMembershipLookup(on: partialResult, searchRequest: searchRequest)
         } else {
             return { $0 = $0.union(withDirectoryResult: partialResult) }
         }
@@ -558,7 +543,7 @@ extension SearchTask {
     private func performTeamMembershipLookup(
         on searchResult: SearchResult,
         searchRequest: SearchRequest
-    ) async -> SearchResultAggregator {
+    ) async throws -> SearchResultAggregator {
 
         let viewContext = contextProvider.viewContext
         let (teamMembersIDs, teamID) = await viewContext.perform { [viewContext] in
@@ -568,66 +553,23 @@ extension SearchTask {
         }
 
         guard
-            let apiVersion,
             let teamID,
             !teamMembersIDs.isEmpty
         else {
             return { $0 = $0.union(withDirectoryResult: searchResult) }
         }
 
-        let request = Self.fetchTeamMembershipRequest(
-            teamID: teamID,
-            teamMemberIDs: teamMembersIDs,
-            apiVersion: apiVersion
+        let remoteTeamMembers = try await teamsAPI.getTeamMembers(of: teamID, for: teamMembersIDs)
+
+        var searchResult = searchResult
+        searchResult.extendWithMembership(remoteTeamMembers: remoteTeamMembers)
+        searchResult.filterBy(
+            searchOptions: searchRequest.searchOptions,
+            query: searchRequest.query.string,
+            contextProvider: contextProvider
         )
+        return { $0 = $0.union(withDirectoryResult: searchResult) }
 
-        return await withCheckedContinuation { continuation in
-
-            request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
-
-                guard
-                    let self,
-                    let rawData = response.rawData,
-                    let payload = MembershipListPayload(rawData)
-                else { return continuation.resume(returning: { _ in }) }
-
-                var updatedResult = searchResult
-                updatedResult.extendWithMembershipPayload(payload: payload)
-                updatedResult.filterBy(
-                    searchOptions: searchRequest.searchOptions,
-                    query: searchRequest.query.string,
-                    contextProvider: contextProvider
-                )
-
-                continuation.resume(returning: { $0 = $0.union(withDirectoryResult: updatedResult) })
-
-            })
-
-            transportSession.enqueueOneTime(request)
-
-        }
-
-    }
-
-    private static func fetchTeamMembershipRequest(
-        teamID: UUID,
-        teamMemberIDs: [UUID],
-        apiVersion: WireTransport.APIVersion
-    ) -> ZMTransportRequest {
-
-        let path = "/teams/\(teamID.transportString())/get-members-by-ids-using-post"
-        let payload = [
-            "user_ids": teamMemberIDs.map { $0.transportString() }
-        ]
-
-        let request = ZMTransportRequest(
-            path: path,
-            method: .post,
-            payload: payload as ZMTransportData,
-            apiVersion: apiVersion.rawValue
-        )
-        request.contentHintForRequestLoop = "\(payload.hashValue)"
-        return request
     }
 
 }
@@ -706,6 +648,7 @@ extension SearchTask {
         }
     }
 
+    // This is specific to API v1, so it's most likely already dead code.
     private static func searchRequestInDirectory(
         withHandle handle: String,
         apiVersion: WireDataModel.APIVersion
@@ -793,6 +736,18 @@ extension SearchTask {
         }
 
         return { $0 = $0.union(withBotResult: partialResult) }
+    }
+
+}
+
+private extension SearchResult {
+
+    mutating func extendWithMembership(remoteTeamMembers: [TeamMember]) {
+        remoteTeamMembers.forEach { remoteTeamMember in
+            let searchUser = teamMembers.first(where: { $0.remoteIdentifier == remoteTeamMember.userID })
+            let permissions = remoteTeamMember.permissions.flatMap { Permissions(rawValue: $0.selfPermissions) }
+            searchUser?.updateWithTeamMembership(permissions: permissions, createdBy: remoteTeamMember.creatorID)
+        }
     }
 
 }

@@ -131,7 +131,7 @@ extension SearchResult {
         self.searchUsersCache = searchUsersCache
     }
 
-    mutating func extendWithMembershipPayload(payload: MembershipListPayload) {
+    mutating func extendWithMembershipPayload(payload: MembershipListPayload) { // TODO: delete?
         payload.members.forEach { membershipPayload in
             let searchUser = teamMembers.first(where: { $0.remoteIdentifier == membershipPayload.userID })
             let permissions = membershipPayload.permissions.flatMap { Permissions(rawValue: $0.selfPermissions) }
