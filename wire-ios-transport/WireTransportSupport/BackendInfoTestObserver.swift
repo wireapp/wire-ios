@@ -33,72 +33,17 @@ public func makeBackendInfoTestObserver(
     )
 }
 
-/// A UserDefaults wrapper that uses prefixed keys with UserDefaults.standard
-/// instead of suite-specific defaults to avoid iOS Simulator entitlements hang.
-final class PrefixedUserDefaults: UserDefaults {
-    private let keyPrefix: String
-    private let trackedKeys = NSMutableSet()
-
-    init(keyPrefix: String) {
-        self.keyPrefix = keyPrefix
-        super.init(suiteName: nil)!
-    }
-
-    private func prefixedKey(_ key: String) -> String {
-        let prefixed = "\(keyPrefix)_\(key)"
-        trackedKeys.add(prefixed)
-        return prefixed
-    }
-
-    override func set(_ value: Any?, forKey defaultName: String) {
-        UserDefaults.standard.set(value, forKey: prefixedKey(defaultName))
-    }
-
-    override func set(_ value: Int, forKey defaultName: String) {
-        UserDefaults.standard.set(value, forKey: prefixedKey(defaultName))
-    }
-
-    override func set(_ value: Bool, forKey defaultName: String) {
-        UserDefaults.standard.set(value, forKey: prefixedKey(defaultName))
-    }
-
-    override func object(forKey defaultName: String) -> Any? {
-        UserDefaults.standard.object(forKey: prefixedKey(defaultName))
-    }
-
-    override func string(forKey defaultName: String) -> String? {
-        UserDefaults.standard.string(forKey: prefixedKey(defaultName))
-    }
-
-    override func integer(forKey defaultName: String) -> Int {
-        UserDefaults.standard.integer(forKey: prefixedKey(defaultName))
-    }
-
-    override func bool(forKey defaultName: String) -> Bool {
-        UserDefaults.standard.bool(forKey: prefixedKey(defaultName))
-    }
-
-    func removeAllPrefixedKeys() {
-        for key in trackedKeys.allObjects {
-            if let key = key as? String {
-                UserDefaults.standard.removeObject(forKey: key)
-            }
-        }
-        trackedKeys.removeAllObjects()
-    }
-}
-
 final class BackendInfoTestObserver: NSObject, XCTestObservation {
 
-    private let keyPrefix = UUID().uuidString
-    private let defaults: PrefixedUserDefaults
+    private let suiteName = UUID().uuidString
+    private let defaults: UserDefaults
     private let apiVersion: APIVersion?
     private let preferredAPIVersion: APIVersion?
     private let domain: String?
     private let isFederationEnabled: Bool
 
     init(apiVersion: APIVersion?, preferredAPIVersion: APIVersion?, domain: String?, isFederationEnabled: Bool) {
-        self.defaults = PrefixedUserDefaults(keyPrefix: keyPrefix)
+        self.defaults = UserDefaults(suiteName: suiteName)!
         self.apiVersion = apiVersion
         self.preferredAPIVersion = preferredAPIVersion
         self.domain = domain
@@ -114,7 +59,7 @@ final class BackendInfoTestObserver: NSObject, XCTestObservation {
     }
 
     func testCaseDidFinish(_ testCase: XCTestCase) {
-        defaults.removeAllPrefixedKeys()
+        defaults.removePersistentDomain(forName: suiteName)
     }
 
 }
