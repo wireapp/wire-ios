@@ -443,7 +443,6 @@ extension ConversationTextMessageCellDescription {
         }
         return cells
     }
-    
     static func findDetectedLinks(in messageText: NSAttributedString) -> [NSTextCheckingResult] {
         let checkingTypes: NSTextCheckingResult.CheckingType = [.link, .phoneNumber, .address]
         guard let detector = try? NSDataDetector(types: checkingTypes.rawValue) else {
