@@ -1150,7 +1150,6 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		0177AABF2F151E5A00303844 /* ZMUserSession */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ZMUserSession; sourceTree = "<group>"; };
 		591E5E252D28084200284F11 /* WireCallCenterNotifications */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireCallCenterNotifications; sourceTree = "<group>"; };
-		592994D12F33669200357C06 /* Subtasks */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Subtasks; sourceTree = "<group>"; };
 		598410982D3EC1980062D022 /* Use cases */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Use cases"; sourceTree = "<group>"; };
 		5993EA532DAD078300F08A0E /* Support */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5993EA5B2DAD078300F08A0E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Support; sourceTree = "<group>"; };
 		59A9D3C62E86BB49002FCE03 /* AppVersionMigrations */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AppVersionMigrations; sourceTree = "<group>"; };
@@ -2043,7 +2042,6 @@
 		A9BABE5E19BA1EF300E9E5A3 /* Search */ = {
 			isa = PBXGroup;
 			children = (
-				592994D12F33669200357C06 /* Subtasks */,
 				1660AA081ECCAC900056D403 /* SearchDirectory.swift */,
 				1660AA0C1ECDB0250056D403 /* SearchTask.swift */,
 				164C29A61ED2D7B00026562A /* SearchResult.swift */,
@@ -2431,7 +2429,6 @@
 			);
 			fileSystemSynchronizedGroups = (
 				591E5E252D28084200284F11 /* WireCallCenterNotifications */,
-				592994D12F33669200357C06 /* Subtasks */,
 				59A9D3C62E86BB49002FCE03 /* AppVersionMigrations */,
 				59D0583B2D158D0D00B687F2 /* Analytics */,
 				59DBECA72D3965570069C64C /* Use cases */,
