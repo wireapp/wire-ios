@@ -21,6 +21,7 @@ import WireDesign
 
 struct FilesFilteringView: View {
     @StateObject package var viewModel: FilesFilteringViewModel
+    @Environment(\.wireAccentColor) private var accentColor
 
     package init(
         viewModel: @autoclosure @escaping () -> FilesFilteringViewModel,
@@ -33,29 +34,66 @@ struct FilesFilteringView: View {
             HStack(spacing: 5) {
                 ForEach(FilesFilteringViewModel.Filtering.allCases, id: \.self) { filter in
                     capsule(for: filter)
+                        .onTapGesture {
+                            viewModel.didTap(filter: filter)
+                        }
                 }
             }
             .padding(.horizontal, 10)
         }
         .padding(.horizontal, -5)
+        .sheet(
+            item: $viewModel.sheetNavigation,
+            onDismiss: {},
+            content: { navigationItem in
+                sheet(for: navigationItem)
+                    .presentationDetents([.medium])
+            }
+        )
     }
 
     @ViewBuilder
+    private func sheet(for navigationItem: FilesFilteringViewModel.SheetNavigation) -> some View {
+        switch navigationItem {
+        case .tags:
+            Text("Tags")
+        case .types:
+            Text("Types")
+        case .conversations:
+            Text("Conversations")
+        case .owners:
+            Text("Owners")
+        }
+    }
+    
+    @ViewBuilder
     private func capsule(for filter: FilesFilteringViewModel.Filtering) -> some View {
         let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
-
-        HStack {
+        HStack(spacing: 6) {
             Text(filter.title)
-                .foregroundStyle(filter == .removeAllFilters ? ColorTheme.Buttons.Primary.enabled.color : .primary)
+                .foregroundStyle(textColor(for: filter))
 
-            if filter != .removeAllFilters {
-                Image(systemName: "chevron.down")
+            if let badge = viewModel.badge(for: filter) {
+
+                Text(badge)
+                    .font(.caption2.bold())
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 3)
+                    .background(
+                        ColorTheme.Base.primary(accentColor).color,
+                        in: RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    )
+            }
+
+            if let iconName = iconName(for: filter) {
+                Image(systemName: iconName)
                     .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(imageColor(for: filter))
             }
         }
-        .fontWeight(.medium)
-        .padding(.vertical, 4)
-        .padding(.horizontal, 8)
+        .fontWeight(.semibold)
+        .padding(8)
         .if(filter != .removeAllFilters) { view in
             view.background {
                 shape.fill(capsuleFillColor(for: filter))
@@ -63,24 +101,56 @@ struct FilesFilteringView: View {
             }
         }
         .padding(.vertical, 1)
-        .opacity(
-            (filter == .removeAllFilters && shouldShowRemoveFilters) || filter != .removeAllFilters ? 1 : 0
-        )
+        .opacity(opacity(for: filter))
+    }
+
+    // MARK: - Helpers
+
+    private func imageColor(for filter: FilesFilteringViewModel.Filtering) -> Color {
+        if viewModel.isFilterSelected(filter) {
+            ColorTheme.Base.primary(accentColor).color
+        } else {
+            .primary
+        }
+    }
+
+    private func textColor(for filter: FilesFilteringViewModel.Filtering) -> Color {
+        switch filter {
+        case .removeAllFilters:
+            ColorTheme.Base.primary(accentColor).color
+        default:
+            viewModel.isFilterSelected(filter) ? ColorTheme.Base.primary(accentColor).color : .primary
+        }
+    }
+
+    private func iconName(for filter: FilesFilteringViewModel.Filtering) -> String? {
+        switch filter {
+        case .removeAllFilters:
+            nil
+        case .sharedByMe:
+            viewModel.isFilterSelected(filter) ? "xmark" : nil
+        default:
+            "chevron.down"
+        }
+    }
+
+    private func opacity(for filter: FilesFilteringViewModel.Filtering) -> Double {
+        (filter == .removeAllFilters && shouldShowRemoveFilters) || filter != .removeAllFilters ? 1 : 0
     }
 
     private func capsuleFillColor(for filter: FilesFilteringViewModel.Filtering) -> Color {
         if viewModel.isFilterSelected(filter) {
-            ColorTheme.Base.onPrimaryVariant.color
+            ColorTheme.Base.primary(accentColor).color.opacity(0.1)
         } else {
-            ColorTheme.Backgrounds.backgroundVariant.color
+            ColorTheme.Backgrounds.surface.color
         }
     }
 
     private func capsuleStrokeColor(for filter: FilesFilteringViewModel.Filtering) -> Color {
         if viewModel.isFilterSelected(filter) {
-            ColorTheme.Base.onPrimaryVariant.color
+            ColorTheme.Base.primary(accentColor).color
         } else {
-            ColorTheme.Base.secondaryText.color
+            ColorTheme.Buttons.Secondary.disabledOutline.color
         }
     }
 
@@ -90,5 +160,16 @@ struct FilesFilteringView: View {
 }
 
 #Preview {
-    FilesFilteringView(viewModel: FilesFilteringViewModel())
+    FilesFilteringView(
+        viewModel: FilesFilteringViewModel(
+            filtersSelection: .init(
+                tags: [],
+                types: [UUID().uuidString],
+                conversations: [],
+                owners: [UUID().uuidString, UUID().uuidString],
+                sharedByMe: true
+            ),
+            onUpdate: { _ in }
+        )
+    )
 }

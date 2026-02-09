@@ -50,28 +50,90 @@ final class FilesFilteringViewModel: ObservableObject {
     }
 
     struct FiltersSelection {
-        let tags: Set<ID>
-        let types: Set<ID>
-        let conversations: Set<ID>
-        let owners: Set<ID>
-        let sharedByMe: Bool
+        var tags: Set<ID>
+        var types: Set<ID>
+        var conversations: Set<ID>
+        var owners: Set<ID>
+        var sharedByMe: Bool
 
         var hasFilterSelected: Bool {
             !tags.isEmpty || !types.isEmpty || !conversations.isEmpty || !owners.isEmpty || sharedByMe
         }
     }
 
-    @Published var filtersSelection: FiltersSelection
+    enum SheetNavigation: Identifiable {
+        case tags
+        case types
+        case conversations
+        case owners
 
-    init() {
-        self.filtersSelection = .init(
-            tags: [UUID().uuidString],
-            types: [],
-            conversations: [],
-            owners: [],
-            sharedByMe: false
-        )
+        var id: String {
+            switch self {
+            case .tags:
+                "tags"
+            case .types:
+                "types"
+            case .conversations:
+                "conversations"
+            case .owners:
+                "owners"
+            }
+        }
     }
+
+    @Published var filtersSelection: FiltersSelection
+    @Published var sheetNavigation: SheetNavigation?
+
+    private let onUpdate: (FiltersSelection) -> Void
+
+    init(
+        filtersSelection: FiltersSelection = .empty,
+        onUpdate: @escaping (FiltersSelection) -> Void
+    ) {
+        self.filtersSelection = filtersSelection
+        self.onUpdate = onUpdate
+    }
+
+    // MARK: - Callbacks
+
+    func onDidSelect(data: Set<ID>, filter: Filtering) {
+        switch filter {
+        case .tags:
+            filtersSelection.tags = data
+        case .type:
+            filtersSelection.types = data
+        case .conversation:
+            filtersSelection.conversations = data
+        case .owner:
+            filtersSelection.owners = data
+        case .sharedByMe, .removeAllFilters:
+            break // no callbacks for these cases
+        }
+
+        onUpdate(filtersSelection)
+    }
+
+    // MARK: - Actions
+
+    func didTap(filter: Filtering) {
+        switch filter {
+        case .tags:
+            sheetNavigation = .tags
+        case .type:
+            sheetNavigation = .types
+        case .conversation:
+            sheetNavigation = .conversations
+        case .owner:
+            sheetNavigation = .owners
+        case .sharedByMe:
+            filtersSelection.sharedByMe.toggle()
+        case .removeAllFilters:
+            filtersSelection = .empty
+        }
+
+    }
+
+    // MARK: - UI
 
     var hasFiltersSelected: Bool {
         filtersSelection.hasFilterSelected
@@ -94,8 +156,8 @@ final class FilesFilteringViewModel: ObservableObject {
         }
     }
 
-    func filtersCount(for filter: Filtering) -> Int? {
-        switch filter {
+    func badge(for filter: Filtering) -> String? {
+        let filtersCount: Int? = switch filter {
         case .tags:
             isFilterSelected(filter) ? filtersSelection.tags.count : nil
         case .type:
@@ -105,10 +167,22 @@ final class FilesFilteringViewModel: ObservableObject {
         case .owner:
             isFilterSelected(filter) ? filtersSelection.owners.count : nil
         case .sharedByMe:
-            isFilterSelected(filter) ? 1 : nil
+            nil
         case .removeAllFilters:
             nil
         }
+
+        return filtersCount.map(String.init)
     }
 
+}
+
+private extension FilesFilteringViewModel.FiltersSelection {
+    static let empty = Self(
+        tags: [],
+        types: [],
+        conversations: [],
+        owners: [],
+        sharedByMe: false
+    )
 }
