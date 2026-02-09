@@ -44,7 +44,7 @@ public enum LogAttributesKey: String, Comparable, Sendable {
     case accountID = "account_id"
     case mlsGroupID = "mls_group_id"
     case pushChannelVersion = "push_channel"
-    case duration
+    case syncDuration = "duration" // This is remapped to "sync_duration" in Datadog
     case syncType = "sync_type"
     case syncVersion = "sync_version"
     case workItemID = "work_item_id"

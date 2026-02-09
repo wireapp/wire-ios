@@ -63,7 +63,7 @@ public extension WireLogger {
         let durationInSeconds = context.start.timeIntervalSinceNow.magnitude
         var updatedAttributes = context.attributes
         let formattedDuration = String(format: "%.2f", durationInSeconds)
-        updatedAttributes[.duration] = formattedDuration
+        updatedAttributes[.syncDuration] = formattedDuration
         let completedMessage = "completed \(context.label)"
         info(completedMessage, attributes: updatedAttributes)
     }
