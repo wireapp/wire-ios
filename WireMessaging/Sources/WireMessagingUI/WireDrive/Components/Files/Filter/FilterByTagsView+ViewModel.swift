@@ -28,10 +28,15 @@ extension FilterByTagsView {
         
         @Published var presentedTags: [String] = []
         @Published var selectedTags: Set<String>
+        @Published var searchText = "" {
+            didSet {
+                applySearchFilter()
+            }
+        }
         @Published var isLoading: Bool = false
         @Published var showError: Bool = false
 
-        private var availableTags: Set<String> = []
+        private var availableTags: [String] = []
         private let initiallySelectedTags: Set<String>
 
         private let fetchTagsUseCase: any WireDriveGetTagSuggestionsUseCaseProtocol
@@ -62,20 +67,32 @@ extension FilterByTagsView {
 
         // MARK: - Actions
 
-        private func fetch() async {
+        func fetch() async {
             do {
                 isLoading = true
                 defer { isLoading = false }
                 
                 let tags = try await fetchTagsUseCase.invoke()
                 
-                self.availableTags = Set(tags.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty })
-                
-                self.presentedTags = availableTags
+                self.availableTags = tags
+                    .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
                     .sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
                     .sorted { isTagSelected($0) && !isTagSelected($1) }
+                
+                applySearchFilter()
             } catch {
                 showError = true
+            }
+        }
+        
+        private func applySearchFilter() {
+            presentedTags = availableTags.filter { tag in
+                let cleanSearchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+                return if cleanSearchText.isEmpty {
+                    true
+                } else {
+                    tag.localizedCaseInsensitiveContains(cleanSearchText)
+                }
             }
         }
 

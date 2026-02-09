@@ -41,27 +41,31 @@ struct FilterByTagsView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                ColorTheme.Backgrounds.background.color
-                    .ignoresSafeArea(.all)
-
-                VStack {
-                    ScrollView {
-                        tagsView
-                    }
-                    
-                    removeFilterButton
-                        .padding(10)
+            content()
+                .background {
+                    ColorTheme.Backgrounds.background.color
+                        .ignoresSafeArea(.all)
                 }
+                .toolbar { toolbarContent }
+                .navigationTitle(Strings.Filter.Tags.navigationTitle)
+                .navigationBarTitleDisplayMode(.inline)
+                .alert(L10n.Localizable.General.failure, isPresented: $viewModel.showError) {
+                    Button(L10n.Localizable.General.confirm, role: .cancel) {}
+                }
+                .overlay { if viewModel.isLoading { ProgressView() } }
+                .searchable(text: $viewModel.searchText, prompt: Strings.Filter.Tags.searchPrompt)
+        }
+    }
+    
+    @ViewBuilder private func content() -> some View {
+        VStack {
+            ScrollView {
+                tagsView
+                    .padding()
             }
-            .toolbar { toolbarContent }
-            .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
-            .navigationTitle(Strings.Filter.Tags.navigationTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .alert(L10n.Localizable.General.failure, isPresented: $viewModel.showError) {
-                Button(L10n.Localizable.General.confirm, role: .cancel) {}
-            }
-            .overlay { if viewModel.isLoading { ProgressView() } }
+            
+            removeFilterButton
+                .padding(10)
         }
     }
 }
@@ -72,19 +76,19 @@ private extension FilterByTagsView {
     var tagsViewSpacing: CGFloat {
         viewModel.presentedTags.isEmpty ? 0 : 20
     }
-
+    
     var tagsView: some View {
         VStack(alignment: .leading, spacing: tagsViewSpacing) {
             if viewModel.presentedTags.isEmpty {
                 Spacer()
-
-                Text(Strings.Filter.Tags.emptyTitle)
+                
+                Text(viewModel.searchText.isEmpty ? Strings.Filter.Tags.emptyTitle : Strings.Filter.Tags.notFoundBySearch)
                     .font(for: .h4)
                     .padding([.top, .bottom])
-
+                
                 Spacer()
             }
-
+            
             FlowLayout(spacing: 14, alignment: .leading) {
                 ForEach(viewModel.presentedTags, id: \.self) { tag in
                     TagPill(
@@ -99,10 +103,11 @@ private extension FilterByTagsView {
             .frame(maxWidth: .infinity, alignment: .leading)
             .animation(.easeInOut.speed(1.5), value: viewModel.selectedTags)
         }
-        .padding()
     }
+}
 
-    private struct TagPill: View {
+private extension FilterByTagsView {
+    struct TagPill: View {
         @Environment(\.wireAccentColor) private var wireAccentColor
         
         let text: String
@@ -148,12 +153,10 @@ private extension FilterByTagsView {
 // MARK: - Toolbar
 
 private extension FilterByTagsView {
-
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) { closeButton }
         ToolbarItem(placement: .topBarTrailing) { saveButton }
     }
-
 }
 
 // MARK: - Buttons

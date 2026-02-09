@@ -184,7 +184,7 @@ extension FileVersionItemViewModel {
 
 extension FilterByTagsView.ViewModel {
 
-    /// A stubbed instance of `FilesFiltersViewModel` for SwiftUI previews.
+    /// A stubbed instance for SwiftUI previews.
     static func preview() -> FilterByTagsView.ViewModel {
         let nodesAPI = MockNodesAPIProtocol()
         nodesAPI.getAllTags_MockValue = mockTags
