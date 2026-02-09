@@ -98,8 +98,8 @@ extension ZMUserSession {
 
     public func logout(credentials: UserEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard
-            let accountID = ZMUser.selfUser(inUserSession: self).remoteIdentifier,
-            let selfClientIdentifier = ZMUser.selfUser(inUserSession: self).selfClient()?.remoteIdentifier,
+            let accountID = ZMUser.selfUser(in: viewContext).remoteIdentifier,
+            let selfClientIdentifier = ZMUser.selfUser(in: viewContext).selfClient()?.remoteIdentifier,
             let apiVersion = resolvedBackendMetadata.apiVersion
         else {
             return

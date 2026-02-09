@@ -480,6 +480,10 @@ class MessageAPIV13: MessageAPIV12 {
     }
 }
 
-final class MessageAPIV14: MessageAPIV13 {
+class MessageAPIV14: MessageAPIV13 {
     override var apiVersion: APIVersion { .v14 }
+}
+
+final class MessageAPIV15: MessageAPIV14 {
+    override var apiVersion: APIVersion { .v15 }
 }

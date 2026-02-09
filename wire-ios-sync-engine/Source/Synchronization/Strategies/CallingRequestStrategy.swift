@@ -25,7 +25,7 @@ import WireRequestStrategy
 
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker,
-    ZMContextChangeTrackerSource, ZMEventConsumer {
+    ZMContextChangeTrackerSource {
 
     // MARK: - Private Properties
 
@@ -73,8 +73,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
         configuration = [
             .allowsRequestsWhileInBackground,
-            .allowsRequestsWhileOnline,
-            .allowsRequestsWhileWaitingForWebsocket
+            .allowsRequestsWhileOnline
         ]
 
         self.callConfigRequestSync = ZMSingleRequestSync(
@@ -99,22 +98,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             }
         }
 
-        setupEventProcessingNotifications()
-    }
-
-    private func setupEventProcessingNotifications() {
-
-        NotificationCenter.default
-            .publisher(for: .eventProcessorDidStartProcessingEventsNotification)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in self?.callCenter?.avsWrapper.notify(isProcessingNotifications: true) }
-            .store(in: &cancellables)
-
-        NotificationCenter.default
-            .publisher(for: .eventProcessorDidFinishProcessingEventsNotification)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in self?.callCenter?.avsWrapper.notify(isProcessingNotifications: false) }
-            .store(in: &cancellables)
     }
 
     // MARK: - Methods
@@ -247,92 +230,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             }
         }
     }
-
-    // MARK: - Event Consumer
-
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        Self.logger.debug("process events: \(events.count)")
-        events.forEach(processEvent)
-    }
-
-    private func processEvent(_ event: ZMUpdateEvent) {
-        let serverTimeDelta = managedObjectContext.serverTimeDelta
-        guard event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) else { return }
-
-        if let genericMessage = GenericMessage(from: event, validate: true), genericMessage.hasCalling {
-            Self.logger.debug("process call event", attributes: [.eventId: event.safeUUID])
-            guard
-                let payload = genericMessage.calling.content.data(using: .utf8, allowLossyConversion: false),
-
-                let callEventContent = CallEventContent(from: payload, with: decoder),
-                let senderUUID = event.senderUUID,
-                let conversationUUID = event.conversationUUID,
-                let eventTimestamp = event.timestamp
-            else {
-                Self.logger.error("ignoring calling message: \(genericMessage)")
-                return
-            }
-
-            guard !callEventContent.isRemoteMute else {
-                Self.logger.debug("isRemoteMute", attributes: [.eventId: event.safeUUID])
-                callCenter?.isMuted = true
-                return
-            }
-
-            processCallEvent(
-                callingConversationId: genericMessage.calling.qualifiedConversationID,
-                conversationUUID: conversationUUID,
-                senderUUID: senderUUID,
-                clientId: event.senderClientID ?? callEventContent.callerClientID,
-                conversationDomain: event.conversationDomain,
-                senderDomain: event.senderDomain,
-                payload: payload,
-                currentTimestamp: serverTimeDelta,
-                eventTimestamp: eventTimestamp
-            )
-        }
-    }
-
-    func processCallEvent(
-        callingConversationId: QualifiedConversationId,
-        conversationUUID: UUID,
-        senderUUID: UUID,
-        clientId: String,
-        conversationDomain: String?,
-        senderDomain: String?,
-        payload: Data,
-        currentTimestamp: TimeInterval,
-        eventTimestamp: Date
-    ) {
-
-        let identifier = !callingConversationId.id
-            .isEmpty ? UUID(uuidString: callingConversationId.id)! : conversationUUID
-        let domain = !callingConversationId.domain.isEmpty ? callingConversationId.domain : conversationDomain
-
-        let conversationId = AVSIdentifier(
-            identifier: identifier,
-            domain: domain,
-            isFederationEnabled: isFederationEnabled
-        )
-
-        let userId = AVSIdentifier(
-            identifier: senderUUID,
-            domain: senderDomain,
-            isFederationEnabled: isFederationEnabled
-        )
-
-        let callEvent = CallEvent(
-            data: payload,
-            currentTimestamp: Date().addingTimeInterval(currentTimestamp),
-            serverTimestamp: eventTimestamp,
-            conversationId: conversationId,
-            userId: userId,
-            clientId: clientId
-        )
-
-        callCenter?.processCallEvent(callEvent)
-    }
-
 }
 
 // MARK: - Wire Call Center Transport
@@ -629,7 +526,7 @@ extension CallingRequestStrategy {
             case .v0:
                 // `nestedContainer` contains all the user ids with no notion of domain, we can extract clients directly
                 allClients = try extractClientsFromContainer(nestedContainer, nil)
-            case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
+            case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
                 // `nestedContainer` has further nested containers each dynamically keyed by a domain name.
                 // we need to loop over each container to extract the clients.
                 try nestedContainer.allKeys.forEach { domainKey in

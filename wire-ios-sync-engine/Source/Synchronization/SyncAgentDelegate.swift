@@ -25,10 +25,4 @@ protocol SyncAgentDelegate: AnyObject {
     func syncAgentDidStartIncrementalSync(_ syncAgent: SyncAgent)
     func syncAgentDidFinishIncrementalSync(_ syncAgent: SyncAgent, isRecovering: Bool)
     func syncAgentDidFailSyncing(_ syncAgent: SyncAgent, error: any Error)
-
-    func syncAgentDidStartLegacyInitialSync(_ syncAgent: SyncAgent)
-    func syncAgentDidFinishLegacyInitialSync(_ syncAgent: SyncAgent)
-    func syncAgentDidStartLegacyIncrementalSync(_ syncAgent: SyncAgent)
-    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent, isRecovering: Bool)
-
 }

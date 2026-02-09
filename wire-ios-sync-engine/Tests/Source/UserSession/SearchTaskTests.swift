@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-
 import WireMockTransport
 import WireTransport
+import XCTest
+
 @testable import WireSyncEngine
 
 final class SearchTaskTests: DatabaseTest {
@@ -1419,7 +1419,6 @@ final class SearchTaskTests: DatabaseTest {
     ) -> SearchTask {
         SearchTask(
             request: request,
-            searchContext: searchMOC,
             contextProvider: coreDataStack!,
             transportSession: mockTransportSession,
             searchUsersCache: mockCache,
@@ -1434,7 +1433,6 @@ final class SearchTaskTests: DatabaseTest {
     ) -> SearchTask {
         SearchTask(
             qualifiedID: QualifiedID(uuid: lookupUserId, domain: domain),
-            searchContext: searchMOC,
             contextProvider: coreDataStack!,
             transportSession: mockTransportSession,
             searchUsersCache: mockCache,

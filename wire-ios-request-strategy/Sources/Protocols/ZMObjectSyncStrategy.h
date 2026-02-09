@@ -28,12 +28,11 @@
 @class ZMUpdateEvent;
 @class NSManagedObjectContext;
 @protocol ZMTransportData;
-@protocol ZMEventConsumer;
 @class ZMConversation;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol ZMObjectStrategy <NSObject, ZMEventConsumer, ZMRequestGeneratorSource, ZMContextChangeTrackerSource>
+@protocol ZMObjectStrategy <NSObject, ZMRequestGeneratorSource, ZMContextChangeTrackerSource>
 @end
 
 

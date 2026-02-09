@@ -28,7 +28,5 @@
 #import <WireSyncEngine/ZMClientRegistrationStatusDelegate.h>
 #import <WireSyncEngine/ZMLoginTranscoder.h>
 #import <WireSyncEngine/ZMLoginCodeRequestTranscoder.h>
-#import <WireSyncEngine/ZMLastUpdateEventIDTranscoder.h>
 #import <WireSyncEngine/ZMSelfStrategy.h>
 #import <WireSyncEngine/ZMSyncStrategy.h>
-#import <WireSyncEngine/ZMMissingUpdateEventsTranscoder.h>

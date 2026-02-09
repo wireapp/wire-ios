@@ -116,8 +116,6 @@ extension ZMUserSession: UserSession {
         try earService.unlockDatabase()
 
         DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: notificationContext)
-
-        processLegacyEvents()
     }
 
     public func deleteAppLockPasscode() throws {
@@ -125,15 +123,15 @@ extension ZMUserSession: UserSession {
     }
 
     public var selfUser: any UserType {
-        ZMUser.selfUser(inUserSession: self)
+        ZMUser.selfUser(in: viewContext)
     }
 
     public var selfUserLegalHoldSubject: any SelfUserLegalHoldable {
-        ZMUser.selfUser(inUserSession: self)
+        ZMUser.selfUser(in: viewContext)
     }
 
     public var editableSelfUser: any EditableUserType & UserType {
-        ZMUser.selfUser(inUserSession: self)
+        ZMUser.selfUser(in: viewContext)
     }
 
     public func addUserObserver(
@@ -302,12 +300,15 @@ extension ZMUserSession: UserSession {
         return GetMLSFeatureUseCase(featureRepository: featureRepository)
     }
 
-    public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
-        CreateConversationGuestLinkUseCase(setGuestsAndAppsUseCase: makeSetConversationGuestsAndAppsUseCase())
+    public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol? {
+        guard let setGuestsAndAppsUseCase = makeSetConversationGuestsAndAppsUseCase() else { return nil }
+        return CreateConversationGuestLinkUseCase(setGuestsAndAppsUseCase: setGuestsAndAppsUseCase)
     }
 
-    public func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol {
-        SetAllowGuestAndAppsUseCase()
+    public func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol? {
+        clientSessionComponent.map { component in
+            SetAllowGuestAndAppsUseCase(api: component.conversationsAPI)
+        }
     }
 
     @MainActor

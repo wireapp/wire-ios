@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
 import Foundation
 
 public struct PushChannelV2APIBuilder {
@@ -66,6 +67,8 @@ public struct PushChannelV2APIBuilder {
             PushChannelV2APIV13(pushChannelService: pushChannelService)
         case .v14:
             PushChannelV2APIV14(pushChannelService: pushChannelService)
+        case .v15:
+            PushChannelV2APIV15(pushChannelService: pushChannelService)
         }
     }
 

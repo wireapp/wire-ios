@@ -49,6 +49,7 @@ final class ConversationCreationController: UIViewController {
     typealias CreateGroupName = L10n.Localizable.Conversation.Create.GroupName
 
     private let userSession: UserSession
+    private let isAppsFeatureEnabled: Bool
     private let areLegacyBotsAvailable: Bool
 
     private let collectionViewController = SectionCollectionViewController()
@@ -74,7 +75,7 @@ final class ConversationCreationController: UIViewController {
             // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
             values.encryptionProtocol != .mls ? receiptsSection : nil,
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil,
-            userSession.isWireCellsEnabled ? fileManagementSection : nil
+            userSession.isWireDriveEnabled ? fileManagementSection : nil
         ].compactMap(\.self)
 
         if let firstSection = sections.first {
@@ -180,6 +181,7 @@ final class ConversationCreationController: UIViewController {
     ) {
         self.preSelectedParticipants = preSelectedParticipants
         self.userSession = userSession
+        self.isAppsFeatureEnabled = isAppsFeatureEnabled
         self.areLegacyBotsAvailable = areLegacyBotsAvailable
         self.values = ConversationCreationValues(
             isChannel: false,
@@ -289,7 +291,9 @@ final class ConversationCreationController: UIViewController {
 
             let participantsController = AddParticipantsViewController(
                 context: .create(values),
-                userSession: userSession
+                userSession: userSession,
+                isAppsFeatureEnabled: isAppsFeatureEnabled,
+                areLegacyBotsAvailable: areLegacyBotsAvailable
             )
 
             participantsController.conversationCreationDelegate = self
@@ -403,7 +407,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),
                 enableReceipts: values.enableReceipts,
-                cells: userSession.isWireCellsEnabled ? values.enableFileManagement : nil,
+                cells: userSession.isWireDriveEnabled ? values.enableFileManagement : nil,
                 isMLSEnabled: session.isBackendMLSEnabled
             )
 

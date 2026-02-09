@@ -25,6 +25,7 @@ import WireNetwork
 import WireRequestStrategy
 import WireUtilities
 
+@available(*, deprecated, message: "See UserSessionLoader instead.")
 struct ZMUserSessionBuilder {
 
     // MARK: - Properties
@@ -239,7 +240,6 @@ struct ZMUserSessionBuilder {
             cookieStorage: transportSession.cookieStorage,
             requestCancellation: transportSession,
             application: application,
-            lastEventIDRepository: lastEventIDRepository,
             coreCryptoProvider: coreCryptoProvider,
             isSyncV2Enabled: journal[.isSyncV2Enabled],
             localDomain: BackendInfo.domain,
@@ -253,8 +253,7 @@ struct ZMUserSessionBuilder {
             accountID: coreDataStack.account.userIdentifier,
             databaseContexts: [
                 coreDataStack.viewContext,
-                coreDataStack.syncContext,
-                coreDataStack.searchContext
+                coreDataStack.syncContext
             ],
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults,

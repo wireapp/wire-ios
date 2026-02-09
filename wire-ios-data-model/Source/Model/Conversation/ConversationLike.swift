@@ -60,11 +60,11 @@ public protocol ConversationLike: AnyObject {
     var channelHistoryDepth: String? { get }
     var hasMoreHistory: Bool { get }
 
-    /// The name of the `cell` used for Wire Cells file management.
-    var wireCellName: String { get }
+    /// The name of the `cell` used for Wire Drive file management.
+    var wireDriveCellName: String { get }
 
-    /// Whether Wire Cells is enabled for this conversation.
-    var isCellsEnabled: Bool { get }
+    /// Whether Wire Drive is enabled for this conversation.
+    var isWireDriveEnabled: Bool { get }
 }
 
 // Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another
@@ -120,7 +120,7 @@ extension ZMConversation: ConversationLike {
         securityLevel == .secureWithIgnored
     }
 
-    public var wireCellName: String {
+    public var wireDriveCellName: String {
         guard let qualifiedID else { return "unknown" }
 
         return "\(qualifiedID.uuid.uuidString.lowercased())@\(qualifiedID.domain)"

@@ -22,8 +22,10 @@ import WireMessagingDomain
 import WireMessagingUI
 
 final class MessageReplyAttachmentsViewModel {
-    private let fetchNodeUseCase: any WireCellsFetchNodeUseCaseProtocol
+    private let fetchCachedNodeUseCase: any WireDriveFetchCachedNodeUseCaseProtocol
+    private let fetchNodeUseCase: any WireDriveFetchNodeUseCaseProtocol
     private var task: Task<Void, Error>?
+    private var fetchVisibleNodeIDsTask: Task<Set<UUID>, Error>?
     private let cache = UIImage.defaultUserImageCache.cache
 
     struct PreviewImageInfo {
@@ -33,7 +35,11 @@ final class MessageReplyAttachmentsViewModel {
 
     @Published var previewImageInfo: PreviewImageInfo?
 
-    init(fetchNodeUseCase: any WireCellsFetchNodeUseCaseProtocol) {
+    init(
+        fetchCachedNodeUseCase: any WireDriveFetchCachedNodeUseCaseProtocol,
+        fetchNodeUseCase: any WireDriveFetchNodeUseCaseProtocol
+    ) {
+        self.fetchCachedNodeUseCase = fetchCachedNodeUseCase
         self.fetchNodeUseCase = fetchNodeUseCase
     }
 
@@ -45,11 +51,7 @@ final class MessageReplyAttachmentsViewModel {
         task = Task { [weak self] in
             guard let self else { return }
 
-            guard let node = try? await fetchNodeUseCase
-                .invoke(nodeID: attachment.nodeID)
-                .compactMap(\.self)
-                .first(where: { $0.id == attachment.nodeID })
-            else { return }
+            guard let node = try? await fetchNodeUseCase.invoke(nodeID: attachment.nodeID) else { return }
 
             try await downloadImage(
                 from: node,
@@ -61,12 +63,48 @@ final class MessageReplyAttachmentsViewModel {
     func cancel() {
         task?.cancel()
         task = nil
+        fetchVisibleNodeIDsTask?.cancel()
+        fetchVisibleNodeIDsTask = nil
+    }
+
+    @MainActor
+    func cachedVisibleAttachments(attachments: [MultipartMessageData.Attachment]) -> [MultipartMessageData.Attachment] {
+        attachments.filter { attachment in
+            if let cacheInfo = fetchCachedNodeUseCase.invoke(nodeID: attachment.nodeID) {
+                !cacheInfo.isDeletedOrRecycled
+            } else {
+                true // If we have no cache info, assume it is not deleted
+            }
+        }
+    }
+
+    @MainActor
+    func latestVisibleAttachments(
+        attachments: [MultipartMessageData.Attachment]
+    ) async throws -> [MultipartMessageData.Attachment] {
+        let task = Task { [fetchNodeUseCase] in
+            try await withThrowingTaskGroup(of: WireDriveNode?.self, returning: Set<UUID>.self) { group in
+                for attachment in attachments {
+                    group.addTask { try await fetchNodeUseCase.invoke(nodeID: attachment.nodeID) }
+                }
+
+                return try await group.reduce(into: Set<UUID>()) { result, node in
+                    if let node, !node.isRecycled {
+                        result.insert(node.id)
+                    }
+                }
+            }
+        }
+        fetchVisibleNodeIDsTask = task
+
+        let visibleNodeIDs = try await task.value
+        return attachments.filter { visibleNodeIDs.contains($0.nodeID) }
     }
 
     // MARK: - Private
 
     private func downloadImage(
-        from node: WireCellsNode,
+        from node: WireDriveNode,
         isVideo: Bool
     ) async throws {
         guard let smallPreview = node.previews.min(by: {

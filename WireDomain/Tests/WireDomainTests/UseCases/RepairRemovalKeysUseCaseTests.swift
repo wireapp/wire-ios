@@ -20,6 +20,7 @@ import Foundation
 import Testing
 import WireDataModel
 import WireDataModelSupport
+import WireFoundation
 import WireNetwork
 
 @testable import WireDomain
@@ -216,11 +217,11 @@ struct RepairRemovalKeysUseCaseTests {
 // TODO: [WPB-22478] Remove this mock when we generate it in WireNetwork
 final class MockConversationsAPIProtocol: ConversationsAPI {
 
-    func getLegacyConversationIdentifiers() async throws -> WireNetwork.PayloadPager<[UUID]> {
+    func getLegacyConversationIdentifiers() throws -> WireNetwork.PayloadPager<[UUID]> {
         fatalError("not implemented")
     }
 
-    func getConversationIdentifiers() async throws -> WireNetwork.PayloadPager<[WireNetwork.QualifiedID]> {
+    func getConversationIdentifiers() throws -> WireNetwork.PayloadPager<[WireNetwork.QualifiedID]> {
         fatalError("not implemented")
     }
 
@@ -258,6 +259,14 @@ final class MockConversationsAPIProtocol: ConversationsAPI {
         conversationDomain: String,
         permission: WireNetwork.ChannelPermission
     ) async throws -> WireNetwork.ChannelPermission {
+        fatalError("not implemented")
+    }
+
+    func updateConversationAccess(
+        conversationID: WireFoundation.QualifiedID,
+        allowGuests: Bool,
+        allowApps: Bool
+    ) async throws {
         fatalError("not implemented")
     }
 
