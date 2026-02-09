@@ -17,11 +17,99 @@
 //
 
 import UIKit
+import WireDataModel
 
 final class SearchAppsSectionController: SearchSectionController {
 
+    weak var delegate: SearchAppsSectionDelegate?
+
+    var apps: [any UserType] = []
+
+    let canSelfUserManageTeam: Bool
+
+    init(canSelfUserManageTeam: Bool) {
+        self.canSelfUserManageTeam = canSelfUserManageTeam
+        super.init()
+    }
+
+    override var isHidden: Bool {
+        apps.isEmpty
+    }
+
+    override func prepareForUse(in collectionView: UICollectionView?) {
+        collectionView?.register(
+            OpenBotAdminCell.self, // TODO: fix
+            forCellWithReuseIdentifier: OpenBotAdminCell.zm_reuseIdentifier
+        )
+    }
+
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        0 // TODO: fix
+        if canSelfUserManageTeam {
+            apps.count + 1
+        } else {
+            apps.count
+        }
+    }
+
+    override var sectionTitle: String {
+        L10n.Localizable.Peoplepicker.Header.apps
+    }
+
+    func bot(for indexPath: IndexPath) -> any UserType {
+        if canSelfUserManageTeam {
+            apps[indexPath.row - 1]
+        } else {
+            apps[indexPath.row]
+        }
+    }
+
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
+        .zero
+    }
+
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        if canSelfUserManageTeam, indexPath.row == 0 {
+            return collectionView.dequeueReusableCell(
+                withReuseIdentifier: OpenBotAdminCell.zm_reuseIdentifier, // TODO: fix
+                for: indexPath
+            )
+        } else {
+            let bot = bot(for: indexPath)
+
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: UserCell.zm_reuseIdentifier,
+                for: indexPath
+            ) as! UserCell
+            if let selfUser = ZMUser.selfUser() {
+                cell.configure(
+                    user: bot,
+                    isSelfUserPartOfATeam: selfUser.hasTeam
+                )
+            } else {
+                assertionFailure("ZMUser.selfUser() is nil")
+            }
+            cell.accessoryIconView.isHidden = false
+            cell.showSeparator = (apps.count - 1) != indexPath.row
+
+            return cell
+        }
+    }
+
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        fatalError("TODO")
+//        if canSelfUserManageTeam, indexPath.row == 0 {
+//            delegate?.addAppsSectionDidRequestOpenBotsAdmin()
+//        } else {
+//            let bot = bot(for: indexPath)
+//            delegate?.searchSectionController(self, didSelectUser: bot, at: indexPath)
+//        }
     }
 
 }

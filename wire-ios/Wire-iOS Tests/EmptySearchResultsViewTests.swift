@@ -32,12 +32,11 @@ final class EmptySearchResultsViewTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: false,
-            searchingForServices: false,
+            searchingForBots: false,
             hasFilter: true
         )
     }
@@ -47,7 +46,6 @@ final class EmptySearchResultsViewTests: XCTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
-        super.tearDown()
     }
 
     // MARK: - Snapshot Tests
@@ -61,7 +59,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: true,
-            searchingForServices: false,
+            searchingForBots: false,
             hasFilter: true
         )
 
@@ -74,7 +72,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: false,
-            searchingForServices: false,
+            searchingForBots: false,
             hasFilter: false
         )
 
@@ -115,7 +113,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: true,
             isFederationEnabled: false,
-            searchingForServices: true,
+            searchingForBots: true,
             hasFilter: false
         )
 
@@ -128,7 +126,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
     func setupEmptySearchResultsView(
         isSelfUserAdmin: Bool,
         isFederationEnabled: Bool,
-        searchingForServices: Bool,
+        searchingForBots: Bool,
         hasFilter: Bool
     ) -> EmptySearchResultsView {
 
@@ -138,7 +136,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         )
         sut.overrideUserInterfaceStyle = .dark
         sut.updateStatus(
-            searchingForServices: searchingForServices,
+            searchingForBots: searchingForBots,
             hasFilter: hasFilter
         )
         configureBounds(for: sut)

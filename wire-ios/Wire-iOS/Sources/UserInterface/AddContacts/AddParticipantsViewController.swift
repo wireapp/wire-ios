@@ -266,7 +266,7 @@ final class AddParticipantsViewController: UIViewController {
             }
             // Remove selected users when switching to services tab to avoid the user confusion: users in the field are
             // not going to be added to the new conversation with the bot.
-            if group == .services {
+            if group == .apps { // TODO: apps?
                 searchHeaderViewController.clearInput()
                 confirmButton.isHidden = true
             } else {
@@ -309,7 +309,7 @@ final class AddParticipantsViewController: UIViewController {
         updateSelectionValues()
 
         if searchResultsViewController.isResultEmpty {
-            emptyResultView.updateStatus(searchingForServices: false, hasFilter: false)
+            emptyResultView.updateStatus(searchingForBots: false, hasFilter: false)
         }
     }
 
@@ -463,19 +463,18 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     private func performSearch() {
-        let searchingForServices = searchResultsViewController.searchGroup == .services
+        let searchingForBots = searchResultsViewController.searchGroup == .bots
         let hasFilter = !searchHeaderViewController.tokenField.filterText.isEmpty
 
-        emptyResultView.updateStatus(searchingForServices: searchingForServices, hasFilter: hasFilter)
+        emptyResultView.updateStatus(searchingForBots: searchingForBots, hasFilter: hasFilter)
 
         switch (searchResultsViewController.searchGroup, hasFilter) {
         case (.apps, _):
-            searchResultsViewController.mode = .search // TODO: searching apps is more similar to searching people
-            fatalError() // TODO: searchForApps?
-            // searchResultsViewController.searchForServices(withQuery: searchHeaderViewController.tokenField.filterText)
+            searchResultsViewController.mode = .search
+            searchResultsViewController.searchForApps(withQuery: searchHeaderViewController.tokenField.filterText)
         case (.bots, _):
             searchResultsViewController.mode = .search
-            searchResultsViewController.searchForServices(withQuery: searchHeaderViewController.tokenField.filterText) // TODO: rename searchForBots?
+            searchResultsViewController.searchForBots(withQuery: searchHeaderViewController.tokenField.filterText)
         case (.people, false):
             searchResultsViewController.mode = .list
             searchResultsViewController.searchContactList()
@@ -572,13 +571,13 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(
         _ searchResultsViewController: SearchResultsViewController,
-        didTapOnSeviceUser user: any Bot
+        didTapOnBot bot: any Bot
     ) {
 
         guard case let .add(conversation) = viewModel.context else { return }
 
         let detail = ServiceDetailViewController(
-            bot: user,
+            bot: bot,
             actionType: .addService(conversation as! ZMConversation),
             userSession: userSession
         ) { [weak self] result in

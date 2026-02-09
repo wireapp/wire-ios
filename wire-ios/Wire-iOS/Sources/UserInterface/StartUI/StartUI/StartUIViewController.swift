@@ -254,7 +254,7 @@ final class StartUIViewController: UIViewController {
         groupSelector.translatesAutoresizingMaskIntoConstraints = false
         groupSelector.backgroundColor = backgroundColor
         groupSelector.onGroupSelected = { [weak self] group in
-            if group == .services {
+            if group == .bots || group == .apps {
                 self?.searchController.searchBar.text = ""
             }
             self?.searchResults.searchGroup = group
@@ -328,11 +328,13 @@ final class StartUIViewController: UIViewController {
                 searchResults.mode = .search
                 searchResults.searchForUsers(withQuery: searchString)
             }
+        } else if groupSelector.group == .apps {
+            searchResults.searchForApps(withQuery: searchString)
         } else {
-            searchResults.searchForServices(withQuery: searchString)
+            searchResults.searchForBots(withQuery: searchString)
         }
         emptyResultView.updateStatus(
-            searchingForServices: groupSelector.group == .services,
+            searchingForBots: groupSelector.group == .bots, // TODO: apps?
             hasFilter: !searchString.isEmpty
         )
     }

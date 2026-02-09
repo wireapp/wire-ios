@@ -24,9 +24,6 @@ enum SearchGroup: Int {
     case people
     case apps
     case bots
-
-    @available(*, deprecated, renamed: "bots")
-    static var services: Self { .bots }
 }
 
 extension SearchGroup {
@@ -72,29 +69,6 @@ extension SearchGroup {
     }
 }
 
-protocol SearchResultsViewControllerDelegate: AnyObject {
-
-    func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didTapOnUser user: UserType,
-        indexPath: IndexPath,
-        section: SearchResultsViewControllerSection
-    )
-    func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didDoubleTapOnUser user: UserType,
-        indexPath: IndexPath
-    )
-    func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didTapOnConversation conversation: ZMConversation
-    )
-    func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didTapOnSeviceUser user: any Bot // TODO: rename and fix typo
-    )
-}
-
 enum SearchResultsViewControllerMode: Int {
     case search
     case selection
@@ -108,7 +82,7 @@ enum SearchResultsViewControllerSection: Int {
     case teamMembers
     case conversations
     case directory
-    // TODO: apps?
+    case apps
     case bots
     case federation
 }
@@ -227,7 +201,9 @@ final class SearchResultsViewController: UIViewController {
         teamMemberAndContactsSection.allowsSelection = isAddingParticipants
         teamMemberAndContactsSection.selection = userSelection
         teamMemberAndContactsSection.title = L10n.Localizable.Peoplepicker.Header.contacts
-        self.appsSection = SearchAppsSectionController()
+        self.appsSection = SearchAppsSectionController(
+            canSelfUserManageTeam: userSession.selfUser.canManageTeam
+        )
         self.botsSection = SearchBotsSectionController(
             canSelfUserManageTeam: userSession.selfUser.canManageTeam
         )
@@ -316,7 +292,11 @@ final class SearchResultsViewController: UIViewController {
         performSearch(query: query, options: [.contacts, .teamMembers])
     }
 
-    func searchForServices(withQuery query: String) { // TODO: rename
+    func searchForApps(withQuery query: String) {
+        performSearch(query: query, options: [.apps])
+    }
+
+    func searchForBots(withQuery query: String) {
         performSearch(query: query, options: [.bots])
     }
 
@@ -420,6 +400,7 @@ final class SearchResultsViewController: UIViewController {
 
         directorySection.suggestions = searchResult.directory.filter { !$0.isFederated }
         conversationsSection.groupConversations = searchResult.conversations
+        appsSection.apps = searchResult.apps
         botsSection.bots = searchResult.bots
         federationSection.users = searchResult.directory.filter(\.isFederated)
 
@@ -437,6 +418,8 @@ final class SearchResultsViewController: UIViewController {
             .conversations
         } else if controller === directorySection {
             .directory
+        } else if controller === appsSection {
+            .apps
         } else if controller === botsSection {
             .bots
         } else if controller === federationSection {
@@ -463,7 +446,7 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
                 section: sectionFor(controller: searchSectionController)
             )
         } else if let bot = user as? any Bot, bot.isAppOrBot {
-            delegate?.searchResultsViewController(self, didTapOnSeviceUser: bot)
+            delegate?.searchResultsViewController(self, didTapOnBot: bot)
         } else if let searchUser = user as? ZMSearchUser {
             delegate?.searchResultsViewController(
                 self,

@@ -17,6 +17,6 @@
 //
 
 // TODO: needed?
-//protocol SearchAppsSectionDelegate: SearchSectionControllerDelegate {
+protocol SearchAppsSectionDelegate: SearchSectionControllerDelegate {
 //    func addAppsSectionDidRequestOpenServicesAdmin()
-//}
+}

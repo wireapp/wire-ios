@@ -40,7 +40,7 @@ public struct SearchResult {
 
     public var conversations: [ZMConversation]
 
-    public var apps: [any Bot] // TODO: different type!
+    public var apps: [any UserType]
 
     public var bots: [any Bot]
 

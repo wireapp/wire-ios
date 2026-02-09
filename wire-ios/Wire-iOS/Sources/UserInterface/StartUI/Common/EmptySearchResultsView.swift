@@ -175,8 +175,8 @@ final class EmptySearchResultsView: UIView {
 
     // MARK: - Public Interface
 
-    func updateStatus(searchingForServices: Bool, hasFilter: Bool) {
-        switch (searchingForServices, hasFilter) {
+    func updateStatus(searchingForBots: Bool, hasFilter: Bool) {
+        switch (searchingForBots, hasFilter) {
         case (true, false):
             state = .noServicesEnabled
         case (true, true):

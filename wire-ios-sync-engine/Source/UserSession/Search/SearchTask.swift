@@ -45,7 +45,7 @@ public final class SearchTask {
     ///
     /// The closure is used because there are four different ways of aggregating search results:
     /// - union(withLocalResult:)
-    /// - union(withBotResult:)
+    /// - union(withBotsResult:)
     /// - union(withDirectoryResult:)
     /// - union(prependingDirectory:)
     typealias SearchResultAggregator = (inout SearchResult) -> Void
