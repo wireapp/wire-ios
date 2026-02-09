@@ -53,7 +53,13 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
     VerifyReturnNil(url != nil);
     VerifyReturnNil(context != nil);
     NSPersistentStoreCoordinator *psc = context.persistentStoreCoordinator;
-    return [psc managedObjectIDForURIRepresentation:url];
+    @try {
+        return [psc managedObjectIDForURIRepresentation:url];
+    } @catch (NSException *exception) {
+        // The persistent store referenced by the URI may no longer exist.
+        NSLog(@"exception caught %@", exception);
+        return nil;
+    }
 }
 
 + (instancetype)existingObjectWithID:(NSManagedObjectID *)identifier inUserSession:(id<ZMContextProvider>)userSession;
@@ -73,12 +79,19 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
 {
     VerifyReturnNil(identifier != nil);
     VerifyReturnNil(context != nil);
-    
+
     NSURL *moURL = [NSURL URLWithString:identifier];
     if (moURL == nil) {
         return nil;
     }
-    NSManagedObjectID *moID = [context.persistentStoreCoordinator managedObjectIDForURIRepresentation:moURL];
+    NSManagedObjectID *moID = nil;
+    @try {
+        moID = [context.persistentStoreCoordinator managedObjectIDForURIRepresentation:moURL];
+    } @catch (NSException *exception) {
+        // The persistent store referenced by the URI may no longer exist.
+        NSLog(@"exception caught %@", exception);
+        return nil;
+    }
     if (moID == nil) {
         return nil;
     }

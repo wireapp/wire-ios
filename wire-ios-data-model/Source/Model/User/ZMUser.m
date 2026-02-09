@@ -580,9 +580,17 @@ static NSString *const PrimaryKey = @"primaryKey";
         if (moidString != nil) {
             NSURL *moidURL = [NSURL URLWithString:moidString];
             if (moidURL != nil) {
-                moid = [moc.persistentStoreCoordinator managedObjectIDForURIRepresentation:moidURL];
-                if (moid != nil) {
-                    moc.userInfo[objectIdKey] = moid;
+                @try {
+                    moid = [moc.persistentStoreCoordinator managedObjectIDForURIRepresentation:moidURL];
+                    if (moid != nil) {
+                        moc.userInfo[objectIdKey] = moid;
+                    }
+                } @catch (NSException *exception) {
+                    NSLog(@"ZMUser exception caught %@", exception);
+                    // The persistent store referenced by the URI may no longer exist.
+                    // This can happen in tests when the database is recreated.
+                    // In this case, we simply return nil and let the caller handle the missing object ID.
+                    moid = nil;
                 }
             }
         }
