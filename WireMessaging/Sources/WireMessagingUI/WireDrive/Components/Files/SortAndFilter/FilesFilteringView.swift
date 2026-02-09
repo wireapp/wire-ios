@@ -16,127 +16,79 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// import SwiftUI
-// import WireDesign
-//
-// struct FilesSortFilterView: View {
-//    @StateObject package var viewModel: FilesSortFilterViewModel
-//
-//    package init(
-//        viewModel: @autoclosure @escaping () -> FilesSortFilterViewModel,
-//    ) {
-//        self._viewModel = StateObject(wrappedValue: viewModel())
-//    }
-//
-//    var body: some View {
-//        ScrollView(.horizontal, showsIndicators: false) {
-//            HStack(spacing: 5) {
-//                ForEach(viewModel.queryOptions, id: \.self) { queryOption in
-//                    capsule(for: queryOption)
-//                }
-//            }
-//            .padding(.horizontal, 10)
-//        }
-//        .padding(.horizontal, -5)
-//    }
-//
-//    @ViewBuilder
-//    private func capsule(for queryOption: FilesSortFilterViewModel.QueryOptions) -> some View {
-//        switch queryOption {
-//        case .sorting(let sorting):
-//            menuCapsule(sorting)
-//        case .filtering(let filters):
-//            buttonCapsule(filters)
-//        }
-//    }
-//
-//    @ViewBuilder
-//    private func buttonCapsule(_ filters: [FilesSortFilterViewModel.QueryOptions.Filtering]) -> some View {
-//        let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
-//
-//        ForEach(filters, id: \.self) { filter in
-//            Button {
-//                withAnimation {
-//
-//                }
-//            } label: {
-//                HStack {
-//                    Text(viewModel.title(for: filter))
-//
-//                    Image(systemName: "chevron.down")
-//                        .font(.system(size: 14, weight: .semibold))
-//                }
-//                .fontWeight(.medium)
-//                .padding(.vertical, 4)
-//                .padding(.horizontal, 8)
-//                .background {
-//                    shape.fill(ColorTheme.Backgrounds.backgroundVariant.color)
-//                }
-//                .background {
-//                    shape.stroke(ColorTheme.Base.secondaryText.color)
-//                }
-//                .padding(.vertical, 1)
-//            }
-//            //        .accessibilityLabel(Text(Accessibility.Tags.addTag.replacingOccurrences(of: "{0}", with:
-//            /criterion)))
-//            .foregroundStyle(.primary)
-//        }
-//
-//    }
-//
-//    @ViewBuilder
-//    private func menuCapsule(_ sorting: FilesSortFilterViewModel.QueryOptions.Sorting) -> some View {
-//        let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
-//
-//        Menu {
-//            ForEach(sorting.sortKey, id: \.self) { sortKey in
-//                Button {
-//
-//                } label: {
-//                    Label(
-//                        viewModel.title(for: sortKey.key),
-//                        systemImage: sortKey.isSelected ? "checkmark" : ""
-//                    )
-//                }
-//            }
-//
-//            Divider()
-//
-//            ForEach(sorting.sortOrder, id: \.self) { sortOrder in
-//                Button {
-//
-//                } label: {
-//                    Label(
-//                        viewModel.title(for: sortOrder.order),
-//                        systemImage: sortOrder.isSelected ? "checkmark" : ""
-//                    )
-//                }
-//            }
-//
-//        } label: {
-//            HStack {
-//                Image(systemName: "arrow.up.arrow.down")
-//                    .font(.system(size: 14, weight: .semibold))
-//
-//                Text(viewModel.title(for: sorting))
-//
-//                Image(systemName: "chevron.down")
-//                    .font(.system(size: 14, weight: .semibold))
-//            }
-//            .fontWeight(.medium)
-//            .padding(.vertical, 4)
-//            .padding(.horizontal, 8)
-//            .background {
-//                shape.fill(ColorTheme.Backgrounds.backgroundVariant.color)
-//            }
-//            .background {
-//                shape.stroke(ColorTheme.Base.secondaryText.color)
-//            }
-//            .padding(.vertical, 1)
-//        }.foregroundStyle(.primary)
-//    }
-// }
-//
-// #Preview {
-//    FilesSortFilterView(viewModel: FilesSortFilterViewModel())
-// }
+import SwiftUI
+import WireDesign
+
+struct FilesFilteringView: View {
+    @StateObject package var viewModel: FilesFilteringViewModel
+    
+    package init(
+        viewModel: @autoclosure @escaping () -> FilesFilteringViewModel,
+    ) {
+        self._viewModel = StateObject(wrappedValue: viewModel())
+    }
+    
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 5) {
+                ForEach(FilesFilteringViewModel.Filtering.allCases, id: \.self) { filter in
+                    capsule(for: filter)
+                }
+            }
+            .padding(.horizontal, 10)
+        }
+        .padding(.horizontal, -5)
+    }
+    
+    @ViewBuilder
+    private func capsule(for filter: FilesFilteringViewModel.Filtering) -> some View {
+        let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
+        
+        HStack {
+            Text(filter.title)
+                .foregroundStyle(filter == .removeAllFilters ? ColorTheme.Buttons.Primary.enabled.color : .primary)
+            
+            if filter != .removeAllFilters {
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 14, weight: .semibold))
+            }
+        }
+        .fontWeight(.medium)
+        .padding(.vertical, 4)
+        .padding(.horizontal, 8)
+        .if(filter != .removeAllFilters) { view in
+            view.background {
+                shape.fill(capsuleFillColor(for: filter))
+                shape.stroke(capsuleStrokeColor(for: filter))
+            }
+        }
+        .padding(.vertical, 1)
+        .opacity(
+            (filter == .removeAllFilters && shouldShowRemoveFilters) || filter != .removeAllFilters ? 1 : 0
+        )
+    }
+    
+    private func capsuleFillColor(for filter: FilesFilteringViewModel.Filtering) -> Color {
+        if viewModel.isFilterSelected(filter) {
+            ColorTheme.Base.onPrimaryVariant.color
+        } else {
+            ColorTheme.Backgrounds.backgroundVariant.color
+        }
+    }
+    
+    private func capsuleStrokeColor(for filter: FilesFilteringViewModel.Filtering) -> Color {
+        if viewModel.isFilterSelected(filter) {
+            ColorTheme.Base.onPrimaryVariant.color
+        } else {
+            ColorTheme.Base.secondaryText.color
+        }
+    }
+    
+    private var shouldShowRemoveFilters: Bool {
+        viewModel.filtersSelection.hasFilterSelected
+    }
+}
+
+#Preview {
+    FilesFilteringView(viewModel: FilesFilteringViewModel())
+}

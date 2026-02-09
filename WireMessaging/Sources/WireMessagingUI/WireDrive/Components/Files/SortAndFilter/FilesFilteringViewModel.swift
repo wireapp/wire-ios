@@ -19,103 +19,96 @@
 import Foundation
 import WireMessagingDomain
 
-// package final class FilesSortFilterViewModel: ObservableObject {
-//    enum QueryOptions: Hashable, Equatable {
-//        case sorting(Sorting)
-//        case filtering([Filtering])
-//
-//        enum Filtering: Hashable, Equatable {
-//            case tags([Tag])
-//            case type
-//            case conversation([Conversation])
-//            case owner([Owner])
-//
-//            struct Tag: Hashable, Equatable {
-//                let name: String
-//                let isSelected: Bool
-//            }
-//
-//            struct Conversation: Hashable, Equatable {
-//                let name: String
-//                let isSelected: Bool
-//            }
-//
-//            struct Owner: Hashable, Equatable {
-//                let name: String
-//                let isSelected: Bool
-//            }
-//        }
-//    }
-//
-//    struct Model {
-//        let operation: Operation
-//        let hidden: Bool
-//    }
-//
-//    @Published var queryOptions: [QueryOptions]
-//
-//    init() {
-//        let sorting: QueryOptions.Sorting = .init(
-//            sortKey: [
-//                .init(key: .lastModified, isSelected: false),
-//                .init(key: .name, isSelected: true),
-//                .init(key: .size, isSelected: false)
-//            ],
-//            sortOrder: [
-//                .init(order: .ascending, isSelected: true),
-//                .init(order: .descending, isSelected: false)
-//            ]
-//        )
-//
-//        let filtering: [QueryOptions.Filtering] = [
-//            .tags([]),
-//            .conversation([])
-//        ]
-//
-//        self.queryOptions = [
-//            .sorting(sorting),
-//            .filtering(filtering)
-//        ]
-//    }
-//
-//    // MARK: UI
-//
-//    func title(for sortKey: QueryOptions.Sorting.SortKey.Key) -> String {
-//        switch sortKey {
-//        case .lastModified:
-//            "Last modified"
-//        case .name:
-//            "Name"
-//        case .size:
-//            "Size"
-//        }
-//    }
-//
-//    func title(for sortOrder: QueryOptions.Sorting.SortOrder.Order) -> String {
-//        switch sortOrder {
-//        case .ascending:
-//            "Ascending"
-//        case .descending:
-//            "Descending"
-//        }
-//    }
-//
-//    func title(for filtering: QueryOptions.Filtering) -> String {
-//        switch filtering {
-//        case .tags:
-//            "Tags"
-//        case .type:
-//            "Type"
-//        case .conversation:
-//            "Conversation name"
-//        case .owner:
-//            "Owner name"
-//        }
-//    }
-//
-//    func title(for sorting: QueryOptions.Sorting) -> String {
-//        let sortingKey = sorting.sortKey.first(where: \.isSelected)?.key
-//        return title(for: sortingKey ?? .lastModified)
-//    }
-//
-// }
+final class FilesFilteringViewModel: ObservableObject {
+    
+    typealias ID = String
+    
+    enum Filtering: CaseIterable {
+        case tags
+        case type
+        case conversation
+        case owner
+        case sharedByMe
+        case removeAllFilters
+        
+        var title: String {
+            switch self {
+            case .tags:
+                "Tags"
+            case .type:
+                "Type"
+            case .conversation:
+                "Conversation"
+            case .owner:
+                "Owner"
+            case .sharedByMe:
+                "Shared by me"
+            case .removeAllFilters:
+                "Remove all filters"
+            }
+        }
+    }
+    
+    struct FiltersSelection {
+        let tags: Set<ID>
+        let types: Set<ID>
+        let conversations: Set<ID>
+        let owners: Set<ID>
+        let sharedByMe: Bool
+        
+        var hasFilterSelected: Bool {
+            !tags.isEmpty || !types.isEmpty || !conversations.isEmpty || !owners.isEmpty || sharedByMe
+        }
+    }
+    
+    @Published var filtersSelection: FiltersSelection
+    
+    init() {
+        filtersSelection = .init(
+            tags: [UUID().uuidString],
+            types: [],
+            conversations: [],
+            owners: [],
+            sharedByMe: false
+        )
+    }
+    
+    var hasFiltersSelected: Bool {
+        filtersSelection.hasFilterSelected
+    }
+    
+    func isFilterSelected(_ filter: Filtering) -> Bool {
+        switch filter {
+        case .tags:
+           !filtersSelection.tags.isEmpty
+        case .type:
+            !filtersSelection.types.isEmpty
+        case .conversation:
+            !filtersSelection.conversations.isEmpty
+        case .owner:
+            !filtersSelection.owners.isEmpty
+        case .sharedByMe:
+            filtersSelection.sharedByMe
+        case .removeAllFilters:
+            false
+        }
+    }
+    
+    func filtersCount(for filter: Filtering) -> Int? {
+        switch filter {
+        case .tags:
+            isFilterSelected(filter) ? filtersSelection.tags.count : nil
+        case .type:
+            isFilterSelected(filter) ? filtersSelection.types.count : nil
+        case .conversation:
+            isFilterSelected(filter) ? filtersSelection.conversations.count : nil
+        case .owner:
+            isFilterSelected(filter) ? filtersSelection.owners.count : nil
+        case .sharedByMe:
+            isFilterSelected(filter) ? 1 : nil
+        case .removeAllFilters:
+            nil
+        }
+    }
+    
+}
