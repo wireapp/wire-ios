@@ -45,18 +45,22 @@ struct FilterByTagsView: View {
                 ColorTheme.Backgrounds.background.color
                     .ignoresSafeArea(.all)
 
-                ScrollView {
-                    tagsView
+                VStack {
+                    ScrollView {
+                        tagsView
+                    }
+                    
+                    removeFilterButton
+                        .padding(10)
                 }
             }
             .toolbar { toolbarContent }
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
-            .navigationTitle(viewModel.navigationTitle)
+            .navigationTitle(Strings.Filter.Tags.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .alert(L10n.Localizable.General.failure, isPresented: $viewModel.showError) {
                 Button(L10n.Localizable.General.confirm, role: .cancel) {}
             }
-            .safeAreaInset(edge: .bottom, spacing: 0) { applyButton } // floating button
             .overlay { if viewModel.isLoading { ProgressView() } }
         }
     }
@@ -71,13 +75,10 @@ private extension FilterByTagsView {
 
     var tagsView: some View {
         VStack(alignment: .leading, spacing: tagsViewSpacing) {
-            Text(Strings.AllFiles.Filters.Tags.sectionTitle)
-                .font(for: .body3)
-
             if viewModel.presentedTags.isEmpty {
                 Spacer()
 
-                Text(Strings.AllFiles.Filters.Tags.emptyTitle)
+                Text(Strings.Filter.Tags.emptyTitle)
                     .font(for: .h4)
                     .padding([.top, .bottom])
 
@@ -97,8 +98,6 @@ private extension FilterByTagsView {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .animation(.easeInOut.speed(1.5), value: viewModel.selectedTags)
-
-            Divider()
         }
         .padding()
     }
@@ -151,8 +150,8 @@ private extension FilterByTagsView {
 private extension FilterByTagsView {
 
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) { clearAllButton }
-        ToolbarItem(placement: .topBarTrailing) { closeButton }
+        ToolbarItem(placement: .topBarLeading) { closeButton }
+        ToolbarItem(placement: .topBarTrailing) { saveButton }
     }
 
 }
@@ -160,32 +159,27 @@ private extension FilterByTagsView {
 // MARK: - Buttons
 
 private extension FilterByTagsView {
-    var applyButton: some View {
+    var saveButton: some View {
         Button {
             Task {
                 onApply(viewModel.selectedTags)
                 dismiss()
             }
         } label: {
-            Text(Strings.AllFiles.Filters.apply)
-                .frame(minWidth: 0, maxWidth: .infinity)
-                .accessibilityIdentifier("applyButton")
+            Text(L10n.Localizable.General.save)
+                .fontWeight(.semibold)
+                .accessibilityIdentifier("saveButton")
         }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.large)
-        .buttonBorderShape(.roundedRectangle(radius: 16))
-        .tint(wireAccentColor.color)
-        .font(for: .buttonBig)
-        .padding()
+        .disabled(!viewModel.hasChanges)
     }
 
-    var clearAllButton: some View {
+    var removeFilterButton: some View {
         Button {
             Task { await viewModel.clearAll() }
         } label: {
-            Text(Strings.AllFiles.Filters.clearAll)
-                .accessibilityIdentifier("clearAllButton")
+            Text(Strings.Filter.removeFilter)
         }
+        .accessibilityIdentifier("removeFilterButton")
         .disabled(viewModel.selectedTags.isEmpty)
     }
 
@@ -193,13 +187,10 @@ private extension FilterByTagsView {
         Button(
             action: { dismiss() },
             label: {
-                Image(.close)
-                    .foregroundStyle(SemanticColors.Icon.foregroundDefaultBlack.color)
-                    .frame(width: 44, height: 44, alignment: .trailing)
+                Text(L10n.Localizable.General.cancel)
             }
         )
-        .accessibilityLabel(Accessibility.Files.close)
-        .accessibilityIdentifier("closeButton")
+        .accessibilityIdentifier("cancelButton")
     }
 }
 

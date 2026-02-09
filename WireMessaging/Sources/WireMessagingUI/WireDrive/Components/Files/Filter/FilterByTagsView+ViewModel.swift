@@ -32,6 +32,7 @@ extension FilterByTagsView {
         @Published var showError: Bool = false
 
         private var availableTags: Set<String> = []
+        private let initiallySelectedTags: Set<String>
 
         private let fetchTagsUseCase: any WireDriveGetTagSuggestionsUseCaseProtocol
 
@@ -40,16 +41,19 @@ extension FilterByTagsView {
             selectedTags: some Collection<String>
         ) {
             self.fetchTagsUseCase = fetchTagsUseCase
-            self.selectedTags = Set(selectedTags)
+            
+            let selectedtagsSet = Set(selectedTags)
+            
+            self.selectedTags = selectedtagsSet
+            self.initiallySelectedTags = selectedtagsSet
             
             Task {
                 await fetch()
             }
         }
         
-        var navigationTitle: String {
-            let selectedTagsCount = selectedTags.count
-            return selectedTagsCount == 0 ? Strings.AllFiles.Filters.navigationTitle : "\(Strings.AllFiles.Filters.navigationTitle) (\(selectedTagsCount))"
+        var hasChanges: Bool {
+            selectedTags != initiallySelectedTags
         }
         
         func isTagSelected(_ tag: String) -> Bool {
