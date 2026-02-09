@@ -119,46 +119,12 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 
 - (BOOL)zm_isSyncContext
 {
-    // Access userInfo on the context's queue to avoid race conditions.
-    // Check if we're already on the context's queue to avoid deadlock.
-    __block BOOL result = NO;
-    if ([NSThread isMainThread] && self.concurrencyType == NSMainQueueConcurrencyType) {
-        // Already on the correct queue for main queue context
-        result = [[self validUserInfoValueOfClass:[NSNumber class] forKey:IsSyncContextKey] boolValue];
-    } else if (self.concurrencyType == NSMainQueueConcurrencyType) {
-        // Need to dispatch to main queue
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            result = [[self validUserInfoValueOfClass:[NSNumber class] forKey:IsSyncContextKey] boolValue];
-        });
-    } else {
-        // Background context - use performBlockAndWait
-        [self performBlockAndWait:^{
-            result = [[self validUserInfoValueOfClass:[NSNumber class] forKey:IsSyncContextKey] boolValue];
-        }];
-    }
-    return result;
+    return [[self validUserInfoValueOfClass:[NSNumber class] forKey:IsSyncContextKey] boolValue];
 }
 
 - (BOOL)zm_isUserInterfaceContext
 {
-    // Access userInfo on the context's queue to avoid race conditions.
-    // Check if we're already on the context's queue to avoid deadlock.
-    __block BOOL result = NO;
-    if ([NSThread isMainThread] && self.concurrencyType == NSMainQueueConcurrencyType) {
-        // Already on the correct queue for main queue context
-        result = [[self validUserInfoValueOfClass:[NSNumber class] forKey:IsUserInterfaceContextKey] boolValue];
-    } else if (self.concurrencyType == NSMainQueueConcurrencyType) {
-        // Need to dispatch to main queue
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            result = [[self validUserInfoValueOfClass:[NSNumber class] forKey:IsUserInterfaceContextKey] boolValue];
-        });
-    } else {
-        // Background context - use performBlockAndWait
-        [self performBlockAndWait:^{
-            result = [[self validUserInfoValueOfClass:[NSNumber class] forKey:IsUserInterfaceContextKey] boolValue];
-        }];
-    }
-    return result;
+    return [[self validUserInfoValueOfClass:[NSNumber class] forKey:IsUserInterfaceContextKey] boolValue];
 }
 
 - (NSManagedObjectContext*)zm_syncContext
