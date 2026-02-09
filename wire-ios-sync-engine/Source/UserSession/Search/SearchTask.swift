@@ -99,11 +99,6 @@ public final class SearchTask {
 
             status = .started(taskGroup: taskGroup)
 
-            // search apps
-            taskGroup.addTask {
-                try await self.performRemoteSearchForApps()
-            }
-
             // search bots
             taskGroup.addTask {
                 try await self.performRemoteSearchForBots()
@@ -540,6 +535,8 @@ extension SearchTask {
 
         if searchRequest.searchOptions.contains(.teamMembers) {
             return try await performTeamMembershipLookup(on: partialResult, searchRequest: searchRequest)
+        } else if searchForApps {
+            return { $0 = $0.union(withAppsResult: partialResult) }
         } else {
             return { $0 = $0.union(withDirectoryResult: partialResult) }
         }
@@ -673,39 +670,6 @@ extension SearchTask {
 }
 
 extension SearchTask {
-
-    private func performRemoteSearchForApps() async throws -> SearchResultAggregator {
-
-        guard
-            case let .search(searchRequest) = type,
-            !searchRequest.searchOptions.contains(.localResultsOnly),
-            searchRequest.searchOptions.contains(.apps)
-        else {
-            return { _ in }
-        }
-
-        let viewContext = contextProvider.viewContext
-        // TODO: search for apps
-        try await searchAPI.searchContacts(
-            query: <#T##String#>,
-            domain: <#T##String#>,
-            type: .app
-        )
-
-        let partialResult = SearchResult(
-            context: viewContext,
-            contacts: [],
-            teamMembers: [],
-            directory: [],
-            conversations: [],
-            apps: [],
-            bots: [],
-            searchUsersCache: searchUsersCache
-        )
-
-        return { $0 = $0.union(withAppsResult: partialResult) }
-
-    }
 
     func performRemoteSearchForBots() async throws -> SearchResultAggregator {
 
