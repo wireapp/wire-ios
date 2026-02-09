@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireNetwork
 import WireDataModel
+import WireNetwork
 import WireTransport
 
 public final class SearchDirectory: NSObject {

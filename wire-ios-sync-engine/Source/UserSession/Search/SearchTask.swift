@@ -18,10 +18,10 @@
 
 import CoreData
 import Foundation
-import WireUtilities
-import WireNetwork
 import WireFoundation
 import WireLogging
+import WireNetwork
+import WireUtilities
 
 public final class SearchTask {
 
@@ -470,38 +470,40 @@ extension SearchTask {
         ).documents
 
         let filteredContacts = contacts.filter { contact in
-            return !searchRequest.query.isHandleQuery ||
-            contact.name.hasPrefix("@") ||
-            (contact.handle?.lowercased().contains(queryLowercased) ?? false)
+            !searchRequest.query.isHandleQuery ||
+                contact.name.hasPrefix("@") ||
+                (contact.handle?.lowercased().contains(queryLowercased) ?? false)
         }
 
         try Task.checkCancellation()
 
         let viewContext = contextProvider.viewContext
-        let searchUsers = filteredContacts.compactMap { filteredContact in
-            guard let id = filteredContact.id else { return ZMSearchUser?.none }
+        let searchUsers = await viewContext.perform { [searchUsersCache] in
+            filteredContacts.compactMap { filteredContact in
+                guard let id = filteredContact.id else { return ZMSearchUser?.none }
 
-            let domain = filteredContact.qualifiedID?.domain
-            let localUser = ZMUser.fetch(with: id, domain: domain, in: viewContext)
+                let domain = filteredContact.qualifiedID?.domain
+                let localUser = ZMUser.fetch(with: id, domain: domain, in: viewContext)
 
-            if let cachedSearchUser = searchUsersCache?.object(forKey: id as NSUUID) {
-                cachedSearchUser.user = localUser
-                return cachedSearchUser
+                if let cachedSearchUser = searchUsersCache?.object(forKey: id as NSUUID) {
+                    cachedSearchUser.user = localUser
+                    return cachedSearchUser
 
-            } else {
-                let accentColorRawValue = filteredContact.accentID.flatMap(Int16.init(exactly:))
-                let accentColor = accentColorRawValue.flatMap(AccentColor.init(rawValue:))
-                return ZMSearchUser(
-                    viewContext: viewContext,
-                    name: filteredContact.name,
-                    handle: filteredContact.handle,
-                    accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
-                    remoteIdentifier: filteredContact.id,
-                    domain: domain,
-                    teamIdentifier: filteredContact.team,
-                    user: localUser,
-                    searchUsersCache: searchUsersCache
-                )
+                } else {
+                    let accentColorRawValue = filteredContact.accentID.flatMap(Int16.init(exactly:))
+                    let accentColor = accentColorRawValue.flatMap(AccentColor.init(rawValue:))
+                    return ZMSearchUser(
+                        viewContext: viewContext,
+                        name: filteredContact.name,
+                        handle: filteredContact.handle,
+                        accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
+                        remoteIdentifier: filteredContact.id,
+                        domain: domain,
+                        teamIdentifier: filteredContact.team,
+                        user: localUser,
+                        searchUsersCache: searchUsersCache
+                    )
+                }
             }
         }
 
@@ -509,23 +511,25 @@ extension SearchTask {
 
         let searchOptions = searchRequest.searchOptions
         let includeActiveTeamMembers = searchOptions.contains(.teamMembers) &&
-        searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
+            searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
         // TODO: [WPB-20362] fix for searching apps
-        let partialResult = SearchResult(
-            context: contextProvider.viewContext,
-            contacts: [],
-            teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
-            directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
-            conversations: [],
-            apps: searchForApps ? [] : [],
-            bots: [],
-            searchUsersCache: searchUsersCache
-        )
+        let partialResult = await viewContext.perform { [searchUsersCache] in
+            SearchResult(
+                context: viewContext,
+                contacts: [],
+                teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
+                directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
+                conversations: [],
+                apps: searchForApps ? [] : [],
+                bots: [],
+                searchUsersCache: searchUsersCache
+            )
+        }
 
         try Task.checkCancellation()
 
         if searchRequest.searchOptions.contains(.teamMembers) {
-            return await self.performTeamMembershipLookup(on: partialResult, searchRequest: searchRequest)
+            return await performTeamMembershipLookup(on: partialResult, searchRequest: searchRequest)
         } else {
             return { $0 = $0.union(withDirectoryResult: partialResult) }
         }
@@ -751,10 +755,10 @@ extension SearchTask {
                             viewContext: viewContext,
                             name: profile.name,
                             handle: profile.handle,
-                            accentColor: accentColor.map(ZMAccentColor.from(accentColor:)), TODO: why do bots now appear with blue accent color?
+                            accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
                             remoteIdentifier: profile.id,
                             domain: profile.qualifiedID?.domain,
-                            teamIdentifier: teamIdentifier,
+                            teamIdentifier: profile.teamID,
                             user: localUser,
                             searchUsersCache: searchUsersCache,
                             isDeleted: profile.isDeleted

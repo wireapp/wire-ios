@@ -19,11 +19,11 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLogging
 import WireMainNavigationUI
 import WireMessagingDomain
 import WireReusableUIComponents
 import WireSyncEngine
-import WireLogging
 
 final class SearchUserViewController: UIViewController {
 

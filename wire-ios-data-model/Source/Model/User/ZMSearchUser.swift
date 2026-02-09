@@ -499,7 +499,7 @@ public class ZMSearchUser: NSObject, UserType {
             user: existingUser,
             searchUsersCache: searchUsersCache
         )
-        internalIsAccountDeleted = isDeleted
+        self.internalIsAccountDeleted = isDeleted
     }
 
     @objc
