@@ -386,6 +386,8 @@
 		882B86BE2E8441AA008A50CA /* RemoveCoreCryptoKeysUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B86BD2E84419A008A50CA /* RemoveCoreCryptoKeysUseCase.swift */; };
 		8838CFA42EC4CB1B00495012 /* NSManagedObjectContext+AccountDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8838CFA32EC4CB0D00495012 /* NSManagedObjectContext+AccountDirectory.swift */; };
 		884371662EB8E9F3003DA083 /* store2-132-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 884371652EB8E9F3003DA083 /* store2-132-0.wiredatabase */; };
+		88A80B632F320E9200F7E372 /* EARMessageEncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A80B622F320E7500F7E372 /* EARMessageEncryptionService.swift */; };
+		88A80B652F3381ED00F7E372 /* EARMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A80B642F3381DF00F7E372 /* EARMigrator.swift */; };
 		88B81BD62EC232C600248D7A /* store2-133-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 88B81BD52EC232C600248D7A /* store2-133-0.wiredatabase */; };
 		A90676E7238EAE8B006417AC /* ParticipantRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E6238EAE8B006417AC /* ParticipantRole.swift */; };
 		A90676EA238EB05F006417AC /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E8238EB05E006417AC /* Action.swift */; };
@@ -1120,6 +1122,8 @@
 		882B86BD2E84419A008A50CA /* RemoveCoreCryptoKeysUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveCoreCryptoKeysUseCase.swift; sourceTree = "<group>"; };
 		8838CFA32EC4CB0D00495012 /* NSManagedObjectContext+AccountDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+AccountDirectory.swift"; sourceTree = "<group>"; };
 		884371652EB8E9F3003DA083 /* store2-132-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-132-0.wiredatabase"; sourceTree = "<group>"; };
+		88A80B622F320E7500F7E372 /* EARMessageEncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARMessageEncryptionService.swift; sourceTree = "<group>"; };
+		88A80B642F3381DF00F7E372 /* EARMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARMigrator.swift; sourceTree = "<group>"; };
 		88B81BD52EC232C600248D7A /* store2-133-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-133-0.wiredatabase"; sourceTree = "<group>"; };
 		A90676E6238EAE8B006417AC /* ParticipantRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantRole.swift; sourceTree = "<group>"; };
 		A90676E8238EB05E006417AC /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
@@ -2072,6 +2076,8 @@
 		E6E504302BC542C5004948E7 /* EAR */ = {
 			isa = PBXGroup;
 			children = (
+				88A80B642F3381DF00F7E372 /* EARMigrator.swift */,
+				88A80B622F320E7500F7E372 /* EARMessageEncryptionService.swift */,
 				E6E504222BC542C5004948E7 /* BaseEARKeyDescription.swift */,
 				E6E504232BC542C5004948E7 /* DatabaseEARKeyDescription.swift */,
 				E6E504242BC542C5004948E7 /* EARKeyEncryptor.swift */,
@@ -3576,6 +3582,7 @@
 				63B1335529A503D100009D84 /* ProteusService.swift in Sources */,
 				EEDA9C152513A1DA003A5B27 /* ZMClientMessage+EncryptionAtRest.swift in Sources */,
 				546D3DE61CE5D0B100A6047F /* RichAssetFileType.swift in Sources */,
+				88A80B652F3381ED00F7E372 /* EARMigrator.swift in Sources */,
 				069BCC582B30945500DF4EC2 /* E2EIService.swift in Sources */,
 				EE42938E252C460000E70670 /* Changes.swift in Sources */,
 				E66029D22BDA43E10033C524 /* SearchUsersCache.swift in Sources */,
@@ -3586,6 +3593,7 @@
 				544E8C111E2F76B400F9B8B8 /* NSManagedObjectContext+UserInfoMerge.swift in Sources */,
 				0649D1C524F6A542001DDC78 /* NSManagedObjectContext+ZMKeyValueStore.swift in Sources */,
 				63D9A19E282AA0050074C20C /* NSManagedObjectContext+Federation.swift in Sources */,
+				88A80B632F320E9200F7E372 /* EARMessageEncryptionService.swift in Sources */,
 				165124D42188B613006A3C75 /* ZMClientMessage+Quotes.swift in Sources */,
 				06B99C79242A293500FEAFDE /* ZMClientMessage+Knock.swift in Sources */,
 				F1FDF2FE21B1572500E037A1 /* ZMGenericMessageData.swift in Sources */,

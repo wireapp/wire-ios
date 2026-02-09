@@ -99,7 +99,6 @@ public class ZMGenericMessageData: ZMManagedObject {
         guard let protobufData = try? message.serializedData() else {
             throw ProcessingError.failedToSerializeMessage
         }
-
         guard let moc = managedObjectContext else {
             throw ProcessingError.missingManagedObjectContext
         }
@@ -113,8 +112,14 @@ public class ZMGenericMessageData: ZMManagedObject {
         guard moc.encryptMessagesAtRest else { return (data, nonce: nil) }
 
         do {
-            return try moc.encryptData(data: data)
-        } catch let error as NSManagedObjectContext.EncryptionError {
+            let service = try moc.getEarMessageEncryptionService()
+            let contextData = try service.getContextData(from: moc)
+            let (ciphertext, nonce) = try service.encrypt(data: data, contextData: contextData)
+            return (ciphertext, nonce)
+        } catch let error as NSManagedObjectContext.EARError {
+            WireLogger.ear.error("failed to encrypt message: \(String(describing: error))")
+            throw ProcessingError.failedToEncrypt(reason: error)
+        } catch let error as EARMessageEncryptionService.EncryptionError {
             WireLogger.ear.error("failed to encrypt message: \(String(describing: error))")
             throw ProcessingError.failedToEncrypt(reason: error)
         }
@@ -124,8 +129,13 @@ public class ZMGenericMessageData: ZMManagedObject {
         guard let nonce else { return data }
 
         do {
-            return try moc.decryptData(data: data, nonce: nonce)
-        } catch let error as NSManagedObjectContext.EncryptionError {
+            let service = try moc.getEarMessageEncryptionService()
+            let contextData = try service.getContextData(from: moc)
+            return try service.decrypt(data: data, nonce: nonce, contextData: contextData)
+        } catch let error as NSManagedObjectContext.EARError {
+            WireLogger.ear.error("failed to decrypt message: \(String(describing: error))")
+            throw ProcessingError.failedToDecrypt(reason: error)
+        } catch let error as EARMessageEncryptionService.EncryptionError {
             WireLogger.ear.error("failed to decrypt message: \(String(describing: error))")
             throw ProcessingError.failedToDecrypt(reason: error)
         }
@@ -141,8 +151,8 @@ extension ZMGenericMessageData {
 
         case missingManagedObjectContext
         case failedToSerializeMessage
-        case failedToEncrypt(reason: NSManagedObjectContext.EncryptionError)
-        case failedToDecrypt(reason: NSManagedObjectContext.EncryptionError)
+        case failedToEncrypt(reason: LocalizedError)
+        case failedToDecrypt(reason: LocalizedError)
 
         var errorDescription: String? {
             switch self {
@@ -150,10 +160,10 @@ extension ZMGenericMessageData {
                 "A managed object context is required to process the message data."
             case .failedToSerializeMessage:
                 "The message data couldn't not be serialized."
-            case let .failedToEncrypt(reason: encryptionError):
-                "The message data could not be encrypted. \(encryptionError.errorDescription ?? "")"
-            case let .failedToDecrypt(reason: encryptionError):
-                "The message data could not be decrypted. \(encryptionError.errorDescription ?? "")"
+            case let .failedToEncrypt(reason: error):
+                "The message data could not be encrypted. \(error.errorDescription ?? "")"
+            case let .failedToDecrypt(reason: error):
+                "The message data could not be decrypted. \(error.errorDescription ?? "")"
             }
         }
     }
@@ -165,12 +175,15 @@ extension ZMGenericMessageData: EncryptionAtRestMigratable {
     static let predicateForObjectsNeedingMigration: NSPredicate? = nil
 
     func migrateTowardEncryptionAtRest(
-        in context: NSManagedObjectContext,
-        key: VolatileData
+        key: VolatileData,
+        contextData: Data,
+        messageEncryptionService: EARMessageEncryptionServiceProtocol
     ) throws {
-        let (ciphertext, nonce) = try context.encryptData(
+
+        let (ciphertext, nonce) = try messageEncryptionService.encrypt(
             data: data,
-            key: key
+            contextData: contextData,
+            databaseKey: key
         )
 
         data = ciphertext
@@ -178,17 +191,19 @@ extension ZMGenericMessageData: EncryptionAtRestMigratable {
     }
 
     func migrateAwayFromEncryptionAtRest(
-        in context: NSManagedObjectContext,
-        key: VolatileData
+        key: VolatileData,
+        contextData: Data,
+        messageEncryptionService: EARMessageEncryptionServiceProtocol
     ) throws {
         guard let nonce else {
             return
         }
 
-        let plaintext = try context.decryptData(
+        let plaintext = try messageEncryptionService.decrypt(
             data: data,
             nonce: nonce,
-            key: key
+            contextData: contextData,
+            databaseKey: key
         )
 
         data = plaintext

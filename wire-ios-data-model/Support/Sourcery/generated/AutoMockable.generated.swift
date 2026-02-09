@@ -2895,6 +2895,15 @@ public class MockEARServiceInterface: EARServiceInterface {
 
     public var delegate: EARServiceDelegate?
 
+    // MARK: - isEAREnabled
+
+    public var isEAREnabled: Bool {
+        get { return underlyingIsEAREnabled }
+        set(value) { underlyingIsEAREnabled = value }
+    }
+
+    public var underlyingIsEAREnabled: Bool!
+
 
     // MARK: - enableEncryptionAtRest
 

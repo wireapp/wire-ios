@@ -54,128 +54,15 @@ extension Sequence where Element: NSManagedObject {
 
 }
 
-extension NSManagedObjectContext {
+public extension NSManagedObjectContext {
 
-    public var isLocked: Bool {
-        guard encryptMessagesAtRest else { return false }
-        return databaseKey == nil
-    }
-
-    // MARK: - Migration
-
-    enum MigrationError: LocalizedError {
-
-        case missingDatabaseKey
-        case failedToMigrateInstances(type: ZMManagedObject.Type, reason: String)
-
-        var errorDescription: String? {
-            switch self {
-            case .missingDatabaseKey:
-                "A database key is required to migrate."
-            case let .failedToMigrateInstances(type, reason):
-                "Failed to migrate all instances of \(type). Reason: \(reason)"
-            }
-        }
-
-    }
-
-    public func migrateTowardEncryptionAtRest(databaseKey: VolatileData) throws {
-        do {
-            WireLogger.ear.info("migrating existing data toward EAR")
-            saveOrRollback()
-            try migrateInstancesTowardEncryptionAtRest(
-                type: ZMGenericMessageData.self,
-                key: databaseKey
-            )
-            try migrateInstancesTowardEncryptionAtRest(
-                type: ZMClientMessage.self,
-                key: databaseKey
-            )
-            try migrateInstancesTowardEncryptionAtRest(
-                type: ZMConversation.self,
-                key: databaseKey
-            )
-            saveOrRollback()
-        } catch {
-            WireLogger.ear.error("failed to migrate existing data toward EAR: \(error)")
-            reset()
-            throw error
-        }
-    }
-
-    public func migrateAwayFromEncryptionAtRest(databaseKey: VolatileData) throws {
-        do {
-            WireLogger.ear.info("migrating existing data away from EAR")
-            saveOrRollback()
-            try migrateInstancesAwayFromEncryptionAtRest(
-                type: ZMGenericMessageData.self,
-                key: databaseKey
-            )
-            try migrateInstancesAwayFromEncryptionAtRest(
-                type: ZMClientMessage.self,
-                key: databaseKey
-            )
-            try migrateInstancesAwayFromEncryptionAtRest(
-                type: ZMConversation.self,
-                key: databaseKey
-            )
-            saveOrRollback()
-        } catch {
-            WireLogger.ear.error("failed to migrate existing data away from EAR: \(error)")
-            reset()
-            throw error
-        }
-    }
-
-    private func migrateInstancesTowardEncryptionAtRest(
-        type: (some MigratableEntity).Type,
-        key: VolatileData
-    ) throws {
-        do {
-            try fetchObjects(type: type).modifyAndSaveInBatches { instance in
-                try instance.migrateTowardEncryptionAtRest(
-                    in: self,
-                    key: key
-                )
-            }
-        } catch {
-            throw MigrationError.failedToMigrateInstances(type: type, reason: error.localizedDescription)
-        }
-    }
-
-    private func migrateInstancesAwayFromEncryptionAtRest(
-        type: (some MigratableEntity).Type,
-        key: VolatileData
-    ) throws {
-        do {
-            try fetchObjects(type: type).modifyAndSaveInBatches { instance in
-                try instance.migrateAwayFromEncryptionAtRest(
-                    in: self,
-                    key: key
-                )
-            }
-        } catch {
-            throw MigrationError.failedToMigrateInstances(type: type, reason: error.localizedDescription)
-        }
-    }
-
-    private func fetchObjects<T: MigratableEntity>(type: T.Type) throws -> [T] {
-        let request = fetchRequest(forType: type, batchSize: 100)
-        return try fetch(request)
-    }
-
-    private func fetchRequest<T>(forType type: T.Type, batchSize: Int) -> NSFetchRequest<T>
-        where T: MigratableEntity {
-        let fetchRequest = NSFetchRequest<T>(entityName: T.entityName())
-        fetchRequest.predicate = type.predicateForObjectsNeedingMigration
-        fetchRequest.returnsObjectsAsFaults = false
-        fetchRequest.fetchBatchSize = batchSize
-        return fetchRequest
+    var isLocked: Bool {
+        earMessageEncryptionService?.isLocked ?? false
     }
 
     /// Whether the encryption at rest feature is enabled.
 
-    public internal(set) var encryptMessagesAtRest: Bool {
+    internal(set) var encryptMessagesAtRest: Bool {
         get {
             guard let value = persistentStoreMetadata(
                 forKey: PersistentMetadataKey.encryptMessagesAtRest
@@ -196,125 +83,53 @@ extension NSManagedObjectContext {
 
     }
 
-    // MARK: - Encryption / Decryption
+    private static let earMessageEncryptionServiceKey = "earMessageEncryptionServiceKey"
 
-    enum EncryptionError: LocalizedError {
-
-        case missingDatabaseKey
-        case missingContextData
-        case crypto(error: ChaCha20Poly1305.AEADEncryption.EncryptionError)
-
-        var errorDescription: String? {
-            switch self {
-            case .missingDatabaseKey:
-                "Database key not found. Perhaps the database is locked."
-
-            case .missingContextData:
-                "Couldn't obtain context data."
-
-            case let .crypto(error):
-                error.errorDescription
-            }
-        }
-
-    }
-
-    func encryptData(data: Data) throws -> (data: Data, nonce: Data) {
-        guard let key = databaseKey else {
-            throw EncryptionError.missingDatabaseKey
-        }
-
-        return try encryptData(
-            data: data,
-            key: key
-        )
-    }
-
-    func encryptData(
-        data: Data,
-        key: VolatileData
-    ) throws -> (data: Data, nonce: Data) {
-        guard let context = contextData() else {
-            throw EncryptionError.missingContextData
-        }
-
-        do {
-            let (ciphertext, nonce) = try ChaCha20Poly1305.AEADEncryption.encrypt(
-                message: data,
-                context: context,
-                key: key._storage
-            )
-            return (ciphertext, nonce)
-        } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
-            throw EncryptionError.crypto(error: error)
+    internal var earMessageEncryptionService: EARMessageEncryptionServiceProtocol? {
+        get {
+            userInfo[Self.earMessageEncryptionServiceKey] as? EARMessageEncryptionServiceProtocol
+        } set {
+            userInfo[Self.earMessageEncryptionServiceKey] = newValue
         }
     }
 
-    func decryptData(
-        data: Data,
-        nonce: Data
-    ) throws -> Data {
-        guard let key = databaseKey else {
-            throw EncryptionError.missingDatabaseKey
+    func getEarMessageEncryptionService() throws -> EARMessageEncryptionServiceProtocol {
+        guard let service = earMessageEncryptionService else {
+            throw EARError.missingMessageEncryptionService
         }
 
-        return try decryptData(
-            data: data,
-            nonce: nonce,
-            key: key
-        )
+        return service
     }
 
-    func decryptData(
-        data: Data,
-        nonce: Data,
-        key: VolatileData
-    ) throws -> Data {
-        guard let context = contextData() else {
-            throw EncryptionError.missingContextData
-        }
+    func earContextData() throws -> Data {
 
-        do {
-            return try ChaCha20Poly1305.AEADEncryption.decrypt(
-                ciphertext: data,
-                nonce: nonce,
-                context: context,
-                key: key._storage
-            )
-        } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
-            throw EncryptionError.crypto(error: error)
-        }
-    }
-
-    private func contextData() -> Data? {
         let selfUser = ZMUser.selfUser(in: self)
 
         guard
             let selfClient = selfUser.selfClient(),
             let selfUserId = selfUser.remoteIdentifier?.transportString(),
             let selfClientId = selfClient.remoteIdentifier,
-            let context = (selfUserId + selfClientId).data(using: .utf8)
+            let contextData = (selfUserId + selfClientId).data(using: .utf8)
         else {
             WireLogger.ear.error("Could not obtain self user id and self client id")
             assertionFailure("Could not obtain self user id and self client id")
-            return nil
+            throw EARError.missingContextData
         }
 
-        return context
+        return contextData
     }
+    
+    enum EARError: LocalizedError {
+        case missingMessageEncryptionService
+        case missingContextData
 
-    // MARK: - Database Key
-
-    private static let databaseKeyUserInfoKey = "databaseKey"
-
-    /// The database key used to protect contents of the database.
-
-    public var databaseKey: VolatileData? {
-        get {
-            userInfo[Self.databaseKeyUserInfoKey] as? VolatileData
-        }
-        set {
-            userInfo[Self.databaseKeyUserInfoKey] = newValue
+        public var errorDescription: String? {
+            switch self {
+            case .missingMessageEncryptionService:
+                "Missing message encryption service"
+            case .missingContextData:
+                "Missing context data"
+            }
         }
     }
 
@@ -337,8 +152,9 @@ protocol EncryptionAtRestMigratable {
     /// For example, encrypt sensitve data and set a nonce.
 
     func migrateTowardEncryptionAtRest(
-        in context: NSManagedObjectContext,
-        key: VolatileData
+        key: VolatileData,
+        contextData: Data,
+        messageEncryptionService: EARMessageEncryptionServiceProtocol
     ) throws
 
     /// Migrate necessary data to make it available under normal circumstances.
@@ -346,8 +162,9 @@ protocol EncryptionAtRestMigratable {
     /// For example, decrypt sensitive data and clear the nonce.
 
     func migrateAwayFromEncryptionAtRest(
-        in context: NSManagedObjectContext,
-        key: VolatileData
+        key: VolatileData,
+        contextData: Data,
+        messageEncryptionService: EARMessageEncryptionServiceProtocol
     ) throws
 
 }

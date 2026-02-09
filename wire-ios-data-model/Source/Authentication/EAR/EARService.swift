@@ -74,6 +74,16 @@ public protocol EARServiceInterface: AnyObject {
 
     func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys?
 
+    /// Whether encryption at rest is enabled.
+
+    var isEAREnabled: Bool { get }
+
+    /// Store the encryption a rest flag value.
+    ///
+    /// This flag used to be stored in the database store metadata but was moved to
+    /// the shared user defaults. This method was introduced to copy the value from
+    /// old location to the new location.
+
     func setInitialEARFlagValue(_ enabled: Bool)
 }
 
@@ -92,7 +102,6 @@ public class EARService: EARServiceInterface {
     private let keyGenerator = EARKeyGenerator()
     private let keyEncryptor: EARKeyEncryptorInterface
     private let keyRepository: EARKeyRepositoryInterface
-    private let databaseContexts: [NSManagedObjectContext]
 
     private let primaryPublicKeyDescription: PublicEARKeyDescription
     private let primaryPrivateKeyDescription: PrivateEARKeyDescription
@@ -100,6 +109,8 @@ public class EARService: EARServiceInterface {
     private let secondaryPrivateKeyDescription: PrivateEARKeyDescription
     private let databaseKeyDescription: DatabaseEARKeyDescription
     private let earStorage: EARStorage
+    private let earMessageEncryptionService: EARMessageEncryptionServiceProtocol
+    private let earMigrator: EARMigratorProtocol
 
     private let authenticationContext: any AuthenticationContextProtocol
 
@@ -118,19 +129,25 @@ public class EARService: EARServiceInterface {
     public convenience init(
         accountID: UUID,
         databaseContexts: [NSManagedObjectContext] = [],
+        coreDataStack: CoreDataStackProtocol,
         canPerformKeyMigration: Bool = false,
         sharedUserDefaults: UserDefaults,
         authenticationContext: any AuthenticationContextProtocol
     ) {
         let earStorage = EARStorage(userID: accountID, sharedUserDefaults: sharedUserDefaults)
+        let messageEncryptionService = EARMessageEncryptionService(earStorage: earStorage)
+        let migrator = EARMigrator(messageEncryptionService: messageEncryptionService)
 
         self.init(
             accountID: accountID,
             keyRepository: EARKeyRepository(),
             keyEncryptor: EARKeyEncryptor(),
             databaseContexts: databaseContexts,
+            coreDataStack: coreDataStack,
             canPerformKeyMigration: canPerformKeyMigration,
             earStorage: earStorage,
+            messageEncryptionService: messageEncryptionService,
+            migrator: migrator,
             authenticationContext: authenticationContext
         )
     }
@@ -140,22 +157,32 @@ public class EARService: EARServiceInterface {
         keyRepository: EARKeyRepositoryInterface = EARKeyRepository(),
         keyEncryptor: EARKeyEncryptorInterface = EARKeyEncryptor(),
         databaseContexts: [NSManagedObjectContext],
+        coreDataStack: CoreDataStackProtocol,
         canPerformKeyMigration: Bool,
         earStorage: EARStorage,
+        messageEncryptionService: EARMessageEncryptionServiceProtocol,
+        migrator: EARMigratorProtocol,
         authenticationContext: AuthenticationContextProtocol
     ) {
         self.accountID = accountID
         self.keyRepository = keyRepository
         self.keyEncryptor = keyEncryptor
         self.earStorage = earStorage
-        self.databaseContexts = databaseContexts
         self.authenticationContext = authenticationContext
+        self.earMessageEncryptionService = messageEncryptionService
+        self.earMigrator = migrator
 
         self.primaryPublicKeyDescription = .primaryKeyDescription(accountID: accountID)
         self.primaryPrivateKeyDescription = .primaryKeyDescription(accountID: accountID, context: nil)
         self.secondaryPublicKeyDescription = .secondaryKeyDescription(accountID: accountID)
         self.secondaryPrivateKeyDescription = .secondaryKeyDescription(accountID: accountID)
         self.databaseKeyDescription = .keyDescription(accountID: accountID)
+
+        self.setMessageEncryptionService(
+            messageEncryptionService,
+            onContexts: databaseContexts,
+            andCoreDataStack: coreDataStack
+        )
 
         if canPerformKeyMigration {
             migrateKeysIfNeeded()
@@ -234,15 +261,19 @@ public class EARService: EARServiceInterface {
                 let databaseKey = try fetchDecryptedDatabaseKey()
 
                 if !skipMigration {
-                    try context.migrateTowardEncryptionAtRest(databaseKey: databaseKey)
+                    try earMigrator.migrateTowardEncryptionAtRest(
+                        databaseKey: databaseKey,
+                        context: context
+                    )
                 }
 
-                setDatabaseKeyInAllContexts(databaseKey)
+                earMessageEncryptionService.setDatabaseKey(databaseKey)
                 earStorage.enableEAR(true)
                 context.encryptMessagesAtRest = true
+
             } catch {
                 WireLogger.ear.error("failed to turn on EAR: \(error)")
-                context.databaseKey = nil
+                earMessageEncryptionService.setDatabaseKey(nil)
                 context.encryptMessagesAtRest = false
                 earStorage.enableEAR(false)
                 try? deleteExistingKeys()
@@ -285,7 +316,7 @@ public class EARService: EARServiceInterface {
 
         WireLogger.ear.info("turning off EAR")
 
-        guard let databaseKey = context.databaseKey else {
+        guard let databaseKey = earMessageEncryptionService.getDatabaseKey() else {
             throw EARServiceFailure.databaseKeyMissing
         }
 
@@ -294,15 +325,18 @@ public class EARService: EARServiceInterface {
 
             earStorage.enableEAR(false)
             context.encryptMessagesAtRest = false
-            setDatabaseKeyInAllContexts(nil)
+            earMessageEncryptionService.setDatabaseKey(nil)
 
             do {
                 if !skipMigration {
-                    try context.migrateAwayFromEncryptionAtRest(databaseKey: databaseKey)
+                    try earMigrator.migrateAwayFromEncryptionAtRest(
+                        databaseKey: databaseKey,
+                        context: context
+                    )
                 }
             } catch {
                 WireLogger.ear.error("failed to turn off EAR: \(error)")
-                setDatabaseKeyInAllContexts(databaseKey)
+                earMessageEncryptionService.setDatabaseKey(databaseKey)
                 context.encryptMessagesAtRest = true
                 earStorage.enableEAR(true)
                 throw error
@@ -532,7 +566,7 @@ public class EARService: EARServiceInterface {
 
     public func lockDatabase() {
         WireLogger.ear.info("locking database", attributes: .safePublic)
-        setDatabaseKeyInAllContexts(nil)
+        earMessageEncryptionService.setDatabaseKey(nil)
         keyRepository.clearCache()
     }
 
@@ -545,25 +579,30 @@ public class EARService: EARServiceInterface {
         do {
             WireLogger.ear.info("unlocking database", attributes: .safePublic)
             let databaseKey = try fetchDecryptedDatabaseKey()
-            setDatabaseKeyInAllContexts(databaseKey)
+            earMessageEncryptionService.setDatabaseKey(databaseKey)
         } catch {
             WireLogger.ear.error("failed to unlock database: \(String(describing: error))")
             throw error
         }
     }
+    
+    // MARK: - Helpers
+    
+    private func setMessageEncryptionService(
+        _ service: EARMessageEncryptionServiceProtocol,
+        onContexts contexts: [NSManagedObjectContext],
+        andCoreDataStack coreDataStack: CoreDataStackProtocol
+    ) {
+        // Setting the service on the core data stack so it can be injected in background contexts
+        coreDataStack.setEARMessageEncryptionService(service)
 
-    func setDatabaseKeyInAllContexts(_ key: VolatileData?) {
-        performInAllContexts {
-            $0.databaseKey = key
-        }
-    }
-
-    private func performInAllContexts(_ block: (NSManagedObjectContext) -> Void) {
-        for context in databaseContexts {
-            context.performAndWait {
-                block(context)
+        // Setting the service on the provided contexts
+        for context in contexts {
+            context.perform {
+                context.earMessageEncryptionService = service
             }
         }
     }
 
+    
 }

@@ -40,11 +40,14 @@ extension SessionManager {
 
         let backupInfo: CoreDataStack.BackupInfo
         do {
+            let context = activeUserSession.managedObjectContext
+            let earEncryptionService = try? context.getEarMessageEncryptionService()
+
             backupInfo = try await CoreDataStack.backupLocalStorage(
                 accountIdentifier: userId,
                 clientIdentifier: clientId,
                 applicationContainer: sharedContainerURL,
-                databaseKey: activeUserSession.managedObjectContext.databaseKey
+                databaseKey: earEncryptionService?.getDatabaseKey()
             )
         } catch {
             activeUserSession.analyticsEventTracker?.trackEvent(.Backup.exportFailed)

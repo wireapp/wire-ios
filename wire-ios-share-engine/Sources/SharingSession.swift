@@ -250,6 +250,7 @@ public final class SharingSession {
                 coreDataStack.viewContext,
                 coreDataStack.syncContext
             ],
+            coreDataStack: coreDataStack,
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: AuthenticationContext(storage: contextStorage)
         )

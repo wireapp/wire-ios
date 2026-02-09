@@ -471,6 +471,7 @@ final class UserSessionLoader {
                 coreDataStack.viewContext,
                 coreDataStack.syncContext
             ],
+            coreDataStack: coreDataStack,
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: AuthenticationContext(storage: contextStorage)
