@@ -31,49 +31,61 @@ struct FilesSortingView: View {
     }
 
     var body: some View {
-        Menu {
-            
-            Text(Strings.title)
-                .font(for: .h5)
-                .foregroundStyle(.secondary)
-            
-            Divider()
-            
-            ForEach(viewModel.availableSortingKeys, id: \.self) { sortingKey in
-                Button {
-                    viewModel.select(sortingKey: sortingKey)
-                } label: {
-                    Label(
-                        sortingKey.title,
-                        systemImage: viewModel.model.sortingKey == sortingKey ? "checkmark" : ""
-                    )
-                }
-            }
-            
-            Divider()
-            
-            ForEach(FilesSortingViewModel.SortingOrder.allCases, id: \.self) { sortingOrder in
-                Button {
-                    viewModel.select(sortingOrder: sortingOrder)
-                } label: {
-                    Label(
-                        sortingOrder.title,
-                        systemImage: viewModel.model.sortingOrder == sortingOrder ? "checkmark" : ""
-                    )
-                }
-            }
-
-        } label: {
-            HStack {
-                Text(viewModel.model.sortingKey.title)
-                    .foregroundStyle(.primary)
+        HStack {
+            Menu {
+                
+                Text(Strings.title)
                     .font(for: .h5)
+                    .foregroundStyle(.secondary)
+                
+                Divider()
+                
+                ForEach(viewModel.availableSortingKeys, id: \.self) { sortingKey in
+                    Button {
+                        viewModel.select(sortingKey: sortingKey)
+                    } label: {
+                        Label(
+                            sortingKey.title,
+                            systemImage: viewModel.model.sortingKey == sortingKey ? "checkmark" : ""
+                        )
+                    }
+                }
+                
+                Divider()
+                
+                ForEach(FilesSortingViewModel.SortingOrder.allCases, id: \.self) { sortingOrder in
+                    Button {
+                        viewModel.select(sortingOrder: sortingOrder)
+                    } label: {
+                        Label(
+                            sortingOrder.title,
+                            systemImage: viewModel.model.sortingOrder == sortingOrder ? "checkmark" : ""
+                        )
+                    }
+                }
 
-                Image(systemName: viewModel.model.sortingOrder.iconName)
-                    .resizable()
-                    .frame(width: 9, height: 11)
-            }.frame(minWidth: 120, alignment: .leading)
-        }.foregroundStyle(.primary)
+            } label: {
+                HStack(spacing: 5) {
+                    Text(viewModel.model.sortingKey.title)
+                        .foregroundStyle(.primary)
+                        .font(for: .h5)
+
+                    Image(systemName: viewModel.model.sortingOrder.iconName)
+                        .resizable()
+                        .frame(width: 9, height: 11)
+                }.frame(minWidth: 120, alignment: .leading)
+                
+            }.foregroundStyle(.primary)
+            
+            Spacer()
+            
+            if !viewModel.isBrowsing {
+                Text(Strings.results)
+                    .font(for: .subline2)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(ColorTheme.Base.secondaryText.color)
+            }
+        }
     }
 }
 

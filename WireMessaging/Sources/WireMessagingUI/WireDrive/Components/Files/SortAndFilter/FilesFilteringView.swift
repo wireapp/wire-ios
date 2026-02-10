@@ -40,7 +40,6 @@ struct FilesFilteringView: View {
                 }
             }
         }
-        .padding(.horizontal, -5)
         .sheet(
             item: $viewModel.sheetNavigation,
             onDismiss: {},
@@ -90,8 +89,10 @@ struct FilesFilteringView: View {
     @ViewBuilder
     private func capsule(for filter: FilesFilteringViewModel.Filtering) -> some View {
         let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
+        
         HStack(alignment: .center, spacing: 6) {
             Text(filter.title)
+                .font(for: .h5)
                 .foregroundStyle(textColor(for: filter))
 
             if let badge = viewModel.badge(for: filter) {
@@ -111,7 +112,7 @@ struct FilesFilteringView: View {
                 Image(systemName: iconName)
                     .if(filter != .sharedByMe) { view in
                         view.resizable()
-                            .frame(width: 10, height: 5)
+                            .frame(width: 7.5, height: 3.75)
                             .rotationEffect(.degrees(180))
                         
                     }

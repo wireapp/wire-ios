@@ -293,6 +293,7 @@
 "conversation.wireCells.sorting.key.conversation" = "Conversation";
 "conversation.wireCells.sorting.order.ascending" = "Ascending";
 "conversation.wireCells.sorting.order.descending" = "Descending";
+"conversation.wireCells.sorting.results" = "Results in Shared Drive";
 
 // MARK: - Filtering
 "conversation.wireCells.filtering.tags" = "Tags";

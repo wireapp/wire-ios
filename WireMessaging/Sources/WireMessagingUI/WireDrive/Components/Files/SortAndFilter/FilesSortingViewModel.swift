@@ -76,7 +76,7 @@ final class FilesSortingViewModel: ObservableObject {
 
     @Published var model: SortingModel
     
-    private let isBrowsing: Bool
+    let isBrowsing: Bool
     private let onUpdate: (SortingKey, SortingOrder) -> Void
     
     var availableSortingKeys: [SortingKey] {
