@@ -64,7 +64,6 @@ public final class MLSService: MLSServiceInterface {
     private let logger = WireLogger.mls
     private let groupsBeingRepaired = GroupsBeingRepaired()
     private let featureRepository: LegacyFeatureRepositoryInterface
-    private weak var mlsSyncDelegate: (any MLSSyncDelegate)?
     private weak var resetBrokenMLSConversationDelegate: (any ResetBrokenMLSConversationDelegate)?
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
     private let localDomain: String?
@@ -173,10 +172,6 @@ public final class MLSService: MLSServiceInterface {
     }
 
     // MARK: - Sync delegate
-
-    public func setSyncDelegate(_ delegate: any MLSSyncDelegate) {
-        mlsSyncDelegate = delegate
-    }
 
     public func setResetBrokenMLSConversationDelegate(
         _ delegate: any ResetBrokenMLSConversationDelegate
@@ -567,10 +562,7 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Remove group
 
     public func wipeGroup(_ groupID: MLSGroupID) async throws {
-        logger.info(
-            "wiping group",
-            attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-        )
+        logger.info("wiping group", attributes: groupID.safeAttributes)
 
         do {
             try await coreCrypto.perform { [self] in
@@ -579,23 +571,17 @@ public final class MLSService: MLSServiceInterface {
                 ) else {
                     return logger.info(
                         "conversation doesn't exist, nothing to wipe..",
-                        attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                        attributes: groupID.safeAttributes
                     )
                 }
                 try await $0.wipeConversation(
                     conversationId: groupID.conversationId
                 )
 
-                logger.info(
-                    "wiped group",
-                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-                )
+                logger.info("wiped group", attributes: groupID.safeAttributes)
             }
         } catch {
-            logger.warn(
-                "failed to wipe group \(String(describing: error))",
-                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-            )
+            logger.warn("failed to wipe group: \(String(describing: error))", attributes: groupID.safeAttributes)
             throw error
         }
     }
@@ -909,7 +895,7 @@ public final class MLSService: MLSServiceInterface {
                     } catch {
                         WireLogger.mls.error(
                             "Failed to join pending group: \(error)",
-                            attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
+                            attributes: mlsGroupID.safeAttributes
                         )
                         return false
                     }
@@ -983,7 +969,6 @@ public final class MLSService: MLSServiceInterface {
         let outOfSyncConversationInfos = try await outOfSyncConversations(in: context)
 
         logger.info("found \(outOfSyncConversationInfos.count) conversations out of sync")
-
         for conversationInfo in outOfSyncConversationInfos {
 
             await launchGroupRepairTaskIfNotInProgress(for: conversationInfo.mlsGroupId) {
@@ -996,58 +981,35 @@ public final class MLSService: MLSServiceInterface {
                 } catch {
                     self.logger
                         .warn(
-                            "failed to repair out of sync conversation (\(conversationInfo.mlsGroupId.safeForLoggingDescription)). error: \(String(reflecting: error))"
+                            "failed to repair out of sync conversation: \(String(reflecting: error))",
+                            attributes: conversationInfo.mlsGroupId.safeAttributes
                         )
                 }
             }
         }
     }
 
-    public func fetchAndRepairGroupIfPossible(with groupID: MLSGroupID) async {
-        await launchGroupRepairTaskIfNotInProgress(for: groupID) {
-            await self.fetchAndRepairGroup(with: groupID, shouldPerformIncrementalSync: true)
-        }
-    }
-
-    public func fetchAndRepairGroup(
-        with groupID: MLSGroupID,
-        shouldPerformIncrementalSync: Bool
-    ) async {
+    public func fetchAndRepairGroup(with groupID: MLSGroupID) async {
         if let subgroupInfo = await subconversationGroupIDRepository.findSubgroupTypeAndParentID(for: groupID) {
             await fetchAndRepairSubgroup(parentGroupID: subgroupInfo.parentID)
         } else {
-            await fetchAndRepairParentGroup(
-                with: groupID,
-                shouldPerformIncrementalSync: shouldPerformIncrementalSync
-            )
+            await fetchAndRepairParentGroup(with: groupID)
         }
     }
 
-    private func fetchAndRepairParentGroup(
-        with groupID: MLSGroupID,
-        shouldPerformIncrementalSync: Bool
-    ) async {
+    private func fetchAndRepairParentGroup(with groupID: MLSGroupID) async {
         guard let context else {
             return
         }
 
         do {
-            logger.info(
-                "repairing out of sync conversation...",
-                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-            )
-
-            if shouldPerformIncrementalSync {
-                // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
-                // This ensures we're on the latest state.
-                try await mlsSyncDelegate?.recoverWithIncrementalSync()
-            }
+            logger.info("repairing out of sync conversation...", attributes: groupID.safeAttributes)
 
             guard let conversationInfo = await fetchConversationInfo(
                 with: groupID,
                 in: context
             ) else {
-                logger.warn("conversation not found (\(groupID.safeForLoggingDescription))")
+                logger.warn("conversation not found", attributes: groupID.safeAttributes)
                 return
             }
 
@@ -1061,7 +1023,7 @@ public final class MLSService: MLSServiceInterface {
                 subgroup: nil,
                 context: context
             ) else {
-                logger.info("conversation is not out of sync (\(groupID.safeForLoggingDescription))")
+                logger.info("conversation is not out of sync", attributes: groupID.safeAttributes)
                 return
             }
 
@@ -1071,10 +1033,10 @@ public final class MLSService: MLSServiceInterface {
                 context: context
             )
         } catch {
-            logger
-                .warn(
-                    "failed to repair conversation (\(groupID.safeForLoggingDescription)). error: \(String(describing: error))"
-                )
+            logger.warn(
+                "failed to repair conversation: \(String(describing: error))",
+                attributes: groupID.safeAttributes
+            )
         }
     }
 
@@ -1085,14 +1047,14 @@ public final class MLSService: MLSServiceInterface {
     ) async throws {
         try await joinGroup(with: groupID)
 
-        logger.info("repaired out of sync conversation! (\(groupID.safeForLoggingDescription))")
+        logger.info("repaired out of sync conversation!", attributes: groupID.safeAttributes)
 
         await appendGapSystemMessage(
             in: conversation,
             context: context
         )
 
-        logger.info("inserted gap system message in conversation (\(groupID.safeForLoggingDescription))")
+        logger.info("inserted gap system message in conversation", attributes: groupID.safeAttributes)
     }
 
     private func appendGapSystemMessage(
@@ -1111,13 +1073,13 @@ public final class MLSService: MLSServiceInterface {
         guard let context else { return }
 
         do {
-            logger.info("repairing out of sync subgroup... (parent: \(parentGroupID.safeForLoggingDescription))")
+            logger.info("repairing out of sync subgroup...", attributes: parentGroupID.safeAttributes)
 
             guard let conversationInfo = await fetchConversationInfo(
                 with: parentGroupID,
                 in: context
             ) else {
-                logger.warn("conversation not found (\(parentGroupID.safeForLoggingDescription))")
+                logger.warn("conversation not found", attributes: parentGroupID.safeAttributes)
                 return
             }
 
@@ -1178,9 +1140,11 @@ public final class MLSService: MLSServiceInterface {
             let allMLSConversations = await context.perform { ZMConversation.fetchMLSConversations(in: context) }
 
             var outOfSyncConversations = [ZMConversation]()
-            for conversation in allMLSConversations {
-                guard await self.isConversationOutOfSync(conversation, coreCrypto: coreCrypto, context: context)
-                else { continue }
+            for conversation in allMLSConversations where await self.isConversationOutOfSync(
+                conversation,
+                coreCrypto: coreCrypto,
+                context: context
+            ) {
                 outOfSyncConversations.append(conversation)
             }
             return outOfSyncConversations
@@ -1204,7 +1168,7 @@ public final class MLSService: MLSServiceInterface {
     ) async -> Bool {
         var groupID: MLSGroupID?
         var epoch: UInt64?
-
+        var conversationID: UUID?
         await context.perform {
             if let subgroup {
                 groupID = subgroup.groupID
@@ -1213,18 +1177,25 @@ public final class MLSService: MLSServiceInterface {
                 groupID = conversation.mlsGroupID
                 epoch = conversation.epoch
             }
+            conversationID = conversation.remoteIdentifier
         }
         guard let groupID, let epoch else { return false }
 
         do {
             let localEpoch = try await coreCrypto.conversationEpoch(conversationId: groupID.conversationId)
 
-            logger.info("epochs(remote: \(epoch), local: \(localEpoch)) for (\(groupID.safeForLoggingDescription))")
+            logger.info(
+                "remote epoch: \(epoch) - local epoch: \(localEpoch)",
+                attributes: groupID.safeAttributes,
+                [.conversationId: conversationID?.safeForLoggingDescription ?? "<nil>"]
+            )
             return localEpoch < epoch
         } catch {
             logger
-                .info(
-                    "cannot resolve conversation epoch \(String(describing: error)) for (\(groupID.safeForLoggingDescription))"
+                .error(
+                    "cannot resolve conversation epoch \(String(describing: error))",
+                    attributes: groupID.safeAttributes,
+                    [.conversationId: conversationID?.safeForLoggingDescription ?? "<nil>"]
                 )
             return false
         }
@@ -1375,27 +1346,12 @@ public final class MLSService: MLSServiceInterface {
         subconversationType: SubgroupType?,
         context: CoreCryptoContextProtocol?
     ) async throws -> [MLSDecryptResult] {
-        typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
-
-        do {
-            return try await decryptionService.decrypt(
-                message: message,
-                for: groupID,
-                subconversationType: subconversationType,
-                context: context
-            )
-        } catch DecryptionError.wrongEpoch {
-            Task.detached { [self] in
-                // ⚠️ Important:
-                // Run in detached Task to avoid deadlock:
-                // `fetchAndRepairGroupIfPossible` internally triggers quick sync via `recoverWithQuickSync()`.
-                // If this is called during an ongoing quick sync, awaiting it directly would deadlock.
-                await fetchAndRepairGroupIfPossible(with: groupID)
-            }
-            throw DecryptionError.wrongEpoch
-        } catch {
-            throw error
-        }
+        try await decryptionService.decrypt(
+            message: message,
+            for: groupID,
+            subconversationType: subconversationType,
+            context: context
+        )
     }
 
     // MARK: - Pending proposals
