@@ -41,7 +41,7 @@ extension FilesFilterBy.TypeView {
 
         private let initiallySelectedItems: Set<Item>
 
-        init(selectedItems: some Collection<Item>, includeFolders: Bool) {
+        init(includeFolders: Bool, selectedItems: some Collection<Item>) {
             let items = Set(selectedItems)
             self.selectedItems = items
             self.initiallySelectedItems = items

@@ -64,8 +64,8 @@ struct FilesFilteringView: View {
             )
         case .types:
             FilesFilterBy.TypeView(
-                selectedItems: viewModel.filtersSelection.types,
                 includeFolders: !viewModel.isBrowsing,
+                selectedItems: viewModel.filtersSelection.types,
                 onApply: { selectedItems in
                     viewModel.filtersSelection.types = selectedItems
                 }
@@ -78,7 +78,12 @@ struct FilesFilteringView: View {
                 }
             )
         case .owners:
-            Text("Owners")
+            FilesFilterBy.OwnerView(
+                selectedItems: viewModel.filtersSelection.owners,
+                onApply: { selectedItems in
+                    viewModel.filtersSelection.owners = selectedItems
+                }
+            )
         }
     }
     

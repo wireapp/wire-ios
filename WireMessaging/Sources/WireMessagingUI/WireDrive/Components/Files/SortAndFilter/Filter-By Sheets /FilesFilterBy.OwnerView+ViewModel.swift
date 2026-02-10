@@ -22,5 +22,38 @@ extension FilesFilterBy.OwnerView {
     @MainActor
     final class ViewModel: ObservableObject {
         typealias Item = String
+        
+        @Published var selectedItems: Set<Item> = []
+        
+        @Published var presentedItems: [Item] = ["user 1", "user 2", "user 3"]
+
+        private let initiallySelectedItems: Set<Item>
+
+        init(selectedItems: some Collection<Item>) {
+            let items = Set(selectedItems)
+            self.selectedItems = items
+            self.initiallySelectedItems = items
+        }
+
+        var hasChanges: Bool {
+            selectedItems != initiallySelectedItems
+        }
+
+        func isItemSelected(_ item: Item) -> Bool {
+            selectedItems.contains(item)
+        }
+
+        func toggleItemSelection(_ item: Item) {
+            if selectedItems.contains(item) {
+                selectedItems.remove(item)
+            } else {
+                selectedItems = []
+                selectedItems.insert(item)
+            }
+        }
+
+        func clearAll() {
+            selectedItems = []
+        }
     }
 }

@@ -51,7 +51,7 @@ extension FilesFilterBy {
                             .ignoresSafeArea(.all)
                     }
                     .toolbar { toolbarContent }
-                    .navigationTitle(Strings.Filter.FileType.navigationTitle)
+                    .navigationTitle("TODO")
                     .navigationBarTitleDisplayMode(.inline)
             }
         }
@@ -59,16 +59,11 @@ extension FilesFilterBy {
         @ViewBuilder
         private func content() -> some View {
             VStack {
-                Form {
-                    ForEach(viewModel.presentedItems, id: \.self) { item in
-                        Button {
-                            viewModel.toggleItemSelection(item)
-                        } label: {
-                            itemView(item)
-                        }
-                    }
-                }
-                .scrollContentBackground(.hidden)
+                FormStyledSelectionList(
+                    items: viewModel.presentedItems,
+                    onSelected: viewModel.toggleItemSelection,
+                    itemView: itemView
+                )
                 
                 Buttons.RemoveFilter {
                     viewModel.clearAll()
@@ -120,6 +115,8 @@ private extension FilesFilterBy.ConversationView {
         }
     }
 }
+
+// MARK: - Preview
 
 #Preview {
     FilesFilterBy.ConversationView(

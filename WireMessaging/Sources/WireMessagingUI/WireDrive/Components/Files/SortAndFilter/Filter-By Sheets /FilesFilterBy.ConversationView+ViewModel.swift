@@ -25,7 +25,7 @@ extension FilesFilterBy.ConversationView {
         
         @Published var selectedItems: Set<Item> = []
         
-        @Published var presentedItems: [Item] = ["Hello", "World"]
+        @Published var presentedItems: [Item] = ["conversation 1", "conversation 2"]
 
         private let initiallySelectedItems: Set<Item>
 

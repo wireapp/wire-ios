@@ -32,15 +32,15 @@ extension FilesFilterBy {
         let onApply: (Set<ViewModel.Item>) -> Void
         
         init(
-            selectedItems: some Collection<ViewModel.Item>,
             includeFolders: Bool,
+            selectedItems: some Collection<ViewModel.Item>,
             onApply: @escaping (Set<ViewModel.Item>) -> Void
         ) {
             self.onApply = onApply
             self._viewModel = .init(
                 wrappedValue: .init(
-                    selectedItems: selectedItems,
-                    includeFolders: includeFolders
+                    includeFolders: includeFolders,
+                    selectedItems: selectedItems
                 )
             )
         }
@@ -61,16 +61,11 @@ extension FilesFilterBy {
         @ViewBuilder
         private func content() -> some View {
             VStack {
-                Form {
-                    ForEach(viewModel.presentedItems, id: \.self) { item in
-                        Button {
-                            viewModel.toggleItemSelection(item)
-                        } label: {
-                            itemView(item)
-                        }
-                    }
-                }
-                .scrollContentBackground(.hidden)
+                FormStyledSelectionList(
+                    items: viewModel.presentedItems,
+                    onSelected: viewModel.toggleItemSelection,
+                    itemView: itemView
+                )
                 
                 Buttons.RemoveFilter {
                     viewModel.clearAll()
@@ -123,7 +118,7 @@ private extension FilesFilterBy.TypeView {
     }
 }
 
-// MARK: Localization
+// MARK: - Localization
 
 private extension FileType {
     typealias name = Strings.Filter.FileType.TypeName
@@ -145,12 +140,12 @@ private extension FileType {
     }
 }
 
-// MARK: Preview
+// MARK: - Preview
 
 #Preview {
     FilesFilterBy.TypeView(
-        selectedItems: [.audio, .video],
         includeFolders: true,
+        selectedItems: [.audio, .video],
         onApply: { _ in }
     )
 }

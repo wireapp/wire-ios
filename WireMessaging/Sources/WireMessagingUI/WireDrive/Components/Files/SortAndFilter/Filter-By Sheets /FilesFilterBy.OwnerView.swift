@@ -17,6 +17,10 @@
 //
 
 import SwiftUI
+import WireDesign
+import WireFoundation
+
+private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 extension FilesFilterBy {
     struct OwnerView: View {
@@ -32,14 +36,84 @@ extension FilesFilterBy {
             onApply: @escaping (Set<ViewModel.Item>) -> Void
         ) {
             self.onApply = onApply
-            self._viewModel = .init(wrappedValue: .init())
+            self._viewModel = .init(wrappedValue: .init(selectedItems: selectedItems))
         }
         
         var body: some View {
-            Text("FilesFilterBy.OwnerView")
+            NavigationStack {
+                content()
+                    .background {
+                        ColorTheme.Backgrounds.background.color
+                            .ignoresSafeArea(.all)
+                    }
+                    .toolbar { toolbarContent }
+                    .navigationTitle("TODO")
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+        }
+        
+        @ViewBuilder
+        private func content() -> some View {
+            VStack {
+                FormStyledSelectionList(
+                    items: viewModel.presentedItems,
+                    onSelected: viewModel.toggleItemSelection,
+                    itemView: itemView
+                )
+                
+                Buttons.RemoveFilter {
+                    viewModel.clearAll()
+                }
+                .padding(10)
+                .disabled(viewModel.selectedItems.isEmpty)
+            }
+        }
+        
+        @ViewBuilder
+        private func itemView(_ item: ViewModel.Item) -> some View {
+            Label {
+                HStack {
+                    Text(item)
+                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                    
+                    Spacer()
+                    
+                    if viewModel.isItemSelected(item) {
+                        Image(systemName: "checkmark")
+                            .foregroundStyle(wireAccentColor)
+                    }
+                }
+            } icon: {
+                Image(systemName: "questionmark")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+            }
         }
     }
 }
+
+// MARK: - Toolbar
+
+private extension FilesFilterBy.OwnerView {
+    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            FilesFilterBy.Buttons.Cancel {
+                dismiss()
+            }
+        }
+
+        ToolbarItem(placement: .topBarTrailing) {
+            FilesFilterBy.Buttons.Save {
+                onApply(viewModel.selectedItems)
+                dismiss()
+            }
+            .disabled(!viewModel.hasChanges)
+        }
+    }
+}
+
+
+// MARK: - Preview
 
 #Preview {
     FilesFilterBy.OwnerView(

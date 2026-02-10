@@ -185,6 +185,8 @@ private extension FilesFilterBy.TagsView {
     }
 }
 
+// MARK: - Preview
+
 #Preview {
     let useCase = WireDriveGetTagSuggestionsUseCase(
         nodesAPI: {
