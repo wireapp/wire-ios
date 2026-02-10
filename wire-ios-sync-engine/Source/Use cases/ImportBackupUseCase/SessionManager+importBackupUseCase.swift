@@ -50,9 +50,7 @@ private struct ImportBackupAppStateUpdater: ImportBackupAppStateUpdaterProtocol 
 
     @MainActor
     func reportMigrationNeeded() async {
-        await withCheckedContinuation { continuation in
-            sessionManager.prepareForRestoreWithMigration(completion: continuation.resume)
-        }
+        await sessionManager.prepareForRestoreWithMigration()
     }
 
     @MainActor
