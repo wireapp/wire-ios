@@ -869,7 +869,7 @@ public final class MLSService: MLSServiceInterface {
             for pendingGroup in pendingGroups {
                 group.addTask {
                     guard let mlsGroupID = await context.perform({ pendingGroup.mlsGroupID }),
-                          let conversationDomain = await context.perform({ pendingGroup.domain }) else {
+                          let conversationQualifiedID = await context.perform({ pendingGroup.qualifiedID }) else {
                         return false
                     }
 
@@ -880,7 +880,8 @@ public final class MLSService: MLSServiceInterface {
                         let conversationExists = try await self.conversationExists(
                             groupID: mlsGroupID
                         )
-                        let shouldEstablishGroup = epoch == 0 && !conversationExists && conversationDomain == self.localDomain
+                        let shouldEstablishGroup = epoch == 0 && !conversationExists && conversationQualifiedID
+                            .domain == self.localDomain
 
                         if shouldEstablishGroup {
                             try await self.internalEstablishPendingGroup(
@@ -896,7 +897,10 @@ public final class MLSService: MLSServiceInterface {
                     } catch {
                         WireLogger.mls.error(
                             "Failed to join pending group: \(error)",
-                            attributes: mlsGroupID.safeAttributes
+                            attributes: [
+                                .mlsGroupID: mlsGroupID.safeForLoggingDescription,
+                                .conversationId: conversationQualifiedID.safeForLoggingDescription
+                            ]
                         )
                         return false
                     }

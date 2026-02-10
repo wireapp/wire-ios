@@ -147,8 +147,8 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
                     from: payload,
                     in: context
                 ),
-                    let groupID = await context.perform({ conversation.mlsGroupID }),
-                    let conversationID = await context.perform({ conversation.qualifiedID })
+                let groupID = await context.perform({ conversation.mlsGroupID }),
+                let conversationID = await context.perform({ conversation.qualifiedID })
             else {
                 action.fail(with: .failedToProcessResponse)
                 return
