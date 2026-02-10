@@ -18,6 +18,7 @@
 
 import Foundation
 
+/// The namespace for the bottom sheets for filtering files by different categories.
 enum FilesFilterBy {
     
 }
