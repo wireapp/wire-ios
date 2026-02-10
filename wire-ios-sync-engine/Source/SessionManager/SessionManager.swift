@@ -708,17 +708,23 @@ public final class SessionManager: NSObject, SessionManagerType {
             return
         }
 
-        confirmSwitchingAccount { [weak self] isConfirmed in
+        Task { [weak self] in
+            guard let self else {
+                completion?(nil)
+                return
+            }
+
+            let isConfirmed = await confirmSwitchingAccount()
 
             guard isConfirmed else {
                 completion?(nil)
                 return
             }
 
-            self?.isSelectingAccount = true
-            let selectedAccount = self?.accountManager.selectedAccount
+            isSelectingAccount = true
+            let selectedAccount = accountManager.selectedAccount
 
-            guard let delegate = self?.delegate else {
+            guard let delegate = delegate else {
                 completion?(nil)
                 return
             }
@@ -751,10 +757,14 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     public func addAccount(userInfo: [String: Any]? = nil, completion: (() -> Void)? = nil) {
-        confirmSwitchingAccount { [weak self] isConfirmed in
+        Task { [weak self] in
+            guard let self else { return }
+
+            let isConfirmed = await confirmSwitchingAccount()
             guard isConfirmed else { return }
+
             let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
-            self?.delegate?.sessionManagerWillLogout(
+            delegate?.sessionManagerWillLogout(
                 environment: nil,
                 error: error
             ) { [weak self] in
@@ -1832,22 +1842,27 @@ extension SessionManager: NotificationContext {
 
 public extension SessionManager {
 
-    func confirmSwitchingAccount(completion: @escaping (_ isConfirmed: Bool) -> Void) {
+    func confirmSwitchingAccount() async -> Bool {
         guard
             let switchingDelegate,
             let activeUserSession,
             activeUserSession.isCallOngoing
         else {
             // no confirmation to show if no call is ongoing
-            return completion(true)
+            return true
         }
 
-        switchingDelegate.confirmSwitchingAccount { confirmed in
-            if confirmed {
-                activeUserSession.callCenter?.endAllCalls()
+        let confirmed = await withCheckedContinuation { continuation in
+            switchingDelegate.confirmSwitchingAccount { confirmed in
+                continuation.resume(returning: confirmed)
             }
-            completion(confirmed)
         }
+
+        if confirmed {
+            activeUserSession.callCenter?.endAllCalls()
+        }
+
+        return confirmed
     }
 }
 
