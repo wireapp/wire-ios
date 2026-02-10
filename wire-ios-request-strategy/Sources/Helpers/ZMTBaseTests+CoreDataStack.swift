@@ -43,12 +43,6 @@ extension ZMTBaseTest {
 
         try await stack.load()
 
-        // Force lazy initialization of contexts to avoid race conditions.
-        // The syncContext lazy property calls markAsSyncContext(), and we need
-        // to ensure this completes before any async code uses the context.
-        _ = stack.syncContext
-        _ = stack.eventContext
-
         return stack
     }
 

@@ -131,13 +131,16 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
         #endif
     }
 
-    public lazy var syncContext: NSManagedObjectContext = {
-        let context = messagesContainer.newBackgroundContext()
-        context.markAsSyncContext()
-        return context
-    }()
+    private var _syncContext: NSManagedObjectContext!
+    private var _eventContext: NSManagedObjectContext!
 
-    public lazy var eventContext: NSManagedObjectContext = eventsContainer.newBackgroundContext()
+    public var syncContext: NSManagedObjectContext {
+        _syncContext
+    }
+
+    public var eventContext: NSManagedObjectContext {
+        _eventContext
+    }
 
     public let accountContainer: URL
     public let applicationContainer: URL
@@ -304,9 +307,12 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
                 }
             }
 
+            // Initialize syncContext before configuration
+            _syncContext = messagesContainer.newBackgroundContext()
+
             await configureContextReferences()
             await configureViewContext(viewContext)
-            await configureSyncContext(syncContext)
+            await configureSyncContext(_syncContext)
 
         } catch {
             WireLogger.localStorage.critical(
@@ -335,7 +341,10 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
                 }
             }
 
-            await configureEventContext(eventContext)
+            // Initialize eventContext before configuration
+            _eventContext = eventsContainer.newBackgroundContext()
+
+            await configureEventContext(_eventContext)
 
         } catch {
             WireLogger.localStorage.critical(
@@ -390,8 +399,10 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
     }
 
     func configureSyncContext(_ context: NSManagedObjectContext) async {
-        // Note: markAsSyncContext() is now called in the lazy initializer
         await context.perform {
+            // Mark as sync context (equivalent to markAsSyncContext())
+            context.userInfo[IsSyncContextKey] = true
+
             context.localDomain = self.localDomain
             context.isFederationEnabled = self.isFederationEnabled
             context.createDispatchGroups()
