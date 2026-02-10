@@ -31,7 +31,7 @@
     NSManagedObjectContext *moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
     [moc createDispatchGroups];
     [moc setPersistentStoreCoordinator:psc];
-    [moc markAsSyncContext];
+    [moc performMarkAsSyncContext];
     [moc disableObjectRefresh];
     return moc;
 }

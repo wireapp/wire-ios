@@ -407,8 +407,8 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
 
     func configureSyncContext(_ context: NSManagedObjectContext) async {
         await context.perform {
-            // Mark as sync context (equivalent to markAsSyncContext())
-            context.userInfo[IsSyncContextKey] = true
+            // Mark as sync context directly (already on context's queue)
+            context.markAsSyncContext()
 
             context.localDomain = self.localDomain
             context.isFederationEnabled = self.isFederationEnabled
