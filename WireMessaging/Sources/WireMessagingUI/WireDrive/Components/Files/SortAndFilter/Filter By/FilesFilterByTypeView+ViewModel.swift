@@ -21,9 +21,11 @@ import Foundation
 extension FilesFilterByTypeView {
     @MainActor
     final class ViewModel: ObservableObject {
-        @Published var selectedTypes: Set<FileType> = []
+        typealias Item = FileType
+        
+        @Published var selectedItems: Set<Item> = []
 
-        var presentedTypes: [FileType] = [
+        var presentedItems: [Item] = [
             .pdf,
             .document,
             .image,
@@ -37,35 +39,35 @@ extension FilesFilterByTypeView {
             .other
         ]
 
-        private let initiallySelectedTypes: Set<FileType>
+        private let initiallySelectedItems: Set<Item>
 
-        init(selectedTypes: some Collection<FileType>, includeFolders: Bool) {
-            let types = Set(selectedTypes)
-            self.selectedTypes = types
-            self.initiallySelectedTypes = types
+        init(selectedItems: some Collection<Item>, includeFolders: Bool) {
+            let items = Set(selectedItems)
+            self.selectedItems = items
+            self.initiallySelectedItems = items
             if !includeFolders {
-                presentedTypes.removeAll { $0 == .folder }
+                presentedItems.removeAll { $0 == .folder }
             }
         }
 
         var hasChanges: Bool {
-            selectedTypes != initiallySelectedTypes
+            selectedItems != initiallySelectedItems
         }
 
-        func isTypeSelected(_ type: FileType) -> Bool {
-            selectedTypes.contains(type)
+        func isItemSelected(_ item: Item) -> Bool {
+            selectedItems.contains(item)
         }
 
-        func toggleTypeSelection(_ type: FileType) {
-            if selectedTypes.contains(type) {
-                selectedTypes.remove(type)
+        func toggleItemSelection(_ item: Item) {
+            if selectedItems.contains(item) {
+                selectedItems.remove(item)
             } else {
-                selectedTypes.insert(type)
+                selectedItems.insert(item)
             }
         }
 
         func clearAll() {
-            selectedTypes = []
+            selectedItems = []
         }
     }
 }

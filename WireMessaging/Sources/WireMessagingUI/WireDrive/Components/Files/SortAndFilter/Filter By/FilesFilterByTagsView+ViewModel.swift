@@ -23,8 +23,10 @@ import WireMessagingDomain
 extension FilesFilterByTagsView {
     @MainActor
     final class ViewModel: ObservableObject {
-        @Published var presentedTags: [String] = []
-        @Published var selectedTags: Set<String>
+        typealias Item = String
+        
+        @Published var presentedTags: [Item] = []
+        @Published var selectedTags: Set<Item>
         @Published var searchText = "" {
             didSet {
                 applySearchFilter()
@@ -33,14 +35,14 @@ extension FilesFilterByTagsView {
         @Published var isLoading: Bool = false
         @Published var showError: Bool = false
 
-        private var availableTags: [String] = []
-        private let initiallySelectedTags: Set<String>
+        private var availableTags: [Item] = []
+        private let initiallySelectedTags: Set<Item>
 
         private let fetchTagsUseCase: any WireDriveGetTagSuggestionsUseCaseProtocol
 
         init(
             fetchTagsUseCase: any WireDriveGetTagSuggestionsUseCaseProtocol,
-            selectedTags: some Collection<String>
+            selectedTags: some Collection<Item>
         ) {
             self.fetchTagsUseCase = fetchTagsUseCase
 
@@ -58,7 +60,7 @@ extension FilesFilterByTagsView {
             selectedTags != initiallySelectedTags
         }
 
-        func isTagSelected(_ tag: String) -> Bool {
+        func isTagSelected(_ tag: Item) -> Bool {
             selectedTags.contains { $0.localizedCaseInsensitiveCompare(tag) == .orderedSame }
         }
 
@@ -93,7 +95,7 @@ extension FilesFilterByTagsView {
             }
         }
 
-        func toggleTag(_ tag: String) {
+        func toggleTag(_ tag: Item) {
             if isTagSelected(tag) {
                 selectedTags = selectedTags.filter { $0.localizedCaseInsensitiveCompare(tag) != .orderedSame }
             } else {

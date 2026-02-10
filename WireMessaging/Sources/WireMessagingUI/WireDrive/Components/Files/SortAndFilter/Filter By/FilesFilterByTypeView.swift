@@ -28,17 +28,17 @@ struct FilesFilterByTypeView: View {
 
     @StateObject private var viewModel: ViewModel
 
-    let onApply: (Set<FileType>) -> Void
+    let onApply: (Set<ViewModel.Item>) -> Void
 
     init(
-        selectedItems: some Collection<FileType>,
+        selectedItems: some Collection<ViewModel.Item>,
         includeFolders: Bool,
-        onApply: @escaping (Set<FileType>) -> Void
+        onApply: @escaping (Set<ViewModel.Item>) -> Void
     ) {
         self.onApply = onApply
         self._viewModel = .init(
             wrappedValue: .init(
-                selectedTypes: selectedItems,
+                selectedItems: selectedItems,
                 includeFolders: includeFolders
             )
         )
@@ -61,26 +61,11 @@ struct FilesFilterByTypeView: View {
     private func content() -> some View {
         VStack {
             Form {
-                ForEach(viewModel.presentedTypes, id: \.self) { fileType in
+                ForEach(viewModel.presentedItems, id: \.self) { item in
                     Button {
-                        viewModel.toggleTypeSelection(fileType)
+                        viewModel.toggleItemSelection(item)
                     } label: {
-                        Label {
-                            HStack {
-                                Text(fileType.localizedName())
-
-                                Spacer()
-
-                                if viewModel.isTypeSelected(fileType) {
-                                    Image(systemName: "checkmark")
-                                        .foregroundStyle(wireAccentColor)
-                                }
-                            }
-                        } icon: {
-                            Image(fileType.imageResource)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                        }
+                        itemView(item)
                     }
                 }
             }
@@ -88,6 +73,26 @@ struct FilesFilterByTypeView: View {
 
             removeFilterButton
                 .padding(10)
+        }
+    }
+    
+    @ViewBuilder
+    private func itemView(_ item: ViewModel.Item) -> some View {
+        Label {
+            HStack {
+                Text(item.localizedName())
+
+                Spacer()
+
+                if viewModel.isItemSelected(item) {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(wireAccentColor)
+                }
+            }
+        } icon: {
+            Image(item.imageResource)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
         }
     }
 }
@@ -107,7 +112,7 @@ private extension FilesFilterByTypeView {
     var saveButton: some View {
         Button {
             Task {
-                onApply(viewModel.selectedTypes)
+                onApply(viewModel.selectedItems)
                 dismiss()
             }
         } label: {
@@ -125,7 +130,7 @@ private extension FilesFilterByTypeView {
             Text(Strings.Filter.removeFilter)
         }
         .accessibilityIdentifier("removeFilterButton")
-        .disabled(viewModel.selectedTypes.isEmpty)
+        .disabled(viewModel.selectedItems.isEmpty)
     }
 
     var closeButton: some View {

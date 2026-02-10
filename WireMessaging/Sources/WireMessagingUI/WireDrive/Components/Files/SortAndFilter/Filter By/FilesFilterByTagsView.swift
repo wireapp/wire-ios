@@ -30,12 +30,12 @@ struct FilesFilterByTagsView: View {
 
     @StateObject private var viewModel: ViewModel
 
-    let onApply: (Set<String>) -> Void
+    let onApply: (Set<ViewModel.Item>) -> Void
 
     init(
         fetchTagsUseCase: any WireDriveGetTagSuggestionsUseCaseProtocol,
-        selectedItems: some Collection<String>,
-        onApply: @escaping (Set<String>) -> Void
+        selectedItems: some Collection<ViewModel.Item>,
+        onApply: @escaping (Set<ViewModel.Item>) -> Void
     ) {
         self._viewModel = StateObject(
             wrappedValue: .init(
