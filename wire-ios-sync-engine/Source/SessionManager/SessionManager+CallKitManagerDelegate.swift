@@ -39,17 +39,12 @@ extension SessionManager: CallKitManagerDelegate {
         }
 
         Task { @MainActor in
-            guard
-                let userSession = try? await withSession(for: account),
-                let conversation = ZMConversation.fetch(
-                    with: handle.conversationID,
-                    in: userSession.managedObjectContext
-                )
-            else {
-                return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
+            do {
+                let conversation = try await fetchConversation(id: handle.conversationID, account: account)
+                completionHandler(.success(conversation))
+            } catch {
+                completionHandler(.failure(error))
             }
-
-            completionHandler(.success(conversation))
         }
     }
 
@@ -64,21 +59,17 @@ extension SessionManager: CallKitManagerDelegate {
         }
 
         Task { @MainActor in
-            guard
-                let userSession = try? await withSession(for: account),
-                let conversation = ZMConversation.fetch(
-                    with: handle.conversationID,
-                    in: userSession.managedObjectContext
-                )
-            else {
-                return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
+            do {
+                let userSession = try await withSession(for: account)
+                let conversation = try await fetchConversation(id: handle.conversationID, account: account)
+                await requestCallConfigIfNeeded(for: userSession)
+                await userSession.processPendingCallEvents()
+
+                WireLogger.calling.info("did process call events, returning conversation...")
+                completionHandler(.success(conversation))
+            } catch {
+                completionHandler(.failure(error))
             }
-
-            await requestCallConfigIfNeeded(for: userSession)
-            await userSession.processPendingCallEvents()
-
-            WireLogger.calling.info("did process call events, returning conversation...")
-            completionHandler(.success(conversation))
         }
     }
 
@@ -114,6 +105,17 @@ extension SessionManager: CallKitManagerDelegate {
                 await userSession.syncAgent?.suspend()
             }
         }
+    }
+
+    // MARK: - Private helpers
+
+    private func fetchConversation(id: UUID, account: Account) async throws -> ZMConversation {
+        let userSession = try await withSession(for: account)
+        guard let conversation = ZMConversation.fetch(with: id, in: userSession.managedObjectContext) else {
+            throw ConversationLookupError.conversationDoesNotExist
+        }
+
+        return conversation
     }
 
 }
