@@ -30,12 +30,13 @@ struct FilesFilterByTypeView: View {
 
     let onApply: (Set<FileType>) -> Void
 
-    package init(
+    init(
         selectedTypes: some Collection<FileType>,
+        includeFolders: Bool,
         onApply: @escaping (Set<FileType>) -> Void
     ) {
         self.onApply = onApply
-        self._viewModel = .init(wrappedValue: .init(selectedTypes: selectedTypes))
+        self._viewModel = .init(wrappedValue: .init(selectedTypes: selectedTypes, includeFolders: includeFolders))
     }
 
     var body: some View {
@@ -160,6 +161,7 @@ private extension FileType {
 #Preview {
     FilesFilterByTypeView(
         selectedTypes: [.audio, .video],
+        includeFolders: true,
         onApply: { _ in }
     )
 }
