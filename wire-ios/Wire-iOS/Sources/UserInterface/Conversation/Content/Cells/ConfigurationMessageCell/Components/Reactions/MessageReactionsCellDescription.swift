@@ -27,19 +27,14 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
     // MARK: - Properties
 
     typealias View = MessageReactionsCell
-    var configuration: View.Configuration
-
-    weak var message: ZMConversationMessage? {
-        didSet {
-            if let message {
-                configuration = MessageReactionsCellConfiguration(reactions: configuration.reactions, message: message)
-            }
-        }
-    }
+    let configuration: View.Configuration
 
     let shouldAlignMessageContentForBubbles = true
 
-    init(message: ZMConversationMessage) {
+    init(
+        message: ZMConversationMessage,
+        userSession: UserSession
+    ) {
         self.message = message
 
         let reactions: [MessageReactionMetadata] = message.reactionsSortedByCreationDate().compactMap { reaction in
@@ -53,13 +48,14 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
                 isSelfUserReacting: reaction.users.contains(where: \.isSelfUser)
             )
         }
-
-        self.configuration = MessageReactionsCellConfiguration(reactions: reactions, message: message)
+        self.configuration = View.Configuration(reactions: reactions, userSession: userSession)
     }
 
     var supportsActions: Bool = false
 
     var containsHighlightableContent: Bool = false
+
+    var message: ZMConversationMessage?
 
     weak var delegate: ConversationMessageCellDelegate?
 
