@@ -20,8 +20,8 @@ import Foundation
 import PushKit
 import UserNotifications
 import WireDomain
-import WireRequestStrategy
 import WireLogging
+import WireRequestStrategy
 
 protocol PushRegistry {
 
@@ -40,7 +40,6 @@ private enum UserNotificationHandlingError: Error {
     case missingSelfID
     case missingAccount
 }
-
 
 @objc
 extension SessionManager: UNUserNotificationCenterDelegate {
@@ -102,7 +101,7 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         notificationCenter.setNotificationCategories(newSyncNotificationCategories)
 
         notificationCenter.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { _, error in
-            if let error = error {
+            if let error {
                 WireLogger.notifications.error("Failed to request authorization for user notifications: \(error)")
             }
         })

@@ -1572,7 +1572,7 @@ extension SessionManager: UnauthenticatedSessionDelegate {
             do {
                 userSession = try await activateSession(for: account, newEnvironment: newEnvironment)
             } catch {
-                WireLogger.sessionManager.error("Failed to activate session for newly created account: \(error)",)
+                WireLogger.sessionManager.error("Failed to activate session for newly created account: \(error)")
                 return
             }
 
