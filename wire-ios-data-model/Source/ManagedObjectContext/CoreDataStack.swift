@@ -317,9 +317,9 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
             // Initialize syncContext before configuration
             _syncContext = messagesContainer.newBackgroundContext()
 
-            await configureContextReferences()
             await configureViewContext(viewContext)
             await configureSyncContext(_syncContext)
+            await configureContextReferences()
 
         } catch {
             WireLogger.localStorage.critical(
