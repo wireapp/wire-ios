@@ -65,7 +65,7 @@ struct FilesFilteringView: View {
         case .types:
             FilesFilterByTypeView(
                 selectedItems: viewModel.filtersSelection.types,
-                includeFolders: true, //TODO: should be true for specific conversations and false for "all conversations"
+                includeFolders: !viewModel.isBrowsing,
                 onApply: { selectedTypes in
                     viewModel.filtersSelection.types = selectedTypes
                 }
