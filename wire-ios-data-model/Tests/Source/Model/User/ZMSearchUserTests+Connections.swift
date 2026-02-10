@@ -24,7 +24,7 @@ final class ZMSearchUserTests_Connections: ModelObjectsTests {
     func testThatConnectSendsAConnectToUserNotification() {
         // given
         let searchUser = ZMSearchUser(
-            contextProvider: coreDataStack,
+            viewContext: coreDataStack.viewContext,
             name: "John Doe",
             handle: "johndoe",
             accentColor: .turquoise,

@@ -25,17 +25,47 @@ public extension WireLogger {
         attributes: LogAttributes = [:],
         block: () async throws -> T
     ) async throws -> T {
+        let context = measureTimeStart(label: label, attributes: attributes)
+        let result = try await block()
+        measureTimeEnd(context: context)
+        return result
+    }
+
+    func measureTime<T, E: Error>(
+        label: String,
+        attributes: LogAttributes = [:],
+        block: () throws(E) -> T
+    ) throws(E) -> T {
+        let context = measureTimeStart(label: label, attributes: attributes)
+        let result = try block()
+        measureTimeEnd(context: context)
+        return result
+    }
+
+    // MARK: - Helpers
+
+    private struct Context {
+        let start: Date
+        let label: String
+        let attributes: LogAttributes
+    }
+
+    private func measureTimeStart(
+        label: String,
+        attributes: LogAttributes
+    ) -> Context {
         let startMessage = "starting \(label)"
         info(startMessage, attributes: attributes)
-        let start = Date.now
-        let result = try await block()
-        let durationInSeconds = start.timeIntervalSinceNow.magnitude
-        var updatedAttributes = attributes
+        return Context(start: Date.now, label: label, attributes: attributes)
+    }
+
+    private func measureTimeEnd(context: Context) {
+        let durationInSeconds = context.start.timeIntervalSinceNow.magnitude
+        var updatedAttributes = context.attributes
         let formattedDuration = String(format: "%.2f", durationInSeconds)
         updatedAttributes[.duration] = formattedDuration
-        let completedMessage = "completed \(label)"
+        let completedMessage = "completed \(context.label)"
         info(completedMessage, attributes: updatedAttributes)
-        return result
     }
 
 }

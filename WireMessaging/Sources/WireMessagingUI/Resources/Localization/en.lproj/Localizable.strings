@@ -109,6 +109,7 @@
 "conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "An error occurred while fetching channel history depth options.";
 "conversation.channelHistory.updateHistoryDepth.error" = "An error occurred while updating channel history depth.";
 "conversation.file.preview.open" = "Open preview";
+"conversation.draft.attachmentMenu.errorTitle" = "Unable to load file";
 "conversation.draft.attachmentMenu.retry" = "Retry";
 "conversation.draft.attachmentMenu.remove" = "Remove File";
 
@@ -139,6 +140,8 @@
 "conversation.wireCells.allFiles.noData.title" = "There are no files yet";
 "conversation.wireCells.allFiles.noData.message" = "For conversations that use shared Drive, you'll find all files here.";
 "conversation.wireCells.allFiles.noData.learnMore" = "Learn more";
+"conversation.wireCells.files.noSearchResults.title" = "No results found";
+"conversation.wireCells.files.noSearchResults.message" = "Try adjusting your search.";
 "conversation.wireCells.files.pendingCells.title" = "Files are loading";
 "conversation.wireCells.files.pendingCells.message" = "Your documents and media files will be available here once we've uploaded all files and folders.";
 "conversation.wireCells.files.error.title" = "Can't load files";
@@ -221,6 +224,7 @@
 "conversation.wireCells.shareLink.on" = "ON";
 "conversation.wireCells.shareLink.expired" = "EXPIRED";
 "conversation.wireCells.shareLink.linkExpiredOn" = "Link expired on %@";
+"conversation.wireCells.shareLink.sharedMessage" = "Open this link to explore the attached files: %@";
 
 // MARK: - Share Link Password View
 "conversation.wireCells.shareLink.password.title" = "Password";

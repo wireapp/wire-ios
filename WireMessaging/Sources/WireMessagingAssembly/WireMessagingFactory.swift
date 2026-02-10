@@ -215,7 +215,7 @@ public extension WireMessagingFactory {
                     isBrowsing: true,
                     accentColorProvider: accentColorProvider
                 )
-            )
+            ).environment(\.wireAccentColor, accentColorProvider())
         )
     }
 
