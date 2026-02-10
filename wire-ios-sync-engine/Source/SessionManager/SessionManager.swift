@@ -898,7 +898,12 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     func loadSession(for account: Account) async -> ZMUserSession? {
         if environment.isAuthenticated(account) {
-            return await activateSession(for: account)
+            do {
+                return try await activateSession(for: account)
+            } catch {
+                WireLogger.sessionManager.error("Failed to activate session for account: \(error)")
+                return nil
+            }
         } else if configuration.wipeOnCookieInvalid {
             delete(account: account, reason: .sessionExpired)
         } else {
@@ -925,14 +930,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func activateSession(
         for account: Account,
         newEnvironment: NewEnvironment? = nil
-    ) async -> ZMUserSession? {
-        guard let session = try? await withSession(
-            for: account,
-            newEnvironment: newEnvironment,
-        ) else {
-            return nil
-        }
-
+    ) async throws -> ZMUserSession {
+        let session = try await withSession(for: account, newEnvironment: newEnvironment)
         activeUserSession = session
 
         WireLogger.sessionManager.debug(
@@ -1567,10 +1566,11 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         accountManager.addAndSelect(account)
 
         Task { @MainActor in
-            guard let userSession = await activateSession(
-                for: account,
-                newEnvironment: newEnvironment
-            ) else {
+            let userSession: ZMUserSession
+            do {
+                userSession = try await activateSession(for: account, newEnvironment: newEnvironment)
+            } catch {
+                WireLogger.sessionManager.error("Failed to activate session for newly created account: \(error)",)
                 return
             }
 
