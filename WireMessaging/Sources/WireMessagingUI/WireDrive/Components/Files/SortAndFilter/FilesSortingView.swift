@@ -72,7 +72,7 @@ struct FilesSortingView: View {
                 Image(systemName: viewModel.model.sortingOrder.iconName)
                     .resizable()
                     .frame(width: 9, height: 11)
-            }
+            }.frame(minWidth: 120, alignment: .leading)
         }.foregroundStyle(.primary)
     }
 }
