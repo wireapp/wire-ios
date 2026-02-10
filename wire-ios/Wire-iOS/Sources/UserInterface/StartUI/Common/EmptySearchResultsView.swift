@@ -25,7 +25,7 @@ import WireDesign
 private enum EmptySearchResultsViewState {
     case initialSearch
     case noUsers
-    case noServices
+    case noServices // TODO: rename noApps
     case everyoneAdded
     case noServicesEnabled
 }
