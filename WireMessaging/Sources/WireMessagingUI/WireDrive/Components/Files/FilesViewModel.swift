@@ -799,7 +799,21 @@ package final class FilesViewModel: ObservableObject {
 
         return FileVersioningView(viewModel: viewModel)
     }
+    
+    // MARK: - Sorting & Filtering
+    
+    func makeFilesFilteringViewModel() -> FilesFilteringViewModel {
+        FilesFilteringViewModel(isBrowsing: isBrowsing) { filtersSelection in
+            
+        }
+    }
 
+    func makeFilesSortingViewModel() -> FilesSortingViewModel {
+        FilesSortingViewModel(isBrowsing: isBrowsing) { sortingKey, sortingOrder in
+            
+        }
+    }
+    
 }
 
 extension WireDriveFileTemplate.Kind {

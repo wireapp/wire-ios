@@ -39,7 +39,6 @@ struct FilesFilteringView: View {
                         }
                 }
             }
-            .padding(.horizontal, 10)
         }
         .padding(.horizontal, -5)
         .sheet(

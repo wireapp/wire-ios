@@ -50,8 +50,8 @@ final class FilesSortingViewModel: ObservableObject {
         case owner
         case size
         case name
-        case lastModified
         case conversation
+        case lastModified
 
         var title: String {
             switch self {
@@ -70,8 +70,8 @@ final class FilesSortingViewModel: ObservableObject {
     }
 
     struct SortingModel {
-        let sortingKey: SortingKey
-        let sortingOrder: SortingOrder
+        var sortingKey: SortingKey
+        var sortingOrder: SortingOrder
     }
 
     @Published var model: SortingModel
@@ -80,9 +80,11 @@ final class FilesSortingViewModel: ObservableObject {
     private let onUpdate: (SortingKey, SortingOrder) -> Void
     
     var availableSortingKeys: [SortingKey] {
-        let allKeys = Set(SortingKey.allCases)
-        let excluded: Set<SortingKey> = isBrowsing ? [] : [.conversation]
-        return Array(allKeys.subtracting(excluded))
+        if isBrowsing {
+            SortingKey.allCases
+        } else {
+            [.owner, .size, .name, .lastModified] // omit `conversation` key
+        }
     }
 
     init(
@@ -98,10 +100,12 @@ final class FilesSortingViewModel: ObservableObject {
     // MARK: - Actions
     
     func select(sortingKey: SortingKey) {
+        model.sortingKey = sortingKey
         onUpdate(sortingKey, model.sortingOrder)
     }
 
     func select(sortingOrder: SortingOrder) {
+        model.sortingOrder = sortingOrder
         onUpdate(model.sortingKey, sortingOrder)
     }
 

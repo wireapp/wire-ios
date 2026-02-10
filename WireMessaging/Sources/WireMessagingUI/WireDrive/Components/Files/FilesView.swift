@@ -32,6 +32,7 @@ package struct FilesView: FilesViewProtocol {
     @StateObject package var viewModel: FilesViewModel
     @Environment(\.dismiss) var dismiss
     @Environment(\.wireAccentColor) private var accentColor
+    @State private var isSearchFocused = false
 
     let onOpenRecycleBin: () -> Void
     let onDismissContainer: () -> Void
@@ -64,6 +65,14 @@ package struct FilesView: FilesViewProtocol {
                             Spacer()
                         }
 
+                        if isSearchFocused {
+                            VStack(alignment: .leading, spacing: 15) {
+                                FilesFilteringView(viewModel: viewModel.makeFilesFilteringViewModel())
+                                FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
+                            }
+                            .padding(.horizontal)
+                        }
+                        
                         filesList
                     }
                 case let .error(isConnectionError):
@@ -79,13 +88,7 @@ package struct FilesView: FilesViewProtocol {
             .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
             .toolbar { toolbarContent }
-            .if(viewModel.showSearchBar) { view in
-                view.searchable(
-                    text: $viewModel.searchText,
-                    placement: .navigationBarDrawer,
-                    prompt: Strings.Files.Search.title
-                )
-            }
+            .if(viewModel.showSearchBar, transform: searchView(content:))
             .onAppear { reloadTask() }
             .onReceive(viewModel.triggerReload) { _ in
                 Task {
@@ -140,6 +143,25 @@ package struct FilesView: FilesViewProtocol {
                     viewModel.editFileView(item: item)
                 }
             )
+        }
+    }
+    
+    @ViewBuilder
+    private func searchView(content: some View) -> some View {
+        content.searchable(
+            text: $viewModel.searchText,
+            placement: .navigationBarDrawer,
+            prompt: Strings.Files.Search.title
+        )
+        .onReceive(NotificationCenter.default.publisher(
+            for: UISearchTextField.textDidBeginEditingNotification
+        )) { _ in
+            isSearchFocused = true
+        }
+        .onReceive(NotificationCenter.default.publisher(
+            for: UISearchTextField.textDidEndEditingNotification
+        )) { _ in
+            isSearchFocused = false
         }
     }
 

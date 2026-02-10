@@ -32,19 +32,13 @@ struct FilesSortingView: View {
 
     var body: some View {
         Menu {
-            ForEach(FilesSortingViewModel.SortingOrder.allCases, id: \.self) { sortingOrder in
-                Button {
-                    viewModel.select(sortingOrder: sortingOrder)
-                } label: {
-                    Label(
-                        sortingOrder.title,
-                        systemImage: viewModel.model.sortingOrder == sortingOrder ? "checkmark" : ""
-                    )
-                }
-            }
-
+            
+            Text(Strings.title)
+                .font(for: .h5)
+                .foregroundStyle(.secondary)
+            
             Divider()
-
+            
             ForEach(viewModel.availableSortingKeys, id: \.self) { sortingKey in
                 Button {
                     viewModel.select(sortingKey: sortingKey)
@@ -55,12 +49,19 @@ struct FilesSortingView: View {
                     )
                 }
             }
-
+            
             Divider()
-
-            Text(Strings.title)
-                .font(for: .h5)
-                .foregroundStyle(.secondary)
+            
+            ForEach(FilesSortingViewModel.SortingOrder.allCases, id: \.self) { sortingOrder in
+                Button {
+                    viewModel.select(sortingOrder: sortingOrder)
+                } label: {
+                    Label(
+                        sortingOrder.title,
+                        systemImage: viewModel.model.sortingOrder == sortingOrder ? "checkmark" : ""
+                    )
+                }
+            }
 
         } label: {
             HStack {

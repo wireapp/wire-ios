@@ -90,9 +90,11 @@ final class FilesFilteringViewModel: ObservableObject {
     private let onUpdate: (FiltersSelection) -> Void
     
     var availableFilters: [Filtering] {
-        let allFilters = Set(Filtering.allCases)
-        let excluded: Set<Filtering> = isBrowsing ? [.sharedByMe] : [.conversation, .sharedByMe]
-        return Array(allFilters.subtracting(excluded))
+        if isBrowsing {
+            Filtering.allCases
+        } else {
+            [.tags, .type, .owner, .sharedByMe, .removeAllFilters] // omit `conversation` filter
+        }
     }
 
     init(
