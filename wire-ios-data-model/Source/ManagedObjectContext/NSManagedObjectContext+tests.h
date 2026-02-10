@@ -21,6 +21,7 @@
 
 @interface NSManagedObjectContext (zmessagingTests)
 
+- (void)performMarkAsSyncContext;
 - (void)markAsUIContext;
 - (void)disableObjectRefresh;
 
