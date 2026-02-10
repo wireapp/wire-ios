@@ -57,7 +57,13 @@ struct FilesFilteringView: View {
         case .tags:
             Text("Tags")
         case .types:
-            Text("Types")
+            FilesFilterByTypeView(
+                selectedTypes: viewModel.filtersSelection.types,
+                includeFolders: true, //TODO: should be true for specific conversations and false for "all conversations"
+                onApply: { selectedTypes in
+                    viewModel.filtersSelection.types = selectedTypes
+                }
+            )
         case .conversations:
             Text("Conversations")
         case .owners:
@@ -169,7 +175,7 @@ struct FilesFilteringView: View {
         viewModel: FilesFilteringViewModel(
             filtersSelection: .init(
                 tags: [],
-                types: [UUID().uuidString],
+                types: [.audio],
                 conversations: [],
                 owners: [UUID().uuidString, UUID().uuidString],
                 sharedByMe: true

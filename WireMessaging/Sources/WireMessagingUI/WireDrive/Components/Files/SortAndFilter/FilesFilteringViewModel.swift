@@ -52,8 +52,8 @@ final class FilesFilteringViewModel: ObservableObject {
     }
 
     struct FiltersSelection {
-        var tags: Set<ID>
-        var types: Set<ID>
+        var tags: Set<String>
+        var types: Set<FileType>
         var conversations: Set<ID>
         var owners: Set<ID>
         var sharedByMe: Bool
@@ -83,7 +83,11 @@ final class FilesFilteringViewModel: ObservableObject {
         }
     }
 
-    @Published var filtersSelection: FiltersSelection
+    @Published var filtersSelection: FiltersSelection {
+        didSet {
+            onUpdate(filtersSelection)
+        }
+    }
     @Published var sheetNavigation: SheetNavigation?
 
     private let isBrowsing: Bool
@@ -105,25 +109,6 @@ final class FilesFilteringViewModel: ObservableObject {
         self.filtersSelection = filtersSelection
         self.isBrowsing = isBrowsing
         self.onUpdate = onUpdate
-    }
-
-    // MARK: - Callbacks
-
-    func onSelectedData(_ data: Set<ID>, for filter: Filtering) {
-        switch filter {
-        case .tags:
-            filtersSelection.tags = data
-        case .type:
-            filtersSelection.types = data
-        case .conversation:
-            filtersSelection.conversations = data
-        case .owner:
-            filtersSelection.owners = data
-        case .sharedByMe, .removeAllFilters:
-            break // no callbacks for these cases
-        }
-
-        onUpdate(filtersSelection)
     }
 
     // MARK: - Actions
