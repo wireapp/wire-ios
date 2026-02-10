@@ -17,6 +17,10 @@
 //
 
 import SwiftUI
+import WireDesign
+import WireFoundation
+
+private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 struct FilesFilterByConversationView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
@@ -27,21 +31,121 @@ struct FilesFilterByConversationView: View {
     let onApply: (Set<ViewModel.Item>) -> Void
 
     init(
-        selectedConversations: some Collection<ViewModel.Item>,
+        selectedItems: some Collection<ViewModel.Item>,
         onApply: @escaping (Set<ViewModel.Item>) -> Void
     ) {
         self.onApply = onApply
-        self._viewModel = .init(wrappedValue: .init())
+        self._viewModel = .init(
+            wrappedValue: .init(
+                selectedItems: selectedItems
+            )
+        )
     }
     
     var body: some View {
-        Text("FilesFilterByConversationView")
+        NavigationStack {
+            content()
+                .background {
+                    ColorTheme.Backgrounds.background.color
+                        .ignoresSafeArea(.all)
+                }
+                .toolbar { toolbarContent }
+                .navigationTitle(Strings.Filter.FileType.navigationTitle)
+                .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+
+    @ViewBuilder
+    private func content() -> some View {
+        VStack {
+            Form {
+                ForEach(viewModel.presentedItems, id: \.self) { item in
+                    Button {
+                        viewModel.toggleItemSelection(item)
+                    } label: {
+                        itemView(item)
+                    }
+                }
+            }
+            .scrollContentBackground(.hidden)
+
+            removeFilterButton
+                .padding(10)
+        }
+    }
+    
+    @ViewBuilder
+    private func itemView(_ item: ViewModel.Item) -> some View {
+        Label {
+            HStack {
+                Text(item)
+                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+
+                Spacer()
+
+                if viewModel.isItemSelected(item) {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(wireAccentColor)
+                }
+            }
+        } icon: {
+            Image(systemName: "questionmark")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+        }
+    }
+}
+
+// MARK: - Toolbar
+
+private extension FilesFilterByConversationView {
+    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) { closeButton }
+        ToolbarItem(placement: .topBarTrailing) { saveButton }
+    }
+}
+
+// MARK: - Buttons
+
+private extension FilesFilterByConversationView {
+    var saveButton: some View {
+        Button {
+            Task {
+                onApply(viewModel.selectedItems)
+                dismiss()
+            }
+        } label: {
+            Text(L10n.Localizable.General.save)
+                .fontWeight(.semibold)
+                .accessibilityIdentifier("saveButton")
+        }
+        .disabled(!viewModel.hasChanges)
+    }
+
+    var removeFilterButton: some View {
+        Button {
+            Task { viewModel.clearAll() }
+        } label: {
+            Text(Strings.Filter.removeFilter)
+        }
+        .accessibilityIdentifier("removeFilterButton")
+        .disabled(viewModel.selectedItems.isEmpty)
+    }
+
+    var closeButton: some View {
+        Button(
+            action: { dismiss() },
+            label: {
+                Text(L10n.Localizable.General.cancel)
+            }
+        )
+        .accessibilityIdentifier("cancelButton")
     }
 }
 
 #Preview {
     FilesFilterByConversationView(
-        selectedConversations: [],
+        selectedItems: [],
         onApply: { _ in }
     )
 }

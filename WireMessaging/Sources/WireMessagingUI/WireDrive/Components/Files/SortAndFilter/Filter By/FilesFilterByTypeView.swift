@@ -81,6 +81,7 @@ struct FilesFilterByTypeView: View {
         Label {
             HStack {
                 Text(item.localizedName())
+                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                 Spacer()
 
