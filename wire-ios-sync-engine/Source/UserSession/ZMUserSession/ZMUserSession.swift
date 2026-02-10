@@ -538,7 +538,6 @@ public final class ZMUserSession: NSObject {
         isDeveloperModeEnabled: Bool
     ) {
         coreDataStack.linkCaches(dependencies.caches)
-        coreDataStack.linkContexts()
 
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
         earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)

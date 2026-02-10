@@ -252,8 +252,15 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
         defer { hasBeenClosed = true }
 
         viewContext.tearDown()
-        syncContext.tearDown()
-        eventContext.tearDown()
+
+        // Only tear down contexts if they were initialized
+        if _syncContext != nil {
+            syncContext.tearDown()
+        }
+        if _eventContext != nil {
+            eventContext.tearDown()
+        }
+
         closeStores()
     }
 
@@ -424,13 +431,6 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
             context.createDispatchGroups()
             self.dispatchGroup.map(context.addGroup(_:))
         }
-    }
-
-    public func linkContexts() {
-        syncContext.performGroupedAndWait {
-            self.syncContext.zm_userInterface = self.viewContext
-        }
-        viewContext.zm_sync = syncContext
     }
 
     // MARK: - Static Helpers
