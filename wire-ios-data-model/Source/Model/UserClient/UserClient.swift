@@ -67,9 +67,6 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Client has the capability to use new `consumable-notifications` synchronization system (v8+)
     @NSManaged public var isConsumableNotificationsCapable: Bool
 
-    /// Client has the capability to use new `consumable-notifications` synchronization system (v8+)
-    @NSManaged public var isSimplifiedUserConnectionRequestQRCode: Bool
-
     /// Clients that are trusted by self client.
     @NSManaged public var trustedClients: Set<UserClient>
 

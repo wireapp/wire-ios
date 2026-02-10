@@ -240,7 +240,7 @@ extension URLActionRouter: PresentationDelegate {
         }
         typealias UrlAction = L10n.Localizable.UrlAction
         Task {
-            let shouldShowUserProfile = await userSession.isSimplifiedUserConnectionRequestQRCode()
+            let shouldShowUserProfile = await userSession.isSimplifiedUserConnectionRequestQRCodeEnabled()
             await MainActor.run {
                 if shouldShowUserProfile {
                     decisionHandler(shouldShowUserProfile)

@@ -18,7 +18,7 @@
 
 import Foundation
 
-/// A configuration for the *File Sharing* feature.
+/// A configuration for the *User profile sharing QR code* feature.
 
 public struct SimplifiedUserConnectionRequestQRCodeConfig: Equatable, Sendable {
 

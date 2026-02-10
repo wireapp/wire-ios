@@ -957,14 +957,14 @@ class LegacyFeatureRepositoryTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    // MARK: - Consumable notifications
+    // MARK: - Simplified User Profile Connection QRCode
 
     func testThatItFetchesSimplifiedUserConnectionRequestQRCode() {
         expectThatItFetchesSimplifiedUserConnectionRequestQRCode(when: true)
         expectThatItFetchesSimplifiedUserConnectionRequestQRCode(when: false)
     }
 
-    func testThatItFetchesUserProfileQRCodeItReturnsADefaultValueWhenObjectDoesNotExist() {
+    func test_FetchUserProfileQRCode_ReturnsADefaultValue_WhenObjectDoesNotExist() {
         syncMOC.performGroupedBlock {
             // Given
             let sut = LegacyFeatureRepository(context: self.syncMOC)
@@ -1044,12 +1044,12 @@ class LegacyFeatureRepositoryTests: ZMBaseManagedObjectTest {
     // MARK: - Helpers
 
     private func expectThatItFetchesSimplifiedUserConnectionRequestQRCode(
-        when: Bool,
+        when enabled: Bool,
         file: StaticString = #file,
         line: UInt = #line
     ) {
         syncMOC.performGroupedBlock {
-            let expected: Feature.Status = when ? .enabled : .disabled
+            let expected: Feature.Status = enabled ? .enabled : .disabled
             // Given
             let sut = LegacyFeatureRepository(context: self.syncMOC)
 

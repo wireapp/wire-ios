@@ -17,7 +17,7 @@
 //
 
 public extension UserSession {
-    func isSimplifiedUserConnectionRequestQRCode() async -> Bool {
+    func isSimplifiedUserConnectionRequestQRCodeEnabled() async -> Bool {
         guard let clientSessionComponent else {
             return Feature.SimplifiedUserConnectionRequestQRCode().status == .enabled
         }
