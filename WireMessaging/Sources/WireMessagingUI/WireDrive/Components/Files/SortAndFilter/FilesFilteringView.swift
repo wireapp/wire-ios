@@ -32,10 +32,10 @@ struct FilesFilteringView: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 5) {
-                ForEach(FilesFilteringViewModel.Filtering.allCases, id: \.self) { filter in
+                ForEach(viewModel.availableFilters, id: \.self) { filter in
                     capsule(for: filter)
                         .onTapGesture {
-                            viewModel.didTap(filter: filter)
+                            viewModel.select(filter: filter)
                         }
                 }
             }
@@ -169,6 +169,7 @@ struct FilesFilteringView: View {
                 owners: [UUID().uuidString, UUID().uuidString],
                 sharedByMe: true
             ),
+            isBrowsing: false,
             onUpdate: { _ in }
         )
     )

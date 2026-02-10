@@ -290,6 +290,7 @@
 "conversation.wireCells.sorting.key.name" = "Name";
 "conversation.wireCells.sorting.key.size" = "Size";
 "conversation.wireCells.sorting.key.owner" = "Owner";
+"conversation.wireCells.sorting.key.conversation" = "Conversation";
 "conversation.wireCells.sorting.order.ascending" = "Ascending";
 "conversation.wireCells.sorting.order.descending" = "Descending";
 

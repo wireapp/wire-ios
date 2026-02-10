@@ -45,7 +45,7 @@ struct FilesSortingView: View {
 
             Divider()
 
-            ForEach(FilesSortingViewModel.SortingKey.allCases, id: \.self) { sortingKey in
+            ForEach(viewModel.availableSortingKeys, id: \.self) { sortingKey in
                 Button {
                     viewModel.select(sortingKey: sortingKey)
                 } label: {
@@ -79,8 +79,8 @@ struct FilesSortingView: View {
 #Preview {
     FilesSortingView(
         viewModel: FilesSortingViewModel(
-            model: .init(sortingKey: .lastModified, sortingOrder: .ascending),
-            onSelect: { _, _ in }
+            isBrowsing: false,
+            onUpdate: { _, _ in }
         )
     )
 }

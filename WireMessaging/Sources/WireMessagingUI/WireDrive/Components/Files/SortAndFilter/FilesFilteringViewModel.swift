@@ -86,19 +86,28 @@ final class FilesFilteringViewModel: ObservableObject {
     @Published var filtersSelection: FiltersSelection
     @Published var sheetNavigation: SheetNavigation?
 
+    private let isBrowsing: Bool
     private let onUpdate: (FiltersSelection) -> Void
+    
+    var availableFilters: [Filtering] {
+        let allFilters = Set(Filtering.allCases)
+        let excluded: Set<Filtering> = isBrowsing ? [.sharedByMe] : [.conversation, .sharedByMe]
+        return Array(allFilters.subtracting(excluded))
+    }
 
     init(
         filtersSelection: FiltersSelection = .empty,
+        isBrowsing: Bool,
         onUpdate: @escaping (FiltersSelection) -> Void
     ) {
         self.filtersSelection = filtersSelection
+        self.isBrowsing = isBrowsing
         self.onUpdate = onUpdate
     }
 
     // MARK: - Callbacks
 
-    func onDidSelect(data: Set<ID>, filter: Filtering) {
+    func onSelectedData(_ data: Set<ID>, for filter: Filtering) {
         switch filter {
         case .tags:
             filtersSelection.tags = data
@@ -117,7 +126,7 @@ final class FilesFilteringViewModel: ObservableObject {
 
     // MARK: - Actions
 
-    func didTap(filter: Filtering) {
+    func select(filter: Filtering) {
         switch filter {
         case .tags:
             sheetNavigation = .tags

@@ -51,6 +51,7 @@ final class FilesSortingViewModel: ObservableObject {
         case size
         case name
         case lastModified
+        case conversation
 
         var title: String {
             switch self {
@@ -62,6 +63,8 @@ final class FilesSortingViewModel: ObservableObject {
                 Strings.Key.size
             case .owner:
                 Strings.Key.owner
+            case .conversation:
+                Strings.Key.conversation
             }
         }
     }
@@ -72,22 +75,38 @@ final class FilesSortingViewModel: ObservableObject {
     }
 
     @Published var model: SortingModel
-    private let onSelect: (SortingKey, SortingOrder) -> Void
-
-    init(
-        model: SortingModel,
-        onSelect: @escaping (SortingKey, SortingOrder) -> Void
-    ) {
-        self.model = model
-        self.onSelect = onSelect
+    
+    private let isBrowsing: Bool
+    private let onUpdate: (SortingKey, SortingOrder) -> Void
+    
+    var availableSortingKeys: [SortingKey] {
+        let allKeys = Set(SortingKey.allCases)
+        let excluded: Set<SortingKey> = isBrowsing ? [] : [.conversation]
+        return Array(allKeys.subtracting(excluded))
     }
 
+    init(
+        model: SortingModel = .default,
+        isBrowsing: Bool,
+        onUpdate: @escaping (SortingKey, SortingOrder) -> Void
+    ) {
+        self.model = model
+        self.isBrowsing = isBrowsing
+        self.onUpdate = onUpdate
+    }
+
+    // MARK: - Actions
+    
     func select(sortingKey: SortingKey) {
-        onSelect(sortingKey, model.sortingOrder)
+        onUpdate(sortingKey, model.sortingOrder)
     }
 
     func select(sortingOrder: SortingOrder) {
-        onSelect(model.sortingKey, sortingOrder)
+        onUpdate(model.sortingKey, sortingOrder)
     }
 
+}
+
+private extension FilesSortingViewModel.SortingModel {
+    static let `default` = Self(sortingKey: .lastModified, sortingOrder: .ascending)
 }
