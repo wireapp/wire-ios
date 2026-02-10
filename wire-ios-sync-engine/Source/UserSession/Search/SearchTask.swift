@@ -561,14 +561,16 @@ extension SearchTask {
 
         let remoteTeamMembers = try await teamsAPI.getTeamMembers(of: teamID, for: teamMembersIDs)
 
-        var searchResult = searchResult
-        searchResult.extendWithMembership(remoteTeamMembers: remoteTeamMembers)
-        searchResult.filterBy(
-            searchOptions: searchRequest.searchOptions,
-            query: searchRequest.query.string,
-            contextProvider: contextProvider
-        )
-        return { $0 = $0.union(withDirectoryResult: searchResult) }
+        return await viewContext.perform { [contextProvider] in
+            var searchResult = searchResult
+            searchResult.extendWithMembership(remoteTeamMembers: remoteTeamMembers)
+            searchResult.filterBy(
+                searchOptions: searchRequest.searchOptions,
+                query: searchRequest.query.string,
+                contextProvider: contextProvider
+            )
+            return { $0 = $0.union(withDirectoryResult: searchResult) }
+        }
 
     }
 
