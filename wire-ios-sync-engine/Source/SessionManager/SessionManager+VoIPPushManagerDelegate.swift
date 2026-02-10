@@ -40,8 +40,12 @@ extension SessionManager: VoIPPushManagerDelegate {
             return
         }
 
-        if let session = try? await withSession(for: account) {
+        do {
+            let session = try await withSession(for: account)
             await session.processPendingCallEvents()
+        } catch {
+            WireLogger.calling
+                .error("failed to process pending call events preemptively: cannot load session - \(error)")
         }
         BackgroundActivityFactory.shared.endBackgroundActivity(activity)
     }
