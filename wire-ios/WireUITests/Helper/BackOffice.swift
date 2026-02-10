@@ -33,7 +33,7 @@ final class BackOffice {
         self.backendURL = backendURL
         self.httpClient = httpClient
     }
-    
+
     private enum HTTPMethod {
         static let put = "PUT"
         static let patch = "PATCH"
