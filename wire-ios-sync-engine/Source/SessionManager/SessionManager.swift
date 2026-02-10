@@ -748,20 +748,18 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    public func addAccount(userInfo: [String: Any]? = nil, completion: (() -> Void)? = nil) {
-        Task { [weak self] in
-            guard let self else { return }
+    public func addAccount(userInfo: [String: Any]? = nil) async {
+        let isConfirmed = await confirmSwitchingAccount()
+        guard isConfirmed else { return }
 
-            let isConfirmed = await confirmSwitchingAccount()
-            guard isConfirmed else { return }
-
-            let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
+        let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
+        await withCheckedContinuation { continuation in
             delegate?.sessionManagerWillLogout(
                 environment: nil,
                 error: error
             ) { [weak self] in
                 self?.activeUserSession = nil
-                completion?()
+                continuation.resume()
             }
         }
     }
