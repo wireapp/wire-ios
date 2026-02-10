@@ -23,7 +23,7 @@ extension FilesFilterByTypeView {
     final class ViewModel: ObservableObject {
         @Published var selectedTypes: Set<FileType> = []
 
-        let presentedTypes: [FileType] = [
+        var presentedTypes: [FileType] = [
             .pdf,
             .document,
             .image,
@@ -31,18 +31,21 @@ extension FilesFilterByTypeView {
             .presentation,
             .video,
             .audio,
-            .code,
-            .archive,
+            //.code,
+            //.archive,
             .folder,
             .other
         ]
 
         private let initiallySelectedTypes: Set<FileType>
 
-        package init(selectedTypes: some Collection<FileType>) {
+        init(selectedTypes: some Collection<FileType>, includeFolders: Bool) {
             let types = Set(selectedTypes)
             self.selectedTypes = types
             self.initiallySelectedTypes = types
+            if !includeFolders {
+                presentedTypes.removeAll { $0 == .folder }
+            }
         }
 
         var hasChanges: Bool {
