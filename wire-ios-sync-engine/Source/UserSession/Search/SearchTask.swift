@@ -92,6 +92,14 @@ public final class SearchTask {
             return SearchResult()
         }
 
+        do { // TODO: delete, but consider https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/157221550/Use+case+showing+results+in+search+UI+and+people+picker
+            let tmpContext = contextProvider.newBackgroundContext()
+            await tmpContext.perform {
+                let selfUser = ZMUser.selfUser(in: tmpContext)
+                print(selfUser.teamRole)
+            }
+        }
+
         return try await withThrowingTaskGroup(
             of: SearchResultAggregator.self,
             returning: SearchResult.self
