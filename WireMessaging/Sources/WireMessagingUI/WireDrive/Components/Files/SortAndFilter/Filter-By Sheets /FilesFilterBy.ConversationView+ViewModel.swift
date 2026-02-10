@@ -18,36 +18,21 @@
 
 import Foundation
 
-extension FilesFilterByTypeView {
+extension FilesFilterBy.ConversationView {
     @MainActor
     final class ViewModel: ObservableObject {
-        typealias Item = FileType
+        typealias Item = String
         
         @Published var selectedItems: Set<Item> = []
-
-        var presentedItems: [Item] = [
-            .pdf,
-            .document,
-            .image,
-            .spreadsheet,
-            .presentation,
-            .video,
-            .audio,
-            //.code,
-            //.archive,
-            .folder,
-            .other
-        ]
+        
+        @Published var presentedItems: [Item] = ["conversation 1", "conversation 2"]
 
         private let initiallySelectedItems: Set<Item>
 
-        init(selectedItems: some Collection<Item>, includeFolders: Bool) {
+        init(selectedItems: some Collection<Item>) {
             let items = Set(selectedItems)
             self.selectedItems = items
             self.initiallySelectedItems = items
-            if !includeFolders {
-                presentedItems.removeAll { $0 == .folder }
-            }
         }
 
         var hasChanges: Bool {
@@ -62,6 +47,7 @@ extension FilesFilterByTypeView {
             if selectedItems.contains(item) {
                 selectedItems.remove(item)
             } else {
+                selectedItems = []
                 selectedItems.insert(item)
             }
         }

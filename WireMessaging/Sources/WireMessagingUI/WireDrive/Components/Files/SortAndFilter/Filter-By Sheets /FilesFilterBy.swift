@@ -16,32 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-struct FilesFilterByOwnerView: View {
-    @Environment(\.wireAccentColor) private var wireAccentColor
-    @Environment(\.dismiss) private var dismiss
-
-    @StateObject private var viewModel: ViewModel
+/// The namespace for the bottom sheets for filtering files by different categories.
+enum FilesFilterBy {
     
-    let onApply: (Set<ViewModel.Item>) -> Void
-
-    init(
-        selectedItems: some Collection<ViewModel.Item>,
-        onApply: @escaping (Set<ViewModel.Item>) -> Void
-    ) {
-        self.onApply = onApply
-        self._viewModel = .init(wrappedValue: .init())
-    }
-    
-    var body: some View {
-        Text("FilesFilterByOwnerView")
-    }
-}
-
-#Preview {
-    FilesFilterByOwnerView(
-        selectedItems: [],
-        onApply: { _ in }
-    )
 }

@@ -55,25 +55,35 @@ struct FilesFilteringView: View {
     private func sheet(for navigationItem: FilesFilteringViewModel.SheetNavigation) -> some View {
         switch navigationItem {
         case .tags:
-            FilesFilterByTagsView(
+            FilesFilterBy.TagsView(
                 fetchTagsUseCase: viewModel.useCases.fetchTagsUseCase,
                 selectedItems: viewModel.filtersSelection.tags,
-                onApply: { selectedTags in
-                    viewModel.filtersSelection.tags = Set(selectedTags.map(\.self))
+                onApply: { selectedItems in
+                    viewModel.filtersSelection.tags = selectedItems
                 }
             )
         case .types:
-            FilesFilterByTypeView(
-                selectedItems: viewModel.filtersSelection.types,
+            FilesFilterBy.TypeView(
                 includeFolders: !viewModel.isBrowsing,
-                onApply: { selectedTypes in
-                    viewModel.filtersSelection.types = selectedTypes
+                selectedItems: viewModel.filtersSelection.types,
+                onApply: { selectedItems in
+                    viewModel.filtersSelection.types = selectedItems
                 }
             )
         case .conversations:
-            Text("Conversations")
+            FilesFilterBy.ConversationView(
+                selectedItems: viewModel.filtersSelection.conversations,
+                onApply: { selectedItems in
+                    viewModel.filtersSelection.conversations = selectedItems
+                }
+            )
         case .owners:
-            Text("Owners")
+            FilesFilterBy.OwnerView(
+                selectedItems: viewModel.filtersSelection.owners,
+                onApply: { selectedItems in
+                    viewModel.filtersSelection.owners = selectedItems
+                }
+            )
         }
     }
     
