@@ -82,7 +82,9 @@ struct SettingsCellDescriptorFactory {
                 let count = sessionManager?.accountManager.numberOfAccounts,
                 let maxNumberAccounts = sessionManager?.maxNumberAccounts,
                 count < maxNumberAccounts {
-                sessionManager?.addAccount()
+                Task {
+                    await sessionManager?.addAccount()
+                }
             } else {
                 if let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) {
                     let alert = UIAlertController(

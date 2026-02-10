@@ -57,7 +57,7 @@ protocol ObservableSessionManager: SessionManagerType {
     func delete(account: Account, eraseData: Bool)
 
     /// Add a new account.
-    func addAccount(userInfo: [String: Any]?, completion: (() -> Void)?)
+    func addAccount(userInfo: [String: Any]?) async
 }
 
 extension SessionManager: ObservableSessionManager {}
