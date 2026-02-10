@@ -44,29 +44,30 @@ package struct FilesBrowserView: FilesViewProtocol {
         ZStack {
             ColorTheme.Backgrounds.surface.color
                 .ignoresSafeArea(.all)
-            Group {
+            
+            VStack {
+                if isSearchFocused {
+                    VStack(alignment: .leading, spacing: 15) {
+                        FilesFilteringView(viewModel: viewModel.makeFilesFilteringViewModel())
+                        FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
+                    }
+                    .padding(.horizontal)
+                }
+                
                 switch viewModel.state {
                 case .loading:
+                    Spacer()
                     ProgressView()
                         .progressViewStyle(.circular)
+                    Spacer()
                 case .received, .pending:
-                    VStack {
-                        if viewModel.connectionState == .offline {
-                            Spacer()
-                            offlineBar.id(UUID())
-                            Spacer()
-                        }
-                        
-                        if isSearchFocused {
-                            VStack(alignment: .leading, spacing: 15) {
-                                FilesFilteringView(viewModel: viewModel.makeFilesFilteringViewModel())
-                                FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
-                            }
-                            .padding(.horizontal)
-                        }
-
-                        filesList
+                    if viewModel.connectionState == .offline {
+                        Spacer()
+                        offlineBar.id(UUID())
+                        Spacer()
                     }
+                    
+                    filesList
                 case let .error(isConnectionError):
                     FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
                         reloadTask()
@@ -77,7 +78,7 @@ package struct FilesBrowserView: FilesViewProtocol {
             .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
             .navigationTitle(Strings.AllFiles.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(isSearchFocused ? .hidden : .visible, for: .navigationBar)
             .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
             .toolbar { toolbarContent }
             .if(viewModel.showSearchBar, transform: searchView(content:))
