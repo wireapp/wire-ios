@@ -642,6 +642,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             if let session = await loadSession(for: account) {
                 updateCurrentAccount(in: session.managedObjectContext)
                 session.application(application, didFinishLaunching: launchOptions)
+            } else {
+                WireLogger.sessionManager.error("Failed to load session for selected account")
             }
         } else {
             createUnauthenticatedSession()
