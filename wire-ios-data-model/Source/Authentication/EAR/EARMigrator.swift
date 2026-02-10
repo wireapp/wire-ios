@@ -18,15 +18,13 @@
 
 import WireLogging
 
-protocol EARMigratorProtocol {
+public protocol EARMigratorProtocol {
 
     func migrateTowardEncryptionAtRest(
-        databaseKey: VolatileData,
         context: NSManagedObjectContext
     ) throws
 
     func migrateAwayFromEncryptionAtRest(
-        databaseKey: VolatileData,
         context: NSManagedObjectContext
     ) throws
 
@@ -34,17 +32,14 @@ protocol EARMigratorProtocol {
 
 private typealias MigratableEntity = EncryptionAtRestMigratable & ZMManagedObject
 
-class EARMigrator: EARMigratorProtocol {
+public class EARMigrator: EARMigratorProtocol {
 
     enum MigrationError: LocalizedError {
 
-        case missingDatabaseKey
         case failedToMigrateInstances(type: ZMManagedObject.Type, reason: String)
 
         var errorDescription: String? {
             switch self {
-            case .missingDatabaseKey:
-                "A database key is required to migrate."
             case let .failedToMigrateInstances(type, reason):
                 "Failed to migrate all instances of \(type). Reason: \(reason)"
             }
@@ -54,11 +49,11 @@ class EARMigrator: EARMigratorProtocol {
 
     private let messageEncryptionService: EARMessageEncryptionServiceProtocol
 
-    init(messageEncryptionService: EARMessageEncryptionServiceProtocol) {
+    public init(messageEncryptionService: EARMessageEncryptionServiceProtocol) {
         self.messageEncryptionService = messageEncryptionService
     }
 
-    func migrateTowardEncryptionAtRest(databaseKey: VolatileData, context: NSManagedObjectContext) throws {
+    public func migrateTowardEncryptionAtRest(context: NSManagedObjectContext) throws {
         do {
             WireLogger.ear.info("migrating existing data toward EAR")
 
@@ -67,19 +62,16 @@ class EARMigrator: EARMigratorProtocol {
             context.saveOrRollback()
             try migrateInstancesTowardEncryptionAtRest(
                 type: ZMGenericMessageData.self,
-                key: databaseKey,
                 contextData: contextData,
                 context: context
             )
             try migrateInstancesTowardEncryptionAtRest(
                 type: ZMClientMessage.self,
-                key: databaseKey,
                 contextData: contextData,
                 context: context
             )
             try migrateInstancesTowardEncryptionAtRest(
                 type: ZMConversation.self,
-                key: databaseKey,
                 contextData: contextData,
                 context: context
             )
@@ -91,7 +83,7 @@ class EARMigrator: EARMigratorProtocol {
         }
     }
 
-    func migrateAwayFromEncryptionAtRest(databaseKey: VolatileData, context: NSManagedObjectContext) throws {
+    public func migrateAwayFromEncryptionAtRest(context: NSManagedObjectContext) throws {
         do {
             WireLogger.ear.info("migrating existing data away from EAR")
 
@@ -100,19 +92,16 @@ class EARMigrator: EARMigratorProtocol {
             context.saveOrRollback()
             try migrateInstancesAwayFromEncryptionAtRest(
                 type: ZMGenericMessageData.self,
-                key: databaseKey,
                 contextData: contextData,
                 context: context
             )
             try migrateInstancesAwayFromEncryptionAtRest(
                 type: ZMClientMessage.self,
-                key: databaseKey,
                 contextData: contextData,
                 context: context
             )
             try migrateInstancesAwayFromEncryptionAtRest(
                 type: ZMConversation.self,
-                key: databaseKey,
                 contextData: contextData,
                 context: context
             )
@@ -126,14 +115,12 @@ class EARMigrator: EARMigratorProtocol {
 
     private func migrateInstancesTowardEncryptionAtRest(
         type: (some MigratableEntity).Type,
-        key: VolatileData,
         contextData: Data,
         context: NSManagedObjectContext
     ) throws {
         do {
             try fetchObjects(type: type, context: context).modifyAndSaveInBatches { instance in
                 try instance.migrateTowardEncryptionAtRest(
-                    key: key,
                     contextData: contextData,
                     messageEncryptionService: messageEncryptionService
                 )
@@ -145,14 +132,12 @@ class EARMigrator: EARMigratorProtocol {
 
     private func migrateInstancesAwayFromEncryptionAtRest(
         type: (some MigratableEntity).Type,
-        key: VolatileData,
         contextData: Data,
         context: NSManagedObjectContext
     ) throws {
         do {
             try fetchObjects(type: type, context: context).modifyAndSaveInBatches { instance in
                 try instance.migrateAwayFromEncryptionAtRest(
-                    key: key,
                     contextData: contextData,
                     messageEncryptionService: messageEncryptionService
                 )

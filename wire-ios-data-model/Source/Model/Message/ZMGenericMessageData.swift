@@ -175,7 +175,6 @@ extension ZMGenericMessageData: EncryptionAtRestMigratable {
     static let predicateForObjectsNeedingMigration: NSPredicate? = nil
 
     func migrateTowardEncryptionAtRest(
-        key: VolatileData,
         contextData: Data,
         messageEncryptionService: EARMessageEncryptionServiceProtocol
     ) throws {
@@ -183,7 +182,6 @@ extension ZMGenericMessageData: EncryptionAtRestMigratable {
         let (ciphertext, nonce) = try messageEncryptionService.encrypt(
             data: data,
             contextData: contextData,
-            databaseKey: key
         )
 
         data = ciphertext
@@ -191,7 +189,6 @@ extension ZMGenericMessageData: EncryptionAtRestMigratable {
     }
 
     func migrateAwayFromEncryptionAtRest(
-        key: VolatileData,
         contextData: Data,
         messageEncryptionService: EARMessageEncryptionServiceProtocol
     ) throws {
@@ -203,7 +200,6 @@ extension ZMGenericMessageData: EncryptionAtRestMigratable {
             data: data,
             nonce: nonce,
             contextData: contextData,
-            databaseKey: key
         )
 
         data = plaintext

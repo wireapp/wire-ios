@@ -37,24 +37,12 @@ public protocol EARMessageEncryptionServiceProtocol {
         contextData: Data
     ) throws -> (data: Data, nonce: Data)
 
-    func encrypt(
-        data: Data,
-        contextData: Data,
-        databaseKey: VolatileData
-    ) throws -> (data: Data, nonce: Data)
-
     func decrypt(
         data: Data,
         nonce: Data,
         contextData: Data
     ) throws -> Data
 
-    func decrypt(
-        data: Data,
-        nonce: Data,
-        contextData: Data,
-        databaseKey: VolatileData
-    ) throws -> Data
 }
 
 public final class EARMessageEncryptionService: EARMessageEncryptionServiceProtocol {
@@ -152,22 +140,13 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
         }
         lock.unlock()
 
-        return try encrypt(data: data, contextData: contextData, databaseKey: key)
-    }
-
-    public func encrypt(
-        data: Data,
-        contextData: Data,
-        databaseKey: VolatileData
-    ) throws -> (data: Data, nonce: Data) {
-
         WireLogger.ear.debug("encrypting data for EAR")
 
         do {
             let (ciphertext, nonce) = try ChaCha20Poly1305.AEADEncryption.encrypt(
                 message: data,
                 context: contextData,
-                key: databaseKey._storage
+                key: key._storage
             )
             return (ciphertext, nonce)
         } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
@@ -188,21 +167,6 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
         }
         lock.unlock()
 
-        return try decrypt(
-            data: data,
-            nonce: nonce,
-            contextData: contextData,
-            databaseKey: key
-        )
-    }
-
-    public func decrypt(
-        data: Data,
-        nonce: Data,
-        contextData: Data,
-        databaseKey: VolatileData
-    ) throws -> Data {
-
         WireLogger.ear.debug("decrypting data for EAR")
 
         do {
@@ -210,7 +174,7 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
                 ciphertext: data,
                 nonce: nonce,
                 context: contextData,
-                key: databaseKey._storage
+                key: key._storage
             )
         } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
             WireLogger.ear.debug("failed to decrypt data for EAR with error: \(error.errorDescription ?? "unknown")")

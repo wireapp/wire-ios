@@ -152,7 +152,6 @@ protocol EncryptionAtRestMigratable {
     /// For example, encrypt sensitve data and set a nonce.
 
     func migrateTowardEncryptionAtRest(
-        key: VolatileData,
         contextData: Data,
         messageEncryptionService: EARMessageEncryptionServiceProtocol
     ) throws
@@ -162,7 +161,6 @@ protocol EncryptionAtRestMigratable {
     /// For example, decrypt sensitive data and clear the nonce.
 
     func migrateAwayFromEncryptionAtRest(
-        key: VolatileData,
         contextData: Data,
         messageEncryptionService: EARMessageEncryptionServiceProtocol
     ) throws

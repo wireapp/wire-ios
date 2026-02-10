@@ -23,7 +23,6 @@ extension ZMClientMessage: EncryptionAtRestMigratable {
     static let predicateForObjectsNeedingMigration: NSPredicate? = nil
 
     func migrateTowardEncryptionAtRest(
-        key: VolatileData,
         contextData: Data,
         messageEncryptionService: any EARMessageEncryptionServiceProtocol
     ) throws {
@@ -31,7 +30,6 @@ extension ZMClientMessage: EncryptionAtRestMigratable {
     }
 
     func migrateAwayFromEncryptionAtRest(
-        key: VolatileData,
         contextData: Data,
         messageEncryptionService: any EARMessageEncryptionServiceProtocol
     ) throws {

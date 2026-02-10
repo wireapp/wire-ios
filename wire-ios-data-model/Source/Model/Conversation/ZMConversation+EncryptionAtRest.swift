@@ -24,7 +24,6 @@ extension ZMConversation: EncryptionAtRestMigratable {
         NSPredicate(format: "%K != nil", #keyPath(ZMConversation.draftMessageData))
 
     func migrateTowardEncryptionAtRest(
-        key: VolatileData,
         contextData: Data,
         messageEncryptionService: any EARMessageEncryptionServiceProtocol
     ) throws {
@@ -34,8 +33,7 @@ extension ZMConversation: EncryptionAtRestMigratable {
 
         let (ciphertext, nonce) = try messageEncryptionService.encrypt(
             data: data,
-            contextData: contextData,
-            databaseKey: key
+            contextData: contextData
         )
 
         draftMessageData = ciphertext
@@ -43,7 +41,6 @@ extension ZMConversation: EncryptionAtRestMigratable {
     }
 
     func migrateAwayFromEncryptionAtRest(
-        key: VolatileData,
         contextData: Data,
         messageEncryptionService: any EARMessageEncryptionServiceProtocol
     ) throws {
@@ -57,8 +54,7 @@ extension ZMConversation: EncryptionAtRestMigratable {
         let plaintext = try messageEncryptionService.decrypt(
             data: data,
             nonce: nonce,
-            contextData: contextData,
-            databaseKey: key
+            contextData: contextData
         )
 
         draftMessageData = plaintext

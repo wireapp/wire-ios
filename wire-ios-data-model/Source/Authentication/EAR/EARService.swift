@@ -259,18 +259,15 @@ public class EARService: EARServiceInterface {
                 try deleteExistingKeys()
                 try generateKeys()
                 let databaseKey = try fetchDecryptedDatabaseKey()
+                
+                earMessageEncryptionService.setDatabaseKey(databaseKey)
 
                 if !skipMigration {
-                    try earMigrator.migrateTowardEncryptionAtRest(
-                        databaseKey: databaseKey,
-                        context: context
-                    )
+                    try earMigrator.migrateTowardEncryptionAtRest(context: context)
                 }
 
-                earMessageEncryptionService.setDatabaseKey(databaseKey)
                 earStorage.enableEAR(true)
                 context.encryptMessagesAtRest = true
-
             } catch {
                 WireLogger.ear.error("failed to turn on EAR: \(error)")
                 earMessageEncryptionService.setDatabaseKey(nil)
@@ -316,29 +313,19 @@ public class EARService: EARServiceInterface {
 
         WireLogger.ear.info("turning off EAR")
 
-        guard let databaseKey = earMessageEncryptionService.getDatabaseKey() else {
-            throw EARServiceFailure.databaseKeyMissing
-        }
-
         let disableEAR: (NSManagedObjectContext) throws -> Void = { [weak self] context in
             guard let self else { return }
 
-            earStorage.enableEAR(false)
-            context.encryptMessagesAtRest = false
-            earMessageEncryptionService.setDatabaseKey(nil)
-
             do {
                 if !skipMigration {
-                    try earMigrator.migrateAwayFromEncryptionAtRest(
-                        databaseKey: databaseKey,
-                        context: context
-                    )
+                    try earMigrator.migrateAwayFromEncryptionAtRest(context: context)
                 }
+                
+                earStorage.enableEAR(false)
+                context.encryptMessagesAtRest = false
+                earMessageEncryptionService.setDatabaseKey(nil)
             } catch {
                 WireLogger.ear.error("failed to turn off EAR: \(error)")
-                earMessageEncryptionService.setDatabaseKey(databaseKey)
-                context.encryptMessagesAtRest = true
-                earStorage.enableEAR(true)
                 throw error
             }
 
