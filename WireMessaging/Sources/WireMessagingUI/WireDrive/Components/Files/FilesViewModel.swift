@@ -803,7 +803,11 @@ package final class FilesViewModel: ObservableObject {
     // MARK: - Sorting & Filtering
     
     func makeFilesFilteringViewModel() -> FilesFilteringViewModel {
-        FilesFilteringViewModel(isBrowsing: isBrowsing) { filtersSelection in
+        let useCases = FilesFilteringViewModel.UseCases(
+            fetchTagsUseCase: useCases.getTagSuggestions
+        )
+        
+        return FilesFilteringViewModel(useCases: useCases, isBrowsing: isBrowsing) { filtersSelection in
             
         }
     }

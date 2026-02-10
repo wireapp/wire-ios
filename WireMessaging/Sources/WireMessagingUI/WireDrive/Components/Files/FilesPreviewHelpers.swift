@@ -229,6 +229,27 @@ extension FileVersioningViewModel {
     }
 }
 
+extension FilesFilteringViewModel {
+    /// A stubbed instance of `FilesFilteringViewModel` for SwiftUI previews.
+    static func preview(isBrowsing: Bool = false) -> FilesFilteringViewModel {
+        FilesFilteringViewModel(
+            useCases: .init(
+                fetchTagsUseCase: WireDriveGetTagSuggestionsUseCase(nodesAPI: previewTagsApi())
+            ),
+            filtersSelection: .init(
+                tags: [],
+                types: [.audio],
+                conversations: [],
+                owners: [UUID().uuidString, UUID().uuidString],
+                sharedByMe: true
+            ),
+            isBrowsing: isBrowsing,
+            onUpdate: { _ in }
+        )
+    }
+    
+}
+
 // MARK: - Dependencies
 
 private func previewNodesRepository() -> any WireDriveNodesRepositoryProtocol {

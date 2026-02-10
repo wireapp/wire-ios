@@ -82,6 +82,10 @@ final class FilesFilteringViewModel: ObservableObject {
             }
         }
     }
+    
+    struct UseCases {
+        let fetchTagsUseCase: any WireDriveGetTagSuggestionsUseCaseProtocol
+    }
 
     @Published var filtersSelection: FiltersSelection {
         didSet {
@@ -90,8 +94,9 @@ final class FilesFilteringViewModel: ObservableObject {
     }
     @Published var sheetNavigation: SheetNavigation?
 
-    private let isBrowsing: Bool
     private let onUpdate: (FiltersSelection) -> Void
+    let useCases: UseCases
+    let isBrowsing: Bool
     
     var availableFilters: [Filtering] {
         if isBrowsing {
@@ -102,10 +107,12 @@ final class FilesFilteringViewModel: ObservableObject {
     }
 
     init(
+        useCases: UseCases,
         filtersSelection: FiltersSelection = .empty,
         isBrowsing: Bool,
         onUpdate: @escaping (FiltersSelection) -> Void
     ) {
+        self.useCases = useCases
         self.filtersSelection = filtersSelection
         self.isBrowsing = isBrowsing
         self.onUpdate = onUpdate

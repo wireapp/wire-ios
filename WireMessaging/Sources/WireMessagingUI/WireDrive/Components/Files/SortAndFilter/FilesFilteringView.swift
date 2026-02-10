@@ -55,7 +55,13 @@ struct FilesFilteringView: View {
     private func sheet(for navigationItem: FilesFilteringViewModel.SheetNavigation) -> some View {
         switch navigationItem {
         case .tags:
-            Text("Tags")
+            FilesFilterByTagsView(
+                fetchTagsUseCase: viewModel.useCases.fetchTagsUseCase,
+                selectedItems: viewModel.filtersSelection.tags,
+                onApply: { selectedTags in
+                    viewModel.filtersSelection.tags = Set(selectedTags.map(\.self))
+                }
+            )
         case .types:
             FilesFilterByTypeView(
                 selectedItems: viewModel.filtersSelection.types,
@@ -172,16 +178,6 @@ struct FilesFilteringView: View {
 
 #Preview {
     FilesFilteringView(
-        viewModel: FilesFilteringViewModel(
-            filtersSelection: .init(
-                tags: [],
-                types: [.audio],
-                conversations: [],
-                owners: [UUID().uuidString, UUID().uuidString],
-                sharedByMe: true
-            ),
-            isBrowsing: false,
-            onUpdate: { _ in }
-        )
+        viewModel: .preview(isBrowsing: false)
     )
 }
