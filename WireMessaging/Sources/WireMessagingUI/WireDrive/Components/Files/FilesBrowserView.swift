@@ -93,7 +93,7 @@ package struct FilesBrowserView: FilesViewProtocol {
             } content: { navigationItem in
                 switch navigationItem {
                 case .filterByTagsOld:
-                    FilesFilterByTagsView(
+                    FilesFilterBy.TagsView(
                         fetchTagsUseCase: viewModel.useCases.getTagSuggestions,
                         selectedItems: viewModel.filterWithTags,
                         onApply: { selectedTags in

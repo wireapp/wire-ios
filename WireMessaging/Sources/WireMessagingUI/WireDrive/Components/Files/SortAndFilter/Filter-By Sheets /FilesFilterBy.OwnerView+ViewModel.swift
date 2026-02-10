@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension FilesFilterByOwnerView {
+extension FilesFilterBy.OwnerView {
     @MainActor
     final class ViewModel: ObservableObject {
         typealias Item = String

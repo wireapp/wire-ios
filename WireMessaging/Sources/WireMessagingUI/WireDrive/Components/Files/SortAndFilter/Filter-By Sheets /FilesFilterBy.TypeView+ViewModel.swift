@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension FilesFilterByTypeView {
+extension FilesFilterBy.TypeView {
     @MainActor
     final class ViewModel: ObservableObject {
         typealias Item = FileType

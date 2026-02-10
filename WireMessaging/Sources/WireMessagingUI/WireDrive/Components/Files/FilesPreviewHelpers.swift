@@ -182,14 +182,14 @@ extension FileVersionItemViewModel {
     }
 }
 
-extension FilesFilterByTagsView.ViewModel {
+extension FilesFilterBy.TagsView.ViewModel {
 
     /// A stubbed instance for SwiftUI previews.
-    static func preview() -> FilesFilterByTagsView.ViewModel {
+    static func preview() -> FilesFilterBy.TagsView.ViewModel {
         let nodesAPI = MockNodesAPIProtocol()
         nodesAPI.getAllTags_MockValue = mockTags
 
-        return FilesFilterByTagsView.ViewModel(
+        return FilesFilterBy.TagsView.ViewModel(
             fetchTagsUseCase: WireDriveGetTagSuggestionsUseCase(
                 nodesAPI: nodesAPI
             ),

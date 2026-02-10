@@ -24,63 +24,68 @@ import WireMessagingDomainSupport
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 
-struct FilesFilterByTagsView: View {
-    @Environment(\.wireAccentColor) private var wireAccentColor
-    @Environment(\.dismiss) private var dismiss
-
-    @StateObject private var viewModel: ViewModel
-
-    let onApply: (Set<ViewModel.Item>) -> Void
-
-    init(
-        fetchTagsUseCase: any WireDriveGetTagSuggestionsUseCaseProtocol,
-        selectedItems: some Collection<ViewModel.Item>,
-        onApply: @escaping (Set<ViewModel.Item>) -> Void
-    ) {
-        self._viewModel = StateObject(
-            wrappedValue: .init(
-                fetchTagsUseCase: fetchTagsUseCase,
-                selectedTags: selectedItems
+extension FilesFilterBy {
+    struct TagsView: View {
+        @Environment(\.wireAccentColor) private var wireAccentColor
+        @Environment(\.dismiss) private var dismiss
+        
+        @StateObject private var viewModel: ViewModel
+        
+        let onApply: (Set<ViewModel.Item>) -> Void
+        
+        init(
+            fetchTagsUseCase: any WireDriveGetTagSuggestionsUseCaseProtocol,
+            selectedItems: some Collection<ViewModel.Item>,
+            onApply: @escaping (Set<ViewModel.Item>) -> Void
+        ) {
+            self._viewModel = StateObject(
+                wrappedValue: .init(
+                    fetchTagsUseCase: fetchTagsUseCase,
+                    selectedTags: selectedItems
+                )
             )
-        )
-        self.onApply = onApply
-    }
-
-    var body: some View {
-        NavigationStack {
-            content()
-                .background {
-                    ColorTheme.Backgrounds.background.color
-                        .ignoresSafeArea(.all)
-                }
-                .toolbar { toolbarContent }
-                .navigationTitle(Strings.Filter.Tags.navigationTitle)
-                .navigationBarTitleDisplayMode(.inline)
-                .alert(L10n.Localizable.General.failure, isPresented: $viewModel.showError) {
-                    Button(L10n.Localizable.General.confirm, role: .cancel) {}
-                }
-                .overlay { if viewModel.isLoading { ProgressView() } }
-                .searchable(text: $viewModel.searchText, prompt: Strings.Filter.Tags.searchPrompt)
+            self.onApply = onApply
         }
-    }
-
-    @ViewBuilder
-    private func content() -> some View {
-        VStack {
-            ScrollView {
-                tagsView
-                    .padding()
+        
+        var body: some View {
+            NavigationStack {
+                content()
+                    .background {
+                        ColorTheme.Backgrounds.background.color
+                            .ignoresSafeArea(.all)
+                    }
+                    .toolbar { toolbarContent }
+                    .navigationTitle(Strings.Filter.Tags.navigationTitle)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .alert(L10n.Localizable.General.failure, isPresented: $viewModel.showError) {
+                        Button(L10n.Localizable.General.confirm, role: .cancel) {}
+                    }
+                    .overlay { if viewModel.isLoading { ProgressView() } }
+                    .searchable(text: $viewModel.searchText, prompt: Strings.Filter.Tags.searchPrompt)
             }
-
-            removeFilterButton
+        }
+        
+        @ViewBuilder
+        private func content() -> some View {
+            VStack {
+                ScrollView {
+                    tagsView
+                        .padding()
+                }
+                
+                Buttons.RemoveFilter {
+                    viewModel.clearAll()
+                }
                 .padding(10)
+                .disabled(viewModel.selectedTags.isEmpty)
+            }
         }
     }
 }
 
 // MARK: - Tags
 
-private extension FilesFilterByTagsView {
+private extension FilesFilterBy.TagsView {
     var tagsViewSpacing: CGFloat {
         viewModel.presentedTags.isEmpty ? 0 : 20
     }
@@ -116,7 +121,7 @@ private extension FilesFilterByTagsView {
     }
 }
 
-private extension FilesFilterByTagsView {
+private extension FilesFilterBy.TagsView {
     struct TagPill: View {
         @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -162,48 +167,21 @@ private extension FilesFilterByTagsView {
 
 // MARK: - Toolbar
 
-private extension FilesFilterByTagsView {
+private extension FilesFilterBy.TagsView {
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) { closeButton }
-        ToolbarItem(placement: .topBarTrailing) { saveButton }
-    }
-}
+        ToolbarItem(placement: .topBarLeading) {
+            FilesFilterBy.Buttons.Cancel {
+                dismiss()
+            }
+        }
 
-// MARK: - Buttons
-
-private extension FilesFilterByTagsView {
-    var saveButton: some View {
-        Button {
-            Task {
+        ToolbarItem(placement: .topBarTrailing) {
+            FilesFilterBy.Buttons.Save {
                 onApply(viewModel.selectedTags)
                 dismiss()
             }
-        } label: {
-            Text(L10n.Localizable.General.save)
-                .fontWeight(.semibold)
-                .accessibilityIdentifier("saveButton")
+            .disabled(!viewModel.hasChanges)
         }
-        .disabled(!viewModel.hasChanges)
-    }
-
-    var removeFilterButton: some View {
-        Button {
-            Task { await viewModel.clearAll() }
-        } label: {
-            Text(Strings.Filter.removeFilter)
-        }
-        .accessibilityIdentifier("removeFilterButton")
-        .disabled(viewModel.selectedTags.isEmpty)
-    }
-
-    var closeButton: some View {
-        Button(
-            action: { dismiss() },
-            label: {
-                Text(L10n.Localizable.General.cancel)
-            }
-        )
-        .accessibilityIdentifier("cancelButton")
     }
 }
 
@@ -216,7 +194,7 @@ private extension FilesFilterByTagsView {
         }()
     )
 
-    FilesFilterByTagsView(
+    FilesFilterBy.TagsView(
         fetchTagsUseCase: useCase,
         selectedItems: ["Urgent"],
         onApply: { _ in }

@@ -20,7 +20,7 @@ import Foundation
 import WireFoundation
 import WireMessagingDomain
 
-extension FilesFilterByTagsView {
+extension FilesFilterBy.TagsView {
     @MainActor
     final class ViewModel: ObservableObject {
         typealias Item = String
@@ -103,7 +103,7 @@ extension FilesFilterByTagsView {
             }
         }
 
-        func clearAll() async {
+        func clearAll() {
             selectedTags = []
         }
     }

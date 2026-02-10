@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension FilesFilterByConversationView {
+extension FilesFilterBy.ConversationView {
     @MainActor
     final class ViewModel: ObservableObject {
         typealias Item = String
