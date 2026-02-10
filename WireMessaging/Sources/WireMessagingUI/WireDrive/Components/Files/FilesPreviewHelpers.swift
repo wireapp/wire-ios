@@ -28,7 +28,7 @@ import WireMessagingDomainSupport
 extension FilesViewModel {
 
     /// A stubbed instance of `FilesViewModel` for SwiftUI previews.
-    static func preview() -> FilesViewModel {
+    static func preview(isBrowsing: Bool = false) -> FilesViewModel {
         let cache = mockFileCache()
         let localAssetStore = MockWireDriveLocalAssetStoreProtocol()
         localAssetStore.assetNodeID_MockValue = nil
@@ -102,7 +102,7 @@ extension FilesViewModel {
             nodesRepository: previewNodesRepository(),
             fileCache: cache,
             cellName: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
-            isBrowsing: false,
+            isBrowsing: isBrowsing,
             accentColorProvider: { .default }
         )
     }

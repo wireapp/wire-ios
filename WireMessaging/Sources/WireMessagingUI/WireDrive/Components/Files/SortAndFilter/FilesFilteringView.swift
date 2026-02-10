@@ -68,7 +68,7 @@ struct FilesFilteringView: View {
     @ViewBuilder
     private func capsule(for filter: FilesFilteringViewModel.Filtering) -> some View {
         let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
-        HStack(spacing: 6) {
+        HStack(alignment: .center, spacing: 6) {
             Text(filter.title)
                 .foregroundStyle(textColor(for: filter))
 
@@ -87,6 +87,12 @@ struct FilesFilteringView: View {
 
             if let iconName = iconName(for: filter) {
                 Image(systemName: iconName)
+                    .if(filter != .sharedByMe) { view in
+                        view.resizable()
+                            .frame(width: 10, height: 5)
+                            .rotationEffect(.degrees(180))
+                        
+                    }
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(imageColor(for: filter))
             }
@@ -129,7 +135,7 @@ struct FilesFilteringView: View {
         case .sharedByMe:
             viewModel.isFilterSelected(filter) ? "xmark" : nil
         default:
-            "chevron.down"
+            "triangle.fill"
         }
     }
 

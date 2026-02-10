@@ -167,6 +167,6 @@ extension View {
 
 #Preview {
     NavigationStack {
-        FilesBrowserView(viewModel: .preview())
+        FilesBrowserView(viewModel: .preview(isBrowsing: true))
     }
 }

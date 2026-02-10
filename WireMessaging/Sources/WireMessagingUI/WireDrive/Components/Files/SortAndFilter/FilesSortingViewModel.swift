@@ -24,8 +24,8 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells.Sorting
 final class FilesSortingViewModel: ObservableObject {
 
     enum SortingOrder: CaseIterable {
-        case descending
         case ascending
+        case descending
 
         var title: String {
             switch self {
@@ -47,11 +47,11 @@ final class FilesSortingViewModel: ObservableObject {
     }
 
     enum SortingKey: CaseIterable {
-        case owner
-        case size
-        case name
-        case conversation
         case lastModified
+        case name
+        case size
+        case owner
+        case conversation
 
         var title: String {
             switch self {
@@ -83,7 +83,7 @@ final class FilesSortingViewModel: ObservableObject {
         if isBrowsing {
             SortingKey.allCases
         } else {
-            [.owner, .size, .name, .lastModified] // omit `conversation` key
+            [.lastModified, .name, .size, .owner] // omit `conversation` key
         }
     }
 
