@@ -22,9 +22,32 @@ import WireNetwork
 final class BackOffice {
 
     private let backendURL: URL
+    private let httpClient: HttpClient
 
     init(backendURL: URL) {
         self.backendURL = backendURL
+        self.httpClient = HttpClient()
+    }
+
+    private init(backendURL: URL, httpClient: HttpClient) {
+        self.backendURL = backendURL
+        self.httpClient = httpClient
+    }
+    
+    private enum HTTPMethod {
+        static let put = "PUT"
+        static let patch = "PATCH"
+    }
+
+    private enum HeaderKey {
+        static let contentType = "Content-Type"
+        static let accept = "Accept"
+        static let authorization = "Authorization"
+    }
+
+    private enum ContentType {
+        static let json = "application/json"
+        static let jsonUtf8 = "application/json;charset=UTF-8"
     }
 
     private func sendRequest(
@@ -34,20 +57,16 @@ final class BackOffice {
         basicAuth: String
     ) async throws -> (Data, HTTPURLResponse) {
 
-        var request = URLRequest(url: endpoint)
-        request.httpMethod = method
-
-        request.setValue("application/json;charset=UTF-8", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue(basicAuth, forHTTPHeaderField: "Authorization")
-        request.httpBody = body
-
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let http = response as? HTTPURLResponse else {
-            throw RuntimeError("Non-HTTP response")
-        }
-
-        return (data, http)
+        try await httpClient.send(
+            url: endpoint,
+            method: method,
+            body: body,
+            headers: [
+                HeaderKey.contentType: ContentType.jsonUtf8,
+                HeaderKey.accept: ContentType.json,
+                HeaderKey.authorization: basicAuth
+            ]
+        )
     }
 
     func unlockConferenceCallingFeature(teamId: String, basicAuth: String) async throws {
@@ -70,7 +89,7 @@ final class BackOffice {
 
         let (data, http) = try await sendRequest(
             endpoint: endpoint,
-            method: "PUT",
+            method: HTTPMethod.put,
             body: Data("{}".utf8),
             basicAuth: headerValue
         )
@@ -102,7 +121,7 @@ final class BackOffice {
         let json = try JSONSerialization.data(withJSONObject: ["status": "enabled"], options: [])
         let (data, http) = try await sendRequest(
             endpoint: endpoint,
-            method: "PATCH",
+            method: HTTPMethod.patch,
             body: json,
             basicAuth: headerValue
         )
@@ -112,5 +131,38 @@ final class BackOffice {
                 "enableConferenceCallingBackdoorViaBackendTeam failed: HTTP \(http.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
+    }
+}
+
+private final class HttpClient {
+
+    private let urlSession: URLSession
+
+    init() {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.urlCache = nil
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        self.urlSession = URLSession(configuration: configuration)
+    }
+
+    func send(
+        url: URL,
+        method: String,
+        body: Data,
+        headers: [String: String]
+    ) async throws -> (Data, HTTPURLResponse) {
+
+        var request = URLRequest(url: url)
+        request.httpMethod = method
+        request.httpBody = body
+
+        headers.forEach { request.setValue($0.value, forHTTPHeaderField: $0.key) }
+
+        let (data, response) = try await urlSession.data(for: request)
+        guard let http = response as? HTTPURLResponse else {
+            throw RuntimeError("Non-HTTP response")
+        }
+
+        return (data, http)
     }
 }
