@@ -19,6 +19,8 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireMessagingDomain
+import WireMessagingDomainSupport
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 
@@ -26,15 +28,21 @@ struct FilesFilterByTagsView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.dismiss) private var dismiss
 
-    @StateObject package var viewModel: ViewModel
+    @StateObject private var viewModel: ViewModel
 
     let onApply: (Set<String>) -> Void
 
-    package init(
-        viewModel: @autoclosure @escaping () -> ViewModel,
+    init(
+        fetchTagsUseCase: any WireDriveGetTagSuggestionsUseCaseProtocol,
+        selectedItems: some Collection<String>,
         onApply: @escaping (Set<String>) -> Void
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel())
+        self._viewModel = StateObject(
+            wrappedValue: .init(
+                fetchTagsUseCase: fetchTagsUseCase,
+                selectedTags: selectedItems
+            )
+        )
         self.onApply = onApply
     }
 
@@ -200,5 +208,17 @@ private extension FilesFilterByTagsView {
 }
 
 #Preview {
-    FilesFilterByTagsView(viewModel: .preview()) { _ in }
+    let useCase = WireDriveGetTagSuggestionsUseCase(
+        nodesAPI: {
+            let nodesAPI = MockNodesAPIProtocol()
+            nodesAPI.getAllTags_MockValue = mockTags
+            return nodesAPI
+        }()
+    )
+
+    FilesFilterByTagsView(
+        fetchTagsUseCase: useCase,
+        selectedItems: ["Urgent"],
+        onApply: { _ in }
+    )
 }

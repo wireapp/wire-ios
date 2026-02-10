@@ -19,11 +19,29 @@
 import SwiftUI
 
 struct FilesFilterByOwnerView: View {
+    @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.dismiss) private var dismiss
+
+    @StateObject private var viewModel: ViewModel
+    
+    let onApply: (Set<ViewModel.Item>) -> Void
+
+    init(
+        selectedItems: some Collection<ViewModel.Item>,
+        onApply: @escaping (Set<ViewModel.Item>) -> Void
+    ) {
+        self.onApply = onApply
+        self._viewModel = .init(wrappedValue: .init())
+    }
+    
     var body: some View {
         Text("FilesFilterByOwnerView")
     }
 }
 
 #Preview {
-    FilesFilterByOwnerView()
+    FilesFilterByOwnerView(
+        selectedItems: [],
+        onApply: { _ in }
+    )
 }

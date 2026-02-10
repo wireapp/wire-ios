@@ -17,3 +17,10 @@
 //
 
 import Foundation
+
+extension FilesFilterByConversationView {
+    @MainActor
+    final class ViewModel: ObservableObject {
+        typealias Item = String
+    }
+}

@@ -23,7 +23,6 @@ import WireMessagingDomain
 extension FilesFilterByTagsView {
     @MainActor
     final class ViewModel: ObservableObject {
-
         @Published var presentedTags: [String] = []
         @Published var selectedTags: Set<String>
         @Published var searchText = "" {
@@ -31,7 +30,6 @@ extension FilesFilterByTagsView {
                 applySearchFilter()
             }
         }
-
         @Published var isLoading: Bool = false
         @Published var showError: Bool = false
 

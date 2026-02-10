@@ -94,10 +94,8 @@ package struct FilesBrowserView: FilesViewProtocol {
                 switch navigationItem {
                 case .filterByTagsOld:
                     FilesFilterByTagsView(
-                        viewModel: FilesFilterByTagsView.ViewModel(
-                            fetchTagsUseCase: viewModel.useCases.getTagSuggestions,
-                            selectedTags: viewModel.filterWithTags
-                        ),
+                        fetchTagsUseCase: viewModel.useCases.getTagSuggestions,
+                        selectedItems: viewModel.filterWithTags,
                         onApply: { selectedTags in
                             viewModel.filterWithTags = [String](selectedTags)
                             viewModel.shouldReload = true

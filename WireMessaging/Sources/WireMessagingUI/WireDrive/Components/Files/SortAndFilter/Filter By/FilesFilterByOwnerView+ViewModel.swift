@@ -17,3 +17,10 @@
 //
 
 import Foundation
+
+extension FilesFilterByOwnerView {
+    @MainActor
+    final class ViewModel: ObservableObject {
+        typealias Item = String
+    }
+}

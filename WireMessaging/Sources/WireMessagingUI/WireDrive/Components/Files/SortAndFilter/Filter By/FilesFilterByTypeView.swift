@@ -26,17 +26,22 @@ struct FilesFilterByTypeView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.dismiss) private var dismiss
 
-    @StateObject package var viewModel: ViewModel
+    @StateObject private var viewModel: ViewModel
 
     let onApply: (Set<FileType>) -> Void
 
     init(
-        selectedTypes: some Collection<FileType>,
+        selectedItems: some Collection<FileType>,
         includeFolders: Bool,
         onApply: @escaping (Set<FileType>) -> Void
     ) {
         self.onApply = onApply
-        self._viewModel = .init(wrappedValue: .init(selectedTypes: selectedTypes, includeFolders: includeFolders))
+        self._viewModel = .init(
+            wrappedValue: .init(
+                selectedTypes: selectedItems,
+                includeFolders: includeFolders
+            )
+        )
     }
 
     var body: some View {
@@ -160,7 +165,7 @@ private extension FileType {
 
 #Preview {
     FilesFilterByTypeView(
-        selectedTypes: [.audio, .video],
+        selectedItems: [.audio, .video],
         includeFolders: true,
         onApply: { _ in }
     )
