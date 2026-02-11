@@ -238,7 +238,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     public func addMembers(_ invitees: [WireDataModel.KeyPackage], to groupID: MLSGroupID) async throws {
         try await performNonReentrant(groupID: groupID) {
             do {
-                WireLogger.mls.info("adding members to group (\(groupID.safeForLoggingDescription))...")
+                WireLogger.mls.info("adding members to group...", attributes: groupID.safeAttributes)
 
                 let crlNewDistributionPoints = try await coreCrypto.perform {
                     try await $0.addClientsToConversation(
@@ -253,11 +253,12 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                     onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
                 }
 
-                WireLogger.mls.info("success: adding members to group (\(groupID.safeForLoggingDescription))")
+                WireLogger.mls.info("success: adding members to group", attributes: groupID.safeAttributes)
             } catch {
                 WireLogger.mls
                     .info(
-                        "failed: adding members to group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
+                        "failed: adding members to group: \(String(describing: error))",
+                        attributes: groupID.safeAttributes
                     )
                 throw error
             }
@@ -267,7 +268,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     public func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws {
         try await performNonReentrant(groupID: groupID) {
             do {
-                WireLogger.mls.info("removing clients from group (\(groupID.safeForLoggingDescription))...")
+                WireLogger.mls.info("removing clients from group...", attributes: groupID.safeAttributes)
                 return try await coreCrypto.perform {
                     try await $0.removeClientsFromConversation(
                         conversationId: groupID.conversationId,
@@ -277,7 +278,8 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
             } catch {
                 WireLogger.mls
                     .info(
-                        "error: removing clients from group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
+                        "error: removing clients from group: \(String(describing: error))",
+                        attributes: groupID.safeAttributes
                     )
                 throw error
             }
@@ -287,14 +289,15 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     public func updateKeyMaterial(for groupID: MLSGroupID) async throws {
         try await performNonReentrant(groupID: groupID) {
             do {
-                WireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))...")
+                WireLogger.mls.info("updating key material for group...", attributes: groupID.safeAttributes)
                 return try await coreCrypto.perform {
                     try await $0.updateKeyingMaterial(conversationId: groupID.conversationId)
                 }
             } catch {
                 WireLogger.mls
                     .info(
-                        "error: updating key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
+                        "error: updating key material for group: \(String(describing: error))",
+                        attributes: groupID.safeAttributes
                     )
                 throw error
             }
@@ -304,16 +307,17 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     public func commitPendingProposals(in groupID: MLSGroupID) async throws {
         try await performNonReentrant(groupID: groupID) {
             do {
-                WireLogger.mls.info("committing pending proposals for group (\(groupID.safeForLoggingDescription))...")
+                WireLogger.mls.info("committing pending proposals for group", attributes: groupID.safeAttributes)
                 try await coreCrypto.perform {
                     try await $0.commitPendingProposals(conversationId: groupID.conversationId)
                 }
                 WireLogger.mls
-                    .info("success: committing pending proposals for group (\(groupID.safeForLoggingDescription))")
+                    .info("success: committing pending proposals for group", attributes: groupID.safeAttributes)
             } catch {
                 WireLogger.mls
                     .info(
-                        "error: committing pending proposals for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
+                        "error: committing pending proposals for group: \(String(describing: error))",
+                        attributes: groupID.safeAttributes
                     )
                 throw error
             }
@@ -323,7 +327,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     public func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws {
         try await performNonReentrant(groupID: groupID) {
             do {
-                WireLogger.mls.info("joining group (\(groupID.safeForLoggingDescription)) via external commit")
+                WireLogger.mls.info("joining group via external commit", attributes: groupID.safeAttributes)
                 let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
                 let conversationInitBundle = try await coreCrypto.perform {
                     let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
@@ -338,11 +342,12 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 ) {
                     onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
                 }
-                WireLogger.mls.info("success: joining group (\(groupID.safeForLoggingDescription)) via external commit")
+                WireLogger.mls.info("success: joining group via external commit", attributes: groupID.safeAttributes)
             } catch {
                 WireLogger.mls
                     .info(
-                        "error: joining group (\(groupID.safeForLoggingDescription)) via external commit: \(String(describing: error))"
+                        "error: joining group via external commit: \(String(describing: error))",
+                        attributes: groupID.safeAttributes
                     )
                 throw error
             }
@@ -417,4 +422,10 @@ extension MLSActionExecutor.Action: CustomDebugStringConvertible {
         }
     }
 
+}
+
+extension MLSGroupID {
+    var safeAttributes: LogAttributes {
+        [.mlsGroupID: safeForLoggingDescription, .public: true]
+    }
 }

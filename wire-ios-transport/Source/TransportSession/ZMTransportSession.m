@@ -767,11 +767,6 @@ static NSInteger const DefaultMaximumRequests = 6;
     [self.accessTokenHandler setAccessTokenRenewalFailureHandler:handler];
 }
 
-- (void)setAccessTokenRenewalSuccessHandler:(ZMAccessTokenHandlerBlock)handler;
-{
-    [self.accessTokenHandler setAccessTokenRenewalSuccessHandler:handler];
-}
-
 - (void)renewAccessTokenWithClientID:(NSString *)clientID
 {
     [self.accessTokenHandler sendAccessTokenRequestWithURLSession:self.sessionsDirectory.foregroundSession clientID:clientID];

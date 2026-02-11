@@ -36,7 +36,9 @@ final class IncrementalSyncTests: XCTestCase {
     var processor: MockUpdateEventProcessorProtocol!
     var databaseSaver: MockDatabaseSaverProtocol!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
+    var liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>!
     var mlsGroupRepairAgent: MockMLSGroupRepairAgentProtocol!
+    var cancellables: Set<AnyCancellable>!
 
     override func setUp() {
         journal = Journal(
@@ -51,7 +53,9 @@ final class IncrementalSyncTests: XCTestCase {
         processor = MockUpdateEventProcessorProtocol()
         databaseSaver = MockDatabaseSaverProtocol()
         syncStateSubject = CurrentValueSubject(.idle)
+        liveBrokenGroupSubject = PassthroughSubject()
         mlsGroupRepairAgent = MockMLSGroupRepairAgentProtocol()
+        cancellables = Set<AnyCancellable>()
 
         sut = IncrementalSync(
             selfClientID: Scaffolding.selfClientID,
@@ -63,6 +67,7 @@ final class IncrementalSyncTests: XCTestCase {
             processor: processor,
             databaseSaver: databaseSaver,
             syncStateSubject: syncStateSubject,
+            liveBrokenGroupSubject: liveBrokenGroupSubject,
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent
         )
@@ -79,7 +84,9 @@ final class IncrementalSyncTests: XCTestCase {
         processor = nil
         databaseSaver = nil
         syncStateSubject = nil
+        liveBrokenGroupSubject = nil
         mlsGroupRepairAgent = nil
+        cancellables = nil
     }
 
     func test_perform_pendingEventsExist() async throws {
@@ -218,6 +225,87 @@ final class IncrementalSyncTests: XCTestCase {
         // Then the database was saved once after processing pending events
         // and once after processing each live event.
         XCTAssertEqual(databaseSaver.save_Invocations.count, 3)
+    }
+
+    func test_perform_OutOfSyncLiveEventsAreNotified() async throws {
+        // Mock
+        // Pending events are pulled.
+        updateEventsSync.pull_MockMethod = { AsyncStream { [] } }
+
+        // Pending events are stored in batches.
+        updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
+            []
+        }
+
+        // Pending events are deleted in batches.
+        updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
+
+        // Some live events, some of which were already pulled.
+        let pushChannel = MockPushChannelProtocol()
+        let mlsEvent = Scaffolding.createMLSEvent(message: "hello 1", timeIntervalSinceNow: .oneSecond)
+        let mlsOutOfSyncEvent = Scaffolding.createMLSEvent(message: "hello 2", timeIntervalSinceNow: .oneMinute)
+        pushChannel.open_MockValue = AsyncThrowingStream { continuation in
+            Task {
+                continuation.yield(mlsEvent)
+                continuation.yield(mlsOutOfSyncEvent)
+                continuation.finish()
+            }
+        }
+
+        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
+
+        // Some indices at which live events will be stored.
+        var indices = [Int64(10), 11]
+        updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
+
+        // Live envelopes are peristed and deleted one by one.
+        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
+
+        // Live events are decrypted.
+        decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
+            if envelope.id == mlsOutOfSyncEvent.id {
+                EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
+            } else {
+                EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [])
+            }
+        }
+
+        // Last event is being updated.
+        updateEventsStore.storeLastEventIDId_MockMethod = { _ in }
+
+        // Events are processed.
+        processor.processEvent_MockMethod = { _ in }
+
+        // Unread messages are set
+        updateEventsStore.calculateLastUnreadMessages_MockMethod = {}
+
+        // Database is saved.
+        databaseSaver.save_MockMethod = {}
+
+        // Repair broken MLS conversations
+        mlsGroupRepairAgent.repairConversations_MockMethod = {}
+
+        // When
+        let expectation = expectation(description: "one mls broken group should be detected live")
+        liveBrokenGroupSubject.sink { value in
+            print(value)
+            XCTAssertTrue(value.contains(Scaffolding.mlsGroupID))
+            expectation.fulfill()
+        }.store(in: &cancellables)
+
+        let token = try await sut.perform()
+        await token.task.value
+        wait(for: [expectation])
+
+        // Then live events were decrypted (duplicates skipped).
+        XCTAssertEqual(
+            decryptor.decryptEventsInContext_Invocations.count,
+            2
+        )
+
+        // Broken conversation IDs are stored
+        XCTAssertEqual(journal[.brokenMLSGroupIDs].first, Scaffolding.mlsGroupID)
     }
 
     func test_perform_Cancelled_Push_Channel_Closed() async throws {
@@ -382,4 +470,31 @@ private enum Scaffolding {
         )
     }
 
+    static func createMLSEvent(
+        message: String,
+        timeIntervalSinceNow: TimeInterval,
+        isTransient: Bool = false
+    ) -> UpdateEventEnvelope {
+        let event = ConversationMLSMessageAddEvent(
+            conversationID: ConversationID(
+                id: UUID(),
+                domain: "example.com"
+            ),
+            senderID: UserID(
+                id: UUID(),
+                domain: "example.com"
+            ),
+            subconversation: nil,
+            message: message,
+            timestamp: Date(timeIntervalSinceNow: timeIntervalSinceNow),
+            decryptedMessages: [
+                .init(message: message, senderClientID: UUID().uuidString)
+            ]
+        )
+        return UpdateEventEnvelope(
+            id: UUID(),
+            events: [.conversation(.mlsMessageAdd(event))],
+            isTransient: isTransient
+        )
+    }
 }

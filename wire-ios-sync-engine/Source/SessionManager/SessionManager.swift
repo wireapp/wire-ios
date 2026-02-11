@@ -308,7 +308,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     var callCenterObserverToken: Any?
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
-    let apiMigrationManager: APIMigrationManager
 
     var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
 
@@ -321,7 +320,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public internal(set) var environment: WireTransport.BackendEnvironment {
         didSet {
-            apiVersionResolver = nil
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
             authenticatedSessionFactory.environment = environment
@@ -359,8 +357,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     private static var avsLogObserver: AVSLogObserver?
-
-    var apiVersionResolver: APIVersionResolver?
 
     private(set) var isUnauthenticatedTransportSessionReady: Bool
 
@@ -583,9 +579,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.reachability = reachability
         self.maxNumberAccounts = maxNumberAccounts
         self.isDeveloperModeEnabled = isDeveloperModeEnabled
-        self.apiMigrationManager = APIMigrationManager(
-            migrations: [AccessTokenMigration()]
-        )
 
         // we must set these before initializing the PushDispatcher b/c if the app
         // received a push from terminated state, it requires these properties to be
@@ -682,7 +675,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         // force creation of transport sessions using isUnauthenticatedTransportSessionReady
         isUnauthenticatedTransportSessionReady = ready
-        apiVersionResolver = createAPIVersionResolver()
 
         // force creation of unauthenticatedSession
         unauthenticatedSessionFactory.readyForRequests = ready
@@ -811,7 +803,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     public func logout(account: Account, error: Error? = nil) {
-        WireLogger.session.debug("Logging out account \(account.userIdentifier)...")
         WireLogger.sessionManager.debug("Logging out account \(account.userIdentifier)...")
 
         if let session = backgroundUserSessions[account.userIdentifier] {
