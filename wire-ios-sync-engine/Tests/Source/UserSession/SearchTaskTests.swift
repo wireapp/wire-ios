@@ -911,19 +911,21 @@ final class SearchTaskTests: DatabaseTest {
         // given
         let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.directory])
         let task = makeSearchTask(request: request, apiVersion: .v2)
+        let expectation = XCTestExpectation(description: "wait for request to be sent")
+        searchAPIMock.searchContactsQueryDomainType_MockMethod = { query, _, _ in
+            XCTAssertEqual(query, "steve o'hara & söhne")
+            expectation.fulfill()
+            return .init(documents: [])
+        }
 
         // when
         _ = try await task.performRemoteSearch()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(
-            mockTransportSession.receivedRequests().first?.path,
-            "/v2/search/contacts?q=steve%20o'hara%20%26%20s%C3%B6hne&size=10"
-        )
+        await fulfillment(of: [expectation])
     }
 
-    func testThatItDoesNotSendASearchRequestIfSeachingLocally() async throws {
+    func testThatItDoesNotSendASearchRequestIfSearchingLocally() async throws {
         // given
         let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
@@ -970,26 +972,30 @@ final class SearchTaskTests: DatabaseTest {
         // given
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
         let task = makeSearchTask(request: request, apiVersion: .v2)
-
-        mockTransportSession.performRemoteChanges { remoteChanges in
-            let userA = remoteChanges.insertUser(withName: "User A")
-            let team = remoteChanges.insertTeam(withName: "Team A", isBound: true)
-            team.identifier = self.teamIdentifier.transportString()
-            team.creator = userA
-            remoteChanges.insertMember(with: userA, in: team)
+        let expectation = XCTestExpectation(description: "Wait for team membership lookup")
+        searchAPIMock.searchContactsQueryDomainType_MockValue = .init(
+            documents: [
+                .init(
+                    id: UUID(),
+                    qualifiedID: nil,
+                    name: "User A",
+                    handle: nil,
+                    team: teamIdentifier,
+                    accentID: nil,
+                    type: .regular
+                )
+            ]
+        )
+        teamsAPIMock.getTeamMembersOfFor_MockMethod = { _, _ in
+            expectation.fulfill()
+            return []
         }
 
         // when
         _ = try await task.performRemoteSearch()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(mockTransportSession.receivedRequests().count, 2)
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/v2/search/contacts?q=user&size=10")
-        XCTAssertEqual(
-            mockTransportSession.receivedRequests().last?.path,
-            "/v2/teams/\(teamIdentifier.transportString())/get-members-by-ids-using-post"
-        )
+        await fulfillment(of: [expectation])
     }
 
     func testThatItDoesNotMakeRequestToFetchTeamMembershipMetadata_WhenLocalResultsOnly() async throws {
@@ -1062,18 +1068,18 @@ final class SearchTaskTests: DatabaseTest {
         // given
         let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.bots])
         let task = makeSearchTask(request: request)
+        let expectation = XCTestExpectation()
+        teamsAPIMock.getWhitelistedBotsForWith_MockMethod = { _, prefix in
+            XCTAssertEqual(prefix, "steve o'hara & söhne")
+            expectation.fulfill()
+            return .init { _ in .init(element: .init(), hasMore: false, nextStart: "") }
+        }
 
         // when
         _ = try await task.performRemoteSearchForServices()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
-        // wait again to fix flaky test so second group is entered
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
 
         // then
-        XCTAssertEqual(
-            mockTransportSession.receivedRequests().first?.path,
-            "/teams/\(teamIdentifier.transportString())/services/whitelisted?prefix=steve%20o'hara%20%26%20s%C3%B6hne"
-        )
+        await fulfillment(of: [expectation])
     }
 
     func testThatItDoesNotSendASearchServicesRequest_WhenLocalResultsOnly() async throws {
@@ -1204,15 +1210,19 @@ final class SearchTaskTests: DatabaseTest {
         // given
         let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated)
         let task = makeSearchTask(request: searchRequest, apiVersion: .v3)
+        let expectation = XCTestExpectation()
+        searchAPIMock.searchContactsQueryDomainType_MockMethod = { query, domain, _ in
+            XCTAssertEqual(query, "john")
+            XCTAssertEqual(domain, "example.com")
+            expectation.fulfill()
+            return .init(documents: [])
+        }
 
         // when
         _ = try await task.performRemoteSearch()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let request = try XCTUnwrap(mockTransportSession.receivedRequests().first)
-        XCTAssertEqual(request.method, .get)
-        XCTAssertEqual(request.path, "/v3/search/contacts?q=john&domain=example.com&size=10")
+        await fulfillment(of: [expectation])
     }
 
     func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserExists() async throws { // TODO: is this test useful?
