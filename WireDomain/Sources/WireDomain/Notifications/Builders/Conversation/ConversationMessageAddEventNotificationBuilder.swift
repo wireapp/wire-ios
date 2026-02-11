@@ -62,7 +62,7 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
         case let .left(mlsMessageEvent):
             guard let decryptedMessage = mlsMessageEvent.decryptedMessages.first else {
                 // The event may have contained only mls protocol messages so it's not
-                // unexpected to find no decrypted application messages)
+                // unexpected to find no decrypted application messages.
                 return nil
             }
 
