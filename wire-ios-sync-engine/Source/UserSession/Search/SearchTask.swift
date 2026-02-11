@@ -23,6 +23,8 @@ import WireLogging
 import WireNetwork
 import WireUtilities
 
+// TODO: find out why apps search queries don't trigger API requests
+
 public final class SearchTask {
 
     private let type: `Type`
