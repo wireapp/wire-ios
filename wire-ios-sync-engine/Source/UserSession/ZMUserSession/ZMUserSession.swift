@@ -73,8 +73,6 @@ public final class ZMUserSession: NSObject {
     private(set) var urlActionProcessors: [URLActionProcessor]?
     let debugCommands: [String: DebugCommand]
 
-    var accessTokenRenewalObserver: AccessTokenRenewalObserver?
-
     var recurringActionService: any RecurringActionServiceInterface
 
     private(set) var coreCryptoProvider: CoreCryptoProviderProtocol
@@ -1026,7 +1024,8 @@ public final class ZMUserSession: NSObject {
     // MARK: Access Token
 
     private func renewAccessTokenIfNeeded(for userClient: WireDataModel.UserClient) {
-        WireLogger.session.debug("⚠️ renewAccessTokenIfNeeded")
+        WireLogger.session.debug("🎟️🔓 renewAccessTokenIfNeeded")
+        // apparently it is needed once we got a new userClient so we can send messages
         guard
             let apiVersion = resolvedBackendMetadata.apiVersion,
             apiVersion > .v2,
