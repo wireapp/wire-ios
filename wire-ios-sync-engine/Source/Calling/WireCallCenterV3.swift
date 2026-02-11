@@ -849,7 +849,6 @@ public extension WireCallCenterV3 {
                         "failed to set up MLS conference: \(String(describing: error))",
                         attributes: .safePublic)
                     self.onMLSConferenceFailure(id: conversationID)
-                   // assertionFailure(String(reflecting: error))
                 }
             }
         }

@@ -1565,6 +1565,7 @@ public final class MLSService: MLSServiceInterface {
     ) async throws -> MLSGroupID {
         do {
             logger.info("create or join subgroup in parent conversation (\(parentQualifiedID))")
+
             guard let notificationContext = context?.notificationContext else {
                 logger.error("failed to create or join subgroup: missing notification context")
                 throw SubgroupFailure.missingNotificationContext
