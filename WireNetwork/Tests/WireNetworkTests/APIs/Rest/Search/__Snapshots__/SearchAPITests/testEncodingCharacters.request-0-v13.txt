@@ -1,0 +1,2 @@
+curl \
+	"/v13/search/contacts?domain=wire.com&q=$%26+,/:;%3D?@%20Steve%20O'Hara%20%26%20S%C3%B6hne&type=regular"

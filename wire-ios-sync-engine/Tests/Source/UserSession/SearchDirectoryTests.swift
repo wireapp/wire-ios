@@ -36,6 +36,9 @@ final class SearchDirectoryTests: DatabaseTest {
 
         mockCache = SearchUsersCache()
         mockTransport = MockTransportSession(dispatchGroup: dispatchGroup)
+        searchAPIMock = .init()
+        teamsAPIMock = .init()
+        usersAPIMock = .init()
     }
 
     override func tearDown() {

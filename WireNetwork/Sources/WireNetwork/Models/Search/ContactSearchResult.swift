@@ -22,7 +22,12 @@ public struct ContactSearchResult: Equatable, Sendable {
 
     public let documents: [Contact]
 
+    public init(documents: [Contact]) {
+        self.documents = documents
+    }
+
     public struct Contact: Equatable, Sendable {
+
         public let id: UUID?
         public let qualifiedID: QualifiedID?
         public let name: String
@@ -30,6 +35,25 @@ public struct ContactSearchResult: Equatable, Sendable {
         public let team: UUID?
         public let accentID: Int?
         public let type: UserType
+
+        public init(
+            id: UUID?,
+            qualifiedID: QualifiedID?,
+            name: String,
+            handle: String?,
+            team: UUID?,
+            accentID: Int?,
+            type: UserType
+        ) {
+            self.id = id
+            self.qualifiedID = qualifiedID
+            self.name = name
+            self.handle = handle
+            self.team = team
+            self.accentID = accentID
+            self.type = type
+        }
+
     }
 
 }

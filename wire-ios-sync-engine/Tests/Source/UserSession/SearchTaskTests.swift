@@ -17,6 +17,7 @@
 //
 
 import WireMockTransport
+import WireNetwork
 import WireNetworkSupport
 import WireTransport
 import XCTest
@@ -39,6 +40,9 @@ final class SearchTaskTests: DatabaseTest {
         mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
         mockCache = SearchUsersCache()
         teamIdentifier = UUID()
+        searchAPIMock = .init()
+        teamsAPIMock = .init()
+        usersAPIMock = .init()
 
         performPretendingUIMocIsSyncMoc { [unowned self] in
             let selfUser = ZMUser.selfUser(in: uiMOC)
@@ -907,19 +911,21 @@ final class SearchTaskTests: DatabaseTest {
         // given
         let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.directory])
         let task = makeSearchTask(request: request, apiVersion: .v2)
+        let expectation = XCTestExpectation(description: "wait for request to be sent")
+        searchAPIMock.searchContactsQueryDomainType_MockMethod = { query, _, _ in
+            XCTAssertEqual(query, "steve o'hara & söhne")
+            expectation.fulfill()
+            return .init(documents: [])
+        }
 
         // when
         _ = try await task.performRemoteSearch()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(
-            mockTransportSession.receivedRequests().first?.path,
-            "/v2/search/contacts?q=steve%20o'hara%20%26%20s%C3%B6hne&size=10"
-        )
+        await fulfillment(of: [expectation])
     }
 
-    func testThatItDoesNotSendASearchRequestIfSeachingLocally() async throws {
+    func testThatItDoesNotSendASearchRequestIfSearchingLocally() async throws {
         // given
         let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
@@ -945,51 +951,23 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 0)
     }
 
-    func testThatItEncodesAPlusCharacterInTheSearchURL() async throws {
-        // given
-        let request = SearchRequest(query: "foo+bar@example.com", searchOptions: [.directory])
-        let task = makeSearchTask(request: request, apiVersion: .v2)
-
-        // when
-        _ = try await task.performRemoteSearch()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // then
-        XCTAssertEqual(
-            mockTransportSession.receivedRequests().first?.path,
-            "/v2/search/contacts?q=foo%2Bbar&domain=example.com&size=10"
-        )
-    }
-
-    func testThatItEncodesUnsafeCharactersInRequest() async throws {
-        // RFC 3986 Section 3.4 "Query"
-        // <https://tools.ietf.org/html/rfc3986#section-3.4>
-        //
-        // "The characters slash ("/") and question mark ("?") may represent data within the query component."
-
-        // given
-        let request = SearchRequest(query: "$&+,/:;=?@", searchOptions: [.directory])
-        let task = makeSearchTask(request: request, apiVersion: .v2)
-
-        // when
-        _ = try await task.performRemoteSearch()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // then
-        XCTAssertEqual(
-            mockTransportSession.receivedRequests().first?.path,
-            "/v2/search/contacts?q=$%26%2B,/:;%3D?&size=10"
-        )
-    }
-
     func testThatItCallsCompletionHandlerForDirectorySearch() async throws {
         // given
         let request = SearchRequest(query: "User", searchOptions: [.directory])
         let task = makeSearchTask(request: request, apiVersion: .v2)
-
-        mockTransportSession.performRemoteChanges { remoteChanges in
-            remoteChanges.insertUser(withName: "User A")
-        }
+        searchAPIMock.searchContactsQueryDomainType_MockValue = .init(
+            documents: [
+                .init(
+                    id: UUID(),
+                    qualifiedID: nil,
+                    name: "User A",
+                    handle: nil,
+                    team: nil,
+                    accentID: nil,
+                    type: .regular
+                )
+            ]
+        )
 
         // when
         var result = SearchResult()
@@ -1006,26 +984,30 @@ final class SearchTaskTests: DatabaseTest {
         // given
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
         let task = makeSearchTask(request: request, apiVersion: .v2)
-
-        mockTransportSession.performRemoteChanges { remoteChanges in
-            let userA = remoteChanges.insertUser(withName: "User A")
-            let team = remoteChanges.insertTeam(withName: "Team A", isBound: true)
-            team.identifier = self.teamIdentifier.transportString()
-            team.creator = userA
-            remoteChanges.insertMember(with: userA, in: team)
+        let expectation = XCTestExpectation(description: "Wait for team membership lookup")
+        searchAPIMock.searchContactsQueryDomainType_MockValue = .init(
+            documents: [
+                .init(
+                    id: UUID(),
+                    qualifiedID: nil,
+                    name: "User A",
+                    handle: nil,
+                    team: teamIdentifier,
+                    accentID: nil,
+                    type: .regular
+                )
+            ]
+        )
+        teamsAPIMock.getTeamMembersOfFor_MockMethod = { _, _ in
+            expectation.fulfill()
+            return []
         }
 
         // when
         _ = try await task.performRemoteSearch()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(mockTransportSession.receivedRequests().count, 2)
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/v2/search/contacts?q=user&size=10")
-        XCTAssertEqual(
-            mockTransportSession.receivedRequests().last?.path,
-            "/v2/teams/\(teamIdentifier.transportString())/get-members-by-ids-using-post"
-        )
+        await fulfillment(of: [expectation])
     }
 
     func testThatItDoesNotMakeRequestToFetchTeamMembershipMetadata_WhenLocalResultsOnly() async throws {
@@ -1053,16 +1035,33 @@ final class SearchTaskTests: DatabaseTest {
         // given
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
         let task = makeSearchTask(request: request, apiVersion: .v2)
-
-        mockTransportSession.performRemoteChanges { remoteChanges in
-            let userA = remoteChanges.insertUser(withName: "User A")
-            let selfUser = remoteChanges.insertSelfUser(withName: "Self User")
-            let team = remoteChanges.insertTeam(withName: "Team A", isBound: true)
-            team.identifier = self.teamIdentifier.transportString()
-            team.creator = userA
-            remoteChanges.insertMember(with: selfUser, in: team)
-            let member = remoteChanges.insertMember(with: userA, in: team)
-            member.permissions = .admin
+        let viewContext = coreDataStack!.viewContext
+        let teamIdentifier = await viewContext.perform {
+            ZMUser.selfUser(in: viewContext).teamIdentifier
+        }
+        searchAPIMock.searchContactsQueryDomainType_MockValue = .init(
+            documents: [
+                .init(
+                    id: UUID(),
+                    qualifiedID: nil,
+                    name: "User A",
+                    handle: nil,
+                    team: teamIdentifier,
+                    accentID: nil,
+                    type: .regular
+                )
+            ]
+        )
+        teamsAPIMock.getTeamMembersOfFor_MockMethod = { _, userIDs in
+            userIDs.map { userID in
+                .init(
+                    userID: userID,
+                    creationDate: nil,
+                    creatorID: nil,
+                    legalholdStatus: nil,
+                    permissions: .init(copyPermissions: 5951, selfPermissions: 5951)
+                )
+            }
         }
 
         // when
@@ -1081,18 +1080,18 @@ final class SearchTaskTests: DatabaseTest {
         // given
         let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.bots])
         let task = makeSearchTask(request: request)
+        let expectation = XCTestExpectation()
+        teamsAPIMock.getWhitelistedBotsForWith_MockMethod = { _, prefix in
+            XCTAssertEqual(prefix, "steve o'hara & söhne")
+            expectation.fulfill()
+            return .init { _ in .init(element: .init(), hasMore: false, nextStart: "") }
+        }
 
         // when
         _ = try await task.performRemoteSearchForBots()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
-        // wait again to fix flaky test so second group is entered
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
 
         // then
-        XCTAssertEqual(
-            mockTransportSession.receivedRequests().first?.path,
-            "/teams/\(teamIdentifier.transportString())/services/whitelisted?prefix=steve%20o'hara%20%26%20s%C3%B6hne"
-        )
+        await fulfillment(of: [expectation])
     }
 
     func testThatItDoesNotSendASearchServicesRequest_WhenLocalResultsOnly() async throws {
@@ -1112,14 +1111,27 @@ final class SearchTaskTests: DatabaseTest {
         // given
         let request = SearchRequest(query: "Service", searchOptions: [.bots])
         let task = makeSearchTask(request: request)
-
-        mockTransportSession.performRemoteChanges { remoteChanges in
-            remoteChanges.insertService(
-                withName: "Service A",
-                identifier: UUID().transportString(),
-                provider: UUID().transportString()
+        teamsAPIMock.getWhitelistedBotsForWith_MockValue = .init(fetchPage: { _ in
+            .init(
+                element: [
+                    WhitelistedBotProfile(
+                        id: UUID(),
+                        qualifiedID: nil,
+                        name: "Service A",
+                        summary: "",
+                        description: "",
+                        provider: UUID(),
+                        handle: "",
+                        teamID: nil,
+                        accentID: nil,
+                        assets: [],
+                        isDeleted: false
+                    )
+                ],
+                hasMore: false,
+                nextStart: ""
             )
-        }
+        })
 
         // when
         var result = SearchResult()
@@ -1134,42 +1146,89 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItSendsAUserLookupRequest() async throws {
         // given
-        let userId = UUID()
-        let task = makeSearchTask(lookupUserId: userId)
+        let userID = UUID()
+        let task = makeSearchTask(lookupUserID: userID)
+        let expectation = XCTestExpectation(description: "Wait for request to complete")
+        usersAPIMock.getUserFor_MockMethod = { qualifiedID in
+            XCTAssertEqual(qualifiedID.id, userID)
+            expectation.fulfill()
+            return .init(
+                id: qualifiedID,
+                name: "",
+                handle: nil,
+                teamID: nil,
+                type: nil,
+                accentID: 1,
+                assets: [],
+                deleted: nil,
+                email: nil,
+                expiresAt: nil,
+                service: nil,
+                supportedProtocols: nil,
+                legalholdStatus: .disabled
+            )
+        }
 
         // when
         _ = try await task.performUserLookup()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/users/\(userId.transportString())")
+        await fulfillment(of: [expectation])
     }
 
     func testThatItSendsAUserLookupRequest_IfApiVersionIsV2AndAbove() async throws {
         // given
-        let userId = UUID()
+        let userID = UUID()
         let domain = "wire.com"
-        let task = makeSearchTask(lookupUserId: userId, domain: domain, apiVersion: .v2)
+        let task = makeSearchTask(lookupUserID: userID, domain: domain, apiVersion: .v2)
+        let expectation = XCTestExpectation(description: "Wait for request to complete")
+        usersAPIMock.getUserFor_MockMethod = { qualifiedID in
+            XCTAssertEqual(qualifiedID.id, userID)
+            XCTAssertEqual(qualifiedID.domain, domain)
+            expectation.fulfill()
+            return .init(
+                id: qualifiedID,
+                name: "",
+                handle: nil,
+                teamID: nil,
+                type: nil,
+                accentID: 1,
+                assets: [],
+                deleted: nil,
+                email: nil,
+                expiresAt: nil,
+                service: nil,
+                supportedProtocols: nil,
+                legalholdStatus: .disabled
+            )
+        }
 
         // when
         _ = try await task.performUserLookup()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(
-            mockTransportSession.receivedRequests().first?.path,
-            "/v2/users/\(domain)/\(userId.transportString())"
-        )
+        await fulfillment(of: [expectation])
     }
 
     func testThatItCallsCompletionHandlerForUserLookup() async throws {
         // given
-        var userId: UUID!
-        mockTransportSession.performRemoteChanges { remoteChanges in
-            let mockUser = remoteChanges.insertUser(withName: "User A")
-            userId = UUID(uuidString: mockUser.identifier)!
-        }
-        let task = makeSearchTask(lookupUserId: userId)
+        let userID = UserID(id: UUID(), domain: "wire.com")
+        usersAPIMock.getUserFor_MockValue = User(
+            id: userID,
+            name: "User A",
+            handle: nil,
+            teamID: teamIdentifier,
+            type: nil,
+            accentID: 1,
+            assets: [],
+            deleted: nil,
+            email: nil,
+            expiresAt: nil,
+            service: nil,
+            supportedProtocols: nil,
+            legalholdStatus: .disabled
+        )
+        let task = makeSearchTask(lookupUserID: userID.id, domain: userID.domain)
 
         // when
         var result = SearchResult()
@@ -1199,27 +1258,26 @@ final class SearchTaskTests: DatabaseTest {
         // given
         let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated)
         let task = makeSearchTask(request: searchRequest, apiVersion: .v3)
+        let expectation = XCTestExpectation()
+        searchAPIMock.searchContactsQueryDomainType_MockMethod = { query, domain, _ in
+            XCTAssertEqual(query, "john")
+            XCTAssertEqual(domain, "example.com")
+            expectation.fulfill()
+            return .init(documents: [])
+        }
 
         // when
         _ = try await task.performRemoteSearch()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let request = try XCTUnwrap(mockTransportSession.receivedRequests().first)
-        XCTAssertEqual(request.method, .get)
-        XCTAssertEqual(request.path, "/v3/search/contacts?q=john&domain=example.com&size=10")
+        await fulfillment(of: [expectation])
     }
 
     func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserExists() async throws {
         // given
-        let federatedDomain = "example.com"
-
-        mockTransportSession.federatedDomains = [federatedDomain]
-        mockTransportSession.performRemoteChanges { remoteChanges in
-            let mockUser = remoteChanges.insertUser(withName: "John Doe")
-            mockUser.handle = "john"
-            mockUser.domain = federatedDomain
-        }
+        searchAPIMock.searchContactsQueryDomainType_MockValue = .init(documents: [
+            .init(id: UUID(), qualifiedID: nil, name: "John Doe", handle: nil, team: nil, accentID: nil, type: .regular)
+        ])
 
         let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated)
         let task = makeSearchTask(request: searchRequest, apiVersion: .v3)
@@ -1235,7 +1293,7 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserDoesntExist() async throws {
         // given
-        mockTransportSession.federatedDomains = ["example.com"]
+        searchAPIMock.searchContactsQueryDomainType_MockValue = .init(documents: [])
 
         let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated)
         let task = makeSearchTask(request: searchRequest, apiVersion: .v3)
@@ -1254,6 +1312,19 @@ final class SearchTaskTests: DatabaseTest {
     func testThatRemoteResultsIncludePreviousLocalResults() async throws {
         // given
         let user = try await createConnectedUser(withName: "userA")
+        searchAPIMock.searchContactsQueryDomainType_MockValue = .init(
+            documents: [
+                .init(
+                    id: UUID(),
+                    qualifiedID: nil,
+                    name: "UserB",
+                    handle: nil,
+                    team: nil,
+                    accentID: nil,
+                    type: .regular
+                )
+            ]
+        )
 
         mockTransportSession.performRemoteChanges { remoteChanges in
             remoteChanges.insertUser(withName: "UserB")
@@ -1281,10 +1352,19 @@ final class SearchTaskTests: DatabaseTest {
     func testThatLocalResultsIncludePreviousRemoteResults() async throws {
         // given
         _ = try await createConnectedUser(withName: "userA")
-
-        mockTransportSession.performRemoteChanges { remoteChanges in
-            remoteChanges.insertUser(withName: "UserB")
-        }
+        searchAPIMock.searchContactsQueryDomainType_MockValue = .init(
+            documents: [
+                .init(
+                    id: UUID(),
+                    qualifiedID: nil,
+                    name: "UserB",
+                    handle: nil,
+                    team: nil,
+                    accentID: nil,
+                    type: .regular
+                )
+            ]
+        )
 
         let request = SearchRequest(query: "user", searchOptions: [.contacts, .directory])
         let task = makeSearchTask(request: request, apiVersion: .v2)
@@ -1322,9 +1402,19 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatTaskIsCompletedAfterRemoteResults() async throws {
         // given
-        mockTransportSession.performRemoteChanges { remoteChanges in
-            remoteChanges.insertUser(withName: "UserB")
-        }
+        searchAPIMock.searchContactsQueryDomainType_MockValue = .init(
+            documents: [
+                .init(
+                    id: UUID(),
+                    qualifiedID: nil,
+                    name: "UserB",
+                    handle: nil,
+                    team: nil,
+                    accentID: nil,
+                    type: .regular
+                )
+            ]
+        )
 
         let request = SearchRequest(query: "user", searchOptions: [.directory])
         let task = makeSearchTask(request: request, apiVersion: .v2)
@@ -1342,7 +1432,7 @@ final class SearchTaskTests: DatabaseTest {
 
     private func makeSearchTask(
         request: SearchRequest,
-        apiVersion: APIVersion = .v0
+        apiVersion: WireTransport.APIVersion = .v0
     ) -> SearchTask {
         SearchTask(
             type: .search(searchRequest: request),
@@ -1357,11 +1447,11 @@ final class SearchTaskTests: DatabaseTest {
     }
 
     private func makeSearchTask(
-        lookupUserId: UUID,
+        lookupUserID: UUID,
         domain: String = "wire.com",
-        apiVersion: APIVersion = .v0
+        apiVersion: WireTransport.APIVersion = .v0
     ) -> SearchTask {
-        let qualifiedID = QualifiedID(uuid: lookupUserId, domain: domain)
+        let qualifiedID = QualifiedID(uuid: lookupUserID, domain: domain)
         return SearchTask(
             type: .lookup(qualifiedID: qualifiedID),
             contextProvider: coreDataStack!,

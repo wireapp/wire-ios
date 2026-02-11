@@ -87,7 +87,12 @@ public final class SearchTask {
         taskGroup.cancelAll()
     }
 
-    /// Start the search task. Errors will not be thrown.
+    /// Start the search task.
+    ///
+    /// - Throws:
+    ///   - Errors originating from underlying search requests, such as network or service failures.
+    ///   - `CancellationError` if the task group is cancelled via ``cancel()`` or task cancellation.
+    ///   - Other errors propagated by the underlying APIs used to perform the search.
     public func start() async throws -> SearchResult {
         guard case .pending = status else {
             assertionFailure()
@@ -419,43 +424,45 @@ extension SearchTask {
         qualifiedID = .init(uuid: result.id.id, domain: result.id.domain)
 
         let viewContext = contextProvider.viewContext
-        let localUser = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: viewContext)
+        return await viewContext.perform { [searchUsersCache] in
+            let localUser = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: viewContext)
 
-        let searchUser: ZMSearchUser
-        if let cachedSearchUser = searchUsersCache?.object(forKey: qualifiedID.uuid as NSUUID) {
-            cachedSearchUser.user = localUser
-            searchUser = cachedSearchUser
-        } else {
-            let accentColor = Int16(exactly: result.accentID).flatMap(AccentColor.init(rawValue:))
-            searchUser = ZMSearchUser(
-                viewContext: viewContext,
-                name: result.name,
-                handle: result.handle,
-                accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
-                remoteIdentifier: qualifiedID.uuid,
-                domain: qualifiedID.domain,
-                teamIdentifier: result.teamID,
-                user: localUser,
-                searchUsersCache: searchUsersCache,
-                isDeleted: result.deleted ?? false
+            let searchUser: ZMSearchUser
+            if let cachedSearchUser = searchUsersCache?.object(forKey: qualifiedID.uuid as NSUUID) {
+                cachedSearchUser.user = localUser
+                searchUser = cachedSearchUser
+            } else {
+                let accentColor = Int16(exactly: result.accentID).flatMap(AccentColor.init(rawValue:))
+                searchUser = ZMSearchUser(
+                    viewContext: viewContext,
+                    name: result.name,
+                    handle: result.handle,
+                    accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
+                    remoteIdentifier: qualifiedID.uuid,
+                    domain: qualifiedID.domain,
+                    teamIdentifier: result.teamID,
+                    user: localUser,
+                    searchUsersCache: searchUsersCache,
+                    isDeleted: result.deleted ?? false
+                )
+            }
+
+            guard searchUser.user == nil || searchUser.user?.isTeamMember == false else {
+                return { _ in }
+            }
+
+            let partialResult = SearchResult(
+                context: viewContext,
+                contacts: [],
+                teamMembers: [],
+                directory: [searchUser],
+                conversations: [],
+                apps: [],
+                bots: [],
+                searchUsersCache: searchUsersCache
             )
+            return { $0 = $0.union(withDirectoryResult: partialResult) }
         }
-
-        guard searchUser.user == nil, searchUser.user?.isTeamMember == false else {
-            return { _ in }
-        }
-
-        let partialResult = SearchResult(
-            context: viewContext,
-            contacts: [],
-            teamMembers: [],
-            directory: [searchUser],
-            conversations: [],
-            apps: [],
-            bots: [],
-            searchUsersCache: searchUsersCache
-        )
-        return { $0 = $0.union(withDirectoryResult: partialResult) }
 
     }
 
@@ -535,7 +542,7 @@ extension SearchTask {
                 teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
                 directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
                 conversations: [],
-                apps: searchForApps ? [] : [],
+                apps: [],
                 bots: [],
                 searchUsersCache: searchUsersCache
             )

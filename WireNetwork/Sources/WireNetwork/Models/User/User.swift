@@ -79,4 +79,34 @@ public struct User: Equatable, Sendable {
 
     public let legalholdStatus: LegalholdStatus
 
+    public init(
+        id: UserID,
+        name: String,
+        handle: String?,
+        teamID: UUID?,
+        type: UserType?,
+        accentID: Int,
+        assets: [UserAsset],
+        deleted: Bool?,
+        email: String?,
+        expiresAt: Date?,
+        service: Service?,
+        supportedProtocols: Set<MessageProtocol>?,
+        legalholdStatus: LegalholdStatus
+    ) {
+        self.id = id
+        self.name = name
+        self.handle = handle
+        self.teamID = teamID
+        self.type = type
+        self.accentID = accentID
+        self.assets = assets
+        self.deleted = deleted
+        self.email = email
+        self.expiresAt = expiresAt
+        self.service = service
+        self.supportedProtocols = supportedProtocols
+        self.legalholdStatus = legalholdStatus
+    }
+
 }
