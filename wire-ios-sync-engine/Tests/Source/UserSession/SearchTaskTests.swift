@@ -1134,32 +1134,68 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItSendsAUserLookupRequest() async throws {
         // given
-        let userId = UUID()
-        let task = makeSearchTask(lookupUserID: userId)
+        let userID = UUID()
+        let task = makeSearchTask(lookupUserID: userID)
+        let expectation = XCTestExpectation(description: "Wait for request to complete")
+        usersAPIMock.getUserFor_MockMethod = { qualifiedID in
+            XCTAssertEqual(qualifiedID.id, userID)
+            expectation.fulfill()
+            return .init(
+                id: qualifiedID,
+                name: "",
+                handle: nil,
+                teamID: nil,
+                type: nil,
+                accentID: 1,
+                assets: [],
+                deleted: nil,
+                email: nil,
+                expiresAt: nil,
+                service: nil,
+                supportedProtocols: nil,
+                legalholdStatus: .disabled
+            )
+        }
 
         // when
         _ = try await task.performUserLookup()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/users/\(userId.transportString())")
+        await fulfillment(of: [expectation])
     }
 
     func testThatItSendsAUserLookupRequest_IfApiVersionIsV2AndAbove() async throws {
         // given
-        let userId = UUID()
+        let userID = UUID()
         let domain = "wire.com"
-        let task = makeSearchTask(lookupUserID: userId, domain: domain, apiVersion: .v2)
+        let task = makeSearchTask(lookupUserID: userID, domain: domain, apiVersion: .v2)
+        let expectation = XCTestExpectation(description: "Wait for request to complete")
+        usersAPIMock.getUserFor_MockMethod = { qualifiedID in
+            XCTAssertEqual(qualifiedID.id, userID)
+            XCTAssertEqual(qualifiedID.domain, domain)
+            expectation.fulfill()
+            return .init(
+                id: qualifiedID,
+                name: "",
+                handle: nil,
+                teamID: nil,
+                type: nil,
+                accentID: 1,
+                assets: [],
+                deleted: nil,
+                email: nil,
+                expiresAt: nil,
+                service: nil,
+                supportedProtocols: nil,
+                legalholdStatus: .disabled
+            )
+        }
 
         // when
         _ = try await task.performUserLookup()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(
-            mockTransportSession.receivedRequests().first?.path,
-            "/v2/users/\(domain)/\(userId.transportString())"
-        )
+        await fulfillment(of: [expectation])
     }
 
     func testThatItCallsCompletionHandlerForUserLookup() async throws {
