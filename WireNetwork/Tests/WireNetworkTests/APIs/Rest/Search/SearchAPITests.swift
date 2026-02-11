@@ -47,7 +47,11 @@ final class SearchAPITests: XCTestCase {
     func testEncodingCharacters() async throws {
         let apiVersions = APIVersion.v0.andNextVersions
         try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
-            _ = try await sut.searchContacts(query: "$&+,/:;=?@ Steve O'Hara & Söhne", domain: "wire.com", type: .regular)
+            _ = try await sut.searchContacts(
+                query: "$&+,/:;=?@ Steve O'Hara & Söhne",
+                domain: "wire.com",
+                type: .regular
+            )
         }
     }
 

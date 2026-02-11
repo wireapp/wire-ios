@@ -17,10 +17,10 @@
 //
 
 import WireMockTransport
+import WireNetwork
 import WireNetworkSupport
 import WireTransport
 import XCTest
-import WireNetwork
 
 @testable import WireSyncEngine
 
@@ -955,7 +955,19 @@ final class SearchTaskTests: DatabaseTest {
         // given
         let request = SearchRequest(query: "User", searchOptions: [.directory])
         let task = makeSearchTask(request: request, apiVersion: .v2)
-        searchAPIMock.searchContactsQueryDomainType_MockValue = .init(documents: [])
+        searchAPIMock.searchContactsQueryDomainType_MockValue = .init(
+            documents: [
+                .init(
+                    id: UUID(),
+                    qualifiedID: nil,
+                    name: "User A",
+                    handle: nil,
+                    team: nil,
+                    accentID: nil,
+                    type: .regular
+                )
+            ]
+        )
 
         // when
         var result = SearchResult()
@@ -1040,7 +1052,7 @@ final class SearchTaskTests: DatabaseTest {
                 )
             ]
         )
-        teamsAPIMock.getTeamMembersOfFor_MockMethod = { teamID, userIDs in
+        teamsAPIMock.getTeamMembersOfFor_MockMethod = { _, userIDs in
             userIDs.map { userID in
                 .init(
                     userID: userID,
@@ -1341,18 +1353,18 @@ final class SearchTaskTests: DatabaseTest {
         // given
         _ = try await createConnectedUser(withName: "userA")
         searchAPIMock.searchContactsQueryDomainType_MockValue = .init(
-                documents: [
-                    .init(
-                        id: UUID(),
-                        qualifiedID: nil,
-                        name: "UserB",
-                        handle: nil,
-                        team: nil,
-                        accentID: nil,
-                        type: .regular
-                    )
-                ]
-            )
+            documents: [
+                .init(
+                    id: UUID(),
+                    qualifiedID: nil,
+                    name: "UserB",
+                    handle: nil,
+                    team: nil,
+                    accentID: nil,
+                    type: .regular
+                )
+            ]
+        )
 
         let request = SearchRequest(query: "user", searchOptions: [.contacts, .directory])
         let task = makeSearchTask(request: request, apiVersion: .v2)
