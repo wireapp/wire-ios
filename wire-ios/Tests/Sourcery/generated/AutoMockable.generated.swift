@@ -84,21 +84,6 @@ class MockAccountSelector: AccountSelector {
         mock(account)
     }
 
-    // MARK: - switchTo
-
-    var switchToAccountCompletion_Invocations: [(account: Account, completion: ((UserSession?) -> Void)?)] = []
-    var switchToAccountCompletion_MockMethod: ((Account, ((UserSession?) -> Void)?) -> Void)?
-
-    func switchTo(account: Account, completion: ((UserSession?) -> Void)?) {
-        switchToAccountCompletion_Invocations.append((account: account, completion: completion))
-
-        guard let mock = switchToAccountCompletion_MockMethod else {
-            fatalError("no mock for `switchToAccountCompletion`")
-        }
-
-        mock(account, completion)
-    }
-
 }
 
 class MockAppLocationManagerProtocol: AppLocationManagerProtocol {

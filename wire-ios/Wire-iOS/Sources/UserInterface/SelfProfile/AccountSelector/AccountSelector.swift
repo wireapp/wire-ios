@@ -24,14 +24,5 @@ protocol AccountSelector {
     var currentAccount: Account? { get }
 
     func switchTo(account: Account)
-    func switchTo(account: Account, completion: ((UserSession?) -> Void)?) // TODO: Remove as no completion
-
-}
-
-extension AccountSelector {
-
-    func switchTo(account: Account) {
-        switchTo(account: account, completion: .none)
-    }
 
 }
