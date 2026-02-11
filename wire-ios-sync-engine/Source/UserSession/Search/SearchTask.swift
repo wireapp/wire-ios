@@ -409,43 +409,45 @@ extension SearchTask {
         qualifiedID = .init(uuid: result.id.id, domain: result.id.domain)
 
         let viewContext = contextProvider.viewContext
-        let localUser = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: viewContext)
+        return await viewContext.perform { [searchUsersCache] in
+            let localUser = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: viewContext)
 
-        let searchUser: ZMSearchUser
-        if let cachedSearchUser = searchUsersCache?.object(forKey: qualifiedID.uuid as NSUUID) {
-            cachedSearchUser.user = localUser
-            searchUser = cachedSearchUser
-        } else {
-            let accentColor = Int16(exactly: result.accentID).flatMap(AccentColor.init(rawValue:))
-            searchUser = ZMSearchUser(
-                viewContext: viewContext,
-                name: result.name,
-                handle: result.handle,
-                accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
-                remoteIdentifier: qualifiedID.uuid,
-                domain: qualifiedID.domain,
-                teamIdentifier: result.teamID,
-                user: localUser,
-                searchUsersCache: searchUsersCache,
-                isDeleted: result.deleted ?? false
+            let searchUser: ZMSearchUser
+            if let cachedSearchUser = searchUsersCache?.object(forKey: qualifiedID.uuid as NSUUID) {
+                cachedSearchUser.user = localUser
+                searchUser = cachedSearchUser
+            } else {
+                let accentColor = Int16(exactly: result.accentID).flatMap(AccentColor.init(rawValue:))
+                searchUser = ZMSearchUser(
+                    viewContext: viewContext,
+                    name: result.name,
+                    handle: result.handle,
+                    accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
+                    remoteIdentifier: qualifiedID.uuid,
+                    domain: qualifiedID.domain,
+                    teamIdentifier: result.teamID,
+                    user: localUser,
+                    searchUsersCache: searchUsersCache,
+                    isDeleted: result.deleted ?? false
+                )
+            }
+
+            guard searchUser.user == nil, searchUser.user?.isTeamMember == false else {
+                return { _ in }
+            }
+
+            let partialResult = SearchResult(
+                context: viewContext,
+                contacts: [],
+                teamMembers: [],
+                directory: [searchUser],
+                conversations: [],
+                apps: [],
+                bots: [],
+                searchUsersCache: searchUsersCache
             )
+            return { $0 = $0.union(withDirectoryResult: partialResult) }
         }
-
-        guard searchUser.user == nil, searchUser.user?.isTeamMember == false else {
-            return { _ in }
-        }
-
-        let partialResult = SearchResult(
-            context: viewContext,
-            contacts: [],
-            teamMembers: [],
-            directory: [searchUser],
-            conversations: [],
-            apps: [],
-            bots: [],
-            searchUsersCache: searchUsersCache
-        )
-        return { $0 = $0.union(withDirectoryResult: partialResult) }
 
     }
 

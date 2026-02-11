@@ -1,0 +1,2 @@
+curl \
+	"/v7/search/contacts?domain=wire.com&q=$%26+,/:;%3D?@&type=regular"
