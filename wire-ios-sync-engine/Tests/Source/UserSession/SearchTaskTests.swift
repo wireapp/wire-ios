@@ -1075,8 +1075,17 @@ final class SearchTaskTests: DatabaseTest {
                 )
             ]
         )
-        teamsAPIMock.getTeamMembersOfFor_MockValue = []
-        TODO
+        teamsAPIMock.getTeamMembersOfFor_MockMethod = { teamID, userIDs in
+            userIDs.map { userID in
+                .init(
+                    userID: userID,
+                    creationDate: nil,
+                    creatorID: nil,
+                    legalholdStatus: nil,
+                    permissions: .init(copyPermissions: 5951, selfPermissions: 5951)
+                )
+            }
+        }
 
         // when
         var result = SearchResult()
