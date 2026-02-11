@@ -89,6 +89,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
     private var isCallTopOverlayShown = false
     private(set) var scheduledPostCallAction: PostCallAction?
     private(set) weak var presentedDegradedAlert: UIAlertController?
+    private weak var presentedActiveCallViewController: UIViewController?
 
     init(
         mainWindow: UIWindow,
@@ -157,21 +158,25 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     func dismissActiveCall(animated: Bool = true, completion: Completion? = nil) {
-        guard isActiveCallShown else {
-            completion?()
-            return
-        }
-        mainWindow.rootViewController?.dismiss(animated: animated) { [weak self] in
-            self?.isActiveCallShown = false
-            if let action = self?.scheduledPostCallAction {
-                action {
+        if let presented = presentedActiveCallViewController {
+            presented.dismiss(animated: animated) { [weak self] in
+                guard let self else { completion?(); return }
+
+                self.presentedActiveCallViewController = nil
+                self.isActiveCallShown = false
+                self.isPresentingActiveCall = false
+
+                if let action = self.scheduledPostCallAction {
+                    action { completion?() }
+                } else {
                     completion?()
                 }
-            } else {
-                completion?()
+                self.scheduledPostCallAction = nil
             }
-            self?.scheduledPostCallAction = nil
+            return
         }
+
+        completion?()
     }
 
     func minimizeCall(animated: Bool = true, completion: Completion? = nil) {
@@ -294,6 +299,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     private func presentActiveCall(modalViewController: ModalPresentationViewController, animated: Bool) {
         isPresentingActiveCall = true
+        presentedActiveCallViewController = modalViewController
         mainWindow.rootViewController?.present(modalViewController, animated: animated) { [weak self] in
             self?.isActiveCallShown = true
         }
