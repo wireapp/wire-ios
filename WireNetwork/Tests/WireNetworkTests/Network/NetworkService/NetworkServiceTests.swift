@@ -207,14 +207,14 @@ final class NetworkServiceTests: XCTestCase {
     // MARK: - WebSocket Data Race Test
 
     func testWebSocketsByTask_ConcurrentAccessDoesNotCrash() async throws {
-        // This test reproduces the crash from the production crash report
+        // This test tries to reproduce the crash from the production crash report
         // where concurrent access to webSocketsByTask causes memory corruption
 
         let iterations = 100
 
         // Create multiple web socket requests concurrently
         await withTaskGroup(of: Void.self) { group in
-            for i in 0..<iterations {
+            for i in 0 ..< iterations {
                 // Simulate executeWebSocketRequest (writes to dictionary)
                 group.addTask {
                     do {
@@ -243,9 +243,7 @@ final class NetworkServiceTests: XCTestCase {
             }
         }
 
-        // If we get here without crashing, the actor-based synchronization works
-        // Without proper synchronization, this test will crash with:
-        // EXC_BAD_ACCESS (SIGSEGV) in swift_retain
+        // If we get here without crashing, the implementation is now correct
     }
 
 }
