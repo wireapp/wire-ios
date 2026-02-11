@@ -532,7 +532,7 @@ extension SearchTask {
                 teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
                 directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
                 conversations: [],
-                apps: searchForApps ? [] : [],
+                apps: [],
                 bots: [],
                 searchUsersCache: searchUsersCache
             )
