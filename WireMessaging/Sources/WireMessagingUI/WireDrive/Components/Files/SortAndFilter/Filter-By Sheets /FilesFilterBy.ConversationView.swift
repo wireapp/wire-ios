@@ -32,12 +32,14 @@ extension FilesFilterBy {
         let onApply: (Set<ViewModel.Item>) -> Void
         
         init(
+            availableItems: some Collection<ViewModel.Item>,
             selectedItems: some Collection<ViewModel.Item>,
             onApply: @escaping (Set<ViewModel.Item>) -> Void
         ) {
             self.onApply = onApply
             self._viewModel = .init(
                 wrappedValue: .init(
+                    availableItems: availableItems,
                     selectedItems: selectedItems
                 )
             )
@@ -77,7 +79,7 @@ extension FilesFilterBy {
         private func itemView(_ item: ViewModel.Item) -> some View {
             Label {
                 HStack {
-                    Text(item)
+                    Text(item.name)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                     
                     Spacer()
@@ -120,6 +122,7 @@ private extension FilesFilterBy.ConversationView {
 
 #Preview {
     FilesFilterBy.ConversationView(
+        availableItems: [],
         selectedItems: [],
         onApply: { _ in }
     )

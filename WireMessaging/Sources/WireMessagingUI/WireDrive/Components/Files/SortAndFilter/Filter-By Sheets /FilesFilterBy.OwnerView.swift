@@ -32,11 +32,17 @@ extension FilesFilterBy {
         let onApply: (Set<ViewModel.Item>) -> Void
         
         init(
+            availableItems: some Collection<ViewModel.Item>,
             selectedItems: some Collection<ViewModel.Item>,
             onApply: @escaping (Set<ViewModel.Item>) -> Void
         ) {
             self.onApply = onApply
-            self._viewModel = .init(wrappedValue: .init(selectedItems: selectedItems))
+            self._viewModel = .init(
+                wrappedValue: .init(
+                    availableItems: availableItems,
+                    selectedItems: selectedItems
+                )
+            )
         }
         
         var body: some View {
@@ -73,8 +79,15 @@ extension FilesFilterBy {
         private func itemView(_ item: ViewModel.Item) -> some View {
             Label {
                 HStack {
-                    Text(item)
-                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(item.displayName)
+                            .font(.body)
+                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+
+                        Text("@" + item.handle)
+                            .font(.caption)
+                            .foregroundStyle(ColorTheme.Base.labelTitle.color)
+                    }
                     
                     Spacer()
                     
@@ -117,6 +130,7 @@ private extension FilesFilterBy.OwnerView {
 
 #Preview {
     FilesFilterBy.OwnerView(
+        availableItems: Set<FilesFilterBy.OwnerView.ViewModel.Item>.mocked(),
         selectedItems: [],
         onApply: { _ in }
     )

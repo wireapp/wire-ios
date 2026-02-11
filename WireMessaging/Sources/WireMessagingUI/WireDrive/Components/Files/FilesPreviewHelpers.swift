@@ -243,10 +243,11 @@ extension FilesFilteringViewModel {
                 tags: [],
                 types: [.audio],
                 conversations: [],
-                owners: [UUID().uuidString, UUID().uuidString],
+                owners: Set([WireDriveConversation.Participant].mocked().dropFirst()),
                 sharedByMe: true
             ),
             isBrowsing: isBrowsing,
+            conversations: Set([WireDriveConversation].mocked()),
             onUpdate: { _ in }
         )
     }
@@ -260,7 +261,7 @@ private func previewNodesRepository() -> any WireDriveNodesRepositoryProtocol {
     let nodes = (0 ... 150).map { index in
         WireDriveNode(
             uuid: UUID(),
-            conversation: .init(id: UUID().uuidString, name: "Conversation 1", participants: []),
+            conversation: .mocked(),
             path: "root/foo-\(index).jpg",
             modified: Date().addingTimeInterval(Double(-index * 60)),
             mimeType: "image/jpeg",
@@ -291,10 +292,7 @@ private func previewTagsApi() -> some NodesAPIProtocol {
 private func previewConversationsApi() -> some NodesAPIProtocol {
     let mock = MockNodesAPIProtocol()
     mock.getDriveConversations_MockMethod = {
-        [
-            .init(id: "1234", name: "Conversation 1", participants: ["User 1", "User 2"]),
-            .init(id: "5678", name: "Conversation 2", participants: ["User 1", "User 2", "User 3"]),
-        ]
+        .mocked()
     }
     return mock
 }
@@ -348,11 +346,7 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
     ) async throws -> (node: WireDriveNode, asset: WireDriveLocalAsset) {
         let node = WireDriveNode(
             uuid: .init(),
-            conversation: .init(
-                id: UUID().uuidString,
-                name: "Conversation 1",
-                participants: []
-            ),
+            conversation: .mocked(),
             path: ""
         )
 

@@ -72,6 +72,7 @@ struct FilesFilteringView: View {
             )
         case .conversations:
             FilesFilterBy.ConversationView(
+                availableItems: viewModel.conversations,
                 selectedItems: viewModel.filtersSelection.conversations,
                 onApply: { selectedItems in
                     viewModel.filtersSelection.conversations = selectedItems
@@ -79,6 +80,7 @@ struct FilesFilteringView: View {
             )
         case .owners:
             FilesFilterBy.OwnerView(
+                availableItems: viewModel.conversationsParticipants,
                 selectedItems: viewModel.filtersSelection.owners,
                 onApply: { selectedItems in
                     viewModel.filtersSelection.owners = selectedItems

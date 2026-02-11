@@ -151,13 +151,21 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
 
         return await context.perform {
             driveEnabledConversations.reduce(into: [WireDriveConversation]()) { result, conversation in
-                let participants = conversation.participants.compactMap(\.name)
                 if let name = conversation.name {
-                    result.append(WireDriveConversation(
+                    let participants: [WireDriveConversation.Participant] = conversation.participants.compactMap { item in
+                        .init(
+                            handle: item.handle ?? "-",
+                            displayName: item.name ?? "-"
+                        )
+                    }
+                    
+                    let driveConversation = WireDriveConversation(
                         id: conversation.wireDriveCellName,
                         name: name,
-                        participants: participants
-                    ))
+                        participants: Set(participants)
+                    )
+                
+                    result.append(driveConversation)
                 }
             }
         }

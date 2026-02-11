@@ -23,8 +23,6 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells.Filtering
 
 final class FilesFilteringViewModel: ObservableObject {
 
-    typealias ID = String
-
     enum Filtering: CaseIterable {
         case tags
         case type
@@ -54,8 +52,8 @@ final class FilesFilteringViewModel: ObservableObject {
     struct FiltersSelection {
         var tags: Set<String>
         var types: Set<FileType>
-        var conversations: Set<ID>
-        var owners: Set<ID>
+        var conversations: Set<WireDriveConversation>
+        var owners: Set<WireDriveConversation.Participant>
         var sharedByMe: Bool
 
         var hasFilterSelected: Bool {
@@ -97,6 +95,11 @@ final class FilesFilteringViewModel: ObservableObject {
     private let onUpdate: (FiltersSelection) -> Void
     let useCases: UseCases
     let isBrowsing: Bool
+    let conversations: Set<WireDriveConversation>
+    
+    var conversationsParticipants: Set<WireDriveConversation.Participant> {
+        Set(conversations.flatMap(\.participants))
+    }
     
     var availableFilters: [Filtering] {
         if isBrowsing {
@@ -110,12 +113,14 @@ final class FilesFilteringViewModel: ObservableObject {
         useCases: UseCases,
         filtersSelection: FiltersSelection = .empty,
         isBrowsing: Bool,
+        conversations: Set<WireDriveConversation>,
         onUpdate: @escaping (FiltersSelection) -> Void
     ) {
         self.useCases = useCases
         self.filtersSelection = filtersSelection
         self.isBrowsing = isBrowsing
         self.onUpdate = onUpdate
+        self.conversations = conversations
     }
 
     // MARK: - Actions

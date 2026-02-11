@@ -17,22 +17,26 @@
 //
 
 import Foundation
+import WireMessagingDomain
 
 extension FilesFilterBy.ConversationView {
     @MainActor
     final class ViewModel: ObservableObject {
-        typealias Item = String
+        typealias Item = WireDriveConversation
         
         @Published var selectedItems: Set<Item> = []
         
-        @Published var presentedItems: [Item] = ["conversation 1", "conversation 2"]
+        @Published var presentedItems: [Item] = []
 
         private let initiallySelectedItems: Set<Item>
 
-        init(selectedItems: some Collection<Item>) {
+        init(availableItems: some Collection<Item>, selectedItems: some Collection<Item>) {
             let items = Set(selectedItems)
             self.selectedItems = items
             self.initiallySelectedItems = items
+            self.presentedItems = availableItems.sorted { lhs, rhs in
+                lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
+            }
         }
 
         var hasChanges: Bool {
@@ -47,7 +51,7 @@ extension FilesFilterBy.ConversationView {
             if selectedItems.contains(item) {
                 selectedItems.remove(item)
             } else {
-                selectedItems = []
+                selectedItems = [] //TODO: remove later when we have multi-select
                 selectedItems.insert(item)
             }
         }

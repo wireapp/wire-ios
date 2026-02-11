@@ -273,6 +273,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var fileRenameView: FileRenameView?
     @Published var isEditing: FilesViewItem?
     @Published var templates: [WireDriveFileTemplate] = []
+    @Published var conversations: [WireDriveConversation] = []
     @Published var connectionState: ConnectionState = .online
 
     package init(
@@ -307,6 +308,7 @@ package final class FilesViewModel: ObservableObject {
         bindSearch()
         bindNetworkConnection()
         fetchTemplates()
+        fetchConversations()
     }
 
     private func fetchTemplates() {
@@ -333,6 +335,13 @@ package final class FilesViewModel: ObservableObject {
                     id: "03-Microsoft PowerPoint.pptx"
                 )
             ]
+        }
+    }
+    
+    private func fetchConversations() {
+        Task {
+            //TODO: only fetch one conversation if it's not the All Files Shared Drive
+            conversations = await useCases.getConversations.invoke()
         }
     }
 
@@ -810,7 +819,11 @@ package final class FilesViewModel: ObservableObject {
             fetchTagsUseCase: useCases.getTagSuggestions
         )
         
-        return FilesFilteringViewModel(useCases: useCases, isBrowsing: isBrowsing) { filtersSelection in
+        return FilesFilteringViewModel(
+            useCases: useCases,
+            isBrowsing: isBrowsing,
+            conversations: Set(conversations)
+        ) { filtersSelection in
             
         }
     }

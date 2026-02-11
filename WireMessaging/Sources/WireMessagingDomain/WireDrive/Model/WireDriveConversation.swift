@@ -16,20 +16,63 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// The conversation the node is linked to.
-public struct WireDriveConversation: Sendable, Equatable {
+import Foundation
+
+/// A conversation with enabled Drive.
+/// Wire Drive file nodes are linked to one of this conversations.
+public struct WireDriveConversation: Sendable, Hashable, Identifiable {
     public let id: String
     public let name: String
-    public let participants: [String]
+    public let participants: Set<Participant>
 
     public init(
         id: String,
         name: String,
-        participants: [String]
-
+        participants: Set<Participant>
     ) {
         self.id = id
         self.name = name
         self.participants = participants
+    }
+}
+
+public extension WireDriveConversation {
+    struct Participant: Sendable, Hashable, Identifiable {
+        public let handle: String
+        public let displayName: String
+
+        public var id: String {
+            handle //TODO: check if the handle is an appropriate ID or if we should use something else
+        }
+        
+        public init(handle: String, displayName: String) {
+            self.handle = handle
+            self.displayName = displayName
+        }
+    }
+}
+
+public extension WireDriveConversation {
+    static func mocked() -> Self {
+        .init(id: UUID().uuidString, name: "Conversation 1", participants: [])
+    }
+}
+
+public extension Collection where Element == WireDriveConversation {
+    static func mocked() -> [Element] {
+        [
+            .init(id: "1234", name: "Conversation 1", participants: Set([WireDriveConversation.Participant].mocked())),
+            .init(id: "5678", name: "Conversation 2", participants: Set([WireDriveConversation.Participant].mocked())),
+        ]
+    }
+}
+
+public extension Collection where Element == WireDriveConversation.Participant {
+    static func mocked() -> [Element] {
+        [
+            .init(handle: "waterwhite", displayName: "Heisenberg"),
+            .init(handle: "jessepinkman", displayName: "The Cook"),
+            .init(handle: "tucosalamanca", displayName: "Tuco"),
+        ]
     }
 }
