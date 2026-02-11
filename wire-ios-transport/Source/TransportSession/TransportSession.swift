@@ -41,9 +41,6 @@ public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, T
     @objc(setAccessTokenRenewalFailureHandler:)
     func setAccessTokenRenewalFailureHandler(_ handler: @escaping ZMCompletionHandlerBlock)
 
-    @objc(setAccessTokenRenewalSuccessHandler:)
-    func setAccessTokenRenewalSuccessHandler(_ handler: @escaping ZMAccessTokenHandlerBlock)
-
     func setNetworkStateDelegate(_ delegate: ZMNetworkStateDelegate?)
 
     @objc(addCompletionHandlerForBackgroundSessionWithIdentifier:handler:)
