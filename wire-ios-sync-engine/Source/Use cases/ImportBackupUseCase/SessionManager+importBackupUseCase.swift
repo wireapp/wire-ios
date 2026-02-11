@@ -55,10 +55,7 @@ private struct ImportBackupAppStateUpdater: ImportBackupAppStateUpdaterProtocol 
 
     @MainActor
     func selectAccountAndTriggerSlowSync(_ account: Account) async {
-        let userSession = await withCheckedContinuation { continuation in
-            sessionManager.select(account, completion: { continuation.resume(returning: $0) })
-        }
-        guard let userSession else { return }
+        guard let userSession = await sessionManager.select(account) else { return }
         do {
             try await userSession.syncAgent?.performInitialSync()
         } catch {

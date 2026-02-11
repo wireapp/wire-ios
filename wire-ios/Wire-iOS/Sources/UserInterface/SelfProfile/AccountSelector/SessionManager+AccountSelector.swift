@@ -25,6 +25,9 @@ extension SessionManager: AccountSelector {
     }
 
     public func switchTo(account: Account, completion: (((any UserSession)?) -> Void)?) {
-        select(account, completion: completion, tearDownCompletion: {})
+        Task {
+            let session = await select(account)
+            completion?(session)
+        }
     }
 }

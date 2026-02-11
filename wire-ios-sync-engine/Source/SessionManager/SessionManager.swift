@@ -688,48 +688,34 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     /// Select the account to be the active account.
-    /// - completion: runs when the user session was loaded
-    /// - tearDownCompletion: runs when the UI no longer holds any references to the previous user session.
-    public func select(
-        _ account: Account,
-        completion: ((ZMUserSession?) -> Void)? = nil,
-        tearDownCompletion: (() -> Void)? = nil
-    ) {
+    public func select(_ account: Account) async -> ZMUserSession? {
         guard !isSelectingAccount else {
-            completion?(nil)
-            return
+            return nil
         }
 
-        Task { [weak self] in
-            guard let self else {
-                completion?(nil)
-                return
-            }
+        let isConfirmed = await confirmSwitchingAccount()
 
-            let isConfirmed = await confirmSwitchingAccount()
+        guard isConfirmed else {
+            return nil
+        }
 
-            guard isConfirmed else {
-                completion?(nil)
-                return
-            }
+        isSelectingAccount = true
+        let selectedAccount = accountManager.selectedAccount
 
-            isSelectingAccount = true
-            let selectedAccount = accountManager.selectedAccount
+        guard let delegate = delegate else {
+            return nil
+        }
 
-            guard let delegate = delegate else {
-                completion?(nil)
-                return
-            }
+        return await withCheckedContinuation { continuation in
             delegate.sessionManagerWillOpenAccount(
                 account,
                 from: selectedAccount,
                 userSessionCanBeTornDown: { [weak self] in
                     self?.activeUserSession = nil
-                    tearDownCompletion?()
 
                     Task { @MainActor [weak self] in
                         guard let self else {
-                            completion?(nil)
+                            continuation.resume(returning: nil)
                             return
                         }
 
@@ -737,11 +723,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                         let session = await loadSession(for: account)
                         isSelectingAccount = false
 
-                        if let session {
-                            completion?(session)
-                        } else {
-                            completion?(nil)
-                        }
+                        continuation.resume(returning: session)
                     }
                 }
             )
@@ -786,9 +768,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         WireLogger.sessionManager.debug("Deleting account \(account.userIdentifier)...")
         if let secondAccount = accountManager.inactiveAccounts.first {
             // Deleted an account but we can switch to another account
-            select(secondAccount, tearDownCompletion: { [weak self] in
-                self?.tearDownSessionAndDelete(account: account, eraseData: eraseData)
-            })
+            Task {
+                _ = await select(secondAccount)
+                tearDownSessionAndDelete(account: account, eraseData: eraseData)
+            }
         } else if accountManager.selectedAccount != account {
             // Deleted an inactive account, there's no need notify the UI
             tearDownSessionAndDelete(account: account, eraseData: eraseData)
