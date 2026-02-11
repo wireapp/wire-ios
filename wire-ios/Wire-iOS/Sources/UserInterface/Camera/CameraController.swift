@@ -46,8 +46,13 @@ final class CameraController {
     init?(camera: SettingsCamera) {
         guard !UIDevice.isSimulator else { return nil }
         self.currentCamera = camera
-        setupSession()
         self.previewLayer = AVCaptureVideoPreviewLayer(session: session)
+
+        // `setupSession()` performs session configuration on a dedicated serial queue. This needs to happen after the
+        // `previewLayer` is created to avoid simultaneous session configuration across different threads as
+        // `AVCaptureVideoPreviewLayer` appears to configure the session internally on the main thread during init.
+        // Configuring the `AVCaptureSession` from multiple threads can lead to a deadlock.
+        setupSession()
     }
 
     // MARK: - Session Management
