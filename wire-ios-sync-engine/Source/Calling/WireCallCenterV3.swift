@@ -847,7 +847,8 @@ public extension WireCallCenterV3 {
                 } catch {
                     WireLogger.calling.error(
                         "failed to set up MLS conference: \(String(describing: error))",
-                        attributes: .safePublic)
+                        attributes: .safePublic
+                    )
                     self.onMLSConferenceFailure(id: conversationID)
                 }
             }
@@ -856,6 +857,7 @@ public extension WireCallCenterV3 {
 
     private func onMLSConferenceFailure(id: AVSIdentifier) {
         uiMOC?.perform { [weak self] in
+            // Notify to close calling UI
             self?.handle(
                 callState: .terminating(reason: .unknown),
                 conversationId: id

@@ -162,16 +162,16 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
             presented.dismiss(animated: animated) { [weak self] in
                 guard let self else { completion?(); return }
 
-                self.presentedActiveCallViewController = nil
-                self.isActiveCallShown = false
-                self.isPresentingActiveCall = false
+                presentedActiveCallViewController = nil
+                isActiveCallShown = false
+                isPresentingActiveCall = false
 
-                if let action = self.scheduledPostCallAction {
+                if let action = scheduledPostCallAction {
                     action { completion?() }
                 } else {
                     completion?()
                 }
-                self.scheduledPostCallAction = nil
+                scheduledPostCallAction = nil
             }
             return
         }
