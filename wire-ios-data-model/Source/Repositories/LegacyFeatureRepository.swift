@@ -633,7 +633,6 @@ public class LegacyFeatureRepository: LegacyFeatureRepositoryInterface {
             case .consumableNotifications:
                 storeConsumableNotifications(.init())
 
-
             case .cells:
                 storeCells(.init())
 

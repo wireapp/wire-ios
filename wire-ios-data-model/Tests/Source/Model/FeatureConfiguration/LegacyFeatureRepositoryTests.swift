@@ -947,53 +947,6 @@ class LegacyFeatureRepositoryTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    // MARK: - Simplified User Profile Connection QRCode
-
-    func testThatItFetchesSimplifiedUserConnectionRequestQRCode() {
-        expectThatItFetchesSimplifiedUserConnectionRequestQRCode(when: true)
-        expectThatItFetchesSimplifiedUserConnectionRequestQRCode(when: false)
-    }
-
-    func test_FetchUserProfileQRCode_ReturnsADefaultValue_WhenObjectDoesNotExist() {
-        syncMOC.performGroupedBlock {
-            // Given
-            let sut = LegacyFeatureRepository(context: self.syncMOC)
-
-            // When
-            let result = sut.fetchUserProfileQRCode()
-
-            // Then
-            XCTAssertEqual(result.status, .disabled)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-    }
-
-    func testThatItStoresSimplifiedUserConnectionRequestQRCode() {
-        syncMOC.performGroupedBlock {
-            // Given
-            let sut = LegacyFeatureRepository(context: self.syncMOC)
-
-            let simplifiedUserConnectionRequestQRCode = Feature.SimplifiedUserConnectionRequestQRCode(status: .enabled)
-
-            self.assertFeatureDoesNotExist(name: .simplifiedUserConnectionRequestQRCode)
-
-            // When
-            sut.storeUserProfileQRCode(simplifiedUserConnectionRequestQRCode)
-
-            // Then
-            guard let feature = Feature.fetch(name: .simplifiedUserConnectionRequestQRCode, context: self.syncMOC)
-            else {
-                XCTFail("feature not found")
-                return
-            }
-
-            XCTAssertEqual(feature.status, .enabled)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-    }
-
     // MARK: - Other
 
     func testItCreatesDefaultInstances() throws {
@@ -1029,32 +982,6 @@ class LegacyFeatureRepositoryTests: ZMBaseManagedObjectTest {
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-    }
-
-    // MARK: - Helpers
-
-    private func expectThatItFetchesSimplifiedUserConnectionRequestQRCode(
-        when enabled: Bool,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) {
-        syncMOC.performGroupedBlock {
-            let expected: Feature.Status = enabled ? .enabled : .disabled
-            // Given
-            let sut = LegacyFeatureRepository(context: self.syncMOC)
-
-            Feature.updateOrCreate(havingName: .simplifiedUserConnectionRequestQRCode, in: self.syncMOC) { feature in
-                feature.status = expected
-            }
-
-            // When
-            let result = sut.fetchUserProfileQRCode()
-
-            // Then
-            XCTAssertEqual(result.status, expected, file: file, line: line)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
     }
 }
 
