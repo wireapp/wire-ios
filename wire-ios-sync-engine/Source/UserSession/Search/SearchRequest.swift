@@ -18,7 +18,7 @@
 
 import WireDataModel
 
-public struct SearchOptions: OptionSet {
+public struct SearchOptions: OptionSet, CustomDebugStringConvertible {
 
     public let rawValue: Int
 
@@ -64,6 +64,25 @@ public struct SearchOptions: OptionSet {
 
     public init(rawValue: Int) {
         self.rawValue = rawValue
+    }
+
+    public var debugDescription: String {
+        let allOptions: [(SearchOptions, String)] = [
+            (.contacts, "contacts"),
+            (.teamMembers, "teamMembers"),
+            (.excludeNonActiveTeamMembers, "excludeNonActiveTeamMembers"),
+            (.excludeNonActivePartners, "excludeNonActivePartners"),
+            (.directory, "directory"),
+            (.conversations, "conversations"),
+            (.apps, "apps"),
+            (.bots, "bots"),
+            (.federated, "federated"),
+            (.localResultsOnly, "localResultsOnly"),
+        ]
+        let names = allOptions
+            .filter { contains($0.0) }
+            .map(\.1)
+        return "[\(names.joined(separator: ", "))]"
     }
 
 }

@@ -122,6 +122,7 @@ public class ZMSearchUser: NSObject, UserType {
     fileprivate var internalTeamCreatedBy: UUID?
     fileprivate var internalTeamPermissions: Permissions?
     fileprivate var internalAccentColorValue: ZMAccentColorRawValue
+    fileprivate var internalType: TypeOfUser?
     fileprivate var internalPendingApprovalByOtherUser: Bool = false
     fileprivate var internalConnectionRequestMessage: String?
     fileprivate var internalPreviewImageData: Data?
@@ -211,14 +212,14 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var isApp: Bool {
-        false // Apps (new-style services) don't use ZMSearchUser
+        (user?.type ?? internalType) == .app
     }
 
     public var isBot: Bool {
         providerIdentifier?.isEmpty == false
     }
 
-    public var isAppOrBot: Bool { isBot }
+    public var isAppOrBot: Bool { isApp || isBot }
 
     public var usesCompanyLogin: Bool {
         user?.usesCompanyLogin == true
@@ -491,6 +492,7 @@ public class ZMSearchUser: NSObject, UserType {
         teamIdentifier: UUID? = nil,
         user existingUser: ZMUser? = nil,
         searchUsersCache: SearchUsersCache?,
+        type: TypeOfUser?,
         isDeleted: Bool
     ) {
         self.init(
@@ -502,12 +504,12 @@ public class ZMSearchUser: NSObject, UserType {
             domain: domain,
             teamIdentifier: teamIdentifier,
             user: existingUser,
-            searchUsersCache: searchUsersCache
+            searchUsersCache: searchUsersCache,
+            type: type
         )
         self.internalIsAccountDeleted = isDeleted
     }
 
-    @objc
     public required init(
         viewContext: NSManagedObjectContext,
         name: String,
@@ -517,7 +519,8 @@ public class ZMSearchUser: NSObject, UserType {
         domain: String? = nil,
         teamIdentifier: UUID? = nil,
         user existingUser: ZMUser? = nil,
-        searchUsersCache: SearchUsersCache?
+        searchUsersCache: SearchUsersCache?,
+        type: TypeOfUser?
     ) {
 
         let personName = PersonName.person(withName: name, schemeTagger: nil)
@@ -532,6 +535,7 @@ public class ZMSearchUser: NSObject, UserType {
         self.teamIdentifier = existingUser?.teamIdentifier ?? teamIdentifier
         self.viewContext = viewContext
         self.searchUsersCache = searchUsersCache
+        self.internalType = existingUser?.type ?? type
 
         let selfUser = ZMUser.selfUser(in: viewContext)
         self.internalIsTeamMember = teamIdentifier != nil && selfUser.teamIdentifier == teamIdentifier
@@ -559,7 +563,8 @@ public class ZMSearchUser: NSObject, UserType {
             domain: user.domain,
             teamIdentifier: user.teamIdentifier,
             user: user,
-            searchUsersCache: searchUsersCache
+            searchUsersCache: searchUsersCache,
+            type: user.type
         )
     }
 
@@ -581,6 +586,7 @@ public class ZMSearchUser: NSObject, UserType {
         let qualifiedID = payload["qualified_id"] as? [String: Any]
         let domain = qualifiedID?["domain"] as? String
         let accentColorRawValue = (payload["accent_id"] as? NSNumber)?.int16Value ?? 0
+        let type = (payload["type"] as? String).flatMap(TypeOfUser.init(string:))
 
         self.init(
             viewContext: contextProvider.viewContext,
@@ -591,7 +597,8 @@ public class ZMSearchUser: NSObject, UserType {
             domain: domain,
             teamIdentifier: teamIdentifier,
             user: user,
-            searchUsersCache: searchUsersCache
+            searchUsersCache: searchUsersCache,
+            type: type
         )
 
         self.providerIdentifier = payload["provider"] as? String
@@ -775,4 +782,21 @@ public class ZMSearchUser: NSObject, UserType {
         internalTeamPermissions = permissions
         internalTeamCreatedBy = createdBy
     }
+}
+
+private extension TypeOfUser {
+
+    init?(string: String) {
+        switch string.lowercased() {
+        case "regular":
+            self = .regular
+        case "app":
+            self = .app
+        case "bot":
+            self = .bot
+        default:
+            return nil
+        }
+    }
+
 }

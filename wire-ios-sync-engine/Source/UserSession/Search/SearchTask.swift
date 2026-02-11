@@ -443,6 +443,7 @@ extension SearchTask {
                     teamIdentifier: result.teamID,
                     user: localUser,
                     searchUsersCache: searchUsersCache,
+                    type: localUser?.type,
                     isDeleted: result.deleted ?? false
                 )
             }
@@ -457,7 +458,7 @@ extension SearchTask {
                 teamMembers: [],
                 directory: [searchUser],
                 conversations: [],
-                apps: [],
+                apps: [], // TODO: ?
                 bots: [],
                 searchUsersCache: searchUsersCache
             )
@@ -477,7 +478,7 @@ extension SearchTask {
             case let .search(searchRequest) = type,
             !searchRequest.query.string.isEmpty, // backend won't return anything for empty queries
             !searchRequest.searchOptions.contains(.localResultsOnly),
-            !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated])
+        !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated, .apps])
         else {
             return { _ in }
         }
@@ -523,7 +524,8 @@ extension SearchTask {
                         domain: domain,
                         teamIdentifier: filteredContact.team,
                         user: localUser,
-                        searchUsersCache: searchUsersCache
+                        searchUsersCache: searchUsersCache,
+                        type: .init(filteredContact.type)
                     )
                 }
             }
@@ -534,7 +536,6 @@ extension SearchTask {
         let searchOptions = searchRequest.searchOptions
         let includeActiveTeamMembers = searchOptions.contains(.teamMembers) &&
             searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
-        // TODO: [WPB-20362] fix for searching apps
         let partialResult = await viewContext.perform { [searchUsersCache] in
             SearchResult(
                 context: viewContext,
@@ -542,7 +543,7 @@ extension SearchTask {
                 teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
                 directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
                 conversations: [],
-                apps: [],
+                apps: searchUsers.filter(\.isApp),
                 bots: [],
                 searchUsersCache: searchUsersCache
             )
@@ -713,8 +714,8 @@ extension SearchTask {
             teamMembers: [],
             directory: [],
             conversations: [],
-            apps: [],
-            bots: [],
+            apps: [], // TODO: ?
+            bots: [], // TODO: ?
             searchUsersCache: searchUsersCache
         )
 
@@ -745,6 +746,7 @@ extension SearchTask {
                             teamIdentifier: profile.teamID,
                             user: localUser,
                             searchUsersCache: searchUsersCache,
+                            type: localUser?.type,
                             isDeleted: profile.isDeleted
                         )
                         searchUser.providerIdentifier = profile.provider.uuidString
@@ -799,6 +801,21 @@ private extension SearchUserAssetKeys {
             complete: complete
         )
 
+    }
+
+}
+
+private extension TypeOfUser {
+
+    init(_ type: WireNetwork.UserType) {
+        switch type {
+        case .regular:
+            self = .regular
+        case .app:
+            self = .app
+        case .bot:
+            self = .bot
+        }
     }
 
 }
