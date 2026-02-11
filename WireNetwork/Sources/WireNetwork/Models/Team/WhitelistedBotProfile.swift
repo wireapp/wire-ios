@@ -32,4 +32,30 @@ public struct WhitelistedBotProfile: Equatable, Sendable {
     public var assets: [UserAsset]
     public var isDeleted: Bool
 
+    public init(
+        id: UUID,
+        qualifiedID: UserID?,
+        name: String,
+        summary: String,
+        description: String,
+        provider: UUID,
+        handle: String,
+        teamID: UUID?,
+        accentID: Int?,
+        assets: [UserAsset],
+        isDeleted: Bool
+    ) {
+        self.id = id
+        self.qualifiedID = qualifiedID
+        self.name = name
+        self.summary = summary
+        self.description = description
+        self.provider = provider
+        self.handle = handle
+        self.teamID = teamID
+        self.accentID = accentID
+        self.assets = assets
+        self.isDeleted = isDeleted
+    }
+
 }
