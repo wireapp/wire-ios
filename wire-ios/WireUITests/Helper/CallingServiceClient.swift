@@ -126,11 +126,11 @@ final class CallingServiceClient {
         return (data, code)
     }
 
-    /// Creat callingService instance
+    /// Create callingService instance
     /// - Parameters:
     ///   - name: name of instance
     ///   - userInfo: userInfo
-    ///   - backend: for which backend
+    ///   - backend: name of backend for the instance
     /// - Returns: instance id and status
     func createInstance(
         name: String,
@@ -176,11 +176,11 @@ final class CallingServiceClient {
 
     /// Create multiple callingService instances
     /// - Parameters:
-    ///   - users: users
-    ///   - backend: backend
+    ///   - users: information of users
+    ///   - backend: which backend of calling service is being used
     ///   - beta: true
-    ///   - instanceTypeName: instanceTypeName
-    ///   - instanceTypeVersion: instanceTypeVersion
+    ///   - instanceTypeName: InstanceType i.e chrome, firefox etc
+    ///   - instanceTypeVersion: Version of Instance
     /// - Returns: created Instances
     func createInstances(
         users: [UserInfo],

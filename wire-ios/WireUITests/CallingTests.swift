@@ -21,74 +21,113 @@ import XCTest
 
 final class CallingTests: WireUITestCase {
 
-    /// Testiny : https://app.testiny.io/IOS/testcases/tc/8801
-    @MainActor
-    func test_MultipleUsersJoiningGroupCall() async throws {
+    struct GroupCallSetupResponse {
+        let conversationId: String
+        let groupName: String
+        let allParticipants: [UserInfo]
+        let appCallee: UserInfo
+        let callingServiceUsers: [UserInfo]
+    }
 
-        let groupName = UserGenerator.generateRandomGroupName()
+    private func makeTeamAndGroupCallSetup(
+        memberCount: Int,
+        groupName: String? = nil
+    ) async throws -> GroupCallSetupResponse {
+        let groupName = groupName ?? UserGenerator.generateRandomGroupName()
 
         let (teamOwner, teamMembers, _, conversationId) = try await userHelper
             .registerTeamWithXMembersAndOptionalGroupConversation(
-                memberCount: 5,
+                memberCount: memberCount,
                 groupName: groupName
             )
-        guard let conversationId else {
-            XCTFail("conversationId is nil")
-            return
-        }
 
-        let convId = conversationId.uuidString.lowercased()
+        let conversationId1 = try XCTUnwrap(conversationId, "conversationId is nil")
+        let convId = conversationId1.uuidString.lowercased()
+
         let allParticipants = [teamOwner] + teamMembers
-        let appCallee = teamMembers.last!
+        let appCallee = try XCTUnwrap(teamMembers.last)
+
         let callingServiceAcceptingMembers = Array(teamMembers.dropLast(1))
-        let allParticipantInstanceUsers = [teamOwner] + callingServiceAcceptingMembers
+        let callingServiceUsers = [teamOwner] + callingServiceAcceptingMembers
 
-        let firstTimePage = try app.loginUser(email: appCallee.email, password: appCallee.password)
+        return GroupCallSetupResponse(
+            conversationId: convId,
+            groupName: groupName,
+            allParticipants: allParticipants,
+            appCallee: appCallee,
+            callingServiceUsers: callingServiceUsers
+        )
+    }
+
+    private func loginAndDismissFirstTimePopup(user: UserInfo) throws {
+        let firstTimePage = try app.loginUser(email: user.email, password: user.password)
         _ = try firstTimePage.acceptPopup(with: self)
+    }
 
-        let instances = try await callingServiceClient.createInstances(
-            users: allParticipantInstanceUsers,
+    private func createCallingServiceInstances(users: [UserInfo]) async throws -> [CallingServiceInstance] {
+        try await callingServiceClient.createInstances(
+            users: users,
             backend: CallingTestDefaults.backend,
             beta: CallingTestDefaults.isBeta,
             instanceTypeName: CallingTestDefaults.instanceTypeName,
             instanceTypeVersion: CallingTestDefaults.instanceTypeVersion
         )
+    }
 
-        guard let ownerAsCallerInstanceId = instances.first?.id, !ownerAsCallerInstanceId.isEmpty else {
-            XCTFail("Owner instanceId is nil")
-            return
-        }
+    private func requireOwnerInstanceId(from instances: [CallingServiceInstance]) throws -> String {
+        let ownerId = try XCTUnwrap(instances.first?.id, "Owner instanceId is nil")
+        XCTAssertFalse(ownerId.isEmpty, "Owner instanceId is empty")
+        return ownerId
+    }
 
-        _ = try await callingServiceClient.startCall(
-            instanceId: ownerAsCallerInstanceId,
-            conversationId: convId
-        )
-
-        let acceptingCalleeMembersInstanceIds = instances.dropFirst().compactMap(\.id).filter { !$0.isEmpty }
-
-        let responsesByInstanceId = try await callingServiceClient.acceptNextCalls(
-            instanceIds: acceptingCalleeMembersInstanceIds,
-            conversationId: convId
-        )
-
-        XCTAssertEqual(responsesByInstanceId.count, acceptingCalleeMembersInstanceIds.count)
-
+    private func acceptIncomingCall(groupName: String) throws -> OngoingCallPage {
         let incomingCallPage = try IncomingCallPage()
         XCTAssertTrue(incomingCallPage.acceptButton.exists, "Expected call not received")
 
         let ongoingCallPage = try incomingCallPage.acceptIncommingCall()
-
         XCTAssertTrue(app.staticTexts[groupName].waitForExistence(timeout: 10), "Conversation title mismatch")
 
-        for user in allParticipants {
-            let participantIdentifier = "audioView.\(user.name).minimized.inactive"
-            let participantTile = app.buttons[participantIdentifier]
+        return ongoingCallPage
+    }
 
+    private func verifyParticipantsVisible(_ participants: [UserInfo]) {
+        for user in participants {
+            let participantIdentifier = "audioView.\(user.name).minimized.inactive"
             XCTAssertTrue(
-                participantTile.waitForExistence(timeout: 15),
+                app.buttons[participantIdentifier].waitForExistence(timeout: 15),
                 "Expected \(user.name) to be in the call"
             )
         }
+    }
+
+    /// Testiny : https://app.testiny.io/IOS/testcases/tc/8801
+    /// Team Owner create group conversation and initiate a group call with members
+    @MainActor
+    func test_MultipleUsersJoiningGroupCall() async throws {
+
+        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 5)
+
+        try loginAndDismissFirstTimePopup(user: teamAndGroupCallSetup.appCallee)
+
+        let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
+
+        let ownerInstanceId = try requireOwnerInstanceId(from: instances)
+
+        _ = try await callingServiceClient.startCall(
+            instanceId: ownerInstanceId,
+            conversationId: teamAndGroupCallSetup.conversationId
+        )
+
+        let acceptingIds = instances.dropFirst().compactMap(\.id).filter { !$0.isEmpty }
+        let responses = try await callingServiceClient.acceptNextCalls(
+            instanceIds: acceptingIds,
+            conversationId: teamAndGroupCallSetup.conversationId
+        )
+        XCTAssertEqual(responses.count, acceptingIds.count)
+
+        let ongoingCallPage = try acceptIncomingCall(groupName: teamAndGroupCallSetup.groupName)
+        verifyParticipantsVisible(teamAndGroupCallSetup.allParticipants)
+
         _ = try ongoingCallPage.endOngoingCall()
     }
 }

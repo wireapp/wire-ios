@@ -468,11 +468,11 @@ class UserHelper {
         return [teamMember1.name, teamMember2.name]
     }
 
-    /// Registers number of members..
+    /// Registers a team with a given number of members and add them to a group
     /// - Parameters:
-    ///   - teamOwner: team owner
     ///   - memberCount: count of members
-    /// - Returns: ([QualifiedID], [UserInfo])
+    ///   - groupName : optional groupName
+    /// - Returns: teamOwner info, teamMembers info, qualifiedIds of members, conversationId if group created
     func registerTeamWithXMembersAndOptionalGroupConversation(
         memberCount: Int,
         groupName: String? = nil
