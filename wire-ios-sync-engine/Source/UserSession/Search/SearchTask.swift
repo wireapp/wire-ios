@@ -432,7 +432,7 @@ extension SearchTask {
                 )
             }
 
-            guard searchUser.user == nil, searchUser.user?.isTeamMember == false else {
+            guard searchUser.user == nil || searchUser.user?.isTeamMember == false else {
                 return { _ in }
             }
 

@@ -1205,7 +1205,7 @@ final class SearchTaskTests: DatabaseTest {
             id: userID,
             name: "User A",
             handle: nil,
-            teamID: nil,
+            teamID: teamIdentifier,
             type: nil,
             accentID: 1,
             assets: [],
@@ -1261,7 +1261,7 @@ final class SearchTaskTests: DatabaseTest {
         await fulfillment(of: [expectation])
     }
 
-    func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserExists() async throws { // TODO: is this test useful?
+    func testThatItCallsCompletionHandlerForFederatedUserSearch_WhenUserExists() async throws {
         // given
         searchAPIMock.searchContactsQueryDomainType_MockValue = .init(documents: [
             .init(id: UUID(), qualifiedID: nil, name: "John Doe", handle: nil, team: nil, accentID: nil, type: .regular)
@@ -1300,6 +1300,19 @@ final class SearchTaskTests: DatabaseTest {
     func testThatRemoteResultsIncludePreviousLocalResults() async throws {
         // given
         let user = try await createConnectedUser(withName: "userA")
+        searchAPIMock.searchContactsQueryDomainType_MockValue = .init(
+            documents: [
+                .init(
+                    id: UUID(),
+                    qualifiedID: nil,
+                    name: "UserB",
+                    handle: nil,
+                    team: nil,
+                    accentID: nil,
+                    type: .regular
+                )
+            ]
+        )
 
         mockTransportSession.performRemoteChanges { remoteChanges in
             remoteChanges.insertUser(withName: "UserB")
@@ -1327,10 +1340,19 @@ final class SearchTaskTests: DatabaseTest {
     func testThatLocalResultsIncludePreviousRemoteResults() async throws {
         // given
         _ = try await createConnectedUser(withName: "userA")
-
-        mockTransportSession.performRemoteChanges { remoteChanges in
-            remoteChanges.insertUser(withName: "UserB")
-        }
+        searchAPIMock.searchContactsQueryDomainType_MockValue = .init(
+                documents: [
+                    .init(
+                        id: UUID(),
+                        qualifiedID: nil,
+                        name: "UserB",
+                        handle: nil,
+                        team: nil,
+                        accentID: nil,
+                        type: .regular
+                    )
+                ]
+            )
 
         let request = SearchRequest(query: "user", searchOptions: [.contacts, .directory])
         let task = makeSearchTask(request: request, apiVersion: .v2)
@@ -1368,9 +1390,19 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatTaskIsCompletedAfterRemoteResults() async throws {
         // given
-        mockTransportSession.performRemoteChanges { remoteChanges in
-            remoteChanges.insertUser(withName: "UserB")
-        }
+        searchAPIMock.searchContactsQueryDomainType_MockValue = .init(
+            documents: [
+                .init(
+                    id: UUID(),
+                    qualifiedID: nil,
+                    name: "UserB",
+                    handle: nil,
+                    team: nil,
+                    accentID: nil,
+                    type: .regular
+                )
+            ]
+        )
 
         let request = SearchRequest(query: "user", searchOptions: [.directory])
         let task = makeSearchTask(request: request, apiVersion: .v2)
