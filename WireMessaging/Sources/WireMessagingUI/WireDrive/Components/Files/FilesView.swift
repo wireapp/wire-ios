@@ -82,6 +82,7 @@ package struct FilesView: FilesViewProtocol {
                 }
             }
             .animation(.easeInOut(duration: 0.25), value: viewModel.connectionState)
+            .animation(.easeOut(duration: 0.25), value: isSearchFocused)
             .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
             .navigationTitle(viewModel.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
