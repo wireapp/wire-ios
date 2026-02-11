@@ -688,6 +688,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     /// Select the account to be the active account.
+    @MainActor
     public func select(_ account: Account) async -> ZMUserSession? {
         guard !isSelectingAccount else {
             return nil
@@ -730,6 +731,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
+    @MainActor
     public func addAccount(userInfo: [String: Any]? = nil) async {
         let isConfirmed = await confirmSwitchingAccount()
         guard isConfirmed else { return }
@@ -1083,6 +1085,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     /// The active user session will be torn down and the app goes into migration state.
+    @MainActor
     public func prepareForRestoreWithMigration() async {
         guard let delegate else {
             WireLogger.sessionManager.debug("SessionManager.delegate is nil, aborting migration preparation")
@@ -1264,6 +1267,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         notifyNewUserSessionCreated(newSession)
     }
 
+    @MainActor
     func tearDownBackgroundSession(for accountId: UUID) async {
         guard let userSession = backgroundUserSessions[accountId] else {
             WireLogger.sessionManager
@@ -1815,6 +1819,7 @@ extension SessionManager: NotificationContext {
 
 public extension SessionManager {
 
+    @MainActor
     func confirmSwitchingAccount() async -> Bool {
         guard
             let switchingDelegate,
