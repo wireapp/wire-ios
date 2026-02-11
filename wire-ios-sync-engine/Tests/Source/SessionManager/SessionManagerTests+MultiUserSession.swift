@@ -343,10 +343,9 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         return session
     }
 
-    func testThatItConfiguresNotificationSettingsWhenAccountIsActivated() {
+    func testThatItConfiguresNotificationSettingsWhenAccountIsActivated() async {
         // GIVEN
         _ = setupSession()
-        let expectation = customExpectation(description: "Session loaded")
         sessionManager?.notificationCenter = notificationCenter!
 
         guard
@@ -355,10 +354,8 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         else { return XCTFail() }
 
         // WHEN
-        sessionManager.select(account, completion: { userSession in
-            XCTAssertNotNil(userSession)
-            expectation.fulfill()
-        })
+        let userSession = await sessionManager.select(account)
+        XCTAssertNotNil(userSession)
 
         wait(forConditionToBeTrue: self.sessionManager!.activeUserSession != nil, timeout: 5)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
