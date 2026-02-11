@@ -21,7 +21,7 @@ import WireAuthenticationAPI
 import WireNetwork
 import WireReusableUIComponents
 
-struct FakeReloginViaSSOFactory: ReloginViaSSOFactory, LoginViaSSOUseCaseFactory {
+struct FakeReloginViaSSOFactory: ReloginViaSSOFactory, LoginViaSSOUseCaseFactory, ValidateSSOCodeUseCaseFactory {
 
     let environment: BackendEnvironment2
     let existsAnotherAccount: Bool
@@ -45,4 +45,7 @@ struct FakeReloginViaSSOFactory: ReloginViaSSOFactory, LoginViaSSOUseCaseFactory
         try await MockDependencies().loginViaSSOUseCase(environment: environment)
     }
 
+    func validateSSOCodeUseCase() -> any ValidateSSOCodeUseCaseProtocol {
+        MockDependencies().validateSSOCodeUseCase()
+    }
 }
