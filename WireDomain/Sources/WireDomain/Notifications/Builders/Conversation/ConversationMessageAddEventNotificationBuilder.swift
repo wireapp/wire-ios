@@ -28,6 +28,7 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
 
         case failedToDecodeGenericMessage
         case unknownMessageContent
+        case proteusMessageMissing
         case externalProteusDataMissing
         case failedToDecodeExternalProteusData
         case externalProteusDataSHAMismatch
@@ -73,11 +74,7 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
 
         case let .right(proteusMessageEvent):
             guard let decryptedMessage = proteusMessageEvent.message.decryptedMessage else {
-                WireLogger.notifications.error(
-                    "failed to generate notification: no decrypted proteus message found",
-                    attributes: .safePublic
-                )
-                return nil
+                throw Failure.proteusMessageMissing
             }
 
             message = try extractMessageContent(from: decryptedMessage)
