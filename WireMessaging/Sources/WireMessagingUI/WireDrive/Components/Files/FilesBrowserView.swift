@@ -51,7 +51,6 @@ package struct FilesBrowserView: FilesViewProtocol {
                         FilesFilteringView(viewModel: viewModel.makeFilesFilteringViewModel())
                         FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
                     }
-                    .padding(.horizontal)
                 }
                 
                 switch viewModel.state {

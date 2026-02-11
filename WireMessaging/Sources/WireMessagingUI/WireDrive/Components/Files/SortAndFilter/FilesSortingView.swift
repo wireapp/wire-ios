@@ -85,7 +85,7 @@ struct FilesSortingView: View {
                     .fontWeight(.semibold)
                     .foregroundStyle(ColorTheme.Base.secondaryText.color)
             }
-        }
+        }.padding(.horizontal)
     }
 }
 
