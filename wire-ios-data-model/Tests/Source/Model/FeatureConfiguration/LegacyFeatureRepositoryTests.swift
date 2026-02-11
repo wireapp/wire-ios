@@ -23,17 +23,7 @@ class LegacyFeatureRepositoryTests: ZMBaseManagedObjectTest {
 
     override func setUp() {
         super.setUp()
-        deleteFeatureIfNeeded(name: .appLock)
-        deleteFeatureIfNeeded(name: .classifiedDomains)
-        deleteFeatureIfNeeded(name: .conferenceCalling)
-        deleteFeatureIfNeeded(name: .conversationGuestLinks)
-        deleteFeatureIfNeeded(name: .digitalSignature)
-        deleteFeatureIfNeeded(name: .fileSharing)
-        deleteFeatureIfNeeded(name: .mls)
-        deleteFeatureIfNeeded(name: .selfDeletingMessages)
-        deleteFeatureIfNeeded(name: .e2ei)
-        deleteFeatureIfNeeded(name: .consumableNotifications)
-        deleteFeatureIfNeeded(name: .simplifiedUserConnectionRequestQRCode)
+        Feature.Name.allCases.forEach(deleteFeatureIfNeeded)
     }
 
     // MARK: - Helpers

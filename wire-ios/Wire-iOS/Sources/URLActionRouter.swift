@@ -236,12 +236,13 @@ extension URLActionRouter: PresentationDelegate {
 
     private func openUserProfileIfNeeded(_ decisionHandler: @escaping (Bool) -> Void) {
         guard let userSession = sessionManager?.activeUserSession, !userSession.isLocked else {
+            decisionHandler(false)
             return
         }
         typealias UrlAction = L10n.Localizable.UrlAction
         Task {
             let shouldShowUserProfile = await userSession.isSimplifiedUserConnectionRequestQRCodeEnabled()
-            await MainActor.run {
+            await MainActor.run { [shouldShowUserProfile] in
                 if shouldShowUserProfile {
                     decisionHandler(shouldShowUserProfile)
                 } else {

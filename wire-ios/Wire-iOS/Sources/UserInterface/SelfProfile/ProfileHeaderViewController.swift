@@ -400,7 +400,9 @@ final class ProfileHeaderViewController: UIViewController {
         guard user.isSelfUser else { return }
         Task {
             let hasToShow = await userSession.isSimplifiedUserConnectionRequestQRCodeEnabled()
-            qrCodeButton.isHidden = !hasToShow
+            await MainActor.run { [hasToShow] in
+                qrCodeButton.isHidden = !hasToShow
+            }
         }
     }
 
