@@ -99,26 +99,24 @@ extension SessionManager: APIVersionResolverDelegate {
             accountManager.accounts.forEach { account in
 
                 // 1. Tear down the user sessions
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     dispatchGroup.enter()
-                    self.tearDownBackgroundSession(for: account.userIdentifier) {
-                        Task {
-                            do {
-                                // 2. Migrate users and conversations
-                                try await CoreDataStack.migrateLocalStorage(
-                                    accountIdentifier: account.userIdentifier,
-                                    applicationContainer: self.sharedContainerURL,
-                                    migration: {
-                                        try $0.migrateToFederation(localDomain: localDomain)
-                                    }
-                                )
-                            } catch {
-                                log.error("Failed to migrate account for federation: \(error)")
-                            }
 
-                            dispatchGroup.leave()
-                        }
+                    await self.tearDownBackgroundSession(for: account.userIdentifier)
+                    do {
+                        // 2. Migrate users and conversations
+                        try await CoreDataStack.migrateLocalStorage(
+                            accountIdentifier: account.userIdentifier,
+                            applicationContainer: self.sharedContainerURL,
+                            migration: {
+                                try $0.migrateToFederation(localDomain: localDomain)
+                            }
+                        )
+                    } catch {
+                        log.error("Failed to migrate account for federation: \(error)")
                     }
+
+                    dispatchGroup.leave()
                 }
             }
 

@@ -811,9 +811,10 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func tearDownSessionAndDelete(account: Account, eraseData: Bool) {
-        tearDownBackgroundSession(for: account.userIdentifier) {
+        Task {
+            await tearDownBackgroundSession(for: account.userIdentifier)
             if eraseData {
-                self.deleteAccountData(for: account)
+                deleteAccountData(for: account)
             }
         }
     }
@@ -826,7 +827,9 @@ public final class SessionManager: NSObject, SessionManagerType {
             if session == activeUserSession {
                 logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
             } else {
-                tearDownBackgroundSession(for: account.userIdentifier)
+                Task {
+                    await tearDownBackgroundSession(for: account.userIdentifier)
+                }
             }
         }
     }
@@ -1118,13 +1121,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         WireLogger.sessionManager.debug("... userSessionCanBeTornDown { ... }")
 
         if let accountID = activeUserSession?.account.userIdentifier {
-            await withCheckedContinuation { continuation in
-                tearDownBackgroundSession(for: accountID) { [self] in
-                    activeUserSession = nil
-                    accountTokens.removeValue(forKey: accountID)
-                    continuation.resume()
-                }
-            }
+            await tearDownBackgroundSession(for: accountID)
+            activeUserSession = nil
+            accountTokens.removeValue(forKey: accountID)
         } else {
             activeUserSession = nil
         }
@@ -1291,23 +1290,23 @@ public final class SessionManager: NSObject, SessionManagerType {
         notifyNewUserSessionCreated(newSession)
     }
 
-    func tearDownBackgroundSession(for accountId: UUID, completion: (() -> Void)? = nil) {
+    func tearDownBackgroundSession(for accountId: UUID) async {
         guard let userSession = backgroundUserSessions[accountId] else {
             WireLogger.sessionManager
                 .error("No session to tear down for \(accountId), known sessions: \(backgroundUserSessions)")
-            completion?()
             return
         }
         tearDownObservers(account: accountId)
         backgroundUserSessions[accountId] = nil
 
         dispatchGroup.enter()
-        userSession.close(deleteCookie: false) { [weak self] in
-            self?.notifyUserSessionDestroyed(accountId)
-            completion?()
-            self?.dispatchGroup.leave()
+        await withCheckedContinuation { continuation in
+            userSession.close(deleteCookie: false) { [weak self] in
+                self?.notifyUserSessionDestroyed(accountId)
+                continuation.resume()
+                self?.dispatchGroup.leave()
+            }
         }
-
     }
 
     // Tears down and releases all background user sessions.
@@ -1316,8 +1315,10 @@ public final class SessionManager: NSObject, SessionManagerType {
             activeUserSession != session
         }
 
-        backgroundSessions.keys.forEach {
-            tearDownBackgroundSession(for: $0)
+        Task {
+            for key in backgroundSessions.keys {
+                await tearDownBackgroundSession(for: key)
+            }
         }
     }
 
