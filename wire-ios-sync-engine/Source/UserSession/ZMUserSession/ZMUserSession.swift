@@ -73,6 +73,8 @@ public final class ZMUserSession: NSObject {
     private(set) var urlActionProcessors: [URLActionProcessor]?
     let debugCommands: [String: DebugCommand]
 
+    var accessTokenRenewalObserver: AccessTokenRenewalObserver?
+
     var recurringActionService: any RecurringActionServiceInterface
 
     private(set) var coreCryptoProvider: CoreCryptoProviderProtocol
@@ -777,21 +779,9 @@ public final class ZMUserSession: NSObject {
         transportSession.setAccessTokenRenewalFailureHandler { [weak self] response in
             self?.transportSessionAccessTokenDidFail(response: response)
         }
-    }
-
-    private func transportSessionAccessTokenDidFail(response: ZMTransportResponse) {
-        WireLogger.authentication.error("access token renewal failed: response status: \(response.errorInfo)")
-
-        managedObjectContext.performGroupedBlock { [weak self] in
-            guard let self else { return }
-            let selfUser = ZMUser.selfUser(in: managedObjectContext)
-            let error = NSError.userSessionError(
-                code: .accessTokenExpired,
-                userInfo: selfUser.loginCredentials.dictionaryRepresentation
-            )
-            notifyAuthenticationInvalidated(error)
+        transportSession.setAccessTokenRenewalSuccessHandler { [weak self]  _, _ in
+            self?.transportSessionAccessTokenDidSucceed()
         }
-
     }
 
     private func createStrategyDirectory() -> StrategyDirectoryProtocol {
@@ -1031,6 +1021,19 @@ public final class ZMUserSession: NSObject {
             await conversationEventProcessor.processAndSaveConversationEvents(events)
             completion?()
         }
+    }
+
+    // MARK: Access Token
+
+    private func renewAccessTokenIfNeeded(for userClient: WireDataModel.UserClient) {
+        WireLogger.session.debug("⚠️ renewAccessTokenIfNeeded")
+        guard
+            let apiVersion = resolvedBackendMetadata.apiVersion,
+            apiVersion > .v2,
+            let clientID = userClient.remoteIdentifier
+        else { return }
+
+        renewAccessToken(with: clientID)
     }
 
     // MARK: Perform changes
@@ -1350,6 +1353,7 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
 
     public func didRegisterSelfUserClient(_ userClient: WireDataModel.UserClient) {
         registerCurrentPushToken()
+        renewAccessTokenIfNeeded(for: userClient)
 
         managedObjectContext.performGroupedBlock { [weak self] in
             guard
