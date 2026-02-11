@@ -38,10 +38,6 @@ final class MockContextProvider: ContextProvider {
         NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     }
 
-    var searchContext: NSManagedObjectContext {
-        NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-    }
-
     var eventContext: NSManagedObjectContext {
         NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     }
