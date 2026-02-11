@@ -193,6 +193,8 @@
 "conversation.wireCells.filter.tags.emptyTitle" = "No tags were created yet.";
 "conversation.wireCells.filter.tags.notFoundBySearch" = "No tags found.";
 "conversation.wireCells.filter.tags.searchPrompt" = "Search tags";
+"conversation.wireCells.filter.conversation.navigationTitle" = "Filter by conversation";
+"conversation.wireCells.filter.owner.navigationTitle" = "Filter by owner";
 "conversation.wireCells.filter.fileType.navigationTitle" = "Filter by type";
 "conversation.wireCells.filter.fileType.typeName.pdf" = "PDF";
 "conversation.wireCells.filter.fileType.typeName.doc" = "Documents";

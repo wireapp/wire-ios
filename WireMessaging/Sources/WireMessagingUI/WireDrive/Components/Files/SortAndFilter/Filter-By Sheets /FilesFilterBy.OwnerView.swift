@@ -47,7 +47,7 @@ extension FilesFilterBy {
                             .ignoresSafeArea(.all)
                     }
                     .toolbar { toolbarContent }
-                    .navigationTitle("TODO")
+                    .navigationTitle(Strings.Filter.Owner.navigationTitle)
                     .navigationBarTitleDisplayMode(.inline)
             }
         }
