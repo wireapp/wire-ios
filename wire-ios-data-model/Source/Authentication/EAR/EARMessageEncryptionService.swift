@@ -19,7 +19,7 @@
 import WireCrypto
 import WireLogging
 
-// TODO: Add doc comments
+// sourcery: AutoMockable
 public protocol EARMessageEncryptionServiceProtocol {
 
     var isLocked: Bool { get }
