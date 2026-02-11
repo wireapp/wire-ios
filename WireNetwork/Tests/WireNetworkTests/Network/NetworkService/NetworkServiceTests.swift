@@ -204,6 +204,50 @@ final class NetworkServiceTests: XCTestCase {
         XCTAssertNil(result.1)
     }
 
+    // MARK: - WebSocket Data Race Test
+
+    func testWebSocketsByTask_ConcurrentAccessDoesNotCrash() async throws {
+        // This test reproduces the crash from the production crash report
+        // where concurrent access to webSocketsByTask causes memory corruption
+
+        let iterations = 100
+
+        // Create multiple web socket requests concurrently
+        await withTaskGroup(of: Void.self) { group in
+            for i in 0..<iterations {
+                // Simulate executeWebSocketRequest (writes to dictionary)
+                group.addTask {
+                    do {
+                        let request = try URLRequestBuilder(path: "/websocket-\(i)")
+                            .withMethod(.get)
+                            .build()
+                        _ = try? await self.sut.executeWebSocketRequest(request)
+                    } catch {
+                        // Ignore errors - we're just testing for crashes
+                    }
+                }
+
+                // Simulate delegate callback (reads/writes to dictionary)
+                group.addTask {
+                    // Create a mock web socket task
+                    let mockTask = self.session.webSocketTask(with: URLRequest(url: URL(string: "wss://example.com")!))
+
+                    // Simulate the delegate callback that accesses webSocketsByTask
+                    self.sut.urlSession(
+                        self.session,
+                        webSocketTask: mockTask,
+                        didCloseWith: .normalClosure,
+                        reason: nil
+                    )
+                }
+            }
+        }
+
+        // If we get here without crashing, the actor-based synchronization works
+        // Without proper synchronization, this test will crash with:
+        // EXC_BAD_ACCESS (SIGSEGV) in swift_retain
+    }
+
 }
 
 private enum Scaffolding {
