@@ -1054,10 +1054,14 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(mockTransportSession.receivedRequests().isEmpty)
     }
 
-    func testThatItCallsCompletionHandlerForTeamMemberDirectorySearch() async throws { // TODO: is this test still useful?
+    func testThatItCallsCompletionHandlerForTeamMemberDirectorySearch() async throws {
         // given
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
         let task = makeSearchTask(request: request, apiVersion: .v2)
+        let viewContext = coreDataStack!.viewContext
+        let teamIdentifier = await viewContext.perform {
+            ZMUser.selfUser(in: viewContext).teamIdentifier
+        }
         searchAPIMock.searchContactsQueryDomainType_MockValue = .init(
             documents: [
                 .init(
@@ -1065,23 +1069,14 @@ final class SearchTaskTests: DatabaseTest {
                     qualifiedID: nil,
                     name: "User A",
                     handle: nil,
-                    team: UUID(),
+                    team: teamIdentifier,
                     accentID: nil,
                     type: .regular
                 )
             ]
         )
-
-//        mockTransportSession.performRemoteChanges { remoteChanges in
-//            let userA = remoteChanges.insertUser(withName: "User A")
-//            let selfUser = remoteChanges.insertSelfUser(withName: "Self User")
-//            let team = remoteChanges.insertTeam(withName: "Team A", isBound: true) // TODO: how did User A end up in the local database?
-//            team.identifier = self.teamIdentifier.transportString()
-//            team.creator = userA
-//            remoteChanges.insertMember(with: selfUser, in: team)
-//            let member = remoteChanges.insertMember(with: userA, in: team)
-//            member.permissions = .admin
-//        }
+        teamsAPIMock.getTeamMembersOfFor_MockValue = []
+        TODO
 
         // when
         var result = SearchResult()
