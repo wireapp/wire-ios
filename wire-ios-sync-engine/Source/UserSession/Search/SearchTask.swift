@@ -85,7 +85,12 @@ public final class SearchTask {
         taskGroup.cancelAll()
     }
 
-    /// Start the search task. Errors will not be thrown.
+    /// Start the search task.
+    ///
+    /// - Throws:
+    ///   - Errors originating from underlying search requests, such as network or service failures.
+    ///   - `CancellationError` if the task group is cancelled via ``cancel()`` or task cancellation.
+    ///   - Other errors propagated by the underlying APIs used to perform the search.
     public func start() async throws -> SearchResult {
         guard case .pending = status else {
             assertionFailure()
