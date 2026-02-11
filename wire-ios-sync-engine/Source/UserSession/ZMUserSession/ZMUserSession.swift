@@ -431,6 +431,8 @@ public final class ZMUserSession: NSObject {
     private let networkReachability = NetworkReachability()
     private var networkInterfaceSwitchCancellable: AnyCancellable?
     private var isNetworkReachableCancellable: AnyCancellable?
+    private var liveMLSBrokenGroupsCancellable: AnyCancellable?
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Initialize
 
@@ -612,12 +614,12 @@ public final class ZMUserSession: NSObject {
 
             // Create and perform sync if there is a self client.
             if let selfClientID = selfUserClient.remoteIdentifier {
-                setUpSyncAgent(clientID: selfClientID)
+                setUpSyncAgent(clientID: selfClientID, isNewClient: false)
             }
         }
     }
 
-    func setUpSyncAgent(clientID: String) {
+    func setUpSyncAgent(clientID: String, isNewClient: Bool) {
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
             completionHandlers: .init(
@@ -628,6 +630,8 @@ public final class ZMUserSession: NSObject {
             )
         )
         self.clientSessionComponent = clientSessionComponent
+        liveMLSBrokenGroupsCancellable = clientSessionComponent.setupLiveMLSBrokenGroups()
+
         if let syncStateSubject = self.clientSessionComponent?.syncStateSubject {
             observeSyncStateForAVS(syncStateSubject: syncStateSubject)
         }
@@ -648,7 +652,6 @@ public final class ZMUserSession: NSObject {
         self.syncAgent = syncAgent
         syncAgent.delegate = self
 
-        mlsService.setSyncDelegate(syncAgent)
         mlsService.setResetBrokenMLSConversationDelegate(clientSessionComponent.initiateResetMLSConversationUseCase)
 
         // Finish setting up the final strategies.
@@ -659,24 +662,42 @@ public final class ZMUserSession: NSObject {
                 syncAgent: syncAgent,
                 notificationContext: notificationContext
             )
-            strategyDirectory.makeClientRelatedStategies(
-                applicationStatusDirectory: applicationStatusDirectory,
-                syncContext: syncContext,
-                transportSession: transportSession,
-                pushMessageHandler: localNotificationDispatcher,
-                flowManager: flowManager,
-                incrementalSyncObserver: incrementalSyncObserver,
-                metadata: resolvedBackendMetadata
-            )
+
+            // TODO: [WPB-22986] Remove logging - added this logging temporarily to investigate a hang.
+            WireLogger.session.measureTime(
+                label: "make client strategies",
+                durationKey: .timeInterval,
+                attributes: [.isNewClient: isNewClient]
+            ) {
+                strategyDirectory.makeClientRelatedStrategies(
+                    applicationStatusDirectory: applicationStatusDirectory,
+                    syncContext: syncContext,
+                    transportSession: transportSession,
+                    pushMessageHandler: localNotificationDispatcher,
+                    flowManager: flowManager,
+                    incrementalSyncObserver: incrementalSyncObserver,
+                    initiateResetMLSConversationUseCase: clientSessionComponent.initiateResetMLSConversationUseCase,
+                    metadata: resolvedBackendMetadata
+                )
+            }
             syncStrategy?.updateClientContextChangeTrackers()
         }
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             await clientSessionComponent.workAgent.setAutoStartEnabled(true)
             await clientSessionComponent.workAgent.start()
             clientSessionComponent.generatorsDirectory.observeSyncState()
-
+            clientSessionComponent.syncStateSubject.sink { [weak clientSessionComponent] state in
+                if state == .suspended {
+                    Task {
+                        // clear all items, those will be regenerated when sync is resumed
+                        await clientSessionComponent?.workAgent.clearSchedulerQueue()
+                    }
+                }
+            }.store(in: &cancellables)
             // Initialize the generator to enqueue repair work item if needed
             clientSessionComponent.repairFaultyMLSRemovalKeysGenerator.submitWorkItemIfNeeded()
+
         }
     }
 
@@ -715,6 +736,7 @@ public final class ZMUserSession: NSObject {
         guard !isTornDown else { return }
 
         Task {
+            await clientSessionComponent?.workAgent.clearSchedulerQueue()
             await clientSessionComponent?.workAgent.stop()
         }
         tearDownMLSGroupVerification()
@@ -785,16 +807,6 @@ public final class ZMUserSession: NSObject {
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
             searchUsersCache: dependencies.caches.searchUsers,
-            initiateResetMLSConversationUseCaseFactory: { [weak self] context in
-                guard let self, let repo = clientSessionComponent?.conversationRepository else {
-                    fatal("userSession not reachable")
-                }
-                // Passing useCase from WireDomain to WireRequestStrategy's MessageSender
-                return makeInitiateResetMLSConversationUseCase(
-                    context: context,
-                    conversationRepository: repo
-                )
-            },
             metadata: resolvedBackendMetadata
         )
     }
@@ -1275,26 +1287,6 @@ extension ZMUserSession: SyncAgentDelegate {
         performPostQuickSyncE2EIActions()
     }
 
-    private func makeInitiateResetMLSConversationUseCase(
-        context: NSManagedObjectContext,
-        conversationRepository: ConversationRepositoryProtocol
-    ) -> WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {
-        guard let clientSessionComponent else {
-            fatalError()
-        }
-
-        return InitiateResetMLSConversationUseCase(
-            api: clientSessionComponent.mlsAPI,
-            mlsService: mlsService,
-            conversationLocalStore: clientSessionComponent.conversationLocalStore,
-            conversationRepository: clientSessionComponent.conversationRepository,
-            lockRepository: ResetMLSConversationLockRepository(
-                userID: userId
-            ),
-            selfDomain: resolvedBackendMetadata.domain
-        )
-    }
-
     private func resolveOneOnOneConversationsIfNeeded() async {
         guard let clientSessionComponent, mlsFeature.isEnabled, !didAlreadyResolveAllOneOnOnes else { return }
 
@@ -1389,7 +1381,7 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
         // The client was just registered and still needs to perform the
         // initial sync.
         if let selfClientID = userClient.remoteIdentifier {
-            setUpSyncAgent(clientID: selfClientID)
+            setUpSyncAgent(clientID: selfClientID, isNewClient: true)
             // no migration needed from last sync system as it's a new client
             if userClient.isConsumableNotificationsCapable {
                 // activate new sync with consumable notifications
