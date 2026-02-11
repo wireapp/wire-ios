@@ -113,7 +113,8 @@ package struct RecycleBinContainer: View {
                 createPublicLink: WireDriveCreatePublicLinkUseCase(nodesAPI: nodesAPI),
                 deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesAPI),
                 updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
-                updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI)
+                updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
+                getConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI)
             ),
             title: path.last?.name,
             navigationPath: path,

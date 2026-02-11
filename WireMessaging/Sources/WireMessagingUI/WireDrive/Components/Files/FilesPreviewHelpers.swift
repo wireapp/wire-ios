@@ -94,6 +94,9 @@ extension FilesViewModel {
                 ),
                 updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(
                     nodesAPI: previewPublicLinkApi()
+                ),
+                getConversations: WireDriveGetConversationsUseCase(
+                    nodesAPI: previewConversationsApi()
                 )
             ),
             setNavigation: { _ in },
@@ -282,6 +285,17 @@ private func previewTagsApi() -> some NodesAPIProtocol {
         mockTags
     }
     mock.updateTagsNodeIDTags_MockMethod = { _, _ in }
+    return mock
+}
+
+private func previewConversationsApi() -> some NodesAPIProtocol {
+    let mock = MockNodesAPIProtocol()
+    mock.getDriveConversations_MockMethod = {
+        [
+            .init(id: "1234", name: "Conversation 1", participants: ["User 1", "User 2"]),
+            .init(id: "5678", name: "Conversation 2", participants: ["User 1", "User 2", "User 3"]),
+        ]
+    }
     return mock
 }
 

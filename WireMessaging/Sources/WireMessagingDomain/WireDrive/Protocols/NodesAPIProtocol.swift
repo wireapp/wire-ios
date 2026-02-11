@@ -62,4 +62,6 @@ package protocol NodesAPIProtocol: Sendable {
     func getAllTags() async throws -> [String]
 
     func getVersions(nodeID: UUID) async throws -> [WireDriveNodeVersion]
+    
+    func getDriveConversations() async -> [WireDriveConversation]
 }

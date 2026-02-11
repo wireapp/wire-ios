@@ -237,6 +237,10 @@ package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol
     package func getTemplates() async throws -> [WireDriveFileTemplate] {
         try await restAPI.getTemplates()?.toDomainModel() ?? []
     }
+    
+    package func getDriveConversations() async -> [WireDriveConversation] {
+        return await localStore.fetchDriveConversations()
+    }
 }
 
 private extension CellsSDK.ErrorResponse {

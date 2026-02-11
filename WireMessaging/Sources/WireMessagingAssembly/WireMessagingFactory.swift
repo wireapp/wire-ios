@@ -206,7 +206,8 @@ public extension WireMessagingFactory {
                         createPublicLink: WireDriveCreatePublicLinkUseCase(nodesAPI: nodesAPI),
                         deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesAPI),
                         updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
-                        updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI)
+                        updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
+                        getConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI)
                     ),
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,

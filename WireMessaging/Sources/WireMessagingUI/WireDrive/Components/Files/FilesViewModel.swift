@@ -172,7 +172,8 @@ package final class FilesViewModel: ObservableObject {
             createPublicLink: WireDriveCreatePublicLinkUseCase,
             deletePublicLink: WireDriveDeletePublicLinkUseCase,
             updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase,
-            updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase
+            updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase,
+            getConversations: any WireDriveGetConversationsUseCaseProtocol
         ) {
 
             self.fetchNodes = fetchNodes
@@ -191,6 +192,7 @@ package final class FilesViewModel: ObservableObject {
             self.deletePublicLink = deletePublicLink
             self.updatePublicLinkExpiration = updatePublicLinkExpiration
             self.updatePublicLinkPassword = updatePublicLinkPassword
+            self.getConversations = getConversations
         }
 
         let fetchNodes: WireDriveFetchNodesPageUseCase
@@ -209,6 +211,7 @@ package final class FilesViewModel: ObservableObject {
         let deletePublicLink: WireDriveDeletePublicLinkUseCase
         let updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase
         let updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase
+        let getConversations: any WireDriveGetConversationsUseCaseProtocol
     }
 
     private let setNavigation: ([FilesViewItem]) -> Void
