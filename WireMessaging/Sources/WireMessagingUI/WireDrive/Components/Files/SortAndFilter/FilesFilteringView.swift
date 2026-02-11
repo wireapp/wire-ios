@@ -31,7 +31,7 @@ struct FilesFilteringView: View {
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 5) {
+            HStack(spacing: 8) {
                 ForEach(viewModel.availableFilters, id: \.self) { filter in
                     capsule(for: filter)
                         .onTapGesture {
@@ -90,7 +90,7 @@ struct FilesFilteringView: View {
     private func capsule(for filter: FilesFilteringViewModel.Filtering) -> some View {
         let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
         
-        HStack(alignment: .center, spacing: 6) {
+        HStack(alignment: .center, spacing: 5) {
             Text(filter.title)
                 .font(for: .h5)
                 .foregroundStyle(textColor(for: filter))
@@ -100,11 +100,11 @@ struct FilesFilteringView: View {
                 Text(badge)
                     .font(.caption2.bold())
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 3)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
                     .background(
                         ColorTheme.Base.primary(accentColor).color,
-                        in: RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        in: RoundedRectangle(cornerRadius: 6, style: .continuous)
                     )
             }
 
@@ -120,12 +120,18 @@ struct FilesFilteringView: View {
                     .foregroundStyle(imageColor(for: filter))
             }
         }
+        .frame(height: 15)
         .fontWeight(.semibold)
         .padding(8)
         .if(filter != .removeAllFilters) { view in
             view.background {
                 shape.fill(capsuleFillColor(for: filter))
-                shape.stroke(capsuleStrokeColor(for: filter))
+            }
+            .overlay {
+                shape.strokeBorder(
+                    capsuleStrokeColor(for: filter),
+                    lineWidth: 1
+                )
             }
         }
         .padding(.vertical, 1)
