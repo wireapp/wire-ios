@@ -23,7 +23,7 @@ final class SearchBotsSectionController: SearchSectionController {
 
     weak var delegate: SearchBotsSectionDelegate?
 
-    var bots: [any Bot] = []
+    var bots: [any UserType] = []
 
     let canSelfUserManageTeam: Bool
 
@@ -55,7 +55,7 @@ final class SearchBotsSectionController: SearchSectionController {
         L10n.Localizable.Peoplepicker.Header.apps
     }
 
-    func bot(for indexPath: IndexPath) -> any Bot {
+    func bot(for indexPath: IndexPath) -> any UserType {
         if canSelfUserManageTeam {
             bots[indexPath.row - 1]
         } else {
