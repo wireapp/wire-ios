@@ -319,15 +319,20 @@ public class EARService: EARServiceInterface {
             guard let self else { return }
 
             do {
+                // EAR need to be disabled before attempting migration
+                earStorage.enableEAR(false)
+                context.encryptMessagesAtRest = false
+                
                 if !skipMigration {
                     try earMigrator.migrateAwayFromEncryptionAtRest(context: context)
                 }
-                
-                earStorage.enableEAR(false)
-                context.encryptMessagesAtRest = false
+
+                // Database key needs to be removed after migration
                 earMessageEncryptionService.setDatabaseKey(nil)
             } catch {
                 WireLogger.ear.error("failed to turn off EAR: \(error)")
+                earStorage.enableEAR(true)
+                context.encryptMessagesAtRest = true
                 throw error
             }
 
