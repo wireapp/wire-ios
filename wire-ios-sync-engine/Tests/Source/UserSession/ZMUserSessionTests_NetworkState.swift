@@ -62,7 +62,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         let logFilesProvider = LogFilesProvidingMock()
 
         var builder = ZMUserSessionBuilder()
-        builder.withAllDependencies(
+        await builder.withAllDependencies(
             backendEnvironment: backendEnvironment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             currentAppVersion: "3.120.0",

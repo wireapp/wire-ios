@@ -51,19 +51,20 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
     /// that the `managedObjectContext` is changed.
     /// To remove this workaround, delete this override  and the `mockEARService` should be used instead of
     /// a real instance of `EARService`.
-    override func createSut() -> ZMUserSession {
-        let earService = EARService(
+    override func createSut() async -> ZMUserSession {
+        let earService = await EARService(
             accountID: coreDataStack.account.userIdentifier,
             databaseContexts: [
                 coreDataStack.viewContext,
                 coreDataStack.syncContext
             ],
+            coreDataStack: coreDataStack,
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: MockAuthenticationContextProtocol()
         )
 
-        let session = createSut(earService: earService)
+        let session = await createSut(earService: earService)
 
         session.delegate = userSessionDelegate
         userSessionDelegate.prepareForMigrationOnReadyMockMethod = { _, onReady in

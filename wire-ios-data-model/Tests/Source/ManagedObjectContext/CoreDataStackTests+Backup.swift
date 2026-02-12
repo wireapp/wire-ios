@@ -24,6 +24,7 @@ import XCTest
 final class CoreDataStackTests_Backup: DatabaseBaseTest {
 
     private var migrator: MockCoreDataMessagingMigratorProtocol!
+    private var earMigrator: MockEARMigratorProtocol!
 
     override func setUp() {
         super.setUp()
@@ -33,6 +34,10 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
             false
         }
         migrator.migrateStoreAtToVersion_MockMethod = { _, _ in }
+        
+        earMigrator = MockEARMigratorProtocol()
+        earMigrator.migrateTowardEncryptionAtRestContext_MockMethod = { _ in }
+        earMigrator.migrateAwayFromEncryptionAtRestContext_MockMethod = { _ in }
     }
 
     override func tearDown() {
@@ -48,7 +53,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
 
     func createBackup(
         accountIdentifier: UUID,
-        databaseKey: VolatileData? = nil,
+        earMigrator: EARMigratorProtocol? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws -> URL {
@@ -56,7 +61,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
             accountIdentifier: accountIdentifier,
             clientIdentifier: name,
             applicationContainer: DatabaseBaseTest.applicationContainer,
-            databaseKey: databaseKey
+            earMigrator: earMigrator
         ).url
     }
 
@@ -154,17 +159,15 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
     }
 
     @MainActor
-    func testThatItDisablesEncryptionAtRest_WhenEARIsEnableAndEncryptionKeysAreValid() async throws {
+    func testThatItDisablesEncryptionAtRest_WhenEARIsEnableAndMigratorIsValid() async throws {
         // given
         let uuid = UUID()
         let directory = try await createStorageStackAndWaitForCompletion(userID: uuid)
         directory.viewContext.encryptMessagesAtRest = true
-
-        directory.viewContext.databaseKey = validDatabaseKey
         directory.viewContext.saveOrRollback()
 
         // when
-        let backup = try await createBackup(accountIdentifier: uuid, databaseKey: directory.viewContext.databaseKey)
+        let backup = try await createBackup(accountIdentifier: uuid, earMigrator: earMigrator)
         directory.viewContext.saveOrRollback()
 
         // then
@@ -179,21 +182,20 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
     }
 
     @MainActor
-    func testThatItFailsWhenEARIsEnabledAndEncryptionKeysAreNil() async throws {
+    func testThatItFailsWhenEARIsEnabledAndMigratorIsNil() async throws {
         // given
         let uuid = UUID()
         let directory = try await createStorageStackAndWaitForCompletion(userID: uuid)
         directory.viewContext.encryptMessagesAtRest = true
-        directory.viewContext.databaseKey = nil
         directory.viewContext.saveOrRollback()
 
         await XCTAssertThrowsErrorAsync {
             // when
-            try await createBackup(accountIdentifier: uuid, databaseKey: nil)
+            try await createBackup(accountIdentifier: uuid, earMigrator: nil)
         } errorHandler: { error in
             switch error {
             case CoreDataStack.BackupError.failedToWrite(
-                CoreDataStack.BackupError.missingEAREncryptionKey
+                CoreDataStack.BackupError.missingEARMigrator
             ):
                 // then
                 break

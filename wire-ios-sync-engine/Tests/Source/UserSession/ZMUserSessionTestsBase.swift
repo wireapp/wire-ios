@@ -49,8 +49,8 @@ class ZMUserSessionTestsBase: MessagingTest {
 
     var sut: ZMUserSession!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3Mock.self
 
@@ -115,7 +115,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockRecurringActionService.registerAction_MockMethod = { _ in }
         mockRecurringActionService.performActionsIfNeeded_MockMethod = {}
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
-        sut = createSut()
+        sut = await createSut()
         sut.sessionManager = mockSessionManager
 
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
@@ -148,11 +148,11 @@ class ZMUserSessionTestsBase: MessagingTest {
         super.tearDown()
     }
 
-    func createSut() -> ZMUserSession {
-        createSut(earService: mockEARService)
+    func createSut() async -> ZMUserSession {
+        await createSut(earService: mockEARService)
     }
 
-    func createSut(earService: EARServiceInterface) -> ZMUserSession {
+    func createSut(earService: EARServiceInterface) async -> ZMUserSession {
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
         let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
@@ -171,7 +171,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         let logFilesProvider = LogFilesProvidingMock()
 
         var builder = ZMUserSessionBuilder()
-        builder.withAllDependencies(
+        await builder.withAllDependencies(
             backendEnvironment: backendEnvironment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             currentAppVersion: "3.120.0",

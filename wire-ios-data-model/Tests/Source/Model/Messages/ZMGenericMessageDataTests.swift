@@ -25,12 +25,28 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
 
     // MARK: - Set Up
 
+    private var earMessageEncryptionService: EARMessageEncryptionService!
+    private var earStorage: EARStorage!
+    
     override func setUp() {
         super.setUp()
 
+        earStorage = EARStorage(userID: UUID(), sharedUserDefaults: .temporary())
+        earStorage.enableEAR(false)
+
+        let service = EARMessageEncryptionService(earStorage: earStorage)
+        earMessageEncryptionService = service
+        
         createSelfClient(onMOC: uiMOC)
         uiMOC.encryptMessagesAtRest = false
-        uiMOC.databaseKey = nil
+        uiMOC.earMessageEncryptionService = service
+    }
+    
+    override func tearDown() {
+        earStorage = nil
+        earMessageEncryptionService = nil
+        
+        super.tearDown()
     }
 
     // MARK: - Positive Tests
@@ -40,6 +56,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         let sut = ZMGenericMessageData.insertNewObject(in: uiMOC)
         let genericMessage = createGenericMessage(text: "Hello, world")
 
+        XCTAssertFalse(earStorage.earEnabled())
         XCTAssertFalse(uiMOC.encryptMessagesAtRest)
 
         // When
@@ -57,8 +74,8 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         let sut = ZMGenericMessageData.insertNewObject(in: uiMOC)
         let genericMessage = createGenericMessage(text: "Hello, world")
 
-        uiMOC.encryptMessagesAtRest = true
-        uiMOC.databaseKey = validDatabaseKey
+        setEAREnabled(true)
+        earMessageEncryptionService.setDatabaseKey(validDatabaseKey)
 
         // When
         try sut.setGenericMessage(genericMessage)
@@ -75,18 +92,22 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
     func test_ItDoesNotStoreData_IfDatabaseKeyIsMissing_WhenEncrypting() throws {
         // Given
         let sut = ZMGenericMessageData.insertNewObject(in: uiMOC)
-        let oldGenericMessage = try createAndStoreEncryptedData(sut: sut, text: "Hello, world")
-        let databaseKey = uiMOC.databaseKey
+        let databaseKey = validDatabaseKey
+        let oldGenericMessage = try createAndStoreEncryptedData(
+            sut: sut,
+            text: "Hello, world",
+            databaseKey: databaseKey
+        )
 
         // When
         let newGenericMessage = createGenericMessage(text: "Goodbye!")
 
-        uiMOC.databaseKey = nil
+        earMessageEncryptionService.setDatabaseKey(nil)
 
         XCTAssertThrowsError(try sut.setGenericMessage(newGenericMessage))
 
         // Then
-        uiMOC.databaseKey = databaseKey
+        earMessageEncryptionService.setDatabaseKey(databaseKey)
 
         XCTAssertEqual(sut.underlyingMessage, oldGenericMessage)
     }
@@ -98,7 +119,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         try createAndStoreEncryptedData(sut: sut, text: "Hello, world")
 
         // When
-        uiMOC.databaseKey = nil
+        earMessageEncryptionService.setDatabaseKey(nil)
 
         // Then
         XCTAssertNil(sut.underlyingMessage)
@@ -108,18 +129,22 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
     func test_ItDoesNotStoreData_IfEncryptionFails_WhenEncrypting() throws {
         // Given
         let sut = ZMGenericMessageData.insertNewObject(in: uiMOC)
-        let oldGenericMessage = try createAndStoreEncryptedData(sut: sut, text: "Hello, world")
-        let databaseKey = uiMOC.databaseKey
+        let databaseKey = validDatabaseKey
+        let oldGenericMessage = try createAndStoreEncryptedData(
+            sut: sut,
+            text: "Hello, world",
+            databaseKey: databaseKey
+        )
 
         // When
         let newGenericMessage = createGenericMessage(text: "Goodbye!")
 
-        uiMOC.databaseKey = malformedDatabaseKey
+        earMessageEncryptionService.setDatabaseKey(malformedDatabaseKey)
 
         XCTAssertThrowsError(try sut.setGenericMessage(newGenericMessage))
 
         // Then
-        uiMOC.databaseKey = databaseKey
+        earMessageEncryptionService.setDatabaseKey(databaseKey)
 
         XCTAssertEqual(sut.underlyingMessage, oldGenericMessage)
     }
@@ -131,7 +156,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         try createAndStoreEncryptedData(sut: sut, text: "Hello, world")
 
         // When
-        uiMOC.databaseKey = malformedDatabaseKey
+        earMessageEncryptionService.setDatabaseKey(malformedDatabaseKey)
 
         // Then
         XCTAssertNil(sut.underlyingMessage)
@@ -139,16 +164,25 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
 
     // MARK: - Helpers
 
+    private func setEAREnabled(_ enabled: Bool) {
+        uiMOC.encryptMessagesAtRest = enabled
+        earStorage.enableEAR(enabled)
+    }
+        
     private func createGenericMessage(text: String) -> GenericMessage {
         GenericMessage(content: Text(content: text))
     }
 
     @discardableResult
-    private func createAndStoreEncryptedData(sut: ZMGenericMessageData, text: String) throws -> GenericMessage {
+    private func createAndStoreEncryptedData(
+        sut: ZMGenericMessageData,
+        text: String,
+        databaseKey: VolatileData? = nil
+    ) throws -> GenericMessage {
         let genericMessage = createGenericMessage(text: text)
 
-        uiMOC.encryptMessagesAtRest = true
-        uiMOC.databaseKey = validDatabaseKey
+        setEAREnabled(true)
+        earMessageEncryptionService.setDatabaseKey(databaseKey ?? validDatabaseKey)
 
         try sut.setGenericMessage(genericMessage)
 
