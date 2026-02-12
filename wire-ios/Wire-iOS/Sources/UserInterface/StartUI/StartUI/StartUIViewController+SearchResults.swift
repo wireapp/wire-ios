@@ -59,7 +59,6 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         indexPath: IndexPath,
         section: SearchResultsViewControllerSection
     ) {
-
         if !user.isConnected, !user.isTeamMember {
             presentProfileViewController(for: user, at: indexPath)
         } else {
@@ -72,10 +71,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         didDoubleTapOnUser user: UserType,
         indexPath: IndexPath
     ) {
-
-        guard user.isConnected, !user.isBlocked else {
-            return
-        }
+        guard user.isConnected, !user.isBlocked else { return }
 
         delegate?.startUIViewController(self, didSelect: user)
     }
@@ -93,7 +89,6 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         _ searchResultsViewController: SearchResultsViewController,
         didTapOnBot bot: any Bot
     ) {
-
         let detail = ServiceDetailViewController(
             user: bot,
             actionType: .openConversation,
@@ -101,18 +96,15 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         ) { [weak self] result in
             guard let self else { return }
 
-            if let result {
-                switch result {
-                case let .success(conversation):
-                    delegate?.startUIViewController(self, didSelect: conversation)
-                case let .failure(error):
-                    error.displayAddBotError(in: self)
-                }
-            } else {
+            switch result {
+            case let .success(conversation):
+                delegate?.startUIViewController(self, didSelect: conversation)
+            case let .failure(error):
+                error.displayAddBotError(in: self)
+            case .cancelled:
                 navigationController?.dismiss(animated: true, completion: nil)
             }
         }
-
         navigationController?.pushViewController(detail, animated: true)
     }
 }

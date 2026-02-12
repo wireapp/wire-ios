@@ -581,13 +581,16 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
             actionType: .addService(conversation as! ZMConversation),
             userSession: userSession
         ) { [weak self] result in
-            guard let self, let result else { return }
+            guard let self else { return }
+
             switch result {
             case .success:
                 dismiss(animated: true)
             case let .failure(error):
                 guard let controller = navigationController?.topViewController else { return }
                 error.displayAddBotError(in: controller)
+            case .cancelled:
+                break
             }
         }
 

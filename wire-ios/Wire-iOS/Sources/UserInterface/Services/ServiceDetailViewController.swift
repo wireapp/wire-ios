@@ -58,7 +58,7 @@ final class ServiceDetailViewController: UIViewController {
         wr_supportedInterfaceOrientations
     }
 
-    let completion: (AddBotResult?) -> Void
+    let completion: (AddBotResult) -> Void
 
     private let detailView: ServiceDetailView
     private let actionButton: ZMButton
@@ -77,7 +77,7 @@ final class ServiceDetailViewController: UIViewController {
         user: any UserType,
         actionType: ActionType,
         userSession: UserSession,
-        completion: @escaping (AddBotResult?) -> Void
+        completion: @escaping (AddBotResult) -> Void
     ) {
         self.service = Service(user: user)
         self.completion = completion
@@ -182,14 +182,14 @@ final class ServiceDetailViewController: UIViewController {
     @objc
     func dismissButtonTapped(_ sender: AnyObject!) {
         navigationController?.dismiss(animated: true) { [weak self] in
-            self?.completion(nil)
+            self?.completion(.cancelled)
         }
     }
 
     func callback(
         for type: ActionType,
         sender: UIView,
-        completion: @escaping (AddBotResult?) -> Void
+        completion: @escaping (AddBotResult) -> Void
     ) -> Callback<LegacyButton> {
         { [weak self] _ in
             guard let self, let userSession = userSession as? ZMUserSession, let bot = service.user as? any Bot else {

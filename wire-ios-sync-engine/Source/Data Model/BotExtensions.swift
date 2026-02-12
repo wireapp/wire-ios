@@ -282,8 +282,13 @@ public enum AddBotError: Int, Error {
 }
 
 public enum AddBotResult {
+
     case success(conversation: ZMConversation)
     case failure(error: AddBotError)
+
+    /// The user decided not to proceed with creating a conversation with or adding a bot to an existing conversation.
+    case cancelled
+
 }
 
 extension AddBotError {
