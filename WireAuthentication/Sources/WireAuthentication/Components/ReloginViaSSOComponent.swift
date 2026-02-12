@@ -101,6 +101,11 @@ extension ReloginViaSSOComponent: ReloginViaSSOViewModel.Factory {
     }
 
     @MainActor
+    func validateSSOCodeUseCase() -> any ValidateSSOCodeUseCaseProtocol {
+        ValidateSSOCodeUseCase()
+    }
+
+    @MainActor
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
         let factory = noHistoryFactory(result: result)
         return NoHistoryView(factory: factory)
