@@ -199,7 +199,7 @@ package struct MoveToFolderEmptyStateView: View {
                 Button {
                     onReload()
                 } label: {
-                    Text(Strings.Files.Error.reload)
+                    Text(Strings.Files.Error.retry)
                         .padding()
                         .font(.subheadline.weight(.semibold))
                         .foregroundColor(SemanticColors.Label.textDefault.color)
@@ -213,8 +213,8 @@ package struct MoveToFolderEmptyStateView: View {
 
                         )
                 }
-                .accessibilityLabel(Strings.Files.Error.reload)
-                .accessibilityIdentifier("reloadButton")
+                .accessibilityLabel(Strings.Files.Error.retry)
+                .accessibilityIdentifier("retryButton")
             }
         }
         .frame(maxWidth: 420)

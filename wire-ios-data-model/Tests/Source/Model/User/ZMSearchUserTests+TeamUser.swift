@@ -73,7 +73,7 @@ final class ZMSearchUserTests_TeamUser: ModelObjectsTests {
 
     private func makeSearchUser(teamIdentifier: UUID?) -> ZMSearchUser {
         ZMSearchUser(
-            contextProvider: coreDataStack,
+            viewContext: coreDataStack.viewContext,
             name: "Foo",
             handle: "foo",
             accentColor: .amber,

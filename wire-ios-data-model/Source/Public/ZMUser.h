@@ -83,15 +83,6 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 @end
 
 
-@protocol ZMEditableUserType;
-
-@interface ZMUser (Utilities)
-
-+ (ZMUser<ZMEditableUserType> *_Nonnull)selfUserInUserSession:(id<ZMContextProvider> _Nonnull)session;
-
-@end
-
-
 
 
 @interface ZMUser (Connections)

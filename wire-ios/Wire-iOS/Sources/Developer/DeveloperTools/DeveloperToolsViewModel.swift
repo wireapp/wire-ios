@@ -456,7 +456,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private var selfUser: ZMUser? {
         guard let userSession else { return nil }
-        return ZMUser.selfUser(inUserSession: userSession)
+        return ZMUser.selfUser(in: userSession.viewContext)
     }
 
     private var selfClient: UserClient? {

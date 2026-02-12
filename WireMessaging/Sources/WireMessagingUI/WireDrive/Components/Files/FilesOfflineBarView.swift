@@ -16,11 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
 
-// sourcery: AutoMockable
-public protocol MLSSyncDelegate: AnyObject {
+struct FilesOfflineBarView: View {
+    var body: some View {
+        Group {
+            Text(
+                L10n.Localizable.General.NoInternet.title.uppercased()
+            )
+            .font(for: .subline2)
+            .foregroundColor(.white)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 25)
+        .background(Color(
+            red: 254.0 / 255.0,
+            green: 191.0 / 255.0,
+            blue: 2.0 / 255.0,
+            opacity: 1
+        ))
+        .cornerRadius(6)
+        .padding(.horizontal, 16)
+    }
+}
 
-    func recoverWithIncrementalSync() async throws
-
+#Preview {
+    FilesOfflineBarView()
 }
