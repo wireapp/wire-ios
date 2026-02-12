@@ -56,7 +56,7 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
 
     // MARK: - Types
 
-    enum EncryptionError: LocalizedError {
+    enum EncryptionError: LocalizedError, Equatable {
 
         case missingDatabaseKey
         case missingContextData
@@ -135,6 +135,7 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
         lock.lock()
         guard let key = databaseKey else {
             lock.unlock()
+            WireLogger.ear.error("failed to encrypt data for EAR: missing database key", attributes: .safePublic)
             throw EncryptionError.missingDatabaseKey
         }
         lock.unlock()
@@ -149,7 +150,7 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
             )
             return (ciphertext, nonce)
         } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
-            WireLogger.ear.debug("failed to encrypt data for EAR with error: \(error.errorDescription ?? "unknown")")
+            WireLogger.ear.error("failed to encrypt data for EAR with error: \(error.errorDescription ?? "unknown")", attributes: .safePublic)
             throw EncryptionError.crypto(error: error)
         }
     }
@@ -162,6 +163,7 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
         lock.lock()
         guard let key = databaseKey else {
             lock.unlock()
+            WireLogger.ear.error("failed to decrypt data for EAR: missing database key", attributes: .safePublic)
             throw EncryptionError.missingDatabaseKey
         }
         lock.unlock()
@@ -176,7 +178,7 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
                 key: key._storage
             )
         } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
-            WireLogger.ear.debug("failed to decrypt data for EAR with error: \(error.errorDescription ?? "unknown")")
+            WireLogger.ear.error("failed to decrypt data for EAR with error: \(error.errorDescription ?? "unknown")", attributes: .safePublic)
             throw EncryptionError.crypto(error: error)
         }
     }

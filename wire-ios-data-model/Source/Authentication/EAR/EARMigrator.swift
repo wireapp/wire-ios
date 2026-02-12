@@ -35,6 +35,8 @@ private typealias MigratableEntity = EncryptionAtRestMigratable & ZMManagedObjec
 
 public class EARMigrator: EARMigratorProtocol {
 
+    // MARK: - Types
+    
     enum MigrationError: LocalizedError {
 
         case failedToMigrateInstances(type: ZMManagedObject.Type, reason: String)
@@ -48,15 +50,21 @@ public class EARMigrator: EARMigratorProtocol {
 
     }
 
+    // MARK: - Properties
+    
     private let messageEncryptionService: EARMessageEncryptionServiceProtocol
 
+    // MARK: - Init
+    
     public init(messageEncryptionService: EARMessageEncryptionServiceProtocol) {
         self.messageEncryptionService = messageEncryptionService
     }
 
+    // MARK: - Public Interface
+    
     public func migrateTowardEncryptionAtRest(context: NSManagedObjectContext) throws {
         do {
-            WireLogger.ear.info("migrating existing data toward EAR")
+            WireLogger.ear.info("migrating existing data toward EAR", attributes: .safePublic)
 
             let contextData = try context.earContextData()
 
@@ -78,7 +86,7 @@ public class EARMigrator: EARMigratorProtocol {
             )
             context.saveOrRollback()
         } catch {
-            WireLogger.ear.error("failed to migrate existing data toward EAR: \(error)")
+            WireLogger.ear.error("failed to migrate existing data toward EAR: \(error)", attributes: .safePublic)
             context.reset()
             throw error
         }
@@ -86,7 +94,7 @@ public class EARMigrator: EARMigratorProtocol {
 
     public func migrateAwayFromEncryptionAtRest(context: NSManagedObjectContext) throws {
         do {
-            WireLogger.ear.info("migrating existing data away from EAR")
+            WireLogger.ear.info("migrating existing data away from EAR", attributes: .safePublic)
 
             let contextData = try context.earContextData()
 
@@ -108,11 +116,13 @@ public class EARMigrator: EARMigratorProtocol {
             )
             context.saveOrRollback()
         } catch {
-            WireLogger.ear.error("failed to migrate existing data away from EAR: \(error)")
+            WireLogger.ear.error("failed to migrate existing data away from EAR: \(error)", attributes: .safePublic)
             context.reset()
             throw error
         }
     }
+    
+    // MARK: - Private Methods
 
     private func migrateInstancesTowardEncryptionAtRest(
         type: (some MigratableEntity).Type,
