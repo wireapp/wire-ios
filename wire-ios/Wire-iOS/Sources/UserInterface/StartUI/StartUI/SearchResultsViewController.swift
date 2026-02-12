@@ -400,7 +400,7 @@ final class SearchResultsViewController: UIViewController {
 
         directorySection.suggestions = searchResult.directory.filter { !$0.isFederated }
         conversationsSection.groupConversations = searchResult.conversations
-        appsSection.apps = searchResult.apps
+        appsSection.bots = searchResult.apps
         botsSection.bots = searchResult.bots
         federationSection.users = searchResult.directory.filter(\.isFederated)
 

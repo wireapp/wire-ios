@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: needed?
+// TODO: delete
+typealias SearchBotsSectionDelegate = SearchAppsSectionDelegate
+
 protocol SearchAppsSectionDelegate: SearchSectionControllerDelegate {
-//    func addAppsSectionDidRequestOpenServicesAdmin()
+    func addBotsSectionDidRequestOpenBotsAdmin()
 }
