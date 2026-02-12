@@ -2009,6 +2009,21 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol,
         }
     }
 
+    // MARK: - clearPendingProposals
+
+    public var clearPendingProposalsIn_Invocations: [WireDataModel.MLSGroupID] = []
+    public var clearPendingProposalsIn_MockMethod: ((WireDataModel.MLSGroupID) async -> Void)?
+
+    public func clearPendingProposals(in groupID: WireDataModel.MLSGroupID) async {
+        clearPendingProposalsIn_Invocations.append(groupID)
+
+        guard let mock = clearPendingProposalsIn_MockMethod else {
+            fatalError("no mock for `clearPendingProposalsIn`")
+        }
+
+        await mock(groupID)
+    }
+
 }
 
 class MockConversationTextMessageNotificationBuilderProtocol: ConversationTextMessageNotificationBuilderProtocol {

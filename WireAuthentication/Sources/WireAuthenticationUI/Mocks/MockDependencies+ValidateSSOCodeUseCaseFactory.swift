@@ -17,10 +17,20 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
-// sourcery: AutoMockable
-public protocol MLSSyncDelegate: AnyObject {
+extension MockDependencies: ValidateSSOCodeUseCaseFactory {
 
-    func recoverWithIncrementalSync() async throws
+    func validateSSOCodeUseCase() -> any ValidateSSOCodeUseCaseProtocol {
+        MockValidateSSOCodeUseCase()
+    }
+
+}
+
+struct MockValidateSSOCodeUseCase: ValidateSSOCodeUseCaseProtocol {
+
+    func invoke(ssoCode: String) throws -> UUID {
+        UUID()
+    }
 
 }

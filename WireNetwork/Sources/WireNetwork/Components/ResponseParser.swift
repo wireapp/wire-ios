@@ -102,6 +102,33 @@ struct ResponseParser<Success> {
 
     func failure(
         code: HTTPStatusCode,
+        label: String,
+        wrappingMessage: @escaping (String) -> some Error
+    ) -> ResponseParser<Success> {
+        addParseBlock(
+            code: code,
+            prioritize: true
+        ) { data in
+            guard let data else {
+                return nil
+            }
+
+            guard
+                let failure = try? decoder.decode(
+                    FailureResponseV0.self,
+                    from: data
+                ),
+                failure.label == label
+            else {
+                return nil
+            }
+
+            throw wrappingMessage(failure.message)
+        }
+    }
+
+    func failure(
+        code: HTTPStatusCode,
         label: String? = nil,
         decodingError: @escaping (Data) throws -> (some Error)?
     ) -> ResponseParser<Success> {
