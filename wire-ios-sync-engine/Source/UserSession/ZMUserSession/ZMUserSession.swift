@@ -731,14 +731,8 @@ public final class ZMUserSession: NSObject {
 
         WireLogger.sessionManager.debug("tearDown() starting - clearing all references")
 
-        // Stop work agent asynchronously (don't block tearDown)
-        Task {
-            await clientSessionComponent?.workAgent.clearSchedulerQueue()
-            await clientSessionComponent?.workAgent.stop()
-        }
-
-        // NOTE: transportSession, workAgent, and operationLoop are already stopped during logout
-        // So we just need to clean up references here
+        // NOTE: syncAgent, transportSession, workAgent, operationLoop, and postSyncTask
+        // are already stopped/terminated during logout. We just clean up references here.
 
         WireLogger.sessionManager.debug("tearDown: tearing down MLS group verification")
         tearDownMLSGroupVerification()

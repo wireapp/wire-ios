@@ -71,6 +71,7 @@ extension ZMUserSession {
 
     func close(deleteCookie: Bool, completion: @escaping () -> Void) {
         // Clear all notifications associated with the account from the notification center
+        // and wait for all pending CoreData operations to complete before tearDown
         syncManagedObjectContext.performGroupedBlock { [weak self] in
             self?.localNotificationDispatcher?.cancelAllNotifications()
         }

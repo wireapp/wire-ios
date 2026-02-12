@@ -250,7 +250,7 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
         }
 
         defer { hasBeenClosed = true }
-
+        
         viewContext.tearDown()
 
         // Only tear down contexts if they were initialized
