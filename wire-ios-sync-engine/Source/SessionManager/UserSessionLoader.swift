@@ -465,7 +465,7 @@ final class UserSessionLoader {
             sharedUserDefaults: sharedUserDefaults
         )
 
-        let earService = EARService(
+        let earService = await EARService(
             accountID: accountID,
             databaseContexts: [
                 coreDataStack.viewContext,

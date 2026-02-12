@@ -203,7 +203,7 @@ struct ZMUserSessionBuilder {
         coreCryptoProvider: CoreCryptoProviderProtocol,
         configuration: ZMUserSession.Configuration,
         contextStorage: any LAContextStorable,
-        earService: (any EARServiceInterface)?,
+        earService optionalEARService: (any EARServiceInterface)?,
         flowManager: any FlowManagerType,
         mediaManager: any MediaManagerType,
         mlsService: (any MLSServiceInterface)?,
@@ -217,7 +217,7 @@ struct ZMUserSessionBuilder {
         journal: Journal,
         logFilesProvider: LogFilesProviding,
         faultyMLSRemovalKeysByDomain: [String: [String]]
-    ) {
+    ) async {
         // reused dependencies
 
         let lastEventIDRepository = LastEventIDRepository(
@@ -249,17 +249,23 @@ struct ZMUserSessionBuilder {
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
         )
-        let earService = earService ?? EARService(
-            accountID: coreDataStack.account.userIdentifier,
-            databaseContexts: [
-                coreDataStack.viewContext,
+        let earService: EARServiceInterface
+        if let service = optionalEARService {
+            earService = service
+        } else {
+            earService = await EARService(
+                accountID: coreDataStack.account.userIdentifier,
+                databaseContexts: [
+                    coreDataStack.viewContext,
                 coreDataStack.syncContext
-            ],
-            coreDataStack: coreDataStack,
-            canPerformKeyMigration: true,
-            sharedUserDefaults: sharedUserDefaults,
-            authenticationContext: AuthenticationContext(storage: contextStorage)
-        )
+                ],
+                coreDataStack: coreDataStack,
+                canPerformKeyMigration: true,
+                sharedUserDefaults: sharedUserDefaults,
+                authenticationContext: AuthenticationContext(storage: contextStorage)
+            )
+        }
+        
         let lastE2EIdentityUpdateDateRepository = LastE2EIdentityUpdateDateRepository(
             userID: userId,
             sharedUserDefaults: UserDefaults.standard

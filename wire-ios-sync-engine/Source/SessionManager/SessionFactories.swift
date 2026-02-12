@@ -68,7 +68,7 @@ open class AuthenticatedSessionFactory {
         journal: Journal,
         logFilesProvider: LogFilesProviding,
         faultyMLSRemovalKeysByDomain: [String: [String]]
-    ) -> ZMUserSession? {
+    ) async -> ZMUserSession? {
         let wireAPIBackendEnvironment = BackendEnvironment(
             url: environment.backendURL,
             webSocketURL: environment.backendWSURL,
@@ -119,7 +119,7 @@ open class AuthenticatedSessionFactory {
         )
 
         var userSessionBuilder = ZMUserSessionBuilder()
-        userSessionBuilder.withAllDependencies(
+        await userSessionBuilder.withAllDependencies(
             backendEnvironment: environment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             currentAppVersion: currentAppVersion,

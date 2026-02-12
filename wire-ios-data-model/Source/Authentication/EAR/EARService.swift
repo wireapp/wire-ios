@@ -133,12 +133,12 @@ public class EARService: EARServiceInterface {
         canPerformKeyMigration: Bool = false,
         sharedUserDefaults: UserDefaults,
         authenticationContext: any AuthenticationContextProtocol
-    ) {
+    ) async {
         let earStorage = EARStorage(userID: accountID, sharedUserDefaults: sharedUserDefaults)
         let messageEncryptionService = EARMessageEncryptionService(earStorage: earStorage)
         let migrator = EARMigrator(messageEncryptionService: messageEncryptionService)
 
-        self.init(
+        await self.init(
             accountID: accountID,
             keyRepository: EARKeyRepository(),
             keyEncryptor: EARKeyEncryptor(),
@@ -163,7 +163,7 @@ public class EARService: EARServiceInterface {
         messageEncryptionService: EARMessageEncryptionServiceProtocol,
         migrator: EARMigratorProtocol,
         authenticationContext: AuthenticationContextProtocol
-    ) {
+    ) async {
         self.accountID = accountID
         self.keyRepository = keyRepository
         self.keyEncryptor = keyEncryptor
@@ -178,17 +178,19 @@ public class EARService: EARServiceInterface {
         self.secondaryPrivateKeyDescription = .secondaryKeyDescription(accountID: accountID)
         self.databaseKeyDescription = .keyDescription(accountID: accountID)
 
-        self.setMessageEncryptionService(
-            messageEncryptionService,
-            onContexts: databaseContexts,
-            andCoreDataStack: coreDataStack
-        )
+        coreDataStack.setEARMessageEncryptionService(messageEncryptionService)
+
+        for context in databaseContexts {
+            await context.perform {
+                context.earMessageEncryptionService = messageEncryptionService
+            }
+        }
 
         if canPerformKeyMigration {
             migrateKeysIfNeeded()
         }
     }
-
+    
     // MARK: - Feature Flag
 
     /// Whether encryption at rest is enabled.
@@ -572,24 +574,5 @@ public class EARService: EARServiceInterface {
             throw error
         }
     }
-    
-    // MARK: - Helpers
-    
-    private func setMessageEncryptionService(
-        _ service: EARMessageEncryptionServiceProtocol,
-        onContexts contexts: [NSManagedObjectContext],
-        andCoreDataStack coreDataStack: CoreDataStackProtocol
-    ) {
-        // Setting the service on the core data stack so it can be injected in background contexts
-        coreDataStack.setEARMessageEncryptionService(service)
-
-        // Setting the service on the provided contexts
-        for context in contexts {
-            context.perform {
-                context.earMessageEncryptionService = service
-            }
-        }
-    }
-
     
 }
