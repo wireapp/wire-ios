@@ -380,6 +380,8 @@
 		87D9CCE91F27606200AA4388 /* NSManagedObjectContext+TearDown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87D9CCE81F27606200AA4388 /* NSManagedObjectContext+TearDown.swift */; };
 		87DF59C01F729FDA00C7B406 /* ZMMovedIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87DF59BF1F729FDA00C7B406 /* ZMMovedIndexTests.swift */; };
 		87E2CE312119F6AB0034C2C4 /* ZMClientMessageTests+Cleared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E2CE302119F6AB0034C2C4 /* ZMClientMessageTests+Cleared.swift */; };
+		8807C2282F3DCE2A00396366 /* EARServiceIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8807C2272F3DCE2A00396366 /* EARServiceIntegrationTests.swift */; };
+		8807C22A2F3DD66D00396366 /* EARServiceTestsBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8807C2292F3DD66D00396366 /* EARServiceTestsBase.swift */; };
 		882B83592E82F0F9008A50CA /* StaleCoreCryptoKeyTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B83582E82F0F9008A50CA /* StaleCoreCryptoKeyTracker.swift */; };
 		882B85752E83ED7E008A50CA /* StaleCoreCryptoKeysTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B85742E83ED7A008A50CA /* StaleCoreCryptoKeysTrackerTests.swift */; };
 		882B86BC2E843D0C008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882B86BB2E843D05008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift */; };
@@ -1116,6 +1118,8 @@
 		87D9CCE81F27606200AA4388 /* NSManagedObjectContext+TearDown.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+TearDown.swift"; sourceTree = "<group>"; };
 		87DF59BF1F729FDA00C7B406 /* ZMMovedIndexTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMMovedIndexTests.swift; sourceTree = "<group>"; };
 		87E2CE302119F6AB0034C2C4 /* ZMClientMessageTests+Cleared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Cleared.swift"; sourceTree = "<group>"; };
+		8807C2272F3DCE2A00396366 /* EARServiceIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARServiceIntegrationTests.swift; sourceTree = "<group>"; };
+		8807C2292F3DD66D00396366 /* EARServiceTestsBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARServiceTestsBase.swift; sourceTree = "<group>"; };
 		882B83582E82F0F9008A50CA /* StaleCoreCryptoKeyTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaleCoreCryptoKeyTracker.swift; sourceTree = "<group>"; };
 		882B85742E83ED7A008A50CA /* StaleCoreCryptoKeysTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaleCoreCryptoKeysTrackerTests.swift; sourceTree = "<group>"; };
 		882B86BB2E843D05008A50CA /* RemoveCoreCryptoKeysUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveCoreCryptoKeysUseCaseTests.swift; sourceTree = "<group>"; };
@@ -2119,6 +2123,8 @@
 		E6E5044B2BC56EA0004948E7 /* EAR */ = {
 			isa = PBXGroup;
 			children = (
+				8807C2292F3DD66D00396366 /* EARServiceTestsBase.swift */,
+				8807C2272F3DCE2A00396366 /* EARServiceIntegrationTests.swift */,
 				E6E5044A2BC56EA0004948E7 /* EARServiceTests.swift */,
 			);
 			path = EAR;
@@ -3949,6 +3955,7 @@
 				54563B7B1E0189780089B1D7 /* ZMMessageCategorizationTests.swift in Sources */,
 				01F5AECE2CAC20BE00B01069 /* DatabaseMigrationTests+FixDuplicateOneOnOneConversations.swift in Sources */,
 				017962992B83FC1400D6C7B6 /* DatabaseMigrationTests+TeamUniqueness.swift in Sources */,
+				8807C2282F3DCE2A00396366 /* EARServiceIntegrationTests.swift in Sources */,
 				06D33FCD2524F65D004B9BC1 /* ZMConversationTests+UnreadMessages.swift in Sources */,
 				F9DBA5271E28EEBD00BE23C0 /* UserChangeInfoObservationTests.swift in Sources */,
 				63FCE54828C78D1F00126D9D /* ZMConversationTests+Predicates.swift in Sources */,
@@ -4045,6 +4052,7 @@
 				BFE3A96E1ED301020024A05B /* ZMConversationListTests+Teams.swift in Sources */,
 				16C391E2214BD438003AB3AD /* MentionTests.swift in Sources */,
 				F991CE191CB55E95004D8465 /* ZMSearchUserTests.m in Sources */,
+				8807C22A2F3DD66D00396366 /* EARServiceTestsBase.swift in Sources */,
 				16519D54231D6F8200C9D76D /* ZMConversationTests+Deletion.swift in Sources */,
 				BF103FA11F0138390047FDE5 /* ManagedObjectContextChangeObserverTests.swift in Sources */,
 				5E9EA4D62242942900D401B2 /* ZMClientMessageTests+LinkAttachments.swift in Sources */,
