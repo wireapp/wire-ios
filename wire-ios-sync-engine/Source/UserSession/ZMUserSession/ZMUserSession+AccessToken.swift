@@ -20,7 +20,6 @@ import Foundation
 import WireLogging
 
 protocol AccessTokenRenewing {
-    func setAccessTokenRenewalObserver(_ observer: AccessTokenRenewalObserver)
     func renewAccessToken(with clientID: String)
 }
 
