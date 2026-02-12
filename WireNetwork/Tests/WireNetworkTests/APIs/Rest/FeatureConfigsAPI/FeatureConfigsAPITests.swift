@@ -257,7 +257,7 @@ final class FeatureConfigsAPITests: XCTestCase {
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV12")
         ])
-        
+
         let supportedVersions = [APIVersion.v12]
 
         // Then
@@ -272,7 +272,7 @@ final class FeatureConfigsAPITests: XCTestCase {
     }
 
     // MARK: - V14
-    
+
     func testGetFeatureConfigs_SuccessResponse_200_V14_And_Next_Versions_Then_Verify_Requests() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
@@ -698,4 +698,3 @@ extension FeatureConfigsAPITests {
     }
 
 }
-

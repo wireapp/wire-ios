@@ -34,65 +34,89 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
     }
 
     func testDecodingFeatureConfigUpdateAppLockEvent() throws {
-        expectEqualDecoding(mockJSONFile: "FeatureConfigUpdateAppLock",
-                featureConfigUpdateEvent: Scaffolding.appLockUpdateEvent)
+        expectEqualDecoding(
+            mockJSONFile: "FeatureConfigUpdateAppLock",
+            featureConfigUpdateEvent: Scaffolding.appLockUpdateEvent
+        )
     }
 
     func testDecodingFeatureConfigUpdateClassfiedDomainsEvent() throws {
-        expectEqualDecoding(mockJSONFile: "FeatureConfigUpdateClassifiedDomains",
-                featureConfigUpdateEvent: Scaffolding.classifiedDomainsUpdateEvent)
+        expectEqualDecoding(
+            mockJSONFile: "FeatureConfigUpdateClassifiedDomains",
+            featureConfigUpdateEvent: Scaffolding.classifiedDomainsUpdateEvent
+        )
     }
 
     func testDecodingFeatureConfigUpdateConferenceCallingEvent() throws {
-        expectEqualDecoding(mockJSONFile: "FeatureConfigUpdateConferenceCalling",
-                featureConfigUpdateEvent: Scaffolding.conferenceCallingUpdateEvent)
+        expectEqualDecoding(
+            mockJSONFile: "FeatureConfigUpdateConferenceCalling",
+            featureConfigUpdateEvent: Scaffolding.conferenceCallingUpdateEvent
+        )
     }
 
     func testDecodingFeatureConfigUpdateConversationGuestLinksEvent() throws {
-        expectEqualDecoding(mockJSONFile: "FeatureConfigUpdateConversationGuestLinks",
-                featureConfigUpdateEvent: Scaffolding.conversationGuestLinksUpdateEvent)
+        expectEqualDecoding(
+            mockJSONFile: "FeatureConfigUpdateConversationGuestLinks",
+            featureConfigUpdateEvent: Scaffolding.conversationGuestLinksUpdateEvent
+        )
     }
 
     func testDecodingFeatureConfigUpdateDigitalSignatureEvent() throws {
-        expectEqualDecoding(mockJSONFile: "FeatureConfigUpdateDigitalSignature",
-                featureConfigUpdateEvent: Scaffolding.digitalSignatureUpdateEvent)
+        expectEqualDecoding(
+            mockJSONFile: "FeatureConfigUpdateDigitalSignature",
+            featureConfigUpdateEvent: Scaffolding.digitalSignatureUpdateEvent
+        )
     }
 
     func testDecodingFeatureConfigUpdateEndToEndIdentityEvent() throws {
-        expectEqualDecoding(mockJSONFile: "FeatureConfigUpdateEndToEndIdentity",
-                featureConfigUpdateEvent: Scaffolding.endToEndIdentityUpdateEvent)
+        expectEqualDecoding(
+            mockJSONFile: "FeatureConfigUpdateEndToEndIdentity",
+            featureConfigUpdateEvent: Scaffolding.endToEndIdentityUpdateEvent
+        )
     }
 
     func testDecodingFeatureConfigUpdateFileSharingEvent() throws {
-        expectEqualDecoding(mockJSONFile: "FeatureConfigUpdateFileSharing",
-                featureConfigUpdateEvent: Scaffolding.fileSharingUpdateEvent)
+        expectEqualDecoding(
+            mockJSONFile: "FeatureConfigUpdateFileSharing",
+            featureConfigUpdateEvent: Scaffolding.fileSharingUpdateEvent
+        )
     }
 
     func testDecodingFeatureConfigUpdateMLSEvent() throws {
-        expectEqualDecoding(mockJSONFile: "FeatureConfigUpdateMLS",
-                featureConfigUpdateEvent: Scaffolding.mlsUpdateEvent)
+        expectEqualDecoding(
+            mockJSONFile: "FeatureConfigUpdateMLS",
+            featureConfigUpdateEvent: Scaffolding.mlsUpdateEvent
+        )
     }
 
     func testDecodingFeatureConfigUpdateMLSMigrationEvent() throws {
-        expectEqualDecoding(mockJSONFile: "FeatureConfigUpdateMLSMigration",
-                featureConfigUpdateEvent: Scaffolding.mlsMigrationUpdateEvent)
+        expectEqualDecoding(
+            mockJSONFile: "FeatureConfigUpdateMLSMigration",
+            featureConfigUpdateEvent: Scaffolding.mlsMigrationUpdateEvent
+        )
     }
 
     func testDecodingFeatureConfigUpdateSelfDeletingMessagesEvent() throws {
-        expectEqualDecoding(mockJSONFile: "FeatureConfigUpdateSelfDeletingMessages",
-                featureConfigUpdateEvent: Scaffolding.selfDeletingMessagesUpdateEvent)
+        expectEqualDecoding(
+            mockJSONFile: "FeatureConfigUpdateSelfDeletingMessages",
+            featureConfigUpdateEvent: Scaffolding.selfDeletingMessagesUpdateEvent
+        )
     }
 
     func testDecodingFeatureConfigUpdateAssetAuditLogEvent() throws {
-        expectEqualDecoding(mockJSONFile: "FeatureConfigUpdateAssetAuditLog",
-                featureConfigUpdateEvent: Scaffolding.assetAuditLogUpdateEvent)
+        expectEqualDecoding(
+            mockJSONFile: "FeatureConfigUpdateAssetAuditLog",
+            featureConfigUpdateEvent: Scaffolding.assetAuditLogUpdateEvent
+        )
     }
 
     func testDecodingFeatureConfigSimplifiedUserConnectionRequestQRCode() throws {
-       expectEqualDecoding(mockJSONFile: "FeatureConfigSimplifiedUserConnectionRequestQRCode",
-               featureConfigUpdateEvent: Scaffolding.simplifiedUserConnectionRequestQRCode)
+        expectEqualDecoding(
+            mockJSONFile: "FeatureConfigSimplifiedUserConnectionRequestQRCode",
+            featureConfigUpdateEvent: Scaffolding.simplifiedUserConnectionRequestQRCode
+        )
     }
-    
+
     private func expectEqualDecoding(
         mockJSONFile: String,
         featureConfigUpdateEvent: FeatureConfigUpdateEvent,
@@ -108,7 +132,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
                 UpdateEventDecodingProxy.self,
                 from: mockEventData.jsonData
             ).updateEvent
-            
+
             // Then
             XCTAssertEqual(
                 decodedEvent,
@@ -119,7 +143,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
             XCTFail("Wrong JSON decoding", file: file, line: line)
         }
     }
-    
+
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
@@ -249,7 +273,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
                 )
             )
         )
-        
+
         static let simplifiedUserConnectionRequestQRCode = FeatureConfigUpdateEvent(
             featureConfig: .simplifiedUserConnectionRequestQRCode(
                 SimplifiedUserConnectionRequestQRCodeConfig(
