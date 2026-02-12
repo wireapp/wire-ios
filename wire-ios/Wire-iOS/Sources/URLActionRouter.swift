@@ -310,7 +310,7 @@ extension URLActionRouter: PresentationDelegate {
         alert.addAction(agreeAction)
 
         if showCancelAction {
-            let cancelAction = UIAlertAction.cancel { decisionHandler(!showCancelAction) }
+            let cancelAction = UIAlertAction.cancel { decisionHandler(false) }
             alert.addAction(cancelAction)
         }
 
