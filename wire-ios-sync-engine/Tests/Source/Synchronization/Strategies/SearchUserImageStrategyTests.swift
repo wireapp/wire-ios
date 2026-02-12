@@ -17,11 +17,12 @@
 //
 
 import WireDataModel
+
 @testable import WireSyncEngine
 
 final class SearchUserImageStrategyTests: MessagingTest {
 
-    private let userRequestURL = "/users?ids="
+    private let userRequestURL = "/users?ids=" // TODO: this endpoint has been deleted from v2 onwards
 
     private var sut: SearchUserImageStrategy!
 

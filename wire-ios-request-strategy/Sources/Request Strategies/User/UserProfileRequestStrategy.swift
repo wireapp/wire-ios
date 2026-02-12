@@ -153,7 +153,7 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
         self.processor = UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
     }
 
-    func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
+    func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? { // TODO: this endpoint has been deleted from v2 onwards
         guard apiVersion == .v0 else { return nil }
         // GET /users?ids=?
         let userIDs = identifiers.map { $0.transportString() }.joined(separator: ",")
