@@ -219,6 +219,13 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             try await retrier.retry { [weak self] in
                 guard let self else { return }
 
+                // Stop retrying if task was cancelled or delegate cleared (indicates termination)
+                try Task.checkCancellation()
+                guard delegate != nil else {
+                    WireLogger.sync.debug("syncAgent terminated, stopping incremental sync")
+                    throw CancellationError()
+                }
+
                 do {
                     if isConsumableNotificationsEnabled {
                         incrementalSyncToken = try await incrementalSyncProvider.provideLiveSync(delegate: self)
@@ -246,6 +253,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
                     syncStateSubject.send(.suspended)
                     // swallow error from retrier and start resume
+                    guard delegate != nil else { return }
                     resume()
 
                 } catch IncrementalSync.Failure.missedEvents {
@@ -257,6 +265,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                     journal[.isInitialSyncRequired] = true
                     syncStateSubject.send(.suspended)
                     // swallow error from retrier and start resume
+                    guard delegate != nil else { return }
                     resume()
                 } catch {
                     WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
@@ -272,6 +281,13 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             let retrier = BackoffRetrier()
 
             try await retrier.retry { [self] in
+                // Stop retrying if task was cancelled or delegate cleared (indicates termination)
+                try Task.checkCancellation()
+                guard delegate != nil else {
+                    WireLogger.sync.debug("syncAgent terminated, stopping initial sync")
+                    throw CancellationError()
+                }
+
                 do {
                     delegate?.syncAgentDidStartInitialSync(self)
                     WireLogger.sync.debug("did start new initial sync")

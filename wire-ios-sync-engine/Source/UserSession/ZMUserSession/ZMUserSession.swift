@@ -97,7 +97,7 @@ public final class ZMUserSession: NSObject {
     var conversationEventProcessor: ConversationEventProcessor!
 
     var syncAgent: SyncAgent?
-    private var postSyncTask: Task<Void, Never>?
+    var postSyncTask: Task<Void, Never>?
 
     public var hasCompletedInitialSync: Bool {
         !journal[.isInitialSyncRequired]
@@ -764,8 +764,8 @@ public final class ZMUserSession: NSObject {
         appLockController.delegate = nil
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = nil
 
-        WireLogger.sessionManager.debug("tearDown: cancelling post-sync task")
-        postSyncTask?.cancel()
+        WireLogger.sessionManager.debug("tearDown: clearing post-sync task reference")
+        // postSyncTask should already be cancelled and completed during logout
         postSyncTask = nil
 
         WireLogger.sessionManager.debug("tearDown: tearing down syncAgent")

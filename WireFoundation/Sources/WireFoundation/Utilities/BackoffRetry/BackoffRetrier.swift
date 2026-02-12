@@ -60,6 +60,10 @@ public actor BackoffRetrier {
             do {
                 return try await operation()
             } catch {
+                // Don't retry if the task was cancelled
+                if error is CancellationError {
+                    throw error
+                }
 
                 guard attempt < policy.maxRetries else {
                     throw Failure.exceededMaxAttempts(latestError: error)

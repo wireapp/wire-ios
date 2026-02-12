@@ -120,6 +120,15 @@ extension ZMUserSession {
             self.syncAgent = nil
             WireLogger.sessionManager.info("logout: syncAgent cleared")
 
+            // Cancel and wait for post-sync task to complete
+            if let postSyncTask = self.postSyncTask {
+                WireLogger.sessionManager.info("logout: cancelling post-sync task")
+                postSyncTask.cancel()
+                _ = await postSyncTask.result
+                self.postSyncTask = nil
+                WireLogger.sessionManager.info("logout: post-sync task cancelled and completed")
+            }
+
             if let workAgent = self.clientSessionComponent?.workAgent {
                 WireLogger.sessionManager.info("logout: clearing workAgent queue")
                 await workAgent.clearSchedulerQueue()
