@@ -200,11 +200,11 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
                 return NSIntersectionRange(linkRange, mentionRange).length > 0
             }
 
-            if !isOverlappingMention {
+            if let link = result.url, !isOverlappingMention {
                 mutableAttributedText.addAttributes([
                     .foregroundColor: detectedLinkForegroundColor,
                     .underlineStyle: NSUnderlineStyle.single.rawValue,
-                    .link: result.url!
+                    .link: link
                 ], range: linkRange)
             }
         }
