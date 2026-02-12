@@ -166,7 +166,6 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(conversationTextNotificationBuilder.buildContentTextConversationIDSenderID_Invocations.count, 1)
     }
 
-
     // TODO: [WPB-17284] Add UTs (if possible) for other message content types
 
     private enum Scaffolding {
