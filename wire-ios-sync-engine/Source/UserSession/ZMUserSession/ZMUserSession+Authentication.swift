@@ -70,18 +70,19 @@ extension ZMUserSession {
     /// - parameter completion: called after the user session has been closed
 
     func close(deleteCookie: Bool, completion: @escaping () -> Void) {
-        // Clear all notifications associated with the account from the notification center
-        // and wait for all pending CoreData operations to complete before tearDown
-        syncManagedObjectContext.performGroupedBlock { [weak self] in
-            self?.localNotificationDispatcher?.cancelAllNotifications()
+        // Drain all pending CoreData operations before tearDown
+        // (notifications already cancelled in logout)
+        syncManagedObjectContext.performGroupedAndWait { [weak self] in
+            guard let self else { return }
+            // Ensure view context is also drained
+            managedObjectContext.performGroupedAndWait { }
         }
 
         if deleteCookie {
             deleteUserKeychainItems()
         }
 
-        // Call tearDown directly (not in perform block)
-        // Network services are explicitly invalidated in tearDown before closing Core Data
+        // Now it's safe to tearDown - all CoreData operations are complete
         tearDown()
 
         completion()
@@ -109,7 +110,12 @@ extension ZMUserSession {
 
         WireLogger.sessionManager.info("logout: starting logout sequence")
 
-        // Step 1 & 2: Stop all sync and work processing before sending DELETE request
+        // Step 1: Cancel notifications first while everything is still intact
+        syncManagedObjectContext.performGroupedBlock { [weak self] in
+            self?.localNotificationDispatcher?.cancelAllNotifications()
+        }
+
+        // Step 2 & 3: Stop all sync and work processing before sending DELETE request
         Task { [weak self] in
             guard let self else { return }
 

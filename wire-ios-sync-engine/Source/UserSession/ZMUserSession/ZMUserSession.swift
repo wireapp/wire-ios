@@ -729,23 +729,45 @@ public final class ZMUserSession: NSObject {
         }
         isTornDown = true // Set immediately to prevent recursion
 
-        WireLogger.sessionManager.debug("tearDown() starting - clearing all references")
+        WireLogger.sessionManager.debug("tearDown() starting - reverse order of setup")
 
-        // NOTE: syncAgent, transportSession, workAgent, operationLoop, and postSyncTask
-        // are already stopped/terminated during logout. We just clean up references here.
+        // NOTE: syncAgent, workAgent, operationLoop, transportSession, and postSyncTask
+        // are already stopped/terminated during logout. We clean up in reverse setup order.
 
-        WireLogger.sessionManager.debug("tearDown: tearing down MLS group verification")
-        tearDownMLSGroupVerification()
+        // ============================================================
+        // PHASE 1: Stop active sync operations (already done in logout)
+        // - syncAgent terminated
+        // - workAgent stopped
+        // - postSyncTask cancelled
+        // - operationLoop torn down
+        // - transportSession torn down
+        // ============================================================
 
-        WireLogger.sessionManager.debug("tearDown: clearing tokens and cancellables")
-        tokens.removeAll()
+        WireLogger.sessionManager.debug("tearDown: [Phase 1] clearing references to stopped operations")
+
+        // Clear syncAgent (already terminated in logout)
+        syncAgent?.delegate = nil
+        syncAgent = nil
+        postSyncTask = nil
+        operationLoop = nil
+
+        // ============================================================
+        // PHASE 2: Unregister observers (reverse of setup registration)
+        // ============================================================
+
+        WireLogger.sessionManager.debug("tearDown: [Phase 2] unregistering observers and notifications")
+
+        // Stop timers and observers
         cancellables.removeAll()
         isNetworkReachableCancellable?.cancel()
         isNetworkReachableCancellable = nil
-        application.unregisterObserverForStateChange(self)
-        callStateObserver = nil
+        tokens.removeAll()
 
-        WireLogger.sessionManager.debug("tearDown: unregistering recurring actions")
+        // Unregister from system notifications
+        NotificationCenter.default.removeObserver(self)
+        application.unregisterObserverForStateChange(self)
+
+        // Unregister recurring actions
         recurringActionService.removeAction(id: "refreshUsersMissingMetadataAction")
         recurringActionService.removeAction(id: "refreshConversationsMissingMetadataAction")
         recurringActionService.removeAction(id: "updateProteusToMLSMigrationStatusAction")
@@ -753,57 +775,78 @@ public final class ZMUserSession: NSObject {
         recurringActionService.removeAction(id: "refreshFederationCertificatesAction")
         recurringActionService.removeAction(id: "checkBuildBlacklistAction")
 
-        WireLogger.sessionManager.debug("tearDown: clearing delegates")
+        // ============================================================
+        // PHASE 3: Tear down sync infrastructure (reverse of setUpSyncAgent)
+        // ============================================================
+
+        WireLogger.sessionManager.debug("tearDown: [Phase 3] tearing down sync infrastructure")
+
+        // Tear down components that depend on network and CoreData
+        callStateObserver = nil
+        urlActionProcessors = nil
+
+        // Clear clientSessionComponent (holds workAgent, generators, etc)
+        clientSessionComponent = nil
+
+        // Tear down sync strategy and directory
+        syncStrategy?.tearDown()
+        syncStrategy = nil
+        strategyDirectory = nil
+
+        // ============================================================
+        // PHASE 4: Tear down services and managers (reverse of setup Phase 4)
+        // ============================================================
+
+        WireLogger.sessionManager.debug("tearDown: [Phase 4] tearing down services")
+
+        // Tear down MLS and crypto services
+        tearDownMLSGroupVerification()
+        cRLsDistributionPointsObserver = nil
+        cRLsChecker = nil
+
+        // Tear down call and notification services
+        callCenter?.tearDown()
+        localNotificationDispatcher = nil
+        notificationDispatcher.tearDown()
+
+        // ============================================================
+        // PHASE 5: Tear down network and event processing (reverse of setup Phase 3)
+        // ============================================================
+
+        WireLogger.sessionManager.debug("tearDown: [Phase 5] tearing down network and event processing")
+
+        // Clear event processor (no more events should be processed)
+        conversationEventProcessor = nil
+
+        // Invalidate network services BEFORE closing CoreData
+        // (so no network responses try to save to closed database)
+        userSessionComponent?.invalidateNetworkServices()
+        transportSession.tearDown()
+
+        // ============================================================
+        // PHASE 6: Clear delegates (reverse of setup Phase 2)
+        // ============================================================
+
+        WireLogger.sessionManager.debug("tearDown: [Phase 6] clearing delegates")
+
         earService.delegate = nil
         appLockController.delegate = nil
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = nil
 
-        WireLogger.sessionManager.debug("tearDown: clearing post-sync task reference")
-        // postSyncTask should already be cancelled and completed during logout
-        postSyncTask = nil
+        // ============================================================
+        // PHASE 7: Close data and context (reverse of setup Phase 1)
+        // ============================================================
 
-        WireLogger.sessionManager.debug("tearDown: tearing down syncAgent")
-        syncAgent?.delegate = nil
-        syncAgent = nil
+        WireLogger.sessionManager.debug("tearDown: [Phase 7] closing data stack")
 
-        WireLogger.sessionManager.debug("tearDown: clearing event processors to stop event processing")
-        conversationEventProcessor = nil
+        // Close CoreData (all operations should be complete by now)
+        coreDataStack.close()
 
-        WireLogger.sessionManager.debug("tearDown: clearing clientSessionComponent")
-        clientSessionComponent = nil
-
-        WireLogger.sessionManager.debug("tearDown: tearing down syncStrategy")
-        syncStrategy?.tearDown()
-        syncStrategy = nil
-
-        WireLogger.sessionManager.debug("tearDown: clearing operationLoop reference (already torn down during logout)")
-        operationLoop = nil
-
-        WireLogger.sessionManager.debug("tearDown: tearing down notificationDispatcher")
-        notificationDispatcher.tearDown()
-
-        WireLogger.sessionManager.debug("tearDown: tearing down callCenter")
-        callCenter?.tearDown()
-
-        WireLogger.sessionManager.debug("tearDown: invalidating network services (WireNetwork URLSessions)")
-        userSessionComponent?.invalidateNetworkServices()
-
-        WireLogger.sessionManager.debug("tearDown: tearing down transportSession (legacy network)")
-        transportSession.tearDown()
-
-        WireLogger.sessionManager.debug("tearDown: closing coreDataStack")
-        self.coreDataStack.close()
-
-        WireLogger.sessionManager.debug("tearDown: clearing contextStorage")
+        // Clear remaining context and authentication
         contextStorage.clear()
-
-        // Note: strategyDirectory and urlActionProcessors are left to be cleaned up
-        // when ZMUserSession is deallocated
-
-        NotificationCenter.default.removeObserver(self)
         WireLogger.authentication.clearClientID()
 
-        WireLogger.sessionManager.debug("tearDown() completed")
+        WireLogger.sessionManager.debug("tearDown() completed - all phases done in reverse order")
     }
 
     // MARK: - Methods
