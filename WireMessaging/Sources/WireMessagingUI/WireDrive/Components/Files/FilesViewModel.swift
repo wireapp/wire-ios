@@ -223,6 +223,7 @@ package final class FilesViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
     private let navigationPath: [FilesViewItem]
     private let accentColorProvider: () -> WireAccentColor
+    private var sortingSelection: FilesSortingViewModel.SortingSelection = .default
 
     let useCases: UseCases
     let isBrowsing: Bool
@@ -834,8 +835,8 @@ package final class FilesViewModel: ObservableObject {
     }
 
     func makeFilesSortingViewModel() -> FilesSortingViewModel {
-        FilesSortingViewModel(isBrowsing: isBrowsing) { sortingKey, sortingOrder in
-            
+        FilesSortingViewModel(isBrowsing: isBrowsing) { [weak self] sortingSelection in
+            self?.sortingSelection = sortingSelection
         }
     }
     

@@ -46,7 +46,7 @@ struct FilesSortingView: View {
                     } label: {
                         Label(
                             sortingKey.title,
-                            systemImage: viewModel.model.sortingKey == sortingKey ? "checkmark" : ""
+                            systemImage: viewModel.sortingSelection.sortingKey == sortingKey ? "checkmark" : ""
                         )
                     }
                 }
@@ -59,18 +59,18 @@ struct FilesSortingView: View {
                     } label: {
                         Label(
                             sortingOrder.title,
-                            systemImage: viewModel.model.sortingOrder == sortingOrder ? "checkmark" : ""
+                            systemImage: viewModel.sortingSelection.sortingOrder == sortingOrder ? "checkmark" : ""
                         )
                     }
                 }
 
             } label: {
                 HStack(spacing: 5) {
-                    Text(viewModel.model.sortingKey.title)
+                    Text(viewModel.sortingSelection.sortingKey.title)
                         .foregroundStyle(.primary)
                         .font(for: .h5)
 
-                    Image(systemName: viewModel.model.sortingOrder.iconName)
+                    Image(systemName: viewModel.sortingSelection.sortingOrder.iconName)
                         .resizable()
                         .frame(width: 9, height: 11)
                 }.frame(minWidth: 120, alignment: .leading)
@@ -93,7 +93,7 @@ struct FilesSortingView: View {
     FilesSortingView(
         viewModel: FilesSortingViewModel(
             isBrowsing: false,
-            onUpdate: { _, _ in }
+            onUpdate: { _ in }
         )
     )
 }

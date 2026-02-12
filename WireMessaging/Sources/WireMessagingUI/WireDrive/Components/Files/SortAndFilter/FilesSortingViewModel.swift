@@ -69,15 +69,15 @@ final class FilesSortingViewModel: ObservableObject {
         }
     }
 
-    struct SortingModel {
+    struct SortingSelection {
         var sortingKey: SortingKey
         var sortingOrder: SortingOrder
     }
 
-    @Published var model: SortingModel
+    @Published var sortingSelection: SortingSelection
     
     let isBrowsing: Bool
-    private let onUpdate: (SortingKey, SortingOrder) -> Void
+    private let onUpdate: (SortingSelection) -> Void
     
     var availableSortingKeys: [SortingKey] {
         if isBrowsing {
@@ -88,11 +88,11 @@ final class FilesSortingViewModel: ObservableObject {
     }
 
     init(
-        model: SortingModel = .default,
+        sortingSelection: SortingSelection = .default,
         isBrowsing: Bool,
-        onUpdate: @escaping (SortingKey, SortingOrder) -> Void
+        onUpdate: @escaping (SortingSelection) -> Void
     ) {
-        self.model = model
+        self.sortingSelection = sortingSelection
         self.isBrowsing = isBrowsing
         self.onUpdate = onUpdate
     }
@@ -100,17 +100,17 @@ final class FilesSortingViewModel: ObservableObject {
     // MARK: - Actions
     
     func select(sortingKey: SortingKey) {
-        model.sortingKey = sortingKey
-        onUpdate(sortingKey, model.sortingOrder)
+        sortingSelection.sortingKey = sortingKey
+        onUpdate(sortingSelection)
     }
 
     func select(sortingOrder: SortingOrder) {
-        model.sortingOrder = sortingOrder
-        onUpdate(model.sortingKey, sortingOrder)
+        sortingSelection.sortingOrder = sortingOrder
+        onUpdate(sortingSelection)
     }
 
 }
 
-private extension FilesSortingViewModel.SortingModel {
+extension FilesSortingViewModel.SortingSelection {
     static let `default` = Self(sortingKey: .lastModified, sortingOrder: .ascending)
 }
