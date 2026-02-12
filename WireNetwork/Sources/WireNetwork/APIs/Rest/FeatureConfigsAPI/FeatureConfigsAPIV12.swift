@@ -57,10 +57,10 @@ struct FeatureConfigsResponseAPIV12: Decodable, ToAPIModelConvertible {
     let cells: FeatureWithoutConfig
     let allowedGlobalOperations: FeatureWithConfig<FeatureConfigResponse.AllowedGlobalOperationsV10>
     let consumableNotifications: FeatureWithoutConfig
-    let simplifiedUserConnectionRequestQRCode: FeatureWithoutConfig
 
     // Added in v12
     let assetAuditLog: FeatureWithoutConfig
+    let simplifiedUserConnectionRequestQRCode: FeatureWithoutConfig
 
     func toAPIModel() -> [FeatureConfig] {
         var featureConfigs: [FeatureConfig] = []
