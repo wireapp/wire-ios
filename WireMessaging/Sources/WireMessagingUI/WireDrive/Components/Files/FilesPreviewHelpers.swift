@@ -95,7 +95,7 @@ extension FilesViewModel {
                 updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(
                     nodesAPI: previewPublicLinkApi()
                 ),
-                getConversations: WireDriveGetConversationsUseCase(
+                getDriveConversations: WireDriveGetConversationsUseCase(
                     nodesAPI: previewConversationsApi()
                 )
             ),

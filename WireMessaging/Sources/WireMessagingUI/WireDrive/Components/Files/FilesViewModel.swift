@@ -173,7 +173,7 @@ package final class FilesViewModel: ObservableObject {
             deletePublicLink: WireDriveDeletePublicLinkUseCase,
             updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase,
             updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase,
-            getConversations: any WireDriveGetConversationsUseCaseProtocol
+            getDriveConversations: any WireDriveGetConversationsUseCaseProtocol
         ) {
 
             self.fetchNodes = fetchNodes
@@ -192,7 +192,7 @@ package final class FilesViewModel: ObservableObject {
             self.deletePublicLink = deletePublicLink
             self.updatePublicLinkExpiration = updatePublicLinkExpiration
             self.updatePublicLinkPassword = updatePublicLinkPassword
-            self.getConversations = getConversations
+            self.getDriveConversations = getDriveConversations
         }
 
         let fetchNodes: WireDriveFetchNodesPageUseCase
@@ -211,7 +211,7 @@ package final class FilesViewModel: ObservableObject {
         let deletePublicLink: WireDriveDeletePublicLinkUseCase
         let updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase
         let updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase
-        let getConversations: any WireDriveGetConversationsUseCaseProtocol
+        let getDriveConversations: any WireDriveGetConversationsUseCaseProtocol
     }
 
     private let setNavigation: ([FilesViewItem]) -> Void
@@ -340,8 +340,13 @@ package final class FilesViewModel: ObservableObject {
     
     private func fetchConversations() {
         Task {
-            //TODO: only fetch one conversation if it's not the All Files Shared Drive
-            conversations = await useCases.getConversations.invoke()
+            let allDriveConversations = await useCases.getDriveConversations.invoke()
+            
+            if let cellName {
+                self.conversations = allDriveConversations.filter { $0.id == cellName }
+            } else {
+                self.conversations = allDriveConversations
+            }
         }
     }
 

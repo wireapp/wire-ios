@@ -154,7 +154,7 @@ package struct FilesViewContainer: View {
                 deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesAPI),
                 updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
                 updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
-                getConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI)
+                getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI)
             ),
             title: path.last?.name,
             navigationPath: path,
