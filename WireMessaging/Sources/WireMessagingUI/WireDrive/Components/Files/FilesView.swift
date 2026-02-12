@@ -53,11 +53,11 @@ package struct FilesView: FilesViewProtocol {
                 .ignoresSafeArea(.all)
 
             VStack {
-                if isSearchFocused {
-                    VStack(alignment: .leading, spacing: 15) {
+                VStack(alignment: .leading, spacing: 15) {
+                    if isSearchFocused {
                         FilesFilteringView(viewModel: viewModel.makeFilesFilteringViewModel())
-                        FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
                     }
+                    FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
                 }
                 
                 switch viewModel.state {
@@ -82,10 +82,10 @@ package struct FilesView: FilesViewProtocol {
             }
             .animation(.easeInOut(duration: 0.25), value: viewModel.connectionState)
             .animation(.easeOut(duration: 0.25), value: isSearchFocused)
-            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
+            .quickLookPreview($viewModel.viewingURL)
             .navigationTitle(viewModel.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(isSearchFocused ? .hidden : .visible, for: .navigationBar) // shows navigation bar divider
+            .toolbarBackground(.hidden, for: .navigationBar)
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
             .toolbar { toolbarContent }
             .if(viewModel.showSearchBar, transform: searchView(content:))
