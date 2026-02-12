@@ -304,14 +304,13 @@ extension URLActionRouter: PresentationDelegate {
     ) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-        let agreeAction = UIAlertAction.confirm(style: .default) { _ in
-            decisionHandler(showCancelAction)
-        }
-        alert.addAction(agreeAction)
-
         if showCancelAction {
+            let agreeAction = UIAlertAction.confirm(style: .default) { _ in decisionHandler(true) }
             let cancelAction = UIAlertAction.cancel { decisionHandler(false) }
-            alert.addAction(cancelAction)
+            [agreeAction, cancelAction].forEach { alert.addAction($0) }
+        } else {
+            let agreeAction = UIAlertAction.confirm(style: .default) { _ in decisionHandler(false) }
+            alert.addAction(agreeAction)
         }
 
         presentAlert(alert)
