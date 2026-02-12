@@ -820,7 +820,7 @@ public final class ZMUserSession: NSObject {
                 metadata: resolvedBackendMetadata
             ),
             ConnectToBotURLActionProcessor(
-                contextprovider: coreDataStack,
+                contextProvider: coreDataStack,
                 transportSession: transportSession,
                 eventProcessor: conversationEventProcessor,
                 searchUsersCache: dependencies.caches.searchUsers,

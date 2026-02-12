@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public typealias Bot = BotProtocol
+
 @objc
-public protocol Bot: AnyObject, UserType {
+public protocol BotProtocol: AnyObject, UserType {
     var providerIdentifier: String? { get }
     var serviceIdentifier: String? { get }
 }
@@ -26,9 +28,6 @@ public protocol Bot: AnyObject, UserType {
 public protocol BotSearchResult: Bot {
     var summary: String? { get }
 }
-
-// TODO: delete
-public typealias SearchServiceUser = BotSearchResult
 
 extension ZMUser {
     static let servicesMustBeMentioned = false

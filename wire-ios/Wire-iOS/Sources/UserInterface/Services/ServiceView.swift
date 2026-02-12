@@ -135,8 +135,8 @@ final class ServiceView: UIView {
     }
 
     private func updateForService() {
-        logoView.user = service.bot
-        nameLabel.text = service.bot.name
+        logoView.user = service.user
+        nameLabel.text = service.user.name
         providerLabel.text = service.provider?.name
     }
 }

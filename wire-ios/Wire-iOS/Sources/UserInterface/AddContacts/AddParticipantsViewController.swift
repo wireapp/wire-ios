@@ -577,7 +577,7 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
         guard case let .add(conversation) = viewModel.context else { return }
 
         let detail = ServiceDetailViewController(
-            bot: bot,
+            user: bot,
             actionType: .addService(conversation as! ZMConversation),
             userSession: userSession
         ) { [weak self] result in

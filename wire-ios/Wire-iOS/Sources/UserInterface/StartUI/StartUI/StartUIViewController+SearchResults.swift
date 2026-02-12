@@ -95,7 +95,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     ) {
 
         let detail = ServiceDetailViewController(
-            bot: bot,
+            user: bot,
             actionType: .openConversation,
             userSession: userSession
         ) { [weak self] result in

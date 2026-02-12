@@ -27,22 +27,20 @@ extension ConversationLike where Self: GroupDetailsConversationType {
 }
 
 struct Service {
-    let bot: any Bot
+
+    let user: any UserType
+    let isLegacyBot: Bool
     var serviceUserDetails: ServiceDetails?
     var provider: ServiceProvider?
-}
 
-extension Service {
-    init(bot: any Bot) {
-        self.bot = bot
-        self.serviceUserDetails = nil
-        self.provider = nil
+    init(user: any UserType) {
+        self.user = user
+        self.isLegacyBot = user.isBot
     }
+
 }
 
 final class ServiceDetailViewController: UIViewController {
-
-    typealias Completion = (AddBotResult?) -> Void
 
     enum ActionType {
         case addService(ZMConversation)
@@ -60,7 +58,7 @@ final class ServiceDetailViewController: UIViewController {
         wr_supportedInterfaceOrientations
     }
 
-    let completion: Completion?
+    let completion: (AddBotResult?) -> Void
 
     private let detailView: ServiceDetailView
     private let actionButton: ZMButton
@@ -70,18 +68,18 @@ final class ServiceDetailViewController: UIViewController {
     /// init method with ServiceUser, destination conversation and customized UI.
     ///
     /// - Parameters:
-    ///   - bot: a bot user to show
+    ///   - user: an app or a bot user to show
     ///   - destinationConversation: the destination conversation of the serviceUser
     ///   - actionType: Enum ActionType to choose the action add or remove the service user
     ///   - selfUser: self user, for inject mock user for testing
     ///   - completion: completion handler
     init(
-        bot: any Bot,
+        user: any UserType,
         actionType: ActionType,
         userSession: UserSession,
-        completion: Completion? = nil
+        completion: @escaping (AddBotResult?) -> Void
     ) {
-        self.service = Service(bot: bot)
+        self.service = Service(user: user)
         self.completion = completion
         self.userSession = userSession
 
@@ -116,7 +114,7 @@ final class ServiceDetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if let title = service.bot.name {
+        if let title = service.user.name {
             setupNavigationBarTitle(title)
         }
 
@@ -146,15 +144,17 @@ final class ServiceDetailViewController: UIViewController {
 
         createConstraints()
 
-        guard let userSession = userSession as? ZMUserSession else {
-            return
+        guard let userSession = userSession as? ZMUserSession else { return }
+
+        guard service.isLegacyBot, let bot = service.user as? any Bot else {
+            return // TODO: what is required for apps to start a conversation with?
         }
 
-        service.bot.fetchProvider(in: userSession) { [weak self] provider in
+        bot.fetchProvider(in: userSession) { [weak self] provider in
             self?.detailView.service.provider = provider
         }
 
-        service.bot.fetchDetails(in: userSession) { [weak self] details in
+        bot.fetchDetails(in: userSession) { [weak self] details in
             self?.detailView.service.serviceUserDetails = details
         }
     }
@@ -182,30 +182,29 @@ final class ServiceDetailViewController: UIViewController {
     @objc
     func dismissButtonTapped(_ sender: AnyObject!) {
         navigationController?.dismiss(animated: true) { [weak self] in
-            self?.completion?(nil)
+            self?.completion(nil)
         }
     }
 
     func callback(
         for type: ActionType,
         sender: UIView,
-        completion: Completion?
+        completion: @escaping (AddBotResult?) -> Void
     ) -> Callback<LegacyButton> {
         { [weak self] _ in
-            guard let `self`, let userSession = userSession as? ZMUserSession else {
+            guard let self, let userSession = userSession as? ZMUserSession, let bot = service.user as? any Bot else {
                 return
             }
-            let bot = service.bot
+
             switch type {
 
             case let .addService(conversation):
                 conversation.add(bot: bot, in: userSession) { result in
-
                     switch result {
                     case .success:
-                        completion?(.success(conversation: conversation))
+                        completion(.success(conversation: conversation))
                     case let .failure(error):
-                        completion?(.failure(error: (error as? AddBotError) ?? AddBotError.general))
+                        completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
                     }
                 }
 
@@ -222,14 +221,14 @@ final class ServiceDetailViewController: UIViewController {
                     bot: bot,
                     team: userSession.selfUser.membership?.team
                 ) {
-                    completion?(.success(conversation: existingConversation))
+                    completion(.success(conversation: existingConversation))
                 } else {
                     bot.createConversation(in: userSession, completionHandler: { result in
                         switch result {
                         case let .success(conversation):
-                            completion?(.success(conversation: conversation))
+                            completion(.success(conversation: conversation))
                         case let .failure(error):
-                            completion?(.failure(error: (error as? AddBotError) ?? AddBotError.general))
+                            completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
                         }
                     })
                 }

@@ -51,9 +51,10 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     func createSut() {
         sut = ServiceDetailViewController(
-            bot: bot,
+            user: bot,
             actionType: .removeService(groupConversation),
-            userSession: UserSessionMock(mockUser: mockSelfUser)
+            userSession: UserSessionMock(mockUser: mockSelfUser),
+            completion: { _ in }
         )
     }
 

@@ -27,28 +27,28 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
     let metadata: BackendMetadataProvider
 
     init(
-        contextprovider: ContextProvider,
+        contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         eventProcessor: LegacyConversationEventProcessorProtocol,
         searchUsersCache: SearchUsersCache?,
         metadata: BackendMetadataProvider
     ) {
-        self.contextProvider = contextprovider
+        self.contextProvider = contextProvider
         self.transportSession = transportSession
         self.eventProcessor = eventProcessor
         self.metadata = metadata
     }
 
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
-        guard case let .connectBot(serviceUserData) = urlAction else { return }
+        guard case let .connectBot(providerID, serviceID) = urlAction else { return }
 
-        let providerIdentifier = serviceUserData.provider.transportString()
+        let providerIdentifier = providerID.transportString()
         let serviceUser = ZMSearchUser(
             viewContext: contextProvider.viewContext,
             name: "",
             handle: nil,
             accentColor: .blue,
-            remoteIdentifier: serviceUserData.service,
+            remoteIdentifier: serviceID,
             teamIdentifier: nil,
             user: nil,
             searchUsersCache: searchUsersCache,
