@@ -63,7 +63,7 @@ public final class ZMUserSession: NSObject {
     let userExpirationObserver: UserExpirationObserver
     private(set) var strategyDirectory: StrategyDirectoryProtocol?
     private(set) var syncStrategy: ZMSyncStrategy?
-    private(set) var operationLoop: ZMOperationLoop?
+    var operationLoop: ZMOperationLoop?
     private(set) var notificationDispatcher: NotificationDispatcher
     private(set) var localNotificationDispatcher: LocalNotificationDispatcher?
     let applicationStatusDirectory: ApplicationStatusDirectory
@@ -97,6 +97,7 @@ public final class ZMUserSession: NSObject {
     var conversationEventProcessor: ConversationEventProcessor!
 
     var syncAgent: SyncAgent?
+    private var postSyncTask: Task<Void, Never>?
 
     public var hasCompletedInitialSync: Bool {
         !journal[.isInitialSyncRequired]
@@ -592,7 +593,8 @@ public final class ZMUserSession: NSObject {
         selfUser.needsToBeUpdatedFromBackend = true
 
         // Proactively ensure we clean up invalid connection state.
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             do {
                 let connectionValidator = ConnectionValidator(context: syncContext)
                 try await connectionValidator.cleanUpAllInvalidConnections()
@@ -721,43 +723,93 @@ public final class ZMUserSession: NSObject {
     }
 
     public func tearDown() {
-        guard !isTornDown else { return }
+        guard !isTornDown else {
+            WireLogger.sessionManager.debug("tearDown() called but already torn down, returning")
+            return
+        }
+        isTornDown = true // Set immediately to prevent recursion
 
+        WireLogger.sessionManager.debug("tearDown() starting - clearing all references")
+
+        // Stop work agent asynchronously (don't block tearDown)
         Task {
             await clientSessionComponent?.workAgent.clearSchedulerQueue()
             await clientSessionComponent?.workAgent.stop()
         }
+
+        // NOTE: transportSession, workAgent, and operationLoop are already stopped during logout
+        // So we just need to clean up references here
+
+        WireLogger.sessionManager.debug("tearDown: tearing down MLS group verification")
         tearDownMLSGroupVerification()
 
+        WireLogger.sessionManager.debug("tearDown: clearing tokens and cancellables")
         tokens.removeAll()
+        cancellables.removeAll()
+        isNetworkReachableCancellable?.cancel()
+        isNetworkReachableCancellable = nil
         application.unregisterObserverForStateChange(self)
         callStateObserver = nil
 
-        // Clear delegates to break retain cycles
+        WireLogger.sessionManager.debug("tearDown: unregistering recurring actions")
+        recurringActionService.removeAction(id: "refreshUsersMissingMetadataAction")
+        recurringActionService.removeAction(id: "refreshConversationsMissingMetadataAction")
+        recurringActionService.removeAction(id: "updateProteusToMLSMigrationStatusAction")
+        recurringActionService.removeAction(id: "refreshTeamMetadataAction")
+        recurringActionService.removeAction(id: "refreshFederationCertificatesAction")
+        recurringActionService.removeAction(id: "checkBuildBlacklistAction")
+
+        WireLogger.sessionManager.debug("tearDown: clearing delegates")
         earService.delegate = nil
         appLockController.delegate = nil
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = nil
 
+        WireLogger.sessionManager.debug("tearDown: cancelling post-sync task")
+        postSyncTask?.cancel()
+        postSyncTask = nil
+
+        WireLogger.sessionManager.debug("tearDown: tearing down syncAgent")
         syncAgent?.delegate = nil
         syncAgent = nil
+
+        WireLogger.sessionManager.debug("tearDown: clearing event processors to stop event processing")
+        conversationEventProcessor = nil
+
+        WireLogger.sessionManager.debug("tearDown: clearing clientSessionComponent")
+        clientSessionComponent = nil
+
+        WireLogger.sessionManager.debug("tearDown: tearing down syncStrategy")
         syncStrategy?.tearDown()
         syncStrategy = nil
-        operationLoop?.tearDown()
+
+        WireLogger.sessionManager.debug("tearDown: clearing operationLoop reference (already torn down during logout)")
         operationLoop = nil
-        transportSession.tearDown()
+
+        WireLogger.sessionManager.debug("tearDown: tearing down notificationDispatcher")
         notificationDispatcher.tearDown()
+
+        WireLogger.sessionManager.debug("tearDown: tearing down callCenter")
         callCenter?.tearDown()
-        coreDataStack.close()
+
+        WireLogger.sessionManager.debug("tearDown: invalidating network services (WireNetwork URLSessions)")
+        userSessionComponent?.invalidateNetworkServices()
+
+        WireLogger.sessionManager.debug("tearDown: tearing down transportSession (legacy network)")
+        transportSession.tearDown()
+
+        WireLogger.sessionManager.debug("tearDown: closing coreDataStack")
+        self.coreDataStack.close()
+
+        WireLogger.sessionManager.debug("tearDown: clearing contextStorage")
         contextStorage.clear()
 
-        // Note: strategyDirectory, legacyUpdateEventProcessor, and urlActionProcessors
-        // are left to be cleaned up when ZMUserSession is deallocated to avoid
-        // triggering strategy teardowns while async operations may still be running.
+        // Note: strategyDirectory and urlActionProcessors are left to be cleaned up
+        // when ZMUserSession is deallocated
 
         NotificationCenter.default.removeObserver(self)
         WireLogger.authentication.clearClientID()
 
-        isTornDown = true
+        WireLogger.sessionManager.debug("tearDown() completed")
     }
 
     // MARK: - Methods
@@ -957,8 +1009,8 @@ public final class ZMUserSession: NSObject {
             await triggerResourcesSync()
         } else if journal[.isConversationSyncRequired] {
             // as wanted this should not be blocking, see AppVersionMigration_4_1_1, AppVersionMigration_4_10_0
-            Task {
-                let sync = clientSessionComponent?.pullAllConversationsSync
+            Task { [weak self] in
+                let sync = self?.clientSessionComponent?.pullAllConversationsSync
                 try? await sync?.pull()
             }
             // trigger the sync in this case too, to get the right sync bar state
@@ -994,9 +1046,9 @@ public final class ZMUserSession: NSObject {
 
     // Only used for testing
     public func triggerIncrementalSync() {
-        Task {
+        Task { [weak self] in
             do {
-                try await syncAgent?.performIncrementalSync()
+                try await self?.syncAgent?.performIncrementalSync()
             } catch {
                 WireLogger.sync.error(
                     "failed to perform incremental sync: \(String(describing: error))",
@@ -1083,7 +1135,8 @@ public final class ZMUserSession: NSObject {
     // MARK: Account
 
     public func initiateUserDeletion() {
-        syncManagedObjectContext.performGroupedBlock {
+        syncManagedObjectContext.performGroupedBlock { [weak self] in
+            guard let self else { return }
             self.syncManagedObjectContext.setPersistentStoreMetadata(
                 NSNumber(value: true),
                 key: DeleteAccountRequestStrategy.userDeletionInitiatedKey
@@ -1169,9 +1222,10 @@ extension ZMUserSession: SyncAgentDelegate {
     func syncAgentDidFailSyncing(_ syncAgent: SyncAgent, error: any Error) {
         if Bundle.developerModeEnabled { // Only show sync error alert for debugging
             let onRetry: () -> Void = { [weak self] in
-                self?.managedObjectContext.performGroupedBlock {
-                    self?.isPerformingSync = true
-                    self?.updateNetworkState()
+                guard let self else { return }
+                self.managedObjectContext.performGroupedBlock {
+                    self.isPerformingSync = true
+                    self.updateNetworkState()
                 }
 
                 syncAgent.resume()
@@ -1225,8 +1279,8 @@ extension ZMUserSession: SyncAgentDelegate {
 
     func didStartIncrementalSync() {
         WireLogger.sync.debug("did start incremental sync", attributes: .incrementalSync)
-        Task {
-            await showSyncBar(true)
+        Task { [weak self] in
+            await self?.showSyncBar(true)
         }
         notifyAVSWillProcessEvents()
     }
@@ -1243,16 +1297,23 @@ extension ZMUserSession: SyncAgentDelegate {
             attributes: .incrementalSync
         )
 
-        Task {
-            await showSyncBar(false)
+        Task { [weak self] in
+            await self?.showSyncBar(false)
         }
         notifyAVSDidProcessEvents()
-        WaitingGroupTask(context: syncContext) { [weak self] in
+
+        // Store the post-sync task so we can cancel it during tearDown
+        postSyncTask = WaitingGroupTask(context: syncContext) { [weak self] in
             guard let self else { return }
+
+            // Check if we're torn down before starting work
+            guard !isTornDown else { return }
+
             await fetchAndStoreFeatureConfig()
 
+            let syncContextLocal = syncContext
             let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
-                let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
+                let selfClient = ZMUser.selfUser(in: syncContextLocal).selfClient()
                 let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
                 return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
             }
@@ -1284,6 +1345,8 @@ extension ZMUserSession: SyncAgentDelegate {
         do {
             try await resolveOneOnOneUseCase.resolveAllOneOnOneConversations()
             didAlreadyResolveAllOneOnOnes = true
+        } catch is CancellationError {
+            WireLogger.mls.info("One on one conversation resolution was cancelled")
         } catch {
             WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
         }
@@ -1337,8 +1400,11 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func checkE2EICertificateExpiryStatus() {
-        Task {
-            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+        Task { [weak self] in
+            guard let self else { return }
+            let isE2EIFeatureEnabled = await managedObjectContext.perform { [weak self] in
+                self?.e2eiFeature.isEnabled ?? false
+            }
             if isE2EIFeatureEnabled {
                 NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
             }
@@ -1379,9 +1445,9 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
             }
             // this is a fresh client so we need an initialSync
             journal[.isInitialSyncRequired] = true
-            Task {
+            Task { [weak self] in
                 WireLogger.sync.debug("Triggering initial sync after client registration")
-                await triggerSync()
+                await self?.triggerSync()
             }
         }
     }
@@ -1491,8 +1557,10 @@ extension ZMUserSession {
     }
 
     func onSelfClientInvalidated() async {
-        await syncContext.perform { [self] in
-            syncContext.tearDownCryptoStack()
+        let context = syncContext
+        await syncContext.perform { [weak self] in
+            guard let self else { return }
+            context.tearDownCryptoStack()
 
             let clientRegistrationStatus = applicationStatusDirectory.clientRegistrationStatus
             let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
@@ -1500,7 +1568,7 @@ extension ZMUserSession {
             clientRegistrationStatus.emailCredentials = nil
             clientRegistrationStatus.cookieProvider.deleteKeychainItems()
 
-            let selfUser = ZMUser.selfUser(in: syncContext)
+            let selfUser = ZMUser.selfUser(in: context)
             let clientDeletedRemotelyError = NSError.userSessionError(
                 code: .clientDeletedRemotely,
                 userInfo: selfUser.loginCredentials.dictionaryRepresentation

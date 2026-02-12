@@ -133,6 +133,18 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         }
     }
 
+    func terminate() async {
+        // Nil delegate first to prevent callbacks during/after suspension
+        delegate = nil
+        cancellables.removeAll()
+        await suspend()
+    }
+    
+    func restart() async {
+        setupBindings()
+        resume()
+    }
+    
     /// Suspend any ongoing sync tasks.
 
     func suspend() async {

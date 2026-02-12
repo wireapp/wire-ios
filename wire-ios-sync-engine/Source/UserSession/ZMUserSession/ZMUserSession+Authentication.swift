@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 extension ZMUserSession {
 
@@ -70,17 +71,17 @@ extension ZMUserSession {
 
     func close(deleteCookie: Bool, completion: @escaping () -> Void) {
         // Clear all notifications associated with the account from the notification center
-        syncManagedObjectContext.performGroupedBlock {
-            self.localNotificationDispatcher?.cancelAllNotifications()
+        syncManagedObjectContext.performGroupedBlock { [weak self] in
+            self?.localNotificationDispatcher?.cancelAllNotifications()
         }
 
         if deleteCookie {
             deleteUserKeychainItems()
         }
 
-        syncManagedObjectContext.perform {
-            self.tearDown()
-        }
+        // Call tearDown directly (not in perform block)
+        // Network services are explicitly invalidated in tearDown before closing Core Data
+        tearDown()
 
         completion()
     }
@@ -105,31 +106,65 @@ extension ZMUserSession {
             return
         }
 
-        let payload: [String: Any] = if let password = credentials.password, !password.isEmpty {
-            ["password": password]
-        } else {
-            [:]
-        }
+        WireLogger.sessionManager.info("logout: starting logout sequence")
 
-        let request = ZMTransportRequest(
-            path: "/clients/\(selfClientIdentifier)",
-            method: .delete,
-            payload: payload as ZMTransportData,
-            apiVersion: apiVersion.rawValue
-        )
-
-        request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] response in
+        // Step 1 & 2: Stop all sync and work processing before sending DELETE request
+        Task { [weak self] in
             guard let self else { return }
 
-            if response.httpStatus == 200 {
-                delegate?.userDidLogout(accountId: accountID)
-                completion(.success(()))
-            } else {
-                completion(.failure(errorFromFailedDeleteResponse(response)))
-            }
-        }))
+            WireLogger.sessionManager.info("logout: suspending syncAgent")
+            await self.syncAgent?.terminate()
+            WireLogger.sessionManager.info("logout: syncAgent suspended")
 
-        transportSession.enqueueOneTime(request)
+            // Nil out syncAgent to prevent resume() calls
+            self.syncAgent = nil
+            WireLogger.sessionManager.info("logout: syncAgent cleared")
+
+            if let workAgent = self.clientSessionComponent?.workAgent {
+                WireLogger.sessionManager.info("logout: clearing workAgent queue")
+                await workAgent.clearSchedulerQueue()
+                WireLogger.sessionManager.info("logout: stopping workAgent")
+                await workAgent.stop()
+                WireLogger.sessionManager.info("logout: workAgent stopped")
+            }
+
+            // Step 3: Send DELETE request
+            WireLogger.sessionManager.info("logout: sending DELETE client request")
+            let payload: [String: Any] = if let password = credentials.password, !password.isEmpty {
+                ["password": password]
+            } else {
+                [:]
+            }
+
+            let request = ZMTransportRequest(
+                path: "/clients/\(selfClientIdentifier)",
+                method: .delete,
+                payload: payload as ZMTransportData,
+                apiVersion: apiVersion.rawValue
+            )
+
+            request.add(ZMCompletionHandler(on: self.managedObjectContext, block: { [weak self] response in
+                guard let self else { return }
+
+                // Step 4: Stop operationLoop and transportSession (both success and failure)
+                WireLogger.sessionManager.info("logout: DELETE response received, stopping operationLoop and transportSession")
+                self.operationLoop?.tearDown()
+                WireLogger.sessionManager.info("logout: operationLoop torn down")
+                self.operationLoop = nil
+                WireLogger.sessionManager.info("logout: operationLoop nil")
+                self.transportSession.tearDown()
+                WireLogger.sessionManager.info("logout: transportSession torn down")
+
+                if response.httpStatus == 200 {
+                    self.delegate?.userDidLogout(accountId: accountID)
+                    completion(.success(()))
+                } else {
+                    completion(.failure(self.errorFromFailedDeleteResponse(response)))
+                }
+            }))
+
+            self.transportSession.enqueueOneTime(request)
+        }
     }
 
     func errorFromFailedDeleteResponse(_ response: ZMTransportResponse!) -> NSError {
@@ -141,7 +176,7 @@ extension ZMUserSession {
                 .clientDeletedRemotely
             case "invalid-credentials",
                  "missing-auth",
-                 "bad-request": // in case the password not matching password format requirement
+                 "bad-request": // in case the password does not match password format requirement
                 .invalidCredentials
             default:
                 .unknownError

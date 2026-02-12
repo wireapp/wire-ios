@@ -24,12 +24,13 @@ extension ZMUserSession {
 
     var updateProteusToMLSMigrationStatusAction: RecurringAction {
         .init(id: #function, interval: .oneDay) { [weak self] in
-            guard
-                let self,
-                await viewContext.perform({ self.mlsFeature.isEnabled })
-            else {
-                return
+            guard let self else { return }
+
+            let isMLSEnabled = await viewContext.perform { [weak self] in
+                self?.mlsFeature.isEnabled ?? false
             }
+
+            guard isMLSEnabled else { return }
 
             do {
                 try await proteusToMLSMigrationCoordinator.updateMigrationStatus()
@@ -101,12 +102,13 @@ extension ZMUserSession {
             do {
                 guard let self else { return }
 
-                let (e2eiFeature, e2eiRepository) = await viewContext.perform {
-                    (self.e2eiFeature, self.e2eiRepository)
+                let isEnabled = await viewContext.perform { [weak self] in
+                    self?.e2eiFeature.isEnabled ?? false
                 }
 
-                guard e2eiFeature.isEnabled else { return }
-                try await e2eiRepository.fetchFederationCertificates()
+                guard isEnabled else { return }
+
+                try await self.e2eiRepository.fetchFederationCertificates()
             } catch {
                 WireLogger.e2ei.error("Failed to refresh federation certificates: \(error)")
             }

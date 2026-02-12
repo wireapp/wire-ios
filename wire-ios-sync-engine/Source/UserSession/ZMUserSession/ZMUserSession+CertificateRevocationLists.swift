@@ -57,8 +57,11 @@ extension ZMUserSession {
             return
         }
 
-        Task {
-            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+        Task { [weak self] in
+            guard let self else { return }
+            let isE2EIFeatureEnabled = await managedObjectContext.perform { [weak self] in
+                self?.e2eiFeature.isEnabled ?? false
+            }
             if isE2EIFeatureEnabled {
                 await cRLsChecker.checkExpiredCRLs()
             }
