@@ -34,25 +34,9 @@ final class BackOffice {
         self.httpClient = httpClient
     }
 
-    private enum HTTPMethod {
-        static let put = "PUT"
-        static let patch = "PATCH"
-    }
-
-    private enum HeaderKey {
-        static let contentType = "Content-Type"
-        static let accept = "Accept"
-        static let authorization = "Authorization"
-    }
-
-    private enum ContentType {
-        static let json = "application/json"
-        static let jsonUtf8 = "application/json;charset=UTF-8"
-    }
-
     private func sendRequest(
         endpoint: URL,
-        method: String,
+        method: HttpClient.Method,
         body: Data,
         basicAuth: String
     ) async throws -> (Data, HTTPURLResponse) {
@@ -62,9 +46,9 @@ final class BackOffice {
             method: method,
             body: body,
             headers: [
-                HeaderKey.contentType: ContentType.jsonUtf8,
-                HeaderKey.accept: ContentType.json,
-                HeaderKey.authorization: basicAuth
+                HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
+                HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
+                HttpClient.HeaderKey.authorization: basicAuth
             ]
         )
     }
@@ -87,16 +71,16 @@ final class BackOffice {
             .appendingPathComponent("conferenceCalling")
             .appendingPathComponent("unlocked")
 
-        let (data, http) = try await sendRequest(
+        let (data, code) = try await sendRequest(
             endpoint: endpoint,
-            method: HTTPMethod.put,
+            method: .put,
             body: Data("{}".utf8),
             basicAuth: headerValue
         )
 
-        guard http.statusCode == 200 else {
+        guard code.statusCode == 200 else {
             throw RuntimeError(
-                "unlockConferenceCallingFeature failed: HTTP \(http.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+                "unlockConferenceCallingFeature failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
     }
@@ -119,50 +103,17 @@ final class BackOffice {
             .appendingPathComponent("conferenceCalling")
 
         let json = try JSONSerialization.data(withJSONObject: ["status": "enabled"], options: [])
-        let (data, http) = try await sendRequest(
+        let (data, code) = try await sendRequest(
             endpoint: endpoint,
-            method: HTTPMethod.patch,
+            method: .patch,
             body: json,
             basicAuth: headerValue
         )
 
-        guard http.statusCode == 200 else {
+        guard code.statusCode == 200 else {
             throw RuntimeError(
-                "enableConferenceCallingBackdoorViaBackendTeam failed: HTTP \(http.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+                "enableConferenceCallingBackdoorViaBackendTeam failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
-    }
-}
-
-private final class HttpClient {
-
-    private let urlSession: URLSession
-
-    init() {
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.urlCache = nil
-        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
-        self.urlSession = URLSession(configuration: configuration)
-    }
-
-    func send(
-        url: URL,
-        method: String,
-        body: Data,
-        headers: [String: String]
-    ) async throws -> (Data, HTTPURLResponse) {
-
-        var request = URLRequest(url: url)
-        request.httpMethod = method
-        request.httpBody = body
-
-        headers.forEach { request.setValue($0.value, forHTTPHeaderField: $0.key) }
-
-        let (data, response) = try await urlSession.data(for: request)
-        guard let http = response as? HTTPURLResponse else {
-            throw RuntimeError("Non-HTTP response")
-        }
-
-        return (data, http)
     }
 }

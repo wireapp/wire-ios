@@ -41,11 +41,10 @@ final class CallingTests: WireUITestCase {
                 groupName: groupName
             )
 
-        let conversationId1 = try XCTUnwrap(conversationId, "conversationId is nil")
-        let convId = conversationId1.uuidString.lowercased()
+        let convId = try XCTUnwrap(conversationId, "conversationId is nil").uuidString.lowercased()
 
         let allParticipants = [teamOwner] + teamMembers
-        let appCallee = try XCTUnwrap(teamMembers.last)
+        let appUserWhoWillJoinTheCall = try XCTUnwrap(teamMembers.last)
 
         let callingServiceAcceptingMembers = Array(teamMembers.dropLast(1))
         let callingServiceUsers = [teamOwner] + callingServiceAcceptingMembers
@@ -54,7 +53,7 @@ final class CallingTests: WireUITestCase {
             conversationId: convId,
             groupName: groupName,
             allParticipants: allParticipants,
-            appCallee: appCallee,
+            appCallee: appUserWhoWillJoinTheCall,
             callingServiceUsers: callingServiceUsers
         )
     }
