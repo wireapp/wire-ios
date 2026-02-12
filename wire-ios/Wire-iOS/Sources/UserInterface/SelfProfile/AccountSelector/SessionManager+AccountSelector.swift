@@ -24,9 +24,7 @@ extension SessionManager: AccountSelector {
         accountManager.selectedAccount
     }
 
-    public func switchTo(account: Account) {
-        Task {
-            _ = await select(account)
-        }
+    public func switchTo(account: Account) async {
+        _ = await select(account)
     }
 }

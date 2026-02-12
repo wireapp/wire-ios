@@ -451,7 +451,9 @@ extension BlockerViewController {
     }
 
     private func handleSwitch(to account: Account) {
-        sessionManager?.switchTo(account: account)
+        Task {
+            await sessionManager?.switchTo(account: account)
+        }
     }
 
     private func handleLogout() {

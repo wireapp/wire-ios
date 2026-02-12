@@ -23,6 +23,6 @@ protocol AccountSelector {
 
     var currentAccount: Account? { get }
 
-    func switchTo(account: Account)
+    func switchTo(account: Account) async
 
 }
