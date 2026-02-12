@@ -1,0 +1,5 @@
+curl \
+	--request POST \
+	--header "Content-Type: application/json" \
+	--data "{\"key_packages\":[\"pQABARn\/\/wKhAFggwO2Any+CjiGP8XFYrY67zHPvLgp+ysY5k7vci57aaLwDoQChAFggQU\/vrXc9MrQxPNubQz4NI0uNtF6qdJ0J0mF9XB2f\/GEEY=\",\"pQABARn\/\/wKhAFgg0C2BN+Mxl7dLoDHNx7ZgUE7MR6hEqTmhoQrLmR5MQqYDoQChAFggJQvUqsCdqZ8o4s+OkSlRDPAf8DPQW25uG0+MvxWZxF4E=\"]}" \
+	"/v11/mls/key-packages/self/60f85e4b15ad3786"
