@@ -290,13 +290,16 @@ final class MLSAPITests: XCTestCase {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .forbidden,
-            label: "mls-identity-mismatch"
+            label: "mls-identity-mismatch",
+            message: "something went wrong"
         )
 
         let api = MLSAPIV5(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsErrorAsync(MLSAPIError.mlsIdentityMismatch) {
+        await XCTAssertThrowsErrorAsync(
+            MLSAPIError.mlsIdentityMismatch(message: "something went wrong")
+        ) {
             // When
             try await api.uploadKeyPackages(
                 clientID: Scaffolding.clientID,

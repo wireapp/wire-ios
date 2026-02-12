@@ -116,7 +116,7 @@ class MLSAPIV5: MLSAPIV4 {
             .failure(
                 code: .forbidden,
                 label: "mls-identity-mismatch",
-                error: MLSAPIError.mlsIdentityMismatch
+                wrappingMessage: { MLSAPIError.mlsIdentityMismatch(message: $0) }
             )
             .parse(
                 code: response.statusCode,
