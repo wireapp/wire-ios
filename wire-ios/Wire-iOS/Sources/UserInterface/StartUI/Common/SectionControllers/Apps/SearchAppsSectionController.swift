@@ -19,14 +19,11 @@
 import UIKit
 import WireDataModel
 
-// TODO: delete
-typealias SearchBotsSectionController = SearchAppsSectionController
-
 final class SearchAppsSectionController: SearchSectionController {
 
     weak var delegate: SearchAppsSectionDelegate?
 
-    var bots: [any UserType] = []
+    var apps: [any UserType] = []
 
     let canSelfUserManageTeam: Bool
 
@@ -36,7 +33,7 @@ final class SearchAppsSectionController: SearchSectionController {
     }
 
     override var isHidden: Bool {
-        bots.isEmpty
+        apps.isEmpty
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
@@ -48,9 +45,9 @@ final class SearchAppsSectionController: SearchSectionController {
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if canSelfUserManageTeam {
-            bots.count + 1
+            apps.count + 1
         } else {
-            bots.count
+            apps.count
         }
     }
 
@@ -60,9 +57,9 @@ final class SearchAppsSectionController: SearchSectionController {
 
     func bot(for indexPath: IndexPath) -> any UserType {
         if canSelfUserManageTeam {
-            bots[indexPath.row - 1]
+            apps[indexPath.row - 1]
         } else {
-            bots[indexPath.row]
+            apps[indexPath.row]
         }
     }
 
@@ -99,7 +96,7 @@ final class SearchAppsSectionController: SearchSectionController {
                 assertionFailure("ZMUser.selfUser() is nil")
             }
             cell.accessoryIconView.isHidden = false
-            cell.showSeparator = (bots.count - 1) != indexPath.row
+            cell.showSeparator = (apps.count - 1) != indexPath.row
 
             return cell
         }

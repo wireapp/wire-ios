@@ -154,8 +154,8 @@ final class SearchResultsViewController: UIViewController {
     }()
 
     let appsSection: SearchAppsSectionController
-    let botsSection: SearchBotsSectionController
-    // TODO: [WPB-20362] add apps section?
+    let botsSection: SearchAppsSectionController
+
     let inviteTeamMemberSection: InviteTeamMemberSection
 
     var isAddingParticipants: Bool
@@ -201,12 +201,8 @@ final class SearchResultsViewController: UIViewController {
         teamMemberAndContactsSection.allowsSelection = isAddingParticipants
         teamMemberAndContactsSection.selection = userSelection
         teamMemberAndContactsSection.title = L10n.Localizable.Peoplepicker.Header.contacts
-        self.appsSection = SearchAppsSectionController(
-            canSelfUserManageTeam: userSession.selfUser.canManageTeam
-        )
-        self.botsSection = SearchBotsSectionController(
-            canSelfUserManageTeam: userSession.selfUser.canManageTeam
-        )
+        self.appsSection = SearchAppsSectionController(canSelfUserManageTeam: userSession.selfUser.canManageTeam)
+        self.botsSection = SearchAppsSectionController(canSelfUserManageTeam: userSession.selfUser.canManageTeam)
         conversationsSection.title = team != nil ? L10n.Localizable.Peoplepicker.Header
             .teamConversations(teamName ?? "") : L10n.Localizable.Peoplepicker.Header.conversations
         self.inviteTeamMemberSection = InviteTeamMemberSection(team: team)
@@ -218,6 +214,7 @@ final class SearchResultsViewController: UIViewController {
         directorySection.delegate = self
         topPeopleSection.delegate = self
         conversationsSection.delegate = self
+        appsSection.delegate = self
         botsSection.delegate = self
         inviteTeamMemberSection.delegate = self
         federationSection.delegate = self
@@ -400,8 +397,8 @@ final class SearchResultsViewController: UIViewController {
 
         directorySection.suggestions = searchResult.directory.filter { !$0.isFederated }
         conversationsSection.groupConversations = searchResult.conversations
-        appsSection.bots = searchResult.apps
-        botsSection.bots = searchResult.bots
+        appsSection.apps = searchResult.apps
+        botsSection.apps = searchResult.bots
         federationSection.users = searchResult.directory.filter(\.isFederated)
 
         sectionController.collectionView?.reloadData()
@@ -480,7 +477,7 @@ extension SearchResultsViewController: InviteTeamMemberSectionDelegate {
     }
 }
 
-extension SearchResultsViewController: SearchBotsSectionDelegate {
+extension SearchResultsViewController: SearchAppsSectionDelegate {
     func addBotsSectionDidRequestOpenBotsAdmin() {
         URL.manageTeam(source: .settings).open(from: self)
     }
