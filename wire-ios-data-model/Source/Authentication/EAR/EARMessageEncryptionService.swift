@@ -102,14 +102,13 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
             lock.unlock()
             return cached
         }
-        lock.unlock()
+        
+        defer {
+            lock.unlock()
+        }
 
         let contextData = try context.earContextData()
-
-        lock.lock()
         cachedContextData = contextData
-        lock.unlock()
-
         return contextData
     }
 
