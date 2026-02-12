@@ -258,19 +258,16 @@ final class FeatureConfigsAPITests: XCTestCase {
             (.ok, "GetFeatureConfigsSuccessResponseV12")
         ])
         
-        let supportedVersions = [APIVersion.v12]//, APIVersion.v13]
+        let supportedVersions = [APIVersion.v12]
 
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
             // When
             let result = try await sut.getFeatureConfigs()
-            
-            // TODO: make the result a set and also the scaffolding (Hashable)
-            // Then
-            XCTAssertEqual(
-                result,
-                Scaffolding.featureConfigsV12
-            )
+
+            let resultSet = Set(result)
+            let expectedSet = Set(Scaffolding.featureConfigsV12)
+            XCTAssertEqual(resultSet, expectedSet)
         }
     }
 

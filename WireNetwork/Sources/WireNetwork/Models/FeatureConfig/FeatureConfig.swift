@@ -18,7 +18,7 @@
 
 /// Configurations for various app features.
 
-public enum FeatureConfig: Equatable, Sendable {
+public enum FeatureConfig: Equatable, Sendable, Hashable {
 
     /// Config for the *App Lock* feature.
     ///

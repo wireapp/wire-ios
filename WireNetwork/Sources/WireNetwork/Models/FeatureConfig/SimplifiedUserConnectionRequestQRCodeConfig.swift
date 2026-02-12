@@ -20,7 +20,7 @@ import Foundation
 
 /// A configuration for the *User profile sharing QR code* feature.
 
-public struct SimplifiedUserConnectionRequestQRCodeConfig: Equatable, Sendable {
+public struct SimplifiedUserConnectionRequestQRCodeConfig: Equatable, Sendable, Hashable {
 
     /// The feature's status.
 
