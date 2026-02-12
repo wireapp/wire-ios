@@ -27,6 +27,7 @@ struct Member {
 }
 
 class UserHelper {
+    private let httpClient = HttpClient()
 
     let backendURL = BackendContext.backendEnvironment.url
     var createdUsers: [UserInfo]
@@ -150,7 +151,7 @@ class UserHelper {
     /// - Returns: qualifiedIds Object
     func getConversationIds() async throws -> [QualifiedID] {
         var conversationIDs = [QualifiedID]()
-        for try await ids in try await conversationsAPI.getConversationIdentifiers() {
+        for try await ids in try conversationsAPI.getConversationIdentifiers() {
             conversationIDs.append(contentsOf: ids)
         }
         return conversationIDs
@@ -181,7 +182,7 @@ class UserHelper {
     func getVerificationCode(user: UserInfo) async throws -> String {
         try await InbucketClient.getVerificationCode(email: user.email)
     }
-    
+
     /// Delete  created test users
     func deleteCreatedUsers() async {
         for user in createdUsers {
@@ -253,7 +254,6 @@ class UserHelper {
         return accessToken
     }
 
-
     /// Disable GDPR consent popup
     /// - Parameter user: userInfo
     func disableConsentPopup(for user: UserInfo) async throws {
@@ -276,31 +276,29 @@ class UserHelper {
             ]
         ]
 
-        var request = URLRequest(url: versionedURL)
-        request.httpMethod = "PUT"
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue("application/json;charset=UTF-8", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(accessToken.token)", forHTTPHeaderField: "Authorization")
-        request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
+        let jsonBody = try JSONSerialization.data(withJSONObject: body, options: [])
 
-        func send(_ url: URL) async throws -> HTTPURLResponse {
-            var r = request
-            r.url = url
-            let (data, response) = try await URLSession.shared.data(for: r)
-            return response as! HTTPURLResponse
-        }
+        let (_, response) = try await httpClient.send(
+            url: versionedURL,
+            method: .put,
+            body: jsonBody,
+            headers: [
+                HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
+                HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
+                HttpClient.HeaderKey.authorization: "Bearer \(accessToken.token)"
+            ]
+        )
 
-        let responseCode = try await send(versionedURL)
-        if responseCode.statusCode == 200 {
+        if response.statusCode == 200 {
             return
         }
     }
 
-        /// Register user in team as member
-        /// - Parameters:
-        ///   - ownerAccessToken: ownerAccessToken
-        ///   - teamID: teamID
-        /// - Returns: qualifiedId and memberInfo
+    /// Register user in team as member
+    /// - Parameters:
+    ///   - ownerAccessToken: ownerAccessToken
+    ///   - teamID: teamID
+    /// - Returns: qualifiedId and memberInfo
     func registerUsersAsTeamMember(
         ownerAccessToken: String,
         teamID: UUID
@@ -329,7 +327,6 @@ class UserHelper {
 
         return (qualifiedID, teamMember)
     }
-
 
     func registerUsersAsTeamMemberWithUserHandleSet(
         ownerAccessToken: String,
@@ -371,12 +368,12 @@ class UserHelper {
         return (qualifiedID, teamMember)
     }
 
-        /// fetch qualified id from conversations
-        /// - Returns: qualifiedID object
+    /// fetch qualified id from conversations
+    /// - Returns: qualifiedID object
     func getQualifiedIdsFromConversationList() async throws -> [QualifiedID] {
         var conversationIDs = [QualifiedID]()
 
-        for try await ids in try await conversationsAPI.getConversationIdentifiers() {
+        for try await ids in try conversationsAPI.getConversationIdentifiers() {
             conversationIDs.append(contentsOf: ids)
         }
         return conversationIDs

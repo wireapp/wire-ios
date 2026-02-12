@@ -77,6 +77,8 @@ final class CallingServiceClient {
         return URLSession(configuration: config)
     }()
 
+    private lazy var httpClient = HttpClient(urlSession: session)
+
     private func basicAuthHeader() -> String? {
         guard !callingServiceUsername.isEmpty,
               !callingServicePassword.isEmpty
@@ -100,30 +102,29 @@ final class CallingServiceClient {
     func sendHttpRequest(
         endpoint: URL,
         body: (some Encodable)?,
-        method: String
+        method: HttpClient.Method
     ) async throws -> (Data, HTTPURLResponse) {
-
-        var request = URLRequest(url: endpoint)
-        request.httpMethod = method
-        request.timeoutInterval = Constants.CONNECT_TIMEOUT
-
-        request.setValue("application/json;charset=UTF-8", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        var headers: [String: String] = [
+            HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
+            HttpClient.HeaderKey.accept: HttpClient.ContentType.json
+        ]
 
         if let auth = basicAuthHeader() {
-            request.setValue(auth, forHTTPHeaderField: "Authorization")
+            headers[HttpClient.HeaderKey.authorization] = auth
         }
 
-        if let body {
-            request.httpBody = try JSONEncoder().encode(body)
+        let jsonBody: Data = if let body {
+            try JSONEncoder().encode(body)
+        } else {
+            Data()
         }
 
-        let (data, response) = try await session.data(for: request)
-        guard let code = response as? HTTPURLResponse else {
-            throw RuntimeError("Non-HTTP response")
-        }
-
-        return (data, code)
+        return try await httpClient.send(
+            url: endpoint,
+            method: method,
+            body: jsonBody,
+            headers: headers
+        )
     }
 
     /// Create callingService instance
@@ -162,11 +163,11 @@ final class CallingServiceClient {
             timeout: Constants.RESPONSE_TIMEOUT
         )
 
-        let (data, http) = try await sendHttpRequest(endpoint: endpoint, body: body, method: "POST")
+        let (data, code) = try await sendHttpRequest(endpoint: endpoint, body: body, method: .post)
 
-        guard http.statusCode == 200 else {
+        guard code.statusCode == 200 else {
             throw RuntimeError(
-                "CallingService failed to createInstance: HTTP \(http.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+                "CallingService failed to createInstance: HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
         let instance = try JSONDecoder().decode(CallingServiceInstance.self, from: data)
@@ -229,15 +230,15 @@ final class CallingServiceClient {
 
         for id in instanceIds {
             let endpoint = instanceEndpoint(instanceId: id, path: "status")
-            let (data, http) = try await sendHttpRequest(
+            let (data, code) = try await sendHttpRequest(
                 endpoint: endpoint,
                 body: CallingServiceEmptyBody?.none,
-                method: "GET"
+                method: .get
             )
 
-            guard http.statusCode == 200 else {
+            guard code.statusCode == 200 else {
                 throw RuntimeError(
-                    "CallingService failed to getInstanceStatus for \(id): HTTP \(http.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+                    "CallingService failed to getInstanceStatus for \(id): HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
                 )
             }
 
@@ -255,15 +256,15 @@ final class CallingServiceClient {
 
         for id in instanceIds {
             let endpoint = instanceEndpoint(instanceId: id, path: "destroy")
-            let (data, http) = try await sendHttpRequest(
+            let (data, code) = try await sendHttpRequest(
                 endpoint: endpoint,
                 body: CallingServiceEmptyBody(),
-                method: "PUT"
+                method: .put
             )
 
-            guard http.statusCode == 200 else {
+            guard code.statusCode == 200 else {
                 throw RuntimeError(
-                    "CallingService failed to destroyStatus for \(id): HTTP \(http.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+                    "CallingService failed to destroyStatus for \(id): HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
                 )
             }
 
@@ -280,10 +281,10 @@ final class CallingServiceClient {
         request: some Encodable
     ) async throws -> T {
         let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
-        let (data, http) = try await sendHttpRequest(endpoint: endpoint, body: request, method: "POST")
-        guard http.statusCode == 200 else {
+        let (data, code) = try await sendHttpRequest(endpoint: endpoint, body: request, method: .post)
+        guard code.statusCode == 200 else {
             throw RuntimeError(
-                "CallingService call failed: POST \(path) HTTP \(http.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+                "CallingService call failed: POST \(path) HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
         return try JSONDecoder().decode(T.self, from: data)
@@ -294,14 +295,14 @@ final class CallingServiceClient {
         path: String
     ) async throws -> T {
         let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
-        let (data, http) = try await sendHttpRequest(
+        let (data, code) = try await sendHttpRequest(
             endpoint: endpoint,
             body: CallingServiceEmptyBody?.none,
-            method: "GET"
+            method: .get
         )
-        guard http.statusCode == 200 else {
+        guard code.statusCode == 200 else {
             throw RuntimeError(
-                "CallingService call failed: GET \(path) HTTP \(http.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+                "CallingService call failed: GET \(path) HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
         return try JSONDecoder().decode(T.self, from: data)
@@ -312,10 +313,10 @@ final class CallingServiceClient {
         path: String
     ) async throws -> T {
         let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
-        let (data, http) = try await sendHttpRequest(endpoint: endpoint, body: CallingServiceEmptyBody(), method: "PUT")
-        guard http.statusCode == 200 else {
+        let (data, code) = try await sendHttpRequest(endpoint: endpoint, body: CallingServiceEmptyBody(), method: .put)
+        guard code.statusCode == 200 else {
             throw RuntimeError(
-                "CallingService call failed: PUT \(path) HTTP \(http.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
+                "CallingService call failed: PUT \(path) HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
         return try JSONDecoder().decode(T.self, from: data)
