@@ -220,6 +220,8 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         )
     }
 
+    // TODO: add decoding test for new flag
+    
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {

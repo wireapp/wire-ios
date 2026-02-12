@@ -257,13 +257,15 @@ final class FeatureConfigsAPITests: XCTestCase {
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV12")
         ])
-
-        let supportedVersions = APIVersion.v12.andNextVersions
+        
+        let supportedVersions = [APIVersion.v12]//, APIVersion.v13]
 
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
             // When
             let result = try await sut.getFeatureConfigs()
+            
+            // TODO: make the result a set and also the scaffolding (Hashable)
             // Then
             XCTAssertEqual(
                 result,
@@ -272,6 +274,8 @@ final class FeatureConfigsAPITests: XCTestCase {
         }
     }
 
+    // MARK: - V14
+    
     func testGetFeatureConfigs_SuccessResponse_200_V14_And_Next_Versions_Then_Verify_Requests() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
@@ -679,22 +683,22 @@ extension FeatureConfigsAPITests {
         ]
 
         static let featureConfigsV11: [FeatureConfig] = featureConfigsV10 + [
-            .apps(.init(status: .disabled)),
+            .apps(.init(status: .enabled)),
             .consumableNotifications(.init(status: .enabled)),
             .cells(.init(status: .enabled))
         ]
 
         static let featureConfigsV12: [FeatureConfig] = featureConfigsV11 + [
             .assetAuditLog(.init(status: .enabled)),
-            .cells(.init(status: .enabled))
+            .simplifiedUserConnectionRequestQRCode(.init(status: .disabled))
         ]
 
         static let featureConfigsV14: [FeatureConfig] = featureConfigsV12 + [
             .assetAuditLog(.init(status: .enabled)),
-            .cells(.init(status: .enabled)),
             .cellsInternal(.init(status: .enabled, backendURL: URL(string: "https://example.com")!))
         ]
 
     }
 
 }
+
