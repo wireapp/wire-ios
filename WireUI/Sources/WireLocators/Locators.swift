@@ -282,4 +282,7 @@ public enum Locators {
         case continueButton = "Continue"
     }
 
+    public enum DeveloperToolsPage: String {
+        case userSessionMemoryLeakLabel
+    }
 }

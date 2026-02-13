@@ -25,6 +25,7 @@ import WireRequestStrategy
 import WireSyncEngine
 import WireTransport
 import WireViewsDebugUI
+import WireLocators
 
 final class DeveloperToolsViewModel: ObservableObject {
 
@@ -74,7 +75,13 @@ final class DeveloperToolsViewModel: ObservableObject {
         let id = UUID()
         let title: String
         let value: String
+        let accessibilityIdentifier: String?
 
+        init(title: String, value: String, accessibilityIdentifier: String? = nil) {
+            self.title = title
+            self.value = value
+            self.accessibilityIdentifier = accessibilityIdentifier
+        }
     }
 
     struct DestinationItem: Identifiable {
@@ -129,6 +136,7 @@ final class DeveloperToolsViewModel: ObservableObject {
         setupContextualItems()
         setupActions()
         setupAppInfo()
+        setupMemoryStatus()
         setupBackenInfo()
         setupSelfUser()
         setupPushToken()
@@ -148,6 +156,26 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .text(TextItem(title: "Last version migration", value: lastCompletedAppMigration ?? "None"))
             ]
         ))
+    }
+
+    private func setupMemoryStatus() {
+        #if DEBUG
+        // Only show memory status when memory tracking is enabled
+        guard ProcessInfo.processInfo.arguments.contains("-EnableMemoryTracking") else {
+            return
+        }
+
+        sections.append(Section(
+            header: "Memory Status (UI Test)",
+            items: [
+                .text(TextItem(
+                    title: "UserSession",
+                    value: DebugMemoryStatus.shared.userSessionStatus,
+                    accessibilityIdentifier: Locators.DeveloperToolsPage.userSessionMemoryLeakLabel.rawValue
+                ))
+            ]
+        ))
+        #endif
     }
 
     private func setupSelfUser() {

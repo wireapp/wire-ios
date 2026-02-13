@@ -27,17 +27,18 @@ class WireUITestCase: XCTestCase {
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     let userHelper = UserHelper()
 
-    override func setUpWithError() throws {
-        XCUIApplication().terminate()
-
-        let launchArguments = [
+    class var defaultArguments: [String] {
+        [
             "-resetData",
             "--useEnvStaging"
         ]
+    }
+    override func setUpWithError() throws {
+        XCUIApplication().terminate()
 
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
-        app.launchArguments = launchArguments
+        app.launchArguments = Self.defaultArguments
         app.setDeveloperFlags([
             .useWireAuthentication: true
         ])
