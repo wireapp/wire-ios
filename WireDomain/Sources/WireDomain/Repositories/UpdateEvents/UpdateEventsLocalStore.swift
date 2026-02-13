@@ -166,9 +166,12 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
                     
                     if storedEnvelope.isEncrypted {
                         
-                        WireLogger.ear.info("decrypting stored event. has private keys: \(privateKeys != nil)")
+                        WireLogger.ear.info("decrypting stored event.")
                         
-                        guard let privateKeys else { return nil }
+                        guard let privateKeys else {
+                            WireLogger.ear.error("failed to decrypt stored event: no private keys", attributes: .safePublic)
+                            return nil
+                        }
                         
                         let isBackgroundAccessible = storedEnvelope.isBackgroundAccessible
                         let key = isBackgroundAccessible ? privateKeys.secondary : privateKeys.primary

@@ -410,7 +410,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 attributes: [.eventEnvelopeID: envelope.id] + logAttributes
             )
             index = try await updateEventsStore.indexOfLastEventEnvelope() + 1
-            try await updateEventsStore.persistEventEnvelope(envelope, index: index)
+            try await updateEventsStore.persistEventEnvelope(envelope, index: index, publicKeys: nil)
         } catch {
             logger.error(
                 "failed to store live event envelope: \(String(describing: error))",
