@@ -777,21 +777,9 @@ public final class ZMUserSession: NSObject {
         transportSession.setAccessTokenRenewalFailureHandler { [weak self] response in
             self?.transportSessionAccessTokenDidFail(response: response)
         }
-    }
-
-    private func transportSessionAccessTokenDidFail(response: ZMTransportResponse) {
-        WireLogger.authentication.error("access token renewal failed: response status: \(response.errorInfo)")
-
-        managedObjectContext.performGroupedBlock { [weak self] in
-            guard let self else { return }
-            let selfUser = ZMUser.selfUser(in: managedObjectContext)
-            let error = NSError.userSessionError(
-                code: .accessTokenExpired,
-                userInfo: selfUser.loginCredentials.dictionaryRepresentation
-            )
-            notifyAuthenticationInvalidated(error)
+        transportSession.setAccessTokenRenewalSuccessHandler { [weak self]  _, _ in
+            self?.transportSessionAccessTokenDidSucceed()
         }
-
     }
 
     private func createStrategyDirectory() -> StrategyDirectoryProtocol {
@@ -1031,6 +1019,20 @@ public final class ZMUserSession: NSObject {
             await conversationEventProcessor.processAndSaveConversationEvents(events)
             completion?()
         }
+    }
+
+    // MARK: Access Token
+
+    private func renewAccessTokenIfNeeded(for userClient: WireDataModel.UserClient) {
+        WireLogger.session.debug("🎟️🔓 renewAccessTokenIfNeeded")
+        // apparently it is needed once we got a new userClient so we can send messages
+        guard
+            let apiVersion = resolvedBackendMetadata.apiVersion,
+            apiVersion > .v2,
+            let clientID = userClient.remoteIdentifier
+        else { return }
+
+        renewAccessToken(with: clientID)
     }
 
     // MARK: Perform changes
@@ -1350,6 +1352,7 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
 
     public func didRegisterSelfUserClient(_ userClient: WireDataModel.UserClient) {
         registerCurrentPushToken()
+        renewAccessTokenIfNeeded(for: userClient)
 
         managedObjectContext.performGroupedBlock { [weak self] in
             guard

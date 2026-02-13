@@ -62,6 +62,10 @@ public enum MLSAPIError: Error, Equatable {
 
     case mlsProtocolError(message: String)
 
+    /// Key package credential does not match qualified client ID
+
+    case mlsIdentityMismatch
+
     /// The group ID version of the conversation is not supported by one of the federated backends
 
     case mlsGroupIdNotSupported(message: String)
