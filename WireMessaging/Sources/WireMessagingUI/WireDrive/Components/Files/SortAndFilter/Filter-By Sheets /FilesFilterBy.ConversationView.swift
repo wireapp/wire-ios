@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 
@@ -90,9 +91,20 @@ extension FilesFilterBy {
                     }
                 }
             } icon: {
-                Image(systemName: "questionmark")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+                icon(item)
+            }
+        }
+        
+        @ViewBuilder
+        private func icon(_ item: ViewModel.Item) -> some View {
+            let conversationID = item.id.split(separator: "@").first.flatMap(String.init) ?? ""
+            
+            if item.kind == .group {
+                let mapper = ConversationIDToGroupIconMapper()
+                ConversationGroupIcon(asset: mapper.palette(for: conversationID))
+            } else {
+                let mapper = ConversationIDToChannelIconMapper()
+                ConversationChannelIcon(asset: mapper.palette(for: conversationID))
             }
         }
     }
@@ -122,7 +134,7 @@ private extension FilesFilterBy.ConversationView {
 
 #Preview {
     FilesFilterBy.ConversationView(
-        availableItems: [],
+        availableItems: [WireDriveConversation].mocked(),
         selectedItems: [],
         onApply: { _ in }
     )

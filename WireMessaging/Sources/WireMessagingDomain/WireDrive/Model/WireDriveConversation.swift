@@ -23,16 +23,26 @@ import Foundation
 public struct WireDriveConversation: Sendable, Hashable, Identifiable {
     public let id: String
     public let name: String
+    public let kind: Kind?
     public let participants: Set<Participant>
 
     public init(
         id: String,
         name: String,
+        kind: Kind? = nil,
         participants: Set<Participant>
     ) {
         self.id = id
         self.name = name
+        self.kind = kind
         self.participants = participants
+    }
+}
+
+public extension WireDriveConversation {
+    enum Kind: Sendable {
+        case group
+        case channel
     }
 }
 
