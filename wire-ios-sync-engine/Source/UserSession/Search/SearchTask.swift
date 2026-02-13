@@ -478,7 +478,7 @@ extension SearchTask {
             case let .search(searchRequest) = type,
             !searchRequest.query.string.isEmpty, // backend won't return anything for empty queries
             !searchRequest.searchOptions.contains(.localResultsOnly),
-        !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated, .apps])
+            !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated, .apps])
         else {
             return { _ in }
         }

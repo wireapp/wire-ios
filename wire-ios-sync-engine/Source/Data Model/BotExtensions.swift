@@ -115,8 +115,8 @@ private extension ServiceUserData {
         }
 
         let path = apiVersion >= .v7
-        ? "/bot/conversations/\(remoteIdentifier.transportString())"
-        : "/conversations/\(remoteIdentifier.transportString())/bots"
+            ? "/bot/conversations/\(remoteIdentifier.transportString())"
+            : "/conversations/\(remoteIdentifier.transportString())/bots"
 
         let payload: NSDictionary = [
             "provider": provider.transportString(),

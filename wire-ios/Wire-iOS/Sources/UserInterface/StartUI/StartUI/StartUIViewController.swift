@@ -170,7 +170,7 @@ final class StartUIViewController: UIViewController {
             selfProfileUIBuilder: selfProfileUIBuilder,
             conversationCreationRepository: conversationCreationRepository
         )
-        groupSelector = SearchGroupSelector(for: userSession.defaultProtocol)
+        self.groupSelector = SearchGroupSelector(for: userSession.defaultProtocol)
         super.init(nibName: nil, bundle: nil)
 
         configGroupSelector()
