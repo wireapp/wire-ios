@@ -18,7 +18,7 @@
 
 import class Security.SecKey
 
-public struct EARPublicKeys {
+public struct EARPublicKeys: @unchecked Sendable {
 
     public let primary: SecKey
     public let secondary: SecKey
