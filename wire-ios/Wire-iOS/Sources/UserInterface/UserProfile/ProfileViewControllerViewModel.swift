@@ -185,7 +185,7 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
     func startOneToOneConversation() {
         viewModelDelegate?.startAnimatingActivity()
 
-        userSession.createTeamOneOnOne(with: user) { [weak self] in
+        userSession.createTeamOneOnOne(with: user) { [weak self] in // TODO: use this for starting conversations with apps?
             self?.viewModelDelegate?.stopAnimatingActivity()
 
             switch $0 {
