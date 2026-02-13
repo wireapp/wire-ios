@@ -33,6 +33,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
     enum Error: Swift.Error {
         case failedToFetchStoredEvents(Swift.Error)
         case failedToDeleteStoredEvents(Swift.Error)
+        case failedToEncryptEventData
     }
 
     // MARK: - Properties
@@ -147,11 +148,14 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
             do {
                 let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
                 
-                WireLogger.ear.debug("fetching stored events. backgroundAccessibleOnly: \(backgroundAccessibleOnly)")
+                WireLogger.ear.info("fetching stored events. backgroundAccessibleOnly: \(backgroundAccessibleOnly)")
                 
                 if backgroundAccessibleOnly {
-                    // TODO: Make this predicate robust
-                    request.predicate = NSPredicate(format: "isEncrypted == NO OR isBackgroundAccessible == YES")
+                    request.predicate = NSPredicate(
+                        format: "%K == NO OR %K == YES",
+                        #keyPath(StoredUpdateEventEnvelope.isEncrypted),
+                        #keyPath(StoredUpdateEventEnvelope.isBackgroundAccessible)
+                    )
                 }
                 
                 request.fetchLimit = Int(limit)
@@ -162,7 +166,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
                     
                     if storedEnvelope.isEncrypted {
                         
-                        WireLogger.ear.debug("decrypting stored event. has private keys: \(privateKeys != nil)")
+                        WireLogger.ear.info("decrypting stored event. has private keys: \(privateKeys != nil)")
                         
                         guard let privateKeys else { return nil }
                         
@@ -173,7 +177,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
                             data: data,
                             privateKey: key
                         ) else {
-                            WireLogger.ear.debug("failed to decrypt stored event")
+                            WireLogger.ear.error("failed to decrypt stored event", attributes: .safePublic)
                             return nil
                         }
                         data = decryptedData
@@ -297,8 +301,8 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
                 storedEventEnvelope.isEncrypted = true
                 storedEventEnvelope.isBackgroundAccessible = isBackgroundAccessible
             } else {
-                // TODO: Do we ditch the event data if it fails to encrypt?
-                WireLogger.ear.debug("faied to encrypt event")
+                WireLogger.ear.error("failed to encrypt event", attributes: .safePublic)
+                throw Error.failedToEncryptEventData
             }
         }
         
