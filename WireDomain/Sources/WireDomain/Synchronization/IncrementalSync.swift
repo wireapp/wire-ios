@@ -101,12 +101,12 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 logger.info("processing stored update events", attributes: .incrementalSyncV2, .safePublic)
                 syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
                 
-                let isLocked = await updateEventsStore.isLocked // TODO: Also check if EAR is enabled?
+                let isLocked = await updateEventsStore.isLocked
                 let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !isLocked)
 
                 processedEnvelopeIDs = try await processStoredEvents(
                     privateKeys: privateKeys,
-                    backgroundAccessibleOnly: isLocked && earService.isEAREnabled
+                    backgroundAccessibleOnly: isLocked
                 )
             } catch {
                 func tearDown() async {
