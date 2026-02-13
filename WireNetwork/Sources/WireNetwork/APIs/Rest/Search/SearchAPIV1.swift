@@ -131,6 +131,7 @@ private struct ContactV1: Decodable, ToAPIModelConvertible {
     let handle: String?
     let team: UUID?
     let accentID: Int?
+    let type: UserTypeV1?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -139,6 +140,7 @@ private struct ContactV1: Decodable, ToAPIModelConvertible {
         case handle
         case accentID = "accent_id"
         case team
+        case type
     }
 
     func toAPIModel() -> ContactSearchResult.Contact {
@@ -149,7 +151,7 @@ private struct ContactV1: Decodable, ToAPIModelConvertible {
             handle: handle,
             team: team,
             accentID: accentID,
-            type: .regular
+            type: type?.toAPIModel() ?? .regular
         )
     }
 
