@@ -642,6 +642,8 @@ package final class FilesViewModel: ObservableObject {
     ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
         let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
             searchTerm: searchText.isEmpty ? nil : searchText,
+            sortField: sortingSelection.sortingKey.sortField,
+            sortDirDesc: sortingSelection.sortingOrder == .descending,
             tags: filterWithTags,
             offset: offset
         )
@@ -837,9 +839,26 @@ package final class FilesViewModel: ObservableObject {
     func makeFilesSortingViewModel() -> FilesSortingViewModel {
         FilesSortingViewModel(isBrowsing: isBrowsing) { [weak self] sortingSelection in
             self?.sortingSelection = sortingSelection
+            Task { await self?.reload() }
         }
     }
-    
+}
+
+private extension FilesSortingViewModel.SortingKey {
+    var sortField: String {
+        switch self {
+        case .lastModified:
+            "mtime"
+        case .name:
+            "name"
+        case .size:
+            "size"
+        case .owner:
+            "usermeta-owner"
+        case .conversation:
+            "usermeta-conversation"
+        }
+    }
 }
 
 extension WireDriveFileTemplate.Kind {

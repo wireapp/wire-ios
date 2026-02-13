@@ -57,19 +57,85 @@ final class RestAPI: Sendable {
         }
         return dto
     }
-
+    
+    private func getCollections(
+        request: RestLookupRequest
+    ) async throws -> (nodes: [WireDriveNodeNetworkModel], nextOffset: Int?) {
+        var lookupRequest = request
+        lookupRequest.filters?.type = .collection
+        lookupRequest.limit = nil // no pagination, returns all folders at once.
+        let collectionRequest = lookupRequest
+        
+        let collection = try await NodeServiceAPI.lookup(
+            body: collectionRequest,
+            apiConfiguration: makeConfiguration()
+        )
+        let nodes = collection.nodes?.compactMap { $0.toDTO() } ?? []
+        return (nodes: nodes, nextOffset: nil)
+    }
+    
+    private func getLeafs(
+        request: RestLookupRequest
+    ) async throws -> (nodes: [WireDriveNodeNetworkModel], nextOffset: Int?) {
+        var lookupRequest = request
+        lookupRequest.filters?.type = .leaf
+        let leafsRequest = lookupRequest
+        
+        let collection = try await NodeServiceAPI.lookup(
+            body: leafsRequest,
+            apiConfiguration: makeConfiguration()
+        )
+        let nodes = collection.nodes?.compactMap { $0.toDTO() } ?? []
+        let nextOffset = collection.pagination?.nextOffset
+        return (nodes: nodes, nextOffset: nextOffset)
+    }
+    
+    
     func getNodes(
         _ request: WireDriveGetNodesRequest
     ) async throws -> (nodes: [WireDriveNodeNetworkModel], nextOffset: Int?) {
         do {
-            let collection = try await NodeServiceAPI.lookup(
-                body: request.lookupRequest,
-                apiConfiguration: makeConfiguration()
-            )
-            let nodes = collection.nodes?.compactMap { $0.toDTO() } ?? []
-            let nextOffset = collection.pagination?.nextOffset
-
-            return (nodes: nodes, nextOffset: nextOffset)
+            var result: ([WireDriveNodeNetworkModel], nextOffset: Int?)
+            
+            // TODO: [WPB-23480] - Remove `switch` when folders/files sorting (folders first, then files) is handled by BE.
+            switch request.configuration {
+            case .conversationFileView:
+                if request.offset == 0 {
+                    // initial fetch, get folders first then files.
+                    async let collections = try await getCollections(
+                        request: request.lookupRequest
+                    )
+                    
+                    async let leafs = try await getLeafs(
+                        request: request.lookupRequest
+                    )
+                    
+                    let collectionsNodes = try await collections.nodes
+                    let leafsNodes = try await leafs.nodes
+                    let nextLeafsOffset = try await leafs.nextOffset
+                    result = (nodes: collectionsNodes + leafsNodes, nextOffset: nextLeafsOffset)
+                } else {
+                    // No pagination for folders so no need to re-fetch them.
+                    let leafs = try await getLeafs(
+                        request: request.lookupRequest
+                    )
+                    
+                    result = (nodes: leafs.nodes, nextOffset: leafs.nextOffset)
+                }
+                
+                return result
+            default:
+                let collection = try await NodeServiceAPI.lookup(
+                    body: request.lookupRequest,
+                    apiConfiguration: makeConfiguration()
+                )
+                let nodes = collection.nodes?.compactMap { $0.toDTO() } ?? []
+                let nextOffset = collection.pagination?.nextOffset
+                result = (nodes: nodes, nextOffset: nextOffset)
+            }
+            
+            return result
+            
         } catch let sdkError as CellsSDK.ErrorResponse {
             switch sdkError {
             case let .error(_, _, _, error):
@@ -500,10 +566,10 @@ private extension WireDriveGetNodesRequest {
             } else {
                 nil
             }
-
-            if searchTerm != nil {
-                request.sortField = "mtime"
-                request.sortDirDesc = true
+            
+            if let sortField, let sortDirDesc {
+                request.sortField = sortField
+                request.sortDirDesc = sortDirDesc
             }
 
             request.filters = RestLookupFilter(
