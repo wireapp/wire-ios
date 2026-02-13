@@ -155,7 +155,12 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                     let participants: [WireDriveConversation.Participant] = conversation.participants.compactMap { item in
                         .init(
                             handle: item.handle ?? "-",
-                            displayName: item.name ?? "-"
+                            displayName: item.name ?? "-",
+                            iconData: WireDriveConversation.Participant.IconData(
+                                initials: item.initials ?? "",
+                                color: item.accentColor,
+                                image: item.previewImageData.flatMap(UIImage.init)
+                            )
                         )
                     }
                     

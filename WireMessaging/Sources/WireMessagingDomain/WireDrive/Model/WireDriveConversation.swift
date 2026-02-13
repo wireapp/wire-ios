@@ -17,6 +17,7 @@
 //
 
 import Foundation
+public import UIKit
 
 /// A conversation with enabled Drive.
 /// Wire Drive file nodes are linked to one of this conversations.
@@ -50,14 +51,29 @@ public extension WireDriveConversation {
     struct Participant: Sendable, Hashable, Identifiable {
         public let handle: String
         public let displayName: String
-
-        public var id: String {
-            handle //TODO: check if the handle is an appropriate ID or if we should use something else
+        
+        public struct IconData: Sendable, Hashable {
+            public let initials: String
+            public let color: UIColor
+            public let image: UIImage?
+            
+            public init(initials: String, color: UIColor, image: UIImage?) {
+                self.initials = initials
+                self.color = color
+                self.image = image
+            }
         }
         
-        public init(handle: String, displayName: String) {
+        public let iconData: IconData?
+        
+        public init(handle: String, displayName: String, iconData: IconData? = nil) {
             self.handle = handle
             self.displayName = displayName
+            self.iconData = iconData
+        }
+        
+        public var id: String {
+            handle //TODO: check if the handle is an appropriate ID or if we should use something else
         }
     }
 }

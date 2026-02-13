@@ -29,6 +29,8 @@ extension FilesFilterBy {
         
         @StateObject private var viewModel: ViewModel
         
+        @ScaledMetric private var iconSize: CGFloat = 32
+        
         let onApply: (Set<ViewModel.Item>) -> Void
         
         init(
@@ -97,9 +99,35 @@ extension FilesFilterBy {
                     }
                 }
             } icon: {
-                Image(systemName: "questionmark")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+                icon(item)
+                    .frame(width: iconSize, height: iconSize)
+            }
+        }
+        
+        @ViewBuilder
+        private func icon(_ item: ViewModel.Item) -> some View {
+            if let iconData = item.iconData {
+                ZStack {
+                    if let image = iconData.image {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                    } else {
+                        Color(uiColor: iconData.color)
+                        
+                        Text(iconData.initials)
+                            .fontWeight(.semibold)
+                            .textCase(.uppercase)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.1)
+                            .foregroundStyle(ColorTheme.Backgrounds.background.color)
+                            .padding(4)
+                    }
+                }
+                .clipShape(Circle())
+            } else {
+                Circle()
+                    .foregroundStyle(Color.gray)
             }
         }
     }
