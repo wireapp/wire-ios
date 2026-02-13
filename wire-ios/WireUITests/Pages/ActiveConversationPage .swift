@@ -107,9 +107,8 @@ class ActiveConversationPage: PageModel {
         user.tap()
     }
     
-    func mentionUser(_ nameOfUser: String) throws -> ActiveConversationPage {
-         
-        try inputMessageField.tapIfKeyboardNotFocused().typeText("Hi! ")
+    func mentionUserAndSendMessage(_  message: String, nameOfUser: String,) throws -> ActiveConversationPage {
+        try inputMessageField.tapIfKeyboardNotFocused().typeText(message)
         mentionButton.tap()
         chooseUser(nameOfUser: nameOfUser)
         sendButton.tap()

@@ -197,6 +197,7 @@ final class TeamManageTests: WireUITestCase {
     func test_mentionUserInGroup() async throws {
 
         let groupName = UserGenerator.generateRandomGroupName()
+        let message = "Hello"
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
         let ownerAccessToken = try await userHelper.fetchAccessToken(
             email: teamOwner.email,
@@ -226,6 +227,20 @@ final class TeamManageTests: WireUITestCase {
         let _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopup(with: self)
             .openConversation()
-            .mentionUser(teamMembers[0].name)
+            .mentionUserAndSendMessage(message, nameOfUser: teamMembers[1].name)
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+        
+        let activeConversationPage = try app.loginUser(email: teamMembers[1].email, password: teamMembers[1].password)
+            .acceptPopupOnTeamMemberSetup(with: self)
+            .setUsername(teamMembers[1].username)
+            .openConversation()
+
+        let fetchMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        XCTAssertTrue(
+            fetchMessages.contains("\(message)@\(teamMembers[1].name)"),
+            "Expected mention '\(message)@\(teamMembers[1].name)' not found in sent messages: \(fetchMessages)"
+        )
     }
 }
