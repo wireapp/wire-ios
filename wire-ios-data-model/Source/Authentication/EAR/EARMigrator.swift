@@ -36,8 +36,8 @@ public protocol EARMigratorProtocol {
     ///
     /// **Entities migrated:**
     /// - `ZMGenericMessageData` - Protobuf message data
-    /// - `ZMClientMessage` - Message content
-    /// - `ZMConversation` - Conversation properties (e.g., legal hold request)
+    /// - `ZMClientMessage` - Normalized text
+    /// - `ZMConversation` - Draft message data
     ///
     /// - Parameter context: The managed object context in which to perform the migration
     /// - Throws: `MigrationError.failedToMigrateInstances` if migration fails for any entity type
@@ -55,8 +55,8 @@ public protocol EARMigratorProtocol {
     ///
     /// **Entities migrated:**
     /// - `ZMGenericMessageData` - Protobuf message data
-    /// - `ZMClientMessage` - Message content
-    /// - `ZMConversation` - Conversation properties (e.g., legal hold request)
+    /// - `ZMClientMessage` - Normalized text
+    /// - `ZMConversation` - Draft message data
     ///
     /// - Parameter context: The managed object context in which to perform the migration
     /// - Throws: `MigrationError.failedToMigrateInstances` if migration fails for any entity type
