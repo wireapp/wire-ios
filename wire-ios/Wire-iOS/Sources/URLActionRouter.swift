@@ -246,10 +246,8 @@ extension URLActionRouter: PresentationDelegate {
                 if shouldShowUserProfile {
                     decisionHandler(shouldShowUserProfile)
                 } else {
-                    presentAlert(
-                        title: nil,
+                    presentAlertWarning(
                         message: UrlAction.UserProfileQrFeatureFlag.message,
-                        showCancelAction: false,
                         decisionHandler: decisionHandler
                     )
                 }
@@ -299,19 +297,25 @@ extension URLActionRouter: PresentationDelegate {
     private func presentAlert(
         title: String?,
         message: String,
-        showCancelAction: Bool = true,
         decisionHandler: @escaping (Bool) -> Void
     ) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-        if showCancelAction {
-            let agreeAction = UIAlertAction.confirm(style: .default) { _ in decisionHandler(true) }
-            let cancelAction = UIAlertAction.cancel { decisionHandler(false) }
-            [agreeAction, cancelAction].forEach { alert.addAction($0) }
-        } else {
-            let agreeAction = UIAlertAction.confirm(style: .default) { _ in decisionHandler(false) }
-            alert.addAction(agreeAction)
-        }
+        let agreeAction = UIAlertAction.confirm(style: .default) { _ in decisionHandler(true) }
+        let cancelAction = UIAlertAction.cancel { decisionHandler(false) }
+        [agreeAction, cancelAction].forEach { alert.addAction($0) }
+
+        presentAlert(alert)
+    }
+
+    private func presentAlertWarning(
+        message: String,
+        decisionHandler: @escaping (Bool) -> Void
+    ) {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+
+        let agreeAction = UIAlertAction.confirm(style: .default) { _ in decisionHandler(false) }
+        alert.addAction(agreeAction)
 
         presentAlert(alert)
     }

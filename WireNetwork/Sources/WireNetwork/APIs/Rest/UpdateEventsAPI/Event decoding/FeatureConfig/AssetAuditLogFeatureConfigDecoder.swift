@@ -16,17 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct SimplifiedUserConnectionRequestQRCodeFeatureConfigDecoder {
+struct AssetAuditLogFeatureConfigDecoder {
 
     func decode(
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
-    ) throws -> SimplifiedUserConnectionRequestQRCodeConfig {
+    ) throws -> AssetAuditLogFeatureConfig {
         let payload = try container.decode(
             FeatureWithoutConfig.self,
             forKey: .payload
         )
 
-        return SimplifiedUserConnectionRequestQRCodeConfig(status: payload.status.toAPIModel())
+        return AssetAuditLogFeatureConfig(status: payload.status.toAPIModel())
     }
 
 }
