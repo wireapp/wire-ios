@@ -19,24 +19,104 @@
 import WireCrypto
 import WireLogging
 
-// sourcery: AutoMockable
+/// Protocol for encrypting and decrypting sensitive data when Encryption at Rest (EAR) is enabled.
+///
+/// This service provides authenticated encryption using ChaCha20-Poly1305 AEAD (Authenticated Encryption with Associated Data).
+/// All encryption operations require a database key and context data for additional authentication.
+///
+/// ## Thread Safety
+///
+/// All methods are thread-safe and can be called from any queue.
+///
+/// ## Key Management
+///
+/// The database key is volatile and stored only in memory. When the database is locked:
+/// - The database key is cleared from memory
+/// - All encryption/decryption operations fail with `EncryptionError.missingDatabaseKey`
+/// - The cached context data is also cleared
+///
+/// sourcery: AutoMockable
 public protocol EARMessageEncryptionServiceProtocol {
 
+    /// Whether the database is currently locked.
+    ///
+    /// Returns `true` if EAR is enabled and the database key is not available (database is locked).
+    /// Returns `false` if EAR is disabled or the database is unlocked.
     var isLocked: Bool { get }
 
+    /// Sets or clears the database encryption key.
+    ///
+    /// - Parameter key: The database key to use for encryption/decryption, or `nil` to lock the database.
+    ///
+    /// When `key` is `nil`:
+    /// - The database becomes locked
+    /// - Cached context data is cleared
+    /// - All subsequent encryption/decryption operations will fail
     func setDatabaseKey(_ key: VolatileData?)
 
+    /// Retrieves the current database key.
+    ///
+    /// - Returns: The database key if set, or `nil` if the database is locked.
     func getDatabaseKey() -> VolatileData?
 
+    /// Retrieves and caches the context data for authenticated encryption.
+    ///
+    /// Context data (also known as Associated Authenticated Data or AAD) provides additional
+    /// authentication without being encrypted. It typically includes the self-client identifier
+    /// to bind encrypted data to a specific device.
+    ///
+    /// The context data is cached after first retrieval to avoid repeated lookups on every
+    /// encryption/decryption operation.
+    ///
+    /// - Parameter context: The managed object context to fetch the self-client from
+    /// - Returns: The context data for use in encryption/decryption
+    /// - Throws: `EncryptionError.missingContextData` if the self-client is not available
     func getContextData(
         from context: NSManagedObjectContext
     ) throws -> Data
 
+    /// Encrypts data using ChaCha20-Poly1305 AEAD.
+    ///
+    /// The encryption uses:
+    /// - **Key**: The database key (must be set via `setDatabaseKey`)
+    /// - **Message**: The `data` parameter (plaintext to encrypt)
+    /// - **AAD**: The `contextData` parameter (authenticated but not encrypted)
+    /// - **Nonce**: Randomly generated for each encryption
+    ///
+    /// - Parameters:
+    ///   - data: The plaintext data to encrypt
+    ///   - contextData: Additional authenticated data (typically self-client ID)
+    /// - Returns: A tuple containing the encrypted ciphertext and the nonce
+    /// - Throws:
+    ///   - `EncryptionError.missingDatabaseKey` if the database is locked
+    ///   - `EncryptionError.crypto` if the cryptographic operation fails
     func encrypt(
         data: Data,
         contextData: Data
     ) throws -> (data: Data, nonce: Data)
 
+    /// Decrypts data using ChaCha20-Poly1305 AEAD.
+    ///
+    /// The decryption uses:
+    /// - **Key**: The database key (must be set via `setDatabaseKey`)
+    /// - **Ciphertext**: The `data` parameter
+    /// - **AAD**: The `contextData` parameter (must match encryption context)
+    /// - **Nonce**: The nonce generated during encryption
+    ///
+    /// Decryption will fail if:
+    /// - The database key is incorrect or missing
+    /// - The nonce is incorrect
+    /// - The context data doesn't match what was used during encryption
+    /// - The ciphertext has been tampered with (authentication tag mismatch)
+    ///
+    /// - Parameters:
+    ///   - data: The encrypted ciphertext to decrypt
+    ///   - nonce: The nonce that was used during encryption
+    ///   - contextData: Additional authenticated data (must match encryption context)
+    /// - Returns: The decrypted plaintext data
+    /// - Throws:
+    ///   - `EncryptionError.missingDatabaseKey` if the database is locked
+    ///   - `EncryptionError.crypto` if decryption or authentication fails
     func decrypt(
         data: Data,
         nonce: Data,

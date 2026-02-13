@@ -18,13 +18,48 @@
 
 import WireLogging
 
-// sourcery: AutoMockable
+/// Protocol for migrating database entities to/from encrypted storage.
+///
+/// The migrator handles the process of encrypting or decrypting sensitive data in the database
+/// when Encryption at Rest (EAR) is enabled or disabled.
+///
+/// sourcery: AutoMockable
 public protocol EARMigratorProtocol {
 
+    /// Migrates existing unencrypted data to encrypted form.
+    ///
+    /// This method:
+    /// 1. Fetches all entities that need encryption
+    /// 2. Encrypts sensitive fields using the message encryption service
+    /// 3. Saves changes in batches to avoid memory pressure
+    /// 4. Rolls back all changes if any error occurs
+    ///
+    /// **Entities migrated:**
+    /// - `ZMGenericMessageData` - Protobuf message data
+    /// - `ZMClientMessage` - Message content
+    /// - `ZMConversation` - Conversation properties (e.g., legal hold request)
+    ///
+    /// - Parameter context: The managed object context in which to perform the migration
+    /// - Throws: `MigrationError.failedToMigrateInstances` if migration fails for any entity type
     func migrateTowardEncryptionAtRest(
         context: NSManagedObjectContext
     ) throws
 
+    /// Migrates existing encrypted data back to unencrypted form.
+    ///
+    /// This method:
+    /// 1. Fetches all entities that are currently encrypted
+    /// 2. Decrypts sensitive fields using the message encryption service
+    /// 3. Saves changes in batches to avoid memory pressure
+    /// 4. Rolls back all changes if any error occurs
+    ///
+    /// **Entities migrated:**
+    /// - `ZMGenericMessageData` - Protobuf message data
+    /// - `ZMClientMessage` - Message content
+    /// - `ZMConversation` - Conversation properties (e.g., legal hold request)
+    ///
+    /// - Parameter context: The managed object context in which to perform the migration
+    /// - Throws: `MigrationError.failedToMigrateInstances` if migration fails for any entity type
     func migrateAwayFromEncryptionAtRest(
         context: NSManagedObjectContext
     ) throws
