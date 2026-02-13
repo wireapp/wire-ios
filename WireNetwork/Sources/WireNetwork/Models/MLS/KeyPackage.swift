@@ -16,21 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<<< HEAD:wire-ios/Wire-iOS/Sources/UserInterface/StartUI/Common/Cells/OpenBotAdminCell.swift
-final class OpenBotAdminCell: StartUIIconCell {
-
-    override func setupViews() {
-        super.setupViews()
-
-        icon = .bot
-        title = PeoplePicker.QuickAction.adminApps
-        isAccessibilityElement = true
-        accessibilityLabel = title
-        accessibilityIdentifier = "button.searchui.open-apps"
-    }
-========
-import Foundation
-
 /// A base64-encoded MLS key package.
 
 public struct KeyPackage: Equatable, Sendable {
@@ -47,5 +32,4 @@ public struct KeyPackage: Equatable, Sendable {
         self.base64EncodedData = base64EncodedData
     }
 
->>>>>>>> chore/replace-old-search-requests-WPB-20362:WireNetwork/Sources/WireNetwork/Models/MLS/KeyPackage.swift
 }

@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<<< HEAD:wire-ios/Wire-iOS/Sources/UserInterface/StartUI/Common/Cells/OpenBotAdminCell.swift
+import UIKit
+
 final class OpenBotAdminCell: StartUIIconCell {
 
     override func setupViews() {
@@ -28,24 +29,5 @@ final class OpenBotAdminCell: StartUIIconCell {
         accessibilityLabel = title
         accessibilityIdentifier = "button.searchui.open-apps"
     }
-========
-import Foundation
 
-/// A base64-encoded MLS key package.
-
-public struct KeyPackage: Equatable, Sendable {
-
-    /// The base64-encoded key package data.
-
-    public let base64EncodedData: String
-
-    /// Create a new `KeyPackage`.
-    ///
-    /// - Parameter base64EncodedData: The base64-encoded key package data.
-
-    public init(base64EncodedData: String) {
-        self.base64EncodedData = base64EncodedData
-    }
-
->>>>>>>> chore/replace-old-search-requests-WPB-20362:WireNetwork/Sources/WireNetwork/Models/MLS/KeyPackage.swift
 }
