@@ -18,6 +18,7 @@
 
 import CoreData
 import WireNetwork
+import WireDataModel
 
 // sourcery: AutoMockable
 public protocol UpdateEventsLocalStoreProtocol {
@@ -48,7 +49,8 @@ public protocol UpdateEventsLocalStoreProtocol {
 
     func persistEventEnvelope(
         _ eventEnvelope: UpdateEventEnvelope,
-        index: Int64
+        index: Int64,
+        publicKeys: EARPublicKeys?
     ) async throws
 
     /// Persists an event envelopes locally.
@@ -58,15 +60,22 @@ public protocol UpdateEventsLocalStoreProtocol {
 
     func persistEventEnvelopes(
         _ eventEnvelopes: [UpdateEventEnvelope],
-        index: Int64
+        index: Int64,
+        publicKeys: EARPublicKeys?
     ) async throws
+
+    /// Returns true if the store is currently locked (e.g. device is locked).
+    var isLocked: Bool { get async }
 
     /// Fetches stored event envelopes.
     /// - parameter limit: A fetch limit.
+    /// - parameter privateKeys: The private keys to use for decryption (if needed).
     /// - returns: A list of decoded event envelopes and their related object IDs.
 
     func fetchStoredEventEnvelopes(
-        limit: UInt
+        limit: UInt,
+        privateKeys: EARPrivateKeys?,
+        backgroundAccessibleOnly: Bool
     ) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)]
 
     /// Deletes next pending events locally.

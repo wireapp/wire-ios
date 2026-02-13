@@ -88,15 +88,26 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
             let liveEventStream = try await pushChannel.open()
 
+            // TODO: - Error handling
+            let publicKeys = try? earService.fetchPublicKeys()
+            
             let processedEnvelopeIDs: Set<UUID>
             do {
+
                 logger.info("pulling pending update events", attributes: .incrementalSyncV2, .safePublic)
                 syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
-                try await updateEventsSync.pull()
+                try await updateEventsSync.pull(publicKeys: publicKeys)
 
                 logger.info("processing stored update events", attributes: .incrementalSyncV2, .safePublic)
                 syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
-                processedEnvelopeIDs = try await processStoredEvents()
+                
+                let isLocked = await updateEventsStore.isLocked // TODO: Also check if EAR is enabled?
+                let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !isLocked)
+
+                processedEnvelopeIDs = try await processStoredEvents(
+                    privateKeys: privateKeys,
+                    backgroundAccessibleOnly: isLocked && earService.isEAREnabled
+                )
             } catch {
                 func tearDown() async {
                     logger.info(
@@ -138,7 +149,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     try await withExpiringActivity(reason: "processLiveStream IncrementalSync") {
                         await processLiveEvents(
                             liveEventStream: liveEventStream,
-                            processedEnvelopeIDs: processedEnvelopeIDs
+                            processedEnvelopeIDs: processedEnvelopeIDs,
+                            publicKeys: publicKeys
                         )
                     }
                 } catch {
@@ -162,7 +174,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
     private func processLiveEvents(
         liveEventStream: AsyncThrowingStream<UpdateEventEnvelope, any Error>,
-        processedEnvelopeIDs: Set<UUID>
+        processedEnvelopeIDs: Set<UUID>,
+        publicKeys: EARPublicKeys?
     ) async {
         do {
             for try await var envelope in liveEventStream {
@@ -211,7 +224,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                     )
                     index = try await updateEventsStore.indexOfLastEventEnvelope() + 1
-                    try await updateEventsStore.persistEventEnvelope(envelope, index: index)
+                    try await updateEventsStore.persistEventEnvelope(envelope, index: index, publicKeys: publicKeys)
                 } catch {
                     logger.error(
                         "failed to store live event envelope: \(String(describing: error))",
@@ -275,7 +288,10 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         }
     }
 
-    private func processStoredEvents() async throws -> Set<UUID> {
+    private func processStoredEvents(
+        privateKeys: EARPrivateKeys?,
+        backgroundAccessibleOnly: Bool
+    ) async throws -> Set<UUID> {
         let batchSize: UInt = 500
         var processedEnvelopeIDs = Set<UUID>()
 
@@ -283,7 +299,11 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             // If we need to abort, do it before processing the next batch.
             try Task.checkCancellation()
 
-            let envelopesWithObjectIDs = try await updateEventsStore.fetchStoredEventEnvelopes(limit: batchSize)
+            let envelopesWithObjectIDs = try await updateEventsStore.fetchStoredEventEnvelopes(
+                limit: batchSize,
+                privateKeys: privateKeys,
+                backgroundAccessibleOnly: backgroundAccessibleOnly
+            )
             let envelopes = envelopesWithObjectIDs.map(\.envelope)
             let envelopesObjectIDs = envelopesWithObjectIDs.map(\.objectID)
 
@@ -361,10 +381,15 @@ extension IncrementalSyncV1: SyncMigratorProtocol {
     public func migrateFromIncrementalSyncV1() async throws {
         logger.debug("pulling pending update events", attributes: .incrementalSyncV2)
         syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
-        try await updateEventsSync.pull()
+        try await updateEventsSync.pull(publicKeys: try? earService.fetchPublicKeys())
 
         logger.debug("processing stored update events", attributes: .incrementalSyncV2)
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
-        _ = try await processStoredEvents()
+        let isLocked = await updateEventsStore.isLocked
+        let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !isLocked)
+        _ = try await processStoredEvents(
+            privateKeys: privateKeys,
+            backgroundAccessibleOnly: isLocked
+        )
     }
 }

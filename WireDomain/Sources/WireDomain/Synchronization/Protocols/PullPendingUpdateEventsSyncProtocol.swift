@@ -18,6 +18,7 @@
 
 import Foundation
 import WireNetwork
+import WireDataModel
 
 // sourcery: AutoMockable
 /// A sync to pull pending update events from the remote, decrypts,
@@ -28,6 +29,6 @@ public protocol PullPendingUpdateEventsSyncProtocol {
     /// and store them locally.
     /// - Returns: Stream of UpdateEvent's batch
     @discardableResult
-    func pull() async throws -> AsyncStream<[UpdateEvent]>
+    func pull(publicKeys: EARPublicKeys?) async throws -> AsyncStream<[UpdateEvent]>
 
 }

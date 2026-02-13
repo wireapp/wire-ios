@@ -18,10 +18,11 @@
 
 import WireLogging
 import WireNetwork
+import WireDataModel
 
 // sourcery: AutoMockable
 protocol SyncEventsUseCaseProtocol {
-    func invoke() async throws
+    func invoke(publicKeys: EARPublicKeys?) async throws
 }
 
 struct SyncEventsUseCase: SyncEventsUseCaseProtocol {
@@ -40,11 +41,11 @@ struct SyncEventsUseCase: SyncEventsUseCaseProtocol {
         self.timeout = timeout
     }
 
-    func invoke() async throws {
+    func invoke(publicKeys: EARPublicKeys?) async throws {
         do {
             try await withThrowingTaskGroup(of: Void.self) { group in
                 group.addTask {
-                    try await pendingEventsSync.pull()
+                    try await pendingEventsSync.pull(publicKeys: publicKeys)
                 }
 
                 group.addTask {

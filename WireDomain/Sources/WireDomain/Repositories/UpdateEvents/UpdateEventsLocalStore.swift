@@ -22,7 +22,7 @@ import WireLogging
 import WireNetwork
 import WireUpdateEventCoding
 
-final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
+final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {    
 
     enum Key: String, DefaultsKey {
         case lastEventID
@@ -93,43 +93,93 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
     public func persistEventEnvelope(
         _ eventEnvelope: UpdateEventEnvelope,
-        index: Int64
+        index: Int64,
+        publicKeys: EARPublicKeys?
     ) async throws {
+        
         try await eventContext.perform { [eventContext, updateEventCoder] in
-            let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
-            storedEventEnvelope.data = try updateEventCoder.encode(eventEnvelope)
-            storedEventEnvelope.sortIndex = index
+            try Self.internalPersistEventEnvelope(
+                updateEventCoder: updateEventCoder,
+                eventContext: eventContext,
+                eventEnvelope: eventEnvelope,
+                index: index,
+                publicKeys: publicKeys
+            )
             try eventContext.save()
         }
     }
 
     public func persistEventEnvelopes(
         _ eventEnvelopes: [UpdateEventEnvelope],
-        index: Int64
+        index: Int64,
+        publicKeys: EARPublicKeys?
     ) async throws {
         try await eventContext.perform { [eventContext, updateEventCoder] in
             var currentIndex = index
+            
             for eventEnvelope in eventEnvelopes {
-                let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
-                storedEventEnvelope.data = try updateEventCoder.encode(eventEnvelope)
-                storedEventEnvelope.sortIndex = currentIndex
+                try Self.internalPersistEventEnvelope(
+                    updateEventCoder: updateEventCoder,
+                    eventContext: eventContext,
+                    eventEnvelope: eventEnvelope,
+                    index: currentIndex,
+                    publicKeys: publicKeys
+                )
                 currentIndex += 1
             }
+
             try eventContext.save()
         }
     }
 
+    public var isLocked: Bool {
+        get async {
+            await syncContext.perform { [syncContext] in syncContext.isLocked }
+        }
+    }
+
     public func fetchStoredEventEnvelopes(
-        limit: UInt
+        limit: UInt,
+        privateKeys: EARPrivateKeys?,
+        backgroundAccessibleOnly: Bool
     ) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)] {
         try await eventContext.perform { [eventContext, updateEventCoder] in
             do {
                 let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+                
+                WireLogger.ear.debug("fetching stored events. backgroundAccessibleOnly: \(backgroundAccessibleOnly)")
+                
+                if backgroundAccessibleOnly {
+                    // TODO: Make this predicate robust
+                    request.predicate = NSPredicate(format: "isEncrypted == NO OR isBackgroundAccessible == YES")
+                }
+                
                 request.fetchLimit = Int(limit)
                 request.returnsObjectsAsFaults = false
                 let storedEventEnvelopes = try eventContext.fetch(request)
-                return try storedEventEnvelopes.map {
-                    (try updateEventCoder.decode($0.data), $0.objectID)
+                return try storedEventEnvelopes.compactMap { storedEnvelope in
+                    var data = storedEnvelope.data
+                    
+                    if storedEnvelope.isEncrypted {
+                        
+                        WireLogger.ear.debug("decrypting stored event. has private keys: \(privateKeys != nil)")
+                        
+                        guard let privateKeys else { return nil }
+                        
+                        let isBackgroundAccessible = storedEnvelope.isBackgroundAccessible
+                        let key = isBackgroundAccessible ? privateKeys.secondary : privateKeys.primary
+                        
+                        guard let key, let decryptedData = EAREncryptionHelper.decrypt(
+                            data: data,
+                            privateKey: key
+                        ) else {
+                            WireLogger.ear.debug("failed to decrypt stored event")
+                            return nil
+                        }
+                        data = decryptedData
+                    }
+                    
+                    return (try updateEventCoder.decode(data), storedEnvelope.objectID)
                 }
             } catch {
                 throw Error.failedToFetchStoredEvents(error)
@@ -219,5 +269,40 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
             ZMConversation.calculateLastUnreadMessages(in: syncContext)
         }
     }
+    
+    // MARK: - Private Helpers
 
+    private static func internalPersistEventEnvelope(
+        updateEventCoder: StorableUpdateEventCoder,
+        eventContext: NSManagedObjectContext,
+        eventEnvelope: UpdateEventEnvelope,
+        index: Int64,
+        publicKeys: EARPublicKeys?
+    ) throws {
+        let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
+        
+        var data = try updateEventCoder.encode(eventEnvelope)
+        
+        if let publicKeys {
+            let isBackgroundAccessible = eventEnvelope.isBackgroundAccessible
+            let key = isBackgroundAccessible ? publicKeys.secondary : publicKeys.primary
+            
+            WireLogger.ear.debug("encrypting event. backgroundAccessible: \(isBackgroundAccessible)")
+            
+            if let encryptedData = EAREncryptionHelper.encrypt(
+                data: data,
+                publicKey: key
+            ) {
+                data = encryptedData
+                storedEventEnvelope.isEncrypted = true
+                storedEventEnvelope.isBackgroundAccessible = isBackgroundAccessible
+            } else {
+                // TODO: Do we ditch the event data if it fails to encrypt?
+                WireLogger.ear.debug("faied to encrypt event")
+            }
+        }
+        
+        storedEventEnvelope.data = data
+        storedEventEnvelope.sortIndex = index
+    }
 }
