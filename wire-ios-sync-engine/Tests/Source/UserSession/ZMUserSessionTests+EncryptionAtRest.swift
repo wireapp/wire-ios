@@ -21,7 +21,7 @@ import LocalAuthentication
 import WireDataModelSupport
 @testable import WireSyncEngine
 
-// TODO: Fix the tests setup - [WPB-23472]
+// TODO: [WPB-23474] Fix the tests setup
 // The test class has been removed from the test plan
 
 final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {

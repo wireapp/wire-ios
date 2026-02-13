@@ -120,11 +120,11 @@ public protocol CoreDataStackProtocol: ContextProvider {
 public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvider {
 
     public let account: Account
-    
+
     public var viewContext: NSManagedObjectContext {
         messagesContainer.viewContext
     }
-    
+
     private var earMessageEncryptionService: EARMessageEncryptionServiceProtocol?
 
     public func newBackgroundContext() -> NSManagedObjectContext {
@@ -141,9 +141,9 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
 
         return context
     }
-    
+
     public func setEARMessageEncryptionService(_ service: EARMessageEncryptionServiceProtocol) {
-        self.earMessageEncryptionService = service
+        earMessageEncryptionService = service
     }
 
     private var _syncContext: NSManagedObjectContext!

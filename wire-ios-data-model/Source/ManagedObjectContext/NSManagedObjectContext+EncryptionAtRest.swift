@@ -118,7 +118,7 @@ public extension NSManagedObjectContext {
 
         return contextData
     }
-    
+
     enum EARError: LocalizedError {
         case missingMessageEncryptionService
         case missingContextData

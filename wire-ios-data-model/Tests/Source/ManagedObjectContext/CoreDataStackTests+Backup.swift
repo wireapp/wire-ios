@@ -34,7 +34,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
             false
         }
         migrator.migrateStoreAtToVersion_MockMethod = { _, _ in }
-        
+
         earMigrator = MockEARMigratorProtocol()
         earMigrator.migrateTowardEncryptionAtRestContext_MockMethod = { _ in }
         earMigrator.migrateAwayFromEncryptionAtRestContext_MockMethod = { _ in }

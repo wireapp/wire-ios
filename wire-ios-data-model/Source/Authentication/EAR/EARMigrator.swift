@@ -71,7 +71,7 @@ private typealias MigratableEntity = EncryptionAtRestMigratable & ZMManagedObjec
 public class EARMigrator: EARMigratorProtocol {
 
     // MARK: - Types
-    
+
     enum MigrationError: LocalizedError {
 
         case failedToMigrateInstances(type: ZMManagedObject.Type, reason: String)
@@ -86,17 +86,17 @@ public class EARMigrator: EARMigratorProtocol {
     }
 
     // MARK: - Properties
-    
+
     private let messageEncryptionService: EARMessageEncryptionServiceProtocol
 
     // MARK: - Init
-    
+
     public init(messageEncryptionService: EARMessageEncryptionServiceProtocol) {
         self.messageEncryptionService = messageEncryptionService
     }
 
     // MARK: - Public Interface
-    
+
     public func migrateTowardEncryptionAtRest(context: NSManagedObjectContext) throws {
         do {
             WireLogger.ear.info("migrating existing data toward EAR", attributes: .safePublic)
@@ -156,7 +156,7 @@ public class EARMigrator: EARMigratorProtocol {
             throw error
         }
     }
-    
+
     // MARK: - Private Methods
 
     private func migrateInstancesTowardEncryptionAtRest(

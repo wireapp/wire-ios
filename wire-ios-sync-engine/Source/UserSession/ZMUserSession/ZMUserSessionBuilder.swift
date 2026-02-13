@@ -249,15 +249,14 @@ struct ZMUserSessionBuilder {
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
         )
-        let earService: EARServiceInterface
-        if let service = optionalEARService {
-            earService = service
+        let earService: EARServiceInterface = if let service = optionalEARService {
+            service
         } else {
-            earService = await EARService(
+            await EARService(
                 accountID: coreDataStack.account.userIdentifier,
                 databaseContexts: [
                     coreDataStack.viewContext,
-                coreDataStack.syncContext
+                    coreDataStack.syncContext
                 ],
                 coreDataStack: coreDataStack,
                 canPerformKeyMigration: true,
@@ -265,7 +264,7 @@ struct ZMUserSessionBuilder {
                 authenticationContext: AuthenticationContext(storage: contextStorage)
             )
         }
-        
+
         let lastE2EIdentityUpdateDateRepository = LastE2EIdentityUpdateDateRepository(
             userID: userId,
             sharedUserDefaults: UserDefaults.standard

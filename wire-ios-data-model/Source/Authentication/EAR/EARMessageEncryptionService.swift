@@ -21,7 +21,8 @@ import WireLogging
 
 /// Protocol for encrypting and decrypting sensitive data when Encryption at Rest (EAR) is enabled.
 ///
-/// This service provides authenticated encryption using ChaCha20-Poly1305 AEAD (Authenticated Encryption with Associated Data).
+/// This service provides authenticated encryption using ChaCha20-Poly1305 AEAD (Authenticated Encryption with
+/// Associated Data).
 /// All encryption operations require a database key and context data for additional authentication.
 ///
 /// ## Thread Safety
@@ -182,7 +183,7 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
             lock.unlock()
             return cached
         }
-        
+
         defer {
             lock.unlock()
         }
@@ -230,7 +231,10 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
             )
             return (ciphertext, nonce)
         } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
-            WireLogger.ear.error("failed to encrypt data for EAR with error: \(error.errorDescription ?? "unknown")", attributes: .safePublic)
+            WireLogger.ear.error(
+                "failed to encrypt data for EAR with error: \(error.errorDescription ?? "unknown")",
+                attributes: .safePublic
+            )
             throw EncryptionError.crypto(error: error)
         }
     }
@@ -258,7 +262,10 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
                 key: key._storage
             )
         } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
-            WireLogger.ear.error("failed to decrypt data for EAR with error: \(error.errorDescription ?? "unknown")", attributes: .safePublic)
+            WireLogger.ear.error(
+                "failed to decrypt data for EAR with error: \(error.errorDescription ?? "unknown")",
+                attributes: .safePublic
+            )
             throw EncryptionError.crypto(error: error)
         }
     }

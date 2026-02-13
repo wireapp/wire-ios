@@ -136,7 +136,7 @@ final class EARServiceTests: EARServiceTestsBase, @MainActor EARServiceDelegate 
 
         // When
         sut = await createSUT(canPerformMigration: true)
-        
+
         // Then
         XCTAssertTrue(keyRepository.storePublicKeyDescriptionKey_Invocations.isEmpty)
     }
@@ -149,7 +149,7 @@ final class EARServiceTests: EARServiceTestsBase, @MainActor EARServiceDelegate 
 
         // When
         sut = await createSUT(canPerformMigration: true)
-        
+
         // Then we stored a new public key
         XCTAssertEqual(keyRepository.storePublicKeyDescriptionKey_Invocations.count, 1)
     }
@@ -271,7 +271,7 @@ final class EARServiceTests: EARServiceTestsBase, @MainActor EARServiceDelegate 
         // Given
         await setEAREnabled(true)
         earMessageEncryptionService.getDatabaseKey_MockValue = validDatabaseKey
-    
+
         // Mock
         mockKeyDeletion()
 
@@ -292,7 +292,7 @@ final class EARServiceTests: EARServiceTestsBase, @MainActor EARServiceDelegate 
         // Then EAR is disabled on the context and storage
         XCTAssertFalse(uiMOC.encryptMessagesAtRest)
         XCTAssertFalse(earStorage.earEnabled())
-        
+
         // Then database key was cleared via the encryption service
         XCTAssertEqual(earMessageEncryptionService.setDatabaseKey_Invocations.count, 1)
         XCTAssertEqual(earMessageEncryptionService.setDatabaseKey_Invocations.first, .some(nil))

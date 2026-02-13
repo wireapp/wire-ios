@@ -42,16 +42,16 @@ final class EARServiceIntegrationTests: EARServiceTestsBase, @MainActor EARServi
     var earStorage: EARStorage!
     var messageEncryptionService: EARMessageEncryptionServiceProtocol!
     var migrator: EARMigrator!
-    
+
     // MARK: - Life cycle
 
     override func setUp() async throws {
         try await super.setUp()
-        
+
         earStorage = EARStorage(userID: userID, sharedUserDefaults: .temporary())
         messageEncryptionService = EARMessageEncryptionService(earStorage: earStorage)
         migrator = EARMigrator(messageEncryptionService: messageEncryptionService)
-        
+
         prepareForMigrationCalls = 0
     }
 
@@ -198,9 +198,9 @@ final class EARServiceIntegrationTests: EARServiceTestsBase, @MainActor EARServi
         XCTAssertEqual(conversation.unencryptedDraftMessageContent, "Beep bloop")
         XCTAssertTrue(uiMOC.encryptMessagesAtRest)
     }
-    
+
     // MARK: - Disable EAR
-    
+
     func test_ExistingMessageContentIsDecrypted_WhenEarIsDisabled() async throws {
         // Given
         let sut = await createSUT(canPerformMigration: true)
@@ -212,7 +212,7 @@ final class EARServiceIntegrationTests: EARServiceTestsBase, @MainActor EARServi
         // Enable EAR
         XCTAssertNoThrow(try sut.enableEncryptionAtRest(context: uiMOC))
         XCTAssertEqual(prepareForMigrationCalls, 1)
-        
+
         // Add message to conversation
         let conversation = createConversation(in: uiMOC)
         try conversation.appendText(content: "Beep bloop")
@@ -266,7 +266,7 @@ final class EARServiceIntegrationTests: EARServiceTestsBase, @MainActor EARServi
         // Then
         XCTAssertNotNil(message.normalizedText)
         XCTAssertEqual(message.normalizedText?.isEmpty, false)
-        
+
         // Then EAR is disabled on the context
         XCTAssertFalse(uiMOC.encryptMessagesAtRest)
     }
@@ -282,7 +282,7 @@ final class EARServiceIntegrationTests: EARServiceTestsBase, @MainActor EARServi
         // Enable EAR
         XCTAssertNoThrow(try sut.enableEncryptionAtRest(context: uiMOC))
         XCTAssertEqual(prepareForMigrationCalls, 1)
-       
+
         // Add message to conversation
         let conversation = createConversation(in: uiMOC)
         conversation.draftMessage = DraftMessage(
@@ -319,7 +319,7 @@ final class EARServiceIntegrationTests: EARServiceTestsBase, @MainActor EARServi
 
         // create sut
         let sut = await createSUT(canPerformMigration: true)
-        
+
         // create conversation
         let conversation = createConversation(in: uiMOC)
 
@@ -355,7 +355,7 @@ final class EARServiceIntegrationTests: EARServiceTestsBase, @MainActor EARServi
         // Given
         // Create sut in order to set the EARMessageEncryptionService on the contexts
         _ = await createSUT()
-        
+
         let databaseKey = VolatileData(from: .randomEncryptionKey())
 
         // Mock key generation so unlock works

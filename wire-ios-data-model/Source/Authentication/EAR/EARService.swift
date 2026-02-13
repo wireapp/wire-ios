@@ -230,7 +230,7 @@ public class EARService: EARServiceInterface {
             migrateKeysIfNeeded()
         }
     }
-    
+
     // MARK: - Feature Flag
 
     /// Whether encryption at rest is enabled.
@@ -301,7 +301,7 @@ public class EARService: EARServiceInterface {
                 try deleteExistingKeys()
                 try generateKeys()
                 let databaseKey = try fetchDecryptedDatabaseKey()
-                
+
                 earMessageEncryptionService.setDatabaseKey(databaseKey)
 
                 if !skipMigration {
@@ -362,7 +362,7 @@ public class EARService: EARServiceInterface {
                 // EAR need to be disabled before attempting migration
                 earStorage.enableEAR(false)
                 context.encryptMessagesAtRest = false
-                
+
                 if !skipMigration {
                     try earMigrator.migrateAwayFromEncryptionAtRest(context: context)
                 }
@@ -619,5 +619,5 @@ public class EARService: EARServiceInterface {
             throw error
         }
     }
-    
+
 }

@@ -27,7 +27,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
 
     private var earMessageEncryptionService: EARMessageEncryptionService!
     private var earStorage: EARStorage!
-    
+
     override func setUp() {
         super.setUp()
 
@@ -36,16 +36,16 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
 
         let service = EARMessageEncryptionService(earStorage: earStorage)
         earMessageEncryptionService = service
-        
+
         createSelfClient(onMOC: uiMOC)
         uiMOC.encryptMessagesAtRest = false
         uiMOC.earMessageEncryptionService = service
     }
-    
+
     override func tearDown() {
         earStorage = nil
         earMessageEncryptionService = nil
-        
+
         super.tearDown()
     }
 
@@ -168,7 +168,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         uiMOC.encryptMessagesAtRest = enabled
         earStorage.enableEAR(enabled)
     }
-        
+
     private func createGenericMessage(text: String) -> GenericMessage {
         GenericMessage(content: Text(content: text))
     }

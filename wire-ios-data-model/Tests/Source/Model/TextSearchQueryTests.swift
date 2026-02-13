@@ -17,8 +17,8 @@
 //
 
 import GenericMessageProtocol
-import WireTesting
 import WireDataModelSupport
+import WireTesting
 
 @testable import WireDataModel
 
@@ -108,7 +108,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
 
     func testThatItDoesntPopulateTheNormalizedTextField_WhenEncryptMessagesAtRestIsEnabled() {
         let mockEncryptionService = MockEARMessageEncryptionServiceProtocol()
-        
+
         uiMOC.earMessageEncryptionService = mockEncryptionService
         uiMOC.encryptMessagesAtRest = true
 

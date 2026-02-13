@@ -23,7 +23,7 @@ class ConversationTests_DraftMessage: ZMConversationTestsBase {
 
     private var earMessageEncryptionService: EARMessageEncryptionService!
     private var earStorage: EARStorage!
-    
+
     override func setUp() {
         super.setUp()
 
@@ -38,7 +38,7 @@ class ConversationTests_DraftMessage: ZMConversationTestsBase {
         earMessageEncryptionService = nil
         super.tearDown()
     }
-    
+
     // MARK: Persist encrypted draft message
 
     // @SF.Storage @TSFI.FS-IOS @TSFI.Enclave-IOS @S0.1 @S0.2
@@ -104,7 +104,7 @@ class ConversationTests_DraftMessage: ZMConversationTestsBase {
         // THEN
         XCTAssertNil(conversation.draftMessage)
     }
-    
+
     private func setEAREnabled(_ enabled: Bool) {
         uiMOC.encryptMessagesAtRest = enabled
         earStorage.enableEAR(enabled)
