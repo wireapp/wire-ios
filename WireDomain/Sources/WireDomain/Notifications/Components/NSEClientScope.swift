@@ -126,7 +126,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 currentTask = Task {
                     do {
                         try Task.checkCancellation()
-                        try await useCase.invoke(publicKeys: publicKeys)
+                        try await useCase.invoke()
                     } catch {
                         // either we timeout during decrypting/storing events OR an issue
                         // with the sync. In both cases, we end up with a stream of
