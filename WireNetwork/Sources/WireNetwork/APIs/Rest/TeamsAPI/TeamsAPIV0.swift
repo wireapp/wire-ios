@@ -255,7 +255,6 @@ enum ConversationActionResponseV0: String, Decodable {
     case leaveConversation = "leave_conversation"
     case modifyAddPermission = "modify_add_permission"
     case modifyConversationAccess = "modify_conversation_access"
-    case modifyConversationHistory = "modify_conversation_history"
     case modifyConversationMessageTimer = "modify_conversation_message_timer"
     case modifyConversationName = "modify_conversation_name"
     case modifyConversationReceiptMode = "modify_conversation_receipt_mode"
@@ -274,8 +273,6 @@ enum ConversationActionResponseV0: String, Decodable {
             .modifyAddPermission
         case .modifyConversationAccess:
             .modifyConversationAccess
-        case .modifyConversationHistory:
-            .modifyConversationHistory
         case .modifyConversationMessageTimer:
             .modifyConversationMessageTimer
         case .modifyConversationName:
