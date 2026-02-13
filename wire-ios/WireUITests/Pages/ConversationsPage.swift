@@ -63,6 +63,11 @@ class ConversationsPage: PageModel {
     var accountProfileImageView: XCUIElement {
         app.buttons[Locators.ConversationsPage.accountProfileImageView.rawValue]
     }
+    
+    var mentionStatus: XCUIElement {
+        app.otherElements[Locators.ConversationsPage.status.rawValue]
+    }
+
 
     func openSettings() throws -> SettingsPage {
         settingsButton.tap()

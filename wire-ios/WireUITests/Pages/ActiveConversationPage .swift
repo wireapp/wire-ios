@@ -74,7 +74,9 @@ class ActiveConversationPage: PageModel {
         for i in 0 ..< messageLabels.count {
             let element = messageLabels.element(boundBy: i)
             if let value = element.value as? String {
-                messages.append(value)
+                // Normalize spaces inserted by UI
+                let normalized = value.replacingOccurrences(of: "\u{00A0}", with: " ")
+                messages.append(normalized)
             }
         }
         return messages
@@ -107,8 +109,7 @@ class ActiveConversationPage: PageModel {
         user.tap()
     }
     
-    func mentionUserAndSendMessage(_  message: String, nameOfUser: String,) throws -> ActiveConversationPage {
-        try inputMessageField.tapIfKeyboardNotFocused().typeText(message)
+    func mentionUserAndSendMessage(nameOfUser: String,) throws -> ActiveConversationPage {
         mentionButton.tap()
         chooseUser(nameOfUser: nameOfUser)
         sendButton.tap()
