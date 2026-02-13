@@ -48,6 +48,10 @@ class ActiveConversationPage: PageModel {
     var messageLabels: XCUIElementQuery {
         app.textViews.matching(identifier: Locators.ActiveConversationPage.message.rawValue)
     }
+    
+    var mentionButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.mentionButton.rawValue]
+    }
 
     func getSenderName() -> String? {
         senderNameLabel.label
@@ -91,5 +95,24 @@ class ActiveConversationPage: PageModel {
         conversationTitleButton.tap()
         conversationDetailsButton.tap()
         return try ConversationDetailsPage()
+    }
+    
+    func chooseUser(nameOfUser: String) {
+        let predicate = NSPredicate(
+            format: "identifier == %@ AND label == %@",
+            Locators.ActiveConversationPage.userCellName.rawValue,
+            nameOfUser
+        )
+        let user = app.staticTexts.matching(predicate).firstMatch
+        user.tap()
+    }
+    
+    func mentionUser(_ nameOfUser: String) throws -> ActiveConversationPage {
+         
+        try inputMessageField.tapIfKeyboardNotFocused().typeText("Hi! ")
+        mentionButton.tap()
+        chooseUser(nameOfUser: nameOfUser)
+        sendButton.tap()
+        return self
     }
 }

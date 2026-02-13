@@ -102,6 +102,8 @@ public enum Locators {
         case conversationDetailsButton
         case message
         case imageCell = "ImageCell"
+        case mentionButton
+        case userCellName
     }
 
     public enum BackupOrRestorePage: String {

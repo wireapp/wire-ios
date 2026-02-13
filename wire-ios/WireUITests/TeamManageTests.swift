@@ -191,4 +191,41 @@ final class TeamManageTests: WireUITestCase {
 
         XCTAssertTrue(archivedConversationPage.conversationExists(withName: groupName))
     }
+    
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1389/tc/8865/
+    @MainActor
+    func test_mentionUserInGroup() async throws {
+
+        let groupName = UserGenerator.generateRandomGroupName()
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let ownerAccessToken = try await userHelper.fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+        let countOfMembers = 2
+
+        var qualifiedIds: [QualifiedID] = []
+        var teamMembers: [UserInfo] = []
+
+        for _ in 0 ..< countOfMembers {
+            let (qualifiedId, teamMember) = try await userHelper.registerUsersAsTeamMember(
+                ownerAccessToken: ownerAccessToken.token,
+                teamID: teamID
+            )
+            qualifiedIds.append(qualifiedId)
+            teamMembers.append(teamMember)
+        }
+
+        try await userHelper.createGroupConversations(
+            qualifiedIds: qualifiedIds,
+            owner: teamOwner,
+            groupName: groupName
+        )
+
+        let _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup(with: self)
+            .openConversation()
+            .mentionUser(teamMembers[0].name)
+    }
 }
