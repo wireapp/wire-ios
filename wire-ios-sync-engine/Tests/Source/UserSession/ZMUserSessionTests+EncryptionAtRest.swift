@@ -21,6 +21,9 @@ import LocalAuthentication
 import WireDataModelSupport
 @testable import WireSyncEngine
 
+// TODO: Fix the tests setup - [WPB-23472]
+// The test class has been removed from the test plan
+
 final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
 
     private var activityManager: MockBackgroundActivityManager!
@@ -224,27 +227,28 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         factory.endBackgroundActivity(activity)
     }
 
-    // TODO: Update the test
     // @SF.Locking @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func testThatDatabaseIsLocked_WhenTheCustomTimeoutHasExpiredInTheBackground() throws {
         // given
-//        factory.backgroundTaskTimeout = 2
-//        syncMOC.performAndWait {
-//            simulateLoggedInUser()
-//            syncMOC.saveOrRollback()
-//        }
-//        setEncryptionAtRest(enabled: true)
-//
-//        // when
-//        _ = factory.startBackgroundActivity(name: "Activity 1")!
-//        application.simulateApplicationDidEnterBackground()
-//        XCTAssertNotNil(sut.managedObjectContext.databaseKey)
-//
-//        _ = XCTWaiter.wait(for: [XCTestExpectation(description: "The expiration handler is called.")], timeout: 4.0)
-//
-//        // then
-//        XCTAssertTrue(sut.isDatabaseLocked)
-//        XCTAssertNil(sut.managedObjectContext.databaseKey)
+        let earMessageEncryptionService = try XCTUnwrap(sut.managedObjectContext.getEarMessageEncryptionService())
+
+        factory.backgroundTaskTimeout = 2
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            syncMOC.saveOrRollback()
+        }
+        setEncryptionAtRest(enabled: true)
+
+        // when
+        _ = factory.startBackgroundActivity(name: "Activity 1")!
+        application.simulateApplicationDidEnterBackground()
+        XCTAssertNotNil(earMessageEncryptionService.getDatabaseKey())
+
+        _ = XCTWaiter.wait(for: [XCTestExpectation(description: "The expiration handler is called.")], timeout: 4.0)
+
+        // then
+        XCTAssertTrue(sut.isDatabaseLocked)
+        XCTAssertNil(earMessageEncryptionService.getDatabaseKey())
     }
 
     // MARK: - Database lock handler/observer
