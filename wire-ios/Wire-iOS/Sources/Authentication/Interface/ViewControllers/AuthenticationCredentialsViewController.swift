@@ -121,7 +121,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     let emailPasswordInputField = EmailPasswordTextField()
     let emailInputField = ValidatedTextField(kind: .email, style: .default)
     let loginButton = ZMButton(
-        style: .accentColorTextButtonStyle,
+        style: .accentColorTextButtonStyle(),
         cornerRadius: 16,
         fontSpec: .buttonBigSemibold
     )

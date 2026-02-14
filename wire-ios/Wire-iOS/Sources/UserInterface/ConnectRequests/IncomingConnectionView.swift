@@ -37,7 +37,7 @@ final class IncomingConnectionView: UIView {
     private let incomingConnectionFooter = UIView()
     private let warningView = WarningLabelView()
     private let acceptButton = ZMButton(
-        style: .accentColorTextButtonStyle,
+        style: .accentColorTextButtonStyle(),
         cornerRadius: 16,
         fontSpec: .normalSemiboldFont
     )

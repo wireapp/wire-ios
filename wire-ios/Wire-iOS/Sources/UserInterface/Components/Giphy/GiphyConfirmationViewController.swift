@@ -37,7 +37,7 @@ final class GiphyConfirmationViewController: UIViewController {
 
     private let imagePreview = FLAnimatedImageView()
     private let acceptButton = ZMButton(
-        style: .accentColorTextButtonStyle,
+        style: .accentColorTextButtonStyle(),
         cornerRadius: 16,
         fontSpec: .normalSemiboldFont
     )

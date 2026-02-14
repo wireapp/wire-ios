@@ -34,11 +34,13 @@ final class ConfirmAssetViewController: UIViewController {
         let asset: Asset
         let onConfirm: Confirm?
         let onCancel: Completion?
+        let accentColor: UIColor?
 
-        init(asset: Asset, onConfirm: Confirm? = nil, onCancel: Completion? = nil) {
+        init(asset: Asset, onConfirm: Confirm? = nil, onCancel: Completion? = nil, accentColor: UIColor? = nil) {
             self.asset = asset
             self.onConfirm = onConfirm
             self.onCancel = onCancel
+            self.accentColor = accentColor
         }
     }
 
@@ -68,8 +70,8 @@ final class ConfirmAssetViewController: UIViewController {
     )
     private let bottomPanel: UIView = .init()
     private let confirmButtonsStack: UIStackView = .init()
-    private let acceptImageButton = ZMButton(
-        style: .accentColorTextButtonStyle,
+    private lazy var  acceptImageButton = ZMButton(
+        style: .accentColorTextButtonStyle(customAccentColor: context.accentColor),
         cornerRadius: 16,
         fontSpec: .buttonBigSemibold
     )

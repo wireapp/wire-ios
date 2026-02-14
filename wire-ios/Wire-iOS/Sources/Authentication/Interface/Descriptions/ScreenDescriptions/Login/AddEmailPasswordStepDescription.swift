@@ -95,7 +95,7 @@ private final class CTAFooterDescription: ViewDescriptor, AuthenticationSecondar
     var actioner: AuthenticationActioner?
 
     let ctaButton = ZMButton(
-        style: .accentColorTextButtonStyle,
+        style: .accentColorTextButtonStyle(),
         cornerRadius: 16,
         fontSpec: .buttonBigSemibold
     )

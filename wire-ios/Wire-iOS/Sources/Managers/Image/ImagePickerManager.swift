@@ -38,15 +38,18 @@ class ImagePickerManager: NSObject {
     private var completion: ((UIImage) -> Void)?
     private let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
     private let device = DeviceWrapper(device: .current)
+    private var accentColor: UIColor?
 
     // MARK: - Methods
 
     func showActionSheet(
         on viewController: UIViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false),
         popoverConfiguration: PopoverPresentationControllerConfiguration,
+        accentColor: UIColor? = nil,
         completion: @escaping (UIImage) -> Void
     ) -> UIAlertController {
         self.completion = completion
+        self.accentColor = accentColor
 
         return imagePickerAlert(viewController: viewController, popoverConfiguration: popoverConfiguration)
     }

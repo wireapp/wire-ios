@@ -57,7 +57,7 @@ final class PermissionDeniedViewController: UIViewController {
 
     private func createSettingsButton() {
         settingsButton = ZMButton(
-            style: .accentColorTextButtonStyle,
+            style: .accentColorTextButtonStyle(),
             cornerRadius: 16,
             fontSpec: .normalSemiboldFont
         )

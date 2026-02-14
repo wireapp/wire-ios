@@ -35,7 +35,7 @@ final class LocationSendViewController: UIViewController {
     // MARK: - Properties
 
     private let sendButton = ZMButton(
-        style: .accentColorTextButtonStyle,
+        style: .accentColorTextButtonStyle(),
         cornerRadius: 12,
         fontSpec: .normalSemiboldFont
     )

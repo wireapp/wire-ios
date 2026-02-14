@@ -244,21 +244,21 @@ private extension ZMButton {
 
     static func openServiceConversationButton() -> Self {
         .init(
-            style: .accentColorTextButtonStyle,
+            style: .accentColorTextButtonStyle(),
             title: PeoplePickerApps.OpenConversation.item.capitalized
         )
     }
 
     static func createAddServiceButton() -> Self {
         .init(
-            style: .accentColorTextButtonStyle,
+            style: .accentColorTextButtonStyle(),
             title: PeoplePickerApps.AddApp.button.capitalized
         )
     }
 
     static func createDestructiveServiceButton() -> Self {
         .init(
-            style: .accentColorTextButtonStyle,
+            style: .accentColorTextButtonStyle(),
             title: L10n.Localizable.Participants.Apps.RemoveIntegration.button.capitalized
         )
     }

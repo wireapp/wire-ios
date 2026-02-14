@@ -54,18 +54,24 @@ struct ButtonStyle {
         )
     )
 
-    static let accentColorTextButtonStyle = ButtonStyle(
-        normalStateColors: (
-            background: UIColor.accent(),
-            title: ButtonColors.textPrimaryEnabled,
-            border: nil
-        ),
-        highlightedStateColors: (
-            background: UIColor.accentDarken,
-            title: ButtonColors.textPrimaryEnabled,
-            border: nil
-        )
-    )
+    // Modify this static property to be a function that takes an optional accentColor
+        static func accentColorTextButtonStyle(customAccentColor: UIColor? = nil) -> ButtonStyle {
+            let accent = UIColor.accent()
+            let accentDarken = UIColor.accentDarken // Use custom darker if custom accent provided
+
+            return ButtonStyle(
+                normalStateColors: (
+                    background: accent,
+                    title: ButtonColors.textPrimaryEnabled,
+                    border: nil
+                ),
+                highlightedStateColors: (
+                    background: accentDarken,
+                    title: ButtonColors.textPrimaryEnabled,
+                    border: nil
+                )
+            )
+        }
 
     static let addParticipantsButtonStyle = ButtonStyle(
         normalStateColors: (

@@ -26,7 +26,7 @@ final class WipeCompletionViewController: UIViewController {
     )
 
     private lazy var loginButton = {
-        let button = ZMButton(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)
+        let button = ZMButton(style: .accentColorTextButtonStyle(), cornerRadius: 16, fontSpec: .smallSemiboldFont)
         button.setTitle(L10n.Localizable.Signin.confirm, for: .normal)
         button.addTarget(self, action: #selector(onLoginCodeButtonPressed(sender:)), for: .touchUpInside)
         return button

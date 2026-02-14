@@ -60,6 +60,8 @@ final class SelfProfileViewController: UIViewController {
     private let selfProfileViewsMonitor: SelfProfileViewsMonitor
     private let analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
     private let accountManager: (any SelfProfileAccountManager)?
+    
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     // MARK: - Configuration
 
@@ -121,6 +123,9 @@ final class SelfProfileViewController: UIViewController {
         self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
         super.init(nibName: nil, bundle: nil)
 
+        self.accentColorChangeHandler = AccentColorChangeHandler.addObserver(userSession: userSession) { [weak self] newColor in
+                   self?.handleAccentColorChange(newColor)
+               }
         if selfUser.isTeamMember {
             userSession.enqueue {
                 selfUser.refreshTeamData()
@@ -282,6 +287,18 @@ final class SelfProfileViewController: UIViewController {
         navigationItem.rightBarButtonItem?.accessibilityLabel = AccountPage.CloseButton.description
         navigationItem.backBarButtonItem?.accessibilityLabel = AccountPage.BackButton.description
     }
+    
+    private func handleAccentColorChange(_ newColor: ZMAccentColor?) {
+           // Update UI elements that depend on the accent color
+           updateUIWithAccentColor(newColor)
+           }
+         
+       
+
+// NEW: Helper to apply accent color to relevant UI components
+   private func updateUIWithAccentColor(_ accentColor: ZMAccentColor?) {
+       profileImagePicker.currentAccentColor = accentColor?.accentColor.uiColor // If you add a property to ImagePickerManager
+   }
 
     // MARK: - Events
 

@@ -21,9 +21,15 @@ import WireLogging
 import WireSyncEngine
 
 final class ProfileImagePickerManager: ImagePickerManager {
+    
+    var currentAccentColor: UIColor?
+    
+    init(currentAccentColor: UIColor? = nil) {
+        self.currentAccentColor = currentAccentColor
+    }
 
     func selectProfileImage(popoverConfiguration: PopoverPresentationControllerConfiguration) -> UIAlertController {
-        showActionSheet(popoverConfiguration: popoverConfiguration) { image in
+        showActionSheet(popoverConfiguration: popoverConfiguration, accentColor: currentAccentColor) { image in
             guard let jpegData = image.jpegData, let session = ZMUserSession.shared() else { return }
             do {
                 let imageDataWithoutMetadata = try jpegData.wr_removingImageMetadata()
