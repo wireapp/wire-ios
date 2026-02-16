@@ -145,10 +145,25 @@ final class UserSessionLoader {
             isFederationEnabled: metadata.isFederationEnabled
         )
 
+        let contextStorage = LAContextStorage()
+
+        let earService = await EARService(
+            accountID: accountID,
+            databaseContexts: [
+                coreDataStack.viewContext,
+                coreDataStack.syncContext
+            ],
+            coreDataStack: coreDataStack,
+            canPerformKeyMigration: true,
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
+        )
+        
         // Move to new sync if possible.
         try await enableSyncV2IfNeeded(
             metadata: metadata,
-            eventContext: coreDataStack.eventContext
+            eventContext: coreDataStack.eventContext,
+            earService: earService
         )
 
         // Load network stack.
@@ -183,7 +198,9 @@ final class UserSessionLoader {
             blacklistNetworkService: networkServices.blacklist,
             backendMetadata: metadata,
             coreDataStack: coreDataStack,
-            cookieStorage: cookieStorage
+            earService: earService,
+            cookieStorage: cookieStorage,
+            contextStorage: contextStorage
         )
 
         // Check if this build is blacklisted.
@@ -354,7 +371,8 @@ final class UserSessionLoader {
 
     private func enableSyncV2IfNeeded(
         metadata: ResolvedBackendMetadata,
-        eventContext: NSManagedObjectContext
+        eventContext: NSManagedObjectContext,
+        earService: EARServiceInterface
     ) async throws {
         let isAlreadyEnabled = journal[.isSyncV2Enabled]
         let shouldEnable = !isAlreadyEnabled
@@ -371,7 +389,8 @@ final class UserSessionLoader {
 
         let migrator = UpdateEventMigrator(
             dao: dao,
-            localDomain: metadata.domain
+            localDomain: metadata.domain,
+            earService: earService
         )
 
         do {
@@ -401,7 +420,9 @@ final class UserSessionLoader {
         blacklistNetworkService: NetworkService,
         backendMetadata: ResolvedBackendMetadata,
         coreDataStack: CoreDataStack,
-        cookieStorage: CookieStorage
+        earService: EARServiceInterface,
+        cookieStorage: CookieStorage,
+        contextStorage: LAContextStorage
     ) async -> ZMUserSession {
         let selfClientID = await coreDataStack.viewContext.perform {
             ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()?.remoteIdentifier
@@ -440,8 +461,6 @@ final class UserSessionLoader {
 
         let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
 
-        let contextStorage = LAContextStorage()
-
         let appLock = AppLockController(
             userId: accountID,
             selfUser: selfUser,
@@ -463,18 +482,6 @@ final class UserSessionLoader {
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: accountID,
             sharedUserDefaults: sharedUserDefaults
-        )
-
-        let earService = await EARService(
-            accountID: accountID,
-            databaseContexts: [
-                coreDataStack.viewContext,
-                coreDataStack.syncContext
-            ],
-            coreDataStack: coreDataStack,
-            canPerformKeyMigration: true,
-            sharedUserDefaults: sharedUserDefaults,
-            authenticationContext: AuthenticationContext(storage: contextStorage)
         )
 
         let lastE2EIdentityUpdateDateRepository = LastE2EIdentityUpdateDateRepository(
