@@ -25,8 +25,54 @@ class TeamsAPIV14: TeamsAPIV13 {
     override func getApp(
         for teamID: Team.ID,
         with id: UUID
-    ) async throws -> AppDetails {
-        fatalError()
+    ) async throws -> App {
+
+        let path = "\(basePath(for: teamID))/apps/\(id.transportString())"
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: GetAppResponseV14.self)
+        // TODO: errors?
+//            .failure(code: .notFound, error: TeamsAPIError.invalidTeamID)
+//            .failure(code: .notFound, label: "no-team", error: TeamsAPIError.teamNotFound)
+            .parse(code: response.statusCode, data: data)
+
+    }
+
+}
+
+struct GetAppResponseV14: Decodable, ToAPIModelConvertible {
+
+//    let id: UUID
+    let name: String
+//    let creator: UUID
+//    let icon: String
+//    let iconKey: String?
+//    let binding: Bool?
+
+    enum CodingKeys: String, CodingKey {
+
+//        case id
+        case name
+//        case creator
+//        case icon
+//        case iconKey = "icon_key"
+//        case binding
+//        case splashScreen = "splash_screen"
+
+    }
+
+    func toAPIModel() -> App {
+        App(
+            name: name
+        )
     }
 
 }

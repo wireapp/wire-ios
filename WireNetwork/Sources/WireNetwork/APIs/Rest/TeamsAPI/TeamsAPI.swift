@@ -100,7 +100,7 @@ public protocol TeamsAPI {
     func getApp(
         for teamID: Team.ID,
         with id: UUID
-    ) async throws -> AppDetails
+    ) async throws -> App
 
     func getWhitelistedBots(
         for teamID: Team.ID,

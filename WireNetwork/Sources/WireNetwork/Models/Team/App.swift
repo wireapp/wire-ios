@@ -16,5 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct AppDetails: Equatable, Sendable {
+public struct App: Equatable, Sendable {
+
+    /// The team name.
+
+    public let name: String
+
+    // TODO: add all properties
+
 }
