@@ -29,7 +29,6 @@ final class FilesFilteringViewModel: ObservableObject {
         case conversation
         case owner
         case sharedByMe
-        case removeAllFilters
 
         var title: String {
             switch self {
@@ -43,8 +42,6 @@ final class FilesFilteringViewModel: ObservableObject {
                 Strings.owner
             case .sharedByMe:
                 Strings.sharedByMe
-            case .removeAllFilters:
-                Strings.removeAllFilters
             }
         }
     }
@@ -61,23 +58,14 @@ final class FilesFilteringViewModel: ObservableObject {
         }
     }
 
-    enum SheetNavigation: Identifiable {
+    enum SheetNavigation: String, Identifiable {
         case tags
         case types
         case conversations
         case owners
 
         var id: String {
-            switch self {
-            case .tags:
-                "tags"
-            case .types:
-                "types"
-            case .conversations:
-                "conversations"
-            case .owners:
-                "owners"
-            }
+            rawValue
         }
     }
     
@@ -105,7 +93,7 @@ final class FilesFilteringViewModel: ObservableObject {
         if isBrowsing {
             Filtering.allCases
         } else {
-            [.tags, .type, .owner, .sharedByMe, .removeAllFilters] // omit `conversation` filter
+            Filtering.allCases.filter { $0 != .conversation }
         }
     }
 
@@ -137,10 +125,11 @@ final class FilesFilteringViewModel: ObservableObject {
             sheetNavigation = .owners
         case .sharedByMe:
             filtersSelection.sharedByMe.toggle()
-        case .removeAllFilters:
-            filtersSelection = .empty
         }
-
+    }
+    
+    func removeAllFilters() {
+        filtersSelection = .empty
     }
 
     // MARK: - UI
@@ -161,8 +150,6 @@ final class FilesFilteringViewModel: ObservableObject {
             !filtersSelection.owners.isEmpty
         case .sharedByMe:
             filtersSelection.sharedByMe
-        case .removeAllFilters:
-            false
         }
     }
 
@@ -177,8 +164,6 @@ final class FilesFilteringViewModel: ObservableObject {
         case .owner:
             isFilterSelected(filter) ? filtersSelection.owners.count : nil
         case .sharedByMe:
-            nil
-        case .removeAllFilters:
             nil
         }
 

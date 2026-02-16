@@ -19,9 +19,14 @@
 import SwiftUI
 import WireDesign
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells.Filtering
+
 struct FilesFilteringView: View {
     @StateObject package var viewModel: FilesFilteringViewModel
     @Environment(\.wireAccentColor) private var accentColor
+    
+    @ScaledMetric var dropDownIconWidth: CGFloat = 8
+    @ScaledMetric var dropDownIconHeight: CGFloat = 4
 
     package init(
         viewModel: @autoclosure @escaping () -> FilesFilteringViewModel,
@@ -33,10 +38,22 @@ struct FilesFilteringView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 ForEach(viewModel.availableFilters, id: \.self) { filter in
-                    capsule(for: filter)
-                        .onTapGesture {
-                            viewModel.select(filter: filter)
-                        }
+                    Button {
+                        viewModel.select(filter: filter)
+                    } label: {
+                        capsule(for: filter)
+                    }
+                }
+                
+                if shouldShowRemoveFilters {
+                    Button {
+                        viewModel.removeAllFilters()
+                    } label: {
+                        Text(Strings.removeAllFilters)
+                            .font(for: .h5)
+                            .foregroundStyle(ColorTheme.Base.primary(accentColor).color)
+                            .fontWeight(.semibold)
+                    }
                 }
             }
             .padding(.horizontal)
@@ -99,7 +116,6 @@ struct FilesFilteringView: View {
                 .foregroundStyle(textColor(for: filter))
 
             if let badge = viewModel.badge(for: filter) {
-
                 Text(badge)
                     .font(.caption2.bold())
                     .foregroundStyle(.white)
@@ -111,34 +127,23 @@ struct FilesFilteringView: View {
                     )
             }
 
-            if let iconName = iconName(for: filter) {
-                Image(systemName: iconName)
-                    .if(filter != .sharedByMe) { view in
-                        view.resizable()
-                            .frame(width: 7.5, height: 3.75)
-                            .rotationEffect(.degrees(180))
-                        
-                    }
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(imageColor(for: filter))
-            }
+            Image(systemName: "arrowtriangle.down.fill")
+                .resizable()
+                .frame(width: dropDownIconWidth, height: dropDownIconHeight)
+                .foregroundStyle(imageColor(for: filter))
         }
-        .frame(height: 15)
         .fontWeight(.semibold)
         .padding(8)
-        .if(filter != .removeAllFilters) { view in
-            view.background {
-                shape.fill(capsuleFillColor(for: filter))
-            }
-            .overlay {
-                shape.strokeBorder(
-                    capsuleStrokeColor(for: filter),
-                    lineWidth: 1
-                )
-            }
+        .background {
+            shape.fill(capsuleFillColor(for: filter))
+        }
+        .overlay {
+            shape.strokeBorder(
+                capsuleStrokeColor(for: filter),
+                lineWidth: 1
+            )
         }
         .padding(.vertical, 1)
-        .opacity(opacity(for: filter))
     }
 
     // MARK: - Helpers
@@ -152,27 +157,7 @@ struct FilesFilteringView: View {
     }
 
     private func textColor(for filter: FilesFilteringViewModel.Filtering) -> Color {
-        switch filter {
-        case .removeAllFilters:
-            ColorTheme.Base.primary(accentColor).color
-        default:
-            viewModel.isFilterSelected(filter) ? ColorTheme.Base.primary(accentColor).color : .primary
-        }
-    }
-
-    private func iconName(for filter: FilesFilteringViewModel.Filtering) -> String? {
-        switch filter {
-        case .removeAllFilters:
-            nil
-        case .sharedByMe:
-            viewModel.isFilterSelected(filter) ? "xmark" : nil
-        default:
-            "triangle.fill"
-        }
-    }
-
-    private func opacity(for filter: FilesFilteringViewModel.Filtering) -> Double {
-        (filter == .removeAllFilters && shouldShowRemoveFilters) || filter != .removeAllFilters ? 1 : 0
+        viewModel.isFilterSelected(filter) ? ColorTheme.Base.primary(accentColor).color : .primary
     }
 
     private func capsuleFillColor(for filter: FilesFilteringViewModel.Filtering) -> Color {
