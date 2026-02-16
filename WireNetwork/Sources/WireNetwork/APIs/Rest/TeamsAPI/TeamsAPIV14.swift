@@ -16,6 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 class TeamsAPIV14: TeamsAPIV13 {
+
     override var apiVersion: APIVersion { .v14 }
+
+    override func getApp(
+        for teamID: Team.ID,
+        with id: UUID
+    ) async throws -> AppDetails {
+        fatalError()
+    }
+
 }

@@ -95,6 +95,13 @@ public protocol TeamsAPI {
         ) async throws -> UUID
     #endif
 
+    /// Fetches details of an app by team id and app id.
+
+    func getApp(
+        for teamID: Team.ID,
+        with id: UUID
+    ) async throws -> AppDetails
+
     func getWhitelistedBots(
         for teamID: Team.ID,
         with prefix: String
