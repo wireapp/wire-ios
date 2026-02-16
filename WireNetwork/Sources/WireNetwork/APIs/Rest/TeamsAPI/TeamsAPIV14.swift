@@ -39,39 +39,45 @@ class TeamsAPIV14: TeamsAPIV13 {
 
         return try ResponseParser()
             .success(code: .ok, type: GetAppResponseV14.self)
-        // TODO: errors?
-//            .failure(code: .notFound, error: TeamsAPIError.invalidTeamID)
-//            .failure(code: .notFound, label: "no-team", error: TeamsAPIError.teamNotFound)
+            .failure(code: .notFound, label: "app-not-found", error: TeamsAPIError.appNotFound)
             .parse(code: response.statusCode, data: data)
 
     }
 
 }
 
+// TODO: unit test
+//{
+//    "code": 404,
+//    "label": "app-not-found",
+//    "message": "App not found"
+//}
+
 struct GetAppResponseV14: Decodable, ToAPIModelConvertible {
 
-//    let id: UUID
     let name: String
-//    let creator: UUID
-//    let icon: String
-//    let iconKey: String?
-//    let binding: Bool?
+    let category: String
+    let description: String
+    let accentID: Int
+    let assets: [UserAssetV0]
 
     enum CodingKeys: String, CodingKey {
 
-//        case id
         case name
-//        case creator
-//        case icon
-//        case iconKey = "icon_key"
-//        case binding
-//        case splashScreen = "splash_screen"
+        case category
+        case description
+        case accentID
+        case assets
 
     }
 
     func toAPIModel() -> App {
         App(
-            name: name
+            name: name,
+            category: category,
+            description: description,
+            accentID: accentID,
+            assets: assets.map { $0.toAPIModel() },
         )
     }
 

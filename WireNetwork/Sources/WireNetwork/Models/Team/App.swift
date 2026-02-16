@@ -22,6 +22,18 @@ public struct App: Equatable, Sendable {
 
     public let name: String
 
-    // TODO: add all properties
+    public let category: String
+
+    public let description: String
+
+    /// Color accent of the user
+
+    public let accentID: Int
+
+    /// The user's profile image assets
+
+    public let assets: [UserAsset]
+
+// TODO: metadata, picture
 
 }

@@ -591,10 +591,32 @@ final class TeamsAPITests: XCTestCase {
 
     }
 
+    // MARK: - V14
+
+    func testGetApp_FailureResponse_AppFound_V14_AndLater() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .notFound,
+            label: "app-not-found"
+        )
+        // When
+        try await apiSnapshotHelper.verifyRequest(for: APIVersion.v14.andNextVersions, apiService: apiService) { sut in
+            // Then
+            await XCTAssertThrowsErrorAsync(TeamsAPIError.appNotFound) {
+                // When
+                try await sut.getApp(
+                    for: Scaffolding.teamID,
+                    with: Scaffolding.appID
+                )
+            }
+        }
+    }
+
     // MARK: -
 
     private enum Scaffolding {
         static let teamID = UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
+        static let appID = UUID(uuidString: "E992B160-B0D7-4A46-94FD-C31467BDFF21")!
     }
 
 }
