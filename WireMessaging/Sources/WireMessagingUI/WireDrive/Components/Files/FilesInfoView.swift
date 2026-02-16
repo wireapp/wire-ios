@@ -28,7 +28,7 @@ struct FilesInfoView: View {
     enum Info: Equatable {
         case preparingFiles
         case noFilesFound(scope: Scope, isSearch: Bool)
-        case error(isConnectionError: Bool)
+        case error
 
         enum Scope: Equatable {
             case allConversations
@@ -82,12 +82,8 @@ struct FilesInfoView: View {
                         Strings.Files.NoData.title : Strings.AllFiles.NoData.title,
                     textFor(scope: scope, isSearch: isSearch)
                 )
-            case let .error(isConnectionError):
-                if isConnectionError {
-                    (Strings.Files.Error.NoConnection.title, Strings.Files.Error.NoConnection.message)
-                } else {
-                    (Strings.Files.Error.title, Strings.Files.Error.message)
-                }
+            case .error:
+                (Strings.Files.Error.title, Strings.Files.Error.message)
             }
         }
 
@@ -100,12 +96,8 @@ struct FilesInfoView: View {
                     Accessibility.Files.NoData.title,
                     accessibilityTextFor(scope: scope, isSearch: isSearch)
                 )
-            case let .error(isConnectionError):
-                if isConnectionError {
-                    (Accessibility.Files.Error.NoConnection.title, Strings.Files.Error.NoConnection.message)
-                } else {
-                    (Accessibility.Files.Error.title, Strings.Files.Error.message)
-                }
+            case .error:
+                (Accessibility.Files.Error.title, Accessibility.Files.Error.message)
             }
         }
 
@@ -132,7 +124,7 @@ struct FilesInfoView: View {
     }
 
     let info: Info
-    var onRetry: (() -> Void)?
+    var onReload: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 25) {
@@ -159,7 +151,7 @@ struct FilesInfoView: View {
                     learnMoreLink(scope: scope)
                 }
             case .error:
-                retryButton
+                reloadButton
             default:
                 EmptyView()
             }
@@ -186,12 +178,11 @@ struct FilesInfoView: View {
         }
     }
 
-    private var retryButton: some View {
+    private var reloadButton: some View {
         Button {
-            onRetry?()
+            onReload?()
         } label: {
-            Text(info == .error(isConnectionError: true) ? Strings.Files.Error.NoConnection.retry : Strings.Files.Error
-                .retry)
+            Text(Strings.Files.Error.reload)
                 .padding()
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(SemanticColors.Label.textDefault.color)
@@ -205,8 +196,8 @@ struct FilesInfoView: View {
 
                 )
         }
-        .accessibilityLabel(Strings.Files.Error.retry)
-        .accessibilityIdentifier("filesBrowser.retryButton")
+        .accessibilityLabel(Strings.Files.Error.reload)
+        .accessibilityIdentifier("filesBrowser.reloadButton")
     }
 
 }
