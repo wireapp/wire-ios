@@ -593,7 +593,34 @@ final class TeamsAPITests: XCTestCase {
 
     // MARK: - V14
 
-    func testGetApp_FailureResponse_AppFound_V14_AndLater() async throws {
+    func testGetApp_givenV14AndAbove_AndSuccessResponse200_thenSucceeds() async throws {
+
+        for apiVersion in APIVersion.v14.andNextVersions {
+
+            // Given
+            let apiService = MockAPIServiceProtocol.withResponses([
+                (.ok, "GetAppSuccessResponseV14")
+            ])
+
+            // When
+            try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
+                let app = try await sut.getApp(for: Scaffolding.teamID, with: Scaffolding.appID)
+
+                // Then
+                let expectedApp = App(
+                    name: "WPB-18618",
+                    category: "developer",
+                    description: "WPB-18618",
+                    accentID: 0,
+                    assets: [] // TODO: parse assets, picture, metadata
+                )
+                XCTAssertEqual(app, expectedApp, "failed for apiVersion \(apiVersion)")
+            }
+        }
+
+    }
+
+    func testGetApp_FailureResponse_AppFound_V14AndAbove() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .notFound,

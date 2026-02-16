@@ -46,13 +46,6 @@ class TeamsAPIV14: TeamsAPIV13 {
 
 }
 
-// TODO: unit test
-//{
-//    "code": 404,
-//    "label": "app-not-found",
-//    "message": "App not found"
-//}
-
 struct GetAppResponseV14: Decodable, ToAPIModelConvertible {
 
     let name: String
@@ -66,7 +59,7 @@ struct GetAppResponseV14: Decodable, ToAPIModelConvertible {
         case name
         case category
         case description
-        case accentID
+        case accentID = "accent_id"
         case assets
 
     }
