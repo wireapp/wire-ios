@@ -50,41 +50,45 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
     let conversationVideoMessageNotificationBuilder: any ConversationVideoMessageNotificationBuilderProtocol
     let conversationTextMessageNotificationBuilder: any ConversationTextMessageNotificationBuilderProtocol
 
-    
     struct MessageContent {
         var message: GenericMessage
         var senderID: UserID
         var conversationID: ConversationID
         var timestamp: Date?
     }
-    
+
     func buildContent(
         event: Either<ConversationMLSMessageAddEvent, ConversationProteusMessageAddEvent>
     ) async throws -> [UserNotification]? {
         switch event {
         case let .left(mlsMessageEvent):
             var userNotifications = [UserNotification]()
-            
+
             for decryptedMessage in mlsMessageEvent.decryptedMessages {
                 do {
                     let message = try extractMessageContent(from: decryptedMessage.message)
-                    
+
                     let messageContent =
-                        MessageContent(message: message,
-                              senderID: mlsMessageEvent.senderID,
-                              conversationID: mlsMessageEvent.conversationID,
-                              timestamp: mlsMessageEvent.timestamp)
-                    
+                        MessageContent(
+                            message: message,
+                            senderID: mlsMessageEvent.senderID,
+                            conversationID: mlsMessageEvent.conversationID,
+                            timestamp: mlsMessageEvent.timestamp
+                        )
+
                     if let userNotification = try await buildUserNotification(for: messageContent) {
                         userNotifications.append(userNotification)
                     }
                 } catch {
-                    WireLogger.sync.error("Failed to build notification for message", attributes: [.conversationId: mlsMessageEvent.conversationID.id.safeForLoggingDescription])
+                    WireLogger.sync.error(
+                        "Failed to build notification for message",
+                        attributes: [.conversationId: mlsMessageEvent.conversationID.id.safeForLoggingDescription]
+                    )
                 }
             }
-            
+
             return userNotifications.isEmpty ? nil : userNotifications
-            
+
         case let .right(proteusMessageEvent):
             guard let decryptedMessage = proteusMessageEvent.message.decryptedMessage else {
                 throw Failure.proteusMessageMissing
@@ -105,26 +109,28 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
                 )
             }
 
-            let messageContent = MessageContent(message: message,
-                           senderID: proteusMessageEvent.senderID,
-                           conversationID: proteusMessageEvent.conversationID,
-                           timestamp: proteusMessageEvent.timestamp)
+            let messageContent = MessageContent(
+                message: message,
+                senderID: proteusMessageEvent.senderID,
+                conversationID: proteusMessageEvent.conversationID,
+                timestamp: proteusMessageEvent.timestamp
+            )
             let userNotification = try await buildUserNotification(for: messageContent)
             return userNotification.flatMap { [$0] }
         }
     }
-    
+
     private func buildUserNotification(for content: MessageContent) async throws -> UserNotification? {
-        
+
         if let callingNotification = await conversationCallingEventNotificationBuilder.buildContent(
             calling: content.message.calling,
             at: content.timestamp,
             conversationID: content.conversationID,
             senderID: content.senderID
         ) {
-            return callingNotification
+            callingNotification
         } else {
-            return await buildMessageContentNotification(
+            await buildMessageContentNotification(
                 message: content.message,
                 senderID: content.senderID,
                 conversationID: content.conversationID

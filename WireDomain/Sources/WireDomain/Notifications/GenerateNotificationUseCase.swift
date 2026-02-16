@@ -79,10 +79,9 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
         switch event {
         case let .conversation(conversationEvent):
             do {
-                let notifications = try await conversationEventBuilder.buildContent(
+                return try await conversationEventBuilder.buildContent(
                     event: conversationEvent
                 )
-                return notifications
             } catch ConversationMessageAddEventNotificationBuilder.Failure.unknownMessageContent {
                 // Can't show notifications for unknown message types,
                 // so just ignore.
