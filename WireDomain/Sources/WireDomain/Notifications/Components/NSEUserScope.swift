@@ -154,10 +154,9 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         }) else {
             throw Failure.mainAppRequired(message: "no self client id")
         }
-        
+
         let earService = await EARService(
             accountID: accountID,
-            databaseContexts: [], // TODO: Do we need db contexts ?
             coreDataStack: coreDataStack,
             sharedUserDefaults: dependency.sharedUserDefaults,
             authenticationContext: AuthenticationContext(storage: LAContextStorage())

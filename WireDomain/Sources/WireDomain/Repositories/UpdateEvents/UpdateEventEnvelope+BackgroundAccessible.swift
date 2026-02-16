@@ -20,27 +20,27 @@ import WireNetwork
 
 extension UpdateEventEnvelope {
     var isBackgroundAccessible: Bool {
-        !events.isEmpty && events.allSatisfy { $0.hasCallingContent }
+        !events.isEmpty && events.allSatisfy(\.hasCallingContent)
     }
 }
 
 private extension UpdateEvent {
-    
+
     var hasCallingContent: Bool {
-        
+
         switch self {
         case let .conversation(.proteusMessageAdd(eventData)):
-            return eventData.hasCallingContent
+            eventData.hasCallingContent
         case let .conversation(.mlsMessageAdd(eventData)):
-            return eventData.hasCallingContent
+            eventData.hasCallingContent
         default:
-            return false
+            false
         }
     }
 }
 
 private extension ConversationProteusMessageAddEvent {
-    
+
     var hasCallingContent: Bool {
         guard
             let decryptedMessage = message.decryptedMessage,
@@ -48,27 +48,27 @@ private extension ConversationProteusMessageAddEvent {
         else {
             return false
         }
-        
+
         return message.hasCalling
     }
 
 }
 
 private extension ConversationMLSMessageAddEvent {
-    
+
     var hasCallingContent: Bool {
-        for decryptedMessage in self.decryptedMessages {
+        for decryptedMessage in decryptedMessages {
             guard let message = ProtobufMessageDecoder.getProtobufMessage(
                 from: decryptedMessage.message
             ) else {
                 continue
             }
-            
+
             if message.hasCalling {
                 return true
             }
         }
-        
+
         return false
     }
 

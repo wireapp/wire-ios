@@ -18,10 +18,10 @@
 
 import Combine
 import Foundation
+import WireDataModel
 import WireLogging
 import WireNetwork
 import WireSystem
-import WireDataModel
 import WireUtilities
 
 public class IncrementalSync: IncrementalSyncProtocol {
@@ -386,7 +386,7 @@ public class IncrementalSync: IncrementalSyncProtocol {
             await closePushChannel()
         }
     }
-    
+
     /// Waits for the database to unlock with a timeout.
     ///
     /// Uses a task group to race between:
@@ -423,7 +423,7 @@ public class IncrementalSync: IncrementalSyncProtocol {
 
                             guard let notification = note.userInfo[DatabaseEncryptionLockNotification.userInfoKey]
                                 as? DatabaseEncryptionLockNotification,
-                                  !notification.databaseIsEncrypted
+                                !notification.databaseIsEncrypted
                             else { return }
 
                             resumed = true
@@ -455,7 +455,6 @@ public class IncrementalSync: IncrementalSyncProtocol {
             throw Failure.databaseUnlockTimeout
         }
     }
-
 
 }
 

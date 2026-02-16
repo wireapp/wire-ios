@@ -116,10 +116,10 @@ public protocol EARServiceInterface: AnyObject {
 
     /// Whether the database is currently locked.
     var isLocked: Bool { get }
-    
+
     /// Whether encryption at rest is currently enabled for this account.
     var isEAREnabled: Bool { get }
-    
+
     /// Stores the initial EAR flag value.
     ///
     /// This method exists for migration purposes. The EAR flag was previously stored in
@@ -235,11 +235,11 @@ public class EARService: EARServiceInterface {
     }
 
     // MARK: - Lock status
-    
+
     public var isLocked: Bool {
         earMessageEncryptionService.isLocked
     }
-    
+
     // MARK: - Feature Flag
 
     /// Whether encryption at rest is enabled.

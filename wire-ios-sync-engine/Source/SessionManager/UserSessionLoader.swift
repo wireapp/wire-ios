@@ -158,7 +158,7 @@ final class UserSessionLoader {
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: AuthenticationContext(storage: contextStorage)
         )
-        
+
         // Move to new sync if possible.
         try await enableSyncV2IfNeeded(
             metadata: metadata,

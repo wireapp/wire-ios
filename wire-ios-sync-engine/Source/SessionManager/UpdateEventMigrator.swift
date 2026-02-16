@@ -62,7 +62,7 @@ struct UpdateEventMigrator {
         var currentIndex = try await dao.indexOfLastEventEnvelope() + 1
 
         let privateKeys = try earService.fetchPrivateKeys(includingPrimary: true)
-        
+
         while let legacyEvents = await dao.nextBatchOfLegacyEvents(privateKeys: privateKeys) {
             WireLogger.sync.debug("found \(legacyEvents.count) legacy events to migrate...")
 

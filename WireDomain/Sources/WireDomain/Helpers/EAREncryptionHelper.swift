@@ -18,26 +18,26 @@
 
 import Foundation
 
-struct EAREncryptionHelper {
+enum EAREncryptionHelper {
     static func encrypt(
         data: Data,
         publicKey: SecKey
     ) -> Data? {
 
-        return SecKeyCreateEncryptedData(
+        SecKeyCreateEncryptedData(
             publicKey,
             .eciesEncryptionCofactorX963SHA256AESGCM,
             data as CFData,
             nil
         ) as? Data
     }
-    
+
     static func decrypt(
         data: Data,
         privateKey: SecKey
     ) -> Data? {
 
-        return SecKeyCreateDecryptedData(
+        SecKeyCreateDecryptedData(
             privateKey,
             .eciesEncryptionCofactorX963SHA256AESGCM,
             data as CFData,

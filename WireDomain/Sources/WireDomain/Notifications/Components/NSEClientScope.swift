@@ -81,7 +81,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         self.coreDataStack = coreDataStack
         self.pushChannelCoordinator = AppExtensionPushChannelCoordinator(clientID: clientID)
         self.earService = earService
-        
+
         super.init(parent: parent)
     }
 
