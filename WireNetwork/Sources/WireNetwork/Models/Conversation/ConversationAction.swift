@@ -40,7 +40,7 @@ public enum ConversationAction: Hashable, Sendable {
 
     case modifyConversationAccess
 
-    // TODO: add comment
+    // no description found for this yet, add this once API v15 specs are finalized!
 
     case modifyConversationHistory
 
