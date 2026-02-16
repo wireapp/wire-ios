@@ -150,32 +150,41 @@ public final class LegacyOneOnOneResolver: OneOnOneResolverInterface {
             "no common protocols found",
             attributes: [.senderUserId: userID.safeForLoggingDescription]
         )
-
-        return try await context.perform {
-            guard let user = ZMUser.fetch(with: userID, in: context) else { throw OneOnOneResolverError.userNotFound }
-
-            let source = OneOnOneSource(context: context)
-            guard let conversations = try source.fetchOneOnOnesWithCandidate(
-                user: user,
-                types: [.mls, .fake, .proteus, .proteusPending]
-            ) else {
-                return .noAction
+        do {
+            return try await context.perform {
+                guard let user = ZMUser.fetch(with: userID, in: context) else { throw OneOnOneResolverError.userNotFound }
+                
+                let source = OneOnOneSource(context: context)
+                guard let conversations = try source.fetchOneOnOnesWithCandidate(
+                    user: user,
+                    types: [.mls, .fake, .proteus, .proteusPending]
+                ) else {
+                    return .noAction
+                }
+                
+                let best = conversations.candidate
+                for conversation in conversations.others {
+                    best.migrateMessages(from: conversation)
+                    best.needsToBeUpdatedFromBackend = true
+                }
+                
+                user.oneOnOneConversation = best
+                
+                self.makeConversationReadOnly(
+                    selfUser: ZMUser.selfUser(in: context),
+                    otherUser: user,
+                    conversation: best
+                )
+                
+                return .archivedAsReadOnly
             }
-
-            let best = conversations.candidate
-            for conversation in conversations.others {
-                best.migrateMessages(from: conversation)
-                best.needsToBeUpdatedFromBackend = true
-            }
-
-            user.oneOnOneConversation = best
-
-            self.makeConversationReadOnly(
-                selfUser: ZMUser.selfUser(in: context),
-                otherUser: user,
-                conversation: best
+        } catch OneOnOneResolverError.userNotFound {
+            WireLogger.conversation.info("user deleted, update conversation", attributes: .safePublic)
+            await setReadOnly(
+                to: false,
+                forOneOnOneWithUser: userID,
+                in: context
             )
-
             return .archivedAsReadOnly
         }
     }
@@ -234,6 +243,7 @@ public final class LegacyOneOnOneResolver: OneOnOneResolverInterface {
             }
 
             conversation.isForcedReadOnly = readOnly
+            WireLogger.conversation.info("set conversation as readonly", attributes: [.conversationId: conversation.qualifiedID?.safeForLoggingDescription ?? "<nil>", .senderUserId: otherUser.qualifiedID?.safeForLoggingDescription ?? "<nil>"], .safePublic)
         }
     }
 

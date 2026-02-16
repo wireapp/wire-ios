@@ -378,8 +378,9 @@ public final class MLSService: MLSServiceInterface {
                 return MLSUser(from: selfUser, localDomain: self.localDomain)
             }
             // make sure we have the selfUser but only once
-            let usersWithSelfUser = Set(users + [mlsSelfUser])
-            try await addMembersToConversation(with: Array(usersWithSelfUser), for: groupID)
+            // and add self at last so for 1-1 if other user don't have key packages we don't depleet our keypackages for nothing
+            let usersWithSelfUser = users.filter(!mlsSelfUser) + [mlsSelfUser]
+            try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
             return ciphersuite
         } catch {
             try await wipeGroup(groupID)

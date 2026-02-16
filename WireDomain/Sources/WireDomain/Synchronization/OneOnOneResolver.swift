@@ -79,9 +79,16 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     ) async throws -> OneOnOneConversationResolution {
         var action: OneOnOneConversationResolution = .noAction
 
-        let user = try await userLocalStore.fetchUser(
-            id: userID.uuid, domain: userID.domain
-        )
+        let user: ZMUser
+        do {
+            user = try await userLocalStore.fetchUser(
+                id: userID.uuid, domain: userID.domain
+            )
+        } catch UserRepositoryError.failedToFetchUser(let userRemoteIdentifier) {
+            WireLogger.conversation.info("user \(userID.safeForLoggingDescription) is deleted, setting as read only", attributes: .safePublic)
+            await setReadOnly(to: true, forOneOnOneWithUser: userID, in: context)
+            return .archivedAsReadOnly
+        }
 
         let selfUser = await userLocalStore.fetchSelfUser()
         let commonProtocol = await getCommonProtocol(between: selfUser, and: user)
