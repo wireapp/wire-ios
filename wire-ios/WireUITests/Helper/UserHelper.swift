@@ -288,9 +288,8 @@ class UserHelper {
                 HttpClient.HeaderKey.authorization: "Bearer \(accessToken.token)"
             ]
         )
-
-        if response.statusCode == 200 {
-            return
+        guard response.statusCode == 200 else {
+            throw RuntimeError("disableConsentPopup failed with code \(response.statusCode)")
         }
     }
 
@@ -470,8 +469,8 @@ class UserHelper {
     ///   - memberCount: count of members
     ///   - groupName : optional groupName
     /// - Returns: teamOwner info, teamMembers info, qualifiedIds of members, conversationId if group created
-    func registerTeamWithXMembersAndOptionalGroupConversation(
-        memberCount: Int,
+    func registerTeam(
+        withMemberCount memberCount: Int,
         groupName: String? = nil
     ) async throws
         -> (teamOwner: UserInfo, teamMembers: [UserInfo], qualifiedIDs: [QualifiedID], conversationId: UUID?) {

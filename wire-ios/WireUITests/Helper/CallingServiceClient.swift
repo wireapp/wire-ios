@@ -52,21 +52,17 @@ final class CallingServiceClient {
         _ = try? await destroyInstances(instanceIds: ids)
     }
 
-    init() {
-        do {
-            let envVariables = try EnvironmentVariables()
-            self.callingServiceURL = envVariables.callingServiceURL
-            self.callingServiceUsername = envVariables.callingServiceUsername
-            self.callingServicePassword = envVariables.callingServicePassword
-        } catch {
-            preconditionFailure("CallingServiceClient failed to fetch EnvVariables: \(error)")
-        }
+    init() throws {
+        let envVariables = try EnvironmentVariables()
+        self.callingServiceURL = envVariables.callingServiceURL
+        self.callingServiceUsername = envVariables.callingServiceUsername
+        self.callingServicePassword = envVariables.callingServicePassword
     }
 
     enum Constants {
-        static let CONNECT_TIMEOUT: TimeInterval = 600_000
-        static let RESPONSE_TIMEOUT: TimeInterval = 600_000
-        static let CALLING_RESPONSE_TIMEOUT: TimeInterval = 3_600_000
+        static let CONNECT_TIMEOUT: TimeInterval = 360
+        static let RESPONSE_TIMEOUT: TimeInterval = 360
+        static let CALLING_RESPONSE_TIMEOUT: TimeInterval = 600
 
     }
 
@@ -275,11 +271,11 @@ final class CallingServiceClient {
         return results
     }
 
-    private func performCall<T: Decodable>(
+    private func performCall(
         instanceId: String,
         path: String,
         request: some Encodable
-    ) async throws -> T {
+    ) async throws -> CallResponse {
         let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
         let (data, code) = try await sendHttpRequest(endpoint: endpoint, body: request, method: .post)
         guard code.statusCode == 200 else {
@@ -287,13 +283,13 @@ final class CallingServiceClient {
                 "CallingService call failed: POST \(path) HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
-        return try JSONDecoder().decode(T.self, from: data)
+        return try JSONDecoder().decode(CallResponse.self, from: data)
     }
 
-    private func performCallGet<T: Decodable>(
+    private func performCallGet(
         instanceId: String,
         path: String
-    ) async throws -> T {
+    ) async throws -> CallResponse {
         let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
         let (data, code) = try await sendHttpRequest(
             endpoint: endpoint,
@@ -305,13 +301,13 @@ final class CallingServiceClient {
                 "CallingService call failed: GET \(path) HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
-        return try JSONDecoder().decode(T.self, from: data)
+        return try JSONDecoder().decode(CallResponse.self, from: data)
     }
 
-    private func performCallPut<T: Decodable>(
+    private func performCallPut(
         instanceId: String,
         path: String
-    ) async throws -> T {
+    ) async throws -> CallResponse {
         let endpoint = instanceEndpoint(instanceId: instanceId, path: path)
         let (data, code) = try await sendHttpRequest(endpoint: endpoint, body: CallingServiceEmptyBody(), method: .put)
         guard code.statusCode == 200 else {
@@ -319,25 +315,25 @@ final class CallingServiceClient {
                 "CallingService call failed: PUT \(path) HTTP \(code.statusCode). \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
-        return try JSONDecoder().decode(T.self, from: data)
+        return try JSONDecoder().decode(CallResponse.self, from: data)
     }
 
-    func start(instanceId: String, request: StartCallBody) async throws -> CallReponse {
+    func start(instanceId: String, request: StartCallBody) async throws -> CallResponse {
         try await performCall(instanceId: instanceId, path: "/call/start", request: request)
     }
 
-    func startVideo(instanceId: String, request: StartCallBody) async throws -> CallReponse {
+    func startVideo(instanceId: String, request: StartCallBody) async throws -> CallResponse {
         try await performCall(instanceId: instanceId, path: "/call/startVideo", request: request)
     }
 
-    func acceptNext(instanceId: String, request: CallRequest) async throws -> CallReponse {
+    func acceptNext(instanceId: String, request: CallRequest) async throws -> CallResponse {
         try await performCall(instanceId: instanceId, path: "/call/acceptNext", request: request)
     }
 
     func startCall(
         instanceId: String,
         conversationId: String
-    ) async throws -> CallReponse {
+    ) async throws -> CallResponse {
         let request = StartCallBody(
             conversationId: conversationId,
             timeout: Constants.CALLING_RESPONSE_TIMEOUT
@@ -348,7 +344,7 @@ final class CallingServiceClient {
     func startVideoCall(
         instanceId: String,
         conversationId: String
-    ) async throws -> CallReponse {
+    ) async throws -> CallResponse {
         let request = StartCallBody(
             conversationId: conversationId,
             timeout: Constants.CALLING_RESPONSE_TIMEOUT
@@ -359,10 +355,10 @@ final class CallingServiceClient {
     func acceptNextCalls(
         instanceIds: [String],
         conversationId: String
-    ) async throws -> [String: CallReponse] {
+    ) async throws -> [String: CallResponse] {
         precondition(!instanceIds.isEmpty, "No instance IDs provided")
 
-        return try await withThrowingTaskGroup(of: (String, CallReponse).self) { group in
+        return try await withThrowingTaskGroup(of: (String, CallResponse).self) { group in
             for instanceId in instanceIds {
                 group.addTask {
                     let request = CallRequest(
@@ -374,7 +370,7 @@ final class CallingServiceClient {
                 }
             }
 
-            var results: [String: CallReponse] = [:]
+            var results: [String: CallResponse] = [:]
             for try await (id, response) in group {
                 results[id] = response
             }
@@ -389,7 +385,7 @@ struct InstanceType: Encodable {
 }
 
 struct CallingServiceInstance: Decodable {
-    let id: String?
+    let id: String
     let instanceStatus: String?
 }
 
@@ -412,7 +408,7 @@ typealias CallRequest = StartCallBody
 
 struct CallingServiceEmptyBody: Encodable {}
 
-struct CallReponse: Decodable {
+struct CallResponse: Decodable {
     let id: String?
     let status: String?
 }

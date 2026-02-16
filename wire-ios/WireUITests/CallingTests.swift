@@ -18,6 +18,7 @@
 
 import WireFoundation
 import XCTest
+import WireLocators
 
 final class CallingTests: WireUITestCase {
 
@@ -36,8 +37,8 @@ final class CallingTests: WireUITestCase {
         let groupName = groupName ?? UserGenerator.generateRandomGroupName()
 
         let (teamOwner, teamMembers, _, conversationId) = try await userHelper
-            .registerTeamWithXMembersAndOptionalGroupConversation(
-                memberCount: memberCount,
+            .registerTeam(
+                withMemberCount: memberCount,
                 groupName: groupName
             )
 
@@ -91,7 +92,7 @@ final class CallingTests: WireUITestCase {
 
     private func verifyParticipantsVisible(_ participants: [UserInfo]) {
         for user in participants {
-            let participantIdentifier = "audioView.\(user.name).minimized.inactive"
+            let participantIdentifier = Locators.OngoingCallView.participantIdentifier(user.name)
             XCTAssertTrue(
                 app.buttons[participantIdentifier].waitForExistence(timeout: 15),
                 "Expected \(user.name) to be in the call"
