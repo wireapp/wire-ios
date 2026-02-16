@@ -26,9 +26,9 @@ extension FilesFilterBy.SharedLinkView {
             case withSharedLink
             case withoutSharedLink
         }
-        
+
         @Published var selectedItems: Set<Item> = []
-        
+
         @Published var presentedItems: [Item] = []
 
         private let initiallySelectedItems: Set<Item>
@@ -63,7 +63,7 @@ extension FilesFilterBy.SharedLinkView {
     }
 }
 
-extension Collection where Element == FilesFilterBy.SharedLinkView.ViewModel.Item {
+extension Collection<FilesFilterBy.SharedLinkView.ViewModel.Item> {
     static func fromBool(_ value: Bool?) -> Set<Element> {
         switch value {
         case true:
@@ -74,7 +74,7 @@ extension Collection where Element == FilesFilterBy.SharedLinkView.ViewModel.Ite
             []
         }
     }
-    
+
     func toBool() -> Bool? {
         if contains(.withSharedLink) {
             true

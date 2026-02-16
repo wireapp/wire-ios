@@ -338,11 +338,11 @@ package final class FilesViewModel: ObservableObject {
             ]
         }
     }
-    
+
     private func fetchConversations() {
         Task {
             let allDriveConversations = await useCases.getDriveConversations.invoke()
-            
+
             if let cellName {
                 self.conversations = allDriveConversations.filter { $0.id == cellName }
             } else {
@@ -819,20 +819,20 @@ package final class FilesViewModel: ObservableObject {
 
         return FileVersioningView(viewModel: viewModel)
     }
-    
+
     // MARK: - Sorting & Filtering
-    
+
     func makeFilesFilteringViewModel() -> FilesFilteringViewModel {
         let useCases = FilesFilteringViewModel.UseCases(
             fetchTagsUseCase: useCases.getTagSuggestions
         )
-        
+
         return FilesFilteringViewModel(
             useCases: useCases,
             isBrowsing: isBrowsing,
             conversations: Set(conversations)
-        ) { filtersSelection in
-            
+        ) { _ in
+
         }
     }
 

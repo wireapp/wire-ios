@@ -22,7 +22,7 @@ extension FilesFilterBy.TypeView {
     @MainActor
     final class ViewModel: ObservableObject {
         typealias Item = FileType
-        
+
         @Published var selectedItems: Set<Item> = []
 
         var presentedItems: [Item] = [
@@ -33,8 +33,8 @@ extension FilesFilterBy.TypeView {
             .presentation,
             .video,
             .audio,
-            //.code,
-            //.archive,
+            // .code,
+            // .archive,
             .folder,
             .other
         ]

@@ -24,7 +24,7 @@ extension FilesFilterBy.TagsView {
     @MainActor
     final class ViewModel: ObservableObject {
         typealias Item = String
-        
+
         @Published var presentedTags: [Item] = []
         @Published var selectedTags: Set<Item>
         @Published var searchText = "" {
@@ -32,6 +32,7 @@ extension FilesFilterBy.TagsView {
                 applySearchFilter()
             }
         }
+
         @Published var isLoading: Bool = false
         @Published var showError: Bool = false
 

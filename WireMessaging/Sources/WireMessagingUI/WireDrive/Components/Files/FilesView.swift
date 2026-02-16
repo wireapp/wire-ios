@@ -59,7 +59,7 @@ package struct FilesView: FilesViewProtocol {
                     }
                     FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
                 }
-                
+
                 switch viewModel.state {
                 case .loading:
                     Spacer()
@@ -72,7 +72,7 @@ package struct FilesView: FilesViewProtocol {
                         offlineBar.id(UUID())
                         Spacer()
                     }
-                    
+
                     filesList
                 case let .error(isConnectionError):
                     FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
@@ -145,7 +145,7 @@ package struct FilesView: FilesViewProtocol {
             )
         }
     }
-    
+
     @ViewBuilder
     private func searchView(content: some View) -> some View {
         content.searchable(

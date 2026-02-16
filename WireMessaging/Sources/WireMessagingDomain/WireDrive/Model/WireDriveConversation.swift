@@ -51,29 +51,29 @@ public extension WireDriveConversation {
     struct Participant: Sendable, Hashable, Identifiable {
         public let handle: String
         public let displayName: String
-        
+
         public struct IconData: Sendable, Hashable {
             public let initials: String
             public let color: UIColor
             public let image: UIImage?
-            
+
             public init(initials: String, color: UIColor, image: UIImage?) {
                 self.initials = initials
                 self.color = color
                 self.image = image
             }
         }
-        
+
         public let iconData: IconData?
-        
+
         public init(handle: String, displayName: String, iconData: IconData? = nil) {
             self.handle = handle
             self.displayName = displayName
             self.iconData = iconData
         }
-        
+
         public var id: String {
-            handle //TODO: check if the handle is an appropriate ID or if we should use something else
+            handle // TODO: check if the handle is an appropriate ID or if we should use something else
         }
     }
 }
@@ -84,21 +84,21 @@ public extension WireDriveConversation {
     }
 }
 
-public extension Collection where Element == WireDriveConversation {
+public extension Collection<WireDriveConversation> {
     static func mocked() -> [Element] {
         [
             .init(id: "1234", name: "Conversation 1", participants: Set([WireDriveConversation.Participant].mocked())),
-            .init(id: "5678", name: "Conversation 2", participants: Set([WireDriveConversation.Participant].mocked())),
+            .init(id: "5678", name: "Conversation 2", participants: Set([WireDriveConversation.Participant].mocked()))
         ]
     }
 }
 
-public extension Collection where Element == WireDriveConversation.Participant {
+public extension Collection<WireDriveConversation.Participant> {
     static func mocked() -> [Element] {
         [
             .init(handle: "waterwhite", displayName: "Heisenberg"),
             .init(handle: "jessepinkman", displayName: "The Cook"),
-            .init(handle: "tucosalamanca", displayName: "Tuco"),
+            .init(handle: "tucosalamanca", displayName: "Tuco")
         ]
     }
 }

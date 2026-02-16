@@ -23,9 +23,9 @@ extension FilesFilterBy.OwnerView {
     @MainActor
     final class ViewModel: ObservableObject {
         typealias Item = WireDriveConversation.Participant
-        
+
         @Published var selectedItems: Set<Item> = []
-        
+
         @Published var presentedItems: [Item] = []
 
         private let initiallySelectedItems: Set<Item>
@@ -51,7 +51,7 @@ extension FilesFilterBy.OwnerView {
             if selectedItems.contains(item) {
                 selectedItems.remove(item)
             } else {
-                selectedItems = [] //TODO: remove later when we have multi-select
+                selectedItems = [] // TODO: remove later when we have multi-select
                 selectedItems.insert(item)
             }
         }

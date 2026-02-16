@@ -22,7 +22,7 @@ extension FilesFilterBy {
     enum Buttons {
         struct Save: View {
             let action: () -> Void
-            
+
             var body: some View {
                 Button {
                     action()
@@ -33,10 +33,10 @@ extension FilesFilterBy {
                 .accessibilityIdentifier("saveButton")
             }
         }
-        
+
         struct Cancel: View {
             let action: () -> Void
-            
+
             var body: some View {
                 Button {
                     action()
@@ -47,10 +47,10 @@ extension FilesFilterBy {
                 .accessibilityIdentifier("cancelButton")
             }
         }
-        
+
         struct RemoveFilter: View {
             let action: () -> Void
-            
+
             var body: some View {
                 Button {
                     action()

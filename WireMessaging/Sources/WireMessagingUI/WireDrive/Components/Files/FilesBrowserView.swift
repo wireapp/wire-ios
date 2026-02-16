@@ -44,7 +44,7 @@ package struct FilesBrowserView: FilesViewProtocol {
         ZStack {
             ColorTheme.Backgrounds.surface.color
                 .ignoresSafeArea(.all)
-            
+
             VStack {
                 VStack(alignment: .leading, spacing: 15) {
                     if isSearchFocused {
@@ -52,7 +52,7 @@ package struct FilesBrowserView: FilesViewProtocol {
                     }
                     FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
                 }
-                
+
                 switch viewModel.state {
                 case .loading:
                     Spacer()
@@ -65,7 +65,7 @@ package struct FilesBrowserView: FilesViewProtocol {
                         offlineBar.id(UUID())
                         Spacer()
                     }
-                    
+
                     filesList
                 case let .error(isConnectionError):
                     FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
@@ -110,7 +110,7 @@ package struct FilesBrowserView: FilesViewProtocol {
             }
         }
     }
-    
+
     @ViewBuilder
     private func searchView(content: some View) -> some View {
         content.searchable(

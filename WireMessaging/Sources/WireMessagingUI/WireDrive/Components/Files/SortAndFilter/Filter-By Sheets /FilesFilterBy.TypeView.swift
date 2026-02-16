@@ -26,11 +26,11 @@ extension FilesFilterBy {
     struct TypeView: View {
         @Environment(\.wireAccentColor) private var wireAccentColor
         @Environment(\.dismiss) private var dismiss
-        
+
         @StateObject private var viewModel: ViewModel
-        
+
         let onApply: (Set<ViewModel.Item>) -> Void
-        
+
         init(
             includeFolders: Bool,
             selectedItems: some Collection<ViewModel.Item>,
@@ -44,7 +44,7 @@ extension FilesFilterBy {
                 )
             )
         }
-        
+
         var body: some View {
             NavigationStack {
                 content()
@@ -57,7 +57,7 @@ extension FilesFilterBy {
                     .navigationBarTitleDisplayMode(.inline)
             }
         }
-        
+
         @ViewBuilder
         private func content() -> some View {
             VStack {
@@ -66,7 +66,7 @@ extension FilesFilterBy {
                     onSelected: viewModel.toggleItemSelection,
                     itemView: itemView
                 )
-                
+
                 Buttons.RemoveFilter {
                     viewModel.clearAll()
                 }
@@ -74,16 +74,16 @@ extension FilesFilterBy {
                 .disabled(viewModel.selectedItems.isEmpty)
             }
         }
-        
+
         @ViewBuilder
         private func itemView(_ item: ViewModel.Item) -> some View {
             Label {
                 HStack {
                     Text(item.localizedName())
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    
+
                     Spacer()
-                    
+
                     if viewModel.isItemSelected(item) {
                         Image(systemName: "checkmark")
                             .foregroundStyle(wireAccentColor)
@@ -122,9 +122,9 @@ private extension FilesFilterBy.TypeView {
 
 private extension FileType {
     typealias name = Strings.Filter.FileType.TypeName
-    
+
     func localizedName() -> String {
-        return switch self {
+        switch self {
         case .audio:            name.audio
         case .video:            name.video
         case .image:            name.image

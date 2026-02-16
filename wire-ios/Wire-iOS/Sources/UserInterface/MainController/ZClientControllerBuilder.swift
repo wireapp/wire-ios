@@ -152,30 +152,31 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
         return await context.perform {
             driveEnabledConversations.reduce(into: [WireDriveConversation]()) { result, conversation in
                 if let name = conversation.name {
-                    let participants: [WireDriveConversation.Participant] = conversation.participants.compactMap { item in
-                        .init(
-                            handle: item.handle ?? "-",
-                            displayName: item.name ?? "-",
-                            iconData: WireDriveConversation.Participant.IconData(
-                                initials: item.initials ?? "",
-                                color: item.accentColor,
-                                image: item.previewImageData.flatMap(UIImage.init)
+                    let participants: [WireDriveConversation.Participant] = conversation.participants
+                        .compactMap { item in
+                            .init(
+                                handle: item.handle ?? "-",
+                                displayName: item.name ?? "-",
+                                iconData: WireDriveConversation.Participant.IconData(
+                                    initials: item.initials ?? "",
+                                    color: item.accentColor,
+                                    image: item.previewImageData.flatMap(UIImage.init)
+                                )
                             )
-                        )
-                    }
-                    
+                        }
+
                     let kind: WireDriveConversation.Kind = switch conversation.conversationType {
                     case .group: .group
                     default: .channel
                     }
-                    
+
                     let driveConversation = WireDriveConversation(
                         id: conversation.wireDriveCellName,
                         name: name,
                         kind: kind,
                         participants: Set(participants)
                     )
-                
+
                     result.append(driveConversation)
                 }
             }

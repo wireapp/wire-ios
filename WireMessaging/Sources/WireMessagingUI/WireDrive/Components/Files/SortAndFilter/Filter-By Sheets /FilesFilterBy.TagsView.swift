@@ -28,11 +28,11 @@ extension FilesFilterBy {
     struct TagsView: View {
         @Environment(\.wireAccentColor) private var wireAccentColor
         @Environment(\.dismiss) private var dismiss
-        
+
         @StateObject private var viewModel: ViewModel
-        
+
         let onApply: (Set<ViewModel.Item>) -> Void
-        
+
         init(
             fetchTagsUseCase: any WireDriveGetTagSuggestionsUseCaseProtocol,
             selectedItems: some Collection<ViewModel.Item>,
@@ -46,7 +46,7 @@ extension FilesFilterBy {
             )
             self.onApply = onApply
         }
-        
+
         var body: some View {
             NavigationStack {
                 content()
@@ -64,7 +64,7 @@ extension FilesFilterBy {
                     .searchable(text: $viewModel.searchText, prompt: Strings.Filter.Tags.searchPrompt)
             }
         }
-        
+
         @ViewBuilder
         private func content() -> some View {
             VStack {
@@ -72,7 +72,7 @@ extension FilesFilterBy {
                     tagsView
                         .padding()
                 }
-                
+
                 Buttons.RemoveFilter {
                     viewModel.clearAll()
                 }

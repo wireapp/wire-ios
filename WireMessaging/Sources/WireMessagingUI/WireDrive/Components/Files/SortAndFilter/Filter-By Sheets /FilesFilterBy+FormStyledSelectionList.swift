@@ -23,7 +23,7 @@ extension FilesFilterBy {
         let items: [Item]
         let onSelected: (Item) -> Void
         let itemView: (Item) -> ItemView
-        
+
         var body: some View {
             Form {
                 ForEach(items, id: \.self) { item in

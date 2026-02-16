@@ -69,7 +69,7 @@ final class FilesFilteringViewModel: ObservableObject {
             rawValue
         }
     }
-    
+
     struct UseCases {
         let fetchTagsUseCase: any WireDriveGetTagSuggestionsUseCaseProtocol
     }
@@ -79,17 +79,18 @@ final class FilesFilteringViewModel: ObservableObject {
             onUpdate(filtersSelection)
         }
     }
+
     @Published var sheetNavigation: SheetNavigation?
 
     private let onUpdate: (FiltersSelection) -> Void
     let useCases: UseCases
     let isBrowsing: Bool
     let conversations: Set<WireDriveConversation>
-    
+
     var conversationsParticipants: Set<WireDriveConversation.Participant> {
         Set(conversations.flatMap(\.participants))
     }
-    
+
     var availableFilters: [Filtering] {
         if isBrowsing {
             Filtering.allCases
@@ -128,7 +129,7 @@ final class FilesFilteringViewModel: ObservableObject {
             sheetNavigation = .sharedLink
         }
     }
-    
+
     func removeAllFilters() {
         filtersSelection = .empty
     }

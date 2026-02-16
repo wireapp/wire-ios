@@ -75,10 +75,10 @@ final class FilesSortingViewModel: ObservableObject {
     }
 
     @Published var sortingSelection: SortingSelection
-    
+
     let isBrowsing: Bool
     private let onUpdate: (SortingSelection) -> Void
-    
+
     var availableSortingKeys: [SortingKey] {
         if isBrowsing {
             SortingKey.allCases
@@ -98,7 +98,7 @@ final class FilesSortingViewModel: ObservableObject {
     }
 
     // MARK: - Actions
-    
+
     func select(sortingKey: SortingKey) {
         sortingSelection.sortingKey = sortingKey
         onUpdate(sortingSelection)

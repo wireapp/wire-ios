@@ -24,7 +24,7 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells.Filtering
 struct FilesFilteringView: View {
     @StateObject package var viewModel: FilesFilteringViewModel
     @Environment(\.wireAccentColor) private var accentColor
-    
+
     @ScaledMetric var dropDownIconWidth: CGFloat = 8
     @ScaledMetric var dropDownIconHeight: CGFloat = 4
 
@@ -44,7 +44,7 @@ struct FilesFilteringView: View {
                         capsule(for: filter)
                     }
                 }
-                
+
                 if shouldShowRemoveFilters {
                     Button {
                         viewModel.removeAllFilters()
@@ -68,7 +68,7 @@ struct FilesFilteringView: View {
             }
         )
     }
-    
+
     @ViewBuilder
     private func sheet(for navigationItem: FilesFilteringViewModel.SheetNavigation) -> some View {
         switch navigationItem {
@@ -113,11 +113,11 @@ struct FilesFilteringView: View {
             )
         }
     }
-    
+
     @ViewBuilder
     private func capsule(for filter: FilesFilteringViewModel.Filtering) -> some View {
         let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
-        
+
         HStack(alignment: .center, spacing: 5) {
             Text(filter.title)
                 .font(for: .h5)

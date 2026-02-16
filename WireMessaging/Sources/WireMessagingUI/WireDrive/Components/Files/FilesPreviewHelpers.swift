@@ -251,7 +251,7 @@ extension FilesFilteringViewModel {
             onUpdate: { _ in }
         )
     }
-    
+
 }
 
 // MARK: - Dependencies

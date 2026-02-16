@@ -125,10 +125,10 @@ package struct WireDriveGetNodesRequest: Equatable, Sendable {
 
     /// Filter nodes by tags names.
     package let tags: [String]
-    
+
     /// Filter nodes by the specified value (name, owner, date or size)
     package let sortField: String?
-    
+
     /// Whether the filtering should be ascending or descending (false = ascending, true = descending)
     package let sortDirDesc: Bool?
 

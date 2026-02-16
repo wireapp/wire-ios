@@ -26,13 +26,13 @@ extension FilesFilterBy {
     struct OwnerView: View {
         @Environment(\.wireAccentColor) private var wireAccentColor
         @Environment(\.dismiss) private var dismiss
-        
+
         @StateObject private var viewModel: ViewModel
-        
+
         @ScaledMetric private var iconSize: CGFloat = 32
-        
+
         let onApply: (Set<ViewModel.Item>) -> Void
-        
+
         init(
             availableItems: some Collection<ViewModel.Item>,
             selectedItems: some Collection<ViewModel.Item>,
@@ -46,7 +46,7 @@ extension FilesFilterBy {
                 )
             )
         }
-        
+
         var body: some View {
             NavigationStack {
                 content()
@@ -59,7 +59,7 @@ extension FilesFilterBy {
                     .navigationBarTitleDisplayMode(.inline)
             }
         }
-        
+
         @ViewBuilder
         private func content() -> some View {
             VStack {
@@ -68,7 +68,7 @@ extension FilesFilterBy {
                     onSelected: viewModel.toggleItemSelection,
                     itemView: itemView
                 )
-                
+
                 Buttons.RemoveFilter {
                     viewModel.clearAll()
                 }
@@ -76,7 +76,7 @@ extension FilesFilterBy {
                 .disabled(viewModel.selectedItems.isEmpty)
             }
         }
-        
+
         @ViewBuilder
         private func itemView(_ item: ViewModel.Item) -> some View {
             Label {
@@ -90,9 +90,9 @@ extension FilesFilterBy {
                             .font(.caption)
                             .foregroundStyle(ColorTheme.Base.labelTitle.color)
                     }
-                    
+
                     Spacer()
-                    
+
                     if viewModel.isItemSelected(item) {
                         Image(systemName: "checkmark")
                             .foregroundStyle(wireAccentColor)
@@ -103,7 +103,7 @@ extension FilesFilterBy {
                     .frame(width: iconSize, height: iconSize)
             }
         }
-        
+
         @ViewBuilder
         private func icon(_ item: ViewModel.Item) -> some View {
             if let iconData = item.iconData {
@@ -114,7 +114,7 @@ extension FilesFilterBy {
                             .aspectRatio(contentMode: .fit)
                     } else {
                         Color(uiColor: iconData.color)
-                        
+
                         Text(iconData.initials)
                             .fontWeight(.semibold)
                             .textCase(.uppercase)
@@ -152,7 +152,6 @@ private extension FilesFilterBy.OwnerView {
         }
     }
 }
-
 
 // MARK: - Preview
 

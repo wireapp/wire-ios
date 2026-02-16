@@ -26,13 +26,13 @@ extension FilesFilterBy {
     struct SharedLinkView: View {
         @Environment(\.wireAccentColor) private var wireAccentColor
         @Environment(\.dismiss) private var dismiss
-        
+
         @StateObject private var viewModel: ViewModel
-        
+
         @ScaledMetric private var iconSize: CGFloat = 32
-        
+
         let onApply: (Bool?) -> Void
-        
+
         init(
             selected: Bool?,
             onApply: @escaping (Bool?) -> Void
@@ -44,7 +44,7 @@ extension FilesFilterBy {
                 )
             )
         }
-        
+
         var body: some View {
             NavigationStack {
                 content()
@@ -57,7 +57,7 @@ extension FilesFilterBy {
                     .navigationBarTitleDisplayMode(.inline)
             }
         }
-        
+
         @ViewBuilder
         private func content() -> some View {
             VStack {
@@ -66,7 +66,7 @@ extension FilesFilterBy {
                     onSelected: viewModel.toggleItemSelection,
                     itemView: itemView
                 )
-                
+
                 Buttons.RemoveFilter {
                     viewModel.clearAll()
                 }
@@ -74,7 +74,7 @@ extension FilesFilterBy {
                 .disabled(viewModel.selectedItems.isEmpty)
             }
         }
-        
+
         @ViewBuilder
         private func itemView(_ item: ViewModel.Item) -> some View {
             Label {
@@ -82,9 +82,9 @@ extension FilesFilterBy {
                     Text(displayName(item))
                         .font(.body)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    
+
                     Spacer()
-                    
+
                     if viewModel.isItemSelected(item) {
                         Image(systemName: "checkmark")
                             .foregroundStyle(wireAccentColor)
@@ -95,20 +95,20 @@ extension FilesFilterBy {
                     .frame(width: iconSize, height: iconSize)
             }
         }
-        
+
         @ViewBuilder
         private func icon(_ item: ViewModel.Item) -> some View {
-            let name: String = switch item {
+            let name = switch item {
             case .withSharedLink:
                 "link"
             case .withoutSharedLink:
                 "lock.fill"
             }
-            
+
             Image(systemName: name)
                 .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
         }
-        
+
         private func displayName(_ item: ViewModel.Item) -> String {
             switch item {
             case .withSharedLink:
@@ -139,7 +139,6 @@ private extension FilesFilterBy.SharedLinkView {
         }
     }
 }
-
 
 // MARK: - Preview
 

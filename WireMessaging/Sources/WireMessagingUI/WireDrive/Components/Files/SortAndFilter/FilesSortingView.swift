@@ -33,13 +33,13 @@ struct FilesSortingView: View {
     var body: some View {
         HStack {
             Menu {
-                
+
                 Text(Strings.title)
                     .font(for: .h5)
                     .foregroundStyle(.secondary)
-                
+
                 Divider()
-                
+
                 ForEach(viewModel.availableSortingKeys, id: \.self) { sortingKey in
                     Button {
                         viewModel.select(sortingKey: sortingKey)
@@ -50,9 +50,9 @@ struct FilesSortingView: View {
                         )
                     }
                 }
-                
+
                 Divider()
-                
+
                 ForEach(FilesSortingViewModel.SortingOrder.allCases, id: \.self) { sortingOrder in
                     Button {
                         viewModel.select(sortingOrder: sortingOrder)
@@ -74,11 +74,11 @@ struct FilesSortingView: View {
                         .resizable()
                         .frame(width: 9, height: 11)
                 }.frame(minWidth: 120, alignment: .leading)
-                
+
             }.foregroundStyle(.primary)
-            
+
             Spacer()
-            
+
             if !viewModel.isBrowsing {
                 Text(Strings.results)
                     .font(for: .subline2)
