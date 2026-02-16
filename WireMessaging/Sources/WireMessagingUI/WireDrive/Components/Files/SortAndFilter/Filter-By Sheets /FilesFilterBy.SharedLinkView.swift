@@ -31,16 +31,16 @@ extension FilesFilterBy {
         
         @ScaledMetric private var iconSize: CGFloat = 32
         
-        let onApply: (Set<ViewModel.Item>) -> Void
+        let onApply: (Bool?) -> Void
         
         init(
-            selectedItems: some Collection<ViewModel.Item>,
-            onApply: @escaping (Set<ViewModel.Item>) -> Void
+            selected: Bool?,
+            onApply: @escaping (Bool?) -> Void
         ) {
             self.onApply = onApply
             self._viewModel = .init(
                 wrappedValue: .init(
-                    selectedItems: selectedItems
+                    selectedItems: [ViewModel.Item].fromBool(selected)
                 )
             )
         }
@@ -132,7 +132,7 @@ private extension FilesFilterBy.SharedLinkView {
 
         ToolbarItem(placement: .topBarTrailing) {
             FilesFilterBy.Buttons.Save {
-                onApply(viewModel.selectedItems)
+                onApply(viewModel.selectedItems.toBool())
                 dismiss()
             }
             .disabled(!viewModel.hasChanges)
@@ -145,7 +145,7 @@ private extension FilesFilterBy.SharedLinkView {
 
 #Preview {
     FilesFilterBy.SharedLinkView(
-        selectedItems: [],
+        selected: nil,
         onApply: { _ in }
     )
 }

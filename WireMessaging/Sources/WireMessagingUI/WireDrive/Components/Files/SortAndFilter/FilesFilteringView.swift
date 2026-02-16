@@ -106,9 +106,9 @@ struct FilesFilteringView: View {
             )
         case .sharedLink:
             FilesFilterBy.SharedLinkView(
-                selectedItems: [FilesFilterBy.SharedLinkView.ViewModel.Item].fromBool(viewModel.filtersSelection.sharedLink),
-                onApply: { selectedItems in
-                    viewModel.filtersSelection.sharedLink = selectedItems.toBool()
+                selected: viewModel.filtersSelection.sharedLink,
+                onApply: { selected in
+                    viewModel.filtersSelection.sharedLink = selected
                 }
             )
         }
