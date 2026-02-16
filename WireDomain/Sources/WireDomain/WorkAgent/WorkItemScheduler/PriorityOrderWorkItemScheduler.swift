@@ -54,4 +54,10 @@ actor PriorityOrderWorkItemScheduler: WorkItemScheduler {
         }
     }
 
+    func clearAllItems() async {
+        blockerQueue.removeAll()
+        highQueue.removeAll()
+        mediumQueue.removeAll()
+        lowQueue.removeAll()
+    }
 }
