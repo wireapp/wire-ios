@@ -195,6 +195,9 @@
 "conversation.wireCells.filter.tags.searchPrompt" = "Search tags";
 "conversation.wireCells.filter.conversation.navigationTitle" = "Filter by conversation";
 "conversation.wireCells.filter.owner.navigationTitle" = "Filter by owner";
+"conversation.wireCells.filter.sharedLink.navigationTitle" = "Filter by link sharing";
+"conversation.wireCells.filter.sharedLink.option.withLink" = "Has public link";
+"conversation.wireCells.filter.sharedLink.option.withoutLink" = "No public link";
 "conversation.wireCells.filter.fileType.navigationTitle" = "Filter by type";
 "conversation.wireCells.filter.fileType.typeName.pdf" = "PDF";
 "conversation.wireCells.filter.fileType.typeName.doc" = "Documents";
@@ -302,5 +305,5 @@
 "conversation.wireCells.filtering.type" = "Type";
 "conversation.wireCells.filtering.conversation" = "Conversation";
 "conversation.wireCells.filtering.owner" = "Owner";
-"conversation.wireCells.filtering.sharedByMe" = "Shared by me";
+"conversation.wireCells.filtering.sharedLink" = "Link sharing";
 "conversation.wireCells.filtering.removeAllFilters" = "Remove all filters";

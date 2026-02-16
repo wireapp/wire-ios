@@ -28,7 +28,7 @@ final class FilesFilteringViewModel: ObservableObject {
         case type
         case conversation
         case owner
-        case sharedByMe
+        case sharedLink
 
         var title: String {
             switch self {
@@ -40,21 +40,21 @@ final class FilesFilteringViewModel: ObservableObject {
                 Strings.conversation
             case .owner:
                 Strings.owner
-            case .sharedByMe:
-                Strings.sharedByMe
+            case .sharedLink:
+                Strings.sharedLink
             }
         }
     }
 
-    struct FiltersSelection {
+    struct FiltersSelection: Hashable {
         var tags: Set<String>
         var types: Set<FileType>
         var conversations: Set<WireDriveConversation>
         var owners: Set<WireDriveConversation.Participant>
-        var sharedByMe: Bool
+        var sharedLink: Bool?
 
         var hasFilterSelected: Bool {
-            !tags.isEmpty || !types.isEmpty || !conversations.isEmpty || !owners.isEmpty || sharedByMe
+            !tags.isEmpty || !types.isEmpty || !conversations.isEmpty || !owners.isEmpty || sharedLink != nil
         }
     }
 
@@ -63,6 +63,7 @@ final class FilesFilteringViewModel: ObservableObject {
         case types
         case conversations
         case owners
+        case sharedLink
 
         var id: String {
             rawValue
@@ -123,8 +124,8 @@ final class FilesFilteringViewModel: ObservableObject {
             sheetNavigation = .conversations
         case .owner:
             sheetNavigation = .owners
-        case .sharedByMe:
-            filtersSelection.sharedByMe.toggle()
+        case .sharedLink:
+            sheetNavigation = .sharedLink
         }
     }
     
@@ -148,8 +149,8 @@ final class FilesFilteringViewModel: ObservableObject {
             !filtersSelection.conversations.isEmpty
         case .owner:
             !filtersSelection.owners.isEmpty
-        case .sharedByMe:
-            filtersSelection.sharedByMe
+        case .sharedLink:
+            filtersSelection.sharedLink != nil
         }
     }
 
@@ -163,7 +164,7 @@ final class FilesFilteringViewModel: ObservableObject {
             isFilterSelected(filter) ? filtersSelection.conversations.count : nil
         case .owner:
             isFilterSelected(filter) ? filtersSelection.owners.count : nil
-        case .sharedByMe:
+        case .sharedLink:
             nil
         }
 
@@ -178,6 +179,6 @@ private extension FilesFilteringViewModel.FiltersSelection {
         types: [],
         conversations: [],
         owners: [],
-        sharedByMe: false
+        sharedLink: nil
     )
 }

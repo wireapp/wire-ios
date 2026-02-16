@@ -58,6 +58,7 @@ struct FilesFilteringView: View {
             }
             .padding(.horizontal)
         }
+        .animation(.easeInOut, value: viewModel.filtersSelection)
         .sheet(
             item: $viewModel.sheetNavigation,
             onDismiss: {},
@@ -67,7 +68,7 @@ struct FilesFilteringView: View {
             }
         )
     }
-
+    
     @ViewBuilder
     private func sheet(for navigationItem: FilesFilteringViewModel.SheetNavigation) -> some View {
         switch navigationItem {
@@ -101,6 +102,13 @@ struct FilesFilteringView: View {
                 selectedItems: viewModel.filtersSelection.owners,
                 onApply: { selectedItems in
                     viewModel.filtersSelection.owners = selectedItems
+                }
+            )
+        case .sharedLink:
+            FilesFilterBy.SharedLinkView(
+                selectedItems: [FilesFilterBy.SharedLinkView.ViewModel.Item].fromBool(viewModel.filtersSelection.sharedLink),
+                onApply: { selectedItems in
+                    viewModel.filtersSelection.sharedLink = selectedItems.toBool()
                 }
             )
         }

@@ -244,7 +244,7 @@ extension FilesFilteringViewModel {
                 types: [.audio],
                 conversations: [],
                 owners: Set([WireDriveConversation.Participant].mocked().dropFirst()),
-                sharedByMe: true
+                sharedLink: true
             ),
             isBrowsing: isBrowsing,
             conversations: Set([WireDriveConversation].mocked()),
