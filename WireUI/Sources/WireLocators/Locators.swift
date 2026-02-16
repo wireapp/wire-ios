@@ -282,4 +282,10 @@ public enum Locators {
         case continueButton = "Continue"
     }
 
+    public enum SecurityLevelView: String {
+
+        case classificationBanner = "ClassificationBanner"
+
+    }
+
 }
