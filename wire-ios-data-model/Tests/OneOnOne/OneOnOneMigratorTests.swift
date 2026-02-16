@@ -28,7 +28,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
     private var coreDataStack: CoreDataStack!
     private var syncContext: NSManagedObjectContext!
-
+    private let localDomain = "local.domain"
     private var mockMLSService: MockMLSServiceInterface!
 
     override func setUp() async throws {
@@ -38,6 +38,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         syncContext = coreDataStack.syncContext
 
         mockMLSService = MockMLSServiceInterface()
+        mockMLSService.underlyingLocalDomain = localDomain
     }
 
     override func tearDown() async throws {
@@ -67,6 +68,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
             let mlsConversation = createMLSConversation(with: mlsGroupID, in: syncContext)
             mlsConversation.oneOnOneUser = user
+            mlsConversation.domain = localDomain
             conversationID = mlsConversation.qualifiedID
 
             return mlsConversation
@@ -633,7 +635,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         let conversation = ZMConversation.insertNewObject(in: context)
         conversation.conversationType = .connection
         conversation.remoteIdentifier = .create()
-        conversation.domain = "local@domain.com"
+        conversation.domain = localDomain
         conversation.oneOnOneUser = connection.to
 
         let selfUser = ZMUser.selfUser(in: context)
@@ -670,7 +672,7 @@ final class OneOnOneMigratorTests: XCTestCase {
     ) -> ZMConversation {
         let mlsConversation = ZMConversation.insertNewObject(in: context)
         mlsConversation.remoteIdentifier = .create()
-        mlsConversation.domain = "local@domain.com"
+        mlsConversation.domain = localDomain
         mlsConversation.mlsGroupID = identifier
         mlsConversation.messageProtocol = .mls
         mlsConversation.conversationType = .oneOnOne
