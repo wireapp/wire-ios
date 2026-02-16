@@ -51,7 +51,7 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
         updateEvents: AsyncStream<[UpdateEvent]>
     ) async throws -> [UserNotification] {
 
-        var notifications = [UserNotification]()
+        var allNotifications = [UserNotification]()
 
         for await events in updateEvents {
             logger.info(
@@ -60,28 +60,29 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
             )
 
             for event in events {
-                if let notification = await generateNotification(for: event) {
+                if let notifications = await generateNotification(for: event) {
                     logger.info(
-                        "Generated a notification from an event",
+                        "Generated \(notifications.count) notifications from an event",
                         attributes: .newNSE, .safePublic
                     )
-                    notifications.append(notification)
+                    allNotifications.append(contentsOf: notifications)
                 }
             }
         }
 
-        return notifications
+        return allNotifications
     }
 
     private func generateNotification(
         for event: UpdateEvent
-    ) async -> UserNotification? {
+    ) async -> [UserNotification]? {
         switch event {
         case let .conversation(conversationEvent):
             do {
-                return try await conversationEventBuilder.buildContent(
+                let notifications = try await conversationEventBuilder.buildContent(
                     event: conversationEvent
                 )
+                return notifications
             } catch ConversationMessageAddEventNotificationBuilder.Failure.unknownMessageContent {
                 // Can't show notifications for unknown message types,
                 // so just ignore.
@@ -99,9 +100,10 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
             }
 
         case let .user(userEvent):
-            return await userEventBuilder.buildContent(
+            let notification = await userEventBuilder.buildContent(
                 event: userEvent
             )
+            return notification.flatMap { [$0] }
 
         default:
             var attributes = LogAttributes.newNSE
