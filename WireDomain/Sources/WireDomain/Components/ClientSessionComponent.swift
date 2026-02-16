@@ -409,7 +409,8 @@ public final class ClientSessionComponent {
         liveBrokenGroupSubject: liveBrokenGroupSubject,
         journal: journal,
         mlsGroupRepairAgent: mlsGroupRepairAgent,
-        earService: earService
+        earService: earService,
+        notificationContext: syncContext.notificationContext
     )
 
     public lazy var incrementalSyncV2: IncrementalSyncV2 = if let sharedContainerURL {

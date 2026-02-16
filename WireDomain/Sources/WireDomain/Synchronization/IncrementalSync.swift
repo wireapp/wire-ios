@@ -24,10 +24,11 @@ import WireSystem
 import WireDataModel
 import WireUtilities
 
-public struct IncrementalSync: IncrementalSyncProtocol {
+public class IncrementalSync: IncrementalSyncProtocol {
 
     public enum Failure: Error {
         case missedEvents
+        case databaseUnlockTimeout
     }
 
     private let selfClientID: String
@@ -44,7 +45,9 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let journal: Journal
     private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
     private let earService: EARServiceInterface
-    
+    private let notificationContext: NotificationContext
+    private var unlockObserver: SelfUnregisteringNotificationCenterToken?
+
     public init(
         selfClientID: String,
         pushChannelAPI: any PushChannelAPI,
@@ -58,7 +61,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>,
         journal: Journal,
         mlsGroupRepairAgent: MLSGroupRepairAgentProtocol,
-        earService: EARServiceInterface
+        earService: EARServiceInterface,
+        notificationContext: NotificationContext
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -73,6 +77,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.journal = journal
         self.mlsGroupRepairAgent = mlsGroupRepairAgent
         self.earService = earService
+        self.notificationContext = notificationContext
     }
 
     public func perform() async throws -> Token {
@@ -80,6 +85,17 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             label: "new incremental sync",
             attributes: .incrementalSyncV2
         ) {
+            // If ear is enabled and database is locked, wait for unlock before starting sync
+            // This ensures we can access all encryption keys immediately
+            if earService.isLocked {
+                try await waitForDatabaseUnlock()
+            }
+
+            // Fetch keys (will return nil if EAR is disabled)
+            // Since we waited for unlock above, primary keys are now accessible
+            let publicKeys = try earService.fetchPublicKeys()
+            let privateKeys = try earService.fetchPrivateKeys(includingPrimary: true)
+
             syncStateSubject.send(.incrementalSyncing(.createPushChannel))
             let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
 
@@ -88,25 +104,21 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
             let liveEventStream = try await pushChannel.open()
 
-            // TODO: - Error handling
-            let publicKeys = try? earService.fetchPublicKeys()
-            
             let processedEnvelopeIDs: Set<UUID>
             do {
-
                 logger.info("pulling pending update events", attributes: .incrementalSyncV2, .safePublic)
                 syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
                 try await updateEventsSync.pull(publicKeys: publicKeys)
 
-                logger.info("processing stored update events", attributes: .incrementalSyncV2, .safePublic)
+                logger.info(
+                    "processing stored update events",
+                    attributes: .incrementalSyncV2, .safePublic
+                )
                 syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
-                
-                let isLocked = await updateEventsStore.isLocked
-                let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !isLocked)
 
                 processedEnvelopeIDs = try await processStoredEvents(
                     privateKeys: privateKeys,
-                    backgroundAccessibleOnly: isLocked
+                    backgroundAccessibleOnly: false
                 )
             } catch {
                 func tearDown() async {
@@ -374,6 +386,76 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             await closePushChannel()
         }
     }
+    
+    /// Waits for the database to unlock with a timeout.
+    ///
+    /// Uses a task group to race between:
+    /// - Notification observer waiting for unlock
+    /// - Timeout task that throws after duration expires
+    ///
+    /// - Parameter timeout: Maximum time to wait for unlock
+    /// - Throws: `Failure.databaseUnlockTimeout` if timeout expires before unlock
+    ///
+    private func waitForDatabaseUnlock(timeout: Duration = .seconds(3)) async throws {
+        logger.info(
+            "database is locked, waiting for unlock (timeout: \(timeout))",
+            attributes: .incrementalSyncV2, .safePublic
+        )
+
+        // Ensure cleanup happens on both success and timeout
+        defer {
+            unlockObserver = nil
+        }
+
+        do {
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                // Task 1: Wait for unlock notification
+                group.addTask { [self] in
+                    await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+                        var resumed = false
+
+                        unlockObserver = NotificationInContext.addObserver(
+                            name: DatabaseEncryptionLockNotification.notificationName,
+                            context: notificationContext,
+                            queue: .main
+                        ) { [self] note in
+                            guard !resumed else { return }
+
+                            guard let notification = note.userInfo[DatabaseEncryptionLockNotification.userInfoKey]
+                                as? DatabaseEncryptionLockNotification,
+                                  !notification.databaseIsEncrypted
+                            else { return }
+
+                            resumed = true
+                            logger.info(
+                                "database unlocked, resuming sync",
+                                attributes: .incrementalSyncV2, .safePublic
+                            )
+                            continuation.resume()
+                        }
+                    }
+                }
+
+                // Task 2: Timeout
+                group.addTask {
+                    try await Task.sleep(for: timeout)
+                    throw CancellationError()
+                }
+
+                // Wait for first task to complete (either unlock or timeout)
+                defer { group.cancelAll() }
+
+                try await group.next()
+            }
+        } catch is CancellationError {
+            logger.error(
+                "timed out waiting for database unlock, cancelling sync",
+                attributes: .incrementalSyncV2, .safePublic
+            )
+            throw Failure.databaseUnlockTimeout
+        }
+    }
+
 
 }
 
@@ -385,7 +467,7 @@ extension IncrementalSyncV1: SyncMigratorProtocol {
 
         logger.debug("processing stored update events", attributes: .incrementalSyncV2)
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
-        let isLocked = await updateEventsStore.isLocked
+        let isLocked = earService.isLocked
         let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !isLocked)
         _ = try await processStoredEvents(
             privateKeys: privateKeys,

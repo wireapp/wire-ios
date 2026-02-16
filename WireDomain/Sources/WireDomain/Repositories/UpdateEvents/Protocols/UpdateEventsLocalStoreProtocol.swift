@@ -64,9 +64,6 @@ public protocol UpdateEventsLocalStoreProtocol {
         publicKeys: EARPublicKeys?
     ) async throws
 
-    /// Returns true if the store is currently locked (e.g. device is locked).
-    var isLocked: Bool { get async }
-
     /// Fetches stored event envelopes.
     /// - parameter limit: A fetch limit.
     /// - parameter privateKeys: The private keys to use for decryption (if needed).

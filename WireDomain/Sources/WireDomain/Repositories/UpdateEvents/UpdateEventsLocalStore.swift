@@ -133,12 +133,6 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         }
     }
 
-    public var isLocked: Bool {
-        get async {
-            await syncContext.perform { [syncContext] in syncContext.isLocked }
-        }
-    }
-
     public func fetchStoredEventEnvelopes(
         limit: UInt,
         privateKeys: EARPrivateKeys?,
