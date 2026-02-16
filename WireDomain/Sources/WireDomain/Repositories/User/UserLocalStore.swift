@@ -89,6 +89,13 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             return try context
                 .fetch(request)
                 .compactMap { user in
+                    guard !user.isAccountDeleted else {
+                        WireLogger.conversation.warn(
+                            "skippinig 1-1 conversation of deleted user's"
+                            , attributes: [.senderUserId: user.qualifiedID?.safeForLoggingDescription ?? "<nil>"])
+                        return nil
+                    }
+
                     guard let userID = user.qualifiedID else {
                         WireLogger.conversation.error(
                             "Missing user's qualifiedID"
