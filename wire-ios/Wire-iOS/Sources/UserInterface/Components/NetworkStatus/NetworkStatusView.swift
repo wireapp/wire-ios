@@ -243,7 +243,10 @@ final class NetworkStatusView: UIView {
         do {
             let status = String(describing: networkStatus)
             let logInfo = LogInfo(status: status)
-            _ = try JSONEncoder().encode(logInfo)
+            let data = try JSONEncoder().encode(logInfo)
+            let jsonString = String(decoding: data, as: UTF8.self)
+
+            WireLogger.network.debug("NETWORK_STATUS_VIEW_STATE: \(jsonString)")
         } catch {
             WireLogger.network.error("NETWORK_STATUS_VIEW_STATE: failure: \(error.localizedDescription)")
         }
