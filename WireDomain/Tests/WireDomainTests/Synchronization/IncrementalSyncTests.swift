@@ -19,12 +19,12 @@
 import Combine
 import CoreData
 import XCTest
+@testable import WireDataModel
+@testable import WireDataModelSupport
 @testable import WireDomain
 @testable import WireDomainSupport
 @testable import WireNetwork
 @testable import WireNetworkSupport
-@testable import WireDataModel
-@testable import WireDataModelSupport
 
 private class MockNotificationContext: NSObject, NotificationContext {}
 
@@ -68,7 +68,7 @@ final class IncrementalSyncTests: XCTestCase {
         earService.underlyingIsLocked = false
         earService.fetchPublicKeys_MockMethod = { nil }
         earService.fetchPrivateKeysIncludingPrimary_MockMethod = { _ in nil }
-        
+
         sut = IncrementalSync(
             selfClientID: Scaffolding.selfClientID,
             pushChannelAPI: pushChannelAPI,
@@ -493,22 +493,7 @@ final class IncrementalSyncTests: XCTestCase {
         mlsGroupRepairAgent.repairConversations_MockMethod = {}
 
         // Setup notification posting after 500ms
-        Task {
-            try await Task.sleep(for: .milliseconds(500))
-
-            // Unlock the database
-            earService.underlyingIsLocked = false
-
-            // Post unlock notification
-            NotificationInContext(
-                name: DatabaseEncryptionLockNotification.notificationName,
-                context: self.notificationContext,
-                userInfo: [
-                    DatabaseEncryptionLockNotification.userInfoKey:
-                        DatabaseEncryptionLockNotification(databaseIsEncrypted: false)
-                ]
-            ).post()
-        }
+        startUnlockDatabaseTask(unlockAfter: 500)
 
         // When
         let startTime = Date()
@@ -563,8 +548,21 @@ final class IncrementalSyncTests: XCTestCase {
         mlsGroupRepairAgent.repairConversations_MockMethod = {}
 
         // Post unlock notification
+        startUnlockDatabaseTask(unlockAfter: 100)
+
+        // When
+        _ = try await sut.perform()
+
+        // Then: Should fetch keys with includingPrimary: true
+        XCTAssertEqual(earService.fetchPrivateKeysIncludingPrimary_Invocations.count, 1)
+        XCTAssertTrue(fetchPrivateKeysCalledWithPrimary)
+    }
+
+    // MARK: - Helper Methods
+
+    private func startUnlockDatabaseTask(unlockAfter delay: TimeInterval) {
         Task {
-            try await Task.sleep(for: .milliseconds(100))
+            try? await Task.sleep(for: .milliseconds(delay))
 
             // Unlock the database
             earService.underlyingIsLocked = false
@@ -578,17 +576,8 @@ final class IncrementalSyncTests: XCTestCase {
                 ]
             ).post()
         }
-
-        // When
-        _ = try await sut.perform()
-
-        // Then: Should fetch keys with includingPrimary: true
-        XCTAssertEqual(earService.fetchPrivateKeysIncludingPrimary_Invocations.count, 1)
-        XCTAssertTrue(fetchPrivateKeysCalledWithPrimary)
     }
-
-    // MARK: - Helper Methods
-
+    
     private func setPendingEvents(envelopes: [UpdateEventEnvelope]) {
         var storedEnvelopes = envelopes.map { ($0, NSManagedObjectID()) }
         updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockMethod = { _, _, _ in

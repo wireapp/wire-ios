@@ -410,7 +410,9 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 ) {
                     // Check if this notification contains the unlock signal
                     guard
-                        let unlockNotification = notification.userInfo?[DatabaseEncryptionLockNotification.userInfoKey] as? DatabaseEncryptionLockNotification,
+                        let unlockNotification = notification
+                        .userInfo?[DatabaseEncryptionLockNotification
+                            .userInfoKey] as? DatabaseEncryptionLockNotification,
                         !unlockNotification.databaseIsEncrypted,
                         !earService.isLocked
                     else {
@@ -444,9 +446,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             try await group.next()
         }
     }
-    
-}
 
+}
 
 extension IncrementalSyncV1: SyncMigratorProtocol {
     public func migrateFromIncrementalSyncV1() async throws {

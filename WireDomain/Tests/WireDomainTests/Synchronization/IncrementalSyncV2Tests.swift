@@ -410,7 +410,10 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         let numberOfInvocationInProcessEvents = 0
         // Then stored events were processed
-        XCTAssertEqual(updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count, 1)
+        XCTAssertEqual(
+            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count,
+            1
+        )
         XCTAssertEqual(processor.processEvent_Invocations.count, numberOfInvocationInProcessEvents)
 
         XCTAssertEqual(
@@ -543,7 +546,10 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         let numberOfInvocationInProcessEvents = 0
         // Then stored events were processed
-        XCTAssertEqual(updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count, 1)
+        XCTAssertEqual(
+            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count,
+            1
+        )
         XCTAssertEqual(processor.processEvent_Invocations.count, numberOfInvocationInProcessEvents)
 
         XCTAssertEqual(
@@ -672,7 +678,10 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         let numberOfPendingEvents = 1
         // Then stored events were processed, we fetch N+1 with N the number of envelopes
-        XCTAssertEqual(updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count, numberOfPendingEvents + 1)
+        XCTAssertEqual(
+            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count,
+            numberOfPendingEvents + 1
+        )
         // typing event is skipped
         XCTAssertEqual(processor.processEvent_Invocations.count, 0)
         // typing event is deleted
