@@ -18,7 +18,7 @@
 
 public struct App: Equatable, Sendable {
 
-    /// The team name.
+    /// The app name.
 
     public let name: String
 
@@ -26,12 +26,34 @@ public struct App: Equatable, Sendable {
 
     public let description: String
 
-    /// Color accent of the user
+    /// Accent color of the app
 
     public let accentID: Int
 
-    /// The user's profile image assets
+    /// The app's profile image assets
 
     public let assets: [UserAsset]
+
+    /// Creates a new `App` instance.
+    ///
+    /// - Parameters:
+    ///   - name: The team name.
+    ///   - category: The category of the app.
+    ///   - description: A description of the app.
+    ///   - accentID: The color accent identifier of the user.
+    ///   - assets: The user's profile image assets.
+    public init(
+        name: String,
+        category: String,
+        description: String,
+        accentID: Int,
+        assets: [UserAsset]
+    ) {
+        self.name = name
+        self.category = category
+        self.description = description
+        self.accentID = accentID
+        self.assets = assets
+    }
 
 }

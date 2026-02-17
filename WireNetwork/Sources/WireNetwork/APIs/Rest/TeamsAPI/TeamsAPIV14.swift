@@ -70,7 +70,7 @@ struct GetAppResponseV14: Decodable, ToAPIModelConvertible {
             category: category,
             description: description,
             accentID: accentID,
-            assets: assets.map { $0.toAPIModel() },
+            assets: assets.map { $0.toAPIModel() }
         )
     }
 
