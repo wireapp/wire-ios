@@ -22,7 +22,7 @@ import Foundation
 
 public struct UserList: Equatable {
 
-    /// List of users which were found and succesfully retrieved.
+    /// List of users which were found and successfully retrieved.
 
     public let found: [User]
 

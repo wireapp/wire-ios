@@ -635,7 +635,7 @@ class TestUserProfileUpdateStatus: UserProfileUpdateStatus {
 
     var recordedDidFailEmailUpdate: [Error] = []
     var recordedDidUpdateEmailSuccessfully = 0
-    var recordedDidChangePhoneSuccesfully = 0
+    var recordedDidChangePhonesuccessfully = 0
     var recordedDidFailPasswordUpdate = 0
     var recordedDidUpdatePasswordSuccessfully = 0
     var recordedDidFailChangingPhone: [Error] = []
