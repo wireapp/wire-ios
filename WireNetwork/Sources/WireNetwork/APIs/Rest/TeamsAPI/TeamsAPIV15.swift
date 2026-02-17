@@ -20,6 +20,26 @@ final class TeamsAPIV15: TeamsAPIV14 {
 
     override var apiVersion: APIVersion { .v15 }
 
+    // MARK: - Get team roles
+
+    override func getTeamRoles(for teamID: Team.ID) async throws -> [ConversationRole] {
+        let path = "\(basePath(for: teamID))/conversations/roles"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: ConversationRolesListResponseV15.self)
+            .failure(code: .forbidden, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
+            .parse(code: response.statusCode, data: data)
+    }
+
     // MARK: - Get apps
 
     override func getApps(
@@ -40,6 +60,86 @@ final class TeamsAPIV15: TeamsAPIV14 {
             .success(code: .ok, type: GetAppsResponseV15.self)
             .parse(code: response.statusCode, data: data)
 
+    }
+
+}
+
+struct ConversationRolesListResponseV15: Decodable, ToAPIModelConvertible {
+
+    let conversationRoles: [ConversationRoleResponseV15]
+
+    enum CodingKeys: String, CodingKey {
+        case conversationRoles = "conversation_roles"
+    }
+
+    func toAPIModel() -> [ConversationRole] {
+        conversationRoles.map { $0.toAPIModel() }
+    }
+
+}
+
+struct ConversationRoleResponseV15: Decodable {
+
+    let conversationRole: String?
+    let actions: [ConversationActionResponseV15]
+
+    enum CodingKeys: String, CodingKey {
+
+        case conversationRole = "conversation_role"
+        case actions
+
+    }
+
+    func toAPIModel() -> ConversationRole {
+        ConversationRole(
+            name: conversationRole ?? "unknown",
+            actions: Set(actions.map {
+                $0.toAPIModel()
+            })
+        )
+    }
+
+}
+
+enum ConversationActionResponseV15: String, Decodable {
+
+    case addConversationMember = "add_conversation_member"
+    case deleteConversation = "delete_conversation"
+    case leaveConversation = "leave_conversation"
+    case modifyAddPermission = "modify_add_permission"
+    case modifyConversationAccess = "modify_conversation_access"
+    case modifyConversationHistory = "modify_conversation_history" // added in v15
+    case modifyConversationMessageTimer = "modify_conversation_message_timer"
+    case modifyConversationName = "modify_conversation_name"
+    case modifyConversationReceiptMode = "modify_conversation_receipt_mode"
+    case modifyOtherConversationMember = "modify_other_conversation_member"
+    case removeConversationMember = "remove_conversation_member"
+
+    func toAPIModel() -> ConversationAction {
+        switch self {
+        case .addConversationMember:
+            .addConversationMember
+        case .deleteConversation:
+            .deleteConversation
+        case .leaveConversation:
+            .leaveConversation
+        case .modifyAddPermission:
+            .modifyAddPermission
+        case .modifyConversationAccess:
+            .modifyConversationAccess
+        case .modifyConversationHistory:
+            .modifyConversationHistory
+        case .modifyConversationMessageTimer:
+            .modifyConversationMessageTimer
+        case .modifyConversationName:
+            .modifyConversationName
+        case .modifyConversationReceiptMode:
+            .modifyConversationReceiptMode
+        case .modifyOtherConversationMember:
+            .modifyOtherConversationMember
+        case .removeConversationMember:
+            .removeConversationMember
+        }
     }
 
 }

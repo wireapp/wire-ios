@@ -38,6 +38,23 @@ final class SearchAPITests: XCTestCase {
         apiSnapshotHelper = nil
     }
 
+    // MARK: - Request generation
+
+    /// Ensure certain characters are escaped:
+    /// - Ampersand: `%26`
+    /// - Plus: `%2B` (this doesn't seem to be testable with the snapshot library)
+    /// - Equals sign: `%3D`
+    func testEncodingCharacters() async throws {
+        let apiVersions = APIVersion.v1.andNextVersions
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+            _ = try await sut.searchContacts(
+                query: "$&+,/:;=?@ Steve O'Hara & Söhne",
+                domain: "wire.com",
+                type: .regular
+            )
+        }
+    }
+
     // MARK: - Response handling
 
     // MARK: - V1

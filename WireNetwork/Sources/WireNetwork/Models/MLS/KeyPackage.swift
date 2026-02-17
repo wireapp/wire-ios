@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /// A base64-encoded MLS key package.
 
 public struct KeyPackage: Equatable, Sendable {

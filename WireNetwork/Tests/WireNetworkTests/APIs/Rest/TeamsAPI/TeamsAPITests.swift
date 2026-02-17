@@ -136,7 +136,7 @@ final class TeamsAPITests: XCTestCase {
         ])
 
         // Then
-        try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: APIVersion.allCasesUpTo(.v15), apiService: apiService) { sut in
             // When
             let result = try await sut.getTeamRoles(for: .mockID1)
 
@@ -679,6 +679,35 @@ final class TeamsAPITests: XCTestCase {
             }
         }
 
+    }
+
+    func testGetTeamRolesForID_SuccessResponse_200_V15_Then_Verify_Request() async throws {
+
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetTeamRolesSuccessResponseV15")
+        ])
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: APIVersion.v15.andNextVersions, apiService: apiService) { sut in
+            // When
+            let result = try await sut.getTeamRoles(for: .mockID1)
+
+            // Then
+            XCTAssertEqual(
+                result,
+                [
+                    ConversationRole(
+                        name: "admin",
+                        actions: [
+                            .addConversationMember,
+                            .modifyConversationHistory,
+                            .removeConversationMember
+                        ]
+                    )
+                ]
+            )
+        }
     }
 
     // MARK: -

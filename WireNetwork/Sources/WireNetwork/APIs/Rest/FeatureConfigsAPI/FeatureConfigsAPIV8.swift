@@ -137,18 +137,18 @@ extension FeatureConfigResponse {
             case allowedToOpenChannels = "allowed_to_open_channels"
         }
 
-        let allowedToCreateChannels: ChannelsPermisionV0
-        let allowedToOpenChannels: ChannelsPermisionV0
+        let allowedToCreateChannels: ChannelsPermissionV0
+        let allowedToOpenChannels: ChannelsPermissionV0
 
         init(from decoder: any Decoder) throws {
             let container: KeyedDecodingContainer<CodingKeys> = try decoder
                 .container(keyedBy: CodingKeys.self)
 
             self.allowedToCreateChannels = try container.decode(
-                ChannelsPermisionV0.self,
+                ChannelsPermissionV0.self,
                 forKey: .allowedToCreateChannels
             )
-            self.allowedToOpenChannels = try container.decode(ChannelsPermisionV0.self, forKey: .allowedToOpenChannels)
+            self.allowedToOpenChannels = try container.decode(ChannelsPermissionV0.self, forKey: .allowedToOpenChannels)
         }
     }
 }

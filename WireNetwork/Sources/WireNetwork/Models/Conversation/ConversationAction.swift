@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /// Represents the actions that ca be performed in a conversation.
 
 public enum ConversationAction: Hashable, Sendable {
@@ -26,40 +24,44 @@ public enum ConversationAction: Hashable, Sendable {
 
     case addConversationMember
 
-    /// The action of removing an existing member from a conversation.
+    /// The action of deleting the conversation for all members.
 
-    case removeConversationMember
-
-    /// The action of changing the conversation name.
-
-    case modifyConversationName
-
-    /// The action of changing the self-deleting message timer for the conversation.
-
-    case modifyConversationMessageTimer
-
-    /// The action of changing the read receipt mode of the conversation.
-
-    case modifyConversationReceiptMode
-
-    /// The action of changing the which members are allow to be present in the conversation.
-
-    case modifyConversationAccess
-
-    /// The action of changing the role of other members in the conversation.
-
-    case modifyOtherConversationMember
-
-    /// The action of changing which members can add new members to the conversation.
-
-    case modifyAddPermission
+    case deleteConversation
 
     /// The action of removing yourself as a member of the conversation.
 
     case leaveConversation
 
-    /// The action of deleting the conversation for all members.
+    /// The action of changing which members can add new members to the conversation.
 
-    case deleteConversation
+    case modifyAddPermission
+
+    /// The action of changing which members are allow to be present in the conversation.
+
+    case modifyConversationAccess
+
+    // no description found for this yet, add this once API v15 specs are finalized!
+
+    case modifyConversationHistory
+
+    /// The action of changing the self-deleting message timer for the conversation.
+
+    case modifyConversationMessageTimer
+
+    /// The action of changing the conversation name.
+
+    case modifyConversationName
+
+    /// The action of changing the read receipt mode of the conversation.
+
+    case modifyConversationReceiptMode
+
+    /// The action of changing the role of other members in the conversation.
+
+    case modifyOtherConversationMember
+
+    /// The action of removing an existing member from a conversation.
+
+    case removeConversationMember
 
 }

@@ -1,0 +1,12 @@
+{
+    "conversation_roles": [
+        {
+            "conversation_role": "admin",
+            "actions": [
+                "add_conversation_member",
+                "modify_conversation_history",
+                "remove_conversation_member"
+            ]
+        }
+    ]
+}
