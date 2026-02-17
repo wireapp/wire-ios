@@ -18,7 +18,7 @@
 
 public struct App: Equatable, Sendable {
 
-    /// The team name.
+    /// The app name.
 
     public let name: String
 
