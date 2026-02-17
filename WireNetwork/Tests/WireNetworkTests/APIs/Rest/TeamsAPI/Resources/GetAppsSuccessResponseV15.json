@@ -1,0 +1,22 @@
+[
+    {
+        "metadata": {},
+        "assets": [
+            {
+                "size": "complete",
+                "type": "image",
+                "key": "lorem-ipsum"
+            },
+            {
+                "size": "preview",
+                "type": "image",
+                "key": "dolor"
+            }
+        ],
+        "name": "WPB-18618",
+        "accent_id": 0,
+        "description": "WPB-18618",
+        "category": "developer",
+        "picture": []
+    }
+]

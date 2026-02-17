@@ -40,6 +40,10 @@ public enum TeamsAPIError: Error {
 
     case teamMemberNotFound
 
+    /// A requested app could not be found.
+
+    case appNotFound
+
     /// A request could not be generated.
 
     case failedToGenerateRequest
