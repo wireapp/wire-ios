@@ -27,8 +27,9 @@ class WireUITestCase: XCTestCase {
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     let userHelper = UserHelper()
     lazy var callingServiceClient: CallingServiceClient = {
-        do { return try CallingServiceClient() }
-        catch { fatalError("CallingServiceClient initialization failed: \(error)") }
+        do { return try CallingServiceClient() } catch {
+            fatalError("CallingServiceClient initialization failed: \(error)")
+        }
     }()
 
     override func setUpWithError() throws {
