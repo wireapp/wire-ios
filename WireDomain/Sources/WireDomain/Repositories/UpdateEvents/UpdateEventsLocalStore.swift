@@ -146,7 +146,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
                 if backgroundAccessibleOnly {
                     request.predicate = NSPredicate(
-                        format: "%K == NO OR %K == YES",
+                        format: "%K == false OR %K == true",
                         #keyPath(StoredUpdateEventEnvelope.isEncrypted),
                         #keyPath(StoredUpdateEventEnvelope.isBackgroundAccessible)
                     )
@@ -304,6 +304,10 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
                 WireLogger.ear.error("failed to encrypt event", attributes: .safePublic)
                 throw Error.failedToEncryptEventData
             }
+        } else {
+            // Explicitly set flags for unencrypted events
+            storedEventEnvelope.isEncrypted = false
+            storedEventEnvelope.isBackgroundAccessible = false
         }
 
         storedEventEnvelope.data = data
