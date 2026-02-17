@@ -129,7 +129,7 @@ struct APIServiceSnapshotHelper<API> {
 
         apiService.executeRequestRequiringAccessToken_Invocations = []
 
-        try await block(sut) // TODO: [WPB-23110] we shouldn't swallow exceptions
+        try await block(sut)
 
         let receivedRequests = apiService.executeRequestRequiringAccessToken_Invocations.map(\.request)
 
