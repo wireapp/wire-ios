@@ -137,7 +137,7 @@ final class StartUIViewController: UIViewController {
         L10n.Localizable.Peoplepicker.NavigationHeader.title
     }
 
-    init(
+    init?(
         areLegacyBotsAvailable: Bool,
         isAppsFeatureEnabled: Bool,
         userSession: UserSession,
@@ -147,16 +147,19 @@ final class StartUIViewController: UIViewController {
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
-        self.areLegacyBotsAvailable = areLegacyBotsAvailable
-        self.isAppsFeatureEnabled = isAppsFeatureEnabled
-        self.isFederationEnabled = userSession.resolvedBackendMetadata.isFederationEnabled
-        self.searchResultsViewController = SearchResultsViewController(
+        let isFederationEnabled = userSession.resolvedBackendMetadata.isFederationEnabled
+        guard let searchResultsViewController = SearchResultsViewController(
             userSelection: UserSelection(),
             userSession: userSession,
             isAddingParticipants: false,
             shouldIncludeGuests: true,
             isFederationEnabled: isFederationEnabled
-        )
+        ) else { return nil }
+
+        self.areLegacyBotsAvailable = areLegacyBotsAvailable
+        self.isAppsFeatureEnabled = isAppsFeatureEnabled
+        self.isFederationEnabled = isFederationEnabled
+        self.searchResultsViewController = searchResultsViewController
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.createGroupConversationUIBuilder = createGroupConversationUIBuilder

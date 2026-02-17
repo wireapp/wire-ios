@@ -487,7 +487,10 @@ final class ZClientViewController: UIViewController {
     @objc
     private func openStartUI(_ sender: Any?) {
         Task {
-            let rootViewController = await connectBuilder.build()
+            guard let rootViewController = await connectBuilder.build() else {
+                WireLogger.ui.error("failed to present start UI, VC is nil", attributes: .safePublic)
+                return
+            }
             let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)

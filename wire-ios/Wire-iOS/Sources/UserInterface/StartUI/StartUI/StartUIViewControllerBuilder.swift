@@ -56,7 +56,7 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
     }
 
     @MainActor
-    func build() async -> UIViewController {
+    func build() async -> UIViewController? {
         let isAppsFeatureEnabled = await featureConfigRepository.isFeatureEnabled(.apps)
         let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
         let rootViewController = StartUIViewController(
@@ -69,7 +69,7 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
             selfProfileUIBuilder: selfProfileUIBuilder,
             conversationCreationRepository: conversationCreationRepository
         )
-        rootViewController.delegate = delegate
+        rootViewController?.delegate = delegate
         return rootViewController
     }
 }
