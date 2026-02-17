@@ -264,20 +264,16 @@ final class SearchResultsViewController: UIViewController {
         searchResultsView.emptyResultContainer.isHidden = true
 
         pendingSearchTask = Task {
-            do {
-                var options = options
-                options.updateForSelfUserTeamRole(selfUser: userSession.selfUser)
+            var options = options
+            options.updateForSelfUserTeamRole(selfUser: userSession.selfUser)
 
-                let result = try await searchUsersUseCase.invoke(
-                    query: query,
-                    options: options,
-                    messageProtocol: filterConversation?.messageProtocol
-                )
+            let result = await searchUsersUseCase.invoke(
+                query: query,
+                options: options,
+                messageProtocol: filterConversation?.messageProtocol
+            )
 
-                handleSearchResult(result: result)
-            } catch {
-                WireLogger.search.warn("Search failed with error: \(error.localizedDescription)")
-            }
+            handleSearchResult(result: result)
         }
     }
 

@@ -24,12 +24,12 @@ struct ConversationCreationRepository: ConversationCreationRepositoryProtocol {
     let searchUsersUseCase: () -> (any SearchUsersUseCaseProtocol)?
 
     @concurrent
-    func areBotsSetUpInTheTeam() async throws -> Bool {
+    func areBotsSetUpInTheTeam() async -> Bool {
 
         guard let searchUsersUseCase = searchUsersUseCase() else { return false }
 
         // search for any old-style services/bots whitelisted in the team
-        let result = try await searchUsersUseCase.invoke(
+        let result = await searchUsersUseCase.invoke(
             query: "",
             options: .bots,
             messageProtocol: .proteus

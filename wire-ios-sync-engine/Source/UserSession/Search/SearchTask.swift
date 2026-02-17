@@ -52,7 +52,7 @@ public final class SearchTask {
 
     private enum Status {
         case pending
-        case started(taskGroup: ThrowingTaskGroup<SearchTask.SearchResultAggregator, any Error>)
+        case started(taskGroup: TaskGroup<SearchTask.SearchResultAggregator>)
     }
 
     init(
@@ -85,19 +85,14 @@ public final class SearchTask {
         taskGroup.cancelAll()
     }
 
-    /// Start the search task.
-    ///
-    /// - Throws:
-    ///   - Errors originating from underlying search requests, such as network or service failures.
-    ///   - `CancellationError` if the task group is cancelled via ``cancel()`` or task cancellation.
-    ///   - Other errors propagated by the underlying APIs used to perform the search.
-    public func start() async throws -> SearchResult {
+    /// Start the search task. Errors will be logged only.
+    public func start() async -> SearchResult {
         guard case .pending = status else {
             assertionFailure()
             return SearchResult()
         }
 
-        return try await withThrowingTaskGroup(
+        return await withTaskGroup(
             of: SearchResultAggregator.self,
             returning: SearchResult.self
         ) { @MainActor taskGroup in
@@ -106,7 +101,13 @@ public final class SearchTask {
 
             // search services
             taskGroup.addTask {
-                try await self.performRemoteSearchForServices()
+                do {
+                    return try await self.performRemoteSearchForServices()
+                } catch {
+                    let errorType = Swift.type(of: error)
+                    WireLogger.search.error("failed to search for services: \(String(describing: errorType))")
+                    return { _ in }
+                }
             }
 
             // search People or groups
@@ -124,14 +125,26 @@ public final class SearchTask {
 
             // v2+
             taskGroup.addTask {
-                try await self.performRemoteSearch()
+                do {
+                    return try await self.performRemoteSearch()
+                } catch {
+                    let errorType = Swift.type(of: error)
+                    WireLogger.search.error("failed to perform remote search: \(String(describing: errorType))")
+                    return { _ in }
+                }
             }
             taskGroup.addTask {
-                try await self.performUserLookup()
+                do {
+                    return try await self.performUserLookup()
+                } catch {
+                    let errorType = Swift.type(of: error)
+                    WireLogger.search.error("failed to perform user lookup: \(String(describing: errorType))")
+                    return { _ in }
+                }
             }
 
             var result = SearchResult()
-            while let aggregator = try await taskGroup.next() {
+            while let aggregator = await taskGroup.next() {
                 aggregator(&result)
             }
 

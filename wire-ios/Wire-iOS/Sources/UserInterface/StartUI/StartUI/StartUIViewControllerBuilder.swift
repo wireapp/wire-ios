@@ -58,7 +58,7 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
     @MainActor
     func build() async -> UIViewController {
         let isAppsFeatureEnabled = await featureConfigRepository.isFeatureEnabled(.apps)
-        let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+        let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
         let rootViewController = StartUIViewController(
             areLegacyBotsAvailable: areLegacyBotsAvailable,
             isAppsFeatureEnabled: isAppsFeatureEnabled,
