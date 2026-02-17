@@ -26,7 +26,7 @@ final class CallingTests: WireUITestCase {
         let conversationId: String
         let groupName: String
         let allParticipants: [UserInfo]
-        let appCallee: UserInfo
+        let appUserWhoWillJoinTheCall: UserInfo
         let callingServiceUsers: [UserInfo]
     }
 
@@ -54,7 +54,7 @@ final class CallingTests: WireUITestCase {
             conversationId: convId,
             groupName: groupName,
             allParticipants: allParticipants,
-            appCallee: appUserWhoWillJoinTheCall,
+            appUserWhoWillJoinTheCall: appUserWhoWillJoinTheCall,
             callingServiceUsers: callingServiceUsers
         )
     }
@@ -109,7 +109,7 @@ final class CallingTests: WireUITestCase {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 5)
 
-        try loginAndDismissFirstTimePopup(user: teamAndGroupCallSetup.appCallee)
+        try loginAndDismissFirstTimePopup(user: teamAndGroupCallSetup.appUserWhoWillJoinTheCall)
 
         let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
 
