@@ -95,7 +95,13 @@ public protocol TeamsAPI {
         ) async throws -> UUID
     #endif
 
-    /// Fetches details of an app by team id and app id.
+    /// Fetches details of all apps in a team.
+
+    func getApps(
+        for teamID: Team.ID
+    ) async throws -> [App]
+
+    /// Fetches details of an app in a team by app id.
 
     func getApp(
         for teamID: Team.ID,
