@@ -41,13 +41,31 @@ final class UsersAPITests: XCTestCase {
     // MARK: - Request generation
 
     func testGetUserRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetUserSuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getUser(for: .mockID1)
         }
     }
 
     func testGetUsersRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        var responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetUsersSuccessResponseV0"),
+            count: APIVersion.allCasesUpTo(.v4).count
+        )
+        responses.append(
+            contentsOf: Array(
+                repeating: (.ok, "GetUsersSuccessResponseV4"),
+                count: APIVersion.v4.andNextVersions.count
+            )
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getUsers(userIDs: [.mockID1, .mockID2, .mockID3])
         }
     }

@@ -1,0 +1,5 @@
+curl \
+	--request POST \
+	--header "Content-Type: application/json" \
+	--data "{\"paging_state\":\"string\",\"size\":500}" \
+	"/list-connections"

@@ -40,8 +40,21 @@ class ConnectionsAPITests: XCTestCase {
 
     /// Verifies generation of request for each API versions
     func testGetConnectionsRequest() async throws {
+
+        var responses: [MockAPIServiceProtocol.Response] = [
+            (.ok, "GetConnectionsSuccessResponseV0"),
+            (.ok, "GetConnectionsMultiplePagesSuccessResponseV0.0"),
+            (.ok, "GetConnectionsMultiplePagesSuccessResponseV0.1")
+        ]
+        let apiVersions = APIVersion.v0.andNextVersions
+        responses.append(contentsOf: Array(
+            repeating: (.ok, "GetConnectionsMultiplePagesSuccessResponseV0.2"),
+            count: apiVersions.count
+        ))
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
         // then
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             let pager = try await sut.getConnections()
             for try await _ in pager {
                 // this triggers fetching the data

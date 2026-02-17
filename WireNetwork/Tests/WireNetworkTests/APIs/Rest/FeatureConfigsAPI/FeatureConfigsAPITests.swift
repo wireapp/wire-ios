@@ -265,7 +265,7 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     // MARK: - V12
 
-    func testGetFeatureConfigs_SuccessResponse_200_V12_And_Next_Versions_Then_Verify_Requests() async throws {
+    func testGetFeatureConfigs_SuccessResponse_200_V12_And_V13_Then_Verify_Requests() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses(
             Array(repeating: (.ok, "GetFeatureConfigsSuccessResponseV12"), count: 2)
