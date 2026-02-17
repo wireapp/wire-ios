@@ -16,13 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /// Response when retrieving a list users.
 
 public struct UserList: Equatable {
 
-    /// List of users which were found and succesfully retrieved.
+    /// List of users which were found and successfully retrieved.
 
     public let found: [User]
 
