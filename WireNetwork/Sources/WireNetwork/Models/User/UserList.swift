@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /// Response when retrieving a list users.
 
 public struct UserList: Equatable {

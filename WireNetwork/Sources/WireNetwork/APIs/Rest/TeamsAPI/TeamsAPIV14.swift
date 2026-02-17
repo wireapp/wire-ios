@@ -16,6 +16,62 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 class TeamsAPIV14: TeamsAPIV13 {
+
     override var apiVersion: APIVersion { .v14 }
+
+    override func getApp(
+        for teamID: Team.ID,
+        with id: UUID
+    ) async throws -> App {
+
+        let path = "\(basePath(for: teamID))/apps/\(id.transportString())"
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: GetAppResponseV14.self)
+            .failure(code: .notFound, label: "app-not-found", error: TeamsAPIError.appNotFound)
+            .parse(code: response.statusCode, data: data)
+
+    }
+
+}
+
+struct GetAppResponseV14: Decodable, ToAPIModelConvertible {
+
+    let name: String
+    let category: String
+    let description: String
+    let accentID: Int
+    let assets: [UserAssetV0]
+
+    enum CodingKeys: String, CodingKey {
+
+        case name
+        case category
+        case description
+        case accentID = "accent_id"
+        case assets
+
+    }
+
+    func toAPIModel() -> App {
+        App(
+            name: name,
+            category: category,
+            description: description,
+            accentID: accentID,
+            assets: assets.map { $0.toAPIModel() }
+        )
+    }
+
 }
