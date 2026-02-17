@@ -181,7 +181,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
                 attributes: [.eventEnvelopeID: envelope.id] + logAttributes
             )
             index = try await updateEventsStore.indexOfLastEventEnvelope() + 1
-            // TODO: [WPB-XXX] Add EAR support to incremental sync v2
+            // TODO: [WPB-23558] Support EAR in incremental sync v2
             try await updateEventsStore.persistEventEnvelope(envelope, index: index, publicKeys: nil)
         } catch {
             logger.error(

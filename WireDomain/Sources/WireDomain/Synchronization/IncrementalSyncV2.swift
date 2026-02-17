@@ -195,7 +195,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             // If we need to abort, do it before processing the next batch.
             try Task.checkCancellation()
 
-            // TODO: WPB-XXX Support incremental sync v2
+            // TODO: [WPB-23558] Support EAR in incremental sync v2
             let envelopesWithObjectIDs = try await updateEventsStore.fetchStoredEventEnvelopes(
                 limit: batchSize,
                 privateKeys: nil,

@@ -24,7 +24,7 @@ import WireNetwork
 import WireSystem
 import WireUtilities
 
-public class IncrementalSync: IncrementalSyncProtocol {
+public struct IncrementalSync: IncrementalSyncProtocol {
 
     public enum Failure: Error {
         case missedEvents
@@ -452,7 +452,7 @@ extension IncrementalSyncV1: SyncMigratorProtocol {
     public func migrateFromIncrementalSyncV1() async throws {
         logger.debug("pulling pending update events", attributes: .incrementalSyncV2)
         syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
-        try await updateEventsSync.pull(publicKeys: try? earService.fetchPublicKeys())
+        try await updateEventsSync.pull(publicKeys: try earService.fetchPublicKeys())
 
         logger.debug("processing stored update events", attributes: .incrementalSyncV2)
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))

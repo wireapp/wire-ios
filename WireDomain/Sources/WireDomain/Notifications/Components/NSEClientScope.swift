@@ -91,7 +91,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     ) async throws {
         // Pull pending update events.
         let eventStream: AsyncStream<[UpdateEvent]>
-        let publicKeys = try? earService.fetchPublicKeys()
+        let publicKeys = try earService.fetchPublicKeys()
 
         if dependency.journal[.isConsumableNotificationsEnabled] {
             let (useCase, stream) = syncEventsUseCase()
