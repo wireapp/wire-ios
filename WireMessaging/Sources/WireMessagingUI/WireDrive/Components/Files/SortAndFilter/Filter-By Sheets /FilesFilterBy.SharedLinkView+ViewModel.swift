@@ -37,7 +37,7 @@ extension FilesFilterBy.SharedLinkView {
             let items = Set(selectedItems)
             self.selectedItems = items
             self.initiallySelectedItems = items
-            self.presentedItems = Item.allCases
+            self.presentedItems = Item.allCases.filter { $0 != .withoutSharedLink } // withoutSharedLink is currently not supported by the backend API. This might change in the future.
         }
 
         var hasChanges: Bool {

@@ -79,9 +79,17 @@ extension FilesFilterBy {
         private func itemView(_ item: ViewModel.Item) -> some View {
             Label {
                 HStack {
-                    Text(displayName(item))
-                        .font(.body)
-                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(displayName(item))
+                            .font(.body)
+                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+
+                        if let description = displayDescription(item) {
+                            Text(description)
+                                .font(.callout)
+                                .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                        }
+                    }
 
                     Spacer()
 
@@ -115,6 +123,15 @@ extension FilesFilterBy {
                 Strings.Filter.SharedLink.Option.withLink
             case .withoutSharedLink:
                 Strings.Filter.SharedLink.Option.withoutLink
+            }
+        }
+        
+        private func displayDescription(_ item: ViewModel.Item) -> String? {
+            switch item {
+            case .withSharedLink:
+                Strings.Filter.SharedLink.Option.withLinkDescription
+            case .withoutSharedLink:
+                nil
             }
         }
     }

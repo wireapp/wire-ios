@@ -197,6 +197,7 @@
 "conversation.wireCells.filter.owner.navigationTitle" = "Filter by owner";
 "conversation.wireCells.filter.sharedLink.navigationTitle" = "Filter by link sharing";
 "conversation.wireCells.filter.sharedLink.option.withLink" = "Has public link";
+"conversation.wireCells.filter.sharedLink.option.withLinkDescription" = "Shared by me outside Wire";
 "conversation.wireCells.filter.sharedLink.option.withoutLink" = "No public link";
 "conversation.wireCells.filter.fileType.navigationTitle" = "Filter by type";
 "conversation.wireCells.filter.fileType.typeName.pdf" = "PDF";

@@ -51,6 +51,13 @@ final class FilesFilteringViewModel: ObservableObject {
         var types: Set<FileType>
         var conversations: Set<WireDriveConversation>
         var owners: Set<WireDriveConversation.Participant>
+        
+        /// Meaning of values:
+        /// - `true`: show only files with links
+        /// - `false`: show only files without links
+        /// - `nil`: show all files regardless of links
+        ///
+        /// For now, the backend only supports the first and the last.
         var sharedLink: Bool?
 
         var hasFilterSelected: Bool {
