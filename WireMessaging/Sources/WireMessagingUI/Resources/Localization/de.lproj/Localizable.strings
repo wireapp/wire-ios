@@ -91,7 +91,7 @@
 "conversation.channelHistory.upgradeBanner.title" = "Ältere Nachrichten anzeigen?";
 "conversation.channelHistory.upgradeBanner.message" = "Upgraden Sie auf eine kostenpflichtige Version, um Channel-Mitgliedern den gesamten Gesprächsverlauf zu bieten.";
 "conversation.channelHistory.upgradeBanner.button" = "Jetzt upgraden";
-"conversation.channelHistory.upgradeBanner.closeMessage" = "Close banner";
+"conversation.channelHistory.upgradeBanner.closeMessage" = "Banner schließen";
 "conversation.channelHistory.picker.title" = "Gesprächsverlauf";
 "conversation.channelHistory.picker.off" = "Aus";
 "conversation.channelHistory.picker.oneDay" = "1 Tag";
@@ -142,12 +142,16 @@
 "conversation.wireCells.files.error.message" = "Ihre Dateien und Ordner konnten nicht geladen werden. Bitte laden Sie sie erneut.";
 "conversation.wireCells.files.error.reload" = "Erneut laden";
 "conversation.wireCells.files.search.title" = "Dateien suchen";
-"conversation.wireCells.files.list.newFolder" = "Neuer Ordner";
+"conversation.wireCells.files.list.createFolder" = "Ordner erstellen";
+"conversation.wireCells.files.list.createFile" = "Datei erstellen";
+"conversation.wireCells.files.list.createFile.presentation" = "Präsentation";
+"conversation.wireCells.files.list.createFile.spreadsheet" = "Tabelle";
+"conversation.wireCells.files.list.createFile.document" = "Dokument";
 "conversation.wireCells.files.newFolder.title" = "Ordnername";
 "conversation.wireCells.files.newFolder.placeholder" = "Ordnernamen eingeben";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Ordner erstellen";
+"conversation.wireCells.files.newFile.navigationTitle" = "%@ Datei erstellen";
 "conversation.wireCells.files.newFolder.folderNameTooLongError" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
-"conversation.wireCells.files.newFolder.wrongCharacterError" = "Verwenden Sie einen Namen ohne \"/\"";
 "conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "Ein Ordner mit dem Namen existiert bereits";
 "conversation.wireCells.files.fileName.title" = "Dateiname";
 "conversation.wireCells.files.folderName.title" = "Ordnername";
@@ -155,8 +159,7 @@
 "conversation.wireCells.files.renameFolder.navigationTitle" = "Ordner umbenennen";
 "conversation.wireCells.files.renameFile.filenameTooLongError" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
 "conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
-"conversation.wireCells.files.renameFile.wrongCharacterError" = "Verwenden Sie einen Namen ohne \"/\"";
-"conversation.wireCells.files.renameFile.dotPrefix" = "Beginnen Sie den Namen nicht mit \".\"";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Nicht mit einem . beginnen und kein {0} verwenden";
 "conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "Eine Datei mit diesem Namen existiert bereits";
 "conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "Ein Ordner mit dem Namen existiert bereits";
 "conversation.wireCells.files.renameFile.placeholder" = "Dateinamen eingeben";
@@ -192,7 +195,7 @@
 "conversation.wireCells.tags.error.nameTooLong" = "Verwenden Sie einen kürzeren Namen (max. 64 Zeichen)";
 "conversation.wireCells.tags.error.specialCharacters" = "Verwenden Sie ein Tag ohne Sonderzeichen {0}";
 "conversation.wireCells.tags.error.saveFailedTitle" = "Tags können nicht bearbeitet werden";
-"conversation.wireCells.tags.error.saveFailedMessage" = "Due to an error your tags could not be edited.";
+"conversation.wireCells.tags.error.saveFailedMessage" = "Beim Bearbeiten der Tags ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
 "conversation.wireCells.tags.error.retryButton" = "Erneut versuchen";
 "conversation.wireCells.files.moveToFolder.move" = "Hierhin verschieben";
 "conversation.wireCells.files.moveToFolder.noSubfolders" = "Es gibt keine Unterordner in diesem Ordner.";
@@ -237,7 +240,7 @@
 "conversation.wireCells.shareLink.expiration.addExpirationToggle" = "Ablaufdatum hinzufügen";
 "conversation.wireCells.shareLink.expiration.description" = "Der Link läuft nach dem festgelegten Datum und der festgelegten Uhrzeit automatisch ab. Die Inhalte sind dann nicht mehr zugänglich.";
 "conversation.wireCells.shareLink.expiration.datePickerTitle" = "Läuft ab";
-"conversation.wireCells.shareLink.expiration.dateNotSupported" = "Date in the past is not supported";
+"conversation.wireCells.shareLink.expiration.dateNotSupported" = "Datum in der Vergangenheit";
 "conversation.wireCells.shareLink.expiration.unableToAddExpiration.title" = "Ablaufdatum kann nicht hinzugefügt werden";
 "conversation.wireCells.shareLink.expiration.unableToAddExpiration.message" = "Bitte überprüfen Sie Ihre Netzwerkverbindung und versuchen Sie es erneut.";
 "conversation.wireCells.shareLink.expiration.unableToAddExpiration.action" = "Erneut versuchen";
@@ -254,8 +257,8 @@
 "conversation.wireCells.filesVersioning.restoreAlertTitle" = "Version wiederherstellen";
 "conversation.wireCells.filesVersioning.restoreAlertMessage" = "Dadurch wird die wiederhergestellte Version kopiert und als aktuelle Version festgelegt. Alle vorherigen Versionen bleiben verfügbar.";
 "conversation.wireCells.filesVersioning.restoreAlertAction" = "Wiederherstellen";
-"conversation.wireCells.filesVersioning.restoreFailureAlertTitle" = "Restoring version failed";
-"conversation.wireCells.filesVersioning.restoreFailureAlertMessage" = "Beim Wiederherstellen einer Version ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
+"conversation.wireCells.filesVersioning.restoreFailureAlertTitle" = "Version kann nicht wiederhergestellt werden";
+"conversation.wireCells.filesVersioning.restoreFailureAlertMessage" = "Beim Wiederherstellen dieser Version ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
 "conversation.wireCells.filesVersioning.downloadVersion" = "Version herunterladen";
 "conversation.wireCells.filesVersioning.retry" = "Wiederholen";
 "conversation.wireCells.filesVersioning.restoringVersion" = "Version wird wiederhergestellt...";

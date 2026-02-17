@@ -36,6 +36,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
     var processor: MockUpdateEventProcessorProtocol!
     var databaseSaver: MockDatabaseSaverProtocol!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
+    var liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>!
     var liveDelegate: MockLiveSyncDelegate!
     var coreCryptoContext: MockCoreCryptoContextProtocol!
     var coreCrypto: MockCoreCryptoProtocol!
@@ -43,6 +44,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
     var pushChannelState: MockPushChannelStateProtocol!
     var mlsGroupRepairAgent: MockMLSGroupRepairAgentProtocol!
     var journal: Journal!
+    var cancellables: Set<AnyCancellable>!
 
     override func setUp() {
         pushChannelAPI = MockPushChannelV2API()
@@ -65,6 +67,8 @@ final class IncrementalSyncV2Tests: XCTestCase {
         )
         pushChannelState = MockPushChannelStateProtocol()
         mlsGroupRepairAgent = MockMLSGroupRepairAgentProtocol()
+        liveBrokenGroupSubject = .init()
+        cancellables = .init()
 
         sut = IncrementalSyncV2(
             selfClientID: Scaffolding.selfClientID,
@@ -76,6 +80,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             processor: processor,
             databaseSaver: databaseSaver,
             syncStateSubject: syncStateSubject,
+            liveBrokenGroupSubject: liveBrokenGroupSubject,
             coreCryptoProvider: coreCryptoProvider,
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
@@ -93,6 +98,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         pushChannelState.markAsClosed_MockMethod = {}
         // Repair broken MLS conversations
         mlsGroupRepairAgent.repairConversations_MockMethod = {}
+
     }
 
     override func tearDown() {
@@ -106,10 +112,12 @@ final class IncrementalSyncV2Tests: XCTestCase {
         processor = nil
         databaseSaver = nil
         syncStateSubject = nil
+        liveBrokenGroupSubject = nil
         journal = nil
         liveDelegate = nil
         coreCrypto = nil
         coreCryptoProvider = nil
+        cancellables = nil
         coreCryptoContext = nil
     }
 
@@ -813,6 +821,93 @@ final class IncrementalSyncV2Tests: XCTestCase {
         }
     }
 
+    func test_perform_OutOfSyncLiveEventsAreNotified() async throws {
+        // Mock
+        // Some live events, some of which were already pulled.
+        let pushChannel = MockPushChannelV2Protocol()
+
+        let mlsEvent = Scaffolding.createMLSEvent(message: "hello 1", timeIntervalSinceNow: .oneSecond)
+        let mlsOutOfSyncEvent = Scaffolding.createMLSEvent(message: "hello 2", timeIntervalSinceNow: .oneMinute)
+        pushChannel.open_MockValue = AsyncThrowingStream { continuation in
+            Task {
+                continuation.yield(PushChannelV2.Element.events([mlsEvent]))
+                continuation.yield(PushChannelV2.Element.events([mlsOutOfSyncEvent]))
+                continuation.yield(PushChannelV2.Element.syncMarker(
+                    id: Scaffolding.markerID,
+                    deliveryTag: Scaffolding.markerDeliveryTag
+                ))
+                continuation.finish()
+
+            }
+        }
+
+        pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
+        pushChannel.close_MockMethod = {}
+        pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
+
+        // Events stored from NSE which needs to be processed
+        setPendingEvents(envelopes: [])
+
+        // Pending events are deleted in batches.
+        updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
+
+        // Some indices at which live events will be stored.
+        var indices = [Int64(10), Int64(11)]
+        updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
+
+        // Live envelopes are peristed one by one and deleted by batch.
+        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.deleteEventEnvelopesAt_MockMethod = { _ in }
+
+        // Live events are decrypted.
+        decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
+            if envelope.id == mlsOutOfSyncEvent.id {
+                EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
+            } else {
+                EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [])
+            }
+
+        }
+
+        // Last event is being updated.
+        updateEventsStore.storeLastEventIDId_MockMethod = { _ in }
+
+        // Events are processed.
+        processor.processEvent_MockMethod = { _ in }
+
+        // Unread messages are set
+        updateEventsStore.calculateLastUnreadMessages_MockMethod = {}
+
+        // Database is saved.
+        databaseSaver.save_MockMethod = {}
+
+        // Pending events are stored in batches.
+        updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
+            []
+        }
+
+        // When
+        let expectation = expectation(description: "one mls broken group should be detected live")
+        liveBrokenGroupSubject.sink { value in
+            print(value)
+            XCTAssertTrue(value.contains(Scaffolding.mlsGroupID))
+            expectation.fulfill()
+        }.store(in: &cancellables)
+
+        let token = try await sut.perform()
+        await token.task.value
+        await fulfillment(of: [expectation])
+
+        // Then live events were decrypted (duplicates skipped).
+        XCTAssertEqual(
+            decryptor.decryptEventsInContext_Invocations.count,
+            2
+        )
+
+        // Broken conversation IDs are stored
+        XCTAssertEqual(journal[.brokenMLSGroupIDs].first, Scaffolding.mlsGroupID)
+    }
+
     private func setPendingEvents(envelopes: [(UpdateEventEnvelope, NSManagedObjectID)]) {
         var storedEnvelopes = envelopes
         updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
@@ -897,6 +992,34 @@ private enum Scaffolding {
             events: [.conversation(.proteusMessageAdd(event))],
             isTransient: false,
             deliveryTag: deliveryTag
+        )
+    }
+
+    static func createMLSEvent(
+        message: String,
+        timeIntervalSinceNow: TimeInterval,
+        isTransient: Bool = false
+    ) -> UpdateEventEnvelope {
+        let event = ConversationMLSMessageAddEvent(
+            conversationID: ConversationID(
+                id: UUID(),
+                domain: "example.com"
+            ),
+            senderID: UserID(
+                id: UUID(),
+                domain: "example.com"
+            ),
+            subconversation: nil,
+            message: message,
+            timestamp: Date(timeIntervalSinceNow: timeIntervalSinceNow),
+            decryptedMessages: [
+                .init(message: message, senderClientID: UUID().uuidString)
+            ]
+        )
+        return UpdateEventEnvelope(
+            id: UUID(),
+            events: [.conversation(.mlsMessageAdd(event))],
+            isTransient: isTransient
         )
     }
 

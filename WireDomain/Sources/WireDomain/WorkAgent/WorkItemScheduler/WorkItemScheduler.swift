@@ -38,4 +38,8 @@ protocol WorkItemScheduler: Sendable {
     /// - Returns: The next available item.
 
     func dequeueNextItem() async -> (any WorkItem)?
+
+    /// Clears all items from queues
+
+    func clearAllItems() async
 }

@@ -310,7 +310,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     var callCenterObserverToken: Any?
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
-    let apiMigrationManager: APIMigrationManager
 
     var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
 
@@ -323,7 +322,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public internal(set) var environment: WireTransport.BackendEnvironment {
         didSet {
-            apiVersionResolver = nil
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
             authenticatedSessionFactory.environment = environment
@@ -362,8 +360,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private static var avsLogObserver: AVSLogObserver?
 
-    var apiVersionResolver: APIVersionResolver?
-
     private(set) var isUnauthenticatedTransportSessionReady: Bool
 
     let isDeveloperModeEnabled: Bool
@@ -380,6 +376,10 @@ public final class SessionManager: NSObject, SessionManagerType {
     let analyticsService: AnalyticsService?
 
     private let sharedUserDefaults: UserDefaults
+
+    /// Used by `withSession(for:newEnvironment:notifyAboutMigration:)` to avoid creating & loading multiple sessions
+    /// for the same account concurrently.
+    private let withSessionTaskManager = NonReentrantTaskManager<ZMUserSession?, Never>()
 
     // MARK: - Life cycle
 
@@ -581,9 +581,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.reachability = reachability
         self.maxNumberAccounts = maxNumberAccounts
         self.isDeveloperModeEnabled = isDeveloperModeEnabled
-        self.apiMigrationManager = APIMigrationManager(
-            migrations: [AccessTokenMigration()]
-        )
 
         // we must set these before initializing the PushDispatcher b/c if the app
         // received a push from terminated state, it requires these properties to be
@@ -678,7 +675,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         // force creation of transport sessions using isUnauthenticatedTransportSessionReady
         isUnauthenticatedTransportSessionReady = ready
-        apiVersionResolver = createAPIVersionResolver()
 
         // force creation of unauthenticatedSession
         unauthenticatedSessionFactory.readyForRequests = ready
@@ -807,7 +803,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     public func logout(account: Account, error: Error? = nil) {
-        WireLogger.session.debug("Logging out account \(account.userIdentifier)...")
         WireLogger.sessionManager.debug("Logging out account \(account.userIdentifier)...")
 
         if let session = backgroundUserSessions[account.userIdentifier] {
@@ -993,10 +988,13 @@ public final class SessionManager: NSObject, SessionManagerType {
         notifyAboutMigration: Bool = false
     ) async -> ZMUserSession? {
         WireLogger.sessionManager.debug("Request to load session for \(account)")
+
         if let session = backgroundUserSessions[account.userIdentifier] {
             WireLogger.sessionManager.debug("Session for \(account) is already loaded")
             return session
-        } else {
+        }
+
+        return await withSessionTaskManager.performIfNeeded { @MainActor [self] in
             do {
                 let loader = try UserSessionLoader(
                     account: account,
@@ -1173,7 +1171,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     fileprivate func registerObservers(account: Account, session: ZMUserSession) {
 
-        let selfUser = ZMUser.selfUser(inUserSession: session)
+        let selfUser = ZMUser.selfUser(in: session.viewContext)
         let teamObserver = TeamChangeInfo.add(
             observer: self,
             for: nil,

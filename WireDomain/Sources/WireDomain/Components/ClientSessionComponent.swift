@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireCoreCrypto
 import WireDataModel
+import WireLogging
 import WireNetwork
 
 public final class ClientSessionComponent {
@@ -131,7 +132,7 @@ public final class ClientSessionComponent {
         networkService: restNetworkService
     ).makeAPI()
 
-    public lazy var conversationsAPI = ConversationsAPIBuilder(
+    public private(set) lazy var conversationsAPI = ConversationsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -149,6 +150,10 @@ public final class ClientSessionComponent {
 
     private lazy var pushChannelV2API = PushChannelV2APIBuilder(
         pushChannelService: pushChannelService
+    ).makeAPI(for: apiVersion)
+
+    public private(set) lazy var searchAPI = SearchAPIBuilder(
+        apiService: apiService
     ).makeAPI(for: apiVersion)
 
     private lazy var selfUserAPI = SelfUserAPIBuilder(
@@ -350,6 +355,7 @@ public final class ClientSessionComponent {
     // MARK: High level syncs
 
     public private(set) lazy var syncStateSubject = CurrentValueSubject<SyncState, Never>(.idle)
+    private(set) lazy var liveBrokenGroupSubject = PassthroughSubject<Set<String>, Never>()
 
     public private(set) lazy var initialSync = {
         let pullResourcesSync = PullResourcesSync(
@@ -397,6 +403,7 @@ public final class ClientSessionComponent {
         processor: updateEventProcessor,
         databaseSaver: databaseSaver,
         syncStateSubject: syncStateSubject,
+        liveBrokenGroupSubject: liveBrokenGroupSubject,
         journal: journal,
         mlsGroupRepairAgent: mlsGroupRepairAgent
     )
@@ -412,6 +419,7 @@ public final class ClientSessionComponent {
             processor: updateEventProcessor,
             databaseSaver: databaseSaver,
             syncStateSubject: syncStateSubject,
+            liveBrokenGroupSubject: liveBrokenGroupSubject,
             coreCryptoProvider: coreCryptoProvider,
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
@@ -772,6 +780,19 @@ public final class ClientSessionComponent {
         )
     }
 
+    public func createInitiateResetMLSConversationUseCase() -> some InitiateResetMLSConversationUseCaseProtocol {
+        InitiateResetMLSConversationUseCase(
+            api: mlsAPI,
+            mlsService: mlsService,
+            conversationLocalStore: conversationLocalStore,
+            conversationRepository: conversationRepository,
+            lockRepository: ResetMLSConversationLockRepository(
+                userID: selfUserID
+            ),
+            selfDomain: backendMetadata.domain
+        )
+    }
+
     // MARK: - Other
 
     public private(set) lazy var conversationProtobufMessageProcessor = ConversationProtobufMessageProcessor(
@@ -863,4 +884,14 @@ public final class ClientSessionComponent {
         workAgent: workAgent
     )
 
+    public func setupLiveMLSBrokenGroups() -> AnyCancellable {
+        liveBrokenGroupSubject.sink { [weak self]  liveMLSBrokenGroups in
+            guard let self else { return }
+            WireLogger.mls.debug("detected during live sync \(liveMLSBrokenGroups.count) broken MLS groups")
+            let item = RepairBrokenMLSGroupsItem(repairAgent: mlsGroupRepairAgent)
+            Task {
+                await self.workAgent.submitItem(item)
+            }
+        }
+    }
 }

@@ -431,7 +431,7 @@ extension MessagingTestBase {
 
     func performPretendingUiMocIsSyncMoc(block: () -> Void) {
         uiMOC.resetContextType()
-        uiMOC.markAsSyncContext()
+        uiMOC.performMarkAsSyncContext()
         block()
         uiMOC.resetContextType()
         uiMOC.markAsUIContext()

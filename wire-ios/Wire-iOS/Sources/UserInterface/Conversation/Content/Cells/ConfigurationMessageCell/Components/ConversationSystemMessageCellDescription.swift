@@ -175,7 +175,10 @@ enum ConversationSystemMessageCellDescription {
             var cells: [AnyConversationMessageCellDescription] = []
 
             let welcomeCell = ConversationWelcomeSystemMessageCellDescription(
-                isWireCellsEnabled: conversation.isWireDriveEnabled
+                variant: (
+                    wireCells: conversation.isWireDriveEnabled,
+                    isChannel: conversation.isChannel
+                )
             )
             cells.append(AnyConversationMessageCellDescription(welcomeCell))
 
@@ -191,12 +194,6 @@ enum ConversationSystemMessageCellDescription {
                         GuestsAllowedCellDescription(isChannel: conversation.isChannel)
                     )
                 )
-            }
-            if conversation.isOpenGroup || conversation.isWireDriveEnabled {
-                let encryptionInfoCell = ConversationEncryptionInfoSystemMessageCellDescription(
-                    isWireDriveEnabled: conversation.isWireDriveEnabled
-                )
-                cells.append(AnyConversationMessageCellDescription(encryptionInfoCell))
             }
 
             if conversation.isWireDriveEnabled {

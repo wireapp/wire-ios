@@ -54,14 +54,14 @@ class MLSGroupRepairAgentTests: XCTestCase {
         let validGroupID = Data("valid-group".utf8).base64EncodedString()
         journal[.brokenMLSGroupIDs] = [validGroupID]
 
-        mockMLSService.fetchAndRepairGroupWithShouldPerformIncrementalSync_MockMethod = { _, _ in }
+        mockMLSService.fetchAndRepairGroupWith_MockMethod = { _ in }
 
         // When
         await sut.repairConversations()
 
         // Then
         XCTAssertEqual(
-            mockMLSService.fetchAndRepairGroupWithShouldPerformIncrementalSync_Invocations.count,
+            mockMLSService.fetchAndRepairGroupWith_Invocations.count,
             1
         )
 

@@ -74,6 +74,9 @@ package struct FilesViewItem: Identifiable, Hashable {
 
     /// The public link identifier if the item has a public link.
     let publicLinkID: String?
+
+    /// The name of the conversation the node is attached to.
+    let conversationName: String?
 }
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -96,7 +99,7 @@ package final class FilesViewModel: ObservableObject {
         case shareLink(view: ShareLinkView)
         case moveToFolder(fileItem: FilesViewItem)
         case renameFile(view: FileRenameView)
-        case createFolder(view: CreateFolderView)
+        case create(view: CreateFileView)
         case filters(view: FilesFiltersView)
         case versionHistory(view: FileVersioningView)
 
@@ -108,8 +111,8 @@ package final class FilesViewModel: ObservableObject {
                 "shareLink(\(view.id))"
             case let .moveToFolder(fileItem):
                 "moveToFolder(\(fileItem.id))"
-            case let .createFolder(view):
-                "createFolder(\(view.id))"
+            case let .create(view):
+                "create(\(view.id))"
             case let .renameFile(view):
                 "renameFile(\(view.id))"
             case let .filters(view):
@@ -131,7 +134,7 @@ package final class FilesViewModel: ObservableObject {
         case loading
         case received(items: [FilesViewItem])
         case pending // drive is not ready yet
-        case error
+        case error(isConnectionError: Bool)
 
         var items: [FilesViewItem] {
             switch self {
@@ -160,7 +163,7 @@ package final class FilesViewModel: ObservableObject {
             renameNode: any WireDriveRenameNodeUseCaseProtocol,
             updateTags: any WireDriveUpdateTagsUseCaseProtocol,
             getTagSuggestions: any WireDriveGetTagSuggestionsUseCaseProtocol,
-            createFolder: any WireDriveCreateFolderUseCaseProtocol,
+            createFileUseCase: any WireDriveCreateFileUseCaseProtocol,
             fetchNodeVersions: any WireDriveFetchNodeVersionsUseCaseProtocol,
             restoreNodeVersion: any WireDriveRestoreNodeVersionUseCaseProtocol,
             getEditingURL: WireDriveGetEditingURLUseCase,
@@ -178,7 +181,7 @@ package final class FilesViewModel: ObservableObject {
             self.renameNode = renameNode
             self.updateTags = updateTags
             self.getTagSuggestions = getTagSuggestions
-            self.createFolder = createFolder
+            self.createFileUseCase = createFileUseCase
             self.fetchNodeVersions = fetchNodeVersions
             self.restoreNodeVersion = restoreNodeVersion
             self.getEditingURL = getEditingURL
@@ -196,7 +199,7 @@ package final class FilesViewModel: ObservableObject {
         let renameNode: any WireDriveRenameNodeUseCaseProtocol
         let updateTags: any WireDriveUpdateTagsUseCaseProtocol
         let getTagSuggestions: any WireDriveGetTagSuggestionsUseCaseProtocol
-        let createFolder: any WireDriveCreateFolderUseCaseProtocol
+        let createFileUseCase: any WireDriveCreateFileUseCaseProtocol
         let fetchNodeVersions: any WireDriveFetchNodeVersionsUseCaseProtocol
         let restoreNodeVersion: any WireDriveRestoreNodeVersionUseCaseProtocol
         let getEditingURL: WireDriveGetEditingURLUseCase
@@ -208,8 +211,6 @@ package final class FilesViewModel: ObservableObject {
         let updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase
     }
 
-    let useCases: UseCases
-
     private let setNavigation: ([FilesViewItem]) -> Void
     private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
     private let nodesRepository: any WireDriveNodesRepositoryProtocol
@@ -220,10 +221,43 @@ package final class FilesViewModel: ObservableObject {
     private let navigationPath: [FilesViewItem]
     private let accentColorProvider: () -> WireAccentColor
 
+    let useCases: UseCases
     let isBrowsing: Bool
     let isRecycleBin: Bool
-
     let triggerReload: PassthroughSubject<Void, Never>
+    var shouldReload: Bool = false
+    var filterWithTags: [String] = []
+    let title: String?
+    var showSearchBar: Bool {
+        switch state {
+        case .loading, .received:
+            true
+        case .pending, .error:
+            false
+        }
+    }
+
+    var navigationTitle: String {
+        if let title {
+            title
+        } else {
+            if isRecycleBin {
+                Strings.RecycleBin.navigationTitle
+            } else {
+                Strings.Files.navigationTitle
+            }
+        }
+    }
+
+    /// Whether the view model is currently loading items.
+    var isLoading: Bool {
+        loadMoreTask != nil
+    }
+
+    enum ConnectionState {
+        case offline
+        case online
+    }
 
     @Published var hasMore = true
     @Published private var loadMoreTask: LoadItemsTask?
@@ -232,16 +266,11 @@ package final class FilesViewModel: ObservableObject {
     @Published var viewingURL: URL?
     @Published var state: State
     @Published var sheetNavigation: SheetNavigation?
-    @Published var createFolderView: CreateFolderView?
+    @Published var createView: CreateFileView?
     @Published var fileRenameView: FileRenameView?
     @Published var isEditing: FilesViewItem?
-
-    var shouldReload: Bool = false
-    var filterWithTags: [String] = []
-    let title: String?
-    var showSearchBar: Bool {
-        state != .error && state != .pending
-    }
+    @Published var templates: [WireDriveFileTemplate] = []
+    @Published var connectionState: ConnectionState = .online
 
     package init(
         useCases: UseCases,
@@ -273,23 +302,53 @@ package final class FilesViewModel: ObservableObject {
         self.accentColorProvider = accentColorProvider
 
         bindSearch()
+        bindNetworkConnection()
+        fetchTemplates()
     }
 
-    var navigationTitle: String {
-        if let title {
-            title
-        } else {
-            if isRecycleBin {
-                Strings.RecycleBin.navigationTitle
-            } else {
-                Strings.Files.navigationTitle
-            }
+    private func fetchTemplates() {
+        Task {
+            // TODO: [WPB-22926] Replace hard coded values with server values when GET/ templates endpoint ready.
+            // Do `templates = try await WireDriveFetchFileTemplatesUseCase.invoke()`
+            templates = [
+                .init(
+                    kind: .document,
+                    editable: true,
+                    label: "Microsoft Word",
+                    id: "01-Microsoft Word.docx"
+                ),
+                .init(
+                    kind: .spreadsheet,
+                    editable: true,
+                    label: "Microsoft Excel",
+                    id: "02-Microsoft Excel.xlsx"
+                ),
+                .init(
+                    kind: .presentation,
+                    editable: true,
+                    label: "Microsoft PowerPoint",
+                    id: "03-Microsoft PowerPoint.pptx"
+                )
+            ]
         }
     }
 
-    /// Whether the view model is currently loading items.
-    var isLoading: Bool {
-        loadMoreTask != nil
+    private func bindNetworkConnection() {
+        NetworkMonitor.shared.statusPublisher
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] status in
+                guard let self, !state.items.isEmpty else { return }
+
+                switch status {
+                case .connected:
+                    guard connectionState == .offline else { return }
+                    connectionState = .online
+                case .disconnected:
+                    connectionState = .offline
+                }
+            }
+            .store(in: &subscriptions)
     }
 
     private func bindSearch() {
@@ -336,6 +395,7 @@ package final class FilesViewModel: ObservableObject {
     func itemViewModel(index: Int) -> FilesItemViewModel {
         FilesItemViewModel(
             item: state.items[index],
+            conversationName: isBrowsing ? state.items[index].conversationName : nil,
             localAssetRepository: localAssetRepository,
             onItemAction: { [weak self] action, item in
                 guard let self else { return }
@@ -403,7 +463,7 @@ package final class FilesViewModel: ObservableObject {
                 nodesRepository: nodesRepository,
                 localAssetRepository: assetRepository,
                 moveNodeUseCase: WireDriveMoveNodeUseCase(nodesRepository: nodesRepository),
-                createFolderUseCase: useCases.createFolder
+                createFileUseCase: useCases.createFileUseCase
             )
         )
     }
@@ -503,29 +563,36 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    func onCreateFolder() {
+    func onCreate(target: WireDriveCreateFileUseCase.Target) {
         guard let cellName else { return }
 
-        // When navigation path is empty, folder is created at the root path (cell name)
-        let folderPath = navigationPath.last?.filePath ?? cellName
+        // When navigation path is empty, file/folder is created at the root path (cell name)
+        let path = navigationPath.last?.filePath ?? cellName
 
-        let viewModel = CreateFolderViewModel(
-            createFolderUseCase: useCases.createFolder,
-            folderPath: folderPath
+        let viewModel = CreateFileViewModel(
+            creationTarget: target,
+            path: path,
+            createFileUseCase: useCases.createFileUseCase
         )
 
         // to know whether we need to reload nodes.
-        viewModel.$didCreate
-            .filter(\.self)
-            .sink { [weak self] didCreate in
-                self?.shouldReload = didCreate
+        viewModel.$createdNode
+            .compactMap(\.self)
+            .sink { [weak self] createdNode in
+                guard let self else { return }
+                shouldReload = true
+
+                if case .file = target {
+                    isEditing = makeFileViewItem(node: createdNode)
+                }
+
             }.store(in: &subscriptions)
 
-        let createFolderView = CreateFolderView(
+        let createFileView = CreateFileView(
             viewModel: viewModel
         )
 
-        sheetNavigation = .createFolder(view: createFolderView)
+        sheetNavigation = .create(view: createFileView)
     }
 
     // MARK: - Private
@@ -550,14 +617,18 @@ package final class FilesViewModel: ObservableObject {
         } catch is CancellationError {
             return // developer-driven error, discard
         } catch {
-            if state.items.isEmpty {
-                state = .error
-            } else {
-                let urlError = (error as? URLError)?.code
-                let isNoInternetError = urlError == .notConnectedToInternet || urlError == .networkConnectionLost
-                alert = isNoInternetError ? .noInternet : .unknownError
-            }
+            let urlError = (error as? URLError)?.code
+            let isNoInternetError = urlError == .notConnectedToInternet || urlError == .networkConnectionLost
 
+            if state.items.isEmpty {
+                state = .error(isConnectionError: isNoInternetError)
+            } else {
+                if isNoInternetError {
+                    // no-op, offline bar is dynamically shown/hidden on top of the list (see `bindNetworkConnection()`)
+                } else {
+                    alert = .unknownError
+                }
+            }
             hasMore = state.items.isEmpty ? true : hasMore
         }
         loadMoreTask = nil
@@ -572,28 +643,7 @@ package final class FilesViewModel: ObservableObject {
             offset: offset
         )
 
-        let items: [FilesViewItem] = nodes.compactMap { node in
-            guard let eTag = node.eTag else { return nil }
-
-            let url = URL(string: node.path)
-            let kind: FilesViewItem.Kind = node.type == .collection ? .folder : .file
-            return FilesViewItem(
-                id: node.id,
-                eTag: eTag,
-                kind: kind,
-                name: url?.lastPathComponent ?? node.path,
-                filePath: node.path,
-                ownedBy: node.ownerUserName,
-                modifiedAt: node.modified,
-                icon: kind == .folder ? .folder : .make(
-                    type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
-                    fileExtension: url?.pathExtension
-                ),
-                tags: node.tags,
-                isEditable: node.isEditable,
-                publicLinkID: node.publicLinkID?.string
-            )
-        }
+        let items: [FilesViewItem] = nodes.compactMap(makeFileViewItem(node:))
 
         try Task.checkCancellation()
         return (items, isLastPage)
@@ -618,6 +668,30 @@ package final class FilesViewModel: ObservableObject {
             currentItems.append(asset)
             state = .received(items: Self.processItems(currentItems))
         }
+    }
+
+    private nonisolated func makeFileViewItem(node: WireDriveNode) -> FilesViewItem? {
+        guard let eTag = node.eTag else { return nil }
+
+        let url = URL(string: node.path)
+        let kind: FilesViewItem.Kind = node.type == .collection ? .folder : .file
+        return FilesViewItem(
+            id: node.id,
+            eTag: eTag,
+            kind: kind,
+            name: url?.lastPathComponent ?? node.path,
+            filePath: node.path,
+            ownedBy: node.ownerUserName,
+            modifiedAt: node.modified,
+            icon: kind == .folder ? .folder : .make(
+                type: node.mimeType.map { UTType(mimeType: $0) } ?? nil,
+                fileExtension: url?.pathExtension
+            ),
+            tags: node.tags,
+            isEditable: node.isEditable,
+            publicLinkID: node.publicLinkID?.string,
+            conversationName: node.conversation?.name
+        )
     }
 
     private func restoreItem(_ asset: FilesViewItem) async {
@@ -741,4 +815,28 @@ package final class FilesViewModel: ObservableObject {
         return FileVersioningView(viewModel: viewModel)
     }
 
+}
+
+extension WireDriveFileTemplate.Kind {
+    var title: String {
+        switch self {
+        case .document:
+            Strings.Files.List.CreateFile.document
+        case .spreadsheet:
+            Strings.Files.List.CreateFile.spreadsheet
+        case .presentation:
+            Strings.Files.List.CreateFile.presentation
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .document:
+            "text.document"
+        case .spreadsheet:
+            "tablecells"
+        case .presentation:
+            "sparkles.tv"
+        }
+    }
 }

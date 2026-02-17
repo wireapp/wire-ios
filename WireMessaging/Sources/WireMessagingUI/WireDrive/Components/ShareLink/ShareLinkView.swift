@@ -230,7 +230,7 @@ struct ShareLinkView: View {
     private func shareLinkButton(_ link: URL?) -> some View {
         VStack {
             if let link {
-                ShareLink(item: link) {
+                ShareLink(item: Strings.ShareLink.sharedMessage(link.absoluteString)) {
                     shareLinkContent()
                 }
             } else {
@@ -307,6 +307,7 @@ struct ShareLinkView: View {
         tags: [],
         isEditable: false,
         publicLinkID: UUID().uuidString,
+        conversationName: "Conversation 1"
     )
 
     let mockAPI = {

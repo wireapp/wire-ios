@@ -45,6 +45,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let databaseSaver: any DatabaseSaverProtocol
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
+    private let liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>
     private let logger = WireLogger.sync
     private let journal: Journal
     private let syncMarkerGenerator: SyncMarkerGenerator
@@ -63,6 +64,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         processor: any UpdateEventProcessorProtocol,
         databaseSaver: any DatabaseSaverProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
+        liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         journal: Journal,
         mlsGroupRepairAgent: MLSGroupRepairAgentProtocol,
@@ -78,6 +80,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.processor = processor
         self.databaseSaver = databaseSaver
         self.syncStateSubject = syncStateSubject
+        self.liveBrokenGroupSubject = liveBrokenGroupSubject
         self.coreCryptoProvider = coreCryptoProvider
         self.journal = journal
         self.mlsGroupRepairAgent = mlsGroupRepairAgent
@@ -320,6 +323,16 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         // decrypt
         try await coreCryptoProvider.coreCrypto().transaction { coreCryptoContext in
             for envelope in envelopes {
+
+                if DeveloperFlag.ignoreIncomingEvents.isOn {
+                    logger.warn(
+                        "ignore incoming events",
+                        attributes: .incrementalSyncV3 + [.eventEnvelopeID: envelope.id]
+                    )
+                    await acknowledgeUntilEnvelope(envelope, through: pushChannel, batchSize: 1)
+                    continue
+                }
+
                 var envelope = envelope
                 envelope.events = await decryptEnvelope(envelope, in: coreCryptoContext)
 
@@ -373,8 +386,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
         if !brokenMLSGroupIDs.isEmpty {
-            journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
+            journal.addValues(brokenMLSGroupIDs, for: .brokenMLSGroupIDs)
+            liveBrokenGroupSubject.send(brokenMLSGroupIDs)
         }
+
         return decryptionEventsResult.events
     }
 
