@@ -46,7 +46,6 @@ public class IncrementalSync: IncrementalSyncProtocol {
     private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
     private let earService: EARServiceInterface
     private let notificationContext: NotificationContext
-    private var unlockObserver: SelfUnregisteringNotificationCenterToken?
 
     public init(
         selfClientID: String,
@@ -402,66 +401,52 @@ public class IncrementalSync: IncrementalSyncProtocol {
             attributes: .incrementalSyncV2, .safePublic
         )
 
-        // Ensure cleanup happens on both success and timeout
-        defer {
-            unlockObserver = nil
-        }
-
-        do {
-            try await withThrowingTaskGroup(of: Void.self) { group in
-                // Task 1: Wait for unlock notification
-                group.addTask { [self] in
-                    await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-                        var resumed = false
-
-                        unlockObserver = NotificationInContext.addObserver(
-                            name: DatabaseEncryptionLockNotification.notificationName,
-                            context: notificationContext,
-                            queue: .main
-                        ) { [self] note in
-                            guard !resumed else { return }
-
-                            guard
-                                let notification = note.userInfo[DatabaseEncryptionLockNotification.userInfoKey] as? DatabaseEncryptionLockNotification,
-                                !notification.databaseIsEncrypted,
-                                !earService.isLocked
-                            else { return }
-
-                            resumed = true
-                            logger.info(
-                                "database unlocked, resuming sync",
-                                attributes: .incrementalSyncV2, .safePublic
-                            )
-                            continuation.resume()
-                        }
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            // Task 1: Wait for unlock notification
+            group.addTask { [earService, notificationContext, logger] in
+                for await notification in NotificationCenter.default.notifications(
+                    named: DatabaseEncryptionLockNotification.notificationName,
+                    object: notificationContext
+                ) {
+                    // Check if this notification contains the unlock signal
+                    guard
+                        let unlockNotification = notification.userInfo?[DatabaseEncryptionLockNotification.userInfoKey] as? DatabaseEncryptionLockNotification,
+                        !unlockNotification.databaseIsEncrypted,
+                        !earService.isLocked
+                    else {
+                        continue
                     }
+
+                    logger.info(
+                        "database unlocked, resuming sync",
+                        attributes: .incrementalSyncV2, .safePublic
+                    )
+                    return // Exit task successfully
                 }
+            }
 
-                // Task 2: Timeout
-                group.addTask {
-                    try await Task.sleep(for: timeout)
-                    throw CancellationError()
+            // Task 2: Timeout
+            group.addTask { [earService, logger] in
+                try await Task.sleep(for: timeout)
+
+                if earService.isLocked {
+                    logger.error(
+                        "timed out waiting for database unlock, cancelling sync",
+                        attributes: .incrementalSyncV2, .safePublic
+                    )
+                    throw Failure.databaseUnlockTimeout
                 }
-
-                // Wait for first task to complete (either unlock or timeout)
-                defer { group.cancelAll() }
-
-                try await group.next()
             }
-        } catch is CancellationError {
 
-            // if the database is still locked, throw a timeout error
-            if earService.isLocked {
-                logger.error(
-                    "timed out waiting for database unlock, cancelling sync",
-                    attributes: .incrementalSyncV2, .safePublic
-                )
-                throw Failure.databaseUnlockTimeout
-            }
+            // Wait for first task to complete (either unlock or timeout)
+            defer { group.cancelAll() }
+
+            try await group.next()
         }
     }
-
+    
 }
+
 
 extension IncrementalSyncV1: SyncMigratorProtocol {
     public func migrateFromIncrementalSyncV1() async throws {
