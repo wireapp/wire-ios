@@ -60,6 +60,9 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
             )
 
             for event in events {
+                // Abort if needed.
+                try Task.checkCancellation()
+
                 if let notification = await generateNotification(for: event) {
                     logger.info(
                         "Generated a notification from an event",
