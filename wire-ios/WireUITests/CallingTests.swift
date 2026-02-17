@@ -17,8 +17,8 @@
 //
 
 import WireFoundation
-import XCTest
 import WireLocators
+import XCTest
 
 final class CallingTests: WireUITestCase {
 

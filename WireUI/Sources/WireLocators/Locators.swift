@@ -295,7 +295,7 @@ public enum Locators {
     public enum OngoingCallView {
 
         public static func participantIdentifier(_ name: String) -> String {
-            return "audioView.\(name).minimized.inactive"
+            "audioView.\(name).minimized.inactive"
         }
     }
 
