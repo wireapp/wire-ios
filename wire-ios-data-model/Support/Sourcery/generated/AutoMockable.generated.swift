@@ -3079,6 +3079,15 @@ public class MockEARServiceInterface: EARServiceInterface {
 
     public var delegate: EARServiceDelegate?
 
+    // MARK: - isLocked
+
+    public var isLocked: Bool {
+        get { return underlyingIsLocked }
+        set(value) { underlyingIsLocked = value }
+    }
+
+    public var underlyingIsLocked: Bool!
+
     // MARK: - isEAREnabled
 
     public var isEAREnabled: Bool {
