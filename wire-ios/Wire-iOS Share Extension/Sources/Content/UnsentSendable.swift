@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -327,20 +327,8 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
                 }
             }
 
-            if let data = data as? Data {
-                guard data.count <= AccountManager.fileSizeLimitInBytes else {
-                    self?.error = .fileSizeTooBig
-                    return completion()
-                }
-
-                self?.prepareForSending(
-                    withUTI: UTIString,
-                    name: name,
-                    data: data,
-                    completion: prepareColsure
-                )
-            } else if let dataURL = data as? URL {
-
+            // First try to interpret the result as a URL
+            if let dataURL = data as? URL {
                 guard dataURL.fileSize ?? .max <= AccountManager.fileSizeLimitInBytes else {
                     self?.error = .fileSizeTooBig
                     return completion()
@@ -352,10 +340,84 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
                     dataURL: dataURL,
                     completion: prepareColsure
                 )
+            } else if let data = data as? Data {
+                // Check if this Data is actually a property list containing a file URL
+                // (this can happen, such as when sharing an IPS file from iOS settings)
+                if let fileURL = self?.extractFileURLFromPropertyList(data) {
+                    // We found a file URL in the property list, use it to load the actual file
+                    guard fileURL.fileSize ?? .max <= AccountManager.fileSizeLimitInBytes else {
+                        self?.error = .fileSizeTooBig
+                        return completion()
+                    }
+
+                    self?.prepareForSending(
+                        withUTI: UTIString,
+                        name: name,
+                        dataURL: fileURL,
+                        completion: prepareColsure
+                    )
+                } else {
+                    // This is actual file content
+                    guard data.count <= AccountManager.fileSizeLimitInBytes else {
+                        self?.error = .fileSizeTooBig
+                        return completion()
+                    }
+
+                    self?.prepareForSending(
+                        withUTI: UTIString,
+                        name: name,
+                        data: data,
+                        completion: prepareColsure
+                    )
+                }
             } else {
                 completion()
             }
         }
+    }
+
+    /// Attempts to extract a file URL from a property list data
+    /// - Parameter data: The data that might be a property list
+    /// - Returns: A file URL if the data is a property list containing one, nil otherwise
+    private func extractFileURLFromPropertyList(_ data: Data) -> URL? {
+        do {
+            let plist = try PropertyListSerialization.propertyList(from: data, format: nil)
+
+            func decodeURL(from value: Any) -> URL? {
+                if let string = value as? String, let url = URL(string: string), url.isFileURL {
+                    url
+                } else if let url = value as? URL, url.isFileURL {
+                    url
+                } else {
+                    nil
+                }
+            }
+
+            // Search for a file url in the plist.
+            if let url = decodeURL(from: plist) {
+                // plist is a single value.
+                return url
+            } else if let dict = plist as? [String: Any] {
+                // plist is a dict.
+                for value in dict.values {
+                    if let url = decodeURL(from: value) {
+                        return url
+                    }
+                }
+            } else if let array = plist as? [Any] {
+                // plist is an array.
+                for value in array {
+                    if let url = decodeURL(from: value) {
+                        return url
+                    }
+                }
+            }
+        } catch {
+            // Not a valid property list, or parsing failed
+            error.log(message: "Failed to parse potential property list data")
+        }
+
+        return nil
     }
 
     typealias SendingCompletion = (URL?, Error?) -> Void
@@ -434,10 +496,13 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     }
 
     private func nameForFile(withUTI UTI: String, name: String?) -> String? {
-        if let fileExtension = UTType(UTI)?.preferredFilenameExtension {
-            return "\(UUID().uuidString).\(fileExtension)"
+        if let name {
+            name
+        } else if let fileExtension = UTType(UTI)?.preferredFilenameExtension {
+            "\(UUID().uuidString).\(fileExtension)"
+        } else {
+            nil
         }
-        return name
     }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -79,15 +79,6 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 /// This is useful for non-connected user, that we will otherwise never refetch
 - (void)refreshData;
 
-
-@end
-
-
-@protocol ZMEditableUserType;
-
-@interface ZMUser (Utilities)
-
-+ (ZMUser<ZMEditableUserType> *_Nonnull)selfUserInUserSession:(id<ZMContextProvider> _Nonnull)session;
 
 @end
 

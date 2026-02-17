@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,6 +64,8 @@ public enum Locators {
         case conversationCell
         case blockOptionOnContextMenu = "Block…"
         case blockButtonOnBottomSheet
+        case bottomBarArchivedButton
+        case accountProfileImageView
     }
 
     public enum SettingsPage: String {
@@ -99,6 +101,7 @@ public enum Locators {
         case conversationTitleButton
         case conversationDetailsButton
         case message
+        case imageCell = "ImageCell"
     }
 
     public enum BackupOrRestorePage: String {
@@ -130,6 +133,10 @@ public enum Locators {
         case userCellName
         case close
 
+    }
+
+    public enum ConversationDetailsActions: String {
+        case archive
     }
 
     public enum UserProfilePage: String {
@@ -259,6 +266,26 @@ public enum Locators {
     public enum WebViewPage: String {
 
         case resetPassword = "Reset password"
+    }
+
+    public enum FileVersioningPage: String {
+
+        case closeButton
+    }
+
+    public enum ShareExtensionPage: String {
+
+        case imageTile = "PXGGridLayout-Info"
+        case shareButton = "PUOneUpBarButtonItemIdentifierShare"
+        case chooseConversations = "chevron"
+        case sendButtonOnShareExtension
+        case continueButton = "Continue"
+    }
+
+    public enum SecurityLevelView: String {
+
+        case classificationBanner = "ClassificationBanner"
+
     }
 
 }

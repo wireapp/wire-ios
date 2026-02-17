@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -97,6 +97,33 @@ struct ResponseParser<Success> {
                 return nil
             }
             throw error
+        }
+    }
+
+    func failure(
+        code: HTTPStatusCode,
+        label: String,
+        wrappingMessage: @escaping (String) -> some Error
+    ) -> ResponseParser<Success> {
+        addParseBlock(
+            code: code,
+            prioritize: true
+        ) { data in
+            guard let data else {
+                return nil
+            }
+
+            guard
+                let failure = try? decoder.decode(
+                    FailureResponseV0.self,
+                    from: data
+                ),
+                failure.label == label
+            else {
+                return nil
+            }
+
+            throw wrappingMessage(failure.message)
         }
     }
 

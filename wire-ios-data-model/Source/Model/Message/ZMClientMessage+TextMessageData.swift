@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,7 +60,18 @@ extension ZMClientMessage: TextMessageData {
         // Quotes are ignored in edits but keep it to mark that the message has quote for us locally
         let editedText = Text(content: text, mentions: mentions, linkPreviews: [], replyingTo: quote as? ZMOTRMessage)
         let editNonce = UUID()
-        let content = MessageEdit(replacingMessageID: nonce, text: editedText)
+        let content = if let multipartAttachments {
+            MessageEdit(
+                replacingMessageID: nonce,
+                multipart: .init(text: editedText, attachments: multipartAttachments)
+            )
+        } else {
+            MessageEdit(
+                replacingMessageID: nonce,
+                text: editedText
+            )
+        }
+
         let updatedMessage = GenericMessage(content: content, nonce: editNonce)
 
         do {
@@ -78,5 +89,21 @@ extension ZMClientMessage: TextMessageData {
         linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
         linkAttachments = nil
         delivered = false
+    }
+
+    var multipartAttachments: [GenericMessageProtocol.Attachment]? {
+        switch underlyingMessage?.content {
+        case let .multipart(multipart):
+            multipart.attachments
+        case let .edited(messageEdit):
+            switch messageEdit.content {
+            case let .multipart(data):
+                data.attachments
+            default:
+                nil
+            }
+        default:
+            nil
+        }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -173,6 +173,15 @@ enum ConversationSystemMessageCellDescription {
 
         case .newConversation:
             var cells: [AnyConversationMessageCellDescription] = []
+
+            let welcomeCell = ConversationWelcomeSystemMessageCellDescription(
+                variant: (
+                    wireCells: conversation.isWireDriveEnabled,
+                    isChannel: conversation.isChannel
+                )
+            )
+            cells.append(AnyConversationMessageCellDescription(welcomeCell))
+
             let startedConversationCell = ConversationStartedSystemMessageCellDescription(message: message)
             cells.append(AnyConversationMessageCellDescription(startedConversationCell))
 
@@ -186,14 +195,8 @@ enum ConversationSystemMessageCellDescription {
                     )
                 )
             }
-            if conversation.isOpenGroup {
-                let encryptionInfoCell = ConversationEncryptionInfoSystemMessageCellDescription(
-                    isWireCellsEnabled: conversation.isCellsEnabled
-                )
-                cells.append(AnyConversationMessageCellDescription(encryptionInfoCell))
-            }
 
-            if conversation.isCellsEnabled {
+            if conversation.isWireDriveEnabled {
                 let fileCollaborationCell = ConversationFileCollaborationSystemMessageCellDescription()
                 cells.append(AnyConversationMessageCellDescription(fileCollaborationCell))
 

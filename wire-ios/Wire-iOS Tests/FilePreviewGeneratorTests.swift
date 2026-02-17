@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ final class FilePreviewGeneratorTests: XCTestCase {
 
         // When
         do {
-            _ = try await sut.generatePreviewForFile(at: pdfURL)
+            _ = try sut.generatePreviewForFile(at: pdfURL)
             XCTFail("Unexpected success")
         } catch PDFFilePreviewGenerator.Error.failedToCreatePreview {
             // Then
@@ -49,7 +49,7 @@ final class FilePreviewGeneratorTests: XCTestCase {
 
         // When
         do {
-            _ = try await sut.generatePreviewForFile(at: pdfURL)
+            _ = try sut.generatePreviewForFile(at: pdfURL)
             XCTFail("Unexpected success")
         } catch PDFFilePreviewGenerator.Error.failedToCreatePreview {
             // Then

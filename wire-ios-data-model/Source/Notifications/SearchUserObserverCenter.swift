@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ extension NSManagedObjectContext {
     }
 }
 
-public class SearchUserSnapshot {
+public final class SearchUserSnapshot {
 
     /// Keys that we want to be notified for
     static let observableKeys: [String] = [

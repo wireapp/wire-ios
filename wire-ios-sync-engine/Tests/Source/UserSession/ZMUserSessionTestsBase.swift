@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@ import WireTransportSupport
 class ZMUserSessionTestsBase: MessagingTest {
 
     var mockSessionManager: MockSessionManager!
-    var mockPushChannel: MockPushChannel!
     var mockEARService: MockEARServiceInterface!
     var mockMLSService: MockMLSServiceInterface!
     var backendEnvironment: WireTransport.BackendEnvironment!
@@ -94,8 +93,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             userIdentifier: .create(),
             useCache: true
         )
-        mockPushChannel = MockPushChannel()
-        transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
+
+        transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage)
         mockSessionManager = MockSessionManager()
         mediaManager = MockMediaManager()
         flowManagerMock = FlowManagerMock()
@@ -104,20 +103,18 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockEARService.setInitialEARFlagValue_MockMethod = { _ in }
 
         mockMLSService = MockMLSServiceInterface()
-        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.onNewCRLsDistributionPoints_MockValue = PassthroughSubject<CRLsDistributionPoints, Never>()
             .eraseToAnyPublisher()
         mockMLSService.epochChanges_MockValue = .init { continuation in
             continuation.yield(MLSGroupID.random())
             continuation.finish()
         }
-        mockMLSService.setSyncDelegate_MockMethod = { _ in }
         mockMLSService.setResetBrokenMLSConversationDelegate_MockMethod = { _ in }
 
         mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
         mockRecurringActionService.performActionsIfNeeded_MockMethod = {}
-
+        mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         sut = createSut()
         sut.sessionManager = mockSessionManager
 
@@ -148,7 +145,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockFetchBackendMLSPublicKeysActionHandler = nil
         mockCoreCryptoProvider = nil
         sut?.tearDown()
-        mockPushChannel = nil
         super.tearDown()
     }
 
@@ -197,13 +193,13 @@ class ZMUserSessionTestsBase: MessagingTest {
             userId: coreDataStack.account.userIdentifier,
             minTLSVersion: nil,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            faultyMLSRemovalKeysByDomain: [:]
         )
 
         let userSession = builder.build()
         userSession.setup(
             apiVersion: nil,
-            eventProcessor: MockUpdateEventProcessor(),
             strategyDirectory: MockStrategyDirectory(),
             syncStrategy: nil,
             operationLoop: nil,

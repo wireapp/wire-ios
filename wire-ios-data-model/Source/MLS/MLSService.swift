@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,10 +64,8 @@ public final class MLSService: MLSServiceInterface {
     private let logger = WireLogger.mls
     private let groupsBeingRepaired = GroupsBeingRepaired()
     private let featureRepository: LegacyFeatureRepositoryInterface
-    private weak var mlsSyncDelegate: (any MLSSyncDelegate)?
     private weak var resetBrokenMLSConversationDelegate: (any ResetBrokenMLSConversationDelegate)?
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
-    private var brokenGroupIDs: Set<MLSGroupID> = []
     private let localDomain: String?
 
     private var coreCrypto: SafeCoreCryptoProtocol {
@@ -80,9 +78,10 @@ public final class MLSService: MLSServiceInterface {
         case keyPackageQueriedTime
     }
 
-    var pendingProposalCommitTimers = [MLSGroupID: Timer]()
+    var targetUnclaimedKeyPackageCount: Int {
+        DeveloperFlag.lowKeyPackageCount.isOn ? 1 : 100
+    }
 
-    let targetUnclaimedKeyPackageCount = 100
     let actionsProvider: MLSActionsProviderProtocol
 
     private let subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface
@@ -174,14 +173,21 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Sync delegate
 
-    public func setSyncDelegate(_ delegate: any MLSSyncDelegate) {
-        mlsSyncDelegate = delegate
-    }
-
     public func setResetBrokenMLSConversationDelegate(
         _ delegate: any ResetBrokenMLSConversationDelegate
     ) {
         resetBrokenMLSConversationDelegate = delegate
+    }
+
+    public func epoch(for groupID: MLSGroupID) async throws -> UInt64 {
+        try await coreCrypto.perform {
+            let exists = try? await $0.conversationExists(conversationId: groupID.conversationId)
+            if exists == true {
+                return try await $0.conversationEpoch(conversationId: groupID.conversationId)
+            } else {
+                return 0
+            }
+        }
     }
 
     // MARK: - Conference info for subconversations
@@ -556,10 +562,7 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Remove group
 
     public func wipeGroup(_ groupID: MLSGroupID) async throws {
-        logger.info(
-            "wiping group",
-            attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-        )
+        logger.info("wiping group", attributes: groupID.safeAttributes)
 
         do {
             try await coreCrypto.perform { [self] in
@@ -568,23 +571,17 @@ public final class MLSService: MLSServiceInterface {
                 ) else {
                     return logger.info(
                         "conversation doesn't exist, nothing to wipe..",
-                        attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                        attributes: groupID.safeAttributes
                     )
                 }
                 try await $0.wipeConversation(
                     conversationId: groupID.conversationId
                 )
 
-                logger.info(
-                    "wiped group",
-                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-                )
+                logger.info("wiped group", attributes: groupID.safeAttributes)
             }
         } catch {
-            logger.warn(
-                "failed to wipe group \(String(describing: error))",
-                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-            )
+            logger.warn("failed to wipe group: \(String(describing: error))", attributes: groupID.safeAttributes)
             throw error
         }
     }
@@ -754,6 +751,12 @@ public final class MLSService: MLSServiceInterface {
 
     }
 
+    public func externalSenderKey(groupID: MLSGroupID) async throws -> Data {
+        try await coreCrypto.perform { coreCrypto in
+            try await coreCrypto.getExternalSender(conversationId: groupID.conversationId)
+        }.copyBytes()
+    }
+
     public func conversationExists(groupID: MLSGroupID) async throws -> Bool {
 
         logger.info("checking if group (\(groupID)) exists...")
@@ -870,13 +873,13 @@ public final class MLSService: MLSServiceInterface {
                     }
 
                     do {
-                        let (epoch, isSelfConversation) = await context.perform {
-                            (pendingGroup.epoch, pendingGroup.isSelfConversation)
+                        let epoch = await context.perform {
+                            pendingGroup.epoch
                         }
                         let conversationExists = try await self.conversationExists(
                             groupID: mlsGroupID
                         )
-                        let shouldEstablishGroup = epoch == 0 && isSelfConversation && !conversationExists
+                        let shouldEstablishGroup = epoch == 0 && !conversationExists
 
                         if shouldEstablishGroup {
                             try await self.internalEstablishPendingGroup(
@@ -892,7 +895,7 @@ public final class MLSService: MLSServiceInterface {
                     } catch {
                         WireLogger.mls.error(
                             "Failed to join pending group: \(error)",
-                            attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
+                            attributes: mlsGroupID.safeAttributes
                         )
                         return false
                     }
@@ -966,7 +969,6 @@ public final class MLSService: MLSServiceInterface {
         let outOfSyncConversationInfos = try await outOfSyncConversations(in: context)
 
         logger.info("found \(outOfSyncConversationInfos.count) conversations out of sync")
-
         for conversationInfo in outOfSyncConversationInfos {
 
             await launchGroupRepairTaskIfNotInProgress(for: conversationInfo.mlsGroupId) {
@@ -979,55 +981,35 @@ public final class MLSService: MLSServiceInterface {
                 } catch {
                     self.logger
                         .warn(
-                            "failed to repair out of sync conversation (\(conversationInfo.mlsGroupId.safeForLoggingDescription)). error: \(String(reflecting: error))"
+                            "failed to repair out of sync conversation: \(String(reflecting: error))",
+                            attributes: conversationInfo.mlsGroupId.safeAttributes
                         )
                 }
             }
         }
     }
 
-    public func fetchAndRepairGroupIfPossible(with groupID: MLSGroupID) async {
-        await launchGroupRepairTaskIfNotInProgress(for: groupID) {
-            await self.fetchAndRepairGroup(with: groupID, shouldPerformIncrementalSync: true)
-        }
-    }
-
-    public func fetchAndRepairGroup(
-        with groupID: MLSGroupID,
-        shouldPerformIncrementalSync: Bool
-    ) async {
+    public func fetchAndRepairGroup(with groupID: MLSGroupID) async {
         if let subgroupInfo = await subconversationGroupIDRepository.findSubgroupTypeAndParentID(for: groupID) {
             await fetchAndRepairSubgroup(parentGroupID: subgroupInfo.parentID)
         } else {
-            await fetchAndRepairParentGroup(
-                with: groupID,
-                shouldPerformIncrementalSync: shouldPerformIncrementalSync
-            )
+            await fetchAndRepairParentGroup(with: groupID)
         }
     }
 
-    private func fetchAndRepairParentGroup(
-        with groupID: MLSGroupID,
-        shouldPerformIncrementalSync: Bool
-    ) async {
+    private func fetchAndRepairParentGroup(with groupID: MLSGroupID) async {
         guard let context else {
             return
         }
 
         do {
-            logger.info("repairing out of sync conversation... (\(groupID.safeForLoggingDescription))")
-
-            if shouldPerformIncrementalSync {
-                // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
-                // This ensures we're on the latest state.
-                try await mlsSyncDelegate?.recoverWithIncrementalSync()
-            }
+            logger.info("repairing out of sync conversation...", attributes: groupID.safeAttributes)
 
             guard let conversationInfo = await fetchConversationInfo(
                 with: groupID,
                 in: context
             ) else {
-                logger.warn("conversation not found (\(groupID.safeForLoggingDescription))")
+                logger.warn("conversation not found", attributes: groupID.safeAttributes)
                 return
             }
 
@@ -1041,7 +1023,7 @@ public final class MLSService: MLSServiceInterface {
                 subgroup: nil,
                 context: context
             ) else {
-                logger.info("conversation is not out of sync (\(groupID.safeForLoggingDescription))")
+                logger.info("conversation is not out of sync", attributes: groupID.safeAttributes)
                 return
             }
 
@@ -1051,10 +1033,10 @@ public final class MLSService: MLSServiceInterface {
                 context: context
             )
         } catch {
-            logger
-                .warn(
-                    "failed to repair conversation (\(groupID.safeForLoggingDescription)). error: \(String(describing: error))"
-                )
+            logger.warn(
+                "failed to repair conversation: \(String(describing: error))",
+                attributes: groupID.safeAttributes
+            )
         }
     }
 
@@ -1065,14 +1047,14 @@ public final class MLSService: MLSServiceInterface {
     ) async throws {
         try await joinGroup(with: groupID)
 
-        logger.info("repaired out of sync conversation! (\(groupID.safeForLoggingDescription))")
+        logger.info("repaired out of sync conversation!", attributes: groupID.safeAttributes)
 
         await appendGapSystemMessage(
             in: conversation,
             context: context
         )
 
-        logger.info("inserted gap system message in conversation (\(groupID.safeForLoggingDescription))")
+        logger.info("inserted gap system message in conversation", attributes: groupID.safeAttributes)
     }
 
     private func appendGapSystemMessage(
@@ -1091,13 +1073,13 @@ public final class MLSService: MLSServiceInterface {
         guard let context else { return }
 
         do {
-            logger.info("repairing out of sync subgroup... (parent: \(parentGroupID.safeForLoggingDescription))")
+            logger.info("repairing out of sync subgroup...", attributes: parentGroupID.safeAttributes)
 
             guard let conversationInfo = await fetchConversationInfo(
                 with: parentGroupID,
                 in: context
             ) else {
-                logger.warn("conversation not found (\(parentGroupID.safeForLoggingDescription))")
+                logger.warn("conversation not found", attributes: parentGroupID.safeAttributes)
                 return
             }
 
@@ -1158,9 +1140,11 @@ public final class MLSService: MLSServiceInterface {
             let allMLSConversations = await context.perform { ZMConversation.fetchMLSConversations(in: context) }
 
             var outOfSyncConversations = [ZMConversation]()
-            for conversation in allMLSConversations {
-                guard await self.isConversationOutOfSync(conversation, coreCrypto: coreCrypto, context: context)
-                else { continue }
+            for conversation in allMLSConversations where await self.isConversationOutOfSync(
+                conversation,
+                coreCrypto: coreCrypto,
+                context: context
+            ) {
                 outOfSyncConversations.append(conversation)
             }
             return outOfSyncConversations
@@ -1184,7 +1168,7 @@ public final class MLSService: MLSServiceInterface {
     ) async -> Bool {
         var groupID: MLSGroupID?
         var epoch: UInt64?
-
+        var conversationID: UUID?
         await context.perform {
             if let subgroup {
                 groupID = subgroup.groupID
@@ -1193,18 +1177,25 @@ public final class MLSService: MLSServiceInterface {
                 groupID = conversation.mlsGroupID
                 epoch = conversation.epoch
             }
+            conversationID = conversation.remoteIdentifier
         }
         guard let groupID, let epoch else { return false }
 
         do {
             let localEpoch = try await coreCrypto.conversationEpoch(conversationId: groupID.conversationId)
 
-            logger.info("epochs(remote: \(epoch), local: \(localEpoch)) for (\(groupID.safeForLoggingDescription))")
+            logger.info(
+                "remote epoch: \(epoch) - local epoch: \(localEpoch)",
+                attributes: groupID.safeAttributes,
+                [.conversationId: conversationID?.safeForLoggingDescription ?? "<nil>"]
+            )
             return localEpoch < epoch
         } catch {
             logger
-                .info(
-                    "cannot resolve conversation epoch \(String(describing: error)) for (\(groupID.safeForLoggingDescription))"
+                .error(
+                    "cannot resolve conversation epoch \(String(describing: error))",
+                    attributes: groupID.safeAttributes,
+                    [.conversationId: conversationID?.safeForLoggingDescription ?? "<nil>"]
                 )
             return false
         }
@@ -1355,192 +1346,27 @@ public final class MLSService: MLSServiceInterface {
         subconversationType: SubgroupType?,
         context: CoreCryptoContextProtocol?
     ) async throws -> [MLSDecryptResult] {
-        typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
-
-        do {
-            return try await decryptionService.decrypt(
-                message: message,
-                for: groupID,
-                subconversationType: subconversationType,
-                context: context
-            )
-        } catch DecryptionError.wrongEpoch {
-            Task.detached { [self] in
-                // ⚠️ Important:
-                // Run in detached Task to avoid deadlock:
-                // `fetchAndRepairGroupIfPossible` internally triggers quick sync via `recoverWithQuickSync()`.
-                // If this is called during an ongoing quick sync, awaiting it directly would deadlock.
-                await fetchAndRepairGroupIfPossible(with: groupID)
-            }
-            throw DecryptionError.wrongEpoch
-        } catch {
-            throw error
-        }
+        try await decryptionService.decrypt(
+            message: message,
+            for: groupID,
+            subconversationType: subconversationType,
+            context: context
+        )
     }
 
     // MARK: - Pending proposals
 
-    enum MLSCommitPendingProposalsError: Error {
-
-        case failedToCommitPendingProposals
-
-    }
-
-    private var lastExecutionTime = Date.distantPast
-    private let throttleInterval: TimeInterval = 2.0 // 2 seconds throttle
-
-    public func commitPendingProposalsIfNeeded() async {
-        let now = Date.now
-
-        guard now.timeIntervalSince(lastExecutionTime) > throttleInterval else {
-            return // Ignore call if within the throttle period
-        }
-
-        lastExecutionTime = now
-
-        await commitPendingProposals()
-    }
-
-    func commitPendingProposals() async {
-        guard let context else {
-            return
-        }
-
-        logger.info("committing any scheduled pending proposals")
-
-        let groupsWithPendingCommits = await sortedGroupsWithPendingCommits()
-
-        logger.info("\(groupsWithPendingCommits.count) groups with scheduled pending proposals")
-
-        // Committing proposals for each group is independent and should not wait for
-        // each other.
-        await withTaskGroup(of: Void.self) { taskGroup in
-            for (groupID, timestamp) in groupsWithPendingCommits {
-                taskGroup.addTask { [self] in
-                    do {
-                        if timestamp.isInThePast {
-                            logger.info(
-                                "commit scheduled in the past, committing...",
-                                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-                            )
-                            try await commitPendingProposals(in: groupID)
-                        } else {
-                            logger.info(
-                                "commit scheduled in the future, waiting...",
-                                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-                            )
-
-                            let timeIntervalSinceNow = timestamp.timeIntervalSinceNow
-                            if timeIntervalSinceNow > 0 {
-                                try await Task.sleep(nanoseconds: timeIntervalSinceNow.nanoseconds)
-                            }
-
-                            let isSelfAnActiveMember = await context.perform {
-                                let conversation = ZMConversation.fetch(with: groupID, in: context)
-                                return conversation?.isSelfAnActiveMember ?? false
-                            }
-
-                            guard isSelfAnActiveMember else {
-                                logger.info(
-                                    "cancelling commit as the user is no longer a member",
-                                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-                                )
-                                return
-                            }
-
-                            logger.info(
-                                "scheduled commit is ready, committing...",
-                                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-                            )
-                            try await commitPendingProposals(in: groupID)
-                        }
-
-                    } catch {
-                        logger.error(
-                            "failed to commit pending proposals: \(String(describing: error))",
-                            attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
-                        )
-                    }
-                }
-            }
-        }
-        logger.debug("end any scheduled pending proposals")
-    }
-
-    private func sortedGroupsWithPendingCommits() async -> [(MLSGroupID, Date)] {
-        guard let context else {
-            return []
-        }
-
-        var result: [(MLSGroupID, Date)] = []
-
-        let groupIDsAndProposalDatesArray: [(MLSGroupID, Date)] = await context.perform {
-            ZMConversation.fetchConversationsWithPendingProposals(
-                in: context
-            ).filter(
-                \.isSelfAnActiveMember
-            ).compactMap {
-                guard
-                    let groupID = $0.mlsGroupID,
-                    let proposalDate = $0.commitPendingProposalDate
-                else {
-                    return nil
-                }
-                return (groupID, proposalDate)
-            }
-        }
-
-        for (groupID, timestamp) in groupIDsAndProposalDatesArray {
-            // The pending proposal will always fail and cause
-            // recovery too many recovery syncs.
-            guard !brokenGroupIDs.contains(groupID) else {
-                continue
-            }
-
-            result.append((groupID, timestamp))
-
-            // The pending proposal might be for the subconversation,
-            // so include it just in case.
-            if let subgroupID = await subconversationGroupIDRepository.fetchSubconversationGroupID(
-                forType: .conference,
-                parentGroupID: groupID
-            ) {
-                result.append((subgroupID, timestamp))
-            }
-        }
-
-        return result.sorted { lhs, rhs in
-            let (lhsCommitDate, rhsCommitDate) = (lhs.1, rhs.1)
-            return lhsCommitDate <= rhsCommitDate
-        }
-    }
-
-    private func commitPendingProposalsIfNeeded(in groupID: MLSGroupID) async throws {
-        guard existsPendingProposals(in: groupID) else { return }
-        // Sending a message while there are pending proposals will result in an error,
-        // so commit any first.
-        logger.info("preemptively committing pending proposals in group (\(groupID.safeForLoggingDescription))")
-        try await commitPendingProposals(in: groupID)
-        logger.info("success: committed pending proposals in group (\(groupID.safeForLoggingDescription))")
-    }
-
-    private func existsPendingProposals(in groupID: MLSGroupID) -> Bool {
-        guard let context else { return false }
-
-        var groupHasPendingProposals = false
-
-        context.performAndWait {
-            if let conversation = ZMConversation.fetch(with: groupID, in: context) {
-                groupHasPendingProposals = conversation.commitPendingProposalDate != nil
-            }
-        }
-
-        return groupHasPendingProposals
-    }
-
     public func commitPendingProposals(in groupID: MLSGroupID) async throws {
-        try await retryOnCommitFailure(for: groupID) { [weak self] in
-            try await self?.internalCommitPendingProposals(in: groupID)
+        try await commitPendingProposals(in: groupID, skipRetry: false)
+    }
+
+    public func commitPendingProposals(in groupID: MLSGroupID, skipRetry: Bool) async throws {
+        if skipRetry {
+            try await internalCommitPendingProposals(in: groupID)
+        } else {
+            try await retryOnCommitFailure(for: groupID) { [weak self] in
+                try await self?.internalCommitPendingProposals(in: groupID)
+            }
         }
     }
 
@@ -1548,7 +1374,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("committing pending proposals in: \(groupID.safeForLoggingDescription)")
             try await mlsActionExecutor.commitPendingProposals(in: groupID)
-            clearPendingProposalCommitDate(for: groupID)
+            await clearPendingProposalCommitDate(for: groupID)
             delegate?.mlsServiceDidCommitPendingProposal(for: groupID)
         } catch {
             logger
@@ -1559,12 +1385,12 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func clearPendingProposalCommitDate(for groupID: MLSGroupID) {
+    private func clearPendingProposalCommitDate(for groupID: MLSGroupID) async {
         guard let context else {
             return
         }
 
-        context.performAndWait {
+        await context.perform {
             let conversation = ZMConversation.fetch(with: groupID, in: context)
             conversation?.commitPendingProposalDate = nil
         }
@@ -1579,19 +1405,9 @@ public final class MLSService: MLSServiceInterface {
 
     enum RecoveryStrategy: Equatable {
 
-        /// Perform a quick sync, then retry the action in its entirety.
+        /// Retry the action in its entirety.
         ///
-        /// Core Crypto can not automatically recover by itself. It needs
-        /// to process incoming handshake messages then generate a new commit.
-
-        case retryAfterQuickSync
-
-        /// Repair (re-join) the group and retry the action
-        ///
-        /// We may have missed a few commits so we will rejoin the group
-        /// and try again.
-
-        case retryAfterRepairingGroup
+        case retryAfterBackoff
 
         /// Add the missing users to the group, then retry the action in
         /// its entirety.
@@ -1625,10 +1441,8 @@ public final class MLSService: MLSServiceInterface {
             }
 
             switch error {
-            case .mlsClientMismatch, .mlsCommitMissingReferences:
-                self = .retryAfterQuickSync
-            case .mlsStaleMessage:
-                self = .retryAfterRepairingGroup
+            case .mlsClientMismatch, .mlsCommitMissingReferences, .mlsStaleMessage:
+                self = .retryAfterBackoff
             case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
                 self = .resetBrokenMLSConversation
             case let .groupOutOfSync(missingUsers):
@@ -1654,48 +1468,19 @@ public final class MLSService: MLSServiceInterface {
             try await operation()
         } catch let CoreCryptoError.Mls(.MessageRejected(reason: reason)) {
             switch RecoveryStrategy(from: reason) {
-            case .retryAfterQuickSync:
-                logger.warn(
-                    "failed to send commit, syncing then retrying operation...",
-                    attributes: logAttributes
-                )
-                try await mlsSyncDelegate?.recoverWithIncrementalSync()
-                logger.info(
-                    "sync finished, retrying operation...",
-                    attributes: logAttributes
-                )
+            case .retryAfterBackoff:
+                var attempt = 1
 
-                guard retryCount <= maxRetryAttempts else {
-                    // If MLS conversation reset is DISABLED we quarantine the group to avoid repeated commit attempts
-                    // otherwise assume that things will sort themselves out through conversation reset.
-                    let feature = await featureRepository.fetchAllowedGlobalOperations()
-                    if feature.status == .disabled || feature.config.mlsConversationReset == false {
-                        brokenGroupIDs.insert(groupID)
+                try await BackoffRetrier(policy: .init(maxRetries: 2), monitoringNetwork: false).retry { [logger] in
+                    defer {
+                        attempt += 1
                     }
-
-                    throw MLSRetryError.retryLimitReached
+                    logger.warn(
+                        "failed to send commit due to \(reason). retrying operation with backoff - attempt: \(attempt)...",
+                        attributes: logAttributes
+                    )
+                    try await operation()
                 }
-
-                var currentRetryCount = retryCount
-                currentRetryCount += 1
-
-                try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
-
-            case .retryAfterRepairingGroup:
-                logger.warn(
-                    "failed to send commit, repairing group then retrying operation...",
-                    attributes: logAttributes
-                )
-                await fetchAndRepairGroup(
-                    with: groupID,
-                    shouldPerformIncrementalSync: true
-                )
-
-                logger.info(
-                    "repair finished, retrying operation...",
-                    attributes: logAttributes
-                )
-                try await operation()
 
             case let .retryAfterAddingMissingUsers(missingUsers):
                 guard retryCount <= maxRetryAttempts else {
@@ -1738,7 +1523,6 @@ public final class MLSService: MLSServiceInterface {
                         "no need to apply recovery strategy for reset broken MLS conversation, FF is OFF",
                         attributes: logAttributes
                     )
-                    brokenGroupIDs.insert(groupID)
                     throw MLSRetryError.nonRecoverableError(reason)
                 }
 
@@ -1751,7 +1535,6 @@ public final class MLSService: MLSServiceInterface {
                     epoch = await fetchConversationInfo(with: groupID, in: context)?.epoch ?? 0
                 }
                 await resetBrokenMLSConversationDelegate?.didCatchBrokenMLSConversation(groupID: groupID, epoch: epoch)
-                brokenGroupIDs.remove(groupID)
 
             case .giveUp:
                 logger.warn(
@@ -1978,6 +1761,13 @@ public final class MLSService: MLSServiceInterface {
             parentQualifiedID: parentQualifiedID,
             parentGroupID: parentGroupID,
             subconversationType: subconversationType
+        )
+    }
+
+    public func conferenceSubconversation(parentGroupID: MLSGroupID) async -> MLSGroupID? {
+        await subconversationGroupIDRepository.fetchSubconversationGroupID(
+            forType: .conference,
+            parentGroupID: parentGroupID
         )
     }
 

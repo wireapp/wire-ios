@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireDataModel
 
 final class UserTypeTests_Materialize: ModelObjectsTests {
@@ -97,7 +98,7 @@ final class UserTypeTests_Materialize: ModelObjectsTests {
         teamIdentifier: UUID?
     ) -> ZMSearchUser {
         ZMSearchUser(
-            contextProvider: coreDataStack,
+            viewContext: coreDataStack.viewContext,
             name: name.capitalized,
             handle: name.lowercased(),
             accentColor: .amber,

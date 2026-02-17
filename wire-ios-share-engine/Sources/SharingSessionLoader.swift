@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ public struct SharingSessionLoader {
             throw Failure.buildIsBlacklisted(buildNumber: buildNumber)
         }
 
-        guard !shouldEnableSyncV2(metadata: metadata) else {
+        guard journal[.isSyncV2Enabled] else {
             throw Failure.mainAppRequired(message: "sync v2 should be enabled")
         }
 
@@ -249,13 +249,6 @@ public struct SharingSessionLoader {
         return await useCase.invoke()
     }
 
-    // TODO: [WPB-17732] de-duplicate when implementing NSE
-    private func shouldEnableSyncV2(metadata: ResolvedBackendMetadata) -> Bool {
-        let isAvailable = metadata.apiVersion >= .minimumSyncV2CompatibleVersion
-        let isAlreadyEnabled = journal[.isSyncV2Enabled]
-        return isAvailable && !isAlreadyEnabled
-    }
-
     private func makeSharingSession(
         selfClientID: String,
         environment: BackendEnvironment2,
@@ -384,7 +377,8 @@ public struct SharingSessionLoader {
             mlsService: mlsService,
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            faultyMLSRemovalKeysByDomain: [:] // not relevant
         )
         let completionHandlers = ClientSessionComponent.CompletionHandlers(
             onProcessedCallEvent: { _ in },

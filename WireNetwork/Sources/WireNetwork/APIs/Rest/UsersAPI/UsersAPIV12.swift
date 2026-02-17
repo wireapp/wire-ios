@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ class UsersAPIV12: UsersAPIV11 {
     }
 }
 
-struct UserListResponseV12: Decodable, ToAPIModelConvertible {
+private struct UserListResponseV12: Decodable, ToAPIModelConvertible {
 
     /// List of users which were found and successfully retrieved.
 
@@ -81,7 +81,7 @@ struct UserListResponseV12: Decodable, ToAPIModelConvertible {
     }
 }
 
-struct UserResponseV12: Decodable, ToAPIModelConvertible {
+private struct UserResponseV12: Decodable, ToAPIModelConvertible {
 
     let id: QualifiedIDV0
     let name: String
@@ -136,7 +136,7 @@ struct UserResponseV12: Decodable, ToAPIModelConvertible {
 
 }
 
-enum UserTypeV12: String, Decodable {
+private enum UserTypeV12: String, Decodable {
 
     case regular
     case app

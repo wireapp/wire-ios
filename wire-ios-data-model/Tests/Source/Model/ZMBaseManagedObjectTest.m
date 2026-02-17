@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@
         return;
     }
     [self.uiMOC resetContextType];
-    [self.uiMOC markAsSyncContext];
+    [self.uiMOC performMarkAsSyncContext];
     block();
     [self.uiMOC resetContextType];
     [self.uiMOC markAsUIContext];
@@ -74,7 +74,7 @@
     [self.syncMOC markAsUIContext];
     block();
     [self.syncMOC resetContextType];
-    [self.syncMOC markAsSyncContext];
+    [self.syncMOC performMarkAsSyncContext];
 }
 
 - (void)setUp;
@@ -136,11 +136,6 @@
 - (NSManagedObjectContext *)syncMOC
 {
     return self.coreDataStack.syncContext;
-}
-
-- (NSManagedObjectContext *)searchMOC
-{
-    return self.coreDataStack.searchContext;
 }
 
 - (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistentStore

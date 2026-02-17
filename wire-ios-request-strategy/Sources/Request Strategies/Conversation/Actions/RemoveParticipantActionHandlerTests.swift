@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireRequestStrategy
 
 class RemoveParticipantActionHandlerTests: MessagingTestBase {
@@ -62,7 +63,9 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
 
     override func tearDown() {
         sut = nil
-
+        service = nil
+        user = nil
+        conversation = nil
         super.tearDown()
     }
 

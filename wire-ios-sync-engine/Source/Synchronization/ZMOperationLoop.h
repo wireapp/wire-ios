@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,11 +27,7 @@
 
 @class ZMPersistentCookieStorage;
 @class OperationStatus;
-@class SyncStatus;
-@class PushNotificationStatus;
 @class ZMSyncStrategy;
-
-extern NSString * const ZMPushChannelIsOpenKey;
 
 @interface ZMOperationLoop : NSObject <TearDownCapable>
 
@@ -45,10 +41,7 @@ extern NSString * const ZMPushChannelIsOpenKey;
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithTransportSession:(id<TransportSessionType>)transportSession
                          requestStrategy:(id<RequestStrategy>)requestStrategy
-                    updateEventProcessor:(id<UpdateEventProcessor>)updateEventProcessor
                          operationStatus:(OperationStatus *)operationStatus
-                              syncStatus:(SyncStatus *)syncStatus
-                  pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
                   isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled

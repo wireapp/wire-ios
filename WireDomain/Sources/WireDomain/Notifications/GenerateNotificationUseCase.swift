@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -82,6 +82,10 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
                 return try await conversationEventBuilder.buildContent(
                     event: conversationEvent
                 )
+            } catch ConversationMessageAddEventNotificationBuilder.Failure.unknownMessageContent {
+                // Can't show notifications for unknown message types,
+                // so just ignore.
+                return nil
             } catch {
                 var attributes = LogAttributes.newNSE + .safePublic
                 attributes[.eventId] = eventID.safeForLoggingDescription

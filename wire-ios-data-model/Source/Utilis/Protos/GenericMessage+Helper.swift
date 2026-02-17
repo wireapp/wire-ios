@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -231,8 +231,13 @@ public extension GenericMessage {
         case let .text(data):
             return data
         case let .edited(messageEdit):
-            if case let .text(data)? = messageEdit.content {
+            switch messageEdit.content {
+            case let .text(data):
                 return data
+            case let .multipart(data) where data.hasText:
+                return data.text
+            default:
+                return nil
             }
         case let .ephemeral(ephemeral):
             if case let .text(data)? = ephemeral.content {
@@ -511,6 +516,20 @@ extension Location {
     }
 }
 
+// MARK: - Multipart
+
+public extension Multipart {
+    init(
+        text: Text,
+        attachments: [Attachment]
+    ) {
+        self = Multipart.with {
+            $0.text = text
+            $0.attachments = attachments
+        }
+    }
+}
+
 // MARK: - Text
 
 public extension Text {
@@ -652,6 +671,13 @@ public extension GenericMessageProtocol.MessageEdit {
         self = MessageEdit.with {
             $0.replacingMessageID = replacingMessageID.transportString()
             $0.text = text
+        }
+    }
+
+    init(replacingMessageID: UUID, multipart: Multipart) {
+        self = MessageEdit.with {
+            $0.replacingMessageID = replacingMessageID.transportString()
+            $0.multipart = multipart
         }
     }
 }

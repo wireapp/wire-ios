@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,14 +39,12 @@
                           notificationsDispatcher:(NotificationDispatcher * _Nonnull)notificationsDispatcher
                                   operationStatus:(OperationStatus * _Nonnull)operationStatus
                                       application:(id<ZMApplication> _Nonnull)application
-                                strategyDirectory:(id<StrategyDirectoryProtocol> _Nonnull)strategyDirectory
-                           eventProcessingTracker:(id<EventProcessingTrackerProtocol> _Nonnull)eventProcessingTracker;
+                                strategyDirectory:(id<StrategyDirectoryProtocol> _Nonnull)strategyDirectory;
 
 - (void)tearDown;
 - (void)updateStrategyClientContextChangeTrackers;
 
 @property (nonatomic, readonly, nonnull) NSManagedObjectContext *syncMOC;
-@property (nonatomic, nullable) id<EventProcessingTrackerProtocol> eventProcessingTracker;
 @property (nonatomic, readonly, nullable) id<StrategyDirectoryProtocol> strategyDirectory;
 @end
 

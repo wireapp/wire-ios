@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -365,10 +365,10 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         callerName: String,
         hasVideo: Bool
     ) {
-        logger.info("report incoming call preemptively")
+        logger.info("report incoming call preemptively", attributes: .safePublic)
 
         guard !callRegister.callExists(for: handle) else {
-            logger.critical("fail: report incoming call preemptively: call doesn't exist")
+            logger.critical("fail: report incoming call preemptively: call doesn't exist", attributes: .safePublic)
             return
         }
 
@@ -401,10 +401,10 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         handle: CallHandle,
         reason: CXCallEndedReason
     ) {
-        logger.info("report call ended preemptively")
+        logger.info("report call ended preemptively", attributes: .safePublic)
 
         guard let call = callRegister.lookupCall(by: handle) else {
-            logger.critical("fail: report call ended preemptively: call doesn't exist")
+            logger.critical("fail: report call ended preemptively: call doesn't exist", attributes: .safePublic)
             return
         }
 

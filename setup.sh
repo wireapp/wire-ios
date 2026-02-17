@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 #
 # Wire
-# Copyright (C) 2025 Wire Swiss GmbH
+# Copyright (C) 2026 Wire Swiss GmbH
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@ set -Eeuo pipefail
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
-# ----------------------------------------------------------------------
 
 
 #
@@ -47,6 +46,11 @@ die "Xcode version for the repository should be at least ${repository_xcode_vers
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 
+echo "ℹ️ Installing Homebrew dependencies from Brewfile..."
+# Install dependencies from Brewfile (respects CI environment variable)
+brew bundle install
+echo ""
+
 if [[ -n "${CI-}" ]]; then
     echo "Running on CI, skipping git lfs install"
 elif command -v git-lfs > /dev/null 2>&1; then
@@ -73,15 +77,6 @@ xcrun --sdk macosx swift package --package-path scripts resolve
 xcrun --sdk macosx swift package --package-path WirePlugins resolve
 echo ""
 
-echo "ℹ️ Installing ImageMagick..."
-if [[ -n "${CI-}" ]]; then
-    # CI
-    which identify || brew install ImageMagick
-else
-    # Local Machine
-    echo "Skipping ImageMagick install because not running on CI"
-fi
-echo ""
 
 echo "ℹ️ Installing AWS CLI..."
 if [[ -n "${CI-}" ]]; then

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import Foundation
 import WireLogging
 import WireNetwork
 import WireSystem
+import WireUtilities
 
 public struct IncrementalSync: IncrementalSyncProtocol {
 
@@ -36,6 +37,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let messageStore: any MessageLocalStoreProtocol
     private let processor: any UpdateEventProcessorProtocol
     private let databaseSaver: any DatabaseSaverProtocol
+    private let liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
     private let logger = WireLogger.sync
     private let journal: Journal
@@ -51,6 +53,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         processor: any UpdateEventProcessorProtocol,
         databaseSaver: any DatabaseSaverProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
+        liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>,
         journal: Journal,
         mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
     ) {
@@ -63,6 +66,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.processor = processor
         self.databaseSaver = databaseSaver
         self.syncStateSubject = syncStateSubject
+        self.liveBrokenGroupSubject = liveBrokenGroupSubject
         self.journal = journal
         self.mlsGroupRepairAgent = mlsGroupRepairAgent
     }
@@ -171,6 +175,14 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     continue
                 }
 
+                if DeveloperFlag.ignoreIncomingEvents.isOn {
+                    logger.warn(
+                        "ignore incoming events",
+                        attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
+                    )
+                    continue
+                }
+
                 // Decrypt.
                 logger.debug(
                     "decrypting live event envelope",
@@ -183,7 +195,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
                 let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
                 if !brokenMLSGroupIDs.isEmpty {
-                    journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
+                    journal.addValues(brokenMLSGroupIDs, for: .brokenMLSGroupIDs)
+                    liveBrokenGroupSubject.send(brokenMLSGroupIDs)
                 }
 
                 let index: Int64

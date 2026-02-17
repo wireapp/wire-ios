@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@
 #import <WireDataModel/WireDataModel-Swift.h>
 
 NSString * const IsSyncContextKey = @"ZMIsSyncContext";
-NSString * const IsSearchContextKey = @"ZMIsSearchContext";
 NSString * const IsUserInterfaceContextKey = @"ZMIsUserInterfaceContext";
 NSString * const IsEventContextKey = @"ZMIsEventDecoderContext";
 
@@ -88,7 +87,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 
 - (BOOL)zm_isValidContext
 {
-    return self.zm_isSyncContext || self.zm_isUserInterfaceContext || self.zm_isSearchContext;
+    return self.zm_isSyncContext || self.zm_isUserInterfaceContext;
 }
 
 - (id)validUserInfoValueOfClass:(Class)class forKey:(NSString *)key
@@ -126,11 +125,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 - (BOOL)zm_isUserInterfaceContext
 {
     return [[self validUserInfoValueOfClass:[NSNumber class] forKey:IsUserInterfaceContextKey] boolValue];
-}
-
-- (BOOL)zm_isSearchContext
-{
-    return [self.userInfo[IsSearchContextKey] boolValue];
 }
 
 - (NSManagedObjectContext*)zm_syncContext
@@ -532,17 +526,15 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
     [self.userInfo removeObjectForKey:IsSaveDisabled];
 }
 
-- (void)markAsSyncContext;
+- (void)markAsSyncContext
 {
-    [self performBlockAndWait:^{
-        self.userInfo[IsSyncContextKey] = @YES;
-    }];
+    self.userInfo[IsSyncContextKey] = @YES;
 }
 
-- (void)markAsSearchContext;
+- (void)performMarkAsSyncContext
 {
     [self performBlockAndWait:^{
-        self.userInfo[IsSearchContextKey] = @YES;
+        [self markAsSyncContext];
     }];
 }
 
@@ -558,7 +550,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
     [self performBlockAndWait:^{
         self.userInfo[IsSyncContextKey] = @NO;
         self.userInfo[IsUserInterfaceContextKey] = @NO;
-        self.userInfo[IsSearchContextKey] = @NO;
     }];
 }
 

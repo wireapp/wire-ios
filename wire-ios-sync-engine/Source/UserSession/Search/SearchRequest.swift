@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 
 public struct SearchOptions: OptionSet {
+
     public let rawValue: Int
 
     /// Users you are connected to via connection request.
@@ -49,6 +49,7 @@ public struct SearchOptions: OptionSet {
     /// Services which are enabled in your team.
 
     public static let services = SearchOptions(rawValue: 1 << 6)
+    // TODO: [WPB-20362] consider renaming to `bots` and adding `apps`
 
     /// Users from federated servers.
 
@@ -65,6 +66,7 @@ public struct SearchOptions: OptionSet {
 }
 
 public extension SearchOptions {
+
     mutating func updateForSelfUserTeamRole(selfUser: UserType) {
         if selfUser.teamRole == .partner {
             insert(.excludeNonActiveTeamMembers)
@@ -73,6 +75,7 @@ public extension SearchOptions {
             insert(.excludeNonActivePartners)
         }
     }
+
 }
 
 public struct SearchRequest {
@@ -168,4 +171,5 @@ private extension String {
         guard let normalized = self.normalizedForSearch() as String? else { return "" }
         return normalized.trimmingCharacters(in: .whitespaces)
     }
+
 }

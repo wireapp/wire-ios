@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,6 +37,11 @@ struct MessageReactionMetadata: Equatable {
 // MARK: - MessageReactionsCell
 
 final class MessageReactionsCell: UIView, ConversationMessageCell {
+
+    struct Configuration {
+        let reactions: [MessageReactionMetadata]
+        let userSession: UserSession
+    }
 
     // MARK: - Properties
 
@@ -76,15 +81,13 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     // MARK: - configure method
 
-    func configure(
-        with reactions: [MessageReactionMetadata],
-        animated: Bool
-    ) {
-        let reactionToggles = reactions.map { reaction in
+    func configure(with object: Configuration, animated: Bool) {
+        let reactionToggles = object.reactions.map { reaction in
             ReactionToggle(
                 emoji: reaction.emoji,
                 count: reaction.count,
-                isToggled: reaction.isSelfUserReacting
+                isToggled: reaction.isSelfUserReacting,
+                userSession: object.userSession
             ) { [weak self] in
                 guard
                     let self,

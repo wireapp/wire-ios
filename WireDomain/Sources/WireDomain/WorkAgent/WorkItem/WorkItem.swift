@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ protocol WorkItem: Sendable {
 
     /// A unique identifier for this item.
 
-    var id: UUID { get }
+    var id: String { get }
 
     /// The urgency or importance of this ticket.
 

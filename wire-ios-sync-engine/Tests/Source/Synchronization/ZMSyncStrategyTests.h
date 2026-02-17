@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,8 +26,6 @@
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 #import "MessagingTest.h"
 
-@class MockSyncStateDelegate;
-@class MockEventConsumer;
 @class MockContextChangeTracker;
 
 
@@ -35,10 +33,8 @@
 
 @property (nonatomic) ZMSyncStrategy *sut;
 
-@property (nonatomic) MockSyncStateDelegate *syncStateDelegate;
 @property (nonatomic) OperationStatus *operationStatus;
 
-@property (nonatomic) MockEventConsumer *mockEventConsumer;
 @property (nonatomic) MockContextChangeTracker *mockContextChangeTracker;
 
 @property (nonatomic) NSFetchRequest *fetchRequestForTrackedObjects1;

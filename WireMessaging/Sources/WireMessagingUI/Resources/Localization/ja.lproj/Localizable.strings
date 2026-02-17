@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 "general.error.noInternet.message." = "ネットワークに問題があるようです。後でもう一度お試しください。";
 "general.create" = "新規作成";
 "general.cancel" = "キャンセル";
+"general.done" = "完了";
 
 // MARK: - Channel Access level
 "channel_access_level.public" = "Public";
@@ -81,8 +82,8 @@
 
 "conversation.creationForm.readReceipts.toggle" = "開封通知";
 "conversation.creationForm.readReceipts.description" = "この設定がオンのとき、この会話内のメッセージが読まれたかどうか確認できます。";
-"conversation.creationForm.wireCells.toggle" = "File collaboration";
-"conversation.creationForm.wireCells.description" = "Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone.";
+"conversation.creationForm.wireCells.toggle" = "Shared Drive";
+"conversation.creationForm.wireCells.description" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
 "conversation.creationForm.wireCells.learnMore" = "もっと知る";
 
 
@@ -110,34 +111,47 @@
 "conversation.draft.attachmentMenu.remove" = "Remove File";
 
 // MARK: - Conversation Files View
-"conversation.wireCells.files.navigationTitle" = "ファイル";
-"conversation.wireCells.allFiles.navigationTitle" = "All Files";
+"conversation.wireCells.files.navigationTitle" = "Shared Drive";
+"conversation.wireCells.allFiles.navigationTitle" = "Drive";
 "conversation.wireCells.files.item.subtitle" = "%@ by %@";
 "conversation.wireCells.files.loadMore.title" = "Load more";
 "conversation.wireCells.files.item.menu.open" = "開く";
+"conversation.wireCells.files.item.menu.shareLink" = "Share";
 "conversation.wireCells.files.item.menu.download" = "ダウンロード";
+"conversation.wireCells.files.item.menu.editFile" = "Edit file";
 "conversation.wireCells.files.item.menu.rename" = "名前の変更";
 "conversation.wireCells.files.item.menu.moveToFolder" = "Move to folder";
 "conversation.wireCells.files.item.menu.addOrRemoveTags" = "Add or remove tags";
+"conversation.wireCells.files.item.menu.delete" = "Delete Permanently";
+"conversation.wireCells.files.item.menu.versionHistory" = "Version history";
+"conversation.wireCells.files.item.deleteConfirmation.title" = "This will permanently delete the file %@ for all participants. Everyone will lose access and there is no way to recover the file.";
+"conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Delete Permanently";
 "conversation.wireCells.files.item.menu.delete" = "削除";
 "conversation.wireCells.files.item.deleteFileConfirmation.title" = "The file \"%@\" will move to this conversation's recycle bin.";
 "conversation.wireCells.files.item.deleteFolderConfirmation.title" = "The folder \"%@\" will move to this conversation's recycle bin.";
 "conversation.wireCells.files.item.deleteConfirmation.button" = "削除";
 "conversation.wireCells.files.noData.title" = "There are no files or folders yet";
 "conversation.wireCells.files.noData.message" = "You'll find all files and folders shared in this conversation here.";
-"conversation.wireCells.allFiles.noData.message" = "You'll find all files and folders shared across your conversations here.";
+"conversation.wireCells.files.noData.learnMore" = "Learn more about Shared Drive";
+"conversation.wireCells.allFiles.noData.title" = "There are no files yet";
+"conversation.wireCells.allFiles.noData.message" = "For conversations that use shared Drive, you'll find all files here.";
+"conversation.wireCells.allFiles.noData.learnMore" = "もっと知る";
 "conversation.wireCells.files.pendingCells.title" = "Files are loading";
 "conversation.wireCells.files.pendingCells.message" = "Your documents and media files will be available here once we've uploaded all files and folders.";
 "conversation.wireCells.files.error.title" = "Can't load files";
 "conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
 "conversation.wireCells.files.error.reload" = "Reload";
 "conversation.wireCells.files.search.title" = "Search files";
-"conversation.wireCells.files.list.newFolder" = "New folder";
+"conversation.wireCells.files.list.createFolder" = "Create folder";
+"conversation.wireCells.files.list.createFile" = "Create file";
+"conversation.wireCells.files.list.createFile.presentation" = "Presentation";
+"conversation.wireCells.files.list.createFile.spreadsheet" = "Spreadsheet";
+"conversation.wireCells.files.list.createFile.document" = "Document";
 "conversation.wireCells.files.newFolder.title" = "フォルダ名";
 "conversation.wireCells.files.newFolder.placeholder" = "Enter folder name";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Create folder";
+"conversation.wireCells.files.newFile.navigationTitle" = "Create %@ file";
 "conversation.wireCells.files.newFolder.folderNameTooLongError" = "Use a shorter folder name (most 64 characters)";
-"conversation.wireCells.files.newFolder.wrongCharacterError" = "Use a name without \"/\"";
 "conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "A folder with that name already exists";
 "conversation.wireCells.files.fileName.title" = "ファイル名";
 "conversation.wireCells.files.folderName.title" = "フォルダ名";
@@ -145,13 +159,14 @@
 "conversation.wireCells.files.renameFolder.navigationTitle" = "Rename folder";
 "conversation.wireCells.files.renameFile.filenameTooLongError" = "Use a shorter file name (most 64 characters)";
 "conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Use a shorter folder name (most 64 characters)";
-"conversation.wireCells.files.renameFile.wrongCharacterError" = "Use a name without \"/\" or \".\"";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Don't start with a . and don't use {0}";
 "conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "A file with that name already exists";
 "conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "A folder with that name already exists";
 "conversation.wireCells.files.renameFile.placeholder" = "Enter file name";
 "conversation.wireCells.files.renameFolder.placeholder" = "Enter folder name";
 "conversation.wireCells.files.openRecycleBin" = "Open recycle bin";
 "conversation.wireCells.recycleBin.navigationTitle" = "Recycle Bin";
+"conversation.wireCells.recycleBin.noData.learnMore" = "Learn more about Recycle Bin";
 "conversation.wireCells.recycleBin.noData.message" = "You'll find all deleted files and folders here.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Delete Permanently";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Delete Permanently";
@@ -180,13 +195,70 @@
 "conversation.wireCells.tags.error.nameTooLong" = "Use a shorter tag name (at most 30 characters)";
 "conversation.wireCells.tags.error.specialCharacters" = "Use a tag without special characters {0}";
 "conversation.wireCells.tags.error.saveFailedTitle" = "Unable to edit tags";
-"conversation.wireCells.tags.error.saveFailedMessage" = "Due to an error your tags could not be edited.";
+"conversation.wireCells.tags.error.saveFailedMessage" = "Something went wrong while editing the tags. Please try again.";
 "conversation.wireCells.tags.error.retryButton" = "Try again";
 "conversation.wireCells.files.moveToFolder.move" = "Move here";
 "conversation.wireCells.files.moveToFolder.noSubfolders" = "There are no subfolders in this folder.";
+
+// MARK: - Share Link View
+"conversation.wireCells.shareLink.title" = "Share via link";
+"conversation.wireCells.shareLink.description" = "Upload and share your file via a public link. All recipients can view and download it.";
+"conversation.wireCells.shareLink.createLinkToogle" = "Create public link";
+"conversation.wireCells.shareLink.linkSection.title" = "LINK SETTINGS (OPTIONAL)";
+"conversation.wireCells.shareLink.linkSection.passwordTitle" = "パスワード";
+"conversation.wireCells.shareLink.linkSection.expirationTitle" = "Expiration";
+"conversation.wireCells.shareLink.linkSection.passwordDescription" = "Set a password to restrict access.";
+"conversation.wireCells.shareLink.linkSection.expirationDescription" = "Link expires on a selected day.";
+"conversation.wireCells.shareLink.shareLinkButton" = "リンクを共有";
+"conversation.wireCells.shareLink.preparingLinkButton" = "Preparing Link…";
+"conversation.wireCells.shareLink.off" = "OFF";
+"conversation.wireCells.shareLink.on" = "ON";
+"conversation.wireCells.shareLink.expired" = "EXPIRED";
+"conversation.wireCells.shareLink.linkExpiredOn" = "Link expired on %@";
+
+// MARK: - Share Link Password View
+"conversation.wireCells.shareLink.password.title" = "パスワード";
+"conversation.wireCells.shareLink.password.description" = "People who want to access content via the link need to enter this password first.";
+"conversation.wireCells.shareLink.password.setPasswordToggle" = "パスワード設定";
+"conversation.wireCells.shareLink.password.generatePassword" = "Generate Password";
+"conversation.wireCells.shareLink.password.textfieldTitle" = "パスワード";
+"conversation.wireCells.shareLink.password.textfieldPrompt" = "Enter password";
+"conversation.wireCells.shareLink.password.sharePassword" = "Share Password";
+"conversation.wireCells.shareLink.password.resetPassword" = "パスワードをリセット";
+"conversation.wireCells.shareLink.password.removeConfirmation.title" = "Remove password?";
+"conversation.wireCells.shareLink.password.removeConfirmation.message" = "Anyone with the link can open the file and view its contents.";
+"conversation.wireCells.shareLink.password.removeConfirmation.button" = "削除";
+"conversation.wireCells.shareLink.password.noAccessToExisting.title" = "No access to existing password";
+"conversation.wireCells.shareLink.password.noAccessToExisting.message" = "After reinstalling Wire, you can't copy the set password. Yet, it is still valid.\n\nIf you didn't save the password, change it and reshare the updated link.";
+"conversation.wireCells.shareLink.password.noAccessToExisting.button" = "Change password";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.title" = "Unable to create password-secured link";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.message" = "Please check your network connection and try again.";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.action" = "Try again";
+
+// MARK: - Share Link Expiration View
+"conversation.wireCells.shareLink.expiration.title" = "Expiration";
+"conversation.wireCells.shareLink.expiration.addExpirationToggle" = "Add expiration";
+"conversation.wireCells.shareLink.expiration.description" = "The link expires automatically after the set date and time. People can't access the content anymore.";
+"conversation.wireCells.shareLink.expiration.datePickerTitle" = "Expires";
+"conversation.wireCells.shareLink.expiration.dateNotSupported" = "Date in the past";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.title" = "Unable to add expiration date";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.message" = "Please check your network connection and try again.";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.action" = "Try again";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "File not available";
 "conversation.message.attachment.previewNotAvailable" = "Unable to display preview";
 "conversation.message.attachment.unableToDownload" = "Unable to download file";
 "conversation.message.attachment.loadingContent" = "Loading content";
+
+// MARK: - Files versioning
+"conversation.wireCells.filesVersioning.navigationTitle" = "Version history";
+"conversation.wireCells.filesVersioning.currentFile" = "最新";
+"conversation.wireCells.filesVersioning.restoreAlertTitle" = "Restore version";
+"conversation.wireCells.filesVersioning.restoreAlertMessage" = "This copies the restored version and sets it as the current one. All previous versions remain available.";
+"conversation.wireCells.filesVersioning.restoreAlertAction" = "Restore";
+"conversation.wireCells.filesVersioning.restoreFailureAlertTitle" = "Unable to restore version";
+"conversation.wireCells.filesVersioning.restoreFailureAlertMessage" = "Something went wrong while restoring this version. Please try again.";
+"conversation.wireCells.filesVersioning.downloadVersion" = "Download version";
+"conversation.wireCells.filesVersioning.retry" = "Retry";
+"conversation.wireCells.filesVersioning.restoringVersion" = "Restoring version...";

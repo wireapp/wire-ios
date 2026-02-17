@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
     @Published public private(set) var isFormValid: Bool
 
     let teamsURL: URL
-    let isWireCellsEnabled: Bool
+    let isWireDriveEnabled: Bool
     private let onFormValidityUpdate: @Sendable (_ isValid: Bool) -> Void
     private let isUserPremium: Bool
     private var subscriptions = Set<AnyCancellable>()
@@ -99,7 +99,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
         guestsAllowed: Bool = true,
         readReceiptsEnabled: Bool = true,
         isUserPremium: Bool,
-        isWireCellsEnabled: Bool,
+        isWireDriveEnabled: Bool,
         teamsURL: URL,
         onFormValidityUpdate: @escaping @Sendable (_ isValid: Bool) -> Void
     ) {
@@ -114,7 +114,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
         self.guestsAllowed = guestsAllowed
         self.readReceiptsEnabled = readReceiptsEnabled
         self.isUserPremium = isUserPremium
-        self.isWireCellsEnabled = isWireCellsEnabled
+        self.isWireDriveEnabled = isWireDriveEnabled
         self.teamsURL = teamsURL
         self.onFormValidityUpdate = onFormValidityUpdate
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
     case channelsHistory
     case chatBubbles
-    case considerAppsFeatureFlag
     case consumableNotifications
     case createLegacyBackups
     case debugDuplicateObjects
@@ -33,23 +32,16 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceCRLExpiryAfterOneMinute
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
-    case multibackend
     case newRegistration
     case showCreateMLSGroupToggle
     case showUnreadConversationsFilter
     case skipMLSMessagesDecryption
     case useWireAuthentication
-    case wireCellsFolders
     case wireMeetings
-    case wireCellsCollabora
+    case lowKeyPackageCount
 
     public var description: String {
         switch self {
-        case .considerAppsFeatureFlag:
-            "Apps are not fully supported by the backend yet (e.g. no search endpoint available yet). However, some " +
-                "customers already have the apps feature flag enabled as a workaround for another issue." +
-                "If this toggle is off, the apps feature flag is ignored. Toggle it on for development."
-
         case .createLegacyBackups:
             "Don't use the cross-platform library when creating backups."
 
@@ -80,9 +72,6 @@ public enum DeveloperFlag: String, CaseIterable {
         case .disablePushChannelBatching:
             "Turn on to disable batching while app is live"
 
-        case .multibackend:
-            "Turn on to be able to log in with accounts from multiple backends"
-
         case .newRegistration:
             "Turn on to use the new registration flow"
 
@@ -101,11 +90,8 @@ public enum DeveloperFlag: String, CaseIterable {
         case .wireMeetings:
             "Turn on to enable Wire meetings"
 
-        case .wireCellsFolders:
-            "Turn on to enable Wire Cells folders"
-
-        case .wireCellsCollabora:
-            "Turn on to enable Collabora file editing in Wire Cells"
+        case .lowKeyPackageCount:
+            "Turn on to set the minimum number of packages to 1"
         }
     }
 
@@ -142,8 +128,6 @@ public enum DeveloperFlag: String, CaseIterable {
             "IgnoreIncomingEventsEnabled"
         case .useWireAuthentication:
             "WireAuthenticationEnabled"
-        case .multibackend:
-            "MultibackendEnabled"
         default:
             nil
         }

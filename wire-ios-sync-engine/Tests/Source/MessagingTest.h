@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) NSManagedObjectContext *uiMOC;
 @property (nonatomic, readonly) NSManagedObjectContext *syncMOC;
-@property (nonatomic, readonly) NSManagedObjectContext *searchMOC;
 @property (nonatomic, readonly) NSManagedObjectContext *eventMOC;
 @property (nonatomic, readonly) CoreDataStack *coreDataStack;
 @property (nonatomic, readonly) ApplicationMock<ZMApplication> *application;
@@ -88,7 +87,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MessagingTest (OTR)
 
 - (UserClient *)setupSelfClientInMoc:(NSManagedObjectContext *)moc;
-- (UserClient *)createSelfClient;
 
 @end
 

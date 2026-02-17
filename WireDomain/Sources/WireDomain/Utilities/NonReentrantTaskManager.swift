@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,13 +24,35 @@ import Foundation
 /// at any given time, regardless how many times the block is enqueued.
 /// Repeated invocations don't result in repeated executions.
 
-public actor NonReentrantTaskManager {
+public actor NonReentrantTaskManager<Success, Failure> where Success: Sendable, Failure: Error {
 
     private var state: TaskState = .idle
 
     public init() {}
 
-    public func performIfNeeded(block: @escaping @Sendable () async throws -> Void) async throws {
+    private enum TaskState {
+
+        case idle
+        case inFlight(Task<Success, Failure>)
+
+    }
+
+}
+
+// MARK: - Public API
+
+/// Due to limitations of `Task` - initializers are constrained to either `any Error` or `Never` type Failures - we need
+/// to provide two separate APIs for throwing and non-throwing implementations.
+
+public extension NonReentrantTaskManager where Failure == any Error {
+
+    /// Perform a non-reentrant async block that cannot throw.
+    ///
+    /// - Parameter block: The async block to perform.
+    /// - Returns: The result of the async block.
+    /// - Throws: Rethrows any error thrown by the async block.
+
+    func performIfNeeded(block: @escaping @Sendable () async throws -> Success) async throws -> Success {
         defer {
             state = .idle
         }
@@ -38,7 +60,7 @@ public actor NonReentrantTaskManager {
         switch state {
         case let .inFlight(task):
             // Wait for existing task.
-            try await task.value
+            return try await task.value
 
         case .idle:
             // Create a new task.
@@ -47,15 +69,38 @@ public actor NonReentrantTaskManager {
             }
 
             state = .inFlight(task)
-            try await task.value
+            return try await task.value
         }
     }
 
-    private enum TaskState {
+}
 
-        case idle
-        case inFlight(Task<Void, any Error>)
+public extension NonReentrantTaskManager where Failure == Never {
 
+    /// Perform a non-reentrant async block that cannot throw.
+    ///
+    /// - Parameter block: The async block to perform.
+    /// - Returns: The result of the async block.
+
+    func performIfNeeded(block: @escaping @Sendable () async -> Success) async -> Success {
+        defer {
+            state = .idle
+        }
+
+        switch state {
+        case let .inFlight(task):
+            // Wait for existing task.
+            return await task.value
+
+        case .idle:
+            // Create a new task.
+            let task = Task {
+                await block()
+            }
+
+            state = .inFlight(task)
+            return await task.value
+        }
     }
 
 }

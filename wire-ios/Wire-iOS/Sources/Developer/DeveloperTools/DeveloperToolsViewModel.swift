@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -456,7 +456,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private var selfUser: ZMUser? {
         guard let userSession else { return nil }
-        return ZMUser.selfUser(inUserSession: userSession)
+        return ZMUser.selfUser(in: userSession.viewContext)
     }
 
     private var selfClient: UserClient? {

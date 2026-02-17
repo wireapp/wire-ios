@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -224,7 +224,9 @@ public protocol UserSession: AnyObject {
 
     var channelsFeature: Feature.Channels { get }
 
-    var isWireCellsEnabled: Bool { get }
+    var isWireDriveEnabled: Bool { get }
+
+    var wireDriveBackendURL: URL? { get }
 
     var isEnterpriseUser: Bool { get }
 
@@ -268,9 +270,9 @@ public protocol UserSession: AnyObject {
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol
 
-    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol
+    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol?
 
-    func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol
+    func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol?
 
     func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol
 
@@ -280,7 +282,7 @@ public protocol UserSession: AnyObject {
 
     func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol
 
-    func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol
+    func makeAppendLocationMessageUseCase() -> any AppendLocationMessageUseCaseProtocol
 
     func makeAppendFileMessageUseCase() -> any AppendFileMessageUseCaseProtocol
 

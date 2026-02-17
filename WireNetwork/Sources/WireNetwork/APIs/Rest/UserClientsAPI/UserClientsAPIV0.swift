@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,6 +28,10 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
 
     var apiVersion: APIVersion {
         .v0
+    }
+
+    func registerClient(newClient: NewClient) async throws -> SelfUserClient {
+        throw UserClientsAPIError.endpointUnavailable
     }
 
     func getSelfClients() async throws -> [SelfUserClient] {
@@ -92,6 +96,11 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
             .failure(code: .notFound, error: UserClientsAPIError.clientNotFound)
             .parse(code: response.statusCode, data: data)
     }
+
+    func deleteClient(id: UserClientID, password: String?) async throws {
+        throw UserClientsAPIError.endpointUnavailable
+    }
+
 }
 
 struct ListUserClientV0: Decodable, ToAPIModelConvertible {

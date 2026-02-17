@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -83,16 +83,7 @@ final class SearchUserViewController: UIViewController {
         super.viewDidLoad()
 
         activityIndicator.start()
-
-        if let task = searchDirectory?.lookup(qualifiedID: qualifiedID) {
-            task.addResultHandler { [weak self] in
-                self?.activityIndicator.stop()
-                self?.handleSearchResult(searchResult: $0, isCompleted: $1)
-            }
-            task.start()
-
-            pendingSearchTask = task
-        }
+        startLookup()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -108,8 +99,21 @@ final class SearchUserViewController: UIViewController {
 
     // MARK: - Methods
 
-    private func handleSearchResult(searchResult: SearchResult, isCompleted: Bool) {
-        guard !resultHandled, isCompleted else { return }
+    private func startLookup() {
+        guard let searchDirectory else { return }
+
+        Task {
+            let task = searchDirectory.createLookupTask(with: qualifiedID)
+            pendingSearchTask = task
+            let searchResult = await task.start()
+            pendingSearchTask = nil
+            activityIndicator.stop()
+            handleSearchResult(searchResult: searchResult)
+        }
+    }
+
+    private func handleSearchResult(searchResult: SearchResult) {
+        guard !resultHandled else { return }
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
             return
@@ -137,7 +141,7 @@ final class SearchUserViewController: UIViewController {
 
             navigationController?.setViewControllers([profileViewController], animated: true)
             resultHandled = true
-        } else if isCompleted {
+        } else {
             let alert = UIAlertController(
                 title: L10n.Localizable.UrlAction.InvalidUser.title,
                 message: L10n.Localizable.UrlAction.InvalidUser.message,

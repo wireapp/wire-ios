@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 public struct QualifiedID: Codable, Equatable, Hashable, CustomDebugStringConvertible, Sendable {
 
@@ -58,6 +59,17 @@ extension QualifiedID: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
         "\(uuid.uuidString.lowercased()) - \(domain)"
     }
+}
+
+public extension WireFoundation.QualifiedID {
+
+    init(_ qualifiedID: WireDataModel.QualifiedID) {
+        self.init(
+            id: qualifiedID.uuid,
+            domain: qualifiedID.domain
+        )
+    }
+
 }
 
 public protocol HasQualifiedID {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -191,5 +191,16 @@ public protocol ConversationRepositoryProtocol: Sendable {
     func fetchConversationGuestLink(
         conversationID: String
     ) async throws -> String?
+
+    /// Checks if selfUser is still in a given conversation
+    /// - Parameter groupID: mlsGroupID of the conversation
+    /// - Returns: true if selfUser belongs to the conversation, false otherwise
+    func isSelfAnActiveMember(
+        in groupID: WireDataModel.MLSGroupID
+    ) async -> Bool
+
+    /// Reset the pendingProposalDate for the conversation
+    /// - Parameter groupID: mlsGroupID of the conversation
+    func clearPendingProposals(in groupID: WireDataModel.MLSGroupID) async
 
 }

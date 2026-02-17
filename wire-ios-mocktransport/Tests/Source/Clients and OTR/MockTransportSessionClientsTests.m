@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -599,78 +599,6 @@
     
     // THEN
     XCTAssertEqual(selfUser.clients.count, 0u);
-}
-
-- (void)testThatItSendsANoficationWhenRemovingASelfClient {
- 
-    // GIVEN
-    __block MockUser *selfUser;
-    __block MockUserClient *client;
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        selfUser = [session insertSelfUserWithName:@"Foo"];
-        [session registerClientForUser:selfUser label:@"self user" type:@"permanent" deviceClass:@"phone"];
-        client = [selfUser.clients anyObject];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    NSUInteger previousEventsCount = self.sut.generatedPushEvents.count;
-    NSString *clientId = client.identifier;
-    
-    // WHEN
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        [session deleteUserClientWithIdentifier:client.identifier forUser:selfUser];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    XCTAssertEqual(self.sut.generatedPushEvents.count, previousEventsCount+1u);
-    MockPushEvent *lastEvent = self.sut.generatedPushEvents.lastObject;
-    
-    NSDictionary *expectedPayload = @{
-                                      @"client" : @{
-                                              @"id" : clientId,
-                                            },
-                                      @"type" : @"user.client-remove"
-                                      };
-    XCTAssertEqualObjects(lastEvent.payload, expectedPayload);
-}
-
-- (void)testThatItSendsANoficationWhenAddingASelfClient {
-    
-    // GIVEN
-    __block MockUser *selfUser;
-    __block MockUserClient *client;
-    NSString *clientLabel = @"client label";
-    NSString *clientType = @"permanent";
-    NSString *deviceClass = @"phone";
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        selfUser = [session insertSelfUserWithName:@"Foo"];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // WHEN
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        client = [session registerClientForUser:selfUser label:clientLabel type:clientType  deviceClass:deviceClass];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // THEN
-    XCTAssertEqual(self.sut.generatedPushEvents.count, 1u);
-    MockPushEvent *lastEvent = self.sut.generatedPushEvents.lastObject;
-    
-    NSDictionary *expectedPayload = @{
-                                      @"client" : @{
-                                              @"label" : clientLabel,
-                                              @"location" : @{
-                                                      @"lat" : @(0),
-                                                      @"lon" : @(0)
-                                                      },
-                                              @"time": client.time.transportString,
-                                              @"id" : client.identifier,
-                                              @"type" : clientType,
-                                              @"class" : deviceClass
-                                      },
-                                      @"type" : @"user.client-add"
-    };
-    XCTAssertEqualObjects(lastEvent.payload, expectedPayload);
 }
 
 - (void)testThatItDoesNotSendsANoficationWhenAddingAClientOfAnotherUser {

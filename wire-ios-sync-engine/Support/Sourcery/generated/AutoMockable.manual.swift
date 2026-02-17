@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -510,7 +510,9 @@ public class MockUserSession: UserSession {
 
     public var underlyingMlsFeature: Feature.MLS!
 
-    public var isWireCellsEnabled: Bool = false
+    public var isWireDriveEnabled: Bool = false
+    
+    public var wireDriveBackendURL: URL? = nil
 
     public var isEnterpriseUser: Bool = false
     
@@ -1079,7 +1081,7 @@ public class MockUserSession: UserSession {
     public var makeConversationSecureGuestLinkUseCase_MockMethod: (() -> CreateConversationGuestLinkUseCaseProtocol)?
     public var makeConversationSecureGuestLinkUseCase_MockValue: CreateConversationGuestLinkUseCaseProtocol?
 
-    public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+    public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol? {
         makeConversationSecureGuestLinkUseCase_Invocations.append(())
 
         if let mock = makeConversationSecureGuestLinkUseCase_MockMethod {
@@ -1094,10 +1096,10 @@ public class MockUserSession: UserSession {
     // MARK: - makeSetConversationGuestsAndAppsUseCase
 
     public var makeSetConversationGuestsAndAppsUseCase_Invocations: [Void] = []
-    public var makeSetConversationGuestsAndAppsUseCase_MockMethod: (() -> SetAllowGuestAndAppsUseCaseProtocol)?
-    public var makeSetConversationGuestsAndAppsUseCase_MockValue: SetAllowGuestAndAppsUseCaseProtocol?
+    public var makeSetConversationGuestsAndAppsUseCase_MockMethod: (() -> SetAllowGuestAndAppsUseCaseProtocol?)?
+    public var makeSetConversationGuestsAndAppsUseCase_MockValue: SetAllowGuestAndAppsUseCaseProtocol??
 
-    public func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol {
+    public func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol? {
         makeSetConversationGuestsAndAppsUseCase_Invocations.append(())
 
         if let mock = makeSetConversationGuestsAndAppsUseCase_MockMethod {
@@ -1184,10 +1186,10 @@ public class MockUserSession: UserSession {
     // MARK: - makeAppendLocationMessageUseCase
 
     public var makeAppendLocationMessageUseCase_Invocations: [Void] = []
-    public var makeAppendLocationMessageUseCase_MockMethod: (() -> any AppendLocationMessagekUseCaseProtocol)?
-    public var makeAppendLocationMessageUseCase_MockValue: (any AppendLocationMessagekUseCaseProtocol)?
+    public var makeAppendLocationMessageUseCase_MockMethod: (() -> any AppendLocationMessageUseCaseProtocol)?
+    public var makeAppendLocationMessageUseCase_MockValue: (any AppendLocationMessageUseCaseProtocol)?
 
-    public func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol {
+    public func makeAppendLocationMessageUseCase() -> any AppendLocationMessageUseCaseProtocol {
         makeAppendLocationMessageUseCase_Invocations.append(())
 
         if let mock = makeAppendLocationMessageUseCase_MockMethod {

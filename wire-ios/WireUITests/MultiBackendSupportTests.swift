@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         return (accountPage, user)
     }
 
+    /// testniy: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8797
     @MainActor
     func test_Add_MultiBackend_Accounts() async throws {
 
@@ -54,7 +55,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         _ = try accountPageBackend1
             .backToSettings()
             .switchToConversationsTab()
-            .openUserAccountPageForUser(with: userBackend1.name)
+            .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
         try switchBackend(target: .anta)
@@ -64,7 +65,7 @@ final class MultiBackendSupportTests: WireUITestCase {
         accountPageBackend1 = try accountPageBackend2
             .backToSettings()
             .switchToConversationsTab()
-            .openUserAccountPageForUser(with: userBackend2.name)
+            .openUserProfilePage()
             .switchUserAccountForUser(withName: userBackend1.name)
             .openSettings()
             .openAccountSettings()

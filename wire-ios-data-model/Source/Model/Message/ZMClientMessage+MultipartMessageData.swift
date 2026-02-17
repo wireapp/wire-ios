@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,13 @@ public extension ZMClientMessage {
         switch underlyingMessage?.content {
         case let .multipart(multipart):
             MultipartMessageData(multipart: multipart)
+        case let .edited(messageEdit):
+            switch messageEdit.content {
+            case let .multipart(multipart):
+                MultipartMessageData(multipart: multipart)
+            default:
+                nil
+            }
         default:
             nil
         }

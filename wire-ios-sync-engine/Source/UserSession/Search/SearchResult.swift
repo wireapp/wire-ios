@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ public struct SearchResult {
 
     /// Bots.
 
-    public var services: [ServiceUser]
+    public var services: [ServiceUser] // TODO: [WPB-20362] add `apps`
 
     /// Cache for search users.
 
@@ -51,6 +51,16 @@ public struct SearchResult {
 }
 
 extension SearchResult {
+
+    init() {
+        self.context = .init(concurrencyType: .privateQueueConcurrencyType)
+        self.contacts = []
+        self.teamMembers = []
+        self.directory = []
+        self.conversations = []
+        self.services = []
+        self.searchUsersCache = nil
+    }
 
     public init?(
         payload: [AnyHashable: Any],
@@ -217,6 +227,18 @@ extension SearchResult {
             contacts: contacts,
             teamMembers: Array(Set(teamMembers).union(result.teamMembers)),
             directory: result.directory,
+            conversations: conversations,
+            services: services,
+            searchUsersCache: searchUsersCache
+        )
+    }
+
+    func union(prependingDirectory result: SearchResult) -> SearchResult {
+        SearchResult(
+            context: context,
+            contacts: contacts,
+            teamMembers: teamMembers,
+            directory: result.directory + directory,
             conversations: conversations,
             services: services,
             searchUsersCache: searchUsersCache

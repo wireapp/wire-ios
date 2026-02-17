@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,6 @@
             return mo.objectID.URIRepresentation;
         }] componentsJoinedByString:@", "];
         ZMLogWithLevelAndTag(ZMLogLevelDebug, ZMTAG_CORE_DATA, @"    Inserted: %@", description);
-        [self.eventProcessingTracker registerDataInsertionPerformedWithAmount:inserted.count];
     }
     NSSet *updated = note.userInfo[NSUpdatedObjectsKey];
     if (updated.count > 0) {
@@ -43,7 +42,6 @@
             return mo.objectID.URIRepresentation;
         }] componentsJoinedByString:@", "];
         ZMLogWithLevelAndTag(ZMLogLevelDebug, ZMTAG_CORE_DATA, @"    Updated: %@", description);
-        [self.eventProcessingTracker registerDataUpdatePerformedWithAmount:updated.count];
     }
     NSSet *deleted = note.userInfo[NSDeletedObjectsKey];
     if (deleted.count > 0) {
@@ -51,7 +49,6 @@
             return mo.objectID.URIRepresentation;
         }] componentsJoinedByString:@", "];
         ZMLogWithLevelAndTag(ZMLogLevelDebug, ZMTAG_CORE_DATA, @"    Deleted: %@", description);
-        [self.eventProcessingTracker registerDataDeletionPerformedWithAmount:deleted.count];
     }
 }
 
@@ -92,8 +89,6 @@
             NSSet *syncInsertedObjects = [self objectSetFromObjectIDs:insertedObjectsIDs inContext:self.syncMOC];
             NSSet *syncUpdatedObjects = [self objectSetFromObjectIDs:updatedObjectsIDs inContext:self.syncMOC];
             [self processSaveWithInsertedObjects:syncInsertedObjects updateObjects:syncUpdatedObjects];
-            
-            [self.eventProcessingTracker registerSavePerformed];
         }];
     } else if (mocThatSaved.zm_isSyncContext) {
         RequireString(mocThatSaved == self.syncMOC, "Not the right MOC!");
@@ -115,7 +110,6 @@
             [strongUiMoc mergeChangesFromContextDidSaveNotification:note];
             [strongUiMoc processPendingChanges]; // We need this because merging sometimes leaves the MOC in a 'dirty' state
             [self.notificationDispatcher didMergeChanges:changedObjectsIDs];
-            [self.eventProcessingTracker registerSavePerformed];
         }];
     }
     

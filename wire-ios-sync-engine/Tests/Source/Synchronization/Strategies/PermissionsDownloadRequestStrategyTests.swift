@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -78,22 +78,6 @@ final class PermissionsDownloadRequestStrategyTests: MessagingTest {
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
             XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/teams/\(teamId.transportString())/members/\(userId.transportString())")
-        }
-    }
-
-    func testThatItDoesNotCreateARequestDuringSync() {
-        syncMOC.performGroupedAndWait {
-            // given
-            let member = Member.insertNewObject(in: self.syncMOC)
-            member.remoteIdentifier = .create()
-            self.mockApplicationStatus.mockSynchronizationState = .slowSyncing
-
-            // when
-            member.needsToBeUpdatedFromBackend = true
-            self.boostrapChangeTrackers(with: member)
-
-            // then
-            XCTAssertNil(self.sut.nextRequest(for: .v0))
         }
     }
 

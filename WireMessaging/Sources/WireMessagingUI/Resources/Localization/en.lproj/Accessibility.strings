@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,12 +32,17 @@
 "conversation.wireCells.files.loadMore.title" = "Load more";
 "conversation.wireCells.files.noData.title" = "There are no files or folders yet";
 "conversation.wireCells.files.noData.message" = "You'll find all files and folders shared in this conversation here";
+"conversation.wireCells.files.noSearchResults.title" = "No results found";
+"conversation.wireCells.files.noSearchResults.message" = "Try adjusting your search.";
 "conversation.wireCells.files.pendingCells.title" = "Files are loading";
 "conversation.wireCells.files.pendingCells.message" = "Your documents and media files will be available here once we've uploaded all files and folders.";
 "conversation.wireCells.allFiles.noData.message" = "You'll find all files and folders shared across your conversations here.";
 "conversation.wireCells.files.error.title" = "Can't load files";
-"conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
-"conversation.wireCells.files.error.reload" = "Reload";
+"conversation.wireCells.files.error.message" = "Something went wrong while loading. Please try again.";
+"conversation.wireCells.files.error.retry" = "Retry";
+"conversation.wireCells.files.error.noConnection.title" = "Unable to load files";
+"conversation.wireCells.files.error.noConnection.message" = "Your list of files could not be loaded. Please check your Internet connection and try again.";
+"conversation.wireCells.files.error.noConnection.retry" = "Try again";
 "conversation.wireCells.files.moreActionsButton" = "More";
 "conversation.wireCells.recycleBin.noData.message" = "You'll find all deleted files and folders here.";
 "conversation.wireCells.files.moveToFolder.move" = "Move here";
@@ -45,3 +50,7 @@
 // MARK: - File Tags View
 "conversation.wireCells.tags.removeTag" = "Remove tag {0}";
 "conversation.wireCells.tags.addTag" = "Add tag {0}";
+
+// MARK: - Share Link View
+"conversation.wireCells.shareLink.hidePassword" = "Hide password";
+"conversation.wireCells.shareLink.showPassword" = "Show password";

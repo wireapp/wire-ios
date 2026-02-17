@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -88,11 +88,28 @@ struct WorkAgentTests {
         #expect(await item.startCalls == 1)
     }
 
+    @Test("Clear items are removed")
+    func clearItems() async throws {
+        // Given
+        let item = MockWorkItem(priority: .medium)
+        await sut.submitItem(item)
+        await Task.yield()
+
+        #expect(await scheduler.enqueuedItems.count == 1)
+
+        // When
+        await sut.clearSchedulerQueue()
+
+        // Then
+        #expect(await scheduler.items.isEmpty)
+        #expect(await scheduler.enqueuedItems.isEmpty)
+    }
+
 }
 
 private actor MockWorkItem: WorkItem {
 
-    let id = UUID()
+    let id = UUID().uuidString
     let priority: WorkItemPriority
 
     var startCalls = 0
@@ -137,4 +154,8 @@ private actor MockScheduler: WorkItemScheduler {
         return item
     }
 
+    func clearAllItems() async {
+        enqueuedItems.removeAll()
+        items.removeAll()
+    }
 }

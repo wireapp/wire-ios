@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -85,6 +85,45 @@ class MLSAPIV5: MLSAPIV4 {
 
     }
 
+    override func uploadKeyPackages(clientID: String, keyPackages: KeyPackageUpload) async throws {
+        let body = try JSONEncoder.defaultEncoder.encode(keyPackages.toNetworkModel())
+
+        let path = "\(pathPrefix)/mls/key-packages/self/\(clientID)"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(
+                code: .created
+            )
+            .failure(
+                code: .badRequest,
+                error: MLSAPIError.invalidRequestBody
+            )
+            .failure(
+                code: .badRequest,
+                label: "mls-protocol-error",
+                wrappingMessage: { MLSAPIError.mlsProtocolError(message: $0) }
+            )
+            .failure(
+                code: .forbidden,
+                label: "mls-identity-mismatch",
+                error: MLSAPIError.mlsIdentityMismatch
+            )
+            .parse(
+                code: response.statusCode,
+                data: data
+            )
+    }
+
 }
 
 private struct BackendMLSPublicKeysResponseV5: Decodable, ToAPIModelConvertible {
@@ -104,6 +143,26 @@ struct CommitBundleResponseV5: Decodable, ToAPIModelConvertible {
 
     func toAPIModel() -> [UpdateEvent] {
         events.map(\.updateEvent)
+    }
+
+}
+
+struct KeyPackageUploadV0: Equatable, Sendable, Encodable {
+
+    enum CodingKeys: String, CodingKey {
+        case keyPackages = "key_packages"
+    }
+
+    let keyPackages: [String]
+
+}
+
+extension KeyPackageUpload {
+
+    func toNetworkModel() -> KeyPackageUploadV0 {
+        KeyPackageUploadV0(
+            keyPackages: keyPackages.map(\.base64EncodedData)
+        )
     }
 
 }

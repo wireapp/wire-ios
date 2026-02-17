@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -210,18 +210,30 @@ public extension ZMConversation {
 
     static func fetchConversationsWithMLSGroupStatus(
         mlsGroupStatus: MLSGroupStatus,
+        domain: String? = nil,
         in context: NSManagedObjectContext
     ) throws -> [ZMConversation] {
 
         let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+
         let matchingGroupStatus = NSPredicate(
             format: "%K == \(mlsGroupStatus.rawValue)",
             argumentArray: [Self.mlsStatusKey]
         )
 
-        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            matchingGroupStatus, .isMLSConversation
-        ])
+        var matchingDomain: NSPredicate?
+        if let domain {
+            matchingDomain = NSPredicate(
+                format: "%K == %@",
+                argumentArray: [Self.domainKey(), domain]
+            )
+        }
+
+        request.predicate = NSCompoundPredicate(
+            andPredicateWithSubpredicates: [
+                matchingGroupStatus, .isMLSConversation, matchingDomain
+            ].compactMap(\.self)
+        )
 
         return try context.fetch(request)
     }
@@ -243,6 +255,12 @@ public extension ZMConversation {
     static func fetchMLSConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
         let request = NSFetchRequest<Self>(entityName: Self.entityName())
         request.predicate = .isMLSConversation
+        return context.fetchOrAssert(request: request)
+    }
+
+    static func fetchDriveConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
+        let request = NSFetchRequest<Self>(entityName: Self.entityName())
+        request.predicate = .isDriveConversation
         return context.fetchOrAssert(request: request)
     }
 
@@ -321,11 +339,25 @@ public extension ZMConversation {
 
         return try context.fetch(request)
     }
+
+    static func fetchDeleted(in context: NSManagedObjectContext) -> [ZMConversation] {
+        let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+        request.predicate = NSPredicate(format: "%K == YES", #keyPath(ZMConversation.isDeletedRemotely))
+        return (try? context.fetch(request)) ?? []
+    }
 }
 
 // MARK: - NSPredicate Extensions
 
 private extension NSPredicate {
+
+    static var isDriveConversation: NSPredicate {
+        NSPredicate(
+            format: "%K == %d",
+            "cellsState",
+            CellsState.ready.rawValue
+        )
+    }
 
     static var isMLSConversation: NSPredicate {
         NSPredicate(

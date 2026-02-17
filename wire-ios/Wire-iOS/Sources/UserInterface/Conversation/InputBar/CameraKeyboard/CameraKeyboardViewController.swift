@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -304,19 +304,21 @@ class CameraKeyboardViewController: UIViewController {
         let completeBlock = { (data: Data?, uti: String?) in
             guard let data else { return }
 
-            let returnData: Data = if (uti == "public.heif") ||
-                (uti == "public.heic"),
-                let convertedJPEGData = data.convertHEIFToJPG() {
-                convertedJPEGData
+            let utType: UTType?
+            let returnData: Data
+            if (uti == "public.heif") || (uti == "public.heic"), let convertedJPEGData = data.convertHEIFToJPG() {
+                returnData = convertedJPEGData
+                utType = .jpeg
             } else {
-                data
+                returnData = data
+                utType = uti.flatMap { UTType($0) }
             }
 
             let name = PHAssetResource.assetResources(for: asset).first?.originalFilename
 
             let image = SendableImage(
                 name: name,
-                utType: .jpeg,
+                utType: utType,
                 data: returnData
             )
 

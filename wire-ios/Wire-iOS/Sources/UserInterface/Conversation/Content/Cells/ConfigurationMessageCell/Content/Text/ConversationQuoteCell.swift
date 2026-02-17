@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ final class ConversationReplyContentView: UIView {
         var quotedMessage: ZMConversationMessage?
         let accentColor: AccentColor
         let messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel?
+        weak var delegate: ConversationMessageCellDelegate?
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.accentColor == rhs.accentColor &&
@@ -335,9 +336,13 @@ final class ConversationReplyContentView: UIView {
                 return
             }
 
+            let delegate = object.delegate
             messageReplyAttachmentView = MessageReplyAttachmentsView(
                 attachments: attachments,
-                viewModel: viewModel
+                viewModel: viewModel,
+                onSizeChange: { [weak delegate] in
+                    delegate?.conversationMessageContentDidChangeSize()
+                }
             )
 
             contentAttachmentsView.addSubview(messageReplyAttachmentView!)
@@ -419,7 +424,12 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
         }
     }
 
-    weak var delegate: ConversationMessageCellDelegate?
+    weak var delegate: ConversationMessageCellDelegate? {
+        didSet {
+            configuration.delegate = delegate
+        }
+    }
+
     weak var actionController: ConversationMessageActionController?
 
     let accessibilityLabel: String? = L10n.Localizable.Content.Message.originalLabel

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ public actor WorkAgent {
 
     private var task: Task<Void, Never>?
     private let scheduler: any WorkItemScheduler
-    private let nonReentrantTaskManager = NonReentrantTaskManager()
+    private let nonReentrantTaskManager = NonReentrantTaskManager<Void, any Error>()
 
     init(scheduler: any WorkItemScheduler) {
         self.scheduler = scheduler
@@ -108,7 +108,7 @@ public actor WorkAgent {
                     )
                 } catch {
                     WireLogger.workAgent.error(
-                        "item failed, dropping",
+                        "item failed, dropping \(String(describing: error))",
                         attributes: .init(item)
                     )
                     continue
@@ -136,6 +136,9 @@ public actor WorkAgent {
         task = nil
     }
 
+    public func clearSchedulerQueue() async {
+        await scheduler.clearAllItems()
+    }
 }
 
 extension LogAttributes {

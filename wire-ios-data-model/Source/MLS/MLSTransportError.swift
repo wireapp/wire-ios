@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ public enum MLSTransportError: Error, Codable {
     case invalidOperation(message: String)
     case noConversation(message: String)
     case groupOutOfSync(missingUsers: Set<QualifiedID>)
+    case mlsIdentityMismatch
 
     public init(_ error: MLSAPIError) {
         switch error {
@@ -84,6 +85,8 @@ public enum MLSTransportError: Error, Codable {
                 QualifiedID(uuid: $0.id, domain: $0.domain)
             }
             self = .groupOutOfSync(missingUsers: Set(missingUsers))
+        case .mlsIdentityMismatch:
+            self = .mlsIdentityMismatch
         }
     }
 }

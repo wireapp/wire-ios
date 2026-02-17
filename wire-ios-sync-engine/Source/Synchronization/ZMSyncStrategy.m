@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -63,7 +63,6 @@ ZM_EMPTY_ASSERTING_INIT()
                         operationStatus:(OperationStatus *)operationStatus
                             application:(id<ZMApplication>)application
                       strategyDirectory:(id<StrategyDirectoryProtocol>)strategyDirectory
-                 eventProcessingTracker:(id<EventProcessingTrackerProtocol>)eventProcessingTracker
 {
     self = [super init];
     if (self) {
@@ -73,7 +72,6 @@ ZM_EMPTY_ASSERTING_INIT()
         self.uiMOC = contextProvider.viewContext;
         self.operationStatus = operationStatus;
         self.strategyDirectory = strategyDirectory;
-        self.eventProcessingTracker = eventProcessingTracker;
         self.changeTrackerBootStrap = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.syncMOC changeTrackers:self.strategyDirectory.contextChangeTrackers];
 
         ZM_ALLOW_MISSING_SELECTOR([[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(managedObjectContextDidSave:) name:NSManagedObjectContextDidSaveNotification object:self.syncMOC]);

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@ import Foundation
 public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, TearDownCapable {
 
     var reachability: ReachabilityProvider & TearDownCapable { get }
-
-    var pushChannel: ZMPushChannel { get }
 
     var accessTokenHandler: ZMAccessTokenHandler { get }
 
@@ -50,9 +48,6 @@ public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, T
 
     @objc(addCompletionHandlerForBackgroundSessionWithIdentifier:handler:)
     func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void)
-
-    @objc(configurePushChannelWithConsumer:groupQueue:)
-    func configurePushChannel(consumer: ZMPushChannelConsumer, groupQueue: GroupQueue)
 
     @objc(renewAccessTokenWithClientID:)
     func renewAccessToken(with clientID: String)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 public import Foundation
 public import UIKit
-public import SwiftUI
+import SwiftUI
 public import WireData
 public import WireFoundation
 public import WireMessagingDomain
@@ -27,85 +27,72 @@ public import WireMessagingUI
 
 public struct WireMessagingFactory {
 
+    public typealias DriveURLResolver = @Sendable () throws -> URL
+
     private let nodesAPI: NodesAPI
-    private let uploadManager: WireCellsNodeUploadManager
+    private let uploadManager: WireDriveNodeUploadManager
     private let draftsRepository: DraftsRepository
     private let fileCache: any FileCache
-    private let localAssetStore: any WireCellsLocalAssetStoreProtocol
-    private let localAssetRepository: WireCellsLocalAssetRepository
+    private let localAssetStore: any WireDriveLocalAssetStoreProtocol
+    private let localAssetRepository: WireDriveLocalAssetRepository
     private let filenameGenerator = FilenameGenerator()
-    private let lastOpenRequest: WireCellsLastOpenRequest
-    private let nodeCache: WireCellsNodeCache
-    private let isFoldersEnabled: Bool
-    private let isCollaboraEnabled: Bool
-    private let nodeRenameNotifier: WireCellsNodeRenameNotifier
+    private let lastOpenRequest: WireDriveLastOpenRequest
+    private let nodeCache: WireDriveNodeCache
+    private let nodeRenameNotifier: WireDriveNodeRenameNotifier
 
     @MainActor var lastOpenRequestNodeID: UUID?
 
     @MainActor
     public init(
-        serverURL: URL,
+        driveURLResolver: @escaping DriveURLResolver,
+        driveConversationLocalStore: any WireDriveConversationsLocalStoreProtocol,
         accessToken: any AccessTokenProvider,
         fileCache: any FileCache,
-        contextProvider: any ManagedObjectContextProvider,
-        isFoldersEnabled: Bool,
-        isCollaboraEnabled: Bool
+        contextProvider: any ManagedObjectContextProvider
     ) {
-        // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
-        let serverURL = switch serverURL.host {
-        case "prod-nginz-https.wire.com": // Production
-            URL(string: "https://cells-beta.wire.com")!
-        case "staging-nginz-https.zinfra.io": // Staging
-            URL(string: "https://cells.staging.zinfra.io")!
-        case "nginz-https.fulu.wire.link": // Fulu
-            URL(string: "https://cells.fulu.wire.link")!
-        case "nginz-https.imai.wire.link": // Imai
-            URL(string: "https://cells.imai.wire.link")!
-        default:
-            serverURL
-        }
-
-        self.nodeCache = WireCellsNodeCache()
-        self.nodesAPI = NodesAPI(serverURL: serverURL, accessToken: accessToken)
-        self.uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
+        self.nodeCache = WireDriveNodeCache()
+        self.nodesAPI = NodesAPI(
+            serverURLResolver: driveURLResolver,
+            localStore: driveConversationLocalStore,
+            accessToken: accessToken
+        )
+        self.uploadManager = WireDriveNodeUploadManager(nodesAPI: nodesAPI)
         self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
         self.fileCache = fileCache
-        self.localAssetStore = WireCellsLocalAssetStore(contextProvider: contextProvider)
-        self.localAssetRepository = WireCellsLocalAssetRepository(
+        self.localAssetStore = WireDriveLocalAssetStore(contextProvider: contextProvider)
+        self.localAssetRepository = WireDriveLocalAssetRepository(
             nodesAPI: nodesAPI,
             fileCache: fileCache,
             store: localAssetStore
         )
-        self.lastOpenRequest = WireCellsLastOpenRequest()
-        self.isFoldersEnabled = isFoldersEnabled
-        self.isCollaboraEnabled = isCollaboraEnabled
-        self.nodeRenameNotifier = WireCellsNodeRenameNotifier()
+        self.lastOpenRequest = WireDriveLastOpenRequest()
+        self.nodeRenameNotifier = WireDriveNodeRenameNotifier()
     }
 
-    public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
+    public func makeUploadDraftUseCase(cellName: String) -> any WireDriveUploadDraftUseCaseProtocol {
         UploadDraftUseCase(
             cellName: cellName,
             draftRepository: draftsRepository,
             uploadManager: uploadManager,
             nodesAPI: nodesAPI,
-            metadataRepository: WireCellsDraftMetadataRepository(),
+            metadataRepository: WireDriveDraftMetadataRepository(),
             filenameGenerator: filenameGenerator
         )
     }
 
-    public func makeObserveDraftsUseCase(cellName: String) -> any WireCellsObserveDraftsUseCaseProtocol {
+    public func makeObserveDraftsUseCase(cellName: String) -> any WireDriveObserveDraftsUseCaseProtocol {
         ObserveDraftsUseCase(cellName: cellName, draftRepository: draftsRepository)
     }
 
-    public func makePublishDraftsUseCase(cellName: String) -> any WireCellsPublishDraftsUseCaseProtocol {
+    public func makePublishDraftsUseCase(cellName: String) -> any WireDrivePublishDraftsUseCaseProtocol {
         PublishDraftsUseCase(cellName: cellName, draftRepository: draftsRepository)
     }
 
-    public func makeClearPublishedDraftsUseCase(cellName: String) -> any WireCellsClearPublishedDraftsUseCaseProtocol {
+    public func makeClearPublishedDraftsUseCase(cellName: String) -> any WireDriveClearPublishedDraftsUseCaseProtocol {
         ClearPublishedDraftsUseCase(cellName: cellName, draftRepository: draftsRepository)
     }
 
-    public func makeDeleteDraftUseCase(cellName: String) -> any WireCellsDeleteDraftUseCaseProtocol {
+    public func makeDeleteDraftUseCase(cellName: String) -> any WireDriveDeleteDraftUseCaseProtocol {
         DeleteDraftUseCase(
             cellName: cellName,
             draftRepository: draftsRepository,
@@ -114,34 +101,38 @@ public struct WireMessagingFactory {
         )
     }
 
-    public func makeRetryUploadDraftUseCase(cellName: String) -> any WireCellsRetryUploadDraftUseCaseProtocol {
+    public func makeRetryUploadDraftUseCase(cellName: String) -> any WireDriveRetryUploadDraftUseCaseProtocol {
         UploadDraftUseCase(
             cellName: cellName,
             draftRepository: draftsRepository,
             uploadManager: uploadManager,
             nodesAPI: nodesAPI,
-            metadataRepository: WireCellsDraftMetadataRepository(),
+            metadataRepository: WireDriveDraftMetadataRepository(),
             filenameGenerator: filenameGenerator
         )
     }
 
-    public func makeDeleteNodesUseCase() -> any WireCellsDeleteNodesUseCaseProtocol {
-        WireCellsDeleteNodesUseCase(
+    public func makeDeleteNodesUseCase() -> any WireDriveDeleteNodesUseCaseProtocol {
+        WireDriveDeleteNodesUseCase(
             repository: nodesAPI,
             fileCache: fileCache,
             localAssetStore: localAssetStore
         )
     }
 
-    public func makeUpdateTagsUseCase() -> some WireCellsUpdateTagsUseCaseProtocol {
-        WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI)
+    public func makeUpdateTagsUseCase() -> some WireDriveUpdateTagsUseCaseProtocol {
+        WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI)
     }
 
-    public func makeFetchNodeUseCase() -> any WireCellsFetchNodeUseCaseProtocol {
-        WireCellsFetchNodeUseCase(
+    public func makeFetchNodeUseCase() -> any WireDriveFetchNodeUseCaseProtocol {
+        WireDriveFetchNodeUseCase(
             repository: nodesAPI,
             cache: nodeCache
         )
+    }
+
+    public func makeFetchCachedNodeUseCase() -> any WireDriveFetchCachedNodeUseCaseProtocol {
+        nodeCache
     }
 }
 
@@ -164,8 +155,6 @@ public extension WireMessagingFactory {
                 nodeCache: nodeCache,
                 nodeRenameNotifier: nodeRenameNotifier,
                 fileCache: fileCache,
-                isFoldersEnabled: isFoldersEnabled,
-                isCollaboraEnabled: isCollaboraEnabled,
                 accentColorProvider: accentColorProvider
             ).environment(\.wireAccentColor, accentColorProvider())
         )
@@ -179,44 +168,54 @@ public extension WireMessagingFactory {
             rootView: FilesBrowserView(
                 viewModel: FilesViewModel(
                     useCases: .init(
-                        fetchNodes: WireCellsFetchNodesPageUseCase(
+                        fetchNodes: WireDriveFetchNodesPageUseCase(
                             configuration: .filesBrowserView,
                             repository: nodesAPI
                         ),
-                        deleteNodes: WireCellsDeleteNodesUseCase(
+                        deleteNodes: WireDriveDeleteNodesUseCase(
                             repository: nodesAPI,
                             fileCache: fileCache,
                             localAssetStore: localAssetStore
                         ),
-                        restoreNodes: WireCellsRestoreNodesUseCase(
+                        restoreNodes: WireDriveRestoreNodesUseCase(
                             repository: nodesAPI,
                             fileCache: fileCache,
                             localAssetStore: localAssetStore
                         ),
-                        renameNode: WireCellsRenameNodeUseCase(
+                        renameNode: WireDriveRenameNodeUseCase(
                             nodesRepository: nodesAPI,
                             localAssetsRepository: localAssetRepository,
                             nodeCache: nodeCache,
                             nodeRenameNotifier: nodeRenameNotifier
                         ),
-                        updateTags: WireCellsUpdateTagsUseCase(nodesAPI: nodesAPI),
-                        getTagSuggestions: WireCellsGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
-                        createFolder: WireCellsCreateFolderUseCase(nodesRepository: nodesAPI),
-                        getEditingURL: WireCellsGetEditingURLUseCase(editingURLRepository: nodesAPI),
-                        getAssetUseCase: WireCellsGetAssetUseCase(
+                        updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI),
+                        getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
+                        createFileUseCase: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
+                        fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesAPI),
+                        restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
+                            repository: nodesAPI,
+                            localAssetsRepository: localAssetRepository,
+                            nodeCache: nodeCache
+                        ),
+                        getEditingURL: WireDriveGetEditingURLUseCase(editingURLRepository: nodesAPI),
+                        getAssetUseCase: WireDriveGetAssetUseCase(
                             localAssetRepository: localAssetRepository,
                             fileCache: fileCache
-                        )
+                        ),
+                        getPublicLinkData: WireDriveGetPublicLinkDataUseCase(nodesAPI: nodesAPI),
+                        createPublicLink: WireDriveCreatePublicLinkUseCase(nodesAPI: nodesAPI),
+                        deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesAPI),
+                        updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
+                        updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI)
                     ),
                     isCellsStatePending: false,
                     localAssetRepository: localAssetRepository,
                     nodesRepository: nodesAPI,
                     fileCache: fileCache,
-                    isFoldersEnabled: false,
-                    isCollaboraEnabled: isCollaboraEnabled,
+                    isBrowsing: true,
                     accentColorProvider: accentColorProvider
                 )
-            )
+            ).environment(\.wireAccentColor, accentColorProvider())
         )
     }
 
@@ -224,15 +223,15 @@ public extension WireMessagingFactory {
         insetsProvider: @escaping () -> ConversationCellInsets
     ) -> ConversationCellProvider {
         ConversationCellProvider(
-            fetchNodeUseCase: WireCellsFetchNodeUseCase(
+            fetchCachedNodeUseCase: nodeCache,
+            fetchNodeUseCase: WireDriveFetchNodeUseCase(
                 repository: nodesAPI,
                 cache: nodeCache
             ),
-            getAssetUseCase: WireCellsGetAssetUseCase(
+            getAssetUseCase: WireDriveGetAssetUseCase(
                 localAssetRepository: localAssetRepository,
                 fileCache: fileCache
             ),
-            nodeCache: nodeCache,
             localAssetRepository: localAssetRepository,
             lastOpenRequest: lastOpenRequest,
             nodeRenameNotifier: nodeRenameNotifier,

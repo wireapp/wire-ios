@@ -43,24 +43,25 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             resources: [
-                .process("APIs/Rest/AuthenticationAPI/Resources"),
+                .process("APIs/Blacklist/Resources"),
                 .process("APIs/Rest/AccountsAPI/Resources"),
+                .process("APIs/Rest/AuthenticationAPI/Resources"),
                 .process("APIs/Rest/BackendMetadataAPI/Resources"),
                 .process("APIs/Rest/ConnectionsAPI/Resources"),
                 .process("APIs/Rest/ConversationsAPI/Resources"),
+                .process("APIs/Rest/FeatureConfigsAPI/Resources"),
                 .process("APIs/Rest/MLSAPI/Resources"),
+                .process("APIs/Rest/Search/Resources"),
+                .process("APIs/Rest/SelfUserAPI/Resources"),
                 .process("APIs/Rest/TeamsAPI/Resources"),
                 .process("APIs/Rest/UpdateEventsAPI/Resources"),
-                .process("APIs/Rest/UsersAPI/Resources"),
-                .process("UpdateEvent/Resources"),
-                .process("APIs/Rest/FeatureConfigsAPI/Resources"),
-                .process("APIs/Rest/UserPropertiesAPI/Resources"),
-                .process("APIs/Rest/SelfUserAPI/Resources"),
                 .process("APIs/Rest/UserClientsAPI/Resources"),
-                .process("Network/PushChannel/Resources"),
+                .process("APIs/Rest/UserPropertiesAPI/Resources"),
+                .process("APIs/Rest/UsersAPI/Resources"),
                 .process("Authentication/Resources"),
                 .process("Backend/Resources"),
-                .process("APIs/Blacklist/Resources")
+                .process("Network/PushChannel/Resources"),
+                .process("UpdateEvent/Resources")
             ]
         )
     ]

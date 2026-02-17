@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,23 +72,14 @@ public final class SearchUsersUseCase: SearchUsersUseCaseProtocol {
             team: team
         )
 
-        return try await withCheckedThrowingContinuation { continuation in
-            guard !Task.isCancelled else {
-                continuation.resume(throwing: CancellationError())
-                self.activeSearchTask = nil
-                return
+        let task = searchDirectory.createSearchTask(with: request)
+        activeSearchTask = task
+        defer {
+            if activeSearchTask === task {
+                activeSearchTask = nil
             }
-
-            let task = searchDirectory.perform(request)
-            task.addResultHandler { result, isCompleted in
-                if isCompleted {
-                    continuation.resume(returning: result)
-                    self.activeSearchTask = nil
-                }
-            }
-            task.start()
-            activeSearchTask = task
         }
+        return await task.start()
     }
 
     // MARK: - Private methods

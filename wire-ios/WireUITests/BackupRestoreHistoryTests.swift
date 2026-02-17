@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import XCTest
 
 final class BackupRestoreHistoryTests: WireUITestCase {
 
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8582
     @MainActor
     func test_CreateBackupAndRestoreHistory() async throws {
         let groupName = UserGenerator.generateRandomGroupName()
@@ -38,7 +39,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
 
         for _ in 0 ..< countOfMembers {
             let (qualifiedId, teamMember) = try await userHelper.registerUsersAsTeamMember(
-                ownerAccessToken: ownerAccessToken,
+                ownerAccessToken: ownerAccessToken.token,
                 teamID: teamID
             )
             qualifiedIds.append(qualifiedId)
@@ -52,8 +53,7 @@ final class BackupRestoreHistoryTests: WireUITestCase {
         )
 
         var activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
-            .acceptPopupOnTeamMemberSetup(with: self)
-            .setUsername(teamOwner.username)
+            .acceptPopup(with: self)
             .openConversation()
             .sendMessage(messageFromOwner)
 

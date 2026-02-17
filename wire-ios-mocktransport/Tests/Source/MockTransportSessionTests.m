@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -105,21 +105,6 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 
 @implementation MockTransportSessionTests
 
--(void)pushChannelDidOpen
-{
-    ++self.pushChannelDidOpenCount;
-}
-
--(void)pushChannelDidClose
-{
-    ++self.pushChannelDidCloseCount;
-}
-
--(void)pushChannelDidReceiveData:(NSData *)data
-{
-    NSDictionary *eventData = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-    [self.pushChannelReceivedEvents addObjectsFromArray:[TestPushChannelEvent eventsArrayFromPushChannelData:eventData]];
-}
 
 - (void)setUp
 {
@@ -175,10 +160,6 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     WaitForAllGroupsToBeEmpty(0.5);
     
     [self responseForPayload:payload path:@"/login" method:ZMTransportRequestMethodPost apiVersion:0]; // this will simulate the user logging in
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    [self.sut.mockedTransportSession configurePushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
-    [self.sut.mockedTransportSession.pushChannel setKeepOpen:YES];
     WaitForAllGroupsToBeEmpty(0.5);
 }
 

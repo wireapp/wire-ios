@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,49 +30,28 @@
 - (void)setUp
 {
     [super setUp];
-    [self disableMultibackend];
-    self.pushChannelNotifications = [NSMutableArray array];
     
     self.cookieStorage = [[FakeCookieStorage alloc] init];
-    self.mockPushChannel = [[MockPushChannel alloc] init];
-    self.mockTransportSesssion = [[RecordingMockTransportSession alloc] initWithCookieStorage:self.cookieStorage
-                                                                                  pushChannel:self.mockPushChannel];
+    self.mockTransportSesssion = [[RecordingMockTransportSession alloc] initWithCookieStorage:self.cookieStorage];
             
     self.mockRequestStrategy = [[MockRequestStrategy alloc] init];
-    self.mockUpdateEventProcessor = [[MockUpdateEventProcessor alloc] init];
     self.mockRequestCancellation = [[MockRequestCancellation alloc] init];
 
     self.operationStatus = [[OperationStatus alloc] init];
-    self.syncStatus = [[SyncStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository isSyncV2Enabled:NO];
-    self.pushNotificationStatus = [[PushNotificationStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository];
     self.sut = [[ZMOperationLoop alloc] initWithTransportSession:self.mockTransportSesssion
                                                  requestStrategy:self.mockRequestStrategy
-                                            updateEventProcessor:self.mockUpdateEventProcessor
                                                  operationStatus:self.operationStatus
-                                                      syncStatus:self.syncStatus
-                                          pushNotificationStatus:self.pushNotificationStatus
                                                            uiMOC:self.uiMOC
                                                          syncMOC:self.syncMOC
                                           isDeveloperModeEnabled:NO
                                                  isSyncV2Enabled:NO
-                                                      apiVersion:nil];
-    self.pushChannelObserverToken = [NotificationInContext addObserverWithNotificationCenter:[NSNotificationCenter defaultCenter]
-                                                                                        name:ZMOperationLoop.pushChannelStateChangeNotificationName
-                                                                                     context:self.uiMOC.notificationContext
-                                                                                      object:nil
-                                                                                       queue:nil
-                                                                                       using:^(NotificationInContext * note) {
-        [self pushChannelDidChange:note];
-    }];
+                                                      apiVersion:@5];
 }
 
 - (void)tearDown;
 {
     WaitForAllGroupsToBeEmpty(0.5);
-    self.pushChannelObserverToken = nil;
-    self.pushNotificationStatus = nil;
     self.applicationStatusDirectory = nil;
-    self.mockPushChannel = nil;
     self.mockTransportSesssion = nil;
     self.mockRequestStrategy = nil;
     self.mockUpdateEventProcessor = nil;
@@ -81,56 +60,6 @@
 
     [super tearDown];
 }
-
-- (void)pushChannelDidChange:(NotificationInContext *)note
-{
-    [self.pushChannelNotifications addObject:note];
-}
-
-- (void)testThatItNotifiesTheSyncStatus_WhenThePushChannelIsOpened
-{
-    // when
-    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidOpen];
-    
-    // then
-    XCTAssertNotNil(self.syncStatus.pushChannelEstablishedDate);
-}
-
-- (void)testThatItNotifiesTheSyncStatus_WhenThePushChannelIsClosed
-{
-    // given
-    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidOpen];
-    
-    // when
-    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidClose];
-    
-    // then
-    XCTAssertNil(self.syncStatus.pushChannelEstablishedDate);
-}
-
-- (void)testThatItInitializesThePushChannel
-{
-    // when
-    ZMOperationLoop *op = [[ZMOperationLoop alloc] initWithTransportSession:self.mockTransportSesssion
-                                                            requestStrategy:self.mockRequestStrategy
-                                                       updateEventProcessor:self.mockUpdateEventProcessor
-                                                            operationStatus:self.operationStatus
-                                                                 syncStatus:self.syncStatus
-                                                     pushNotificationStatus:self.pushNotificationStatus
-                                                                      uiMOC:self.uiMOC
-                                                                    syncMOC:self.syncMOC
-                                                     isDeveloperModeEnabled:NO
-                                                            isSyncV2Enabled:NO
-                                                                 apiVersion:nil];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertNotNil(op);
-    XCTAssertTrue(self.mockTransportSesssion.didCallConfigurePushChannel);
-    [op tearDown];
-}
-
-
 
 - (void)testThatItSendsTheNextOperation
 {
@@ -167,7 +96,7 @@
 - (void)testThatItDoesNotSendARequestIfThereIsNoCurrentAPIVersion
 {
     // given
-    [self setBackendInfoAPIVersionNil];
+    [self.sut setApiVersion:nil];
     XCTAssertNil(self.sut.currentAPIVersion);
 
     self.mockRequestStrategy.mockRequest = [[ZMTransportRequest alloc] initWithPath:@"/test"
@@ -224,159 +153,6 @@
     
     // then
     XCTAssertTrue(self.mockRequestStrategy.nextRequestCalled);
-}
-
-
-- (void)testThatPushChannelDataBuffered_WhenSyncing
-{
-    // given
-    NSString *eventType = @"user.update";
-    
-    NSDictionary *payload1 = @{
-                               @"type" : eventType,
-                               @"foo" : @"bar"
-                               };
-    NSDictionary *payload2 = @{
-                               @"type" : eventType,
-                               @"bar" : @"xxxxxxx"
-                               };
-    NSDictionary *payload3 = @{
-                               @"type" : eventType,
-                               @"baz" : @"barbar"
-                               };
-    
-    NSDictionary *eventData = @{
-                                @"id" : @"5cc1ab91-45f4-49ec-bb7a-a5517b7a4173",
-                                @"payload" : @[payload1, payload2, payload3],
-                                };
-
-    NSMutableArray *expectedEvents = [NSMutableArray array];
-    [expectedEvents addObjectsFromArray:[ZMUpdateEvent eventsArrayFromPushChannelData:eventData]];
-    XCTAssertGreaterThan(expectedEvents.count, 0u);
-
-    // when
-    NSData *pushChannelData = [NSJSONSerialization dataWithJSONObject:eventData
-                                                              options:0
-                                                                error:nil];
-
-    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidReceiveData:pushChannelData];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqualObjects(self.mockUpdateEventProcessor.bufferedEvents, expectedEvents);
-}
-
-- (void)testThatPushChannelDataProcessed_WhenOnline
-{
-    // given
-
-    // FIXME: [WPB-9091] use a mock sync status
-    // simulate being online
-    [self.syncStatus pushChannelDidOpen];
-    while (self.syncStatus.isSyncing) {
-        [self.syncStatus finishCurrentSyncPhaseWithPhase:self.syncStatus.currentSyncPhase];
-    }
-
-    NSString *eventType = @"user.update";
-
-    NSDictionary *payload1 = @{
-                               @"type" : eventType,
-                               @"foo" : @"bar"
-                               };
-    NSDictionary *payload2 = @{
-                               @"type" : eventType,
-                               @"bar" : @"xxxxxxx"
-                               };
-    NSDictionary *payload3 = @{
-                               @"type" : eventType,
-                               @"baz" : @"barbar"
-                               };
-
-    NSDictionary *eventData = @{
-                                @"id" : @"5cc1ab91-45f4-49ec-bb7a-a5517b7a4173",
-                                @"payload" : @[payload1, payload2, payload3],
-                                };
-
-    NSMutableArray *expectedEvents = [NSMutableArray array];
-    [expectedEvents addObjectsFromArray:[ZMUpdateEvent eventsArrayFromPushChannelData:eventData]];
-    XCTAssertGreaterThan(expectedEvents.count, 0u);
-
-    // when
-    NSData *pushChannelData = [NSJSONSerialization dataWithJSONObject:eventData
-                                                              options:0
-                                                                error:nil];
-
-    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidReceiveData:pushChannelData];
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    // then
-    XCTAssertEqualObjects(self.mockUpdateEventProcessor.processedLivedEvents, expectedEvents);
-}
-
-- (void)testThatProcessSyncDataIsNotForwardedToAllSyncObjectsIfItIsNotAnArray
-{
-    // given
-    NSDictionary *eventData = @{
-                                @"id" : @"16be010d-c284-4fc0-b636-837bcebed654",
-                                @"payload" : @{
-                                        @"type" : @"yyy",
-                                        @"cat" : @"dog"
-                                        },
-                                };
-    
-    // when
-    NSData *pushChannelData = [NSJSONSerialization dataWithJSONObject:eventData
-                                                              options:0
-                                                                error:nil];
-
-    [self performIgnoringZMLogError:^{
-        [(id<ZMPushChannelConsumer>)self.sut pushChannelDidReceiveData:pushChannelData];
-        WaitForAllGroupsToBeEmpty(0.5);
-    }];
-    
-    // then
-    XCTAssertEqual(self.mockUpdateEventProcessor.processedEvents.count, 0);
-}
-
-- (void)testThatProcessSyncDataIsNotForwardedToAllSyncObjectsIfEventsAreInvalid
-{
-    // given
-    NSArray *eventData = @[ @{ @"id" : @"16be010d-c284-4fc0-b636-837bcebed654" } ];
-
-    // when
-    NSData *pushChannelData = [NSJSONSerialization dataWithJSONObject:eventData
-                                                              options:0
-                                                                error:nil];
-
-    [self performIgnoringZMLogError:^{
-        [(id<ZMPushChannelConsumer>)self.sut pushChannelDidReceiveData:pushChannelData];
-        WaitForAllGroupsToBeEmpty(0.5);
-    }];
-    
-    // then
-    XCTAssertEqual(self.mockUpdateEventProcessor.processedEvents.count, 0);
-}
-
-- (void)testThatItSendsANotificationWhenClosingThePushChannelAndRemovingConsumers
-{
-    // when
-    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidClose];
-    
-    // then
-    XCTAssertEqual(self.pushChannelNotifications.count, 1u);
-    NSNotification *note = self.pushChannelNotifications.firstObject;
-    XCTAssertFalse([note.userInfo[ZMPushChannelIsOpenKey] boolValue]);
-}
-
-- (void)testThatItSendsANotificationWhenOpeningThePushChannel
-{
-    // when
-    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidOpen];
-    
-    // then
-    XCTAssertEqual(self.pushChannelNotifications.count, 1u);
-    NSNotification *note = self.pushChannelNotifications.firstObject;
-    XCTAssertTrue([note.userInfo[ZMPushChannelIsOpenKey] boolValue]);
 }
 
 - (void)testThatItInformsTransportSessionWhenEnteringForeground

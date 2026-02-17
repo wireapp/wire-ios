@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,18 +19,19 @@
 import Foundation
 import WireLogging
 
+protocol AccessTokenRenewing {
+    func renewAccessToken(with clientID: String)
+}
+
 extension ZMUserSession: AccessTokenRenewing {
 
     func renewAccessToken(with clientID: String) {
+        WireLogger.session.debug("🎟️🔓 renewAccessToken clientID: \(clientID)")
         transportSession.renewAccessToken(with: clientID)
     }
 
-    func setAccessTokenRenewalObserver(_ observer: AccessTokenRenewalObserver) {
-        accessTokenRenewalObserver = observer
-    }
-
     func transportSessionAccessTokenDidFail(response: ZMTransportResponse) {
-        WireLogger.authentication.error("access token renewal failed: response status: \(response.errorInfo)")
+        WireLogger.authentication.error("🎟️🔓 access token renewal failed: response status: \(response.errorInfo)")
 
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
@@ -41,14 +42,9 @@ extension ZMUserSession: AccessTokenRenewing {
             )
             notifyAuthenticationInvalidated(error)
         }
-
-        accessTokenRenewalObserver?.accessTokenRenewalDidFail()
-        accessTokenRenewalObserver = nil
     }
 
     func transportSessionAccessTokenDidSucceed() {
-        WireLogger.authentication.info("access token renewal did succeed")
-        accessTokenRenewalObserver?.accessTokenRenewalDidSucceed()
-        accessTokenRenewalObserver = nil
+        WireLogger.authentication.info("🎟️🔓 access token renewal did succeed")
     }
 }

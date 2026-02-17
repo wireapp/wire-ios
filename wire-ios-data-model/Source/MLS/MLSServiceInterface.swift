@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -160,6 +160,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func wipeGroup(_ groupID: MLSGroupID) async throws
 
+    func externalSenderKey(groupID: MLSGroupID) async throws -> Data
+
     /// Checks if the group exists in core crypto's local storage
     ///
     /// - Parameter groupID: The ID of the group to check
@@ -248,6 +250,11 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
         parentID: MLSGroupID
     ) async throws -> MLSGroupID
 
+    /// Fetches subConversation of type conference
+    /// - Parameter parentGroupID: MLSGroupID of the parent conversation
+    /// - Returns: MLSGroupID of the subconversation
+    func conferenceSubconversation(parentGroupID: MLSGroupID) async -> MLSGroupID?
+
     /// Leaves the subgroup associated with the given parent conversation
     ///
     /// - Parameters:
@@ -310,22 +317,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     // MARK: - Pending proposals
 
-    /// Finds groups with pending proposals and commits them if any are found.
-    ///
-    /// Starts by getting a list of groups that have pending proposals.
-    /// This is done by fetching conversations that have a ``ZMConversation/commitPendingProposalDate`` set.
-    /// We then compile the ``MLSGroupID`` of each conversation and their subconversation
-    /// (if they exist) associated with the pending proposal date.
-    /// The groups are then sorted by the date of the pending proposal.
-    ///
-    /// We then iterate through each group and check if the pending proposal date has been passed.
-    /// If it has, we commit the pending proposal by calling ``MLSService/commitPendingProposals(in:)``
-    /// Otherwise, we wait until the pending proposal date has passed. Then we commit the pending proposal.
-    ///
-    /// [confluence use case](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/601522340/Use+Case+Committing+pending+proposals+MLS)
-
-    func commitPendingProposalsIfNeeded() async
-
     /// Commits pending proposals for a group.
     ///
     /// - Parameter groupID: The group ID to commit pending proposals for
@@ -340,6 +331,14 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws
+
+    /// Commits pending proposals for a group.
+    /// - Parameters:
+    ///   - groupID: The group ID to commit pending proposals for
+    ///   - skipRetry: true to skip internal recovery strategy. False otherwise
+    ///
+    /// If skipRetry is false it's up to the caller to handle errors
+    func commitPendingProposals(in groupID: MLSGroupID, skipRetry: Bool) async throws
 
     // MARK: - Key material
 
@@ -408,10 +407,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// If rejoining is successful, a system message will be appended
     /// to the conversation to indicate a potential gap in history.
 
-    func fetchAndRepairGroup(
-        with groupID: MLSGroupID,
-        shouldPerformIncrementalSync: Bool
-    ) async
+    func fetchAndRepairGroup(with groupID: MLSGroupID) async
 
     // MARK: - Epoch
 
@@ -489,13 +485,13 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// - Parameter groupID: the mls GroupID of the conversation to re-establish
     func reEstablishPendingGroup(groupID: MLSGroupID) async throws
 
-    // MARK: - Sync delegate
+    /// Epoch for given MLS group
+    /// - Parameter groupID: groupID of the MLS group
+    /// - Returns: epoch
+    func epoch(for groupID: MLSGroupID) async throws -> UInt64
 
-    /// Set the MLS sync delegate.
-    ///
-    /// - Parameter delegate: The sync delegate to set.
-
-    func setSyncDelegate(_ delegate: any MLSSyncDelegate)
+    // MARK: - delegate
 
     func setResetBrokenMLSConversationDelegate(_ delegate: any ResetBrokenMLSConversationDelegate)
+
 }

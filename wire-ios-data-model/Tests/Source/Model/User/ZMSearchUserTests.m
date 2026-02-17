@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,40 +49,40 @@
     NSUUID *remoteIDA = [NSUUID createUUID];
     NSUUID *remoteIDB = [NSUUID createUUID];
 
-    ZMSearchUser *user1 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
-                                                                   name:@"A"
-                                                                 handle:@"a"
-                                                            accentColor:ZMAccentColor.green
-                                                       remoteIdentifier:remoteIDA
-                                                                 domain:nil
-                                                         teamIdentifier:nil
-                                                                   user:nil
-                                                       searchUsersCache:nil];
+    ZMSearchUser *user1 = [[ZMSearchUser alloc] initWithViewContext:self.coreDataStack.viewContext
+                                                               name:@"A"
+                                                             handle:@"a"
+                                                        accentColor:ZMAccentColor.green
+                                                   remoteIdentifier:remoteIDA
+                                                             domain:nil
+                                                     teamIdentifier:nil
+                                                               user:nil
+                                                   searchUsersCache:nil];
 
     // (1)
-    ZMSearchUser *user2 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
-                                                                   name:@"B"
-                                                                 handle:@"b"
-                                                            accentColor:ZMAccentColor.purple
-                                                       remoteIdentifier:remoteIDA
-                                                                 domain:nil
-                                                         teamIdentifier:nil
-                                                                   user:nil
-                                                       searchUsersCache:nil];
+    ZMSearchUser *user2 = [[ZMSearchUser alloc] initWithViewContext:self.coreDataStack.viewContext
+                                                               name:@"B"
+                                                             handle:@"b"
+                                                        accentColor:ZMAccentColor.purple
+                                                   remoteIdentifier:remoteIDA
+                                                             domain:nil
+                                                     teamIdentifier:nil
+                                                               user:nil
+                                                   searchUsersCache:nil];
 
     XCTAssertEqualObjects(user1, user2);
     XCTAssertEqual(user1.hash, user2.hash);
     
     // (2)
-    ZMSearchUser *user3 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
-                                                                   name:@"A"
-                                                                 handle:@"b"
-                                                            accentColor:ZMAccentColor.green
-                                                       remoteIdentifier:remoteIDB
-                                                                 domain:nil
-                                                         teamIdentifier:nil
-                                                                   user:nil
-                                                       searchUsersCache:nil];
+    ZMSearchUser *user3 = [[ZMSearchUser alloc] initWithViewContext:self.coreDataStack.viewContext
+                                                               name:@"A"
+                                                             handle:@"b"
+                                                        accentColor:ZMAccentColor.green
+                                                   remoteIdentifier:remoteIDB
+                                                             domain:nil
+                                                     teamIdentifier:nil
+                                                               user:nil
+                                                   searchUsersCache:nil];
 
     XCTAssertNotEqualObjects(user1, user3);
 }
@@ -95,15 +95,15 @@
     NSUUID *remoteID = [NSUUID createUUID];
     
     // when
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
-                                                                        name:name
-                                                                      handle:handle
-                                                                 accentColor:ZMAccentColor.green
-                                                            remoteIdentifier:remoteID
-                                                                      domain:nil
-                                                              teamIdentifier:nil
-                                                                        user:nil
-                                                            searchUsersCache:nil];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithViewContext:self.coreDataStack.viewContext
+                                                                    name:name
+                                                                  handle:handle
+                                                             accentColor:ZMAccentColor.green
+                                                        remoteIdentifier:remoteID
+                                                                  domain:nil
+                                                          teamIdentifier:nil
+                                                                    user:nil
+                                                        searchUsersCache:nil];
 
     
     // then
@@ -134,15 +134,15 @@
    
     
     // when
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
-                                                                        name:@"Wrong name"
-                                                                      handle:@"not_my_handle"
-                                                                 accentColor:ZMAccentColor.green
-                                                            remoteIdentifier:[NSUUID createUUID]
-                                                                      domain:nil
-                                                              teamIdentifier:nil
-                                                                        user:user
-                                                            searchUsersCache:nil];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithViewContext:self.coreDataStack.viewContext
+                                                                    name:@"Wrong name"
+                                                                  handle:@"not_my_handle"
+                                                             accentColor:ZMAccentColor.green
+                                                        remoteIdentifier:[NSUUID createUUID]
+                                                                  domain:nil
+                                                          teamIdentifier:nil
+                                                                    user:user
+                                                        searchUsersCache:nil];
 
     // then
     XCTAssertEqualObjects(searchUser.name, user.name);
@@ -162,15 +162,15 @@
 - (void)testThatItCanBeConnectedIfItIsNotAlreadyConnected
 {
     // given
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
-                                                                        name:@"Hans"
-                                                                      handle:@"hans"
-                                                                 accentColor:ZMAccentColor.green
-                                                            remoteIdentifier:NSUUID.createUUID
-                                                                      domain:nil
-                                                              teamIdentifier:nil
-                                                                        user:nil
-                                                            searchUsersCache:nil];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithViewContext:self.coreDataStack.viewContext
+                                                                    name:@"Hans"
+                                                                  handle:@"hans"
+                                                             accentColor:ZMAccentColor.green
+                                                        remoteIdentifier:NSUUID.createUUID
+                                                                  domain:nil
+                                                          teamIdentifier:nil
+                                                                    user:nil
+                                                        searchUsersCache:nil];
 
     
     // then
@@ -181,15 +181,15 @@
 - (void)testThatItCanNotBeConnectedIfItHasNoRemoteIdentifier
 {
     // given
-    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
-                                                                        name:@"Hans"
-                                                                      handle:@"hans"
-                                                                 accentColor:ZMAccentColor.green
-                                                            remoteIdentifier:nil
-                                                                      domain:nil
-                                                              teamIdentifier:nil
-                                                                        user:nil
-                                                            searchUsersCache:nil];
+    ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithViewContext:self.coreDataStack.viewContext
+                                                                    name:@"Hans"
+                                                                  handle:@"hans"
+                                                             accentColor:ZMAccentColor.green
+                                                        remoteIdentifier:nil
+                                                                  domain:nil
+                                                          teamIdentifier:nil
+                                                                    user:nil
+                                                        searchUsersCache:nil];
 
     // then
     XCTAssertFalse(searchUser.canBeConnected);

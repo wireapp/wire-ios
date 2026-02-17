@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -166,7 +166,7 @@ enum DebugActions {
             return
         }
 
-        let selfUser = ZMUser.selfUser(inUserSession: userSession)
+        let selfUser = ZMUser.selfUser(in: userSession.viewContext)
 
         let alert = UIAlertController(
             title: "Analytics identifier",
@@ -246,6 +246,9 @@ enum DebugActions {
 
             case .resyncResources:
                 DebugActions.triggerResyncResources()
+
+            case .repairFaultyMLSRemovalKeys:
+                DebugActions.repairFaultyMLSRemovalKeys()
             }
         }
     }
@@ -270,6 +273,35 @@ enum DebugActions {
                         .fromLegacyAccessRole(.nonActivated)
                 )
                 action.send(in: userSession.notificationContext)
+            }
+        }
+    }
+
+    static func repairFaultyMLSRemovalKeys() {
+        guard let userSession = ZMUserSession.shared() else {
+            alert("Error: No user session available")
+            return
+        }
+
+        guard let useCase = userSession.clientSessionComponent?.repairFaultyRemovalKeysUsecase else {
+            alert("Error: Repair use case not available")
+            return
+        }
+
+        Task {
+            do {
+                let result = try await useCase.invoke()
+                await MainActor.run {
+                    let message = """
+                    Found: \(result.faultyConversationsFound) faulty conversation(s)
+                    Repaired: \(result.conversationsRepaired) conversation(s)
+                    """
+                    alert(message, title: "Faulty MLS Removal Keys Repair")
+                }
+            } catch {
+                await MainActor.run {
+                    alert("Error: \(error.localizedDescription)", title: "Repair Failed")
+                }
             }
         }
     }

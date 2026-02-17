@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,10 +23,10 @@ public import Foundation
 public protocol ConversationsAPI {
 
     /// Fetch all conversation identifiers in batches for ``APIVersion`` v0.
-    func getLegacyConversationIdentifiers() async throws -> PayloadPager<[UUID]>
+    func getLegacyConversationIdentifiers() throws -> PayloadPager<[UUID]>
 
     /// Fetch all conversation identifiers in batches available from ``APIVersion`` v1.
-    func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]>
+    func getConversationIdentifiers() throws -> PayloadPager<[QualifiedID]>
 
     /// Fetch conversation list with qualified identifiers.
     func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList
@@ -70,5 +70,11 @@ public protocol ConversationsAPI {
         conversationDomain: String,
         permission: ChannelPermission
     ) async throws -> ChannelPermission
+
+    func updateConversationAccess(
+        conversationID: QualifiedID,
+        allowGuests: Bool,
+        allowApps: Bool
+    ) async throws
 
 }

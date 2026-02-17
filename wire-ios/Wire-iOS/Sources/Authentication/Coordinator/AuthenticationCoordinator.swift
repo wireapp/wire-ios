@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -155,6 +155,7 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     }
 
     func tearDown() {
+        unauthenticatedSession.removeAuthenticationModuleURLActionProcessors()
         loginObservers.removeAll()
         unauthenticatedSessionObserver = nil
         postLoginObservers.removeAll()
@@ -314,29 +315,8 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 unauthenticatedSession.continueAfterBackupImportStep()
 
             case let .completeWireAuthenticationLogin((result, trackingConsent)):
-                if !DeveloperFlag.multibackend.isOn {
-                    // Make sure we use the same backend from the authentication flow.
-                    let backendEnvironment = BackendEnvironment(result.backendEnvironment)
-
-                    BackendEnvironment.shared = backendEnvironment
-                    SessionManager.shared?.switchBackendWithoutResolving(to: backendEnvironment)
-
-                    // Make sure we persist and backend info gathered during authentication.
-                    let backendMetadata = result.backendMetadata
-                    BackendInfo.apiVersion = APIVersion(rawValue: Int32(backendMetadata.apiVersion.rawValue))
-                    BackendInfo.domain = backendMetadata.domain
-                    BackendInfo.isFederationEnabled = backendMetadata.isFederationEnabled
-
-                    if let proxyCredentials = result.proxyCredentials {
-                        sessionManager.saveProxyCredentials(
-                            username: proxyCredentials.username,
-                            password: proxyCredentials.password
-                        )
-                    }
-                } else {
-                    // Don't store the env here... pass it along when upgrading
-                    // to an authenticated session.
-                }
+                // Don't store the env here... pass it along when upgrading
+                // to an authenticated session.
 
                 if let emailCredentials = result.emailCredentials {
                     // Set credentials so we can register a new client via registration status.
@@ -372,20 +352,16 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     break
                 }
 
-                if DeveloperFlag.multibackend.isOn {
-                    let newEnvironment = NewEnvironment(
-                        backendEnvironment: result.backendEnvironment,
-                        metadata: result.backendMetadata,
-                        cookies: result.cookies,
-                        proxyCredentials: result.proxyCredentials
-                    )
-                    unauthenticatedSession.upgradeToAuthenticatedSession(
-                        with: userInfo,
-                        newEnvironment: newEnvironment
-                    )
-                } else {
-                    unauthenticatedSession.upgradeToAuthenticatedSession(with: userInfo)
-                }
+                let newEnvironment = NewEnvironment(
+                    backendEnvironment: result.backendEnvironment,
+                    metadata: result.backendMetadata,
+                    cookies: result.cookies,
+                    proxyCredentials: result.proxyCredentials
+                )
+                unauthenticatedSession.upgradeToAuthenticatedSession(
+                    with: userInfo,
+                    newEnvironment: newEnvironment
+                )
 
             case let .executeFeedbackAction(action):
                 currentViewController?.executeErrorFeedbackAction(action)
@@ -436,9 +412,8 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 continueFlow(withVerificationCode: code)
 
             case let .startRegistrationFlow(unverifiedCredential):
-                activateNetworkSessions { [weak self] _ in
-                    self?.startRegistration(unverifiedCredential)
-                }
+                sessionManager.markNetworkSessionsAsReady(true)
+                startRegistration(unverifiedCredential)
 
             case let .setFullName(fullName):
                 updateUnregisteredUser(\.name, fullName)
@@ -453,9 +428,8 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 companyLoginController?.updateBackendEnvironment(with: url)
 
             case let .startCompanyLogin(code):
-                activateNetworkSessions { [weak self] _ in
-                    self?.startCompanyLoginFlowIfPossible(linkCode: code)
-                }
+                sessionManager.markNetworkSessionsAsReady(true)
+                startCompanyLoginFlowIfPossible(linkCode: code)
 
             case .startSSOFlow:
                 startAutomaticSSOFlow()
@@ -743,14 +717,8 @@ extension AuthenticationCoordinator {
             )
         }
 
-        activateNetworkSessions { [weak self] error in
-            guard error == nil else {
-                self?.sessionManager.removeProxyCredentials()
-                self?.showAlertWithNoInternetConnectionError()
-                return
-            }
-            action()
-        }
+        sessionManager.markNetworkSessionsAsReady(true)
+        action()
     }
 
     // Sends the login verification code to the email address
@@ -937,19 +905,6 @@ extension AuthenticationCoordinator {
                 actions: [.ok]
             ))]
         )
-    }
-
-    /// Call this method when ready to use network sessions : first login
-    private func activateNetworkSessions(before action: @escaping (Error?) -> Void) {
-        sessionManager.markNetworkSessionsAsReady(true)
-        startActivityIndicator()
-        sessionManager.resolveAPIVersion { [weak self] error in
-            self?.stopActivityIndicator()
-            if error != nil {
-                self?.sessionManager.markNetworkSessionsAsReady(false)
-            }
-            action(error)
-        }
     }
 
     private func updateUsername(_ username: String) {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,4 +38,8 @@ protocol WorkItemScheduler: Sendable {
     /// - Returns: The next available item.
 
     func dequeueNextItem() async -> (any WorkItem)?
+
+    /// Clears all items from queues
+
+    func clearAllItems() async
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import WireAuthenticationAPI
 import WireNetwork
 import WireReusableUIComponents
 
-struct FakeReloginViaSSOFactory: ReloginViaSSOFactory, LoginViaSSOUseCaseFactory {
+struct FakeReloginViaSSOFactory: ReloginViaSSOFactory, LoginViaSSOUseCaseFactory, ValidateSSOCodeUseCaseFactory {
 
     let environment: BackendEnvironment2
     let existsAnotherAccount: Bool
@@ -45,4 +45,7 @@ struct FakeReloginViaSSOFactory: ReloginViaSSOFactory, LoginViaSSOUseCaseFactory
         try await MockDependencies().loginViaSSOUseCase(environment: environment)
     }
 
+    func validateSSOCodeUseCase() -> any ValidateSSOCodeUseCaseProtocol {
+        MockDependencies().validateSSOCodeUseCase()
+    }
 }

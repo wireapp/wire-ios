@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,13 +32,12 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         // given
         let userId = NSUUID.create()!
 
-        mockPushChannel = MockPushChannel()
         cookieStorage = ZMPersistentCookieStorage(
             forServerName: "usersessiontest.example.com",
             userIdentifier: userId,
             useCache: true
         )
-        let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
+        let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage)
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
         let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
@@ -85,12 +84,12 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             userId: userId,
             minTLSVersion: nil,
             journal: journal,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            faultyMLSRemovalKeysByDomain: [:]
         )
         let testSession = builder.build()
         testSession.setup(
             apiVersion: nil,
-            eventProcessor: nil,
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
@@ -100,10 +99,6 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
         // then
         XCTAssertTrue(self.transportSession.didCallSetNetworkStateDelegate)
-        XCTAssertEqual(mockPushChannel.keepOpen, true)
-        coreDataStack.syncContext.performAndWait {
-            XCTAssertEqual(mockPushChannel.clientID, selfClient.remoteIdentifier)
-        }
         testSession.tearDown()
     }
 }

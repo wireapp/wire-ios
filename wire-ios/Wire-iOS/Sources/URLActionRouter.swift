@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -143,10 +143,6 @@ class URLActionRouter: URLActionRouterProtocol {
 
 extension URLActionRouter: PresentationDelegate {
 
-    func updateActiveCallPresentationStateIfNeeded() {
-        authenticatedRouter?.updateActiveCallPresentationState()
-    }
-
     func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
         typealias ConversationAlert = L10n.Localizable.Join.Group.Conversation.Alert
 
@@ -212,10 +208,20 @@ extension URLActionRouter: PresentationDelegate {
             if let error = sessionManager?.canSwitchBackend() {
                 let localizedError = mapToLocalizedError(error)
                 presentLocalizedErrorAlert(localizedError)
+                decisionHandler(false)
+                return
             }
 
             if DeveloperFlag.useWireAuthentication.isOn {
-                decisionHandler(SecurityFlags.customBackend.isEnabled)
+                if let sessionManager, sessionManager.activeUserSession?.isLoggedIn == true {
+                    // allows switching backend from current session
+                    sessionManager.addAccount {
+                        decisionHandler(SecurityFlags.customBackend.isEnabled)
+                    }
+                } else {
+                    decisionHandler(SecurityFlags.customBackend.isEnabled)
+                }
+
             } else {
                 // Switching backend is handled below, so pass false here.
                 decisionHandler(false)

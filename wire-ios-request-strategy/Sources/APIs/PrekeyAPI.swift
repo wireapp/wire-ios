@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -164,8 +164,16 @@ class PrekeyAPIV12: PrekeyAPIV11 {
     override var apiVersion: APIVersion { .v12 }
 }
 
-final class PrekeyAPIV13: PrekeyAPIV12 {
+class PrekeyAPIV13: PrekeyAPIV12 {
     override var apiVersion: APIVersion { .v13 }
+}
+
+class PrekeyAPIV14: PrekeyAPIV13 {
+    override var apiVersion: APIVersion { .v14 }
+}
+
+final class PrekeyAPIV15: PrekeyAPIV14 {
+    override var apiVersion: APIVersion { .v15 }
 }
 
 extension Collection<QualifiedClientID> {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,20 +23,13 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
 
     var sut: TeamRolesDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
-    var mockSyncStatus: MockSyncStatus!
 
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
-        mockSyncStatus = MockSyncStatus(
-            managedObjectContext: syncMOC,
-            lastEventIDRepository: lastEventIDRepository,
-            isSyncV2Enabled: false
-        )
         sut = TeamRolesDownloadRequestStrategy(
             withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
-            syncStatus: mockSyncStatus
         )
 
         syncMOC.performGroupedAndWait {
@@ -47,7 +40,6 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
 
     override func tearDown() {
         mockApplicationStatus = nil
-        mockSyncStatus = nil
         sut = nil
         super.tearDown()
     }
@@ -177,35 +169,6 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
         }
     }
 
-    func testThatItUpdatesSyncStepDuringSync() {
-
-        mockSyncStatus.mockPhase = .fetchingTeamRoles
-
-        syncMOC.performGroupedAndWait {
-            // given
-            let team = Team.insertNewObject(in: self.syncMOC)
-            self.mockApplicationStatus.mockSynchronizationState = .online
-            team.remoteIdentifier = .create()
-            team.needsToDownloadRoles = true
-            self.boostrapChangeTrackers(with: team)
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
-
-            // when
-            let response = ZMTransportResponse(
-                payload: self.sampleResponse as ZMTransportData,
-                httpStatus: 200,
-                transportSessionError: nil,
-                apiVersion: APIVersion.v0.rawValue
-            )
-            request.complete(with: response)
-        }
-
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-
-        // then
-        XCTAssertTrue(mockSyncStatus.didCallFinishCurrentSyncPhase)
-    }
-
     func testThatItDoesNotUpdatesSyncStepOutsideOfSync() {
 
         syncMOC.performGroupedAndWait {
@@ -228,24 +191,6 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-
-        // then
-        XCTAssertFalse(mockSyncStatus.didCallFinishCurrentSyncPhase)
-    }
-
-    func testThatItFinishedSyncStepIfNoTeam() {
-
-        syncMOC.performGroupedAndWait {
-            // given
-            self.mockSyncStatus.mockPhase = .fetchingTeamRoles
-
-            // when
-            let request = self.sut.nextRequest(for: .v0)
-
-            // then
-            XCTAssertNil(request)
-            XCTAssertTrue(self.mockSyncStatus.didCallFinishCurrentSyncPhase)
-        }
     }
 
     func testThatItCreatesNoNewRequestAfterReceivingAResponse() {

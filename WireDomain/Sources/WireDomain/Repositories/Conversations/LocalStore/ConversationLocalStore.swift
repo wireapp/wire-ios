@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     // MARK: - Properties
 
-    let context: NSManagedObjectContext
+    public let context: NSManagedObjectContext
     let mlsService: (any MLSServiceInterface)?
     let eventProcessingLogger = WireLogger.eventProcessing
     let mlsLogger = WireLogger.mls
@@ -98,23 +98,25 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         conversation: ZMConversation
     ) async -> (mlsGroupID: MLSGroupID, isMLSReady: Bool)? {
 
-        await context.perform {
+        try? await context.unpack(conversation) { conversation in
             guard let mlsGroupID = conversation.mlsGroupID else {
                 return nil
             }
 
             return (mlsGroupID, conversation.mlsStatus == .ready)
         }
-
     }
 
     public func storeMLSConversationEstablished(
         mlsGroupID: MLSGroupID,
+        epoch: UInt64,
         conversation: ZMConversation
     ) async {
         await context.perform {
             conversation.mlsStatus = .ready
+            conversation.epoch = epoch
             conversation.mlsGroupID = mlsGroupID
+            conversation.commitPendingProposalDate = nil
         }
     }
 
@@ -125,6 +127,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         await context.perform {
             conversation.mlsStatus = .pendingJoinAfterReset
             conversation.mlsGroupID = newMLSGroupID
+            conversation.commitPendingProposalDate = nil
+            conversation.epoch = 0
         }
     }
 
@@ -198,6 +202,16 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     referenceDate: archivedReference
                 )
             }
+        }
+    }
+
+    public func fetchAllMLSConversations(domain: String?) async throws -> [ZMConversation] {
+        try await context.perform { [context] in
+            try ZMConversation.fetchConversationsWithMLSGroupStatus(
+                mlsGroupStatus: .ready,
+                domain: domain,
+                in: context
+            )
         }
     }
 
@@ -1302,6 +1316,15 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func execute(
+        identifier: MLSGroupID,
+        block: @escaping @Sendable (ZMConversation?, NSManagedObjectContext) -> Void
+    ) async {
+        await context.perform { [context] in
+            let conversation = ZMConversation.fetch(with: identifier, in: context)
+            block(conversation, context)
+        }
+    }
 }
 
 // MARK: - Private helpers

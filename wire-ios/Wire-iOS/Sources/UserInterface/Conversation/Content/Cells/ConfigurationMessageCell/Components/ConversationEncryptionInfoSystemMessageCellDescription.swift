@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,12 +33,14 @@ final class ConversationEncryptionInfoSystemMessageCellDescription: Conversation
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    init(isWireCellsEnabled: Bool) {
+    init(isWireDriveEnabled: Bool) {
         typealias connectionView = L10n.Localizable.Conversation.ConnectionView
 
         self.configuration = View.Configuration(
-            topText: isWireCellsEnabled ? connectionView.WireCells.encryptionInfo : connectionView.encryptionInfo,
-            bottomText: connectionView.sensitiveInformationWarning
+            icon: nil,
+            topText: isWireDriveEnabled ? NSAttributedString(string: connectionView.WireCells.encryptionInfo) :
+                NSAttributedString(string: connectionView.encryptionInfo),
+            bottomText: NSAttributedString(string: connectionView.sensitiveInformationWarning)
         )
 
         self.accessibilityLabel = "\(connectionView.encryptionInfo), \(connectionView.sensitiveInformationWarning)"

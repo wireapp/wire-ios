@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,16 +33,11 @@
 
 @property (nonatomic) ZMOperationLoop *sut;
 @property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
-@property (nonatomic) MockPushChannel* mockPushChannel;
 @property (nonatomic) RecordingMockTransportSession *mockTransportSesssion;
 @property (nonatomic) ApplicationStatusDirectory *applicationStatusDirectory;
-@property (nonatomic) PushNotificationStatus *pushNotificationStatus;
-@property (nonatomic) SyncStatus *syncStatus;
 @property (nonatomic) OperationStatus *operationStatus;
 @property (nonatomic) MockRequestStrategy *mockRequestStrategy;
 @property (nonatomic) MockUpdateEventProcessor *mockUpdateEventProcessor;
 @property (nonatomic) MockRequestCancellation *mockRequestCancellation;
-@property (nonatomic) NSMutableArray *pushChannelNotifications;
-@property (nonatomic) id pushChannelObserverToken;
 
 @end

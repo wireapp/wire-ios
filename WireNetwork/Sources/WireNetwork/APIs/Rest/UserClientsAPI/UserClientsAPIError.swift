@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Errors originating from `ConnectionsAPI`.
+/// Errors originating from `UserClientsAPI`.
 
 public enum UserClientsAPIError: Error {
 
@@ -31,5 +31,26 @@ public enum UserClientsAPIError: Error {
     /// client not found
 
     case clientNotFound // v3 removed
+
+    /// Code authentication is required
+
+    case codeAuthenticationRequired
+
+    /// Code authentication failed
+
+    case codeAuthenticationFailed
+
+    /// Re-authentication via password required
+
+    case missingAuth
+
+    /// Failed to register new client because there are
+    /// too many clients
+
+    case tooManyClients
+
+    /// The endpoint is unavailable in this API version
+
+    case endpointUnavailable
 
 }

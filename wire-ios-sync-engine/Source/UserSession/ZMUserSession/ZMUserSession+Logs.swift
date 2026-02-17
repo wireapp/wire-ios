@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,25 +22,21 @@ import WireDataModel
 // MARK: - Error on context save debugging
 
 public enum ContextType: String {
-    case UI
-    case Sync
-    case Search
-    case Other
+    case ui
+    case sync
+    case other
 }
 
 extension NSManagedObjectContext {
 
     var type: ContextType {
         if zm_isSyncContext {
-            return .Sync
+            return .sync
         }
         if zm_isUserInterfaceContext {
-            return .UI
+            return .ui
         }
-        if zm_isSearchContext {
-            return .Search
-        }
-        return .Other
+        return .other
     }
 }
 

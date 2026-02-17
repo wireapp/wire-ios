@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -487,7 +487,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         func addReactions() {
             if !message.isSystem, !message.isEphemeral, message.hasReactions() {
-                let description = MessageReactionsCellDescription(message: message)
+                let description = MessageReactionsCellDescription(message: message, userSession: userSession)
                 cellDescriptions.append(AnyConversationMessageCellDescription(description))
             }
         }

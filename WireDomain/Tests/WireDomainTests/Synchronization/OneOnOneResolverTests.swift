@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -307,9 +307,10 @@ final class OneOnOneResolverTests: XCTestCase {
             with: selfUser,
             in: context
         )
-
+        proteusConversation.messageProtocol = .proteus
         proteusConversation.isForcedReadOnly = forcedReadOnly
         user.oneOnOneConversation = proteusConversation
+        proteusConversation.addParticipantAndUpdateConversationState(user: user)
 
         try proteusConversation.appendText(content: "Hello")
         try proteusConversation.appendText(content: "World!")

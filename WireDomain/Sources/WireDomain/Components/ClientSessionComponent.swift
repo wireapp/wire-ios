@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireCoreCrypto
 import WireDataModel
+import WireLogging
 import WireNetwork
 
 public final class ClientSessionComponent {
@@ -65,6 +66,8 @@ public final class ClientSessionComponent {
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
     private let completionHandlers: CompletionHandlers
 
+    private let faultyMLSRemovalKeysByDomain: [String: [String]]
+
     public init(
         selfUserID: UUID,
         selfClientID: String,
@@ -81,7 +84,8 @@ public final class ClientSessionComponent {
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
-        completionHandlers: CompletionHandlers
+        completionHandlers: CompletionHandlers,
+        faultyMLSRemovalKeysByDomain: [String: [String]]
     ) {
         self.selfUserID = selfUserID
         self.selfClientID = selfClientID
@@ -99,6 +103,7 @@ public final class ClientSessionComponent {
         self.isMLSEnabled = isMLSEnabled
         self.coreCryptoProvider = coreCryptoProvider
         self.completionHandlers = completionHandlers
+        self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
     }
 
     public private(set) lazy var authenticationManager = AuthenticationManager(
@@ -127,7 +132,7 @@ public final class ClientSessionComponent {
         networkService: restNetworkService
     ).makeAPI()
 
-    public lazy var conversationsAPI = ConversationsAPIBuilder(
+    public private(set) lazy var conversationsAPI = ConversationsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -145,6 +150,10 @@ public final class ClientSessionComponent {
 
     private lazy var pushChannelV2API = PushChannelV2APIBuilder(
         pushChannelService: pushChannelService
+    ).makeAPI(for: apiVersion)
+
+    public private(set) lazy var searchAPI = SearchAPIBuilder(
+        apiService: apiService
     ).makeAPI(for: apiVersion)
 
     private lazy var selfUserAPI = SelfUserAPIBuilder(
@@ -346,6 +355,7 @@ public final class ClientSessionComponent {
     // MARK: High level syncs
 
     public private(set) lazy var syncStateSubject = CurrentValueSubject<SyncState, Never>(.idle)
+    private(set) lazy var liveBrokenGroupSubject = PassthroughSubject<Set<String>, Never>()
 
     public private(set) lazy var initialSync = {
         let pullResourcesSync = PullResourcesSync(
@@ -393,6 +403,7 @@ public final class ClientSessionComponent {
         processor: updateEventProcessor,
         databaseSaver: databaseSaver,
         syncStateSubject: syncStateSubject,
+        liveBrokenGroupSubject: liveBrokenGroupSubject,
         journal: journal,
         mlsGroupRepairAgent: mlsGroupRepairAgent
     )
@@ -408,6 +419,7 @@ public final class ClientSessionComponent {
             processor: updateEventProcessor,
             databaseSaver: databaseSaver,
             syncStateSubject: syncStateSubject,
+            liveBrokenGroupSubject: liveBrokenGroupSubject,
             coreCryptoProvider: coreCryptoProvider,
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
@@ -768,6 +780,19 @@ public final class ClientSessionComponent {
         )
     }
 
+    public func createInitiateResetMLSConversationUseCase() -> some InitiateResetMLSConversationUseCaseProtocol {
+        InitiateResetMLSConversationUseCase(
+            api: mlsAPI,
+            mlsService: mlsService,
+            conversationLocalStore: conversationLocalStore,
+            conversationRepository: conversationRepository,
+            lockRepository: ResetMLSConversationLockRepository(
+                userID: selfUserID
+            ),
+            selfDomain: backendMetadata.domain
+        )
+    }
+
     // MARK: - Other
 
     public private(set) lazy var conversationProtobufMessageProcessor = ConversationProtobufMessageProcessor(
@@ -793,12 +818,22 @@ public final class ClientSessionComponent {
         userID: selfUserID
     )
 
+    public lazy var repairFaultyRemovalKeysUsecase = RepairRemovalKeysUseCase(
+        faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain,
+        context: syncContext,
+        mlsService: mlsService,
+        conversationsAPI: conversationsAPI,
+        conversationLocalStore: conversationLocalStore,
+        initiateResetUseCase: initiateResetMLSConversationUseCase
+    )
+
     public lazy var initiateResetMLSConversationUseCase = InitiateResetMLSConversationUseCase(
         api: mlsAPI,
         mlsService: mlsService,
         conversationLocalStore: conversationLocalStore,
         conversationRepository: conversationRepository,
-        lockRepository: resetMLSConversationLockRepository
+        lockRepository: resetMLSConversationLockRepository,
+        selfDomain: backendMetadata.domain
     )
 
     public lazy var mlsTransport: any WireCoreCryptoUniffi.MlsTransport = MLSTransportImpl(
@@ -808,7 +843,7 @@ public final class ClientSessionComponent {
 
     public lazy var workAgent: WorkAgent = .init(scheduler: PriorityOrderWorkItemScheduler())
 
-    public lazy var conversationUpdatesGenerator: ConversationUpdatesGeneratorProtocol = ConversationUpdatesGenerator(
+    public lazy var conversationUpdatesGenerator: IncrementalGeneratorProtocol = ConversationUpdatesGenerator(
         repository: conversationRepository,
         context: syncContext,
         onConversationUpdated: { [weak self] workItem in
@@ -817,4 +852,46 @@ public final class ClientSessionComponent {
         }
     )
 
+    public lazy var commitPendingProposalsGenerator: LiveGeneratorProtocol = CommitPendingProposalsGenerator(
+        repository: conversationRepository,
+        mlsService: mlsService,
+        context: syncContext,
+        isMLSGroupBroken: { [weak self] groupID in
+            self?.isMLSGroupBroken(groupID: groupID) == true
+        },
+        onCommitPendingProposals: { [weak self] workItem in
+
+            self?.workAgent.submitItem(workItem)
+        }
+    )
+
+    public lazy var generatorsDirectory = GeneratorsDirectory(
+        generators: [
+            conversationUpdatesGenerator,
+            commitPendingProposalsGenerator
+        ],
+        syncStatePublisher: syncStateSubject.eraseToAnyPublisher()
+    )
+
+    private func isMLSGroupBroken(groupID: MLSGroupID) -> Bool {
+        let brokenGroupIds = journal[.brokenMLSGroupIDs]
+        return brokenGroupIds.contains(groupID.description)
+    }
+
+    public lazy var repairFaultyMLSRemovalKeysGenerator = RepairFaultyMLSRemovalKeysGenerator(
+        journal: journal,
+        repairUseCase: repairFaultyRemovalKeysUsecase,
+        workAgent: workAgent
+    )
+
+    public func setupLiveMLSBrokenGroups() -> AnyCancellable {
+        liveBrokenGroupSubject.sink { [weak self]  liveMLSBrokenGroups in
+            guard let self else { return }
+            WireLogger.mls.debug("detected during live sync \(liveMLSBrokenGroups.count) broken MLS groups")
+            let item = RepairBrokenMLSGroupsItem(repairAgent: mlsGroupRepairAgent)
+            Task {
+                await self.workAgent.submitItem(item)
+            }
+        }
+    }
 }

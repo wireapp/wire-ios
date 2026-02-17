@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,8 +34,6 @@
 #import "MockModelObjectContextFactory.h"
 
 #import "ZMSelfStrategy.h"
-#import "ZMMissingUpdateEventsTranscoder.h"
-#import "ZMLastUpdateEventIDTranscoder.h"
 #import "ZMLoginTranscoder.h"
 #import "ZMLoginCodeRequestTranscoder.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
@@ -213,11 +211,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     return self.coreDataStack.syncContext;
 }
 
-- (NSManagedObjectContext *)searchMOC
-{
-    return self.coreDataStack.searchContext;
-}
-
 - (NSManagedObjectContext *)eventMOC
 {
     return self.coreDataStack.eventContext;
@@ -276,9 +269,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     }
     if (self.syncMOC != nil) {
         [result addObject:self.syncMOC];
-    }
-    if (self.searchMOC != nil) {
-        [result addObject:self.searchMOC];
     }
     if (self.mockTransportSession.managedObjectContext != nil) {
         [result addObject:self.mockTransportSession.managedObjectContext];

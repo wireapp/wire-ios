@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -391,6 +391,7 @@ extension SettingsCellDescriptorFactory {
         // force-unwrapping should be fine, since we should have a session manager and an active user session here
         let sessionManager = SessionManager.shared!
         let selfUser = ZMUser.selfUser()!
+        let selfUserID = selfUser.qualifiedID!
         let backupLocalStore = BackupLocalStore(
             contextProvider: sessionManager.activeUserSession!.contextProvider
         )
@@ -398,7 +399,7 @@ extension SettingsCellDescriptorFactory {
         let importBackupUseCaseFactory = ImportBackupUseCaseFactory { url in
             ImportBackupUseCase(
                 url: url,
-                selfUserID: .init(selfUser.qualifiedID!),
+                selfUserID: .init(selfUserID),
                 backupLocalStore: backupLocalStore,
                 fileUnarchiver: ZIPFoundationFileUnarchiver(),
                 syncTrigger: {
@@ -415,7 +416,7 @@ extension SettingsCellDescriptorFactory {
             CreateLegacyBackupUseCase(sessionManager: sessionManager)
         } else {
             CreateBackupUseCase(
-                selfUserID: .init(selfUser.qualifiedID!),
+                selfUserID: .init(selfUserID),
                 backupLocalStore: backupLocalStore,
                 fileArchiver: ZIPFoundationFileArchiver(),
                 logger: WireLogger.backupExport

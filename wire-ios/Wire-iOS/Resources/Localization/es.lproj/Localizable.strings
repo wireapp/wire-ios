@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2025 Wire Swiss GmbH
+// Copyright (C) 2026 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -334,6 +334,13 @@
 "conversation.connection_view.encryption_info" = "La comunicación en Wire siempre está cifrada de extremo a extremo. Todo lo que envíes y recibes en esta conversación solo es accesible para ti y para tu contacto.";
 "conversation.connection_view.wire_cells.encryption_info" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.";
 "conversation.connection_view.sensitive_information_warning" = "Por favor, tenga cuidado con quién comparte información confidencial.";
+"conversation.connection_view.welcome.title.wire" = "Communication in Wire is always end-to-end encrypted.";
+"conversation.connection_view.welcome.title.wire_cells" = "Communication in Wire is always secured.";
+"conversation.connection_view.welcome.message.wire_channel" = "Everything you send and receive in this channel is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_group" = "Everything you send and receive in this conversation is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_one_on_one" = "Everything you send and receive in this conversation is only accessible to you and your contact.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_cells" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.learn_more" = "Más información";
 
 "conversation.input_bar.shortcut.send" = "Envía Mensaje";
 "conversation.input_bar.shortcut.newline" = "Insertar salto de línea";
@@ -371,8 +378,9 @@
 "conversation.create.protocol_selection.mls_default" = "SCM (por defecto)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (por defecto)";
-"conversation.create.file_management.title" = "File collaboration";
-"conversation.create.file_management.subtitle" = "Habilitar a los participantes el gestionar sus documentos y archivos de medios. Utilice carpetas, etiquetas y filtros para trabajar más eficientemente. Esto no se puede deshacer.";
+"conversation.create.file_management.title" = "Shared Drive";
+"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
+"conversation.create.file_management.learnMore" = "Más información";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Llamada activa";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "No puede grabar un mensaje de audio durante una llamada.";
@@ -400,7 +408,7 @@
 
 "conversation.action.search" = "Buscar";
 "conversation.action.conversationDetails" = "Detalles de la conversación";
-"conversation.action.files" = "Ficheros";
+"conversation.action.files" = "Shared Drive";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Imágen";
@@ -607,7 +615,7 @@
 "content.system.message_timer_off" = "%@ desactivó el temporizador de mensajes";
 "content.system.message_timer_off-you" = "%@ desactivó el temporizador de mensajes";
 
-"content.system.message_timer_unavailable" = "Self-deleting messages are off for conversations with Cells";
+"content.system.message_timer_unavailable" = "Self-deleting messages are off";
 
 "content.system.backends_stop_federating.self_backend" = "**Tu backend** ha dejado de federar con **%@**. [Más información](%@)";
 "content.system.backends_stop_federating.other_backends" = "Los backends **%@** y **%@** dejaron de federar. [Más información](%@)";
@@ -621,7 +629,7 @@
 "content.system.channel.guest.joined" = "%@ se unió al canal";
 "content.system.channel.guest.you_joined" = "Te has unido al canal";
 
-"content.system.file_collaboration.enabled" = "File collaboration (Cells) is on";
+"content.system.file_collaboration.enabled" = "Shared Drive is on";
 
 // read receipt
 
@@ -660,7 +668,6 @@
 
 "content.system.cannot_decrypt.self" = "No se pudo descifrar un mensaje tuyo.";
 "content.system.cannot_decrypt.other" = "No se pudo descifrar un mensaje de %@.";
-"content.system.cannot_decrypt.reset_session" = "Corregir mensajes futuros";
 "content.system.cannot_decrypt.error_details" = "(Error corregido: %d ID: %@)";
 
 "content.system.cannot_decrypt_resolved.self" = "Ahora puedes descifrar mensajes de ti mismo. Para recuperar mensajes perdidos, necesitas reenviarlos.";
@@ -733,6 +740,15 @@
 "content.reactions_list.likers" = "Le ha gustado a";
 
 "content.file.too_big" = "Puedes enviar archivos de hasta %@";
+
+"content.message.reply.files.count" = "%@ files";
+"content.message.reply.files.notAvailable" = "Archivo no disponible";
+
+// Uploaded file needs rename
+"content.uploaded_file_needs_rename.title" = "Replace incompatible characters";
+"content.uploaded_file_needs_rename.message" = "You can't use the characters %@ and %@.\n\\Replace them automatically or rename the file manually.";
+"content.uploaded_file_needs_rename.confirmButton" = "Replace";
+"content.uploaded_file_needs_rename.cancelButton" = "Cancelar";
 
 // Reactions
 "content.reactions.title" = "Seleccionar reacción";
@@ -1089,10 +1105,10 @@
 "group_details.receipt_options_cell.description" = "Cuando esto está activado, la gente puede ver cuándo se leen sus mensajes en esta conversación.";
 "group_details.access_options_cell.title" = "Acceso al canal";
 "group_details.channel_history_options_cell.title" = "Historial de conversaciones";
-"group_details.file_collaboration_cell.title" = "File collaboration (Cells)";
+"group_details.file_collaboration_cell.title" = "Shared Drive";
 "group_details.file_collaboration_cell.subtitle" = "En";
 "group_details.file_collaboration_cell.footer" = "Permanently on for this conversation";
-"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with Cells.";
+"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with a shared Drive.";
 
 "group_details.message_protocol.section_tile" = "Detalles del protocolo";
 "group_details.message_protocol.title" = "Protocolo";
@@ -1840,10 +1856,6 @@
 "databaseloadingfailure.alert.delete_database.continue" = "Continuar";
 "databaseloadingfailure.alert.retry" = "Reintentar";
 
-// Backend not supported alert
-"backend_not_supported.alert.title" = "Versión del servidor no soportada";
-"backend_not_supported.alert.message" = "La versión del servidor no es compatible con esta aplicación. Póngase en contacto con el administrador del sistema.";
-
 // Third Party
 "giphy.conversation.message" = "%@ · vía giphy.com";
 "giphy.conversation.random_message" = "vía giphy.com";
@@ -1869,6 +1881,10 @@
 
 "collections.search.field.placeholder" = "Buscar mensajes";
 "collections.search.no_items" = "Ningún resultado";
+
+"collections.section.searchFiles.description" = "Search Files";
+"collections.section.searchFiles.alert.title" = "Shared Drive";
+"collections.section.searchFiles.alert.message" = "Find any file or folder in this conversation.";
 
 
 
