@@ -65,12 +65,14 @@ final class CallingTests: WireUITestCase {
     }
 
     private func createCallingServiceInstances(users: [UserInfo]) async throws -> [CallingServiceInstance] {
-        try await callingServiceClient.createInstances(
+        let envVariables = try EnvironmentVariables()
+
+        return try await callingServiceClient.createInstances(
             users: users,
-            backend: CallingTestDefaults.backend,
-            beta: CallingTestDefaults.isBeta,
-            instanceTypeName: CallingTestDefaults.instanceTypeName,
-            instanceTypeVersion: CallingTestDefaults.instanceTypeVersion
+            backend: envVariables.callingBackend,
+            beta: true,
+            instanceTypeName: envVariables.callingInstanceTypeName,
+            instanceTypeVersion: envVariables.callingInstanceTypeVersion
         )
     }
 
@@ -128,6 +130,10 @@ final class CallingTests: WireUITestCase {
         let ongoingCallPage = try acceptIncomingCall(groupName: teamAndGroupCallSetup.groupName)
         verifyParticipantsVisible(teamAndGroupCallSetup.allParticipants)
 
-        _ = try ongoingCallPage.endOngoingCall()
+        let conversationsPage = try ongoingCallPage.endOngoingCall()
+        XCTAssertTrue(
+            conversationsPage.conversationCell.exists,
+            "Conversation List is not showing after ending the call"
+        )
     }
 }

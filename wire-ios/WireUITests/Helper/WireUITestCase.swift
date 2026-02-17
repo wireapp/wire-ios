@@ -26,14 +26,11 @@ class WireUITestCase: XCTestCase {
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     let userHelper = UserHelper()
-    lazy var callingServiceClient: CallingServiceClient = {
-        do { return try CallingServiceClient() } catch {
-            fatalError("CallingServiceClient initialization failed: \(error)")
-        }
-    }()
+    var callingServiceClient: CallingServiceClient!
 
     override func setUpWithError() throws {
         XCUIApplication().terminate()
+        callingServiceClient = try CallingServiceClient()
 
         let launchArguments = [
             "-resetData",

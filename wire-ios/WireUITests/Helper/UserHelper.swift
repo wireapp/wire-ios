@@ -382,7 +382,7 @@ class UserHelper {
     /// - Parameter criteria: pass the criteria to filter conversations
     /// - Returns: conversation UUID and domain info
     func getConversationId(matching criteria: FilterConversationsByCriteria) async throws
-        -> (conversationID: UUID?, domain: String?) {
+        -> (conversationID: UUID, domain: String?) {
         let conversationIDs = try await getQualifiedIdsFromConversationList()
 
         let conversations = try await conversationsAPI.getConversations(for: conversationIDs)
@@ -396,10 +396,10 @@ class UserHelper {
             }
         }
 
-        if let match = filtered.first {
-            return (match.qualifiedID?.id, match.qualifiedID?.domain)
+        if let match = filtered.first, let id = match.qualifiedID?.id {
+            return (id, match.qualifiedID?.domain)
         }
-        return (nil, nil)
+        throw RuntimeError("getConversationId: no matching conversation found")
     }
 
     /// Create group conversation
@@ -477,7 +477,7 @@ class UserHelper {
 
         let (_, teamOwner) = try await registerUserAsTeamOwner()
         guard let teamID = teamOwner.teamID else {
-            throw RuntimeError("registerTeamWithMembersAndOptionalGroup: teamOwner.teamID is nil")
+            throw RuntimeError("registerTeam: teamOwner.teamID is nil")
         }
 
         let ownerAccessToken = try await fetchAccessToken(
@@ -510,11 +510,6 @@ class UserHelper {
             )
 
             let (resolvedConversationId, _) = try await getConversationId(matching: .groupName(groupName))
-            guard let resolvedConversationId else {
-                throw RuntimeError(
-                    "registerTeamWithMembersAndOptionalGroup: Failed to resolve conversationId for group \(groupName)"
-                )
-            }
             conversationId = resolvedConversationId
         }
 

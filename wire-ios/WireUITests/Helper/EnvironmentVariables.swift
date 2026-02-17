@@ -27,7 +27,9 @@ struct EnvironmentVariables {
         case missingCallingServiceURL
         case missingCallingServiceUsername
         case missingCallingServicePassword
-
+        case missingCallingBackend
+        case missingCallingInstanceTypeName
+        case missingCallingInstanceTypeVersion
     }
 
     private let stagingBackendURL: URL
@@ -43,6 +45,9 @@ struct EnvironmentVariables {
     let callingServiceURL: URL
     let callingServiceUsername: String
     let callingServicePassword: String
+    let callingBackend: String
+    let callingInstanceTypeName: String
+    let callingInstanceTypeVersion: String
 
     init() throws {
         guard let backendURLString = ProcessInfo.processInfo.environment["BACKEND_URL"],
@@ -94,6 +99,21 @@ struct EnvironmentVariables {
             throw Failure.missingBackendURL
         }
 
+        guard let callingBackend = ProcessInfo.processInfo.environment["CALLING_BACKEND"],
+              !callingBackend.isEmpty else {
+            throw Failure.missingCallingBackend
+        }
+
+        guard let callingInstanceTypeName = ProcessInfo.processInfo.environment["CALLING_INSTANCE_TYPE_NAME"],
+              !callingInstanceTypeName.isEmpty else {
+            throw Failure.missingCallingInstanceTypeName
+        }
+
+        guard let callingInstanceTypeVersion = ProcessInfo.processInfo.environment["CALLING_INSTANCE_TYPE_VERSION"],
+              !callingInstanceTypeVersion.isEmpty else {
+            throw Failure.missingCallingInstanceTypeVersion
+        }
+
         self.stagingBackendURL = URL(string: "https://\(backendURLString)")!
         self.stagingInbucketURL = URL(string: "https://\(inbucketHostname)")!
         self.inbucketUsername = inbucketUsername
@@ -104,6 +124,9 @@ struct EnvironmentVariables {
         self.antaInbucketURL = URL(string: "https://\(antaInbucketURL)")!
         self.antaBackendURL = URL(string: "https://\(backendURLAntaString)")!
         self.callingServiceURL = URL(string: "https://\(callingServiceURLString)")!
+        self.callingBackend = callingBackend
+        self.callingInstanceTypeName = callingInstanceTypeName
+        self.callingInstanceTypeVersion = callingInstanceTypeVersion
     }
 
     var inbucketURL: URL {
