@@ -297,6 +297,10 @@ public enum Locators {
         public static func participantIdentifier(_ name: String) -> String {
             "audioView.\(name).minimized.inactive"
         }
+    public enum SecurityLevelView: String {
+
+        case classificationBanner = "ClassificationBanner"
+
     }
 
 }

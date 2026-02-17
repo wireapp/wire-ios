@@ -17,22 +17,21 @@
 //
 
 import Foundation
-import XCTest
-@testable import Wire
 
-final class ___FILEBASENAMEASIDENTIFIER___: XCTestCase {
+/// Payload to upload MLS key packages.
 
-    private var sut: ___VARIABLE_productName:identifier___Module.Router!
+public struct KeyPackageUpload: Equatable, Sendable {
 
-    override func setUp() {
-        super.setUp()
-        sut = ___VARIABLE_productName:identifier___Module.Router()
+    /// The list of base64-encoded key packages to upload.
+
+    public let keyPackages: [KeyPackage]
+
+    /// Create a new `KeyPackageUpload`.
+    ///
+    /// - Parameter keyPackages: The list of key packages to upload.
+
+    public init(keyPackages: [KeyPackage]) {
+        self.keyPackages = keyPackages
     }
-
-    override func tearDown() {
-        sut = nil
-    }
-
-    // MARK: - Tests
 
 }

@@ -17,22 +17,21 @@
 //
 
 import Foundation
-import XCTest
-@testable import Wire
 
-final class ___FILEBASENAMEASIDENTIFIER___: XCTestCase {
+/// A base64-encoded MLS key package.
 
-    private var sut: ___VARIABLE_productName:identifier___Module.Router!
+public struct KeyPackage: Equatable, Sendable {
 
-    override func setUp() {
-        super.setUp()
-        sut = ___VARIABLE_productName:identifier___Module.Router()
+    /// The base64-encoded key package data.
+
+    public let base64EncodedData: String
+
+    /// Create a new `KeyPackage`.
+    ///
+    /// - Parameter base64EncodedData: The base64-encoded key package data.
+
+    public init(base64EncodedData: String) {
+        self.base64EncodedData = base64EncodedData
     }
-
-    override func tearDown() {
-        sut = nil
-    }
-
-    // MARK: - Tests
 
 }
