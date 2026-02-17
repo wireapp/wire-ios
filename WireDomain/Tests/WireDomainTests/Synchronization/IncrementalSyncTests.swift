@@ -23,6 +23,10 @@ import XCTest
 @testable import WireDomainSupport
 @testable import WireNetwork
 @testable import WireNetworkSupport
+@testable import WireDataModel
+@testable import WireDataModelSupport
+
+private class MockNotificationContext: NSObject, NotificationContext {}
 
 final class IncrementalSyncTests: XCTestCase {
 
@@ -39,6 +43,7 @@ final class IncrementalSyncTests: XCTestCase {
     var liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>!
     var mlsGroupRepairAgent: MockMLSGroupRepairAgentProtocol!
     var cancellables: Set<AnyCancellable>!
+    var earService: MockEARServiceInterface!
 
     override func setUp() {
         journal = Journal(
@@ -56,7 +61,8 @@ final class IncrementalSyncTests: XCTestCase {
         liveBrokenGroupSubject = PassthroughSubject()
         mlsGroupRepairAgent = MockMLSGroupRepairAgentProtocol()
         cancellables = Set<AnyCancellable>()
-
+        earService = MockEARServiceInterface()
+        
         sut = IncrementalSync(
             selfClientID: Scaffolding.selfClientID,
             pushChannelAPI: pushChannelAPI,
@@ -69,7 +75,9 @@ final class IncrementalSyncTests: XCTestCase {
             syncStateSubject: syncStateSubject,
             liveBrokenGroupSubject: liveBrokenGroupSubject,
             journal: journal,
-            mlsGroupRepairAgent: mlsGroupRepairAgent
+            mlsGroupRepairAgent: mlsGroupRepairAgent,
+            earService: earService,
+            notificationContext: MockNotificationContext()
         )
     }
 
@@ -92,7 +100,7 @@ final class IncrementalSyncTests: XCTestCase {
     func test_perform_pendingEventsExist() async throws {
         // Mock
         // Pending events are pulled.
-        updateEventsSync.pull_MockMethod = { AsyncStream { [] } }
+        updateEventsSync.pullPublicKeys_MockMethod = { _ in AsyncStream { [] } }
 
         // Some pending events.
         let managedObjectID1 = NSManagedObjectID()
@@ -106,7 +114,7 @@ final class IncrementalSyncTests: XCTestCase {
         ]
 
         // Pending events are stored in batches.
-        updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
+        updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockMethod = { _, _, _ in
             let envelopes = storedEnvelopes
             storedEnvelopes = []
             return envelopes
@@ -134,7 +142,7 @@ final class IncrementalSyncTests: XCTestCase {
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
 
         // Live envelopes are peristed and deleted one by one.
-        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ async throws in }
         updateEventsStore.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
 
         // Live events are decrypted.
@@ -171,7 +179,7 @@ final class IncrementalSyncTests: XCTestCase {
         XCTAssertEqual(pushChannel.open_Invocations.count, 1)
 
         // Then pending events were pulled.
-        XCTAssertEqual(updateEventsSync.pull_Invocations.count, 1)
+        XCTAssertEqual(updateEventsSync.pullPublicKeys_Invocations.count, 1)
 
         // Then live events were decrypted (duplicates skipped).
         XCTAssertEqual(
@@ -185,7 +193,7 @@ final class IncrementalSyncTests: XCTestCase {
         // Broken conversation IDs are stored
         XCTAssertEqual(journal[.brokenMLSGroupIDs].first, Scaffolding.mlsGroupID)
 
-        let storeInvocations = updateEventsStore.persistEventEnvelopeIndex_Invocations
+        let storeInvocations = updateEventsStore.persistEventEnvelopeIndexPublicKeys_Invocations
         try XCTAssertCount(storeInvocations, count: 2)
         XCTAssertEqual(storeInvocations[0].eventEnvelope, Scaffolding.event4)
         XCTAssertEqual(storeInvocations[0].index, 11)
@@ -230,10 +238,10 @@ final class IncrementalSyncTests: XCTestCase {
     func test_perform_OutOfSyncLiveEventsAreNotified() async throws {
         // Mock
         // Pending events are pulled.
-        updateEventsSync.pull_MockMethod = { AsyncStream { [] } }
+        updateEventsSync.pullPublicKeys_MockMethod = { _ in AsyncStream { [] } }
 
         // Pending events are stored in batches.
-        updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
+        updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockMethod = { _, _, _ in
             []
         }
 
@@ -259,7 +267,7 @@ final class IncrementalSyncTests: XCTestCase {
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
 
         // Live envelopes are peristed and deleted one by one.
-        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ async throws in }
         updateEventsStore.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
 
         // Live events are decrypted.
@@ -311,7 +319,7 @@ final class IncrementalSyncTests: XCTestCase {
     func test_perform_Cancelled_Push_Channel_Closed() async throws {
         // Mock
         // Pending events are pulled.
-        updateEventsSync.pull_MockMethod = { AsyncStream { [] } }
+        updateEventsSync.pullPublicKeys_MockMethod = { _ in AsyncStream { [] } }
 
         // Some pending events.
         var storedEnvelopes = [
@@ -321,7 +329,7 @@ final class IncrementalSyncTests: XCTestCase {
         ]
 
         // Pending events are stored in batches.
-        updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
+        updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockMethod = { _, _, _ in
             let envelopes = storedEnvelopes
             storedEnvelopes = []
             return envelopes.map { ($0, NSManagedObjectID()) }
@@ -348,7 +356,7 @@ final class IncrementalSyncTests: XCTestCase {
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
 
         // Live envelopes are peristed and deleted one by one.
-        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ async throws in }
         updateEventsStore.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
 
         // Live events are decrypted.
@@ -393,7 +401,7 @@ final class IncrementalSyncTests: XCTestCase {
         pushChannel.open_MockValue = AsyncThrowingStream { _ in }
         pushChannel.close_MockMethod = {}
         pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
-        updateEventsSync.pull_MockError = UpdateEventsAPIError.notFound
+        updateEventsSync.pullPublicKeys_MockError = UpdateEventsAPIError.notFound
         messageLocalStore.addPotentialGapSystemMessage_MockMethod = {}
         updateEventsStore.storeLastEventIDId_MockMethod = { _ in }
         updateEventsStore.resetLastEventID_MockMethod = {}

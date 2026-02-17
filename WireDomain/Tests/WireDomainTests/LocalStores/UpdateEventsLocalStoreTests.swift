@@ -78,7 +78,8 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         try await sut.persistEventEnvelope(
             Scaffolding.envelope1,
-            index: 1
+            index: 1,
+            publicKeys: nil
         )
 
         // Then
@@ -99,7 +100,11 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // When
 
-        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(limit: 3)
+        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(
+            limit: 3,
+            privateKeys: nil,
+            backgroundAccessibleOnly: false
+        )
 
         // Then it returns no envelopes.
 
@@ -114,7 +119,11 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // When
 
-        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(limit: 3)
+        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(
+            limit: 3,
+            privateKeys: nil,
+            backgroundAccessibleOnly: false
+        )
 
         // Then it returns the one and only envelope.
         try XCTAssertCount(fetchedEnvelopes, count: 1)
@@ -136,7 +145,11 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // When
 
-        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(limit: 3)
+        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(
+            limit: 3,
+            privateKeys: nil,
+            backgroundAccessibleOnly: false
+        )
 
         // Then the first 3 envelopes were returned.
         try XCTAssertCount(fetchedEnvelopes, count: 3)

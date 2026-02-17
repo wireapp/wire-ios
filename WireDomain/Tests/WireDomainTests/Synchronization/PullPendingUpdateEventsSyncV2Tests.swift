@@ -70,7 +70,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
 
         var indices = [Int64(10), 11, 12, 13, 14, 15]
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
-        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ async throws in }
     }
 
     override func tearDown() {
@@ -241,7 +241,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
             line: line
         )
         try XCTAssertCount(
-            updateEventsStore.persistEventEnvelopeIndex_Invocations,
+            updateEventsStore.persistEventEnvelopeIndexPublicKeys_Invocations,
             count: storedEventsCount,
             "storedEventsCount mismatch",
             file: file,
