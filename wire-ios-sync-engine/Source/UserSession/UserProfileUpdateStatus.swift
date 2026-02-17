@@ -217,7 +217,7 @@ extension UserProfileUpdateStatus {
             .post(in: managedObjectContext.notificationContext)
     }
 
-    /// Invoked when the handle was succesfully set
+    /// Invoked when the handle was successfully set
     func didSetHandle() {
         if let handle = handleToSet {
             ZMUser.selfUser(in: managedObjectContext).handle = handle

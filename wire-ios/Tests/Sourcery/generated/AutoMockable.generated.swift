@@ -276,11 +276,11 @@ class MockConnectViewControllerBuilderProtocol: ConnectViewControllerBuilderProt
     // MARK: - build
 
     var build_Invocations: [Void] = []
-    var build_MockMethod: (() async -> UIViewController)?
-    var build_MockValue: UIViewController?
+    var build_MockMethod: (() async -> UIViewController?)?
+    var build_MockValue: UIViewController??
 
     @MainActor
-    func build() async -> UIViewController {
+    func build() async -> UIViewController? {
         build_Invocations.append(())
 
         if let mock = build_MockMethod {

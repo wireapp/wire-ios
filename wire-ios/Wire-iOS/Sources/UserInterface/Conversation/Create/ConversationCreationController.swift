@@ -295,9 +295,12 @@ final class ConversationCreationController: UIViewController {
                 isAppsFeatureEnabled: isAppsFeatureEnabled,
                 areLegacyBotsAvailable: areLegacyBotsAvailable
             )
-
-            participantsController.conversationCreationDelegate = self
-            navigationController?.pushViewController(participantsController, animated: true)
+            if let participantsController {
+                participantsController.conversationCreationDelegate = self
+                navigationController?.pushViewController(participantsController, animated: true)
+            } else {
+                WireLogger.ui.error("failed to present participants VC, it is nil", attributes: .safePublic)
+            }
         }
     }
 

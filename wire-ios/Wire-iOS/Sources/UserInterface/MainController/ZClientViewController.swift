@@ -487,7 +487,10 @@ final class ZClientViewController: UIViewController {
     @objc
     private func openStartUI(_ sender: Any?) {
         Task {
-            let rootViewController = await connectBuilder.build()
+            guard let rootViewController = await connectBuilder.build() else {
+                WireLogger.ui.error("failed to present start UI, VC is nil", attributes: .safePublic)
+                return
+            }
             let connectUI = UINavigationController(rootViewController: rootViewController)
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)
@@ -551,7 +554,7 @@ final class ZClientViewController: UIViewController {
     /// - Parameter conversation: conversation to open
     func openDetailScreen(for conversation: ZMConversation) {
         Task {
-            let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+            let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
             let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
                 .isFeatureEnabled(.apps) ?? false
             let controller = GroupDetailsViewController(

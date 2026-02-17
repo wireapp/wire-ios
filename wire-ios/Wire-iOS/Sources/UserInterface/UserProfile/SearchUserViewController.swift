@@ -112,17 +112,12 @@ final class SearchUserViewController: UIViewController {
         guard let searchDirectory else { return }
 
         Task {
-            do {
-                let task = searchDirectory.createLookupTask(with: qualifiedID)
-                pendingSearchTask = task
-                let searchResult = try await task.start()
-                pendingSearchTask = nil
-                activityIndicator.stop()
-                handleSearchResult(searchResult: searchResult)
-            } catch {
-                let errorType = type(of: error)
-                WireLogger.search.error("starting lookup failed: \(String(describing: errorType))")
-            }
+            let task = searchDirectory.createLookupTask(with: qualifiedID)
+            pendingSearchTask = task
+            let searchResult = await task.start()
+            pendingSearchTask = nil
+            activityIndicator.stop()
+            handleSearchResult(searchResult: searchResult)
         }
     }
 

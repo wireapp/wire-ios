@@ -177,20 +177,22 @@ final class SearchResultsViewController: UIViewController {
         }
     }
 
-    init(
+    init?(
         userSelection: UserSelection,
         userSession: UserSession,
         isAddingParticipants: Bool = false,
         shouldIncludeGuests: Bool,
         isFederationEnabled: Bool
     ) {
+        guard let searchUsersUseCase = userSession.makeSearchUsersUseCase() else { return nil }
+
         self.userSelection = userSelection
         self.userSession = userSession
         self.isAddingParticipants = isAddingParticipants
         self.mode = .list
         self.shouldIncludeGuests = shouldIncludeGuests
         self.isFederationEnabled = isFederationEnabled
-        self.searchUsersUseCase = userSession.makeSearchUsersUseCase()!
+        self.searchUsersUseCase = searchUsersUseCase
 
         let team = userSession.selfUser.membership?.team
         let teamName = team?.name
@@ -253,20 +255,16 @@ final class SearchResultsViewController: UIViewController {
         searchResultsView.emptyResultContainer.isHidden = true
 
         pendingSearchTask = Task {
-            do {
-                var options = options
-                options.updateForSelfUserTeamRole(selfUser: userSession.selfUser)
+            var options = options
+            options.updateForSelfUserTeamRole(selfUser: userSession.selfUser)
 
-                let result = try await searchUsersUseCase.invoke(
-                    query: query,
-                    options: options,
-                    messageProtocol: filterConversation?.messageProtocol
-                )
+            let result = await searchUsersUseCase.invoke(
+                query: query,
+                options: options,
+                messageProtocol: filterConversation?.messageProtocol
+            )
 
-                handleSearchResult(result: result)
-            } catch {
-                WireLogger.search.warn("Search failed with error: \(error.localizedDescription)")
-            }
+            handleSearchResult(result: result)
         }
     }
 

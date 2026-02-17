@@ -53,7 +53,7 @@ public final class SearchUsersUseCase: SearchUsersUseCaseProtocol {
         query: String,
         options: SearchOptions,
         messageProtocol: MessageProtocol?
-    ) async throws -> SearchResult {
+    ) async -> SearchResult {
         activeSearchTask?.cancel()
         activeSearchTask = nil
 
@@ -79,7 +79,7 @@ public final class SearchUsersUseCase: SearchUsersUseCaseProtocol {
                 activeSearchTask = nil
             }
         }
-        return try await task.start()
+        return await task.start()
     }
 
     // MARK: - Private methods

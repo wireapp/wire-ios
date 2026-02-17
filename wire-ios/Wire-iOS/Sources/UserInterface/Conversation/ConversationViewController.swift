@@ -116,7 +116,7 @@ final class ConversationViewController: UIViewController {
     var participantsController: UIViewController? {
         get async {
 
-            let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+            let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
             let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
                 .isFeatureEnabled(.apps) ?? false
 

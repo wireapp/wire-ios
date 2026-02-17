@@ -381,10 +381,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 isAppsFeatureEnabled: isAppsFeatureEnabled,
                 areLegacyBotsAvailable: areLegacyBotsAvailable
             )
-            let navigationController = addParticipantsViewController.wrapInNavigationController()
-            navigationController.modalPresentationStyle = .currentContext
-
-            present(navigationController, animated: true)
+            if let navigationController = addParticipantsViewController?.wrapInNavigationController() {
+                navigationController.modalPresentationStyle = .currentContext
+                present(navigationController, animated: true)
+            }
+            WireLogger.ui
+                .error("failed to perform invite action, addParticipantsViewController is nil", attributes: .safePublic)
         case .more:
             actionController = ConversationActionController(
                 conversation: conversation,
