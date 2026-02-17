@@ -104,7 +104,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             let result = try await sut.getFeatureConfigs()
             // Then
             let resultSet = Set(result)
-            let expectedSet = Set(Scaffolding.featureConfigsV1)
+            let expectedSet = Scaffolding.featureConfigsV1
             XCTAssertEqual(resultSet, expectedSet)
         }
     }
@@ -223,13 +223,13 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     // MARK: - V10
 
-    func testGetFeatureConfigs_SuccessResponse_200_V10_And_Next_Versions_Then_Verify_Requests() async throws {
+    func testGetFeatureConfigs_SuccessResponse_200_V10_Then_Verify_Requests() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV10")
         ])
 
-        let supportedVersions = [APIVersion.v10] // .andNextVersions
+        let supportedVersions = [APIVersion.v10]
 
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
@@ -362,7 +362,7 @@ extension FeatureConfigsAPITests {
             )
         ]
 
-        static let featureConfigsV1: [FeatureConfig] = [
+        static let featureConfigsV1: Set<FeatureConfig> = [
             .appLock(
                 .init(
                     status: .enabled,
