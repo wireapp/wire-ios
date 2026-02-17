@@ -85,7 +85,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
             EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
         }
 
-        store.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ in }
+        store.persistEventEnvelopesIndexPublicKeys_MockMethod = { _, _, _ in }
         store.storeLastEventIDId_MockMethod = { _ in }
         store.storeServerTimeDelta_MockMethod = { _ in }
 
