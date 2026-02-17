@@ -66,7 +66,7 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
         )
 
         return try ResponseParser()
-            .success(code: .ok, type: ListUsersResponseV0.self) // TODO: make sure unit tests cover this
+            .success(code: .ok, type: ListUsersResponseV0.self)
             .parse(code: response.statusCode, data: data)
     }
 
