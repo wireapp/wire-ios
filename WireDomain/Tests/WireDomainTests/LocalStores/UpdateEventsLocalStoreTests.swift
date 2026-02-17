@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import WireDataModelSupport
 import WireTestingPackage
@@ -267,6 +268,272 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         await syncContext.perform {
             XCTAssertEqual(conversation.needsToCalculateUnreadMessages, false)
         }
+    }
+
+    // MARK: - EAR Encryption Tests
+
+    func testPersistEventEnvelope_WithPublicKeys_EncryptsData() async throws {
+        // Given: Generate key pair
+        let (publicKey, _) = try generateKeyPair()
+        let (secondaryPublicKey, _) = try generateSecondaryKeyPair()
+
+        let publicKeys = EARPublicKeys(
+            primary: publicKey,
+            secondary: secondaryPublicKey
+        )
+
+        // Create non-calling event (should use primary key)
+        let event = createNonCallingEvent()
+        let envelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [event],
+            isTransient: false,
+            deliveryTag: nil
+        )
+
+        // When
+        try await sut.persistEventEnvelope(envelope, index: 0, publicKeys: publicKeys)
+
+        // Then: Verify envelope is stored and encrypted
+        try await eventContext.perform { [eventContext] in
+            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+            let stored = try XCTUnwrap(eventContext.fetch(request).first)
+
+            XCTAssertTrue(stored.isEncrypted, "Should be marked as encrypted")
+            XCTAssertFalse(stored.isBackgroundAccessible, "Non-calling event not background accessible")
+
+            // Verify data is actually encrypted (not plaintext)
+            let coder = StorableUpdateEventCoder()
+            XCTAssertThrowsError(try coder.decode(stored.data))
+        }
+    }
+
+    func testPersistEventEnvelope_CallingEvent_UsesSecondaryKey() async throws {
+        // Given: Generate key pairs
+        let (publicKey, _) = try generateKeyPair()
+        let (secondaryPublicKey, _) = try generateSecondaryKeyPair()
+
+        let publicKeys = EARPublicKeys(
+            primary: publicKey,
+            secondary: secondaryPublicKey
+        )
+
+        // Create calling-related event (should use secondary key)
+        let event = createCallingEvent()
+        let envelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [event],
+            isTransient: false,
+            deliveryTag: nil
+        )
+
+        // When
+        try await sut.persistEventEnvelope(envelope, index: 0, publicKeys: publicKeys)
+
+        // Then: Verify envelope is encrypted and background accessible
+        try await eventContext.perform { [eventContext] in
+            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+            let stored = try XCTUnwrap(eventContext.fetch(request).first)
+
+            XCTAssertTrue(stored.isEncrypted)
+            XCTAssertTrue(stored.isBackgroundAccessible, "Calling event should be background accessible")
+        }
+    }
+
+    func testFetchStoredEventEnvelopes_Encrypted_DecryptsWithPrimaryKey() async throws {
+        // Given: Generate key pair and encrypt an envelope
+        let (publicKey, privateKey) = try generateKeyPair()
+        let (secondaryPublicKey, secondaryPrivateKey) = try generateSecondaryKeyPair()
+
+        let publicKeys = EARPublicKeys(primary: publicKey, secondary: secondaryPublicKey)
+        let privateKeys = EARPrivateKeys(primary: privateKey, secondary: secondaryPrivateKey)
+
+        let eventID = UUID()
+        let event = createNonCallingEvent()
+        let envelope = UpdateEventEnvelope(
+            id: eventID,
+            events: [event],
+            isTransient: false,
+            deliveryTag: nil
+        )
+
+        // Persist encrypted
+        try await sut.persistEventEnvelope(envelope, index: 0, publicKeys: publicKeys)
+
+        // When: Fetch with private keys
+        let fetched = try await sut.fetchStoredEventEnvelopes(
+            limit: 10,
+            privateKeys: privateKeys,
+            backgroundAccessibleOnly: false
+        )
+
+        // Then: Should decrypt and return envelope
+        XCTAssertEqual(fetched.count, 1)
+        XCTAssertEqual(fetched.first?.envelope.id, eventID)
+        XCTAssertEqual(fetched.first?.envelope.events.count, 1)
+    }
+
+    func testFetchStoredEventEnvelopes_Encrypted_NoPrivateKeys_ReturnsEmpty() async throws {
+        // Given: Encrypted envelope stored
+        let (publicKey, _) = try generateKeyPair()
+        let (secondaryPublicKey, _) = try generateSecondaryKeyPair()
+
+        let publicKeys = EARPublicKeys(primary: publicKey, secondary: secondaryPublicKey)
+
+        let envelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [createNonCallingEvent()],
+            isTransient: false,
+            deliveryTag: nil
+        )
+
+        try await sut.persistEventEnvelope(envelope, index: 0, publicKeys: publicKeys)
+
+        // When: Fetch without private keys
+        let fetched = try await sut.fetchStoredEventEnvelopes(
+            limit: 10,
+            privateKeys: nil,
+            backgroundAccessibleOnly: false
+        )
+
+        // Then: Should return empty (can't decrypt)
+        XCTAssertEqual(fetched.count, 0)
+    }
+
+    func testFetchStoredEventEnvelopes_BackgroundAccessibleOnly_FiltersCorrectly() async throws {
+        // Given: Mix of encrypted and unencrypted envelopes
+        let (publicKey, privateKey) = try generateKeyPair()
+        let (secondaryPublicKey, secondaryPrivateKey) = try generateSecondaryKeyPair()
+
+        let publicKeys = EARPublicKeys(primary: publicKey, secondary: secondaryPublicKey)
+        let privateKeys = EARPrivateKeys(primary: privateKey, secondary: secondaryPrivateKey)
+
+        // 1. Unencrypted envelope (should be included)
+        let unencryptedEnvelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [createNonCallingEvent()],
+            isTransient: false,
+            deliveryTag: nil
+        )
+        try await sut.persistEventEnvelope(unencryptedEnvelope, index: 0, publicKeys: nil)
+
+        // 2. Encrypted + background accessible (calling event, should be included)
+        let backgroundAccessibleEnvelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [createCallingEvent()],
+            isTransient: false,
+            deliveryTag: nil
+        )
+        try await sut.persistEventEnvelope(backgroundAccessibleEnvelope, index: 1, publicKeys: publicKeys)
+
+        // 3. Encrypted + NOT background accessible (should be excluded)
+        let nonBackgroundAccessibleEnvelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [createNonCallingEvent()],
+            isTransient: false,
+            deliveryTag: nil
+        )
+        try await sut.persistEventEnvelope(nonBackgroundAccessibleEnvelope, index: 2, publicKeys: publicKeys)
+
+        // When: Fetch with backgroundAccessibleOnly: true
+        let fetched = try await sut.fetchStoredEventEnvelopes(
+            limit: 10,
+            privateKeys: privateKeys,
+            backgroundAccessibleOnly: true
+        )
+
+        // Then: Should return only unencrypted and background-accessible envelopes
+        XCTAssertEqual(fetched.count, 2)
+
+        let fetchedIDs = fetched.map(\.envelope.id)
+        XCTAssertTrue(fetchedIDs.contains(unencryptedEnvelope.id))
+        XCTAssertTrue(fetchedIDs.contains(backgroundAccessibleEnvelope.id))
+        XCTAssertFalse(fetchedIDs.contains(nonBackgroundAccessibleEnvelope.id))
+    }
+
+    func testEncryptionDecryption_RoundTrip_BothKeyTypes() async throws {
+        // Given: Both key pairs
+        let (publicKey, privateKey) = try generateKeyPair()
+        let (secondaryPublicKey, secondaryPrivateKey) = try generateSecondaryKeyPair()
+
+        let publicKeys = EARPublicKeys(primary: publicKey, secondary: secondaryPublicKey)
+        let privateKeys = EARPrivateKeys(primary: privateKey, secondary: secondaryPrivateKey)
+
+        // Create one envelope for each key type
+        let primaryEnvelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [createNonCallingEvent()],
+            isTransient: false,
+            deliveryTag: nil
+        )
+
+        let secondaryEnvelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [createCallingEvent()],
+            isTransient: false,
+            deliveryTag: nil
+        )
+
+        // When: Persist both
+        try await sut.persistEventEnvelope(primaryEnvelope, index: 0, publicKeys: publicKeys)
+        try await sut.persistEventEnvelope(secondaryEnvelope, index: 1, publicKeys: publicKeys)
+
+        // Fetch both
+        let fetched = try await sut.fetchStoredEventEnvelopes(
+            limit: 10,
+            privateKeys: privateKeys,
+            backgroundAccessibleOnly: false
+        )
+
+        // Then: Both should be decrypted successfully
+        XCTAssertEqual(fetched.count, 2)
+
+        let fetchedIDs = fetched.map(\.envelope.id)
+        XCTAssertTrue(fetchedIDs.contains(primaryEnvelope.id))
+        XCTAssertTrue(fetchedIDs.contains(secondaryEnvelope.id))
+    }
+
+    // MARK: - Helper Methods
+
+    private func generateKeyPair() throws -> (publicKey: SecKey, privateKey: SecKey) {
+        let keyGenerator = EARKeyGenerator()
+        return try keyGenerator.generatePrimaryPublicPrivateKeyPair(id: "test-primary-\(UUID().uuidString)")
+    }
+
+    private func generateSecondaryKeyPair() throws -> (publicKey: SecKey, privateKey: SecKey) {
+        let keyGenerator = EARKeyGenerator()
+        return try keyGenerator.generateSecondaryPublicPrivateKeyPair(id: "test-secondary-\(UUID().uuidString)")
+    }
+
+    private func createNonCallingEvent() -> UpdateEvent {
+        .user(.pushRemove)
+    }
+
+    private func createCallingEvent() -> UpdateEvent {
+        // Create a GenericMessage with Calling content
+        let callingMessage = GenericMessage(
+            content: Calling(content: "calling", conversationId: .init(uuid: UUID(), domain: "")),
+            nonce: UUID()
+        )
+
+        // Serialize to data
+        let callingData = try! callingMessage.serializedData().base64String()
+
+        // Create a ProteusMessageAddEvent with the calling message as decrypted content
+        let event = ConversationProteusMessageAddEvent(
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.aliceID,
+            timestamp: Date(),
+            message: MessageContent(
+                encryptedMessage: "encrypted",
+                decryptedMessage: callingData
+            ),
+            externalData: nil,
+            messageSenderClientID: Scaffolding.aliceClientID,
+            messageRecipientClientID: Scaffolding.selfClientID
+        )
+
+        return .conversation(.proteusMessageAdd(event))
     }
 
     @discardableResult
