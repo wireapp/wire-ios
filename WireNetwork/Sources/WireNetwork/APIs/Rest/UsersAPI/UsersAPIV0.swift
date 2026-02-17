@@ -137,7 +137,7 @@ struct ListUsersResponseV0: Decodable, ToAPIModelConvertible {
     var users: [UserResponseV0]
 
     init(from decoder: any Decoder) throws {
-        var container = try decoder.unkeyedContainer()
+        let container = try decoder.singleValueContainer()
         self.users = try container.decode([UserResponseV0].self)
     }
 

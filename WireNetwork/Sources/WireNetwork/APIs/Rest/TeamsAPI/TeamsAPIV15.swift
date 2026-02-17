@@ -49,7 +49,7 @@ private struct GetAppsResponseV15: Decodable, ToAPIModelConvertible {
     var apps: [GetAppResponseV14]
 
     init(from decoder: any Decoder) throws {
-        var container = try decoder.unkeyedContainer()
+        let container = try decoder.singleValueContainer()
         self.apps = try container.decode([GetAppResponseV14].self)
     }
 
