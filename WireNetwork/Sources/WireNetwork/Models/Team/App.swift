@@ -16,10 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class UsersAPIV6: UsersAPIV5 {
+public struct App: Equatable, Sendable {
 
-    override var apiVersion: APIVersion {
-        .v6
-    }
+    /// The team name.
+
+    public let name: String
+
+    public let category: String
+
+    public let description: String
+
+    /// Color accent of the user
+
+    public let accentID: Int
+
+    /// The user's profile image assets
+
+    public let assets: [UserAsset]
 
 }
