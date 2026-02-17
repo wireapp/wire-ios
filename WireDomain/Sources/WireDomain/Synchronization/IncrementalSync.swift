@@ -448,11 +448,15 @@ public class IncrementalSync: IncrementalSyncProtocol {
                 try await group.next()
             }
         } catch is CancellationError {
-            logger.error(
-                "timed out waiting for database unlock, cancelling sync",
-                attributes: .incrementalSyncV2, .safePublic
-            )
-            throw Failure.databaseUnlockTimeout
+
+            // if the database is still locked, throw a timeout error
+            if earService.isLocked {
+                logger.error(
+                    "timed out waiting for database unlock, cancelling sync",
+                    attributes: .incrementalSyncV2, .safePublic
+                )
+                throw Failure.databaseUnlockTimeout
+            }
         }
     }
 
