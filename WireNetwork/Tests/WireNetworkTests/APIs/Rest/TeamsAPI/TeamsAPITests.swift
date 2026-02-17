@@ -612,7 +612,7 @@ final class TeamsAPITests: XCTestCase {
                     category: "developer",
                     description: "WPB-18618",
                     accentID: 0,
-                    assets: [] // TODO: parse assets, picture, metadata
+                    assets: []
                 )
                 XCTAssertEqual(app, expectedApp, "failed for apiVersion \(apiVersion)")
             }
@@ -661,7 +661,18 @@ final class TeamsAPITests: XCTestCase {
                         category: "developer",
                         description: "WPB-18618",
                         accentID: 0,
-                        assets: [] // TODO: parse assets, picture, metadata
+                        assets: [
+                            UserAsset(
+                                key: "lorem-ipsum",
+                                size: .complete,
+                                type: .image
+                            ),
+                            UserAsset(
+                                key: "dolor",
+                                size: .preview,
+                                type: .image
+                            )
+                        ]
                     )
                 ]
                 XCTAssertEqual(apps, expectedApps, "failed for apiVersion \(apiVersion)")

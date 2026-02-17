@@ -34,6 +34,4 @@ public struct App: Equatable, Sendable {
 
     public let assets: [UserAsset]
 
-    // TODO: metadata, picture
-
 }
