@@ -250,7 +250,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             (.ok, "GetFeatureConfigsSuccessResponseV11")
         ])
 
-        let supportedVersions = [APIVersion.v11] // .andNextVersions
+        let supportedVersions = [APIVersion.v11]
 
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
