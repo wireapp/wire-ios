@@ -421,9 +421,10 @@ public class IncrementalSync: IncrementalSyncProtocol {
                         ) { [self] note in
                             guard !resumed else { return }
 
-                            guard let notification = note.userInfo[DatabaseEncryptionLockNotification.userInfoKey]
-                                as? DatabaseEncryptionLockNotification,
-                                !notification.databaseIsEncrypted
+                            guard
+                                let notification = note.userInfo[DatabaseEncryptionLockNotification.userInfoKey] as? DatabaseEncryptionLockNotification,
+                                !notification.databaseIsEncrypted,
+                                !earService.isLocked
                             else { return }
 
                             resumed = true
