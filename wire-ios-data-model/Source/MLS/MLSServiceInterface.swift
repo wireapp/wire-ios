@@ -490,8 +490,12 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// - Returns: epoch
     func epoch(for groupID: MLSGroupID) async throws -> UInt64
 
+    /// Local Domain of the backend environment
+    ///
+    /// - Note: useful to check if we should establishGroup or not
+    var localDomain: String { get }
+
     // MARK: - delegate
 
     func setResetBrokenMLSConversationDelegate(_ delegate: any ResetBrokenMLSConversationDelegate)
-
 }
