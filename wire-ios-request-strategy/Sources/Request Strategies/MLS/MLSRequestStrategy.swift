@@ -60,6 +60,7 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
         )
 
         configuration = [
+            .allowsRequestsWhileInBackground,
             .allowsRequestsWhileOnline
         ]
     }
