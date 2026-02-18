@@ -80,22 +80,26 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     }
 
     public func perform() async throws -> Token {
-        return try await perform(
+        try await perform(
             appState: await UIApplication.shared.applicationState
         )
     }
-    
+
     func perform(appState: UIApplication.State) async throws -> Token {
         let inBackground = appState == .background
-        
-        if !inBackground && earService.isLocked {
-            logger.info("not starting incremental sync because the database is locked", attributes: .incrementalSyncV2, .safePublic)
+
+        if !inBackground, earService.isLocked {
+            logger.info(
+                "not starting incremental sync because the database is locked",
+                attributes: .incrementalSyncV2,
+                .safePublic
+            )
             throw Failure.databaseLocked
         }
-        
+
         return try await internalPerform(inBackground: inBackground)
     }
-    
+
     private func internalPerform(inBackground: Bool) async throws -> Token {
         try await logger.measureTime(
             label: "new incremental sync",
@@ -194,7 +198,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             })
         }
     }
-    
+
     private func processLiveEvents(
         liveEventStream: AsyncThrowingStream<UpdateEventEnvelope, any Error>,
         processedEnvelopeIDs: Set<UUID>,
@@ -273,7 +277,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     publicKeys: publicKeys,
                     backgroundAccessibleOnly: backgroundAccessibleOnly
                 )
-                
+
                 do {
                     // Save.
                     try await databaseSaver.save()
@@ -287,7 +291,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             logger.warn("live event stream encountered error: \(String(describing: error))")
         }
     }
-    
+
     private func processLiveEventEnvelope(
         envelope: UpdateEventEnvelope,
         index: Int64,
@@ -297,11 +301,12 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         guard !backgroundAccessibleOnly || (backgroundAccessibleOnly && envelope.isBackgroundAccessible) else {
             logger.info(
                 "skipping processing of live event envelope: not accessible in the background",
-                attributes: .safePublic, .incrementalSyncV2 + [.eventEnvelopeID: envelope.id] // TODO: Can it be safePublic?
+                attributes: .safePublic,
+                .incrementalSyncV2 + [.eventEnvelopeID: envelope.id] // Can it be safePublic?
             )
             return
         }
-        
+
         for event in envelope.events {
             do {
                 logger.debug(
@@ -316,7 +321,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 )
             }
         }
-        
+
         do {
             // Delete.
             logger.debug(
@@ -330,7 +335,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
             )
         }
-        
+
         await updateEventsStore.calculateLastUnreadMessages()
     }
 

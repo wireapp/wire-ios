@@ -484,8 +484,12 @@ final class IncrementalSyncTests: XCTestCase {
         XCTAssertFalse(earService.fetchPrivateKeysIncludingPrimary_Invocations[0])
 
         // Should process only background-accessible events
-        XCTAssertEqual(updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count, 1)
-        XCTAssertTrue(updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations[0].backgroundAccessibleOnly)
+        XCTAssertEqual(
+            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count,
+            1
+        )
+        XCTAssertTrue(updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations[0]
+            .backgroundAccessibleOnly)
     }
 
     // MARK: - Helper Methods
