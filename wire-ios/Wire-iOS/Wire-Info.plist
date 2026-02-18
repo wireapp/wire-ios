@@ -135,7 +135,6 @@
 		<string>audio</string>
 		<string>voip</string>
 		<string>remote-notification</string>
-		<string>fetch</string>
 	</array>
 	<key>UIDesignRequiresCompatibility</key>
 	<true/>

@@ -4194,6 +4194,15 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public init() {}
 
+    // MARK: - localDomain
+
+    public var localDomain: String {
+        get { return underlyingLocalDomain }
+        set(value) { underlyingLocalDomain = value }
+    }
+
+    public var underlyingLocalDomain: String!
+
 
     // MARK: - createGroup
 

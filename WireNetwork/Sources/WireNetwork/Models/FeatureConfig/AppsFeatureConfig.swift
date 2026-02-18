@@ -19,7 +19,7 @@
 /// A configuration for enabling the *Apps* feature.
 /// This flag only affects new-style apps, not old-style services/bots.
 
-public struct AppsFeatureConfig: Equatable, Sendable {
+public struct AppsFeatureConfig: Equatable, Sendable, Hashable {
 
     /// The feature's status.
 
