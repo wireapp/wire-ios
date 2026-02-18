@@ -50,7 +50,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         in context: NSManagedObjectContext
     ) async throws -> MLSGroupID {
         // Fetch MLS 1:1 conversation and store it locally.
-        let (mlsGroupID, removalKeys) = try await syncMLSConversationFromBackend(
+        let (conversationID, mlsGroupID, removalKeys) = try await syncMLSConversationFromBackend(
             userID: userID,
             in: context
         )
@@ -58,6 +58,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         // Create or join the MLS conversation if needed.
         if try await !mlsService.conversationExists(groupID: mlsGroupID) {
             try await createOrJoinMLSConversationIfNeeded(
+                conversationID: conversationID,
                 userID: userID,
                 mlsGroupID: mlsGroupID,
                 removalKeys: removalKeys,
@@ -89,7 +90,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
     private func syncMLSConversationFromBackend(
         userID: QualifiedID,
         in context: NSManagedObjectContext
-    ) async throws -> (MLSGroupID, BackendMLSPublicKeys?) {
+    ) async throws -> (QualifiedID, MLSGroupID, BackendMLSPublicKeys?) {
         var action = SyncMLSOneToOneConversationAction(
             userID: userID.uuid,
             domain: userID.domain
@@ -171,6 +172,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
     }
 
     private func createOrJoinMLSConversationIfNeeded(
+        conversationID: QualifiedID,
         userID: QualifiedID,
         mlsGroupID: MLSGroupID,
         removalKeys: BackendMLSPublicKeys?,
@@ -180,7 +182,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             throw MigrateMLSOneOnOneConversationError.missingConversationEpoch
         }
 
-        if epoch == 0 {
+        if epoch == 0, conversationID.domain == mlsService.localDomain {
             try await establishMLSGroupIfNeeded(
                 userID: userID,
                 mlsGroupID: mlsGroupID,
