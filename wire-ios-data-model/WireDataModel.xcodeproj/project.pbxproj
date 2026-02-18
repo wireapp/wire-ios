@@ -391,8 +391,6 @@
 		88A80B632F320E9200F7E372 /* EARMessageEncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A80B622F320E7500F7E372 /* EARMessageEncryptionService.swift */; };
 		88A80B652F3381ED00F7E372 /* EARMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A80B642F3381DF00F7E372 /* EARMigrator.swift */; };
 		88B81BD62EC232C600248D7A /* store2-133-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 88B81BD52EC232C600248D7A /* store2-133-0.wiredatabase */; };
-		88E04C322F40D46300BAD87C /* SelfPostingNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E04C312F40D45D00BAD87C /* SelfPostingNotification.swift */; };
-		88E04C342F40D4B600BAD87C /* DatabaseEncryptionLockNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E04C332F40D4AD00BAD87C /* DatabaseEncryptionLockNotification.swift */; };
 		A90676E7238EAE8B006417AC /* ParticipantRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E6238EAE8B006417AC /* ParticipantRole.swift */; };
 		A90676EA238EB05F006417AC /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E8238EB05E006417AC /* Action.swift */; };
 		A90676EB238EB05F006417AC /* Role.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90676E9238EB05F006417AC /* Role.swift */; };
@@ -1131,8 +1129,6 @@
 		88A80B622F320E7500F7E372 /* EARMessageEncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARMessageEncryptionService.swift; sourceTree = "<group>"; };
 		88A80B642F3381DF00F7E372 /* EARMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARMigrator.swift; sourceTree = "<group>"; };
 		88B81BD52EC232C600248D7A /* store2-133-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-133-0.wiredatabase"; sourceTree = "<group>"; };
-		88E04C312F40D45D00BAD87C /* SelfPostingNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfPostingNotification.swift; sourceTree = "<group>"; };
-		88E04C332F40D4AD00BAD87C /* DatabaseEncryptionLockNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseEncryptionLockNotification.swift; sourceTree = "<group>"; };
 		A90676E6238EAE8B006417AC /* ParticipantRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantRole.swift; sourceTree = "<group>"; };
 		A90676E8238EB05E006417AC /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		A90676E9238EB05F006417AC /* Role.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Role.swift; sourceTree = "<group>"; };
@@ -2084,7 +2080,6 @@
 		E6E504302BC542C5004948E7 /* EAR */ = {
 			isa = PBXGroup;
 			children = (
-				88E04C332F40D4AD00BAD87C /* DatabaseEncryptionLockNotification.swift */,
 				88A80B642F3381DF00F7E372 /* EARMigrator.swift */,
 				88A80B622F320E7500F7E372 /* EARMessageEncryptionService.swift */,
 				E6E504222BC542C5004948E7 /* BaseEARKeyDescription.swift */,
@@ -2468,7 +2463,6 @@
 				EE42938B252C443000E70670 /* ManagedObjectObserverToken.swift */,
 				EE429389252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift */,
 				5451DE341F5FFF8B00C82E75 /* NotificationInContext.swift */,
-				88E04C312F40D45D00BAD87C /* SelfPostingNotification.swift */,
 				F920AE291E3A5FDD001BC14F /* Dictionary+Mapping.swift */,
 				F9FD75771E2F9A0600B4558B /* SearchUserObserverCenter.swift */,
 				F9FD75721E2E6A2100B4558B /* ConversationListObserverCenter.swift */,
@@ -3603,7 +3597,6 @@
 				EE5316422A13B59500A9E0B1 /* LastUpdateEventIDRepository.swift in Sources */,
 				EE74E4DE2A37B28C00B63E6E /* SubconversationGroupIDRepository.swift in Sources */,
 				544E8C111E2F76B400F9B8B8 /* NSManagedObjectContext+UserInfoMerge.swift in Sources */,
-				88E04C322F40D46300BAD87C /* SelfPostingNotification.swift in Sources */,
 				0649D1C524F6A542001DDC78 /* NSManagedObjectContext+ZMKeyValueStore.swift in Sources */,
 				63D9A19E282AA0050074C20C /* NSManagedObjectContext+Federation.swift in Sources */,
 				88A80B632F320E9200F7E372 /* EARMessageEncryptionService.swift in Sources */,
@@ -3665,7 +3658,6 @@
 				4058AAA22AA76BFA0013DE71 /* ReactionData.swift in Sources */,
 				6326E4762AEBB946006EEA28 /* ProteusToMLSMigrationStorage.swift in Sources */,
 				0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */,
-				88E04C342F40D4B600BAD87C /* DatabaseEncryptionLockNotification.swift in Sources */,
 				63370CC4242CFA860072C37F /* ZMAssetClientMessage+UpdateEvent.swift in Sources */,
 				F9A706C61CAEE01D00C2F5FE /* ZMFetchRequestBatch.m in Sources */,
 				166DCDB82555886F004F4F59 /* CoreDataStack+Migration.swift in Sources */,

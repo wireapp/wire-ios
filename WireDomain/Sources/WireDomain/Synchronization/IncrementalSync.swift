@@ -45,7 +45,6 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let journal: Journal
     private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
     private let earService: EARServiceInterface
-    private let notificationContext: NotificationContext
 
     public init(
         selfClientID: String,
@@ -60,8 +59,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>,
         journal: Journal,
         mlsGroupRepairAgent: MLSGroupRepairAgentProtocol,
-        earService: EARServiceInterface,
-        notificationContext: NotificationContext
+        earService: EARServiceInterface
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -76,7 +74,6 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.journal = journal
         self.mlsGroupRepairAgent = mlsGroupRepairAgent
         self.earService = earService
-        self.notificationContext = notificationContext
     }
 
     public func perform() async throws -> Token {

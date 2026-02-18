@@ -54,3 +54,13 @@ public protocol ZMTypingChangeObserver: NSObjectProtocol {
 
     func typingDidChange(conversation: ZMConversation, typingUsers: [UserType])
 }
+
+// MARK: - Encryption at rest
+
+public struct DatabaseEncryptionLockNotification: SelfPostingNotification {
+
+    static var notificationName: Notification.Name = .init("DatabaseEncryptionLockNotification")
+
+    var databaseIsEncrypted: Bool
+
+}

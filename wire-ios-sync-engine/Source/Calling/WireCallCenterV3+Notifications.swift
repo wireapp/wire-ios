@@ -17,7 +17,23 @@
 //
 
 import Foundation
-import WireDataModel
+
+protocol SelfPostingNotification {
+    static var notificationName: Notification.Name { get }
+}
+
+extension SelfPostingNotification {
+    static var userInfoKey: String { notificationName.rawValue }
+
+    func post(in context: NotificationContext, object: AnyObject? = nil) {
+        NotificationInContext(
+            name: type(of: self).notificationName,
+            context: context,
+            object: object,
+            userInfo: [type(of: self).userInfoKey: self]
+        ).post()
+    }
+}
 
 // MARK: - Network Quality observer
 
@@ -95,7 +111,7 @@ public protocol WireCallCenterCallStateObserver: AnyObject {
 }
 
 public struct WireCallCenterCallStateNotification: SelfPostingNotification {
-    public static let notificationName = Notification.Name("WireCallCenterNotification")
+    static let notificationName = Notification.Name("WireCallCenterNotification")
 
     weak var context: NSManagedObjectContext?
     let callState: CallState
@@ -112,7 +128,7 @@ public protocol WireCallCenterMissedCallObserver: AnyObject {
 }
 
 public struct WireCallCenterMissedCallNotification: SelfPostingNotification {
-    public static let notificationName = Notification.Name("WireCallCenterMissedCallNotification")
+    static let notificationName = Notification.Name("WireCallCenterMissedCallNotification")
 
     weak var context: NSManagedObjectContext?
     let conversationId: AVSIdentifier
@@ -128,7 +144,7 @@ public protocol WireCallCenterCallErrorObserver: AnyObject {
 }
 
 public struct WireCallCenterCallErrorNotification: SelfPostingNotification {
-    public static let notificationName = Notification.Name("WireCallCenterCallErrorNotification")
+    static let notificationName = Notification.Name("WireCallCenterCallErrorNotification")
 
     weak var context: NSManagedObjectContext?
 
@@ -149,7 +165,7 @@ public protocol WireCallCenterCallParticipantObserver: AnyObject {
 
 public struct WireCallCenterCallParticipantNotification: SelfPostingNotification {
 
-    public static let notificationName = Notification.Name("VoiceChannelParticipantNotification")
+    static let notificationName = Notification.Name("VoiceChannelParticipantNotification")
 
     let conversationId: AVSIdentifier
     let participants: [CallParticipant]
@@ -164,7 +180,7 @@ public protocol VoiceGainObserver: AnyObject {
 
 public class VoiceGainNotification: SelfPostingNotification {
 
-    public static let notificationName = Notification.Name("VoiceGainNotification")
+    static let notificationName = Notification.Name("VoiceGainNotification")
     static let userInfoKey = notificationName.rawValue
 
     let volume: Float
