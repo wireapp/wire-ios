@@ -202,8 +202,11 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
             do {
                 let conversation = try result.get()
                 completion(conversation)
-            } catch {
-                logger.error("failed to find conversation associated with contacts: \(error)")
+            } catch let error as NSError{
+                logger.error(
+                    "failed to find conversation associated with contacts: \(error.safeForLoggingDescription)",
+                    attributes: .safePublic
+                )
             }
         }
     }

@@ -62,8 +62,11 @@ extension SessionManager: UNUserNotificationCenterDelegate {
                     }
                 )
             }
-        } catch {
-            WireLogger.notifications.error("Will present notification failed: \(error)")
+        } catch let error as NSError {
+            WireLogger.notifications.error(
+                "Will present notification failed: \(error.safeForLoggingDescription)",
+                attributes: .safePublic
+            )
             return []
         }
     }
@@ -87,8 +90,11 @@ extension SessionManager: UNUserNotificationCenterDelegate {
                     }
                 )
             }
-        } catch {
-            WireLogger.notifications.error("Did receive notification response failed: \(error)")
+        } catch let error as NSError {
+            WireLogger.notifications.error(
+                "Did receive notification response failed: \(error.safeForLoggingDescription)",
+                attributes: .safePublic
+            )
         }
     }
 
