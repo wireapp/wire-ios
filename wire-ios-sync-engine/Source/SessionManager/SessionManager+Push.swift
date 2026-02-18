@@ -53,15 +53,7 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         // route to user session
         do {
             let userSession = try await loadSession(userInfo: notification.userInfo)
-            return await withCheckedContinuation { continuation in
-                userSession.userNotificationCenter(
-                    center,
-                    willPresent: notification,
-                    withCompletionHandler: { options in
-                        continuation.resume(returning: options)
-                    }
-                )
-            }
+            return await userSession.userNotificationCenter(center, willPresent: notification)
         } catch let error as NSError {
             WireLogger.notifications.error(
                 "Will present notification failed: \(error.safeForLoggingDescription)",
@@ -81,15 +73,7 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         // route to user session
         do {
             let userSession = try await loadSession(userInfo: response.notification.userInfo)
-            await withCheckedContinuation { continuation in
-                userSession.userNotificationCenter(
-                    center,
-                    didReceive: response,
-                    withCompletionHandler: {
-                        continuation.resume()
-                    }
-                )
-            }
+            await userSession.userNotificationCenter(center, didReceive: response)
         } catch let error as NSError {
             WireLogger.notifications.error(
                 "Did receive notification response failed: \(error.safeForLoggingDescription)",
@@ -106,6 +90,8 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         let newSyncNotificationCategories = WireDomain.NotificationCategory.allCategories
         notificationCenter.setNotificationCategories(newSyncNotificationCategories)
 
+
+
         notificationCenter.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { _, error in
             if let error {
                 WireLogger.notifications.error("Failed to request authorization for user notifications: \(error)")
@@ -114,6 +100,7 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         notificationCenter.delegate = self
     }
 
+    @MainActor
     func loadSession(userInfo: NotificationUserInfo) async throws -> ZMUserSession {
         guard let selfID = userInfo.selfUserID else {
             WireLogger.notifications.critical("userInfo has no self ID")
