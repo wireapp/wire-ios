@@ -80,33 +80,31 @@ final class EmptySearchResultsViewTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    // TODO: [WPB-17509] Uncomment this test which renders differently locally and on CI
-//    func testNoResultsForServices() {
-//        // GIVEN && WHEN
-//        sut = setupEmptySearchResultsView(
-//            isSelfUserAdmin: false,
-//            isFederationEnabled: false,
-//            searchingForApps: true,
-//            hasFilter: true
-//        )
-//
-//        // THEN
-//        snapshotHelper.verify(matching: sut)
-//    }
+    func testNoResultsForServices() {
+        // GIVEN && WHEN
+        sut = setupEmptySearchResultsView(
+            isSelfUserAdmin: false,
+            isFederationEnabled: false,
+            searchingForApps: true,
+            hasFilter: true
+        )
 
-    // TODO: [WPB-17509] Uncomment this test which renders differently locally and on CI
-//    func testServicesNotEnabled() {
-//        // GIVEN && WHEN
-//        sut = setupEmptySearchResultsView(
-//            isSelfUserAdmin: false,
-//            isFederationEnabled: false,
-//            searchingForApps: true,
-//            hasFilter: false
-//        )
-//
-//        // THEN
-//        snapshotHelper.verify(matching: sut)
-//    }
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testServicesNotEnabled() {
+        // GIVEN && WHEN
+        sut = setupEmptySearchResultsView(
+            isSelfUserAdmin: false,
+            isFederationEnabled: false,
+            searchingForApps: true,
+            hasFilter: false
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
 
     func testServicesNotEnabled_WhenAdmin() {
         // GIVEN && WHEN

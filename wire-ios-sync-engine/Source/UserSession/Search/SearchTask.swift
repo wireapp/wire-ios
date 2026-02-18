@@ -148,6 +148,7 @@ public final class SearchTask {
                     return { _ in }
                 }
             }
+            // TODO: perform app lookup
 
             var result = SearchResult()
             while let aggregator = await taskGroup.next() {
