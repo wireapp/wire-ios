@@ -10,6 +10,30 @@
             "value" : "$(INBUCKET_USERNAME)"
           },
           {
+            "key" : "PREDEFINED_BACKEND",
+            "value" : "$(PREDEFINED_BACKEND)"
+          },
+          {
+            "key" : "CALLING_INSTANCE_TYPE_NAME",
+            "value" : "$(CALLING_INSTANCE_TYPE_NAME)"
+          },
+          {
+            "key" : "CALLING_INSTANCE_TYPE_VERSION",
+            "value" : "$(CALLING_INSTANCE_TYPE_VERSION)"
+          },
+          {
+            "key" : "CALLINGSERVICE_URL",
+            "value" : "$(CALLINGSERVICE_URL)"
+          },
+          {
+            "key" : "CALLINGSERVICE_USERNAME",
+            "value" : "$(CALLINGSERVICE_USERNAME)"
+          },
+          {
+            "key" : "CALLINGSERVICE_PASSWORD",
+            "value" : "$(CALLINGSERVICE_PASSWORD)"
+          },
+          {
             "key" : "BASIC_AUTH",
             "value" : "$(BASIC_AUTH)"
           },
