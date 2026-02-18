@@ -110,7 +110,7 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
 
         // Verify that not all events were processed (some but not all)
         let totalInvocations = conversationEventBuilder.buildContentEvent_Invocations.count +
-                               userEventBuilder.buildContentEvent_Invocations.count
+            userEventBuilder.buildContentEvent_Invocations.count
         XCTAssertLessThan(totalInvocations, events.count, "Should not process all events after cancellation")
     }
 
