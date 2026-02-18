@@ -345,23 +345,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(
         _ application: UIApplication,
-        performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-    ) {
-        WireLogger.appDelegate.info("application:performFetchWithCompletionHandler:", attributes: .safePublic)
-
-        guard let appRootRouter else {
-            WireLogger.appDelegate.info("no appRouter, calling completionHandler", attributes: .safePublic)
-            completionHandler(.noData)
-            return
-        }
-
-        appRootRouter.performWhenAuthenticated {
-            ZMUserSession.shared()?.application(application, performFetchWithCompletionHandler: completionHandler)
-        }
-    }
-
-    func application(
-        _ application: UIApplication,
         handleEventsForBackgroundURLSession identifier: String,
         completionHandler: @escaping () -> Void
     ) {

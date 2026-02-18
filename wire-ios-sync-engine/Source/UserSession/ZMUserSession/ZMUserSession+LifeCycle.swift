@@ -30,32 +30,6 @@ public extension ZMUserSession {
 
     func application(
         _ application: ZMApplication,
-        performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-    ) {
-        // TODO: [WPB-17583] re-enable background fetch for new sync.
-        guard !journal[.isSyncV2Enabled] else {
-            WireLogger.sync.debug("background fetch is triggered")
-            Task {
-                WireLogger.sync.debug("Sync already running: \(syncAgent?.syncRunning ?? false)")
-                await self.syncAgent?.suspend()
-                WireLogger.sync.debug("Sync suspended")
-                completionHandler(.noData)
-            }
-            // disable background fetch
-            application.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalNever)
-            return
-        }
-
-        BackgroundActivityFactory.shared.resume()
-
-        syncManagedObjectContext.performGroupedBlock {
-            self.applicationStatusDirectory.operationStatus
-                .startBackgroundFetch(withCompletionHandler: completionHandler)
-        }
-    }
-
-    func application(
-        _ application: ZMApplication,
         handleEventsForBackgroundURLSession identifier: String,
         completionHandler: @escaping () -> Void
     ) {
