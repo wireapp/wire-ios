@@ -173,10 +173,9 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
                 }
                 scheduledPostCallAction = nil
             }
-            return
-        }
-
-        completion?()
+} else {
+    completion?()
+}
     }
 
     func minimizeCall(animated: Bool = true, completion: Completion? = nil) {
