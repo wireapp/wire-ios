@@ -173,7 +173,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         await processLiveEvents(
                             liveEventStream: liveEventStream,
                             processedEnvelopeIDs: processedEnvelopeIDs,
-                            publicKeys: publicKeys
+                            publicKeys: publicKeys,
+                            backgroundAccessibleOnly: inBackground
                         )
                     }
                 } catch {
@@ -194,11 +195,12 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             })
         }
     }
-
+    
     private func processLiveEvents(
         liveEventStream: AsyncThrowingStream<UpdateEventEnvelope, any Error>,
         processedEnvelopeIDs: Set<UUID>,
-        publicKeys: EARPublicKeys?
+        publicKeys: EARPublicKeys?,
+        backgroundAccessibleOnly: Bool
     ) async {
         do {
             for try await var envelope in liveEventStream {
@@ -266,37 +268,13 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 }
 
                 // Process.
-                for event in envelope.events {
-                    do {
-                        logger.debug(
-                            "processing live event: \(event.name)",
-                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id, .eventType: event.name]
-                        )
-                        try await processor.processEvent(event)
-                    } catch {
-                        logger.error(
-                            "failed to process live event: \(String(describing: error))",
-                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id, .eventType: event.name]
-                        )
-                    }
-                }
-
-                do {
-                    // Delete.
-                    logger.debug(
-                        "deleting live event envelope",
-                        attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
-                    )
-                    try await updateEventsStore.deleteEventEnvelope(atIndex: index)
-                } catch {
-                    logger.error(
-                        "failed to delete live event envelope: \(String(describing: error))",
-                        attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
-                    )
-                }
-
-                await updateEventsStore.calculateLastUnreadMessages()
-
+                await processLiveEventEnvelope(
+                    envelope: envelope,
+                    index: index,
+                    publicKeys: publicKeys,
+                    backgroundAccessibleOnly: backgroundAccessibleOnly
+                )
+                
                 do {
                     // Save.
                     try await databaseSaver.save()
@@ -309,6 +287,52 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         } catch {
             logger.warn("live event stream encountered error: \(String(describing: error))")
         }
+    }
+    
+    private func processLiveEventEnvelope(
+        envelope: UpdateEventEnvelope,
+        index: Int64,
+        publicKeys: EARPublicKeys?,
+        backgroundAccessibleOnly: Bool
+    ) async {
+        guard !backgroundAccessibleOnly || (backgroundAccessibleOnly && envelope.isBackgroundAccessible) else {
+            logger.info(
+                "skipping processing of live event envelope: not accessible in the background",
+                attributes: .safePublic, .incrementalSyncV2 + [.eventEnvelopeID: envelope.id] // TODO: Can it be safePublic?
+            )
+            return
+        }
+        
+        for event in envelope.events {
+            do {
+                logger.debug(
+                    "processing live event: \(event.name)",
+                    attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id, .eventType: event.name]
+                )
+                try await processor.processEvent(event)
+            } catch {
+                logger.error(
+                    "failed to process live event: \(String(describing: error))",
+                    attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id, .eventType: event.name]
+                )
+            }
+        }
+        
+        do {
+            // Delete.
+            logger.debug(
+                "deleting live event envelope",
+                attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
+            )
+            try await updateEventsStore.deleteEventEnvelope(atIndex: index)
+        } catch {
+            logger.error(
+                "failed to delete live event envelope: \(String(describing: error))",
+                attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
+            )
+        }
+        
+        await updateEventsStore.calculateLastUnreadMessages()
     }
 
     private func processStoredEvents(
