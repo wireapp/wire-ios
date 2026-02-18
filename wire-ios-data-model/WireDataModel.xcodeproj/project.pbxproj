@@ -1554,6 +1554,7 @@
 		59B705A92EAA611F0075ACE1 /* Migration */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Migration; sourceTree = "<group>"; };
 		59B74DA92EAA1D230075ACE1 /* 130-131 */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "130-131"; sourceTree = "<group>"; };
 		59D2642C2CF7249D0005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+		88A9FB112F44C8F30092E1C9 /* Protocols */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Protocols; sourceTree = "<group>"; };
 		CB5273202D9C0FA000CF8099 /* Channels */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Channels; sourceTree = "<group>"; };
 		CB9615DC2D47B0E10016389E /* EntityValidation */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = EntityValidation; sourceTree = "<group>"; };
 		CBAE486D2DC5140300C62C4E /* WireCellsMessageAttachmentDraftEntity */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireCellsMessageAttachmentDraftEntity; sourceTree = "<group>"; };
@@ -2080,6 +2081,7 @@
 		E6E504302BC542C5004948E7 /* EAR */ = {
 			isa = PBXGroup;
 			children = (
+				88A9FB112F44C8F30092E1C9 /* Protocols */,
 				88A80B642F3381DF00F7E372 /* EARMigrator.swift */,
 				88A80B622F320E7500F7E372 /* EARMessageEncryptionService.swift */,
 				E6E504222BC542C5004948E7 /* BaseEARKeyDescription.swift */,
@@ -3217,6 +3219,7 @@
 				596B91912EA7956C0010C93D /* UserClient */,
 				59AE1CA22E9D3A1900AF053A /* FeatureConfig */,
 				59B74DA92EAA1D230075ACE1 /* 130-131 */,
+				88A9FB112F44C8F30092E1C9 /* Protocols */,
 			);
 			name = WireDataModel;
 			packageProductDependencies = (

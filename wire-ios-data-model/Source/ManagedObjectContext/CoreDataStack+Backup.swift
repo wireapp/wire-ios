@@ -93,7 +93,7 @@ public extension CoreDataStack {
         accountIdentifier: UUID,
         clientIdentifier: String,
         applicationContainer: URL,
-        earMigrator: EARMigratorProtocol? = nil
+        earMigrator: EARMigratorProtocol
     ) async throws -> BackupInfo {
         let accountDirectory = Self.accountDataFolder(
             accountIdentifier: accountIdentifier,
@@ -299,7 +299,7 @@ public extension CoreDataStack {
         coordinator: NSPersistentStoreCoordinator,
         location: URL,
         options: [String: Any],
-        earMigrator: EARMigratorProtocol?
+        earMigrator: EARMigratorProtocol
     ) throws {
         // Add persistent store at the new location to allow creation of NSManagedObjectContext
         let store = try coordinator.addPersistentStore(
@@ -313,7 +313,6 @@ public extension CoreDataStack {
 
         try context.performGroupedAndWait {
             if context.encryptMessagesAtRest {
-                guard let earMigrator else { throw BackupError.missingEARMigrator }
                 try earMigrator.migrateAwayFromEncryptionAtRest(context: context)
 
                 context.encryptMessagesAtRest = false

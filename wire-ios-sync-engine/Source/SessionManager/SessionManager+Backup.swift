@@ -41,10 +41,9 @@ extension SessionManager {
         let backupInfo: CoreDataStack.BackupInfo
         do {
             let context = activeUserSession.managedObjectContext
-            var earMigrator: EARMigrator?
-            if let earEncryptionService = try? context.getEarMessageEncryptionService() {
-                earMigrator = EARMigrator(messageEncryptionService: earEncryptionService)
-            }
+           
+            let earEncryptionService = try context.getEarMessageEncryptionService()
+            let earMigrator = EARMigrator(messageEncryptionService: earEncryptionService)
 
             backupInfo = try await CoreDataStack.backupLocalStorage(
                 accountIdentifier: userId,
