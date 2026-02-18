@@ -18,7 +18,7 @@
 
 /// A configuration for the *Asset Audit Log* feature.
 
-public struct AssetAuditLogFeatureConfig: Equatable, Sendable {
+public struct AssetAuditLogFeatureConfig: Equatable, Sendable, Hashable {
 
     /// The feature's status.
 
