@@ -46,6 +46,11 @@ die "Xcode version for the repository should be at least ${repository_xcode_vers
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 
+echo "ℹ️ Installing Homebrew dependencies from Brewfile..."
+# Install dependencies from Brewfile (respects CI environment variable)
+brew bundle install
+echo ""
+
 if [[ -n "${CI-}" ]]; then
     echo "Running on CI, skipping git lfs install"
 elif command -v git-lfs > /dev/null 2>&1; then
@@ -72,15 +77,6 @@ xcrun --sdk macosx swift package --package-path scripts resolve
 xcrun --sdk macosx swift package --package-path WirePlugins resolve
 echo ""
 
-echo "ℹ️ Installing ImageMagick..."
-if [[ -n "${CI-}" ]]; then
-    # CI
-    which identify || brew install ImageMagick
-else
-    # Local Machine
-    echo "Skipping ImageMagick install because not running on CI"
-fi
-echo ""
 
 echo "ℹ️ Installing AWS CLI..."
 if [[ -n "${CI-}" ]]; then

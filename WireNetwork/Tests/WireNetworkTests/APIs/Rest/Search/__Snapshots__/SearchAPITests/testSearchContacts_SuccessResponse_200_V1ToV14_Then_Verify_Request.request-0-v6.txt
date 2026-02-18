@@ -1,2 +1,2 @@
 curl \
-	"/v6/search/contacts?q=lorem&type=app"
+	"/v6/search/contacts?q=lorem%20ipsum&type=app"

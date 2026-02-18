@@ -54,11 +54,9 @@ final class FilesItemViewModel: ObservableObject {
     @Published var isPresentingDeleteFolderPermanentlyConfirmation = false
     @Published var isPresentingDeleteFileToRecycleBinConfirmation = false
     @Published var isPresentingDeleteFolderToRecycleBinConfirmation = false
-
     @Published var isPresentingRestoreFileConfirmation = false
     @Published var isPresentingRestoreFolderConfirmation = false
     @Published var isPresentingRestoreParentConfirmation = false
-
     @Published var menuActions: Set<ItemAction> = []
 
     let fileName: String
@@ -81,6 +79,7 @@ final class FilesItemViewModel: ObservableObject {
 
     init(
         item: FilesViewItem,
+        conversationName: String?,
         localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         onItemAction: @escaping (ItemAction, FilesViewItem) async -> Void,
         locale: Locale = .autoupdatingCurrent,
@@ -94,6 +93,7 @@ final class FilesItemViewModel: ObservableObject {
         self.onItemAction = onItemAction
         self.fileName = item.name
         self.subtitle = Self.subtitle(
+            conversationName: conversationName,
             modifiedAt: item.modifiedAt,
             ownedBy: item.ownedBy,
             locale: locale,
@@ -221,27 +221,32 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     static func subtitle(
+        conversationName: String?,
         modifiedAt: Date?,
         ownedBy: String?,
         locale: Locale,
         calendar: Calendar,
         timeZone: TimeZone
     ) -> String? {
-        let modifiedAt = modifiedAt.map { date in
-            let style = Date.FormatStyle(
-                date: .abbreviated,
-                time: .shortened,
-                locale: locale,
-                calendar: calendar,
-                timeZone: timeZone,
-                capitalizationContext: .beginningOfSentence
-            )
-            return date.formatted(style)
-        }
-        return if let modifiedAt, let ownedBy {
-            L10n.Localizable.Conversation.WireCells.Files.Item.subtitle(modifiedAt, ownedBy)
+        if let conversationName, let ownedBy {
+            return L10n.Localizable.Conversation.WireCells.AllFiles.Item.subtitle(ownedBy, conversationName)
         } else {
-            [modifiedAt, ownedBy].compactMap(\.self).first
+            let modifiedAt = modifiedAt.map { date in
+                let style = Date.FormatStyle(
+                    date: .abbreviated,
+                    time: .shortened,
+                    locale: locale,
+                    calendar: calendar,
+                    timeZone: timeZone,
+                    capitalizationContext: .beginningOfSentence
+                )
+                return date.formatted(style)
+            }
+            return if let modifiedAt, let ownedBy {
+                L10n.Localizable.Conversation.WireCells.Files.Item.subtitle(modifiedAt, ownedBy)
+            } else {
+                [modifiedAt, ownedBy].compactMap(\.self).first
+            }
         }
     }
 

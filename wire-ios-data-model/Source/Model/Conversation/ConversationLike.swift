@@ -61,7 +61,7 @@ public protocol ConversationLike: AnyObject {
     var hasMoreHistory: Bool { get }
 
     /// The name of the `cell` used for Wire Drive file management.
-    var wireCellName: String { get }
+    var wireDriveCellName: String { get }
 
     /// Whether Wire Drive is enabled for this conversation.
     var isWireDriveEnabled: Bool { get }
@@ -120,7 +120,7 @@ extension ZMConversation: ConversationLike {
         securityLevel == .secureWithIgnored
     }
 
-    public var wireCellName: String {
+    public var wireDriveCellName: String {
         guard let qualifiedID else { return "unknown" }
 
         return "\(qualifiedID.uuid.uuidString.lowercased())@\(qualifiedID.domain)"

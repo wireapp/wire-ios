@@ -195,7 +195,6 @@
 		16F7341224F9567000AB93B1 /* ZMConversationTests+DraftMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F7341024F9556600AB93B1 /* ZMConversationTests+DraftMessage.swift */; };
 		16F7341424F9573C00AB93B1 /* XCTestCase+EncryptionKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F7341324F9573C00AB93B1 /* XCTestCase+EncryptionKeys.swift */; };
 		16F7341624F95F9D00AB93B1 /* store2-85-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 16F7341524F95F9100AB93B1 /* store2-85-0.wiredatabase */; };
-		3416DE162DC8F94E00827BCB /* MLSSyncDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3416DE152DC8F94E00827BCB /* MLSSyncDelegate.swift */; };
 		347FA6002E70131700F34C6A /* NSManagedObjectContext+BackendMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347FA5FF2E70131700F34C6A /* NSManagedObjectContext+BackendMetadata.swift */; };
 		34937A702EBA4E97001A0061 /* MLSTransportError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34937A6F2EBA4E97001A0061 /* MLSTransportError.swift */; };
 		34BD6E032DB26FA200DFA11A /* StoredUpdateEventEnvelope+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BD6E022DB26FA200DFA11A /* StoredUpdateEventEnvelope+Helpers.swift */; };
@@ -941,7 +940,6 @@
 		16F7341024F9556600AB93B1 /* ZMConversationTests+DraftMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+DraftMessage.swift"; sourceTree = "<group>"; };
 		16F7341324F9573C00AB93B1 /* XCTestCase+EncryptionKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+EncryptionKeys.swift"; sourceTree = "<group>"; };
 		16F7341524F95F9100AB93B1 /* store2-85-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-85-0.wiredatabase"; sourceTree = "<group>"; };
-		3416DE152DC8F94E00827BCB /* MLSSyncDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSSyncDelegate.swift; sourceTree = "<group>"; };
 		347FA5FF2E70131700F34C6A /* NSManagedObjectContext+BackendMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+BackendMetadata.swift"; sourceTree = "<group>"; };
 		34937A6F2EBA4E97001A0061 /* MLSTransportError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSTransportError.swift; sourceTree = "<group>"; };
 		34BD6E022DB26FA200DFA11A /* StoredUpdateEventEnvelope+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoredUpdateEventEnvelope+Helpers.swift"; sourceTree = "<group>"; };
@@ -1917,7 +1915,6 @@
 				63B1334329A503D000009D84 /* MessageProtocol.swift */,
 				63B1334529A503D000009D84 /* MLSClientID.swift */,
 				63B1334729A503D000009D84 /* SyncStatusProtocol.swift */,
-				3416DE152DC8F94E00827BCB /* MLSSyncDelegate.swift */,
 				E4AD4E402E281FB800308EDC /* ResetBrokenMLSConversationDelegate.swift */,
 				63B1334829A503D000009D84 /* Actions */,
 				63B1335029A503D000009D84 /* MLSGroupStatus.swift */,
@@ -3626,7 +3623,6 @@
 				0129E7F929A520870065E6DB /* SafeCoreCrypto.swift in Sources */,
 				CE4EDC091D6D9A3D002A20AA /* Reaction.swift in Sources */,
 				F9A7067A1CAEE01D00C2F5FE /* ZMExternalEncryptedDataWithKeys.m in Sources */,
-				3416DE162DC8F94E00827BCB /* MLSSyncDelegate.swift in Sources */,
 				EE68EECB252DC4730013B242 /* ExplicitChangeDetector.swift in Sources */,
 				63D41E512452F0A60076826F /* ZMMessage+Removal.swift in Sources */,
 				63B1336129A503D100009D84 /* MLSClientID.swift in Sources */,
@@ -4171,7 +4167,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Wire Swiss GmbH. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Wire Swiss GmbH. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4250,7 +4246,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Wire Swiss GmbH. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Wire Swiss GmbH. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

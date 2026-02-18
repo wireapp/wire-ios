@@ -81,6 +81,7 @@ package final actor WireDriveNodeUploadManager: WireDriveNodeUploadManagerProtoc
 
         let node = WireDriveNode(
             uuid: nodeID,
+            conversation: nil,
             path: resolvedPath,
             modified: nil,
             size: assetSize,

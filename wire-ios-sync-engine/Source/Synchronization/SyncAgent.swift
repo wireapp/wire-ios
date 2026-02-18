@@ -62,8 +62,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let featureConfigRepository: any FeatureConfigRepositoryProtocol
     private let pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol
     private let networkStatePublisher: AnyPublisher<NetworkState, Never>
-    private let incrementalSyncTaskManager = NonReentrantTaskManager()
-    private let initialSyncTaskManager = NonReentrantTaskManager()
+    private let incrementalSyncTaskManager = NonReentrantTaskManager<Void, any Error>()
+    private let initialSyncTaskManager = NonReentrantTaskManager<Void, any Error>()
     private var incrementalSyncToken: IncrementalSync.Token?
     private var ongoingSyncTask: Task<Void, Never>?
     private var cancellables: Set<AnyCancellable> = .init()
@@ -342,37 +342,6 @@ extension SyncAgent: LiveSyncDelegate {
 
     func didStart(sync: IncrementalSyncV2) {
         delegate?.syncAgentDidStartIncrementalSync(self)
-    }
-
-}
-
-// MARK: - MLS sync delegate
-
-extension SyncAgent: MLSSyncDelegate {
-
-    func recoverWithIncrementalSync() async throws {
-        WireLogger.sync.info("performing recovery incremental sync")
-
-        // Recovery means to restart any existing sync.
-        await suspend()
-
-        do {
-            try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
-                guard let self else { return }
-                if isConsumableNotificationsEnabled {
-                    incrementalSyncToken = try await incrementalSyncProvider.provideLiveSync(delegate: self)
-                        .perform()
-                } else {
-                    delegate?.syncAgentDidStartIncrementalSync(self)
-                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
-                        .perform()
-                    delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: true)
-                }
-            }
-        } catch {
-            WireLogger.sync.error("failed to perform recovery incremental sync: \(String(describing: error))")
-            throw error
-        }
     }
 
 }
