@@ -608,9 +608,9 @@ final class TeamsAPITests: XCTestCase {
 
                 // Then
                 let expectedApp = App(
-                    name: "WPB-18618",
+                    name: "WPB-18618 app",
                     category: "developer",
-                    description: "WPB-18618",
+                    description: "WPB-18618 description",
                     accentID: 0,
                     assets: []
                 )
@@ -657,9 +657,9 @@ final class TeamsAPITests: XCTestCase {
                 // Then
                 let expectedApps = [
                     App(
-                        name: "WPB-18618",
+                        name: "WPB-18618 app",
                         category: "developer",
-                        description: "WPB-18618",
+                        description: "WPB-18618 description",
                         accentID: 0,
                         assets: [
                             UserAsset(
