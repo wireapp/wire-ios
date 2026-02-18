@@ -439,6 +439,7 @@ private extension FilesItemViewModel {
 
         return FilesItemViewModel(
             item: item,
+            selectedSortingKey: .date,
             conversationName: "Conversation 1",
             localAssetRepository: localAssetRepository,
             onItemAction: { _, _ in },

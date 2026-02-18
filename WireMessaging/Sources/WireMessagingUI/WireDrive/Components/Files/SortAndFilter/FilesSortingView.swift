@@ -40,7 +40,7 @@ struct FilesSortingView: View {
 
                 Divider()
 
-                ForEach(viewModel.availableSortingKeys, id: \.self) { sortingKey in
+                ForEach(FilesSortingViewModel.SortingKey.allCases, id: \.self) { sortingKey in
                     Button {
                         viewModel.select(sortingKey: sortingKey)
                     } label: {
@@ -53,12 +53,12 @@ struct FilesSortingView: View {
 
                 Divider()
 
-                ForEach(FilesSortingViewModel.SortingOrder.allCases, id: \.self) { sortingOrder in
+                ForEach(viewModel.sortingOrders, id: \.self) { sortingOrder in
                     Button {
                         viewModel.select(sortingOrder: sortingOrder)
                     } label: {
                         Label(
-                            sortingOrder.title,
+                            sortingOrder.title(forKey: viewModel.sortingSelection.sortingKey),
                             systemImage: viewModel.sortingSelection.sortingOrder == sortingOrder ? "checkmark" : ""
                         )
                     }
@@ -66,7 +66,7 @@ struct FilesSortingView: View {
 
             } label: {
                 HStack(spacing: 5) {
-                    Text(viewModel.sortingSelection.sortingKey.title)
+                    Text(viewModel.menuLabel)
                         .foregroundStyle(.primary)
                         .font(for: .h5)
 

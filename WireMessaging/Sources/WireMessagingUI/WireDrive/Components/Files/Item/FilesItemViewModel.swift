@@ -79,6 +79,7 @@ final class FilesItemViewModel: ObservableObject {
 
     init(
         item: FilesViewItem,
+        selectedSortingKey: FilesSortingViewModel.SortingKey,
         conversationName: String?,
         localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         onItemAction: @escaping (ItemAction, FilesViewItem) async -> Void,
@@ -93,6 +94,8 @@ final class FilesItemViewModel: ObservableObject {
         self.onItemAction = onItemAction
         self.fileName = item.name
         self.subtitle = Self.subtitle(
+            selectedSortingKey: selectedSortingKey,
+            isBrowsing: isBrowsing,
             conversationName: conversationName,
             modifiedAt: item.modifiedAt,
             ownedBy: item.ownedBy,
@@ -220,7 +223,9 @@ final class FilesItemViewModel: ObservableObject {
         await onItemAction(.restore, item)
     }
 
-    static func subtitle(
+    private static func subtitle(
+        selectedSortingKey: FilesSortingViewModel.SortingKey,
+        isBrowsing: Bool,
         conversationName: String?,
         modifiedAt: Date?,
         ownedBy: String?,

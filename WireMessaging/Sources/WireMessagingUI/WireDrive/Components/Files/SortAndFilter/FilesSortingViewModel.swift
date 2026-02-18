@@ -27,12 +27,14 @@ final class FilesSortingViewModel: ObservableObject {
         case ascending
         case descending
 
-        var title: String {
-            switch self {
-            case .ascending:
-                Strings.Order.ascending
-            case .descending:
-                Strings.Order.descending
+        func title(forKey key: SortingKey) -> String {
+            switch key {
+            case .date:
+                return self == .descending ? Strings.Order.Date.recentFirst : Strings.Order.Date.oldestFirst
+            case .name:
+                return self == .descending ? Strings.Order.Name.za : Strings.Order.Name.az
+            case .size:
+                return self == .descending ? Strings.Order.Size.largestFirst : Strings.Order.Size.smallestFirst
             }
         }
 
@@ -47,24 +49,18 @@ final class FilesSortingViewModel: ObservableObject {
     }
 
     enum SortingKey: CaseIterable {
-        case lastModified
+        case date
         case name
         case size
-        case owner
-        case conversation
 
         var title: String {
             switch self {
-            case .lastModified:
-                Strings.Key.lastModified
+            case .date:
+                Strings.Key.date
             case .name:
                 Strings.Key.name
             case .size:
                 Strings.Key.size
-            case .owner:
-                Strings.Key.owner
-            case .conversation:
-                Strings.Key.conversation
             }
         }
     }
@@ -79,11 +75,12 @@ final class FilesSortingViewModel: ObservableObject {
     let isBrowsing: Bool
     private let onUpdate: (SortingSelection) -> Void
 
-    var availableSortingKeys: [SortingKey] {
-        if isBrowsing {
-            SortingKey.allCases
-        } else {
-            [.lastModified, .name, .size, .owner] // omit `conversation` key
+    var sortingOrders: [SortingOrder] {
+        switch sortingSelection.sortingKey {
+        case .date:
+            [.descending, .ascending]
+        case .name, .size:
+            SortingOrder.allCases
         }
     }
 
@@ -108,9 +105,15 @@ final class FilesSortingViewModel: ObservableObject {
         sortingSelection.sortingOrder = sortingOrder
         onUpdate(sortingSelection)
     }
+    
+    // MARK: - UI
+    
+    var menuLabel: String {
+        sortingSelection.sortingOrder.title(forKey: sortingSelection.sortingKey)
+    }
 
 }
 
 extension FilesSortingViewModel.SortingSelection {
-    static let `default` = Self(sortingKey: .lastModified, sortingOrder: .descending)
+    static let `default` = Self(sortingKey: .date, sortingOrder: .descending)
 }

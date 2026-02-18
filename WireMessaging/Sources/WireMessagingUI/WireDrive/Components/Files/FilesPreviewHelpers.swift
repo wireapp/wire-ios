@@ -159,6 +159,7 @@ extension FilesItemViewModel {
                 publicLinkID: publicLinkID,
                 conversationName: "Conversation 1",
             ),
+            selectedSortingKey: .date,
             conversationName: "Test",
             localAssetRepository: PreviewLocalAssetRepository(),
             onItemAction: { _, _ in },

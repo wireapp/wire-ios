@@ -413,6 +413,7 @@ package final class FilesViewModel: ObservableObject {
     func itemViewModel(index: Int) -> FilesItemViewModel {
         FilesItemViewModel(
             item: state.items[index],
+            selectedSortingKey: sortingSelection.sortingKey,
             conversationName: isBrowsing ? state.items[index].conversationName : nil,
             localAssetRepository: localAssetRepository,
             onItemAction: { [weak self] action, item in
@@ -847,16 +848,12 @@ package final class FilesViewModel: ObservableObject {
 private extension FilesSortingViewModel.SortingKey {
     var sortField: String {
         switch self {
-        case .lastModified:
+        case .date:
             "mtime"
         case .name:
             "name"
         case .size:
             "size"
-        case .owner:
-            "usermeta-owner"
-        case .conversation:
-            "usermeta-conversation"
         }
     }
 }

@@ -149,8 +149,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
             MoveToFolderItem(
                 id: node.id,
                 name: node.name,
-                subtitle: FilesItemViewModel.subtitle(
-                    conversationName: nil,
+                subtitle: Self.subtitle(
                     modifiedAt: node.modified,
                     ownedBy: node.ownerUserName,
                     locale: .autoupdatingCurrent,
@@ -290,6 +289,31 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
     private static func title(for path: String) -> String {
         path.components(separatedBy: "/").dropFirst().last ?? L10n.Localizable.Conversation.WireCells.Files
             .navigationTitle
+    }
+    
+    private static func subtitle(
+        modifiedAt: Date?,
+        ownedBy: String?,
+        locale: Locale,
+        calendar: Calendar,
+        timeZone: TimeZone
+    ) -> String? {
+        let modifiedAt = modifiedAt.map { date in
+            let style = Date.FormatStyle(
+                date: .abbreviated,
+                time: .shortened,
+                locale: locale,
+                calendar: calendar,
+                timeZone: timeZone,
+                capitalizationContext: .beginningOfSentence
+            )
+            return date.formatted(style)
+        }
+        return if let modifiedAt, let ownedBy {
+            L10n.Localizable.Conversation.WireCells.Files.Item.subtitle(modifiedAt, ownedBy)
+        } else {
+            [modifiedAt, ownedBy].compactMap(\.self).first
+        }
     }
 
     // MARK: - Private Helpers
