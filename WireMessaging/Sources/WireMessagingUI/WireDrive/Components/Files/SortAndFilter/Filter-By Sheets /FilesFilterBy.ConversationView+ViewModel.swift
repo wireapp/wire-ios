@@ -25,18 +25,25 @@ extension FilesFilterBy.ConversationView {
         typealias Item = WireDriveConversation
 
         @Published var selectedItems: Set<Item> = []
-
         @Published var presentedItems: [Item] = []
+        
+        @Published var searchText = "" {
+            didSet {
+                updatePresentedItems()
+            }
+        }
 
         private let initiallySelectedItems: Set<Item>
+        private let availableItems: [Item]
 
         init(availableItems: some Collection<Item>, selectedItems: some Collection<Item>) {
             let items = Set(selectedItems)
             self.selectedItems = items
             self.initiallySelectedItems = items
-            self.presentedItems = availableItems.sorted { lhs, rhs in
+            self.availableItems = availableItems.sorted { lhs, rhs in
                 lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
             }
+            updatePresentedItems()
         }
 
         var hasChanges: Bool {
@@ -58,6 +65,18 @@ extension FilesFilterBy.ConversationView {
 
         func clearAll() {
             selectedItems = []
+        }
+
+        private func updatePresentedItems() {
+            let searchText = self.searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            presentedItems = availableItems.filter { item in
+                if searchText.isEmpty {
+                    true
+                } else {
+                    item.name.localizedCaseInsensitiveContains(searchText)
+                }
+            }
         }
     }
 }

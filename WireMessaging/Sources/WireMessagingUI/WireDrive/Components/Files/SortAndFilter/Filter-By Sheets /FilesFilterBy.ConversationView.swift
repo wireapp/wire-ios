@@ -56,6 +56,7 @@ extension FilesFilterBy {
                     .toolbar { toolbarContent }
                     .navigationTitle(Strings.Filter.Conversation.navigationTitle)
                     .navigationBarTitleDisplayMode(.inline)
+                    .searchable(text: $viewModel.searchText)
             }
         }
 
