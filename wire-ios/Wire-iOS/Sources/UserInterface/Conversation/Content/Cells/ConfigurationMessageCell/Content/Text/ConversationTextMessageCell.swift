@@ -22,7 +22,6 @@ import WireLocators
 import WireMessagingDomain
 import WireSyncEngine
 
-private let linkDetector = NSDataDetector.linkDetector
 final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
     struct Configuration: Equatable {
@@ -484,9 +483,8 @@ extension ConversationTextMessageCellDescription {
 
     static func findEmbeddedLinks(in textMessageData: TextMessageData) -> [NSTextCheckingResult] {
         if let originalURLString = textMessageData.linkPreview?.originalURLString,
-           let url = URL(string: originalURLString), // Ensure it's a valid URL
+           let url = URL(string: originalURLString),
            let messageTextString = textMessageData.messageText {
-            // Find the range of the originalURLString within the messageTextString
             if let rangeOfEmbeddedLink = messageTextString.range(of: originalURLString) {
                 let nsRange = NSRange(rangeOfEmbeddedLink, in: messageTextString)
                 let linkResult = NSTextCheckingResult.linkCheckingResult(range: nsRange, url: url)
