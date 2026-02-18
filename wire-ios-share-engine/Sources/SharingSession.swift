@@ -184,7 +184,7 @@ public final class SharingSession {
         legacyEnvironment: WireTransport.BackendEnvironment,
         proxyCredentials: WireTransport.ProxyCredentials?,
         currentBuildNumber: String,
-        localDomain: String?
+        localDomain: String
     ) async throws {
 
         let applicationStatusDirectory = ApplicationStatusDirectory(
