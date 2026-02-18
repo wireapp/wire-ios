@@ -174,7 +174,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             let result = try await sut.getFeatureConfigs()
             // Then
             let resultSet = Set(result)
-            let expectedSet = Set(Scaffolding.featureConfigsV4)
+            let expectedSet = Scaffolding.featureConfigsV4
             XCTAssertEqual(resultSet, expectedSet)
         }
     }
@@ -195,7 +195,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             let result = try await sut.getFeatureConfigs()
             // Then
             let resultSet = Set(result)
-            let expectedSet = Set(Scaffolding.featureConfigsV6)
+            let expectedSet = Scaffolding.featureConfigsV6
             XCTAssertEqual(resultSet, expectedSet)
         }
     }
@@ -216,7 +216,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             let result = try await sut.getFeatureConfigs()
             // Then
             let resultSet = Set(result)
-            let expectedSet = Set(Scaffolding.featureConfigsV8)
+            let expectedSet = Scaffolding.featureConfigsV8
             XCTAssertEqual(resultSet, expectedSet)
         }
     }
@@ -237,14 +237,14 @@ final class FeatureConfigsAPITests: XCTestCase {
             let result = try await sut.getFeatureConfigs()
             // Then
             let resultSet = Set(result)
-            let expectedSet = Set(Scaffolding.featureConfigsV10)
+            let expectedSet = Scaffolding.featureConfigsV10
             XCTAssertEqual(resultSet, expectedSet)
         }
     }
 
     // MARK: - V11
 
-    func testGetFeatureConfigs_SuccessResponse_200_V11_And_Next_Versions_Then_Verify_Requests() async throws {
+    func testGetFeatureConfigs_SuccessResponse_200_V11_Then_Verify_Requests() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV11")
@@ -258,7 +258,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             let result = try await sut.getFeatureConfigs()
             // Then
             let resultSet = Set(result)
-            let expectedSet = Set(Scaffolding.featureConfigsV11)
+            let expectedSet = Scaffolding.featureConfigsV11
             XCTAssertEqual(resultSet, expectedSet)
         }
     }
@@ -279,7 +279,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             let result = try await sut.getFeatureConfigs()
 
             let resultSet = Set(result)
-            let expectedSet = Set(Scaffolding.featureConfigsV12)
+            let expectedSet = Scaffolding.featureConfigsV12
             XCTAssertEqual(resultSet, expectedSet)
         }
     }
@@ -300,7 +300,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             let result = try await sut.getFeatureConfigs()
             // Then
             let resultSet = Set(result)
-            let expectedSet = Set(Scaffolding.featureConfigsV14)
+            let expectedSet = Scaffolding.featureConfigsV14
             XCTAssertEqual(resultSet, expectedSet)
         }
     }
@@ -419,7 +419,7 @@ extension FeatureConfigsAPITests {
             )
         ]
 
-        static let featureConfigsV4: [FeatureConfig] = [
+        static let featureConfigsV4: Set<FeatureConfig> = [
             .appLock(
                 .init(
                     status: .enabled,
@@ -480,7 +480,7 @@ extension FeatureConfigsAPITests {
             )
         ]
 
-        static let featureConfigsV6: [FeatureConfig] = [
+        static let featureConfigsV6: Set<FeatureConfig> = [
             .appLock(
                 .init(
                     status: .enabled,
@@ -543,7 +543,7 @@ extension FeatureConfigsAPITests {
             )
         ]
 
-        static let featureConfigsV8: [FeatureConfig] = [
+        static let featureConfigsV8: Set<FeatureConfig> = [
             .appLock(
                 .init(
                     status: .enabled,
@@ -614,7 +614,7 @@ extension FeatureConfigsAPITests {
             .cells(.init(status: .enabled))
         ]
 
-        static let featureConfigsV10: [FeatureConfig] = [
+        static let featureConfigsV10: Set<FeatureConfig> = [
             .appLock(
                 .init(
                     status: .enabled,
@@ -691,21 +691,20 @@ extension FeatureConfigsAPITests {
             .cells(.init(status: .enabled))
         ]
 
-        static let featureConfigsV11: [FeatureConfig] = featureConfigsV10 + [
+        static let featureConfigsV11: Set<FeatureConfig> = featureConfigsV10.union([
             .apps(.init(status: .enabled)),
             .consumableNotifications(.init(status: .enabled)),
             .cells(.init(status: .enabled))
-        ]
-
-        static let featureConfigsV12: [FeatureConfig] = featureConfigsV11 + [
+        ])
+        static let featureConfigsV12: Set<FeatureConfig> = featureConfigsV11.union([
             .assetAuditLog(.init(status: .enabled)),
             .simplifiedUserConnectionRequestQRCode(.init(status: .disabled))
-        ]
+        ])
 
-        static let featureConfigsV14: [FeatureConfig] = featureConfigsV12 + [
+        static let featureConfigsV14: Set<FeatureConfig> = featureConfigsV12.union([
             .assetAuditLog(.init(status: .enabled)),
             .cellsInternal(.init(status: .enabled, backendURL: URL(string: "https://example.com")!))
-        ]
+        ])
 
     }
 
