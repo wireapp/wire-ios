@@ -80,15 +80,14 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     }
 
     public func perform() async throws -> Token {
-        let appState = await UIApplication.shared.applicationState
-        let inBackground = appState == .background
-        
-        return try await perform(inBackground: inBackground)
+        return try await perform(
+            appState: await UIApplication.shared.applicationState
+        )
     }
     
-    // keeping this for tests if needed
-    func perform(inBackground: Bool) async throws -> Token {
-
+    func perform(appState: UIApplication.State) async throws -> Token {
+        let inBackground = appState == .background
+        
         if !inBackground && earService.isLocked {
             logger.info("not starting incremental sync because the database is locked", attributes: .incrementalSyncV2, .safePublic)
             throw Failure.databaseLocked

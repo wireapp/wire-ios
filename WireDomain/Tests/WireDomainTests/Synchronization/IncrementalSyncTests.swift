@@ -422,42 +422,10 @@ final class IncrementalSyncTests: XCTestCase {
         XCTAssertEqual(updateEventsStore.resetLastEventID_Invocations.count, 1)
     }
 
-    // MARK: - EAR Database Unlock Tests
+    // MARK: - EAR Database Lock Tests
 
-    func test_TaskGroup_timeout_works() async throws {
-        // Test task group with timeout
-        let start = Date()
-
-        await XCTAssertThrowsErrorAsync(IncrementalSync.Failure.databaseUnlockTimeout) {
-            try await withThrowingTaskGroup(of: Void.self) { group in
-                // Task that never completes
-                group.addTask {
-                    try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
-                }
-
-                // Timeout task
-                group.addTask {
-                    try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
-                    throw IncrementalSync.Failure.databaseUnlockTimeout
-                }
-
-                do {
-                    _ = try await group.next()
-                    group.cancelAll()
-                } catch {
-                    group.cancelAll()
-                    throw error
-                }
-            }
-        }
-
-        let duration = Date().timeIntervalSince(start)
-        XCTAssertGreaterThan(duration, 0.4)
-        XCTAssertLessThan(duration, 1.0)
-    }
-
-    func test_perform_databaseUnlocked_skipsWait() async throws {
-        // Given: Database is not locked
+    func test_perform_foreground_databaseUnlocked_succeeds() async throws {
+        // Given: Database is not locked, app in foreground
         earService.underlyingIsLocked = false
         earService.fetchPublicKeys_MockMethod = { nil }
         earService.fetchPrivateKeysIncludingPrimary_MockMethod = { _ in nil }
@@ -471,75 +439,36 @@ final class IncrementalSyncTests: XCTestCase {
         mlsGroupRepairAgent.repairConversations_MockMethod = {}
 
         // When
-        let startTime = Date()
-        _ = try await sut.perform()
-        let duration = Date().timeIntervalSince(startTime)
+        _ = try await sut.perform(appState: .active)
 
-        // Then: Should not wait (completes immediately, under 1 second)
-        XCTAssertLessThan(duration, 1.0)
+        // Then: Should fetch keys with includingPrimary: true (foreground)
+        XCTAssertEqual(earService.fetchPrivateKeysIncludingPrimary_Invocations.count, 1)
+        XCTAssertTrue(earService.fetchPrivateKeysIncludingPrimary_Invocations[0])
     }
 
-    func test_perform_databaseLocked_waitsForUnlockThenProceeds() async throws {
-        // Given: Database is initially locked
-        earService.underlyingIsLocked = true
-        earService.fetchPublicKeys_MockMethod = { nil }
-        earService.fetchPrivateKeysIncludingPrimary_MockMethod = { _ in nil }
-
-        setPendingEvents(envelopes: [])
-        setupPushChannel()
-        updateEventsSync.pullPublicKeys_MockMethod = { _ in AsyncStream { [] } }
-        updateEventsStore.calculateLastUnreadMessages_MockMethod = {}
-        databaseSaver.save_MockMethod = {}
-        mlsGroupRepairAgent.repairConversations_MockMethod = {}
-
-        // Setup notification posting after 500ms
-        startUnlockDatabaseTask(unlockAfter: 500)
-
-        // When
-        let startTime = Date()
-        _ = try await sut.perform()
-        let duration = Date().timeIntervalSince(startTime)
-
-        // Then: Should wait ~500ms and succeed
-        XCTAssertGreaterThan(duration, 0.4)  // Waited at least 400ms
-        XCTAssertLessThan(duration, 2.0)     // But less than timeout
-    }
-
-    func test_perform_databaseLocked_timeoutThrowsError() async throws {
-        // Given: Database is locked and never unlocks
+    func test_perform_foreground_databaseLocked_throwsError() async throws {
+        // Given: Database is locked, app in foreground
         earService.underlyingIsLocked = true
 
-        // Setup push channel mock (won't be reached due to timeout)
-        let pushChannel = MockPushChannelProtocol()
-        pushChannel.close_MockMethod = {}
-        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
-
-        // When/Then: Should throw timeout error after ~3 seconds
-        let startTime = Date()
-
-        await XCTAssertThrowsErrorAsync(IncrementalSync.Failure.databaseUnlockTimeout) {
-            try await self.sut.perform()
+        // When/Then: Should throw databaseLocked error immediately
+        await XCTAssertThrowsErrorAsync(IncrementalSync.Failure.databaseLocked) {
+            try await self.sut.perform(appState: .active)
         }
 
-        let duration = Date().timeIntervalSince(startTime)
-
-        // Verify timeout occurred around 3 seconds
-        XCTAssertGreaterThan(duration, 2.8)
-        XCTAssertLessThan(duration, 3.5)
+        // Verify no sync operations were attempted
+        XCTAssertEqual(pushChannelAPI.createPushChannelClientID_Invocations.count, 0)
     }
 
-    func test_perform_afterUnlock_fetchesPrimaryKeys() async throws {
-        // Given: Database is locked initially
+    func test_perform_background_databaseLocked_usesSecondaryKeys() async throws {
+        // Given: Database is locked, app in background
         earService.underlyingIsLocked = true
-
-        // Track whether fetchPrivateKeys was called with includingPrimary: true
-        var fetchPrivateKeysCalledWithPrimary = false
         earService.fetchPublicKeys_MockMethod = { nil }
         earService.fetchPrivateKeysIncludingPrimary_MockMethod = { includingPrimary in
-            fetchPrivateKeysCalledWithPrimary = includingPrimary
+            XCTAssertFalse(includingPrimary, "Should not include primary keys in background")
             return nil
         }
 
+        // Setup other required mocks
         setPendingEvents(envelopes: [])
         setupPushChannel()
         updateEventsSync.pullPublicKeys_MockMethod = { _ in AsyncStream { [] } }
@@ -547,37 +476,20 @@ final class IncrementalSyncTests: XCTestCase {
         databaseSaver.save_MockMethod = {}
         mlsGroupRepairAgent.repairConversations_MockMethod = {}
 
-        // Post unlock notification
-        startUnlockDatabaseTask(unlockAfter: 100)
-
         // When
-        _ = try await sut.perform()
+        _ = try await sut.perform(appState: .background)
 
-        // Then: Should fetch keys with includingPrimary: true
+        // Then: Should proceed with only secondary keys
         XCTAssertEqual(earService.fetchPrivateKeysIncludingPrimary_Invocations.count, 1)
-        XCTAssertTrue(fetchPrivateKeysCalledWithPrimary)
+        XCTAssertFalse(earService.fetchPrivateKeysIncludingPrimary_Invocations[0])
+
+        // Should process only background-accessible events
+        XCTAssertEqual(updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count, 1)
+        XCTAssertTrue(updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations[0].backgroundAccessibleOnly)
     }
 
     // MARK: - Helper Methods
 
-    private func startUnlockDatabaseTask(unlockAfter delay: TimeInterval) {
-        Task {
-            try? await Task.sleep(for: .milliseconds(delay))
-
-            // Unlock the database
-            earService.underlyingIsLocked = false
-
-            NotificationInContext(
-                name: DatabaseEncryptionLockNotification.notificationName,
-                context: self.notificationContext,
-                userInfo: [
-                    DatabaseEncryptionLockNotification.userInfoKey:
-                        DatabaseEncryptionLockNotification(databaseIsEncrypted: false)
-                ]
-            ).post()
-        }
-    }
-    
     private func setPendingEvents(envelopes: [UpdateEventEnvelope]) {
         var storedEnvelopes = envelopes.map { ($0, NSManagedObjectID()) }
         updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockMethod = { _, _, _ in
