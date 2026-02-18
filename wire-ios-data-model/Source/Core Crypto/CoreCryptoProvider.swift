@@ -203,7 +203,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
                 throw error
             }
 
-
             resumeCoreCryptoContinuations(with: .success(cc))
             loadingCoreCrypto = false
             coreCrypto = cc
