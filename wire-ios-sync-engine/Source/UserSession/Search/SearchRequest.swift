@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 
 public struct SearchOptions: OptionSet {
+
     public let rawValue: Int
 
     /// Users you are connected to via connection request.
@@ -66,6 +66,7 @@ public struct SearchOptions: OptionSet {
 }
 
 public extension SearchOptions {
+
     mutating func updateForSelfUserTeamRole(selfUser: UserType) {
         if selfUser.teamRole == .partner {
             insert(.excludeNonActiveTeamMembers)
@@ -74,6 +75,7 @@ public extension SearchOptions {
             insert(.excludeNonActivePartners)
         }
     }
+
 }
 
 public struct SearchRequest {
@@ -169,4 +171,5 @@ private extension String {
         guard let normalized = self.normalizedForSearch() as String? else { return "" }
         return normalized.trimmingCharacters(in: .whitespaces)
     }
+
 }

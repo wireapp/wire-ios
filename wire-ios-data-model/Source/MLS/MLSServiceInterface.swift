@@ -407,10 +407,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// If rejoining is successful, a system message will be appended
     /// to the conversation to indicate a potential gap in history.
 
-    func fetchAndRepairGroup(
-        with groupID: MLSGroupID,
-        shouldPerformIncrementalSync: Bool
-    ) async
+    func fetchAndRepairGroup(with groupID: MLSGroupID) async
 
     // MARK: - Epoch
 
@@ -493,14 +490,12 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// - Returns: epoch
     func epoch(for groupID: MLSGroupID) async throws -> UInt64
 
-    // MARK: - Sync delegate
-
-    /// Set the MLS sync delegate.
+    /// Local Domain of the backend environment
     ///
-    /// - Parameter delegate: The sync delegate to set.
+    /// - Note: useful to check if we should establishGroup or not
+    var localDomain: String { get }
 
-    func setSyncDelegate(_ delegate: any MLSSyncDelegate)
+    // MARK: - delegate
 
     func setResetBrokenMLSConversationDelegate(_ delegate: any ResetBrokenMLSConversationDelegate)
-
 }

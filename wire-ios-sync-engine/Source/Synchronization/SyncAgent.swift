@@ -345,34 +345,3 @@ extension SyncAgent: LiveSyncDelegate {
     }
 
 }
-
-// MARK: - MLS sync delegate
-
-extension SyncAgent: MLSSyncDelegate {
-
-    func recoverWithIncrementalSync() async throws {
-        WireLogger.sync.info("performing recovery incremental sync")
-
-        // Recovery means to restart any existing sync.
-        await suspend()
-
-        do {
-            try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
-                guard let self else { return }
-                if isConsumableNotificationsEnabled {
-                    incrementalSyncToken = try await incrementalSyncProvider.provideLiveSync(delegate: self)
-                        .perform()
-                } else {
-                    delegate?.syncAgentDidStartIncrementalSync(self)
-                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
-                        .perform()
-                    delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: true)
-                }
-            }
-        } catch {
-            WireLogger.sync.error("failed to perform recovery incremental sync: \(String(describing: error))")
-            throw error
-        }
-    }
-
-}

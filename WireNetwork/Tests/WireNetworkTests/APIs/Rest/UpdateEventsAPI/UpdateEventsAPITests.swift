@@ -32,7 +32,13 @@ final class UpdateEventsAPITests: XCTestCase {
     // MARK: - Request generation
 
     func testGetLastUpdateEvent() async throws {
-        try await createSnapshotter().verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetLastEventSuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await createSnapshotter().verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getLastUpdateEvent(selfClientID: Scaffolding.selfClientID)
         }
     }
@@ -56,7 +62,13 @@ final class UpdateEventsAPITests: XCTestCase {
     }
 
     func testGetServerTime() async throws {
-        try await createSnapshotter().verifyRequest(for: APIVersion.v9.andNextVersions) { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetServerTimeSuccessResponseV8"),
+            count: APIVersion.allCasesUpTo(.v8).count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await createSnapshotter().verifyRequest(for: APIVersion.v9.andNextVersions, apiService: apiService) { sut in
             _ = try await sut.getServerTime()
         }
     }

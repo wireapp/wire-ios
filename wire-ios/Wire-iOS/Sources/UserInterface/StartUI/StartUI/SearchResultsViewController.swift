@@ -261,7 +261,6 @@ final class SearchResultsViewController: UIViewController {
         options: SearchOptions
     ) {
         pendingSearchTask?.cancel()
-        pendingSearchTask = nil
         searchResultsView.emptyResultContainer.isHidden = true
 
         pendingSearchTask = Task {
@@ -275,7 +274,7 @@ final class SearchResultsViewController: UIViewController {
                     messageProtocol: filterConversation?.messageProtocol
                 )
 
-                handleSearchResult(result: result, isCompleted: true)
+                handleSearchResult(result: result)
             } catch {
                 WireLogger.search.warn("Search failed with error: \(error.localizedDescription)")
             }
@@ -315,12 +314,9 @@ final class SearchResultsViewController: UIViewController {
         }
     }
 
-    func handleSearchResult(result: SearchResult, isCompleted: Bool) {
+    func handleSearchResult(result: SearchResult) {
         updateSections(withSearchResult: result)
-
-        if isCompleted {
-            isResultEmpty = sectionController.visibleSections.isEmpty
-        }
+        isResultEmpty = sectionController.visibleSections.isEmpty
     }
 
     func updateVisibleSections() {

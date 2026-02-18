@@ -38,7 +38,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     var mockEncryptionService: MockMLSEncryptionServiceInterface!
     var mockDecryptionService: MockMLSDecryptionServiceInterface!
     var mockMLSActionExecutor: MockMLSActionExecutor!
-    var mockSyncDelegate: MockMLSSyncDelegate!
     var mockActionsProvider: MockMLSActionsProviderProtocol!
     var mockStaleMLSKeyDetector: MockStaleMLSKeyDetectorProtocol!
     var userDefaultsTestSuite: UserDefaults!
@@ -63,7 +62,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockEncryptionService = MockMLSEncryptionServiceInterface()
         mockDecryptionService = MockMLSDecryptionServiceInterface()
         mockMLSActionExecutor = MockMLSActionExecutor()
-        mockSyncDelegate = MockMLSSyncDelegate()
         mockActionsProvider = MockMLSActionsProviderProtocol()
         mockStaleMLSKeyDetector = MockStaleMLSKeyDetectorProtocol()
         userDefaultsTestSuite = UserDefaults.temporary()
@@ -113,7 +111,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             subconversationGroupIDRepository: mockSubconversationGroupIDRepository,
             localDomain: localDomain
         )
-        sut.setSyncDelegate(mockSyncDelegate)
         sut.setResetBrokenMLSConversationDelegate(resetMLSConversationDelegate)
     }
 
@@ -125,7 +122,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockEncryptionService = nil
         mockDecryptionService = nil
         mockMLSActionExecutor = nil
-        mockSyncDelegate = nil
         mockActionsProvider = nil
         mockStaleMLSKeyDetector = nil
         mockSubconversationGroupIDRepository = nil
@@ -326,43 +322,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(invocation?.groupID, groupID)
         XCTAssertEqual(invocation?.subconversationType, subconversationType)
         XCTAssertEqual(results.first, mockResult)
-    }
-
-    func test_Decrypt_RepairsConversationOnWrongEpochError() async throws {
-        // Given
-        let conversation = await uiMOC.perform { self.createConversation(outOfSync: true).conversation }
-        guard let groupID = await uiMOC.perform({ conversation.mlsGroupID }) else {
-            XCTFail("no groupId")
-            return
-        }
-        let message = "foo"
-        let error = MLSDecryptionService.MLSMessageDecryptionError.wrongEpoch
-        mockDecryptionService.decryptMessageForSubconversationTypeContext_MockError = error
-        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
-
-        let expectation = XCTestExpectation(description: "repaired conversation")
-        await uiMOC.perform {
-            self.setMocksForConversationRepair(
-                parentGroupID: groupID,
-                epoch: conversation.epoch - 1,
-                onJoinGroup: { joinedGroupID in
-                    XCTAssertEqual(groupID, joinedGroupID)
-                    expectation.fulfill()
-                }
-            )
-        }
-
-        // When
-        _ = try? await sut.decrypt(
-            message: message,
-            for: groupID,
-            subconversationType: nil,
-            context: nil
-        )
-
-        // Then
-        await fulfillment(of: [expectation], timeout: 1)
-        _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
     }
 
     // MARK: - Create group
@@ -1047,6 +1006,41 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
     }
 
+    func test_PerformPendingJoins_It_JoinsViaExternalCommit_FederationGroup() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+        let conversationID = UUID.create()
+        let domain = localDomain
+        let conversation = await uiMOC.perform { [uiMOC] in
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.remoteIdentifier = conversationID
+
+            conversation.mlsGroupID = groupID
+            conversation.messageProtocol = .mls
+            conversation.mlsStatus = .pendingJoin
+            conversation.conversationType = .group
+
+            conversation.epoch = 0
+            conversation.domain = "foreign.domain"
+            XCTAssertNotEqual(conversation.domain, self.localDomain)
+            return conversation
+        }
+        // mock
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = false
+        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
+        mockMLSActionExecutor.mockJoinGroup = { _, _ in }
+
+        // When
+        try await sut.performPendingJoins()
+
+        // Then
+        XCTAssertEqual(
+            mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations.count,
+            1
+        )
+        XCTAssertEqual(mockMLSActionExecutor.mockJoinGroupCount, 1)
+    }
+
     func assert_PerformPendingJoins_It_Establishes_Group(
         conversationType: ZMConversationType,
         file: StaticString = #file,
@@ -1055,7 +1049,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         let groupID = MLSGroupID.random()
         let conversationID = UUID.create()
-        let domain = "example.domain.com"
+        let domain = localDomain
         let conversation = await uiMOC.perform { [uiMOC] in
             let conversation = ZMConversation.insertNewObject(in: uiMOC)
             conversation.remoteIdentifier = conversationID
@@ -1180,9 +1174,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return conversation
         }
 
-        // mock recovering with incremental sync
-        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
-
         // mock fetching group info
         mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = groupInfo
 
@@ -1303,7 +1294,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTFail("missing groupID")
             return
         }
-        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
 
         let expectation = XCTestExpectation(description: "rejoined conversation")
 
@@ -1318,7 +1308,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             )
         }
         // WHEN
-        await sut.fetchAndRepairGroupIfPossible(with: groupID)
+        await sut.fetchAndRepairGroup(with: groupID)
 
         // THEN
         // Verify expectation that the conversation was rejoined
@@ -1335,8 +1325,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return
         }
 
-        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
-
         let expectation = XCTestExpectation(description: "didn't rejoin conversation")
         expectation.isInverted = true
 
@@ -1350,7 +1338,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             )
         }
         // WHEN
-        await sut.fetchAndRepairGroupIfPossible(with: groupID)
+        await sut.fetchAndRepairGroup(with: groupID)
 
         // THEN
         // Verify expectation that the conversation was NOT rejoined
@@ -1364,7 +1352,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTFail("missing groupID")
             return
         }
-        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
         let subgroupID = MLSGroupID.random()
         let qualifiedID = await uiMOC.perform { conversation.qualifiedID }
 
@@ -1391,7 +1378,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // WHEN
-        await sut.fetchAndRepairGroupIfPossible(with: groupID)
+        await sut.fetchAndRepairGroup(with: groupID)
 
         // THEN
         // Verify expectation that the subgroup was rejoined
@@ -1405,7 +1392,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTFail("missing groupID")
             return
         }
-        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
         let subgroupID = MLSGroupID.random()
         let qualifiedID = await uiMOC.perform { conversation.qualifiedID }
 
@@ -1433,7 +1419,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // WHEN
-        await sut.fetchAndRepairGroupIfPossible(with: groupID)
+        await sut.fetchAndRepairGroup(with: groupID)
 
         // THEN
         // Verify expectation that the subgroup was NOT rejoined
@@ -1826,9 +1812,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
         }
 
-        // Mock incremental sync.
-        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
-
         // When
         try await sut.updateKeyMaterial(for: groupID)
 
@@ -1885,10 +1868,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
             ))
         }
-
-        // Mock incremental sync.
-        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
-
         do {
             // When
             try await sut.updateKeyMaterial(for: groupID)
@@ -1930,9 +1909,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 return
             }
         }
-
-        // Mock incremental sync.
-        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
 
         // When
         try await sut.updateKeyMaterial(for: groupID)

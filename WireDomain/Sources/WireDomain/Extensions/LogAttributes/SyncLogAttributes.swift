@@ -63,7 +63,7 @@ public extension LogAttributes {
         [
             .syncType: initialSync ? Constants.initial : Constants.incremental,
             .syncVersion: Constants.v1,
-            .duration: duration,
+            .syncDuration: duration,
             .public: true
         ]
     }
@@ -89,7 +89,7 @@ public extension LogAttributes {
             .syncType: initialSync ? Constants.initial : Constants.incremental,
             .syncVersion: Constants.v1,
             .syncPhase: phase,
-            .duration: duration,
+            .syncDuration: duration,
             .public: true
         ]
     }
