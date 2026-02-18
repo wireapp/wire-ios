@@ -79,11 +79,7 @@ public final class SearchTask {
 
     /// Cancel a previously started task
     public func cancel() {
-        guard case let .started(taskGroup) = status else {
-            assertionFailure()
-            return
-        }
-
+        guard case let .started(taskGroup) = status else { return }
         taskGroup.cancelAll()
     }
 

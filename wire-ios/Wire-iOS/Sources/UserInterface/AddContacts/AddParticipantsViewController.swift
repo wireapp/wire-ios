@@ -173,6 +173,7 @@ final class AddParticipantsViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
         _ = searchHeaderViewController.tokenField.resignFirstResponder()
     }
 

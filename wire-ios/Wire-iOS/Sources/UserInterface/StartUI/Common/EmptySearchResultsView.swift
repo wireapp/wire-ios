@@ -25,9 +25,11 @@ import WireDesign
 private enum EmptySearchResultsViewState {
     case initialSearch
     case noUsers
-    case noServices // TODO: rename noApps
     case everyoneAdded
-    case noServicesEnabled
+    case noApps
+    case noAppsEnabled
+    case noBots
+    case noBotsEnabled
 }
 
 // MARK: - EmptySearchResultsViewAction
@@ -80,9 +82,9 @@ final class EmptySearchResultsView: UIView {
             } else {
                 return Message.users
             }
-        case .noServices:
+        case .noApps, .noBots:
             return Message.apps
-        case .noServicesEnabled:
+        case .noAppsEnabled, .noBotsEnabled:
             if isSelfUserAdmin {
                 return Message.appsNotEnabledAdmin
             } else {
@@ -99,7 +101,7 @@ final class EmptySearchResultsView: UIView {
         switch state {
         case .initialSearch:
             return UIImage()
-        case .noServices, .noServicesEnabled:
+        case .noApps, .noAppsEnabled, .noBots, .noBotsEnabled:
             icon = .bot
         default:
             icon = .personalProfile
@@ -110,7 +112,9 @@ final class EmptySearchResultsView: UIView {
 
     private var buttonAction: EmptySearchResultsViewAction? {
         switch state {
-        case .noServicesEnabled where isSelfUserAdmin:
+        case .noAppsEnabled where isSelfUserAdmin:
+            fallthrough
+        case .noBotsEnabled where isSelfUserAdmin:
             .openManageServices
         case .noUsers:
             .openSearchSupportPage
@@ -175,12 +179,12 @@ final class EmptySearchResultsView: UIView {
 
     // MARK: - Public Interface
 
-    func updateStatus(searchingForBots: Bool, hasFilter: Bool) {
-        switch (searchingForBots, hasFilter) {
+    func updateStatus(searchingForAppsOrBots: Bool, hasFilter: Bool) {
+        switch (searchingForAppsOrBots, hasFilter) {
         case (true, false):
-            state = .noServicesEnabled
+            state = .noBotsEnabled
         case (true, true):
-            state = .noServices
+            state = .noBots
         case (false, true):
             state = .noUsers
         case (false, false):
@@ -246,7 +250,6 @@ final class EmptySearchResultsView: UIView {
         isSelfUserAdmin: true,
         isFederationEnabled: false
     )
-
-    view.state = .noServicesEnabled
+    view.state = .noBotsEnabled
     return view
 }
