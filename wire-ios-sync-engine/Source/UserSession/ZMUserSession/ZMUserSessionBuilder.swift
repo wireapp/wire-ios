@@ -270,7 +270,7 @@ struct ZMUserSessionBuilder {
             featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
             userID: coreDataStack.account.userIdentifier,
-            localDomain: BackendInfo.domain
+            localDomain: BackendInfo.domain ?? "unused" // unused
         )
         let proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,
