@@ -225,7 +225,7 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
     ) throws -> Data {
         lock.lock()
         defer { lock.unlock() }
-        
+
         guard let key = databaseKey else {
             WireLogger.ear.error("failed to decrypt data for EAR: missing database key", attributes: .safePublic)
             throw EncryptionError.missingDatabaseKey
