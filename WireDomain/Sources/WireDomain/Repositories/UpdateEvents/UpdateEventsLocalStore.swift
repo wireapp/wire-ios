@@ -307,7 +307,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         } else {
             // Explicitly set flags for unencrypted events
             storedEventEnvelope.isEncrypted = false
-            storedEventEnvelope.isBackgroundAccessible = false
+            storedEventEnvelope.isBackgroundAccessible = true
         }
 
         storedEventEnvelope.data = data

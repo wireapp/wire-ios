@@ -88,19 +88,23 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     func perform(appState: UIApplication.State) async throws -> Token {
         let inBackground = appState == .background
 
+        // Abort sync if we're in foreground and database is locked
         if !inBackground, earService.isLocked {
             logger.info(
-                "not starting incremental sync because the database is locked",
+                "not starting incremental sync: database is locked",
                 attributes: .incrementalSyncV2,
                 .safePublic
             )
             throw Failure.databaseLocked
         }
 
-        return try await internalPerform(inBackground: inBackground)
+        // Process only background events is EAR is enabled and we're in the background
+        let backgroundAccessibleOnly = earService.isEAREnabled && inBackground
+        
+        return try await internalPerform(backgroundAccessibleOnly: backgroundAccessibleOnly)
     }
 
-    private func internalPerform(inBackground: Bool) async throws -> Token {
+    private func internalPerform(backgroundAccessibleOnly: Bool) async throws -> Token {
         try await logger.measureTime(
             label: "new incremental sync",
             attributes: .incrementalSyncV2
@@ -108,7 +112,9 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
             // Fetch keys (will return nil if EAR is disabled)
             let publicKeys = try earService.fetchPublicKeys()
-            let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !inBackground)
+            let privateKeys = try earService.fetchPrivateKeys(
+                includingPrimary: !backgroundAccessibleOnly
+            )
 
             syncStateSubject.send(.incrementalSyncing(.createPushChannel))
             let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
@@ -132,7 +138,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
                 processedEnvelopeIDs = try await processStoredEvents(
                     privateKeys: privateKeys,
-                    backgroundAccessibleOnly: inBackground
+                    backgroundAccessibleOnly: backgroundAccessibleOnly
                 )
             } catch {
                 func tearDown() async {
@@ -177,7 +183,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                             liveEventStream: liveEventStream,
                             processedEnvelopeIDs: processedEnvelopeIDs,
                             publicKeys: publicKeys,
-                            backgroundAccessibleOnly: inBackground
+                            backgroundAccessibleOnly: backgroundAccessibleOnly
                         )
                     }
                 } catch {
