@@ -818,8 +818,9 @@ public extension WireCallCenterV3 {
                                 )
                             }
                         } catch {
+                            let nsError = error as NSError
                             WireLogger.calling.error(
-                                "Error updating conference info: \(error)",
+                                "Error updating conference info: \(nsError.safeForLoggingDescription)",
                                 attributes: .safePublic
                             )
                         }
@@ -845,8 +846,9 @@ public extension WireCallCenterV3 {
                         self.callSnapshots[conversationID] = snapshot
                     }
                 } catch {
+                    let nsError = error as NSError
                     WireLogger.calling.error(
-                        "failed to set up MLS conference: \(String(describing: error))",
+                        "failed to set up MLS conference: \(nsError.safeForLoggingDescription)",
                         attributes: .safePublic
                     )
                     self.onMLSConferenceFailure(id: conversationID)
