@@ -181,6 +181,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     // https://forums.swift.org/t/structured-caching-in-an-actor/65501/13
     private func getCoreCrypto() async throws -> SafeCoreCrypto {
         guard !loadingCoreCrypto else {
+            WireLogger.coreCrypto.debug(
+                "already loading CoreCrypto, waiting for continuation",
+                attributes: .safePublic
+            )
             return try await withCheckedThrowingContinuation { continuation in
                 coreCryptoContinuations.append(continuation)
             }
@@ -199,6 +203,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
                 throw error
             }
 
+
             resumeCoreCryptoContinuations(with: .success(cc))
             loadingCoreCrypto = false
             coreCrypto = cc
@@ -208,6 +213,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
     private func resumeCoreCryptoContinuations(with result: Result<SafeCoreCrypto, Error>) {
         for continuation in coreCryptoContinuations {
+            WireLogger.coreCrypto.debug(
+                "resuming continuations",
+                attributes: .safePublic
+            )
             continuation.resume(with: result)
         }
         coreCryptoContinuations = []
@@ -221,10 +230,20 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         )
         let provider = CoreCryptoConfigProvider(coreCryptoKeyProvider: coreCryptoKeyProvider)
 
+        WireLogger.coreCrypto.debug(
+            "creating Core Crypto config",
+            attributes: .safePublic
+        )
+
         let configuration = try await provider.createInitialConfiguration(
             sharedContainerURL: sharedContainerURL,
             userID: selfUserID,
             allowKeyCreation: allowCreation
+        )
+
+        WireLogger.coreCrypto.debug(
+            "creating Core Crypto",
+            attributes: .safePublic
         )
 
         let coreCrypto = try await SafeCoreCrypto(
@@ -245,11 +264,29 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         // it fixes `Mls(WireCoreCrypto.MlsError.Other("Proteus client hasn\'t been initialized"))`
         // Empty transaction was committed, this could be an indication of a programming error - [core_crypto_context:
         // {}]
-        try await coreCrypto.unsafePerform { try await $0.proteusInit() }
+        WireLogger.coreCrypto.debug(
+            "configuring proteus client",
+            attributes: .safePublic
+        )
+        try await coreCrypto.unsafePerform {
+            WireLogger.coreCrypto.debug(
+                "proteus init",
+                attributes: .safePublic
+            )
+            try await $0.proteusInit()
+        }
     }
 
     private func configureMLSClient(coreCrypto: SafeCoreCrypto) async throws {
+        WireLogger.coreCrypto.debug(
+            "configuring mls client",
+            attributes: .safePublic
+        )
         let mlsClientID: MLSClientID? = await syncContext.perform {
+            WireLogger.coreCrypto.debug(
+                "getting mls id",
+                attributes: .safePublic
+            )
             guard
                 let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient(),
                 selfClient.hasRegisteredMLSClient
@@ -264,12 +301,26 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
         // Initialise MLS if we have previously registered an MLS client
         if let mlsClientID {
+            WireLogger.coreCrypto.debug(
+                "checking ciphersuite",
+                attributes: .safePublic
+            )
             let cipherSuite = await featureRespository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
-            try await coreCrypto.perform { try await $0.mlsInit(
-                clientId: .init(bytes: mlsClientID.data),
-                ciphersuites: [cipherSuite],
-                nbKeyPackage: nil
-            ) }
+            WireLogger.coreCrypto.debug(
+                "core crypto perform...",
+                attributes: .safePublic
+            )
+            try await coreCrypto.perform {
+                WireLogger.coreCrypto.debug(
+                    "mls init",
+                    attributes: .safePublic
+                )
+                try await $0.mlsInit(
+                    clientId: .init(bytes: mlsClientID.data),
+                    ciphersuites: [cipherSuite],
+                    nbKeyPackage: nil
+                )
+            }
         }
     }
 
@@ -288,7 +339,18 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private func updateKeychainItemAccess() {
         WireLogger.coreCrypto.info("updating keychain item access")
 
-        for account in accountsForAllItemsNeedingUpdates() {
+        let accounts = accountsForAllItemsNeedingUpdates()
+
+        WireLogger.coreCrypto.debug(
+            "found \(accounts.count) accounts needing keychain access update",
+            attributes: .safePublic
+        )
+
+        for (index, account) in accounts.enumerated() {
+            WireLogger.coreCrypto.debug(
+                "updating keychain item access for account #\(index + 1)",
+                attributes: .safePublic
+            )
             let query = [
                 kSecClass: kSecClassGenericPassword,
                 kSecAttrService: "wire.com",
