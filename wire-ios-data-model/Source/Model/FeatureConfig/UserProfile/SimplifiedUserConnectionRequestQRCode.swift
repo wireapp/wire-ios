@@ -18,31 +18,19 @@
 
 import Foundation
 
-/// A configuration for the *App Lock* feature.
+public extension Feature {
 
-public struct AppLockFeatureConfig: Equatable, Sendable, Hashable {
+    struct SimplifiedUserConnectionRequestQRCode: Codable {
 
-    /// The feature's status.
+        // MARK: - Properties
 
-    public let status: FeatureConfigStatus
+        public let status: Status
 
-    /// Whether the app lock is mandatorily enabled.
+        // MARK: - Life cycle
 
-    public let isMandatory: Bool
-
-    /// The number of seconds in the background before
-    /// the app should relock.
-
-    public let inactivityTimeoutInSeconds: UInt
-
-    public init(
-        status: FeatureConfigStatus,
-        isMandatory: Bool,
-        inactivityTimeoutInSeconds: UInt
-    ) {
-        self.status = status
-        self.isMandatory = isMandatory
-        self.inactivityTimeoutInSeconds = inactivityTimeoutInSeconds
+        public init(status: Feature.Status = .disabled) {
+            self.status = status
+        }
     }
 
 }

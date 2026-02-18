@@ -18,31 +18,18 @@
 
 import Foundation
 
-/// A configuration for the *App Lock* feature.
+/// A configuration for the *User profile sharing QR code* feature.
 
-public struct AppLockFeatureConfig: Equatable, Sendable, Hashable {
+public struct SimplifiedUserConnectionRequestQRCodeConfig: Equatable, Sendable, Hashable {
 
     /// The feature's status.
 
     public let status: FeatureConfigStatus
 
-    /// Whether the app lock is mandatorily enabled.
-
-    public let isMandatory: Bool
-
-    /// The number of seconds in the background before
-    /// the app should relock.
-
-    public let inactivityTimeoutInSeconds: UInt
-
     public init(
-        status: FeatureConfigStatus,
-        isMandatory: Bool,
-        inactivityTimeoutInSeconds: UInt
+        status: FeatureConfigStatus
     ) {
         self.status = status
-        self.isMandatory = isMandatory
-        self.inactivityTimeoutInSeconds = inactivityTimeoutInSeconds
     }
 
 }
