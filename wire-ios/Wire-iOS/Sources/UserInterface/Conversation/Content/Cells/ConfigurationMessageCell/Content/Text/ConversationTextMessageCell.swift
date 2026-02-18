@@ -22,6 +22,7 @@ import WireLocators
 import WireMessagingDomain
 import WireSyncEngine
 
+private let linkDetector = NSDataDetector.linkDetector
 final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
     struct Configuration: Equatable {
@@ -175,6 +176,9 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             detectedLinkForegroundColor = UIColor.accent()
         }
 
+        // Create a set of mention ranges for quick lookup to avoid applying underline to mentions
+        let mentionRanges: Set<NSRange> = Set(object.mentions.map(\.range))
+
         // Apply styling for Mentions (NO UNDERLINE)
         for mention in object.mentions {
             let mentionRange = mention.range
@@ -193,12 +197,9 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             let linkRange = result.range
             guard linkRange.location + linkRange.length <= mutableAttributedText.length else { continue }
 
-            // IMPORTANT: Check for overlap with mentions.
-            // If a detected link overlaps with a mention, the mention's styling should take precedence.
-            let isOverlappingMention = object.mentions.contains { mention in
-                let mentionRange = mention.range // Access range from the Mention object
-                return NSIntersectionRange(linkRange, mentionRange).length > 0
-            }
+            // Check if this link range overlaps with any mention.
+            // If it does, the mention's styling (no underline) should take precedence.
+            let isOverlappingMention = mentionRanges.contains { NSIntersectionRange(linkRange, $0).length > 0 }
 
             if let link = result.url, !isOverlappingMention {
                 mutableAttributedText.addAttributes([
@@ -206,6 +207,27 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
                     .underlineStyle: NSUnderlineStyle.single.rawValue,
                     .link: link
                 ], range: linkRange)
+            }
+        }
+
+        mutableAttributedText.enumerateAttribute(
+            .link,
+            in: NSRange(location: 0, length: mutableAttributedText.length),
+            options: []
+        ) { value, range, _ in
+            if let link = value as? URL {
+                // Check if this range is covered by any mention.
+                // If it is, we respect the mention's no-underline style.
+                let isCoveredByMention = mentionRanges.contains { NSIntersectionRange(range, $0).length > 0 }
+
+                if !isCoveredByMention {
+                    // Apply or re-apply the underline style and color
+                    mutableAttributedText.addAttributes([
+                        .foregroundColor: detectedLinkForegroundColor, // Ensure consistent color
+                        .underlineStyle: NSUnderlineStyle.single.rawValue, // Explicitly apply underline
+                        .link: link // Ensure link attribute is still present
+                    ], range: range)
+                }
             }
         }
 
@@ -375,7 +397,14 @@ extension ConversationTextMessageCellDescription {
             isObfuscated: message.isObfuscated,
             accentColor: (selfUser.zmAccentColor ?? .default).accentColor
         )
-        let detectedLinks = findDetectedLinks(in: messageText)
+
+        var allDetectedLinks: [NSTextCheckingResult] = []
+
+        let embeddedLinks = ConversationTextMessageCellDescription.findEmbeddedLinks(in: textMessageData)
+        allDetectedLinks.append(contentsOf: embeddedLinks)
+
+        let autoDetectedLinks = ConversationTextMessageCellDescription.findDetectedLinks(in: messageText)
+        allDetectedLinks.append(contentsOf: autoDetectedLinks)
 
         // Search queries
         if !searchQueries.isEmpty {
@@ -410,7 +439,7 @@ extension ConversationTextMessageCellDescription {
                 isObfuscated: message.isObfuscated,
                 userSession: userSession,
                 mentions: textMessageData.mentions,
-                detectedLinks: detectedLinks
+                detectedLinks: allDetectedLinks
             )
             cells.append(AnyConversationMessageCellDescription(textCell))
         }
@@ -451,6 +480,20 @@ extension ConversationTextMessageCellDescription {
             options: [],
             range: scanRange
         )
+    }
+
+    static func findEmbeddedLinks(in textMessageData: TextMessageData) -> [NSTextCheckingResult] {
+        if let originalURLString = textMessageData.linkPreview?.originalURLString,
+           let url = URL(string: originalURLString), // Ensure it's a valid URL
+           let messageTextString = textMessageData.messageText {
+            // Find the range of the originalURLString within the messageTextString
+            if let rangeOfEmbeddedLink = messageTextString.range(of: originalURLString) {
+                let nsRange = NSRange(rangeOfEmbeddedLink, in: messageTextString)
+                let linkResult = NSTextCheckingResult.linkCheckingResult(range: nsRange, url: url)
+                return [linkResult]
+            }
+        }
+        return []
     }
 }
 

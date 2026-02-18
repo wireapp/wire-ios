@@ -563,6 +563,33 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertEqual(sut.cellDescriptionsForTesting.count, 3)
     }
 
+    func testFindEmbeddedLinks_directMatch() {
+        let messageText = "Check out this cool link: page"
+        let originalURLString = "page"
+        // Use MockTextMessageData for testing
+        let linkMessage = MockMessageFactory.textMessageWithEmbeddedLink(
+            text: messageText,
+            originalURL: originalURLString
+        )
+
+        // Assuming findEmbeddedLinks is a static method on ConversationTextMessageCellDescription
+        let detectedLinks = ConversationTextMessageCellDescription
+            .findEmbeddedLinks(in: linkMessage.backingTextMessageData)
+
+        XCTAssertEqual(detectedLinks.count, 1, "Should detect exactly one link")
+
+        if let linkResult = detectedLinks.first {
+            XCTAssertEqual(linkResult.resultType, .link, "Detected result should be a link")
+            XCTAssertEqual(linkResult.url, URL(string: originalURLString), "Detected URL should match original URL")
+
+            // Calculate expected range
+            let expectedRange = (messageText as NSString).range(of: originalURLString)
+            XCTAssertEqual(linkResult.range, expectedRange, "Detected range should match the link's position")
+        } else {
+            XCTFail("No link result found")
+        }
+    }
+
     private func makeSUT(
         message: MockMessage = MockMessage(),
         context: ConversationMessageContext? = nil,

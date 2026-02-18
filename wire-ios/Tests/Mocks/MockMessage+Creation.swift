@@ -368,4 +368,29 @@ enum MockMessageFactory {
 
         return fileMessage
     }
+
+    /// Creates a MockMessage with TextMessageData that includes an embedded link preview.
+    /// The `originalURL` is used for the linkPreview and is also expected to be present in the `text`.
+    static func textMessageWithEmbeddedLink(
+        text: String,
+        originalURL: String,
+        sender: UserType? = nil
+    ) -> MockMessage {
+        let message: MockMessage = MockMessageFactory.messageTemplate(sender: sender)
+        // Use the MockTextMessageData defined above, which has an accessible initializer
+        let textMessageData = MockTextMessageData()
+        // messageText: text, originalURLString: originalURL
+        textMessageData.messageText = text
+
+        let article = ArticleMetadata(
+            originalURLString: originalURL,
+            permanentURLString: "http://foo.bar/baz",
+            resolvedURLString: "http://foo.bar/baz",
+            offset: 0
+        )
+        textMessageData.backingLinkPreview = article
+
+        message.backingTextMessageData = textMessageData
+        return message
+    }
 }
