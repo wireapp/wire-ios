@@ -28,8 +28,6 @@ private enum EmptySearchResultsViewState {
     case everyoneAdded
     case noApps
     case noAppsEnabled
-    case noBots
-    case noBotsEnabled
 }
 
 // MARK: - EmptySearchResultsViewAction
@@ -73,25 +71,21 @@ final class EmptySearchResultsView: UIView {
     private var text: String {
         typealias Message = L10n.Localizable.Peoplepicker.NoMatchingResults.Message
 
-        switch state {
+        return switch state {
         case .everyoneAdded:
-            return Message.usersAllAdded
+            Message.usersAllAdded
+        case .noUsers where isFederationEnabled:
+            Message.usersAndFederation
         case .noUsers:
-            if isFederationEnabled {
-                return Message.usersAndFederation
-            } else {
-                return Message.users
-            }
-        case .noApps, .noBots:
-            return Message.apps
-        case .noAppsEnabled, .noBotsEnabled:
-            if isSelfUserAdmin {
-                return Message.appsNotEnabledAdmin
-            } else {
-                return Message.appsNotEnabled
-            }
+            Message.users
+        case .noApps:
+            Message.apps
+        case .noAppsEnabled where isSelfUserAdmin:
+            Message.appsNotEnabledAdmin
+        case .noAppsEnabled:
+            Message.appsNotEnabled
         case .initialSearch:
-            return ""
+            ""
         }
     }
 
@@ -101,7 +95,7 @@ final class EmptySearchResultsView: UIView {
         switch state {
         case .initialSearch:
             return UIImage()
-        case .noApps, .noAppsEnabled, .noBots, .noBotsEnabled:
+        case .noApps, .noAppsEnabled:
             icon = .bot
         default:
             icon = .personalProfile
@@ -113,8 +107,6 @@ final class EmptySearchResultsView: UIView {
     private var buttonAction: EmptySearchResultsViewAction? {
         switch state {
         case .noAppsEnabled where isSelfUserAdmin:
-            fallthrough
-        case .noBotsEnabled where isSelfUserAdmin:
             .openManageServices
         case .noUsers:
             .openSearchSupportPage
@@ -179,12 +171,12 @@ final class EmptySearchResultsView: UIView {
 
     // MARK: - Public Interface
 
-    func updateStatus(searchingForAppsOrBots: Bool, hasFilter: Bool) {
-        switch (searchingForAppsOrBots, hasFilter) {
+    func updateStatus(searchingForApps: Bool, hasFilter: Bool) {
+        switch (searchingForApps, hasFilter) {
         case (true, false):
-            state = .noBotsEnabled
+            state = .noAppsEnabled
         case (true, true):
-            state = .noBots
+            state = .noApps
         case (false, true):
             state = .noUsers
         case (false, false):
@@ -250,6 +242,6 @@ final class EmptySearchResultsView: UIView {
         isSelfUserAdmin: true,
         isFederationEnabled: false
     )
-    view.state = .noBotsEnabled
+    view.state = .noAppsEnabled
     return view
 }

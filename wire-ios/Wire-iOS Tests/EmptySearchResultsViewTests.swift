@@ -36,7 +36,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: false,
-            searchingForBots: false,
+            searchingForApps: false,
             hasFilter: true
         )
     }
@@ -59,7 +59,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: true,
-            searchingForBots: false,
+            searchingForApps: false,
             hasFilter: true
         )
 
@@ -72,7 +72,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: false,
-            searchingForBots: false,
+            searchingForApps: false,
             hasFilter: false
         )
 
@@ -86,7 +86,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
 //        sut = setupEmptySearchResultsView(
 //            isSelfUserAdmin: false,
 //            isFederationEnabled: false,
-//            searchingForServices: true,
+//            searchingForApps: true,
 //            hasFilter: true
 //        )
 //
@@ -100,7 +100,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
 //        sut = setupEmptySearchResultsView(
 //            isSelfUserAdmin: false,
 //            isFederationEnabled: false,
-//            searchingForServices: true,
+//            searchingForApps: true,
 //            hasFilter: false
 //        )
 //
@@ -113,7 +113,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: true,
             isFederationEnabled: false,
-            searchingForBots: true,
+            searchingForApps: true,
             hasFilter: false
         )
 
@@ -126,7 +126,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
     func setupEmptySearchResultsView(
         isSelfUserAdmin: Bool,
         isFederationEnabled: Bool,
-        searchingForBots: Bool,
+        searchingForApps: Bool,
         hasFilter: Bool
     ) -> EmptySearchResultsView {
 
@@ -136,7 +136,7 @@ final class EmptySearchResultsViewTests: XCTestCase {
         )
         sut.overrideUserInterfaceStyle = .dark
         sut.updateStatus(
-            searchingForBots: searchingForBots,
+            searchingForApps: searchingForApps,
             hasFilter: hasFilter
         )
         configureBounds(for: sut)
