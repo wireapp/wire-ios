@@ -1,0 +1,9 @@
+{
+    "type": "feature-config.update",
+    "name": "simplifiedUserConnectionRequestQRCode",
+    "data": {
+        "lockStatus": "unlocked",
+        "status": "disabled",
+        "ttl": "unlimited"
+    }
+}

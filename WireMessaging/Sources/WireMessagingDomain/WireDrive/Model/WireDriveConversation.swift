@@ -88,7 +88,8 @@ public extension Collection<WireDriveConversation> {
     static func mocked() -> [Element] {
         [
             .init(id: "1234", name: "Conversation 1", participants: Set([WireDriveConversation.Participant].mocked())),
-            .init(id: "5678", name: "Conversation 2", participants: Set([WireDriveConversation.Participant].mocked()))
+            .init(id: "5678", name: "Conversation 2", participants: Set([WireDriveConversation.Participant].mocked())),
+            .init(id: "5678", name: "Conversation 3", kind: .group, participants: Set([WireDriveConversation.Participant].mocked()))
         ]
     }
 }

@@ -41,25 +41,51 @@ final class TeamsAPITests: XCTestCase {
     // MARK: - Request generation
 
     func testGetTeamRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetTeamSuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getTeam(for: .mockID1)
         }
     }
 
     func testGetTeamRolesRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetTeamRolesSuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getTeamRoles(for: .mockID1)
         }
     }
 
     func testGetTeamMembersRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetTeamMembersSuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getTeamMembers(for: .mockID1, maxResults: 2000)
         }
     }
 
     func testGetLegalholdInfoRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetLegalHoldInfoSuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getLegalholdInfo(for: .mockID1, userID: .mockID2)
         }
     }
@@ -329,9 +355,12 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamForID_SuccessResponse_200_V2_Then_Verify_Request() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetTeamSuccessResponseV2")
-        ])
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetTeamSuccessResponseV2"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
 
         let teamID = try XCTUnwrap(Team.ID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506"))
 
@@ -356,9 +385,12 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetMembersByIDs_SuccessResponse_200_V2_Then_Verify_Request() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetTeamMembersByIDsSuccessResponseV0")
-        ])
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetTeamMembersByIDsSuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
 
         // Then
         try await apiSnapshotHelper.verifyRequest(for: APIVersion.v2.andNextVersions, apiService: apiService) { sut in
