@@ -67,6 +67,7 @@ public enum Locators {
         case bottomBarArchivedButton
         case accountProfileImageView
         case status
+        case loadBar
     }
 
     public enum SettingsPage: String {

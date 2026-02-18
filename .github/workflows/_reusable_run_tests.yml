@@ -224,7 +224,7 @@ jobs:
           {
             echo "## 📊 Allure Report Generated Successfully";
             echo "";
-            echo "**Artifact Name:** \`html-report-${{ github.run_number }}\`";
+            echo "**Artifact Name:** \`html-report-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}\`";
             echo "";
             echo "### 📥 How to View the Report";
             echo "";

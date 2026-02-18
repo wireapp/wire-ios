@@ -46,9 +46,9 @@ class ActiveConversationPage: PageModel {
     }
 
     var messageLabels: XCUIElementQuery {
-        app.textViews.matching(identifier: Locators.ActiveConversationPage.message.rawValue)
+        app.descendants(matching: .any).matching(identifier: Locators.ActiveConversationPage.message.rawValue)
     }
-    
+
     var mentionButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.mentionButton.rawValue]
     }
@@ -98,7 +98,7 @@ class ActiveConversationPage: PageModel {
         conversationDetailsButton.tap()
         return try ConversationDetailsPage()
     }
-    
+
     func chooseUser(nameOfUser: String) {
         let predicate = NSPredicate(
             format: "identifier == %@ AND label == %@",
@@ -108,8 +108,8 @@ class ActiveConversationPage: PageModel {
         let user = app.staticTexts.matching(predicate).firstMatch
         user.tap()
     }
-    
-    func mentionUserAndSendMessage(nameOfUser: String,) throws -> ActiveConversationPage {
+
+    func mentionUserAndSendMessage(nameOfUser: String, ) throws -> ActiveConversationPage {
         mentionButton.tap()
         chooseUser(nameOfUser: nameOfUser)
         sendButton.tap()

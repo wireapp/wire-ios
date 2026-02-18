@@ -191,7 +191,7 @@ final class TeamManageTests: WireUITestCase {
 
         XCTAssertTrue(archivedConversationPage.conversationExists(withName: groupName))
     }
-    
+
     /// testiny: https://app.testiny.io/IOS/testcases/tcf/1389/tc/8865/
     @MainActor
     func test_mentionUserInGroup() async throws {
@@ -223,11 +223,11 @@ final class TeamManageTests: WireUITestCase {
             groupName: groupName
         )
 
-        let _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopup(with: self)
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
-        
+
         let conversationPage = try app.loginUser(email: teamMembers[1].email, password: teamMembers[1].password)
             .acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(teamMembers[1].username)
@@ -238,13 +238,13 @@ final class TeamManageTests: WireUITestCase {
             .goBackToConversationPage()
             .openUserProfilePage()
             .switchUserAccountForUser(withName: teamMembers[1].name)
-            
+
         XCTAssertEqual(
             conversationPage.mentionStatus.value as? String,
             "You are mentioned",
             "'You are mentioned' value not found"
         )
-        
+
         let activeConversationPage = try conversationPage.openConversation()
 
         let fetchMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
