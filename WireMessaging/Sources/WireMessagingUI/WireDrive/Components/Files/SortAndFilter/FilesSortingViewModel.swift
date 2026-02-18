@@ -112,5 +112,5 @@ final class FilesSortingViewModel: ObservableObject {
 }
 
 extension FilesSortingViewModel.SortingSelection {
-    static let `default` = Self(sortingKey: .lastModified, sortingOrder: .ascending)
+    static let `default` = Self(sortingKey: .lastModified, sortingOrder: .descending)
 }
