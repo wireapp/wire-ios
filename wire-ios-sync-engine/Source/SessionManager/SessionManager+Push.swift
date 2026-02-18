@@ -90,8 +90,6 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         let newSyncNotificationCategories = WireDomain.NotificationCategory.allCategories
         notificationCenter.setNotificationCategories(newSyncNotificationCategories)
 
-
-
         notificationCenter.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { _, error in
             if let error {
                 WireLogger.notifications.error("Failed to request authorization for user notifications: \(error)")
