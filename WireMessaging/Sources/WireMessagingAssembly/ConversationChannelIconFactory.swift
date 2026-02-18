@@ -27,8 +27,8 @@ public final class ConversationChannelIconFactory {
     public init() {}
 
     @MainActor
-    public func create(conversationID: String) -> some View {
-        ConversationChannelIcon(asset: mapper.palette(for: conversationID))
+    public func create(conversationID: String, isPrivateChannel: Bool) -> some View {
+        ConversationChannelIcon(asset: mapper.palette(for: conversationID), isPrivateChannel: isPrivateChannel)
     }
 
     @MainActor

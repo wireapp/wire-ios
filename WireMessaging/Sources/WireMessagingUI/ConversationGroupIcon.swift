@@ -21,21 +21,23 @@ package import WireMessagingDomain
 
 package struct ConversationGroupIcon: View {
     let groupIcon: ConversationGroupIconAsset
+    
+    @ScaledMetric private var iconSize: CGFloat
 
-    package init(asset: ConversationGroupIconAsset) {
+    package init(asset: ConversationGroupIconAsset, size: CGFloat = 34) {
         self.groupIcon = asset
+        self._iconSize = .init(wrappedValue: size)
     }
 
     package var body: some View {
         groupIcon.image
             .resizable()
             .aspectRatio(contentMode: .fit)
+            .frame(width: iconSize, height: iconSize)
     }
 }
 
 #Preview {
     ConversationGroupIcon(asset: ConversationGroupIconAsset._1)
-        .frame(width: 40, height: 40)
     ConversationGroupIcon(asset: ConversationGroupIconAsset._2)
-        .frame(width: 40, height: 40)
 }

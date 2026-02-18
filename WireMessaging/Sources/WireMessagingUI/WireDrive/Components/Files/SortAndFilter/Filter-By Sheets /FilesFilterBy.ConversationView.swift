@@ -30,8 +30,6 @@ extension FilesFilterBy {
 
         @StateObject private var viewModel: ViewModel
 
-        @ScaledMetric private var iconSize: CGFloat = 32
-
         let onApply: (Set<ViewModel.Item>) -> Void
 
         init(
@@ -94,7 +92,6 @@ extension FilesFilterBy {
                 }
             } icon: {
                 icon(item)
-                    .frame(width: iconSize, height: iconSize)
             }
         }
 

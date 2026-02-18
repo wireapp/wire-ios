@@ -165,10 +165,7 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                             )
                         }
 
-                    let kind: WireDriveConversation.Kind = switch conversation.conversationType {
-                    case .group: .group
-                    default: .channel
-                    }
+                    let kind: WireDriveConversation.Kind = conversation.isChannel ? .channel : .group
 
                     let driveConversation = WireDriveConversation(
                         id: conversation.wireDriveCellName,
