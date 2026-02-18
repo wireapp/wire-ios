@@ -16,33 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+struct SimplifiedUserConnectionRequestQRCodeFeatureConfigDecoder {
 
-/// A configuration for the *App Lock* feature.
+    func decode(
+        from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
+    ) throws -> SimplifiedUserConnectionRequestQRCodeConfig {
+        let payload = try container.decode(
+            FeatureWithoutConfig.self,
+            forKey: .payload
+        )
 
-public struct AppLockFeatureConfig: Equatable, Sendable, Hashable {
-
-    /// The feature's status.
-
-    public let status: FeatureConfigStatus
-
-    /// Whether the app lock is mandatorily enabled.
-
-    public let isMandatory: Bool
-
-    /// The number of seconds in the background before
-    /// the app should relock.
-
-    public let inactivityTimeoutInSeconds: UInt
-
-    public init(
-        status: FeatureConfigStatus,
-        isMandatory: Bool,
-        inactivityTimeoutInSeconds: UInt
-    ) {
-        self.status = status
-        self.isMandatory = isMandatory
-        self.inactivityTimeoutInSeconds = inactivityTimeoutInSeconds
+        return SimplifiedUserConnectionRequestQRCodeConfig(status: payload.status.toAPIModel())
     }
 
 }
