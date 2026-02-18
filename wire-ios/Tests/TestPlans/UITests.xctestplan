@@ -10,16 +10,16 @@
             "value" : "$(INBUCKET_USERNAME)"
           },
           {
-            "key" : "CALLING_BACKEND",
-            "value" : "DEV"
+            "key" : "PREDEFINED_BACKEND",
+            "value" : "$(PREDEFINED_BACKEND)"
           },
           {
             "key" : "CALLING_INSTANCE_TYPE_NAME",
-            "value" : "chrome"
+            "value" : "$(CALLING_INSTANCE_TYPE_NAME)"
           },
           {
             "key" : "CALLING_INSTANCE_TYPE_VERSION",
-            "value" : "103.0.5060.53"
+            "value" : "$(CALLING_INSTANCE_TYPE_VERSION)"
           },
           {
             "key" : "CALLINGSERVICE_URL",

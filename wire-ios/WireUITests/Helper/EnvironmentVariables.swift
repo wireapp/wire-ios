@@ -99,7 +99,7 @@ struct EnvironmentVariables {
             throw Failure.missingBackendURL
         }
 
-        guard let callingBackend = ProcessInfo.processInfo.environment["CALLING_BACKEND"],
+        guard let callingBackend = ProcessInfo.processInfo.environment["PREDEFINED_BACKEND"],
               !callingBackend.isEmpty else {
             throw Failure.missingCallingBackend
         }
