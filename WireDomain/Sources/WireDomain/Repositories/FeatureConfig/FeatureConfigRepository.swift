@@ -224,6 +224,12 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 isEnabled: config.status == .enabled
             )
 
+        case let .simplifiedUserConnectionRequestQRCode(config):
+            return FeatureState(
+                name: .simplifiedUserConnectionRequestQRCode,
+                isEnabled: config.status == .enabled
+            )
+
         case let .cells(cellsConfig):
             return FeatureState(
                 name: .cells,
