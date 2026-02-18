@@ -148,7 +148,15 @@ public final class SearchTask {
                     return { _ in }
                 }
             }
-            // TODO: perform app lookup
+            taskGroup.addTask {
+                do {
+                    return try await self.listAllApps()
+                } catch {
+                    let errorType = Swift.type(of: error)
+                    WireLogger.search.error("failed to perform app lookup: \(String(describing: errorType))")
+                    return { _ in }
+                }
+            }
 
             var result = SearchResult()
             while let aggregator = await taskGroup.next() {
@@ -163,9 +171,8 @@ public final class SearchTask {
             return result
         }
     }
-}
 
-extension SearchTask {
+    // MARK: -
 
     /// Look up a user ID from contacts and teamMembers locally.
     private func performLocalLookup() async -> SearchResultAggregator {
@@ -421,9 +428,109 @@ extension SearchTask {
         return matching + nonMatching
     }
 
-}
+    // MARK: -
 
-extension SearchTask {
+    func listAllApps() async throws -> SearchResultAggregator {
+
+        func getTeamID() async -> UUID? {
+            let searchContext = contextProvider.newBackgroundContext()
+            return await searchContext.perform {
+                ZMUser.selfUser(in: searchContext).team?.remoteIdentifier
+            }
+        }
+
+        guard
+            let apiVersion,
+            apiVersion >= .v15,
+            case let .search(searchRequest) = type,
+            searchRequest.query.string.isEmpty,
+            !searchRequest.searchOptions.contains(.localResultsOnly),
+            searchRequest.searchOptions.contains(.apps),
+            let teamID = await getTeamID()
+        else {
+            return { _ in }
+        }
+
+        let xxx = try await teamsAPI.getApps(for: teamID)
+        print(xxx) // [WireNetwork.App(name: "WPB-20362 App 0", category: "developer", description: "some other app", accentID: 5, assets: [])]
+        fatalError("TODO")
+        /*
+        let contacts = try await searchAPI.searchContacts(
+            query: queryLowercased,
+            domain: searchDomain,
+            type: searchForApps ? .app : .regular
+        ).documents
+
+        let filteredContacts = contacts.filter { contact in
+            !searchRequest.query.isHandleQuery ||
+                contact.name.hasPrefix("@") ||
+                (contact.handle?.lowercased().contains(queryLowercased) ?? false)
+        }
+
+        try Task.checkCancellation()
+
+        let viewContext = contextProvider.viewContext
+        let searchUsers = await viewContext.perform { [searchUsersCache] in
+            filteredContacts.compactMap { filteredContact in
+                guard let id = filteredContact.id else { return ZMSearchUser?.none }
+
+                let domain = filteredContact.qualifiedID?.domain
+                let localUser = ZMUser.fetch(with: id, domain: domain, in: viewContext)
+
+                if let cachedSearchUser = searchUsersCache?.object(forKey: id as NSUUID) {
+                    cachedSearchUser.user = localUser
+                    return cachedSearchUser
+
+                } else {
+                    let accentColorRawValue = filteredContact.accentID.flatMap(Int16.init(exactly:))
+                    let accentColor = accentColorRawValue.flatMap(AccentColor.init(rawValue:))
+                    return ZMSearchUser(
+                        viewContext: viewContext,
+                        name: filteredContact.name,
+                        handle: filteredContact.handle,
+                        accentColor: accentColor.map(ZMAccentColor.from(accentColor:)),
+                        remoteIdentifier: filteredContact.id,
+                        domain: domain,
+                        teamIdentifier: filteredContact.team,
+                        user: localUser,
+                        searchUsersCache: searchUsersCache,
+                        type: .init(filteredContact.type)
+                    )
+                }
+            }
+        }
+
+        try Task.checkCancellation()
+
+        let searchOptions = searchRequest.searchOptions
+        let includeActiveTeamMembers = searchOptions.contains(.teamMembers) &&
+            searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers)
+        let partialResult = await viewContext.perform { [searchUsersCache] in
+            SearchResult(
+                context: viewContext,
+                contacts: [],
+                teamMembers: includeActiveTeamMembers ? searchUsers.filter(\.isTeamMember) : [],
+                directory: searchUsers.filter { !$0.isConnected && !$0.isTeamMember },
+                conversations: [],
+                apps: searchUsers.filter(\.isApp),
+                bots: [],
+                searchUsersCache: searchUsersCache
+            )
+        }
+
+        try Task.checkCancellation()
+
+        if searchRequest.searchOptions.contains(.teamMembers) {
+            return try await performTeamMembershipLookup(on: partialResult, searchRequest: searchRequest)
+        } else if searchForApps {
+            return { $0 = $0.union(withAppsResult: partialResult) }
+        } else {
+            return { $0 = $0.union(withDirectoryResult: partialResult) }
+        }
+         */
+    }
+
+// MARK: -
 
     func performUserLookup() async throws -> SearchResultAggregator {
         guard case var .lookup(qualifiedID) = type else {
@@ -477,9 +584,7 @@ extension SearchTask {
 
     }
 
-}
-
-extension SearchTask {
+// MARK: -
 
     func performRemoteSearch() async throws -> SearchResultAggregator {
         guard
@@ -604,9 +709,7 @@ extension SearchTask {
 
     }
 
-}
-
-extension SearchTask {
+// MARK: -
 
     func performRemoteSearchForTeamUser() async -> SearchResultAggregator {
         guard
@@ -697,9 +800,8 @@ extension SearchTask {
         let urlStr = url.string?.replacingOccurrences(of: "+", with: "%2B") ?? ""
         return ZMTransportRequest(getFromPath: urlStr, apiVersion: apiVersion.rawValue)
     }
-}
 
-extension SearchTask {
+    // MARK: -
 
     func performRemoteSearchForBots() async throws -> SearchResultAggregator {
 
