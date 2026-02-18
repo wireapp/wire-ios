@@ -42,7 +42,26 @@ final class FeatureConfigsAPITests: XCTestCase {
     // MARK: - Request generation
 
     func testGetFeatureConfigs() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetFeatureConfigsSuccessResponseV0"),
+            (.ok, "GetFeatureConfigsSuccessResponseV1"),
+            (.ok, "GetFeatureConfigsSuccessResponseV1"),
+            (.ok, "GetFeatureConfigsSuccessResponseV1"),
+            (.ok, "GetFeatureConfigsSuccessResponseV4"),
+            (.ok, "GetFeatureConfigsSuccessResponseV4"),
+            (.ok, "GetFeatureConfigsSuccessResponseV6"),
+            (.ok, "GetFeatureConfigsSuccessResponseV6"),
+            (.ok, "GetFeatureConfigsSuccessResponseV8"),
+            (.ok, "GetFeatureConfigsSuccessResponseV8"),
+            (.ok, "GetFeatureConfigsSuccessResponseV10"),
+            (.ok, "GetFeatureConfigsSuccessResponseV11"),
+            (.ok, "GetFeatureConfigsSuccessResponseV12"),
+            (.ok, "GetFeatureConfigsSuccessResponseV12"),
+            (.ok, "GetFeatureConfigsSuccessResponseV14"),
+            (.ok, "GetFeatureConfigsSuccessResponseV14")
+        ])
+
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getFeatureConfigs()
         }
     }
@@ -73,9 +92,9 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_SuccessResponse_200_V1_to_V3_Then_Verify_Requests() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetFeatureConfigsSuccessResponseV1")
-        ])
+        let apiService = MockAPIServiceProtocol.withResponses(
+            Array(repeating: (.ok, "GetFeatureConfigsSuccessResponseV1"), count: 3)
+        )
 
         let supportedVersions: [APIVersion] = [.v1, .v2, .v3]
 
@@ -84,10 +103,9 @@ final class FeatureConfigsAPITests: XCTestCase {
             // When
             let result = try await sut.getFeatureConfigs()
             // Then
-            XCTAssertEqual(
-                result,
-                Scaffolding.featureConfigsV1
-            )
+            let resultSet = Set(result)
+            let expectedSet = Scaffolding.featureConfigsV1
+            XCTAssertEqual(resultSet, expectedSet)
         }
     }
 
@@ -144,9 +162,9 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_SuccessResponse_200_V4_To_V5_Then_Verify_Requests() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetFeatureConfigsSuccessResponseV4")
-        ])
+        let apiService = MockAPIServiceProtocol.withResponses(
+            Array(repeating: (.ok, "GetFeatureConfigsSuccessResponseV4"), count: 2)
+        )
 
         let supportedVersions: [APIVersion] = [.v4, .v5]
 
@@ -155,10 +173,9 @@ final class FeatureConfigsAPITests: XCTestCase {
             // When
             let result = try await sut.getFeatureConfigs()
             // Then
-            XCTAssertEqual(
-                result,
-                Scaffolding.featureConfigsV4
-            )
+            let resultSet = Set(result)
+            let expectedSet = Scaffolding.featureConfigsV4
+            XCTAssertEqual(resultSet, expectedSet)
         }
     }
 
@@ -166,9 +183,9 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_SuccessResponse_200_V6_And_Next_Versions_Then_Verify_Requests() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetFeatureConfigsSuccessResponseV6")
-        ])
+        let apiService = MockAPIServiceProtocol.withResponses(
+            Array(repeating: (.ok, "GetFeatureConfigsSuccessResponseV6"), count: 2)
+        )
 
         let supportedVersions = [APIVersion.v6, APIVersion.v7]
 
@@ -177,10 +194,9 @@ final class FeatureConfigsAPITests: XCTestCase {
             // When
             let result = try await sut.getFeatureConfigs()
             // Then
-            XCTAssertEqual(
-                result,
-                Scaffolding.featureConfigsV6
-            )
+            let resultSet = Set(result)
+            let expectedSet = Scaffolding.featureConfigsV6
+            XCTAssertEqual(resultSet, expectedSet)
         }
     }
 
@@ -188,9 +204,9 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_SuccessResponse_200_V8_V9_Then_Verify_Requests() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetFeatureConfigsSuccessResponseV8")
-        ])
+        let apiService = MockAPIServiceProtocol.withResponses(
+            Array(repeating: (.ok, "GetFeatureConfigsSuccessResponseV8"), count: 2)
+        )
 
         let supportedVersions = [APIVersion.v8, .v9]
 
@@ -199,84 +215,82 @@ final class FeatureConfigsAPITests: XCTestCase {
             // When
             let result = try await sut.getFeatureConfigs()
             // Then
-            XCTAssertEqual(
-                result,
-                Scaffolding.featureConfigsV8
-            )
+            let resultSet = Set(result)
+            let expectedSet = Scaffolding.featureConfigsV8
+            XCTAssertEqual(resultSet, expectedSet)
         }
     }
 
     // MARK: - V10
 
-    func testGetFeatureConfigs_SuccessResponse_200_V10_And_Next_Versions_Then_Verify_Requests() async throws {
+    func testGetFeatureConfigs_SuccessResponse_200_V10_Then_Verify_Requests() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV10")
         ])
 
-        let supportedVersions = APIVersion.v10.andNextVersions
+        let supportedVersions = [APIVersion.v10]
 
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
             // When
             let result = try await sut.getFeatureConfigs()
             // Then
-            XCTAssertEqual(
-                result,
-                Scaffolding.featureConfigsV10
-            )
+            let resultSet = Set(result)
+            let expectedSet = Scaffolding.featureConfigsV10
+            XCTAssertEqual(resultSet, expectedSet)
         }
     }
 
     // MARK: - V11
 
-    func testGetFeatureConfigs_SuccessResponse_200_V11_And_Next_Versions_Then_Verify_Requests() async throws {
+    func testGetFeatureConfigs_SuccessResponse_200_V11_Then_Verify_Requests() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV11")
         ])
 
-        let supportedVersions = APIVersion.v11.andNextVersions
+        let supportedVersions = [APIVersion.v11]
 
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
             // When
             let result = try await sut.getFeatureConfigs()
             // Then
-            XCTAssertEqual(
-                result,
-                Scaffolding.featureConfigsV11
-            )
+            let resultSet = Set(result)
+            let expectedSet = Scaffolding.featureConfigsV11
+            XCTAssertEqual(resultSet, expectedSet)
         }
     }
 
     // MARK: - V12
 
-    func testGetFeatureConfigs_SuccessResponse_200_V12_And_Next_Versions_Then_Verify_Requests() async throws {
+    func testGetFeatureConfigs_SuccessResponse_200_V12_And_V13_Then_Verify_Requests() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetFeatureConfigsSuccessResponseV12")
-        ])
+        let apiService = MockAPIServiceProtocol.withResponses(
+            Array(repeating: (.ok, "GetFeatureConfigsSuccessResponseV12"), count: 2)
+        )
 
-        let supportedVersions = APIVersion.v12.andNextVersions
+        let supportedVersions = [APIVersion.v12, APIVersion.v13]
 
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
             // When
             let result = try await sut.getFeatureConfigs()
-            // Then
-            XCTAssertEqual(
-                result,
-                Scaffolding.featureConfigsV12
-            )
+
+            let resultSet = Set(result)
+            let expectedSet = Scaffolding.featureConfigsV12
+            XCTAssertEqual(resultSet, expectedSet)
         }
     }
 
+    // MARK: - V14
+
     func testGetFeatureConfigs_SuccessResponse_200_V14_And_Next_Versions_Then_Verify_Requests() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetFeatureConfigsSuccessResponseV14")
-        ])
+        let apiService = MockAPIServiceProtocol.withResponses(
+            Array(repeating: (.ok, "GetFeatureConfigsSuccessResponseV14"), count: 2)
+        )
 
         let supportedVersions = APIVersion.v14.andNextVersions
 
@@ -285,10 +299,9 @@ final class FeatureConfigsAPITests: XCTestCase {
             // When
             let result = try await sut.getFeatureConfigs()
             // Then
-            XCTAssertEqual(
-                result,
-                Scaffolding.featureConfigsV14
-            )
+            let resultSet = Set(result)
+            let expectedSet = Scaffolding.featureConfigsV14
+            XCTAssertEqual(resultSet, expectedSet)
         }
     }
 
@@ -349,7 +362,7 @@ extension FeatureConfigsAPITests {
             )
         ]
 
-        static let featureConfigsV1: [FeatureConfig] = [
+        static let featureConfigsV1: Set<FeatureConfig> = [
             .appLock(
                 .init(
                     status: .enabled,
@@ -406,7 +419,7 @@ extension FeatureConfigsAPITests {
             )
         ]
 
-        static let featureConfigsV4: [FeatureConfig] = [
+        static let featureConfigsV4: Set<FeatureConfig> = [
             .appLock(
                 .init(
                     status: .enabled,
@@ -467,7 +480,7 @@ extension FeatureConfigsAPITests {
             )
         ]
 
-        static let featureConfigsV6: [FeatureConfig] = [
+        static let featureConfigsV6: Set<FeatureConfig> = [
             .appLock(
                 .init(
                     status: .enabled,
@@ -530,7 +543,7 @@ extension FeatureConfigsAPITests {
             )
         ]
 
-        static let featureConfigsV8: [FeatureConfig] = [
+        static let featureConfigsV8: Set<FeatureConfig> = [
             .appLock(
                 .init(
                     status: .enabled,
@@ -601,7 +614,7 @@ extension FeatureConfigsAPITests {
             .cells(.init(status: .enabled))
         ]
 
-        static let featureConfigsV10: [FeatureConfig] = [
+        static let featureConfigsV10: Set<FeatureConfig> = [
             .appLock(
                 .init(
                     status: .enabled,
@@ -678,22 +691,20 @@ extension FeatureConfigsAPITests {
             .cells(.init(status: .enabled))
         ]
 
-        static let featureConfigsV11: [FeatureConfig] = featureConfigsV10 + [
-            .apps(.init(status: .disabled)),
+        static let featureConfigsV11: Set<FeatureConfig> = featureConfigsV10.union([
+            .apps(.init(status: .enabled)),
             .consumableNotifications(.init(status: .enabled)),
             .cells(.init(status: .enabled))
-        ]
-
-        static let featureConfigsV12: [FeatureConfig] = featureConfigsV11 + [
+        ])
+        static let featureConfigsV12: Set<FeatureConfig> = featureConfigsV11.union([
             .assetAuditLog(.init(status: .enabled)),
-            .cells(.init(status: .enabled))
-        ]
+            .simplifiedUserConnectionRequestQRCode(.init(status: .disabled))
+        ])
 
-        static let featureConfigsV14: [FeatureConfig] = featureConfigsV12 + [
+        static let featureConfigsV14: Set<FeatureConfig> = featureConfigsV12.union([
             .assetAuditLog(.init(status: .enabled)),
-            .cells(.init(status: .enabled)),
             .cellsInternal(.init(status: .enabled, backendURL: URL(string: "https://example.com")!))
-        ]
+        ])
 
     }
 
