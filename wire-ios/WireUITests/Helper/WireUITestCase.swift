@@ -26,9 +26,11 @@ class WireUITestCase: XCTestCase {
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     let userHelper = UserHelper()
+    var callingServiceClient: CallingServiceClient!
 
     override func setUpWithError() throws {
         XCUIApplication().terminate()
+        callingServiceClient = try CallingServiceClient()
 
         let launchArguments = [
             "-resetData",
@@ -49,6 +51,7 @@ class WireUITestCase: XCTestCase {
     }
 
     override func tearDown() async throws {
+        await callingServiceClient.destroyCreatedInstances()
         await userHelper.deleteCreatedUsers()
     }
 

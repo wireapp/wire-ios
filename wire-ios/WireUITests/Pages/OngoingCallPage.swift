@@ -16,10 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class UsersAPIV6: UsersAPIV5 {
+import WireLocators
+import XCTest
 
-    override var apiVersion: APIVersion {
-        .v6
+class OngoingCallPage: PageModel {
+
+    override var pageMainElement: XCUIElement {
+        endCallButton
+    }
+
+    var endCallButton: XCUIElement {
+        app.buttons[Locators.OngoingCallPage.endOngoingCallButton.rawValue]
+    }
+
+    func endOngoingCall() throws -> ConversationsPage {
+        endCallButton.tap()
+        return try ConversationsPage()
     }
 
 }

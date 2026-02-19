@@ -120,8 +120,8 @@ extension WireNetwork.ChannelsFeatureConfig {
 
 }
 
-extension WireNetwork.ChannelsPermision {
-    func toDomainModel() -> Feature.Channels.Config.ChannelsPermision {
+extension WireNetwork.ChannelsPermission {
+    func toDomainModel() -> Feature.Channels.Config.ChannelsPermission {
         switch self {
         case .admins:
             .admins
