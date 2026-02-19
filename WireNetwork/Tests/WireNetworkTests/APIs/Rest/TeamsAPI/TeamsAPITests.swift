@@ -157,9 +157,10 @@ final class TeamsAPITests: XCTestCase {
     func testGetTeamRolesForID_SuccessResponse_200_V0_Then_Verify_Request() async throws {
 
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetTeamRolesSuccessResponseV0")
-        ])
+        let apiVersions = APIVersion.allCasesUpTo(.v15)
+        let apiService = MockAPIServiceProtocol.withResponses(
+            .init(repeating: (.ok, "GetTeamRolesSuccessResponseV0"), count: apiVersions.count)
+        )
 
         // Then
         try await apiSnapshotHelper.verifyRequest(for: APIVersion.allCasesUpTo(.v15), apiService: apiService) { sut in
@@ -628,9 +629,10 @@ final class TeamsAPITests: XCTestCase {
     func testGetTeamRolesForID_SuccessResponse_200_V15_Then_Verify_Request() async throws {
 
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetTeamRolesSuccessResponseV15")
-        ])
+        let apiVersions = APIVersion.v15.andNextVersions
+        let apiService = MockAPIServiceProtocol.withResponses(
+            .init(repeating: (.ok, "GetTeamRolesSuccessResponseV15"), count: apiVersions.count)
+        )
 
         // Then
         try await apiSnapshotHelper.verifyRequest(for: APIVersion.v15.andNextVersions, apiService: apiService) { sut in
