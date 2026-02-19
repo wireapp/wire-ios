@@ -451,28 +451,14 @@ public final class SearchTask {
             return { _ in }
         }
 
-        let xxx = try await teamsAPI.getApps(for: teamID)
-        print(xxx) // [WireNetwork.App(name: "WPB-20362 App 0", category: "developer", description: "some other app", accentID: 5, assets: [])]
-        fatalError("TODO")
-        /*
-        let contacts = try await searchAPI.searchContacts(
-            query: queryLowercased,
-            domain: searchDomain,
-            type: searchForApps ? .app : .regular
-        ).documents
-
-        let filteredContacts = contacts.filter { contact in
-            !searchRequest.query.isHandleQuery ||
-                contact.name.hasPrefix("@") ||
-                (contact.handle?.lowercased().contains(queryLowercased) ?? false)
-        }
+        let apps = try await teamsAPI.getApps(for: teamID) // [WireNetwork.App(name: "WPB-20362 App 0", category: "developer", description: "some other app", accentID: 5, assets: [])]
 
         try Task.checkCancellation()
 
         let viewContext = contextProvider.viewContext
         let searchUsers = await viewContext.perform { [searchUsersCache] in
-            filteredContacts.compactMap { filteredContact in
-                guard let id = filteredContact.id else { return ZMSearchUser?.none }
+            apps.compactMap { app in
+                guard let id = app.id else { return ZMSearchUser?.none }
 
                 let domain = filteredContact.qualifiedID?.domain
                 let localUser = ZMUser.fetch(with: id, domain: domain, in: viewContext)
