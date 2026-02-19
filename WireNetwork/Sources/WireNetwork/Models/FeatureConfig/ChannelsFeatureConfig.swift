@@ -26,16 +26,16 @@ public struct ChannelsFeatureConfig: Equatable, Sendable, Hashable {
 
     /// This determines which users can create channels
 
-    public let allowedToCreateChannels: ChannelsPermision
+    public let allowedToCreateChannels: ChannelsPermission
 
     /// This determines which users can create public channels
 
-    public let allowedToOpenChannels: ChannelsPermision
+    public let allowedToOpenChannels: ChannelsPermission
 
     public init(
         status: FeatureConfigStatus,
-        allowedToCreateChannels: ChannelsPermision,
-        allowedToOpenChannels: ChannelsPermision
+        allowedToCreateChannels: ChannelsPermission,
+        allowedToOpenChannels: ChannelsPermission
     ) {
         self.status = status
         self.allowedToCreateChannels = allowedToCreateChannels
@@ -43,7 +43,7 @@ public struct ChannelsFeatureConfig: Equatable, Sendable, Hashable {
     }
 }
 
-public enum ChannelsPermision: Sendable {
+public enum ChannelsPermission: Sendable {
 
     /// Member, Admin, Owner
     case teamMembers
@@ -53,13 +53,13 @@ public enum ChannelsPermision: Sendable {
     case admins
 }
 
-enum ChannelsPermisionV0: String, Sendable, Decodable, ToAPIModelConvertible {
+enum ChannelsPermissionV0: String, Sendable, Decodable, ToAPIModelConvertible {
 
     case teamMembers = "team-members"
     case everyone
     case admins
 
-    func toAPIModel() -> ChannelsPermision {
+    func toAPIModel() -> ChannelsPermission {
         switch self {
         case .teamMembers:
             .teamMembers
