@@ -1,2 +1,0 @@
-curl \
-	"/v14/teams/99db9768-04e3-4b5d-9268-831b6a25c4ab/apps/e992b160-b0d7-4a46-94fd-c31467bdff21"
