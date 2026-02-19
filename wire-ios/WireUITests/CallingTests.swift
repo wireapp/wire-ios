@@ -86,7 +86,7 @@ final class CallingTests: WireUITestCase {
         let incomingCallPage = try IncomingCallPage()
         XCTAssertTrue(incomingCallPage.acceptButton.exists, "Expected call not received")
 
-        let ongoingCallPage = try incomingCallPage.acceptIncommingCall()
+        let ongoingCallPage = try incomingCallPage.acceptIncommingCall(with: self)
         XCTAssertTrue(app.staticTexts[groupName].waitForExistence(timeout: 10), "Conversation title mismatch")
 
         return ongoingCallPage
