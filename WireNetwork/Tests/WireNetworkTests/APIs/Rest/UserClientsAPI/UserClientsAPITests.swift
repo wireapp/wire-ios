@@ -42,36 +42,75 @@ final class UserClientsAPITests: XCTestCase {
     // MARK: - Request generation
 
     func testGetSelfClients() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        var responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetSelfClientsSuccessResponseV0"),
+            count: APIVersion.allCasesUpTo(.v7).count
+        )
+        responses.append(
+            contentsOf: Array(
+                repeating: (.ok, "GetSelfClientsSuccessResponseV7"),
+                count: APIVersion.v7.andNextVersions.count
+            )
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getSelfClients()
         }
     }
 
     func testUpdateClient() async throws {
+        let clientId = "000600d0-000b-9c1a-000d-a4130002c221"
 
-        try await apiSnapshotHelper.verifyRequest(for: APIVersion.allCasesUpTo(.v8)) { sut in
-            _ = try await sut.updateClient(
-                id: "000600d0-000b-9c1a-000d-a4130002c221",
-                clientUpdate: .init(capabilities: [.legalholdConsent])
-            )
-        }
+        let scenarios: [(versions: [APIVersion], capabilities: [UserClientCapability]?)] = [
+            (APIVersion.allCasesUpTo(.v8), [.legalholdConsent]),
+            (APIVersion.v8.andNextVersions, [.legalholdConsent, .consumableNotifications])
+        ]
 
-        try await apiSnapshotHelper.verifyRequest(for: APIVersion.v8.andNextVersions) { sut in
-            _ = try await sut.updateClient(
-                id: "000600d0-000b-9c1a-000d-a4130002c221",
-                clientUpdate: .init(capabilities: [.legalholdConsent, .consumableNotifications])
+        for scenario in scenarios {
+            let responses = Array(
+                repeating: MockAPIServiceProtocol.Response(.ok, nil),
+                count: scenario.versions.count
             )
+            let apiService = MockAPIServiceProtocol.withResponses(responses)
+
+            try await apiSnapshotHelper.verifyRequest(for: scenario.versions, apiService: apiService) { sut in
+                _ = try await sut.updateClient(
+                    id: clientId,
+                    clientUpdate: .init(capabilities: scenario.capabilities)
+                )
+            }
         }
     }
 
     func testRegisterClient() async throws {
-        try await apiSnapshotHelper.verifyRequest(for: APIVersion.v5.andNextVersions) { sut in
-            _ = try await sut.registerClient(newClient: Scaffolding.newClient)
+        let scenarios: [(versions: [APIVersion], response: String?)] = [
+            ([APIVersion.v5, .v6], "RegisterClientSuccessResponseV5"),
+            (APIVersion.v7.andNextVersions, "RegisterClientSuccessResponseV7")
+        ]
+
+        for scenario in scenarios {
+            let responses = Array(
+                repeating: MockAPIServiceProtocol.Response(.created, scenario.response),
+                count: scenario.versions.count
+            )
+            let apiService = MockAPIServiceProtocol.withResponses(responses)
+
+            try await apiSnapshotHelper.verifyRequest(for: scenario.versions, apiService: apiService) { sut in
+                _ = try await sut.registerClient(newClient: Scaffolding.newClient)
+            }
         }
     }
 
     func testDeleteClient() async throws {
-        try await apiSnapshotHelper.verifyRequest(for: APIVersion.v5.andNextVersions) { sut in
+        let apiVersions = APIVersion.v5.andNextVersions
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, nil),
+            count: apiVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             _ = try await sut.deleteClient(
                 id: "60f85e4b15ad3786",
                 password: "strongPassword123"
@@ -80,7 +119,14 @@ final class UserClientsAPITests: XCTestCase {
     }
 
     func testDeleteClientWithoutPassword() async throws {
-        try await apiSnapshotHelper.verifyRequest(for: APIVersion.v5.andNextVersions) { sut in
+        let apiVersions = APIVersion.v5.andNextVersions
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, nil),
+            count: apiVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             _ = try await sut.deleteClient(
                 id: "60f85e4b15ad3786",
                 password: nil
