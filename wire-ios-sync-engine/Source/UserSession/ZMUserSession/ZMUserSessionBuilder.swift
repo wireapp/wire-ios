@@ -203,7 +203,7 @@ struct ZMUserSessionBuilder {
         coreCryptoProvider: CoreCryptoProviderProtocol,
         configuration: ZMUserSession.Configuration,
         contextStorage: any LAContextStorable,
-        earService optionalEARService: (any EARServiceInterface)?,
+        earService: any EARServiceInterface,
         flowManager: any FlowManagerType,
         mediaManager: any MediaManagerType,
         mlsService: (any MLSServiceInterface)?,
@@ -217,7 +217,7 @@ struct ZMUserSessionBuilder {
         journal: Journal,
         logFilesProvider: LogFilesProviding,
         faultyMLSRemovalKeysByDomain: [String: [String]]
-    ) async {
+    ) {
         // reused dependencies
 
         let lastEventIDRepository = LastEventIDRepository(
@@ -249,22 +249,6 @@ struct ZMUserSessionBuilder {
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
         )
-        let earService: EARServiceInterface = if let service = optionalEARService {
-            service
-        } else {
-            await EARService(
-                accountID: coreDataStack.account.userIdentifier,
-                databaseContexts: [
-                    coreDataStack.viewContext,
-                    coreDataStack.syncContext
-                ],
-                coreDataStack: coreDataStack,
-                canPerformKeyMigration: true,
-                sharedUserDefaults: sharedUserDefaults,
-                authenticationContext: AuthenticationContext(storage: contextStorage)
-            )
-        }
-
         let lastE2EIdentityUpdateDateRepository = LastE2EIdentityUpdateDateRepository(
             userID: userId,
             sharedUserDefaults: UserDefaults.standard

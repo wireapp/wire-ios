@@ -45,7 +45,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     /// that the `managedObjectContext` is changed.
     /// To remove this workaround, delete this override  and the `mockEARService` should be used instead of
     /// a real instance of `EARService`.
-    override func createSut() async -> ZMUserSession {
+    func createSut() async -> ZMUserSession {
         let earService = await EARService(
             accountID: coreDataStack.account.userIdentifier,
             databaseContexts: [
@@ -58,7 +58,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
             authenticationContext: MockAuthenticationContextProtocol()
         )
 
-        return await createSut(earService: earService)
+        return createSut(earService: earService)
     }
 
     override func tearDown() {
