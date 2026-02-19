@@ -277,6 +277,11 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                     status: .enabled
                 )
             ),
+            .simplifiedUserConnectionRequestQRCode(
+                SimplifiedUserConnectionRequestQRCodeConfig(
+                    status: .disabled
+                )
+            ),
             .cells(
                 .init(status: .enabled)
             ),

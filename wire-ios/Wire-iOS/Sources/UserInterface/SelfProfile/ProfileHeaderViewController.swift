@@ -391,8 +391,19 @@ final class ProfileHeaderViewController: UIViewController {
             self?.qrCodeButtonTapped()
         }
         qrCodeButton.addAction(qrCodeAction, for: .touchUpInside)
-        qrCodeButton.isHidden = !user.isSelfUser
+        updateQRCodeButtonIsHidden()
         updateColors()
+    }
+
+    private func updateQRCodeButtonIsHidden() {
+        qrCodeButton.isHidden = !user.isSelfUser
+        guard user.isSelfUser else { return }
+        Task {
+            let hasToShow = await userSession.isSimplifiedUserConnectionRequestQRCodeEnabled()
+            await MainActor.run { [hasToShow] in
+                qrCodeButton.isHidden = !hasToShow
+            }
+        }
     }
 
     private func updateColors() {

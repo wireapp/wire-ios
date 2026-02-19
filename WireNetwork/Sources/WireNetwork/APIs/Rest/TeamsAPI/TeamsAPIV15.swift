@@ -40,28 +40,6 @@ final class TeamsAPIV15: TeamsAPIV14 {
             .parse(code: response.statusCode, data: data)
     }
 
-    // MARK: - Get apps
-
-    override func getApps(
-        for teamID: Team.ID
-    ) async throws -> [App] {
-
-        let path = "\(basePath(for: teamID))/apps"
-        let request = try URLRequestBuilder(path: path)
-            .withMethod(.get)
-            .build()
-
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: true
-        )
-
-        return try ResponseParser()
-            .success(code: .ok, type: GetAppsResponseV15.self)
-            .parse(code: response.statusCode, data: data)
-
-    }
-
 }
 
 struct ConversationRolesListResponseV15: Decodable, ToAPIModelConvertible {
@@ -140,21 +118,6 @@ enum ConversationActionResponseV15: String, Decodable {
         case .removeConversationMember:
             .removeConversationMember
         }
-    }
-
-}
-
-private struct GetAppsResponseV15: Decodable, ToAPIModelConvertible {
-
-    var apps: [GetAppResponseV14]
-
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        self.apps = try container.decode([GetAppResponseV14].self)
-    }
-
-    func toAPIModel() -> [App] {
-        apps.map { $0.toAPIModel() }
     }
 
 }
