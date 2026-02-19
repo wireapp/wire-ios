@@ -23,7 +23,7 @@
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2014 Wire Swiss GmbH. All rights reserved.</string>
+	<string>Copyright © 2026 Wire Swiss GmbH. All rights reserved.</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
 </dict>

@@ -117,6 +117,15 @@ class MessagingTestBase: ZMTBaseTest {
     }
 
     override func tearDown() async throws {
+        // Wait for all async tasks (WaitingGroupTask) to complete before tearing down
+        // This prevents tasks from accessing contexts after they've been torn down
+        if let syncGroup = syncMOC?.dispatchGroup {
+            _ = syncGroup.wait(forInterval: 2.0)
+        }
+        if let uiGroup = uiMOC?.dispatchGroup {
+            _ = uiGroup.wait(forInterval: 2.0)
+        }
+
         BackgroundActivityFactory.shared.activityManager = nil
 
         await syncMOC.perform { [syncMOC] in

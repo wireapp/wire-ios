@@ -20,7 +20,7 @@ import Foundation
 
 /// A configuration for the *Consumable Notifications* feature.
 
-public struct ConsumableNotificationsFeatureConfig: Equatable, Sendable {
+public struct ConsumableNotificationsFeatureConfig: Equatable, Sendable, Hashable {
 
     /// The feature's status.
 

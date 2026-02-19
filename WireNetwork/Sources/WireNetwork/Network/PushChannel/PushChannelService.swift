@@ -60,7 +60,7 @@ public final class PushChannelService: PushChannelServiceProtocol {
         // gone to the background)
         try Task.checkCancellation()
 
-        let webSocket = try networkService.executeWebSocketRequest(request)
+        let webSocket = try await networkService.executeWebSocketRequest(request)
         return PushChannel(
             webSocket: webSocket,
             keepAliveInterval: keepAliveInterval
@@ -76,7 +76,7 @@ public final class PushChannelService: PushChannelServiceProtocol {
         // gone to the background)
         try Task.checkCancellation()
 
-        let webSocket = try networkService.executeWebSocketRequest(request)
+        let webSocket = try await networkService.executeWebSocketRequest(request)
 
         return PushChannelV2(
             webSocket: webSocket,
