@@ -148,7 +148,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
 
         // ack the decrypted events
         //
-        // NOTE: it's important that we ack after the CC transaction has succesfully completed,
+        // NOTE: it's important that we ack after the CC transaction has successfully completed,
         // otherwise we risk data loss in case of a crash.
         if let lastEnvelope = storedEnvelopes.last?.0 {
             try await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel, batchSize: storedEnvelopes.count)

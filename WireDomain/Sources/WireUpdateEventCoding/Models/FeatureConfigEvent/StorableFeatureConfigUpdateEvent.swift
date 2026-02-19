@@ -438,7 +438,7 @@ struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
         case everyone
         case admins
 
-        init(_ value: WireNetwork.ChannelsPermision) {
+        init(_ value: WireNetwork.ChannelsPermission) {
             switch value {
             case .teamMembers:
                 self = .teamMembers
@@ -449,7 +449,7 @@ struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
             }
         }
 
-        func toAPIModel() -> WireNetwork.ChannelsPermision {
+        func toAPIModel() -> WireNetwork.ChannelsPermission {
             switch self {
             case .teamMembers:
                 .teamMembers
