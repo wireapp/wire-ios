@@ -116,7 +116,7 @@ final class CallingTests: WireUITestCase {
             instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
         } catch {
             NSLog("⚠️ Skipping test_MultipleUsersJoiningGroupCall due to calling service failure: \(error)")
-            throw XCTSkip("⚠️ Calling service failedSkipping test.")
+            throw XCTSkip("⚠️ Calling service failed..Skipping this test")
         }
 
         let ownerInstanceId = try requireOwnerInstanceId(from: instances)
