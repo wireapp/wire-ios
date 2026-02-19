@@ -166,7 +166,7 @@ final class FilesFilteringViewModel: ObservableObject {
         case .owner:
             isFilterSelected(filter) ? filtersSelection.owners.count : nil
         case .sharedLink:
-            nil
+            isFilterSelected(filter) ? 1 : nil
         }
 
         return filtersCount.map(String.init)
