@@ -46,8 +46,15 @@ final class MLSAPITests: XCTestCase {
         // Given
         let apiVersions = APIVersion.v5.andNextVersions
 
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetBackendMLSPublicKeysSuccessResponse1"),
+            count: apiVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
         // Then
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             // When
             _ = try await sut.getBackendMLSPublicKeys()
         }
@@ -109,8 +116,15 @@ final class MLSAPITests: XCTestCase {
         // Given
         let apiVersions = APIVersion.v5.andNextVersions
 
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.created, "PostCommitBundleSuccessResponse1"),
+            count: apiVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
         // Then
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             // When
             _ = try await sut.postCommitBundle(Scaffolding.commitBundle)
         }
@@ -228,8 +242,14 @@ final class MLSAPITests: XCTestCase {
         // Given
         let apiVersions = APIVersion.v5.andNextVersions
 
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.created, nil), // No sample expected file works.
+            count: apiVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
         // Then
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             // When
             _ = try await sut.uploadKeyPackages(
                 clientID: Scaffolding.clientID,

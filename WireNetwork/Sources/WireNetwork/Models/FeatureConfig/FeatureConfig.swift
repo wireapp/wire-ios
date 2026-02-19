@@ -18,7 +18,7 @@
 
 /// Configurations for various app features.
 
-public enum FeatureConfig: Equatable, Sendable {
+public enum FeatureConfig: Equatable, Sendable, Hashable {
 
     /// Config for the *App Lock* feature.
     ///
@@ -55,6 +55,8 @@ public enum FeatureConfig: Equatable, Sendable {
     /// the app is up to date.
 
     case consumableNotifications(ConsumableNotificationsFeatureConfig)
+
+    case simplifiedUserConnectionRequestQRCode(SimplifiedUserConnectionRequestQRCodeConfig)
 
     /// Config for the *Conversation Guest Links* feature.`
     ///
