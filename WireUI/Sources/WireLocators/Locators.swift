@@ -295,6 +295,7 @@ public enum Locators {
     public enum OngoingCallPage: String {
 
         case endOngoingCallButton = "End call"
+        case timeLabel
 
         public static func participantIdentifier(_ name: String) -> String {
             "audioView.\(name).minimized.inactive"

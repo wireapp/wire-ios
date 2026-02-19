@@ -83,7 +83,7 @@ class ConversationsPage: PageModel {
     }
 
     func openUserProfilePage() throws -> UserProfilePage {
-        try letTheSyncfinish()
+        try letTheSyncFinish()
         accountProfileImageView.waitAndTap()
         return try UserProfilePage()
     }
@@ -94,7 +94,7 @@ class ConversationsPage: PageModel {
     }
 
     func openPendingRequest() throws -> ConnectionRequestsPage {
-        try letTheSyncfinish()
+        try letTheSyncFinish()
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
 
         let maxDuration: TimeInterval = 10
@@ -110,7 +110,7 @@ class ConversationsPage: PageModel {
     }
 
     func openConversation() throws -> ActiveConversationPage {
-        try letTheSyncfinish()
+        try letTheSyncFinish()
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
 
         let maxDuration: TimeInterval = 10
@@ -140,7 +140,7 @@ class ConversationsPage: PageModel {
         conversationCell.label
     }
 
-    func letTheSyncfinish() throws {
+    func letTheSyncFinish() throws {
         loadBar.waitToDisappear()
     }
 }
