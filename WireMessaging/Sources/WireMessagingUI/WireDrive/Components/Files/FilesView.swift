@@ -53,10 +53,20 @@ package struct FilesView: FilesViewProtocol {
                 .ignoresSafeArea(.all)
 
             VStack {
-                VStack(alignment: .leading, spacing: 15) {
-                    if isSearchFocused {
-                        FilesFilteringView(viewModel: viewModel.makeFilesFilteringViewModel())
-                    }
+                VStack(alignment: .leading, spacing: 0) {
+                    FilesFilteringView(
+                        useCases: .init(fetchTagsUseCase: viewModel.useCases.getTagSuggestions),
+                        filtersSelection: viewModel.filtersSelection,
+                        isBrowsing: isBrowsing,
+                        conversations: Set(viewModel.conversations),
+                        onUpdate: { selection in
+                            viewModel.filtersSelection = selection
+                        }
+                    )
+                    .opacity(isSearchFocused ? 1 : 0)
+                    .frame(height: isSearchFocused ? nil : 0)
+                    .padding(.bottom, isSearchFocused ? 15 : 0)
+                    
                     FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
                 }
 

@@ -18,20 +18,36 @@
 
 import SwiftUI
 import WireDesign
+import WireMessagingDomain
+import WireMessagingDomainSupport
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells.Filtering
 
 struct FilesFilteringView: View {
-    @StateObject package var viewModel: FilesFilteringViewModel
+    @StateObject private var viewModel: FilesFilteringViewModel
     @Environment(\.wireAccentColor) private var accentColor
 
     @ScaledMetric var dropDownIconWidth: CGFloat = 8
     @ScaledMetric var dropDownIconHeight: CGFloat = 4
+    
+    private let conversations: Set<WireDriveConversation>
 
     package init(
-        viewModel: @autoclosure @escaping () -> FilesFilteringViewModel,
+        useCases: FilesFilteringViewModel.UseCases,
+        filtersSelection: FilesFilteringViewModel.FiltersSelection,
+        isBrowsing: Bool,
+        conversations: Set<WireDriveConversation>,
+        onUpdate: @escaping (FilesFilteringViewModel.FiltersSelection) -> Void
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel())
+        self.conversations = conversations
+        self._viewModel = .init(
+            wrappedValue: .init(
+                useCases: useCases,
+                filtersSelection: filtersSelection,
+                isBrowsing: isBrowsing,
+                onUpdate: onUpdate
+            )
+        )
     }
 
     var body: some View {
@@ -90,7 +106,7 @@ struct FilesFilteringView: View {
             )
         case .conversations:
             FilesFilterBy.ConversationView(
-                availableItems: viewModel.conversations,
+                availableItems: conversations,
                 selectedItems: viewModel.filtersSelection.conversations,
                 onApply: { selectedItems in
                     viewModel.filtersSelection.conversations = selectedItems
@@ -98,7 +114,7 @@ struct FilesFilteringView: View {
             )
         case .owners:
             FilesFilterBy.OwnerView(
-                availableItems: viewModel.conversationsParticipants,
+                availableItems: conversationsParticipants,
                 selectedItems: viewModel.filtersSelection.owners,
                 onApply: { selectedItems in
                     viewModel.filtersSelection.owners = selectedItems
@@ -187,10 +203,35 @@ struct FilesFilteringView: View {
     private var shouldShowRemoveFilters: Bool {
         viewModel.filtersSelection.hasFilterSelected
     }
+    
+    private var conversationsParticipants: Set<WireDriveConversation.Participant> {
+        Set(conversations.flatMap(\.participants))
+    }
 }
 
 #Preview {
     FilesFilteringView(
-        viewModel: .preview(isBrowsing: false)
+        useCases: .init(
+            fetchTagsUseCase: WireDriveGetTagSuggestionsUseCase(
+                nodesAPI: {
+                    let mock = MockNodesAPIProtocol()
+                    mock.getAllTags_MockMethod = {
+                        mockTags
+                    }
+                    mock.updateTagsNodeIDTags_MockMethod = { _, _ in }
+                    return mock
+                }()
+            )
+        ),
+        filtersSelection: .init(
+            tags: [],
+            types: [.audio],
+            conversations: [],
+            owners: Set([WireDriveConversation.Participant].mocked().dropFirst()),
+            sharedLink: true
+        ),
+        isBrowsing: true,
+        conversations: Set([WireDriveConversation].mocked()),
+        onUpdate: { _ in }
     )
 }

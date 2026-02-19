@@ -279,6 +279,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var templates: [WireDriveFileTemplate] = []
     @Published var conversations: [WireDriveConversation] = []
     @Published var connectionState: ConnectionState = .online
+    @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
 
     package init(
         useCases: UseCases,
@@ -826,20 +827,6 @@ package final class FilesViewModel: ObservableObject {
     }
 
     // MARK: - Sorting & Filtering
-
-    func makeFilesFilteringViewModel() -> FilesFilteringViewModel {
-        let useCases = FilesFilteringViewModel.UseCases(
-            fetchTagsUseCase: useCases.getTagSuggestions
-        )
-
-        return FilesFilteringViewModel(
-            useCases: useCases,
-            isBrowsing: isBrowsing,
-            conversations: Set(conversations)
-        ) { _ in
-
-        }
-    }
 
     func makeFilesSortingViewModel() -> FilesSortingViewModel {
         FilesSortingViewModel(isBrowsing: isBrowsing) { [weak self] sortingSelection in

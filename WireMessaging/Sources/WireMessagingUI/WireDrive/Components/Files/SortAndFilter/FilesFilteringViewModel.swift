@@ -92,11 +92,6 @@ final class FilesFilteringViewModel: ObservableObject {
     private let onUpdate: (FiltersSelection) -> Void
     let useCases: UseCases
     let isBrowsing: Bool
-    let conversations: Set<WireDriveConversation>
-
-    var conversationsParticipants: Set<WireDriveConversation.Participant> {
-        Set(conversations.flatMap(\.participants))
-    }
 
     var availableFilters: [Filtering] {
         if isBrowsing {
@@ -108,16 +103,14 @@ final class FilesFilteringViewModel: ObservableObject {
 
     init(
         useCases: UseCases,
-        filtersSelection: FiltersSelection = .empty,
+        filtersSelection: FiltersSelection,
         isBrowsing: Bool,
-        conversations: Set<WireDriveConversation>,
         onUpdate: @escaping (FiltersSelection) -> Void
     ) {
         self.useCases = useCases
         self.filtersSelection = filtersSelection
         self.isBrowsing = isBrowsing
         self.onUpdate = onUpdate
-        self.conversations = conversations
     }
 
     // MARK: - Actions
@@ -181,7 +174,7 @@ final class FilesFilteringViewModel: ObservableObject {
 
 }
 
-private extension FilesFilteringViewModel.FiltersSelection {
+extension FilesFilteringViewModel.FiltersSelection {
     static let empty = Self(
         tags: [],
         types: [],
