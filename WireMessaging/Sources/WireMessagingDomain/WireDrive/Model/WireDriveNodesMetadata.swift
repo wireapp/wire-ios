@@ -16,30 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import UIKit
-import WireMessagingDomain
+import Foundation
 
-public struct AttachmentsCarouselItem: Identifiable, Sendable, Equatable {
-
-    public enum State: Sendable, Equatable {
-        case uploading(progress: Double)
-        case uploaded
-        case failed
-    }
-
-    public enum Kind: Sendable, Equatable {
-        case image(thumbnail: UIImage?)
-        case video(thumbnail: UIImage?)
-        case audio(samples: [Double]?)
-        case document
-    }
-
-    public var id: UUID
-    public var state: State
-    public var kind: Kind
-    public var name: String
-    public var fileExtension: String?
-    public var size: String
-    var fileIcon: WireDriveFileType
-
+package enum WireDriveNodesMetaFilter: Equatable, Hashable, Sendable {
+    case tags(Set<String>)
+    case types(Set<WireDriveFileType>)
+    case conversations(Set<WireDriveConversation>)
+    case owners(Set<WireDriveConversation.Participant>)
 }

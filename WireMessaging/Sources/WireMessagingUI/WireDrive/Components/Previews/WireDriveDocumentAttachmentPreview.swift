@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireMessagingDomain
 
 /// A wire drive attachment preview for document attachments.
 
@@ -58,7 +59,7 @@ struct WireDriveDocumentAttachmentPreview: View {
 
 #Preview {
     WireDriveDocumentAttachmentPreview(
-        headerIcon: Image(FileType.pdf.imageResource),
+        headerIcon: Image(WireDriveFileType.pdf.imageResource),
         headerText: "PDF (336 KB)",
         labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
         progress: 0.7,

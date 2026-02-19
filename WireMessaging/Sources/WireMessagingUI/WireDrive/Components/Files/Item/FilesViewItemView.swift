@@ -297,7 +297,7 @@ extension FilesItemView {
         @ScaledMetric private var offsetX: CGFloat
         @ScaledMetric private var offsetY: CGFloat
 
-        init(forIcon icon: FileType) {
+        init(forIcon icon: WireDriveFileType) {
             switch icon {
             case .folder:
                 _offsetX = .init(wrappedValue: 5)

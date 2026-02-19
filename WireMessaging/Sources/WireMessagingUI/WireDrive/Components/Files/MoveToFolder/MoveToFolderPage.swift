@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
@@ -232,7 +233,7 @@ private struct MoveToFolderItemView: View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
 
-                Image(FileType.folder.imageResource)
+                Image(WireDriveFileType.folder.imageResource)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 56, height: imageHeight)

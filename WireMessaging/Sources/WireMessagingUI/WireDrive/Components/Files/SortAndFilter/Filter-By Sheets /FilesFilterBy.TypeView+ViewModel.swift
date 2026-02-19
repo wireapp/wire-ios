@@ -17,11 +17,12 @@
 //
 
 import Foundation
+import WireMessagingDomain
 
 extension FilesFilterBy.TypeView {
     @MainActor
     final class ViewModel: ObservableObject {
-        typealias Item = FileType
+        typealias Item = WireDriveFileType
 
         @Published var selectedItems: Set<Item> = []
 

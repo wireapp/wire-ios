@@ -21,6 +21,7 @@ import WireDesign
 import WireFoundation
 import WireTestingPackage
 import XCTest
+import WireMessagingDomain
 
 @testable import WireMessagingUI
 
@@ -42,21 +43,21 @@ final class WireDriveDocumentAttachmentPreviewTests: XCTestCase {
         let testCases: [(headerIcon: Image, headerText: String, labelText: String, progress: Double?, isError: Bool)] =
             [
                 (
-                    headerIcon: Image(FileType.pdf.resource),
+                    headerIcon: Image(WireDriveFileType.pdf.imageResource),
                     headerText: "PDF (336 KB)",
                     labelText: "short file name",
                     progress: nil,
                     isError: false
                 ),
                 (
-                    headerIcon: Image(FileType.pdf.resource),
+                    headerIcon: Image(WireDriveFileType.pdf.imageResource),
                     headerText: "PDF (336 KB)",
                     labelText: "this is a file with a medium name that wraps",
                     progress: 0.5,
                     isError: false
                 ),
                 (
-                    headerIcon: Image(FileType.pdf.resource),
+                    headerIcon: Image(WireDriveFileType.pdf.imageResource),
                     headerText: "PDF (336 KB)",
                     labelText: "this is a file with a long name that wraps and doesn't fit into the two lines of text",
                     progress: 1,

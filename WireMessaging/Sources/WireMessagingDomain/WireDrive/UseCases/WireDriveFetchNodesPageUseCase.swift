@@ -45,14 +45,16 @@ package struct WireDriveFetchNodesPageUseCase: Sendable {
     /// `nil`, there are no more pages to fetch.
     package func invoke(
         searchTerm: String?,
+        metafilter: Set<WireDriveNodesMetaFilter> = [],
+        sharedByMe: Bool? = nil,
         sortField: String? = nil,
         sortDirDesc: Bool? = nil,
-        tags: [String],
         offset: Int
     ) async throws -> (nodes: [WireDriveNode], isLastPage: Bool) {
         let request = WireDriveGetNodesRequest(
             searchTerm: searchTerm,
-            tags: tags,
+            metafilter: metafilter,
+            sharedByMe: sharedByMe,
             sortField: sortField,
             sortDirDesc: sortDirDesc,
             limit: 30,

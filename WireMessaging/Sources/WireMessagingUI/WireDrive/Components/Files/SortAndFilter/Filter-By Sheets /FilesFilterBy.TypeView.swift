@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 
@@ -120,7 +121,7 @@ private extension FilesFilterBy.TypeView {
 
 // MARK: - Localization
 
-private extension FileType {
+private extension WireDriveFileType {
     typealias name = Strings.Filter.FileType.TypeName
 
     func localizedName() -> String {

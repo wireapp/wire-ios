@@ -19,38 +19,25 @@
 import Foundation
 public import SwiftUI
 public import UniformTypeIdentifiers
+public import WireMessagingDomain
 
-public enum FileType: Hashable, Sendable {
-    case archive
-    case audio
-    case code
-    case document
-    case image
-    case other
-    case pdf
-    case presentation
-    case spreadsheet
-    case video
-    case folder
-}
-
-extension FileType {
+extension WireDriveFileType {
 
     // MARK: - Factory
 
     /// Creates an instance based on the provided optional type and file extension.
-    public static func make(type: UTType?, fileExtension: String?) -> FileType {
-        if let type, let icon = FileType.make(type: type) {
+    public static func make(type: UTType?, fileExtension: String?) -> WireDriveFileType {
+        if let type, let icon = WireDriveFileType.make(type: type) {
             icon
-        } else if let fileExtension, let icon = FileType.make(fileExtension: fileExtension) {
+        } else if let fileExtension, let icon = WireDriveFileType.make(fileExtension: fileExtension) {
             icon
         } else {
             .other
         }
     }
 
-    private static func make(type: UTType) -> FileType? {
-        func icon(type: UTType) -> FileType? {
+    private static func make(type: UTType) -> WireDriveFileType? {
+        func icon(type: UTType) -> WireDriveFileType? {
             switch type {
             case .archive:
                 .archive
@@ -84,7 +71,7 @@ extension FileType {
         return nil
     }
 
-    private static func make(fileExtension: String) -> FileType? {
+    private static func make(fileExtension: String) -> WireDriveFileType? {
         switch fileExtension.lowercased() {
         case "docx", "doc", "dotx", "dot", "odt", "ott", "rtf":
             .document

@@ -64,7 +64,7 @@ package struct FilesViewItem: Identifiable, Hashable {
     let modifiedAt: Date?
 
     /// The icon representing the item's type.
-    let icon: FileType
+    let icon: WireDriveFileType
 
     /// The tags that users have added for that file.
     let tags: [String]
@@ -647,9 +647,10 @@ package final class FilesViewModel: ObservableObject {
     ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
         let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
             searchTerm: searchText.isEmpty ? nil : searchText,
+            metafilter: filtersSelection.toDomainModel(),
+            sharedByMe: filtersSelection.sharedLink,
             sortField: sortingSelection.sortingKey?.sortField,
             sortDirDesc: sortingSelection.sortingOrder == .descending,
-            tags: filterWithTags,
             offset: offset
         )
 
@@ -833,6 +834,12 @@ package final class FilesViewModel: ObservableObject {
             self?.sortingSelection = sortingSelection
             Task { await self?.reload() }
         }
+    }
+    
+    func onUpdate(of filters: FilesFilteringViewModel.FiltersSelection) {
+        guard filters != filtersSelection else { return }
+        filtersSelection = filters
+        Task { await reload() }
     }
 }
 

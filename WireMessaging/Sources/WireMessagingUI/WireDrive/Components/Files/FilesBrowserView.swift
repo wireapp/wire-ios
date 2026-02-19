@@ -52,9 +52,7 @@ package struct FilesBrowserView: FilesViewProtocol {
                         filtersSelection: viewModel.filtersSelection,
                         isBrowsing: isBrowsing,
                         conversations: Set(viewModel.conversations),
-                        onUpdate: { selection in
-                            viewModel.filtersSelection = selection
-                        }
+                        onUpdate: viewModel.onUpdate(of:)
                     )
                     .opacity(isSearchFocused ? 1 : 0)
                     .frame(height: isSearchFocused ? nil : 0)

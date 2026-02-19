@@ -507,8 +507,10 @@ private extension WireDriveGetNodesRequest {
             }
 
             request.filters = RestLookupFilter(
+                metadata: metafilter.toDTO(),
                 status: LookupFilterStatusFilter(
                     deleted: .not,
+                    hasPublicLink: sharedByMe,
                     isDraft: false // Backend filtering is not available; filtering is handled on the client side.
                 ),
                 text: lookupFilterTextSearch,
@@ -544,11 +546,10 @@ private extension WireDriveGetNodesRequest {
             )
         case .filesBrowserView:
             request.filters = RestLookupFilter(
-                metadata: tags.isEmpty ? [] : [LookupFilterMetaFilter(
-                    namespace: "usermeta-tags",
-                    term: tags.joined(separator: ",")
-                )], status: LookupFilterStatusFilter(
+                metadata: metafilter.toDTO(),
+                status: LookupFilterStatusFilter(
                     deleted: .not,
+                    hasPublicLink: sharedByMe,
                     isDraft: false // // Backend filtering is not available; filtering is handled on the client side.
                 ),
                 text: LookupFilterTextSearch(searchIn: .baseName, term: searchTerm ?? "*"),
@@ -622,4 +623,50 @@ private extension WireDrivePublicLink {
         )
     }
 
+}
+
+private extension Set<WireDriveNodesMetaFilter> {
+    func toDTO() -> [LookupFilterMetaFilter] {
+        flatMap { filter -> [LookupFilterMetaFilter] in
+            switch filter {
+            case .conversations(let values):
+                return values.map { LookupFilterMetaFilter(namespace: "usermeta-conversation-uuid", operation: .should, term: $0.id) }
+            case .owners(let values):
+                return values.map { LookupFilterMetaFilter(namespace: "usermeta-owner", operation: .should, term: $0.id) }
+            case .tags(let values):
+                return values.map { LookupFilterMetaFilter(namespace: "usermeta-tags", operation: .should, term: $0) }
+            case .types(let values):
+                return values.map { LookupFilterMetaFilter(namespace: "mime", operation: .should, term: $0.contentType) }
+            }
+        }
+    }
+}
+
+private extension WireDriveFileType {
+    var contentType: String {
+        switch self {
+        case .archive:
+            "*archive*"
+        case .audio:
+            "*audio*"
+        case .code:
+            "*code*"
+        case .document:
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        case .image:
+            "image/*"
+        case .other:
+            ""
+        case .pdf:
+            "*pdf*"
+        case .presentation:
+            "*presentation*"
+        case .spreadsheet:
+            "*spreadsheet*"
+        case .video:
+            "*video*"
+        case .folder:
+            ""
+        }
+    }
 }

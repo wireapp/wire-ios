@@ -48,7 +48,7 @@ final class FilesFilteringViewModel: ObservableObject {
 
     struct FiltersSelection: Hashable {
         var tags: Set<String>
-        var types: Set<FileType>
+        var types: Set<WireDriveFileType>
         var conversations: Set<WireDriveConversation>
         var owners: Set<WireDriveConversation.Participant>
         
@@ -182,4 +182,28 @@ extension FilesFilteringViewModel.FiltersSelection {
         owners: [],
         sharedLink: nil
     )
+}
+
+extension FilesFilteringViewModel.FiltersSelection {
+    func toDomainModel() -> Set<WireDriveNodesMetaFilter> {
+        var metafilter = Set<WireDriveNodesMetaFilter>()
+        
+        if !tags.isEmpty {
+            metafilter.insert(.tags(tags))
+        }
+        
+        if !types.isEmpty {
+            metafilter.insert(.types(types))
+        }
+        
+        if !conversations.isEmpty {
+            metafilter.insert(.conversations(conversations))
+        }
+        
+        if !owners.isEmpty {
+            metafilter.insert(.owners(owners))
+        }
+        
+        return metafilter
+    }
 }

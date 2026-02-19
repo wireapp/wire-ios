@@ -73,7 +73,7 @@ public extension WireDriveConversation {
         }
 
         public var id: String {
-            handle // TODO: check if the handle is an appropriate ID or if we should use something else
+            handle.filter { $0.isLetter || $0.isNumber }
         }
     }
 }
