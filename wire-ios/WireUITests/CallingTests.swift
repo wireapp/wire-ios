@@ -111,7 +111,13 @@ final class CallingTests: WireUITestCase {
 
         try loginAndDismissFirstTimePopup(user: teamAndGroupCallSetup.appUserWhoWillJoinTheCall)
 
-        let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
+        let instances: [CallingServiceInstance]
+        do {
+            instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
+        } catch {
+            NSLog("⚠️ Skipping test_MultipleUsersJoiningGroupCall due to calling service failure: \(error)")
+            throw XCTSkip("⚠️ Calling service failedSkipping test.")
+        }
 
         let ownerInstanceId = try requireOwnerInstanceId(from: instances)
 

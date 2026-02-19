@@ -196,32 +196,11 @@ final class TeamManageTests: WireUITestCase {
     @MainActor
     func test_mentionUserInGroup() async throws {
 
-        let groupName = UserGenerator.generateRandomGroupName()
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
-            email: teamOwner.email,
-            password: teamOwner.password
-        )
-        let teamID = try XCTUnwrap(teamOwner.teamID)
-        let countOfMembers = 2
-
-        var qualifiedIds: [QualifiedID] = []
-        var teamMembers: [UserInfo] = []
-
-        for _ in 0 ..< countOfMembers {
-            let (qualifiedId, teamMember) = try await userHelper.registerUsersAsTeamMember(
-                ownerAccessToken: ownerAccessToken.token,
-                teamID: teamID
+        let (teamOwner, teamMembers, _, _) = try await userHelper
+            .registerTeam(
+                withMemberCount: 4,
+                groupName: UserGenerator.generateRandomGroupName()
             )
-            qualifiedIds.append(qualifiedId)
-            teamMembers.append(teamMember)
-        }
-
-        try await userHelper.createGroupConversations(
-            qualifiedIds: qualifiedIds,
-            owner: teamOwner,
-            groupName: groupName
-        )
 
         _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopup(with: self)
@@ -229,8 +208,7 @@ final class TeamManageTests: WireUITestCase {
             .tapAddAccountOrTeamButton()
 
         let conversationPage = try app.loginUser(email: teamMembers[1].email, password: teamMembers[1].password)
-            .acceptPopupOnTeamMemberSetup(with: self)
-            .setUsername(teamMembers[1].username)
+            .acceptPopup(with: self)
             .openUserProfilePage()
             .switchUserAccountForUser(withName: teamOwner.name)
             .openConversation()
@@ -242,7 +220,7 @@ final class TeamManageTests: WireUITestCase {
         XCTAssertEqual(
             conversationPage.mentionStatus.value as? String,
             "You are mentioned",
-            "'You are mentioned' value not found"
+            "'@' value not found in conversation cell"
         )
 
         let activeConversationPage = try conversationPage.openConversation()

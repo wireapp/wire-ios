@@ -152,6 +152,7 @@ public enum Locators {
         case createWireTeamButton
         case manageTeamButton
         case addAccountOrTeamButton
+        case userProfilePicture
     }
 
     public enum CreateGroupPage: String {
