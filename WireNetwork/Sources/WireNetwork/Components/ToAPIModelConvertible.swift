@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /// A type that can be converted to an associated api model.
 
 protocol ToAPIModelConvertible {
