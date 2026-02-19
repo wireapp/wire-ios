@@ -17,13 +17,13 @@
 //
 
 import UIKit
-import WireLogging
 import WireAccountImageUI
 import WireCommonComponents
 import WireConversationListUI
 import WireDataModel
 import WireDesign
 import WireFoundation
+import WireLogging
 import WireMainNavigationUI
 import WireMessagingDomain
 import WireReusableUIComponents
