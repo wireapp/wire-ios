@@ -46,7 +46,10 @@ final class SearchAPITests: XCTestCase {
     /// - Equals sign: `%3D`
     func testEncodingCharacters() async throws {
         let apiVersions = APIVersion.v1.andNextVersions
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+        let apiService = MockAPIServiceProtocol.withResponses(
+            .init(repeating: (.ok, "GetSearchContactsSuccessResponseV15"), count: apiVersions.count)
+        )
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions, apiService: apiService) { sut in
             _ = try await sut.searchContacts(
                 query: "$&+,/:;=?@ Steve O'Hara & Söhne",
                 domain: "wire.com",
