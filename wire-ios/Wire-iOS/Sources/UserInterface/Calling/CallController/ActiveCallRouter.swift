@@ -89,6 +89,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
     private var isCallTopOverlayShown = false
     private(set) var scheduledPostCallAction: PostCallAction?
     private(set) weak var presentedDegradedAlert: UIAlertController?
+    private weak var presentedActiveCallViewController: UIViewController?
 
     init(
         mainWindow: UIWindow,
@@ -157,20 +158,23 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     func dismissActiveCall(animated: Bool = true, completion: Completion? = nil) {
-        guard isActiveCallShown else {
-            completion?()
-            return
-        }
-        mainWindow.rootViewController?.dismiss(animated: animated) { [weak self] in
-            self?.isActiveCallShown = false
-            if let action = self?.scheduledPostCallAction {
-                action {
+        if let presented = presentedActiveCallViewController {
+            presented.dismiss(animated: animated) { [weak self] in
+                guard let self else { completion?(); return }
+
+                presentedActiveCallViewController = nil
+                isActiveCallShown = false
+                isPresentingActiveCall = false
+
+                if let action = scheduledPostCallAction {
+                    action { completion?() }
+                } else {
                     completion?()
                 }
-            } else {
-                completion?()
+                scheduledPostCallAction = nil
             }
-            self?.scheduledPostCallAction = nil
+        } else {
+            completion?()
         }
     }
 
@@ -294,6 +298,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     private func presentActiveCall(modalViewController: ModalPresentationViewController, animated: Bool) {
         isPresentingActiveCall = true
+        presentedActiveCallViewController = modalViewController
         mainWindow.rootViewController?.present(modalViewController, animated: animated) { [weak self] in
             self?.isActiveCallShown = true
         }
