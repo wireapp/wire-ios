@@ -97,6 +97,10 @@ final class FilesSortingViewModel: ObservableObject {
     // MARK: - Actions
 
     func select(sortingKey: SortingKey) {
+        sortingSelection.sortingOrder = switch sortingKey {
+        case .date: .descending
+        case .name, .size: .ascending
+        }
         sortingSelection.sortingKey = sortingKey
         onUpdate(sortingSelection)
     }

@@ -558,8 +558,11 @@ private extension WireDriveGetNodesRequest {
                 recursive: true,
                 root: nil
             )
-            request.sortDirDesc = true
-            request.sortField = "mtime"
+            
+            if let sortField, let sortDirDesc {
+                request.sortField = sortField
+                request.sortDirDesc = sortDirDesc
+            }
         case let .moveToFolder(root):
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(

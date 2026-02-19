@@ -313,7 +313,8 @@ struct TagsEditView: View {
         tags: ["Lorem", "Ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"],
         isEditable: false,
         publicLinkID: nil,
-        conversationName: "Conversation 1"
+        conversationName: "Conversation 1",
+        size: nil
     )
 
     let mockAPI = {

@@ -98,6 +98,7 @@ final class FilesItemViewModel: ObservableObject {
             isBrowsing: isBrowsing,
             conversationName: conversationName,
             modifiedAt: item.modifiedAt,
+            size: item.size,
             ownedBy: item.ownedBy,
             locale: locale,
             calendar: calendar,
@@ -228,25 +229,88 @@ final class FilesItemViewModel: ObservableObject {
         isBrowsing: Bool,
         conversationName: String?,
         modifiedAt: Date?,
+        size: UInt64?,
         ownedBy: String?,
         locale: Locale,
         calendar: Calendar,
         timeZone: TimeZone
     ) -> String? {
+        if isBrowsing {
+            switch selectedSortingKey {
+            case .date:
+                if let conversationName, let date = formattedDate(modifiedAt: modifiedAt, locale: locale, calendar: calendar, timeZone: timeZone) {
+                    return L10n.Localizable.Conversation.WireCells.AllFiles.Item.subtitle(date, conversationName)
+                } else {
+                    return defaultSubtitle(conversationName: conversationName, modifiedAt: modifiedAt, ownedBy: ownedBy, locale: locale, calendar: calendar, timeZone: timeZone)
+                }
+            case .name:
+                if let conversationName, let ownedBy {
+                    return L10n.Localizable.Conversation.WireCells.AllFiles.Item.subtitle(ownedBy, conversationName)
+                } else {
+                    return defaultSubtitle(conversationName: conversationName, modifiedAt: modifiedAt, ownedBy: ownedBy, locale: locale, calendar: calendar, timeZone: timeZone)
+                }
+            case .size:
+                if let conversationName, let size = formattedFileSize(size: size) {
+                    return L10n.Localizable.Conversation.WireCells.AllFiles.Item.subtitle(size, conversationName)
+                } else {
+                    return defaultSubtitle(conversationName: conversationName, modifiedAt: modifiedAt, ownedBy: ownedBy, locale: locale, calendar: calendar, timeZone: timeZone)
+                }
+            }
+        } else {
+            switch selectedSortingKey {
+            case .date, .name:
+                return defaultSubtitle(modifiedAt: modifiedAt, ownedBy: ownedBy, locale: locale, calendar: calendar, timeZone: timeZone)
+            case .size:
+                if let size = formattedFileSize(size: size), let ownedBy {
+                    return L10n.Localizable.Conversation.WireCells.Files.Item.subtitle(size, ownedBy)
+                } else {
+                    return defaultSubtitle(modifiedAt: modifiedAt, ownedBy: ownedBy, locale: locale, calendar: calendar, timeZone: timeZone)
+                }
+            }
+        }
+
+    }
+    
+    private static func formattedFileSize(size: UInt64?) -> String? {
+        guard let size else { return nil }
+        let formatter = ByteCountFormatter()
+        formatter.allowedUnits = [.useKB, .useMB, .useGB]
+        formatter.countStyle = .file
+        return formatter.string(fromByteCount: Int64(size))
+    }
+    
+    private static func formattedDate(
+        modifiedAt: Date?,
+        locale: Locale,
+        calendar: Calendar,
+        timeZone: TimeZone
+    ) -> String? {
+        modifiedAt.map { date in
+            let style = Date.FormatStyle(
+                date: .abbreviated,
+                time: .shortened,
+                locale: locale,
+                calendar: calendar,
+                timeZone: timeZone,
+                capitalizationContext: .beginningOfSentence
+            )
+            return date.formatted(style)
+        }
+    }
+    
+    private static func defaultSubtitle(
+        conversationName: String? = nil,
+        modifiedAt: Date?,
+        ownedBy: String?,
+        locale: Locale,
+        calendar: Calendar,
+        timeZone: TimeZone
+    ) -> String? {
+        let modifiedAt = formattedDate(modifiedAt: modifiedAt, locale: locale, calendar: calendar, timeZone: timeZone)
+        
         if let conversationName, let ownedBy {
             return L10n.Localizable.Conversation.WireCells.AllFiles.Item.subtitle(ownedBy, conversationName)
         } else {
-            let modifiedAt = modifiedAt.map { date in
-                let style = Date.FormatStyle(
-                    date: .abbreviated,
-                    time: .shortened,
-                    locale: locale,
-                    calendar: calendar,
-                    timeZone: timeZone,
-                    capitalizationContext: .beginningOfSentence
-                )
-                return date.formatted(style)
-            }
             return if let modifiedAt, let ownedBy {
                 L10n.Localizable.Conversation.WireCells.Files.Item.subtitle(modifiedAt, ownedBy)
             } else {

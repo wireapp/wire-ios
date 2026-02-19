@@ -126,7 +126,8 @@ final class FilesViewTests: XCTestCase {
             tags: [],
             isEditable: false,
             publicLinkID: nil,
-            conversationName: "Conversation 1"
+            conversationName: "Conversation 1",
+            size: nil
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -154,7 +155,8 @@ final class FilesViewTests: XCTestCase {
             tags: [],
             isEditable: false,
             publicLinkID: nil,
-            conversationName: "Conversation 1"
+            conversationName: "Conversation 1",
+            size: nil
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -182,7 +184,8 @@ final class FilesViewTests: XCTestCase {
             tags: ["important"],
             isEditable: false,
             publicLinkID: nil,
-            conversationName: "Conversation 1"
+            conversationName: "Conversation 1",
+            size: nil
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -210,7 +213,8 @@ final class FilesViewTests: XCTestCase {
             tags: ["tag1", "tag2", "abcdef"],
             isEditable: false,
             publicLinkID: nil,
-            conversationName: "Conversation 1"
+            conversationName: "Conversation 1",
+            size: nil
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -238,7 +242,8 @@ final class FilesViewTests: XCTestCase {
             tags: [],
             isEditable: false,
             publicLinkID: nil,
-            conversationName: "Conversation 1"
+            conversationName: "Conversation 1",
+            size: nil
         )
 
         let view = FilesItemView(viewModel: .make(item: item))
@@ -268,7 +273,8 @@ final class FilesViewTests: XCTestCase {
             tags: [],
             isEditable: false,
             publicLinkID: nil,
-            conversationName: "Conversation 1"
+            conversationName: "Conversation 1",
+            size: nil
         )
         let asset = WireDriveLocalAsset(
             nodeID: item.id,
@@ -304,7 +310,8 @@ final class FilesViewTests: XCTestCase {
             tags: [],
             isEditable: false,
             publicLinkID: nil,
-            conversationName: "Conversation 1"
+            conversationName: "Conversation 1",
+            size: nil
         )
         let asset = WireDriveLocalAsset(
             nodeID: item.id,

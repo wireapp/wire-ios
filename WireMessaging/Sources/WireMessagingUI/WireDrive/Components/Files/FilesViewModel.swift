@@ -77,6 +77,9 @@ package struct FilesViewItem: Identifiable, Hashable {
 
     /// The name of the conversation the node is attached to.
     let conversationName: String?
+    
+    /// The size of of this item
+    let size: UInt64?
 }
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -696,7 +699,8 @@ package final class FilesViewModel: ObservableObject {
             tags: node.tags,
             isEditable: node.isEditable,
             publicLinkID: node.publicLinkID?.string,
-            conversationName: node.conversation?.name
+            conversationName: node.conversation?.name,
+            size: node.size
         )
     }
 

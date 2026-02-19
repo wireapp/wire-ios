@@ -158,6 +158,7 @@ extension FilesItemViewModel {
                 isEditable: false,
                 publicLinkID: publicLinkID,
                 conversationName: "Conversation 1",
+                size: nil
             ),
             selectedSortingKey: .date,
             conversationName: "Test",

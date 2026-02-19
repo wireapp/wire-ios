@@ -48,7 +48,8 @@ extension FilesViewItem {
             tags: tags,
             isEditable: isEditable,
             publicLinkID: publicLinkID,
-            conversationName: conversationName
+            conversationName: conversationName,
+            size: nil
         )
     }
 

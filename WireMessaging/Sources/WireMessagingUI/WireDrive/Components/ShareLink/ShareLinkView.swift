@@ -307,7 +307,8 @@ struct ShareLinkView: View {
         tags: [],
         isEditable: false,
         publicLinkID: UUID().uuidString,
-        conversationName: "Conversation 1"
+        conversationName: "Conversation 1",
+        size: nil
     )
 
     let mockAPI = {
