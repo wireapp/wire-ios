@@ -83,7 +83,7 @@ public final class Account: NSObject, Codable {
     }
 
     /// Updates the properties of the receiver with the given account. Use this method
-    /// when you wish to update an exisiting account object with newly fetched properties
+    /// when you wish to update an existing account object with newly fetched properties
     /// from the account store.
     ///
     public func updateWith(_ account: Account) {
