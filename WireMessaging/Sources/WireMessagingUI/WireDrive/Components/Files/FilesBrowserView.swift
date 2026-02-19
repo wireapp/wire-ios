@@ -56,12 +56,13 @@ package struct FilesBrowserView: FilesViewProtocol {
                             viewModel.filtersSelection = selection
                         }
                     )
-                    .opacity(isSearchFocused ? 1 : 0)
-                    .frame(height: isSearchFocused ? nil : 0)
-                    .padding(.bottom, isSearchFocused ? 15 : 0)
+                    .opacity(isFilterBarPresented ? 1 : 0)
+                    .frame(height: isFilterBarPresented ? nil : 0)
+                    .padding(.bottom, isFilterBarPresented ? 15 : 0)
                     
                     FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
                 }
+                .padding(.top, 4)
 
                 switch viewModel.state {
                 case .loading:
@@ -138,6 +139,10 @@ package struct FilesBrowserView: FilesViewProtocol {
         )) { _ in
             isSearchFocused = false
         }
+    }
+
+    private var isFilterBarPresented: Bool {
+        isSearchFocused || !viewModel.searchText.isEmpty || viewModel.filtersSelection.hasFilterSelected
     }
 }
 
