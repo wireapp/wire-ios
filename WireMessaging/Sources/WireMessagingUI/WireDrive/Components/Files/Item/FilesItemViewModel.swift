@@ -79,7 +79,7 @@ final class FilesItemViewModel: ObservableObject {
 
     init(
         item: FilesViewItem,
-        selectedSortingKey: FilesSortingViewModel.SortingKey,
+        selectedSortingKey: FilesSortingViewModel.SortingKey?,
         conversationName: String?,
         localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         onItemAction: @escaping (ItemAction, FilesViewItem) async -> Void,
@@ -225,7 +225,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     private static func subtitle(
-        selectedSortingKey: FilesSortingViewModel.SortingKey,
+        selectedSortingKey: FilesSortingViewModel.SortingKey?,
         isBrowsing: Bool,
         conversationName: String?,
         modifiedAt: Date?,
@@ -255,6 +255,8 @@ final class FilesItemViewModel: ObservableObject {
                 } else {
                     return defaultSubtitle(conversationName: conversationName, modifiedAt: modifiedAt, ownedBy: ownedBy, locale: locale, calendar: calendar, timeZone: timeZone)
                 }
+            default:
+                return defaultSubtitle(conversationName: conversationName, modifiedAt: modifiedAt, ownedBy: ownedBy, locale: locale, calendar: calendar, timeZone: timeZone)
             }
         } else {
             switch selectedSortingKey {
@@ -266,6 +268,8 @@ final class FilesItemViewModel: ObservableObject {
                 } else {
                     return defaultSubtitle(modifiedAt: modifiedAt, ownedBy: ownedBy, locale: locale, calendar: calendar, timeZone: timeZone)
                 }
+            default:
+                return defaultSubtitle(modifiedAt: modifiedAt, ownedBy: ownedBy, locale: locale, calendar: calendar, timeZone: timeZone)
             }
         }
 

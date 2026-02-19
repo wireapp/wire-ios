@@ -646,7 +646,7 @@ package final class FilesViewModel: ObservableObject {
     ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
         let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
             searchTerm: searchText.isEmpty ? nil : searchText,
-            sortField: sortingSelection.sortingKey.sortField,
+            sortField: sortingSelection.sortingKey?.sortField,
             sortDirDesc: sortingSelection.sortingOrder == .descending,
             tags: filterWithTags,
             offset: offset

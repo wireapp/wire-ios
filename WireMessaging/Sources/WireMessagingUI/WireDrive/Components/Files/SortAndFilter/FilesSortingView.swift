@@ -58,7 +58,7 @@ struct FilesSortingView: View {
                         viewModel.select(sortingOrder: sortingOrder)
                     } label: {
                         Label(
-                            sortingOrder.title(forKey: viewModel.sortingSelection.sortingKey),
+                            sortingOrder.title(forKey: viewModel.sortingSelection.sortingKey ?? .date),
                             systemImage: viewModel.sortingSelection.sortingOrder == sortingOrder ? "checkmark" : ""
                         )
                     }
@@ -70,7 +70,7 @@ struct FilesSortingView: View {
                         .foregroundStyle(.primary)
                         .font(for: .h5)
 
-                    Image(systemName: viewModel.sortingSelection.sortingOrder.iconName)
+                    Image(systemName: viewModel.menuIcon)
                         .resizable()
                         .frame(width: 9, height: 11)
                 }.frame(minWidth: 120, alignment: .leading)

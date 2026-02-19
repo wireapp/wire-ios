@@ -66,21 +66,21 @@ final class FilesSortingViewModel: ObservableObject {
     }
 
     struct SortingSelection {
-        var sortingKey: SortingKey
-        var sortingOrder: SortingOrder
+        var sortingKey: SortingKey?
+        var sortingOrder: SortingOrder?
     }
 
-    @Published var sortingSelection: SortingSelection
+    @Published var sortingSelection: SortingSelection = .default
 
     let isBrowsing: Bool
     private let onUpdate: (SortingSelection) -> Void
 
     var sortingOrders: [SortingOrder] {
         switch sortingSelection.sortingKey {
-        case .date:
-            [.descending, .ascending]
         case .name, .size:
             SortingOrder.allCases
+        default:
+            [.descending, .ascending]
         }
     }
 
@@ -113,11 +113,20 @@ final class FilesSortingViewModel: ObservableObject {
     // MARK: - UI
     
     var menuLabel: String {
-        sortingSelection.sortingOrder.title(forKey: sortingSelection.sortingKey)
+        if let sortingOrder = sortingSelection.sortingOrder, let sortingKey = sortingSelection.sortingKey {
+            sortingOrder.title(forKey: sortingKey)
+        } else {
+            Strings.title
+        }
+    }
+    
+    var menuIcon: String {
+        sortingSelection.sortingOrder?.iconName ?? "arrow.left.arrow.right"
     }
 
 }
 
 extension FilesSortingViewModel.SortingSelection {
-    static let `default` = Self(sortingKey: .date, sortingOrder: .descending)
+    /// no sorting criterion applied
+    static let `default` = Self(sortingKey: nil, sortingOrder: nil)
 }
