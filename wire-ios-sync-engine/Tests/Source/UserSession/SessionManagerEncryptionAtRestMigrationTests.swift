@@ -67,7 +67,7 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
             authenticationContext: MockAuthenticationContextProtocol()
         )
 
-        let session = await createSut(earService: earService)
+        let session = createSut(earService: earService)
 
         session.delegate = userSessionDelegate
         userSessionDelegate.prepareForMigrationOnReadyMockMethod = { _, onReady in
