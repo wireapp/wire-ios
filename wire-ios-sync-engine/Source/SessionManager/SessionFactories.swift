@@ -129,7 +129,7 @@ open class AuthenticatedSessionFactory {
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: AuthenticationContext(storage: contextStorage)
         )
-        
+
         var userSessionBuilder = ZMUserSessionBuilder()
         await userSessionBuilder.withAllDependencies(
             backendEnvironment: environment,

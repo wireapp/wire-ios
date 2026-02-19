@@ -111,7 +111,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         mockEncryptionService.getContextDataFrom_MockMethod = { _ in Data() }
         mockEncryptionService.encryptDataContextData_MockMethod = { _, _ in (Data(), Data()) }
         mockEncryptionService.decryptDataNonceContextData_MockMethod = { _, _, _ in Data() }
-        
+
         uiMOC.earMessageEncryptionService = mockEncryptionService
         uiMOC.encryptMessagesAtRest = true
 
