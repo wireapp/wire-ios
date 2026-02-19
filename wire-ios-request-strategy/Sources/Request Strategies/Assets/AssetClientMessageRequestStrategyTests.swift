@@ -361,7 +361,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItMarksAnImageMessageAsSentWhenItReceivesASuccesfulResponse() {
+    func testThatItMarksAnImageMessageAsSentWhenItReceivesAsuccessfulResponse() {
         // GIVEN
         var message: ZMAssetClientMessage!
         mockMessageSender.sendMessageMessage_MockMethod = { _ in }
