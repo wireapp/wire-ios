@@ -27,6 +27,9 @@ struct Member {
 }
 
 class UserHelper {
+    private let httpClient = HttpClient()
+
+    let backendURL = BackendContext.backendEnvironment.url
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
 
@@ -148,7 +151,7 @@ class UserHelper {
     /// - Returns: qualifiedIds Object
     func getConversationIds() async throws -> [QualifiedID] {
         var conversationIDs = [QualifiedID]()
-        for try await ids in try await conversationsAPI.getConversationIdentifiers() {
+        for try await ids in try conversationsAPI.getConversationIdentifiers() {
             conversationIDs.append(contentsOf: ids)
         }
         return conversationIDs
@@ -176,6 +179,10 @@ class UserHelper {
         return response.teamId
     }
 
+    func getVerificationCode(user: UserInfo) async throws -> String {
+        try await InbucketClient.getVerificationCode(email: user.email)
+    }
+
     /// Delete  created test users
     func deleteCreatedUsers() async {
         for user in createdUsers {
@@ -198,6 +205,7 @@ class UserHelper {
     /// Register a team owner
     /// - Returns: qualifiedId of the owner and ownerInfo
     func registerUserAsTeamOwner() async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
+
         let teamOwner = UserGenerator.generateUniqueUserInfo()
 
         let (teamID, qualifiedId) = try await authenticationAPI.registerTeamOwner(
@@ -246,6 +254,45 @@ class UserHelper {
         return accessToken
     }
 
+    /// Disable GDPR consent popup
+    /// - Parameter user: userInfo
+    func disableConsentPopup(for user: UserInfo) async throws {
+
+        let baseURL = BackendContext.backendEnvironment.url
+        let versionedURL = baseURL
+            .appendingPathComponent(String(describing: apiVersion))
+            .appendingPathComponent("properties")
+            .appendingPathComponent("webapp")
+
+        let accessToken = try await fetchAccessToken(email: user.email, password: user.password)
+
+        let body: [String: Any] = [
+            "settings": [
+                "privacy": [
+                    "improve_wire": false,
+                    "marketing_consent": false,
+                    "telemetry_data_sharing": false
+                ]
+            ]
+        ]
+
+        let jsonBody = try JSONSerialization.data(withJSONObject: body, options: [])
+
+        let (_, response) = try await httpClient.send(
+            url: versionedURL,
+            method: .put,
+            body: jsonBody,
+            headers: [
+                HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
+                HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
+                HttpClient.HeaderKey.authorization: "Bearer \(accessToken.token)"
+            ]
+        )
+        guard response.statusCode == 200 else {
+            throw RuntimeError("disableConsentPopup failed with code \(response.statusCode)")
+        }
+    }
+
     /// Register user in team as member
     /// - Parameters:
     ///   - ownerAccessToken: ownerAccessToken
@@ -280,12 +327,52 @@ class UserHelper {
         return (qualifiedID, teamMember)
     }
 
+    func registerUsersAsTeamMemberWithUserHandleSet(
+        ownerAccessToken: String,
+        teamID: UUID
+    ) async throws -> (qualifiedID: QualifiedID, member: UserInfo) {
+
+        let teamMember = UserGenerator.generateUniqueUserInfo()
+
+        let invitationID = try await teamsAPI.inviteMemberToTeam(
+            access_token: ownerAccessToken,
+            teamID: teamID,
+            memberName: teamMember.name,
+            memberEmail: teamMember.email
+        )
+
+        let invitationCode = try await authenticationAPI.getInvitationCode(
+            teamID: teamID,
+            invitationID: invitationID
+        )
+
+        let qualifiedID = try await authenticationAPI.registerTeamMember(
+            email: teamMember.email,
+            password: teamMember.password,
+            name: teamMember.name,
+            invitationCode: invitationCode
+        )
+
+        // get access token
+        authenticationManager.accessToken = try await fetchAccessToken(
+            email: teamMember.email,
+            password: teamMember.password
+        )
+
+        // Set handle
+        try await selfUserAPI.updateHandle(handle: teamMember.username)
+
+        createdUsers.append(teamMember)
+
+        return (qualifiedID, teamMember)
+    }
+
     /// fetch qualified id from conversations
     /// - Returns: qualifiedID object
     func getQualifiedIdsFromConversationList() async throws -> [QualifiedID] {
         var conversationIDs = [QualifiedID]()
 
-        for try await ids in try await conversationsAPI.getConversationIdentifiers() {
+        for try await ids in try conversationsAPI.getConversationIdentifiers() {
             conversationIDs.append(contentsOf: ids)
         }
         return conversationIDs
@@ -295,7 +382,7 @@ class UserHelper {
     /// - Parameter criteria: pass the criteria to filter conversations
     /// - Returns: conversation UUID and domain info
     func getConversationId(matching criteria: FilterConversationsByCriteria) async throws
-        -> (conversationID: UUID?, domain: String?) {
+        -> (conversationID: UUID, domain: String?) {
         let conversationIDs = try await getQualifiedIdsFromConversationList()
 
         let conversations = try await conversationsAPI.getConversations(for: conversationIDs)
@@ -309,10 +396,10 @@ class UserHelper {
             }
         }
 
-        if let match = filtered.first {
-            return (match.qualifiedID?.id, match.qualifiedID?.domain)
+        if let match = filtered.first, let id = match.qualifiedID?.id {
+            return (id, match.qualifiedID?.domain)
         }
-        return (nil, nil)
+        throw RuntimeError("getConversationId: no matching conversation found")
     }
 
     /// Create group conversation
@@ -377,6 +464,75 @@ class UserHelper {
         return [teamMember1.name, teamMember2.name]
     }
 
+    /// Registers a team with a given number of members and add them to a group
+    /// - Parameters:
+    ///   - memberCount: count of members
+    ///   - groupName : optional groupName
+    /// - Returns: teamOwner info, teamMembers info, qualifiedIds of members, conversationId if group created
+    func registerTeam(
+        withMemberCount memberCount: Int,
+        groupName: String? = nil
+    ) async throws
+        -> (teamOwner: UserInfo, teamMembers: [UserInfo], qualifiedIDs: [QualifiedID], conversationId: UUID?) {
+
+        let (_, teamOwner) = try await registerUserAsTeamOwner()
+        guard let teamID = teamOwner.teamID else {
+            throw RuntimeError("registerTeam: teamOwner.teamID is nil")
+        }
+
+        let ownerAccessToken = try await fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+
+        var qualifiedIDs: [QualifiedID] = []
+        qualifiedIDs.reserveCapacity(memberCount)
+
+        var teamMembers: [UserInfo] = []
+        teamMembers.reserveCapacity(memberCount)
+
+        for _ in 0 ..< memberCount {
+            let (qualifiedId, teamMember) = try await registerUsersAsTeamMemberWithUserHandleSet(
+                ownerAccessToken: ownerAccessToken.token,
+                teamID: teamID
+            )
+            qualifiedIDs.append(qualifiedId)
+            teamMembers.append(teamMember)
+        }
+
+        // if group conversation passed
+        var conversationId: UUID?
+        if let groupName {
+            try await createGroupConversations(
+                qualifiedIds: qualifiedIDs,
+                owner: teamOwner,
+                groupName: groupName
+            )
+
+            let (resolvedConversationId, _) = try await getConversationId(matching: .groupName(groupName))
+            conversationId = resolvedConversationId
+        }
+
+        // unlock and enable ConferenceCalling
+        let backOffice = BackOffice(backendURL: backendURL)
+        try await backOffice.unlockConferenceCallingFeature(teamId: teamID.uuidString, basicAuth: basicAuth())
+        try await backOffice.enableConferenceCallingFeature(
+            teamId: teamID.uuidString,
+            basicAuth: basicAuth()
+        )
+
+        return (
+            teamOwner: teamOwner,
+            teamMembers: teamMembers,
+            qualifiedIDs: qualifiedIDs,
+            conversationId: conversationId
+        )
+    }
+
+    /// Send connection request
+    /// - Parameters:
+    ///   - domain: domain info
+    ///   - userId: userId info
     func sendConnectionRequestToUser(
         domain: String,
         userId: String

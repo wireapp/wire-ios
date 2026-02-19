@@ -20,7 +20,7 @@ public import Foundation
 
 /// A configuration for the *MLS* feature.
 
-public struct MLSFeatureConfig: Equatable, Sendable {
+public struct MLSFeatureConfig: Equatable, Sendable, Hashable {
 
     /// The feature's status.
 
