@@ -528,6 +528,7 @@ public final class ZMUserSession: NSObject {
         analyticsEventTracker?.trackEvent(.App.open)
     }
 
+    @MainActor
     func setup(
         apiVersion: WireNetwork.APIVersion?,
         strategyDirectory: (any StrategyDirectoryProtocol)?,
@@ -535,7 +536,7 @@ public final class ZMUserSession: NSObject {
         operationLoop: ZMOperationLoop?,
         configuration: Configuration,
         isDeveloperModeEnabled: Bool
-    ) {
+    ) async {
         coreDataStack.linkCaches(dependencies.caches)
 
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
@@ -544,7 +545,7 @@ public final class ZMUserSession: NSObject {
         appLockController.delegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
 
-        syncManagedObjectContext.performGroupedAndWait { [self] in
+        await syncManagedObjectContext.performGrouped { [self] in
             localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
             configureTransportSession()
 
@@ -606,12 +607,12 @@ public final class ZMUserSession: NSObject {
 
             // Create and perform sync if there is a self client.
             if let selfClientID = selfUserClient.remoteIdentifier {
-                setUpSyncAgent(clientID: selfClientID, isNewClient: false)
+                await setUpSyncAgent(clientID: selfClientID, isNewClient: false)
             }
         }
     }
 
-    func setUpSyncAgent(clientID: String, isNewClient: Bool) {
+    func setUpSyncAgent(clientID: String, isNewClient: Bool) async {
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
             completionHandlers: .init(
@@ -655,23 +656,17 @@ public final class ZMUserSession: NSObject {
                 notificationContext: notificationContext
             )
 
-            // TODO: [WPB-22986] Remove logging - added this logging temporarily to investigate a hang.
-            WireLogger.session.measureTime(
-                label: "make client strategies",
-                durationKey: .timeInterval,
-                attributes: [.isNewClient: isNewClient]
-            ) {
-                strategyDirectory.makeClientRelatedStrategies(
-                    applicationStatusDirectory: applicationStatusDirectory,
-                    syncContext: syncContext,
-                    transportSession: transportSession,
-                    pushMessageHandler: localNotificationDispatcher,
-                    flowManager: flowManager,
-                    incrementalSyncObserver: incrementalSyncObserver,
-                    initiateResetMLSConversationUseCase: clientSessionComponent.initiateResetMLSConversationUseCase,
-                    metadata: resolvedBackendMetadata
-                )
-            }
+            await strategyDirectory.makeClientRelatedStrategies(
+                applicationStatusDirectory: applicationStatusDirectory,
+                syncContext: syncContext,
+                transportSession: transportSession,
+                pushMessageHandler: localNotificationDispatcher,
+                flowManager: flowManager,
+                incrementalSyncObserver: incrementalSyncObserver,
+                initiateResetMLSConversationUseCase: clientSessionComponent.initiateResetMLSConversationUseCase,
+                metadata: resolvedBackendMetadata
+            )
+
             syncStrategy?.updateClientContextChangeTrackers()
         }
         Task { [weak self] in
@@ -1350,9 +1345,9 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 }
 
-// MARK: - ZMClientRegistrationStatusDelegate
+// MARK: - ClientRegistrationStatusDelegate
 
-extension ZMUserSession: ZMClientRegistrationStatusDelegate {
+extension ZMUserSession: ClientRegistrationStatusDelegate {
 
     public func didRegisterSelfUserClient(_ userClient: WireDataModel.UserClient) {
         registerCurrentPushToken()
@@ -1375,15 +1370,17 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
         // The client was just registered and still needs to perform the
         // initial sync.
         if let selfClientID = userClient.remoteIdentifier {
-            setUpSyncAgent(clientID: selfClientID, isNewClient: true)
-            // no migration needed from last sync system as it's a new client
-            if userClient.isConsumableNotificationsCapable {
-                // activate new sync with consumable notifications
-                journal[.isConsumableNotificationsEnabled] = true
-            }
-            // this is a fresh client so we need an initialSync
-            journal[.isInitialSyncRequired] = true
+            let isConsumableNotificationsCapable = userClient.isConsumableNotificationsCapable // TODO: Is it to early to get that here?
             Task {
+                await setUpSyncAgent(clientID: selfClientID, isNewClient: true)
+                // no migration needed from last sync system as it's a new client
+                if isConsumableNotificationsCapable {
+                    // activate new sync with consumable notifications
+                    journal[.isConsumableNotificationsEnabled] = true
+                }
+                // this is a fresh client so we need an initialSync
+                journal[.isInitialSyncRequired] = true
+
                 WireLogger.sync.debug("Triggering initial sync after client registration")
                 await triggerSync()
             }

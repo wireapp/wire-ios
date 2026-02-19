@@ -553,7 +553,7 @@ final class UserSessionLoader {
             faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
         )
 
-        userSession.setup(
+        await userSession.setup(
             apiVersion: backendMetadata.apiVersion,
             strategyDirectory: nil,
             syncStrategy: nil,

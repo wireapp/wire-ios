@@ -59,6 +59,7 @@ open class AuthenticatedSessionFactory {
         self.minTLSVersion = minTLSVersion
     }
 
+    @MainActor
     func session(
         for account: Account,
         coreDataStack: CoreDataStack,
@@ -68,7 +69,7 @@ open class AuthenticatedSessionFactory {
         journal: Journal,
         logFilesProvider: LogFilesProviding,
         faultyMLSRemovalKeysByDomain: [String: [String]]
-    ) -> ZMUserSession? {
+    ) async -> ZMUserSession? {
         let wireAPIBackendEnvironment = BackendEnvironment(
             url: environment.backendURL,
             webSocketURL: environment.backendWSURL,
@@ -146,7 +147,7 @@ open class AuthenticatedSessionFactory {
         )
 
         let userSession = userSessionBuilder.build()
-        userSession.setup(
+        await userSession.setup(
             apiVersion: nil,
             strategyDirectory: nil,
             syncStrategy: nil,

@@ -104,7 +104,7 @@ extension ClientRegistrationPhase: CustomDebugStringConvertible {
 @objc
 public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
-    @objc public weak var registrationStatusDelegate: ZMClientRegistrationStatusDelegate?
+    public weak var registrationStatusDelegate: ClientRegistrationStatusDelegate?
     @objc public var emailCredentials: UserEmailCredentials?
     var prekeys: [IdPrekeyTuple]?
     var lastResortPrekey: IdPrekeyTuple?
@@ -497,7 +497,6 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         }
     }
 
-    @objc(didRegisterProteusClient:)
     public func didRegisterProteusClient(_ client: UserClient) {
         WireLogger.authentication.info("Did register proteus client")
 

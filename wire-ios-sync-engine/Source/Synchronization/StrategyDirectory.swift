@@ -20,7 +20,7 @@ import Foundation
 import WireDataModel
 import WireDomain
 import WireNetwork
-import WireRequestStrategy
+@preconcurrency import WireRequestStrategy
 
 @objc
 public protocol StrategyDirectoryProtocol {
@@ -304,6 +304,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         ]
     }
 
+    @MainActor
     func makeClientRelatedStrategies(
         applicationStatusDirectory: ApplicationStatusDirectory,
         syncContext: NSManagedObjectContext,
@@ -313,8 +314,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         incrementalSyncObserver: IncrementalSyncObserverProtocol,
         initiateResetMLSConversationUseCase: WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol,
         metadata: BackendMetadataProvider
-    ) {
-        syncContext.performAndWait {
+    ) async {
+        await syncContext.perform {
             let httpClient = HttpClientImpl(
                 transportSession: transportSession,
                 queue: syncContext
@@ -380,7 +381,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                     return []
                 }
             }
-            self.contextChangeTrackers.append(contentsOf: clientContextChangeTrackers)
+            self.contextChangeTrackers.append(contentsOf: self.clientContextChangeTrackers)
         }
     }
 }

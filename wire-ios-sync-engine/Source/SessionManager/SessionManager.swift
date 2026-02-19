@@ -1246,55 +1246,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    // Creates the user session for @c account given, calls @c completion when done.
-    @MainActor
-    private func startBackgroundSession(
-        for account: Account,
-        with coreDataStack: CoreDataStack,
-        journal: Journal,
-        logFilesProvider: LogFilesProviding
-    ) -> ZMUserSession {
-        guard let newSession = createUserSession(
-            for: account,
-            with: coreDataStack,
-            journal: journal,
-            logFilesProvider: logFilesProvider
-        ) else {
-            preconditionFailure("Unable to create session for \(account)")
-        }
-
-        finishSettingUpUserSession(
-            account: account,
-            newSession: newSession,
-            coreDataStack: coreDataStack
-        )
-
-        return newSession
-    }
-
-    @MainActor
-    private func createUserSession(
-        for account: Account,
-        with coreDataStack: CoreDataStack,
-        journal: Journal,
-        logFilesProvider: LogFilesProviding
-    ) -> ZMUserSession? {
-        let sessionConfig = ZMUserSession.Configuration(
-            appLockConfig: configuration.legacyAppLockConfig
-        )
-
-        return authenticatedSessionFactory.session(
-            for: account,
-            coreDataStack: coreDataStack,
-            configuration: sessionConfig,
-            sharedUserDefaults: sharedUserDefaults,
-            isDeveloperModeEnabled: isDeveloperModeEnabled,
-            journal: journal,
-            logFilesProvider: logFilesProvider,
-            faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain
-        )
-    }
-
     @MainActor
     private func finishSettingUpUserSession(
         account: Account,

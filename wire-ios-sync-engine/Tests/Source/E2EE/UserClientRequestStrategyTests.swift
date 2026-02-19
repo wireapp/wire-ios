@@ -26,8 +26,7 @@ import XCTest
 
 @testable import WireSyncEngine
 
-@objcMembers
-public final class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegistrationStatusDelegate {
+public final class MockClientRegistrationStatusDelegate: ClientRegistrationStatusDelegate {
 
     public var didCallRegisterMLSClient: Bool = false
     public func didRegisterMLSClient(_ userClient: WireDataModel.UserClient) {

@@ -49,10 +49,6 @@
 @end
 
 
-@interface ZMSyncStrategy (Registration) <ZMClientRegistrationStatusDelegate>
-@end
-
-
 @implementation ZMSyncStrategy
 
 ZM_EMPTY_ASSERTING_INIT()

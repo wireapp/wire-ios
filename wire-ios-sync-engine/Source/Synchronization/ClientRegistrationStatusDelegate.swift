@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@class UserClient;
+import WireDataModel
 
+public protocol ClientRegistrationStatusDelegate: AnyObject {
 
-@protocol ZMClientRegistrationStatusDelegate <NSObject>
+    func didRegisterSelfUserClient(_ userClient: UserClient)
+    func didFailToRegisterSelfUserClient(error: Error)
+    func didDeleteSelfUserClient(error: Error)
 
-- (void)didRegisterSelfUserClient:(UserClient *_Nonnull)userClient;
-- (void)didFailToRegisterSelfUserClient:(NSError *_Nonnull)error NS_SWIFT_NAME(didFailToRegisterSelfUserClient(error:));
-- (void)didDeleteSelfUserClient:(NSError *_Nonnull)error NS_SWIFT_NAME(didDeleteSelfUserClient(error:));
-
-@end
+}

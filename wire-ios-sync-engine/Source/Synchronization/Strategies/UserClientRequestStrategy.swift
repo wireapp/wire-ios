@@ -532,7 +532,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             }
 
             userClient.needsToUploadMLSPublicKeys = false
-            clientRegistrationStatus?.didRegisterMLSClient(userClient)
+            clientRegistrationStatus?.didRegisterMLSClient(userClient) 
         }
 
         return false
