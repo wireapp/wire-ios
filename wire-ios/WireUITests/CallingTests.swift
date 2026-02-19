@@ -138,7 +138,6 @@ final class CallingTests: WireUITestCase {
                 "Conversation List is not showing after ending the call"
             )
         } catch {
-            NSLog("⚠️ Skipping test_MultipleUsersJoiningGroupCall due to calling service failure: \(error)")
             throw XCTSkip("⚠️ Calling service failed..Skipping this test")
         }
     }
