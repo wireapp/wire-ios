@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import os
 import WireDataModel
 import WireLogging
 
@@ -25,21 +26,21 @@ public let AccountManagerDidUpdateAccountsNotificationName = Notification
 
 /// Manages the known and selected accounts.
 
-public final class AccountManager: NSObject {
+public final class AccountManager: NSObject, Sendable {
 
     // MARK: - Properties
 
     /// The currently selected account.
 
     public var selectedAccount: Account? {
-        guard let id = defaults.selectedAccountIdentifier else { return nil }
-        return cache[id]
+        guard let id = defaults().selectedAccountIdentifier else { return nil }
+        return cache.withLock { $0[id] }
     }
 
     /// All known accounts.
 
     public var accounts: Set<Account> {
-        Set(cache.values)
+        cache.withLock { Set($0.values) }
     }
 
     /// All accounts excluding the selected account.
@@ -55,27 +56,29 @@ public final class AccountManager: NSObject {
     /// The sum of unread conversations in all accounts.
 
     public var totalUnreadCount: Int {
-        cache.values.reduce(0) {
-            $0 + $1.unreadConversationCount
+        cache.withLock { dict in
+            dict.values.reduce(0) {
+                $0 + $1.unreadConversationCount
+            }
         }
     }
 
     /// The number of known accounts.
 
     public var numberOfAccounts: Int {
-        cache.count
+        cache.withLock { $0.count }
     }
 
     /// Whether there are any known accounts.
 
     public var hasAccounts: Bool {
-        !cache.isEmpty
+        cache.withLock { !$0.isEmpty }
     }
 
     private let currentAppVersion: String
-    private var cache = [UUID: Account]()
-    private var store: AccountStore
-    private let defaults: UserDefaults
+    private let cache = OSAllocatedUnfairLock<[UUID: Account]>(initialState: [:])
+    private let store: AccountStore
+    private let defaults: @Sendable () -> UserDefaults
 
     // MARK: - Init
 
@@ -88,7 +91,7 @@ public final class AccountManager: NSObject {
     public init(
         currentAppVersion: String,
         directory: URL,
-        defaults: UserDefaults = .shared()!
+        defaults: @autoclosure @escaping @Sendable () -> UserDefaults = { .shared()! }()
     ) throws {
         self.currentAppVersion = currentAppVersion
         self.store = try AccountStore(directory: directory)
@@ -99,7 +102,7 @@ public final class AccountManager: NSObject {
         for account in accounts {
             var journal = Journal(
                 userID: account.userIdentifier,
-                storage: defaults
+                storage: defaults()
             )
 
             journal.markInitialAppVersionForExistingAccount()
@@ -116,7 +119,7 @@ public final class AccountManager: NSObject {
         if store.storeAccount(account) {
             var journal = Journal(
                 userID: account.userIdentifier,
-                storage: defaults
+                storage: defaults()
             )
             journal.markInitialAppVersionForNewAccount(currentVersion: currentAppVersion)
         }
@@ -140,15 +143,15 @@ public final class AccountManager: NSObject {
         let id = account.userIdentifier
 
         precondition(
-            cache[id] != nil,
+            cache.withLock { $0[id] != nil },
             "Selecting an account without first adding it is not allowed"
         )
 
-        guard id != defaults.selectedAccountIdentifier else {
+        guard id != defaults().selectedAccountIdentifier else {
             return
         }
 
-        defaults.selectedAccountIdentifier = id
+        defaults().selectedAccountIdentifier = id
         refreshCache()
 
         WireLogger.system.setActiveAccount(
@@ -165,7 +168,7 @@ public final class AccountManager: NSObject {
     public func remove(_ account: Account) {
         store.deleteAccount(account)
         if selectedAccount == account {
-            defaults.selectedAccountIdentifier = nil
+            defaults().selectedAccountIdentifier = nil
             WireLogger.system.clearActiveAccount()
         }
         refreshCache()
@@ -187,7 +190,7 @@ public final class AccountManager: NSObject {
     /// - Returns: The account, if it exists.
 
     public func account(with id: UUID) -> Account? {
-        cache[id]
+        cache.withLock { $0[id] }
     }
 
     /// Load and sort the stored accounts.
@@ -197,17 +200,19 @@ public final class AccountManager: NSObject {
     /// sorted by their team name.
 
     public func sortedAccounts() -> [Account] {
-        cache.values.sorted { lhs, rhs in
-            switch (lhs.teamName, rhs.teamName) {
-            case (.some, .none):
-                return false
-            case (.none, .some):
-                return true
-            case let (.some(leftName), .some(rightName)):
-                guard leftName != rightName else { fallthrough }
-                return leftName < rightName
-            default:
-                return lhs.userName < rhs.userName
+        cache.withLock { dict in
+            dict.values.sorted { lhs, rhs in
+                switch (lhs.teamName, rhs.teamName) {
+                case (.some, .none):
+                    return false
+                case (.none, .some):
+                    return true
+                case let (.some(leftName), .some(rightName)):
+                    guard leftName != rightName else { fallthrough }
+                    return leftName < rightName
+                default:
+                    return lhs.userName < rhs.userName
+                }
             }
         }
     }
@@ -217,23 +222,25 @@ public final class AccountManager: NSObject {
     private func refreshCache() {
         let accounts = store.fetchAllAccounts()
 
-        // Add or update values in cache.
-        for account in accounts {
-            // Since some objects (eg. AccountView) observe changes in the account, we must
-            // make sure their object addresses are maintained after updating, i.e if
-            // exisiting objects need to be updated from the account store, we just update
-            // their properties and not replace the whole object.
-            if let existingAccount = cache[account.userIdentifier] {
-                existingAccount.updateWith(account)
-                cache[account.userIdentifier] = existingAccount
-            } else {
-                cache[account.userIdentifier] = account
+        cache.withLock { dict in
+            // Add or update values in cache.
+            for account in accounts {
+                // Since some objects (eg. AccountView) observe changes in the account, we must
+                // make sure their object addresses are maintained after updating, i.e if
+                // exisiting objects need to be updated from the account store, we just update
+                // their properties and not replace the whole object.
+                if let existingAccount = dict[account.userIdentifier] {
+                    existingAccount.updateWith(account)
+                    dict[account.userIdentifier] = existingAccount
+                } else {
+                    dict[account.userIdentifier] = account
+                }
             }
-        }
 
-        // Remove deleted accounts.
-        for key in Set(cache.keys).subtracting(accounts.map(\.userIdentifier)) {
-            cache[key] = nil
+            // Remove deleted accounts.
+            for key in Set(dict.keys).subtracting(accounts.map(\.userIdentifier)) {
+                dict[key] = nil
+            }
         }
 
         NotificationCenter.default.post(
