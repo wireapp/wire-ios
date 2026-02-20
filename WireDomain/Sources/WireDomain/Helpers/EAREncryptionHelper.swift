@@ -19,29 +19,43 @@
 import Foundation
 
 enum EAREncryptionHelper {
+
+    enum CryptoError: Error {
+        case encryptionFailed(CFError)
+        case decryptionFailed(CFError)
+    }
+
     static func encrypt(
         data: Data,
         publicKey: SecKey
-    ) -> Data? {
-
-        SecKeyCreateEncryptedData(
+    ) throws -> Data {
+        var cfError: Unmanaged<CFError>?
+        guard let result = SecKeyCreateEncryptedData(
             publicKey,
             .eciesEncryptionCofactorX963SHA256AESGCM,
             data as CFData,
-            nil
-        ) as? Data
+            &cfError
+        ) as? Data else {
+            // cfError is guaranteed to be populated if result in nil
+            throw CryptoError.encryptionFailed(cfError!.takeRetainedValue())
+        }
+        return result
     }
 
     static func decrypt(
         data: Data,
         privateKey: SecKey
-    ) -> Data? {
-
-        SecKeyCreateDecryptedData(
+    ) throws -> Data {
+        var cfError: Unmanaged<CFError>?
+        guard let result = SecKeyCreateDecryptedData(
             privateKey,
             .eciesEncryptionCofactorX963SHA256AESGCM,
             data as CFData,
-            nil
-        ) as? Data
+            &cfError
+        ) as? Data else {
+            // cfError is guaranteed to be populated if result in nil
+            throw CryptoError.decryptionFailed(cfError!.takeRetainedValue())
+        }
+        return result
     }
 }
