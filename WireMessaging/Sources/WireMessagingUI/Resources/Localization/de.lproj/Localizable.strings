@@ -215,6 +215,7 @@
 "conversation.wireCells.shareLink.on" = "EIN";
 "conversation.wireCells.shareLink.expired" = "ABGELAUFEN";
 "conversation.wireCells.shareLink.linkExpiredOn" = "Link ist am %@ abgelaufen";
+"conversation.wireCells.shareLink.sharedMessage" = "Öffnen Sie diesen Link, um die angehängten Dateien anzuzeigen: %@";
 
 // MARK: - Share Link Password View
 "conversation.wireCells.shareLink.password.title" = "Passwort";
