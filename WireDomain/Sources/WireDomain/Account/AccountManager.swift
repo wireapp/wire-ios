@@ -33,7 +33,7 @@ public final class AccountManager: NSObject, Sendable {
     /// The currently selected account.
 
     public var selectedAccount: Account? {
-        guard let id = defaults().selectedAccountIdentifier else { return nil }
+        guard let id = defaults.selectedAccountIdentifier else { return nil }
         return cache.withLock { $0[id] }
     }
 
@@ -78,7 +78,7 @@ public final class AccountManager: NSObject, Sendable {
     private let currentAppVersion: String
     private let cache = OSAllocatedUnfairLock<[UUID: Account]>(initialState: [:])
     private let store: AccountStore
-    private let defaults: @Sendable () -> UserDefaults
+    private nonisolated(unsafe) let defaults: UserDefaults // UserDefaults is thread safe but not marked as `Sendable`.
 
     // MARK: - Init
 
@@ -91,7 +91,7 @@ public final class AccountManager: NSObject, Sendable {
     public init(
         currentAppVersion: String,
         directory: URL,
-        defaults: @autoclosure @escaping @Sendable () -> UserDefaults = { .shared()! }()
+        defaults: UserDefaults = .shared()!
     ) throws {
         self.currentAppVersion = currentAppVersion
         self.store = try AccountStore(directory: directory)
@@ -102,7 +102,7 @@ public final class AccountManager: NSObject, Sendable {
         for account in accounts {
             var journal = Journal(
                 userID: account.userIdentifier,
-                storage: defaults()
+                storage: defaults
             )
 
             journal.markInitialAppVersionForExistingAccount()
@@ -119,7 +119,7 @@ public final class AccountManager: NSObject, Sendable {
         if store.storeAccount(account) {
             var journal = Journal(
                 userID: account.userIdentifier,
-                storage: defaults()
+                storage: defaults
             )
             journal.markInitialAppVersionForNewAccount(currentVersion: currentAppVersion)
         }
@@ -147,11 +147,11 @@ public final class AccountManager: NSObject, Sendable {
             "Selecting an account without first adding it is not allowed"
         )
 
-        guard id != defaults().selectedAccountIdentifier else {
+        guard id != defaults.selectedAccountIdentifier else {
             return
         }
 
-        defaults().selectedAccountIdentifier = id
+        defaults.selectedAccountIdentifier = id
         refreshCache()
 
         WireLogger.system.setActiveAccount(
@@ -168,7 +168,7 @@ public final class AccountManager: NSObject, Sendable {
     public func remove(_ account: Account) {
         store.deleteAccount(account)
         if selectedAccount == account {
-            defaults().selectedAccountIdentifier = nil
+            defaults.selectedAccountIdentifier = nil
             WireLogger.system.clearActiveAccount()
         }
         refreshCache()
