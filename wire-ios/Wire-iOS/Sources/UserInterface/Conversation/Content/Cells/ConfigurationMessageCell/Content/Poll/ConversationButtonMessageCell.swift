@@ -44,6 +44,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
         button.textTransform = .none
         return button
     }()
+
     private var buttonAction: Completion?
 
     private let errorLabel: UILabel = {
