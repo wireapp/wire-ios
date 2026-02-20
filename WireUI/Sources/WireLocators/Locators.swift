@@ -66,6 +66,8 @@ public enum Locators {
         case blockButtonOnBottomSheet
         case bottomBarArchivedButton
         case accountProfileImageView
+        case status
+        case loadBar
     }
 
     public enum SettingsPage: String {
@@ -102,6 +104,8 @@ public enum Locators {
         case conversationDetailsButton
         case message
         case imageCell = "ImageCell"
+        case mentionButton
+        case userCellName
     }
 
     public enum BackupOrRestorePage: String {
@@ -148,6 +152,7 @@ public enum Locators {
         case createWireTeamButton
         case manageTeamButton
         case addAccountOrTeamButton
+        case userProfilePicture
     }
 
     public enum CreateGroupPage: String {
@@ -290,6 +295,7 @@ public enum Locators {
     public enum OngoingCallPage: String {
 
         case endOngoingCallButton = "End call"
+        case timeLabel
 
         public static func participantIdentifier(_ name: String) -> String {
             "audioView.\(name).minimized.inactive"

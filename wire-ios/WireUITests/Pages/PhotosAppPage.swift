@@ -59,7 +59,9 @@ class PhotosAppPage: PageModel {
     }
 
     func selectConversation(name: String) -> XCUIElement {
-        photosApp.staticTexts[name].firstMatch
+        var conversationCell = photosApp.staticTexts[name]
+        XCTAssertTrue(conversationCell.waitForExistence(timeout: timeout))
+        return conversationCell.firstMatch
     }
 
     @discardableResult
