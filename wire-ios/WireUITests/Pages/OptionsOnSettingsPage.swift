@@ -49,7 +49,7 @@ class OptionsOnSettingsPage: PageModel {
         return self
     }
 
-    func enterPasscode(_ pass: String) throws -> ConversationsPage {
+    func enterPasscode(_ passcode: String) throws -> ConversationsPage {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let passcodeField = springboard.secureTextFields["Passcode field"].firstMatch
 
@@ -58,7 +58,7 @@ class OptionsOnSettingsPage: PageModel {
             XCTFail("Passcode SecureTextField did not appear")
             throw XCTSkip("Passcode field not available")
         }
-        try passcodeField.tapIfKeyboardNotFocused().typeText(pass)
+        try passcodeField.tapIfKeyboardNotFocused().typeText(passcode)
 
         let doneButton = springboard.keyboards.buttons["Done"].firstMatch
         if doneButton.waitAndTap() {
