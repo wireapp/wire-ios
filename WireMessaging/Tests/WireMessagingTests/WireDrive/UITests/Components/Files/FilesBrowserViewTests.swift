@@ -49,6 +49,7 @@ final class FilesBrowserViewTests: XCTestCase {
     private var deletePublicLink: WireDriveDeletePublicLinkUseCase!
     private var updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase!
     private var updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase!
+    private var getDriveConversationsUseCase: WireDriveGetConversationsUseCase<MockNodesAPIProtocol>!
 
     private let record: Bool? = nil
 
@@ -63,6 +64,9 @@ final class FilesBrowserViewTests: XCTestCase {
         let nodesApi = MockNodesAPIProtocol()
         nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
+        nodesApi.getDriveConversations_MockValue = [.mocked()]
+        
+        getDriveConversationsUseCase = WireDriveGetConversationsUseCase(nodesAPI: nodesApi)
 
         fetchNodesUseCase = WireDriveFetchNodesPageUseCase(
             configuration: .conversationFileView(root: .id(.mockID1)),
@@ -128,6 +132,7 @@ final class FilesBrowserViewTests: XCTestCase {
         renameNodeUseCase = nil
         deleteNodeUseCase = nil
         restoreNodeVersionUseCase = nil
+        getDriveConversationsUseCase = nil
     }
 
     @MainActor
@@ -221,6 +226,7 @@ final class FilesBrowserViewTests: XCTestCase {
                 deletePublicLink: deletePublicLink,
                 updatePublicLinkExpiration: updatePublicLinkExpiration,
                 updatePublicLinkPassword: updatePublicLinkPassword,
+                getDriveConversations: getDriveConversationsUseCase
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetsRepository,

@@ -44,6 +44,7 @@ final class FilesViewTests: XCTestCase {
     private var deletePublicLink: WireDriveDeletePublicLinkUseCase!
     private var updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase!
     private var updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase!
+    private var driveConversationsUseCase: WireDriveGetConversationsUseCase<MockNodesAPIProtocol>!
 
     private let record: Bool? = nil
 
@@ -88,6 +89,13 @@ final class FilesViewTests: XCTestCase {
         getEditingURLUseCase = WireDriveGetEditingURLUseCase(
             editingURLRepository: editingURLRepository
         )
+        
+        nodesApi.getDriveConversations_MockValue = [
+            .mocked(),
+            .mocked()
+        ]
+        
+        driveConversationsUseCase = WireDriveGetConversationsUseCase(nodesAPI: nodesApi)
 
         getPublicLinkData = WireDriveGetPublicLinkDataUseCase(nodesAPI: nodesApi)
         createPublicLink = WireDriveCreatePublicLinkUseCase(nodesAPI: nodesApi)
@@ -110,6 +118,7 @@ final class FilesViewTests: XCTestCase {
         deletePublicLink = nil
         updatePublicLinkExpiration = nil
         updatePublicLinkPassword = nil
+        driveConversationsUseCase = nil
     }
 
     @MainActor
@@ -412,6 +421,7 @@ final class FilesViewTests: XCTestCase {
                 deletePublicLink: deletePublicLink,
                 updatePublicLinkExpiration: updatePublicLinkExpiration,
                 updatePublicLinkPassword: updatePublicLinkPassword,
+                getDriveConversations: driveConversationsUseCase,
             ),
             isCellsStatePending: false,
             localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol(),

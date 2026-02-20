@@ -39,6 +39,7 @@ final class FilesViewModelTests {
         let nodesApi = MockNodesAPIProtocol()
         nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
+        nodesApi.getDriveConversations_MockValue = [.mocked()]
 
         let editingURLRepository = MockWireDriveEditingURLRepositoryProtocol()
         editingURLRepository.getEditorURLId_MockValue = nil
@@ -84,6 +85,7 @@ final class FilesViewModelTests {
                 deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesApi),
                 updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesApi),
                 updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesApi),
+                getDriveConversations: WireDriveGetConversationsUseCase<MockNodesAPIProtocol>(nodesAPI: nodesApi)
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
