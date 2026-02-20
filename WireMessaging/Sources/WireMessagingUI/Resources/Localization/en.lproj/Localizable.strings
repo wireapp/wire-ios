@@ -305,8 +305,8 @@
 
 // MARK: - Filtering
 "conversation.wireCells.filtering.tags" = "Tags";
-"conversation.wireCells.filtering.type" = "Type";
+"conversation.wireCells.filtering.type" = "File type";
 "conversation.wireCells.filtering.conversation" = "Conversation";
-"conversation.wireCells.filtering.owner" = "Owner";
-"conversation.wireCells.filtering.sharedLink" = "Link sharing";
+"conversation.wireCells.filtering.owner" = "Created by";
+"conversation.wireCells.filtering.sharedLink" = "Shared via link";
 "conversation.wireCells.filtering.removeAllFilters" = "Remove all filters";

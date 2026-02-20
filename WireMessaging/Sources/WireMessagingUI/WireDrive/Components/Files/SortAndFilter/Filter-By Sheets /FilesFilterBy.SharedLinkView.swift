@@ -23,6 +23,7 @@ import WireFoundation
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 extension FilesFilterBy {
+    /// This view is currently not used, but probably will be later when the backend capability is expanded
     struct SharedLinkView: View {
         @Environment(\.wireAccentColor) private var wireAccentColor
         @Environment(\.dismiss) private var dismiss

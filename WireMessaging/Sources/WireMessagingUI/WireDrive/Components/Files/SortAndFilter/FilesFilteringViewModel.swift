@@ -70,7 +70,7 @@ final class FilesFilteringViewModel: ObservableObject {
         case types
         case conversations
         case owners
-        case sharedLink
+        case sharedLink // currently not used, but probably will be later when the backend capability is expanded
 
         var id: String {
             rawValue
@@ -126,7 +126,11 @@ final class FilesFilteringViewModel: ObservableObject {
         case .owner:
             sheetNavigation = .owners
         case .sharedLink:
-            sheetNavigation = .sharedLink
+            if filtersSelection.sharedLink == true {
+                filtersSelection.sharedLink = nil
+            } else {
+                filtersSelection.sharedLink = true
+            }
         }
     }
 
@@ -166,7 +170,7 @@ final class FilesFilteringViewModel: ObservableObject {
         case .owner:
             isFilterSelected(filter) ? filtersSelection.owners.count : nil
         case .sharedLink:
-            isFilterSelected(filter) ? 1 : nil
+            nil
         }
 
         return filtersCount.map(String.init)

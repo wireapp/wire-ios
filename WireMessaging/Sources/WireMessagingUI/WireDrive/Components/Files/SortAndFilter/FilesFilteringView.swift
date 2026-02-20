@@ -29,7 +29,8 @@ struct FilesFilteringView: View {
 
     @ScaledMetric var dropDownIconWidth: CGFloat = 8
     @ScaledMetric var dropDownIconHeight: CGFloat = 4
-    
+    @ScaledMetric var xmarkIconSize: CGFloat = 11
+
     private let conversations: Set<WireDriveConversation>
 
     package init(
@@ -120,7 +121,7 @@ struct FilesFilteringView: View {
                     viewModel.filtersSelection.owners = selectedItems
                 }
             )
-        case .sharedLink:
+        case .sharedLink: // currently not used, but probably will be later when the backend capability is expanded
             FilesFilterBy.SharedLinkView(
                 selected: viewModel.filtersSelection.sharedLink,
                 onApply: { selected in
@@ -150,11 +151,8 @@ struct FilesFilteringView: View {
                         in: RoundedRectangle(cornerRadius: 6, style: .continuous)
                     )
             }
-
-            Image(systemName: "arrowtriangle.down.fill")
-                .resizable()
-                .frame(width: dropDownIconWidth, height: dropDownIconHeight)
-                .foregroundStyle(imageColor(for: filter))
+            
+            capsuleTrailingIcon(for: filter)
         }
         .fontWeight(.semibold)
         .padding(8)
@@ -168,6 +166,23 @@ struct FilesFilteringView: View {
             )
         }
         .padding(.vertical, 1)
+    }
+    
+    @ViewBuilder
+    private func capsuleTrailingIcon(for filter: FilesFilteringViewModel.Filtering) -> some View {
+        if filter == .sharedLink {
+            if viewModel.isFilterSelected(filter) {
+                Image(systemName: "xmark")
+                    .resizable()
+                    .frame(width: xmarkIconSize, height: xmarkIconSize)
+                    .foregroundStyle(imageColor(for: filter))
+            }
+        } else {
+            Image(systemName: "arrowtriangle.down.fill")
+                .resizable()
+                .frame(width: dropDownIconWidth, height: dropDownIconHeight)
+                .foregroundStyle(imageColor(for: filter))
+        }
     }
 
     // MARK: - Helpers
