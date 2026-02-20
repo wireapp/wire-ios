@@ -53,7 +53,6 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
 
     func createBackup(
         accountIdentifier: UUID,
-        earMigrator: EARMigratorProtocol? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws -> URL {
@@ -159,7 +158,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
     }
 
     @MainActor
-    func testThatItDisablesEncryptionAtRest_WhenEARIsEnableAndMigratorIsValid() async throws {
+    func testThatItDisablesEncryptionAtRest_WhenEARIsEnabled() async throws {
         // given
         let uuid = UUID()
         let directory = try await createStorageStackAndWaitForCompletion(userID: uuid)
@@ -167,7 +166,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         directory.viewContext.saveOrRollback()
 
         // when
-        let backup = try await createBackup(accountIdentifier: uuid, earMigrator: earMigrator)
+        let backup = try await createBackup(accountIdentifier: uuid)
         directory.viewContext.saveOrRollback()
 
         // then
@@ -179,30 +178,6 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         context.persistentStoreCoordinator = coordinator
         XCTAssertFalse(context.encryptMessagesAtRest)
-    }
-
-    @MainActor
-    func testThatItFailsWhenEARIsEnabledAndMigratorIsNil() async throws {
-        // given
-        let uuid = UUID()
-        let directory = try await createStorageStackAndWaitForCompletion(userID: uuid)
-        directory.viewContext.encryptMessagesAtRest = true
-        directory.viewContext.saveOrRollback()
-
-        await XCTAssertThrowsErrorAsync {
-            // when
-            try await createBackup(accountIdentifier: uuid, earMigrator: nil)
-        } errorHandler: { error in
-            switch error {
-            case CoreDataStack.BackupError.failedToWrite(
-                CoreDataStack.BackupError.missingEARMigrator
-            ):
-                // then
-                break
-            default:
-                XCTFail("unexpected error: \(error)")
-            }
-        }
     }
 
     @MainActor

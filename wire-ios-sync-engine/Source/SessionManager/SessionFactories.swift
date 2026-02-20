@@ -117,6 +117,18 @@ open class AuthenticatedSessionFactory {
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
             localDomain: BackendInfo.domain
         )
+        let contextStorage = LAContextStorage()
+        let earService = await EARService(
+            accountID: coreDataStack.account.userIdentifier,
+            databaseContexts: [
+                coreDataStack.viewContext,
+                coreDataStack.syncContext
+            ],
+            coreDataStack: coreDataStack,
+            canPerformKeyMigration: true,
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
+        )
 
         var userSessionBuilder = ZMUserSessionBuilder()
         await userSessionBuilder.withAllDependencies(
@@ -128,8 +140,8 @@ open class AuthenticatedSessionFactory {
             coreDataStack: coreDataStack,
             coreCryptoProvider: coreCryptoProvider,
             configuration: configuration,
-            contextStorage: LAContextStorage(),
-            earService: nil,
+            contextStorage: contextStorage,
+            earService: earService,
             flowManager: flowManager,
             mediaManager: mediaManager,
             mlsService: nil,

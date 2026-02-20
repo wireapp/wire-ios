@@ -78,12 +78,6 @@ public protocol EARMessageEncryptionServiceProtocol {
 
     /// Encrypts data using ChaCha20-Poly1305 AEAD.
     ///
-    /// The encryption uses:
-    /// - **Key**: The database key (must be set via `setDatabaseKey`)
-    /// - **Message**: The `data` parameter (plaintext to encrypt)
-    /// - **AAD**: The `contextData` parameter (authenticated but not encrypted)
-    /// - **Nonce**: Randomly generated for each encryption
-    ///
     /// - Parameters:
     ///   - data: The plaintext data to encrypt
     ///   - contextData: Additional authenticated data (typically self-client ID)
@@ -97,18 +91,6 @@ public protocol EARMessageEncryptionServiceProtocol {
     ) throws -> (data: Data, nonce: Data)
 
     /// Decrypts data using ChaCha20-Poly1305 AEAD.
-    ///
-    /// The decryption uses:
-    /// - **Key**: The database key (must be set via `setDatabaseKey`)
-    /// - **Ciphertext**: The `data` parameter
-    /// - **AAD**: The `contextData` parameter (must match encryption context)
-    /// - **Nonce**: The nonce generated during encryption
-    ///
-    /// Decryption will fail if:
-    /// - The database key is incorrect or missing
-    /// - The nonce is incorrect
-    /// - The context data doesn't match what was used during encryption
-    /// - The ciphertext has been tampered with (authentication tag mismatch)
     ///
     /// - Parameters:
     ///   - data: The encrypted ciphertext to decrypt
@@ -179,13 +161,10 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
     // have the self client at that time.
     public func getContextData(from context: NSManagedObjectContext) throws -> Data {
         lock.lock()
-        if let cached = cachedContextData {
-            lock.unlock()
-            return cached
-        }
+        defer { lock.unlock() }
 
-        defer {
-            lock.unlock()
+        if let cached = cachedContextData {
+            return cached
         }
 
         let contextData = try context.earContextData()
@@ -214,12 +193,12 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
         contextData: Data
     ) throws -> (data: Data, nonce: Data) {
         lock.lock()
+        defer { lock.unlock() }
+
         guard let key = databaseKey else {
-            lock.unlock()
             WireLogger.ear.error("failed to encrypt data for EAR: missing database key", attributes: .safePublic)
             throw EncryptionError.missingDatabaseKey
         }
-        lock.unlock()
 
         WireLogger.ear.debug("encrypting data for EAR")
 
@@ -245,12 +224,12 @@ public final class EARMessageEncryptionService: EARMessageEncryptionServiceProto
         contextData: Data
     ) throws -> Data {
         lock.lock()
+        defer { lock.unlock() }
+
         guard let key = databaseKey else {
-            lock.unlock()
             WireLogger.ear.error("failed to decrypt data for EAR: missing database key", attributes: .safePublic)
             throw EncryptionError.missingDatabaseKey
         }
-        lock.unlock()
 
         WireLogger.ear.debug("decrypting data for EAR")
 

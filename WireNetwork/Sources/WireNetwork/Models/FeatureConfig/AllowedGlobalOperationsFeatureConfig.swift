@@ -18,7 +18,7 @@
 
 /// A configuration for the *Reset MLS Conversations* feature.
 
-public struct AllowedGlobalOperationsFeatureConfig: Equatable, Sendable {
+public struct AllowedGlobalOperationsFeatureConfig: Equatable, Sendable, Hashable {
 
     /// The feature's status.
 

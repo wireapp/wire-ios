@@ -57,7 +57,7 @@ extension Sequence where Element: NSManagedObject {
 public extension NSManagedObjectContext {
 
     var isLocked: Bool {
-        earMessageEncryptionService?.isLocked ?? false
+        earMessageEncryptionService?.isLocked ?? true
     }
 
     /// Whether the encryption at rest feature is enabled.
@@ -95,6 +95,8 @@ public extension NSManagedObjectContext {
 
     func getEarMessageEncryptionService() throws -> EARMessageEncryptionServiceProtocol {
         guard let service = earMessageEncryptionService else {
+            WireLogger.ear.error("EAR message encryption service must be set on the context")
+            assertionFailure("EAR message encryption service must be set on the context")
             throw EARError.missingMessageEncryptionService
         }
 

@@ -148,9 +148,7 @@ class EARServiceTestsBase: XCTestCase {
     /// Creates a test conversation in the specified context
     @discardableResult
     func createConversation(
-        in moc: NSManagedObjectContext,
-        with participants: [ZMUser] = [],
-        role: Role? = nil
+        in moc: NSManagedObjectContext
     ) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: moc)
         conversation.remoteIdentifier = UUID()

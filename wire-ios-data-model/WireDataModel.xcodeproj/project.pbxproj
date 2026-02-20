@@ -556,7 +556,6 @@
 		EEAAD760252C713E00E6A44E /* ClassIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAAD75F252C713E00E6A44E /* ClassIdentifier.swift */; };
 		EEB121AE2A175C9500E74D39 /* LastEventIDRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB121AD2A175C9500E74D39 /* LastEventIDRepositoryTests.swift */; };
 		EEB5DE112837BD52009B4741 /* store2-101-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EEB5DE102837BD52009B4741 /* store2-101-0.wiredatabase */; };
-		EEB930B52ABD5A9B00FB35B2 /* FetchSupportedProtocolsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB930B42ABD5A9B00FB35B2 /* FetchSupportedProtocolsAction.swift */; };
 		EEBF69ED28A2724800195771 /* ZMConversationTests+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBF69EC28A2724800195771 /* ZMConversationTests+MLS.swift */; };
 		EEC737B42D01AECC003C0FC9 /* CoreCryptoLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC737B32D01AECC003C0FC9 /* CoreCryptoLogger.swift */; };
 		EEC794F42A384421008E1A3B /* MLSDecryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC794F32A384421008E1A3B /* MLSDecryptionService.swift */; };
@@ -1292,7 +1291,6 @@
 		EEAAD75F252C713E00E6A44E /* ClassIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassIdentifier.swift; sourceTree = "<group>"; };
 		EEB121AD2A175C9500E74D39 /* LastEventIDRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastEventIDRepositoryTests.swift; sourceTree = "<group>"; };
 		EEB5DE102837BD52009B4741 /* store2-101-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-101-0.wiredatabase"; sourceTree = "<group>"; };
-		EEB930B42ABD5A9B00FB35B2 /* FetchSupportedProtocolsAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchSupportedProtocolsAction.swift; sourceTree = "<group>"; };
 		EEBF69EC28A2724800195771 /* ZMConversationTests+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+MLS.swift"; sourceTree = "<group>"; };
 		EEC737B32D01AECC003C0FC9 /* CoreCryptoLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCryptoLogger.swift; sourceTree = "<group>"; };
 		EEC794F32A384421008E1A3B /* MLSDecryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSDecryptionService.swift; sourceTree = "<group>"; };
@@ -1554,6 +1552,7 @@
 		59B705A92EAA611F0075ACE1 /* Migration */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Migration; sourceTree = "<group>"; };
 		59B74DA92EAA1D230075ACE1 /* 130-131 */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "130-131"; sourceTree = "<group>"; };
 		59D2642C2CF7249D0005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+		88A9FB112F44C8F30092E1C9 /* Protocols */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Protocols; sourceTree = "<group>"; };
 		CB5273202D9C0FA000CF8099 /* Channels */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Channels; sourceTree = "<group>"; };
 		CB9615DC2D47B0E10016389E /* EntityValidation */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = EntityValidation; sourceTree = "<group>"; };
 		CBAE486D2DC5140300C62C4E /* WireCellsMessageAttachmentDraftEntity */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireCellsMessageAttachmentDraftEntity; sourceTree = "<group>"; };
@@ -1955,7 +1954,6 @@
 				6308F8A32A273C680072A177 /* FetchMLSSubconversationGroupInfoAction.swift */,
 				EE0DE5032A24D2A10029746C /* DeleteSubgroupAction.swift */,
 				EEE95CD42A432FA100E136CB /* LeaveSubconversationAction.swift */,
-				EEB930B42ABD5A9B00FB35B2 /* FetchSupportedProtocolsAction.swift */,
 				EE19CE1E2AEBE4CB00CB8641 /* SyncMLSOneToOneConversationAction.swift */,
 			);
 			path = Actions;
@@ -2080,6 +2078,7 @@
 		E6E504302BC542C5004948E7 /* EAR */ = {
 			isa = PBXGroup;
 			children = (
+				88A9FB112F44C8F30092E1C9 /* Protocols */,
 				88A80B642F3381DF00F7E372 /* EARMigrator.swift */,
 				88A80B622F320E7500F7E372 /* EARMessageEncryptionService.swift */,
 				E6E504222BC542C5004948E7 /* BaseEARKeyDescription.swift */,
@@ -3217,6 +3216,7 @@
 				596B91912EA7956C0010C93D /* UserClient */,
 				59AE1CA22E9D3A1900AF053A /* FeatureConfig */,
 				59B74DA92EAA1D230075ACE1 /* 130-131 */,
+				88A9FB112F44C8F30092E1C9 /* Protocols */,
 			);
 			name = WireDataModel;
 			packageProductDependencies = (
@@ -3570,7 +3570,6 @@
 				F1FDF2F721B152BC00E037A1 /* GenericMessage+Helper.swift in Sources */,
 				16030DC521AEE25500F8032E /* ZMOTRMessage+Confirmations.swift in Sources */,
 				D5FA30C52063DC2D00716618 /* BackupMetadata.swift in Sources */,
-				EEB930B52ABD5A9B00FB35B2 /* FetchSupportedProtocolsAction.swift in Sources */,
 				BF8361DA1F0A3C41009AE5AC /* NSSecureCoding+Swift.swift in Sources */,
 				16CDEBFB2209D13B00E74A41 /* ZMMessage+Quotes.swift in Sources */,
 				EE997A1425062295008336D2 /* Logging.swift in Sources */,
@@ -4183,7 +4182,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Wire Swiss GmbH. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Wire Swiss GmbH. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4262,7 +4261,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Wire Swiss GmbH. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Wire Swiss GmbH. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
