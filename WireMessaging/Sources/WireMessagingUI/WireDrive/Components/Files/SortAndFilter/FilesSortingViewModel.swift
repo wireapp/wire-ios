@@ -119,11 +119,6 @@ final class FilesSortingViewModel: ObservableObject {
             Strings.title
         }
     }
-    
-    var menuIcon: String {
-        sortingSelection.sortingOrder?.iconName ?? "arrow.left.arrow.right"
-    }
-
 }
 
 extension FilesSortingViewModel.SortingSelection {

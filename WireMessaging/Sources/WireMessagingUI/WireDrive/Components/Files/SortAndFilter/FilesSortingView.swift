@@ -23,6 +23,11 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells.Sorting
 
 struct FilesSortingView: View {
     @StateObject package var viewModel: FilesSortingViewModel
+    
+    @ScaledMetric private var defaultSortMenuIconWidth: CGFloat = 12
+    @ScaledMetric private var defaultSortMenuIconHeight: CGFloat = 10
+    @ScaledMetric private var selectedSortMenuIconWidth: CGFloat = 9
+    @ScaledMetric private var selectedSortMenuIconHeight: CGFloat = 11
 
     package init(
         viewModel: @autoclosure @escaping () -> FilesSortingViewModel,
@@ -33,7 +38,6 @@ struct FilesSortingView: View {
     var body: some View {
         HStack {
             Menu {
-
                 Text(Strings.title)
                     .font(for: .h5)
                     .foregroundStyle(.secondary)
@@ -41,12 +45,14 @@ struct FilesSortingView: View {
                 Divider()
 
                 ForEach(FilesSortingViewModel.SortingKey.allCases, id: \.self) { sortingKey in
+                    let isSelected = viewModel.sortingSelection.sortingKey == sortingKey
+                        
                     Button {
                         viewModel.select(sortingKey: sortingKey)
                     } label: {
                         Label(
                             sortingKey.title,
-                            systemImage: viewModel.sortingSelection.sortingKey == sortingKey ? "checkmark" : ""
+                            systemImage: selectionIconName(isSelected: isSelected)
                         )
                     }
                 }
@@ -54,12 +60,14 @@ struct FilesSortingView: View {
                 Divider()
 
                 ForEach(viewModel.sortingOrders, id: \.self) { sortingOrder in
+                    let isSelected = viewModel.sortingSelection.sortingOrder == sortingOrder
+                    
                     Button {
                         viewModel.select(sortingOrder: sortingOrder)
                     } label: {
                         Label(
                             sortingOrder.title(forKey: viewModel.sortingSelection.sortingKey ?? .date),
-                            systemImage: viewModel.sortingSelection.sortingOrder == sortingOrder ? "checkmark" : ""
+                            systemImage: selectionIconName(isSelected: isSelected)
                         )
                     }
                 }
@@ -70,12 +78,10 @@ struct FilesSortingView: View {
                         .foregroundStyle(.primary)
                         .font(for: .h5)
 
-                    Image(systemName: viewModel.menuIcon)
-                        .resizable()
-                        .frame(width: 9, height: 11)
-                }.frame(minWidth: 120, alignment: .leading)
-
-            }.foregroundStyle(.primary)
+                    menuIcon()
+                }
+            }
+            .foregroundStyle(.primary)
 
             Spacer()
 
@@ -85,7 +91,25 @@ struct FilesSortingView: View {
                     .fontWeight(.semibold)
                     .foregroundStyle(ColorTheme.Base.secondaryText.color)
             }
-        }.padding(.horizontal)
+        }
+        .padding(.horizontal)
+    }
+    
+    @ViewBuilder
+    private func menuIcon() -> some View {
+        if let name = viewModel.sortingSelection.sortingOrder?.iconName {
+            Image(systemName: name)
+                .resizable()
+                .frame(width: selectedSortMenuIconWidth, height: selectedSortMenuIconHeight)
+        } else {
+            Image(systemName: "arrow.up.arrow.down")
+                .resizable()
+                .frame(width: defaultSortMenuIconWidth, height: defaultSortMenuIconHeight)
+        }
+    }
+    
+    private func selectionIconName(isSelected: Bool) -> String {
+        isSelected ? "checkmark" : ""
     }
 }
 
