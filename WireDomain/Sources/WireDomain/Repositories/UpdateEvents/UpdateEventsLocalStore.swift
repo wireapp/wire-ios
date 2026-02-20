@@ -297,8 +297,9 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
         var data = try updateEventCoder.encode(eventEnvelope)
 
+        let isBackgroundAccessible = storedEventEnvelope.isBackgroundAccessible
+        
         if let publicKeys {
-            let isBackgroundAccessible = eventEnvelope.isBackgroundAccessible
             let key = isBackgroundAccessible ? publicKeys.secondary : publicKeys.primary
 
             WireLogger.ear.debug("encrypting event. backgroundAccessible: \(isBackgroundAccessible)")
@@ -309,13 +310,11 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
             )
 
             storedEventEnvelope.isEncrypted = true
-            storedEventEnvelope.isBackgroundAccessible = isBackgroundAccessible
         } else {
-            // Explicitly set flags for unencrypted events
             storedEventEnvelope.isEncrypted = false
-            storedEventEnvelope.isBackgroundAccessible = true
         }
 
+        storedEventEnvelope.isBackgroundAccessible = isBackgroundAccessible
         storedEventEnvelope.data = data
         storedEventEnvelope.sortIndex = index
     }
