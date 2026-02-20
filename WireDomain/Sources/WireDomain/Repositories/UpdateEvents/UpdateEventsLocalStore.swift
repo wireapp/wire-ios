@@ -165,7 +165,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
                         guard let privateKeys else {
                             WireLogger.ear.error(
                                 "failed to decrypt stored event: no private keys",
-                                attributes: .safePublic
+                                attributes: .safePublic, .incrementalSync
                             )
                             return nil
                         }
@@ -177,7 +177,10 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
                             data: data,
                             privateKey: key
                         ) else {
-                            WireLogger.ear.error("failed to decrypt stored event", attributes: .safePublic)
+                            WireLogger.ear.error(
+                                "failed to decrypt stored event",
+                                attributes: .safePublic, .incrementalSync
+                            )
                             return nil
                         }
                         data = decryptedData
@@ -301,7 +304,10 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
                 storedEventEnvelope.isEncrypted = true
                 storedEventEnvelope.isBackgroundAccessible = isBackgroundAccessible
             } else {
-                WireLogger.ear.error("failed to encrypt event", attributes: .safePublic)
+                WireLogger.ear.error(
+                    "failed to encrypt event",
+                    attributes: .safePublic, .incrementalSync + [.eventEnvelopeID: eventEnvelope.id]
+                )
                 throw Error.failedToEncryptEventData
             }
         } else {
