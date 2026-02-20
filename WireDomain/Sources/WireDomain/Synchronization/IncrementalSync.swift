@@ -301,6 +301,10 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         publicKeys: EARPublicKeys?,
         backgroundAccessibleOnly: Bool
     ) async {
+        // If we're processing events in the background, and the event is not accessible: skip it.
+        //
+        // If we don't skip it, we may end up processing events that require access to the database key (e.g: messages).
+        // But the database key is only accessible once the app is unlocked.
         guard !backgroundAccessibleOnly || (backgroundAccessibleOnly && envelope.isBackgroundAccessible) else {
             logger.info(
                 "skipping processing of live event envelope: not accessible in the background",
