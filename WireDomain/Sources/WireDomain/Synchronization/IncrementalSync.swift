@@ -432,18 +432,22 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 }
 
 extension IncrementalSyncV1: SyncMigratorProtocol {
+    
+    // TODO: [WPB-23558] Support EAR in incremental sync v2
     public func migrateFromIncrementalSyncV1() async throws {
+        guard !earService.isLocked else {
+            throw Failure.databaseLocked
+        }
+        
         logger.debug("pulling pending update events", attributes: .incrementalSyncV2)
         syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
         try await updateEventsSync.pull(publicKeys: try earService.fetchPublicKeys())
 
         logger.debug("processing stored update events", attributes: .incrementalSyncV2)
-        syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
-        let isLocked = earService.isLocked
-        let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !isLocked)
+        let privateKeys = try earService.fetchPrivateKeys(includingPrimary: true)
         _ = try await processStoredEvents(
             privateKeys: privateKeys,
-            backgroundAccessibleOnly: isLocked
+            backgroundAccessibleOnly: false
         )
     }
 }
