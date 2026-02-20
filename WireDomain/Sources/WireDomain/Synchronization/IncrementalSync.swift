@@ -172,8 +172,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         await processLiveEvents(
                             liveEventStream: liveEventStream,
                             processedEnvelopeIDs: processedEnvelopeIDs,
-                            publicKeys: publicKeys,
-                            backgroundAccessibleOnly: backgroundAccessibleOnly
+                            publicKeys: publicKeys
                         )
                     }
                 } catch {
@@ -198,8 +197,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private func processLiveEvents(
         liveEventStream: AsyncThrowingStream<UpdateEventEnvelope, any Error>,
         processedEnvelopeIDs: Set<UUID>,
-        publicKeys: EARPublicKeys?,
-        backgroundAccessibleOnly: Bool
+        publicKeys: EARPublicKeys?
     ) async {
         do {
             for try await var envelope in liveEventStream {
@@ -270,8 +268,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 await processLiveEventEnvelope(
                     envelope: envelope,
                     index: index,
-                    publicKeys: publicKeys,
-                    backgroundAccessibleOnly: backgroundAccessibleOnly
+                    publicKeys: publicKeys
                 )
 
                 do {
@@ -291,18 +288,17 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private func processLiveEventEnvelope(
         envelope: UpdateEventEnvelope,
         index: Int64,
-        publicKeys: EARPublicKeys?,
-        backgroundAccessibleOnly: Bool
+        publicKeys: EARPublicKeys?
     ) async {
         // If we're processing events in the background, and the event is not accessible: skip it.
         //
         // If we don't skip it, we may end up processing events that require access to the database key (e.g: messages).
         // But the database key is only accessible once the app is unlocked.
-        guard !backgroundAccessibleOnly || (backgroundAccessibleOnly && envelope.isBackgroundAccessible) else {
+        guard !earService.isLocked || envelope.isBackgroundAccessible else {
             logger.info(
                 "skipping processing of live event envelope: not accessible in the background",
                 attributes: .safePublic,
-                .incrementalSyncV2 + [.eventEnvelopeID: envelope.id] // Can it be safePublic?
+                .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
             )
             return
         }
