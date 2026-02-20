@@ -44,8 +44,32 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.conversationCell.rawValue]
     }
 
+    var textFilteredByFavourites: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.textFilteredByFavourites.rawValue]
+    }
+
+    var textFilteredByOneOnOne: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.textFilteredByOneOnOne.rawValue]
+    }
+
     var blockButtonOnMoreOptions: XCUIElement {
         app.buttons[Locators.ConversationsPage.blockOptionOnContextMenu.rawValue]
+    }
+
+    var favouriteButtonOnMoreOptions: XCUIElement {
+        app.buttons[Locators.ConversationsPage.addToFavourite.rawValue]
+    }
+
+    var filterByFavourite: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterByFavourites.rawValue]
+    }
+
+    var filterByOneOnOneConversation: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterByOneOnOneConversation.rawValue]
+    }
+
+    var filterConversationsButton: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterConversations.rawValue]
     }
 
     var blockButtonOnBottomSheet: XCUIElement {
@@ -142,5 +166,22 @@ class ConversationsPage: PageModel {
 
     func letTheSyncFinish() throws {
         loadBar.waitToDisappear()
+    }
+
+    func markConversationAsFavourite() throws -> ConversationsPage {
+        favouriteButtonOnMoreOptions.tap()
+        return self
+    }
+
+    func filterConversationByFavourite() throws -> ConversationsPage {
+        filterConversationsButton.tap()
+        filterByFavourite.tap()
+        return self
+    }
+
+    func filterConversationByOneOnOne() throws -> ConversationsPage {
+        filterConversationsButton.tap()
+        filterByOneOnOneConversation.tap()
+        return self
     }
 }

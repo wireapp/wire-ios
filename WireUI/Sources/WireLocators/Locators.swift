@@ -68,6 +68,12 @@ public enum Locators {
         case accountProfileImageView
         case status
         case loadBar
+        case addToFavourite = "Add to Favorites"
+        case filterConversations = "Filter conversations"
+        case filterByFavourites = "Show all favorite conversations"
+        case filterByOneOnOneConversation = "Show all one on one conversations"
+        case textFilteredByFavourites = "Filtered by Favorites"
+        case textFilteredByOneOnOne = "Filtered by 1:1 Conversations"
     }
 
     public enum SettingsPage: String {
