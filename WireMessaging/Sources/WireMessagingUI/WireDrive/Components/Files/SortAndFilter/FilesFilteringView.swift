@@ -55,11 +55,15 @@ struct FilesFilteringView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 ForEach(viewModel.availableFilters, id: \.self) { filter in
+                    let isEnabled = isFilterCategoryButtonEnabled(for: filter)
+                    
                     Button {
                         viewModel.select(filter: filter)
                     } label: {
                         capsule(for: filter)
+                            .opacity(isEnabled ? 1 : 0.5)
                     }
+                    .disabled(!isEnabled)
                 }
 
                 if shouldShowRemoveFilters {
@@ -222,31 +226,39 @@ struct FilesFilteringView: View {
     private var conversationsParticipants: Set<WireDriveConversation.Participant> {
         Set(conversations.flatMap(\.participants))
     }
+
+    private func isFilterCategoryButtonEnabled(for filter: FilesFilteringViewModel.Filtering) -> Bool {
+        !viewModel.hasFiltersSelected || viewModel.isFilterSelected(filter)
+    }
 }
 
 #Preview {
-    FilesFilteringView(
-        useCases: .init(
-            fetchTagsUseCase: WireDriveGetTagSuggestionsUseCase(
-                nodesAPI: {
-                    let mock = MockNodesAPIProtocol()
-                    mock.getAllTags_MockMethod = {
-                        mockTags
-                    }
-                    mock.updateTagsNodeIDTags_MockMethod = { _, _ in }
-                    return mock
-                }()
-            )
-        ),
-        filtersSelection: .init(
-            tags: [],
-            types: [.audio],
-            conversations: [],
-            owners: Set([WireDriveConversation.Participant].mocked().dropFirst()),
-            sharedLink: true
-        ),
-        isBrowsing: true,
-        conversations: Set([WireDriveConversation].mocked()),
-        onUpdate: { _ in }
-    )
+    VStack {
+        FilesFilteringView(
+            useCases: .init(
+                fetchTagsUseCase: WireDriveGetTagSuggestionsUseCase(
+                    nodesAPI: {
+                        let mock = MockNodesAPIProtocol()
+                        mock.getAllTags_MockMethod = {
+                            mockTags
+                        }
+                        mock.updateTagsNodeIDTags_MockMethod = { _, _ in }
+                        return mock
+                    }()
+                )
+            ),
+            filtersSelection: .init(
+                tags: [],
+                types: [.audio],
+                conversations: [],
+                owners: Set([WireDriveConversation.Participant].mocked().dropFirst()),
+                sharedLink: true
+            ),
+            isBrowsing: true,
+            conversations: Set([WireDriveConversation].mocked()),
+            onUpdate: { _ in }
+        )
+        
+        Spacer()
+    }
 }
