@@ -246,6 +246,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                     syncStateSubject.send(.suspended)
                     // swallow error from retrier and start resume
                     resume()
+                } catch IncrementalSync.Failure.databaseLocked {
+                    syncStateSubject.send(.suspended)
+                    // ignore error and don't retry, the sync will be resumed once the app is unlocked
                 } catch {
                     WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
                     syncStateSubject.send(.suspended)
