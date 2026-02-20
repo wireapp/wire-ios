@@ -160,7 +160,17 @@ public final class Account: NSObject, Codable, @unchecked Sendable {
     }
 
     public override var debugDescription: String {
-        "<Account>:\n\tname: \(userName)\n\tid: \(userIdentifier)\n\tcredentials:\n\t\(String(describing: loginCredentials?.debugDescription))\n\tteam: \(String(describing: teamName))\n\timage: \(String(describing: imageData?.count))\n\tteamImageData: \(String(describing: teamImageData?.count))\n"
+        """
+        <Account>:
+        \tname: \(userName)
+        \tid: \(userIdentifier)
+        \tcredentials:
+        \t\(String(describing: loginCredentials?.debugDescription))
+        \tteam: \(String(describing: teamName))
+        \timage: \(String(describing: imageData?.count))
+        \tteamImageData: \(String(describing: teamImageData?.count))
+
+        """
     }
 
 }
