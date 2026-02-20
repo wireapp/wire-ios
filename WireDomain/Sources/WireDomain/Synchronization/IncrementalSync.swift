@@ -77,28 +77,21 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     }
 
     public func perform() async throws -> Token {
-        try await perform(
-            appState: await UIApplication.shared.applicationState
-        )
-    }
-
-    func perform(appState: UIApplication.State) async throws -> Token {
-        let inBackground = appState == .background
-
         // Abort sync if we're in foreground and database is locked
-        if !inBackground, earService.isLocked {
+        if earService.isLocked {
             logger.info(
                 "not starting incremental sync: database is locked",
-                attributes: .incrementalSyncV2,
-                .safePublic
+                attributes: .incrementalSyncV2, .safePublic
             )
             throw Failure.databaseLocked
         }
-
-        // Process only background events is EAR is enabled and we're in the background
-        let backgroundAccessibleOnly = earService.isEAREnabled && inBackground
         
-        return try await internalPerform(backgroundAccessibleOnly: backgroundAccessibleOnly)
+        return try await internalPerform(backgroundAccessibleOnly: false)
+    }
+    
+    public func performInBackgroundForCallingEvents() async throws -> Token {
+        // if EAR is enabled, we'll process only the calling events (they are marked as `backgroundAccessible`)
+        return try await internalPerform(backgroundAccessibleOnly: earService.isEAREnabled)
     }
 
     private func internalPerform(backgroundAccessibleOnly: Bool) async throws -> Token {

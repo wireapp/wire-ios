@@ -1318,13 +1318,13 @@ extension ZMUserSession: SyncAgentDelegate {
         }
     }
 
-    func processPendingCallEvents() async {
+    func processPendingCallEvents(only: Bool) async {
         WireLogger.sync.debug(
             "process pending call events",
             attributes: .incrementalSync
         )
 
-        syncAgent?.resume()
+        syncAgent?.resume(forCallEventsOnly: only)
     }
 
     func notifyAuthenticationInvalidated(_ error: Error) {

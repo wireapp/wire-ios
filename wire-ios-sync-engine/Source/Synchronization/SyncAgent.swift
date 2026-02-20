@@ -104,13 +104,15 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     // MARK: - API
 
     /// Trigger the appropriate sync depending in the local state.
-    ///
+    /// 
     /// If no last event id is known, then the initial sync will be performed,
     /// otherwise the incremental sync will be performed.
-    ///
+    /// 
     /// This method logs any errors and does not wait for the sync to finish.
+    ///
+    /// - Parameter forCallEventsOnly: if the sync should be resumed only for calling events
 
-    func resume() {
+    func resume(forCallEventsOnly: Bool = false) {
         syncStateSubject.send(.idle)
 
         ongoingSyncTask = Task {
@@ -119,7 +121,11 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
                 // cancel the task (not keeping any file lock in suspend mode)
                 try await withExpiringActivity(reason: "resuming sync") { [weak self] in
-                    try await self?.performSync()
+                    if forCallEventsOnly {
+                        try await self?.performIncrementalSyncForCallingEvents()
+                    } else {
+                        try await self?.performSync()
+                    }
                 }
             } catch is CancellationError {
                 // ignore error
@@ -257,7 +263,15 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             }
         }
     }
-
+    
+    private func performIncrementalSyncForCallingEvents() async throws {
+        try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
+            guard let self else { return }
+            incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
+                .performInBackgroundForCallingEvents()
+        }
+    }
+    
     private func performInitialSyncV2() async throws {
         try await initialSyncTaskManager.performIfNeeded {
             let retrier = BackoffRetrier()
