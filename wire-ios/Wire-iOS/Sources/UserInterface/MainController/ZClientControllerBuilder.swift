@@ -157,6 +157,7 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                             .init(
                                 handle: item.handle ?? "-",
                                 displayName: item.name ?? "-",
+                                isSelfUser: item.isSelfUser,
                                 iconData: WireDriveConversation.Participant.IconData(
                                     initials: item.initials ?? "",
                                     color: item.accentColor,

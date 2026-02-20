@@ -51,6 +51,7 @@ public extension WireDriveConversation {
     struct Participant: Sendable, Hashable, Identifiable {
         public let handle: String
         public let displayName: String
+        public let isSelfUser: Bool
 
         public struct IconData: Sendable, Hashable {
             public let initials: String
@@ -66,8 +67,9 @@ public extension WireDriveConversation {
 
         public let iconData: IconData?
 
-        public init(handle: String, displayName: String, iconData: IconData? = nil) {
+        public init(handle: String, displayName: String, isSelfUser: Bool, iconData: IconData? = nil) {
             self.handle = handle
+            self.isSelfUser = isSelfUser
             self.displayName = displayName
             self.iconData = iconData
         }
@@ -97,9 +99,9 @@ public extension Collection<WireDriveConversation> {
 public extension Collection<WireDriveConversation.Participant> {
     static func mocked() -> [Element] {
         [
-            .init(handle: "waterwhite", displayName: "Heisenberg"),
-            .init(handle: "jessepinkman", displayName: "The Cook"),
-            .init(handle: "tucosalamanca", displayName: "Tuco")
+            .init(handle: "waterwhite", displayName: "Heisenberg", isSelfUser: false),
+            .init(handle: "jessepinkman", displayName: "The Cook", isSelfUser: false),
+            .init(handle: "tucosalamanca", displayName: "Tuco", isSelfUser: false)
         ]
     }
 }

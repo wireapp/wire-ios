@@ -23,4 +23,5 @@ package enum WireDriveNodesMetaFilter: Equatable, Hashable, Sendable {
     case types(Set<WireDriveFileType>)
     case conversations(Set<WireDriveConversation>)
     case owners(Set<WireDriveConversation.Participant>)
+    case sharedByMe(handle: String)
 }

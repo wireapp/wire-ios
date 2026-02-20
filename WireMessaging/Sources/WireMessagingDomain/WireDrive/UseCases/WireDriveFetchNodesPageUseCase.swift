@@ -46,7 +46,6 @@ package struct WireDriveFetchNodesPageUseCase: Sendable {
     package func invoke(
         searchTerm: String?,
         metafilter: Set<WireDriveNodesMetaFilter> = [],
-        sharedByMe: Bool? = nil,
         sortField: String? = nil,
         sortDirDesc: Bool? = nil,
         offset: Int
@@ -54,7 +53,6 @@ package struct WireDriveFetchNodesPageUseCase: Sendable {
         let request = WireDriveGetNodesRequest(
             searchTerm: searchTerm,
             metafilter: metafilter,
-            sharedByMe: sharedByMe,
             sortField: sortField,
             sortDirDesc: sortDirDesc,
             limit: 30,

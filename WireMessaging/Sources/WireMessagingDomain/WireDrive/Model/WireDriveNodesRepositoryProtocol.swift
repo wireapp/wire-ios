@@ -123,7 +123,7 @@ package struct WireDriveGetNodesRequest: Equatable, Sendable {
     /// An optional search term to filter nodes by name.
     package let searchTerm: String?
 
-    /// Filter nodes by file types, conversations, owners or tags.
+    /// Filter nodes by file types, conversations, owners, tags or publicly shared files.
     package let metafilter: Set<WireDriveNodesMetaFilter>
 
     /// Sort nodes by the specified value (name, owner, date or size)
@@ -131,9 +131,6 @@ package struct WireDriveGetNodesRequest: Equatable, Sendable {
 
     /// Whether the filtering should be ascending or descending (false = ascending, true = descending)
     package let sortDirDesc: Bool?
-    
-    /// Whether the filtering should only show files that have been shared publicly by me.
-    package let sharedByMe: Bool?
 
     /// The maximum number of nodes to return.
     package let limit: Int
@@ -147,7 +144,6 @@ package struct WireDriveGetNodesRequest: Equatable, Sendable {
     package init(
         searchTerm: String?,
         metafilter: Set<WireDriveNodesMetaFilter> = [],
-        sharedByMe: Bool? = nil,
         sortField: String? = nil,
         sortDirDesc: Bool? = nil,
         limit: Int,
@@ -156,7 +152,6 @@ package struct WireDriveGetNodesRequest: Equatable, Sendable {
     ) {
         self.searchTerm = searchTerm
         self.metafilter = metafilter
-        self.sharedByMe = sharedByMe
         self.sortField = sortField
         self.sortDirDesc = sortDirDesc
         self.limit = limit

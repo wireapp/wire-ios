@@ -510,7 +510,7 @@ private extension WireDriveGetNodesRequest {
                 metadata: metafilter.toDTO(),
                 status: LookupFilterStatusFilter(
                     deleted: .not,
-                    hasPublicLink: sharedByMe,
+                    hasPublicLink: metafilter.hasPublicLink,
                     isDraft: false // Backend filtering is not available; filtering is handled on the client side.
                 ),
                 text: lookupFilterTextSearch,
@@ -549,7 +549,7 @@ private extension WireDriveGetNodesRequest {
                 metadata: metafilter.toDTO(),
                 status: LookupFilterStatusFilter(
                     deleted: .not,
-                    hasPublicLink: sharedByMe,
+                    hasPublicLink: metafilter.hasPublicLink,
                     isDraft: false // // Backend filtering is not available; filtering is handled on the client side.
                 ),
                 text: LookupFilterTextSearch(searchIn: .baseName, term: searchTerm ?? "*"),
@@ -637,8 +637,23 @@ private extension Set<WireDriveNodesMetaFilter> {
                 return values.map { LookupFilterMetaFilter(namespace: "usermeta-tags", operation: .should, term: $0) }
             case .types(let values):
                 return values.map { LookupFilterMetaFilter(namespace: "mime", operation: .should, term: $0.contentType) }
+            case .sharedByMe(let handle):
+                return [LookupFilterMetaFilter(namespace: "usermeta-owner", operation: .should, term: handle)]
             }
         }
+    }
+    
+    var hasPublicLink: Bool {
+        for filter in self {
+            switch filter {
+            case .sharedByMe:
+                return true
+            default:
+                continue
+            }
+        }
+        
+        return false
     }
 }
 
@@ -646,17 +661,15 @@ private extension WireDriveFileType {
     var contentType: String {
         switch self {
         case .archive:
-            "*archive*"
+            "*archive*" // TODO: To test
         case .audio:
             "*audio*"
         case .code:
-            "*code*"
+            "*code*" // TODO: To test
         case .document:
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         case .image:
             "image/*"
-        case .other:
-            ""
         case .pdf:
             "*pdf*"
         case .presentation:
@@ -665,8 +678,8 @@ private extension WireDriveFileType {
             "*spreadsheet*"
         case .video:
             "*video*"
-        case .folder:
-            ""
+        case .other, .folder:
+            fatalError("Not supported")
         }
     }
 }
