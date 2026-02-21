@@ -2505,6 +2505,29 @@ public class MockIncrementalSyncProtocol: IncrementalSyncProtocol {
         }
     }
 
+    // MARK: - performInBackgroundForCallingEvents
+
+    public var performInBackgroundForCallingEvents_Invocations: [Void] = []
+    public var performInBackgroundForCallingEvents_MockError: Error?
+    public var performInBackgroundForCallingEvents_MockMethod: (() async throws -> IncrementalSync.Token)?
+    public var performInBackgroundForCallingEvents_MockValue: IncrementalSync.Token?
+
+    public func performInBackgroundForCallingEvents() async throws -> IncrementalSync.Token {
+        performInBackgroundForCallingEvents_Invocations.append(())
+
+        if let error = performInBackgroundForCallingEvents_MockError {
+            throw error
+        }
+
+        if let mock = performInBackgroundForCallingEvents_MockMethod {
+            return try await mock()
+        } else if let mock = performInBackgroundForCallingEvents_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `performInBackgroundForCallingEvents`")
+        }
+    }
+
 }
 
 public class MockInitialSyncProtocol: InitialSyncProtocol {
