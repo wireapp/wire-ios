@@ -298,7 +298,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         var data = try updateEventCoder.encode(eventEnvelope)
 
         let isBackgroundAccessible = storedEventEnvelope.isBackgroundAccessible
-        
+
         if let publicKeys {
             let key = isBackgroundAccessible ? publicKeys.secondary : publicKeys.primary
 

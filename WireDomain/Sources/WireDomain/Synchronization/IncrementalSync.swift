@@ -85,13 +85,13 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             )
             throw Failure.databaseLocked
         }
-        
+
         return try await internalPerform(backgroundAccessibleOnly: false)
     }
-    
+
     public func performInBackgroundForCallingEvents() async throws -> Token {
         // if EAR is enabled, we'll process only the calling events (they are marked as `backgroundAccessible`)
-        return try await internalPerform(backgroundAccessibleOnly: earService.isEAREnabled)
+        try await internalPerform(backgroundAccessibleOnly: earService.isEAREnabled)
     }
 
     private func internalPerform(backgroundAccessibleOnly: Bool) async throws -> Token {
@@ -425,13 +425,13 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 }
 
 extension IncrementalSyncV1: SyncMigratorProtocol {
-    
+
     // TODO: [WPB-23558] Support EAR in incremental sync v2
     public func migrateFromIncrementalSyncV1() async throws {
         guard !earService.isLocked else {
             throw Failure.databaseLocked
         }
-        
+
         logger.debug("pulling pending update events", attributes: .incrementalSyncV2)
         syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
         try await updateEventsSync.pull(publicKeys: try earService.fetchPublicKeys())

@@ -104,10 +104,10 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     // MARK: - API
 
     /// Trigger the appropriate sync depending in the local state.
-    /// 
+    ///
     /// If no last event id is known, then the initial sync will be performed,
     /// otherwise the incremental sync will be performed.
-    /// 
+    ///
     /// This method logs any errors and does not wait for the sync to finish.
     ///
     /// - Parameter forCallEventsOnly: if the sync should be resumed only for calling events
@@ -263,7 +263,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             }
         }
     }
-    
+
     private func performIncrementalSyncForCallingEvents() async throws {
         try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
             guard let self else { return }
@@ -271,7 +271,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 .performInBackgroundForCallingEvents()
         }
     }
-    
+
     private func performInitialSyncV2() async throws {
         try await initialSyncTaskManager.performIfNeeded {
             let retrier = BackoffRetrier()
