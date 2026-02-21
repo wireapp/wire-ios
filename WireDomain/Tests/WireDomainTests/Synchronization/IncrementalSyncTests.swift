@@ -82,8 +82,7 @@ final class IncrementalSyncTests: XCTestCase {
             liveBrokenGroupSubject: liveBrokenGroupSubject,
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
-            earService: earService,
-            notificationContext: notificationContext
+            earService: earService
         )
     }
 
@@ -424,8 +423,8 @@ final class IncrementalSyncTests: XCTestCase {
 
     // MARK: - EAR Database Lock Tests
 
-    func test_perform_foreground_databaseUnlocked_succeeds() async throws {
-        // Given: Database is not locked, app in foreground
+    func test_perform_databaseUnlocked_succeeds() async throws {
+        // Given: Database is not locked
         earService.underlyingIsLocked = false
         earService.fetchPublicKeys_MockMethod = { nil }
         earService.fetchPrivateKeysIncludingPrimary_MockMethod = { _ in nil }
@@ -439,32 +438,32 @@ final class IncrementalSyncTests: XCTestCase {
         mlsGroupRepairAgent.repairConversations_MockMethod = {}
 
         // When
-        _ = try await sut.perform(appState: .active)
+        _ = try await sut.perform()
 
-        // Then: Should fetch keys with includingPrimary: true (foreground)
+        // Then: Should fetch keys with includingPrimary: true
         XCTAssertEqual(earService.fetchPrivateKeysIncludingPrimary_Invocations.count, 1)
         XCTAssertTrue(earService.fetchPrivateKeysIncludingPrimary_Invocations[0])
     }
 
-    func test_perform_foreground_databaseLocked_throwsError() async throws {
-        // Given: Database is locked, app in foreground
+    func test_perform_databaseLocked_throwsError() async throws {
+        // Given: Database is locked
         earService.underlyingIsLocked = true
 
         // When/Then: Should throw databaseLocked error immediately
         await XCTAssertThrowsErrorAsync(IncrementalSync.Failure.databaseLocked) {
-            try await self.sut.perform(appState: .active)
+            try await self.sut.perform()
         }
 
         // Verify no sync operations were attempted
         XCTAssertEqual(pushChannelAPI.createPushChannelClientID_Invocations.count, 0)
     }
 
-    func test_perform_background_databaseLocked_usesSecondaryKeys() async throws {
-        // Given: Database is locked, app in background
-        earService.underlyingIsLocked = true
+    func test_performInBackgroundForCallingEvents_EAREnabled_usesSecondaryKeysAndFiltersEvents() async throws {
+        // Given: EAR is enabled (database may be locked in background)
+        earService.underlyingIsEAREnabled = true
         earService.fetchPublicKeys_MockMethod = { nil }
         earService.fetchPrivateKeysIncludingPrimary_MockMethod = { includingPrimary in
-            XCTAssertFalse(includingPrimary, "Should not include primary keys in background")
+            XCTAssertFalse(includingPrimary, "Should not include primary keys")
             return nil
         }
 
@@ -477,7 +476,7 @@ final class IncrementalSyncTests: XCTestCase {
         mlsGroupRepairAgent.repairConversations_MockMethod = {}
 
         // When
-        _ = try await sut.perform(appState: .background)
+        _ = try await sut.performInBackgroundForCallingEvents()
 
         // Then: Should proceed with only secondary keys
         XCTAssertEqual(earService.fetchPrivateKeysIncludingPrimary_Invocations.count, 1)
@@ -488,8 +487,42 @@ final class IncrementalSyncTests: XCTestCase {
             updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count,
             1
         )
-        XCTAssertTrue(updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations[0]
-            .backgroundAccessibleOnly)
+        XCTAssertTrue(
+            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations[0]
+                .backgroundAccessibleOnly
+        )
+    }
+
+    func test_performInBackgroundForCallingEvents_EARDisabled_processesAllEvents() async throws {
+        // Given: EAR is disabled
+        earService.underlyingIsEAREnabled = false
+        earService.fetchPublicKeys_MockMethod = { nil }
+        earService.fetchPrivateKeysIncludingPrimary_MockMethod = { _ in nil }
+
+        // Setup other required mocks
+        setPendingEvents(envelopes: [])
+        setupPushChannel()
+        updateEventsSync.pullPublicKeys_MockMethod = { _ in AsyncStream { [] } }
+        updateEventsStore.calculateLastUnreadMessages_MockMethod = {}
+        databaseSaver.save_MockMethod = {}
+        mlsGroupRepairAgent.repairConversations_MockMethod = {}
+
+        // When
+        _ = try await sut.performInBackgroundForCallingEvents()
+
+        // Then: Should fetch all keys (primary included)
+        XCTAssertEqual(earService.fetchPrivateKeysIncludingPrimary_Invocations.count, 1)
+        XCTAssertTrue(earService.fetchPrivateKeysIncludingPrimary_Invocations[0])
+
+        // Should process all events (not background-accessible only)
+        XCTAssertEqual(
+            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count,
+            1
+        )
+        XCTAssertFalse(
+            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations[0]
+                .backgroundAccessibleOnly
+        )
     }
 
     // MARK: - Helper Methods
