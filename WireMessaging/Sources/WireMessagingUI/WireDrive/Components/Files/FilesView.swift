@@ -138,8 +138,6 @@ package struct FilesView: FilesViewProtocol {
                         versionHistoryView
                     case let .moveToFolder(fileItem):
                         viewModel.moveToFolderView(item: fileItem)
-                    case .filterByTagsOld:
-                        EmptyView()
                     }
                 }
             )

@@ -103,7 +103,6 @@ package final class FilesViewModel: ObservableObject {
         case moveToFolder(fileItem: FilesViewItem)
         case renameFile(view: FileRenameView)
         case create(view: CreateFileView)
-        case filterByTagsOld
         case versionHistory(view: FileVersioningView)
 
         var id: String {
@@ -118,8 +117,6 @@ package final class FilesViewModel: ObservableObject {
                 "create(\(view.id))"
             case let .renameFile(view):
                 "renameFile(\(view.id))"
-            case .filterByTagsOld:
-                "filterByTagsOld"
             case let .versionHistory(view):
                 "versionHistory(\(view.id))"
             }
@@ -233,7 +230,6 @@ package final class FilesViewModel: ObservableObject {
     let isRecycleBin: Bool
     let triggerReload: PassthroughSubject<Void, Never>
     var shouldReload: Bool = false
-    var filterWithTags: [String] = []
     let title: String?
     var showSearchBar: Bool {
         switch state {
@@ -453,10 +449,6 @@ package final class FilesViewModel: ObservableObject {
             isBrowsing: isBrowsing,
             isInRecycleBin: isRecycleBin,
         )
-    }
-
-    func openFilters() {
-        sheetNavigation = .filterByTagsOld
     }
 
     func moveToFolderView(item: FilesViewItem) -> some View {

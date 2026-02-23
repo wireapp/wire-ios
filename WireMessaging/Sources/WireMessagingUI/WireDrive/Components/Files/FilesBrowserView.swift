@@ -89,7 +89,6 @@ package struct FilesBrowserView: FilesViewProtocol {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
             .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
-            .toolbar { toolbarContent }
             .if(viewModel.showSearchBar, transform: searchView(content:))
             .onAppear { reloadTask() }
             .alert(
@@ -102,15 +101,6 @@ package struct FilesBrowserView: FilesViewProtocol {
                 Task { await viewModel.onSheetDismissed() }
             } content: { navigationItem in
                 switch navigationItem {
-                case .filterByTagsOld:
-                    FilesFilterBy.TagsView(
-                        fetchTagsUseCase: viewModel.useCases.getTagSuggestions,
-                        selectedItems: viewModel.filterWithTags,
-                        onApply: { selectedTags in
-                            viewModel.filterWithTags = [String](selectedTags)
-                            viewModel.shouldReload = true
-                        }
-                    )
                 case let .shareLink(shareLinkView):
                     shareLinkView
                 default:
@@ -142,23 +132,6 @@ package struct FilesBrowserView: FilesViewProtocol {
     private var isFilterBarPresented: Bool {
         isSearchFocused || !viewModel.searchText.isEmpty || viewModel.filtersSelection.hasFilterSelected
     }
-}
-
-// MARK: - Toolbar
-
-private extension FilesBrowserView {
-
-    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarTrailing) {
-            Button {
-                viewModel.openFilters()
-            } label: {
-                Image(systemName: "line.3.horizontal.decrease.circle")
-            }
-
-        }
-    }
-
 }
 
 // MARK: - Helper
