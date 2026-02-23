@@ -254,12 +254,12 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             attributes: .safePublic
         )
 
-        try await coreCrypto.transaction { 
+        try await coreCrypto.transaction {
             WireLogger.coreCrypto.debug(
                 "proteus init",
                 attributes: .safePublic
             )
-            try await $0.proteusInit() 
+            try await $0.proteusInit()
         }
     }
 
