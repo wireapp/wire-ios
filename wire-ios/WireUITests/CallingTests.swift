@@ -94,7 +94,6 @@ final class CallingTests: WireUITestCase {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 3)
 
-        //        try loginAndDismissFirstTimePopup(user: teamAndGroupCallSetup.appUserWhoWillJoinTheCall)
         let firstTimePage = try app.loginUser(
             email: teamAndGroupCallSetup.appUserWhoWillJoinTheCall.email,
             password: teamAndGroupCallSetup.appUserWhoWillJoinTheCall.password
