@@ -65,6 +65,7 @@ final class AppRootRouter {
 
     // MARK: - Initialization
 
+    @MainActor
     init(
         defaultEnvironment: BackendEnvironment2,
         mainWindow: UIWindow,
@@ -130,24 +131,29 @@ final class AppRootRouter {
         )
     }
 
+    @MainActor
     private func setupAppStateCalculator() {
         appStateCalculator.delegate = self
     }
 
+    @MainActor
     private func setupURLActionRouter() {
         urlActionRouter.delegate = self
     }
 
+    @MainActor
     private func setupNotifications() {
         setupApplicationNotifications()
         setupContentSizeCategoryNotifications()
         setupAudioPermissionsNotifications()
     }
 
+    @MainActor
     private func createLifeCycleObserverTokens() {
         sessionManagerLifeCycleObserver.createLifeCycleObserverTokens()
     }
 
+    @MainActor
     private func setCallingSettings() {
         sessionManager.updateCallNotificationStyleFromSettings()
         sessionManager.updateMuteOtherCallsFromSettings()
