@@ -206,7 +206,8 @@ public protocol MessageLocalStoreProtocol {
     ///     - referenceMessageID: The id of the parent message.
     ///     - conversation: The related conversation.
     ///     - senderID: The message sender id.
-    ///     - ensureSenderIsSelfUser: If `true` `senderID` is compared to the self user's id and if they don't match, the update is skipped.
+    ///     - ensureSenderIsSelfUser: If `true` `senderID` is compared to the self user's id and if they don't match,
+    /// the update is skipped.
     ///
     /// When someone has clicked on a button, to confirm to them that the answer has been accepted.
 

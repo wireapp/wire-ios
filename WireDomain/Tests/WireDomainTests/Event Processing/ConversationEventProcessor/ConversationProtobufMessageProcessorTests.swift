@@ -83,8 +83,8 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         messageLocalStore.fetchOrCreateClientMessageIdConversationSenderDate_MockValue = (clientMessage, isNew: true)
         messageLocalStore
             .addClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_MockMethod =
-        { _, _, _, _, _, _ in
-        }
+            { _, _, _, _, _, _ in
+            }
 
         let genericMessage = try XCTUnwrap(GenericMessage(from: Scaffolding.base64EncodedString, validate: true))
 
@@ -189,7 +189,10 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
             message.messageID = UUID().uuidString.lowercased()
             message.content = .buttonAction(.with { _ in })
         }
-        messageLocalStore.updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_MockMethod = { _, _, _, _, _ in }
+        messageLocalStore
+            .updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_MockMethod =
+            { _, _, _, _, _ in
+            }
 
         // When
         try await sut.processProtobufMessage(
@@ -203,7 +206,8 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         )
 
         // Then
-        let invocation = try XCTUnwrap(messageLocalStore.updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_Invocations.first)
+        let invocation = try XCTUnwrap(messageLocalStore
+            .updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_Invocations.first)
         XCTAssertTrue(invocation.ensureSenderIsSelfUser)
     }
 
@@ -218,7 +222,10 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
             message.messageID = UUID().uuidString.lowercased()
             message.content = .buttonActionConfirmation(.with { _ in })
         }
-        messageLocalStore.updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_MockMethod = { _, _, _, _, _ in }
+        messageLocalStore
+            .updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_MockMethod =
+            { _, _, _, _, _ in
+            }
 
         // When
         try await sut.processProtobufMessage(
@@ -232,7 +239,8 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         )
 
         // Then
-        let invocation = try XCTUnwrap(messageLocalStore.updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_Invocations.first)
+        let invocation = try XCTUnwrap(messageLocalStore
+            .updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_Invocations.first)
         XCTAssertFalse(invocation.ensureSenderIsSelfUser)
     }
 
