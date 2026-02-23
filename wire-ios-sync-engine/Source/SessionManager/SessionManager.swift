@@ -19,6 +19,7 @@
 import avs
 import CallKit
 import Foundation
+import os
 import PushKit
 import UserNotifications
 import WireAnalytics
@@ -272,11 +273,20 @@ public final class SessionManager: NSObject, SessionManagerType {
     public let environmentStore: BackendEnvironmentStore
     public weak var loginDelegate: LoginDelegate?
 
+    private let _activeUserSession = OSAllocatedUnfairLock<ZMUserSession?>(uncheckedState: nil)
     public internal(set) var activeUserSession: ZMUserSession? {
-        willSet {
-            guard activeUserSession != newValue else { return }
-            activeUserSession?.appLockController.beginTimer()
-            activeUserSession?.setAnalyticsEventTracker(nil)
+        get {
+            _activeUserSession.withLockUnchecked { $0 }
+        }
+        set {
+            let old = _activeUserSession.withLockUnchecked { state -> ZMUserSession? in
+                guard state !== newValue else { return nil }
+                let old = state
+                state = newValue
+                return old
+            }
+            old?.appLockController.beginTimer()
+            old?.setAnalyticsEventTracker(nil)
         }
     }
 
