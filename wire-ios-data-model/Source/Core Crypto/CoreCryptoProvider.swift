@@ -68,8 +68,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let allowCreation: Bool
     private var coreCrypto: CoreCrypto?
     private var loadingCoreCrypto = false
-    private var initialisatingMLS = false
-    private var hasInitialisedMLS = false
     private var hasRegisteredMlsTransport = false
     private var hasRegisteredEpochObserver = false
     private var coreCryptoContinuations: [CheckedContinuation<CoreCrypto, Error>] = []
@@ -156,11 +154,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     public nonisolated func registerMlsTransport(_ transport: any MlsTransport) {
         mlsTransport = transport
     }
-
-    private func reset() {
-        coreCrypto = nil
-    }
-
+    
     private func registerMlsTransportIfNecessary(with coreCrypto: CoreCryptoProtocol) async throws {
         guard let mlsTransport, !hasRegisteredMlsTransport else {
             return
