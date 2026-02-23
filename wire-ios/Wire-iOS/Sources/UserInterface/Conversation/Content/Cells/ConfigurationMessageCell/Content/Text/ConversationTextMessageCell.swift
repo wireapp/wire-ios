@@ -196,8 +196,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             let linkRange = result.range
             guard linkRange.location + linkRange.length <= mutableAttributedText.length else { continue }
 
-            // Check if this link range overlaps with any mention.
-            // If it does, the mention's styling (no underline) should take precedence.
             let isOverlappingMention = mentionRanges.contains { NSIntersectionRange(linkRange, $0).length > 0 }
 
             if let link = result.url, !isOverlappingMention {
@@ -214,20 +212,21 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             in: NSRange(location: 0, length: mutableAttributedText.length),
             options: []
         ) { value, range, _ in
-            if let link = value as? URL {
-                // Check if this range is covered by any mention.
-                // If it is, we respect the mention's no-underline style.
-                let isCoveredByMention = mentionRanges.contains { NSIntersectionRange(range, $0).length > 0 }
-
-                if !isCoveredByMention {
-                    // Apply or re-apply the underline style and color
-                    mutableAttributedText.addAttributes([
-                        .foregroundColor: detectedLinkForegroundColor, // Ensure consistent color
-                        .underlineStyle: NSUnderlineStyle.single.rawValue, // Explicitly apply underline
-                        .link: link // Ensure link attribute is still present
-                    ], range: range)
-                }
+            guard let link = value as? URL else {
+                return
             }
+
+            let isCoveredByMention = mentionRanges.contains { NSIntersectionRange(range, $0).length > 0 }
+
+            guard !isCoveredByMention else {
+                return
+            }
+
+            mutableAttributedText.addAttributes([
+                .foregroundColor: detectedLinkForegroundColor,
+                .underlineStyle: NSUnderlineStyle.single.rawValue,
+                .link: link
+            ], range: range)
         }
 
         messageTextView.attributedText = mutableAttributedText
@@ -482,16 +481,19 @@ extension ConversationTextMessageCellDescription {
     }
 
     static func findEmbeddedLinks(in textMessageData: TextMessageData) -> [NSTextCheckingResult] {
-        if let originalURLString = textMessageData.linkPreview?.originalURLString,
-           let url = URL(string: originalURLString),
-           let messageTextString = textMessageData.messageText {
-            if let rangeOfEmbeddedLink = messageTextString.range(of: originalURLString) {
-                let nsRange = NSRange(rangeOfEmbeddedLink, in: messageTextString)
-                let linkResult = NSTextCheckingResult.linkCheckingResult(range: nsRange, url: url)
-                return [linkResult]
-            }
+        guard let originalURLString = textMessageData.linkPreview?.originalURLString,
+              let url = URL(string: originalURLString),
+              let messageTextString = textMessageData.messageText else {
+            return []
         }
-        return []
+
+        guard let rangeOfEmbeddedLink = messageTextString.range(of: originalURLString) else {
+            return []
+        }
+
+        let nsRange = NSRange(rangeOfEmbeddedLink, in: messageTextString)
+        let linkResult = NSTextCheckingResult.linkCheckingResult(range: nsRange, url: url)
+        return [linkResult]
     }
 }
 
