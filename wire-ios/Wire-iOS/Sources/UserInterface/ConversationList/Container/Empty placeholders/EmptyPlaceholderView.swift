@@ -69,7 +69,7 @@ final class EmptyPlaceholderView: UIView {
     // MARK: - Setup
 
     private func setup(_ content: ConversationListViewController.EmptyPlaceholder, connectWithPeopleAction: UIAction) {
-        backgroundColor = isIPadRegular() ? ColorTheme.Backgrounds.backgroundVariant : ColorTheme.Backgrounds
+        backgroundColor = isIPadRegular() ? ColorTheme.Backgrounds.chatBackground : ColorTheme.Backgrounds
             .surfaceVariant
         titleLabel = DynamicFontLabel(
             text: content.headline,
