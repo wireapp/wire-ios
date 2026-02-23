@@ -373,7 +373,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         XCTAssertEqual(fetched.first?.envelope.events.count, 1)
     }
 
-    func testFetchStoredEventEnvelopes_Encrypted_NoPrivateKeys_ReturnsEmpty() async throws {
+    func testFetchStoredEventEnvelopes_Encrypted_NoPrivateKeys_Throws() async throws {
         // Given: Encrypted envelope stored
         let (publicKey, _) = try generateKeyPair()
         let (secondaryPublicKey, _) = try generateSecondaryKeyPair()
@@ -389,15 +389,14 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         try await sut.persistEventEnvelope(envelope, index: 0, publicKeys: publicKeys)
 
-        // When: Fetch without private keys
-        let fetched = try await sut.fetchStoredEventEnvelopes(
-            limit: 10,
-            privateKeys: nil,
-            backgroundAccessibleOnly: false
-        )
-
-        // Then: Should return empty (can't decrypt)
-        XCTAssertEqual(fetched.count, 0)
+        // When / Then: Fetching encrypted events without private keys is a developer error
+        await XCTAssertThrowsErrorAsync(UpdateEventsLocalStore.Error.failedToFetchStoredEvents(UpdateEventsLocalStore.Error.missingPrivateKeys)) {
+            _ = try await self.sut.fetchStoredEventEnvelopes(
+                limit: 10,
+                privateKeys: nil,
+                backgroundAccessibleOnly: false
+            )
+        }
     }
 
     func testFetchStoredEventEnvelopes_BackgroundAccessibleOnly_FiltersCorrectly() async throws {
