@@ -99,7 +99,7 @@ public extension Collection<WireDriveConversation> {
 public extension Collection<WireDriveConversation.Participant> {
     static func mocked() -> [Element] {
         [
-            .init(handle: "waterwhite", displayName: "Heisenberg", isSelfUser: false),
+            .init(handle: "walterwhite", displayName: "Heisenberg", isSelfUser: false),
             .init(handle: "jessepinkman", displayName: "The Cook", isSelfUser: false),
             .init(handle: "tucosalamanca", displayName: "Tuco", isSelfUser: false)
         ]
