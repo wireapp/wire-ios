@@ -23,22 +23,14 @@ import WireLogging
 import WireNetwork
 
 struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEventNotificationBuilderProtocol {
-
+    
     enum Failure: Error {
-
-        case failedToDecodeGenericMessage
-        case unknownMessageContent
         case proteusMessageMissing
-        case externalProteusDataMissing
-        case failedToDecodeExternalProteusData
-        case externalProteusDataSHAMismatch
-        case failedToDecryptExternalProteusData
-
     }
-
+    
     let context: Context
     let validator: Validator
-
+    
     let conversationCallingEventNotificationBuilder: any ConversationCallingEventNotificationBuilderProtocol
     let conversationAudioMessageNotificationBuilder: any ConversationAudioMessageNotificationBuilderProtocol
     let conversationEphemeralMessageNotificationBuilder: any ConversationEphemeralMessageNotificationBuilderProtocol
@@ -49,16 +41,17 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
     let conversationPingMessageNotificationBuilder: any ConversationPingMessageNotificationBuilderProtocol
     let conversationVideoMessageNotificationBuilder: any ConversationVideoMessageNotificationBuilderProtocol
     let conversationTextMessageNotificationBuilder: any ConversationTextMessageNotificationBuilderProtocol
-
+    let protobufMessageDecoder: ProtobufMessageDecoder
+    
     func buildContent(
         event: Either<ConversationMLSMessageAddEvent, ConversationProteusMessageAddEvent>
     ) async throws -> UserNotification? {
-
+        
         var message: GenericMessage
         var senderID: UserID
         var conversationID: ConversationID
         var timestamp: Date?
-
+        
         switch event {
         case let .left(mlsMessageEvent):
             guard let decryptedMessage = mlsMessageEvent.decryptedMessages.first else {
@@ -67,37 +60,29 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
                 // unexpected to find no decrypted application messages.
                 return nil
             }
-
-            message = try extractMessageContent(from: decryptedMessage.message)
+            
+            message = try protobufMessageDecoder.extractMLSMessageContent(
+                from: decryptedMessage.message
+            )
             senderID = mlsMessageEvent.senderID
             conversationID = mlsMessageEvent.conversationID
             timestamp = mlsMessageEvent.timestamp
-
+            
         case let .right(proteusMessageEvent):
             guard let decryptedMessage = proteusMessageEvent.message.decryptedMessage else {
                 throw Failure.proteusMessageMissing
             }
-
-            message = try extractMessageContent(from: decryptedMessage)
-
-            // Extra large proteus messages (many recipients) are contained
-            // in external data.
-            if case let .external(externalMessage) = message.content {
-                guard let externalData = proteusMessageEvent.externalData?.encryptedMessage else {
-                    throw Failure.externalProteusDataMissing
-                }
-
-                message = try decryptExternalProteusData(
-                    external: externalMessage,
-                    externalData: externalData
-                )
-            }
-
+            
+            message = try protobufMessageDecoder.extractProteusMessageContent(
+                from: decryptedMessage,
+                externalData: proteusMessageEvent.externalData
+            )
+            
             senderID = proteusMessageEvent.senderID
             conversationID = proteusMessageEvent.conversationID
             timestamp = proteusMessageEvent.timestamp
         }
-
+        
         if let callingNotification = await conversationCallingEventNotificationBuilder.buildContent(
             calling: message.calling,
             at: timestamp,
@@ -113,7 +98,7 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
             )
         }
     }
-
+    
     private func buildMessageContentNotification(
         message: GenericMessage,
         senderID: UserID,
@@ -124,20 +109,20 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
             senderID: senderID,
             conversationID: conversationID
         )
-
+        
         guard canDisplayNotification else {
             return nil
         }
-
+        
         let hidesNotificationContent = await context.shouldHideNotification()
-
+        
         guard !hidesNotificationContent else {
             return await conversationHiddenMessageNotificationBuilder.buildContent(
                 conversationID: conversationID,
                 senderID: senderID
             )
         }
-
+        
         switch message.content {
         case .location:
             return await conversationLocationMessageNotificationBuilder.buildContent(
@@ -169,7 +154,7 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
         case let .composite(composite):
             let text = composite.items.compactMap(\.text).first
             guard let text else { return nil }
-
+            
             return await conversationTextMessageNotificationBuilder.buildContent(
                 text: text,
                 conversationID: conversationID,
@@ -206,57 +191,6 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
         default:
             return nil
         }
-    }
-
-    // MARK: - Message Processing
-
-    private func extractMessageContent(from base64Message: String) throws -> GenericMessage {
-        // Decode the protobuf message.
-        guard let genericMessage = GenericMessage(
-            from: base64Message,
-            validate: true
-        ) else {
-            throw Failure.failedToDecodeGenericMessage
-        }
-
-        // Ensure the content is understood.
-        if genericMessage.content == nil {
-            throw Failure.unknownMessageContent
-        }
-
-        return genericMessage
-    }
-
-    private func decryptExternalProteusData(
-        external: External,
-        externalData: String
-    ) throws -> GenericMessage {
-        // Decode the base64 external data.
-        guard let encryptedData = Data(base64Encoded: externalData) else {
-            throw Failure.failedToDecodeExternalProteusData
-        }
-
-        // Verify SHA256 hash.
-        guard encryptedData.zmSHA256Digest() == external.sha256 else {
-            throw Failure.externalProteusDataSHAMismatch
-        }
-
-        // Decrypt the data.
-        guard let decryptedData = encryptedData.zmDecryptPrefixedPlainTextIV(
-            key: external.otrKey
-        ) else {
-            throw Failure.failedToDecryptExternalProteusData
-        }
-
-        // Decode the decrypted message.
-        guard let message = GenericMessage(
-            from: decryptedData.base64String(),
-            validate: true
-        ) else {
-            throw Failure.failedToDecryptExternalProteusData
-        }
-
-        return message
     }
 }
 
