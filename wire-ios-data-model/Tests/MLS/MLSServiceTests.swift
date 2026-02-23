@@ -1005,6 +1005,41 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
     }
 
+    func test_PerformPendingJoins_It_JoinsViaExternalCommit_FederationGroup() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+        let conversationID = UUID.create()
+        let domain = localDomain
+        let conversation = await uiMOC.perform { [uiMOC] in
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.remoteIdentifier = conversationID
+
+            conversation.mlsGroupID = groupID
+            conversation.messageProtocol = .mls
+            conversation.mlsStatus = .pendingJoin
+            conversation.conversationType = .group
+
+            conversation.epoch = 0
+            conversation.domain = "foreign.domain"
+            XCTAssertNotEqual(conversation.domain, self.localDomain)
+            return conversation
+        }
+        // mock
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = false
+        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
+        mockMLSActionExecutor.mockJoinGroup = { _, _ in }
+
+        // When
+        try await sut.performPendingJoins()
+
+        // Then
+        XCTAssertEqual(
+            mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations.count,
+            1
+        )
+        XCTAssertEqual(mockMLSActionExecutor.mockJoinGroupCount, 1)
+    }
+
     func assert_PerformPendingJoins_It_Establishes_Group(
         conversationType: ZMConversationType,
         file: StaticString = #file,
@@ -1013,7 +1048,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         let groupID = MLSGroupID.random()
         let conversationID = UUID.create()
-        let domain = "example.domain.com"
+        let domain = localDomain
         let conversation = await uiMOC.perform { [uiMOC] in
             let conversation = ZMConversation.insertNewObject(in: uiMOC)
             conversation.remoteIdentifier = conversationID

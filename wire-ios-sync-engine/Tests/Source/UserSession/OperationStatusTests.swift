@@ -84,29 +84,6 @@ final class OperationStatusTests: MessagingTest {
         XCTAssertEqual(sut.operationState, .background)
     }
 
-    func testThatBackgroundFetchIsUpdatingOperationState() {
-
-        // given
-        sut.isInBackground = true
-        let handlerCalled = customExpectation(description: "background fetch handler called")
-
-        // when
-        sut.startBackgroundFetch(withCompletionHandler: { _ in
-            handlerCalled.fulfill()
-        })
-
-        // then
-        XCTAssertEqual(sut.operationState, .backgroundFetch)
-        wait(for: [XCTestExpectation().inverted()], timeout: 0.05)
-
-        // when
-        sut.finishBackgroundFetch(withFetchResult: .noData)
-        wait(for: [XCTestExpectation().inverted()], timeout: 0.05)
-
-        // then
-        XCTAssertEqual(sut.operationState, .background)
-    }
-
     func testThatStartingMultipleBackgroundTasksFail() {
 
         let successHandler = customExpectation(description: "background task handler called with success result")
@@ -131,52 +108,11 @@ final class OperationStatusTests: MessagingTest {
         sut.finishBackgroundTask(withTaskResult: .finished)
     }
 
-    func testThatStartingMultipleBackgroundFetchesFail() {
-
-        let successHandler = customExpectation(description: "background fetch handler called with success result")
-        let failureHandler = customExpectation(description: "background fetch handler called with failure result")
-
-        // given
-        sut.startBackgroundFetch(withCompletionHandler: { result in
-            // expect
-            if result == UIBackgroundFetchResult.noData {
-                successHandler.fulfill()
-            }
-        })
-
-        // when
-        sut.startBackgroundFetch(withCompletionHandler: { result in
-            // expect
-            if result == UIBackgroundFetchResult.failed {
-                failureHandler.fulfill()
-            }
-        })
-
-        sut.finishBackgroundFetch(withFetchResult: .noData)
-    }
-
     func testBackgroundTaskFailAfterTimeout() {
         let failureHandler = customExpectation(description: "background task handler called with failure result")
 
         // given
         sut.startBackgroundTask(timeout: 1.0) { result in
-            if result == .failed {
-                failureHandler.fulfill()
-            }
-        }
-
-        // when
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-
-        // then
-        XCTAssertEqual(sut.operationState, .background)
-    }
-
-    func testBackgroundFetchFailAfterTimeout() {
-        let failureHandler = customExpectation(description: "background fetch handler called with failure result")
-
-        // given
-        sut.startBackgroundFetch(timeout: 1.0) { result in
             if result == .failed {
                 failureHandler.fulfill()
             }

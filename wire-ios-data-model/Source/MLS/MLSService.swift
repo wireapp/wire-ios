@@ -66,7 +66,7 @@ public final class MLSService: MLSServiceInterface {
     private let featureRepository: LegacyFeatureRepositoryInterface
     private weak var resetBrokenMLSConversationDelegate: (any ResetBrokenMLSConversationDelegate)?
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
-    private let localDomain: String?
+    public let localDomain: String
 
     private var coreCrypto: CoreCryptoProtocol {
         get async throws {
@@ -106,7 +106,7 @@ public final class MLSService: MLSServiceInterface {
         featureRepository: LegacyFeatureRepositoryInterface,
         userDefaults: UserDefaults,
         userID: UUID,
-        localDomain: String?
+        localDomain: String
     ) {
         self.init(
             context: context,
@@ -136,7 +136,7 @@ public final class MLSService: MLSServiceInterface {
         featureRepository: LegacyFeatureRepositoryInterface,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface =
             SubconversationGroupIDRepository(),
-        localDomain: String?
+        localDomain: String
     ) {
         self.context = context
         self.notificationContext = notificationContext
@@ -868,7 +868,8 @@ public final class MLSService: MLSServiceInterface {
         let needToSave = await withTaskGroup(of: Bool.self) { group in
             for pendingGroup in pendingGroups {
                 group.addTask {
-                    guard let mlsGroupID = await context.perform({ pendingGroup.mlsGroupID }) else {
+                    guard let mlsGroupID = await context.perform({ pendingGroup.mlsGroupID }),
+                          let conversationQualifiedID = await context.perform({ pendingGroup.qualifiedID }) else {
                         return false
                     }
 
@@ -879,7 +880,8 @@ public final class MLSService: MLSServiceInterface {
                         let conversationExists = try await self.conversationExists(
                             groupID: mlsGroupID
                         )
-                        let shouldEstablishGroup = epoch == 0 && !conversationExists
+                        let shouldEstablishGroup = epoch == 0 && !conversationExists && conversationQualifiedID
+                            .domain == self.localDomain
 
                         if shouldEstablishGroup {
                             try await self.internalEstablishPendingGroup(
@@ -895,7 +897,10 @@ public final class MLSService: MLSServiceInterface {
                     } catch {
                         WireLogger.mls.error(
                             "Failed to join pending group: \(error)",
-                            attributes: mlsGroupID.safeAttributes
+                            attributes: [
+                                .mlsGroupID: mlsGroupID.safeForLoggingDescription,
+                                .conversationId: conversationQualifiedID.safeForLoggingDescription
+                            ]
                         )
                         return false
                     }
