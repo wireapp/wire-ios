@@ -54,6 +54,10 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
     public func isFeatureEnabled(
         _ feature: Feature.Name
     ) async -> Bool {
+         await isFeatureEnabled(feature, default: false)
+    }
+    
+    public func isFeatureEnabled( _ feature: Feature.Name, default: Bool ) async -> Bool {
         do {
             let feature = try await featureConfigLocalStore.fetchFeature(
                 name: feature
@@ -62,7 +66,7 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 feature: feature
             )
         } catch {
-            return false
+            return `default`
         }
     }
 
