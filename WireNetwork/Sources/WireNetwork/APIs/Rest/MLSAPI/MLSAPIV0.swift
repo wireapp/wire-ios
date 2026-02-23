@@ -42,6 +42,10 @@ class MLSAPIV0: MLSAPI, VersionedAPI {
         throw MLSAPIError.unsupportedEndpointForAPIVersion
     }
 
+    func uploadKeyPackages(clientID: String, keyPackages: KeyPackageUpload) async throws {
+        throw MLSAPIError.unsupportedEndpointForAPIVersion
+    }
+
     func resetMLSConversation(epoch: UInt64, groupID: String) async throws {
         throw MLSAPIError.unsupportedEndpointForAPIVersion
     }

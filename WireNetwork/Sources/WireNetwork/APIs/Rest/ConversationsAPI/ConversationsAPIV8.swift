@@ -142,7 +142,7 @@ class ConversationsAPIV8: ConversationsAPIV7 {
                 .failure(
                     code: .forbidden,
                     label: "action-denied",
-                    error: ConversationsAPIError.insufficienAuthorization
+                    error: ConversationsAPIError.insufficientAuthorization
                 )
                 .failure(code: .forbidden, label: "invalid-op", error: ConversationsAPIError.invalidOperation)
                 .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)

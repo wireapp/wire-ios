@@ -32,13 +32,13 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceCRLExpiryAfterOneMinute
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
-    case multibackend
     case newRegistration
     case showCreateMLSGroupToggle
     case showUnreadConversationsFilter
     case skipMLSMessagesDecryption
     case useWireAuthentication
     case wireMeetings
+    case lowKeyPackageCount
 
     public var description: String {
         switch self {
@@ -72,9 +72,6 @@ public enum DeveloperFlag: String, CaseIterable {
         case .disablePushChannelBatching:
             "Turn on to disable batching while app is live"
 
-        case .multibackend:
-            "Turn on to be able to log in with accounts from multiple backends"
-
         case .newRegistration:
             "Turn on to use the new registration flow"
 
@@ -92,6 +89,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .wireMeetings:
             "Turn on to enable Wire meetings"
+
+        case .lowKeyPackageCount:
+            "Turn on to set the minimum number of packages to 1"
         }
     }
 
@@ -128,8 +128,6 @@ public enum DeveloperFlag: String, CaseIterable {
             "IgnoreIncomingEventsEnabled"
         case .useWireAuthentication:
             "WireAuthenticationEnabled"
-        case .multibackend:
-            "MultibackendEnabled"
         default:
             nil
         }

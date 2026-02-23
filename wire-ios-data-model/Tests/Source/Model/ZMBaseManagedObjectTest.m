@@ -59,7 +59,7 @@
         return;
     }
     [self.uiMOC resetContextType];
-    [self.uiMOC markAsSyncContext];
+    [self.uiMOC performMarkAsSyncContext];
     block();
     [self.uiMOC resetContextType];
     [self.uiMOC markAsUIContext];
@@ -74,7 +74,7 @@
     [self.syncMOC markAsUIContext];
     block();
     [self.syncMOC resetContextType];
-    [self.syncMOC markAsSyncContext];
+    [self.syncMOC performMarkAsSyncContext];
 }
 
 - (void)setUp;
@@ -136,11 +136,6 @@
 - (NSManagedObjectContext *)syncMOC
 {
     return self.coreDataStack.syncContext;
-}
-
-- (NSManagedObjectContext *)searchMOC
-{
-    return self.coreDataStack.searchContext;
 }
 
 - (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistentStore

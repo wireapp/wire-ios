@@ -32,6 +32,10 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.bottomBarSettingsButton.rawValue]
     }
 
+    var archivedButton: XCUIElement {
+        app.buttons[Locators.ConversationsPage.bottomBarArchivedButton.rawValue]
+    }
+
     var plusButtonToCreateGroup: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.createGroupOrSearchButton.rawValue].firstMatch
     }
@@ -56,6 +60,18 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConnectionRequestsPage.connectRequestButton.rawValue]
     }
 
+    var accountProfileImageView: XCUIElement {
+        app.buttons[Locators.ConversationsPage.accountProfileImageView.rawValue]
+    }
+
+    var mentionStatus: XCUIElement {
+        app.otherElements[Locators.ConversationsPage.status.rawValue]
+    }
+
+    var loadBar: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationsPage.loadBar.rawValue]
+    }
+
     func openSettings() throws -> SettingsPage {
         settingsButton.tap()
         return try SettingsPage()
@@ -71,6 +87,14 @@ class ConversationsPage: PageModel {
         if button.waitForExistence(timeout: 2), button.isHittable {
             button.tap()
         }
+    func openArchived() throws -> ArchivedConversationsPage {
+        archivedButton.tap()
+        return try ArchivedConversationsPage()
+    }
+
+    func openUserProfilePage() throws -> UserProfilePage {
+        try letTheSyncFinish()
+        accountProfileImageView.waitAndTap()
         return try UserProfilePage()
     }
 
@@ -80,6 +104,7 @@ class ConversationsPage: PageModel {
     }
 
     func openPendingRequest() throws -> ConnectionRequestsPage {
+        try letTheSyncFinish()
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
 
         let maxDuration: TimeInterval = 10
@@ -95,6 +120,7 @@ class ConversationsPage: PageModel {
     }
 
     func openConversation() throws -> ActiveConversationPage {
+        try letTheSyncFinish()
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
 
         let maxDuration: TimeInterval = 10
@@ -128,5 +154,9 @@ class ConversationsPage: PageModel {
         let predicate = NSPredicate(format: "label BEGINSWITH %@", sentBy)
         let button = app.staticTexts.containing(predicate).firstMatch
         return button.waitForExistence(timeout: 5)
+    }
+      
+     func letTheSyncFinish() throws {
+        loadBar.waitToDisappear()
     }
 }

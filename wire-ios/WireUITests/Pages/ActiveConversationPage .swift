@@ -46,7 +46,11 @@ class ActiveConversationPage: PageModel {
     }
 
     var messageLabels: XCUIElementQuery {
-        app.textViews.matching(identifier: Locators.ActiveConversationPage.message.rawValue)
+        app.descendants(matching: .any).matching(identifier: Locators.ActiveConversationPage.message.rawValue)
+    }
+
+    var mentionButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.mentionButton.rawValue]
     }
 
     func getSenderName() -> String? {
@@ -67,6 +71,8 @@ class ActiveConversationPage: PageModel {
 
     var fileLabels: XCUIElementQuery {
         app.staticTexts.matching(identifier: "FileTransferTopLabel")
+    var imageCell: XCUIElement {
+        app.otherElements[Locators.ActiveConversationPage.imageCell.rawValue]
     }
 
     func fetchMessages() -> [String] {
@@ -74,7 +80,9 @@ class ActiveConversationPage: PageModel {
         for i in 0 ..< messageLabels.count {
             let element = messageLabels.element(boundBy: i)
             if let value = element.value as? String {
-                messages.append(value)
+                // Normalize spaces inserted by UI
+                let normalized = value.replacingOccurrences(of: "\u{00A0}", with: " ")
+                messages.append(normalized)
             }
         }
         return messages
@@ -113,5 +121,22 @@ class ActiveConversationPage: PageModel {
         conversationTitleButton.tap()
         conversationDetailsButton.tap()
         return try ConversationDetailsPage()
+    }
+
+    func chooseUser(nameOfUser: String) {
+        let predicate = NSPredicate(
+            format: "identifier == %@ AND label == %@",
+            Locators.ActiveConversationPage.userCellName.rawValue,
+            nameOfUser
+        )
+        let user = app.staticTexts.matching(predicate).firstMatch
+        user.tap()
+    }
+
+    func mentionUserAndSendMessage(nameOfUser: String) throws -> ActiveConversationPage {
+        mentionButton.tap()
+        chooseUser(nameOfUser: nameOfUser)
+        sendButton.tap()
+        return self
     }
 }

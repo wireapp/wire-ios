@@ -356,9 +356,8 @@ final class UserSessionLoader {
         metadata: ResolvedBackendMetadata,
         eventContext: NSManagedObjectContext
     ) async throws {
-        let isAvailable = metadata.apiVersion >= .minimumSyncV2CompatibleVersion
         let isAlreadyEnabled = journal[.isSyncV2Enabled]
-        let shouldEnable = isAvailable && !isAlreadyEnabled
+        let shouldEnable = !isAlreadyEnabled
 
         guard shouldEnable else {
             return
@@ -455,7 +454,6 @@ final class UserSessionLoader {
             cookieStorage: transportSession.cookieStorage,
             requestCancellation: transportSession,
             application: application,
-            lastEventIDRepository: lastEventIDRepository,
             coreCryptoProvider: coreCryptoProvider,
             isSyncV2Enabled: journal[.isSyncV2Enabled],
             localDomain: backendMetadata.domain,
@@ -471,8 +469,7 @@ final class UserSessionLoader {
             accountID: accountID,
             databaseContexts: [
                 coreDataStack.viewContext,
-                coreDataStack.syncContext,
-                coreDataStack.searchContext
+                coreDataStack.syncContext
             ],
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults,
@@ -558,7 +555,6 @@ final class UserSessionLoader {
 
         userSession.setup(
             apiVersion: backendMetadata.apiVersion,
-            eventProcessor: nil,
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,

@@ -40,14 +40,20 @@ public struct Prekey: Equatable, Sendable {
 
 }
 
-struct PrekeyV0: Equatable, Sendable, Encodable {
+struct PrekeyV0: Equatable, Sendable, Codable {
 
     let id: Int
-    let base64EncodedKey: String
+    let key: String
+
 }
 
 extension Prekey: ToNetworkConvertible {
+
     func toNetworkModel() -> PrekeyV0 {
-        .init(id: id, base64EncodedKey: base64EncodedKey)
+        .init(
+            id: id,
+            key: base64EncodedKey
+        )
     }
+
 }

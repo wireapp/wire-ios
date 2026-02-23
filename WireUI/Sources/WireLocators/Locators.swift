@@ -64,6 +64,10 @@ public enum Locators {
         case conversationCell
         case blockOptionOnContextMenu = "Block…"
         case blockButtonOnBottomSheet
+        case bottomBarArchivedButton
+        case accountProfileImageView
+        case status
+        case loadBar
     }
 
     public enum SettingsPage: String {
@@ -99,6 +103,9 @@ public enum Locators {
         case conversationTitleButton
         case conversationDetailsButton
         case message
+        case imageCell = "ImageCell"
+        case mentionButton
+        case userCellName
     }
 
     public enum BackupOrRestorePage: String {
@@ -132,6 +139,10 @@ public enum Locators {
 
     }
 
+    public enum ConversationDetailsActions: String {
+        case archive
+    }
+
     public enum UserProfilePage: String {
 
         case name
@@ -141,6 +152,7 @@ public enum Locators {
         case createWireTeamButton
         case manageTeamButton
         case addAccountOrTeamButton
+        case userProfilePicture
     }
 
     public enum CreateGroupPage: String {
@@ -266,4 +278,33 @@ public enum Locators {
         case closeButton
     }
 
+    public enum ShareExtensionPage: String {
+
+        case imageTile = "PXGGridLayout-Info"
+        case shareButton = "PUOneUpBarButtonItemIdentifierShare"
+        case chooseConversations = "chevron"
+        case sendButtonOnShareExtension
+        case continueButton = "Continue"
+    }
+
+    public enum IncomingCallPage: String {
+
+        case acceptCall = "Accept"
+    }
+
+    public enum OngoingCallPage: String {
+
+        case endOngoingCallButton = "End call"
+        case timeLabel
+
+        public static func participantIdentifier(_ name: String) -> String {
+            "audioView.\(name).minimized.inactive"
+        }
+    }
+
+    public enum SecurityLevelView: String {
+
+        case classificationBanner = "ClassificationBanner"
+
+    }
 }

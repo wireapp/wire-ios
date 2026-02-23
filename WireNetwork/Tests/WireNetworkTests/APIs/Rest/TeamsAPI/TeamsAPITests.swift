@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireNetwork
 @testable import WireNetworkSupport
 
@@ -27,7 +28,6 @@ final class TeamsAPITests: XCTestCase {
     // MARK: - Setup
 
     override func setUp() {
-        super.setUp()
         apiSnapshotHelper = APIServiceSnapshotHelper { apiService, apiVersion in
             let builder = TeamsAPIBuilder(apiService: apiService)
             return builder.makeAPI(for: apiVersion)
@@ -36,31 +36,56 @@ final class TeamsAPITests: XCTestCase {
 
     override func tearDown() {
         apiSnapshotHelper = nil
-        super.tearDown()
     }
 
     // MARK: - Request generation
 
     func testGetTeamRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetTeamSuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getTeam(for: .mockID1)
         }
     }
 
     func testGetTeamRolesRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetTeamRolesSuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getTeamRoles(for: .mockID1)
         }
     }
 
     func testGetTeamMembersRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetTeamMembersSuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getTeamMembers(for: .mockID1, maxResults: 2000)
         }
     }
 
     func testGetLegalholdInfoRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetLegalHoldInfoSuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getLegalholdInfo(for: .mockID1, userID: .mockID2)
         }
     }
@@ -330,13 +355,16 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamForID_SuccessResponse_200_V2_Then_Verify_Request() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, "GetTeamSuccessResponseV2")
-        ])
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetTeamSuccessResponseV2"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
 
         let teamID = try XCTUnwrap(Team.ID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506"))
 
-        try await apiSnapshotHelper.verifyRequest(for: [.v2], apiService: apiService) { sut in
+        try await apiSnapshotHelper.verifyRequest(for: APIVersion.v2.andNextVersions, apiService: apiService) { sut in
             // When
             let result = try await sut.getTeam(for: teamID)
 
@@ -351,6 +379,45 @@ final class TeamsAPITests: XCTestCase {
                     logoKey: "iconKey",
                     splashScreenID: "splashScreen"
                 )
+            )
+        }
+    }
+
+    func testGetMembersByIDs_SuccessResponse_200_V2_Then_Verify_Request() async throws {
+        // Given
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetTeamMembersByIDsSuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: APIVersion.v2.andNextVersions, apiService: apiService) { sut in
+            // When
+            let result = try await sut.getTeamMembers(
+                for: .mockID1,
+                maxResults: 2000
+            )
+
+            // Then
+            XCTAssertEqual(
+                result,
+                [
+                    TeamMember(
+                        userID: try XCTUnwrap(UUID(uuidString: "849f56b9-5c9f-4682-ad76-c580b5724464")),
+                        creationDate: try XCTUnwrap(
+                            ISO8601DateFormatter.fractionalInternetDateTime
+                                .date(from: "2024-05-14T08:55:04.779Z")
+                        ),
+                        creatorID: try XCTUnwrap(UUID(uuidString: "c57d68c8-1ed4-41c7-b0a8-33026b7381fc")),
+                        legalholdStatus: .pending,
+                        permissions: TeamMemberPermissions(
+                            copyPermissions: 123,
+                            selfPermissions: 456
+                        )
+                    )
+                ]
             )
         }
     }
@@ -417,6 +484,28 @@ final class TeamsAPITests: XCTestCase {
         )
     }
 
+    func testGetWhitelistedBots_givenV0_To_V4_AndFailure_Unsupported_Endpoint_For_API_Version() async throws {
+
+        // Given
+        let unsupportedVersions = APIVersion.allCasesUpTo(.v5)
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
+        let suts = unsupportedVersions.map { apiVersion in
+            TeamsAPIBuilder(apiService: apiService)
+                .makeAPI(for: apiVersion)
+        }
+
+        // When & Then
+        XCTAssertEqual(suts.count, unsupportedVersions.count)
+        for sut in suts {
+            XCTAssertThrowsError(try sut.getWhitelistedBots(for: Scaffolding.teamID, with: "")) { error in
+                guard case TeamsAPIError.unsupportedEndpointForAPIVersion = error else {
+                    return XCTFail("unexpected error type: \(error)")
+                }
+            }
+        }
+
+    }
+
     // MARK: - V5
 
     func testGetTeamForID_FailureResponse_InvalidID_V5() async throws {
@@ -469,6 +558,75 @@ final class TeamsAPITests: XCTestCase {
                 userID: UUID()
             )
         }
+    }
+
+    func testGetWhitelistedBots_givenV5AndAbove_AndSuccessResponse200_thenSucceeds() async throws {
+
+        for apiVersion in APIVersion.v5.andNextVersions {
+
+            // Given
+            let apiService = MockAPIServiceProtocol.withResponses([
+                (.ok, "GetWhitelistedBotsSuccessResponseV5")
+            ])
+
+            // When
+            try await apiSnapshotHelper.verifyRequest(for: [apiVersion], apiService: apiService) { sut in
+                let pager = try sut.getWhitelistedBots(for: Scaffolding.teamID, with: "")
+                let bots = try await pager.reduce(into: []) { $0 += $1 }
+
+                // Then
+                let expectedBots = [
+                    WhitelistedBotProfile(
+                        id: UUID(uuidString: "cc0702a4-e126-48a1-87cd-8325835ac071")!,
+                        qualifiedID: .init(
+                            id: UUID(uuidString: "cc0702a4-e126-48a1-87cd-8325835ac071")!,
+                            domain: "example.com"
+                        ),
+                        name: "Google Calendar",
+                        summary: "Calendar",
+                        description: "Google Calendar integration for Wire",
+                        provider: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
+                        handle: "some-handle",
+                        teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab"),
+                        accentID: 2_147_483_647,
+                        assets: [],
+                        isDeleted: false
+                    ),
+                    WhitelistedBotProfile(
+                        id: UUID(uuidString: "d554c310-8237-4f85-b3cc-b7ae5ec1e6cd")!,
+                        qualifiedID: nil,
+                        name: "Secure Alert",
+                        summary: "Sends alarms",
+                        description: "for Alarms",
+                        provider: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
+                        handle: "",
+                        teamID: nil,
+                        accentID: nil,
+                        assets: [
+                            UserAsset(
+                                key: "lorem-ipsum",
+                                size: .complete,
+                                type: .image
+                            ),
+                            UserAsset(
+                                key: "dolor",
+                                size: .preview,
+                                type: .image
+                            )
+                        ],
+                        isDeleted: false
+                    )
+                ]
+                XCTAssertEqual(bots, expectedBots, "failed for apiVersion \(apiVersion)")
+            }
+        }
+
+    }
+
+    // MARK: -
+
+    private enum Scaffolding {
+        static let teamID = UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
     }
 
 }

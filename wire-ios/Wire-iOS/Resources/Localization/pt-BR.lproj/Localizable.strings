@@ -334,6 +334,13 @@
 "conversation.connection_view.encryption_info" = "A comunicação no Wire é sempre criptografada de ponta a ponta. Tudo o que você envia e recebe nessa conversa só é acessível para você e seu contato.";
 "conversation.connection_view.wire_cells.encryption_info" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.";
 "conversation.connection_view.sensitive_information_warning" = "Tenha cuidado com quem você compartilha informações confidenciais.";
+"conversation.connection_view.welcome.title.wire" = "Communication in Wire is always end-to-end encrypted.";
+"conversation.connection_view.welcome.title.wire_cells" = "Communication in Wire is always secured.";
+"conversation.connection_view.welcome.message.wire_channel" = "Everything you send and receive in this channel is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_group" = "Everything you send and receive in this conversation is only accessible to you and other participants.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_one_on_one" = "Everything you send and receive in this conversation is only accessible to you and your contact.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.message.wire_cells" = "Messages and calls are always end-to-end encrypted, whereas files and folders are secured in transit and encrypted at rest.\n\nPlease still be careful with who you share sensitive information.";
+"conversation.connection_view.welcome.learn_more" = "Mais informação";
 
 "conversation.input_bar.shortcut.send" = "Enviar mensagem";
 "conversation.input_bar.shortcut.newline" = "Inserir Quebra de Linha";
@@ -371,8 +378,9 @@
 "conversation.create.protocol_selection.mls_default" = "MLS (padrão)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
 "conversation.create.protocol_selection.proteus_default" = "Proteus (padrão)";
-"conversation.create.file_management.title" = "File collaboration";
-"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files. Use folders, tags and filters to work more efficiently. This can't be undone.";
+"conversation.create.file_management.title" = "Shared Drive";
+"conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
+"conversation.create.file_management.learnMore" = "Mais informação";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Chamada em curso";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Você não pode gravar uma mensagem de áudio durante uma chamada.";
@@ -400,7 +408,7 @@
 
 "conversation.action.search" = "Procurar";
 "conversation.action.conversationDetails" = "Detalhes da Conversa";
-"conversation.action.files" = "Arquivos";
+"conversation.action.files" = "Shared Drive";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Imagem";
@@ -607,7 +615,7 @@
 "content.system.message_timer_off" = "%@ desligou o tempo da mensagem";
 "content.system.message_timer_off-you" = "%@ desligou o tempo da mensagem";
 
-"content.system.message_timer_unavailable" = "Self-deleting messages are off for conversations with Cells";
+"content.system.message_timer_unavailable" = "Self-deleting messages are off";
 
 "content.system.backends_stop_federating.self_backend" = "**Seu backend** parou de federar com **%@**. [Saiba mais](%@)";
 "content.system.backends_stop_federating.other_backends" = "Os backends **%@** e **%@** pararam de federar. [Saiba mais](%@)";
@@ -621,7 +629,7 @@
 "content.system.channel.guest.joined" = "%@ entrou no canal";
 "content.system.channel.guest.you_joined" = "Você entrou no canal";
 
-"content.system.file_collaboration.enabled" = "File collaboration (Cells) is on";
+"content.system.file_collaboration.enabled" = "Shared Drive is on";
 
 // read receipt
 
@@ -734,6 +742,13 @@
 "content.file.too_big" = "Você pode enviar arquivos de até %@";
 
 "content.message.reply.files.count" = "%@ files";
+"content.message.reply.files.notAvailable" = "File not available";
+
+// Uploaded file needs rename
+"content.uploaded_file_needs_rename.title" = "Replace incompatible characters";
+"content.uploaded_file_needs_rename.message" = "You can't use the characters %@ and %@.\n\\Replace them automatically or rename the file manually.";
+"content.uploaded_file_needs_rename.confirmButton" = "Replace";
+"content.uploaded_file_needs_rename.cancelButton" = "Cancelar";
 
 // Reactions
 "content.reactions.title" = "Selecione reação";
@@ -1090,10 +1105,10 @@
 "group_details.receipt_options_cell.description" = "Quando isso está ativado, as pessoas podem ver quando suas mensagens nessa conversa são lidas.";
 "group_details.access_options_cell.title" = "Acesso ao canal";
 "group_details.channel_history_options_cell.title" = "Conversation history";
-"group_details.file_collaboration_cell.title" = "File collaboration (Cells)";
+"group_details.file_collaboration_cell.title" = "Shared Drive";
 "group_details.file_collaboration_cell.subtitle" = "Ligado";
 "group_details.file_collaboration_cell.footer" = "Permanently on for this conversation";
-"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with Cells.";
+"group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with a shared Drive.";
 
 "group_details.message_protocol.section_tile" = "Detalhes do protocolo";
 "group_details.message_protocol.title" = "Protocolo";
@@ -1866,6 +1881,10 @@
 
 "collections.search.field.placeholder" = "Buscar mensagens de texto";
 "collections.search.no_items" = "Não há resultados";
+
+"collections.section.searchFiles.description" = "Search Files";
+"collections.section.searchFiles.alert.title" = "Shared Drive";
+"collections.section.searchFiles.alert.message" = "Find any file or folder in this conversation.";
 
 
 

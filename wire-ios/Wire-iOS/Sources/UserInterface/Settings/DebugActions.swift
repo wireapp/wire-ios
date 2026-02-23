@@ -166,7 +166,7 @@ enum DebugActions {
             return
         }
 
-        let selfUser = ZMUser.selfUser(inUserSession: userSession)
+        let selfUser = ZMUser.selfUser(in: userSession.viewContext)
 
         let alert = UIAlertController(
             title: "Analytics identifier",

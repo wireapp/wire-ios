@@ -29,7 +29,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     // MARK: - Properties
 
-    let context: NSManagedObjectContext
+    public let context: NSManagedObjectContext
     let mlsService: (any MLSServiceInterface)?
     let eventProcessingLogger = WireLogger.eventProcessing
     let mlsLogger = WireLogger.mls
@@ -98,23 +98,25 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         conversation: ZMConversation
     ) async -> (mlsGroupID: MLSGroupID, isMLSReady: Bool)? {
 
-        await context.perform {
+        try? await context.unpack(conversation) { conversation in
             guard let mlsGroupID = conversation.mlsGroupID else {
                 return nil
             }
 
             return (mlsGroupID, conversation.mlsStatus == .ready)
         }
-
     }
 
     public func storeMLSConversationEstablished(
         mlsGroupID: MLSGroupID,
+        epoch: UInt64,
         conversation: ZMConversation
     ) async {
         await context.perform {
             conversation.mlsStatus = .ready
+            conversation.epoch = epoch
             conversation.mlsGroupID = mlsGroupID
+            conversation.commitPendingProposalDate = nil
         }
     }
 
@@ -125,6 +127,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         await context.perform {
             conversation.mlsStatus = .pendingJoinAfterReset
             conversation.mlsGroupID = newMLSGroupID
+            conversation.commitPendingProposalDate = nil
+            conversation.epoch = 0
         }
     }
 

@@ -34,7 +34,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
     private lazy var viewModel = ConversationChannelCreationFormViewModel(
         channelName: "",
         isUserPremium: userSession.isEnterpriseUser,
-        isWireCellsEnabled: userSession.isWireCellsEnabled,
+        isWireDriveEnabled: userSession.isWireDriveEnabled,
         teamsURL: URL.manageTeam(source: .settings),
         onFormValidityUpdate: { formIsValid in
             Task { @MainActor [weak self] in
@@ -150,7 +150,9 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
         let participantsController = AddParticipantsViewController(
             context: .create(values),
-            userSession: userSession
+            userSession: userSession,
+            isAppsFeatureEnabled: values.isAppsFeatureEnabled,
+            areLegacyBotsAvailable: values.areLegacyBotsAvailable
         )
 
         participantsController.conversationCreationDelegate = self
@@ -231,7 +233,7 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
                 teamID: teamID,
                 name: values.name,
                 historyDepth: channelHistoryDepth,
-                cells: userSession.isWireCellsEnabled ? values.enableFileManagement : nil,
+                cells: userSession.isWireDriveEnabled ? values.enableFileManagement : nil,
                 users: Set(users),
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),

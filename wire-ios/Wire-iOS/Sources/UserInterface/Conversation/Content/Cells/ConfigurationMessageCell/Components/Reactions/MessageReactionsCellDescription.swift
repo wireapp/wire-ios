@@ -31,7 +31,10 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
 
     let shouldAlignMessageContentForBubbles = true
 
-    init(message: ZMConversationMessage) {
+    init(
+        message: ZMConversationMessage,
+        userSession: UserSession
+    ) {
         self.message = message
 
         let reactions: [MessageReactionMetadata] = message.reactionsSortedByCreationDate().compactMap { reaction in
@@ -45,8 +48,7 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
                 isSelfUserReacting: reaction.users.contains(where: \.isSelfUser)
             )
         }
-
-        self.configuration = reactions
+        self.configuration = View.Configuration(reactions: reactions, userSession: userSession)
     }
 
     var supportsActions: Bool = false

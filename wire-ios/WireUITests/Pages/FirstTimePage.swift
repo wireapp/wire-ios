@@ -48,7 +48,13 @@ class FirstTimePage: PageModel {
     // Tap OK button on first time using Wire popup
     func acceptFirstTimeAlert() -> FirstTimePage {
         dismissSavePasswordAlertIfPresent()
-        okButton.tap()
+        _ = okButton.waitForExistence(timeout: 2)
+        if !okButton.isHittable {
+            dismissSavePasswordAlertIfPresent()
+        }
+        if okButton.isHittable {
+            okButton.tap()
+        }
         okButton.waitToDisappear()
         return self
     }
@@ -77,9 +83,9 @@ class FirstTimePage: PageModel {
     }
 
     private func dismissSavePasswordAlertIfPresent() {
-        if savePasswordSheet.waitForExistence(timeout: 2) {
+        if savePasswordSheet.waitForExistence(timeout: 4) {
             notNowOptionOnSavePasswordSheet.tap()
-            _ = savePasswordSheet.waitToDisappear(timeout: 2)
+            _ = savePasswordSheet.waitToDisappear(timeout: 4)
         }
     }
 }

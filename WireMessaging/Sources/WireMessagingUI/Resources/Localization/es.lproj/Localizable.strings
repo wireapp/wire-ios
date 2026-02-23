@@ -29,6 +29,7 @@
 "general.error.noInternet.message." = "Parece haber un problema con la red. Por favor, inténtalo más tarde.";
 "general.create" = "Crear";
 "general.cancel" = "Cancelar";
+"general.done" = "Listo";
 
 // MARK: - Channel Access level
 "channel_access_level.public" = "Público";
@@ -81,8 +82,8 @@
 
 "conversation.creationForm.readReceipts.toggle" = "Confirmaciones de lectura";
 "conversation.creationForm.readReceipts.description" = "Cuando esto está activado, la gente puede ver cuándo se leen sus mensajes en esta conversación.";
-"conversation.creationForm.wireCells.toggle" = "File collaboration";
-"conversation.creationForm.wireCells.description" = "Habilitar a los participantes el gestionar sus documentos y archivos de medios. Utilice carpetas, etiquetas y filtros para trabajar más eficientemente. Esto no se puede deshacer.";
+"conversation.creationForm.wireCells.toggle" = "Shared Drive";
+"conversation.creationForm.wireCells.description" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
 "conversation.creationForm.wireCells.learnMore" = "Más información";
 
 
@@ -110,11 +111,12 @@
 "conversation.draft.attachmentMenu.remove" = "Quitar archivo";
 
 // MARK: - Conversation Files View
-"conversation.wireCells.files.navigationTitle" = "Ficheros";
-"conversation.wireCells.allFiles.navigationTitle" = "Todos los archivos";
+"conversation.wireCells.files.navigationTitle" = "Shared Drive";
+"conversation.wireCells.allFiles.navigationTitle" = "Drive";
 "conversation.wireCells.files.item.subtitle" = "%@ por %@";
 "conversation.wireCells.files.loadMore.title" = "Cargar más";
 "conversation.wireCells.files.item.menu.open" = "Abrir";
+"conversation.wireCells.files.item.menu.shareLink" = "Share";
 "conversation.wireCells.files.item.menu.download" = "Descargar";
 "conversation.wireCells.files.item.menu.editFile" = "Edit file";
 "conversation.wireCells.files.item.menu.rename" = "Renombrar";
@@ -130,19 +132,26 @@
 "conversation.wireCells.files.item.deleteConfirmation.button" = "Eliminar";
 "conversation.wireCells.files.noData.title" = "Aún no hay archivos o carpetas";
 "conversation.wireCells.files.noData.message" = "You'll find all files and folders shared in this conversation here.";
-"conversation.wireCells.allFiles.noData.message" = "You'll find all files and folders shared across your conversations here.";
+"conversation.wireCells.files.noData.learnMore" = "Learn more about Shared Drive";
+"conversation.wireCells.allFiles.noData.title" = "There are no files yet";
+"conversation.wireCells.allFiles.noData.message" = "For conversations that use shared Drive, you'll find all files here.";
+"conversation.wireCells.allFiles.noData.learnMore" = "Más información";
 "conversation.wireCells.files.pendingCells.title" = "Los archivos están cargando";
 "conversation.wireCells.files.pendingCells.message" = "Tus documentos y archivos multimedia estarán disponibles aquí una vez que hayamos subido todos los archivos y carpetas.";
 "conversation.wireCells.files.error.title" = "Can't load files";
 "conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
 "conversation.wireCells.files.error.reload" = "Reload";
 "conversation.wireCells.files.search.title" = "Search files";
-"conversation.wireCells.files.list.newFolder" = "New folder";
+"conversation.wireCells.files.list.createFolder" = "Create folder";
+"conversation.wireCells.files.list.createFile" = "Create file";
+"conversation.wireCells.files.list.createFile.presentation" = "Presentation";
+"conversation.wireCells.files.list.createFile.spreadsheet" = "Spreadsheet";
+"conversation.wireCells.files.list.createFile.document" = "Document";
 "conversation.wireCells.files.newFolder.title" = "Nombre de carpeta";
 "conversation.wireCells.files.newFolder.placeholder" = "Enter folder name";
 "conversation.wireCells.files.newFolder.navigationTitle" = "Create folder";
+"conversation.wireCells.files.newFile.navigationTitle" = "Create %@ file";
 "conversation.wireCells.files.newFolder.folderNameTooLongError" = "Use a shorter folder name (most 64 characters)";
-"conversation.wireCells.files.newFolder.wrongCharacterError" = "Use a name without \"/\"";
 "conversation.wireCells.files.newFolder.folderAlreadyExistsError" = "A folder with that name already exists";
 "conversation.wireCells.files.fileName.title" = "Nombre del archivo";
 "conversation.wireCells.files.folderName.title" = "Nombre de carpeta";
@@ -150,13 +159,14 @@
 "conversation.wireCells.files.renameFolder.navigationTitle" = "Rename folder";
 "conversation.wireCells.files.renameFile.filenameTooLongError" = "Use a shorter file name (most 64 characters)";
 "conversation.wireCells.files.renameFolder.folderNameTooLongError" = "Use a shorter folder name (most 64 characters)";
-"conversation.wireCells.files.renameFile.wrongCharacterError" = "Use a name without \"/\" and not starting with \".\"";
+"conversation.wireCells.files.renameFile.wrongCharacterError" = "Don't start with a . and don't use {0}";
 "conversation.wireCells.files.renameFile.fileAlreadyExistsError" = "A file with that name already exists";
 "conversation.wireCells.files.renameFolder.folderAlreadyExistsError" = "A folder with that name already exists";
 "conversation.wireCells.files.renameFile.placeholder" = "Enter file name";
 "conversation.wireCells.files.renameFolder.placeholder" = "Enter folder name";
 "conversation.wireCells.files.openRecycleBin" = "Open recycle bin";
 "conversation.wireCells.recycleBin.navigationTitle" = "Recycle Bin";
+"conversation.wireCells.recycleBin.noData.learnMore" = "Learn more about Recycle Bin";
 "conversation.wireCells.recycleBin.noData.message" = "You'll find all deleted files and folders here.";
 "conversation.wireCells.recycleBin.item.menu.delete" = "Delete Permanently";
 "conversation.wireCells.recycleBin.item.deleteConfirmation.button" = "Delete Permanently";
@@ -185,10 +195,55 @@
 "conversation.wireCells.tags.error.nameTooLong" = "Use a shorter tag name (at most 30 characters)";
 "conversation.wireCells.tags.error.specialCharacters" = "Use a tag without special characters {0}";
 "conversation.wireCells.tags.error.saveFailedTitle" = "Unable to edit tags";
-"conversation.wireCells.tags.error.saveFailedMessage" = "Due to an error your tags could not be edited.";
+"conversation.wireCells.tags.error.saveFailedMessage" = "Something went wrong while editing the tags. Please try again.";
 "conversation.wireCells.tags.error.retryButton" = "Try again";
 "conversation.wireCells.files.moveToFolder.move" = "Move here";
 "conversation.wireCells.files.moveToFolder.noSubfolders" = "There are no subfolders in this folder.";
+
+// MARK: - Share Link View
+"conversation.wireCells.shareLink.title" = "Share via link";
+"conversation.wireCells.shareLink.description" = "Upload and share your file via a public link. All recipients can view and download it.";
+"conversation.wireCells.shareLink.createLinkToogle" = "Create public link";
+"conversation.wireCells.shareLink.linkSection.title" = "LINK SETTINGS (OPTIONAL)";
+"conversation.wireCells.shareLink.linkSection.passwordTitle" = "Contraseña";
+"conversation.wireCells.shareLink.linkSection.expirationTitle" = "Expiration";
+"conversation.wireCells.shareLink.linkSection.passwordDescription" = "Set a password to restrict access.";
+"conversation.wireCells.shareLink.linkSection.expirationDescription" = "Link expires on a selected day.";
+"conversation.wireCells.shareLink.shareLinkButton" = "Compartir enlace";
+"conversation.wireCells.shareLink.preparingLinkButton" = "Preparing Link…";
+"conversation.wireCells.shareLink.off" = "OFF";
+"conversation.wireCells.shareLink.on" = "ON";
+"conversation.wireCells.shareLink.expired" = "EXPIRED";
+"conversation.wireCells.shareLink.linkExpiredOn" = "Link expired on %@";
+
+// MARK: - Share Link Password View
+"conversation.wireCells.shareLink.password.title" = "Contraseña";
+"conversation.wireCells.shareLink.password.description" = "People who want to access content via the link need to enter this password first.";
+"conversation.wireCells.shareLink.password.setPasswordToggle" = "Establecer contraseña";
+"conversation.wireCells.shareLink.password.generatePassword" = "Generate Password";
+"conversation.wireCells.shareLink.password.textfieldTitle" = "Contraseña";
+"conversation.wireCells.shareLink.password.textfieldPrompt" = "Introduzca contraseña";
+"conversation.wireCells.shareLink.password.sharePassword" = "Share Password";
+"conversation.wireCells.shareLink.password.resetPassword" = "Cambiar contraseña de Wire";
+"conversation.wireCells.shareLink.password.removeConfirmation.title" = "Remove password?";
+"conversation.wireCells.shareLink.password.removeConfirmation.message" = "Anyone with the link can open the file and view its contents.";
+"conversation.wireCells.shareLink.password.removeConfirmation.button" = "Eliminar";
+"conversation.wireCells.shareLink.password.noAccessToExisting.title" = "No access to existing password";
+"conversation.wireCells.shareLink.password.noAccessToExisting.message" = "After reinstalling Wire, you can't copy the set password. Yet, it is still valid.\n\nIf you didn't save the password, change it and reshare the updated link.";
+"conversation.wireCells.shareLink.password.noAccessToExisting.button" = "Change password";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.title" = "Unable to create password-secured link";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.message" = "Please check your network connection and try again.";
+"conversation.wireCells.shareLink.password.unableToCreatePassword.action" = "Try again";
+
+// MARK: - Share Link Expiration View
+"conversation.wireCells.shareLink.expiration.title" = "Expiration";
+"conversation.wireCells.shareLink.expiration.addExpirationToggle" = "Add expiration";
+"conversation.wireCells.shareLink.expiration.description" = "The link expires automatically after the set date and time. People can't access the content anymore.";
+"conversation.wireCells.shareLink.expiration.datePickerTitle" = "Expires";
+"conversation.wireCells.shareLink.expiration.dateNotSupported" = "Date in the past";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.title" = "Unable to add expiration date";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.message" = "Please check your network connection and try again.";
+"conversation.wireCells.shareLink.expiration.unableToAddExpiration.action" = "Try again";
 
 // MARK: - Conversation
 "conversation.message.attachment.notAvailable" = "Archivo no disponible";
@@ -202,9 +257,8 @@
 "conversation.wireCells.filesVersioning.restoreAlertTitle" = "Restore version";
 "conversation.wireCells.filesVersioning.restoreAlertMessage" = "This copies the restored version and sets it as the current one. All previous versions remain available.";
 "conversation.wireCells.filesVersioning.restoreAlertAction" = "Restore";
-"conversation.wireCells.filesVersioning.restoreFailureAlertTitle" = "Restoring version failed";
-"conversation.wireCells.filesVersioning.restoreFailureAlertMessage" = "Something went wrong while restoring a version. Please retry.";
+"conversation.wireCells.filesVersioning.restoreFailureAlertTitle" = "Unable to restore version";
+"conversation.wireCells.filesVersioning.restoreFailureAlertMessage" = "Something went wrong while restoring this version. Please try again.";
 "conversation.wireCells.filesVersioning.downloadVersion" = "Download version";
 "conversation.wireCells.filesVersioning.retry" = "Reintentar";
 "conversation.wireCells.filesVersioning.restoringVersion" = "Restoring version...";
-"conversation.wireCells.filesVersioning.downloadingVersion" = "Downloading file version";

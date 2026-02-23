@@ -47,8 +47,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
             accountID: coreDataStack.account.userIdentifier,
             databaseContexts: [
                 coreDataStack.viewContext,
-                coreDataStack.syncContext,
-                coreDataStack.searchContext
+                coreDataStack.syncContext
             ],
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults,

@@ -27,9 +27,11 @@ class WireUITestCase: XCTestCase {
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     let userHelper = UserHelper()
     let testServicesClient = TestServicesClient()
+    var callingServiceClient: CallingServiceClient!
 
     override func setUpWithError() throws {
         XCUIApplication().terminate()
+        callingServiceClient = try CallingServiceClient()
 
         let launchArguments = [
             "-resetData",
@@ -40,8 +42,7 @@ class WireUITestCase: XCTestCase {
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
         app.launchArguments = launchArguments
         app.setDeveloperFlags([
-            .useWireAuthentication: true,
-            .multibackend: true
+            .useWireAuthentication: true
         ])
         app.launch()
 
@@ -51,6 +52,7 @@ class WireUITestCase: XCTestCase {
     }
 
     override func tearDown() async throws {
+        await callingServiceClient.destroyCreatedInstances()
         await userHelper.deleteCreatedUsers()
     }
 

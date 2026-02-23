@@ -373,23 +373,23 @@ public class MockConversationLike: ConversationLike {
 
     public var underlyingHasMoreHistory: Bool!
 
-    // MARK: - wireCellName
+    // MARK: - wireDriveCellName
 
-    public var wireCellName: String {
-        get { return underlyingWireCellName }
-        set(value) { underlyingWireCellName = value }
+    public var wireDriveCellName: String {
+        get { return underlyingWireDriveCellName }
+        set(value) { underlyingWireDriveCellName = value }
     }
 
-    public var underlyingWireCellName: String!
+    public var underlyingWireDriveCellName: String!
 
-    // MARK: - isCellsEnabled
+    // MARK: - isWireDriveEnabled
 
-    public var isCellsEnabled: Bool {
-        get { return underlyingIsCellsEnabled }
-        set(value) { underlyingIsCellsEnabled = value }
+    public var isWireDriveEnabled: Bool {
+        get { return underlyingIsWireDriveEnabled }
+        set(value) { underlyingIsWireDriveEnabled = value }
     }
 
-    public var underlyingIsCellsEnabled: Bool!
+    public var underlyingIsWireDriveEnabled: Bool!
 
 
     // MARK: - localParticipantsContain
@@ -2136,15 +2136,6 @@ public class MockCoreDataStackProtocol: CoreDataStackProtocol {
     }
 
     public var underlyingSyncContext: NSManagedObjectContext!
-
-    // MARK: - searchContext
-
-    public var searchContext: NSManagedObjectContext {
-        get { return underlyingSearchContext }
-        set(value) { underlyingSearchContext = value }
-    }
-
-    public var underlyingSearchContext: NSManagedObjectContext!
 
     // MARK: - eventContext
 
@@ -4203,6 +4194,15 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public init() {}
 
+    // MARK: - localDomain
+
+    public var localDomain: String {
+        get { return underlyingLocalDomain }
+        set(value) { underlyingLocalDomain = value }
+    }
+
+    public var underlyingLocalDomain: String!
+
 
     // MARK: - createGroup
 
@@ -4626,6 +4626,26 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         try await mock(groupID)
     }
 
+    // MARK: - commitPendingProposals
+
+    public var commitPendingProposalsInSkipRetry_Invocations: [(groupID: MLSGroupID, skipRetry: Bool)] = []
+    public var commitPendingProposalsInSkipRetry_MockError: Error?
+    public var commitPendingProposalsInSkipRetry_MockMethod: ((MLSGroupID, Bool) async throws -> Void)?
+
+    public func commitPendingProposals(in groupID: MLSGroupID, skipRetry: Bool) async throws {
+        commitPendingProposalsInSkipRetry_Invocations.append((groupID: groupID, skipRetry: skipRetry))
+
+        if let error = commitPendingProposalsInSkipRetry_MockError {
+            throw error
+        }
+
+        guard let mock = commitPendingProposalsInSkipRetry_MockMethod else {
+            fatalError("no mock for `commitPendingProposalsInSkipRetry`")
+        }
+
+        try await mock(groupID, skipRetry)
+    }
+
     // MARK: - updateKeyMaterialForAllStaleGroupsIfNeeded
 
     public var updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations: [Void] = []
@@ -4678,17 +4698,17 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     // MARK: - fetchAndRepairGroup
 
-    public var fetchAndRepairGroupWithShouldPerformIncrementalSync_Invocations: [(groupID: MLSGroupID, shouldPerformIncrementalSync: Bool)] = []
-    public var fetchAndRepairGroupWithShouldPerformIncrementalSync_MockMethod: ((MLSGroupID, Bool) async -> Void)?
+    public var fetchAndRepairGroupWith_Invocations: [MLSGroupID] = []
+    public var fetchAndRepairGroupWith_MockMethod: ((MLSGroupID) async -> Void)?
 
-    public func fetchAndRepairGroup(with groupID: MLSGroupID, shouldPerformIncrementalSync: Bool) async {
-        fetchAndRepairGroupWithShouldPerformIncrementalSync_Invocations.append((groupID: groupID, shouldPerformIncrementalSync: shouldPerformIncrementalSync))
+    public func fetchAndRepairGroup(with groupID: MLSGroupID) async {
+        fetchAndRepairGroupWith_Invocations.append(groupID)
 
-        guard let mock = fetchAndRepairGroupWithShouldPerformIncrementalSync_MockMethod else {
-            fatalError("no mock for `fetchAndRepairGroupWithShouldPerformIncrementalSync`")
+        guard let mock = fetchAndRepairGroupWith_MockMethod else {
+            fatalError("no mock for `fetchAndRepairGroupWith`")
         }
 
-        await mock(groupID, shouldPerformIncrementalSync)
+        await mock(groupID)
     }
 
     // MARK: - generateNewEpoch
@@ -4810,19 +4830,27 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         try await mock(groupID)
     }
 
-    // MARK: - setSyncDelegate
+    // MARK: - epoch
 
-    public var setSyncDelegate_Invocations: [any MLSSyncDelegate] = []
-    public var setSyncDelegate_MockMethod: ((any MLSSyncDelegate) -> Void)?
+    public var epochFor_Invocations: [MLSGroupID] = []
+    public var epochFor_MockError: Error?
+    public var epochFor_MockMethod: ((MLSGroupID) async throws -> UInt64)?
+    public var epochFor_MockValue: UInt64?
 
-    public func setSyncDelegate(_ delegate: any MLSSyncDelegate) {
-        setSyncDelegate_Invocations.append(delegate)
+    public func epoch(for groupID: MLSGroupID) async throws -> UInt64 {
+        epochFor_Invocations.append(groupID)
 
-        guard let mock = setSyncDelegate_MockMethod else {
-            fatalError("no mock for `setSyncDelegate`")
+        if let error = epochFor_MockError {
+            throw error
         }
 
-        mock(delegate)
+        if let mock = epochFor_MockMethod {
+            return try await mock(groupID)
+        } else if let mock = epochFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `epochFor`")
+        }
     }
 
     // MARK: - setResetBrokenMLSConversationDelegate
@@ -4925,35 +4953,6 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         } else {
             fatalError("no mock for `encryptMessageFor`")
         }
-    }
-
-}
-
-public class MockMLSSyncDelegate: MLSSyncDelegate {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - recoverWithIncrementalSync
-
-    public var recoverWithIncrementalSync_Invocations: [Void] = []
-    public var recoverWithIncrementalSync_MockError: Error?
-    public var recoverWithIncrementalSync_MockMethod: (() async throws -> Void)?
-
-    public func recoverWithIncrementalSync() async throws {
-        recoverWithIncrementalSync_Invocations.append(())
-
-        if let error = recoverWithIncrementalSync_MockError {
-            throw error
-        }
-
-        guard let mock = recoverWithIncrementalSync_MockMethod else {
-            fatalError("no mock for `recoverWithIncrementalSync`")
-        }
-
-        try await mock()
     }
 
 }

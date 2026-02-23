@@ -69,6 +69,7 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
             .success(code: .ok, type: ListUsersResponseV0.self)
             .parse(code: response.statusCode, data: data)
     }
+
 }
 
 struct UserResponseV0: Decodable, ToAPIModelConvertible {
@@ -131,12 +132,22 @@ struct ListUsersRequestV0: Encodable {
     }
 }
 
-typealias ListUsersResponseV0 = [UserResponseV0]
+struct ListUsersResponseV0: Decodable, ToAPIModelConvertible {
 
-extension ListUsersResponseV0: ToAPIModelConvertible {
-    func toAPIModel() -> UserList {
-        UserList(found: map { $0.toAPIModel() }, failed: [])
+    var users: [UserResponseV0]
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        self.users = try container.decode([UserResponseV0].self)
     }
+
+    func toAPIModel() -> UserList {
+        UserList(
+            found: users.map { $0.toAPIModel() },
+            failed: []
+        )
+    }
+
 }
 
 struct ServiceResponseV0: Decodable, ToAPIModelConvertible {
@@ -147,4 +158,5 @@ struct ServiceResponseV0: Decodable, ToAPIModelConvertible {
     func toAPIModel() -> Service {
         Service(id: id, provider: provider)
     }
+
 }

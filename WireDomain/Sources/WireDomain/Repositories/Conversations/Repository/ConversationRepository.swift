@@ -82,16 +82,19 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             for: [qualifiedID]
         )
 
-        guard let conversation = conversationList.found.first else {
+        if let conversation = conversationList.found.first {
+            await conversationsLocalStore.storeConversation(
+                conversation.toDomainModel(),
+                timestamp: .now,
+                isFederationEnabled: isFederationEnabled,
+                isMLSEnabled: isMLSEnabled
+            )
+        } else if conversationList.notFound.contains(qualifiedID) {
             throw ConversationRepositoryError.conversationNotFound
+        } else {
+            throw ConversationRepositoryError.retrievalFailed
         }
 
-        await conversationsLocalStore.storeConversation(
-            conversation.toDomainModel(),
-            timestamp: .now,
-            isFederationEnabled: isFederationEnabled,
-            isMLSEnabled: isMLSEnabled
-        )
     }
 
     public func fetchConversation(
@@ -385,6 +388,13 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             isSelfAnActiveMember = conversation?.isSelfAnActiveMember ?? false
         }
         return isSelfAnActiveMember
+    }
+
+    public func clearPendingProposals(in groupID: WireDataModel.MLSGroupID) async {
+        await conversationsLocalStore.execute(identifier: groupID) { conversation, context in
+            conversation?.commitPendingProposalDate = nil
+            context.saveOrRollback()
+        }
     }
 
     // MARK: - Private

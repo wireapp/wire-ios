@@ -22,7 +22,7 @@ import GenericMessageProtocol
 // TODO: [WPB-16311] This is currently just a stub and needs to be implemented properly.
 public final class MultipartMessageData: NSObject {
 
-    public enum Metadata {
+    public enum Metadata: Equatable {
 
         /// Image metadata, containing width and height in pixels.
         case image(width: Int?, height: Int?)
@@ -37,7 +37,7 @@ public final class MultipartMessageData: NSObject {
 
     }
 
-    public struct Attachment {
+    public struct Attachment: Equatable {
         public let nodeID: UUID
         public let contentType: String?
         public let initialName: String?

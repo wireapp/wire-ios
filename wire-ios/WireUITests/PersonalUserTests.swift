@@ -20,6 +20,7 @@ import XCTest
 
 final class PersonalUsersTests: WireUITestCase {
 
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8587
     @MainActor
     func test_Register_asPersonalUser() async throws {
         let user = UserGenerator.generateUniqueUserInfo()
@@ -57,6 +58,7 @@ final class PersonalUsersTests: WireUITestCase {
         XCTAssertEqual(accountPage.getEmail(), user.email, "Email didn't contain \(user.email)")
     }
 
+    /// testiny:  https://app.testiny.io/IOS/testcases/tcf/1286/tc/8799
     @MainActor
     func test_Login_asExistingPersonalUser() async throws {
         let user = try await userHelper.createPersonalUser()
@@ -69,6 +71,7 @@ final class PersonalUsersTests: WireUITestCase {
             .enterPassword(user.password)
     }
 
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8798
     @MainActor
     func test_PersonalAccountLifecycle() async throws {
         let userA = try await userHelper.createPersonalUser()
@@ -88,7 +91,7 @@ final class PersonalUsersTests: WireUITestCase {
         _ = try userDetailsPage.sendConnectionRequest()
             .closeProfilePage()
             .closeNewConversationPage()
-            .openUserAccountPageForUser(with: userA.name)
+            .openUserProfilePage()
             .tapAddAccountOrTeamButton()
         let connectionRequestsPage = try app.loginUser(email: userB.email, password: userB.password)
             .acceptPopup(with: self)
@@ -104,7 +107,7 @@ final class PersonalUsersTests: WireUITestCase {
         let nameA = try XCTUnwrap(conversationsPage.getNameLabel())
         XCTAssertEqual(nameA, userA.name, "name didn't match \(userA.name)")
 
-        conversationsPage = try conversationsPage.openUserAccountPageForUser(with: userB.name)
+        conversationsPage = try conversationsPage.openUserProfilePage()
             .switchUserAccountForUser(withName: userA.name)
 
         let nameUserB = try XCTUnwrap(conversationsPage.getNameLabel())

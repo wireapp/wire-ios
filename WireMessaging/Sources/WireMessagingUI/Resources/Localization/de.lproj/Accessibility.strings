@@ -25,7 +25,7 @@
 
 // MARK: Channel History
 "conversation.create.channel.back" = "Zurück zur Übersicht der neuen Unterhaltung";
-"conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";
+"conversation.creationForm.channelHistory.upgradeBanner.close" = "Upgrade-Banner schließen";
 
 // MARK: Conversation Files View
 "conversation.wireCells.files.close" = "Dateien schließen";
@@ -45,3 +45,7 @@
 // MARK: - File Tags View
 "conversation.wireCells.tags.removeTag" = "Tag entfernen {0}";
 "conversation.wireCells.tags.addTag" = "Tag hinzufügen {0}";
+
+// MARK: - Share Link View
+"conversation.wireCells.shareLink.hidePassword" = "Passwort ausblenden";
+"conversation.wireCells.shareLink.showPassword" = "Passwort anzeigen";

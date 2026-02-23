@@ -21,53 +21,52 @@ import XCTest
 
 final class TeamManageTests: WireUITestCase {
 
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1299/tc/8625
     @MainActor
     func test_Migrate_PersonalUserToTeam() async throws {
         let user = try await userHelper.createPersonalUser()
 
         let conversationPage = try app.loginUser(email: user.email, password: user.password)
             .acceptPopup(with: self)
-            .openUserAccountPageForUser(with: user.name)
+            .openUserProfilePage()
             .tapCreateTeamButton()
             .tapContinue()
             .typeTeamNameAndContinue(user.teamName)
             .acceptTheConfirmationAndContinue()
             .tapBackToWireButton()
 
-        let userProfilePage = try conversationPage.openUserAccountPageForUser(with: user.name)
+        let userProfilePage = try conversationPage.openUserProfilePage()
 
         let teamName = try XCTUnwrap(userProfilePage.getTeamName())
         XCTAssertEqual(teamName, user.teamName, "Team name didn't match expected value \(user.teamName)")
         XCTAssertTrue(userProfilePage.manageTeamButton.exists, "Manage Team button is not visible")
     }
 
+    /// testiny:  https://app.testiny.io/IOS/testcases/tcf/1287/tc/8800
     @MainActor
     func test_PersonalUser_InvitedToTeam() async throws {
-        let owner = try await userHelper.createPersonalUser()
-        let memberUser = UserGenerator.generateUniqueUserInfo()
-        let teamID = try await BackendClient.upgradePersonalToTeam(
-            email: owner.email,
-            password: owner.password,
-            teamName: owner.teamName
+        let teamOwner = try await userHelper.createPersonalUser()
+        let teamID = try await userHelper.upgradePersonalToTeam(
+            teamName: teamOwner.teamName
         )
 
-        let invitationID = try await BackendClient.inviteUserToTeam(
-            teamID: teamID,
-            email: owner.email,
-            password: owner.password,
-            memberName: memberUser.name,
-            memberEmail: memberUser.email
+        let ownerAccessToken = try await userHelper.fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
         )
-        let code = try await BackendClient.getInvitationCode(team: teamID, invitationID: invitationID)
-        try await BackendClient.registerTeamMember(memberUser, invitationCode: code)
+
+        let (_, memberUser) = try await userHelper.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            teamID: teamID
+        )
 
         let firstTimePage = try app.loginUser(email: memberUser.email, password: memberUser.password)
         let userProfilePage = try firstTimePage.acceptPopupOnTeamMemberSetup(with: self)
             .setUsername(memberUser.username)
-            .openUserAccountPageForUser(with: memberUser.username)
+            .openUserProfilePage()
 
         let teamName = try XCTUnwrap(userProfilePage.getTeamName())
-        XCTAssertEqual(teamName, owner.teamName, "Team name didn't match expected value \(owner.teamName)")
+        XCTAssertEqual(teamName, teamOwner.teamName, "Team name didn't match expected value \(teamOwner.teamName)")
 
         let conversationPage = try userProfilePage.closeAccountPage()
         _ = try conversationPage.openSettings()
@@ -76,6 +75,7 @@ final class TeamManageTests: WireUITestCase {
             .enterPassword(memberUser.password)
     }
 
+    ///  testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8579
     @MainActor
     func test_TeamOwner_GroupCreatedAndSendMessage() async throws {
 
@@ -84,28 +84,14 @@ final class TeamManageTests: WireUITestCase {
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
 
-        let teamID = try XCTUnwrap(teamOwner.teamID)
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
-            email: teamOwner.email,
-            password: teamOwner.password
-        )
-
-        let (_, teamMember1) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken.token,
-            teamID: teamID,
-        )
-
-        let (_, teamMember2) = try await userHelper.registerUsersAsTeamMember(
-            ownerAccessToken: ownerAccessToken.token,
-            teamID: teamID,
-        )
+        let teamMemberNames = try await userHelper.registerTeamWith2Members(teamOwner: teamOwner)
 
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopup(with: self)
             .tapPlusButtonToCreateGroup()
             .tapNewGroupButton()
             .enterGroupName(groupName)
-            .tapMemberCells(withLabelPrefixes: [teamMember1.name, teamMember2.name])
+            .tapMemberCells(withLabelPrefixes: teamMemberNames)
             .doneSelectingMembers()
             .sendMessage(messageFromOwner)
 
@@ -119,6 +105,7 @@ final class TeamManageTests: WireUITestCase {
         )
     }
 
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1302/tc/8656
     @MainActor
     func test_GroupAdmin_RemoveAndAddParticipantFromGroup() async throws {
 
@@ -291,5 +278,71 @@ final class TeamManageTests: WireUITestCase {
 //                fetchSenders[2].contains(teamMembers[0].name),
 //            "Expected message '\(messageFromMember1)' not found in sent messages: \(fetchMessages)"
 //        )
+    /// [WPB-3772] Bug: Opening an archived conversation unarchives it
+    /// testiny: https://app.testiny.io/IOS/testcases/tc/8563
+    @MainActor
+    func test_ArchivedConversationUnarchivesWhenOpened() async throws {
+        let groupName = UserGenerator.generateRandomGroupName()
+
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+
+        let teamNames = try await userHelper.registerTeamWith2Members(teamOwner: teamOwner)
+
+        let archivedConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup(with: self)
+            .tapPlusButtonToCreateGroup()
+            .tapNewGroupButton()
+            .enterGroupName(groupName)
+            .tapMemberCells(withLabelPrefixes: teamNames)
+            .doneSelectingMembers()
+            .openConversationDetails()
+            .moreOptionsConversationDetails()
+            .archiveOptionsConversationDetails()
+            .openArchived()
+            .openConversation()
+            .goBackToConversationPage()
+            .openArchived()
+
+        XCTAssertTrue(archivedConversationPage.conversationExists(withName: groupName))
+    }
+
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1389/tc/8865/
+    @MainActor
+    func test_mentionUserInGroup() async throws {
+
+        let (teamOwner, teamMembers, _, _) = try await userHelper
+            .registerTeam(
+                withMemberCount: 4,
+                groupName: UserGenerator.generateRandomGroupName()
+            )
+
+        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup(with: self)
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        let conversationPage = try app.loginUser(email: teamMembers[1].email, password: teamMembers[1].password)
+            .acceptPopup(with: self)
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: teamOwner.name)
+            .openConversation()
+            .mentionUserAndSendMessage(nameOfUser: teamMembers[1].name)
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: teamMembers[1].name)
+
+        XCTAssertEqual(
+            conversationPage.mentionStatus.value as? String,
+            "You are mentioned",
+            "'@' value not found in conversation cell"
+        )
+
+        let activeConversationPage = try conversationPage.openConversation()
+
+        let fetchMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        XCTAssertTrue(
+            fetchMessages.contains(where: { $0.contains("@") && $0.contains(teamMembers[1].name) }),
+            "Expected mention '@\(teamMembers[1].name)' not found in sent messages: \(fetchMessages)"
+        )
     }
 }

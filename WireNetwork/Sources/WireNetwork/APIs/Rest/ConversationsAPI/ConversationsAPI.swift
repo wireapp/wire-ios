@@ -23,7 +23,7 @@ public import Foundation
 public protocol ConversationsAPI {
 
     /// Fetch all conversation identifiers in batches for ``APIVersion`` v0.
-    func getLegacyConversationIdentifiers() async throws -> PayloadPager<[UUID]>
+    func getLegacyConversationIdentifiers() throws -> PayloadPager<[UUID]>
 
     /// Fetch all conversation identifiers in batches available from ``APIVersion`` v1.
     #if DEBUG
@@ -73,5 +73,11 @@ public protocol ConversationsAPI {
         conversationDomain: String,
         permission: ChannelPermission
     ) async throws -> ChannelPermission
+
+    func updateConversationAccess(
+        conversationID: QualifiedID,
+        allowGuests: Bool,
+        allowApps: Bool
+    ) async throws
 
 }

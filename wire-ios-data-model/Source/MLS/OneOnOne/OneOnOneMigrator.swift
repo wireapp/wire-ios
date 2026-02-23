@@ -50,7 +50,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         in context: NSManagedObjectContext
     ) async throws -> MLSGroupID {
         // Fetch MLS 1:1 conversation and store it locally.
-        let (mlsGroupID, removalKeys) = try await syncMLSConversationFromBackend(
+        let (conversationID, mlsGroupID, removalKeys) = try await syncMLSConversationFromBackend(
             userID: userID,
             in: context
         )
@@ -58,6 +58,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         // Create or join the MLS conversation if needed.
         if try await !mlsService.conversationExists(groupID: mlsGroupID) {
             try await createOrJoinMLSConversationIfNeeded(
+                conversationID: conversationID,
                 userID: userID,
                 mlsGroupID: mlsGroupID,
                 removalKeys: removalKeys,
@@ -89,7 +90,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
     private func syncMLSConversationFromBackend(
         userID: QualifiedID,
         in context: NSManagedObjectContext
-    ) async throws -> (MLSGroupID, BackendMLSPublicKeys?) {
+    ) async throws -> (QualifiedID, MLSGroupID, BackendMLSPublicKeys?) {
         var action = SyncMLSOneToOneConversationAction(
             userID: userID.uuid,
             domain: userID.domain
@@ -161,42 +162,17 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 .info(
                     "Migrating messages and link the MLS conversation if needed. Conversation is migrated to MLS: \(mlsConversation.migratedToMLS), is oneOnOneConversation MLS: \(otherUser.oneOnOneConversation == mlsConversation)"
                 )
-            // Note on proteus, it's possible to have duplicate 1-1 conversations, so we need to fetch all relevant
-            // 1-1 conversations here.
-            let source = OneOnOneSource(context: context)
-            var proteusConversations: [ZMConversation] = []
-            // NOTE: querying for all types at once triggers a table scan which is very expensive
-            for type in [OneOnOneType.fake, OneOnOneType.proteus, OneOnOneType.proteusPending] {
-                let conversations = try source.fetchOneOnOnes(
-                    user: otherUser,
-                    types: [type]
-                )
-                proteusConversations.append(contentsOf: conversations)
-            }
 
-            // Move local messages from all proteus conversations
-            for proteusConversation in proteusConversations {
-                // Since ZMMessages only have a single conversation connected,
-                // forming this union also removes the relationship to the proteus conversation.
-                mlsConversation.migrateMessages(from: proteusConversation)
-            }
-
-            if !proteusConversations.isEmpty {
-                // insert system message that we moved from proteus to MLS
-                let sender = ZMUser.selfUser(in: context)
-                mlsConversation.appendMLSMigrationFinalizedSystemMessageIfNeeded(sender: sender, at: .now)
-
-                // update just to be sure
-                mlsConversation.needsToBeUpdatedFromBackend = true
-            }
-            // switch active conversation
-            otherUser.oneOnOneConversation = mlsConversation
-
-            mlsConversation.migratedToMLS = true
+            try OneOnOneSource.migrate(
+                toMLSConversation: mlsConversation,
+                for: otherUser,
+                in: context
+            )
         }
     }
 
     private func createOrJoinMLSConversationIfNeeded(
+        conversationID: QualifiedID,
         userID: QualifiedID,
         mlsGroupID: MLSGroupID,
         removalKeys: BackendMLSPublicKeys?,
@@ -206,7 +182,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             throw MigrateMLSOneOnOneConversationError.missingConversationEpoch
         }
 
-        if epoch == 0 {
+        if epoch == 0, conversationID.domain == mlsService.localDomain {
             try await establishMLSGroupIfNeeded(
                 userID: userID,
                 mlsGroupID: mlsGroupID,

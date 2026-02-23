@@ -326,11 +326,11 @@ final class UserSessionMock: UserSession {
         MockGetE2eIdentityCertificatesUseCaseProtocol()
     }
 
-    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+    func makeConversationSecureGuestLinkUseCase() -> (any CreateConversationGuestLinkUseCaseProtocol)? {
         MockCreateConversationGuestLinkUseCaseProtocol()
     }
 
-    func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol {
+    func makeSetConversationGuestsAndAppsUseCase() -> (any SetAllowGuestAndAppsUseCaseProtocol)? {
         MockSetAllowGuestAndAppsUseCaseProtocol()
     }
 
@@ -350,7 +350,7 @@ final class UserSessionMock: UserSession {
         AppendKnockMessageUseCase(analyticsEventTracker: nil)
     }
 
-    func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol {
+    func makeAppendLocationMessageUseCase() -> any AppendLocationMessageUseCaseProtocol {
         AppendLocationMessageUseCase(analyticsEventTracker: nil)
     }
 
@@ -405,9 +405,9 @@ final class UserSessionMock: UserSession {
         config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
     )
 
-    var isWireCellsEnabled: Bool = false
+    var isWireDriveEnabled: Bool = false
 
-    var wireCellsBackendURL: URL?
+    var wireDriveBackendURL: URL?
 
     var isEnterpriseUser: Bool = false
 
@@ -470,7 +470,6 @@ extension UserSessionMock: ContextProvider {
     }
 
     var syncContext: NSManagedObjectContext { contextProvider.syncContext }
-    var searchContext: NSManagedObjectContext { contextProvider.searchContext }
     var eventContext: NSManagedObjectContext { contextProvider.eventContext }
 
 }

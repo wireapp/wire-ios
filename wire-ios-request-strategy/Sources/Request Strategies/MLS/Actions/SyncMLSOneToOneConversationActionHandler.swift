@@ -102,7 +102,7 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
                     payload: payload
                 )
 
-            case .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
+            case .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
                 guard
                     let result = Payload.ConversationWithRemovalKeys(data, decoder: decoder),
                     let payload = result.conversation
@@ -147,13 +147,14 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
                     from: payload,
                     in: context
                 ),
-                let groupID = await context.perform({ conversation.mlsGroupID })
+                let groupID = await context.perform({ conversation.mlsGroupID }),
+                let conversationID = await context.perform({ conversation.qualifiedID })
             else {
                 action.fail(with: .failedToProcessResponse)
                 return
             }
 
-            action.succeed(with: (groupID: groupID, publicKeys: publicKeys))
+            action.succeed(with: (conversationID: conversationID, groupID: groupID, publicKeys: publicKeys))
         }
 
     }
