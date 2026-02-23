@@ -341,7 +341,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate var memoryWarningObserver: NSObjectProtocol?
     fileprivate var isSelectingAccount: Bool = false
 
-    var proxyCredentials: WireTransport.ProxyCredentials?
+    private var proxyCredentials: WireTransport.ProxyCredentials?
 
     public let callKitManager: CallKitManagerInterface
     private let logFilesProvider: LogFilesProviding
