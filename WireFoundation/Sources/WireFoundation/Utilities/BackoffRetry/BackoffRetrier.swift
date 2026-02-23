@@ -25,7 +25,7 @@ public actor BackoffRetrier {
         _ seconds: Double
     ) async throws -> Void
 
-    enum Failure: Error {
+    public enum Failure: Error {
         case exceededMaxAttempts(latestError: any Error)
     }
 
@@ -36,14 +36,16 @@ public actor BackoffRetrier {
 
     public init(
         policy: BackoffRetryPolicy = .init(),
+        monitoringNetwork: Bool = true,
         sleep: @escaping SleepFunction = { delay in
             try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
         }
     ) {
         self.policy = policy
         self.sleep = sleep
-
-        setupObservers()
+        if monitoringNetwork {
+            setupObservers()
+        }
     }
 
     deinit {

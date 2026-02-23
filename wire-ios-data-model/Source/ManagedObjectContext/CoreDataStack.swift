@@ -131,13 +131,16 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
         #endif
     }
 
-    public lazy var syncContext: NSManagedObjectContext = {
-        let context = messagesContainer.newBackgroundContext()
-        context.markAsSyncContext()
-        return context
-    }()
+    private var _syncContext: NSManagedObjectContext!
+    private var _eventContext: NSManagedObjectContext!
 
-    public lazy var eventContext: NSManagedObjectContext = eventsContainer.newBackgroundContext()
+    public var syncContext: NSManagedObjectContext {
+        _syncContext
+    }
+
+    public var eventContext: NSManagedObjectContext {
+        _eventContext
+    }
 
     public let accountContainer: URL
     public let applicationContainer: URL
@@ -249,8 +252,15 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
         defer { hasBeenClosed = true }
 
         viewContext.tearDown()
-        syncContext.tearDown()
-        eventContext.tearDown()
+
+        // Only tear down contexts if they were initialized
+        if _syncContext != nil {
+            syncContext.tearDown()
+        }
+        if _eventContext != nil {
+            eventContext.tearDown()
+        }
+
         closeStores()
     }
 
@@ -304,9 +314,12 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
                 }
             }
 
-            await configureContextReferences()
+            // Initialize syncContext before configuration
+            _syncContext = messagesContainer.newBackgroundContext()
+
             await configureViewContext(viewContext)
-            await configureSyncContext(syncContext)
+            await configureSyncContext(_syncContext)
+            await configureContextReferences()
 
         } catch {
             WireLogger.localStorage.critical(
@@ -335,7 +348,10 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
                 }
             }
 
-            await configureEventContext(eventContext)
+            // Initialize eventContext before configuration
+            _eventContext = eventsContainer.newBackgroundContext()
+
+            await configureEventContext(_eventContext)
 
         } catch {
             WireLogger.localStorage.critical(
@@ -390,8 +406,10 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
     }
 
     func configureSyncContext(_ context: NSManagedObjectContext) async {
-        // Note: markAsSyncContext() is now called in the lazy initializer
         await context.perform {
+            // Mark as sync context directly (already on context's queue)
+            context.markAsSyncContext()
+
             context.localDomain = self.localDomain
             context.isFederationEnabled = self.isFederationEnabled
             context.createDispatchGroups()
@@ -413,13 +431,6 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
             context.createDispatchGroups()
             self.dispatchGroup.map(context.addGroup(_:))
         }
-    }
-
-    public func linkContexts() {
-        syncContext.performGroupedAndWait {
-            self.syncContext.zm_userInterface = self.viewContext
-        }
-        viewContext.zm_sync = syncContext
     }
 
     // MARK: - Static Helpers

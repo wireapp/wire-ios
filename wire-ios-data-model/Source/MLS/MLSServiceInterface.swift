@@ -332,6 +332,14 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws
 
+    /// Commits pending proposals for a group.
+    /// - Parameters:
+    ///   - groupID: The group ID to commit pending proposals for
+    ///   - skipRetry: true to skip internal recovery strategy. False otherwise
+    ///
+    /// If skipRetry is false it's up to the caller to handle errors
+    func commitPendingProposals(in groupID: MLSGroupID, skipRetry: Bool) async throws
+
     // MARK: - Key material
 
     /// Updates the key material for all stale groups if it hasn't been done in the past day.
@@ -399,10 +407,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// If rejoining is successful, a system message will be appended
     /// to the conversation to indicate a potential gap in history.
 
-    func fetchAndRepairGroup(
-        with groupID: MLSGroupID,
-        shouldPerformIncrementalSync: Bool
-    ) async
+    func fetchAndRepairGroup(with groupID: MLSGroupID) async
 
     // MARK: - Epoch
 
@@ -485,14 +490,12 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// - Returns: epoch
     func epoch(for groupID: MLSGroupID) async throws -> UInt64
 
-    // MARK: - Sync delegate
-
-    /// Set the MLS sync delegate.
+    /// Local Domain of the backend environment
     ///
-    /// - Parameter delegate: The sync delegate to set.
+    /// - Note: useful to check if we should establishGroup or not
+    var localDomain: String { get }
 
-    func setSyncDelegate(_ delegate: any MLSSyncDelegate)
+    // MARK: - delegate
 
     func setResetBrokenMLSConversationDelegate(_ delegate: any ResetBrokenMLSConversationDelegate)
-
 }
