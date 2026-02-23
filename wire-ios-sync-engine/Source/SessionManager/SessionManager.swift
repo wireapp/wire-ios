@@ -305,19 +305,19 @@ public final class SessionManager: NSObject, SessionManagerType {
     public let groupQueue: GroupQueue = DispatchGroupQueue(queue: .main)
 
     let application: ZMApplication
-    var deleteAccountToken: Any?
-    var callCenterObserverToken: Any?
+    private var deleteAccountToken: Any?
+    private var callCenterObserverToken: Any?
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
 
     var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
 
-    var authenticatedSessionFactory: AuthenticatedSessionFactory
-    let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
+    private let authenticatedSessionFactory: AuthenticatedSessionFactory
+    private let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
 
     private let sessionLoadingQueue: DispatchQueue = .init(label: "sessionLoadingQueue")
 
-    private(set) var reachability: ReachabilityWrapper
+    private var reachability: ReachabilityWrapper
 
     public internal(set) var environment: WireTransport.BackendEnvironment {
         didSet {
@@ -331,14 +331,14 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     // closure injected to remove all user related logs
-    var deleteUserLogs: (() -> Void)?
+    private let deleteUserLogs: (() -> Void)?
 
     let sharedContainerURL: URL
     let dispatchGroup: ZMSDispatchGroup
-    let jailbreakDetector: JailbreakDetectorProtocol?
-    fileprivate var accountTokens: [UUID: [Any]] = [:]
-    fileprivate var memoryWarningObserver: NSObjectProtocol?
-    fileprivate var isSelectingAccount: Bool = false
+    private let jailbreakDetector: JailbreakDetectorProtocol?
+    private var accountTokens: [UUID: [Any]] = [:]
+    private var memoryWarningObserver: NSObjectProtocol?
+    private var isSelectingAccount: Bool = false
 
     private var proxyCredentials: WireTransport.ProxyCredentials?
 
@@ -359,13 +359,13 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private static var avsLogObserver: AVSLogObserver?
 
-    private(set) var isUnauthenticatedTransportSessionReady: Bool
+    private var isUnauthenticatedTransportSessionReady: Bool
 
-    let isDeveloperModeEnabled: Bool
+    private let isDeveloperModeEnabled: Bool
 
     let pushTokenService: PushTokenServiceInterface
 
-    var cachesDirectory: URL? {
+    private var cachesDirectory: URL? {
         let manager = FileManager.default
         return manager.urls(for: .cachesDirectory, in: .userDomainMask).first
     }
