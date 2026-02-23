@@ -176,4 +176,120 @@ final class TeamManageTests: WireUITestCase {
             "User \(teamMembers[0].name) is not present in group"
         )
     }
+
+    @MainActor
+    func test_TeamOwner_VerifyMessagesAndFileSentByMembersInGroup() async throws {
+        let groupName = UserGenerator.generateRandomGroupName()
+        let messageFromMember1 = UserGenerator.generateRandomMessage()
+
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let ownerAccessToken = try await userHelper.fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+        let countOfMembers = 3
+
+        var qualifiedIds: [QualifiedID] = []
+        var teamMembers: [UserInfo] = []
+
+        for _ in 0 ..< countOfMembers {
+            let (qualifiedId, teamMember) = try await userHelper.registerUsersAsTeamMember(
+                ownerAccessToken: ownerAccessToken.token,
+                teamID: teamID
+            )
+            qualifiedIds.append(qualifiedId)
+            teamMembers.append(teamMember)
+        }
+
+        try await userHelper.createGroupConversations(
+            qualifiedIds: qualifiedIds,
+            owner: teamOwner,
+            groupName: groupName
+        )
+
+        let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup(with: self)
+
+        let (convoId, domain) = try await userHelper.getConversationId(matching: .groupName(groupName))
+        let convoUUID = try XCTUnwrap(convoId)
+        let convoDomain = try XCTUnwrap(domain)
+
+        // member1 send text
+        try await testServicesClient.sendText(
+            user: teamMembers[0],
+            text: messageFromMember1,
+            convoId: convoUUID,
+            domain: convoDomain
+        )
+
+        func getFileInfo(from path: String) -> (name: String, ext: String) {
+            let url = URL(fileURLWithPath: path)
+            return (url.deletingPathExtension().lastPathComponent, url.pathExtension)
+        }
+
+        let basePath = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .appendingPathComponent("TestServicesData")
+
+//        let imagePath = basePath.appendingPathComponent("Img/testImage.jpg").path
+//        let audioPath = basePath.appendingPathComponent("Audio/testAudio.m4a").path
+
+//        let (imageName, imageExtension) = getFileInfo(from: imagePath)
+//        let (audioName, audioExtension) = getFileInfo(from: audioPath)
+
+        // member2 send image
+//        try await testServicesClient.sendFile(
+//            type: imageExtension,
+//            user: teamMembers[1],
+//            fileName: imageName,
+//            filepath: imagePath,
+//            convoId: convoUUID,
+//            domain: convoDomain
+//        )
+
+        // member3 send audio
+//        try await testServicesClient.sendFile(
+//            type: audioExtension,
+//            user: teamMembers[2],
+//            fileName: audioName,
+//            filepath: audioPath,
+//            convoId: convoUUID,
+//            domain: convoDomain
+//        )
+
+        let fetchedGroupName = try XCTUnwrap(conversationsPage.getGroupName())
+        XCTAssertEqual(
+            fetchedGroupName,
+            groupName,
+            "Group name \(fetchedGroupName) didn't match expected value \(groupName)"
+        )
+
+        XCTAssertTrue(
+            try conversationsPage.waitUntilLastMessageReceivedByTestService(with: teamMembers[2].name),
+            "Last message not received within 5 seconds by \(teamMembers[2].name)"
+        )
+
+        let activeConversationPage = try conversationsPage.openConversation()
+        let fetchMessages = activeConversationPage.fetchMessages()
+        let fetchFileNames = activeConversationPage.fetchFileNames()
+        let fetchSenders = activeConversationPage.fetchSenders()
+
+//        XCTAssertTrue(
+//            fetchFileNames[0].contains(audioName.uppercased()) && fetchSenders[0].contains(teamMembers[2].name),
+//            "Either expected message '\(audioName)' not found or not sent by \(teamMembers[2].name)"
+//        )
+//
+//        XCTAssertTrue(
+//            fetchFileNames[1].contains(imageName.uppercased()) &&
+//                fetchSenders[1].contains(teamMembers[1].name),
+//            "Either expected message '\(imageName)' not found or not sent by \(teamMembers[1].name)"
+//        )
+//
+//        XCTAssertTrue(
+//            fetchMessages[0].contains(messageFromMember1) &&
+//                fetchSenders[2].contains(teamMembers[0].name),
+//            "Expected message '\(messageFromMember1)' not found in sent messages: \(fetchMessages)"
+//        )
+    }
 }

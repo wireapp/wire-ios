@@ -53,4 +53,74 @@ class SelfUserAPIV8: SelfUserAPIV7 {
         }
     }
 
+    override func getSelfUser() async throws -> SelfUser {
+        let request = try URLRequestBuilder(path: resourcePath)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: SelfUserV8.self)
+            .parse(code: response.statusCode, data: data)
+    }
+}
+
+struct SelfUserV8: Decodable, ToAPIModelConvertible {
+
+    let accentID: Int
+    let assets: [UserAssetV0]?
+    let deleted: Bool?
+    let email: String?
+    let expiresAt: UTCTime?
+    let handle: String?
+    let id: UUID
+    let locale: String
+    let managedBy: ManagedByV0?
+    let name: String
+    let phone: String?
+    let picture: [String]?
+    let qualifiedID: QualifiedIDV0
+    let service: ServiceResponseV0?
+    let ssoID: SSOIDV0?
+    let supportedProtocols: Set<MessageProtocolV0>?
+    let teamID: UUID?
+
+    enum CodingKeys: String, CodingKey {
+        case accentID = "accent_id"
+        case assets, deleted, email
+        case expiresAt = "expires_at"
+        case handle, id, locale
+        case managedBy = "managed_by"
+        case name, phone, picture
+        case qualifiedID = "qualified_id"
+        case service
+        case ssoID = "sso_id"
+        case teamID = "team"
+        case supportedProtocols = "supported_protocols"
+    }
+
+    func toAPIModel() -> SelfUser {
+        let supportedProtocols = supportedProtocols?.map { $0.toAPIModel() } ?? [.proteus]
+        return SelfUser(
+            id: id,
+            qualifiedID: qualifiedID.toAPIModel(),
+            ssoID: ssoID?.toAPIModel(),
+            name: name,
+            handle: handle,
+            teamID: teamID,
+            phone: phone,
+            accentID: accentID,
+            managedBy: managedBy?.toAPIModel(),
+            assets: assets?.map { $0.toAPIModel() },
+            deleted: deleted,
+            email: email,
+            expiresAt: expiresAt?.date,
+            service: service?.toAPIModel(),
+            supportedProtocols: Set(supportedProtocols)
+        )
+    }
 }

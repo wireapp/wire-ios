@@ -61,6 +61,14 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.conversationDetailsButton.rawValue]
     }
 
+    var senderNames: XCUIElementQuery {
+        app.staticTexts.matching(identifier: "author.name")
+    }
+
+    var fileLabels: XCUIElementQuery {
+        app.staticTexts.matching(identifier: "FileTransferTopLabel")
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
@@ -70,6 +78,24 @@ class ActiveConversationPage: PageModel {
             }
         }
         return messages
+    }
+
+    func fetchSenders() -> [String] {
+        var senders: [String] = []
+        for i in 0 ..< senderNames.count {
+            let element = senderNames.element(boundBy: i)
+            senders.append(element.label)
+        }
+        return senders
+    }
+
+    func fetchFileNames() -> [String] {
+        var files: [String] = []
+        for i in 0 ..< fileLabels.count {
+            let element = fileLabels.element(boundBy: i)
+            files.append(element.label)
+        }
+        return files
     }
 
     func sendMessage(_ message: String) throws -> ActiveConversationPage {

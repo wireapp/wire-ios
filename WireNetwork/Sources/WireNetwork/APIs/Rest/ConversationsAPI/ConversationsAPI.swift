@@ -26,7 +26,9 @@ public protocol ConversationsAPI {
     func getLegacyConversationIdentifiers() async throws -> PayloadPager<[UUID]>
 
     /// Fetch all conversation identifiers in batches available from ``APIVersion`` v1.
-    func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]>
+    #if DEBUG
+        func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]>
+    #endif
 
     /// Fetch conversation list with qualified identifiers.
     func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList
@@ -53,10 +55,11 @@ public protocol ConversationsAPI {
     /// Creates a group conversation given provided parameters.
     /// - parameter parameters: API body parameters required to create the group.
     /// - returns: The created group conversation.
-
-    func createGroupConversation(
-        parameters: CreateGroupConversationParameters
-    ) async throws -> Conversation
+    #if DEBUG
+        func createGroupConversation(
+            parameters: CreateGroupConversationParameters
+        ) async throws -> Conversation
+    #endif
 
     /// Add channel permission.
     /// - parameter conversationID: The conversation ID.

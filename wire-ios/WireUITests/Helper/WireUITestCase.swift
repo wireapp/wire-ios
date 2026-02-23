@@ -26,6 +26,7 @@ class WireUITestCase: XCTestCase {
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     let userHelper = UserHelper()
+    let testServicesClient = TestServicesClient()
 
     override func setUpWithError() throws {
         XCUIApplication().terminate()

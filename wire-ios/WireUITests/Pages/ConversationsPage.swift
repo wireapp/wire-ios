@@ -61,6 +61,10 @@ class ConversationsPage: PageModel {
         return try SettingsPage()
     }
 
+    func getGroupName() -> String? {
+        conversationCell.label as? String
+    }
+
     func openUserAccountPageForUser(with input: String) throws -> UserProfilePage {
         let predicate = NSPredicate(format: "value BEGINSWITH %@", input)
         let button = app.buttons.containing(predicate).firstMatch
@@ -118,5 +122,11 @@ class ConversationsPage: PageModel {
 
     func getNameLabel() -> String? {
         conversationCell.label
+    }
+
+    func waitUntilLastMessageReceivedByTestService(with sentBy: String) throws -> Bool {
+        let predicate = NSPredicate(format: "label BEGINSWITH %@", sentBy)
+        let button = app.staticTexts.containing(predicate).firstMatch
+        return button.waitForExistence(timeout: 5)
     }
 }
