@@ -357,8 +357,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private static var avsLogObserver: AVSLogObserver?
 
-    private var isUnauthenticatedTransportSessionReady: Bool
-
     private let isDeveloperModeEnabled: Bool
 
     let pushTokenService: PushTokenServiceInterface
@@ -538,7 +536,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.jailbreakDetector = detector
         self.pushTokenService = pushTokenService
         self.callKitManager = callKitManager
-        self.isUnauthenticatedTransportSessionReady = isUnauthenticatedTransportSessionReady
         self.sharedUserDefaults = sharedUserDefaults
         self.minTLSVersion = minTLSVersion
         self.deleteUserLogs = deleteUserLogs
@@ -668,9 +665,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private func markSessionsAsReady(_ ready: Bool) {
         reachability.enabled = ready
-
-        // force creation of transport sessions using isUnauthenticatedTransportSessionReady
-        isUnauthenticatedTransportSessionReady = ready
 
         // force creation of unauthenticatedSession
         unauthenticatedSessionFactory.readyForRequests = ready
