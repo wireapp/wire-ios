@@ -390,12 +390,21 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         try await sut.persistEventEnvelope(envelope, index: 0, publicKeys: publicKeys)
 
         // When / Then: Fetching encrypted events without private keys is a developer error
-        await XCTAssertThrowsErrorAsync(UpdateEventsLocalStore.Error.failedToFetchStoredEvents(UpdateEventsLocalStore.Error.missingPrivateKeys)) {
+        await XCTAssertThrowsErrorAsync({
             _ = try await self.sut.fetchStoredEventEnvelopes(
                 limit: 10,
                 privateKeys: nil,
                 backgroundAccessibleOnly: false
             )
+        }) { error in
+            guard
+                case UpdateEventsLocalStore.Error.failedToFetchStoredEvents(let inner) = error,
+                let storeError = inner as? UpdateEventsLocalStore.Error,
+                case .missingPrivateKeys = storeError
+            else {
+                XCTFail("Expected failedToFetchStoredEvents(missingPrivateKeys), got: \(error)")
+                return
+            }
         }
     }
 
