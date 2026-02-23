@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import wire_ios_testiny
 
 final class PersonalUsersTests: WireUITestCase {
 
@@ -59,6 +60,7 @@ final class PersonalUsersTests: WireUITestCase {
     }
 
     /// testiny:  https://app.testiny.io/IOS/testcases/tcf/1286/tc/8799
+    @testiny("TC-8799")
     @MainActor
     func test_Login_asExistingPersonalUser() async throws {
         let user = try await userHelper.createPersonalUser()

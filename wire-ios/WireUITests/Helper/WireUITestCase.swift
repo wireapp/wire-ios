@@ -96,3 +96,21 @@ class WireUITestCase: XCTestCase {
         BackendContext.current = target
     }
 }
+
+// MARK: - Testiny integration
+
+enum TestinyRuntime {
+    static func record(_ key: String) {
+        XCTContext.runActivity(named: "TESTINY:\(key)") { activity in
+            let attachment = XCTAttachment(string: "TESTINY_KEY=\(key)")
+            attachment.lifetime = .keepAlways
+            activity.add(attachment)
+        }
+    }
+
+    static func record(_ keys: [String]) {
+        for k in keys {
+            record(k)
+        }
+    }
+}
