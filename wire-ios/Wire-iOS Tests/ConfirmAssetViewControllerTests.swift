@@ -47,30 +47,32 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testThatItRendersTheAssetViewControllerWithLandscapeImage() {
+
+        accentColor = .green
         sut = ConfirmAssetViewController(
             context: ConfirmAssetViewController
                 .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_matterhorn.jpg")))
         )
-
-        accentColor = .green
         sut.previewTitle = "Matterhorn"
 
         snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersTheAssetViewControllerWithPortraitImage() {
+
+        accentColor = .red
         sut = ConfirmAssetViewController(
             context: ConfirmAssetViewController
                 .Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_burger.jpg")))
         )
-
-        accentColor = .red
         sut.previewTitle = "Burger & Beer"
 
         snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersTheAssetViewControllerWithSmallImage() {
+
+        accentColor = .red
         sut = ConfirmAssetViewController(
             context: ConfirmAssetViewController
                 .Context(asset: .image(
@@ -78,8 +80,6 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
                         .imageScaled(with: 0.5)!
                 ))
         )
-
-        accentColor = .red
         sut.previewTitle = "Sea Food"
 
         snapshotHelper.verify(matching: sut)
