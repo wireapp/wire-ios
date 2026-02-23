@@ -61,6 +61,6 @@ public protocol FeatureConfigRepositoryProtocol {
     
     func isFeatureEnabled(
         _ feature: Feature.Name,
-        default: Bool
+        defaultValue: Bool
     ) async -> Bool
 }

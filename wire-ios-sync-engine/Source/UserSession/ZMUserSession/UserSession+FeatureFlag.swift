@@ -22,6 +22,6 @@ public extension UserSession {
             return Feature.SimplifiedUserConnectionRequestQRCode().status == .enabled
         }
         let featureConfigRepository = clientSessionComponent.featureConfigRepository
-        return await featureConfigRepository.isFeatureEnabled(.simplifiedUserConnectionRequestQRCode, default: true)
+        return await featureConfigRepository.isFeatureEnabled(.simplifiedUserConnectionRequestQRCode, defaultValue: true)
     }
 }
