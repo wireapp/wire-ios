@@ -3012,17 +3012,17 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
 
     // MARK: - updateButtonStates
 
-    public var updateButtonStatesButtonIDReferenceMessageIDInSenderID_Invocations: [(buttonID: String?, referenceMessageID: String, conversation: ZMConversation, senderID: UUID)] = []
-    public var updateButtonStatesButtonIDReferenceMessageIDInSenderID_MockMethod: ((String?, String, ZMConversation, UUID) async -> Void)?
+    public var updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_Invocations: [(buttonID: String?, referenceMessageID: String, conversation: ZMConversation, senderID: UUID, ensureSenderIsSelfUser: Bool)] = []
+    public var updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_MockMethod: ((String?, String, ZMConversation, UUID, Bool) async -> Void)?
 
-    public func updateButtonStates(buttonID: String?, referenceMessageID: String, in conversation: ZMConversation, senderID: UUID) async {
-        updateButtonStatesButtonIDReferenceMessageIDInSenderID_Invocations.append((buttonID: buttonID, referenceMessageID: referenceMessageID, conversation: conversation, senderID: senderID))
+    public func updateButtonStates(buttonID: String?, referenceMessageID: String, in conversation: ZMConversation, senderID: UUID, ensureSenderIsSelfUser: Bool) async {
+        updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_Invocations.append((buttonID: buttonID, referenceMessageID: referenceMessageID, conversation: conversation, senderID: senderID, ensureSenderIsSelfUser: ensureSenderIsSelfUser))
 
-        guard let mock = updateButtonStatesButtonIDReferenceMessageIDInSenderID_MockMethod else {
-            fatalError("no mock for `updateButtonStatesButtonIDReferenceMessageIDInSenderID`")
+        guard let mock = updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser_MockMethod else {
+            fatalError("no mock for `updateButtonStatesButtonIDReferenceMessageIDInSenderIDEnsureSenderIsSelfUser`")
         }
 
-        await mock(buttonID, referenceMessageID, conversation, senderID)
+        await mock(buttonID, referenceMessageID, conversation, senderID, ensureSenderIsSelfUser)
     }
 
     // MARK: - editMessage
