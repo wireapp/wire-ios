@@ -28,4 +28,5 @@ public enum WireDriveFileType: Hashable, Sendable {
     case spreadsheet
     case video
     case folder
+    case text
 }

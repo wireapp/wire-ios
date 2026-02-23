@@ -122,21 +122,22 @@ private extension FilesFilterBy.TypeView {
 // MARK: - Localization
 
 private extension WireDriveFileType {
-    typealias name = Strings.Filter.FileType.TypeName
+    typealias Name = Strings.Filter.FileType.TypeName
 
     func localizedName() -> String {
         switch self {
-        case .audio:            name.audio
-        case .video:            name.video
-        case .image:            name.image
-        case .other:            name.other
-        case .archive:          name.archive
-        case .code:             name.code
-        case .document:         name.doc
-        case .folder:           name.folder
-        case .pdf:              name.pdf
-        case .presentation:     name.presentation
-        case .spreadsheet:      name.spreadsheet
+        case .audio:            Name.audio
+        case .video:            Name.video
+        case .image:            Name.image
+        case .other:            Name.other
+        case .archive:          Name.archive
+        case .code:             Name.code
+        case .document:         Name.doc
+        case .folder:           Name.folder
+        case .pdf:              Name.pdf
+        case .presentation:     Name.presentation
+        case .spreadsheet:      Name.spreadsheet
+        case .text:             Name.text
         }
     }
 }

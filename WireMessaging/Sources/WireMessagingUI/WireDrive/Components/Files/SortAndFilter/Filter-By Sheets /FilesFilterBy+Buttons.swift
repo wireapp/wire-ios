@@ -55,7 +55,7 @@ extension FilesFilterBy {
                 Button {
                     action()
                 } label: {
-                    Text(L10n.Localizable.Conversation.WireCells.Filter.removeFilter)
+                    Text(L10n.Localizable.Conversation.WireCells.Filter.clearAll)
                 }
                 .accessibilityIdentifier("removeFilterButton")
             }

@@ -39,7 +39,7 @@ extension WireDriveFileType {
     private static func make(type: UTType) -> WireDriveFileType? {
         func icon(type: UTType) -> WireDriveFileType? {
             switch type {
-            case .archive:
+            case .archive, .zip, .gzip, .bz2:
                 .archive
             case .audio:
                 .audio
@@ -55,6 +55,8 @@ extension WireDriveFileType {
                 .spreadsheet
             case .movie:
                 .video
+            case .text, .plainText:
+                .text
             default:
                 nil
             }
@@ -75,8 +77,12 @@ extension WireDriveFileType {
         switch fileExtension.lowercased() {
         case "docx", "doc", "dotx", "dot", "odt", "ott", "rtf":
             .document
-        case "css", "phtml", "sparql", "cs", "java", "jsp", "sql", "cgi", "pl", "inc", "xsl":
+        case "css", "phtml", "sparql", "cs", "java", "jsp", "sql", "cgi", "pl", "inc", "xsl", "html":
             .code
+        case "rar", "7z", "tar":
+            .archive
+        case "txt":
+            .text
         default:
             nil
         }
@@ -108,6 +114,8 @@ extension WireDriveFileType {
             .fileIconVideo
         case .folder:
             .fileIconFolder
+        case .text:
+            .fileIconText
         }
     }
 

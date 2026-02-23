@@ -34,10 +34,8 @@ extension FilesFilterBy.TypeView {
             .presentation,
             .video,
             .audio,
-            .code,
             .archive,
-            //.folder,
-            //.other,
+            .text
         ]
 
         private let initiallySelectedItems: Set<Item>

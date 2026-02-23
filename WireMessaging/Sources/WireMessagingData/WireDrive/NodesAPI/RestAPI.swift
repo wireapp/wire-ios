@@ -636,14 +636,16 @@ private extension Set<WireDriveNodesMetaFilter> {
             case .tags(let values):
                 return values.map { LookupFilterMetaFilter(namespace: "usermeta-tags", operation: .should, term: $0) }
             case .types(let values):
-                return values.map { LookupFilterMetaFilter(namespace: "mime", operation: .should, term: $0.contentType) }
+                return values.flatMap(\.contentTypes).compactMap {
+                    LookupFilterMetaFilter(namespace: "mime", operation: .should, term: $0)
+                }
             case .sharedByMe(let handle):
                 return [LookupFilterMetaFilter(namespace: "usermeta-owner", operation: .should, term: handle)]
             }
         }
     }
     
-    var hasPublicLink: Bool {
+    var hasPublicLink: Bool? {
         for filter in self {
             switch filter {
             case .sharedByMe:
@@ -653,32 +655,32 @@ private extension Set<WireDriveNodesMetaFilter> {
             }
         }
         
-        return false
+        return nil
     }
 }
 
 private extension WireDriveFileType {
-    var contentType: String {
+    var contentTypes: [String] {
         switch self {
         case .archive:
-            "*archive*" // TODO: To test
+            ["*zip*", "*rar*", "*7z*", "*tar*", "*gz*", "*bz2*"]
         case .audio:
-            "*audio*"
-        case .code:
-            "*code*" // TODO: To test
+            ["audio/*"]
         case .document:
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            ["*word*"]
         case .image:
-            "image/*"
+            ["image/*"]
         case .pdf:
-            "*pdf*"
+            ["application/pdf"]
         case .presentation:
-            "*presentation*"
+            ["*presentation*"]
         case .spreadsheet:
-            "*spreadsheet*"
+            ["*spreadsheet*"]
         case .video:
-            "*video*"
-        case .other, .folder:
+            ["video/*"]
+        case .text:
+            ["text/*"]
+        case .other, .folder, .code:
             fatalError("Not supported")
         }
     }
