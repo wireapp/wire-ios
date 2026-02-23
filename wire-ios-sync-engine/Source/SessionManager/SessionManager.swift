@@ -267,7 +267,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public let currentAppVersion: String
     public let currentBuildNumber: String
-    var isAppVersionBlacklisted = false
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
     public let environmentStore: BackendEnvironmentStore
