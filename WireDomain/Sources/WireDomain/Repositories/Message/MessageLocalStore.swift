@@ -359,12 +359,15 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         buttonID: String?,
         referenceMessageID: String,
         in conversation: ZMConversation,
-        senderID: UUID
+        senderID: UUID,
+        ensureSenderIsSelfUser: Bool
     ) async {
         await context.perform { [context] in
 
-            let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier
-            guard senderID == selfUserID else { return }
+            if ensureSenderIsSelfUser {
+                let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier
+                guard senderID == selfUserID else { return }
+            }
 
             ZMClientMessage.updateButtonStates(
                 buttonID: buttonID,
