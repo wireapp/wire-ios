@@ -110,9 +110,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     ///
     /// This method logs any errors and does not wait for the sync to finish.
     ///
-    /// - Parameter forCallEventsOnly: if the sync should be resumed only for calling events
+    /// - Parameter callEventsOnly: if the sync should be resumed only for calling events
 
-    func resume(forCallEventsOnly: Bool = false) {
+    func resume(callEventsOnly: Bool = false) {
         syncStateSubject.send(.idle)
 
         ongoingSyncTask = Task {
@@ -121,7 +121,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
                 // cancel the task (not keeping any file lock in suspend mode)
                 try await withExpiringActivity(reason: "resuming sync") { [weak self] in
-                    if forCallEventsOnly {
+                    if callEventsOnly {
                         try await self?.performIncrementalSyncForCallingEvents()
                     } else {
                         try await self?.performSync()
