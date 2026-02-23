@@ -21,7 +21,7 @@ import GenericMessageProtocol
 import WireNetwork
 
 struct ProtobufMessageDecoder {
-    
+
     // MARK: - Error types
 
     enum Failure: Error {
@@ -32,15 +32,15 @@ struct ProtobufMessageDecoder {
         case externalProteusDataSHAMismatch
         case externalProteusDataMissing
     }
-    
+
     // MARK: - Interface
-    
+
     func extractMLSMessageContent(
         from base64Message: String
     ) throws -> GenericMessage {
         try extractMessageContent(from: base64Message)
     }
-    
+
     func extractProteusMessageContent(
         from base64Message: String,
         externalData: MessageContent?
@@ -59,12 +59,12 @@ struct ProtobufMessageDecoder {
                 externalData: externalData
             )
         }
-        
+
         return message
     }
-    
+
     // MARK: - Private methods
-    
+
     private func extractMessageContent(from base64Message: String) throws -> GenericMessage {
         // Decode the protobuf message.
         guard let genericMessage = GenericMessage(

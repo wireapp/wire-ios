@@ -23,14 +23,14 @@ import WireLogging
 import WireNetwork
 
 struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEventNotificationBuilderProtocol {
-    
+
     enum Failure: Error {
         case proteusMessageMissing
     }
-    
+
     let context: Context
     let validator: Validator
-    
+
     let conversationCallingEventNotificationBuilder: any ConversationCallingEventNotificationBuilderProtocol
     let conversationAudioMessageNotificationBuilder: any ConversationAudioMessageNotificationBuilderProtocol
     let conversationEphemeralMessageNotificationBuilder: any ConversationEphemeralMessageNotificationBuilderProtocol
@@ -42,16 +42,16 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
     let conversationVideoMessageNotificationBuilder: any ConversationVideoMessageNotificationBuilderProtocol
     let conversationTextMessageNotificationBuilder: any ConversationTextMessageNotificationBuilderProtocol
     let protobufMessageDecoder: ProtobufMessageDecoder
-    
+
     func buildContent(
         event: Either<ConversationMLSMessageAddEvent, ConversationProteusMessageAddEvent>
     ) async throws -> UserNotification? {
-        
+
         var message: GenericMessage
         var senderID: UserID
         var conversationID: ConversationID
         var timestamp: Date?
-        
+
         switch event {
         case let .left(mlsMessageEvent):
             guard let decryptedMessage = mlsMessageEvent.decryptedMessages.first else {
@@ -60,29 +60,29 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
                 // unexpected to find no decrypted application messages.
                 return nil
             }
-            
+
             message = try protobufMessageDecoder.extractMLSMessageContent(
                 from: decryptedMessage.message
             )
             senderID = mlsMessageEvent.senderID
             conversationID = mlsMessageEvent.conversationID
             timestamp = mlsMessageEvent.timestamp
-            
+
         case let .right(proteusMessageEvent):
             guard let decryptedMessage = proteusMessageEvent.message.decryptedMessage else {
                 throw Failure.proteusMessageMissing
             }
-            
+
             message = try protobufMessageDecoder.extractProteusMessageContent(
                 from: decryptedMessage,
                 externalData: proteusMessageEvent.externalData
             )
-            
+
             senderID = proteusMessageEvent.senderID
             conversationID = proteusMessageEvent.conversationID
             timestamp = proteusMessageEvent.timestamp
         }
-        
+
         if let callingNotification = await conversationCallingEventNotificationBuilder.buildContent(
             calling: message.calling,
             at: timestamp,
@@ -98,7 +98,7 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
             )
         }
     }
-    
+
     private func buildMessageContentNotification(
         message: GenericMessage,
         senderID: UserID,
@@ -109,20 +109,20 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
             senderID: senderID,
             conversationID: conversationID
         )
-        
+
         guard canDisplayNotification else {
             return nil
         }
-        
+
         let hidesNotificationContent = await context.shouldHideNotification()
-        
+
         guard !hidesNotificationContent else {
             return await conversationHiddenMessageNotificationBuilder.buildContent(
                 conversationID: conversationID,
                 senderID: senderID
             )
         }
-        
+
         switch message.content {
         case .location:
             return await conversationLocationMessageNotificationBuilder.buildContent(
@@ -154,7 +154,7 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
         case let .composite(composite):
             let text = composite.items.compactMap(\.text).first
             guard let text else { return nil }
-            
+
             return await conversationTextMessageNotificationBuilder.buildContent(
                 text: text,
                 conversationID: conversationID,
