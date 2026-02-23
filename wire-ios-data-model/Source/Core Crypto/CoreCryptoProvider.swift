@@ -229,12 +229,12 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             userID: selfUserID,
             allowKeyCreation: allowCreation
         )
-        
+
         WireLogger.coreCrypto.debug(
             "creating Core Crypto",
             attributes: .safePublic
         )
-        
+
         let coreCrypto = try await CoreCrypto(
             keystorePath: configuration.path,
             key: DatabaseKey(key: configuration.key)
@@ -291,17 +291,17 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
                 "core crypto transaction...",
                 attributes: .safePublic
             )
-            try await coreCrypto.transaction { 
+            try await coreCrypto.transaction {
                 WireLogger.coreCrypto.debug(
                     "mls init",
                     attributes: .safePublic
                 )
 
                 try await $0.mlsInit(
-                  clientId: .init(bytes: mlsClientID.data),
-                  ciphersuites: [cipherSuite],
-                  nbKeyPackage: nil
-                ) 
+                    clientId: .init(bytes: mlsClientID.data),
+                    ciphersuites: [cipherSuite],
+                    nbKeyPackage: nil
+                )
             }
         }
     }
