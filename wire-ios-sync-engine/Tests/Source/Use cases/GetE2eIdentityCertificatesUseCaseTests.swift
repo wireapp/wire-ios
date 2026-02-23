@@ -28,20 +28,16 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
     private let modelHelper = ModelHelper()
 
     private var sut: GetE2eIdentityCertificatesUseCase!
-    private var coreCryptoProvider: MockCoreCryptoProviderProtocol!
-    private var coreCrypto: MockCoreCryptoProtocol!
-    private var coreCryptoContext: MockCoreCryptoContextProtocol!
+    private var coreCryptoEnvelope: CoreCryptoMocksEnvelope!
 
     override func setUp() async throws {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
-        coreCryptoContext = MockCoreCryptoContextProtocol()
-        coreCrypto = MockCoreCryptoProtocol()
-        coreCrypto.mockTransaction(context: coreCryptoContext)
-        coreCryptoProvider = MockCoreCryptoProviderProtocol()
-        coreCryptoProvider.coreCrypto_MockValue = coreCrypto
+
+        coreCryptoEnvelope = .init()
+
         sut = GetE2eIdentityCertificatesUseCase(
-            coreCryptoProvider: coreCryptoProvider,
+            coreCryptoProvider: coreCryptoEnvelope.coreCryptoProvider,
             syncContext: stack.syncContext
         )
     }
@@ -49,9 +45,7 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
     override func tearDown() async throws {
         stack = nil
         sut = nil
-        coreCryptoContext = nil
-        coreCrypto = nil
-        coreCryptoProvider = nil
+        coreCryptoEnvelope = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
     }
@@ -91,20 +85,21 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
         let groupID = MLSGroupID.random()
 
         // Self user with 4 clients
-        try await stack.syncContext.perform {
+        let context = stack.syncContext
+        try await context.perform { [context] in
             let modelHelper = ModelHelper()
 
-            let selfUser = modelHelper.createSelfUser(in: self.stack.syncContext)
+            let selfUser = modelHelper.createSelfUser(in: context)
             selfUser.handle = selfUserHandle
             selfUser.name = selfUserName
             selfUser.domain = domain
 
-            modelHelper.createSelfClient(id: clientID1.clientID, in: self.stack.syncContext)
+            modelHelper.createSelfClient(id: clientID1.clientID, in: context)
             modelHelper.createClient(id: clientID2.clientID, for: selfUser)
             modelHelper.createClient(id: clientID3.clientID, for: selfUser)
             modelHelper.createClient(id: clientID4.clientID, for: selfUser)
 
-            try self.stack.syncContext.save()
+            try context.save()
         }
 
         // Mock
@@ -136,7 +131,7 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
             status: .revoked
         )
 
-        coreCryptoContext.getDeviceIdentitiesConversationIdDeviceIds_MockMethod = { _, _ in
+        coreCryptoEnvelope.coreCryptoContext.getDeviceIdentitiesConversationIdDeviceIds_MockMethod = { _, _ in
             [
                 validIdentity,
                 identityWithInvalidHandle,

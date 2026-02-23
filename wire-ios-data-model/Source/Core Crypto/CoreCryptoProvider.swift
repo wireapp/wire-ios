@@ -154,7 +154,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     public nonisolated func registerMlsTransport(_ transport: any MlsTransport) {
         mlsTransport = transport
     }
-    
+
     private func registerMlsTransportIfNecessary(with coreCrypto: CoreCryptoProtocol) async throws {
         guard let mlsTransport, !hasRegisteredMlsTransport else {
             return
