@@ -105,6 +105,7 @@ final class AppRootRouter {
 
     // MARK: - Public implementation
 
+    @MainActor
     func start(launchOptions: LaunchOptions) {
         lastLaunchOptions = launchOptions
         showInitial(launchOptions: launchOptions)
@@ -319,6 +320,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         }
     }
 
+    @MainActor
     func reload() {
         enqueueTransition(to: .headless)
         enqueueTransition(to: appStateCalculator.appState)
