@@ -254,7 +254,13 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             attributes: .safePublic
         )
 
-        try await coreCrypto.transaction { try await $0.proteusInit() }
+        try await coreCrypto.transaction { 
+            WireLogger.coreCrypto.debug(
+                "proteus init",
+                attributes: .safePublic
+            )
+            try await $0.proteusInit() 
+        }
     }
 
     private func configureMLSClient(coreCrypto: CoreCrypto) async throws {
