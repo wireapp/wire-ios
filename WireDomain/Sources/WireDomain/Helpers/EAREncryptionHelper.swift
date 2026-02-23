@@ -36,7 +36,7 @@ enum EAREncryptionHelper {
             data as CFData,
             &cfError
         ) as? Data else {
-            // cfError is guaranteed to be populated if result in nil
+            // cfError is guaranteed to be populated if result is nil
             throw CryptoError.encryptionFailed(cfError!.takeRetainedValue())
         }
         return result
