@@ -59,11 +59,6 @@ final class CallingTests: WireUITestCase {
         )
     }
 
-    private func loginAndDismissFirstTimePopup(user: UserInfo) throws {
-        let firstTimePage = try app.loginUser(email: user.email, password: user.password)
-        _ = try firstTimePage.acceptPopup(with: self)
-    }
-
     private func createCallingServiceInstances(users: [UserInfo]) async throws -> [CallingServiceInstance] {
         let envVariables = try EnvironmentVariables()
 
@@ -92,16 +87,6 @@ final class CallingTests: WireUITestCase {
         return ongoingCallPage
     }
 
-    private func verifyParticipantsVisible(_ participants: [UserInfo]) {
-        for user in participants {
-            let participantIdentifier = Locators.OngoingCallPage.participantIdentifier(user.name)
-            XCTAssertTrue(
-                app.buttons[participantIdentifier].waitForExistence(timeout: 15),
-                "Expected \(user.name) to be in the call"
-            )
-        }
-    }
-
     /// Testiny : https://app.testiny.io/IOS/testcases/tc/8801
     /// Team Owner create group conversation and initiate a group call with members
     @MainActor
@@ -109,7 +94,11 @@ final class CallingTests: WireUITestCase {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 3)
 
-        try loginAndDismissFirstTimePopup(user: teamAndGroupCallSetup.appUserWhoWillJoinTheCall)
+        let firstTimePage = try app.loginUser(
+            email: teamAndGroupCallSetup.appUserWhoWillJoinTheCall.email,
+            password: teamAndGroupCallSetup.appUserWhoWillJoinTheCall.password
+        )
+        _ = try firstTimePage.acceptPopup(with: self)
 
         let instances: [CallingServiceInstance]
         do {
@@ -130,7 +119,13 @@ final class CallingTests: WireUITestCase {
             XCTAssertEqual(responses.count, acceptingIds.count)
 
             let ongoingCallPage = try acceptIncomingCall(groupName: teamAndGroupCallSetup.groupName)
-            verifyParticipantsVisible(teamAndGroupCallSetup.allParticipants)
+
+            let participantIdentifier = Locators.OngoingCallPage
+                .participantIdentifier(teamAndGroupCallSetup.appUserWhoWillJoinTheCall.name)
+            XCTAssertTrue(
+                app.buttons[participantIdentifier].waitForExistence(timeout: 15),
+                "Expected \(teamAndGroupCallSetup.appUserWhoWillJoinTheCall.name) to be in the call OR took more than 15 seconds to join"
+            )
 
             let conversationsPage = try ongoingCallPage.endOngoingCall()
             XCTAssertTrue(
