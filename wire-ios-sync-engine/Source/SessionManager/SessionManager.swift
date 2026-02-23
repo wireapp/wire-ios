@@ -340,8 +340,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     private var memoryWarningObserver: NSObjectProtocol?
     private var isSelectingAccount: Bool = false
 
-    private var proxyCredentials: WireTransport.ProxyCredentials?
-
     public let callKitManager: CallKitManagerInterface
     private let logFilesProvider: LogFilesProviding
 
@@ -540,7 +538,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.jailbreakDetector = detector
         self.pushTokenService = pushTokenService
         self.callKitManager = callKitManager
-        self.proxyCredentials = proxyCredentials
         self.isUnauthenticatedTransportSessionReady = isUnauthenticatedTransportSessionReady
         self.sharedUserDefaults = sharedUserDefaults
         self.minTLSVersion = minTLSVersion
@@ -654,9 +651,9 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public func saveProxyCredentials(username: String, password: String) {
         guard let proxy = environment.proxy else { return }
-        proxyCredentials = ProxyCredentials(username: username, password: password, proxy: proxy)
+        let proxyCredentials = ProxyCredentials(username: username, password: password, proxy: proxy)
         do {
-            try proxyCredentials?.persist()
+            try proxyCredentials.persist()
             authenticatedSessionFactory.updateProxy(username: username, password: password)
             unauthenticatedSessionFactory.updateProxy(username: username, password: password)
         } catch {
