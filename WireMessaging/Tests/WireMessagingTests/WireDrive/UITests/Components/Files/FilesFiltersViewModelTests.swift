@@ -80,16 +80,21 @@ final class FilesFiltersViewModelTests {
         #expect(sut.selectedTags.count == 3)
 
         // when
-        await sut.clearAll()
+        sut.clearAll()
 
         // then
         #expect(sut.selectedTags.isEmpty)
     }
 
     private enum Scaffolding {
-        static let expectedTags = Array(mockTags.filter { !$0.isEmpty })
         static let savedTag = "Urgent"
         static let selectedTag = "Marketing"
+        
+        static let expectedTags = Array(
+            mockTags.filter { !$0.isEmpty }
+                .sorted { lhs, rhs in lhs.localizedCaseInsensitiveCompare(rhs) == .orderedAscending } //order alphabetically
+                .sorted { lhs, _ in lhs.localizedCaseInsensitiveCompare(savedTag) == .orderedSame } //but initially selected tags should be the first in the list
+        )
     }
 
 }
