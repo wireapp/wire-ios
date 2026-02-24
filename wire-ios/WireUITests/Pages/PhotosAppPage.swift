@@ -50,8 +50,8 @@ class PhotosAppPage: PageModel {
         photosApp.cells["Wire"].firstMatch
     }
 
-    var chooseConversationButton: XCUIElement {
-        photosApp.buttons[Locators.ShareExtensionPage.chooseConversations.rawValue].firstMatch
+    var chooseConversation: XCUIElement {
+        photosApp.descendants(matching: .any)[Locators.ShareExtensionPage.chooseConversations.rawValue].firstMatch
     }
 
     var sendButton: XCUIElement {
@@ -59,7 +59,7 @@ class PhotosAppPage: PageModel {
     }
 
     func selectConversation(name: String) -> XCUIElement {
-        var conversationCell = photosApp.staticTexts[name]
+        let conversationCell = photosApp.staticTexts[name]
         XCTAssertTrue(conversationCell.waitForExistence(timeout: timeout))
         return conversationCell.firstMatch
     }
@@ -95,11 +95,13 @@ class PhotosAppPage: PageModel {
     func chooseConversationAndSend(name: String) throws {
         defer { photosApp.terminate() }
 
-        XCTAssertTrue(chooseConversationButton.waitForExistence(timeout: timeout))
-        chooseConversationButton.tap()
+        chooseConversation.waitAndTap()
 
         let conversationToSend = selectConversation(name: name)
-        XCTAssertTrue(conversationToSend.waitForExistence(timeout: timeout))
+        XCTAssertTrue(
+            conversationToSend.waitForExistence(timeout: timeout),
+            "Tap to chooseConversation, didn't succeed"
+        )
         conversationToSend.waitAndTap()
 
         XCTAssertTrue(sendButton.waitForExistence(timeout: timeout))

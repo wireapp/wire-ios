@@ -1942,6 +1942,7 @@
 "url_action.confirm" = "Подтвердить";
 "url_action.title" = "Подтвердить действие по URL";
 "url_action.connect_to_bot.message" = "Вы хотите подключиться к боту?";
+"url_action.user_profile_qr_feature_flag.message" = "Использование ссылок на профили или QR-кодов в вашей команде запрещено. Обратитесь к администратору.";
 
 "url_action.switch_backend_confirmation.title" = "Перенаправить на локальный бэкэнд?";
 "url_action.switch_backend_confirmation.message" = "При продолжении вы будете перенаправлены на следующий локальный бэкэнд для авторизации:";
