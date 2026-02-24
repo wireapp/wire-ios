@@ -27,7 +27,7 @@ public protocol ConversationsAPI {
 
     /// Fetch all conversation identifiers in batches available from ``APIVersion`` v1.
     #if DEBUG
-        func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]>
+        func getConversationIdentifiers() throws -> PayloadPager<[QualifiedID]>
     #endif
 
     /// Fetch conversation list with qualified identifiers.
@@ -60,7 +60,6 @@ public protocol ConversationsAPI {
             parameters: CreateGroupConversationParameters
         ) async throws -> Conversation
     #endif
-
     /// Add channel permission.
     /// - parameter conversationID: The conversation ID.
     /// - parameter conversationDomain: The conversation domain.

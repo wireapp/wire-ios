@@ -214,7 +214,7 @@ class TestServicesClient {
             body["messageTimer"] = timeoutMillis
         }
 
-        let (responseData, response) = try await sendHttpRequest(
+        let (_, response) = try await sendHttpRequest(
             url: String(describing: requestUrl),
             body: body,
             requestType: "POST"

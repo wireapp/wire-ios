@@ -69,10 +69,12 @@ class ActiveConversationPage: PageModel {
         app.staticTexts.matching(identifier: "author.name")
     }
 
-    var fileLabels: XCUIElementQuery {
-        app.staticTexts.matching(identifier: "FileTransferTopLabel")
     var imageCell: XCUIElement {
         app.otherElements[Locators.ActiveConversationPage.imageCell.rawValue]
+    }
+
+    var fileLabels: XCUIElementQuery {
+        app.staticTexts.matching(identifier: "FileTransferTopLabel")
     }
 
     func fetchMessages() -> [String] {

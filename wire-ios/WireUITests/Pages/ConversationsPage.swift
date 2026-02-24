@@ -72,21 +72,15 @@ class ConversationsPage: PageModel {
         app.descendants(matching: .any)[Locators.ConversationsPage.loadBar.rawValue]
     }
 
+    func getGroupName() -> String? {
+        conversationCell.label as? String
+    }
+
     func openSettings() throws -> SettingsPage {
         settingsButton.tap()
         return try SettingsPage()
     }
 
-    func getGroupName() -> String? {
-        conversationCell.label as? String
-    }
-
-    func openUserAccountPageForUser(with input: String) throws -> UserProfilePage {
-        let predicate = NSPredicate(format: "value BEGINSWITH %@", input)
-        let button = app.buttons.containing(predicate).firstMatch
-        if button.waitForExistence(timeout: 2), button.isHittable {
-            button.tap()
-        }
     func openArchived() throws -> ArchivedConversationsPage {
         archivedButton.tap()
         return try ArchivedConversationsPage()
@@ -150,13 +144,13 @@ class ConversationsPage: PageModel {
         conversationCell.label
     }
 
+    func letTheSyncFinish() throws {
+        loadBar.waitToDisappear()
+    }
+
     func waitUntilLastMessageReceivedByTestService(with sentBy: String) throws -> Bool {
         let predicate = NSPredicate(format: "label BEGINSWITH %@", sentBy)
         let button = app.staticTexts.containing(predicate).firstMatch
         return button.waitForExistence(timeout: 5)
-    }
-      
-     func letTheSyncFinish() throws {
-        loadBar.waitToDisappear()
     }
 }

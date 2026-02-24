@@ -192,30 +192,6 @@ class ConversationsAPIV8: ConversationsAPIV7 {
             .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.usersNotConnected)
             .parse(code: response.statusCode, data: data)
     }
-
-    override func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]> {
-        let path = "\(pathPrefix)\(basePath)/list-ids"
-
-        return PayloadPager<[QualifiedID]> { start in
-            let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
-            let body = try JSONEncoder.defaultEncoder.encode(params)
-
-            let request = try URLRequestBuilder(path: path)
-                .withMethod(.post)
-                .withBody(body, contentType: .json)
-                .build()
-
-            let (data, response) = try await self.apiService.executeRequest(
-                request,
-                requiringAccessToken: true
-            )
-
-            return try ResponseParser()
-                .success(code: .ok, type: PaginatedConversationIDsV8.self)
-                .parse(code: response.statusCode, data: data)
-        }
-    }
-
 }
 
 // MARK: - Encodables
