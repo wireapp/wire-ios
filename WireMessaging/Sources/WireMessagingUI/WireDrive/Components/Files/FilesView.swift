@@ -84,9 +84,11 @@ package struct FilesView: FilesViewProtocol {
 
                     filesList
                 case let .error(isConnectionError):
+                    Spacer()
                     FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
                         reloadTask()
                     })
+                    Spacer()
                 }
             }
             .animation(.easeInOut(duration: 0.25), value: viewModel.connectionState)
