@@ -18,4 +18,4 @@
 
 #include "./Security-Flags.xcconfig"
 
-WIRE_PRODUCT_NAME = Wire
+WIRE_PRODUCT_NAME = Wire C1
