@@ -290,7 +290,11 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    public private(set) var backgroundUserSessions = [UUID: ZMUserSession]()
+    private let _backgroundUserSessions = OSAllocatedUnfairLock<[UUID: ZMUserSession]>(uncheckedState: [:])
+
+    public var backgroundUserSessions: [UUID: ZMUserSession] {
+        _backgroundUserSessions.withLockUnchecked { $0 }
+    }
 
     public internal(set) var unauthenticatedSession: UnauthenticatedSession? {
         willSet {
@@ -851,7 +855,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             return
         }
 
-        backgroundUserSessions[account.userIdentifier] = nil
+        _backgroundUserSessions.withLockUnchecked { $0[account.userIdentifier] = nil }
         tearDownObservers(account: account.userIdentifier)
         notifyUserSessionDestroyed(account.userIdentifier)
 
@@ -1221,7 +1225,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         userSession.sessionManager = self
         userSession.delegate = self
         require(backgroundUserSessions[account.userIdentifier] == nil, "User session is already loaded")
-        backgroundUserSessions[account.userIdentifier] = userSession
+        _backgroundUserSessions.withLockUnchecked { $0[account.userIdentifier] = userSession }
         userSession.useConstantBitRateAudio = useConstantBitRateAudio
         userSession.usePackagingFeatureConfig = usePackagingFeatureConfig
         configurePushToken(session: userSession)
@@ -1320,7 +1324,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             return
         }
         tearDownObservers(account: accountId)
-        backgroundUserSessions[accountId] = nil
+        _backgroundUserSessions.withLockUnchecked { $0[accountId] = nil }
 
         dispatchGroup.enter()
         userSession.close(deleteCookie: false) { [weak self] in
