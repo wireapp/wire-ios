@@ -293,10 +293,10 @@
 
 // MARK: - Sorting
 "conversation.wireCells.sorting.title" = "Sort by";
-"conversation.wireCells.sorting.key.date" = "Date";
+"conversation.wireCells.sorting.key.date" = "Modified";
 "conversation.wireCells.sorting.key.name" = "Name";
 "conversation.wireCells.sorting.key.size" = "Size";
-"conversation.wireCells.sorting.order.date.recentFirst" = "Recent first";
+"conversation.wireCells.sorting.order.date.recentFirst" = "Newest first";
 "conversation.wireCells.sorting.order.date.oldestFirst" = "Oldest first";
 "conversation.wireCells.sorting.order.name.az" = "A-Z";
 "conversation.wireCells.sorting.order.name.za" = "Z-A";

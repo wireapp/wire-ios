@@ -106,6 +106,9 @@ final class FilesSortingViewModel: ObservableObject {
     }
 
     func select(sortingOrder: SortingOrder) {
+        if sortingSelection.sortingKey == nil {
+            sortingSelection.sortingKey = .date
+        }
         sortingSelection.sortingOrder = sortingOrder
         onUpdate(sortingSelection)
     }
