@@ -56,8 +56,12 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.blockOptionOnContextMenu.rawValue]
     }
 
-    var favouriteButtonOnMoreOptions: XCUIElement {
+    var addFavouriteButtonOnMoreOptions: XCUIElement {
         app.buttons[Locators.ConversationsPage.addToFavourite.rawValue]
+    }
+
+    var removeFavouriteButtonOnMoreOptions: XCUIElement {
+        app.buttons[Locators.ConversationsPage.removeFromFavourite.rawValue]
     }
 
     var filterByFavourite: XCUIElement {
@@ -169,7 +173,7 @@ class ConversationsPage: PageModel {
     }
 
     func markConversationAsFavourite() throws -> ConversationsPage {
-        favouriteButtonOnMoreOptions.tap()
+        addFavouriteButtonOnMoreOptions.tap()
         return self
     }
 
