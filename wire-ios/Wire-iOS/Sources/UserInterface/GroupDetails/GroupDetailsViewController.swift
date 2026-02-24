@@ -84,7 +84,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
             self.token = ConversationChangeInfo.add(observer: self, for: conversation)
 
-            if let session = ZMUserSession.shared() {
+            if let session = userSession as? ZMUserSession {
                 if session.hasCompletedInitialSync {
                     self.didCompleteInitialSync = true
                 } else {
@@ -557,7 +557,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
     func presentGuestOptions(animated: Bool) {
         guard
             let conversation = conversation as? ZMConversation,
-            let userSession = ZMUserSession.shared(),
+            let userSession = userSession as? ZMUserSession,
             let createSecureGuestLinkUseCase = userSession.makeConversationSecureGuestLinkUseCase(),
             let navigationController
         else { return }
@@ -574,7 +574,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
 
     func presentServicesOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = userSession as? ZMUserSession else { return }
         let menu = ConversationServicesOptionsViewController(
             conversation: conversation,
             userSession: userSession,
@@ -586,14 +586,14 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
 
     func presentTimeoutOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = userSession as? ZMUserSession else { return }
         let menu = ConversationTimeoutOptionsViewController(conversation: conversation, userSession: userSession)
         navigationController?.pushViewController(menu, animated: animated)
     }
 
     func presentNotificationsOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = userSession as? ZMUserSession else { return }
         let menu = ConversationNotificationOptionsViewController(conversation: conversation, userSession: userSession)
         navigationController?.pushViewController(menu, animated: animated)
     }
@@ -601,7 +601,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
     func presentAccessOptions(animated: Bool) {
         guard
             let conversation = conversation as? ZMConversation,
-            let session = ZMUserSession.shared(),
+            let session = userSession as? ZMUserSession,
             let clientSessionComponent = session.clientSessionComponent
         else {
             return
@@ -633,7 +633,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
     func presentChannelHistoryOptions(animated: Bool) {
         guard
             let conversation = conversation as? ZMConversation,
-            let session = ZMUserSession.shared(),
+            let session = userSession as? ZMUserSession,
             let clientSessionComponent = session.clientSessionComponent
         else {
             return

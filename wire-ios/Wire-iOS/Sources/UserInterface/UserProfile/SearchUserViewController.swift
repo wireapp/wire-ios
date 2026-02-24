@@ -61,7 +61,7 @@ final class SearchUserViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        if let session = ZMUserSession.shared() {
+        if let session = userSession as? ZMUserSession {
             self.searchDirectory = SearchDirectory(userSession: session)
         }
 

@@ -363,7 +363,7 @@ final class ConversationViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         updateLeftNavigationBarItems()
-        ZMUserSession.shared()?.didClose(conversation: conversation)
+        (userSession as? ZMUserSession)?.didClose(conversation: conversation)
     }
 
     override func viewDidDisappear(_ animated: Bool) {

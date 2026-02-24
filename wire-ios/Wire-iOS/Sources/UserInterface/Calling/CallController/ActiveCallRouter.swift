@@ -101,7 +101,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
         self.topOverlayPresenter = topOverlayPresenter
 
         self.callController = CallController(userSession: userSession)
-        callController.callConversationProvider = ZMUserSession.shared()
+        callController.callConversationProvider = userSession as? CallConversationProvider
 
         self.callQualityController = CallQualityController(
             mainWindow: mainWindow,

@@ -291,7 +291,7 @@ final class ConversationImagesViewController: UIViewController {
             let emojiSketchButton = iconButton(messageAction: .sketchEmoji)
 
             let revealButton = iconButton(messageAction: .showInConversation)
-            if !MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canDownloadMedia {
+            if !MediaShareRestrictionManager(sessionRestriction: userSession as? ZMUserSession).canDownloadMedia {
                 buttons = [sketchButton, emojiSketchButton, revealButton]
             } else {
                 buttons = [sketchButton, emojiSketchButton, copyButton, saveButton, revealButton]
