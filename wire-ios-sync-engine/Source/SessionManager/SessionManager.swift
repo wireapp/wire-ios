@@ -296,21 +296,27 @@ public final class SessionManager: NSObject, SessionManagerType {
         _backgroundUserSessions.withLockUnchecked { $0 }
     }
 
-    public internal(set) var unauthenticatedSession: UnauthenticatedSession? {
-        willSet {
-            unauthenticatedSession?.tearDown()
-        }
-        didSet {
-            if let session = unauthenticatedSession {
+    private let _unauthenticatedSession = OSAllocatedUnfairLock<UnauthenticatedSession?>(uncheckedState: nil)
 
+    public internal(set) var unauthenticatedSession: UnauthenticatedSession? {
+        get {
+            _unauthenticatedSession.withLockUnchecked { $0 }
+        }
+        set {
+            let old = _unauthenticatedSession.withLockUnchecked { state -> UnauthenticatedSession? in
+                let old = state
+                state = newValue
+                return old
+            }
+            old?.tearDown()
+            if let newValue {
                 NotificationInContext(
                     name: sessionManagerCreatedUnauthenticatedSessionNotificationName,
                     context: self,
-                    object: session
+                    object: newValue
                 ).post()
             }
         }
-
     }
 
     public weak var presentationDelegate: PresentationDelegate?
