@@ -41,6 +41,7 @@ final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
         sut = SettingsTextCell()
 
         let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart")
+        let mockUserSession = UserSessionMock(mockUser: selfUser)
         let settingsPropertyFactory = SettingsPropertyFactory(
             userSession: SessionManager.shared?.activeUserSession,
             selfUser: selfUser,
@@ -52,7 +53,8 @@ final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
             userRightInterfaceType: UserRight.self,
             settingsCoordinator: settingsCoordinator,
             localDomain: "wire.com",
-            isFederationEnabled: false
+            isFederationEnabled: false,
+            userSession: mockUserSession
         )
     }
 

@@ -68,7 +68,8 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
             userRightInterfaceType: MockUserRight.self,
             settingsCoordinator: mockSettingsCoordinator,
             localDomain: "wire.com",
-            isFederationEnabled: false
+            isFederationEnabled: false,
+            userSession: userSession
         )
 
         MockUserRight.isPermitted = true
@@ -183,7 +184,8 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
             userRightInterfaceType: MockUserRight.self,
             settingsCoordinator: mockSettingsCoordinator,
             localDomain: "wire.com",
-            isFederationEnabled: false
+            isFederationEnabled: false,
+            userSession: userSession
         )
 
         // then
@@ -200,7 +202,8 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
             userRightInterfaceType: MockUserRight.self,
             settingsCoordinator: mockSettingsCoordinator,
             localDomain: "wire.com",
-            isFederationEnabled: false
+            isFederationEnabled: false,
+            userSession: userSession
         )
 
         // then

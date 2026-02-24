@@ -96,7 +96,8 @@ final class SelfProfileViewController: UIViewController {
             userRightInterfaceType: userRightInterfaceType,
             settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator),
             localDomain: userSession.resolvedBackendMetadata.domain,
-            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
+            isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled,
+            userSession: userSession
         )
 
         let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)

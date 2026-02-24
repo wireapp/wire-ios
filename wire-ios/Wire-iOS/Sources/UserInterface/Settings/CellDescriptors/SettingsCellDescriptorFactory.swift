@@ -32,6 +32,7 @@ struct SettingsCellDescriptorFactory {
     var settingsCoordinator: AnySettingsCoordinator
     let localDomain: String?
     let isFederationEnabled: Bool
+    let userSession: UserSession
 
     func rootGroup(userSession: UserSession) -> any SettingsControllerGeneratorType &
         SettingsInternalGroupCellDescriptorType {

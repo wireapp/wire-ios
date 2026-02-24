@@ -108,12 +108,18 @@ extension SettingsCellDescriptorFactory {
             SettingsButtonCellDescriptor(
                 title: SelfSettingsAdvancedLocale.DebuggingTools.FirstUnreadConversation.title,
                 isDestructive: false,
-                selectAction: DebugActions.findUnreadConversationContributingToBadgeCount
+                selectAction: { [userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.findUnreadConversationContributingToBadgeCount(userSession: session)
+                }
             ),
             SettingsButtonCellDescriptor(
                 title: SelfSettingsAdvancedLocale.DebuggingTools.EnterDebugCommand.title,
                 isDestructive: false,
-                selectAction: DebugActions.enterDebugCommand
+                selectAction: { [userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.enterDebugCommand(userSession: session)
+                }
             )
         ])
 

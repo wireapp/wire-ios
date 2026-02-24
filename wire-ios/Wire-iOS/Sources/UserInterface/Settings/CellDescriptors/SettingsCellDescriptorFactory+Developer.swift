@@ -18,6 +18,7 @@
 
 import Foundation
 import SwiftUI
+import WireSyncEngine
 
 extension SettingsCellDescriptorFactory {
 
@@ -36,7 +37,10 @@ extension SettingsCellDescriptorFactory {
             Button(
                 title: "Send broken message",
                 isDestructive: true,
-                selectAction: DebugActions.sendBrokenMessage
+                selectAction: { [userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.sendBrokenMessage(userSession: session)
+                }
             )
         )
 
@@ -44,7 +48,10 @@ extension SettingsCellDescriptorFactory {
             Button(
                 title: "First unread conversation (badge count)",
                 isDestructive: false,
-                selectAction: DebugActions.findUnreadConversationContributingToBadgeCount
+                selectAction: { [userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.findUnreadConversationContributingToBadgeCount(userSession: session)
+                }
             )
         )
 
@@ -52,7 +59,10 @@ extension SettingsCellDescriptorFactory {
             Button(
                 title: "First unread conversation (back arrow count)",
                 isDestructive: false,
-                selectAction: DebugActions.findUnreadConversationContributingToBackArrowDot
+                selectAction: { [userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.findUnreadConversationContributingToBackArrowDot(userSession: session)
+                }
             )
         )
 
@@ -60,7 +70,10 @@ extension SettingsCellDescriptorFactory {
             Button(
                 title: "Delete invalid conversations",
                 isDestructive: false,
-                selectAction: DebugActions.deleteInvalidConversations
+                selectAction: { [userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.deleteInvalidConversations(userSession: session)
+                }
             )
         )
 
@@ -78,22 +91,27 @@ extension SettingsCellDescriptorFactory {
             Button(
                 title: "Re-calculate badge count",
                 isDestructive: false,
-                selectAction: DebugActions.recalculateBadgeCount
+                selectAction: { [userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.recalculateBadgeCount(userSession: session)
+                }
             )
         )
 
         developerCellDescriptors.append(
-            Button(title: "Append N messages to the top conv (not sending)", isDestructive: true) { _ in
+            Button(title: "Append N messages to the top conv (not sending)", isDestructive: true) { [userSession] _ in
+                guard let session = userSession as? ZMUserSession else { return }
                 DebugActions.askNumber(title: "Enter count of messages") { count in
-                    DebugActions.appendMessagesInBatches(count: count)
+                    DebugActions.appendMessagesInBatches(count: count, userSession: session)
                 }
             }
         )
 
         developerCellDescriptors.append(
-            Button(title: "Spam the top conv", isDestructive: true) { _ in
+            Button(title: "Spam the top conv", isDestructive: true) { [userSession] _ in
+                guard let session = userSession as? ZMUserSession else { return }
                 DebugActions.askNumber(title: "Enter count of messages") { count in
-                    DebugActions.spamWithMessages(amount: count)
+                    DebugActions.spamWithMessages(amount: count, userSession: session)
                 }
             }
         )
@@ -119,7 +137,10 @@ extension SettingsCellDescriptorFactory {
             Button(
                 title: "Trigger slow sync",
                 isDestructive: false,
-                selectAction: DebugActions.triggerSlowSync
+                selectAction: { [userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.triggerSlowSync(userSession: session)
+                }
             )
         )
 
@@ -127,7 +148,10 @@ extension SettingsCellDescriptorFactory {
             Button(
                 title: "Trigger resyncResources",
                 isDestructive: false,
-                selectAction: { _ in DebugActions.triggerResyncResources() }
+                selectAction: { [userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.triggerResyncResources(userSession: session)
+                }
             )
         )
 
