@@ -267,8 +267,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 // Process.
                 await processLiveEventEnvelope(
                     envelope: envelope,
-                    index: index,
-                    publicKeys: publicKeys
+                    index: index
                 )
 
                 do {
@@ -287,8 +286,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
     private func processLiveEventEnvelope(
         envelope: UpdateEventEnvelope,
-        index: Int64,
-        publicKeys: EARPublicKeys?
+        index: Int64
     ) async {
         // if the database key is nil (`earService.isLocked == true`),
         // we cannot process events that require access to it,
