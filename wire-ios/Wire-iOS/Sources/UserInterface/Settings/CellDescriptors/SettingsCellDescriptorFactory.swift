@@ -165,10 +165,13 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .navigation,
             identifier: type(of: self).settingsDevicesCellIdentifier,
-            presentationAction: { () -> (UIViewController?) in
+            presentationAction: { [weak userSession] () -> (UIViewController?) in
+                guard let userSession else { return nil }
                 return ClientListViewController(
                     clientsList: .none,
-                    credentials: .none,
+                    selfClient: userSession.selfUserClient,
+                    userSession: userSession,
+                    contextProvider: userSession.contextProvider,
                     detailedView: true
                 )
             },

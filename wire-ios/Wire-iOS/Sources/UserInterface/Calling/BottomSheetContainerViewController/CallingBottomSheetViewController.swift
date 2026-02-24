@@ -109,10 +109,6 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        guard let userSession = ZMUserSession.shared() else {
-            zmLog.error("UserSession not available when initializing \(type(of: self))")
-            return
-        }
         callStateObserverToken = WireCallCenterV3.addCallStateObserver(
             observer: self,
             contextProvider: userSession.contextProvider
@@ -209,7 +205,7 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
 
     func updateVisibleVoiceChannelViewController() {
         guard
-            let conversation = ZMUserSession.shared()?.priorityCallConversation,
+            let conversation = (userSession as? ZMUserSession)?.priorityCallConversation,
             visibleVoiceChannelViewController.conversation != conversation,
             let voiceChannel = conversation.voiceChannel
         else {

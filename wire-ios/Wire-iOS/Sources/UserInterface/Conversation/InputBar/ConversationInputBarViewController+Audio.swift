@@ -28,8 +28,7 @@ import WireSyncEngine
 extension ConversationInputBarViewController {
 
     func setupCallStateObserver() {
-        if !ProcessInfo.processInfo.isRunningTests,
-           let userSession = ZMUserSession.shared() {
+        if !ProcessInfo.processInfo.isRunningTests {
             callStateObserverToken = WireCallCenterV3.addCallStateObserver(
                 observer: self,
                 contextProvider: userSession.contextProvider

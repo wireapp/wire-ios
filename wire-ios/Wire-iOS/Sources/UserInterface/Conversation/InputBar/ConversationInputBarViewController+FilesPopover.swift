@@ -56,7 +56,7 @@ extension ConversationInputBarViewController {
                 handler: plistHandler
             ))
 
-            let size = UInt(ZMUserSession.shared()?.maxUploadFileSize ?? 0) + 1
+            let size = UInt(userSession.maxUploadFileSize) + 1
             let humanReadableSize = size / 1024 / 1024
             alertController.addAction(uploadTestAlertAction(
                 size: size,

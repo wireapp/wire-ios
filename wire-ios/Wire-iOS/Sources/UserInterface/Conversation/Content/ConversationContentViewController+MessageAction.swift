@@ -232,7 +232,7 @@ extension ConversationContentViewController: SignatureObserver {
 
     func didReceiveDigitalSignature(_ cmsFileMetadata: ZMFileMetadata) {
         dismissDigitalSignatureVerification { [weak self] in
-            ZMUserSession.shared()?.perform {
+            self?.userSession.perform {
                 do {
                     try self?.conversation.appendFile(with: cmsFileMetadata)
                 } catch {

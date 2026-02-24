@@ -117,7 +117,13 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
     }
 
     private func buildDevices() -> UIViewController {
-        ClientListViewController(clientsList: .none, credentials: .none, detailedView: true)
+        ClientListViewController(
+            clientsList: .none,
+            selfClient: userSession.selfUserClient,
+            userSession: userSession,
+            contextProvider: userSession.contextProvider,
+            detailedView: true
+        )
     }
 
     private func buildOptions(_ mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {

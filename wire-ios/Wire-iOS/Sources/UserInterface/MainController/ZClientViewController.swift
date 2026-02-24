@@ -789,7 +789,10 @@ final class ZClientViewController: UIViewController {
         if user.isSelfUser, let clients = user.allClients as? [UserClient] {
             let clientListViewController = ClientListViewController(
                 clientsList: clients,
+                selfClient: userSession.selfUserClient,
+                userSession: userSession,
                 credentials: nil,
+                contextProvider: userSession.contextProvider,
                 detailedView: true,
                 showTemporary: true
             )

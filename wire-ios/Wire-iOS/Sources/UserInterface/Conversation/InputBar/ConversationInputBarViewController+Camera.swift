@@ -228,7 +228,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
     private func writeToSavedPhotoAlbumIfNecessary(imageData: Data, isFromCamera: Bool) {
         guard isFromCamera,
-              MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll,
+              mediaShareRestrictionManager.hasAccessToCameraRoll,
               SecurityFlags.cameraRoll.isEnabled,
               let image = UIImage(data: imageData as Data)
         else {
@@ -343,9 +343,9 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 extension ConversationInputBarViewController {
 
     func showCameraAndPhotos() {
-        UIApplication.wr_requestVideoAccess { _ in
+        UIApplication.wr_requestVideoAccess { [mediaShareRestrictionManager] _ in
             if SecurityFlags.cameraRoll.isEnabled,
-               MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll {
+               mediaShareRestrictionManager.hasAccessToCameraRoll {
                 self.executeWithCameraRollPermission { _ in
                     self.mode = .camera
                     self.inputBar.textView.becomeFirstResponder()

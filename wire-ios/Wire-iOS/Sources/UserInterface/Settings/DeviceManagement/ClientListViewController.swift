@@ -88,10 +88,10 @@ final class ClientListViewController: UIViewController,
 
     required init(
         clientsList: [UserClient]?,
-        selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
-        userSession: UserSession? = ZMUserSession.shared(),
+        selfClient: UserClient?,
+        userSession: UserSession?,
         credentials: UserEmailCredentials? = .none,
-        contextProvider: ContextProvider? = ZMUserSession.shared(),
+        contextProvider: ContextProvider?,
         detailedView: Bool = false,
         showTemporary: Bool = true,
         showLegalHold: Bool = true
@@ -114,7 +114,7 @@ final class ClientListViewController: UIViewController,
         super.init(nibName: nil, bundle: nil)
 
         initalizeProperties(clientsList ?? Array(ZMUser.selfUser()?.clients.filter { !$0.isSelfClient() } ?? []))
-        self.clientsObserverToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
+        self.clientsObserverToken = (userSession as? ZMUserSession)?.addClientUpdateObserver(self)
         if let user = ZMUser.selfUser(), let session = userSession as? ZMUserSession {
             self.userObserverToken = UserChangeInfo.add(observer: self, for: user, in: session)
         }

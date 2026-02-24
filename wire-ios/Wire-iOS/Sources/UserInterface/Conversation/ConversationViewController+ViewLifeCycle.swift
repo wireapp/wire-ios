@@ -36,7 +36,7 @@ extension ConversationViewController {
 
         contentViewController?.searchQueries = collectionController?.currentTextSearchQuery ?? []
 
-        ZMUserSession.shared()?.didOpen(conversation: conversation)
+        (userSession as? ZMUserSession)?.didOpen(conversation: conversation)
 
         isAppearing = false
 

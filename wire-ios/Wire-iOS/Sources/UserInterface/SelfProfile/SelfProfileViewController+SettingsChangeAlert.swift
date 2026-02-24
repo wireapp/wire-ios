@@ -45,8 +45,8 @@ extension SelfProfileViewController {
         let okAction = UIAlertAction(
             title: L10n.Localizable.General.ok,
             style: .default
-        ) { [weak settingsChangedAlert] _ in
-            ZMUserSession.shared()?.perform {
+        ) { [weak userSession, weak settingsChangedAlert] _ in
+            userSession?.perform {
                 ZMUser.selfUser()?.readReceiptsEnabledChangedRemotely = false
             }
             settingsChangedAlert?.dismiss(animated: true)
