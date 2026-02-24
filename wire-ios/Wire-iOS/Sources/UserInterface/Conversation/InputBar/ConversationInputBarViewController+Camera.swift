@@ -37,7 +37,10 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             fatal("SplitViewController is not created")
         }
         let splitLayoutObserver = SplitLayoutObserver(zClientViewController: zClientViewController)
-        let cameraKeyboardViewController = CameraKeyboardViewController(splitLayoutObservable: splitLayoutObserver)
+        let cameraKeyboardViewController = CameraKeyboardViewController(
+            splitLayoutObservable: splitLayoutObserver,
+            userSession: userSession
+        )
         cameraKeyboardViewController.delegate = self
         self.cameraKeyboardViewController = cameraKeyboardViewController
         return cameraKeyboardViewController
@@ -92,7 +95,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                     }
                 }
             )
-            let confirmVideoViewController = ConfirmAssetViewController(context: context)
+            let confirmVideoViewController = ConfirmAssetViewController(context: context, userSession: userSession)
             confirmVideoViewController.previewTitle = conversation.displayNameWithFallback
 
             view.window?.endEditing(true)
@@ -206,7 +209,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             }
         )
 
-        let confirmImageViewController = ConfirmAssetViewController(context: context)
+        let confirmImageViewController = ConfirmAssetViewController(context: context, userSession: userSession)
         confirmImageViewController.previewTitle = conversation.displayNameWithFallback
 
         view.window?.endEditing(true)

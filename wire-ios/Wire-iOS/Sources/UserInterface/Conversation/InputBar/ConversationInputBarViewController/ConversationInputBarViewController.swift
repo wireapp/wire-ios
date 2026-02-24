@@ -1029,7 +1029,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
     }
 
     private func sketch() {
-        let viewController = CanvasViewController()
+        let viewController = CanvasViewController(userSession: userSession)
         viewController.delegate = self
         viewController.setupNavigationBarTitle(conversation.displayNameWithFallback)
 
@@ -1053,8 +1053,7 @@ extension ConversationInputBarViewController: InformalTextViewDelegate {
             }
         )
 
-        let confirmImageViewController = ConfirmAssetViewController(context: context)
-
+        let confirmImageViewController = ConfirmAssetViewController(context: context, userSession: userSession)
         confirmImageViewController.previewTitle = conversation.displayNameWithFallback
 
         present(confirmImageViewController, animated: false)

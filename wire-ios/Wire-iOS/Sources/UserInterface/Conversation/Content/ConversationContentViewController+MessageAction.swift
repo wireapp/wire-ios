@@ -51,7 +51,7 @@ extension ConversationContentViewController {
     }
 
     func openSketch(for message: ZMConversationMessage, in editMode: CanvasViewControllerEditMode) {
-        let canvasViewController = CanvasViewController()
+        let canvasViewController = CanvasViewController(userSession: userSession)
         if let imageData = message.imageMessageData?.imageData {
             canvasViewController.sketchImage = UIImage(data: imageData)
         }

@@ -80,7 +80,8 @@ extension SettingsCellDescriptorFactory {
             icon: .personalProfile,
             accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton.description,
             settingsTopLevelMenuItem: .account,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -252,11 +253,12 @@ extension SettingsCellDescriptorFactory {
     ) -> SettingsCellDescriptorType {
         typealias AccountSection = L10n.Localizable.Self.Settings.AccountSection
         if enabled {
-            let presentation = {
+            let presentation = { [userSession] in
                 ChangeHandleViewController(
                     useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
                     settingsCoordinator: settingsCoordinator,
-                    isFederationEnabled: isFederationEnabled
+                    isFederationEnabled: isFederationEnabled,
+                    userSession: userSession
                 )
             }
 
@@ -308,7 +310,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     private func pictureElement() -> any SettingsCellDescriptorType {
-        let profileImagePicker = ProfileImagePickerManager()
+        let profileImagePicker = ProfileImagePickerManager(userSession: userSession)
         let previewGenerator: PreviewGeneratorType = { _ in
             guard let image = ZMUser.selfUser()?.imageSmallProfileData.flatMap(UIImage.init) else { return .none }
             return .image(image)
@@ -358,10 +360,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     private func colorElementPresentationAction(sender: UIView) -> UIViewController {
-        guard
-            let selfUser = ZMUser.selfUser(),
-            let userSession = ZMUserSession.shared()
-        else {
+        guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("misses prerequisites to present color elements!")
             return UIViewController()
         }
@@ -488,7 +487,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     func deleteAccountButtonElement() -> any SettingsCellDescriptorType {
-        let presentationAction: () -> UIViewController = {
+        let presentationAction: () -> UIViewController = { [userSession] in
             let alert = UIAlertController(
                 title: L10n.Localizable.Self.Settings.AccountDetails.DeleteAccount.Alert.title,
                 message: L10n.Localizable.Self.Settings.AccountDetails.DeleteAccount.Alert.message,
@@ -497,8 +496,9 @@ extension SettingsCellDescriptorFactory {
             let actionCancel = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel, handler: nil)
             alert.addAction(actionCancel)
             let actionDelete = UIAlertAction(title: L10n.Localizable.General.ok, style: .destructive) { _ in
-                ZMUserSession.shared()?.enqueue {
-                    ZMUserSession.shared()?.initiateUserDeletion()
+                guard let session = userSession as? ZMUserSession else { return }
+                session.enqueue {
+                    session.initiateUserDeletion()
                 }
             }
             alert.addAction(actionDelete)

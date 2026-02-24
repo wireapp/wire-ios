@@ -65,7 +65,7 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
                             }
                         )
 
-                        let confirmImageViewController = ConfirmAssetViewController(context: context)
+                        let confirmImageViewController = ConfirmAssetViewController(context: context, userSession: self.userSession)
                         confirmImageViewController.previewTitle = self.conversation.displayNameWithFallback
                         self.present(confirmImageViewController, animated: true) {}
                     }
@@ -79,8 +79,7 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
 
     func dropInteraction(_ interaction: UIDropInteraction, sessionDidUpdate session: UIDropSession) -> UIDropProposal {
         dropProposal(mediaShareRestrictionManager: MediaShareRestrictionManager(
-            sessionRestriction: ZMUserSession
-                .shared()
+            sessionRestriction: userSession as? ZMUserSession
         ))
     }
 

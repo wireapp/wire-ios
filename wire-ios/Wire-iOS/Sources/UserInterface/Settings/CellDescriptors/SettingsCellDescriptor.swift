@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSettingsUI
+import WireSyncEngine
 
 // * Top-level structure overview:
 // * Settings group (screen) @c SettingsGroupCellDescriptorType contains
@@ -199,6 +200,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
 
     let settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
     let settingsCoordinator: AnySettingsCoordinator
+    let userSession: UserSession
 
     weak var viewController: UIViewController?
 
@@ -211,7 +213,8 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         icon: StyleKitIcon? = nil,
         accessibilityBackButtonText: String,
         settingsTopLevelMenuItem: SettingsTopLevelMenuItem?,
-        settingsCoordinator: AnySettingsCoordinator
+        settingsCoordinator: AnySettingsCoordinator,
+        userSession: UserSession
     ) {
         self.items = items
         self.title = title
@@ -222,6 +225,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         self.accessibilityBackButtonText = accessibilityBackButtonText
         self.settingsTopLevelMenuItem = settingsTopLevelMenuItem
         self.settingsCoordinator = settingsCoordinator
+        self.userSession = userSession
     }
 
     func featureCell(_ cell: SettingsCellType) {
@@ -246,7 +250,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     }
 
     func generateViewController() -> UIViewController? {
-        SettingsTableViewController(group: self, settingsCoordinator: settingsCoordinator)
+        SettingsTableViewController(group: self, settingsCoordinator: settingsCoordinator, userSession: userSession)
     }
 }
 

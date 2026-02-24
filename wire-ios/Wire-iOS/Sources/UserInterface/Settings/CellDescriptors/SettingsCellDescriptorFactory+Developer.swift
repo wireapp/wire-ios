@@ -121,7 +121,7 @@ extension SettingsCellDescriptorFactory {
                 title: "Show database statistics",
                 isDestructive: false,
                 presentationStyle: .navigation,
-                presentationAction: { DatabaseStatisticsController() }
+                presentationAction: { [userSession] in DatabaseStatisticsController(userSession: userSession) }
             )
         )
 
@@ -161,7 +161,8 @@ extension SettingsCellDescriptorFactory {
             icon: .robot,
             accessibilityBackButtonText: L10n.Accessibility.DeveloperOptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: .developerOptions,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 

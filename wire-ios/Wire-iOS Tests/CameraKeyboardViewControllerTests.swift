@@ -187,7 +187,8 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
     private func setupSut(permissions: PhotoPermissionsController) {
         sut = CameraKeyboardViewController(
             splitLayoutObservable: splitView,
-            permissions: permissions
+            permissions: permissions,
+            userSession: UserSessionMock()
         )
     }
 
@@ -197,7 +198,8 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
         let permissions = MockPhotoPermissionsController(camera: true, library: true)
         sut = CallingMockCameraKeyboardViewController(
             splitLayoutObservable: splitView,
-            permissions: permissions
+            permissions: permissions,
+            userSession: UserSessionMock()
         )
 
         snapshotHelper.verify(matching: prepareForSnapshot())

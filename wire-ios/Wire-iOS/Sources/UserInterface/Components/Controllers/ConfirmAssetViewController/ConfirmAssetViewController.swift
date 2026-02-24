@@ -21,6 +21,7 @@ import FLAnimatedImage
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireSyncEngine
 
 final class ConfirmAssetViewController: UIViewController {
     enum Asset {
@@ -47,6 +48,7 @@ final class ConfirmAssetViewController: UIViewController {
     }
 
     let context: Context
+    private let userSession: UserSession
 
     var previewTitle: String? {
         didSet {
@@ -85,8 +87,9 @@ final class ConfirmAssetViewController: UIViewController {
         wr_supportedInterfaceOrientations
     }
 
-    init(context: Context) {
+    init(context: Context, userSession: UserSession) {
         self.context = context
+        self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -182,7 +185,7 @@ final class ConfirmAssetViewController: UIViewController {
             return
         }
 
-        let canvasViewController = CanvasViewController()
+        let canvasViewController = CanvasViewController(userSession: userSession)
         canvasViewController.sketchImage = image
         canvasViewController.delegate = self
         canvasViewController.title = previewTitle

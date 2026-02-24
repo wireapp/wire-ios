@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireSyncEngine
 
 extension UIImage {
 
@@ -33,9 +34,15 @@ extension UIImage {
 final class ImagePickerConfirmationController: NSObject {
     var previewTitle: String?
     var imagePickedBlock: ((_ imageData: Data?) -> Void)?
+    private let userSession: UserSession
 
     /// We need to store this reference to close the @c SketchViewController
     private var presentingPickerController: UIImagePickerController?
+
+    init(userSession: UserSession) {
+        self.userSession = userSession
+        super.init()
+    }
 
 }
 
@@ -72,7 +79,7 @@ extension ImagePickerConfirmationController: UIImagePickerControllerDelegate {
                 onCancel: onCancel
             )
 
-            let confirmImageViewController = ConfirmAssetViewController(context: context)
+            let confirmImageViewController = ConfirmAssetViewController(context: context, userSession: userSession)
             confirmImageViewController.modalPresentationStyle = .fullScreen
             confirmImageViewController.previewTitle = previewTitle
 

@@ -217,7 +217,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     var footerFont: UIFont = .smallFont
     var state: HandleChangeState
     private var footerLabel = UILabel()
-    fileprivate weak var userProfile = ZMUserSession.shared()?.userProfile
+    fileprivate weak var userProfile: UserProfile?
     private var observerToken: Any?
     var popOnSuccess = true
     private var federationEnabled: Bool
@@ -227,14 +227,16 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     convenience init(
         useTypeIntrinsicSizeTableView: Bool,
         settingsCoordinator: AnySettingsCoordinator,
-        isFederationEnabled: Bool
+        isFederationEnabled: Bool,
+        userSession: UserSession
     ) {
         let user = SelfUser.provider?.providedSelfUser
         self.init(
             state: HandleChangeState(currentHandle: user?.handle ?? nil, newHandle: nil, availability: .unknown),
             useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
             settingsCoordinator: settingsCoordinator,
-            isFederationEnabled: isFederationEnabled
+            isFederationEnabled: isFederationEnabled,
+            userSession: userSession
         )
     }
 
@@ -242,13 +244,15 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
         suggestedHandle handle: String,
         useTypeIntrinsicSizeTableView: Bool,
         settingsCoordinator: AnySettingsCoordinator,
-        isFederationEnabled: Bool
+        isFederationEnabled: Bool,
+        userSession: UserSession
     ) {
         self.init(
             state: .init(currentHandle: nil, newHandle: handle, availability: .unknown),
             useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
             settingsCoordinator: settingsCoordinator,
-            isFederationEnabled: isFederationEnabled
+            isFederationEnabled: isFederationEnabled,
+            userSession: userSession
         )
         setupViews()
         checkAvailability(of: handle)
@@ -259,7 +263,8 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
         state: HandleChangeState,
         useTypeIntrinsicSizeTableView: Bool,
         settingsCoordinator: AnySettingsCoordinator,
-        isFederationEnabled: Bool
+        isFederationEnabled: Bool,
+        userSession: UserSession
     ) {
         self.state = state
         self.federationEnabled = isFederationEnabled
@@ -269,6 +274,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
             settingsCoordinator: settingsCoordinator
         )
 
+        self.userProfile = userSession.userProfile
         setupViews()
     }
 

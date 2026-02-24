@@ -74,7 +74,7 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
             useTypeIntrinsicSizeTableView: false,
             mainCoordinator: mainCoordinator
         )
-        return .init(group: group, settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
+        return .init(group: group, settingsCoordinator: .init(settingsCoordinator: settingsCoordinator), userSession: userSession)
     }
 
     func build(
@@ -112,7 +112,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         ) as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 
@@ -133,7 +134,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let group = factory.optionsGroup as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 
@@ -147,7 +149,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         ) as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 
@@ -158,7 +161,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let group = factory.helpSection() as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 
@@ -169,7 +173,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let group = factory.aboutSection() as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 
@@ -180,7 +185,8 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let group = factory.developerGroup as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
-            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
         )
     }
 }

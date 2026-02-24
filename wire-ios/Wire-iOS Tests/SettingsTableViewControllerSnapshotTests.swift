@@ -158,7 +158,8 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         let group = settingsCellDescriptorFactory.optionsGroup
         sut = SettingsTableViewController(
             group: group as! SettingsInternalGroupCellDescriptorType,
-            settingsCoordinator: mockSettingsCoordinator
+            settingsCoordinator: mockSettingsCoordinator,
+            userSession: userSession
         )
 
         sut.view.backgroundColor = .black
@@ -217,7 +218,8 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
         let group = SettingsCellDescriptorFactory.darkThemeGroup(
             for: settingsPropertyFactory.property(.darkMode),
-            settingsCoordinator: mockSettingsCoordinator
+            settingsCoordinator: mockSettingsCoordinator,
+            userSession: userSession
         )
         try verify(group: group)
     }
@@ -231,7 +233,8 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         let group = try XCTUnwrap(group as? SettingsInternalGroupCellDescriptorType)
         sut = SettingsTableViewController(
             group: group,
-            settingsCoordinator: mockSettingsCoordinator
+            settingsCoordinator: mockSettingsCoordinator,
+            userSession: userSession
         )
 
         sut.view.backgroundColor = .black

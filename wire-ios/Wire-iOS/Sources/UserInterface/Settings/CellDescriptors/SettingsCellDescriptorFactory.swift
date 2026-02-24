@@ -53,7 +53,8 @@ struct SettingsCellDescriptorFactory {
             style: .plain,
             accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -155,7 +156,8 @@ struct SettingsCellDescriptorFactory {
             icon: .gear,
             accessibilityBackButtonText: L10n.Accessibility.Settings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -242,7 +244,8 @@ struct SettingsCellDescriptorFactory {
             previewGenerator: previewGenerator,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -289,7 +292,8 @@ struct SettingsCellDescriptorFactory {
             icon: .settingsSupport,
             accessibilityBackButtonText: L10n.Accessibility.SupportSettings.BackButton.description,
             settingsTopLevelMenuItem: .support,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -342,7 +346,8 @@ struct SettingsCellDescriptorFactory {
             icon: .about,
             accessibilityBackButtonText: L10n.Accessibility.AboutSettings.BackButton.description,
             settingsTopLevelMenuItem: .about,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 

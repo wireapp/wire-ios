@@ -72,9 +72,8 @@ class CameraKeyboardViewController: UIViewController {
         case photos = 1
     }
 
-    private let mediaSharingRestrictionsMananger = MediaShareRestrictionManager(
-        sessionRestriction: ZMUserSession.shared()
-    )
+    private let mediaSharingRestrictionsMananger: MediaShareRestrictionManager
+    private let userSession: UserSession
 
     let assetLibrary: AssetLibrary?
     let imageManagerType: ImageManagerProtocol.Type
@@ -93,8 +92,13 @@ class CameraKeyboardViewController: UIViewController {
     init(
         splitLayoutObservable: SplitLayoutObservable,
         imageManagerType: ImageManagerProtocol.Type = PHImageManager.self,
-        permissions: PhotoPermissionsController = PhotoPermissionsControllerStrategy()
+        permissions: PhotoPermissionsController = PhotoPermissionsControllerStrategy(),
+        userSession: UserSession
     ) {
+        self.userSession = userSession
+        self.mediaSharingRestrictionsMananger = MediaShareRestrictionManager(
+            sessionRestriction: userSession as? ZMUserSession
+        )
         self.splitLayoutObservable = splitLayoutObservable
         self.imageManagerType = imageManagerType
         self.assetLibrary = SecurityFlags.cameraRoll.isEnabled ? AssetLibrary() : nil
@@ -114,12 +118,10 @@ class CameraKeyboardViewController: UIViewController {
             object: nil
         )
 
-        if let userSession = ZMUserSession.shared() {
-            self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(
-                observer: self,
-                contextProvider: userSession.contextProvider
-            )
-        }
+        self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(
+            observer: self,
+            contextProvider: userSession.contextProvider
+        )
     }
 
     @available(*, unavailable)
@@ -414,7 +416,7 @@ class CameraKeyboardViewController: UIViewController {
 
     private func forwardSelectedVideoAsset(_ asset: PHAsset) {
         activityIndicator.start()
-        guard let fileLengthLimit: UInt64 = ZMUserSession.shared()?.maxUploadFileSize else { return }
+        let fileLengthLimit: UInt64 = userSession.maxUploadFileSize
 
         asset.getVideoURL { url in
             DispatchQueue.main.async {
@@ -533,7 +535,7 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: a protocol for this for testing
     @objc var shouldBlockCallingRelatedActions: Bool {
-        ZMUserSession.shared()?.isCallOngoing ?? false
+        (userSession as? ZMUserSession)?.isCallOngoing ?? false
     }
 
     private func deniedAuthorizationCell(
