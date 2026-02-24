@@ -44,6 +44,7 @@ class IncomingCallPage: PageModel {
 
     func acceptIncommingCall(with testCase: XCTestCase) throws -> OngoingCallPage {
         handleMicrophonePermissionAlert(testCase: testCase)
+        XCTAssertTrue(acceptButton.exists, "Expected call not received")
         acceptButton.tap()
         app.tap()
         return try OngoingCallPage()

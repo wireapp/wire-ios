@@ -77,16 +77,6 @@ final class CallingTests: WireUITestCase {
         return ownerId
     }
 
-    private func acceptIncomingCall(groupName: String) throws -> OngoingCallPage {
-        let incomingCallPage = try IncomingCallPage()
-        XCTAssertTrue(incomingCallPage.acceptButton.exists, "Expected call not received")
-
-        let ongoingCallPage = try incomingCallPage.acceptIncommingCall(with: self)
-        XCTAssertTrue(app.staticTexts[groupName].waitForExistence(timeout: 10), "Conversation title mismatch")
-
-        return ongoingCallPage
-    }
-
     /// Testiny : https://app.testiny.io/IOS/testcases/tc/8801
     /// Team Owner create group conversation and initiate a group call with members
     @MainActor
@@ -118,7 +108,12 @@ final class CallingTests: WireUITestCase {
             )
             XCTAssertEqual(responses.count, acceptingIds.count)
 
-            let ongoingCallPage = try acceptIncomingCall(groupName: teamAndGroupCallSetup.groupName)
+            let incomingCallPage = try IncomingCallPage()
+            let ongoingCallPage = try incomingCallPage.acceptIncommingCall(with: self)
+            XCTAssertTrue(
+                app.staticTexts[teamAndGroupCallSetup.groupName].waitForExistence(timeout: 10),
+                "Conversation title mismatch"
+            )
 
             let participantIdentifier = Locators.OngoingCallPage
                 .participantIdentifier(teamAndGroupCallSetup.appUserWhoWillJoinTheCall.name)
