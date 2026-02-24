@@ -42,7 +42,7 @@ struct AppVersionMigration_4_12_2: AppVersionMigration {
 
         for mlsGroupID in mlsGroupIDs {
 
-            try await coreCrypto.perform { ccContext in
+            try await coreCrypto.transaction { ccContext in
                 let epoch: UInt64 = if try await ccContext
                     .conversationExists(conversationId: mlsGroupID.conversationId) {
                     UInt64(try await ccContext.conversationEpoch(conversationId: mlsGroupID.conversationId))
