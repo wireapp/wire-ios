@@ -441,7 +441,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
             index: 1,
             publicKeys: nil
         )
-        
+
         // 3. Encrypted + background accessible (calling event, should be included)
         let encryptedBackgroundAccessibleEnvelope = UpdateEventEnvelope(
             id: UUID(),
