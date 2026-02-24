@@ -2363,6 +2363,11 @@ public class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtoco
             fatalError("no mock for `isFeatureEnabled`")
         }
     }
+    
+    public func isFeatureEnabled(_ feature: WireDataModel.Feature.Name, defaultValue: Bool) async -> Bool {
+        await isFeatureEnabled(feature)
+    }
+    
 
 }
 
