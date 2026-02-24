@@ -441,7 +441,7 @@ final class IncrementalSyncTests: XCTestCase {
         _ = try await sut.perform()
 
         // Then: Should fetch keys with includingPrimary: true
-        XCTAssertEqual(earService.fetchPrivateKeysIncludingPrimary_Invocations.count, 1)
+        try XCTAssertCount(earService.fetchPrivateKeysIncludingPrimary_Invocations, count: 1)
         XCTAssertTrue(earService.fetchPrivateKeysIncludingPrimary_Invocations[0])
     }
 
@@ -479,13 +479,13 @@ final class IncrementalSyncTests: XCTestCase {
         _ = try await sut.performForCallingEventsOnly()
 
         // Then: Should proceed with only secondary keys
-        XCTAssertEqual(earService.fetchPrivateKeysIncludingPrimary_Invocations.count, 1)
+        try XCTAssertCount(earService.fetchPrivateKeysIncludingPrimary_Invocations, count: 1)
         XCTAssertFalse(earService.fetchPrivateKeysIncludingPrimary_Invocations[0])
 
         // Should process only background-accessible events
-        XCTAssertEqual(
-            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count,
-            1
+        try XCTAssertCount(
+            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations,
+            count: 1
         )
         XCTAssertTrue(
             updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations[0]
@@ -511,9 +511,9 @@ final class IncrementalSyncTests: XCTestCase {
         _ = try await sut.performForCallingEventsOnly()
 
         // Then: Should filter events (background-accessible only)
-        XCTAssertEqual(
-            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count,
-            1
+        try XCTAssertCount(
+            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations,
+            count: 1
         )
         XCTAssertTrue(
             updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations[0]
