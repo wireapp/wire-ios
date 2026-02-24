@@ -30,8 +30,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
     private var api: MockUpdateEventsAPI!
     private var store: MockUpdateEventsLocalStoreProtocol!
     private var decryptor: MockUpdateEventDecryptorProtocol!
-    private var coreCrypto: MockSafeCoreCrypto!
-    private var coreCryptoProvider: MockCoreCryptoProviderProtocol!
+    private var envelope: CoreCryptoMocksEnvelope!
 
     override func setUp() async throws {
         journal = Journal(
@@ -41,9 +40,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         api = MockUpdateEventsAPI()
         store = MockUpdateEventsLocalStoreProtocol()
         decryptor = MockUpdateEventDecryptorProtocol()
-        coreCrypto = MockSafeCoreCrypto()
-        coreCryptoProvider = MockCoreCryptoProviderProtocol()
-        coreCryptoProvider.coreCrypto_MockValue = coreCrypto
+        envelope = CoreCryptoMocksEnvelope()
 
         sut = PullPendingUpdateEventsSync(
             selfClientID: Scaffolding.selfClientID,
@@ -51,11 +48,12 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
             store: store,
             journal: journal,
             decryptor: decryptor,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: envelope.coreCryptoProvider
         )
     }
 
     override func tearDown() async throws {
+        envelope = nil
         api = nil
         store = nil
         decryptor = nil
@@ -143,7 +141,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         store.storeLastEventIDId_MockMethod = { _ in }
         store.storeServerTimeDelta_MockMethod = { _ in }
 
-        coreCrypto.completeTransactionByDefault = false
+        envelope.setCompleteTransactionByDefault(false)
 
         // When
         let pullingEventsTask = Task { [sut] in
@@ -151,12 +149,14 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         }
 
         // we wait until the sync tries to commit the batch of decrypted events
-        try await coreCrypto.waitUntilTransactionIsPending()
+        try await envelope.waitUntilTransactionIsPending()
 
         // Then
         try XCTAssertCount(store.storeLastEventIDId_Invocations, count: 0)
 
-        coreCrypto.completeAllTransactions()
+        // complete all transaction
+        envelope.completeAllTransactions()
+
         _ = await pullingEventsTask.result
 
         // after allowing the transaction to complete we should we see
