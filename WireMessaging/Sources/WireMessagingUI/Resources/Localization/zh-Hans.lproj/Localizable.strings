@@ -30,6 +30,7 @@
 "general.create" = "创建";
 "general.cancel" = "取消";
 "general.done" = "完成";
+"general.noInternet.title" = "没有网路连线";
 
 // MARK: - Channel Access level
 "channel_access_level.public" = "公开";
@@ -107,6 +108,7 @@
 "conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "An error occurred while fetching channel history depth options.";
 "conversation.channelHistory.updateHistoryDepth.error" = "An error occurred while updating channel history depth.";
 "conversation.file.preview.open" = "打开预览";
+"conversation.draft.attachmentMenu.errorTitle" = "Unable to load file";
 "conversation.draft.attachmentMenu.retry" = "重试";
 "conversation.draft.attachmentMenu.remove" = "移除文件";
 
@@ -114,6 +116,7 @@
 "conversation.wireCells.files.navigationTitle" = "Shared Drive";
 "conversation.wireCells.allFiles.navigationTitle" = "Drive";
 "conversation.wireCells.files.item.subtitle" = "%@ 作者 %@";
+"conversation.wireCells.allFiles.item.subtitle" = "%@ 在 %@";
 "conversation.wireCells.files.loadMore.title" = "加载更多";
 "conversation.wireCells.files.item.menu.open" = "开启";
 "conversation.wireCells.files.item.menu.shareLink" = "Share";
@@ -136,11 +139,16 @@
 "conversation.wireCells.allFiles.noData.title" = "There are no files yet";
 "conversation.wireCells.allFiles.noData.message" = "For conversations that use shared Drive, you'll find all files here.";
 "conversation.wireCells.allFiles.noData.learnMore" = "更多信息";
+"conversation.wireCells.files.noSearchResults.title" = "No results found";
+"conversation.wireCells.files.noSearchResults.message" = "Try adjusting your search.";
 "conversation.wireCells.files.pendingCells.title" = "Files are loading";
 "conversation.wireCells.files.pendingCells.message" = "Your documents and media files will be available here once we've uploaded all files and folders.";
 "conversation.wireCells.files.error.title" = "Can't load files";
-"conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
-"conversation.wireCells.files.error.reload" = "Reload";
+"conversation.wireCells.files.error.message" = "Something went wrong while loading. Please try again.";
+"conversation.wireCells.files.error.retry" = "重试";
+"conversation.wireCells.files.error.noConnection.title" = "Unable to load files";
+"conversation.wireCells.files.error.noConnection.message" = "Your list of files could not be loaded. Please check your Internet connection and try again.";
+"conversation.wireCells.files.error.noConnection.retry" = "Try again";
 "conversation.wireCells.files.search.title" = "Search files";
 "conversation.wireCells.files.list.createFolder" = "Create folder";
 "conversation.wireCells.files.list.createFile" = "Create file";
@@ -215,6 +223,7 @@
 "conversation.wireCells.shareLink.on" = "ON";
 "conversation.wireCells.shareLink.expired" = "EXPIRED";
 "conversation.wireCells.shareLink.linkExpiredOn" = "Link expired on %@";
+"conversation.wireCells.shareLink.sharedMessage" = "Open this link to explore the attached files: %@";
 
 // MARK: - Share Link Password View
 "conversation.wireCells.shareLink.password.title" = "密码";

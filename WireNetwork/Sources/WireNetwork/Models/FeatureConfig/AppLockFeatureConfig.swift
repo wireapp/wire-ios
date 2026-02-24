@@ -20,7 +20,7 @@ import Foundation
 
 /// A configuration for the *App Lock* feature.
 
-public struct AppLockFeatureConfig: Equatable, Sendable {
+public struct AppLockFeatureConfig: Equatable, Sendable, Hashable {
 
     /// The feature's status.
 

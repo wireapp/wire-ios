@@ -82,6 +82,10 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
                 return try await conversationEventBuilder.buildContent(
                     event: conversationEvent
                 )
+            } catch ConversationMessageAddEventNotificationBuilder.Failure.unknownMessageContent {
+                // Can't show notifications for unknown message types,
+                // so just ignore.
+                return nil
             } catch {
                 var attributes = LogAttributes.newNSE + .safePublic
                 attributes[.eventId] = eventID.safeForLoggingDescription

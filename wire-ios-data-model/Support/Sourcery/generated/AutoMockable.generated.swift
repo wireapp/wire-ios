@@ -1258,26 +1258,6 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol, @unchecke
         }
     }
 
-    // MARK: - proteusCryptoboxMigrate
-
-    public var proteusCryptoboxMigratePath_Invocations: [String] = []
-    public var proteusCryptoboxMigratePath_MockError: Error?
-    public var proteusCryptoboxMigratePath_MockMethod: ((String) async throws -> Void)?
-
-    public func proteusCryptoboxMigrate(path: String) async throws {
-        proteusCryptoboxMigratePath_Invocations.append(path)
-
-        if let error = proteusCryptoboxMigratePath_MockError {
-            throw error
-        }
-
-        guard let mock = proteusCryptoboxMigratePath_MockMethod else {
-            fatalError("no mock for `proteusCryptoboxMigratePath`")
-        }
-
-        try await mock(path)
-    }
-
     // MARK: - proteusDecrypt
 
     public var proteusDecryptSessionIdCiphertext_Invocations: [(sessionId: String, ciphertext: Data)] = []
@@ -1298,6 +1278,29 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol, @unchecke
             return mock
         } else {
             fatalError("no mock for `proteusDecryptSessionIdCiphertext`")
+        }
+    }
+
+    // MARK: - proteusDecryptSafe
+
+    public var proteusDecryptSafeSessionIdCiphertext_Invocations: [(sessionId: String, ciphertext: Data)] = []
+    public var proteusDecryptSafeSessionIdCiphertext_MockError: Error?
+    public var proteusDecryptSafeSessionIdCiphertext_MockMethod: ((String, Data) async throws -> Data)?
+    public var proteusDecryptSafeSessionIdCiphertext_MockValue: Data?
+
+    public func proteusDecryptSafe(sessionId: String, ciphertext: Data) async throws -> Data {
+        proteusDecryptSafeSessionIdCiphertext_Invocations.append((sessionId: sessionId, ciphertext: ciphertext))
+
+        if let error = proteusDecryptSafeSessionIdCiphertext_MockError {
+            throw error
+        }
+
+        if let mock = proteusDecryptSafeSessionIdCiphertext_MockMethod {
+            return try await mock(sessionId, ciphertext)
+        } else if let mock = proteusDecryptSafeSessionIdCiphertext_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `proteusDecryptSafeSessionIdCiphertext`")
         }
     }
 
@@ -1946,10 +1949,10 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
 
     public var coreCrypto_Invocations: [Void] = []
     public var coreCrypto_MockError: Error?
-    public var coreCrypto_MockMethod: (() async throws -> SafeCoreCryptoProtocol)?
-    public var coreCrypto_MockValue: SafeCoreCryptoProtocol?
+    public var coreCrypto_MockMethod: (() async throws -> CoreCryptoProtocol)?
+    public var coreCrypto_MockValue: CoreCryptoProtocol?
 
-    public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
+    public func coreCrypto() async throws -> CoreCryptoProtocol {
         coreCrypto_Invocations.append(())
 
         if let error = coreCrypto_MockError {
@@ -4193,6 +4196,15 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - Life cycle
 
     public init() {}
+
+    // MARK: - localDomain
+
+    public var localDomain: String {
+        get { return underlyingLocalDomain }
+        set(value) { underlyingLocalDomain = value }
+    }
+
+    public var underlyingLocalDomain: String!
 
 
     // MARK: - createGroup
