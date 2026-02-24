@@ -51,7 +51,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
     private let featureRepository: LegacyFeatureRepositoryInterface
     private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
 
-    private var coreCrypto: SafeCoreCryptoProtocol {
+    private var coreCrypto: CoreCryptoProtocol {
         get async throws {
             try await coreCryptoProvider.coreCrypto()
         }
@@ -85,7 +85,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             throw Error.invalidIdentity
         }
 
-        let crlNewDistributionPoints = try await coreCrypto.perform { context in
+        let crlNewDistributionPoints = try await coreCrypto.transaction { context in
             try await context.saveX509Credential(
                 enrollment: enrollment,
                 certificateChain: certificateChain
@@ -117,7 +117,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             return mlsGroupIDs
         }
 
-        try await coreCrypto.perform { context in
+        try await coreCrypto.transaction { context in
             for groupID in mlsConversationsToMigrate {
                 do {
                     try await context.e2eiRotate(conversationId: groupID.conversationId)
@@ -144,7 +144,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             throw Error.invalidCiphersuite
         }
 
-        try await coreCrypto.perform { coreCryptoContext in
+        try await coreCrypto.transaction { coreCryptoContext in
             let newKeyPackages = try await coreCryptoContext.clientKeypackages(
                 ciphersuite: ciphersuite.coreCryptoCipherSuite,
                 credentialType: .x509,
