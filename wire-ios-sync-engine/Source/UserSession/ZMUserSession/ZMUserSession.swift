@@ -1324,7 +1324,7 @@ extension ZMUserSession: SyncAgentDelegate {
             attributes: .incrementalSync
         )
 
-        syncAgent?.resume(callEventsOnly: onlyCallEvents)
+        syncAgent?.resume(callEventsOnly: true)
     }
 
     func notifyAuthenticationInvalidated(_ error: Error) {

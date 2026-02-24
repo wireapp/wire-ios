@@ -268,7 +268,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
             guard let self else { return }
             incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
-                .performInBackgroundForCallingEvents()
+                .performForCallingEventsOnly()
         }
     }
 

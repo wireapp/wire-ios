@@ -89,9 +89,9 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         return try await internalPerform(backgroundAccessibleOnly: false)
     }
 
-    public func performInBackgroundForCallingEvents() async throws -> Token {
-        // if EAR is enabled, we'll process only the calling events (they are marked as `backgroundAccessible`)
-        try await internalPerform(backgroundAccessibleOnly: earService.isEAREnabled)
+    public func performForCallingEventsOnly() async throws -> Token {
+        // we'll process only the calling events (they are marked as `backgroundAccessible`)
+        try await internalPerform(backgroundAccessibleOnly: true)
     }
 
     private func internalPerform(backgroundAccessibleOnly: Bool) async throws -> Token {
