@@ -398,7 +398,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
             )
         }) { error in
             guard
-                case UpdateEventsLocalStore.Error.failedToFetchStoredEvents(let inner) = error,
+                case let UpdateEventsLocalStore.Error.failedToFetchStoredEvents(inner) = error,
                 let storeError = inner as? UpdateEventsLocalStore.Error,
                 case .missingPrivateKeys = storeError
             else {
