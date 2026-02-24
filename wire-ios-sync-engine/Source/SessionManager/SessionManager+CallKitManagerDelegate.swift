@@ -75,7 +75,7 @@ extension SessionManager: CallKitManagerDelegate {
             }
 
             await requestCallConfigIfNeeded(for: userSession)
-            await userSession.processPendingCallEvents(only: false)
+            await userSession.processPendingCallEvents()
 
             WireLogger.calling.info("did process call events, returning conversation...")
             completionHandler(.success(conversation))
