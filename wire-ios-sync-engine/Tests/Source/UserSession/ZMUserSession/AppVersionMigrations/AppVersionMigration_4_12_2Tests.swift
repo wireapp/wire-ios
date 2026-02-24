@@ -28,8 +28,7 @@ struct AppVersionMigration_4_12_2Tests {
 
     let coreDataHelper = CoreDataStackHelper()
     let modelHelper = ModelHelper()
-    let mockSafeCoreCrypto = MockSafeCoreCrypto()
-    let mockProvider = MockCoreCryptoProviderProtocol()
+    let coreCryptoMocksEnvelope = CoreCryptoMocksEnvelope()
 
     let stack: CoreDataStack
     let sut: AppVersionMigration_4_12_2
@@ -38,9 +37,8 @@ struct AppVersionMigration_4_12_2Tests {
         self.stack = try await coreDataHelper.createStack()
         self.sut = AppVersionMigration_4_12_2(
             coreDataStack: stack,
-            coreCryptoProvider: mockProvider
+            coreCryptoProvider: coreCryptoMocksEnvelope.coreCryptoProvider
         )
-        mockProvider.coreCrypto_MockValue = mockSafeCoreCrypto
     }
 
     @Test("Set correct epoch for all mls conversations")
@@ -59,8 +57,8 @@ struct AppVersionMigration_4_12_2Tests {
         let expectedEpochA = UInt64(0)
         let expectedEpochB = UInt64(10)
 
-        mockSafeCoreCrypto.coreCryptoContext.conversationExistsConversationId_MockValue = true
-        mockSafeCoreCrypto.coreCryptoContext.conversationEpochConversationId_MockMethod = { conversationID in
+        coreCryptoMocksEnvelope.coreCryptoContext.conversationExistsConversationId_MockValue = true
+        coreCryptoMocksEnvelope.coreCryptoContext.conversationEpochConversationId_MockMethod = { conversationID in
             if conversationID == idA.conversationId {
                 return expectedEpochA
             } else if conversationID == idB.conversationId {
