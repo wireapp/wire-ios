@@ -257,6 +257,10 @@ package final class FilesViewModel: ObservableObject {
         loadMoreTask != nil
     }
 
+    var shouldShowOfflineBar: Bool {
+        connectionState == .offline && !state.items.isEmpty
+    }
+
     enum ConnectionState {
         case offline
         case online
@@ -361,7 +365,7 @@ package final class FilesViewModel: ObservableObject {
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] status in
-                guard let self, !state.items.isEmpty else { return }
+                guard let self else { return }
 
                 switch status {
                 case .connected:

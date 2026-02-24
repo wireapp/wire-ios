@@ -572,4 +572,38 @@ final class FilesViewModelTests {
         #expect(sut.alert == expectedAlert)
     }
 
+    @Test
+    func testOfflineBarIsHiddenWhenItemsAreEmpty() {
+        sut.connectionState = .offline
+        sut.state = .received(items: [])
+
+        #expect(sut.shouldShowOfflineBar == false)
+    }
+
+    @Test
+    func testOfflineBarIsShownWhenOfflineWithItems() {
+        let nodeA = WireDriveNode.fixture(path: "foo/aa.xyz")
+        let now = Date()
+
+        sut.connectionState = .offline
+        sut.state = .received(items: [
+            FilesViewItem(
+                id: nodeA.id,
+                eTag: "eTag",
+                kind: .file,
+                name: "aaa.xyz",
+                filePath: "foo/aaa.xyz",
+                ownedBy: nil,
+                modifiedAt: now,
+                icon: .other,
+                tags: [],
+                isEditable: false,
+                publicLinkID: nil,
+                conversationName: nil
+            )
+        ])
+
+        #expect(sut.shouldShowOfflineBar == true)
+    }
+
 }

@@ -69,13 +69,15 @@ package struct FilesBrowserView: FilesViewProtocol {
                         .progressViewStyle(.circular)
                     Spacer()
                 case .received, .pending:
-                    if viewModel.connectionState == .offline {
-                        Spacer()
-                        offlineBar.id(UUID())
-                        Spacer()
-                    }
+                    VStack {
+                        if viewModel.shouldShowOfflineBar {
+                            Spacer()
+                            offlineBar.id(UUID())
+                            Spacer()
+                        }
 
-                    filesList
+                        filesList
+                    }
                 case let .error(isConnectionError):
                     FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
                         reloadTask()
