@@ -135,7 +135,16 @@ jobs:
         run: |
           bundle exec fastlane prepare_for_tests
 
+      - name: Install Docker CLI + Colima for Testservice
+        if: ${{ inputs.run_critical_flows }}
+        shell: bash
+        run: |
+          brew install docker colima
+          colima start --cpu 2 --memory 4
+          docker version
+
       - name: Start Testservice
+        if: ${{ inputs.run_critical_flows }}
         continue-on-error: true
         shell: bash
         run: |
