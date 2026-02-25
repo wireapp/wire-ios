@@ -481,8 +481,7 @@ final class AuthenticationAPITests: XCTestCase {
         let networkService = MockNetworkServiceProtocol()
         let builder = AuthenticationAPIBuilder(networkService: networkService)
 
-        for apiVersion in [APIVersion.v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7,
-                           .v8, .v9, .v10, .v11, .v12, .v13, .v14] {
+        for apiVersion in APIVersion.allCasesUpTo(.v15) {
             let sut = builder.makeAPI(for: apiVersion)
 
             // Then
