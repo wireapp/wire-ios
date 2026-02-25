@@ -318,12 +318,13 @@ public struct SharingSessionLoader {
             transportSession: transportSession
         )
         let contextStorage = LAContextStorage()
-        let earService = EARService(
+        let earService = await EARService(
             accountID: accountID,
             databaseContexts: [
                 coreDataStack.viewContext,
                 coreDataStack.syncContext
             ],
+            coreDataStack: coreDataStack,
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: AuthenticationContext(storage: contextStorage)
         )

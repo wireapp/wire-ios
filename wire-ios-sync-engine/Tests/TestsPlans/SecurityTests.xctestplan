@@ -21,14 +21,6 @@
   "testTargets" : [
     {
       "selectedTests" : [
-        "SessionManagerEncryptionAtRestMigrationTests\/testThatDatabaseIsMigrated_WhenEncryptionAtRestIsDisabled()",
-        "SessionManagerEncryptionAtRestMigrationTests\/testThatDatabaseIsMigrated_WhenEncryptionAtRestIsEnabled()",
-        "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseIsLocked_AfterEnteringBackground()",
-        "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseIsLocked_WhenTheCustomTimeoutHasExpiredInTheBackground()",
-        "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseLockedHandlerIsCalled_AfterDatabaseIsLocked()",
-        "ZMUserSessionTests_EncryptionAtRest\/testThatDelegateIsCalled_WhenEncryptionAtRestIsDisabled()",
-        "ZMUserSessionTests_EncryptionAtRest\/testThatDelegateIsCalled_WhenEncryptionAtRestIsEnabled()",
-        "ZMUserSessionTests_EncryptionAtRest\/testThatIfDatabaseIsLocked_ThenUserSessionLockIsSet()",
         "ZMUserSessionTests_EncryptionAtRest\/testThatOldEncryptionKeysAreReplaced_AfterActivatingEncryptionAtRest()"
       ],
       "target" : {

@@ -465,12 +465,13 @@ final class UserSessionLoader {
             sharedUserDefaults: sharedUserDefaults
         )
 
-        let earService = EARService(
+        let earService = await EARService(
             accountID: accountID,
             databaseContexts: [
                 coreDataStack.viewContext,
                 coreDataStack.syncContext
             ],
+            coreDataStack: coreDataStack,
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: AuthenticationContext(storage: contextStorage)
