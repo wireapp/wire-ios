@@ -39,7 +39,8 @@ class IncomingCallPage: PageModel {
 
         acceptButton.tap()
         let alert = springboard.alerts.firstMatch
-        if alert.waitForExistence(timeout: 2), alert.label.contains(Locators.IncomingCallPage.microphoneLabel.rawValue) {
+        if alert.waitForExistence(timeout: 2),
+           alert.label.contains(Locators.IncomingCallPage.microphoneLabel.rawValue) {
             alert.buttons[Locators.IncomingCallPage.allowButtonOnNotification.rawValue].tap()
         }
 
