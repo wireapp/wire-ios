@@ -2364,24 +2364,6 @@ public class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtoco
         }
     }
 
-    // MARK: - isFeatureEnabled
-
-    public var isFeatureEnabledDefaultValue_Invocations: [(feature: Feature.Name, defaultValue: Bool)] = []
-    public var isFeatureEnabledDefaultValue_MockMethod: ((Feature.Name, Bool) async -> Bool)?
-    public var isFeatureEnabledDefaultValue_MockValue: Bool?
-
-    public func isFeatureEnabled(_ feature: Feature.Name, defaultValue: Bool) async -> Bool {
-        isFeatureEnabledDefaultValue_Invocations.append((feature: feature, defaultValue: defaultValue))
-
-        if let mock = isFeatureEnabledDefaultValue_MockMethod {
-            return await mock(feature, defaultValue)
-        } else if let mock = isFeatureEnabledDefaultValue_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `isFeatureEnabledDefaultValue`")
-        }
-    }
-
 }
 
 class MockGenerateNotificationUseCaseProtocol: GenerateNotificationUseCaseProtocol {

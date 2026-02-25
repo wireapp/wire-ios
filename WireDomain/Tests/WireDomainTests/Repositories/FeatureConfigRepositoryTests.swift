@@ -65,28 +65,26 @@ final class FeatureConfigRepositoryTests: XCTestCase {
     // MARK: - Tests
 
     func test_isFeatureEnabled_forDefaultValueWithDefaultValue() async {
-        featureConfigLocalStore.fetchFeatureName_MockError = NSError(domain: "test", code: 0)
 
-        for expectedValue in [true, false] {
-            let result = await sut.isFeatureEnabled(.simplifiedUserConnectionRequestQRCode, defaultValue: expectedValue)
-            XCTAssertEqual(result, expectedValue)
+        for feature in Feature.Name.allCases {
+            featureConfigLocalStore.fetchFeatureName_MockError = FeatureConfigLocalStore.Error
+                .failedToFetchFeatureLocally(feature)
+            let result = await sut.isFeatureEnabled(feature)
+            XCTAssertEqual(result, feature == .simplifiedUserConnectionRequestQRCode)
         }
     }
 
     func test_isFeatureEnabled_statusHandling() async {
-        let testCases: [(status: Feature.Status, expected: Bool, fallback: Bool)] = [
-            (.enabled, true, false),
-            (.disabled, false, true)
+        let testCases: [(status: Feature.Status, expected: Bool)] = [
+            (.enabled, true),
+            (.disabled, false)
         ]
 
         for scenario in testCases {
             featureConfigLocalStore.isFeatureEnabled_ReturnValue = scenario.expected
             featureConfigLocalStore.fetchFeatureName_MockValue = Feature()
 
-            let result = await sut.isFeatureEnabled(
-                .simplifiedUserConnectionRequestQRCode,
-                defaultValue: scenario.fallback
-            )
+            let result = await sut.isFeatureEnabled(.simplifiedUserConnectionRequestQRCode)
 
             XCTAssertEqual(
                 result,
