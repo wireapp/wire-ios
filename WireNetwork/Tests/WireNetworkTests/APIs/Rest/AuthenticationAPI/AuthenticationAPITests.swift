@@ -474,6 +474,63 @@ final class AuthenticationAPITests: XCTestCase {
         }
     }
 
+    // MARK: - getSSOCode(forEmail:)
+
+    func testGetSSOCodeByEmail_V0_To_V14() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol()
+        let builder = AuthenticationAPIBuilder(networkService: networkService)
+
+        for apiVersion in [APIVersion.v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7,
+                           .v8, .v9, .v10, .v11, .v12, .v13, .v14] {
+            let sut = builder.makeAPI(for: apiVersion)
+
+            // Then
+            await XCTAssertThrowsErrorAsync(AuthenticationAPIError.unsupportedEndpointForAPIVersion) {
+                try await sut.getSSOCode(forEmail: Scaffolding.email)
+            }
+        }
+    }
+
+    func testGetSSOCodeByEmail_Request_Generation_V15() async throws {
+        // Given
+        let apiVersions = APIVersion.v15.andNextVersions
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+            // When
+            _ = try await sut.getSSOCode(forEmail: Scaffolding.email)
+        }
+    }
+
+    func testGetSSOCodeByEmail_Response_Handling_V15_Success() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withResponses([
+            (.ok, "GetSSOCodeByEmailSuccessResponseV15")
+        ])
+
+        let sut = AuthenticationAPIV15(networkService: networkService)
+
+        // When
+        let ssoCode = try await sut.getSSOCode(forEmail: Scaffolding.email)
+
+        // Then
+        XCTAssertEqual(ssoCode, UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!)
+    }
+
+    func testGetSSOCodeByEmail_Response_Handling_V15_NotFound() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withError(statusCode: .notFound)
+
+        let sut = AuthenticationAPIV15(networkService: networkService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(AuthenticationAPIError.ssoCodeNotFound) {
+            // When
+            try await sut.getSSOCode(forEmail: Scaffolding.email)
+        }
+    }
+
 }
 
 private enum Scaffolding {

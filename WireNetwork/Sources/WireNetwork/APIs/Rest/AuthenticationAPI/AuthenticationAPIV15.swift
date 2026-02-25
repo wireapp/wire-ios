@@ -16,8 +16,41 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 final class AuthenticationAPIV15: AuthenticationAPIV14 {
 
     override var apiVersion: APIVersion { .v15 }
 
+    override func getSSOCode(forEmail email: String) async throws -> UUID {
+        let path = "\(pathPrefix)/sso/get-by-email"
+        let body = GetSSOCodeByEmailRequestBodyV15(email: email)
+
+        let encodedJSON: Data
+        do {
+            encodedJSON = try JSONEncoder.defaultEncoder.encode(body)
+        } catch {
+            assertionFailure("failed to encode body")
+            throw AuthenticationAPIError.invalidRequestBody
+        }
+
+        let request = try URLRequestBuilder(path: path)
+            .withBody(encodedJSON, contentType: .json)
+            .withMethod(.post)
+            .build()
+
+        let (data, response) = try await networkService.executeRequest(request)
+
+        return try ResponseParser()
+            .success(code: .ok, type: SSOCodeByEmailResponseV15.self)
+            .failure(code: .notFound, error: AuthenticationAPIError.ssoCodeNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
+
+}
+
+// MARK: - Encodables
+
+private struct GetSSOCodeByEmailRequestBodyV15: Encodable {
+    let email: String
 }

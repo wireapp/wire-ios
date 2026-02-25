@@ -59,11 +59,22 @@ public protocol AuthenticationAPI: Sendable {
 
     func getSSOCode() async throws -> UUID?
 
-    /// Request a verification code for a provided email address.
+    /// Get the SSO code associated with the given email address.
     ///
-    /// - Parameter
-    ///     - email: Email address of the account
-    /// - Returns: The user details
+    /// Available from API version 15 onwards.
+    ///
+    /// - Parameter email: The email address to look up.
+    /// - Returns: The SSO code UUID associated with the email's domain.
+    /// - Throws: `AuthenticationAPIError.ssoCodeNotFound` if no SSO code exists
+    ///   for the email or the SSO feature is disabled.
+    ///   `AuthenticationAPIError.unsupportedEndpointForAPIVersion` if called on a version below v15.
+
+    func getSSOCode(forEmail email: String) async throws -> UUID
+
+    /// Request a 2FA verification code sent to the given email address.
+    ///
+    /// - Parameter email: Email address of the account.
+    /// - Throws: `AuthenticationAPIError.invalidEmail` if the email address is malformed.
 
     func requestVerificationCode(for email: String) async throws
 

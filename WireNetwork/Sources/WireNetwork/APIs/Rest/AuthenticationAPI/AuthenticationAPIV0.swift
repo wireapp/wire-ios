@@ -164,6 +164,10 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .parse(code: response.statusCode, data: nil)
     }
 
+    func getSSOCode(forEmail email: String) async throws -> UUID {
+        throw AuthenticationAPIError.unsupportedEndpointForAPIVersion
+    }
+
     // Move to separate api
     func getSSOCode() async throws -> UUID? {
         let path = "/sso/settings"
