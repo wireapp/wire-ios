@@ -35,7 +35,7 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
             at: Date(),
             sender: otherUser,
             client: otherClient,
-            error: .Other(1) // Error codes are internal, just pick a random one
+            error: .Other(errorCode: 1) // Error codes are internal, just pick a random one
         )
         let systemMessage: ZMSystemMessage = (otherUser.oneOnOneConversation?.lastMessage as! ZMSystemMessage)
         moc.saveOrRollback()
@@ -91,7 +91,7 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
             at: Date(),
             sender: otherUser,
             client: otherUserClient1,
-            error: .Other(1) // Error codes are internal, just pick a random one
+            error: .Other(errorCode: 1) // Error codes are internal, just pick a random one
         )
         let systemMessage: ZMSystemMessage = (otherUser.oneOnOneConversation?.lastMessage as! ZMSystemMessage)
         moc.saveOrRollback()

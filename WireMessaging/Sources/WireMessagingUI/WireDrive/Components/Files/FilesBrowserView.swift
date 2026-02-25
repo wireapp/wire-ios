@@ -50,7 +50,7 @@ package struct FilesBrowserView: FilesViewProtocol {
                         .progressViewStyle(.circular)
                 case .received, .pending:
                     VStack {
-                        if viewModel.connectionState == .offline {
+                        if viewModel.shouldShowOfflineBar {
                             Spacer()
                             offlineBar.id(UUID())
                             Spacer()
