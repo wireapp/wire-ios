@@ -650,7 +650,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
 
     func testFindEmbeddedLinks_urlWithDifferentSchemeInMessageText() {
         let originalURLString = "http://foo.bar/baz"
-        let messageText = "Check out [amazing article]\(originalURLString)"
+        let messageText = "Check out [amazing article]https://foo.bar/baz"
         let visibleLinkText = "[amazing article]"
         guard let rangeOfVisibleText = messageText.range(of: visibleLinkText) else {
             XCTFail("Test setup error: visibleLinkText not found in messageText.")
