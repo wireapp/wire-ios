@@ -23,7 +23,9 @@ import WireSyncEngine
 
 final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor {
 
-    lazy var logoutHelper: LogOutHelper? = LogOutHelper(showLoading: { [weak self] in
+    private let userSession: UserSession
+
+    lazy var logoutHelper: LogOutHelper? = LogOutHelper(userSession: userSession, showLoading: { [weak self] in
         Task { @MainActor in self?.activityIndicator.start() }
     }, hideLoading: { [weak self] in
         Task { @MainActor in self?.activityIndicator.stop() }
@@ -34,7 +36,8 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
         return BlockingActivityIndicator(view: topMostViewController.view)
     }()
 
-    init() {
+    init(userSession: UserSession) {
+        self.userSession = userSession
         super.init(
             title: L10n.Localizable.Self.signOut,
             isDestructive: true,

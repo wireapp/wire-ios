@@ -98,6 +98,8 @@ final class DeveloperToolsViewModel: ObservableObject {
     let router: AppRootRouter?
     let onDismiss: (_ completion: @escaping () -> Void) -> Void
 
+    private let userSession: ZMUserSession?
+
     // MARK: - State
 
     var sections: [Section]
@@ -107,18 +109,13 @@ final class DeveloperToolsViewModel: ObservableObject {
     var alertTitle: String?
     var alertBody: String?
 
-    // MARK: - Computed
-
-    private var userSession: ZMUserSession? {
-        ZMUserSession.shared()
-    }
-
     // MARK: - Life cycle
 
     init(
         router: AppRootRouter? = nil,
         onDismiss: @escaping (_ completion: @escaping () -> Void) -> Void = { $0() }
     ) {
+        self.userSession = router?.sessionManager.activeUserSession
         self.router = router
         self.onDismiss = onDismiss
         self.sections = []
@@ -156,9 +153,20 @@ final class DeveloperToolsViewModel: ObservableObject {
                 Section(
                     header: "Self user",
                     items: [
-                        .destination(DestinationItem(title: "Journal", makeView: {
-                            AnyView(JournalView(viewModel: JournalViewModel(userId: selfUser.remoteIdentifier!)))
-                        })),
+                        .destination(
+                            DestinationItem(
+                                title: "Journal",
+                                makeView: { [weak userSession] in
+                                    AnyView(
+                                        JournalView(
+                                            viewModel: JournalViewModel(
+                                                userId: selfUser.remoteIdentifier!,
+                                                userSession: userSession
+                                            )
+                                        )
+                                    )
+                                })
+                        ),
                         .text(TextItem(
                             title: "Handle",
                             value: selfUser.handleDisplayString(withDomain: true) ?? "None"
@@ -201,7 +209,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private func oneOnOneMLSConversationsCount() -> String {
-        guard let context = ZMUserSession.shared()?.managedObjectContext else {
+        guard let context = userSession?.managedObjectContext else {
             return "-"
         }
         let allOneOnOneRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
@@ -269,13 +277,13 @@ final class DeveloperToolsViewModel: ObservableObject {
             Section(
                 header: "Actions",
                 items: [
-                    .destination(DestinationItem(title: "E2E Identity", makeView: {
-                        AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel()))
+                    .destination(DestinationItem(title: "E2E Identity", makeView: { [weak self] in
+                        AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel(userSession: self?.userSession)))
                     })),
                     .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
                         AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(
-                            selfClient: self?
-                                .selfClient,
+                            userSession: self?.userSession,
+                            selfClient: self?.selfClient,
                             onDismiss: { self?.onDismiss {} }
                         )))
                     })),

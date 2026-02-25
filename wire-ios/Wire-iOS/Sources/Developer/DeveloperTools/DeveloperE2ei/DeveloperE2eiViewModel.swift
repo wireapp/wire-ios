@@ -22,7 +22,7 @@ import WireSyncEngine
 
 final class DeveloperE2eiViewModel: ObservableObject {
 
-    private var userSession: ZMUserSession? { ZMUserSession.shared() }
+    private let userSession: ZMUserSession?
     private var crlExpirationDatesRepository: CRLExpirationDatesRepository? {
         guard let userSession else { return nil }
         return CRLExpirationDatesRepository(userID: userSession.selfUser.remoteIdentifier)
@@ -36,7 +36,8 @@ final class DeveloperE2eiViewModel: ObservableObject {
 
     @Published var certificateValidTo = ""
 
-    init() {
+    init(userSession: UserSession?) {
+        self.userSession = userSession as? ZMUserSession
         refreshCRLExpirationDates()
         Task {
             await fetchSelfClientCertificate()

@@ -618,7 +618,7 @@ final class ZClientViewController: UIViewController {
         // TODO: [WPB-11609] check if needed
 
         if let currentAccount = SessionManager.shared?.accountManager.selectedAccount {
-            if let conversation = Settings.shared.lastViewedConversation(for: currentAccount) {
+            if let conversation = Settings.shared.lastViewedConversation(for: currentAccount, in: userSession) {
                 select(conversation: conversation, focusOnView: focus, animated: animated)
             }
 

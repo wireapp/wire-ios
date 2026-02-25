@@ -514,7 +514,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     func signOutElement() -> any SettingsCellDescriptorType {
-        SettingsSignOutCellDescriptor()
+        SettingsSignOutCellDescriptor(userSession: userSession)
     }
 
 }

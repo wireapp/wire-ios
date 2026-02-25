@@ -117,5 +117,5 @@ struct DeveloperE2eiView: View {
 // MARK: - Previews
 
 #Preview {
-    DeveloperE2eiView(viewModel: DeveloperE2eiViewModel())
+    DeveloperE2eiView(viewModel: DeveloperE2eiViewModel(userSession: nil))
 }

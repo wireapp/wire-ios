@@ -25,13 +25,16 @@ final class LogOutHelper {
 
     private var requestPasswordController: RequestPasswordController?
 
+    private let userSession: UserSession
     private let showLoading: () -> Void
     private let hideLoading: () -> Void
 
     init(
+        userSession: UserSession,
         showLoading: @escaping () -> Void,
         hideLoading: @escaping () -> Void
     ) {
+        self.userSession = userSession
         self.showLoading = showLoading
         self.hideLoading = hideLoading
     }
@@ -80,7 +83,7 @@ final class LogOutHelper {
             let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemInCallSound)
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemSound)
-            ZMUserSession.shared()?.logout(credentials: UserEmailCredentials(
+            (userSession as? ZMUserSession)?.logout(credentials: UserEmailCredentials(
                 email: "",
                 password: password ?? ""
             )) { [weak topMostViewController, weak self] result in

@@ -25,7 +25,7 @@ final class JournalViewModelTests: XCTestCase {
 
     func testJournalSectionsCount() throws {
         // given
-        let sut = JournalViewModel(userId: UUID())
+        let sut = JournalViewModel(userId: UUID(), userSession: nil)
 
         // when
         // then
