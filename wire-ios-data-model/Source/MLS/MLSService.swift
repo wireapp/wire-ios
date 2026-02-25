@@ -379,7 +379,7 @@ public final class MLSService: MLSServiceInterface {
             }
             // make sure we have the selfUser but only once
             // and add self at last so for 1-1 if other user don't have key packages we don't depleet our keypackages for nothing
-            let usersWithSelfUser = users.filter(!mlsSelfUser) + [mlsSelfUser]
+            let usersWithSelfUser = users.filter { $0 != mlsSelfUser } + [mlsSelfUser]
             try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
             return ciphersuite
         } catch {
