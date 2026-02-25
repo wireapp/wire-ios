@@ -58,6 +58,7 @@ extension FilesFilterBy.ConversationView {
             if selectedItems.contains(item) {
                 selectedItems.remove(item)
             } else {
+                selectedItems = []
                 selectedItems.insert(item)
             }
         }
