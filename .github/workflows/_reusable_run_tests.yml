@@ -140,7 +140,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          brew install docker colima
+          brew install docker colima qemu
 
           colima stop || true
           colima delete -f || true
