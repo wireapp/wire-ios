@@ -30,6 +30,7 @@
 "general.create" = "Erstellen";
 "general.cancel" = "Abbrechen";
 "general.done" = "Fertig";
+"general.noInternet.title" = "Kein Internet";
 
 // MARK: - Channel Access level
 "channel_access_level.public" = "Öffentlich";
@@ -107,6 +108,7 @@
 "conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "An error occurred while fetching channel history depth options.";
 "conversation.channelHistory.updateHistoryDepth.error" = "An error occurred while updating channel history depth.";
 "conversation.file.preview.open" = "Vorschau öffnen";
+"conversation.draft.attachmentMenu.errorTitle" = "Datei konnte nicht geladen werden";
 "conversation.draft.attachmentMenu.retry" = "Wiederholen";
 "conversation.draft.attachmentMenu.remove" = "Datei löschen";
 
@@ -114,6 +116,7 @@
 "conversation.wireCells.files.navigationTitle" = "Geteiltes Drive";
 "conversation.wireCells.allFiles.navigationTitle" = "Drive";
 "conversation.wireCells.files.item.subtitle" = "%@ von %@";
+"conversation.wireCells.allFiles.item.subtitle" = "%@ in %@";
 "conversation.wireCells.files.loadMore.title" = "Weitere Objekte laden";
 "conversation.wireCells.files.item.menu.open" = "Öffnen";
 "conversation.wireCells.files.item.menu.shareLink" = "Teilen";
@@ -136,11 +139,16 @@
 "conversation.wireCells.allFiles.noData.title" = "Es gibt noch keine Dateien";
 "conversation.wireCells.allFiles.noData.message" = "Bei Unterhaltungen mit Geteiltes Drive finden Sie hier die geteilten Dateien.";
 "conversation.wireCells.allFiles.noData.learnMore" = "Mehr erfahren";
+"conversation.wireCells.files.noSearchResults.title" = "Keine Ergebnisse gefunden";
+"conversation.wireCells.files.noSearchResults.message" = "Versuchen Sie, Ihre Suche anzupassen.";
 "conversation.wireCells.files.pendingCells.title" = "Dateien werden geladen";
 "conversation.wireCells.files.pendingCells.message" = "Ihre Dokumente und Mediendateien werden hier verfügbar sein, sobald wir alle Dateien und Ordner hochgeladen haben.";
 "conversation.wireCells.files.error.title" = "Dateien werden nicht geladen";
-"conversation.wireCells.files.error.message" = "Ihre Dateien und Ordner konnten nicht geladen werden. Bitte laden Sie sie erneut.";
-"conversation.wireCells.files.error.reload" = "Erneut laden";
+"conversation.wireCells.files.error.message" = "Beim Laden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
+"conversation.wireCells.files.error.retry" = "Wiederholen";
+"conversation.wireCells.files.error.noConnection.title" = "Dateien können nicht geladen werden";
+"conversation.wireCells.files.error.noConnection.message" = "Ihre Datei-Liste konnte nicht geladen werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.";
+"conversation.wireCells.files.error.noConnection.retry" = "Erneut versuchen";
 "conversation.wireCells.files.search.title" = "Dateien suchen";
 "conversation.wireCells.files.list.createFolder" = "Ordner erstellen";
 "conversation.wireCells.files.list.createFile" = "Datei erstellen";
@@ -215,6 +223,7 @@
 "conversation.wireCells.shareLink.on" = "EIN";
 "conversation.wireCells.shareLink.expired" = "ABGELAUFEN";
 "conversation.wireCells.shareLink.linkExpiredOn" = "Link ist am %@ abgelaufen";
+"conversation.wireCells.shareLink.sharedMessage" = "Öffnen Sie diesen Link, um die angehängten Dateien anzuzeigen: %@";
 
 // MARK: - Share Link Password View
 "conversation.wireCells.shareLink.password.title" = "Passwort";

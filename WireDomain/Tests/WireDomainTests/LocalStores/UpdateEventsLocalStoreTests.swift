@@ -373,7 +373,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         XCTAssertEqual(fetched.first?.envelope.events.count, 1)
     }
 
-    func testFetchStoredEventEnvelopes_Encrypted_NoPrivateKeys_ReturnsEmpty() async throws {
+    func testFetchStoredEventEnvelopes_Encrypted_NoPrivateKeys_Throws() async throws {
         // Given: Encrypted envelope stored
         let (publicKey, _) = try generateKeyPair()
         let (secondaryPublicKey, _) = try generateSecondaryKeyPair()
@@ -389,15 +389,23 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         try await sut.persistEventEnvelope(envelope, index: 0, publicKeys: publicKeys)
 
-        // When: Fetch without private keys
-        let fetched = try await sut.fetchStoredEventEnvelopes(
-            limit: 10,
-            privateKeys: nil,
-            backgroundAccessibleOnly: false
-        )
-
-        // Then: Should return empty (can't decrypt)
-        XCTAssertEqual(fetched.count, 0)
+        // When / Then: Fetching encrypted events without private keys is a developer error
+        await XCTAssertThrowsErrorAsync {
+            _ = try await self.sut.fetchStoredEventEnvelopes(
+                limit: 10,
+                privateKeys: nil,
+                backgroundAccessibleOnly: false
+            )
+        } errorHandler: { error in
+            guard
+                case let UpdateEventsLocalStore.Error.failedToFetchStoredEvents(inner) = error,
+                let storeError = inner as? UpdateEventsLocalStore.Error,
+                case .missingPrivateKeys = storeError
+            else {
+                XCTFail("Expected failedToFetchStoredEvents(missingPrivateKeys), got: \(error)")
+                return
+            }
+        }
     }
 
     func testFetchStoredEventEnvelopes_BackgroundAccessibleOnly_FiltersCorrectly() async throws {
@@ -408,32 +416,57 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         let publicKeys = EARPublicKeys(primary: publicKey, secondary: secondaryPublicKey)
         let privateKeys = EARPrivateKeys(primary: privateKey, secondary: secondaryPrivateKey)
 
-        // 1. Unencrypted envelope (should be included)
+        // 1. Unencrypted, non-background-accessible envelope (should be excluded)
         let unencryptedEnvelope = UpdateEventEnvelope(
             id: UUID(),
             events: [createNonCallingEvent()],
             isTransient: false,
             deliveryTag: nil
         )
-        try await sut.persistEventEnvelope(unencryptedEnvelope, index: 0, publicKeys: nil)
+        try await sut.persistEventEnvelope(
+            unencryptedEnvelope,
+            index: 0,
+            publicKeys: nil
+        )
 
-        // 2. Encrypted + background accessible (calling event, should be included)
-        let backgroundAccessibleEnvelope = UpdateEventEnvelope(
+        // 2. Unencrypted + background accessible (calling event, should be included)
+        let unencryptedBackgroundAccessibleEnvelope = UpdateEventEnvelope(
             id: UUID(),
             events: [createCallingEvent()],
             isTransient: false,
             deliveryTag: nil
         )
-        try await sut.persistEventEnvelope(backgroundAccessibleEnvelope, index: 1, publicKeys: publicKeys)
+        try await sut.persistEventEnvelope(
+            unencryptedBackgroundAccessibleEnvelope,
+            index: 1,
+            publicKeys: nil
+        )
 
-        // 3. Encrypted + NOT background accessible (should be excluded)
-        let nonBackgroundAccessibleEnvelope = UpdateEventEnvelope(
+        // 3. Encrypted + background accessible (calling event, should be included)
+        let encryptedBackgroundAccessibleEnvelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [createCallingEvent()],
+            isTransient: false,
+            deliveryTag: nil
+        )
+        try await sut.persistEventEnvelope(
+            encryptedBackgroundAccessibleEnvelope,
+            index: 2,
+            publicKeys: publicKeys
+        )
+
+        // 4. Encrypted + non-background-accessible (should be excluded)
+        let encryptedEnvelope = UpdateEventEnvelope(
             id: UUID(),
             events: [createNonCallingEvent()],
             isTransient: false,
             deliveryTag: nil
         )
-        try await sut.persistEventEnvelope(nonBackgroundAccessibleEnvelope, index: 2, publicKeys: publicKeys)
+        try await sut.persistEventEnvelope(
+            encryptedEnvelope,
+            index: 3,
+            publicKeys: publicKeys
+        )
 
         // When: Fetch with backgroundAccessibleOnly: true
         let fetched = try await sut.fetchStoredEventEnvelopes(
@@ -442,13 +475,16 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
             backgroundAccessibleOnly: true
         )
 
-        // Then: Should return only unencrypted and background-accessible envelopes
+        // Then: Should return only background-accessible envelopes regardless of encryption
         XCTAssertEqual(fetched.count, 2)
 
         let fetchedIDs = fetched.map(\.envelope.id)
-        XCTAssertTrue(fetchedIDs.contains(unencryptedEnvelope.id))
-        XCTAssertTrue(fetchedIDs.contains(backgroundAccessibleEnvelope.id))
-        XCTAssertFalse(fetchedIDs.contains(nonBackgroundAccessibleEnvelope.id))
+
+        XCTAssertFalse(fetchedIDs.contains(unencryptedEnvelope.id))
+        XCTAssertFalse(fetchedIDs.contains(encryptedEnvelope.id))
+
+        XCTAssertTrue(fetchedIDs.contains(unencryptedBackgroundAccessibleEnvelope.id))
+        XCTAssertTrue(fetchedIDs.contains(encryptedBackgroundAccessibleEnvelope.id))
     }
 
     func testEncryptionDecryption_RoundTrip_BothKeyTypes() async throws {

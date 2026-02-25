@@ -147,8 +147,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
                 if backgroundAccessibleOnly {
                     request.predicate = NSPredicate(
-                        format: "%K == false OR %K == true",
-                        #keyPath(StoredUpdateEventEnvelope.isEncrypted),
+                        format: "%K == true",
                         #keyPath(StoredUpdateEventEnvelope.isBackgroundAccessible)
                     )
                 }
@@ -297,7 +296,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
         var data = try updateEventCoder.encode(eventEnvelope)
 
-        let isBackgroundAccessible = storedEventEnvelope.isBackgroundAccessible
+        let isBackgroundAccessible = eventEnvelope.isBackgroundAccessible
 
         if let publicKeys {
             let key = isBackgroundAccessible ? publicKeys.secondary : publicKeys.primary

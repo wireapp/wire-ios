@@ -33,5 +33,5 @@ public protocol IncrementalSyncProtocol {
     ///
     /// - Returns: A token to retain to keep the push channel open.
 
-    func performInBackgroundForCallingEvents() async throws -> IncrementalSync.Token
+    func performForCallingEventsOnly() async throws -> IncrementalSync.Token
 }

@@ -22,7 +22,11 @@ import XCTest
 class OngoingCallPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        endCallButton
+        timeLabel
+    }
+
+    var timeLabel: XCUIElement {
+        app.staticTexts[Locators.OngoingCallPage.timeLabel.rawValue]
     }
 
     var endCallButton: XCUIElement {

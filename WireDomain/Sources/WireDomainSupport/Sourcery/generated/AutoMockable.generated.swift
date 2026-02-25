@@ -2505,26 +2505,26 @@ public class MockIncrementalSyncProtocol: IncrementalSyncProtocol {
         }
     }
 
-    // MARK: - performInBackgroundForCallingEvents
+    // MARK: - performForCallingEventsOnly
 
-    public var performInBackgroundForCallingEvents_Invocations: [Void] = []
-    public var performInBackgroundForCallingEvents_MockError: Error?
-    public var performInBackgroundForCallingEvents_MockMethod: (() async throws -> IncrementalSync.Token)?
-    public var performInBackgroundForCallingEvents_MockValue: IncrementalSync.Token?
+    public var performForCallingEventsOnly_Invocations: [Void] = []
+    public var performForCallingEventsOnly_MockError: Error?
+    public var performForCallingEventsOnly_MockMethod: (() async throws -> IncrementalSync.Token)?
+    public var performForCallingEventsOnly_MockValue: IncrementalSync.Token?
 
-    public func performInBackgroundForCallingEvents() async throws -> IncrementalSync.Token {
-        performInBackgroundForCallingEvents_Invocations.append(())
+    public func performForCallingEventsOnly() async throws -> IncrementalSync.Token {
+        performForCallingEventsOnly_Invocations.append(())
 
-        if let error = performInBackgroundForCallingEvents_MockError {
+        if let error = performForCallingEventsOnly_MockError {
             throw error
         }
 
-        if let mock = performInBackgroundForCallingEvents_MockMethod {
+        if let mock = performForCallingEventsOnly_MockMethod {
             return try await mock()
-        } else if let mock = performInBackgroundForCallingEvents_MockValue {
+        } else if let mock = performForCallingEventsOnly_MockValue {
             return mock
         } else {
-            fatalError("no mock for `performInBackgroundForCallingEvents`")
+            fatalError("no mock for `performForCallingEventsOnly`")
         }
     }
 

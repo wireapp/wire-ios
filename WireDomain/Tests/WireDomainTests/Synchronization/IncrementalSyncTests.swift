@@ -441,7 +441,7 @@ final class IncrementalSyncTests: XCTestCase {
         _ = try await sut.perform()
 
         // Then: Should fetch keys with includingPrimary: true
-        XCTAssertEqual(earService.fetchPrivateKeysIncludingPrimary_Invocations.count, 1)
+        try XCTAssertCount(earService.fetchPrivateKeysIncludingPrimary_Invocations, count: 1)
         XCTAssertTrue(earService.fetchPrivateKeysIncludingPrimary_Invocations[0])
     }
 
@@ -458,7 +458,7 @@ final class IncrementalSyncTests: XCTestCase {
         XCTAssertEqual(pushChannelAPI.createPushChannelClientID_Invocations.count, 0)
     }
 
-    func test_performInBackgroundForCallingEvents_EAREnabled_usesSecondaryKeysAndFiltersEvents() async throws {
+    func test_performForCallingEventsOnly_EAREnabled_usesSecondaryKeysAndFiltersEvents() async throws {
         // Given: EAR is enabled (database may be locked in background)
         earService.underlyingIsEAREnabled = true
         earService.fetchPublicKeys_MockMethod = { nil }
@@ -476,16 +476,16 @@ final class IncrementalSyncTests: XCTestCase {
         mlsGroupRepairAgent.repairConversations_MockMethod = {}
 
         // When
-        _ = try await sut.performInBackgroundForCallingEvents()
+        _ = try await sut.performForCallingEventsOnly()
 
         // Then: Should proceed with only secondary keys
-        XCTAssertEqual(earService.fetchPrivateKeysIncludingPrimary_Invocations.count, 1)
+        try XCTAssertCount(earService.fetchPrivateKeysIncludingPrimary_Invocations, count: 1)
         XCTAssertFalse(earService.fetchPrivateKeysIncludingPrimary_Invocations[0])
 
         // Should process only background-accessible events
-        XCTAssertEqual(
-            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count,
-            1
+        try XCTAssertCount(
+            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations,
+            count: 1
         )
         XCTAssertTrue(
             updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations[0]
@@ -493,7 +493,7 @@ final class IncrementalSyncTests: XCTestCase {
         )
     }
 
-    func test_performInBackgroundForCallingEvents_EARDisabled_processesAllEvents() async throws {
+    func test_performForCallingEventsOnly_filterEvents() async throws {
         // Given: EAR is disabled
         earService.underlyingIsEAREnabled = false
         earService.fetchPublicKeys_MockMethod = { nil }
@@ -508,18 +508,14 @@ final class IncrementalSyncTests: XCTestCase {
         mlsGroupRepairAgent.repairConversations_MockMethod = {}
 
         // When
-        _ = try await sut.performInBackgroundForCallingEvents()
+        _ = try await sut.performForCallingEventsOnly()
 
-        // Then: Should fetch all keys (primary included)
-        XCTAssertEqual(earService.fetchPrivateKeysIncludingPrimary_Invocations.count, 1)
-        XCTAssertTrue(earService.fetchPrivateKeysIncludingPrimary_Invocations[0])
-
-        // Should process all events (not background-accessible only)
-        XCTAssertEqual(
-            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count,
-            1
+        // Then: Should filter events (background-accessible only)
+        try XCTAssertCount(
+            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations,
+            count: 1
         )
-        XCTAssertFalse(
+        XCTAssertTrue(
             updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations[0]
                 .backgroundAccessibleOnly
         )

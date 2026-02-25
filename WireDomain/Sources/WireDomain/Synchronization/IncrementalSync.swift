@@ -89,9 +89,9 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         return try await internalPerform(backgroundAccessibleOnly: false)
     }
 
-    public func performInBackgroundForCallingEvents() async throws -> Token {
-        // if EAR is enabled, we'll process only the calling events (they are marked as `backgroundAccessible`)
-        try await internalPerform(backgroundAccessibleOnly: earService.isEAREnabled)
+    public func performForCallingEventsOnly() async throws -> Token {
+        // we'll process only the calling events (they are marked as `backgroundAccessible`)
+        try await internalPerform(backgroundAccessibleOnly: true)
     }
 
     private func internalPerform(backgroundAccessibleOnly: Bool) async throws -> Token {
@@ -267,8 +267,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 // Process.
                 await processLiveEventEnvelope(
                     envelope: envelope,
-                    index: index,
-                    publicKeys: publicKeys
+                    index: index
                 )
 
                 do {
@@ -287,13 +286,12 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
     private func processLiveEventEnvelope(
         envelope: UpdateEventEnvelope,
-        index: Int64,
-        publicKeys: EARPublicKeys?
+        index: Int64
     ) async {
-        // If we're processing events in the background, and the event is not accessible: skip it.
-        //
-        // If we don't skip it, we may end up processing events that require access to the database key (e.g: messages).
-        // But the database key is only accessible once the app is unlocked.
+        // if the database key is nil (`earService.isLocked == true`),
+        // we cannot process events that require access to it,
+        // so we only process events that we're certain do not need the database key.
+        // such events are marked as "background accessible"
         guard !earService.isLocked || envelope.isBackgroundAccessible else {
             logger.info(
                 "skipping processing of live event envelope: not accessible in the background",

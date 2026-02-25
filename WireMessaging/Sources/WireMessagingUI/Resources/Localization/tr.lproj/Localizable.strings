@@ -30,6 +30,7 @@
 "general.create" = "Oluştur";
 "general.cancel" = "İptal";
 "general.done" = "Yapıldı";
+"general.noInternet.title" = "İnternet Bağlantısı Yok";
 
 // MARK: - Channel Access level
 "channel_access_level.public" = "Public";
@@ -107,6 +108,7 @@
 "conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "An error occurred while fetching channel history depth options.";
 "conversation.channelHistory.updateHistoryDepth.error" = "An error occurred while updating channel history depth.";
 "conversation.file.preview.open" = "Open preview";
+"conversation.draft.attachmentMenu.errorTitle" = "Unable to load file";
 "conversation.draft.attachmentMenu.retry" = "Retry";
 "conversation.draft.attachmentMenu.remove" = "Remove File";
 
@@ -114,6 +116,7 @@
 "conversation.wireCells.files.navigationTitle" = "Shared Drive";
 "conversation.wireCells.allFiles.navigationTitle" = "Drive";
 "conversation.wireCells.files.item.subtitle" = "%@ by %@";
+"conversation.wireCells.allFiles.item.subtitle" = "%@ in %@";
 "conversation.wireCells.files.loadMore.title" = "Load more";
 "conversation.wireCells.files.item.menu.open" = "Aç";
 "conversation.wireCells.files.item.menu.shareLink" = "Share";
@@ -136,11 +139,16 @@
 "conversation.wireCells.allFiles.noData.title" = "There are no files yet";
 "conversation.wireCells.allFiles.noData.message" = "For conversations that use shared Drive, you'll find all files here.";
 "conversation.wireCells.allFiles.noData.learnMore" = "Daha fazla bilgi";
+"conversation.wireCells.files.noSearchResults.title" = "No results found";
+"conversation.wireCells.files.noSearchResults.message" = "Try adjusting your search.";
 "conversation.wireCells.files.pendingCells.title" = "Files are loading";
 "conversation.wireCells.files.pendingCells.message" = "Your documents and media files will be available here once we've uploaded all files and folders.";
 "conversation.wireCells.files.error.title" = "Can't load files";
-"conversation.wireCells.files.error.message" = "Your files and folders could not be loaded. Please reload.";
-"conversation.wireCells.files.error.reload" = "Reload";
+"conversation.wireCells.files.error.message" = "Something went wrong while loading. Please try again.";
+"conversation.wireCells.files.error.retry" = "Retry";
+"conversation.wireCells.files.error.noConnection.title" = "Unable to load files";
+"conversation.wireCells.files.error.noConnection.message" = "Your list of files could not be loaded. Please check your Internet connection and try again.";
+"conversation.wireCells.files.error.noConnection.retry" = "Try again";
 "conversation.wireCells.files.search.title" = "Search files";
 "conversation.wireCells.files.list.createFolder" = "Create folder";
 "conversation.wireCells.files.list.createFile" = "Create file";
@@ -215,6 +223,7 @@
 "conversation.wireCells.shareLink.on" = "ON";
 "conversation.wireCells.shareLink.expired" = "EXPIRED";
 "conversation.wireCells.shareLink.linkExpiredOn" = "Link expired on %@";
+"conversation.wireCells.shareLink.sharedMessage" = "Open this link to explore the attached files: %@";
 
 // MARK: - Share Link Password View
 "conversation.wireCells.shareLink.password.title" = "Parola";
