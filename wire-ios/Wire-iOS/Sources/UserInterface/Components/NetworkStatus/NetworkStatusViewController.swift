@@ -118,12 +118,14 @@ final class NetworkStatusViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-
-        enqueue(state: viewState(from: userSession.networkState))
-        networkStatusObserverToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
-            self,
-            notificationContext: userSession.notificationContext
-        )
+        // The cast is not needed for compilation but is a necessary hack for tests
+        if let userSession = userSession as? ZMUserSession {
+            enqueue(state: viewState(from: userSession.networkState))
+            networkStatusObserverToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
+                self,
+                notificationContext: userSession.managedObjectContext.notificationContext
+            )
+        }
 
         networkStatusView.addGestureRecognizer(UITapGestureRecognizer(
             target: self,

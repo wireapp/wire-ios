@@ -109,6 +109,11 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // This is a hack for testing as a real ZMUserSession is not available
+        guard userSession is ZMUserSession else {
+            zmLog.error("UserSession not available when initializing \(type(of: self))")
+            return
+        }
         callStateObserverToken = WireCallCenterV3.addCallStateObserver(
             observer: self,
             contextProvider: userSession.contextProvider

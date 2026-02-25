@@ -118,10 +118,13 @@ class CameraKeyboardViewController: UIViewController {
             object: nil
         )
 
-        self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(
-            observer: self,
-            contextProvider: userSession.contextProvider
-        )
+        // The cast is not needed for compilation but is a necessary hack for tests
+        if let userSession = userSession as? ZMUserSession {
+            self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(
+                observer: self,
+                contextProvider: userSession.contextProvider
+            )
+        }
     }
 
     @available(*, unavailable)

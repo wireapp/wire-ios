@@ -118,7 +118,7 @@ final class ConversationListViewController: UIViewController {
 
     weak var accountImageView: AccountImageView?
 
-    let networkStatusViewController = NetworkStatusViewController()
+    let networkStatusViewController: NetworkStatusViewController
     private var emptyPlaceholderView: EmptyPlaceholderContainerView!
 
     var mainSplitViewState: MainSplitViewState = .expanded {
@@ -198,6 +198,7 @@ final class ConversationListViewController: UIViewController {
             zClientViewController: zClientViewController
         )
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
+        networkStatusViewController = NetworkStatusViewController(userSession: viewModel.userSession)
 
         super.init(nibName: nil, bundle: nil)
 
