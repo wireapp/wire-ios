@@ -72,7 +72,7 @@ final class ClientListViewController: UIViewController,
 
     private let clientSorter: (UserClient, UserClient) -> Bool
     private let clientFilter: (UserClient) -> Bool
-    private let userSession: UserSession?
+    private let userSession: UserSession
     private let contextProvider: ContextProvider?
     private weak var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
 
@@ -89,7 +89,7 @@ final class ClientListViewController: UIViewController,
     required init(
         clientsList: [UserClient]?,
         selfClient: UserClient?,
-        userSession: UserSession?,
+        userSession: UserSession,
         credentials: UserEmailCredentials? = .none,
         contextProvider: ContextProvider?,
         detailedView: Bool = false,
@@ -121,7 +121,7 @@ final class ClientListViewController: UIViewController,
 
         if clients.isEmpty {
             activityIndicator.start()
-            userSession?.fetchAllClients()
+            userSession.fetchAllClients()
         }
     }
 
@@ -181,8 +181,7 @@ final class ClientListViewController: UIViewController,
     }
 
     func openDetailsOfClient(_ client: UserClient) {
-        guard let userSession,
-              let contextProvider,
+        guard let contextProvider,
               let navigationController
         else {
             assertionFailure("Unable to display Devices screen.UserSession and/or navigation instances are nil")
@@ -291,10 +290,10 @@ final class ClientListViewController: UIViewController,
         _ userClient: UserClient,
         credentials: UserEmailCredentials?
     ) {
-
         removalObserver = ClientRemovalObserver(
             userClientToDelete: userClient,
             delegate: self,
+            userSession: userSession,
             credentials: credentials
         )
         removalObserver?.startRemoval()
@@ -518,7 +517,6 @@ final class ClientListViewController: UIViewController,
     private func updateCertificates(for userClients: [UserClient]) async {
         activityIndicator.start()
         guard
-            let userSession,
             let selfMlsGroupID = await userSession.fetchSelfConversationMLSGroupID()
         else {
             activityIndicator.stop()

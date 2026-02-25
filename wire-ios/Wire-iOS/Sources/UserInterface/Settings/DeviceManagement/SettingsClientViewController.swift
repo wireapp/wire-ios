@@ -322,6 +322,7 @@ final class SettingsClientViewController: UIViewController,
             removalObserver = ClientRemovalObserver(
                 userClientToDelete: userClient,
                 delegate: self,
+                userSession: userSession,
                 credentials: credentials,
                 completion: completion
             )
