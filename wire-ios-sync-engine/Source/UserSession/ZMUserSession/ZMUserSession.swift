@@ -1318,9 +1318,9 @@ extension ZMUserSession: SyncAgentDelegate {
         }
     }
 
-    func processPendingCallEvents() async {
+    func processPendingCallEvents(only onlyCallEvents: Bool) async {
         WireLogger.sync.debug(
-            "process pending call events",
+            "process pending call events (onlyCallEvents: \(onlyCallEvents)",
             attributes: .incrementalSync
         )
 
