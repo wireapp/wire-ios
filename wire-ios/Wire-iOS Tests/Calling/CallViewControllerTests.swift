@@ -68,7 +68,7 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
         mediaManager: ZMMockAVSMediaManager
     ) -> CallViewController {
 
-        let proximityManager = ProximityMonitorManager()
+        let proximityManager = ProximityMonitorManager(userSession: userSession)
         return CallViewController(
             voiceChannel: mockVoiceChannel,
             selfUser: selfUser,

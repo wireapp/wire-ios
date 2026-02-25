@@ -185,7 +185,7 @@ final class ZClientViewController: UIViewController {
         getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
     )
 
-    var proximityMonitorManager: ProximityMonitorManager?
+    let proximityMonitorManager: ProximityMonitorManager
     var legalHoldDisclosureController: LegalHoldDisclosureController?
 
     var userObserverToken: NSObjectProtocol?
@@ -232,10 +232,10 @@ final class ZClientViewController: UIViewController {
 
         self.wireMeetingsFactory = wireMeetingsFactory
         self.wireMessagingFactory = wireMessagingFactory
+        self.proximityMonitorManager = ProximityMonitorManager(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
 
-        self.proximityMonitorManager = ProximityMonitorManager()
         self.mediaPlaybackManager = MediaPlaybackManager(name: "conversationMedia", userSession: userSession)
 
         AVSMediaManager.sharedInstance().register(mediaPlaybackManager, withOptions: ["media": "external "])

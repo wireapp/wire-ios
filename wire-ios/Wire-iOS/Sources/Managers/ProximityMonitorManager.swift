@@ -27,6 +27,8 @@ final class ProximityMonitorManager: NSObject {
 
     typealias RaisedToEarHandler = (_ raisedToEar: Bool) -> Void
 
+    private let userSession: UserSession
+
     var callStateObserverToken: Any?
 
     fileprivate(set) var raisedToEar: Bool = false {
@@ -46,13 +48,9 @@ final class ProximityMonitorManager: NSObject {
         NotificationCenter.default.removeObserver(self)
     }
 
-    override init() {
+    init(userSession: UserSession) {
+        self.userSession = userSession
         super.init()
-
-        guard let userSession = ZMUserSession.shared() else {
-            zmLog.error("UserSession not available when initializing \(type(of: self))")
-            return
-        }
 
         self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(
             observer: self,
@@ -65,7 +63,8 @@ final class ProximityMonitorManager: NSObject {
 
     func updateProximityMonitorState() {
         // Only do proximity monitoring on phones
-        guard UIDevice.current.userInterfaceIdiom == .phone, let callCenter = ZMUserSession.shared()?.callCenter,
+        guard UIDevice.current.userInterfaceIdiom == .phone,
+              let callCenter = (userSession as? ZMUserSession)?.callCenter,
               !listening else { return }
 
         let ongoingCalls = callCenter.nonIdleCalls.filter { (_, callState: CallState) -> Bool in
