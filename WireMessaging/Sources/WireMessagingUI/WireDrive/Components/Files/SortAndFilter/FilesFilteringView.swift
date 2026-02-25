@@ -215,7 +215,7 @@ struct FilesFilteringView: View {
         if viewModel.isFilterSelected(filter) {
             ColorTheme.Base.primary(accentColor).color
         } else {
-            ColorTheme.Buttons.Secondary.disabledOutline.color
+            ColorTheme.Strokes.disabledOutline.color
         }
     }
 

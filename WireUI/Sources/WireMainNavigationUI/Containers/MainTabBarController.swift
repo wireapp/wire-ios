@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireLocators
+import WireDesign
 
 // TODO: [WPB-11448] Bug: The call screen doesn't rotate to landscape
 
@@ -344,6 +345,7 @@ public final class MainTabBarController<
         }
 
         _filesUI = filesUI
+        filesNavigationController?.view.backgroundColor = ColorTheme.Backgrounds.surface
 
         let viewControllers = [filesUI].compactMap(\.self)
         filesNavigationController?.setViewControllers(viewControllers, animated: animated)
