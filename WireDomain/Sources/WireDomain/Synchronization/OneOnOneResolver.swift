@@ -361,7 +361,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         between selfUser: ZMUser,
         and user: ZMUser
     ) async {
-        
+
         var mlsGroupToWipe: MLSGroupID?
 
         await context.perform {
