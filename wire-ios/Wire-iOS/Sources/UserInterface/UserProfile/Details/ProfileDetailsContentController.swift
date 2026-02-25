@@ -80,6 +80,7 @@ final class ProfileDetailsContentController: NSObject,
     // MARK: - Properties
 
     private var observerToken: Any?
+    private let userSession: UserSession
     private let userPropertyCellID = "UserPropertyCell"
     private let messageProtocolCellID = "MessageProtocolCell"
 
@@ -94,18 +95,20 @@ final class ProfileDetailsContentController: NSObject,
     init(
         user: UserType,
         viewer: UserType,
-        conversation: ZMConversation?
+        conversation: ZMConversation?,
+        userSession: UserSession
     ) {
         self.user = user
         self.viewer = viewer
         self.conversation = conversation
+        self.userSession = userSession
 
         self.isAdminState = conversation.map(user.isGroupAdmin) ?? false
 
         super.init()
         configureObservers()
         updateContent()
-        ZMUserSession.shared()?.perform {
+        userSession.perform {
             user.refreshRichProfile()
         }
     }
@@ -119,7 +122,7 @@ final class ProfileDetailsContentController: NSObject,
 
     /// Starts observing changes in the user profile.
     private func configureObservers() {
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             observerToken = UserChangeInfo.add(observer: self, for: user, in: userSession)
         }
     }

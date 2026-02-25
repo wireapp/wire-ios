@@ -1225,7 +1225,8 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         let controller = ProfileDetailsContentController(
             user: user,
             viewer: viewer,
-            conversation: conversation.convertToRegularConversation()
+            conversation: conversation.convertToRegularConversation(),
+            userSession: UserSessionMock()
         )
 
         XCTAssertEqual(controller.contents, expectedContents, file: file, line: line)
