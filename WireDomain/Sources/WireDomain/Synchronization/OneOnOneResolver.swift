@@ -89,6 +89,11 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
             await setReadOnly(to: true, forOneOnOneWithUser: userID, in: context)
             return .archivedAsReadOnly
         }
+        
+        if try await handleDeletedUserIfNeeded(user) {
+            WireLogger.conversation.info("user \(userID.safeForLoggingDescription) is marked as deleted, set as read only", attributes: .safePublic)
+            return .archivedAsReadOnly
+        }
 
         let selfUser = await userLocalStore.fetchSelfUser()
         let commonProtocol = await getCommonProtocol(between: selfUser, and: user)
@@ -134,6 +139,26 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         return action
     }
 
+    private func handleDeletedUserIfNeeded(_ user: ZMUser) async throws -> Bool {
+        let (mlsGroupID, deletedUser) = await context.perform {
+            if user.isAccountDeleted {
+                defer {
+                    user.oneOnOneConversation?.mlsGroupID = nil
+                    user.oneOnOneConversation?.mlsStatus = .pendingJoin
+                    user.oneOnOneConversation?.epoch = 0
+                    user.oneOnOneConversation?.epochTimestamp = nil
+                }
+                let mlsGroupID = user.oneOnOneConversation?.mlsGroupID
+                return (mlsGroupID, true)
+            }
+            return (nil, false)
+        }
+        if let mlsGroupID {
+            try await mlsProvider.service.wipeGroup(mlsGroupID)
+        }
+        return deletedUser
+    }
+    
     @discardableResult
     private func resolveMLSConversation(for user: ZMUser) async throws -> MLSGroupID {
         WireLogger.conversation.debug("Should resolve to mls 1-1 conversation")
