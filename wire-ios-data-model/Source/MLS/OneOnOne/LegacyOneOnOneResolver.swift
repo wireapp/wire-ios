@@ -150,43 +150,51 @@ public final class LegacyOneOnOneResolver: OneOnOneResolverInterface {
             "no common protocols found",
             attributes: [.senderUserId: userID.safeForLoggingDescription]
         )
-        do {
-            return try await context.perform {
-                guard let user = ZMUser.fetch(with: userID, in: context) else { throw OneOnOneResolverError.userNotFound }
-                
-                let source = OneOnOneSource(context: context)
-                guard let conversations = try source.fetchOneOnOnesWithCandidate(
-                    user: user,
-                    types: [.mls, .fake, .proteus, .proteusPending]
-                ) else {
-                    return .noAction
-                }
-                
-                let best = conversations.candidate
-                for conversation in conversations.others {
-                    best.migrateMessages(from: conversation)
-                    best.needsToBeUpdatedFromBackend = true
-                }
-                
-                user.oneOnOneConversation = best
-                
-                self.makeConversationReadOnly(
-                    selfUser: ZMUser.selfUser(in: context),
-                    otherUser: user,
-                    conversation: best
-                )
-                
-                return .archivedAsReadOnly
+
+        var mlsGroupToWipe: MLSGroupID?
+        let action: OneOnOneConversationResolution = try await context.perform {
+            guard let user = ZMUser.fetch(with: userID, in: context) else { throw OneOnOneResolverError.userNotFound }
+
+            let source = OneOnOneSource(context: context)
+            guard let conversations = try source.fetchOneOnOnesWithCandidate(
+                user: user,
+                types: [.mls, .fake, .proteus, .proteusPending]
+            ) else {
+                return .noAction
             }
-        } catch OneOnOneResolverError.userNotFound {
-            WireLogger.conversation.info("user deleted, update conversation", attributes: .safePublic)
-            await setReadOnly(
-                to: false,
-                forOneOnOneWithUser: userID,
-                in: context
+
+            let best = conversations.candidate
+            for conversation in conversations.others {
+                best.migrateMessages(from: conversation)
+                best.needsToBeUpdatedFromBackend = true
+            }
+
+            user.oneOnOneConversation = best
+
+            self.makeConversationReadOnly(
+                selfUser: ZMUser.selfUser(in: context),
+                otherUser: user,
+                conversation: best
             )
+            if user.isAccountDeleted {
+                mlsGroupToWipe = best.mlsGroupID
+            }
             return .archivedAsReadOnly
         }
+
+        if let mlsService = await context.perform({ context.mlsService }),
+
+           let groupID = mlsGroupToWipe {
+            WireLogger.mls.info(
+                "wiping group of deleted user",
+                attributes: [
+                    .senderUserId: userID.safeForLoggingDescription,
+                    .mlsGroupID: groupID.safeForLoggingDescription
+                ]
+            )
+            try await mlsService.wipeGroup(groupID)
+        }
+        return action
     }
 
     private func makeConversationReadOnly(
@@ -228,22 +236,31 @@ public final class LegacyOneOnOneResolver: OneOnOneResolverInterface {
         return .migratedToMLSGroup(identifier: mlsGroupID)
     }
 
+    @discardableResult
     private func setReadOnly(
         to readOnly: Bool,
         forOneOnOneWithUser userID: QualifiedID,
         in context: NSManagedObjectContext
-    ) async {
+    ) async -> ZMConversation? {
         await context.perform {
             guard
                 let otherUser = ZMUser.fetch(with: userID, in: context),
                 let conversation = otherUser.oneOnOneConversation,
                 conversation.isForcedReadOnly != readOnly
             else {
-                return
+                return nil
             }
 
             conversation.isForcedReadOnly = readOnly
-            WireLogger.conversation.info("set conversation as readonly", attributes: [.conversationId: conversation.qualifiedID?.safeForLoggingDescription ?? "<nil>", .senderUserId: otherUser.qualifiedID?.safeForLoggingDescription ?? "<nil>"], .safePublic)
+            WireLogger.conversation.info(
+                "set conversation as readonly",
+                attributes: [
+                    .conversationId: conversation.qualifiedID?.safeForLoggingDescription ?? "<nil>",
+                    .senderUserId: otherUser.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+                ],
+                .safePublic
+            )
+            return conversation
         }
     }
 
