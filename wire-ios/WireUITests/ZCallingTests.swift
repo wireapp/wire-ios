@@ -20,7 +20,7 @@ import WireFoundation
 import WireLocators
 import XCTest
 
-final class CallingTests: WireUITestCase {
+final class ZCallingTests: WireUITestCase {
 
     struct GroupCallSetupResponse {
         let conversationId: String
