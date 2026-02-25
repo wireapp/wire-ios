@@ -109,6 +109,9 @@ public protocol EARServiceInterface: AnyObject {
     /// - Throws: Error if EAR is enabled but keys cannot be accessed
     func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys?
 
+    /// Whether the database is currently locked.
+    var isLocked: Bool { get }
+
     /// Whether encryption at rest is currently enabled for this account.
     var isEAREnabled: Bool { get }
 
