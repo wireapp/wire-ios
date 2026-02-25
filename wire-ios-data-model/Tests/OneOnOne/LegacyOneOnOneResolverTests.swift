@@ -304,7 +304,6 @@ final class LegacyOneOnOneResolverTests: XCTestCase {
         }
     }
 
-
     func test_ResolveOneOnOneConversation_DeletedUser_SetsReadOnly() async throws {
         // Given
         let userID: QualifiedID = .random()
