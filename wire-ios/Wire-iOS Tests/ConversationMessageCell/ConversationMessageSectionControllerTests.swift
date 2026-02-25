@@ -590,7 +590,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             XCTFail("Test setup error: visibleLinkText not found in messageText.")
             return
         }
-        let embeddedTextOffset = messageText.distance(from: messageText.startIndex, to: rangeOfVisibleText.lowerBound)
+        let embeddedTextOffset = messageText.distance(from: messageText.startIndex, to: rangeOfVisibleText.upperBound)
         let linkMessage = MockMessageFactory.textMessageWithEmbeddedLink(
             text: messageText,
             originalURL: originalURLString,
@@ -611,7 +611,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             XCTFail("Test setup error: visibleLinkText not found in messageText.")
             return
         }
-        let embeddedTextOffset = messageText.distance(from: messageText.startIndex, to: rangeOfVisibleText.lowerBound)
+        let embeddedTextOffset = messageText.distance(from: messageText.startIndex, to: rangeOfVisibleText.upperBound)
         let linkMessage = MockMessageFactory.textMessageWithEmbeddedLink(
             text: messageText,
             originalURL: originalURLString,
@@ -626,13 +626,13 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
 
     func testFindEmbeddedLinks_urlPartiallyInMessageText() {
         let originalURLString = "http://foo.bar/baz/full/path"
-        let messageText = "Only [amazing article]\(originalURLString) is in the message."
+        let messageText = "Only [amazing article]http://foo.bar/baz is in the message."
         let visibleLinkText = "[amazing article]"
         guard let rangeOfVisibleText = messageText.range(of: visibleLinkText) else {
             XCTFail("Test setup error: visibleLinkText not found in messageText.")
             return
         }
-        let embeddedTextOffset = messageText.distance(from: messageText.startIndex, to: rangeOfVisibleText.lowerBound)
+        let embeddedTextOffset = messageText.distance(from: messageText.startIndex, to: rangeOfVisibleText.upperBound)
         let linkMessage = MockMessageFactory.textMessageWithEmbeddedLink(
             text: messageText,
             originalURL: originalURLString,
@@ -656,7 +656,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             XCTFail("Test setup error: visibleLinkText not found in messageText.")
             return
         }
-        let embeddedTextOffset = messageText.distance(from: messageText.startIndex, to: rangeOfVisibleText.lowerBound)
+        let embeddedTextOffset = messageText.distance(from: messageText.startIndex, to: rangeOfVisibleText.upperBound)
         let linkMessage = MockMessageFactory.textMessageWithEmbeddedLink(
             text: messageText,
             originalURL: originalURLString,
