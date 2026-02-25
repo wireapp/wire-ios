@@ -297,6 +297,7 @@ public enum Locators {
     public enum IncomingCallPage: String {
 
         case acceptCall = "Accept"
+        case turnOffMicrophone = "Microphone"
     }
 
     public enum OngoingCallPage: String {

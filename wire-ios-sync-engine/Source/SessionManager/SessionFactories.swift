@@ -68,7 +68,7 @@ open class AuthenticatedSessionFactory {
         journal: Journal,
         logFilesProvider: LogFilesProviding,
         faultyMLSRemovalKeysByDomain: [String: [String]]
-    ) -> ZMUserSession? {
+    ) async -> ZMUserSession? {
         let wireAPIBackendEnvironment = BackendEnvironment(
             url: environment.backendURL,
             webSocketURL: environment.backendWSURL,
@@ -117,9 +117,21 @@ open class AuthenticatedSessionFactory {
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
             localDomain: BackendInfo.domain
         )
+        let contextStorage = LAContextStorage()
+        let earService = await EARService(
+            accountID: coreDataStack.account.userIdentifier,
+            databaseContexts: [
+                coreDataStack.viewContext,
+                coreDataStack.syncContext
+            ],
+            coreDataStack: coreDataStack,
+            canPerformKeyMigration: true,
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
+        )
 
         var userSessionBuilder = ZMUserSessionBuilder()
-        userSessionBuilder.withAllDependencies(
+        await userSessionBuilder.withAllDependencies(
             backendEnvironment: environment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             currentAppVersion: currentAppVersion,
@@ -128,8 +140,8 @@ open class AuthenticatedSessionFactory {
             coreDataStack: coreDataStack,
             coreCryptoProvider: coreCryptoProvider,
             configuration: configuration,
-            contextStorage: LAContextStorage(),
-            earService: nil,
+            contextStorage: contextStorage,
+            earService: earService,
             flowManager: flowManager,
             mediaManager: mediaManager,
             mlsService: nil,
