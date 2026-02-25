@@ -64,6 +64,38 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
     // MARK: - Tests
 
+    func test_isFeatureEnabled_forDefaultValueWithDefaultValue() async {
+        featureConfigLocalStore.fetchFeatureName_MockError = NSError(domain: "test", code: 0)
+
+        for expectedValue in [true, false] {
+            let result = await sut.isFeatureEnabled(.simplifiedUserConnectionRequestQRCode, defaultValue: expectedValue)
+            XCTAssertEqual(result, expectedValue)
+        }
+    }
+
+    func test_isFeatureEnabled_statusHandling() async {
+        let testCases: [(status: Feature.Status, expected: Bool, fallback: Bool)] = [
+            (.enabled, true, false),
+            (.disabled, false, true)
+        ]
+
+        for scenario in testCases {
+            featureConfigLocalStore.isFeatureEnabled_ReturnValue = scenario.expected
+            featureConfigLocalStore.fetchFeatureName_MockValue = Feature()
+
+            let result = await sut.isFeatureEnabled(
+                .simplifiedUserConnectionRequestQRCode,
+                defaultValue: scenario.fallback
+            )
+
+            XCTAssertEqual(
+                result,
+                scenario.expected,
+                "Failed for status: \(scenario.status). Should follow store value, ignoring fallback."
+            )
+        }
+    }
+
     func testPullFeatureConfigs_It_Invokes_Local_Store_Methods() async throws {
         // Mock
 
