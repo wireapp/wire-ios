@@ -256,7 +256,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 WireLogger.mls.info("success: adding members to group", attributes: groupID.safeAttributes)
             } catch {
                 WireLogger.mls
-                    .info(
+                    .error(
                         "failed: adding members to group: \(String(describing: error))",
                         attributes: groupID.safeAttributes
                     )
@@ -277,7 +277,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 }
             } catch {
                 WireLogger.mls
-                    .info(
+                    .error(
                         "error: removing clients from group: \(String(describing: error))",
                         attributes: groupID.safeAttributes
                     )
@@ -295,7 +295,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 }
             } catch {
                 WireLogger.mls
-                    .info(
+                    .error(
                         "error: updating key material for group: \(String(describing: error))",
                         attributes: groupID.safeAttributes
                     )
@@ -315,7 +315,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                     .info("success: committing pending proposals for group", attributes: groupID.safeAttributes)
             } catch {
                 WireLogger.mls
-                    .info(
+                    .error(
                         "error: committing pending proposals for group: \(String(describing: error))",
                         attributes: groupID.safeAttributes
                     )
@@ -345,7 +345,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 WireLogger.mls.info("success: joining group via external commit", attributes: groupID.safeAttributes)
             } catch {
                 WireLogger.mls
-                    .info(
+                    .error(
                         "error: joining group via external commit: \(String(describing: error))",
                         attributes: groupID.safeAttributes
                     )
