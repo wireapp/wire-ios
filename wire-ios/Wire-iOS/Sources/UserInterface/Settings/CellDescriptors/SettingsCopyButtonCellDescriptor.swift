@@ -39,6 +39,7 @@ final class SettingsCopyButtonCellDescriptor: SettingsCellDescriptorType {
     func featureCell(_ cell: SettingsCellType) {
         if let iconActionCell = cell as? IconActionCell {
             delegate = iconActionCell
+            iconActionCell.accessibilityTraits = .button
             iconActionCell.configure(with: copyInProgress ? copiedLink : copyLink)
         }
     }

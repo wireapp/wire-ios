@@ -194,7 +194,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
         super.prepareForReuse()
         preview = .none
         accessibilityIdentifier = nil
-        accessibilityTraits = .none
+        accessibilityTraits = []
         accessibilityElements = nil
     }
 

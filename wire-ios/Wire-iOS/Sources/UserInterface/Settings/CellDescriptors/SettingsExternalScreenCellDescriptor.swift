@@ -135,8 +135,6 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
             tableCell.accessibilityIdentifier = settingsTopLevelMenuItem?.accessibilityID
             tableCell.valueLabel.accessibilityIdentifier = title + "Field"
             tableCell.valueLabel.isAccessibilityElement = true
-            tableCell.accessibilityTraits = .keyboardKey
-            
         }
 
         if let previewGenerator {
@@ -149,8 +147,10 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
             case .automatic:
                 if presentationStyle == .modal {
                     groupCell.hideAccessoryView()
+                    groupCell.accessibilityTraits = .button
                 } else {
                     groupCell.showDisclosureIndicatorAccessoryView()
+                    groupCell.accessibilityTraits = .button
                 }
             case .disclosureIndicator:
                 groupCell.showDisclosureIndicatorAccessoryView()
