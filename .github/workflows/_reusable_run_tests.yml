@@ -145,7 +145,7 @@ jobs:
           colima stop || true
           colima delete -f || true
 
-          colima start -f --cpu 2 --memory 4 --vm-type=vz
+          colima start -f --cpu 2 --memory 4 --vm-type=qemu
 
           docker version
 
