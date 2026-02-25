@@ -31,8 +31,8 @@ final class MessageKeyPathObserver: NSObject, ZMMessageObserver {
 
     var onChanged: ChangedBlock?
 
-    init?(message: ZMConversationMessage, keypath: KeyPath<MessageChangeInfo, Bool>, _ changed: ChangedBlock? = nil) {
-        guard let session = ZMUserSession.shared() else { return nil }
+    init?(message: ZMConversationMessage, userSession: UserSession, keypath: KeyPath<MessageChangeInfo, Bool>, _ changed: ChangedBlock? = nil) {
+        guard let session = userSession as? ZMUserSession else { return nil }
 
         self.keypath = keypath
 

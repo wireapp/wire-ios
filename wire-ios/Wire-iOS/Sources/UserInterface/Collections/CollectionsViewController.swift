@@ -53,7 +53,7 @@ final class CollectionsViewController: UIViewController {
         view as? CollectionsView
     }
 
-    private let messagePresenter = MessagePresenter()
+    private let messagePresenter: MessagePresenter
     private weak var selectedMessage: ZMConversationMessage? = .none
 
     private var imageMessages: [ZMConversationMessage] = []
@@ -155,6 +155,7 @@ final class CollectionsViewController: UIViewController {
         }
 
         self.fetchingDone = fetchingDone
+        self.messagePresenter = MessagePresenter(userSession: userSession)
 
         super.init(nibName: .none, bundle: .none)
         collection.assetCollectionDelegate.add(self)

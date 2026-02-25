@@ -43,16 +43,23 @@ final class MessagePresenter: NSObject {
     var videoPlayerObserver: NSObjectProtocol?
     var fileAvailabilityObserver: MessageKeyPathObserver?
 
+    private let userSession: UserSession
     private var documentInteractionController: UIDocumentInteractionController?
+
+    init(userSession: UserSession) {
+        self.userSession = userSession
+        super.init()
+    }
 
     /// init method for injecting MediaPlaybackManager for testing
     ///
     /// - Parameter mediaPlaybackManager: for testing only
     convenience init(
+        userSession: UserSession,
         mediaPlaybackManager: MediaPlaybackManager? = (UIApplication.shared.delegate as? AppDelegate)?
             .mediaPlaybackManager
     ) {
-        self.init()
+        self.init(userSession: userSession)
 
         self.mediaPlaybackManager = mediaPlaybackManager
     }
@@ -71,7 +78,7 @@ final class MessagePresenter: NSObject {
             assertionFailure(errorMessage)
 
             zmLog.error(errorMessage)
-            ZMUserSession.shared()?.enqueue {
+            userSession.enqueue {
                 message.fileMessageData?.requestFileDownload()
             }
 
@@ -136,6 +143,7 @@ final class MessagePresenter: NSObject {
 
             fileAvailabilityObserver = MessageKeyPathObserver(
                 message: message,
+                userSession: userSession,
                 keypath: \.fileAvailabilityChanged
             ) { [weak self] message in
                 guard message.isFileDownloaded() else { return }
