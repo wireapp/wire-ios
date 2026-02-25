@@ -122,6 +122,7 @@ final class CallingTests: WireUITestCase {
 
             let participantIdentifier = Locators.OngoingCallPage
                 .participantIdentifier(teamAndGroupCallSetup.appUserWhoWillJoinTheCall.name)
+
             XCTAssertTrue(
                 app.buttons[participantIdentifier].waitForExistence(timeout: 15),
                 "Expected \(teamAndGroupCallSetup.appUserWhoWillJoinTheCall.name) to be in the call OR took more than 15 seconds to join"
