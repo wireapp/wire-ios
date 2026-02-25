@@ -311,6 +311,7 @@ public final class SharingSession {
             sharedContainerURL: nil, // the container is not used in this case
             syncContext: coreDataStack.syncContext,
             eventContext: coreDataStack.eventContext,
+            earService: earService,
             mlsService: mlsService,
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
