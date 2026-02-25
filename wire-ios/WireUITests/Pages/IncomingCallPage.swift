@@ -25,14 +25,6 @@ class IncomingCallPage: PageModel {
         acceptButton
     }
 
-    private var handler: (XCTestCase, any NSObjectProtocol)?
-
-    deinit {
-        if let token = handler?.1 {
-            handler?.0.removeUIInterruptionMonitor(token)
-        }
-    }
-
     var acceptButton: XCUIElement {
         app.staticTexts[Locators.IncomingCallPage.acceptCall.rawValue]
     }
@@ -43,23 +35,14 @@ class IncomingCallPage: PageModel {
     }
 
     func acceptIncommingCall(with testCase: XCTestCase) throws -> OngoingCallPage {
-        handleMicrophonePermissionAlert(testCase: testCase)
-        XCTAssertTrue(acceptButton.exists, "Expected call not received")
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+
         acceptButton.tap()
-        app.tap()
+        let alert = springboard.alerts.firstMatch
+        if alert.waitForExistence(timeout: 2), alert.label.contains(Locators.IncomingCallPage.microphoneLabel.rawValue) {
+            alert.buttons[Locators.IncomingCallPage.allowButtonOnNotification.rawValue].tap()
+        }
+
         return try OngoingCallPage()
-    }
-
-    private func handleMicrophonePermissionAlert(testCase: XCTestCase) {
-        let handler = testCase
-            .addUIInterruptionMonitor(withDescription: "Microphone Permission Alert") { alertElement -> Bool in
-                let microphoneKeyword = "Microphone"
-                guard alertElement.label.contains(microphoneKeyword) else { return false }
-
-                guard alertElement.buttons["Allow"].exists else { return false }
-                alertElement.buttons["Allow"].tap()
-                return true
-            }
-        self.handler = (testCase, handler)
     }
 }
