@@ -17,6 +17,7 @@
 //
 
 import WireDesign
+import WireSyncEngineSupport
 import WireTestingPackage
 import XCTest
 
@@ -73,7 +74,7 @@ final class UserConnectionViewSnapshotTests: XCTestCase {
         mockUser.isFederated = isFederated
         mockUser.domain = "wire.com"
 
-        let connectionView = UserConnectionView(user: mockUser)
+        let connectionView = UserConnectionView(user: mockUser, userSession: UserSessionMock())
         connectionView.layoutForTest()
         connectionView.backgroundColor = SemanticColors.View.backgroundConversationView
         return connectionView

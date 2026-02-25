@@ -28,11 +28,11 @@ final class IncomingConnectionViewController: UIViewController {
 
     fileprivate var connectionView: IncomingConnectionView!
 
-    let userSession: ZMUserSession?
+    let userSession: UserSession
     let user: UserType
     var onAction: ((IncomingConnectionAction) -> Void)?
 
-    init(userSession: ZMUserSession?, user: UserType) {
+    init(userSession: UserSession, user: UserType) {
         self.userSession = userSession
         self.user = user
         super.init(nibName: .none, bundle: .none)
@@ -47,7 +47,11 @@ final class IncomingConnectionViewController: UIViewController {
     }
 
     override func loadView() {
-        connectionView = IncomingConnectionView(user: user)
+        connectionView = IncomingConnectionView(
+            user: user,
+            userSession: userSession,
+            classificationProvider: userSession as? SecurityClassificationProviding
+        )
         connectionView.onAccept = { [weak self] _ in
             guard let self else { return }
             onAction?(.accept)
@@ -84,7 +88,7 @@ final class UserConnectionViewController: UIViewController {
     }
 
     override func loadView() {
-        userConnectionView = UserConnectionView(user: user)
+        userConnectionView = UserConnectionView(user: user, userSession: userSession)
         view = userConnectionView
     }
 }
