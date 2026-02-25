@@ -1260,18 +1260,22 @@ extension ZMUserSession: SyncAgentDelegate {
             guard let self else { return }
             await fetchAndStoreFeatureConfig()
 
-            let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
+            let (qualifiedSelfClientID, hasRegisteredMLSClient, isE2EIRequired) = await syncContext.perform {
                 let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
                 let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
-                return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
+
+                let isE2EIRequired = LegacyFeatureRepository(context: self.syncContext).fetchE2EI().isEnabled
+                return (selfClient?.qualifiedClientID, hasRegisteredMLSClient, isE2EIRequired)
             }
 
             if let qualifiedSelfClientID {
+
                 await mlsClientManager.initializeMLSClientIfNeeded(
                     for: qualifiedSelfClientID,
                     hasRegisteredMLSClient: hasRegisteredMLSClient,
                     mlsFeature: mlsFeature,
-                    isBackendMLSEnabled: isBackendMLSEnabled
+                    isBackendMLSEnabled: isBackendMLSEnabled,
+                    isE2EIRequired: isE2EIRequired
                 )
             } else {
                 WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")

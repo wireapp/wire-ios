@@ -25,7 +25,8 @@ public protocol MLSClientManagerProtocol {
         for qualifiedClientID: QualifiedClientID,
         hasRegisteredMLSClient: Bool,
         mlsFeature: Feature.MLS,
-        isBackendMLSEnabled: Bool
+        isBackendMLSEnabled: Bool,
+        isE2EIRequired: Bool
     ) async
 
 }
@@ -53,10 +54,16 @@ public final class MLSClientManager: MLSClientManagerProtocol {
         for qualifiedClientID: QualifiedClientID,
         hasRegisteredMLSClient: Bool,
         mlsFeature: Feature.MLS,
-        isBackendMLSEnabled: Bool
+        isBackendMLSEnabled: Bool,
+        isE2EIRequired: Bool
     ) async {
         guard isBackendMLSEnabled, mlsFeature.isEnabled else {
             WireLogger.mls.info("MLS feature in not enabled.")
+            return
+        }
+
+        if !hasRegisteredMLSClient && isE2EIRequired {
+            WireLogger.mls.info("MLS client needs to be initialized via E2EI.")
             return
         }
 
