@@ -190,7 +190,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     func showCallTopOverlay(for conversation: ZMConversation) {
         guard !isCallTopOverlayShown else { return }
-        let callTopOverlayController = CallTopOverlayController(conversation: conversation)
+        let callTopOverlayController = CallTopOverlayController(conversation: conversation, userSession: userSession)
         callTopOverlayController.delegate = self
         topOverlayPresenter.presentTopOverlay(callTopOverlayController, animated: true)
         isCallTopOverlayShown = true
