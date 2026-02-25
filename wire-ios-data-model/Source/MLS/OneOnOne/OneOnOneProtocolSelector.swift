@@ -50,6 +50,9 @@ public final class OneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
             guard let otherUser = ZMUser.fetch(with: id, in: context) else {
                 throw OneOnOneProtocolSelectorError.userNotFound
             }
+            if otherUser.isAccountDeleted {
+                return Set<MessageProtocol>()
+            }
 
             var otherProtocols = otherUser.supportedProtocols
 

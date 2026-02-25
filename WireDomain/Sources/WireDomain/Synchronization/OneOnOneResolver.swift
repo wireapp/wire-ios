@@ -79,21 +79,9 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     ) async throws -> OneOnOneConversationResolution {
         var action: OneOnOneConversationResolution = .noAction
 
-        let user: ZMUser
-        do {
-            user = try await userLocalStore.fetchUser(
-                id: userID.uuid, domain: userID.domain
-            )
-        } catch UserRepositoryError.failedToFetchUser(let userRemoteIdentifier) {
-            WireLogger.conversation.info("user \(userID.safeForLoggingDescription) is deleted, setting as read only", attributes: .safePublic)
-            await setReadOnly(to: true, forOneOnOneWithUser: userID, in: context)
-            return .archivedAsReadOnly
-        }
-        
-        if try await handleDeletedUserIfNeeded(user) {
-            WireLogger.conversation.info("user \(userID.safeForLoggingDescription) is marked as deleted, set as read only", attributes: .safePublic)
-            return .archivedAsReadOnly
-        }
+        let user = try await userLocalStore.fetchUser(
+            id: userID.uuid, domain: userID.domain
+        )
 
         let selfUser = await userLocalStore.fetchSelfUser()
         let commonProtocol = await getCommonProtocol(between: selfUser, and: user)
@@ -158,7 +146,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         }
         return deletedUser
     }
-    
+
     @discardableResult
     private func resolveMLSConversation(for user: ZMUser) async throws -> MLSGroupID {
         WireLogger.conversation.debug("Should resolve to mls 1-1 conversation")
@@ -373,6 +361,9 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         between selfUser: ZMUser,
         and user: ZMUser
     ) async {
+        
+        var mlsGroupToWipe: MLSGroupID?
+
         await context.perform {
             WireLogger.conversation.debug("No common protocols found")
 
@@ -390,6 +381,26 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 }
 
                 conversation.isForcedReadOnly = true
+                if user.isAccountDeleted {
+                    mlsGroupToWipe = conversation.mlsGroupID
+                }
+            }
+        }
+
+        if let mlsGroupToWipe {
+            do {
+                WireLogger.mls.info(
+                    "wiping mls group of user",
+                    attributes: .safePublic,
+                    [.mlsGroupID: mlsGroupToWipe.safeForLoggingDescription]
+                )
+                try await mlsProvider.service.wipeGroup(mlsGroupToWipe)
+            } catch {
+                WireLogger.mls.error(
+                    "failed to wipe mls group for deleted user",
+                    attributes: .safePublic,
+                    [.mlsGroupID: mlsGroupToWipe.safeForLoggingDescription]
+                )
             }
         }
     }
@@ -403,6 +414,9 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
             let otherUserProtocols = otherUser.supportedProtocols.isEmpty ?
                 [.proteus] : otherUser.supportedProtocols /// default to Proteus if empty.
 
+            if otherUser.isAccountDeleted {
+                return nil
+            }
             let commonProtocols = selfUserProtocols.intersection(otherUserProtocols)
 
             if commonProtocols.contains(.mls) {

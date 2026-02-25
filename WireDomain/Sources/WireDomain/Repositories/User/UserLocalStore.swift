@@ -91,8 +91,9 @@ public final class UserLocalStore: UserLocalStoreProtocol {
                 .compactMap { user in
                     guard !user.isAccountDeleted else {
                         WireLogger.conversation.warn(
-                            "skippinig 1-1 conversation of deleted user's"
-                            , attributes: [.senderUserId: user.qualifiedID?.safeForLoggingDescription ?? "<nil>"])
+                            "skippinig 1-1 conversation of deleted user's",
+                            attributes: [.senderUserId: user.qualifiedID?.safeForLoggingDescription ?? "<nil>"]
+                        )
                         return nil
                     }
 

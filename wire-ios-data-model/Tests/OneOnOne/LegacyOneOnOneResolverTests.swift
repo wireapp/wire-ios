@@ -304,6 +304,44 @@ final class LegacyOneOnOneResolverTests: XCTestCase {
         }
     }
 
+
+    func test_ResolveOneOnOneConversation_DeletedUser_SetsReadOnly() async throws {
+        // Given
+        let userID: QualifiedID = .random()
+        let resolver = makeResolver()
+
+        let conversation = await syncContext.perform { [self] in
+            let user = modelHelper.createUser(qualifiedID: userID, in: syncContext)
+            let conversation = modelHelper.createOneOnOne(with: user, in: syncContext)
+            conversation.localParticipantsExcludingSelf.first?.isAccountDeleted = true
+            conversation.messageProtocol = .mls
+            conversation.mlsStatus = .pendingJoin
+            conversation.mlsGroupID = .random()
+            XCTAssertFalse(conversation.isForcedReadOnly)
+
+            return conversation
+        }
+
+        // Mock
+
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.some(.none))
+
+        // When
+        let result = try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
+
+        // Then
+        guard case .archivedAsReadOnly = result else {
+            XCTFail("expected result '.archive'")
+            return
+        }
+
+        await syncContext.perform {
+            XCTAssertEqual(conversation.messageProtocol, .mls)
+            XCTAssertTrue(conversation.isForcedReadOnly)
+            XCTAssertEqual(conversation.lastMessage?.systemMessageData?.systemMessageType, .mlsNotSupportedSelfUser)
+        }
+    }
+
     // MARK: Helpers
 
     private func makeResolver() -> LegacyOneOnOneResolver {
