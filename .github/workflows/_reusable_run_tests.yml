@@ -139,8 +139,14 @@ jobs:
         if: ${{ inputs.run_critical_flows }}
         shell: bash
         run: |
+          set -euo pipefail
           brew install docker colima
-          colima start --cpu 2 --memory 4
+
+          colima stop || true
+          colima delete -f || true
+
+          colima start -f --cpu 2 --memory 4 --vm-type=vz
+
           docker version
 
       - name: Start Testservice
