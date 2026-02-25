@@ -84,8 +84,12 @@ struct FilesFilteringView: View {
             item: $viewModel.sheetNavigation,
             onDismiss: {},
             content: { navigationItem in
-                sheet(for: navigationItem)
-                    .presentationDetents([.medium])
+                if #available(iOS 18.0, *) {
+                    sheet(for: navigationItem)
+                        .presentationSizing(.form.fitted(horizontal: false, vertical: true)) // This will make the height of the sheet dynamic and adapt to the contents. But it only works on iPad.
+                } else {
+                    sheet(for: navigationItem)
+                }
             }
         )
     }
