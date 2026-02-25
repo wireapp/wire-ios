@@ -1026,6 +1026,10 @@ public final class SessionManager: NSObject, SessionManagerType {
                     newSession: userSession,
                     coreDataStack: userSession.coreDataStack
                 )
+
+                userSession.operationLoop?.resumeEnqueuing()
+                await userSession.start()
+
                 return userSession
 
             } catch UserSessionLoader.Failure.buildIsBlacklisted {
