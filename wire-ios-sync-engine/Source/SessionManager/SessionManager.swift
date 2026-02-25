@@ -1604,6 +1604,14 @@ extension SessionManager: UnauthenticatedSessionDelegate {
             return
         }
 
+        // The journal may have old values for the same user
+        // from a previous installation or login session.
+        var journal = Journal(
+            userID: account.userIdentifier,
+            storage: sharedUserDefaults
+        )
+        journal[.isInitialSyncRequired] = true
+
         accountManager.addAndSelect(account)
 
         Task { @MainActor in
