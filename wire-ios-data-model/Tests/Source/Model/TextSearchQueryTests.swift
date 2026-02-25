@@ -17,6 +17,7 @@
 //
 
 import GenericMessageProtocol
+import WireDataModelSupport
 import WireTesting
 
 @testable import WireDataModel
@@ -106,8 +107,13 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
     }
 
     func testThatItDoesntPopulateTheNormalizedTextField_WhenEncryptMessagesAtRestIsEnabled() {
+        let mockEncryptionService = MockEARMessageEncryptionServiceProtocol()
+        mockEncryptionService.getContextDataFrom_MockMethod = { _ in Data() }
+        mockEncryptionService.encryptDataContextData_MockMethod = { _, _ in (Data(), Data()) }
+        mockEncryptionService.decryptDataNonceContextData_MockMethod = { _, _, _ in Data() }
+
+        uiMOC.earMessageEncryptionService = mockEncryptionService
         uiMOC.encryptMessagesAtRest = true
-        uiMOC.databaseKey = validDatabaseKey
 
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()

@@ -244,12 +244,13 @@ public final class SharingSession {
             featureRepository: featureRepository
         )
         let contextStorage = LAContextStorage()
-        let earService = EARService(
+        let earService = await EARService(
             accountID: accountIdentifier,
             databaseContexts: [
                 coreDataStack.viewContext,
                 coreDataStack.syncContext
             ],
+            coreDataStack: coreDataStack,
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: AuthenticationContext(storage: contextStorage)
         )
