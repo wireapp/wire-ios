@@ -550,14 +550,15 @@ private extension WireDriveGetNodesRequest {
                 status: LookupFilterStatusFilter(
                     deleted: .not,
                     hasPublicLink: metafilter.hasPublicLink,
-                    isDraft: false // // Backend filtering is not available; filtering is handled on the client side.
+                    isDraft: false // Backend filtering is not available; filtering is handled on the client side.
                 ),
                 text: LookupFilterTextSearch(searchIn: .baseName, term: searchTerm ?? "*"),
                 type: .leaf
             )
             request.scope = RestLookupScope(
                 recursive: true,
-                root: nil
+                // this is a temp solution until BE handles multiple conversations filtering
+                root: metafilter.conversations?.first.map { RestNodeLocator(.path($0)) }
             )
             
             if let sortField, let sortDirDesc {
@@ -629,18 +630,18 @@ private extension Set<WireDriveNodesMetaFilter> {
     func toDTO() -> [LookupFilterMetaFilter] {
         flatMap { filter -> [LookupFilterMetaFilter] in
             switch filter {
-            case .conversations(let values):
-                return values.map { LookupFilterMetaFilter(namespace: "usermeta-conversation-uuid", operation: .should, term: $0.id) }
+            case .conversations:
+                []
             case .owners(let values):
-                return values.map { LookupFilterMetaFilter(namespace: "usermeta-owner", operation: .should, term: $0.id) }
+                values.map { LookupFilterMetaFilter(namespace: "usermeta-owner", operation: .should, term: $0.id) }
             case .tags(let values):
-                return values.map { LookupFilterMetaFilter(namespace: "usermeta-tags", operation: .should, term: $0) }
+                values.map { LookupFilterMetaFilter(namespace: "usermeta-tags", operation: .should, term: $0) }
             case .types(let values):
-                return values.flatMap(\.contentTypes).compactMap {
+                values.flatMap(\.contentTypes).compactMap {
                     LookupFilterMetaFilter(namespace: "mime", operation: .should, term: $0)
                 }
             case .sharedByMe(let handle):
-                return [LookupFilterMetaFilter(namespace: "usermeta-owner", operation: .should, term: handle)]
+                [LookupFilterMetaFilter(namespace: "usermeta-owner", operation: .should, term: handle)]
             }
         }
     }
@@ -650,6 +651,19 @@ private extension Set<WireDriveNodesMetaFilter> {
             switch filter {
             case .sharedByMe:
                 return true
+            default:
+                continue
+            }
+        }
+        
+        return nil
+    }
+    
+    var conversations: [String]? {
+        for filter in self {
+            switch filter {
+            case .conversations(let values):
+                return values.map(\.id)
             default:
                 continue
             }
