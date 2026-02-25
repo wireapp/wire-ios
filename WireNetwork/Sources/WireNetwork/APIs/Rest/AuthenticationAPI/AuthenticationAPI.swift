@@ -38,11 +38,24 @@ public protocol AuthenticationAPI: Sendable {
         label: String?
     ) async throws -> ([HTTPCookie], AccessToken)
 
-    /// Get on-prem config `URL` for domain
+    /// Get on-prem config `URL` for domain.
+    ///
+    /// - Parameter domain: The domain to look up.
+    /// - Returns: Domain info containing the configuration URL.
+    /// - Throws: `AuthenticationAPIError.invalidDomain` if the domain is empty or invalid.
+    ///   `AuthenticationAPIError.configNotFound` if no custom backend exists for the domain.
 
     func getOnPremConfigURL(forDomain domain: String) async throws -> DomainInfo
 
-    /// Get domain registration configuration by email
+    /// Get domain registration configuration for the given email address.
+    ///
+    /// Available from API version 8 onwards.
+    ///
+    /// - Parameter email: The email address whose domain is used for the lookup.
+    /// - Returns: The domain registration configuration.
+    /// - Throws: `AuthenticationAPIError.invalidDomain` if the domain derived from the email is invalid.
+    ///   `AuthenticationAPIError.serviceUnavailable` if the enterprise service is not enabled.
+    ///   `AuthenticationAPIError.unsupportedEndpointForAPIVersion` if called on a version below v8.
 
     func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration
 
@@ -104,9 +117,14 @@ public protocol AuthenticationAPI: Sendable {
     #if DEBUG
         func activateUser(email: String, key: String, code: String) async throws
     #endif
-    /// Send (or resend) an email activation code
-    /// - Parameters:
-    ///   - email: Email address of the account
+    /// Send (or resend) an email activation code.
+    ///
+    /// - Parameter email: Email address of the account.
+    /// - Throws: `AuthenticationAPIError.RegistrationError.invalidEmail` if the email is invalid.
+    ///   `AuthenticationAPIError.RegistrationError.blacklistedEmail` if the email domain is blacklisted.
+    ///   `AuthenticationAPIError.RegistrationError.keyExists` if the email is already registered.
+    ///   `AuthenticationAPIError.RegistrationError.domainBlocked` if the domain is blocked for registration.
+
     func requestEmailVerificationCode(for email: String) async throws
 
     /// Register a new user.
