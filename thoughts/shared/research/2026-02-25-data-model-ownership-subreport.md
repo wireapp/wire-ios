@@ -270,8 +270,8 @@ extension AuthenticationAccessToken {
 
 ### Scope note (important)
 - This pilot enforces full token-model separation (auth boundary model + separate network model).
-- It does **not** redesign auth routing contracts (issue 5).
-- It does **not** prescribe DI/container changes (issue 2).
+- It does **not** redesign auth routing contracts.
+- It does **not** prescribe DI/container changes.
 - It does **not** perform full decomposition of all `WireNetwork` models in one step.
 
 ### Validation criteria for this pilot

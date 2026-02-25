@@ -188,8 +188,8 @@ Unknown:
 
 ### Scope note (important)
 - This step focuses on broad-module decomposition and ownership convergence.
-- It does **not** redesign flow-capability routing contracts (issue 5).
-- It does **not** prescribe DI framework/container migration (issue 2).
+- It does **not** redesign flow-capability routing contracts.
+- It does **not** prescribe DI framework/container migration.
 - It does **not** attempt a single-shot rewrite of all shared modules.
 
 ### Validation gate

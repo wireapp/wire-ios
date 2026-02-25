@@ -129,7 +129,7 @@ Assessment:
 ## Suggested Next Step (Detailed Example)
 ### Flow-capability pilot on `WireAuthentication` via `WireAuthenticationInterface`
 - Why this pilot:
-  - issue 5 is primarily an auth-routing capability gap (cross-feature "login required" trigger).
+  - is primarily an auth-routing capability gap (cross-feature "login required" trigger).
   - current auth boundary already has typed events (`WireAuthenticationBridge.OutboundEvent`), which can be adapted to a feature-agnostic capability contract.
   - this allows introducing capability-style routing without rewriting all auth internals at once.
   - Evidence:

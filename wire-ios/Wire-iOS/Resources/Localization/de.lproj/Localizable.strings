@@ -1942,6 +1942,7 @@
 "url_action.confirm" = "Bestätigen";
 "url_action.title" = "URL-Aktion bestätigen";
 "url_action.connect_to_bot.message" = "Möchten Sie sich mit dem Bot verbinden?";
+"url_action.user_profile_qr_feature_flag.message" = "Die Verwendung von Profil-Links oder QR-Codes ist in Ihrem Team nicht gestattet. Wenden Sie sich an Ihren Admin.";
 
 "url_action.switch_backend_confirmation.title" = "Umleitung auf ein lokales Backend?";
 "url_action.switch_backend_confirmation.message" = "Wenn Sie fortfahren, werden Sie zum folgenden lokalen Backend weitergeleitet, um sich anzumelden:";

@@ -275,9 +275,9 @@ return UIHostingController(
 
 ### Scope note (important)
 - This pilot addresses internal layer leakage (`UI -> Data`) and composition ownership.
-- It does **not** by itself solve app-facing interface consistency (issue 1).
-- It does **not** by itself solve routing-capability contracts (issue 5).
-- It does **not** prescribe DI-container strategy (issue 2).
+- It does **not** by itself solve app-facing interface consistency.
+- It does **not** by itself solve routing-capability contracts.
+- It does **not** prescribe DI-container strategy.
 
 ### Validation criteria for this pilot
 - `WireMessagingUI/WireDrive/Components/Files/*` has no `WireMessagingData` imports.

@@ -325,9 +325,9 @@ import WireMessagingUI
 
 ### Scope note (important)
 - This pilot hardens assembly export boundaries only.
-- It does **not** replace issue 1 (`FeatureInterface` integration boundary policy).
-- It does **not** replace issue 2 (centralized DI/container strategy).
-- It does **not** replace issue 5 (flow-capability routing contracts).
+- It does **not** replace `FeatureInterface` integration boundary policy.
+- It does **not** replace centralized DI/container strategy.
+- It does **not** replace flow-capability routing contracts.
 
 ### Validation criteria for this pilot
 - No `public import Wire*` remains under `WireMessaging/Sources/WireMessagingAssembly`.
