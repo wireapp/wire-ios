@@ -217,6 +217,64 @@ platform :ios do
         `export TEMP='BUILD_INSTALL_LINK=#{ENV['BETA_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
     end
 
+    desc "Promote existing TestFlight Beta build to groups"
+    lane :promote_testflight_build do |options|
+        build_number = options[:build_number]
+        if build_number.nil?
+            UI.user_error! "Pass build_number parameter to fastlane e.g. fastlane promote_testflight_build build_number:1234"
+        end
+
+        groups = options[:groups]
+        if groups.nil? || groups.empty?
+            UI.user_error! "Pass groups parameter to fastlane e.g. fastlane promote_testflight_build groups:'Wire Employees,Externals - Non Wire Employees'"
+        end
+
+        # Split groups if passed as comma-separated string
+        groups_array = groups.is_a?(String) ? groups.split(',').map(&:strip) : groups
+
+        # Get changelog if provided
+        changelog_text = options[:changelog]
+
+        UI.message("Promoting build #{build_number} to groups: #{groups_array.join(', ')}")
+
+        sh "cp ../wire-ios/Configuration/Appfile ."
+
+        # Get app identifier
+        app_bundle_id = get_xcconfig_value(
+            path: './wire-ios/Configuration/Release.xcconfig',
+            name: 'WIRE_BUNDLE_ID'
+        )
+
+        # Promote the build to specified groups
+        pilot_options = {
+            api_key_path: appstoreconnect_api_key_file_path,
+            app_identifier: app_bundle_id,
+            build_number: build_number,
+            distribute_external: true,
+            groups: groups_array,
+            skip_submission: true,
+            skip_waiting_for_build_processing: true
+        }
+
+        # Add changelog if provided
+        if !changelog_text.nil? && !changelog_text.empty?
+            pilot_options[:changelog] = changelog_text
+        end
+
+        pilot(pilot_options)
+
+        # Save info for notifications
+        `echo APP_NAME=Testflight Beta >> ./.post_build/.env`
+        `echo BUILD_NUMBER=#{build_number} >> ./.post_build/.env`
+        `echo PROMOTED_GROUPS=#{groups_array.join(', ')} >> ./.post_build/.env`
+        `echo BUILD_INSTALL_LINK=#{ENV['BETA_TESTFLIGHT_LINK']} >> ./.post_build/.env`
+
+        # Save changelog for notification
+        if !changelog_text.nil? && !changelog_text.empty?
+            `export TEMP='RELEASE_NOTES=#{Base64.strict_encode64(changelog_text)}' && echo $TEMP >> ./.post_build/.env`
+        end
+    end
+
     desc "Build & Upload Public AppStore build"
     lane :appstore_public do |options|
         options[:build_type] = "AppStore"

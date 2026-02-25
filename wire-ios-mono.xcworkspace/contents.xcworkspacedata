@@ -67,6 +67,9 @@
          location = "group:pr-author-assigner.yml">
       </FileRef>
       <FileRef
+         location = "group:promote_beta_build.yml">
+      </FileRef>
+      <FileRef
          location = "group:public_app_release.yml">
       </FileRef>
       <FileRef

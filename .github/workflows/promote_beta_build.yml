@@ -1,0 +1,116 @@
+name: Promote Beta Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_number:
+        description: 'Build number to promote'
+        required: true
+        type: string
+      groups:
+        description: 'Distribution groups (multiple selection allowed)'
+        required: true
+        type: choice
+        options:
+          - 'Wire Employees'
+          - 'Externals - Non Wire Employees'
+          - 'Wire Employees,Externals - Non Wire Employees'
+      changelog:
+        description: 'Changelog text (optional - will update TestFlight and show in notification)'
+        required: false
+        type: string
+
+env:
+  LC_ALL: en_US.UTF-8
+  LANG: en_US.UTF-8
+
+permissions:
+  checks: write
+
+jobs:
+  promote_build:
+    timeout-minutes: 15
+    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
+    env:
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
+      WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
+      BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
+      REPO_ROOT: ${{ github.workspace }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: 'false'
+          token: ${{ secrets.SUBMODULE_PAT }}
+          submodules: recursive
+
+      - name: Retrieve Xcode version
+        run: |
+          echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
+        id: xcode-version
+
+      - uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Run setup
+        run: sh ./setup.sh
+
+      - name: Promote TestFlight Build
+        run: |
+          mkdir -p ./fastlane/.post_build
+          if [ -n "${{ inputs.changelog }}" ]; then
+            bundle exec fastlane promote_testflight_build build_number:${{ inputs.build_number }} groups:'${{ inputs.groups }}' changelog:'${{ inputs.changelog }}'
+          else
+            bundle exec fastlane promote_testflight_build build_number:${{ inputs.build_number }} groups:'${{ inputs.groups }}'
+          fi
+
+      - name: Load .env file
+        if: always()
+        uses: xom9ikk/dotenv@v2.3.0
+        with:
+          path: fastlane/.post_build
+
+      - uses: akiojin/decode-base64-github-action@v1.0.2
+        if: env.RELEASE_NOTES != ''
+        id: base64-decoded-changelog
+        with:
+          base64: ${{ env.RELEASE_NOTES }}
+
+      - name: Notify on Wire if succeeded
+        if: success()
+        continue-on-error: true
+        uses: 8398a7/action-slack@v3
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
+        with:
+          status: ${{ job.status }}
+          text: |
+            **${{ env.APP_NAME }}** build **${{ env.BUILD_NUMBER }}** has been promoted 🚀
+            **Promoted to groups:** ${{ env.PROMOTED_GROUPS }}
+            **Tap on iOS device to install:** ${{ env.BUILD_INSTALL_LINK }}
+            **Commit:** ${{ github.sha }}
+            **Triggered by:** ${{ github.triggering_actor }}
+            **Promotion log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            **Changelog:**
+            ${{ steps.base64-decoded-changelog.outputs.decoded || inputs.changelog || 'No changelog provided' }}
+
+      - name: Notify on Wire if failed
+        if: failure()
+        continue-on-error: true
+        uses: 8398a7/action-slack@v3
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
+        with:
+          status: ${{ job.status }}
+          text: "🆘 Promotion of build **${{ env.BUILD_NUMBER }}** failed 🆘\n**Commit:** ${{ github.sha }}\n**Triggered by:** ${{ github.triggering_actor }}\n**Promotion log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
