@@ -104,7 +104,7 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
             conversationID: conversationID,
             senderID: senderID
         ) {
-            return callingNotification
+            return callingNotification //nil
         } else {
             return await buildMessageContentNotification(
                 message: message,

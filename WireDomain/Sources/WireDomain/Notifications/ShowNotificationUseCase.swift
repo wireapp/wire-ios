@@ -67,6 +67,10 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
                         attributes: .newNSE, .safePublic
                     )
 
+                    WireLogger.calling.info(
+                        "gagaga !!! callKitContent \(callKitContent)",
+                        attributes: .newNSE, .safePublic
+                    )
                     try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
                 } catch {
                     WireLogger.calling.error(
