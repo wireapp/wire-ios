@@ -135,6 +135,8 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
             tableCell.accessibilityIdentifier = settingsTopLevelMenuItem?.accessibilityID
             tableCell.valueLabel.accessibilityIdentifier = title + "Field"
             tableCell.valueLabel.isAccessibilityElement = true
+            tableCell.accessibilityTraits = .keyboardKey
+            
         }
 
         if let previewGenerator {

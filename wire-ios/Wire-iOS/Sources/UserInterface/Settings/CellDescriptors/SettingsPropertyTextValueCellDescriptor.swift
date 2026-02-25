@@ -48,13 +48,16 @@ final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescrip
         if settingsProperty.enabled {
             textCell.textInput.accessibilityTraits.remove(.staticText)
             textCell.textInput.accessibilityIdentifier = title + "Field"
+            textCell.accessibilityTraits.insert(.keyboardKey)
         } else {
+            textCell.accessibilityTraits.remove(.keyboardKey)
             textCell.textInput.accessibilityTraits.insert(.staticText)
             textCell.textInput.accessibilityIdentifier = title + "FieldDisabled"
         }
 
         textCell.textInput.isEnabled = settingsProperty.enabled
-        textCell.textInput.isAccessibilityElement = true
+
+        textCell.setupAccessibility()
     }
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {

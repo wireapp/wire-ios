@@ -109,8 +109,9 @@ final class SettingsLinkTableCell: SettingsTableCellProtocol {
         ])
     }
 
-    private func setupAccessibility() {
+     func setupAccessibility() {
         isAccessibilityElement = true
+        accessibilityValue = cellLinkLabel.text
         accessibilityTraits = .staticText
     }
 

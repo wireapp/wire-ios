@@ -194,6 +194,8 @@ class SettingsTableCell: SettingsTableCellProtocol {
         super.prepareForReuse()
         preview = .none
         accessibilityIdentifier = nil
+        accessibilityTraits = .none
+        accessibilityElements = nil
     }
 
     func setup() {
@@ -259,7 +261,6 @@ class SettingsTableCell: SettingsTableCellProtocol {
 
     func setupAccessibility() {
         isAccessibilityElement = true
-        accessibilityTraits = .button
         accessibilityValue = valueLabel.text
         let badgeValue = badgeLabel.text ?? ""
         accessibilityHint = badgeValue.isEmpty ? "" : L10n.Accessibility.Settings.DeviceCount.hint("\(badgeValue)")
