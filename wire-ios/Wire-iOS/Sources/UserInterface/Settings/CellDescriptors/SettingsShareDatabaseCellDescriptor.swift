@@ -33,12 +33,12 @@ final class SettingsShareDatabaseCellDescriptor: SettingsButtonCellDescriptor {
 
     let documentDelegate: DocumentDelegate
 
-    init() {
+    init(userSession: UserSession) {
         let documentDelegate = DocumentDelegate()
         self.documentDelegate = documentDelegate
 
-        super.init(title: "Share Database", isDestructive: false) { _ in
-            guard let userSession = ZMUserSession.shared() else { return }
+        super.init(title: "Share Database", isDestructive: false) { [weak userSession] _ in
+            guard let userSession = userSession as? ZMUserSession else { return }
             let fileURL = userSession.managedObjectContext.zm_storeURL!
             let archiveURL = fileURL.appendingPathExtension("zip")
 

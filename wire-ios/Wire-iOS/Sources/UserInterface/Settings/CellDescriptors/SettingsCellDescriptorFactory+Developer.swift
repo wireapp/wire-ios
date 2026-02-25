@@ -77,7 +77,7 @@ extension SettingsCellDescriptorFactory {
             )
         )
 
-        developerCellDescriptors.append(SettingsShareDatabaseCellDescriptor())
+        developerCellDescriptors.append(SettingsShareDatabaseCellDescriptor(userSession: userSession))
 
         developerCellDescriptors.append(
             Button(
