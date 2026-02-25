@@ -19,8 +19,6 @@
 import Foundation
 import WireLogging
 
-public typealias BackgroundFetchHandler = (_ fetchResult: UIBackgroundFetchResult) -> Void
-
 public typealias BackgroundTaskHandler = (_ taskResult: BackgroundTaskResult) -> Void
 
 private let zmLog = ZMSLog(tag: "OperationStatus")
@@ -49,10 +47,6 @@ public enum SyncEngineOperationState: UInt, CustomStringConvertible {
 
     case backgroundCall
 
-    /// The app is active in the background to perform a background fetch.
-
-    case backgroundFetch
-
     /// The app is active in the background to perform a background task.
 
     case backgroundTask
@@ -69,9 +63,6 @@ public enum SyncEngineOperationState: UInt, CustomStringConvertible {
         case .backgroundCall:
             "backgroundCall"
 
-        case .backgroundFetch:
-            "backgroundFetch"
-
         case .backgroundTask:
             "backgroundTask"
 
@@ -86,14 +77,7 @@ public class OperationStatus: NSObject {
 
     public weak var delegate: OperationStatusDelegate?
 
-    private var backgroundFetchTimer: Timer?
     private var backgroundTaskTimer: Timer?
-
-    private var backgroundFetchHandler: BackgroundFetchHandler? {
-        didSet {
-            updateOperationState()
-        }
-    }
 
     private var backgroundTaskHandler: BackgroundTaskHandler? {
         didSet {
@@ -119,29 +103,6 @@ public class OperationStatus: NSObject {
         }
     }
 
-    public func startBackgroundFetch(withCompletionHandler completionHandler: @escaping BackgroundFetchHandler) {
-        startBackgroundFetch(timeout: 30.0, withCompletionHandler: completionHandler)
-    }
-
-    public func startBackgroundFetch(
-        timeout: TimeInterval,
-        withCompletionHandler completionHandler: @escaping BackgroundFetchHandler
-    ) {
-        guard backgroundFetchHandler == nil else {
-            return completionHandler(.failed)
-        }
-
-        backgroundFetchHandler = completionHandler
-        backgroundFetchTimer = Timer.scheduledTimer(
-            timeInterval: timeout,
-            target: self,
-            selector: #selector(backgroundFetchTimeout),
-            userInfo: nil,
-            repeats: false
-        )
-        RequestAvailableNotification.notifyNewRequestsAvailable(self)
-    }
-
     public func startBackgroundTask(withCompletionHandler completionHandler: @escaping BackgroundTaskHandler) {
         startBackgroundTask(timeout: 30.0, withCompletionHandler: completionHandler)
     }
@@ -164,22 +125,8 @@ public class OperationStatus: NSObject {
         )
     }
 
-    func backgroundFetchTimeout() {
-        finishBackgroundFetch(withFetchResult: .failed)
-    }
-
     func backgroundTaskTimeout() {
         finishBackgroundTask(withTaskResult: .failed)
-    }
-
-    public func finishBackgroundFetch(withFetchResult result: UIBackgroundFetchResult) {
-        backgroundFetchTimer?.invalidate()
-        backgroundFetchTimer = nil
-        DispatchQueue.main.async {
-            WireLogger.appState.info("end background fetch", attributes: .safePublic)
-            self.backgroundFetchHandler?(result)
-            self.backgroundFetchHandler = nil
-        }
     }
 
     public func finishBackgroundTask(withTaskResult result: BackgroundTaskResult) {
@@ -206,10 +153,6 @@ public class OperationStatus: NSObject {
 
             if hasOngoingCall {
                 return .backgroundCall
-            }
-
-            if backgroundFetchHandler != nil {
-                return .backgroundFetch
             }
 
             if backgroundTaskHandler != nil {

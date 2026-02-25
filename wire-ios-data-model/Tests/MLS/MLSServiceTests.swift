@@ -33,7 +33,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     var sut: MLSService!
     var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
-    var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     var mockEncryptionService: MockMLSEncryptionServiceInterface!
     var mockDecryptionService: MockMLSDecryptionServiceInterface!
@@ -54,11 +53,11 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     override func setUp() {
         super.setUp()
 
-        mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCryptoContext = MockCoreCryptoContextProtocol()
-        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto, coreCryptoContext: mockCoreCryptoContext)
+        mockCoreCrypto = MockCoreCryptoProtocol()
+        mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
         mockEncryptionService = MockMLSEncryptionServiceInterface()
         mockDecryptionService = MockMLSDecryptionServiceInterface()
         mockMLSActionExecutor = MockMLSActionExecutor()
@@ -118,7 +117,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         sut = nil
         keyMaterialUpdatedExpectation = nil
         mockCoreCryptoContext = nil
-        mockSafeCoreCrypto = nil
+        mockCoreCrypto = nil
         mockEncryptionService = nil
         mockDecryptionService = nil
         mockMLSActionExecutor = nil
@@ -256,7 +255,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         mockCoreCryptoContext.exportSecretKeyConversationIdKeyLength_MockMethod = { _, _ in
-            throw CoreCryptoError.Other("conversation not found")
+            throw CoreCryptoError.Other(msg: "conversation not found")
         }
 
         // When / Then
@@ -377,7 +376,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTAssertEqual($2.ciphersuite, config.ciphersuite)
             XCTAssertEqual($2.custom, config.custom)
 
-            throw CoreCryptoError.Other("malformed identifier")
+            throw CoreCryptoError.Other(msg: "malformed identifier")
         }
 
         // when / then
@@ -857,11 +856,11 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
 
         mockMLSActionExecutor.mockAddMembers = { _, _ in
-            throw CoreCryptoError.Mls(.StaleCommit)
+            throw CoreCryptoError.Mls(mlsError: .StaleCommit)
         }
 
         // when / then
-        await assertItThrows(error: CoreCryptoError.Mls(.StaleCommit)) {
+        await assertItThrows(error: CoreCryptoError.Mls(mlsError: .StaleCommit)) {
             try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
         }
     }
@@ -971,11 +970,11 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock executor error.
         mockMLSActionExecutor.mockRemoveClients = { _, _ in
-            throw CoreCryptoError.Mls(.StaleCommit)
+            throw CoreCryptoError.Mls(mlsError: .StaleCommit)
         }
 
         // When / Then
-        await assertItThrows(error: CoreCryptoError.Mls(.StaleCommit)) {
+        await assertItThrows(error: CoreCryptoError.Mls(mlsError: .StaleCommit)) {
             try await sut.removeMembersFromConversation(with: [mlsClientID], for: mlsGroupID)
         }
     }
@@ -1006,6 +1005,41 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
     }
 
+    func test_PerformPendingJoins_It_JoinsViaExternalCommit_FederationGroup() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+        let conversationID = UUID.create()
+        let domain = localDomain
+        let conversation = await uiMOC.perform { [uiMOC] in
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.remoteIdentifier = conversationID
+
+            conversation.mlsGroupID = groupID
+            conversation.messageProtocol = .mls
+            conversation.mlsStatus = .pendingJoin
+            conversation.conversationType = .group
+
+            conversation.epoch = 0
+            conversation.domain = "foreign.domain"
+            XCTAssertNotEqual(conversation.domain, self.localDomain)
+            return conversation
+        }
+        // mock
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = false
+        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
+        mockMLSActionExecutor.mockJoinGroup = { _, _ in }
+
+        // When
+        try await sut.performPendingJoins()
+
+        // Then
+        XCTAssertEqual(
+            mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations.count,
+            1
+        )
+        XCTAssertEqual(mockMLSActionExecutor.mockJoinGroupCount, 1)
+    }
+
     func assert_PerformPendingJoins_It_Establishes_Group(
         conversationType: ZMConversationType,
         file: StaticString = #file,
@@ -1014,7 +1048,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         let groupID = MLSGroupID.random()
         let conversationID = UUID.create()
-        let domain = "example.domain.com"
+        let domain = localDomain
         let conversation = await uiMOC.perform { [uiMOC] in
             let conversation = ZMConversation.insertNewObject(in: uiMOC)
             conversation.remoteIdentifier = conversationID
@@ -1148,7 +1182,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             joinGroupCount += 1
 
             if joinGroupCount == 1 {
-                throw CoreCryptoError.Mls(.MessageRejected(reason: try error.encodeAsString()))
+                throw CoreCryptoError.Mls(mlsError: .MessageRejected(reason: try error.encodeAsString()))
             }
         }
 
@@ -1741,7 +1775,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockUpdateKeyMaterialCount += 1 }
             switch mockUpdateKeyMaterialCount {
             case 0:
-                throw CoreCryptoError.Mls(.MessageRejected(
+                throw CoreCryptoError.Mls(mlsError: .MessageRejected(
                     reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
                 ))
             default:
@@ -1769,7 +1803,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockUpdateKeyMaterialCount += 1 }
             switch mockUpdateKeyMaterialCount {
             case 0 ..< 3:
-                throw CoreCryptoError.Mls(.MessageRejected(
+                throw CoreCryptoError.Mls(mlsError: .MessageRejected(
                     reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
                 ))
             default:
@@ -1793,13 +1827,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // again.
 
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw CoreCryptoError.Mls(.MessageRejected(
+            throw CoreCryptoError.Mls(mlsError: .MessageRejected(
                 reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
             ))
         }
 
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
-            throw CoreCryptoError.Mls(.MessageRejected(
+            throw CoreCryptoError.Mls(mlsError: .MessageRejected(
                 reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
             ))
         }
@@ -1823,13 +1857,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // again.
 
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw CoreCryptoError.Mls(.MessageRejected(
+            throw CoreCryptoError.Mls(mlsError: .MessageRejected(
                 reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
             ))
         }
 
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
-            throw CoreCryptoError.Mls(.MessageRejected(
+            throw CoreCryptoError.Mls(mlsError: .MessageRejected(
                 reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
             ))
         }
@@ -1853,7 +1887,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockCommitPendingProposalsCount += 1 }
             switch mockCommitPendingProposalsCount {
             case 0 ..< 2:
-                throw CoreCryptoError.Mls(.MessageRejected(
+                throw CoreCryptoError.Mls(mlsError: .MessageRejected(
                     reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
                 ))
             default:
@@ -1867,7 +1901,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockUpdateKeyMaterialCount += 1 }
             switch mockUpdateKeyMaterialCount {
             case 0 ..< 3:
-                throw CoreCryptoError.Mls(.MessageRejected(
+                throw CoreCryptoError.Mls(mlsError: .MessageRejected(
                     reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
                 ))
             default:
@@ -1905,7 +1939,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 }
                 let error = MLSAPIError.groupOutOfSync(missingUsers: Set(users))
                 let reason = try error.encodeAsString()
-                throw CoreCryptoError.Mls(.MessageRejected(reason: reason))
+                throw CoreCryptoError.Mls(mlsError: .MessageRejected(reason: reason))
             } else {
                 // Success.
             }
@@ -1949,7 +1983,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockCommitPendingProposalsCount += 1 }
             switch mockCommitPendingProposalsCount {
             case 0:
-                throw CoreCryptoError.Mls(.MessageRejected(
+                throw CoreCryptoError.Mls(mlsError: .MessageRejected(
                     reason: try MLSAPIError.mlsCommitMissingReferences.encodeAsString()
                 ))
             default:
@@ -1989,7 +2023,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         var mockUpdateKeyMaterialCount = 0
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
             defer { mockUpdateKeyMaterialCount += 1 }
-            throw CoreCryptoError.Mls(.MessageRejected(
+            throw CoreCryptoError.Mls(mlsError: .MessageRejected(
                 reason: try unrecoverableError.encodeAsString()
             ))
         }
@@ -2019,7 +2053,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockMLSActionExecutor.mockUpdateKeyMaterial = { groupID in
             if groupID == group2 {
                 // Given one of the group fails
-                throw CoreCryptoError.Mls(.MessageRejected(reason: "mls stale mesage"))
+                throw CoreCryptoError.Mls(mlsError: .MessageRejected(reason: "mls stale mesage"))
             } else {
                 updatedGroups.append(groupID)
             }
@@ -2697,7 +2731,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let updateKeyMaterialInvocations = [MLSGroupID]()
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
             throw CoreCryptoError
-                .Mls(.MessageRejected(reason: try MLSAPIError.mlsInvalidLeafNodeSignature.encodeAsString()))
+                .Mls(mlsError: .MessageRejected(reason: try MLSAPIError.mlsInvalidLeafNodeSignature.encodeAsString()))
         }
 
         // When
@@ -2738,7 +2772,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let updateKeyMaterialInvocations = [MLSGroupID]()
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
             throw CoreCryptoError
-                .Mls(.MessageRejected(reason: reason))
+                .Mls(mlsError: .MessageRejected(reason: reason))
         }
 
         // When

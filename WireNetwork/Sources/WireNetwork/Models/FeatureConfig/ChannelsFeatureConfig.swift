@@ -18,7 +18,7 @@
 
 /// A configuration for the *Channels* feature.
 
-public struct ChannelsFeatureConfig: Equatable, Sendable {
+public struct ChannelsFeatureConfig: Equatable, Sendable, Hashable {
 
     /// The feature's status.
 

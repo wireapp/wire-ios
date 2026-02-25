@@ -9,6 +9,11 @@
         "status": "enabled",
         "ttl": "unlimited"
     },
+    "apps": {
+        "lockStatus": "locked",
+        "status": "enabled",
+        "ttl": "unlimited"
+    },
     "assetAuditLog": {
         "lockStatus": "locked",
         "status": "enabled",
@@ -135,6 +140,11 @@
         "lockStatus": "locked",
         "status": "enabled",
         "ttl": "unlimited"
+    },
+    "simplifiedUserConnectionRequestQRCode": {
+      "lockStatus": "locked",
+      "status": "disabled",
+      "ttl": "unlimited"
     },
     "sndFactorPasswordChallenge": {
         "lockStatus": "locked",
