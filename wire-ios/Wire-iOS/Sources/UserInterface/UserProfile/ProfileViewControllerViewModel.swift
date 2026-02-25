@@ -90,7 +90,7 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
         conversation: ZMConversation?,
         viewer: UserType,
         context: ProfileViewControllerContext,
-        classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
+        classificationProvider: SecurityClassificationProviding?,
         userSession: UserSession,
         profileActionsFactory: ProfileActionsFactoryProtocol
     ) {

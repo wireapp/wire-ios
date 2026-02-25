@@ -68,7 +68,6 @@ final class ProfileViewController: UIViewController {
         viewer: UserType,
         conversation: ZMConversation? = nil,
         context: ProfileViewControllerContext? = nil,
-        classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
@@ -93,7 +92,7 @@ final class ProfileViewController: UIViewController {
             conversation: conversation,
             viewer: viewer,
             context: profileViewControllerContext,
-            classificationProvider: classificationProvider,
+            classificationProvider: userSession as? SecurityClassificationProviding,
             userSession: userSession,
             profileActionsFactory: profileActionsFactory
         )
