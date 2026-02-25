@@ -374,19 +374,18 @@ enum MockMessageFactory {
     static func textMessageWithEmbeddedLink(
         text: String,
         originalURL: String,
-        sender: UserType? = nil
+        sender: UserType? = nil,
+        offset: Int
     ) -> MockMessage {
         let message: MockMessage = MockMessageFactory.messageTemplate(sender: sender)
-        // Use the MockTextMessageData defined above, which has an accessible initializer
         let textMessageData = MockTextMessageData()
-        // messageText: text, originalURLString: originalURL
         textMessageData.messageText = text
 
         let article = ArticleMetadata(
             originalURLString: originalURL,
             permanentURLString: "http://foo.bar/baz",
             resolvedURLString: "http://foo.bar/baz",
-            offset: 0
+            offset: offset
         )
         textMessageData.backingLinkPreview = article
 

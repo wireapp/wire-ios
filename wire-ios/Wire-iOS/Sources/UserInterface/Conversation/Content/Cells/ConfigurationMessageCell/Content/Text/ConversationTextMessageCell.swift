@@ -481,18 +481,32 @@ extension ConversationTextMessageCellDescription {
     }
 
     static func findEmbeddedLinks(in textMessageData: TextMessageData) -> [NSTextCheckingResult] {
-        guard let originalURLString = textMessageData.linkPreview?.originalURLString,
+        guard let messageTextString = textMessageData.messageText else {
+            return []
+        }
+        guard let linkPreview = textMessageData.linkPreview,
+              let originalURLString = textMessageData.linkPreview?.originalURLString,
               let url = URL(string: originalURLString),
-              let messageTextString = textMessageData.messageText else {
+              let scheme = url.scheme,
+              ["http", "https"].contains(scheme.lowercased()) else {
+            return []
+        }
+        let expectedRange = NSRange(
+            location: linkPreview.characterOffsetInText,
+            length: linkPreview.textLengthInMessage
+        )
+        guard expectedRange.location >= 0,
+              expectedRange.length >= 0,
+              expectedRange.location + expectedRange.length <= messageTextString.count else {
             return []
         }
 
-        guard let rangeOfEmbeddedLink = messageTextString.range(of: originalURLString) else {
+        let nsMessageText = messageTextString as NSString
+        let textAtRange = nsMessageText.substring(with: expectedRange)
+        guard textAtRange == originalURLString else {
             return []
         }
-
-        let nsRange = NSRange(rangeOfEmbeddedLink, in: messageTextString)
-        let linkResult = NSTextCheckingResult.linkCheckingResult(range: nsRange, url: url)
+        let linkResult = NSTextCheckingResult.linkCheckingResult(range: expectedRange, url: url)
         return [linkResult]
     }
 }

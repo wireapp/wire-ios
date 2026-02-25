@@ -25,6 +25,11 @@ open class LinkMetadata: NSObject {
     public let permanentURL: URL?
     public let resolvedURL: URL?
     public let characterOffsetInText: Int
+
+    public var textLengthInMessage: Int {
+        originalURLString.count
+    }
+
     open var imageURLs = [URL]()
     open var imageData = [Data]()
 

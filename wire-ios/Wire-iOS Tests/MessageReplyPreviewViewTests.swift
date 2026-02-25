@@ -217,7 +217,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             )
     }
 
-    func testThatItRendersLinkPreviewMessagePreview() {
+    func testThatItRendersLinkPreviewMessagePreview() throws {
         let url = "https://www.example.com/article/1"
         let article = ArticleMetadata(
             originalURLString: url,
@@ -234,29 +234,28 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .jpegData(compressionQuality: 0.9)
         message.backingTextMessageData.linkPreviewHasImage = true
 
-        if let previewView = message.replyPreview() {
-            XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
+        let previewView = try XCTUnwrap(message.replyPreview())
+        XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
-            snapshotHelper
-                .withUserInterfaceStyle(.light)
-                .verify(
-                    matching: previewView.prepareForSnapshot(),
-                    named: "LightTheme",
-                    file: #filePath,
-                    testName: #function,
-                    line: #line
-                )
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(
+                matching: previewView.prepareForSnapshot(),
+                named: "LightTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
 
-            snapshotHelper
-                .withUserInterfaceStyle(.dark)
-                .verify(
-                    matching: previewView.prepareForSnapshot(),
-                    named: "DarkTheme",
-                    file: #filePath,
-                    testName: #function,
-                    line: #line
-                )
-        }
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: previewView.prepareForSnapshot(),
+                named: "DarkTheme",
+                file: #filePath,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testThatItRendersImageMessagePreview() throws {
