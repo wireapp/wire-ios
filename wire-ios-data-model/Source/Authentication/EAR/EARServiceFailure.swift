@@ -19,6 +19,5 @@
 enum EARServiceFailure: Error {
 
     case cannotPerformMigration
-    case databaseKeyMissing
 
 }
