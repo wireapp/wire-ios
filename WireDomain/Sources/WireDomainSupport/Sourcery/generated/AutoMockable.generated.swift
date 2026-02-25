@@ -2505,6 +2505,29 @@ public class MockIncrementalSyncProtocol: IncrementalSyncProtocol {
         }
     }
 
+    // MARK: - performForCallingEventsOnly
+
+    public var performForCallingEventsOnly_Invocations: [Void] = []
+    public var performForCallingEventsOnly_MockError: Error?
+    public var performForCallingEventsOnly_MockMethod: (() async throws -> IncrementalSync.Token)?
+    public var performForCallingEventsOnly_MockValue: IncrementalSync.Token?
+
+    public func performForCallingEventsOnly() async throws -> IncrementalSync.Token {
+        performForCallingEventsOnly_Invocations.append(())
+
+        if let error = performForCallingEventsOnly_MockError {
+            throw error
+        }
+
+        if let mock = performForCallingEventsOnly_MockMethod {
+            return try await mock()
+        } else if let mock = performForCallingEventsOnly_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `performForCallingEventsOnly`")
+        }
+    }
+
 }
 
 public class MockInitialSyncProtocol: InitialSyncProtocol {
@@ -3328,24 +3351,24 @@ class MockPullEventsUseCaseProtocol: PullEventsUseCaseProtocol {
 
     // MARK: - invoke
 
-    var invoke_Invocations: [Void] = []
-    var invoke_MockError: Error?
-    var invoke_MockMethod: (() async throws -> AsyncStream<[UpdateEvent]>)?
-    var invoke_MockValue: AsyncStream<[UpdateEvent]>?
+    var invokePublicKeys_Invocations: [EARPublicKeys?] = []
+    var invokePublicKeys_MockError: Error?
+    var invokePublicKeys_MockMethod: ((EARPublicKeys?) async throws -> AsyncStream<[UpdateEvent]>)?
+    var invokePublicKeys_MockValue: AsyncStream<[UpdateEvent]>?
 
-    func invoke() async throws -> AsyncStream<[UpdateEvent]> {
-        invoke_Invocations.append(())
+    func invoke(publicKeys: EARPublicKeys?) async throws -> AsyncStream<[UpdateEvent]> {
+        invokePublicKeys_Invocations.append(publicKeys)
 
-        if let error = invoke_MockError {
+        if let error = invokePublicKeys_MockError {
             throw error
         }
 
-        if let mock = invoke_MockMethod {
-            return try await mock()
-        } else if let mock = invoke_MockValue {
+        if let mock = invokePublicKeys_MockMethod {
+            return try await mock(publicKeys)
+        } else if let mock = invokePublicKeys_MockValue {
             return mock
         } else {
-            fatalError("no mock for `invoke`")
+            fatalError("no mock for `invokePublicKeys`")
         }
     }
 
@@ -3478,25 +3501,25 @@ public class MockPullPendingUpdateEventsSyncProtocol: PullPendingUpdateEventsSyn
 
     // MARK: - pull
 
-    public var pull_Invocations: [Void] = []
-    public var pull_MockError: Error?
-    public var pull_MockMethod: (() async throws -> AsyncStream<[UpdateEvent]>)?
-    public var pull_MockValue: AsyncStream<[UpdateEvent]>?
+    public var pullPublicKeys_Invocations: [EARPublicKeys?] = []
+    public var pullPublicKeys_MockError: Error?
+    public var pullPublicKeys_MockMethod: ((EARPublicKeys?) async throws -> AsyncStream<[UpdateEvent]>)?
+    public var pullPublicKeys_MockValue: AsyncStream<[UpdateEvent]>?
 
     @discardableResult
-    public func pull() async throws -> AsyncStream<[UpdateEvent]> {
-        pull_Invocations.append(())
+    public func pull(publicKeys: EARPublicKeys?) async throws -> AsyncStream<[UpdateEvent]> {
+        pullPublicKeys_Invocations.append(publicKeys)
 
-        if let error = pull_MockError {
+        if let error = pullPublicKeys_MockError {
             throw error
         }
 
-        if let mock = pull_MockMethod {
-            return try await mock()
-        } else if let mock = pull_MockValue {
+        if let mock = pullPublicKeys_MockMethod {
+            return try await mock(publicKeys)
+        } else if let mock = pullPublicKeys_MockValue {
             return mock
         } else {
-            fatalError("no mock for `pull`")
+            fatalError("no mock for `pullPublicKeys`")
         }
     }
 
@@ -4646,64 +4669,64 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
 
     // MARK: - persistEventEnvelope
 
-    public var persistEventEnvelopeIndex_Invocations: [(eventEnvelope: UpdateEventEnvelope, index: Int64)] = []
-    public var persistEventEnvelopeIndex_MockError: Error?
-    public var persistEventEnvelopeIndex_MockMethod: ((UpdateEventEnvelope, Int64) async throws -> Void)?
+    public var persistEventEnvelopeIndexPublicKeys_Invocations: [(eventEnvelope: UpdateEventEnvelope, index: Int64, publicKeys: EARPublicKeys?)] = []
+    public var persistEventEnvelopeIndexPublicKeys_MockError: Error?
+    public var persistEventEnvelopeIndexPublicKeys_MockMethod: ((UpdateEventEnvelope, Int64, EARPublicKeys?) async throws -> Void)?
 
-    public func persistEventEnvelope(_ eventEnvelope: UpdateEventEnvelope, index: Int64) async throws {
-        persistEventEnvelopeIndex_Invocations.append((eventEnvelope: eventEnvelope, index: index))
+    public func persistEventEnvelope(_ eventEnvelope: UpdateEventEnvelope, index: Int64, publicKeys: EARPublicKeys?) async throws {
+        persistEventEnvelopeIndexPublicKeys_Invocations.append((eventEnvelope: eventEnvelope, index: index, publicKeys: publicKeys))
 
-        if let error = persistEventEnvelopeIndex_MockError {
+        if let error = persistEventEnvelopeIndexPublicKeys_MockError {
             throw error
         }
 
-        guard let mock = persistEventEnvelopeIndex_MockMethod else {
-            fatalError("no mock for `persistEventEnvelopeIndex`")
+        guard let mock = persistEventEnvelopeIndexPublicKeys_MockMethod else {
+            fatalError("no mock for `persistEventEnvelopeIndexPublicKeys`")
         }
 
-        try await mock(eventEnvelope, index)
+        try await mock(eventEnvelope, index, publicKeys)
     }
 
     // MARK: - persistEventEnvelopes
 
-    public var persistEventEnvelopesIndex_Invocations: [(eventEnvelopes: [UpdateEventEnvelope], index: Int64)] = []
-    public var persistEventEnvelopesIndex_MockError: Error?
-    public var persistEventEnvelopesIndex_MockMethod: (([UpdateEventEnvelope], Int64) async throws -> Void)?
+    public var persistEventEnvelopesIndexPublicKeys_Invocations: [(eventEnvelopes: [UpdateEventEnvelope], index: Int64, publicKeys: EARPublicKeys?)] = []
+    public var persistEventEnvelopesIndexPublicKeys_MockError: Error?
+    public var persistEventEnvelopesIndexPublicKeys_MockMethod: (([UpdateEventEnvelope], Int64, EARPublicKeys?) async throws -> Void)?
 
-    public func persistEventEnvelopes(_ eventEnvelopes: [UpdateEventEnvelope], index: Int64) async throws {
-        persistEventEnvelopesIndex_Invocations.append((eventEnvelopes: eventEnvelopes, index: index))
+    public func persistEventEnvelopes(_ eventEnvelopes: [UpdateEventEnvelope], index: Int64, publicKeys: EARPublicKeys?) async throws {
+        persistEventEnvelopesIndexPublicKeys_Invocations.append((eventEnvelopes: eventEnvelopes, index: index, publicKeys: publicKeys))
 
-        if let error = persistEventEnvelopesIndex_MockError {
+        if let error = persistEventEnvelopesIndexPublicKeys_MockError {
             throw error
         }
 
-        guard let mock = persistEventEnvelopesIndex_MockMethod else {
-            fatalError("no mock for `persistEventEnvelopesIndex`")
+        guard let mock = persistEventEnvelopesIndexPublicKeys_MockMethod else {
+            fatalError("no mock for `persistEventEnvelopesIndexPublicKeys`")
         }
 
-        try await mock(eventEnvelopes, index)
+        try await mock(eventEnvelopes, index, publicKeys)
     }
 
     // MARK: - fetchStoredEventEnvelopes
 
-    public var fetchStoredEventEnvelopesLimit_Invocations: [UInt] = []
-    public var fetchStoredEventEnvelopesLimit_MockError: Error?
-    public var fetchStoredEventEnvelopesLimit_MockMethod: ((UInt) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)])?
-    public var fetchStoredEventEnvelopesLimit_MockValue: [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)]?
+    public var fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations: [(limit: UInt, privateKeys: EARPrivateKeys?, backgroundAccessibleOnly: Bool)] = []
+    public var fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockError: Error?
+    public var fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockMethod: ((UInt, EARPrivateKeys?, Bool) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)])?
+    public var fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockValue: [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)]?
 
-    public func fetchStoredEventEnvelopes(limit: UInt) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)] {
-        fetchStoredEventEnvelopesLimit_Invocations.append(limit)
+    public func fetchStoredEventEnvelopes(limit: UInt, privateKeys: EARPrivateKeys?, backgroundAccessibleOnly: Bool) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)] {
+        fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.append((limit: limit, privateKeys: privateKeys, backgroundAccessibleOnly: backgroundAccessibleOnly))
 
-        if let error = fetchStoredEventEnvelopesLimit_MockError {
+        if let error = fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockError {
             throw error
         }
 
-        if let mock = fetchStoredEventEnvelopesLimit_MockMethod {
-            return try await mock(limit)
-        } else if let mock = fetchStoredEventEnvelopesLimit_MockValue {
+        if let mock = fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockMethod {
+            return try await mock(limit, privateKeys, backgroundAccessibleOnly)
+        } else if let mock = fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchStoredEventEnvelopesLimit`")
+            fatalError("no mock for `fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly`")
         }
     }
 

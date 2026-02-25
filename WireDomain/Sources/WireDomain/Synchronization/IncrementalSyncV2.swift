@@ -51,6 +51,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let syncMarkerGenerator: SyncMarkerGenerator
     private let createPushChannelState: CreatePushChannelStateClosure
     private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
+    private let earService: EARServiceInterface
 
     weak var delegate: (any LiveSyncDelegate)?
 
@@ -68,6 +69,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         journal: Journal,
         mlsGroupRepairAgent: MLSGroupRepairAgentProtocol,
+        earService: EARServiceInterface,
         createPushChannelState: @escaping CreatePushChannelStateClosure,
         syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
@@ -84,6 +86,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.coreCryptoProvider = coreCryptoProvider
         self.journal = journal
         self.mlsGroupRepairAgent = mlsGroupRepairAgent
+        self.earService = earService
         self.syncMarkerGenerator = syncMarkerGenerator
         self.createPushChannelState = createPushChannelState
     }
@@ -192,7 +195,12 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             // If we need to abort, do it before processing the next batch.
             try Task.checkCancellation()
 
-            let envelopesWithObjectIDs = try await updateEventsStore.fetchStoredEventEnvelopes(limit: batchSize)
+            // TODO: [WPB-23558] Support EAR in incremental sync v2
+            let envelopesWithObjectIDs = try await updateEventsStore.fetchStoredEventEnvelopes(
+                limit: batchSize,
+                privateKeys: nil,
+                backgroundAccessibleOnly: false
+            )
             let envelopes = envelopesWithObjectIDs.map(\.envelope)
             let envelopesObjectIDs = envelopesWithObjectIDs.map(\.objectID)
 
@@ -402,7 +410,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 attributes: [.eventEnvelopeID: envelope.id] + logAttributes
             )
             index = try await updateEventsStore.indexOfLastEventEnvelope() + 1
-            try await updateEventsStore.persistEventEnvelope(envelope, index: index)
+            try await updateEventsStore.persistEventEnvelope(envelope, index: index, publicKeys: nil)
         } catch {
             logger.error(
                 "failed to store live event envelope: \(String(describing: error))",

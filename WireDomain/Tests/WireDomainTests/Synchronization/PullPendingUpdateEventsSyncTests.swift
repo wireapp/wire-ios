@@ -83,12 +83,12 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
             EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
         }
 
-        store.persistEventEnvelopesIndex_MockMethod = { _, _ in }
+        store.persistEventEnvelopesIndexPublicKeys_MockMethod = { _, _, _ in }
         store.storeLastEventIDId_MockMethod = { _ in }
         store.storeServerTimeDelta_MockMethod = { _ in }
 
         // When
-        try await sut.pull()
+        try await sut.pull(publicKeys: nil)
 
         // Then we used the api to fetch pending events.
         let apiInvocations = api.getUpdateEventsSelfClientIDSinceEventID_Invocations
@@ -105,7 +105,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         XCTAssertEqual(decryptorInvocations[3].eventEnvelope.id, Scaffolding.envelope4.id)
 
         // Then the events were stored at correct indices.
-        let persistInvocactions = store.persistEventEnvelopesIndex_Invocations
+        let persistInvocactions = store.persistEventEnvelopesIndexPublicKeys_Invocations
         try XCTAssertCount(persistInvocactions, count: 2)
         XCTAssertEqual(persistInvocactions[0].index, Scaffolding.indexOfLastEventEnvelope + 1)
         XCTAssertEqual(persistInvocactions[1].index, Scaffolding.indexOfLastEventEnvelope + 1)
@@ -137,7 +137,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
             EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
         }
 
-        store.persistEventEnvelopesIndex_MockMethod = { _, _ in }
+        store.persistEventEnvelopesIndexPublicKeys_MockMethod = { _, _, _ in }
         store.storeLastEventIDId_MockMethod = { _ in }
         store.storeServerTimeDelta_MockMethod = { _ in }
 
@@ -145,7 +145,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
 
         // When
         let pullingEventsTask = Task { [sut] in
-            try await sut.pull()
+            try await sut.pull(publicKeys: nil)
         }
 
         // we wait until the sync tries to commit the batch of decrypted events
