@@ -27,10 +27,12 @@ final class TopPeopleSectionController: SearchSectionController {
     var token: Any?
     weak var delegate: SearchSectionControllerDelegate?
 
-    init(topConversationsDirectory: TopConversationsDirectory!) {
+    init(topConversationsDirectory: TopConversationsDirectory!, userSession: UserSession) {
         self.topConversationsDirectory = topConversationsDirectory
 
         super.init()
+
+        innerCollectionViewController.userSession = userSession
 
         createInnerCollectionView()
 

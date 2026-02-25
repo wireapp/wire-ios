@@ -46,6 +46,11 @@ final class TopPeopleCell: UICollectionViewCell {
         }
     }
 
+    var userSession: UserSession? {
+        get { badgeUserImageView.userSession }
+        set { badgeUserImageView.userSession = newValue }
+    }
+
     private let badgeUserImageView = BadgeUserImageView()
     private let conversationImageView = UIImageView()
     private let nameLabel = UILabel()
@@ -88,7 +93,6 @@ final class TopPeopleCell: UICollectionViewCell {
 
         badgeUserImageView.removeFromSuperview()
         badgeUserImageView.initialsFont = .systemFont(ofSize: 11, weight: .light)
-        badgeUserImageView.userSession = ZMUserSession.shared()
         badgeUserImageView.isUserInteractionEnabled = false
         badgeUserImageView.wr_badgeIconSize = 16
         badgeUserImageView.accessibilityIdentifier = "TopPeopleAvatar"
