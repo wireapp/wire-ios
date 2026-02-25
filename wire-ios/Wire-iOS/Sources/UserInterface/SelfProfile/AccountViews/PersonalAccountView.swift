@@ -37,10 +37,12 @@ final class PersonalAccountView: BaseAccountView {
 
     private var conversationListObserver: NSObjectProtocol!
     private var connectionRequestObserver: NSObjectProtocol!
+    private let userSession: UserSession
 
     // MARK: - Init
 
-    override init(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
+    init(account: Account, user: ZMUser? = nil, userSession: UserSession, displayContext: DisplayContext) {
+        self.userSession = userSession
         super.init(account: account, user: user, displayContext: displayContext)
 
         self.isAccessibilityElement = true
@@ -50,7 +52,7 @@ final class PersonalAccountView: BaseAccountView {
 
         selectionView.layer.masksToBounds = true
 
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             self.conversationListObserver = ConversationListChangeInfo.add(
                 observer: self,
                 for: ConversationList.conversations(inUserSession: userSession),

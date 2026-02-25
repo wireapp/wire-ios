@@ -42,7 +42,7 @@ final class AccountViewSnapshotTests: XCTestCase {
     func testThatItShowsBasicAccount_Personal() {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: nil)
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
+        let sut = PersonalAccountView(account: account, userSession: UserSessionMock(), displayContext: .accountSelector)
 
         // WHEN && THEN
         snapshotHelper.verify(matching: sut)
@@ -51,7 +51,7 @@ final class AccountViewSnapshotTests: XCTestCase {
     func testThatItShowsBasicAccountSelected_Personal() {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: nil)
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
+        let sut = PersonalAccountView(account: account, userSession: UserSessionMock(), displayContext: .accountSelector)
         sut.overrideUserInterfaceStyle = .light
         // WHEN
         sut.selected = true
@@ -63,7 +63,7 @@ final class AccountViewSnapshotTests: XCTestCase {
     func testThatItShowsBasicAccountWithPicture_Personal() {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: imageData)
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
+        let sut = PersonalAccountView(account: account, userSession: UserSessionMock(), displayContext: .accountSelector)
 
         // WHEN && THEN
         snapshotHelper.verify(matching: sut)
@@ -72,7 +72,7 @@ final class AccountViewSnapshotTests: XCTestCase {
     func testThatItShowsBasicAccountWithPictureSelected_Personal() {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: imageData)
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
+        let sut = PersonalAccountView(account: account, userSession: UserSessionMock(), displayContext: .accountSelector)
         // WHEN
         sut.selected = true
         // THEN

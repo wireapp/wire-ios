@@ -17,18 +17,20 @@
 //
 
 import WireDataModel
+import WireSyncEngine
 
 struct AccountViewBuilder {
 
     var account: Account
     var user: ZMUser?
+    var userSession: UserSession
     var displayContext: DisplayContext
 
     func build() -> BaseAccountView {
         if let accountView = TeamAccountView(user: user, account: account, displayContext: displayContext) {
             accountView
         } else {
-            PersonalAccountView(account: account, user: user, displayContext: displayContext)
+            PersonalAccountView(account: account, user: user, userSession: userSession, displayContext: displayContext)
         }
     }
 }
