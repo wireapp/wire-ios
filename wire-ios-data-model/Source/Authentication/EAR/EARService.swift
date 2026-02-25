@@ -125,6 +125,12 @@ public class EARService: EARServiceInterface {
         }
     }
 
+    // MARK: - Lock status
+
+    public var isLocked: Bool {
+        earMessageEncryptionService.isLocked
+    }
+
     // MARK: - Feature Flag
 
     /// Whether encryption at rest is enabled.
