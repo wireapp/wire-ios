@@ -71,6 +71,7 @@ extension SessionManager: UserSessionLogoutDelegate {
             let environment = try? environmentStore.fetchBackendEnvironment(accountID: accountId)
 
             delegate?.sessionManagerWillLogout(
+                accountID: accountId,
                 environment: environment,
                 error: error,
                 userSessionCanBeTornDown: nil

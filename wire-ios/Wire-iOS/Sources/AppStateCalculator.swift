@@ -26,7 +26,7 @@ enum AppState: Equatable {
     case headless
     case locked(UserSession)
     case authenticated(UserSession)
-    case unauthenticated(environment: BackendEnvironment2?, error: NSError?)
+    case unauthenticated(accountID: UUID?, environment: BackendEnvironment2?, error: NSError?)
     case blacklisted(reason: BlacklistReason)
     case jailbroken
     case certificateEnrollmentRequired
@@ -43,9 +43,10 @@ enum AppState: Equatable {
             true
         case (.authenticated, .authenticated):
             true
-        case let (.unauthenticated(env1, error1), .unauthenticated(env2, error2)):
+        case let (.unauthenticated(id1, env1, error1), .unauthenticated(id2, env2, error2)):
+            id1 == id2 &&
             env1 == env2 &&
-                error1 === error2
+            error1 === error2
         case let (.blacklisted(reason1), .blacklisted(reason2)):
             reason1 == reason2
         case (jailbroken, jailbroken):
@@ -78,7 +79,7 @@ extension AppState: CustomDebugStringConvertible {
             "locked"
         case .authenticated:
             "authenticated"
-        case let .unauthenticated(_, error):
+        case let .unauthenticated(_, _, error):
             "unauthenticated: \(error.debugDescription)"
         case let .blacklisted(reason: reason):
             "blacklisted: \(reason)"
@@ -109,7 +110,7 @@ extension AppState: SafeForLoggingStringConvertible {
             "locked"
         case .authenticated:
             "authenticated"
-        case let .unauthenticated(_, error):
+        case let .unauthenticated(_, _, error):
             "unauthenticated \(error?.localizedDescription ?? "<nil>")"
         case let .blacklisted(reason):
             "blacklisted \(reason)"
@@ -241,12 +242,17 @@ extension AppStateCalculator: SessionManagerDelegate {
     }
 
     func sessionManagerWillLogout(
+        accountID: UUID?,
         environment: BackendEnvironment2?,
         error: Error?,
         userSessionCanBeTornDown: (() -> Void)?
     ) {
         transition(
-            to: .unauthenticated(environment: environment, error: error as NSError?),
+            to: .unauthenticated(
+                accountID: accountID,
+                environment: environment,
+                error: error as NSError?
+            ),
             completion: userSessionCanBeTornDown
         )
     }
@@ -331,7 +337,7 @@ extension AppStateCalculator: SessionManagerDelegate {
             transition(to: .authenticated(activeSession))
         } else {
             let error = NSError(userSessionErrorCode: .needsAuthenticationAfterMigration, userInfo: nil)
-            transition(to: .unauthenticated(environment: nil, error: error))
+            transition(to: .unauthenticated(accountID: nil, environment: nil, error: error))
         }
     }
 
@@ -340,7 +346,7 @@ extension AppStateCalculator: SessionManagerDelegate {
             transition(to: .authenticated(activeSession))
         } else {
             let error = NSError(userSessionErrorCode: .needsAuthenticationAfterMigration, userInfo: nil)
-            transition(to: .unauthenticated(environment: nil, error: error))
+            transition(to: .unauthenticated(accountID: nil, environment: nil, error: error))
         }
     }
 

@@ -225,10 +225,11 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showDatabaseLoadingFailure(error: error, completion: completion)
         case .migrating:
             showLaunchScreen(isLoading: true, completion: completion)
-        case let .unauthenticated(environment, error):
+        case let .unauthenticated(accountID, environment, error):
             screenCurtainWindow.userSession = nil
             configureUnauthenticatedAppearance()
             showUnauthenticatedFlow(
+                accountID: accountID,
                 environment: environment,
                 error: error,
                 completion: completion
@@ -367,6 +368,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
     }
 
     private func showUnauthenticatedFlow(
+        accountID: UUID?,
         environment: BackendEnvironment2?,
         error: NSError?,
         completion: @escaping () -> Void
@@ -391,12 +393,18 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         authenticationCoordinator?.tearDown()
 
+        var session: ZMUserSession?
+        if let accountID {
+            session = sessionManager.backgroundUserSessions[accountID]
+        }
+        let statusProvider = AuthenticationStatusProvider(sharedUserSession: session)
+
         authenticationCoordinator = AuthenticationCoordinator(
             defaultEnvironment: defaultEnvironment,
             presenter: navigationController,
             sessionManager: sessionManager,
             featureProvider: BuildSettingAuthenticationFeatureProvider(),
-            statusProvider: AuthenticationStatusProvider()
+            statusProvider: statusProvider
         )
 
         guard let authenticationCoordinator else {
@@ -504,7 +512,7 @@ extension AppRootRouter {
 
     private func applicationDidTransition(to appState: AppState) {
         switch appState {
-        case let .unauthenticated(_, error):
+        case let .unauthenticated(_, _, error):
             presentAlertForDeletedAccountIfNeeded(error)
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
         case .authenticated:
