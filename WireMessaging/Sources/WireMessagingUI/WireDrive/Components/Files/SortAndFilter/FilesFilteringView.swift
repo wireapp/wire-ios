@@ -26,6 +26,7 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells.Filtering
 struct FilesFilteringView: View {
     @StateObject private var viewModel: FilesFilteringViewModel
     @Environment(\.wireAccentColor) private var accentColor
+    @Environment(\.isSearching) private var isSearching
 
     @ScaledMetric var dropDownIconWidth: CGFloat = 8
     @ScaledMetric var dropDownIconHeight: CGFloat = 4
@@ -38,7 +39,8 @@ struct FilesFilteringView: View {
         filtersSelection: FilesFilteringViewModel.FiltersSelection,
         isBrowsing: Bool,
         conversations: Set<WireDriveConversation>,
-        onUpdate: @escaping (FilesFilteringViewModel.FiltersSelection) -> Void
+        onUpdate: @escaping (FilesFilteringViewModel.FiltersSelection) -> Void,
+        onSearchFocused: @escaping (Bool) -> Void
     ) {
         self.conversations = conversations
         self._viewModel = .init(
@@ -46,7 +48,8 @@ struct FilesFilteringView: View {
                 useCases: useCases,
                 filtersSelection: filtersSelection,
                 isBrowsing: isBrowsing,
-                onUpdate: onUpdate
+                onUpdate: onUpdate,
+                onSearchFocused: onSearchFocused
             )
         )
     }
@@ -84,14 +87,12 @@ struct FilesFilteringView: View {
             item: $viewModel.sheetNavigation,
             onDismiss: {},
             content: { navigationItem in
-                if #available(iOS 18.0, *) {
-                    sheet(for: navigationItem)
-                        .presentationSizing(.form.fitted(horizontal: false, vertical: true)) // This will make the height of the sheet dynamic and adapt to the contents. But it only works on iPad.
-                } else {
-                    sheet(for: navigationItem)
-                }
+                sheet(for: navigationItem)
             }
         )
+        .onChange(of: isSearching) { newValue in
+            viewModel.onSearchFocused(newValue)
+        }
     }
 
     @ViewBuilder
@@ -260,7 +261,7 @@ struct FilesFilteringView: View {
             ),
             isBrowsing: true,
             conversations: Set([WireDriveConversation].mocked()),
-            onUpdate: { _ in }
+            onUpdate: { _ in }, onSearchFocused: { _ in }
         )
         
         Spacer()

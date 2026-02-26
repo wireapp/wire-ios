@@ -90,6 +90,7 @@ final class FilesFilteringViewModel: ObservableObject {
     @Published var sheetNavigation: SheetNavigation?
 
     private let onUpdate: (FiltersSelection) -> Void
+    private let onSearchFocused: (Bool) -> Void
     let useCases: UseCases
     let isBrowsing: Bool
 
@@ -105,15 +106,22 @@ final class FilesFilteringViewModel: ObservableObject {
         useCases: UseCases,
         filtersSelection: FiltersSelection,
         isBrowsing: Bool,
-        onUpdate: @escaping (FiltersSelection) -> Void
+        onUpdate: @escaping (FiltersSelection) -> Void,
+        onSearchFocused: @escaping (Bool) -> Void
     ) {
         self.useCases = useCases
         self.filtersSelection = filtersSelection
         self.isBrowsing = isBrowsing
         self.onUpdate = onUpdate
+        self.onSearchFocused = onSearchFocused
     }
 
     // MARK: - Actions
+    
+    func onSearchFocused(_ isFocused: Bool) {
+        if !isFocused { filtersSelection = .empty }
+        onSearchFocused(isFocused)
+    }
 
     func select(filter: Filtering) {
         switch filter {

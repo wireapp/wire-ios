@@ -59,7 +59,8 @@ package struct FilesView: FilesViewProtocol {
                         filtersSelection: viewModel.filtersSelection,
                         isBrowsing: isBrowsing,
                         conversations: Set(viewModel.conversations),
-                        onUpdate: viewModel.onUpdate(of:)
+                        onUpdate: viewModel.onUpdate(of:),
+                        onSearchFocused: { isSearchFocused = $0 }
                     )
                     .opacity(isFilterBarPresented ? 1 : 0)
                     .frame(height: isFilterBarPresented ? nil : 0)
@@ -159,19 +160,9 @@ package struct FilesView: FilesViewProtocol {
     private func searchView(content: some View) -> some View {
         content.searchable(
             text: $viewModel.searchText,
-            placement: .navigationBarDrawer,
+            placement: .navigationBarDrawer(displayMode: .always),
             prompt: Strings.Files.Search.title
         )
-        .onReceive(NotificationCenter.default.publisher(
-            for: UISearchTextField.textDidBeginEditingNotification
-        )) { _ in
-            isSearchFocused = true
-        }
-        .onReceive(NotificationCenter.default.publisher(
-            for: UISearchTextField.textDidEndEditingNotification
-        )) { _ in
-            isSearchFocused = false
-        }
     }
 
     private var isFilterBarPresented: Bool {
