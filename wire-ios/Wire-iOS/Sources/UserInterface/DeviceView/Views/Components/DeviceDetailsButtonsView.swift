@@ -72,20 +72,20 @@ struct DeviceDetailsButtonsView: View {
     var body: some View {
         VStack(spacing: 0) {
             if viewModel.e2eIdentityCertificate?.status != nil {
-                
-                if viewModel.presentShowCertDetailsViewButton {
+
+                if viewModel.showCertificateButtonVisible {
                     showCertificateButton.padding()
                 }
-                
-                if viewModel.presentGetButton {
-                    if viewModel.presentShowCertDetailsViewButton {
+
+                if viewModel.getCertificateButtonVisible {
+                    if viewModel.showCertificateButtonVisible {
                         Divider()
                     }
                     getCertificateButton.padding()
                 }
-                
-                if viewModel.presentUpdateButton {
-                    if viewModel.presentShowCertDetailsViewButton || viewModel.presentGetButton {
+
+                if viewModel.updateCertificateButtonVisible {
+                    if viewModel.showCertificateButtonVisible || viewModel.getCertificateButtonVisible {
                         Divider()
                     }
                     updateCertificateButton.padding()

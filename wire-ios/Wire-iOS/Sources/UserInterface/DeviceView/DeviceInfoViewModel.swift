@@ -74,17 +74,17 @@ final class DeviceInfoViewModel: ObservableObject {
             .replacingOccurrences(of: " ", with: ":")
     }
 
-    var presentShowCertDetailsViewButton: Bool {
+    var showCertificateButtonVisible: Bool {
         guard let status = e2eIdentityCertificate?.status, status != .notActivated else { return false }
         return true
     }
 
-    var presentGetButton: Bool {
-        guard let status = e2eIdentityCertificate?.status, status == .notActivated  else { return false }
-        return  !isFromConversation && isSelfClient
+    var getCertificateButtonVisible: Bool {
+        guard let status = e2eIdentityCertificate?.status, status == .notActivated, isSelfClient  else { return false }
+        return true
     }
 
-    var presentUpdateButton: Bool {
+    var updateCertificateButtonVisible: Bool {
         guard let status = e2eIdentityCertificate?.status, status != .notActivated, isSelfClient else { return false }
         return true
     }

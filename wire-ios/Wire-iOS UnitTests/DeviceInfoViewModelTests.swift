@@ -63,9 +63,9 @@ final class DeviceInfoViewModelTests: XCTestCase {
     func test_actionButtonsWhenCertStateNotActivated() {
         for isSelfClient in [true, false] {
             setup(e2eIdentityCertificate: .mockNotActivated, isSelfClient: isSelfClient)
-            XCTAssertEqual(deviceInfoViewModel.presentShowCertDetailsViewButton, false)
-            XCTAssertEqual(deviceInfoViewModel.presentGetButton, isSelfClient)
-            XCTAssertEqual(deviceInfoViewModel.presentUpdateButton, false)
+            XCTAssertEqual(deviceInfoViewModel.showCertificateButtonVisible, false)
+            XCTAssertEqual(deviceInfoViewModel.getCertificateButtonVisible, isSelfClient)
+            XCTAssertEqual(deviceInfoViewModel.updateCertificateButtonVisible, false)
         }
     }
 
@@ -173,9 +173,9 @@ final class DeviceInfoViewModelTests: XCTestCase {
     ) {
         for isSelfClient in [true, false] {
             setup(e2eIdentityCertificate: e2eIdentityCertificate, isSelfClient: isSelfClient)
-            XCTAssertEqual(deviceInfoViewModel.presentShowCertDetailsViewButton, true)
-            XCTAssertEqual(deviceInfoViewModel.presentGetButton, false)
-            XCTAssertEqual(deviceInfoViewModel.presentUpdateButton, isSelfClient)
+            XCTAssertEqual(deviceInfoViewModel.showCertificateButtonVisible, true)
+            XCTAssertEqual(deviceInfoViewModel.getCertificateButtonVisible, false)
+            XCTAssertEqual(deviceInfoViewModel.updateCertificateButtonVisible, isSelfClient)
         }
     }
 }
