@@ -316,7 +316,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                     conversation: conversation,
                     syncCompleted: didCompleteInitialSync,
                     collectionView: collectionView,
-                    presentingViewController: self
+                    presentingViewController: self,
+                    userSession: userSession
                 )
                 sections.append(receiptOptionsSectionController)
             }
