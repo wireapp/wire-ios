@@ -635,16 +635,26 @@ struct ConversationEventPayloadProcessor {
         return conversation
     }
 
-    private func linkOneOnOneUserIfNeeded(for conversation: ZMConversation) {
-        guard
-            conversation.conversationType == .oneOnOne,
-            let otherUser = conversation.localParticipantsExcludingSelf.first,
-            otherUser.oneOnOneConversation == nil
-        else {
+    private func linkOneOnOneUserIfNeeded(
+        for localConversation: ZMConversation
+    ) {
+        
+        guard localConversation.conversationType == .oneOnOne else {
+            return
+        }
+        
+        guard let otherUser = localConversation.localParticipantsExcludingSelf.first else {
+            WireLogger.conversation.debug("⚠️ this conversation is a 1:1 from a deleted user, conv: \(localConversation.remoteIdentifier) \(localConversation.messageProtocol)")
+            localConversation.isForcedReadOnly = true
+            return
+        }
+        
+        guard otherUser.oneOnOneConversation == nil else {
+            WireLogger.conversation.debug("⚠️ \(otherUser.remoteIdentifier) has already a 1:1 : \(otherUser.oneOnOneConversation?.remoteIdentifier) \(otherUser.oneOnOneConversation?.messageProtocol); this conversation: \(localConversation.remoteIdentifier) \(localConversation.messageProtocol)")
             return
         }
 
-        conversation.oneOnOneUser = otherUser
+        localConversation.oneOnOneUser = otherUser
     }
 
     @discardableResult

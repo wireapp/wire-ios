@@ -18,6 +18,7 @@
 
 import WireDataModel
 import WireNetwork
+import WireLogging
 
 /// An extension that encapsulates storage operations related to conversation group (user, role, members).
 
@@ -95,11 +96,19 @@ extension ConversationLocalStore {
     func linkOneOnOneUserIfNeeded(
         for localConversation: ZMConversation
     ) {
-        guard
-            localConversation.conversationType == .oneOnOne,
-            let otherUser = localConversation.localParticipantsExcludingSelf.first,
-            otherUser.oneOnOneConversation == nil
-        else {
+        
+        guard localConversation.conversationType == .oneOnOne else {
+            return
+        }
+        
+        guard let otherUser = localConversation.localParticipantsExcludingSelf.first else {
+            WireLogger.conversation.debug("⚠️ this conversation is a 1:1 from a deleted user, conv: \(localConversation.remoteIdentifier) \(localConversation.messageProtocol)")
+            localConversation.isForcedReadOnly = true
+            return
+        }
+        
+        guard otherUser.oneOnOneConversation == nil else {
+            WireLogger.conversation.debug("⚠️ \(otherUser.remoteIdentifier) has already a 1:1 : \(otherUser.oneOnOneConversation?.remoteIdentifier) \(otherUser.oneOnOneConversation?.messageProtocol); this conversation: \(localConversation.remoteIdentifier) \(localConversation.messageProtocol)")
             return
         }
 
