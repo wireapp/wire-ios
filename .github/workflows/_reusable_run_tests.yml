@@ -112,6 +112,29 @@ jobs:
         run: |
           ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
+
+      - name: Install Docker CLI + Colima for Testservice
+        if: ${{ inputs.run_critical_flows }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          brew install docker colima qemu
+
+          COLIMA_BIN="/opt/homebrew/opt/colima/bin/colima"
+          $COLIMA_BIN stop || true
+          $COLIMA_BIN delete -f || true
+
+          # Increase resources: qemu is resource-heavy in CI
+          $COLIMA_BIN start -f \
+            --cpu 4 \
+            --memory 8 \
+            --disk 20 \
+            --vm-type qemu \
+            --runtime docker
+
+          docker version
+          $COLIMA_BIN status
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -135,23 +158,6 @@ jobs:
         run: |
           bundle exec fastlane prepare_for_tests
 
-      - name: Install Docker CLI + Colima for Testservice
-        if: ${{ inputs.run_critical_flows }}
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          brew install docker colima qemu
-
-          /opt/homebrew/opt/colima/bin/colima stop || true
-          /opt/homebrew/opt/colima/bin/colima delete -f || true
-
-          /opt/homebrew/opt/colima/bin/colima start -f \
-            --cpu 2 \
-            --memory 4 \
-            --vm-type qemu
-
-          docker --version
 
 
       - name: Start Testservice
