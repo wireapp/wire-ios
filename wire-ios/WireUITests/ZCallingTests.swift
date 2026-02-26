@@ -20,6 +20,7 @@ import WireFoundation
 import WireLocators
 import XCTest
 
+/// Prefixed 'Z' in the class name to run these tests at the end
 final class ZCallingTests: WireUITestCase {
 
     struct GroupCallSetupResponse {
