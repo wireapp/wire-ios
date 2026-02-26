@@ -20,6 +20,8 @@ import Combine
 import Foundation
 import WireMessagingDomain
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+
 /// A view model for a single item in the `FilesView`.
 ///
 /// A view model is needed as the item is _live_ - it can be updated remotely, it's file downloaded locally, and so on.
@@ -239,19 +241,19 @@ final class FilesItemViewModel: ObservableObject {
             switch selectedSortingKey {
             case .date:
                 if let conversationName, let date = formattedDate(modifiedAt: modifiedAt, locale: locale, calendar: calendar, timeZone: timeZone) {
-                    return L10n.Localizable.Conversation.WireCells.AllFiles.Item.subtitle(date, conversationName)
+                    return Strings.AllFiles.Item.subtitle(date, conversationName)
                 } else {
                     return defaultSubtitle(conversationName: conversationName, modifiedAt: modifiedAt, ownedBy: ownedBy, locale: locale, calendar: calendar, timeZone: timeZone)
                 }
             case .name:
                 if let conversationName, let ownedBy {
-                    return L10n.Localizable.Conversation.WireCells.AllFiles.Item.subtitle(ownedBy, conversationName)
+                    return Strings.AllFiles.Item.subtitle(ownedBy, conversationName)
                 } else {
                     return defaultSubtitle(conversationName: conversationName, modifiedAt: modifiedAt, ownedBy: ownedBy, locale: locale, calendar: calendar, timeZone: timeZone)
                 }
             case .size:
                 if let conversationName, let size = formattedFileSize(size: size) {
-                    return L10n.Localizable.Conversation.WireCells.AllFiles.Item.subtitle(size, conversationName)
+                    return Strings.AllFiles.Item.subtitle(size, conversationName)
                 } else {
                     return defaultSubtitle(conversationName: conversationName, modifiedAt: modifiedAt, ownedBy: ownedBy, locale: locale, calendar: calendar, timeZone: timeZone)
                 }
@@ -260,11 +262,17 @@ final class FilesItemViewModel: ObservableObject {
             }
         } else {
             switch selectedSortingKey {
-            case .date, .name:
+            case .date:
+                if let ownedBy {
+                    return Strings.Files.Item.subtitle(Strings.Sorting.Key.date, ownedBy)
+                } else {
+                    return defaultSubtitle(modifiedAt: modifiedAt, ownedBy: ownedBy, locale: locale, calendar: calendar, timeZone: timeZone)
+                }
+            case .name:
                 return defaultSubtitle(modifiedAt: modifiedAt, ownedBy: ownedBy, locale: locale, calendar: calendar, timeZone: timeZone)
             case .size:
                 if let size = formattedFileSize(size: size), let ownedBy {
-                    return L10n.Localizable.Conversation.WireCells.Files.Item.subtitle(size, ownedBy)
+                    return Strings.Files.Item.subtitle(size, ownedBy)
                 } else {
                     return defaultSubtitle(modifiedAt: modifiedAt, ownedBy: ownedBy, locale: locale, calendar: calendar, timeZone: timeZone)
                 }
