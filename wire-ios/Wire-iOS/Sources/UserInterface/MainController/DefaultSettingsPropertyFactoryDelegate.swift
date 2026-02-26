@@ -62,7 +62,7 @@ final class DefaultSettingsPropertyFactoryDelegate: SettingsPropertyFactoryDeleg
             return
         }
 
-        let passcodeSetupViewController = PasscodeSetupViewController(context: .createPasscode, callback: callback)
+        let passcodeSetupViewController = PasscodeSetupViewController(context: .createPasscode, userSession: userSession, callback: callback)
         passcodeSetupViewController.passcodeSetupViewControllerDelegate = self
 
         let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: passcodeSetupViewController)

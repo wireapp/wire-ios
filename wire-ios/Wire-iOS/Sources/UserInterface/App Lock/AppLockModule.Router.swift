@@ -59,6 +59,7 @@ extension AppLockModule.Router: AppLockRouterPresenterInterface {
     private func presentCreatePasscodeModule(shouldInform: Bool) {
         let passcodeSetupViewController = PasscodeSetupViewController.createKeyboardAvoidingFullScreenView(
             context: shouldInform ? .forcedForTeam : .createPasscode,
+            userSession: userSession,
             delegate: view
         )
 
