@@ -633,7 +633,7 @@ private extension Set<WireDriveNodesMetaFilter> {
             case .conversations:
                 []
             case .owners(let values):
-                values.map { LookupFilterMetaFilter(namespace: "usermeta-owner", operation: .should, term: $0.id) }
+                values.map { LookupFilterMetaFilter(namespace: "usermeta-owner-uuid", operation: .should, term: $0.id) }
             case .tags(let values):
                 values.map { LookupFilterMetaFilter(namespace: "usermeta-tags", operation: .should, term: $0) }
             case .types(let values):

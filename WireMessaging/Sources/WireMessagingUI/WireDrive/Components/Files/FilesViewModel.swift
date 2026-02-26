@@ -282,7 +282,8 @@ package final class FilesViewModel: ObservableObject {
     @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
     
     private var selfUserHandle: String? {
-        conversations.flatMap(\.participants)
+        conversations
+            .flatMap(\.participants)
             .first(where: \.isSelfUser)?.id
     }
 
