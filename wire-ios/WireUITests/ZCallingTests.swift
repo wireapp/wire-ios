@@ -20,7 +20,8 @@ import WireFoundation
 import WireLocators
 import XCTest
 
-/// Prefixed 'Z' in the class name to run these tests at the end, just to avoid if this test may impact others due to alert keep showing
+/// Prefixed 'Z' in the class name to run these tests at the end, just to avoid if this test may impact others due to
+/// alert keep showing
 final class ZCallingTests: WireUITestCase {
 
     struct GroupCallSetupResponse {
