@@ -19,9 +19,9 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireMessagingDomain
 import WireTestingPackage
 import XCTest
-import WireMessagingDomain
 
 @testable import WireMessagingUI
 

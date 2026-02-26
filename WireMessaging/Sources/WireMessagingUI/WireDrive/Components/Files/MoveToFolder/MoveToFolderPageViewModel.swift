@@ -290,7 +290,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
         path.components(separatedBy: "/").dropFirst().last ?? L10n.Localizable.Conversation.WireCells.Files
             .navigationTitle
     }
-    
+
     private static func subtitle(
         modifiedAt: Date?,
         ownedBy: String?,

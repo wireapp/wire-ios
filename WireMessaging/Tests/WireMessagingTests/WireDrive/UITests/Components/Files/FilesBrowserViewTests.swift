@@ -65,7 +65,7 @@ final class FilesBrowserViewTests: XCTestCase {
         nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
         nodesApi.getDriveConversations_MockValue = [.mocked()]
-        
+
         getDriveConversationsUseCase = WireDriveGetConversationsUseCase(nodesAPI: nodesApi)
 
         fetchNodesUseCase = WireDriveFetchNodesPageUseCase(

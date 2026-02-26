@@ -21,7 +21,7 @@ package import WireMessagingDomain
 
 package struct ConversationGroupIcon: View {
     let groupIcon: ConversationGroupIconAsset
-    
+
     @ScaledMetric private var iconSize: CGFloat
 
     package init(asset: ConversationGroupIconAsset, size: CGFloat = 34) {

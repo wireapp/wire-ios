@@ -89,12 +89,12 @@ final class FilesViewTests: XCTestCase {
         getEditingURLUseCase = WireDriveGetEditingURLUseCase(
             editingURLRepository: editingURLRepository
         )
-        
+
         nodesApi.getDriveConversations_MockValue = [
             .mocked(),
             .mocked()
         ]
-        
+
         driveConversationsUseCase = WireDriveGetConversationsUseCase(nodesAPI: nodesApi)
 
         getPublicLinkData = WireDriveGetPublicLinkDataUseCase(nodesAPI: nodesApi)

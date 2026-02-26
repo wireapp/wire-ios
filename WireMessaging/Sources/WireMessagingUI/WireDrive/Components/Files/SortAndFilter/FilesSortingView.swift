@@ -23,7 +23,7 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells.Sorting
 
 struct FilesSortingView: View {
     @StateObject package var viewModel: FilesSortingViewModel
-    
+
     @ScaledMetric private var defaultSortMenuIconWidth: CGFloat = 12
     @ScaledMetric private var defaultSortMenuIconHeight: CGFloat = 10
     @ScaledMetric private var selectedSortMenuIconWidth: CGFloat = 9
@@ -46,7 +46,7 @@ struct FilesSortingView: View {
 
                 ForEach(FilesSortingViewModel.SortingKey.allCases, id: \.self) { sortingKey in
                     let isSelected = viewModel.sortingSelection.sortingKey == sortingKey
-                        
+
                     Button {
                         viewModel.select(sortingKey: sortingKey)
                     } label: {
@@ -61,7 +61,7 @@ struct FilesSortingView: View {
 
                 ForEach(viewModel.sortingOrders, id: \.self) { sortingOrder in
                     let isSelected = viewModel.sortingSelection.sortingOrder == sortingOrder
-                    
+
                     Button {
                         viewModel.select(sortingOrder: sortingOrder)
                     } label: {
@@ -94,7 +94,7 @@ struct FilesSortingView: View {
         }
         .padding(.horizontal)
     }
-    
+
     @ViewBuilder
     private func menuIcon() -> some View {
         if let name = viewModel.sortingSelection.sortingOrder?.iconName {
@@ -107,7 +107,7 @@ struct FilesSortingView: View {
                 .frame(width: defaultSortMenuIconWidth, height: defaultSortMenuIconHeight)
         }
     }
-    
+
     private func selectionIconName(isSelected: Bool) -> String {
         isSelected ? "checkmark" : ""
     }

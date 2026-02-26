@@ -28,19 +28,19 @@ import XCTest
 @testable import WireMessagingUI
 
 final class FilesFilterByTests: XCTestCase {
-    
+
     private var snapshotHelper: SnapshotHelper!
     private var fetchTagsUseCase: (any WireDriveGetTagSuggestionsUseCaseProtocol)!
     private var nodesAPI: MockNodesAPIProtocol!
-    
+
     @MainActor
     override func setUp() async throws {
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
-        
+
         nodesAPI = MockNodesAPIProtocol()
         nodesAPI.getAllTags_MockMethod = { ["Lorem", "ipsum", "dolor", "sit", "amet"] }
-        
+
         fetchTagsUseCase = WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI)
     }
 
@@ -65,7 +65,7 @@ final class FilesFilterByTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: view, named: "dark")
     }
-    
+
     @MainActor
     func testFilterByTypes() async {
         let view = FilesFilterBy.TypeView(
@@ -74,7 +74,7 @@ final class FilesFilterByTests: XCTestCase {
             onApply: { _ in }
         )
         .frame(width: 375, height: 667)
-        
+
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: view, named: "light")
@@ -82,18 +82,18 @@ final class FilesFilterByTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: view, named: "dark")
     }
-    
+
     @MainActor
     func testFilterByConversations() async {
         let mockedItems = [WireDriveConversation].mocked()
-        
+
         let view = FilesFilterBy.ConversationView(
             availableItems: mockedItems,
             selectedItems: [mockedItems.first!, mockedItems.last!],
             onApply: { _ in }
         )
         .frame(width: 375, height: 667)
-        
+
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: view, named: "light")
@@ -105,14 +105,14 @@ final class FilesFilterByTests: XCTestCase {
     @MainActor
     func testFilterByOwners() async {
         let mockedItems = [WireDriveConversation.Participant].mocked()
-        
+
         let view = FilesFilterBy.OwnerView(
             availableItems: mockedItems,
             selectedItems: [mockedItems.first!, mockedItems.last!],
             onApply: { _ in }
         )
         .frame(width: 375, height: 667)
-        
+
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: view, named: "light")
@@ -128,7 +128,7 @@ final class FilesFilterByTests: XCTestCase {
             onApply: { _ in }
         )
         .frame(width: 375, height: 667)
-        
+
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: view, named: "light")

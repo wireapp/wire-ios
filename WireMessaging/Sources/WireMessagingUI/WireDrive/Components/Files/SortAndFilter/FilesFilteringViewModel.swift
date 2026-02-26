@@ -51,7 +51,7 @@ final class FilesFilteringViewModel: ObservableObject {
         var types: Set<WireDriveFileType>
         var conversations: Set<WireDriveConversation>
         var owners: Set<WireDriveConversation.Participant>
-        
+
         /// Meaning of values:
         /// - `true`: show only files with links
         /// - `false`: show only files without links
@@ -117,7 +117,7 @@ final class FilesFilteringViewModel: ObservableObject {
     }
 
     // MARK: - Actions
-    
+
     func onSearchFocused(_ isFocused: Bool) {
         if !isFocused { filtersSelection = .empty }
         onSearchFocused(isFocused)
@@ -199,27 +199,27 @@ extension FilesFilteringViewModel.FiltersSelection {
 extension FilesFilteringViewModel.FiltersSelection {
     func toDomainModel(selfUserHandle: String?) -> Set<WireDriveNodesMetaFilter> {
         var metafilter = Set<WireDriveNodesMetaFilter>()
-        
+
         if !tags.isEmpty {
             metafilter.insert(.tags(tags))
         }
-        
+
         if !types.isEmpty {
             metafilter.insert(.types(types))
         }
-        
+
         if !conversations.isEmpty {
             metafilter.insert(.conversations(conversations))
         }
-        
+
         if !owners.isEmpty {
             metafilter.insert(.owners(owners))
         }
-        
+
         if sharedLink != nil, let selfUserHandle {
             metafilter.insert(.sharedByMe(handle: selfUserHandle))
         }
-        
+
         return metafilter
     }
 }

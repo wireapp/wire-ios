@@ -155,7 +155,7 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                     let participants: [WireDriveConversation.Participant] = conversation.participants
                         .compactMap { item -> WireDriveConversation.Participant? in
                             guard let id = item.remoteIdentifier, let domain = item.domain else { return nil }
-                            
+
                             return .init(
                                 handle: item.handle ?? "-",
                                 displayName: item.name ?? "-",

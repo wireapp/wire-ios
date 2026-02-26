@@ -17,8 +17,8 @@
 //
 
 import SwiftUI
-import WireLocators
 import WireDesign
+import WireLocators
 
 // TODO: [WPB-11448] Bug: The call screen doesn't rotate to landscape
 

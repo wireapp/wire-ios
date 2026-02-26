@@ -17,13 +17,13 @@
 //
 
 package import SwiftUI
-package import WireMessagingDomain
 import WireDesign
+package import WireMessagingDomain
 
 package struct ConversationChannelIcon: View {
     let groupIcon: ConversationChannelIconAsset
     let isPrivateChannel: Bool
-    
+
     @ScaledMetric private var iconSize: CGFloat
 
     // TODO: [WPB-16527] Pass in correct `isPrivateChannel` when we implement public channels
@@ -46,15 +46,15 @@ package struct ConversationChannelIcon: View {
     }
 }
 
-extension ConversationChannelIcon {
-    package struct PrivateIcon: View {
+package extension ConversationChannelIcon {
+    struct PrivateIcon: View {
         @ScaledMetric private var width: CGFloat = 9
         @ScaledMetric private var height: CGFloat = 10
         @ScaledMetric private var innerPadding: CGFloat = 3.5
         @ScaledMetric private var cornerRadius: CGFloat = 3
         @ScaledMetric private var offsetX: CGFloat = 3
         @ScaledMetric private var offsetY: CGFloat = 3
-        
+
         package var body: some View {
             Image(systemName: "lock.fill")
                 .resizable()

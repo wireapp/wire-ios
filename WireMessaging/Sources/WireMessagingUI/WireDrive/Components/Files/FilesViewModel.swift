@@ -77,7 +77,7 @@ package struct FilesViewItem: Identifiable, Hashable {
 
     /// The name of the conversation the node is attached to.
     let conversationName: String?
-    
+
     /// The size of of this item
     let size: UInt64?
 }
@@ -280,7 +280,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var conversations: [WireDriveConversation] = []
     @Published var connectionState: ConnectionState = .online
     @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
-    
+
     private var selfUserHandle: String? {
         conversations
             .flatMap(\.participants)
@@ -836,7 +836,7 @@ package final class FilesViewModel: ObservableObject {
             Task { await self?.reload() }
         }
     }
-    
+
     func onUpdate(of filters: FilesFilteringViewModel.FiltersSelection) {
         guard filters != filtersSelection else { return }
         filtersSelection = filters

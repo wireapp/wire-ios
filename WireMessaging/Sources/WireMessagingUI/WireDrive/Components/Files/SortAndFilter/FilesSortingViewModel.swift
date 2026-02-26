@@ -30,11 +30,11 @@ final class FilesSortingViewModel: ObservableObject {
         func title(forKey key: SortingKey) -> String {
             switch key {
             case .date:
-                return self == .descending ? Strings.Order.Date.recentFirst : Strings.Order.Date.oldestFirst
+                self == .descending ? Strings.Order.Date.recentFirst : Strings.Order.Date.oldestFirst
             case .name:
-                return self == .descending ? Strings.Order.Name.za : Strings.Order.Name.az
+                self == .descending ? Strings.Order.Name.za : Strings.Order.Name.az
             case .size:
-                return self == .descending ? Strings.Order.Size.largestFirst : Strings.Order.Size.smallestFirst
+                self == .descending ? Strings.Order.Size.largestFirst : Strings.Order.Size.smallestFirst
             }
         }
 
@@ -112,9 +112,9 @@ final class FilesSortingViewModel: ObservableObject {
         sortingSelection.sortingOrder = sortingOrder
         onUpdate(sortingSelection)
     }
-    
+
     // MARK: - UI
-    
+
     var menuLabel: String {
         if let sortingOrder = sortingSelection.sortingOrder, let sortingKey = sortingSelection.sortingKey {
             sortingOrder.title(forKey: sortingKey)

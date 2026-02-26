@@ -59,7 +59,7 @@ struct FilesFilteringView: View {
             HStack(spacing: 8) {
                 ForEach(viewModel.availableFilters, id: \.self) { filter in
                     let isEnabled = isFilterCategoryButtonEnabled(for: filter)
-                    
+
                     Button {
                         viewModel.select(filter: filter)
                     } label: {
@@ -160,7 +160,7 @@ struct FilesFilteringView: View {
                         in: RoundedRectangle(cornerRadius: 6, style: .continuous)
                     )
             }
-            
+
             capsuleTrailingIcon(for: filter)
         }
         .fontWeight(.semibold)
@@ -176,7 +176,7 @@ struct FilesFilteringView: View {
         }
         .padding(.vertical, 1)
     }
-    
+
     @ViewBuilder
     private func capsuleTrailingIcon(for filter: FilesFilteringViewModel.Filtering) -> some View {
         if filter == .sharedLink {
@@ -227,7 +227,7 @@ struct FilesFilteringView: View {
     private var shouldShowRemoveFilters: Bool {
         viewModel.filtersSelection.hasFilterSelected
     }
-    
+
     private var conversationsParticipants: Set<WireDriveConversation.Participant> {
         Set(conversations.flatMap(\.participants))
     }
@@ -263,7 +263,7 @@ struct FilesFilteringView: View {
             conversations: Set([WireDriveConversation].mocked()),
             onUpdate: { _ in }, onSearchFocused: { _ in }
         )
-        
+
         Spacer()
     }
 }

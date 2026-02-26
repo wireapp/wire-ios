@@ -560,7 +560,7 @@ private extension WireDriveGetNodesRequest {
                 // this is a temp solution until BE handles multiple conversations filtering
                 root: metafilter.conversations?.first.map { RestNodeLocator(.path($0)) }
             )
-            
+
             if let sortField, let sortDirDesc {
                 request.sortField = sortField
                 request.sortDirDesc = sortDirDesc
@@ -632,20 +632,20 @@ private extension Set<WireDriveNodesMetaFilter> {
             switch filter {
             case .conversations:
                 []
-            case .owners(let values):
+            case let .owners(values):
                 values.map { LookupFilterMetaFilter(namespace: "usermeta-owner-uuid", operation: .should, term: $0.id) }
-            case .tags(let values):
+            case let .tags(values):
                 values.map { LookupFilterMetaFilter(namespace: "usermeta-tags", operation: .should, term: $0) }
-            case .types(let values):
+            case let .types(values):
                 values.flatMap(\.contentTypes).compactMap {
                     LookupFilterMetaFilter(namespace: "mime", operation: .should, term: $0)
                 }
-            case .sharedByMe(let handle):
+            case let .sharedByMe(handle):
                 [LookupFilterMetaFilter(namespace: "usermeta-owner", operation: .should, term: handle)]
             }
         }
     }
-    
+
     var hasPublicLink: Bool? {
         for filter in self {
             switch filter {
@@ -655,20 +655,20 @@ private extension Set<WireDriveNodesMetaFilter> {
                 continue
             }
         }
-        
+
         return nil
     }
-    
+
     var conversations: [String]? {
         for filter in self {
             switch filter {
-            case .conversations(let values):
+            case let .conversations(values):
                 return values.map(\.id)
             default:
                 continue
             }
         }
-        
+
         return nil
     }
 }

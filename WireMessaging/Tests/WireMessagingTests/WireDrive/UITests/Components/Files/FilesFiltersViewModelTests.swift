@@ -89,11 +89,15 @@ final class FilesFiltersViewModelTests {
     private enum Scaffolding {
         static let savedTag = "Urgent"
         static let selectedTag = "Marketing"
-        
+
         static let expectedTags = Array(
             mockTags.filter { !$0.isEmpty }
-                .sorted { lhs, rhs in lhs.localizedCaseInsensitiveCompare(rhs) == .orderedAscending } //order alphabetically
-                .sorted { lhs, _ in lhs.localizedCaseInsensitiveCompare(savedTag) == .orderedSame } //but initially selected tags should be the first in the list
+                .sorted { lhs, rhs in
+                    lhs.localizedCaseInsensitiveCompare(rhs) == .orderedAscending
+                } // order alphabetically
+                .sorted { lhs, _ in
+                    lhs.localizedCaseInsensitiveCompare(savedTag) == .orderedSame
+                } // but initially selected tags should be the first in the list
         )
     }
 

@@ -126,7 +126,7 @@ extension FilesFilterBy {
                 Strings.Filter.SharedLink.Option.withoutLink
             }
         }
-        
+
         private func displayDescription(_ item: ViewModel.Item) -> String? {
             switch item {
             case .withSharedLink:

@@ -26,7 +26,7 @@ extension FilesFilterBy.OwnerView {
 
         @Published var selectedItems: Set<Item> = []
         @Published var presentedItems: [Item] = []
-        
+
         @Published var searchText = "" {
             didSet {
                 updatePresentedItems()
@@ -67,8 +67,8 @@ extension FilesFilterBy.OwnerView {
         }
 
         private func updatePresentedItems() {
-            let searchText = self.searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-            
+            let searchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+
             presentedItems = availableItems.filter { item in
                 if searchText.isEmpty {
                     true

@@ -58,7 +58,7 @@ package struct FilesBrowserView: FilesViewProtocol {
                     .opacity(isFilterBarPresented ? 1 : 0)
                     .frame(height: isFilterBarPresented ? nil : 0)
                     .padding(.bottom, isFilterBarPresented ? 15 : 0)
-                    
+
                     FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
                 }
                 .padding(.top, 4)
