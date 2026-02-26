@@ -72,17 +72,17 @@ extension [ZMConversation] {
 extension ZMMessage: Shareable {
     typealias I = ZMConversation
 
-    func share(to: [some Any]) {
-        forward(to: to as [AnyObject])
+    func share(to: [some Any], userSession: UserSession) {
+        forward(to: to as [AnyObject], userSession: userSession)
     }
 
-    func forward(to: [AnyObject]) {
+    func forward(to: [AnyObject], userSession: UserSession) {
 
         let conversations = to as! [ZMConversation]
 
         if isText {
             let fetchLinkPreview = !Settings.disableLinkPreviews
-            ZMUserSession.shared()?.perform {
+            userSession.perform {
                 conversations.forEachNonEphemeral {
                     do {
                         // We should not forward any mentions to other conversations
@@ -98,7 +98,7 @@ extension ZMMessage: Shareable {
                 }
             }
         } else if isImage, let imageMessageData, let data = imageMessageData.imageData {
-            ZMUserSession.shared()?.perform {
+            userSession.perform {
                 conversations.forEachNonEphemeral {
                     do {
                         let image = SendableImage(
@@ -115,19 +115,20 @@ extension ZMMessage: Shareable {
             }
         } else if isVideo || isAudio || isFile {
             guard let url = fileMessageData!.temporaryURLToDecryptedFile() else { return }
-            Task {
+            Task { [weak userSession] in
                 let fileMetadata = await FileMetaDataGenerator.shared.metadataForFile(at: url)
-                let userSession = ZMUserSession.shared()
-                await userSession?.managedObjectContext.perform {
-                    conversations.forEachNonEphemeral {
-                        do {
-                            try $0.appendFile(with: fileMetadata)
-                        } catch {
-                            WireLogger.messageProcessing
-                                .warn("Failed to append file message. Reason: \(error.localizedDescription)")
+                if let userSession = userSession as? ZMUserSession {
+                    await userSession.managedObjectContext.perform {
+                        conversations.forEachNonEphemeral {
+                            do {
+                                try $0.appendFile(with: fileMetadata)
+                            } catch {
+                                WireLogger.messageProcessing
+                                    .warn("Failed to append file message. Reason: \(error.localizedDescription)")
+                            }
                         }
+                        userSession.saveOrRollbackChanges()
                     }
-                    userSession?.saveOrRollbackChanges()
                 }
             }
         } else if isLocation {
@@ -137,7 +138,7 @@ extension ZMMessage: Shareable {
                 name: locationMessageData!.name,
                 zoomLevel: locationMessageData!.zoomLevel
             )
-            ZMUserSession.shared()?.perform {
+            userSession.perform {
                 conversations.forEachNonEphemeral {
                     do {
                         try $0.appendLocation(with: locationData)

@@ -17,6 +17,7 @@
 //
 
 import WireLinkPreview
+import WireSyncEngineSupport
 import WireTestingPackage
 import XCTest
 
@@ -171,6 +172,7 @@ final class ShareViewControllerTests: XCTestCase {
             destinations: [groupConversation, oneToOneConversation],
             showPreview: true,
             allowsMultipleSelection: allowsMultipleSelection,
+            userSession: UserSessionMock(),
             mainCoordinator: MockMainCoordinator()
         )
     }
@@ -197,7 +199,7 @@ final class MockShareableMessage: MockMessage, Shareable {
 
     typealias I = MockShareViewControllerConversation
 
-    func share(to: [some Any]) {
+    func share(to: [some Any], userSession: UserSession) {
         // no-op
     }
 }

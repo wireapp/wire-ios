@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 import WireMainNavigationUI
+import WireSyncEngine
 
 protocol ShareDestination: Hashable {
     var displayNameWithFallback: String { get }
@@ -31,7 +32,7 @@ protocol ShareDestination: Hashable {
 
 protocol Shareable {
     associatedtype I: ShareDestination
-    func share(to: [some Any])
+    func share(to: [some Any], userSession: UserSession)
     func previewView() -> UIView?
 }
 
@@ -42,6 +43,7 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
 
     let destinations: [D]
     let shareable: S
+    private let userSession: UserSession
     private let mainCoordinator: any MainCoordinatorProtocol
     private(set) var selectedDestinations: Set<D> = Set() {
         didSet {
@@ -82,6 +84,7 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
         destinations: [D],
         showPreview: Bool = true,
         allowsMultipleSelection: Bool = true,
+        userSession: UserSession,
         mainCoordinator: any MainCoordinatorProtocol
     ) {
         self.destinations = destinations
@@ -89,6 +92,7 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
         self.shareable = shareable
         self.showPreview = showPreview
         self.allowsMultipleSelection = allowsMultipleSelection
+        self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         super.init(nibName: nil, bundle: nil)
 
@@ -153,7 +157,7 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     @objc
     func onSendButtonPressed(sender: AnyObject?) {
         if !selectedDestinations.isEmpty {
-            shareable.share(to: Array(selectedDestinations))
+            shareable.share(to: Array(selectedDestinations), userSession: userSession)
             if let conversation = selectedDestinations.first as? ZMConversation,
                let mainCoordinator = mainCoordinator as? MainCoordinator {
                 Task {

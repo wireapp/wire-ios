@@ -33,7 +33,7 @@ struct ShareableDebugReport: Shareable {
 
     // MARK: - Interface
 
-    func share(to: [some Any]) {
+    func share(to: [some Any], userSession: UserSession) {
         guard let conversations = to as? [ZMConversation] else {
             return
         }

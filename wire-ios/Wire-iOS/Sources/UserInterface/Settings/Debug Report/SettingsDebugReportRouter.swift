@@ -20,6 +20,7 @@ import MessageUI
 import WireDataModel
 import WireMainNavigationUI
 import WireReusableUIComponents
+import WireSyncEngine
 
 // sourcery: AutoMockable
 protocol SettingsDebugReportRouterProtocol {
@@ -52,9 +53,11 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
     weak var viewController: UIViewController?
 
     private let mailRecipient = WireEmail.shared.supportEmail
+    private let userSession: UserSession
     private let mainCoordinator: any MainCoordinatorProtocol
 
-    init(mainCoordinator: any MainCoordinatorProtocol) {
+    init(userSession: UserSession, mainCoordinator: any MainCoordinatorProtocol) {
+        self.userSession = userSession
         self.mainCoordinator = mainCoordinator
     }
 
@@ -74,6 +77,7 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
             shareable: debugReport,
             destinations: destinations,
             showPreview: true,
+            userSession: userSession,
             mainCoordinator: mainCoordinator
         )
 

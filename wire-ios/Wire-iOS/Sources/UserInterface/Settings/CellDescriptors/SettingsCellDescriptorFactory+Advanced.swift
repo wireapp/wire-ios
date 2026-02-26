@@ -57,7 +57,7 @@ extension SettingsCellDescriptorFactory {
         let submitDebugButton = SettingsExternalScreenCellDescriptor(
             title: SelfSettingsAdvancedLocale.Troubleshooting.SubmitDebug.title,
             presentationAction: { () -> (UIViewController?) in
-                let router = SettingsDebugReportRouter(mainCoordinator: mainCoordinator)
+                let router = SettingsDebugReportRouter(userSession: userSession, mainCoordinator: mainCoordinator)
                 let shareFile = ShareFileUseCase(contextProvider: userSession.contextProvider)
                 let fetchShareableConversations = FetchShareableConversationsUseCase(
                     contextProvider: userSession
