@@ -142,6 +142,21 @@ jobs:
         run: |
           set -euo pipefail
 
+          echo "== Runner uname =="
+          uname -a
+
+          echo "== macOS sw_vers =="
+          sw_vers || true
+
+          echo "== System Version Plist =="
+          cat /System/Library/CoreServices/SystemVersion.plist || true
+
+          echo "== Xcode path =="
+          xcode-select -p || true
+
+          echo "== Host Architecture =="
+          arch || true
+
           echo "Installing Apple container CLI..."
           tmpdir="$(mktemp -d)"
           curl -fsSL -o "$tmpdir/container-installer-signed.pkg" \
@@ -150,8 +165,17 @@ jobs:
           sudo installer -pkg "$tmpdir/container-installer-signed.pkg" -target /
           container --version
 
-          # Start once so system components are prepared (non-interactive)
-          yes | sudo container system start
+          echo "== container system start =="
+          container system start || true
+
+          echo "== container system status =="
+          container system status || true
+
+          echo "== container system logs (last 200) =="
+          container system logs --last 200 || true
+
+          echo "== launchctl (user domain) =="
+          launchctl print gui/$(id -u) | head -n 120 || true
 
 
       - name: Start Testservice
@@ -177,7 +201,6 @@ jobs:
             exit 0
           fi
 
-          # Readiness check (prefer a real endpoint, not / which may 404)
           for i in {1..45}; do
             if curl -fsS "http://localhost:8080/api/v1/instance" >/dev/null 2>&1; then
               echo "Testservice reachable at http://localhost:8080"
