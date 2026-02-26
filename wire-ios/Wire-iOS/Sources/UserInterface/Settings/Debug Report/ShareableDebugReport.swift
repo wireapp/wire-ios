@@ -44,7 +44,7 @@ struct ShareableDebugReport: Shareable {
         )
     }
 
-    func previewView() -> UIView? {
+    func previewView(userSession: UserSession) -> UIView? {
         let view = ShareableDebugReportView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = SemanticColors.View.backgroundUserCell

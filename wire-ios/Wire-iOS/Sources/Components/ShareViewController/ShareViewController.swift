@@ -33,7 +33,7 @@ protocol ShareDestination: Hashable {
 protocol Shareable {
     associatedtype I: ShareDestination
     func share(to: [some Any], userSession: UserSession)
-    func previewView() -> UIView?
+    func previewView(userSession: UserSession) -> UIView?
 }
 
 final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Shareable>: UIViewController,
@@ -43,7 +43,7 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
 
     let destinations: [D]
     let shareable: S
-    private let userSession: UserSession
+    let userSession: UserSession
     private let mainCoordinator: any MainCoordinatorProtocol
     private(set) var selectedDestinations: Set<D> = Set() {
         didSet {

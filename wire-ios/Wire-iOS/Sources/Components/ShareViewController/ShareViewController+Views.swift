@@ -22,7 +22,7 @@ import WireDesign
 extension ShareViewController {
 
     func createShareablePreview() {
-        let shareablePreviewView = shareable.previewView()
+        let shareablePreviewView = shareable.previewView(userSession: userSession)
         shareablePreviewView?.layer.cornerRadius = 4
         shareablePreviewView?.clipsToBounds = true
         self.shareablePreviewView = shareablePreviewView

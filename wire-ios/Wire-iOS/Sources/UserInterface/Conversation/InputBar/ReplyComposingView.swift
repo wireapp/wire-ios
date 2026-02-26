@@ -113,6 +113,7 @@ final class ReplyComposingView: UIView {
         backgroundColor = SemanticColors.SearchBar.backgroundInputView
 
         previewView = message.replyPreview(
+            userSession: userSession,
             messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
         )
         previewView.isUserInteractionEnabled = false

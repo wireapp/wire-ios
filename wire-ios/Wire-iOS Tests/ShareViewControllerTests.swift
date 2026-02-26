@@ -193,7 +193,7 @@ final class ShareViewControllerTests: XCTestCase {
 }
 
 final class MockShareableMessage: MockMessage, Shareable {
-    func previewView() -> UIView? {
+    func previewView(userSession: UserSession) -> UIView? {
         nil
     }
 

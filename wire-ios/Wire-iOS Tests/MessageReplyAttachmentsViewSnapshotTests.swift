@@ -227,7 +227,7 @@ final class MessageReplyAttachmentsViewSnapshotTests: XCTestCase {
             fetchNodeUseCase: fetchNodeUseCase
         )
 
-        let view = message.replyPreview(messageReplyAttachmentsViewModel: viewModel)!
+        let view = message.replyPreview(userSession: UserSessionMock(), messageReplyAttachmentsViewModel: viewModel)!
         return view.prepareForSnapshot()
     }
 }

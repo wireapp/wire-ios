@@ -67,7 +67,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
 
     func testThatItRendersTextMessagePreview() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
-        let sut = message.replyPreview()!.prepareForSnapshot()
+        let sut = message.replyPreview(userSession: UserSessionMock())!.prepareForSnapshot()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -92,7 +92,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
 
     func testThatItRendersEmojiOnly() {
         let message = MockMessageFactory.textMessage(withText: "😀🌮")
-        let sut = message.replyPreview()!.prepareForSnapshot()
+        let sut = message.replyPreview(userSession: UserSessionMock())!.prepareForSnapshot()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -116,7 +116,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
     }
 
     func testThatItRendersMention() {
-        let sut = mentionMessage().replyPreview()!.prepareForSnapshot()
+        let sut = mentionMessage().replyPreview(userSession: UserSessionMock())!.prepareForSnapshot()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -144,7 +144,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .textMessage(
                 withText: "Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed."
             )
-        let sut = message.replyPreview()!.prepareForSnapshot()
+        let sut = message.replyPreview(userSession: UserSessionMock())!.prepareForSnapshot()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -169,7 +169,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
 
     func testThatItRendersFileMessagePreview() {
         let message = MockMessageFactory.fileTransferMessage()
-        let sut = message.replyPreview()!.prepareForSnapshot()
+        let sut = message.replyPreview(userSession: UserSessionMock())!.prepareForSnapshot()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -194,7 +194,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
 
     func testThatItRendersLocationMessagePreview() {
         let message = MockMessageFactory.locationMessage()
-        let sut = message.replyPreview()!.prepareForSnapshot()
+        let sut = message.replyPreview(userSession: UserSessionMock())!.prepareForSnapshot()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -234,7 +234,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .jpegData(compressionQuality: 0.9)
         message.backingTextMessageData.linkPreviewHasImage = true
 
-        let previewView = message.replyPreview()!
+        let previewView = message.replyPreview(userSession: UserSessionMock())!
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
         snapshotHelper
@@ -262,7 +262,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
         let image = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
 
-        let previewView = try XCTUnwrap(message.replyPreview())
+        let previewView = try XCTUnwrap(message.replyPreview(userSession: UserSessionMock()))
         XCTAssert(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
         snapshotHelper
@@ -291,7 +291,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
         message.backingFileMessageData.mimeType = "audio/x-m4a"
         message.backingFileMessageData.filename = "vacation.m4a"
 
-        let previewView = message.replyPreview()!
+        let previewView = message.replyPreview(userSession: UserSessionMock())!
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
         snapshotHelper
@@ -320,7 +320,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
     func testDeallocation() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
         verifyDeallocation {
-            message.replyPreview()!
+            message.replyPreview(userSession: UserSessionMock())!
         }
     }
 
