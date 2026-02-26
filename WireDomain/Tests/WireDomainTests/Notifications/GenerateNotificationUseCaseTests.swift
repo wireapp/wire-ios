@@ -50,7 +50,7 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
     func testProcess_It_Invokes_Notification_Content_Handler() async throws {
         // Mock
 
-        conversationEventBuilder.buildContentEvent_MockValue = .text(UNMutableNotificationContent())
+        conversationEventBuilder.buildContentEvent_MockValue = [.text(UNMutableNotificationContent())]
         userEventBuilder.buildContentEvent_MockValue = .text(UNMutableNotificationContent())
 
         let asyncStream = AsyncStream<[UpdateEvent]> {
@@ -69,7 +69,7 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
 
     func testCancellation_stopsGeneratingNotifications() async throws {
         // Mock
-        conversationEventBuilder.buildContentEvent_MockValue = .text(UNMutableNotificationContent())
+        conversationEventBuilder.buildContentEvent_MockValue = [.text(UNMutableNotificationContent())]
         userEventBuilder.buildContentEvent_MockValue = .text(UNMutableNotificationContent())
 
         // Create multiple events to test partial processing
