@@ -447,10 +447,10 @@ class MockConversationEventNotificationBuilderProtocol: ConversationEventNotific
 
     var buildContentEvent_Invocations: [ConversationEvent] = []
     var buildContentEvent_MockError: Error?
-    var buildContentEvent_MockMethod: ((ConversationEvent) async throws -> UserNotification?)?
-    var buildContentEvent_MockValue: UserNotification??
+    var buildContentEvent_MockMethod: ((ConversationEvent) async throws -> [UserNotification]?)?
+    var buildContentEvent_MockValue: [UserNotification]??
 
-    func buildContent(event: ConversationEvent) async throws -> UserNotification? {
+    func buildContent(event: ConversationEvent) async throws -> [UserNotification]? {
         buildContentEvent_Invocations.append(event)
 
         if let error = buildContentEvent_MockError {
