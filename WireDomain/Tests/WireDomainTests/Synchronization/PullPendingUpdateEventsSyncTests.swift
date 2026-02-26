@@ -30,8 +30,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
     private var api: MockUpdateEventsAPI!
     private var store: MockUpdateEventsLocalStoreProtocol!
     private var decryptor: MockUpdateEventDecryptorProtocol!
-    private var coreCrypto: MockSafeCoreCrypto!
-    private var coreCryptoProvider: MockCoreCryptoProviderProtocol!
+    private var envelope: CoreCryptoMocksEnvelope!
 
     override func setUp() async throws {
         journal = Journal(
@@ -41,9 +40,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         api = MockUpdateEventsAPI()
         store = MockUpdateEventsLocalStoreProtocol()
         decryptor = MockUpdateEventDecryptorProtocol()
-        coreCrypto = MockSafeCoreCrypto()
-        coreCryptoProvider = MockCoreCryptoProviderProtocol()
-        coreCryptoProvider.coreCrypto_MockValue = coreCrypto
+        envelope = CoreCryptoMocksEnvelope()
 
         sut = PullPendingUpdateEventsSync(
             selfClientID: Scaffolding.selfClientID,
@@ -51,11 +48,12 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
             store: store,
             journal: journal,
             decryptor: decryptor,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: envelope.coreCryptoProvider
         )
     }
 
     override func tearDown() async throws {
+        envelope = nil
         api = nil
         store = nil
         decryptor = nil
@@ -85,12 +83,12 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
             EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
         }
 
-        store.persistEventEnvelopesIndex_MockMethod = { _, _ in }
+        store.persistEventEnvelopesIndexPublicKeys_MockMethod = { _, _, _ in }
         store.storeLastEventIDId_MockMethod = { _ in }
         store.storeServerTimeDelta_MockMethod = { _ in }
 
         // When
-        try await sut.pull()
+        try await sut.pull(publicKeys: nil)
 
         // Then we used the api to fetch pending events.
         let apiInvocations = api.getUpdateEventsSelfClientIDSinceEventID_Invocations
@@ -107,7 +105,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         XCTAssertEqual(decryptorInvocations[3].eventEnvelope.id, Scaffolding.envelope4.id)
 
         // Then the events were stored at correct indices.
-        let persistInvocactions = store.persistEventEnvelopesIndex_Invocations
+        let persistInvocactions = store.persistEventEnvelopesIndexPublicKeys_Invocations
         try XCTAssertCount(persistInvocactions, count: 2)
         XCTAssertEqual(persistInvocactions[0].index, Scaffolding.indexOfLastEventEnvelope + 1)
         XCTAssertEqual(persistInvocactions[1].index, Scaffolding.indexOfLastEventEnvelope + 1)
@@ -139,24 +137,26 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
             EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
         }
 
-        store.persistEventEnvelopesIndex_MockMethod = { _, _ in }
+        store.persistEventEnvelopesIndexPublicKeys_MockMethod = { _, _, _ in }
         store.storeLastEventIDId_MockMethod = { _ in }
         store.storeServerTimeDelta_MockMethod = { _ in }
 
-        coreCrypto.completeTransactionByDefault = false
+        envelope.setCompleteTransactionByDefault(false)
 
         // When
         let pullingEventsTask = Task { [sut] in
-            try await sut.pull()
+            try await sut.pull(publicKeys: nil)
         }
 
         // we wait until the sync tries to commit the batch of decrypted events
-        try await coreCrypto.waitUntilTransactionIsPending()
+        try await envelope.waitUntilTransactionIsPending()
 
         // Then
         try XCTAssertCount(store.storeLastEventIDId_Invocations, count: 0)
 
-        coreCrypto.completeAllTransactions()
+        // complete all transaction
+        envelope.completeAllTransactions()
+
         _ = await pullingEventsTask.result
 
         // after allowing the transaction to complete we should we see

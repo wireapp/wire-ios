@@ -134,7 +134,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
         var storedEnvelopes: [(UpdateEventEnvelope, Int64)] = []
 
         // decrypt
-        try await coreCryptoProvider.coreCrypto().perform { coreCryptoContext in
+        try await coreCryptoProvider.coreCrypto().transaction { coreCryptoContext in
             for envelope in envelopes {
                 var envelope = envelope
                 envelope.events = await decryptEnvelope(envelope, in: coreCryptoContext)
@@ -148,7 +148,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
 
         // ack the decrypted events
         //
-        // NOTE: it's important that we ack after the CC transaction has succesfully completed,
+        // NOTE: it's important that we ack after the CC transaction has successfully completed,
         // otherwise we risk data loss in case of a crash.
         if let lastEnvelope = storedEnvelopes.last?.0 {
             try await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel, batchSize: storedEnvelopes.count)
@@ -181,7 +181,8 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
                 attributes: [.eventEnvelopeID: envelope.id] + logAttributes
             )
             index = try await updateEventsStore.indexOfLastEventEnvelope() + 1
-            try await updateEventsStore.persistEventEnvelope(envelope, index: index)
+            // TODO: [WPB-23558] Support EAR in incremental sync v2
+            try await updateEventsStore.persistEventEnvelope(envelope, index: index, publicKeys: nil)
         } catch {
             logger.error(
                 "failed to store live event envelope: \(String(describing: error))",

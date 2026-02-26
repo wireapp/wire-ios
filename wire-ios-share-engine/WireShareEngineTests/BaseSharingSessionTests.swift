@@ -176,9 +176,10 @@ class BaseTest: ZMTBaseTest {
     }
 
     func createSharingSession() async throws -> SharingSession {
-        let earService = EARService(
+        let earService = await EARService(
             accountID: accountIdentifier,
             databaseContexts: [coreDataStack.viewContext, coreDataStack.syncContext],
+            coreDataStack: coreDataStack,
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: MockAuthenticationContextProtocol()
         )

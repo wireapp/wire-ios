@@ -26,13 +26,16 @@ struct UpdateEventMigrator {
 
     private let dao: any UpdateEventMigratorDAOProtocol
     private let localDomain: String
+    private let earService: EARServiceInterface
 
     init(
         dao: any UpdateEventMigratorDAOProtocol,
-        localDomain: String
+        localDomain: String,
+        earService: EARServiceInterface
     ) {
         self.dao = dao
         self.localDomain = localDomain
+        self.earService = earService
     }
 
     func isMigrationNeeded() async throws -> Bool {
@@ -58,11 +61,13 @@ struct UpdateEventMigrator {
         // Store new events starting at this index.
         var currentIndex = try await dao.indexOfLastEventEnvelope() + 1
 
-        // TODO: [WPB-17302] pass in private keys
-        while let legacyEvents = await dao.nextBatchOfLegacyEvents(privateKeys: nil) {
+        let privateKeys = try earService.fetchPrivateKeys(includingPrimary: true)
+
+        while let legacyEvents = await dao.nextBatchOfLegacyEvents(privateKeys: privateKeys) {
             WireLogger.sync.debug("found \(legacyEvents.count) legacy events to migrate...")
 
             for legacyEvent in legacyEvents {
+
                 // Map it to the new event model.
                 let newUpdateEvent: UpdateEvent?
                 do {
