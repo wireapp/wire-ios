@@ -86,21 +86,13 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             let predicate = NSPredicate(format: "%K != nil", #keyPath(ZMUser.oneOnOneConversation))
             request.predicate = predicate
 
-            return try context
+            let results = try context
                 .fetch(request)
+            return results
                 .compactMap { user in
-                    guard !user.isAccountDeleted else {
-                        WireLogger.conversation.warn(
-                            "skippinig 1-1 conversation of deleted user's",
-                            attributes: [.senderUserId: user.qualifiedID?.safeForLoggingDescription ?? "<nil>"]
-                        )
-                        return nil
-                    }
-
                     guard let userID = user.qualifiedID else {
                         WireLogger.conversation.error(
-                            "Missing user's qualifiedID"
-                        )
+                            "⚠️ Missing user's qualifiedID")
                         return nil
                     }
                     return userID
@@ -233,6 +225,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
 
     public func markAccountAsDeleted(for user: ZMUser) async {
         await context.perform {
+            WireLogger.conversation.debug("⚠️ mark as deleted store", attributes: [.senderUserId: user.qualifiedID?.safeForLoggingDescription ?? "<nil>"])
             user.isAccountDeleted = true
         }
     }
