@@ -18,7 +18,6 @@
 
 import SwiftUI
 import WireCommonComponents
-import WireDataModel
 import WireDesign
 
 struct DeviceDetailsButtonsView: View {
