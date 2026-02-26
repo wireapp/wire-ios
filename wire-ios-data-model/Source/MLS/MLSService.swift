@@ -858,13 +858,16 @@ public final class MLSService: MLSServiceInterface {
             return
         }
 
-        let pendingGroups = try await context.perform {
-            try ZMConversation.fetchConversationsWithMLSGroupStatus(
+        let pendingGroups = try await context.perform { [logger] in
+            let pendingGroups = try  ZMConversation.fetchConversationsWithMLSGroupStatus(
                 mlsGroupStatus: .pendingJoin,
                 in: context
             )
+            logger.info("\(pendingGroups.count) pendingJoin group(s)")
+        
+            return pendingGroups.filter { !($0.conversationType == .oneOnOne && $0.localParticipantsExcludingSelf.isEmpty) }
         }
-
+      
         logger.info("joining \(pendingGroups.count) group(s)")
 
         let needToSave = await withTaskGroup(of: Bool.self) { group in
