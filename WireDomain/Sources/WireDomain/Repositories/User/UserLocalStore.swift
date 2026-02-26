@@ -324,10 +324,6 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         )
 
         await context.perform {
-            guard !userInfo.isDeleted else {
-                return persistedUser.markAccountAsDeleted(at: Date())
-            }
-
             persistedUser.name = userInfo.name
             persistedUser.handle = userInfo.handle
             persistedUser.teamIdentifier = userInfo.teamID
@@ -343,6 +339,10 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             // `type` only exists in v12 or later
             let fallbackType: TypeOfUser = persistedUser.serviceIdentifier != nil ? .bot : .regular
             persistedUser.type = userInfo.type ?? fallbackType
+
+            if userInfo.isDeleted {
+                return persistedUser.markAccountAsDeleted(at: Date())
+            }
         }
     }
 
