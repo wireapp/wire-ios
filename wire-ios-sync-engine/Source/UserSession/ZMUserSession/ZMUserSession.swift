@@ -510,6 +510,7 @@ public final class ZMUserSession: NSObject {
             sharedContainerURL: sharedContainerURL,
             syncContext: coreDataStack.syncContext,
             eventContext: coreDataStack.eventContext,
+            earService: earService,
             mlsService: mlsService,
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
@@ -1326,13 +1327,13 @@ extension ZMUserSession: SyncAgentDelegate {
         }
     }
 
-    func processPendingCallEvents() async {
+    func processPendingCallEvents(only onlyCallEvents: Bool) async {
         WireLogger.sync.debug(
-            "process pending call events",
+            "process pending call events (onlyCallEvents: \(onlyCallEvents)",
             attributes: .incrementalSync
         )
 
-        syncAgent?.resume()
+        syncAgent?.resume(callEventsOnly: true)
     }
 
     func notifyAuthenticationInvalidated(_ error: Error) {

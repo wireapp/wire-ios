@@ -1263,8 +1263,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         with coreDataStack: CoreDataStack,
         journal: Journal,
         logFilesProvider: LogFilesProviding
-    ) -> ZMUserSession {
-        guard let newSession = createUserSession(
+    ) async -> ZMUserSession {
+        guard let newSession = await createUserSession(
             for: account,
             with: coreDataStack,
             journal: journal,
@@ -1288,12 +1288,12 @@ public final class SessionManager: NSObject, SessionManagerType {
         with coreDataStack: CoreDataStack,
         journal: Journal,
         logFilesProvider: LogFilesProviding
-    ) -> ZMUserSession? {
+    ) async -> ZMUserSession? {
         let sessionConfig = ZMUserSession.Configuration(
             appLockConfig: configuration.legacyAppLockConfig
         )
 
-        return authenticatedSessionFactory.session(
+        return await authenticatedSessionFactory.session(
             for: account,
             coreDataStack: coreDataStack,
             configuration: sessionConfig,
