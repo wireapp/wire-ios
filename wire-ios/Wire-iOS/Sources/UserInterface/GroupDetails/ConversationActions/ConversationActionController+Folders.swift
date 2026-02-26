@@ -22,7 +22,7 @@ import WireSyncEngine
 
 extension ConversationActionController {
     func openMoveToFolder(for conversation: ZMConversation) {
-        guard let directory = ZMUserSession.shared()?.conversationDirectory else { return }
+        guard let directory = (userSession as? ZMUserSession)?.conversationDirectory else { return }
         let useCase = userSession.makeConversationFolderSelectionUseCase()
 
         Task { @MainActor in
