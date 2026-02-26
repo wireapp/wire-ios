@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDataModel
 import WireDesign
 
 struct DeviceDetailsButtonsView: View {
@@ -70,32 +71,28 @@ struct DeviceDetailsButtonsView: View {
     }
 
     var body: some View {
-        if let status = viewModel.e2eIdentityCertificate?.status {
-            switch status {
-            case .valid:
-                if viewModel.isSelfClient, viewModel.isCertificateExpiringSoon == true {
+        VStack(spacing: 0) {
+            let buttons = activeButtons
+            ForEach(0 ..< buttons.count, id: \.self) { index in
+                buttons[index].padding()
+
+                if index < buttons.count - 1 {
                     Divider()
-                    updateCertificateButton.padding()
                 }
-                Divider()
-                showCertificateButton.padding()
-            case .notActivated:
-                if !viewModel.isFromConversation, viewModel.isSelfClient {
-                    Divider()
-                    getCertificateButton.padding()
-                }
-            case .revoked, .invalid:
-                Divider()
-                showCertificateButton.padding()
-            case .expired:
-                if !viewModel.isFromConversation, viewModel.isSelfClient {
-                    Divider()
-                    updateCertificateButton.padding()
-                }
-                Divider()
-                showCertificateButton.padding()
             }
+            Divider()
         }
-        Divider()
+    }
+
+    private var activeButtons: [AnyView] {
+        guard viewModel.e2eIdentityCertificate?.status != nil else { return [] }
+
+        let rules: [(shouldShow: Bool, view: AnyView)] = [
+            (viewModel.presentShowCertDeatilsViewButton, AnyView(showCertificateButton)),
+            (viewModel.presentGetButton, AnyView(getCertificateButton)),
+            (viewModel.presentUpdateButton, AnyView(updateCertificateButton))
+        ]
+
+        return rules.compactMap { $0.shouldShow ? $0.view : nil }
     }
 }
