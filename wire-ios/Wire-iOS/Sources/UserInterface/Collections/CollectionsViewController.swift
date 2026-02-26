@@ -582,10 +582,12 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
 
         case CollectionsSectionSet.filesAndAudio:
             if message(for: indexPath).fileMessageData?.isAudio == true {
-                resultCell = collectionView.dequeueReusableCell(
+                let audioCell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: CollectionAudioCell.reuseIdentifier,
                     for: indexPath
                 ) as! CollectionAudioCell
+                audioCell.setUserSession(userSession: userSession)
+                resultCell = audioCell
             } else {
                 resultCell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: CollectionFileCell.reuseIdentifier,

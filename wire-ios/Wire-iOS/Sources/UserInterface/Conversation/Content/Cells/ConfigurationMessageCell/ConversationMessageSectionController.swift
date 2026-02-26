@@ -309,6 +309,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         let cellDescriptions = ConversationCollapsedMessageCellDescription(
             message: message,
             accentColor: (selfUser.zmAccentColor ?? .default).accentColor,
+            userSession: userSession,
             collapseExpandAction: { [weak self] in
                 self?.handleCollapseExpand()
             }
@@ -346,7 +347,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if shouldCollapseCell() {
             return addCollapsedCell()
         }
-        let cellDescription = ConversationAudioMessageCellDescription(message: message)
+        let cellDescription = ConversationAudioMessageCellDescription(message: message, userSession: userSession)
         return [AnyConversationMessageCellDescription(cellDescription)]
     }
 
@@ -466,7 +467,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             let description = ConversationSenderMessageCellDescription(
                 sender: sender,
                 selfUser: selfUser,
-                message: message
+                message: message,
+                userSession: userSession
             )
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }

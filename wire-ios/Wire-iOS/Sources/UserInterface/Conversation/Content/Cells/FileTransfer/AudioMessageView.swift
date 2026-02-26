@@ -29,6 +29,7 @@ final class AudioMessageView: UIView, TransferView {
     typealias AudioMessage = L10n.Accessibility.AudioMessage
     var fileMessage: ZMConversationMessage?
     weak var delegate: TransferViewDelegate?
+    private var userSession: UserSession?
     private weak var mediaPlaybackManager: MediaPlaybackManager?
 
     var audioTrackPlayer: AudioTrackPlayer? {
@@ -117,13 +118,6 @@ final class AudioMessageView: UIView, TransferView {
 
         setNeedsLayout()
         layoutIfNeeded()
-
-        if let session = ZMUserSession.shared() {
-            self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(
-                observer: self,
-                contextProvider: session.contextProvider
-            )
-        }
     }
 
     @available(*, unavailable)
@@ -181,6 +175,17 @@ final class AudioMessageView: UIView, TransferView {
     override var tintColor: UIColor! {
         didSet {
             downloadProgressView.tintColor = tintColor
+        }
+    }
+
+    func setUserSession(userSession: UserSession) {
+        self.userSession = userSession
+
+        if callStateObserverToken == nil, let userSession = userSession as? ZMUserSession {
+            callStateObserverToken = WireCallCenterV3.addCallStateObserver(
+                observer: self,
+                contextProvider: userSession.contextProvider
+            )
         }
     }
 
@@ -323,7 +328,7 @@ final class AudioMessageView: UIView, TransferView {
     }
 
     private func playTrack() {
-        let userSession = ZMUserSession.shared()
+        let userSession = userSession as? ZMUserSession
         guard let fileMessage,
               let fileMessageData = fileMessage.fileMessageData,
               let audioTrackPlayer,
@@ -412,7 +417,7 @@ final class AudioMessageView: UIView, TransferView {
             switch fileMessageData.downloadState {
             case .remote:
                 expectingDownload = true
-                ZMUserSession.shared()?.enqueue(fileMessageData.requestFileDownload)
+                userSession?.enqueue(fileMessageData.requestFileDownload)
 
             case .downloaded:
                 playTrack()
