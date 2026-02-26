@@ -225,8 +225,10 @@ public final class ConversationPredicateFactory: NSObject {
         }
 
         let isOtherUserBot = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.serviceIdentifier)) != NULL")
+        
+        let otherUserDeleted = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.isAccountDeleted)) == YES")
 
-        return isOneOnOne.and(hasOneOnOneUser).and(isConnectionAccepted.or(isOtherUserInSameTeam).or(isOtherUserBot))
+        return isOneOnOne.and(otherUserDeleted).or(isOneOnOne.and(hasOneOnOneUser).and(isConnectionAccepted.or(isOtherUserInSameTeam).or(isOtherUserBot)))
     }
 
     private func isValidGroup() -> NSPredicate {
