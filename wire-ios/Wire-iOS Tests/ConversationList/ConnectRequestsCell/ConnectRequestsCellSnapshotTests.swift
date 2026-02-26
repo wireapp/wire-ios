@@ -40,6 +40,7 @@ final class ConnectRequestsCellSnapshotTests: XCTestCase {
         let otherUser = MockUserType.createDefaultOtherUser()
         sut.itemView.configure(with: title, subtitle: nil, users: [otherUser])
         sut.backgroundColor = .black
+        sut.setupConnectRequestsCell(userSession: UserSessionMock())
     }
 
     // MARK: - tearDown
