@@ -71,27 +71,26 @@ struct DeviceDetailsButtonsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            let buttons = activeButtons
-            ForEach(0 ..< buttons.count, id: \.self) { index in
-                buttons[index].padding()
-
-                if index < buttons.count - 1 {
-                    Divider()
+            if viewModel.e2eIdentityCertificate?.status != nil {
+                
+                if viewModel.presentShowCertDetailsViewButton {
+                    showCertificateButton.padding()
+                }
+                
+                if viewModel.presentGetButton {
+                    if viewModel.presentShowCertDetailsViewButton {
+                        Divider()
+                    }
+                    getCertificateButton.padding()
+                }
+                
+                if viewModel.presentUpdateButton {
+                    if viewModel.presentShowCertDetailsViewButton || viewModel.presentGetButton {
+                        Divider()
+                    }
+                    updateCertificateButton.padding()
                 }
             }
-            Divider()
         }
-    }
-
-    private var activeButtons: [AnyView] {
-        guard viewModel.e2eIdentityCertificate?.status != nil else { return [] }
-
-        let rules: [(shouldShow: Bool, view: AnyView)] = [
-            (viewModel.presentShowCertDeatilsViewButton, AnyView(showCertificateButton)),
-            (viewModel.presentGetButton, AnyView(getCertificateButton)),
-            (viewModel.presentUpdateButton, AnyView(updateCertificateButton))
-        ]
-
-        return rules.compactMap { $0.shouldShow ? $0.view : nil }
     }
 }

@@ -74,7 +74,7 @@ final class DeviceInfoViewModel: ObservableObject {
             .replacingOccurrences(of: " ", with: ":")
     }
 
-    var presentShowCertDeatilsViewButton: Bool {
+    var presentShowCertDetailsViewButton: Bool {
         guard let status = e2eIdentityCertificate?.status, status != .notActivated else { return false }
         return true
     }
