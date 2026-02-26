@@ -70,6 +70,7 @@ final class ReplyComposingView: UIView {
 
     let message: ZMConversationMessage
     let closeButton = IconButton()
+    private let userSession: UserSession
     private let leftSideView = UIView(frame: .zero)
     private var messagePreviewContainer: ReplyRoundCornersView!
     private var previewView: UIView!
@@ -79,11 +80,12 @@ final class ReplyComposingView: UIView {
 
     // MARK: - Init
 
-    init(message: ZMConversationMessage, messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil) {
+    init(message: ZMConversationMessage, userSession: UserSession, messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil) {
         require(message.canBeQuoted)
         require(message.conversationLike != nil)
 
         self.message = message
+        self.userSession = userSession
         self.messageReplyAttachmentsViewModel = messageReplyAttachmentsViewModel
         super.init(frame: .zero)
 
@@ -100,7 +102,7 @@ final class ReplyComposingView: UIView {
     // MARK: - Setup Message Observer
 
     private func setupMessageObserver() {
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             observerToken = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
         }
     }

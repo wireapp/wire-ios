@@ -97,6 +97,7 @@ final class AudioRecorder: NSObject, AudioRecorderType {
 
     let format: AudioRecorderFormat
     var state: AudioRecorderState = .initializing
+    private let userSession: UserSession
 
     var audioRecorder: AVAudioRecorder?
 
@@ -116,14 +117,16 @@ final class AudioRecorder: NSObject, AudioRecorderType {
 
     private var token: Any?
 
+
     override init() {
         fatalError("init() is not implemented for AudioRecorder")
     }
 
-    init(format: AudioRecorderFormat = .m4A, maxRecordingDuration: TimeInterval?, maxFileSize: UInt64?) {
+    init(format: AudioRecorderFormat = .m4A, maxRecordingDuration: TimeInterval?, maxFileSize: UInt64?, userSession: UserSession) {
         self.format = format
         self.maxRecordingDuration = maxRecordingDuration
         self.maxFileSize = maxFileSize
+        self.userSession = userSession
         super.init()
         setupDidEnterBackgroundObserver()
     }
@@ -314,7 +317,7 @@ final class AudioRecorder: NSObject, AudioRecorderType {
     func playRecording() {
         guard
             let audioRecorder,
-            ZMUserSession.shared()?.isCallOngoing == false
+            (userSession as? ZMUserSession)?.isCallOngoing == false
         else { return }
 
         do {

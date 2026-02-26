@@ -124,7 +124,7 @@ final class MessageDetailsViewController: UIViewController {
         conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
         self.message = message
-        self.dataSource = MessageDetailsDataSource(message: message)
+        self.dataSource = MessageDetailsDataSource(message: message, userSession: userSession)
         self.userSession = userSession
 
         // Setup view controllers based on display mode
