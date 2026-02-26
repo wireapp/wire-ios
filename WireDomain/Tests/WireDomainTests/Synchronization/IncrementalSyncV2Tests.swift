@@ -38,12 +38,14 @@ final class IncrementalSyncV2Tests: XCTestCase {
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
     var liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>!
     var liveDelegate: MockLiveSyncDelegate!
-    var coreCrypto: MockSafeCoreCrypto!
+    var coreCryptoContext: MockCoreCryptoContextProtocol!
+    var coreCrypto: MockCoreCryptoProtocol!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
     var pushChannelState: MockPushChannelStateProtocol!
     var mlsGroupRepairAgent: MockMLSGroupRepairAgentProtocol!
     var journal: Journal!
     var cancellables: Set<AnyCancellable>!
+    var earService: MockEARServiceInterface!
 
     override func setUp() {
         pushChannelAPI = MockPushChannelV2API()
@@ -55,7 +57,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
         databaseSaver = MockDatabaseSaverProtocol()
         liveDelegate = MockLiveSyncDelegate()
         syncStateSubject = .init(.idle)
-        coreCrypto = MockSafeCoreCrypto()
+        coreCryptoContext = MockCoreCryptoContextProtocol()
+        coreCrypto = MockCoreCryptoProtocol()
+        coreCrypto.mockTransaction(context: coreCryptoContext)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
         coreCryptoProvider.coreCrypto_MockValue = coreCrypto
         journal = Journal(
@@ -66,6 +70,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         mlsGroupRepairAgent = MockMLSGroupRepairAgentProtocol()
         liveBrokenGroupSubject = .init()
         cancellables = .init()
+        earService = MockEARServiceInterface()
 
         sut = IncrementalSyncV2(
             selfClientID: Scaffolding.selfClientID,
@@ -81,6 +86,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             coreCryptoProvider: coreCryptoProvider,
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
+            earService: earService,
             createPushChannelState: {
                 self.pushChannelState
             },
@@ -115,6 +121,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         coreCrypto = nil
         coreCryptoProvider = nil
         cancellables = nil
+        coreCryptoContext = nil
     }
 
     func testPerform_pendingEventsExist() async throws {
@@ -150,7 +157,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
 
         // Live envelopes are peristed one by one and deleted by batch.
-        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ async throws in }
         updateEventsStore.deleteEventEnvelopesAt_MockMethod = { _ in }
 
         // Live events are decrypted.
@@ -182,7 +189,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // Then stored events were processed
         XCTAssertEqual(
-            updateEventsStore.fetchStoredEventEnvelopesLimit_Invocations.count,
+            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count,
             numberOfStoredEventEnvelopesInvocations
         )
         XCTAssertEqual(processor.processEvent_Invocations.count, 1)
@@ -279,7 +286,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
 
         // Live envelopes are peristed one by one and deleted by batch.
-        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ async throws in }
         updateEventsStore.deleteEventEnvelopesAt_MockMethod = { _ in }
 
         // Live events are decrypted.
@@ -375,7 +382,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         setPendingEvents(envelopes: [])
 
         // Live envelopes are peristed one by one and deleted by batch.
-        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ async throws in }
         updateEventsStore.deleteEventEnvelopesAt_MockMethod = { _ in }
 
         // Some indices at which live events will be stored.
@@ -407,7 +414,10 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         let numberOfInvocationInProcessEvents = 0
         // Then stored events were processed
-        XCTAssertEqual(updateEventsStore.fetchStoredEventEnvelopesLimit_Invocations.count, 1)
+        XCTAssertEqual(
+            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count,
+            1
+        )
         XCTAssertEqual(processor.processEvent_Invocations.count, numberOfInvocationInProcessEvents)
 
         XCTAssertEqual(
@@ -511,7 +521,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         setPendingEvents(envelopes: [])
 
         // Live envelopes are peristed one by one and deleted by batch.
-        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ async throws in }
         updateEventsStore.deleteEventEnvelopesAt_MockMethod = { _ in }
 
         // Some indices at which live events will be stored.
@@ -540,7 +550,10 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         let numberOfInvocationInProcessEvents = 0
         // Then stored events were processed
-        XCTAssertEqual(updateEventsStore.fetchStoredEventEnvelopesLimit_Invocations.count, 1)
+        XCTAssertEqual(
+            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count,
+            1
+        )
         XCTAssertEqual(processor.processEvent_Invocations.count, numberOfInvocationInProcessEvents)
 
         XCTAssertEqual(
@@ -640,7 +653,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
 
         // Live envelopes are peristed one by one and deleted by batch.
-        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ async throws in }
         updateEventsStore.deleteEventEnvelopesAt_MockMethod = { _ in }
 
         // Some indices at which live events will be stored.
@@ -669,7 +682,10 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         let numberOfPendingEvents = 1
         // Then stored events were processed, we fetch N+1 with N the number of envelopes
-        XCTAssertEqual(updateEventsStore.fetchStoredEventEnvelopesLimit_Invocations.count, numberOfPendingEvents + 1)
+        XCTAssertEqual(
+            updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_Invocations.count,
+            numberOfPendingEvents + 1
+        )
         // typing event is skipped
         XCTAssertEqual(processor.processEvent_Invocations.count, 0)
         // typing event is deleted
@@ -703,7 +719,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
 
         // Live envelopes are peristed one by one and deleted by batch.
-        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ async throws in }
         updateEventsStore.deleteEventEnvelopesAt_MockMethod = { _ in }
 
         // Some indices at which live events will be stored.
@@ -753,13 +769,13 @@ final class IncrementalSyncV2Tests: XCTestCase {
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
-        updateEventsStore.fetchStoredEventEnvelopesLimit_MockError = expectedError
+        updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockError = expectedError
 
         // Pending events are deleted in batches.
         updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
 
         // Live envelopes are peristed one by one and deleted by batch.
-        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ async throws in }
         updateEventsStore.deleteEventEnvelopesAt_MockMethod = { _ in }
 
         // Some indices at which live events will be stored.
@@ -852,7 +868,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
 
         // Live envelopes are peristed one by one and deleted by batch.
-        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.persistEventEnvelopeIndexPublicKeys_MockMethod = { _, _, _ async throws in }
         updateEventsStore.deleteEventEnvelopesAt_MockMethod = { _ in }
 
         // Live events are decrypted.
@@ -878,7 +894,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         databaseSaver.save_MockMethod = {}
 
         // Pending events are stored in batches.
-        updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
+        updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockMethod = { _, _, _ in
             []
         }
 
@@ -906,7 +922,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
     private func setPendingEvents(envelopes: [(UpdateEventEnvelope, NSManagedObjectID)]) {
         var storedEnvelopes = envelopes
-        updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
+        updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockMethod = { _, _, _ in
             let envelopes = storedEnvelopes
             storedEnvelopes = []
             return envelopes

@@ -16,34 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-public final class FetchSupportedProtocolsAction: EntityAction {
-
-    public typealias Result = Set<MessageProtocol>
-
-    public enum Failure: Error, Equatable {
-
-        case endpointUnavailable
-        case invalidParameters
-        case invalidResponse
-        case unknown(status: Int, label: String, message: String)
-
+public extension UserSession {
+    func isSimplifiedUserConnectionRequestQRCodeEnabled() async -> Bool {
+        guard let clientSessionComponent else {
+            return Feature.SimplifiedUserConnectionRequestQRCode().status == .enabled
+        }
+        let featureConfigRepository = clientSessionComponent.featureConfigRepository
+        return await featureConfigRepository.isFeatureEnabled(.simplifiedUserConnectionRequestQRCode)
     }
-
-    // MARK: - Properties
-
-    public let userID: QualifiedID
-    public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
-
-    public init(
-        userID: QualifiedID,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.userID = userID
-        self.resultHandler = resultHandler
-    }
-
 }

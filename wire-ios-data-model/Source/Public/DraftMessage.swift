@@ -166,12 +166,20 @@ extension ZMConversation {
     @nonobjc
     private func encryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> (data: Data, nonce: Data?) {
         guard moc.encryptMessagesAtRest else { return (data, nonce: nil) }
-        return try moc.encryptData(data: data)
+
+        let service = try moc.getEarMessageEncryptionService()
+        let contextData = try service.getContextData(from: moc)
+
+        return try service.encrypt(data: data, contextData: contextData)
     }
 
     private func decryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> Data {
         guard let nonce = draftMessageNonce else { return data }
-        return try moc.decryptData(data: data, nonce: nonce)
+
+        let service = try moc.getEarMessageEncryptionService()
+        let contextData = try service.getContextData(from: moc)
+
+        return try service.decrypt(data: data, nonce: nonce, contextData: contextData)
     }
 
 }

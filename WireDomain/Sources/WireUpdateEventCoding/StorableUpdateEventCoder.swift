@@ -21,7 +21,7 @@ public import WireNetwork
 
 /// Encodes and decodes `UpdateEventEnvelope` objects to and from data for the sole purpose of storing them in a
 /// database.
-public struct StorableUpdateEventCoder {
+public struct StorableUpdateEventCoder: Sendable {
 
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()

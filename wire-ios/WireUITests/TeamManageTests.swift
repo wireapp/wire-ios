@@ -191,4 +191,44 @@ final class TeamManageTests: WireUITestCase {
 
         XCTAssertTrue(archivedConversationPage.conversationExists(withName: groupName))
     }
+
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1389/tc/8865/
+    @MainActor
+    func test_mentionUserInGroup() async throws {
+
+        let (teamOwner, teamMembers, _, _) = try await userHelper
+            .registerTeam(
+                withMemberCount: 4,
+                groupName: UserGenerator.generateRandomGroupName()
+            )
+
+        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup(with: self)
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        let conversationPage = try app.loginUser(email: teamMembers[1].email, password: teamMembers[1].password)
+            .acceptPopup(with: self)
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: teamOwner.name)
+            .openConversation()
+            .mentionUserAndSendMessage(nameOfUser: teamMembers[1].name)
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: teamMembers[1].name)
+
+        XCTAssertEqual(
+            conversationPage.mentionStatus.value as? String,
+            "You are mentioned",
+            "'@' value not found in conversation cell"
+        )
+
+        let activeConversationPage = try conversationPage.openConversation()
+
+        let fetchMessages = try XCTUnwrap(activeConversationPage.fetchMessages())
+        XCTAssertTrue(
+            fetchMessages.contains(where: { $0.contains("@") && $0.contains(teamMembers[1].name) }),
+            "Expected mention '@\(teamMembers[1].name)' not found in sent messages: \(fetchMessages)"
+        )
+    }
 }

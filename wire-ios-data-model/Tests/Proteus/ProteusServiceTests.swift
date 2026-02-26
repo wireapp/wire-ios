@@ -28,7 +28,7 @@ class ProteusServiceTests: XCTestCase {
     struct MockError: Error, Equatable {}
 
     var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
-    var mockSafeCoreCrypto: MockSafeCoreCrypto!
+    var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     var sut: ProteusService!
 
@@ -38,15 +38,16 @@ class ProteusServiceTests: XCTestCase {
         try super.setUpWithError()
         mockCoreCryptoContext = MockCoreCryptoContextProtocol()
         mockCoreCryptoContext.proteusInit_MockMethod = {}
-        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCryptoContext: mockCoreCryptoContext)
+        mockCoreCrypto = MockCoreCryptoProtocol()
+        mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
         sut = ProteusService(coreCryptoProvider: mockCoreCryptoProvider)
     }
 
     override func tearDown() {
         mockCoreCryptoContext = nil
-        mockSafeCoreCrypto = nil
+        mockCoreCrypto = nil
         sut = nil
         super.tearDown()
     }
@@ -80,7 +81,7 @@ class ProteusServiceTests: XCTestCase {
         // Then
         XCTAssertFalse(didCreateNewSession)
         XCTAssertEqual(decryptedData, Data([0, 1, 2, 3, 4, 5]))
-        XCTAssertEqual(mockSafeCoreCrypto.performAsyncCount, 1)
+        XCTAssertEqual(mockCoreCrypto.transaction_Invocations.count, 1)
     }
 
     func test_DecryptDataForSession_SessionExists_Failure() async throws {
@@ -95,7 +96,7 @@ class ProteusServiceTests: XCTestCase {
         }
 
         mockCoreCryptoContext.proteusDecryptSessionIdCiphertext_MockMethod = { _, _ in
-            throw CoreCryptoError.Proteus(.DuplicateMessage)
+            throw CoreCryptoError.Proteus(exception: .DuplicateMessage)
         }
 
         // Then
@@ -156,7 +157,7 @@ class ProteusServiceTests: XCTestCase {
         }
 
         mockCoreCryptoContext.proteusSessionFromMessageSessionIdEnvelope_MockMethod = { _, _ in
-            throw CoreCryptoError.Proteus(.DuplicateMessage)
+            throw CoreCryptoError.Proteus(exception: .DuplicateMessage)
         }
 
         await assertItThrows {
@@ -203,7 +204,7 @@ class ProteusServiceTests: XCTestCase {
         // Then
         XCTAssertFalse(didCreateNewSession)
         XCTAssertEqual(decryptedData, Data([0, 1, 2, 3, 4, 5]))
-        XCTAssertEqual(mockSafeCoreCrypto.performAsyncCount, 0)
+        XCTAssertEqual(mockCoreCrypto.transaction_Invocations.count, 0)
     }
 
     func test_DecryptDataForSession_CancellationStopsDecryption() async throws {

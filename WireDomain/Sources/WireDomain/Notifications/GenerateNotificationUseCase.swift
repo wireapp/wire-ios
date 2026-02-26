@@ -85,7 +85,7 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
                 return try await conversationEventBuilder.buildContent(
                     event: conversationEvent
                 )
-            } catch ConversationMessageAddEventNotificationBuilder.Failure.unknownMessageContent {
+            } catch ProtobufMessageDecoder.Failure.unknownMessageContent {
                 // Can't show notifications for unknown message types,
                 // so just ignore.
                 return nil

@@ -56,7 +56,7 @@ package struct WireDriveCreateFileUseCase: WireDriveCreateFileUseCaseProtocol {
             url.appendingPathComponent("\(name).\(template.fileExtension)")
         }
 
-        let path = targetPath.absoluteString
+        let path = targetPath.absoluteString.removingPercentEncoding ?? targetPath.absoluteString
 
         // Checks whether the path doesn't already exist.
         let preCheckResult = try await nodesRepository.preCheck(
