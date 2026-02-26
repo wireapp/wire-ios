@@ -53,7 +53,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 
         // NOTE: the sut is not really a mock it's just the real implementation
         // but with canPresentCallQualitySurvey set to true for testing the callQualitySurvey
-        sut = MockCallQualityController(mainWindow: .init(), submitCallQualitySurvey: callQualitySurvey)
+        sut = MockCallQualityController(mainWindow: .init(), userSession: UserSessionMock(), submitCallQualitySurvey: callQualitySurvey)
         sut.router = router
         sut.usesCallSurveyBudget = false
 

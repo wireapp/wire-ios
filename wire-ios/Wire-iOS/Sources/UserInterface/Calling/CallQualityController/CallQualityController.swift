@@ -32,12 +32,12 @@ class CallQualityController: NSObject {
     private let mainWindow: UIWindow
     private let submitCallQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol
 
-    init(mainWindow: UIWindow, submitCallQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol) {
+    init(mainWindow: UIWindow, userSession: UserSession, submitCallQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol) {
         self.mainWindow = mainWindow
         self.submitCallQualitySurvey = submitCallQualitySurvey
         super.init()
 
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             self.token = WireCallCenterV3.addCallStateObserver(
                 observer: self,
                 contextProvider: userSession.contextProvider

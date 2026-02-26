@@ -105,6 +105,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
 
         self.callQualityController = CallQualityController(
             mainWindow: mainWindow,
+            userSession: userSession,
             submitCallQualitySurvey: userSession.makeCallQualitySurveyUseCase()
         )
         self.transitioningDelegate = CallQualityAnimator()
