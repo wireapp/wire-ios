@@ -60,7 +60,14 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
             )
 
             for event in events {
+<<<<<<< HEAD
                 if let notifications = await generateNotification(for: event) {
+=======
+                // Abort if needed.
+                try Task.checkCancellation()
+
+                if let notification = await generateNotification(for: event) {
+>>>>>>> 80e8746d5d (fix: nse task  cancellation - WPB-23442 (#4325))
                     logger.info(
                         "Generated \(notifications.count) notifications from an event",
                         attributes: .newNSE, .safePublic
