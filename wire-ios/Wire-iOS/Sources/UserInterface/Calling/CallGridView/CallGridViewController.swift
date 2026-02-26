@@ -67,6 +67,7 @@ final class CallGridViewController: UIViewController {
     private let mediaManager: AVSMediaManagerInterface
     private let voiceChannel: VoiceChannel
     private let isFederationEnabled: Bool
+    private let userSession: UserSession
 
     // MARK: - Public Properties
 
@@ -110,7 +111,8 @@ final class CallGridViewController: UIViewController {
         voiceChannel: VoiceChannel,
         configuration: CallGridViewControllerInput,
         mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance(),
-        isFederationEnabled: Bool
+        isFederationEnabled: Bool,
+        userSession: UserSession
     ) {
 
         self.configuration = configuration
@@ -118,6 +120,7 @@ final class CallGridViewController: UIViewController {
         self.voiceChannel = voiceChannel
         self.networkQuality = voiceChannel.networkQuality
         self.isFederationEnabled = isFederationEnabled
+        self.userSession = userSession
 
         super.init(nibName: nil, bundle: nil)
 
@@ -349,7 +352,8 @@ final class CallGridViewController: UIViewController {
                 isCovered: isCovered,
                 shouldShowActiveSpeakerFrame: configuration.shouldShowActiveSpeakerFrame,
                 shouldShowBorderWhenVideoIsStopped: shouldShowBorderWhenVideoIsStopped,
-                pinchToZoomRule: pinchToZoomRule
+                pinchToZoomRule: pinchToZoomRule,
+                userSession: userSession
             )
         }
     }
@@ -556,7 +560,8 @@ extension CallGridViewController: UICollectionViewDataSource {
                 shouldShowActiveSpeakerFrame: configuration.shouldShowActiveSpeakerFrame,
                 shouldShowBorderWhenVideoIsStopped: shouldShowBorderWhenVideoIsStopped,
                 pinchToZoomRule: pinchToZoomRule,
-                isFederationEnabled: isFederationEnabled
+                isFederationEnabled: isFederationEnabled,
+                userSession: userSession
             )
             viewCache[streamId] = view
             return view

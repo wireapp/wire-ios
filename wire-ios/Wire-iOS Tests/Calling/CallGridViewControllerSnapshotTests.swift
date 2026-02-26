@@ -101,7 +101,8 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
             voiceChannel: mockVoiceChannel,
             configuration: configuration,
             mediaManager: mediaManager,
-            isFederationEnabled: false
+            isFederationEnabled: false,
+            userSession: UserSessionMock()
         )
 
         sut.isCovered = false
@@ -360,7 +361,8 @@ extension CallGridViewControllerSnapshotTests {
                         isCovered: false,
                         shouldShowActiveSpeakerFrame: true,
                         shouldShowBorderWhenVideoIsStopped: true,
-                        pinchToZoomRule: .enableWhenFitted
+                        pinchToZoomRule: .enableWhenFitted,
+                        userSession: UserSessionMock()
                     )
                 }
             }

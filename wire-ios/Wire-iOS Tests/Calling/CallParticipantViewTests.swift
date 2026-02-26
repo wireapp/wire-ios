@@ -51,7 +51,8 @@ class CallParticipantViewTests: XCTestCase {
             shouldShowActiveSpeakerFrame: true,
             shouldShowBorderWhenVideoIsStopped: true,
             pinchToZoomRule: pinchToZoomRule,
-            isFederationEnabled: false
+            isFederationEnabled: false,
+            userSession: UserSessionMock()
         )
         view.frame = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
         view.backgroundColor = .graphite

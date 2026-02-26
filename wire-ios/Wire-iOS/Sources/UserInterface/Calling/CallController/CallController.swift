@@ -28,6 +28,7 @@ final class CallController: NSObject {
 
     // MARK: - Private Implentation
 
+    private let userSession: UserSession
     private var observerTokens: [Any] = []
     private var minimizedCall: ZMConversation?
 
@@ -41,6 +42,7 @@ final class CallController: NSObject {
     // MARK: - Init
 
     init(userSession: UserSession) {
+        self.userSession = userSession
         super.init()
         addObservers(userSession: userSession)
     }
@@ -125,7 +127,7 @@ final class CallController: NSObject {
     }
 
     private func acceptDegradedCall(conversation: ZMConversation) {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = userSession as? ZMUserSession else { return }
 
         userSession.enqueue {
             conversation.voiceChannel?.continueByDecreasingConversationSecurity(userSession: userSession)
@@ -135,7 +137,7 @@ final class CallController: NSObject {
     }
 
     private func cancelCall(conversation: ZMConversation) {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = userSession as? ZMUserSession else { return }
         conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
     }
 
