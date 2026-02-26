@@ -140,14 +140,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+
           brew install docker colima qemu
 
-          colima stop || true
-          colima delete -f || true
+          /opt/homebrew/opt/colima/bin/colima stop || true
+          /opt/homebrew/opt/colima/bin/colima delete -f || true
 
-          colima start -f --cpu 2 --memory 4 --vm-type=qemu
+          /opt/homebrew/opt/colima/bin/colima start -f \
+            --cpu 2 \
+            --memory 4 \
+            --vm-type qemu
 
-          docker version
+          docker --version
+
 
       - name: Start Testservice
         if: ${{ inputs.run_critical_flows }}
