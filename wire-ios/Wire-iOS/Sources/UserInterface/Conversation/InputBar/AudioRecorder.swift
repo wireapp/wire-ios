@@ -117,12 +117,16 @@ final class AudioRecorder: NSObject, AudioRecorderType {
 
     private var token: Any?
 
-
     override init() {
         fatalError("init() is not implemented for AudioRecorder")
     }
 
-    init(format: AudioRecorderFormat = .m4A, maxRecordingDuration: TimeInterval?, maxFileSize: UInt64?, userSession: UserSession) {
+    init(
+        format: AudioRecorderFormat = .m4A,
+        maxRecordingDuration: TimeInterval?,
+        maxFileSize: UInt64?,
+        userSession: UserSession
+    ) {
         self.format = format
         self.maxRecordingDuration = maxRecordingDuration
         self.maxFileSize = maxFileSize

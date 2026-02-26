@@ -65,7 +65,10 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
                             }
                         )
 
-                        let confirmImageViewController = ConfirmAssetViewController(context: context, userSession: self.userSession)
+                        let confirmImageViewController = ConfirmAssetViewController(
+                            context: context,
+                            userSession: self.userSession
+                        )
                         confirmImageViewController.previewTitle = self.conversation.displayNameWithFallback
                         self.present(confirmImageViewController, animated: true) {}
                     }

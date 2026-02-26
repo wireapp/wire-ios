@@ -31,7 +31,10 @@ extension ZMConversationMessage {
         guard canBeQuoted else {
             return nil
         }
-        return preparePreviewView(userSession: userSession, messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel)
+        return preparePreviewView(
+            userSession: userSession,
+            messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
+        )
     }
 
     func preparePreviewView(

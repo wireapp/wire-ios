@@ -218,7 +218,7 @@ final class SearchResultsViewController: UIViewController {
         conversationsSection.title = team != nil ? L10n.Localizable.Peoplepicker.Header
             .teamConversations(teamName ?? "") : L10n.Localizable.Peoplepicker.Header.conversations
         self.inviteTeamMemberSection = InviteTeamMemberSection(team: team)
-        directorySection = DirectorySectionController(userSession: userSession)
+        self.directorySection = DirectorySectionController(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
 

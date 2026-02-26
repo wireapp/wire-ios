@@ -223,7 +223,11 @@ extension ArchivedListViewController: ConversationListCellDelegate {
     func conversationListCellJoinCallButtonTapped(_ cell: ConversationListCell) {
         guard let conversation = cell.conversation as? ZMConversation else { return }
 
-        startCallController = ConversationCallController(conversation: conversation, target: self, userSession: userSession)
+        startCallController = ConversationCallController(
+            conversation: conversation,
+            target: self,
+            userSession: userSession
+        )
         startCallController?.joinCall()
     }
 

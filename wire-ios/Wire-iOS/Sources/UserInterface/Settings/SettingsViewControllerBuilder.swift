@@ -74,7 +74,11 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
             useTypeIntrinsicSizeTableView: false,
             mainCoordinator: mainCoordinator
         )
-        return .init(group: group, settingsCoordinator: .init(settingsCoordinator: settingsCoordinator), userSession: userSession)
+        return .init(
+            group: group,
+            settingsCoordinator: .init(settingsCoordinator: settingsCoordinator),
+            userSession: userSession
+        )
     }
 
     func build(

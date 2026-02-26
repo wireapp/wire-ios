@@ -32,7 +32,11 @@ class CallQualityController: NSObject {
     private let mainWindow: UIWindow
     private let submitCallQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol
 
-    init(mainWindow: UIWindow, userSession: UserSession, submitCallQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol) {
+    init(
+        mainWindow: UIWindow,
+        userSession: UserSession,
+        submitCallQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol
+    ) {
         self.mainWindow = mainWindow
         self.submitCallQualitySurvey = submitCallQualitySurvey
         super.init()

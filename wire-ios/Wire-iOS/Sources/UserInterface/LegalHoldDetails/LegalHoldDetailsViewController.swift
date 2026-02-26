@@ -158,7 +158,10 @@ final class LegalHoldDetailsViewController: UIViewController {
 
     private func computeVisibleSections() -> [CollectionViewSectionController] {
         let headerSection = SingleViewSectionController(view: LegalHoldHeaderView(frame: .zero))
-        let legalHoldParticipantsSection = LegalHoldParticipantsSectionController(conversation: conversation, userSession: userSession)
+        let legalHoldParticipantsSection = LegalHoldParticipantsSectionController(
+            conversation: conversation,
+            userSession: userSession
+        )
         legalHoldParticipantsSection.delegate = self
 
         return [headerSection, legalHoldParticipantsSection]

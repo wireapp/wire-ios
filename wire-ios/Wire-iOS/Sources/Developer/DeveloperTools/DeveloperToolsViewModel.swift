@@ -165,7 +165,8 @@ final class DeveloperToolsViewModel: ObservableObject {
                                             )
                                         )
                                     )
-                                })
+                                }
+                            )
                         ),
                         .text(TextItem(
                             title: "Handle",

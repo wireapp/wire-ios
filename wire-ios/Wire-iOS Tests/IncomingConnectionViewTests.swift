@@ -79,7 +79,11 @@ final class IncomingConnectionViewTests: XCTestCase {
         let mockClassificationProvider = MockSecurityClassificationProviding()
         mockClassificationProvider.classificationUsersConversationDomain_MockValue = .classified
 
-        let sut = IncomingConnectionView(user: user, userSession: UserSessionMock(), classificationProvider: mockClassificationProvider)
+        let sut = IncomingConnectionView(
+            user: user,
+            userSession: UserSessionMock(),
+            classificationProvider: mockClassificationProvider
+        )
 
         sut.backgroundColor = sutBackgroundColor
         snapshotHelper.verify(matching: sut.layoutForTest())
@@ -90,7 +94,11 @@ final class IncomingConnectionViewTests: XCTestCase {
         let mockClassificationProvider = MockSecurityClassificationProviding()
         mockClassificationProvider.classificationUsersConversationDomain_MockValue = .notClassified
 
-        let sut = IncomingConnectionView(user: user, userSession: UserSessionMock(), classificationProvider: mockClassificationProvider)
+        let sut = IncomingConnectionView(
+            user: user,
+            userSession: UserSessionMock(),
+            classificationProvider: mockClassificationProvider
+        )
 
         sut.backgroundColor = sutBackgroundColor
         snapshotHelper.verify(matching: sut.layoutForTest())
@@ -102,7 +110,11 @@ final class IncomingConnectionViewTests: XCTestCase {
         mockClassificationProvider.classificationUsersConversationDomain_MockValue = .notClassified
         user.isFederated = true
 
-        let sut = IncomingConnectionView(user: user, userSession: UserSessionMock(), classificationProvider: mockClassificationProvider)
+        let sut = IncomingConnectionView(
+            user: user,
+            userSession: UserSessionMock(),
+            classificationProvider: mockClassificationProvider
+        )
 
         sut.backgroundColor = sutBackgroundColor
         snapshotHelper.verify(matching: sut.layoutForTest())

@@ -168,7 +168,8 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         photoButton.hitAreaPadding = hitAreaPadding
         photoButton.accessibilityIdentifier = "photoButton"
         photoButton.accessibilityLabel = Sketch.SelectPictureButton.description
-        photoButton.isHidden = !MediaShareRestrictionManager(sessionRestriction: userSession as? ZMUserSession).hasAccessToCameraRoll
+        photoButton.isHidden = !MediaShareRestrictionManager(sessionRestriction: userSession as? ZMUserSession)
+            .hasAccessToCameraRoll
 
         emojiButton.setIcon(.emoji, size: .tiny, for: .normal)
         emojiButton.addTarget(self, action: #selector(openEmojiKeyboard), for: .touchUpInside)

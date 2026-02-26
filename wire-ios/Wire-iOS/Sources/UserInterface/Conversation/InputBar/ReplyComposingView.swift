@@ -80,7 +80,11 @@ final class ReplyComposingView: UIView {
 
     // MARK: - Init
 
-    init(message: ZMConversationMessage, userSession: UserSession, messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil) {
+    init(
+        message: ZMConversationMessage,
+        userSession: UserSession,
+        messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil
+    ) {
         require(message.canBeQuoted)
         require(message.conversationLike != nil)
 
