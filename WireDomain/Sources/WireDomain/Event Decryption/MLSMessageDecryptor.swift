@@ -34,6 +34,9 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         let welcomeMessage = eventData.welcomeMessage
         let conversationID = eventData.conversationID
 
+        // Abort if needed.
+        try Task.checkCancellation()
+
         let groupID = try await mlsDecryptionService.processWelcomeMessage(
             welcomeMessage: welcomeMessage,
             context: context
@@ -69,6 +72,9 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         guard isMLSReady else {
             throw MLSMessageDecryptorError.mlsConversationNotReady
         }
+
+        // Abort if needed.
+        try Task.checkCancellation()
 
         do {
             let decryptionResults = try await decryptMLSMessage(
