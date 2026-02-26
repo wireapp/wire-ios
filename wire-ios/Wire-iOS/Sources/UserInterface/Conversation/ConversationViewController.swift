@@ -264,7 +264,7 @@ final class ConversationViewController: UIViewController {
 
         selfUserObservationToken = userSession.addUserObserver(self, for: userSession.selfUser)
 
-        startCallController = ConversationCallController(conversation: conversation, target: self)
+        startCallController = ConversationCallController(conversation: conversation, target: self, userSession: userSession)
 
     }
 

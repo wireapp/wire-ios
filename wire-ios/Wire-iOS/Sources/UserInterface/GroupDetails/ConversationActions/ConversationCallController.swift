@@ -24,11 +24,13 @@ final class ConversationCallController: NSObject {
 
     private unowned let target: UIViewController
     private let conversation: ZMConversation
+    private let userSession: UserSession
     private let confirmGroupCallParticipantsLimit = 4
 
-    init(conversation: ZMConversation, target: UIViewController) {
+    init(conversation: ZMConversation, target: UIViewController, userSession: UserSession) {
         self.conversation = conversation
         self.target = target
+        self.userSession = userSession
         super.init()
     }
 
@@ -66,8 +68,8 @@ final class ConversationCallController: NSObject {
                 }
             },
             cancelAction: { [weak self] in
-                guard let userSession = ZMUserSession.shared() else { return }
-                self?.conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
+                guard let self, let userSession = userSession as? ZMUserSession else { return }
+                conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
 
             },
             showAlert: { [weak self] in
