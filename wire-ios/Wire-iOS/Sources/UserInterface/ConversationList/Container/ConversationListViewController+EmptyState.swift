@@ -64,7 +64,7 @@ extension ConversationListViewController {
                 showArrow: false
             )
         case .oneOnOne:
-            let domain = listContentController.listViewModel.userSession?.selfUser.domain ?? ""
+            let domain = listContentController.listViewModel.userSession.selfUser.domain ?? ""
             return EmptyPlaceholder(
                 subheadline: Strings.Oneonone.subheadline(domain).attributedString,
                 showArrow: !isIPadRegular(),

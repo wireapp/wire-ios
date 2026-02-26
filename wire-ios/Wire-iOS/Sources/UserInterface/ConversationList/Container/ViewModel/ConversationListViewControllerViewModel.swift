@@ -185,7 +185,7 @@ extension ConversationListViewController.ViewModel {
 
     func setupObservers() {
 
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             userObservationToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
 
             if let team = userSession.selfUser.membership?.team {
