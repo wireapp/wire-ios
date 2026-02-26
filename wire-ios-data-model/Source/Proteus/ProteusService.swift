@@ -235,6 +235,9 @@ public final class ProteusService: ProteusServiceInterface {
     ) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
         logger.info("decrypting data")
 
+        // Abort if needed.
+        try Task.checkCancellation()
+
         if try await context.proteusSessionExists(sessionId: id.rawValue) {
             logger.info("session exists, decrypting...")
 

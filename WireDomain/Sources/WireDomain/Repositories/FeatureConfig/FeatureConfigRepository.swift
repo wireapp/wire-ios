@@ -54,6 +54,7 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
     public func isFeatureEnabled(
         _ feature: Feature.Name
     ) async -> Bool {
+
         do {
             let feature = try await featureConfigLocalStore.fetchFeature(
                 name: feature
@@ -61,6 +62,8 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             return await featureConfigLocalStore.isFeatureEnabled(
                 feature: feature
             )
+        } catch FeatureConfigLocalStore.Error.failedToFetchFeatureLocally(.simplifiedUserConnectionRequestQRCode) {
+            return true
         } catch {
             return false
         }
