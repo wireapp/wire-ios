@@ -109,6 +109,7 @@ extension SessionManager: CallKitManagerDelegate {
 
     // MARK: - Private helpers
 
+    @MainActor
     private func fetchConversation(id: UUID, account: Account) async throws -> ZMConversation {
         let userSession = try await withSession(for: account)
         guard let conversation = ZMConversation.fetch(with: id, in: userSession.managedObjectContext) else {
