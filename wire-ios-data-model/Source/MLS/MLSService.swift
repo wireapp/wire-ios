@@ -865,10 +865,11 @@ public final class MLSService: MLSServiceInterface {
             )
             logger.info("\(pendingGroups.count) pendingJoin group(s)")
         
+            // exclude 1:1s where other user has been deleted
             return pendingGroups.filter { !($0.conversationType == .oneOnOne && $0.localParticipantsExcludingSelf.isEmpty) }
         }
       
-        logger.info("joining \(pendingGroups.count) group(s)")
+        logger.info("joining \(pendingGroups.count) pendingJoin group(s)")
 
         let needToSave = await withTaskGroup(of: Bool.self) { group in
             for pendingGroup in pendingGroups {

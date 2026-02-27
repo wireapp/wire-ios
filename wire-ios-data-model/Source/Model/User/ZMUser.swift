@@ -21,6 +21,7 @@ import WireFoundation
 import WireSystem
 import WireTransport
 import WireUtilities
+import WireLogging
 
 extension ZMUser: UserType {
 
@@ -492,6 +493,7 @@ public extension ZMUser {
     @objc
     func markAccountAsDeleted(at timestamp: Date) {
         isAccountDeleted = true
+        WireLogger.conversation.debug("⚠️ mark as deleted", attributes: [.senderUserId: qualifiedID?.safeForLoggingDescription ?? "<nil>"])
         removeFromAllGroupConversations(at: timestamp)
         addSystemMessageInOneOnOneConversation(at: timestamp)
     }
@@ -524,8 +526,17 @@ public extension ZMUser {
         }
 
         conversations.forEach { conversation in
+            WireLogger.conversation.debug("inserting message for user removal from team")
             conversation.appendUserRemovedFromTeamSystemMessage(user: self, at: timestamp)
+            
+            // could update the conversation state here and delete mls
+            if conversation.messageProtocol.isOne(of: .mls, .mixed) {
+                conversation.mlsStatus = .invalid
+            }
+            conversation.removeParticipantAndUpdateConversationState(user: self, initiatingUser: self)
         }
+        
+      
     }
 
 }
