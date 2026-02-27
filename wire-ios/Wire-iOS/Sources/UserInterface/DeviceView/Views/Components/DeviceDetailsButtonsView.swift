@@ -70,27 +70,23 @@ struct DeviceDetailsButtonsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            if viewModel.e2eIdentityCertificate?.status != nil {
-
-                if viewModel.showCertificateButtonVisible {
-                    showCertificateButton.padding()
-                }
-
-                if viewModel.getCertificateButtonVisible {
-                    if viewModel.showCertificateButtonVisible {
-                        Divider()
-                    }
-                    getCertificateButton.padding()
-                }
-
-                if viewModel.updateCertificateButtonVisible {
-                    if viewModel.showCertificateButtonVisible || viewModel.getCertificateButtonVisible {
-                        Divider()
-                    }
-                    updateCertificateButton.padding()
-                }
+        if viewModel.e2eIdentityCertificate?.status != nil {
+            
+            if viewModel.updateCertificateButtonVisible {
+                Divider()
+                updateCertificateButton.padding()
+            }
+            
+            if viewModel.showCertificateButtonVisible {
+                Divider()
+                showCertificateButton.padding()
+            }
+            
+            if viewModel.getCertificateButtonVisible {
+                Divider()
+                getCertificateButton.padding()
             }
         }
+        Divider()
     }
 }
