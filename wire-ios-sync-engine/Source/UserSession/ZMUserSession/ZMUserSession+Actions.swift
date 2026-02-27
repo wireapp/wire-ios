@@ -113,9 +113,9 @@ public extension ZMUserSession {
 
         let conversation = userInfo.conversation(in: managedObjectContext)
 
-        managedObjectContext.perform {
+        managedObjectContext.perform { [weak self] in
             conversation?.mutedMessageTypes = .all
-            self.managedObjectContext.saveOrRollback()
+            self?.managedObjectContext.saveOrRollback()
             BackgroundActivityFactory.shared.endBackgroundActivity(activity)
             completionHandler()
         }
@@ -136,7 +136,12 @@ public extension ZMUserSession {
             guard let self else { return }
 
             messageReplyObserver = nil
-            syncManagedObjectContext.performGroupedBlock {
+            syncManagedObjectContext.performGroupedBlock { [weak self] in
+                guard let self else {
+                    BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+                    completionHandler()
+                    return
+                }
 
                 let conversationOnSyncContext = userInfo.conversation(in: self.syncManagedObjectContext)
                 if result == .failed {

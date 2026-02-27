@@ -593,7 +593,8 @@ public final class ZMUserSession: NSObject {
         selfUser.needsToBeUpdatedFromBackend = true
 
         // Proactively ensure we clean up invalid connection state.
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             do {
                 let connectionValidator = ConnectionValidator(context: syncContext)
                 try await connectionValidator.cleanUpAllInvalidConnections()
@@ -962,8 +963,8 @@ public final class ZMUserSession: NSObject {
             await triggerResourcesSync()
         } else if journal[.isConversationSyncRequired] {
             // as wanted this should not be blocking, see AppVersionMigration_4_1_1, AppVersionMigration_4_10_0
-            Task {
-                let sync = clientSessionComponent?.pullAllConversationsSync
+            Task { [weak self] in
+                let sync = self?.clientSessionComponent?.pullAllConversationsSync
                 try? await sync?.pull()
             }
             // trigger the sync in this case too, to get the right sync bar state
@@ -999,9 +1000,9 @@ public final class ZMUserSession: NSObject {
 
     // Only used for testing
     public func triggerIncrementalSync() {
-        Task {
+        Task { [weak self] in
             do {
-                try await syncAgent?.performIncrementalSync()
+                try await self?.syncAgent?.performIncrementalSync()
             } catch {
                 WireLogger.sync.error(
                     "failed to perform incremental sync: \(String(describing: error))",
@@ -1088,7 +1089,8 @@ public final class ZMUserSession: NSObject {
     // MARK: Account
 
     public func initiateUserDeletion() {
-        syncManagedObjectContext.performGroupedBlock {
+        syncManagedObjectContext.performGroupedBlock { [weak self] in
+            guard let self else { return }
             self.syncManagedObjectContext.setPersistentStoreMetadata(
                 NSNumber(value: true),
                 key: DeleteAccountRequestStrategy.userDeletionInitiatedKey
@@ -1174,9 +1176,10 @@ extension ZMUserSession: SyncAgentDelegate {
     func syncAgentDidFailSyncing(_ syncAgent: SyncAgent, error: any Error) {
         if Bundle.developerModeEnabled { // Only show sync error alert for debugging
             let onRetry: () -> Void = { [weak self] in
-                self?.managedObjectContext.performGroupedBlock {
-                    self?.isPerformingSync = true
-                    self?.updateNetworkState()
+                guard let self else { return }
+                self.managedObjectContext.performGroupedBlock {
+                    self.isPerformingSync = true
+                    self.updateNetworkState()
                 }
 
                 syncAgent.resume()
@@ -1230,8 +1233,8 @@ extension ZMUserSession: SyncAgentDelegate {
 
     func didStartIncrementalSync() {
         WireLogger.sync.debug("did start incremental sync", attributes: .incrementalSync)
-        Task {
-            await showSyncBar(true)
+        Task { [weak self] in
+            await self?.showSyncBar(true)
         }
         notifyAVSWillProcessEvents()
     }
@@ -1248,8 +1251,8 @@ extension ZMUserSession: SyncAgentDelegate {
             attributes: .incrementalSync
         )
 
-        Task {
-            await showSyncBar(false)
+        Task { [weak self] in
+            await self?.showSyncBar(false)
         }
         notifyAVSDidProcessEvents()
         WaitingGroupTask(context: syncContext) { [weak self] in
@@ -1342,8 +1345,11 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func checkE2EICertificateExpiryStatus() {
-        Task {
-            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+        Task { [weak self] in
+            guard let self else { return }
+            let isE2EIFeatureEnabled = await managedObjectContext.perform { [weak self] in
+                self?.e2eiFeature.isEnabled ?? false
+            }
             if isE2EIFeatureEnabled {
                 NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
             }
@@ -1384,9 +1390,9 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
             }
             // this is a fresh client so we need an initialSync
             journal[.isInitialSyncRequired] = true
-            Task {
+            Task { [weak self] in
                 WireLogger.sync.debug("Triggering initial sync after client registration")
-                await triggerSync()
+                await self?.triggerSync()
             }
         }
     }
@@ -1496,8 +1502,10 @@ extension ZMUserSession {
     }
 
     func onSelfClientInvalidated() async {
-        await syncContext.perform { [self] in
-            syncContext.tearDownCryptoStack()
+        let context = syncContext
+        await syncContext.perform { [weak self] in
+            guard let self else { return }
+            context.tearDownCryptoStack()
 
             let clientRegistrationStatus = applicationStatusDirectory.clientRegistrationStatus
             let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
@@ -1505,7 +1513,7 @@ extension ZMUserSession {
             clientRegistrationStatus.emailCredentials = nil
             clientRegistrationStatus.cookieProvider.deleteKeychainItems()
 
-            let selfUser = ZMUser.selfUser(in: syncContext)
+            let selfUser = ZMUser.selfUser(in: context)
             let clientDeletedRemotelyError = NSError.userSessionError(
                 code: .clientDeletedRemotely,
                 userInfo: selfUser.loginCredentials.dictionaryRepresentation

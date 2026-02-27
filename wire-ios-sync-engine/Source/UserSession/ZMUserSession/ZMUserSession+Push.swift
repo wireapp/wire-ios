@@ -85,7 +85,8 @@ public extension ZMUserSession {
     }
 
     internal func registerCurrentPushToken() {
-        managedObjectContext.performGroupedBlock {
+        managedObjectContext.performGroupedBlock { [weak self] in
+            guard let self else { return }
             self.sessionManager?.configurePushToken(session: self)
         }
     }
@@ -162,8 +163,8 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
     ) {
         // foreground notification responder exists on the UI context, so we
         // need to switch to that context
-        managedObjectContext.perform {
-            let responder = self.sessionManager?.foregroundNotificationResponder
+        managedObjectContext.perform { [weak self] in
+            let responder = self?.sessionManager?.foregroundNotificationResponder
             let shouldPresent = responder?.shouldPresentNotification(with: userInfo) ?? true
 
             var options = UNNotificationPresentationOptions()

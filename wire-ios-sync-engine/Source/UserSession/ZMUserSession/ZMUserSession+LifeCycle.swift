@@ -71,7 +71,8 @@ public extension ZMUserSession {
         // to ensure that they have timers running or are deleted/obfuscated if
         // needed. Note: ZMMessageTimer will only create a new timer for a message
         // if one does not already exist.
-        syncManagedObjectContext.performGroupedBlock {
+        syncManagedObjectContext.performGroupedBlock { [weak self] in
+            guard let self else { return }
             ZMMessage.deleteOldEphemeralMessages(self.syncManagedObjectContext)
         }
     }
@@ -85,7 +86,8 @@ public extension ZMUserSession {
         for changes in storedNotifications {
             NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [managedObjectContext])
 
-            syncManagedObjectContext.performGroupedBlock {
+            syncManagedObjectContext.performGroupedBlock { [weak self] in
+                guard let self else { return }
                 NSManagedObjectContext.mergeChanges(
                     fromRemoteContextSave: changes,
                     into: [self.syncManagedObjectContext]
@@ -95,8 +97,8 @@ public extension ZMUserSession {
 
         // we only process pending changes on sync context bc changes on the
         // ui context will be processed when we do the save.
-        syncManagedObjectContext.performGroupedBlock {
-            self.syncManagedObjectContext.processPendingChanges()
+        syncManagedObjectContext.performGroupedBlock { [weak self] in
+            self?.syncManagedObjectContext.processPendingChanges()
         }
 
         managedObjectContext.saveOrRollback()
@@ -104,7 +106,8 @@ public extension ZMUserSession {
 
     internal func recalculateUnreadMessages() {
         WireLogger.badgeCount.info("recalculate unread conversations")
-        syncManagedObjectContext.performGroupedBlock {
+        syncManagedObjectContext.performGroupedBlock { [weak self] in
+            guard let self else { return }
             ZMConversation.recalculateUnreadMessages(in: self.syncManagedObjectContext)
             self.syncManagedObjectContext.saveOrRollback()
             NotificationInContext(name: .calculateBadgeCount, context: self.notificationContext).post()
