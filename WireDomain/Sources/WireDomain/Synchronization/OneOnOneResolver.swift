@@ -77,12 +77,13 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     public func resolveOneOnOneConversation(
         with userID: WireDataModel.QualifiedID
     ) async throws -> OneOnOneConversationResolution {
+        WireLogger.conversation.debug("Resolving 1-1 conversation for userID", attributes: [.senderUserId: userID.safeForLoggingDescription])
         var action: OneOnOneConversationResolution = .noAction
 
         let user = try await userLocalStore.fetchUser(
             id: userID.uuid, domain: userID.domain
         )
-
+        
         let selfUser = await userLocalStore.fetchSelfUser()
         let commonProtocol = await getCommonProtocol(between: selfUser, and: user)
 
@@ -129,9 +130,9 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
 
     @discardableResult
     private func resolveMLSConversation(for user: ZMUser) async throws -> MLSGroupID {
-        WireLogger.conversation.debug("Should resolve to mls 1-1 conversation")
         let userID = try await context.unpack(user) { $0.qualifiedID }
-
+        WireLogger.conversation.debug("Should resolve to mls 1-1 conversation", attributes: [.senderUserId: userID?.safeForLoggingDescription ?? "<nil>"])
+        
         guard let userID else {
             throw Error.failedToActivateConversation
         }
@@ -342,15 +343,14 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         and user: ZMUser
     ) async {
 
-        var mlsGroupToWipe: MLSGroupID?
-
-        await context.perform {
-            WireLogger.conversation.debug("No common protocols found")
+        let mlsGroupToWipe: MLSGroupID? = await context.perform {
+            WireLogger.conversation.debug("No common protocols found", attributes: [.senderUserId: user.qualifiedID?.safeForLoggingDescription ?? "<nil>"])
 
             guard let conversation = user.oneOnOneConversation else {
-                return WireLogger.conversation.warn(
-                    "Failed to resolve 1:1 conversation with no common protocol: missing 1:1 conversation for user with id \(user.remoteIdentifier.safeForLoggingDescription)"
+                WireLogger.conversation.warn(
+                    "Failed to resolve 1:1 conversation with no common protocol: missing 1:1 conversation for user with id", attributes: [.senderUserId: user.qualifiedID?.safeForLoggingDescription ?? "<nil>"]
                 )
+                return nil
             }
 
             if !conversation.isForcedReadOnly {
@@ -362,9 +362,10 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
 
                 conversation.isForcedReadOnly = true
                 if user.isAccountDeleted {
-                    mlsGroupToWipe = conversation.mlsGroupID
+                    return conversation.mlsGroupID
                 }
             }
+            return nil
         }
 
         if let mlsGroupToWipe {
@@ -395,6 +396,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 [.proteus] : otherUser.supportedProtocols /// default to Proteus if empty.
 
             if otherUser.isAccountDeleted {
+                WireLogger.conversation.info("⚠️ deleted user, skipping for MLS resolution.")
                 return nil
             }
             let commonProtocols = selfUserProtocols.intersection(otherUserProtocols)
