@@ -121,6 +121,30 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(conversationTextNotificationBuilder.buildContentTextConversationIDSenderID_Invocations.count, 1)
     }
 
+    func testGenerateNotifications_Multiple_MLS_Text_Message_Content_It_Invokes_Text_Notification_Builder(
+    ) async throws {
+
+        // Mock
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
+        }
+        conversationCallingEventNotificationBuilder.buildContentCallingAtConversationIDSenderID_MockValue = .some(nil)
+        conversationTextNotificationBuilder
+            .buildContentTextConversationIDSenderID_MockValue = .text(UNMutableNotificationContent())
+        conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
+        conversationLocalStore.isMessageSilencedSenderIDConversation_MockValue = false
+        conversationLocalStore.shouldHideNotification_MockValue = false
+
+        // When
+
+        _ = try await sut.buildContent(
+            event: .left(Scaffolding.mlsTextMessageEvents)
+        )
+
+        // Then
+        XCTAssertEqual(conversationTextNotificationBuilder.buildContentTextConversationIDSenderID_Invocations.count, 2)
+    }
+
     func testGenerateNotification_MLS_Does_Not_Fail_If_No_Messages_Found() async throws {
         // When
         let result = try await sut.buildContent(
@@ -191,6 +215,24 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
                 message: Scaffolding.base64EncodedString, // text content
                 senderClientID: UUID.mockID1.uuidString
             )]
+        )
+
+        static let mlsTextMessageEvents = ConversationMLSMessageAddEvent(
+            conversationID: conversationID,
+            senderID: userID,
+            subconversation: "",
+            message: messageContent,
+            timestamp: .now,
+            decryptedMessages: [
+                .init(
+                    message: Scaffolding.base64EncodedString, // text content
+                    senderClientID: UUID.mockID1.uuidString
+                ),
+                .init(
+                    message: Scaffolding.base64EncodedString, // text content
+                    senderClientID: UUID.mockID1.uuidString
+                )
+            ]
         )
 
         static let proteusTextMessageEvent = ConversationProteusMessageAddEvent(

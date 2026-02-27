@@ -203,6 +203,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                     try clientMessage.setUnderlyingMessage(genericMessage)
                     clientMessage.updateNormalizedText()
                 } catch {
+                    WireLogger.messaging.error("Failed to set generic message: \(error.localizedDescription)")
                     assertionFailure("Failed to set generic message: \(error.localizedDescription)")
                 }
             } else {
