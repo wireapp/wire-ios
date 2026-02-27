@@ -27,8 +27,15 @@ final class DeviceInfoViewModelTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
+        setup(e2eIdentityCertificate: .mockExpired)
+    }
+
+    func setup(
+        e2eIdentityCertificate: E2eIdentityCertificate,
+        isSelfClient: Bool = false
+    ) {
         let userClient = MockUserClient()
-        userClient.e2eIdentityCertificate = .mockExpired
+        userClient.e2eIdentityCertificate = e2eIdentityCertificate
         userClient.verified = true
 
         deviceInfoViewModel = DeviceInfoViewModel(
@@ -36,13 +43,38 @@ final class DeviceInfoViewModelTests: XCTestCase {
             addedDate: "",
             proteusID: "",
             userClient: userClient,
-            isSelfClient: false,
+            isSelfClient: isSelfClient,
             gracePeriod: 0,
             mlsCiphersuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
             isFromConversation: false,
             actionsHandler: mockDeviceActionsHandler,
             conversationClientDetailsActions: mockConversationUserClientDetailsActions
         )
+    }
+
+    func test_actionButtonsWhenCertStateIsValid() {
+        showViewAndUpdate_HideGet(.mockValid)
+    }
+
+    func test_actionButtonsWhenCertStateIsInvalid() {
+        showViewAndUpdate_HideGet(.mockInvalid)
+    }
+
+    func test_actionButtonsWhenCertStateNotActivated() {
+        for isSelfClient in [true, false] {
+            setup(e2eIdentityCertificate: .mockNotActivated, isSelfClient: isSelfClient)
+            XCTAssertEqual(deviceInfoViewModel.showCertificateButtonVisible, false)
+            XCTAssertEqual(deviceInfoViewModel.getCertificateButtonVisible, isSelfClient)
+            XCTAssertEqual(deviceInfoViewModel.updateCertificateButtonVisible, false)
+        }
+    }
+
+    func test_actionButtonsWhenCertStateIsRevoked() {
+        showViewAndUpdate_HideGet(.mockRevoked)
+    }
+
+    func test_actionButtonsWhenCertStateIsExpired() {
+        showViewAndUpdate_HideGet(.mockExpired)
     }
 
     func testThatItCallsShowMyDeviceMethodInConversationUserClientDetailsActionsHandler_WhenOnShowMyDeviceTappedIsCalled(
@@ -130,5 +162,20 @@ final class DeviceInfoViewModelTests: XCTestCase {
         }
         await deviceInfoViewModel.enrollClient()
         await fulfillment(of: [expectation])
+    }
+
+    // MARK: - Helpers
+
+    fileprivate func showViewAndUpdate_HideGet(
+        _ e2eIdentityCertificate: E2eIdentityCertificate,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        for isSelfClient in [true, false] {
+            setup(e2eIdentityCertificate: e2eIdentityCertificate, isSelfClient: isSelfClient)
+            XCTAssertEqual(deviceInfoViewModel.showCertificateButtonVisible, true)
+            XCTAssertEqual(deviceInfoViewModel.getCertificateButtonVisible, false)
+            XCTAssertEqual(deviceInfoViewModel.updateCertificateButtonVisible, isSelfClient)
+        }
     }
 }
