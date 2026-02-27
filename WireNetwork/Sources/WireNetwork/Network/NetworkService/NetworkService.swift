@@ -66,6 +66,13 @@ public final class NetworkService: NSObject, NetworkServiceProtocol {
         self.urlSession = urlSession
     }
 
+    /// Explicitly invalidate and cancel all tasks in the URLSession.
+    /// Call this during teardown to ensure in-flight requests are cancelled.
+    public func invalidateAndCancel() {
+        urlSession?.invalidateAndCancel()
+        urlSession = nil
+    }
+
     public func executeRequest(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
         guard let urlSession else {
             throw NetworkServiceError.serviceNotConfigured

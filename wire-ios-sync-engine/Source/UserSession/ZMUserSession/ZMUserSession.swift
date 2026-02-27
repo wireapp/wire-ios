@@ -63,7 +63,7 @@ public final class ZMUserSession: NSObject {
     let userExpirationObserver: UserExpirationObserver
     private(set) var strategyDirectory: StrategyDirectoryProtocol?
     private(set) var syncStrategy: ZMSyncStrategy?
-    private(set) var operationLoop: ZMOperationLoop?
+    var operationLoop: ZMOperationLoop?
     private(set) var notificationDispatcher: NotificationDispatcher
     private(set) var localNotificationDispatcher: LocalNotificationDispatcher?
     let applicationStatusDirectory: ApplicationStatusDirectory
@@ -97,6 +97,7 @@ public final class ZMUserSession: NSObject {
     var conversationEventProcessor: ConversationEventProcessor!
 
     var syncAgent: SyncAgent?
+    private var postSyncTask: Task<Void, Never>?
 
     public var hasCompletedInitialSync: Bool {
         !journal[.isInitialSyncRequired]
@@ -727,43 +728,75 @@ public final class ZMUserSession: NSObject {
     }
 
     public func tearDown() {
-        guard !isTornDown else { return }
+        guard !isTornDown else {
+            WireLogger.sessionManager.debug("tearDown() called but already torn down, returning")
+            return
+        }
+        isTornDown = true // Set immediately to prevent recursion
 
+
+        // Stop work agent asynchronously (don't block tearDown)
         Task {
             await clientSessionComponent?.workAgent.clearSchedulerQueue()
             await clientSessionComponent?.workAgent.stop()
         }
+
+        // NOTE: transportSession, workAgent, and operationLoop are already stopped during logout
+        // So we just need to clean up references here
+
         tearDownMLSGroupVerification()
 
         tokens.removeAll()
+        cancellables.removeAll()
+        isNetworkReachableCancellable?.cancel()
+        isNetworkReachableCancellable = nil
         application.unregisterObserverForStateChange(self)
         callStateObserver = nil
 
-        // Clear delegates to break retain cycles
+        recurringActionService.removeAction(id: "refreshUsersMissingMetadataAction")
+        recurringActionService.removeAction(id: "refreshConversationsMissingMetadataAction")
+        recurringActionService.removeAction(id: "updateProteusToMLSMigrationStatusAction")
+        recurringActionService.removeAction(id: "refreshTeamMetadataAction")
+        recurringActionService.removeAction(id: "refreshFederationCertificatesAction")
+        recurringActionService.removeAction(id: "checkBuildBlacklistAction")
+
         earService.delegate = nil
         appLockController.delegate = nil
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = nil
 
+        postSyncTask?.cancel()
+        postSyncTask = nil
+
         syncAgent?.delegate = nil
         syncAgent = nil
+
+        conversationEventProcessor = nil
+
+        clientSessionComponent = nil
+
         syncStrategy?.tearDown()
         syncStrategy = nil
-        operationLoop?.tearDown()
+
         operationLoop = nil
-        transportSession.tearDown()
+
         notificationDispatcher.tearDown()
+
         callCenter?.tearDown()
-        coreDataStack.close()
+
+        userSessionComponent?.invalidateNetworkServices()
+
+        transportSession.tearDown()
+
+        self.coreDataStack.close()
+
         contextStorage.clear()
 
-        // Note: strategyDirectory, legacyUpdateEventProcessor, and urlActionProcessors
-        // are left to be cleaned up when ZMUserSession is deallocated to avoid
-        // triggering strategy teardowns while async operations may still be running.
+        // Note: strategyDirectory and urlActionProcessors are left to be cleaned up
+        // when ZMUserSession is deallocated
 
         NotificationCenter.default.removeObserver(self)
         WireLogger.authentication.clearClientID()
 
-        isTornDown = true
     }
 
     // MARK: - Methods
@@ -1255,12 +1288,19 @@ extension ZMUserSession: SyncAgentDelegate {
             await self?.showSyncBar(false)
         }
         notifyAVSDidProcessEvents()
-        WaitingGroupTask(context: syncContext) { [weak self] in
+
+        // Store the post-sync task so we can cancel it during tearDown
+        postSyncTask = WaitingGroupTask(context: syncContext) { [weak self] in
             guard let self else { return }
+
+            // Check if we're torn down before starting work
+            guard !isTornDown else { return }
+
             await fetchAndStoreFeatureConfig()
 
+            let syncContextLocal = syncContext
             let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
-                let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
+                let selfClient = ZMUser.selfUser(in: syncContextLocal).selfClient()
                 let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
                 return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
             }
@@ -1292,6 +1332,8 @@ extension ZMUserSession: SyncAgentDelegate {
         do {
             try await resolveOneOnOneUseCase.resolveAllOneOnOneConversations()
             didAlreadyResolveAllOneOnOnes = true
+        } catch is CancellationError {
+            WireLogger.mls.info("One on one conversation resolution was cancelled")
         } catch {
             WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
         }

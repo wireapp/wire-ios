@@ -876,17 +876,22 @@ public final class SessionManager: NSObject, SessionManagerType {
         // TODO: [WPB-19941] Better error handling
         let environment = try? environmentStore.fetchBackendEnvironment(accountID: account.userIdentifier)
 
-        delegate?.sessionManagerWillLogout(
-            environment: environment,
-            error: error
-        ) { [weak self] in
-            activeUserSession.close(deleteCookie: deleteCookie) {
-                if deleteAccount {
-                    self?.deleteAccountData(for: account)
-                }
+        // Store session locally, clear from properties immediately
+        let sessionToClose = activeUserSession
+        self.activeUserSession = nil
+
+        // Close the session, then notify delegate when done
+        sessionToClose.close(deleteCookie: deleteCookie) { [weak self] in
+            if deleteAccount {
+                self?.deleteAccountData(for: account)
             }
 
-            self?.activeUserSession = nil
+            // Notify delegate that teardown is complete - session should deallocate after this
+            self?.delegate?.sessionManagerWillLogout(
+                environment: environment,
+                error: error,
+                userSessionCanBeTornDown: nil
+            )
         }
     }
 
