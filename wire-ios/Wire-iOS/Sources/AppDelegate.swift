@@ -479,8 +479,41 @@ private extension AppDelegate {
         )
 
         voIPPushManager.delegate = sessionManager
+
+        // Setup debug memory tracking for UI tests
+        #if DEBUG
+        setupDebugMemoryTracking(for: sessionManager)
+        #endif
+
         return sessionManager
     }
+
+    #if DEBUG
+    /// Setup debug memory tracking for UI tests
+    /// Only activates when -EnableMemoryTracking launch argument is present
+    /// Status is visible in Developer Tools (shake device)
+    private func setupDebugMemoryTracking(for sessionManager: SessionManager) {
+        guard ProcessInfo.processInfo.arguments.contains("-EnableMemoryTracking") else {
+            return
+        }
+
+        WireLogger.appDelegate.info("Debug memory tracking enabled for UI tests - check Developer Tools")
+
+        // Track the active user session when it becomes available
+        NotificationCenter.default.addObserver(
+            forName: .ZMUserSessionDidBecomeAvailable,
+            object: nil,
+            queue: .main
+        ) { [weak sessionManager] _ in
+            guard let activeSession = sessionManager?.activeUserSession else { return }
+
+            // Track session with debug view (accessible via Developer Tools)
+            DebugMemoryStatus.shared.trackUserSession(activeSession)
+
+            WireLogger.appDelegate.info("Tracking UserSession for memory leak detection - shake device to see status")
+        }
+    }
+    #endif
 
     private func queueInitializationOperations(launchOptions: LaunchOptions) {
         var operations = launchOperations.map {

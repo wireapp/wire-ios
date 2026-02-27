@@ -28,6 +28,13 @@ class WireUITestCase: XCTestCase {
     let userHelper = UserHelper()
     var callingServiceClient: CallingServiceClient!
 
+    class var defaultArguments: [String] {
+        [
+            "-resetData",
+            "--useEnvStaging"
+        ]
+    }
+
     override func setUpWithError() throws {
         // Tap "Allow" on permission alert from a previous failed test, so next test is not blocked
         dismissAllowIfPresent()
@@ -38,10 +45,13 @@ class WireUITestCase: XCTestCase {
             "-resetData",
             "--useEnvStaging"
         ]
+    }
+    override func setUpWithError() throws {
+        XCUIApplication().terminate()
 
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
-        app.launchArguments = launchArguments
+        app.launchArguments = Self.defaultArguments
         app.setDeveloperFlags([
             .useWireAuthentication: true
         ])

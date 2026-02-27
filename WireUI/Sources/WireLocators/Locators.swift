@@ -315,4 +315,8 @@ public enum Locators {
         case classificationBanner = "ClassificationBanner"
 
     }
+
+    public enum DeveloperToolsPage: String {
+        case userSessionMemoryLeakLabel
+    }
 }
