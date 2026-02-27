@@ -93,6 +93,9 @@ struct FilesSortingView: View {
             }
         }
         .padding(.horizontal)
+        .onDisappear {
+            viewModel.sortingSelection = .default
+        }
     }
 
     @ViewBuilder

@@ -96,6 +96,10 @@ package struct FilesBrowserView: FilesViewProtocol {
             .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
             .if(viewModel.showSearchBar, transform: searchView(content:))
             .onAppear { reloadTask() }
+            .onDisappear {
+                isSearchFocused = false
+                viewModel.resetFilters()
+            }
             .alert(
                 item: $viewModel.alert,
                 title: { Text($0.title) },

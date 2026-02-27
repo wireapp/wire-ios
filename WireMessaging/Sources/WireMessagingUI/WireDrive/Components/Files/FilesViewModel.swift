@@ -837,6 +837,11 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
+    func resetFilters() {
+        filtersSelection = .empty
+        sortingSelection = .default
+    }
+
     func onUpdate(of filters: FilesFilteringViewModel.FiltersSelection) {
         guard filters != filtersSelection else { return }
         filtersSelection = filters

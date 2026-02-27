@@ -25,8 +25,10 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells.Filtering
 
 struct FilesFilteringView: View {
     @StateObject private var viewModel: FilesFilteringViewModel
+
     @Environment(\.wireAccentColor) private var accentColor
     @Environment(\.isSearching) private var isSearching
+    @Environment(\.dismissSearch) private var dismissSearch
 
     @ScaledMetric var dropDownIconWidth: CGFloat = 8
     @ScaledMetric var dropDownIconHeight: CGFloat = 4
@@ -93,6 +95,11 @@ struct FilesFilteringView: View {
         .onChange(of: isSearching) { newValue in
             viewModel.onSearchFocused(newValue)
         }
+        .onDisappear {
+            viewModel.filtersSelection = .empty
+            dismissSearch()
+        }
+
     }
 
     @ViewBuilder
