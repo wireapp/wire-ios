@@ -141,7 +141,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          brew install colima docker
+          brew install colima docker qemu
 
           colima stop || true
           colima delete -f || true
