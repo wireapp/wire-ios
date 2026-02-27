@@ -146,26 +146,22 @@ jobs:
           colima stop || true
           colima delete -f || true
 
-          if ! pgrep oahd >/dev/null 2>&1; then
-            echo "Installing Rosetta 2..."
-            sudo /usr/sbin/softwareupdate --install-rosetta --agree-to-license
-          else
-            echo "Rosetta 2 already installed."
-          fi
-
           colima start -f \
             --cpu 2 \
             --memory 4 \
-            --vm-type vz \
-            --vz-rosetta \
-            --mount-type virtiofs
+            --vm-type qemu \
+            --arch aarch64
 
           colima status
           docker version
           docker info --format '{{.Architecture}}'
 
-          echo "Testing amd64 emulation with Rosetta:"
+          echo "Testing amd64 emulation (QEMU binfmt):"
           docker run --rm --platform linux/amd64 alpine uname -m
+
+          # If Colima fails to start, these logs can help debugging
+          cat /Users/admin/.colima/_lima/colima/ha.stderr.log || true
+          cat /Users/admin/.colima/_lima/colima/serial*.log || true
 
       - name: Start Testservice
         if: ${{ inputs.run_critical_flows }}
