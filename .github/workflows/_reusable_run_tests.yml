@@ -146,9 +146,16 @@ jobs:
           colima stop || true
           colima delete -f || true
 
+          if ! pgrep oahd >/dev/null 2>&1; then
+            echo "Installing Rosetta 2..."
+            sudo /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+          else
+            echo "Rosetta 2 already installed."
+          fi
+
           colima start -f \
-            --cpu 3 \
-            --memory 6 \
+            --cpu 2 \
+            --memory 4 \
             --vm-type vz \
             --vz-rosetta \
             --mount-type virtiofs
@@ -159,8 +166,6 @@ jobs:
 
           echo "Testing amd64 emulation with Rosetta:"
           docker run --rm --platform linux/amd64 alpine uname -m
-
-          docker run --rm --platform linux/amd64 quay.io/wire/testservice:latest uname -m || echo "Image uname test failed (but may still work if binary is compatible)"
 
       - name: Start Testservice
         if: ${{ inputs.run_critical_flows }}
@@ -192,6 +197,7 @@ jobs:
           echo "::warning::Testservice did not become reachable on http://localhost:8080 within 30s"
           docker logs wire-testservice || true
           exit 0
+
 
       - name: Install 1Password
         if: ${{ inputs.run_critical_flows }}
