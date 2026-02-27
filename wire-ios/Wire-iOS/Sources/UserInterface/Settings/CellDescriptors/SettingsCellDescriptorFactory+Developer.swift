@@ -99,7 +99,10 @@ extension SettingsCellDescriptorFactory {
         )
 
         developerCellDescriptors.append(
-            Button(title: "Append N messages to the top conv (not sending)", isDestructive: true) { [weak userSession] _ in
+            Button(
+                title: "Append N messages to the top conv (not sending)",
+                isDestructive: true
+            ) { [weak userSession] _ in
                 guard let session = userSession as? ZMUserSession else { return }
                 DebugActions.askNumber(title: "Enter count of messages") { count in
                     DebugActions.appendMessagesInBatches(count: count, userSession: session)
@@ -122,7 +125,7 @@ extension SettingsCellDescriptorFactory {
                 isDestructive: false,
                 presentationStyle: .navigation,
                 presentationAction: { [weak userSession] in
-                    guard let userSession = userSession else { return nil }
+                    guard let userSession else { return nil }
                     return DatabaseStatisticsController(userSession: userSession)
                 }
             )
