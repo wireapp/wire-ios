@@ -77,13 +77,14 @@ package struct FilesView: FilesViewProtocol {
                         .progressViewStyle(.circular)
                     Spacer()
                 case .received, .pending:
-                    if viewModel.connectionState == .offline {
-                        Spacer()
-                        offlineBar.id(UUID())
-                        Spacer()
-                    }
-
                     filesList
+                        .safeAreaInset(edge: .top) {
+                            if viewModel.shouldShowOfflineBar {
+                                offlineBar
+                                    .id(UUID())
+                                    .background(ColorTheme.Backgrounds.surface.color)
+                            }
+                        }
                 case let .error(isConnectionError):
                     Spacer()
                     FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
