@@ -1211,6 +1211,8 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func didFinishInitialSync() {
+        // initialSync includes resolving all 1:1 so mark it as done here
+        didAlreadyResolveAllOneOnOnes = true
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
 
