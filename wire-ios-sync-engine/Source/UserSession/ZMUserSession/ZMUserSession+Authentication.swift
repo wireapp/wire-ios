@@ -106,22 +106,30 @@ extension ZMUserSession {
             return
         }
 
+        WireLogger.sessionManager.info("logout: starting logout sequence")
 
         // Step 1 & 2: Stop all sync and work processing before sending DELETE request
         Task { [weak self] in
             guard let self else { return }
 
+            WireLogger.sessionManager.info("logout: suspending syncAgent")
             await self.syncAgent?.terminate()
+            WireLogger.sessionManager.info("logout: syncAgent suspended")
 
             // Nil out syncAgent to prevent resume() calls
             self.syncAgent = nil
+            WireLogger.sessionManager.info("logout: syncAgent cleared")
 
             if let workAgent = self.clientSessionComponent?.workAgent {
+                WireLogger.sessionManager.info("logout: clearing workAgent queue")
                 await workAgent.clearSchedulerQueue()
+                WireLogger.sessionManager.info("logout: stopping workAgent")
                 await workAgent.stop()
+                WireLogger.sessionManager.info("logout: workAgent stopped")
             }
 
             // Step 3: Send DELETE request
+            WireLogger.sessionManager.info("logout: sending DELETE client request")
             let payload: [String: Any] = if let password = credentials.password, !password.isEmpty {
                 ["password": password]
             } else {
@@ -139,9 +147,13 @@ extension ZMUserSession {
                 guard let self else { return }
 
                 // Step 4: Stop operationLoop and transportSession (both success and failure)
+                WireLogger.sessionManager.info("logout: DELETE response received, stopping operationLoop and transportSession")
                 self.operationLoop?.tearDown()
+                WireLogger.sessionManager.info("logout: operationLoop torn down")
                 self.operationLoop = nil
+                WireLogger.sessionManager.info("logout: operationLoop nil")
                 self.transportSession.tearDown()
+                WireLogger.sessionManager.info("logout: transportSession torn down")
 
                 if response.httpStatus == 200 {
                     self.delegate?.userDidLogout(accountId: accountID)

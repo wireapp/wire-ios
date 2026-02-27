@@ -734,6 +734,7 @@ public final class ZMUserSession: NSObject {
         }
         isTornDown = true // Set immediately to prevent recursion
 
+        WireLogger.sessionManager.debug("tearDown() starting - clearing all references")
 
         // Stop work agent asynchronously (don't block tearDown)
         Task {
@@ -744,8 +745,10 @@ public final class ZMUserSession: NSObject {
         // NOTE: transportSession, workAgent, and operationLoop are already stopped during logout
         // So we just need to clean up references here
 
+        WireLogger.sessionManager.debug("tearDown: tearing down MLS group verification")
         tearDownMLSGroupVerification()
 
+        WireLogger.sessionManager.debug("tearDown: clearing tokens and cancellables")
         tokens.removeAll()
         cancellables.removeAll()
         isNetworkReachableCancellable?.cancel()
@@ -753,6 +756,7 @@ public final class ZMUserSession: NSObject {
         application.unregisterObserverForStateChange(self)
         callStateObserver = nil
 
+        WireLogger.sessionManager.debug("tearDown: unregistering recurring actions")
         recurringActionService.removeAction(id: "refreshUsersMissingMetadataAction")
         recurringActionService.removeAction(id: "refreshConversationsMissingMetadataAction")
         recurringActionService.removeAction(id: "updateProteusToMLSMigrationStatusAction")
@@ -760,35 +764,48 @@ public final class ZMUserSession: NSObject {
         recurringActionService.removeAction(id: "refreshFederationCertificatesAction")
         recurringActionService.removeAction(id: "checkBuildBlacklistAction")
 
+        WireLogger.sessionManager.debug("tearDown: clearing delegates")
         earService.delegate = nil
         appLockController.delegate = nil
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = nil
 
+        WireLogger.sessionManager.debug("tearDown: cancelling post-sync task")
         postSyncTask?.cancel()
         postSyncTask = nil
 
+        WireLogger.sessionManager.debug("tearDown: tearing down syncAgent")
         syncAgent?.delegate = nil
         syncAgent = nil
 
+        WireLogger.sessionManager.debug("tearDown: clearing event processors to stop event processing")
         conversationEventProcessor = nil
 
+        WireLogger.sessionManager.debug("tearDown: clearing clientSessionComponent")
         clientSessionComponent = nil
 
+        WireLogger.sessionManager.debug("tearDown: tearing down syncStrategy")
         syncStrategy?.tearDown()
         syncStrategy = nil
 
+        WireLogger.sessionManager.debug("tearDown: clearing operationLoop reference (already torn down during logout)")
         operationLoop = nil
 
+        WireLogger.sessionManager.debug("tearDown: tearing down notificationDispatcher")
         notificationDispatcher.tearDown()
 
+        WireLogger.sessionManager.debug("tearDown: tearing down callCenter")
         callCenter?.tearDown()
 
+        WireLogger.sessionManager.debug("tearDown: invalidating network services (WireNetwork URLSessions)")
         userSessionComponent?.invalidateNetworkServices()
 
+        WireLogger.sessionManager.debug("tearDown: tearing down transportSession (legacy network)")
         transportSession.tearDown()
 
+        WireLogger.sessionManager.debug("tearDown: closing coreDataStack")
         self.coreDataStack.close()
 
+        WireLogger.sessionManager.debug("tearDown: clearing contextStorage")
         contextStorage.clear()
 
         // Note: strategyDirectory and urlActionProcessors are left to be cleaned up
@@ -797,6 +814,7 @@ public final class ZMUserSession: NSObject {
         NotificationCenter.default.removeObserver(self)
         WireLogger.authentication.clearClientID()
 
+        WireLogger.sessionManager.debug("tearDown() completed")
     }
 
     // MARK: - Methods

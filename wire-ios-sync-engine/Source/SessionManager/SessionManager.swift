@@ -851,7 +851,9 @@ public final class SessionManager: NSObject, SessionManagerType {
             return
         }
 
+        WireLogger.sessionManager.info("Removing session \(account.userIdentifier) from backgroundUserSessions (count: \(backgroundUserSessions.count))")
         backgroundUserSessions[account.userIdentifier] = nil
+        WireLogger.sessionManager.info("After removal, backgroundUserSessions count: \(backgroundUserSessions.count)")
         tearDownObservers(account: account.userIdentifier)
         notifyUserSessionDestroyed(account.userIdentifier)
 
