@@ -22,49 +22,55 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
+@MainActor
+final class EARServiceTests: EARServiceTestsBase, @MainActor EARServiceDelegate {
 
     var sut: EARService!
-    var keyRepository: MockEARKeyRepositoryInterface!
-    var keyEncryptor: MockEARKeyEncryptorInterface!
     var earStorage: EARStorage!
-
+    var earMessageEncryptionService: MockEARMessageEncryptionServiceProtocol!
+    var earMigrator: MockEARMigratorProtocol!
     var prepareForMigrationCalls = 0
 
     // MARK: - Life cycle
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
-        keyRepository = MockEARKeyRepositoryInterface()
-        keyEncryptor = MockEARKeyEncryptorInterface()
-        earStorage = .init(userID: userIdentifier, sharedUserDefaults: .temporary())
+        earMessageEncryptionService = MockEARMessageEncryptionServiceProtocol()
+        earMigrator = MockEARMigratorProtocol()
+
+        earStorage = .init(userID: userID, sharedUserDefaults: .temporary())
         earStorage.enableEAR(true)
-        sut = createSUT()
-        prepareForMigrationCalls = 0
 
-        createSelfClient(onMOC: uiMOC)
+        // Setup default mock behaviors
+        setMockEncryptionService()
+        setMockMigrator()
+
+        sut = await createSUT()
+        prepareForMigrationCalls = 0
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         sut = nil
         earStorage = nil
-        keyRepository = nil
-        keyEncryptor = nil
-        uiMOC.encryptMessagesAtRest = false
-        uiMOC.databaseKey = nil
-        super.tearDown()
+        earMigrator = nil
+        earMessageEncryptionService = nil
+        try await super.tearDown()
     }
 
-    func createSUT(canPerformMigration: Bool = false) -> EARService {
-
-        let sut = EARService(
-            accountID: userIdentifier,
+    func createSUT(
+        canPerformMigration: Bool = false
+    ) async -> EARService {
+        let sut = await EARService(
+            accountID: userID,
             keyRepository: keyRepository,
             keyEncryptor: keyEncryptor,
             databaseContexts: [uiMOC, syncMOC],
+            coreDataStack: coreDataStack,
             canPerformKeyMigration: canPerformMigration,
             earStorage: earStorage,
+            messageEncryptionService: earMessageEncryptionService,
+            migrator: earMigrator,
             authenticationContext: MockAuthenticationContextProtocol()
         )
 
@@ -81,109 +87,68 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     // MARK: - Mock helpers
 
+    // MARK: - Test-specific Errors
+
     enum MockError: Error {
-
         case cannotStoreKey
-
     }
 
-    func generatePrimaryKeyPair() throws -> (publicKey: SecKey, privateKey: SecKey) {
-        let keyGenerator = EARKeyGenerator()
-        return try keyGenerator.generatePrimaryPublicPrivateKeyPair(id: "primary")
+    // MARK: - Mock Setup (Specific to Unit Tests)
+
+    /// Sets up mock encryption service behaviors
+    func setMockEncryptionService() {
+        earMessageEncryptionService.setDatabaseKey_MockMethod = { _ in }
+        earMessageEncryptionService.getDatabaseKey_MockValue = nil
     }
 
-    func generateSecondaryKeyPair() throws -> (publicKey: SecKey, privateKey: SecKey) {
-        let keyGenerator = EARKeyGenerator()
-        return try keyGenerator.generateSecondaryPublicPrivateKeyPair(id: "secondary")
+    /// Sets up mock migrator behaviors
+    func setMockMigrator() {
+        earMigrator.migrateTowardEncryptionAtRestContext_MockMethod = { _ in }
+        earMigrator.migrateAwayFromEncryptionAtRestContext_MockMethod = { _ in }
     }
 
-    func mockKeyGeneration() {
-        mockKeyDeletion()
-        keyEncryptor.encryptDatabaseKeyPublicKey_MockValue = .randomEncryptionKey()
-        mockKeyStorage()
-        try? mockKeyFetching()
-    }
+    // MARK: - Overridden Helper (adds earStorage behavior)
 
-    func mockKeyDeletion() {
-        keyRepository.deletePublicKeyDescription_MockMethod = { _ in }
-        keyRepository.deletePrivateKeyDescription_MockMethod = { _ in }
-        keyRepository.deleteDatabaseKeyDescription_MockMethod = { _ in }
-    }
-
-    func mockKeyStorage() {
-        keyRepository.storePublicKeyDescriptionKey_MockMethod = { _, _ in }
-        keyRepository.storeDatabaseKeyDescriptionKey_MockMethod = { _, _ in }
-    }
-
-    func mockKeyFetching() throws {
-        let primaryKeys = try generatePrimaryKeyPair()
-        let secondaryKeys = try generateSecondaryKeyPair()
-
-        keyRepository.fetchPublicKeyDescription_MockMethod = { description in
-            switch description.label {
-            case "public":
-                return primaryKeys.publicKey
-
-            case "secondary-public":
-                return secondaryKeys.publicKey
-
-            default:
-                throw EARKeyRepositoryFailure.keyNotFound
-            }
-        }
-
-        keyRepository.fetchPrivateKeyDescription_MockMethod = { description in
-            switch description.label {
-            case "private":
-                return primaryKeys.privateKey
-
-            case "secondary-private":
-                return secondaryKeys.privateKey
-
-            default:
-                throw EARKeyRepositoryFailure.keyNotFound
-            }
-        }
-
-        keyRepository.fetchDatabaseKeyDescription_MockValue = .randomEncryptionKey()
-        keyEncryptor.decryptDatabaseKeyPrivateKey_MockValue = .randomEncryptionKey()
+    /// Overrides base class to also update earStorage
+    override func setEAREnabled(_ enabled: Bool) async {
+        earStorage.enableEAR(enabled)
+        await super.setEAREnabled(enabled)
     }
 
     // MARK: - Migration
 
-    func test_ItDoesNotMigrateKeys_IfEARIsDisabled() throws {
+    func test_ItDoesNotMigrateKeys_IfEARIsDisabled() async throws {
         // Given
-        earStorage.enableEAR(false)
-        uiMOC.encryptMessagesAtRest = false
+        await setEAREnabled(false)
 
         // When
-        sut = createSUT(canPerformMigration: true)
+        sut = await createSUT(canPerformMigration: true)
 
         // Then
         XCTAssertTrue(keyRepository.storePublicKeyDescriptionKey_Invocations.isEmpty)
     }
 
-    func test_ItDoesNotMigrateKeys_IfSecondaryKeysAlreadyExist() throws {
+    func test_ItDoesNotMigrateKeys_IfSecondaryKeysAlreadyExist() async throws {
         // Given
-        uiMOC.encryptMessagesAtRest = true
+        await setEAREnabled(true)
         let existingSecondaryKeys = try generateSecondaryKeyPair()
         keyRepository.fetchPublicKeyDescription_MockValue = existingSecondaryKeys.publicKey
 
         // When
-        sut = createSUT(canPerformMigration: true)
+        sut = await createSUT(canPerformMigration: true)
 
         // Then
         XCTAssertTrue(keyRepository.storePublicKeyDescriptionKey_Invocations.isEmpty)
     }
 
-    func test_ItDoesMigrateKeys_IfEARIsEnabledAndSecondaryKeysDontExist() throws {
+    func test_ItDoesMigrateKeys_IfEARIsEnabledAndSecondaryKeysDontExist() async throws {
         // Given
-        uiMOC.encryptMessagesAtRest = true
+        await setEAREnabled(true)
         keyRepository.fetchPublicKeyDescription_MockError = EARKeyRepositoryFailure.keyNotFound
         keyRepository.storePublicKeyDescriptionKey_MockMethod = { _, _ in }
 
         // When
-        sut = createSUT(canPerformMigration: true)
+        sut = await createSUT(canPerformMigration: true)
 
         // Then we stored a new public key
         XCTAssertEqual(keyRepository.storePublicKeyDescriptionKey_Invocations.count, 1)
@@ -191,9 +156,9 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     // MARK: - Enable EAR
 
-    func test_EnableEncryptionAtRest_DontEnableIfNotNeeded() throws {
+    func test_EnableEncryptionAtRest_DontEnableIfNotNeeded() async throws {
         // Given
-        uiMOC.encryptMessagesAtRest = true
+        await setEAREnabled(true)
 
         // When
         XCTAssertNoThrow(try sut.enableEncryptionAtRest(context: uiMOC))
@@ -202,15 +167,9 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertEqual(prepareForMigrationCalls, 0)
     }
 
-    func test_EnableEncryptionAtRest_SkipMigration() throws {
+    func test_EnableEncryptionAtRest_SkipMigration() async throws {
         // Given
-        uiMOC.encryptMessagesAtRest = false
-        uiMOC.databaseKey = nil
-
-        syncMOC.performAndWait {
-            syncMOC.encryptMessagesAtRest = false
-            syncMOC.databaseKey = nil
-        }
+        await setEAREnabled(false)
 
         // Mock
         mockKeyGeneration()
@@ -243,14 +202,14 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         // Then EAR is enabled on the context
         XCTAssertTrue(uiMOC.encryptMessagesAtRest)
 
-        // Then all contexts have the database key.
-        XCTAssertNotNil(uiMOC.databaseKey)
-        syncMOC.performAndWait { XCTAssertNotNil(syncMOC.databaseKey) }
+        // Then database key was set via the encryption service
+        XCTAssertEqual(earMessageEncryptionService.setDatabaseKey_Invocations.count, 1)
+        XCTAssertNotNil(earMessageEncryptionService.setDatabaseKey_Invocations.first as? VolatileData)
     }
 
-    func test_EnableEncryptionAtRest_RollbackOnFailure() throws {
+    func test_EnableEncryptionAtRest_RollbackOnFailure() async throws {
         // Given
-        uiMOC.encryptMessagesAtRest = false
+        await setEAREnabled(false)
 
         // Mock
         mockKeyGeneration()
@@ -263,21 +222,24 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
             }
         }
 
-        // Then
+        // Then EAR is not enabled (rollback occurred)
         XCTAssertFalse(uiMOC.encryptMessagesAtRest)
-        XCTAssertNil(uiMOC.databaseKey)
 
+        // Then database key was cleared during rollback
+        XCTAssertTrue(earMessageEncryptionService.setDatabaseKey_Invocations.contains(where: { $0 == nil }))
+
+        // Then keys were deleted during cleanup
         // In total, the 5 keys (2 public, 2 private, 1 database) were
         // deleted 2 times. Once before generating new keys, and once
-        // after cleaning up the the error.
+        // after cleaning up the error.
         XCTAssertEqual(keyRepository.deletePublicKeyDescription_Invocations.count, 4)
         XCTAssertEqual(keyRepository.deletePrivateKeyDescription_Invocations.count, 4)
         XCTAssertEqual(keyRepository.deleteDatabaseKeyDescription_Invocations.count, 2)
     }
 
-    func test_EnableEncryptionAtRest_FailedToMigrate() throws {
+    func test_EnableEncryptionAtRest_FailedToMigrate() async throws {
         // Given
-        uiMOC.encryptMessagesAtRest = false
+        await setEAREnabled(false)
         sut.delegate = nil
 
         // Mock
@@ -291,137 +253,24 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         }
     }
 
-    // @SF.Storage @TSFI.FS-IOS @TSFI.Enclave-IOS @S0.1 @S0.2
-    // Make sure that message content is encrypted when EAR is enabled
-    func test_ExistingMessageContentIsEncrypted_WhenEarIsEnabled() throws {
-        // Given
-        uiMOC.encryptMessagesAtRest = false
-        uiMOC.databaseKey = nil
-
-        let conversation = createConversation(in: uiMOC)
-        try conversation.appendText(content: "Beep bloop")
-
-        let results: [ZMGenericMessageData] = try uiMOC.fetchObjects()
-
-        guard let messageData = results.first else {
-            XCTFail("Could not find message data.")
-            return
-        }
-
-        // Then
-        XCTAssertFalse(messageData.isEncrypted)
-        XCTAssertEqual(messageData.unencryptedContent, "Beep bloop")
-        XCTAssertFalse(uiMOC.encryptMessagesAtRest)
-
-        // Mock
-        mockKeyGeneration()
-
-        // When
-        XCTAssertNoThrow(try sut.enableEncryptionAtRest(context: uiMOC))
-
-        // Then migration was run
-        XCTAssertEqual(prepareForMigrationCalls, 1)
-        XCTAssertTrue(messageData.isEncrypted)
-        XCTAssertEqual(messageData.unencryptedContent, "Beep bloop")
-
-        // Then EAR is enabled on the context
-        XCTAssertTrue(uiMOC.encryptMessagesAtRest)
-    }
-
-    // @SF.Storage @TSFI.FS-IOS @TSFI.Enclave-IOS @S0.1 @S0.2
-    // Make sure that message content normalized for text search is also encrypted when EAR is enabled
-    func test_NormalizedMessageContentIsCleared_WhenEarIsEnabled() throws {
-        // Given
-        uiMOC.encryptMessagesAtRest = false
-        uiMOC.databaseKey = nil
-
-        let conversation = createConversation(in: uiMOC)
-        let message = try conversation.appendText(content: "Beep bloop") as! ZMMessage
-
-        // Then
-        XCTAssertNotNil(message.normalizedText)
-        XCTAssertEqual(message.normalizedText?.isEmpty, false)
-
-        // Mock
-        mockKeyGeneration()
-
-        // When
-        XCTAssertNoThrow(try sut.enableEncryptionAtRest(context: uiMOC))
-
-        // Then
-        XCTAssertNotNil(message.normalizedText)
-        XCTAssertEqual(message.normalizedText?.isEmpty, true)
-        XCTAssertTrue(uiMOC.encryptMessagesAtRest)
-    }
-
-    // @SF.Storage @TSFI.FS-IOS @TSFI.Enclave-IOS @S0.1 @S0.2
-    // Make sure that message content that is drafted but not send by the user yet is also encrypted
-    // when EAR is enabled
-    func test_DraftMessageContentIsEncrypted_WhenEarIsEnabled() throws {
-        // Given
-        uiMOC.encryptMessagesAtRest = false
-        uiMOC.databaseKey = nil
-
-        let conversation = createConversation(in: uiMOC)
-        conversation.draftMessage = DraftMessage(
-            text: "Beep bloop",
-            mentions: [],
-            quote: nil
-        )
-
-        // Then
-        XCTAssertTrue(conversation.hasDraftMessage)
-        XCTAssertFalse(conversation.hasEncryptedDraftMessageData)
-        XCTAssertEqual(conversation.unencryptedDraftMessageContent, "Beep bloop")
-
-        // Mock
-        mockKeyGeneration()
-
-        // When
-        XCTAssertNoThrow(try sut.enableEncryptionAtRest(context: uiMOC))
-
-        // Then
-        XCTAssertTrue(conversation.hasEncryptedDraftMessageData)
-        XCTAssertEqual(conversation.unencryptedDraftMessageContent, "Beep bloop")
-        XCTAssertTrue(uiMOC.encryptMessagesAtRest)
-    }
-
     // MARK: - Disable EAR
 
-    func test_DisableEncryptionAtRest_DontDisableIfNotNeeded() throws {
+    func test_DisableEncryptionAtRest_DontDisableIfNotNeeded() async throws {
         // Given
-        uiMOC.encryptMessagesAtRest = false
+        await setEAREnabled(false)
 
         // When
         XCTAssertNoThrow(try sut.disableEncryptionAtRest(context: uiMOC))
 
         // Then
         XCTAssertEqual(prepareForMigrationCalls, 0)
+        XCTAssertTrue(keyRepository.deletePublicKeyDescription_Invocations.isEmpty)
     }
 
-    func test_DisableEncryptionAtRest_DatabaseKeyMissing() throws {
+    func test_DisableEncryptionAtRest_SkipMigration() async throws {
         // Given
-        uiMOC.encryptMessagesAtRest = true
-        uiMOC.databaseKey = nil
-
-        // When
-        XCTAssertThrowsError(try sut.disableEncryptionAtRest(context: uiMOC)) { error in
-            guard case EARServiceFailure.databaseKeyMissing = error else {
-                return XCTFail("unexpected error: \(error)")
-            }
-        }
-    }
-
-    func test_DisableEncryptionAtRest_SkipMigration() throws {
-        // Given
-        let databaseKey = VolatileData(from: .randomEncryptionKey())
-        uiMOC.encryptMessagesAtRest = true
-        uiMOC.databaseKey = databaseKey
-
-        syncMOC.performAndWait {
-            syncMOC.encryptMessagesAtRest = true
-            syncMOC.databaseKey = databaseKey
-        }
+        await setEAREnabled(true)
+        earMessageEncryptionService.getDatabaseKey_MockValue = validDatabaseKey
 
         // Mock
         mockKeyDeletion()
@@ -440,163 +289,29 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         // Then migration was not run
         XCTAssertEqual(prepareForMigrationCalls, 0)
 
-        // Then EAR is disabled on the context
+        // Then EAR is disabled on the context and storage
         XCTAssertFalse(uiMOC.encryptMessagesAtRest)
+        XCTAssertFalse(earStorage.earEnabled())
 
-        // Then all contexts no longer have the database key
-        XCTAssertNil(uiMOC.databaseKey)
-        syncMOC.performAndWait { XCTAssertNil(syncMOC.databaseKey) }
-    }
-
-    func test_ExistingMessageContentIsDecrypted_WhenEarIsDisabled() throws {
-        // Given
-        let databaseKey = VolatileData(from: .randomEncryptionKey())
-        uiMOC.encryptMessagesAtRest = true
-        uiMOC.databaseKey = databaseKey
-
-        let conversation = createConversation(in: uiMOC)
-        try conversation.appendText(content: "Beep bloop")
-
-        let results: [ZMGenericMessageData] = try uiMOC.fetchObjects()
-
-        guard let messageData = results.first else {
-            XCTFail("Could not find message data.")
-            return
-        }
-
-        // Then
-        XCTAssertTrue(messageData.isEncrypted)
-        XCTAssertEqual(messageData.unencryptedContent, "Beep bloop")
-
-        // Mock
-        mockKeyDeletion()
-
-        // When
-        XCTAssertNoThrow(try sut.disableEncryptionAtRest(context: uiMOC))
-
-        // Then migration was run
-        XCTAssertEqual(prepareForMigrationCalls, 1)
-        XCTAssertFalse(messageData.isEncrypted)
-        XCTAssertEqual(messageData.unencryptedContent, "Beep bloop")
-
-        // Then EAR is disabled on the context
-        XCTAssertFalse(uiMOC.encryptMessagesAtRest)
-    }
-
-    func test_NormalizedMessageContentIsUpdated_WhenEarIsDisabled() throws {
-        // Given
-        let databaseKey = VolatileData(from: .randomEncryptionKey())
-        uiMOC.encryptMessagesAtRest = true
-        uiMOC.databaseKey = databaseKey
-
-        let conversation = createConversation(in: uiMOC)
-        let message = try conversation.appendText(content: "Beep bloop") as! ZMMessage
-
-        // Then
-        XCTAssertNotNil(message.normalizedText)
-        XCTAssertEqual(message.normalizedText?.isEmpty, true)
-
-        // Mock
-        mockKeyDeletion()
-
-        // When
-        XCTAssertNoThrow(try sut.disableEncryptionAtRest(context: uiMOC))
-
-        // Then
-        XCTAssertNotNil(message.normalizedText)
-        XCTAssertEqual(message.normalizedText?.isEmpty, false)
-        XCTAssertFalse(uiMOC.encryptMessagesAtRest)
-    }
-
-    func test_DraftMessageContentIsDecrypted_WhenEarIsDisabled() throws {
-        // Given
-        let databaseKey = VolatileData(from: .randomEncryptionKey())
-        uiMOC.encryptMessagesAtRest = true
-        uiMOC.databaseKey = databaseKey
-
-        let conversation = createConversation(in: uiMOC)
-        conversation.draftMessage = DraftMessage(
-            text: "Beep bloop",
-            mentions: [],
-            quote: nil
-        )
-
-        // Then
-        XCTAssertTrue(conversation.hasDraftMessage)
-        XCTAssertTrue(conversation.hasEncryptedDraftMessageData)
-        XCTAssertEqual(conversation.unencryptedDraftMessageContent, "Beep bloop")
-
-        // Mock
-        mockKeyDeletion()
-
-        // When
-        XCTAssertNoThrow(try sut.disableEncryptionAtRest(context: uiMOC))
-
-        // Then
-        XCTAssertTrue(conversation.hasDraftMessage)
-        XCTAssertFalse(conversation.hasEncryptedDraftMessageData)
-        XCTAssertEqual(conversation.unencryptedDraftMessageContent, "Beep bloop")
-        XCTAssertFalse(uiMOC.encryptMessagesAtRest)
-    }
-
-    func test_MigrationIsCanceled_WhenASingleInstanceFailsToMigrate() throws {
-        // Given
-        let databaseKey1 = VolatileData(from: .randomEncryptionKey())
-        let databaseKey2 = VolatileData(from: .randomEncryptionKey())
-        uiMOC.encryptMessagesAtRest = true
-
-        let conversation = createConversation(in: uiMOC)
-
-        uiMOC.databaseKey = databaseKey1
-        try conversation.appendText(content: "Beep bloop")
-
-        uiMOC.databaseKey = databaseKey2
-        try conversation.appendText(content: "buzz buzzz")
-
-        let results: [ZMGenericMessageData] = try uiMOC.fetchObjects()
-        XCTAssertEqual(results.count, 2)
-
-        // When
-        XCTAssertThrowsError(try sut.disableEncryptionAtRest(context: uiMOC)) { error in
-            // Then
-            switch error {
-            case let NSManagedObjectContext.MigrationError.failedToMigrateInstances(type, _):
-                XCTAssertEqual(type.entityName(), ZMGenericMessageData.entityName())
-
-            default:
-                XCTFail("Unexpected error thrown: \(error.localizedDescription)")
-            }
-        }
-
-        // Then
-        XCTAssertTrue(uiMOC.encryptMessagesAtRest)
+        // Then database key was cleared via the encryption service
+        XCTAssertEqual(earMessageEncryptionService.setDatabaseKey_Invocations.count, 1)
+        XCTAssertEqual(earMessageEncryptionService.setDatabaseKey_Invocations.first, .some(nil))
     }
 
     // MARK: - Lock database
 
     func test_LockDatabase() throws {
         // Given
-        let databaseKey = VolatileData(from: .randomEncryptionKey())
-
-        uiMOC.databaseKey = databaseKey
-
-        syncMOC.performAndWait {
-            syncMOC.databaseKey = databaseKey
-        }
-
         // Mock
         keyRepository.clearCache_MockMethod = {}
 
         // When
         sut.lockDatabase()
 
-        // Then
-        XCTAssertNil(uiMOC.databaseKey)
+        // Then database key was cleared via the encryption service
+        XCTAssertTrue(earMessageEncryptionService.setDatabaseKey_Invocations.contains(where: { $0 == nil }))
 
-        syncMOC.performAndWait {
-            XCTAssertNil(syncMOC.databaseKey)
-        }
-
+        // Then key repository cache was cleared
         XCTAssertEqual(keyRepository.clearCache_Invocations.count, 1)
     }
 
@@ -616,19 +331,17 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         // When
         XCTAssertNoThrow(try sut.unlockDatabase())
 
-        // Then
-        XCTAssertEqual(uiMOC.databaseKey?._storage, decryptedDatabaseKey)
-
-        syncMOC.performAndWait {
-            XCTAssertEqual(syncMOC.databaseKey?._storage, decryptedDatabaseKey)
-        }
+        // Then database key was set via the encryption service
+        XCTAssertEqual(earMessageEncryptionService.setDatabaseKey_Invocations.count, 1)
+        let key = try XCTUnwrap(earMessageEncryptionService.setDatabaseKey_Invocations.first)
+        XCTAssertEqual(key?._storage, decryptedDatabaseKey)
     }
 
     // MARK: - Fetch public keys
 
-    func test_FetchPublicKeys() throws {
+    func test_FetchPublicKeys() async throws {
         // Given
-        uiMOC.encryptMessagesAtRest = true
+        await setEAREnabled(true)
         let primaryKeys = try generatePrimaryKeyPair()
         let secondaryKeys = try generateSecondaryKeyPair()
 
@@ -646,10 +359,9 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertEqual(publicKeys.secondary, secondaryKeys.publicKey)
     }
 
-    func test_FetchPublicKeys_EARDisabled() throws {
+    func test_FetchPublicKeys_EARDisabled() async throws {
         // Given
-        earStorage.enableEAR(false)
-        uiMOC.encryptMessagesAtRest = false
+        await setEAREnabled(false)
 
         // When
         let publicKeys = try sut.fetchPublicKeys()
@@ -658,9 +370,9 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertNil(publicKeys)
     }
 
-    func test_FetchPublicKeys_KeyNotFound() throws {
+    func test_FetchPublicKeys_KeyNotFound() async throws {
         // Given
-        uiMOC.encryptMessagesAtRest = true
+        await setEAREnabled(true)
         let primaryKeys = try generatePrimaryKeyPair()
 
         // Mock
@@ -694,9 +406,9 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     // MARK: - Fetch private keys
 
-    func test_FetchPrivateKeys() throws {
+    func test_FetchPrivateKeys() async throws {
         // Given
-        uiMOC.encryptMessagesAtRest = true
+        await setEAREnabled(true)
         let primaryKeys = try generatePrimaryKeyPair()
         let secondaryKeys = try generateSecondaryKeyPair()
 
@@ -714,10 +426,9 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertEqual(privateKeys.secondary, secondaryKeys.privateKey)
     }
 
-    func test_FetchPrivateKeys_EARDisabled() throws {
+    func test_FetchPrivateKeys_EARDisabled() async throws {
         // Given
-        earStorage.enableEAR(false)
-        uiMOC.encryptMessagesAtRest = false
+        await setEAREnabled(false)
 
         // When
         let privateKeys = try sut.fetchPrivateKeys(includingPrimary: true)
@@ -726,9 +437,9 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertNil(privateKeys)
     }
 
-    func test_FetchPrivateKeys_ExcludingPrimary() throws {
+    func test_FetchPrivateKeys_ExcludingPrimary() async throws {
         // Given
-        uiMOC.encryptMessagesAtRest = true
+        await setEAREnabled(true)
         let primaryKeys = try generatePrimaryKeyPair()
         let secondaryKeys = try generateSecondaryKeyPair()
 
@@ -746,9 +457,9 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertEqual(privateKeys.secondary, secondaryKeys.privateKey)
     }
 
-    func test_FetchPrivateKeys_PrimaryKeyNotFound() throws {
+    func test_FetchPrivateKeys_PrimaryKeyNotFound() async throws {
         // Given
-        uiMOC.encryptMessagesAtRest = true
+        await setEAREnabled(true)
         let secondaryKeys = try generateSecondaryKeyPair()
 
         // Mock
@@ -765,9 +476,9 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertEqual(privateKeys.secondary, secondaryKeys.privateKey)
     }
 
-    func test_FetchPrivateKeys_SecondaryKeyNotFound() throws {
+    func test_FetchPrivateKeys_SecondaryKeyNotFound() async throws {
         // Given
-        uiMOC.encryptMessagesAtRest = true
+        await setEAREnabled(true)
 
         // Mock
         mockFetchingPrivateKeys(
@@ -800,32 +511,6 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
     // MARK: - Security tests
 
-    // @SF.Storage @TSFI.FS-IOS @TSFI.Enclave-IOS @S0.1 @S0.2
-    func test_ItStoresAndClearsDatabaseKeyOnAllContexts() throws {
-        // Given
-        let databaseKey = VolatileData(from: .randomEncryptionKey())
-
-        // When
-        sut.setDatabaseKeyInAllContexts(databaseKey)
-
-        // Then
-        XCTAssertEqual(uiMOC.databaseKey, databaseKey)
-
-        syncMOC.performAndWait {
-            XCTAssertEqual(syncMOC.databaseKey, databaseKey)
-        }
-
-        // When
-        sut.setDatabaseKeyInAllContexts(nil)
-
-        // Then
-        XCTAssertNil(uiMOC.databaseKey)
-
-        syncMOC.performAndWait {
-            XCTAssertNil(syncMOC.databaseKey)
-        }
-    }
-
     // @SF.Storage @TSFI.ClientRNG @S0.1 @S0.2
     func test_EncryptionKeysAreSuccessfullyCreated() throws {
         // Mock
@@ -855,50 +540,6 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertEqual(keyRepository.deletePublicKeyDescription_Invocations.count, 2)
         XCTAssertEqual(keyRepository.deletePrivateKeyDescription_Invocations.count, 2)
         XCTAssertEqual(keyRepository.deleteDatabaseKeyDescription_Invocations.count, 1)
-    }
-
-    // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
-    func test_OldEncryptionKeysAreReplaced_AfterActivatingEncryptionAtRest() throws {
-        // Given
-        let sut = EARService(
-            accountID: userIdentifier,
-            databaseContexts: [uiMOC],
-            sharedUserDefaults: .temporary(),
-            authenticationContext: MockAuthenticationContextProtocol()
-        )
-
-        let oldDatabaseKey = try sut.generateKeys()
-
-        sut.setInitialEARFlagValue(true)
-        uiMOC.encryptMessagesAtRest = true
-        let oldPublicKeys = try XCTUnwrap(sut.fetchPublicKeys())
-        let oldPrivateKeys = try XCTUnwrap(sut.fetchPrivateKeys(includingPrimary: true))
-        let oldPrimaryPublicKey = oldPublicKeys.primary
-        let oldPrimaryPrivateKey = try XCTUnwrap(oldPrivateKeys.primary)
-        let oldSecondaryPublicKey = oldPublicKeys.secondary
-        let oldSecondaryPrivateKey = oldPrivateKeys.secondary
-        uiMOC.encryptMessagesAtRest = false
-
-        // When
-        try sut.enableEncryptionAtRest(context: uiMOC, skipMigration: true)
-
-        // Then
-        XCTAssertFalse(uiMOC.isLocked)
-
-        let newPublicKeys = try XCTUnwrap(sut.fetchPublicKeys())
-        let newPrivateKeys = try XCTUnwrap(sut.fetchPrivateKeys(includingPrimary: true))
-        let newPrimaryPublicKey = newPublicKeys.primary
-        let newPrimaryPrivateKey = try XCTUnwrap(newPrivateKeys.primary)
-        let newSecondaryPublicKey = newPublicKeys.secondary
-        let newSecondaryPrivateKey = newPrivateKeys.secondary
-        let newDatabaseKey = try XCTUnwrap(uiMOC.databaseKey)
-
-        XCTAssertNotEqual(oldPrimaryPublicKey, newPrimaryPublicKey)
-        XCTAssertNotEqual(oldPrimaryPrivateKey, newPrimaryPrivateKey)
-        XCTAssertNotEqual(oldSecondaryPublicKey, newSecondaryPublicKey)
-        XCTAssertNotEqual(oldSecondaryPrivateKey, newSecondaryPrivateKey)
-        XCTAssertNotEqual(oldDatabaseKey, newDatabaseKey)
-        XCTAssertTrue(earStorage.earEnabled())
     }
 
     // @SF.Storage @TSFI.ClientRNG @S0.1 @S0.2
@@ -938,34 +579,4 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         // THEN
         XCTAssertEqual(earStorage.earEnabled(), !currentValue)
     }
-}
-
-private extension ZMGenericMessageData {
-
-    var unencryptedContent: String? {
-        underlyingMessage?.text.content
-    }
-
-}
-
-private extension NSManagedObjectContext {
-
-    func fetchObjects<T: ZMManagedObject>() throws -> [T] {
-        let request = NSFetchRequest<T>(entityName: T.entityName())
-        request.returnsObjectsAsFaults = false
-        return try fetch(request)
-    }
-
-}
-
-private extension ZMConversation {
-
-    var hasEncryptedDraftMessageData: Bool {
-        draftMessageData != nil && draftMessageNonce != nil
-    }
-
-    var unencryptedDraftMessageContent: String? {
-        draftMessage?.text
-    }
-
 }

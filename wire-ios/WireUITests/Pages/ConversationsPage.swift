@@ -44,8 +44,36 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.conversationCell.rawValue]
     }
 
+    var textFilteredByFavourites: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.textFilteredByFavourites.rawValue]
+    }
+
+    var textFilteredByOneOnOne: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.textFilteredByOneOnOne.rawValue]
+    }
+
     var blockButtonOnMoreOptions: XCUIElement {
         app.buttons[Locators.ConversationsPage.blockOptionOnContextMenu.rawValue]
+    }
+
+    var addFavouriteButtonOnMoreOptions: XCUIElement {
+        app.buttons[Locators.ConversationsPage.addToFavourite.rawValue]
+    }
+
+    var removeFavouriteButtonOnMoreOptions: XCUIElement {
+        app.buttons[Locators.ConversationsPage.removeFromFavourite.rawValue]
+    }
+
+    var filterByFavourite: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterByFavourites.rawValue]
+    }
+
+    var filterByOneOnOneConversation: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterByOneOnOneConversation.rawValue]
+    }
+
+    var filterConversationsButton: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterConversations.rawValue]
     }
 
     var blockButtonOnBottomSheet: XCUIElement {
@@ -152,5 +180,20 @@ class ConversationsPage: PageModel {
         let predicate = NSPredicate(format: "label BEGINSWITH %@", sentBy)
         let button = app.staticTexts.containing(predicate).firstMatch
         return button.waitForExistence(timeout: 5)
+    func markConversationAsFavourite() throws -> ConversationsPage {
+        addFavouriteButtonOnMoreOptions.tap()
+        return self
+    }
+
+    func filterConversationByFavourite() throws -> ConversationsPage {
+        filterConversationsButton.tap()
+        filterByFavourite.tap()
+        return self
+    }
+
+    func filterConversationByOneOnOne() throws -> ConversationsPage {
+        filterConversationsButton.tap()
+        filterByOneOnOneConversation.tap()
+        return self
     }
 }

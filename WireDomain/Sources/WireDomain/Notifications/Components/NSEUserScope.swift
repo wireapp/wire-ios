@@ -155,6 +155,13 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             throw Failure.mainAppRequired(message: "no self client id")
         }
 
+        let earService = await EARService(
+            accountID: accountID,
+            coreDataStack: coreDataStack,
+            sharedUserDefaults: dependency.sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: LAContextStorage())
+        )
+
         // Continue with client.
         let clientScope = clientScope(
             clientID: clientID,
@@ -163,7 +170,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             apiVersion: metadata.apiVersion,
             localDomain: metadata.domain,
             isFederationEnabled: metadata.isFederationEnabled,
-            coreDataStack: coreDataStack
+            coreDataStack: coreDataStack,
+            earService: earService
         )
 
         try await clientScope.processPayload(
@@ -304,7 +312,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         apiVersion: WireNetwork.APIVersion,
         localDomain: String,
         isFederationEnabled: Bool,
-        coreDataStack: CoreDataStack
+        coreDataStack: CoreDataStack,
+        earService: EARServiceInterface
     ) -> NSEClientScope {
         NSEClientScope(
             parent: self,
@@ -314,7 +323,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             apiVersion: apiVersion,
             localDomain: localDomain,
             isFederationEnabled: isFederationEnabled,
-            coreDataStack: coreDataStack
+            coreDataStack: coreDataStack,
+            earService: earService
         )
     }
 
