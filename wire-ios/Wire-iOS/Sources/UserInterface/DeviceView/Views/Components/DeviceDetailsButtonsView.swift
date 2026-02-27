@@ -71,17 +71,17 @@ struct DeviceDetailsButtonsView: View {
 
     var body: some View {
         if viewModel.e2eIdentityCertificate?.status != nil {
-            
+
             if viewModel.updateCertificateButtonVisible {
                 Divider()
                 updateCertificateButton.padding()
             }
-            
+
             if viewModel.showCertificateButtonVisible {
                 Divider()
                 showCertificateButton.padding()
             }
-            
+
             if viewModel.getCertificateButtonVisible {
                 Divider()
                 getCertificateButton.padding()
