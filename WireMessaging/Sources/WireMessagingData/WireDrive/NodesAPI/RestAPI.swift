@@ -640,8 +640,8 @@ private extension Set<WireDriveNodesMetaFilter> {
                 values.flatMap(\.contentTypes).compactMap {
                     LookupFilterMetaFilter(namespace: "mime", operation: .should, term: $0)
                 }
-            case let .sharedByMe(handle):
-                [LookupFilterMetaFilter(namespace: "usermeta-owner", operation: .should, term: handle)]
+            case let .sharedByMe(selfUserID):
+                [LookupFilterMetaFilter(namespace: "usermeta-owner-uuid", operation: .should, term: selfUserID)]
             }
         }
     }

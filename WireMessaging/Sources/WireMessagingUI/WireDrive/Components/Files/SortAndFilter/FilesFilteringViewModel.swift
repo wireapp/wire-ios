@@ -197,7 +197,7 @@ extension FilesFilteringViewModel.FiltersSelection {
 }
 
 extension FilesFilteringViewModel.FiltersSelection {
-    func toDomainModel(selfUserHandle: String?) -> Set<WireDriveNodesMetaFilter> {
+    func toDomainModel(selfUserID: String?) -> Set<WireDriveNodesMetaFilter> {
         var metafilter = Set<WireDriveNodesMetaFilter>()
 
         if !tags.isEmpty {
@@ -216,8 +216,8 @@ extension FilesFilteringViewModel.FiltersSelection {
             metafilter.insert(.owners(owners))
         }
 
-        if sharedLink != nil, let selfUserHandle {
-            metafilter.insert(.sharedByMe(handle: selfUserHandle))
+        if sharedLink != nil, let selfUserID {
+            metafilter.insert(.sharedByMe(selfUserID: selfUserID))
         }
 
         return metafilter

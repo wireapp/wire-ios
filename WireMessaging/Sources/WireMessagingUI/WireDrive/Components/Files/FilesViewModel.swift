@@ -281,7 +281,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var connectionState: ConnectionState = .online
     @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
 
-    private var selfUserHandle: String? {
+    private var selfUserID: String? {
         conversations
             .flatMap(\.participants)
             .first(where: \.isSelfUser)?.id
@@ -649,7 +649,7 @@ package final class FilesViewModel: ObservableObject {
     ) async throws -> (items: [FilesViewItem], isLastPage: Bool) {
         let (nodes, isLastPage) = try await useCases.fetchNodes.invoke(
             searchTerm: searchText.isEmpty ? nil : searchText,
-            metafilter: filtersSelection.toDomainModel(selfUserHandle: selfUserHandle),
+            metafilter: filtersSelection.toDomainModel(selfUserID: selfUserID),
             sortField: sortingSelection.sortingKey?.sortField,
             sortDirDesc: sortingSelection.sortingOrder == .descending,
             offset: offset
