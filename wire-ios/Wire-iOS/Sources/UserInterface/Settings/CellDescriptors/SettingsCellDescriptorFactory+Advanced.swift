@@ -87,7 +87,7 @@ extension SettingsCellDescriptorFactory {
             title: SelfSettingsAdvancedLocale.ResetPushToken.title,
             isDestructive: false,
             presentationStyle: .modal,
-            presentationAction: { [userSession] () -> (UIViewController?) in
+            presentationAction: { [weak userSession] () -> (UIViewController?) in
                 (userSession as? ZMUserSession)?.validatePushToken()
                 return self.pushButtonAlertController
             }
@@ -109,7 +109,7 @@ extension SettingsCellDescriptorFactory {
             SettingsButtonCellDescriptor(
                 title: SelfSettingsAdvancedLocale.DebuggingTools.FirstUnreadConversation.title,
                 isDestructive: false,
-                selectAction: { [userSession] _ in
+                selectAction: { [weak userSession] _ in
                     guard let session = userSession as? ZMUserSession else { return }
                     DebugActions.findUnreadConversationContributingToBadgeCount(userSession: session)
                 }
@@ -117,7 +117,7 @@ extension SettingsCellDescriptorFactory {
             SettingsButtonCellDescriptor(
                 title: SelfSettingsAdvancedLocale.DebuggingTools.EnterDebugCommand.title,
                 isDestructive: false,
-                selectAction: { [userSession] _ in
+                selectAction: { [weak userSession] _ in
                     guard let session = userSession as? ZMUserSession else { return }
                     DebugActions.enterDebugCommand(userSession: session)
                 }

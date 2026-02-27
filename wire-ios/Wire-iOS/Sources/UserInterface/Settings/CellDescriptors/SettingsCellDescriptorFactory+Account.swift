@@ -253,8 +253,10 @@ extension SettingsCellDescriptorFactory {
     ) -> SettingsCellDescriptorType {
         typealias AccountSection = L10n.Localizable.Self.Settings.AccountSection
         if enabled {
-            let presentation = { [userSession] in
-                ChangeHandleViewController(
+            let presentation: () -> UIViewController? = { [weak userSession] in
+                guard let userSession else { return nil }
+
+                return ChangeHandleViewController(
                     useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
                     settingsCoordinator: settingsCoordinator,
                     isFederationEnabled: isFederationEnabled,
@@ -487,7 +489,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     func deleteAccountButtonElement() -> any SettingsCellDescriptorType {
-        let presentationAction: () -> UIViewController = { [userSession] in
+        let presentationAction: () -> UIViewController = { [weak userSession] in
             let alert = UIAlertController(
                 title: L10n.Localizable.Self.Settings.AccountDetails.DeleteAccount.Alert.title,
                 message: L10n.Localizable.Self.Settings.AccountDetails.DeleteAccount.Alert.message,
