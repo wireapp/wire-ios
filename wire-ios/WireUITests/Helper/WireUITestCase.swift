@@ -45,9 +45,6 @@ class WireUITestCase: XCTestCase {
             "-resetData",
             "--useEnvStaging"
         ]
-    }
-    override func setUpWithError() throws {
-        XCUIApplication().terminate()
 
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
