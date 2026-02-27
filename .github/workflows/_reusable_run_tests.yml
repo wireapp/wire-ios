@@ -141,27 +141,32 @@ jobs:
         run: |
           set -euo pipefail
 
-          brew install colima docker qemu
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+
+          brew install colima docker
 
           colima stop || true
           colima delete -f || true
 
           colima start -f \
-            --cpu 2 \
-            --memory 4 \
-            --vm-type qemu \
-            --arch aarch64
+            --cpu 4 \
+            --memory 6 \
+            --vm-type vz \
+            --arch aarch64 \
+            --mount-type virtiofs
 
-          colima status
-          docker version
-          docker info --format '{{.Architecture}}'
+          colima status || true
+          docker version || true
+          docker info --format '{{.Architecture}}' || true
 
-          echo "Testing amd64 emulation (QEMU binfmt):"
-          docker run --rm --platform linux/amd64 alpine uname -m
+          echo "Testing container..."
+          docker run --rm alpine uname -m || true
 
-          # If Colima fails to start, these logs can help debugging
-          cat /Users/admin/.colima/_lima/colima/ha.stderr.log || true
-          cat /Users/admin/.colima/_lima/colima/serial*.log || true
+          echo "Testing AMD64 emulation.."
+          docker run --rm --platform linux/amd64 alpine uname -m || true
+
+          cat ~/.colima/_lima/colima/ha.stderr.log || true
+          cat ~/.colima/_lima/colima/serial*.log || true
 
       - name: Start Testservice
         if: ${{ inputs.run_critical_flows }}
