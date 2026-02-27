@@ -41,11 +41,14 @@ private enum UserNotificationHandlingError: Error {
     case missingAccount
 }
 
+/// **note**: `UNUserNotificationCenterDelegate` methods are annotated as `@MainActor`. This seems to be an undocumented
+/// requirement. Without this annotation, the app may crash even with empty delegate method implementations.
 @objc
 extension SessionManager: UNUserNotificationCenterDelegate {
 
     // Called by the OS when the app receives a notification while in the
     // foreground.
+    @MainActor
     public func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification
@@ -64,6 +67,7 @@ extension SessionManager: UNUserNotificationCenterDelegate {
     }
 
     // Called when the user engages a notification action.
+    @MainActor
     public func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse
