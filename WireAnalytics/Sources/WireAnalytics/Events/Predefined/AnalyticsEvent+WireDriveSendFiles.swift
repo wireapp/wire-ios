@@ -16,19 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import WireFoundation
 
-/// Publishes all drafts associated with a given conversation.
-
-public protocol WireDrivePublishDraftsUseCaseProtocol {
-
-    /// Publish all drafts.
-    ///
-    /// - Parameters:
-    ///   - containsText: weather the message also contains text.
-    /// - Throws: Throws an error if not **all** drafts have been uploaded or if there are unpublished drafts remaining
-    /// once the operation completes.
-
-    func invoke(containsText: Bool) async throws
-
+public extension AnalyticsEvent {
+    enum WireDriveSendFiles {
+        public static func shareFileNumber(containsText: Bool, numberOfAttachments: Int, mixedTypes: Bool) -> AnalyticsEvent {
+            AnalyticsEvent(name: "drive.share_file_number")
+        }
+    }
 }

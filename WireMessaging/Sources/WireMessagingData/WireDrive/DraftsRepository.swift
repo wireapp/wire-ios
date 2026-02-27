@@ -87,8 +87,8 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
     /// - throws: An error if not **all** files have been uploaded before publishing or if not all files are published
     /// when the method completes.
 
-    package func publishAll(for cellName: String) async throws {
-        guard let drafts = drafts.value[cellName] else { return }
+    package func publishAll(for cellName: String) async throws -> [WireDriveDraft] {
+        guard let drafts = drafts.value[cellName] else { return [] }
 
         guard drafts.areAllUploaded else {
             throw DraftsRepositoryError.notAllFilesAreUploaded
@@ -123,6 +123,8 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         guard self.drafts.value[cellName]?.areAllPublished == true else {
             throw DraftsRepositoryError.notAllFilesArePublished
         }
+        
+        return drafts.map { $0.value }
     }
 
     /// Clears all published drafts for the specified cell name.

@@ -47,7 +47,7 @@ extension ConversationInputBarViewController {
         } else {
             if !attachments.isEmpty {
                 do {
-                    try await publishDraftsUseCase.invoke()
+                    try await publishDraftsUseCase.invoke(containsText: !text.isEmpty)
                     await clearPublishedDraftsUseCase.invoke()
                 } catch {
                     WireLogger.conversation.error("Failed to publish drafts: \(error)")
