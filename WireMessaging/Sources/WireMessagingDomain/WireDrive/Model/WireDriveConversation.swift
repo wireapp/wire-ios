@@ -81,6 +81,16 @@ public extension WireDriveConversation {
             self.id = id
             self.iconData = iconData
         }
+
+        // MARK: - Hashable
+
+        public func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
+
+        public static func == (lhs: Participant, rhs: Participant) -> Bool {
+            lhs.id == rhs.id
+        }
     }
 }
 
