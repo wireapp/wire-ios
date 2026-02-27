@@ -26,6 +26,9 @@ struct FileIconTests {
 
     @Test(arguments: [
         (type: UTType.archive, expected: WireDriveFileType.archive),
+        (type: UTType.zip, expected: WireDriveFileType.archive),
+        (type: UTType.gzip, expected: WireDriveFileType.archive),
+        (type: UTType.bz2, expected: WireDriveFileType.archive),
         (type: UTType.audio, expected: WireDriveFileType.audio),
         (type: UTType.script, expected: WireDriveFileType.code),
         (type: UTType.sourceCode, expected: WireDriveFileType.code),
@@ -37,7 +40,8 @@ struct FileIconTests {
         (type: UTType.presentation, expected: WireDriveFileType.presentation),
         (type: UTType.spreadsheet, expected: WireDriveFileType.spreadsheet),
         (type: UTType.movie, expected: WireDriveFileType.video),
-        (type: UTType.text, expected: WireDriveFileType.other)
+        (type: UTType.text, expected: WireDriveFileType.text),
+        (type: UTType.plainText, expected: WireDriveFileType.text)
     ])
     func makeFileIconWithUTType(type: UTType, expectedIcon: WireDriveFileType) {
         #expect(WireDriveFileType.make(type: type, fileExtension: nil) == expectedIcon)
@@ -52,9 +56,12 @@ struct FileIconTests {
         (extension: "odt", expected: WireDriveFileType.document),
         (extension: "ott", expected: WireDriveFileType.document),
         (extension: "rtf", expected: WireDriveFileType.document),
+        // Test text extensions
+        (extension: "txt", expected: WireDriveFileType.text),
         // Test code extensions
         (extension: "css", expected: WireDriveFileType.code),
         (extension: "phtml", expected: WireDriveFileType.code),
+        (extension: "html", expected: WireDriveFileType.code),
         (extension: "sparql", expected: WireDriveFileType.code),
         (extension: "cs", expected: WireDriveFileType.code),
         (extension: "java", expected: WireDriveFileType.code),
@@ -64,6 +71,10 @@ struct FileIconTests {
         (extension: "pl", expected: WireDriveFileType.code),
         (extension: "inc", expected: WireDriveFileType.code),
         (extension: "xsl", expected: WireDriveFileType.code),
+        // Test archive extensions,
+        (extension: "rar", expected: WireDriveFileType.archive),
+        (extension: "7z", expected: WireDriveFileType.archive),
+        (extension: "tar", expected: WireDriveFileType.archive),
         // Test case insensitivity
         (extension: "DOCX", expected: WireDriveFileType.document),
         (extension: "Java", expected: WireDriveFileType.code),

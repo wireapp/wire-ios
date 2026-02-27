@@ -599,7 +599,8 @@ final class FilesViewModelTests {
                 tags: [],
                 isEditable: false,
                 publicLinkID: nil,
-                conversationName: nil
+                conversationName: nil,
+                size: nil
             )
         ])
 

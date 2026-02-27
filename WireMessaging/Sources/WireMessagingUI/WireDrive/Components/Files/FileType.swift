@@ -62,14 +62,19 @@ extension WireDriveFileType {
             }
         }
 
-        var types = type.supertypes
-        types.insert(type)
+        if let icon = icon(type: type) {
+            return icon
+        } else {
+            var types = type.supertypes
+            types.insert(type)
 
-        for type in types {
-            if let icon = icon(type: type) {
-                return icon
+            for type in types {
+                if let icon = icon(type: type) {
+                    return icon
+                }
             }
         }
+
         return nil
     }
 
