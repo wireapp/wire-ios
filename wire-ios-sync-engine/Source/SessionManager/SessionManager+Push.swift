@@ -79,8 +79,10 @@ extension SessionManager: UNUserNotificationCenterDelegate {
             let userSession = try await loadSession(userInfo: response.notification.userInfo)
             await userSession.userNotificationCenter(center, didReceive: response)
         } catch let error as NSError {
+            let errorString = error.safeForLoggingDescription
+            let responseString = response.safeForLoggingDescription
             WireLogger.notifications.error(
-                "Did receive notification response failed: \(error.safeForLoggingDescription)",
+                "Did receive notification response failed: \(errorString), response: \(responseString)",
                 attributes: .safePublic
             )
         }
@@ -105,7 +107,7 @@ extension SessionManager: UNUserNotificationCenterDelegate {
     @MainActor
     func loadSession(userInfo: NotificationUserInfo) async throws -> ZMUserSession {
         guard let selfID = userInfo.selfUserID else {
-            WireLogger.notifications.critical("userInfo has no self ID")
+            WireLogger.notifications.error("userInfo has no self ID")
             throw UserNotificationHandlingError.missingSelfID
         }
         guard let account = accountManager.account(with: selfID) else {
