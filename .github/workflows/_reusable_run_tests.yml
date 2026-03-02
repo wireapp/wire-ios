@@ -135,71 +135,95 @@ jobs:
         run: |
           bundle exec fastlane prepare_for_tests
 
-      - name: Install Docker CLI + Colima for Testservice
+      - name: Clone Kalium
+        if: ${{ inputs.run_critical_flows }}
+        shell: bash
+        run: |
+          KALIUM_DIR="$RUNNER_TEMP/kalium"
+          rm -rf "$KALIUM_DIR"
+          git clone --depth 1 --branch develop \
+            https://github.com/wireapp/kalium.git "$KALIUM_DIR"
+
+      - name: Setup Java 17 for Kalium Testservice
+        if: ${{ inputs.run_critical_flows }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+          cache-dependency-path: |
+            ${{ runner.temp }}/kalium/**/build.gradle*
+            ${{ runner.temp }}/kalium/**/settings.gradle*
+            ${{ runner.temp }}/kalium/**/gradle.properties
+            ${{ runner.temp }}/kalium/**/gradle-wrapper.properties
+            ${{ runner.temp }}/kalium/**/libs.versions.toml
+
+      - name: Build Kalium Testservice fat jar
         if: ${{ inputs.run_critical_flows }}
         shell: bash
         run: |
           set -euo pipefail
+          cd "$RUNNER_TEMP/kalium"
+          ./gradlew --no-daemon --parallel :tools:testservice:shadowJar
 
-          eval "$(/opt/homebrew/bin/brew shellenv)"
+          JAR="$(ls -1t "$RUNNER_TEMP/kalium/tools/testservice/build/libs/"*"-all.jar" | head -n 1)"
+          [[ -z "$JAR" ]] && { echo "::error::Fat jar not found after build!"; exit 1; }
+          echo "JAR=$JAR" >> $GITHUB_ENV
+          echo "Built jar: $JAR"
 
-          brew install colima docker
 
-          colima stop || true
-          colima delete -f || true
-
-          colima start -f \
-            --cpu 4 \
-            --memory 6 \
-            --vm-type vz \
-            --arch aarch64 \
-            --mount-type virtiofs
-
-          colima status || true
-          docker version || true
-          docker info --format '{{.Architecture}}' || true
-
-          echo "Testing container..."
-          docker run --rm alpine uname -m || true
-
-          echo "Testing AMD64 emulation.."
-          docker run --rm --platform linux/amd64 alpine uname -m || true
-
-          cat ~/.colima/_lima/colima/ha.stderr.log || true
-          cat ~/.colima/_lima/colima/serial*.log || true
-
-      - name: Start Testservice
+      - name: Start Kalium Testservice
         if: ${{ inputs.run_critical_flows }}
         shell: bash
         run: |
           set -euo pipefail
-          echo "Starting Testservice container..."
-
-          docker rm -f wire-testservice >/dev/null 2>&1 || true
-
-          if ! docker run -d --name wire-testservice \
-            --platform linux/amd64 \
-            -p 8080:8080 -p 8081:8081 \
-            quay.io/wire/testservice:latest; then
-            echo "::warning::Failed to start Testservice container."
-            exit 0
-          fi
-
-          docker inspect -f '{{.Architecture}}' wire-testservice || true
-
-          for i in {1..30}; do
-            if curl -sS "http://localhost:8080" >/dev/null 2>&1; then
-              echo "Testservice reachable at http://localhost:8080"
+          JAR="${{ env.JAR }}"
+          nohup java -jar "$JAR" server ".github/testservice/testservice-config.yml" \
+            >"$RUNNER_TEMP/testservice.log" 2>&1 &
+          echo $! > "$RUNNER_TEMP/testservice.pid"
+          echo "Testservice started with PID $(cat $RUNNER_TEMP/testservice.pid)"
+          echo "Polling http://localhost:8080/api/v1/instance (up to 90s)..."
+          for i in {1..90}; do
+            STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+              "http://localhost:8080/api/v1/instance" || true)
+            if echo "$STATUS" | grep -Eq '^[0-9]{3}$'; then
+              echo "HTTP responder is up on /api/v1/instance (status: $STATUS) after ${i}s"
               exit 0
             fi
+            echo "  attempt $i/90 — not responding yet"
             sleep 1
           done
 
-          echo "::warning::Testservice did not become reachable on http://localhost:8080 within 30s"
-          docker logs wire-testservice || true
-          exit 0
+          echo "::error::Testservice did not become reachable in 90s."
+          echo "::group::Testservice log (last 200 lines)"
+          tail -n 200 "$RUNNER_TEMP/testservice.log" || true
+          echo "::endgroup::"
+          exit 1
 
 
+#      - name: Wait for Kalium Testservice to be ready
+#        if: ${{ inputs.run_critical_flows }}
+#        shell: bash
+#        run: |
+#          set -euo pipefail
+#          echo "Polling http://localhost:8080/api/v1/instance (up to 90s)..."
+#          for i in {1..90}; do
+#            STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+#              "http://localhost:8080/api/v1/instance" || true)
+#            if echo "$STATUS" | grep -Eq '^[0-9]{3}$'; then
+#              echo "HTTP responder is up on /api/v1/instance (status: $STATUS) after ${i}s"
+#              exit 0
+#            fi
+#            echo "  attempt $i/90 — not responding yet"
+#            sleep 1
+#          done
+#
+#          echo "::error::Testservice did not become reachable in 90s."
+#          echo "::group::Testservice log"
+#          tail -n 200 "$RUNNER_TEMP/testservice.log" || true
+#          echo "::endgroup::"
+#          exit 1
+          
       - name: Install 1Password
         if: ${{ inputs.run_critical_flows }}
         uses: 1password/install-cli-action@v1
@@ -223,6 +247,38 @@ jobs:
         if: ${{ inputs.test_dependencies == false }}
         run: |
           bundle exec fastlane test_only_frameworks folders:${{ inputs.folders }}
+
+      - name: Stop Kalium Testservice
+        if: always() && inputs.run_critical_flows
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PID_FILE="$RUNNER_TEMP/testservice.pid"
+          LOG_FILE="$RUNNER_TEMP/testservice.log"
+
+          if [[ -f "$PID_FILE" ]]; then
+            PID="$(cat "$PID_FILE")"
+            if kill -0 "$PID" 2>/dev/null; then
+              kill "$PID" || true
+              for i in {1..10}; do
+                kill -0 "$PID" 2>/dev/null || break
+                sleep 1
+              done
+              kill -0 "$PID" 2>/dev/null && kill -9 "$PID" || true
+            fi
+            rm -f "$PID_FILE"
+          else
+            echo "::warning::No PID file — testservice may never have started"
+          fi
+
+          if [[ -f "$LOG_FILE" ]]; then
+            echo "::group::Testservice log (last 200 lines)"
+            tail -n 200 "$LOG_FILE" || true
+            echo "::endgroup::"
+          else
+            echo "::warning::No log file found"
+          fi
 
       - name: Find all .xcresult files
         if: ${{ always() && github.event_name == 'pull_request' }}
@@ -316,11 +372,6 @@ jobs:
             echo "⚠️ No \`.xcresult\` found under \`artifacts\`. Allure report was not generated.";
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Stop Testservice
-        if: always()
-        shell: bash
-        run: |
-          docker rm -f wire-testservice >/dev/null 2>&1 || true
 
       - name: Archiving DerivedData Logs
         uses: actions/upload-artifact@v4

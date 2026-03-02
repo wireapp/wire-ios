@@ -1,0 +1,21 @@
+instanceCreationTimeoutInSeconds: 60
+instanceMaximumRuntimeInMinutes: 10
+instanceCleanupPeriodInMinutes: 5
+
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+      bindHost: 0.0.0.0
+  adminConnectors:
+    - type: http
+      port: 8081
+      bindHost: 127.0.0.1
+
+logging:
+  level: INFO
+  loggers:
+    com.wire.kalium: INFO
+  appenders:
+    - type: console
+      threshold: INFO
