@@ -44,5 +44,17 @@ package struct PublishDraftsUseCase: WireDrivePublishDraftsUseCaseProtocol {
                 mixedTypes: mixedTypes
             )
         )
+        
+        for draft in drafts {
+            let fileExtension = "." + draft.assetURL.pathExtension
+            let fileSize = UInt64(draft.bytes)
+            
+            analyticsEventTracker?.trackEvent(
+                .WireDriveSendFiles.shareFile(
+                    fileExtension: fileExtension,
+                    fileSize: fileSize
+                )
+            )
+        }
     }
 }
