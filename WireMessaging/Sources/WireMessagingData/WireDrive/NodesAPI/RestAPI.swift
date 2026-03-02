@@ -546,7 +546,7 @@ private extension WireDriveGetNodesRequest {
             )
         case .filesBrowserView:
             request.filters = RestLookupFilter(
-                metadata: metafilter.toDTO(),
+                metadata: metafilter.toDTO(), // Contains all filters except for the conversations filter. The conversations filter is applied via RestLookupScope below.
                 status: LookupFilterStatusFilter(
                     deleted: .not,
                     hasPublicLink: metafilter.hasPublicLink,
@@ -631,7 +631,7 @@ private extension Set<WireDriveNodesMetaFilter> {
         flatMap { filter -> [LookupFilterMetaFilter] in
             switch filter {
             case .conversations:
-                []
+                [] // The conversations filter is applied via the "scope" (RestLookupScope) in the RestLookupRequest.
             case let .owners(values):
                 values.map { LookupFilterMetaFilter(namespace: "usermeta-owner-uuid", operation: .should, term: $0.id) }
             case let .tags(values):
