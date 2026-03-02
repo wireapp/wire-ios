@@ -1258,26 +1258,6 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol, @unchecke
         }
     }
 
-    // MARK: - proteusCryptoboxMigrate
-
-    public var proteusCryptoboxMigratePath_Invocations: [String] = []
-    public var proteusCryptoboxMigratePath_MockError: Error?
-    public var proteusCryptoboxMigratePath_MockMethod: ((String) async throws -> Void)?
-
-    public func proteusCryptoboxMigrate(path: String) async throws {
-        proteusCryptoboxMigratePath_Invocations.append(path)
-
-        if let error = proteusCryptoboxMigratePath_MockError {
-            throw error
-        }
-
-        guard let mock = proteusCryptoboxMigratePath_MockMethod else {
-            fatalError("no mock for `proteusCryptoboxMigratePath`")
-        }
-
-        try await mock(path)
-    }
-
     // MARK: - proteusDecrypt
 
     public var proteusDecryptSessionIdCiphertext_Invocations: [(sessionId: String, ciphertext: Data)] = []
@@ -1298,6 +1278,29 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol, @unchecke
             return mock
         } else {
             fatalError("no mock for `proteusDecryptSessionIdCiphertext`")
+        }
+    }
+
+    // MARK: - proteusDecryptSafe
+
+    public var proteusDecryptSafeSessionIdCiphertext_Invocations: [(sessionId: String, ciphertext: Data)] = []
+    public var proteusDecryptSafeSessionIdCiphertext_MockError: Error?
+    public var proteusDecryptSafeSessionIdCiphertext_MockMethod: ((String, Data) async throws -> Data)?
+    public var proteusDecryptSafeSessionIdCiphertext_MockValue: Data?
+
+    public func proteusDecryptSafe(sessionId: String, ciphertext: Data) async throws -> Data {
+        proteusDecryptSafeSessionIdCiphertext_Invocations.append((sessionId: sessionId, ciphertext: ciphertext))
+
+        if let error = proteusDecryptSafeSessionIdCiphertext_MockError {
+            throw error
+        }
+
+        if let mock = proteusDecryptSafeSessionIdCiphertext_MockMethod {
+            return try await mock(sessionId, ciphertext)
+        } else if let mock = proteusDecryptSafeSessionIdCiphertext_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `proteusDecryptSafeSessionIdCiphertext`")
         }
     }
 
@@ -1946,10 +1949,10 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
 
     public var coreCrypto_Invocations: [Void] = []
     public var coreCrypto_MockError: Error?
-    public var coreCrypto_MockMethod: (() async throws -> SafeCoreCryptoProtocol)?
-    public var coreCrypto_MockValue: SafeCoreCryptoProtocol?
+    public var coreCrypto_MockMethod: (() async throws -> CoreCryptoProtocol)?
+    public var coreCrypto_MockValue: CoreCryptoProtocol?
 
-    public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
+    public func coreCrypto() async throws -> CoreCryptoProtocol {
         coreCrypto_Invocations.append(())
 
         if let error = coreCrypto_MockError {
@@ -2165,6 +2168,21 @@ public class MockCoreDataStackProtocol: CoreDataStackProtocol {
         }
 
         try await mock()
+    }
+
+    // MARK: - setEARMessageEncryptionService
+
+    public var setEARMessageEncryptionService_Invocations: [EARMessageEncryptionServiceProtocol] = []
+    public var setEARMessageEncryptionService_MockMethod: ((EARMessageEncryptionServiceProtocol) -> Void)?
+
+    public func setEARMessageEncryptionService(_ service: EARMessageEncryptionServiceProtocol) {
+        setEARMessageEncryptionService_Invocations.append(service)
+
+        guard let mock = setEARMessageEncryptionService_MockMethod else {
+            fatalError("no mock for `setEARMessageEncryptionService`")
+        }
+
+        mock(service)
     }
 
     // MARK: - newBackgroundContext
@@ -2885,6 +2903,175 @@ class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
 
 }
 
+public class MockEARMessageEncryptionServiceProtocol: EARMessageEncryptionServiceProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - isLocked
+
+    public var isLocked: Bool {
+        get { return underlyingIsLocked }
+        set(value) { underlyingIsLocked = value }
+    }
+
+    public var underlyingIsLocked: Bool!
+
+
+    // MARK: - setDatabaseKey
+
+    public var setDatabaseKey_Invocations: [VolatileData?] = []
+    public var setDatabaseKey_MockMethod: ((VolatileData?) -> Void)?
+
+    public func setDatabaseKey(_ key: VolatileData?) {
+        setDatabaseKey_Invocations.append(key)
+
+        guard let mock = setDatabaseKey_MockMethod else {
+            fatalError("no mock for `setDatabaseKey`")
+        }
+
+        mock(key)
+    }
+
+    // MARK: - getDatabaseKey
+
+    public var getDatabaseKey_Invocations: [Void] = []
+    public var getDatabaseKey_MockMethod: (() -> VolatileData?)?
+    public var getDatabaseKey_MockValue: VolatileData??
+
+    public func getDatabaseKey() -> VolatileData? {
+        getDatabaseKey_Invocations.append(())
+
+        if let mock = getDatabaseKey_MockMethod {
+            return mock()
+        } else if let mock = getDatabaseKey_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getDatabaseKey`")
+        }
+    }
+
+    // MARK: - getContextData
+
+    public var getContextDataFrom_Invocations: [NSManagedObjectContext] = []
+    public var getContextDataFrom_MockError: Error?
+    public var getContextDataFrom_MockMethod: ((NSManagedObjectContext) throws -> Data)?
+    public var getContextDataFrom_MockValue: Data?
+
+    public func getContextData(from context: NSManagedObjectContext) throws -> Data {
+        getContextDataFrom_Invocations.append(context)
+
+        if let error = getContextDataFrom_MockError {
+            throw error
+        }
+
+        if let mock = getContextDataFrom_MockMethod {
+            return try mock(context)
+        } else if let mock = getContextDataFrom_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getContextDataFrom`")
+        }
+    }
+
+    // MARK: - encrypt
+
+    public var encryptDataContextData_Invocations: [(data: Data, contextData: Data)] = []
+    public var encryptDataContextData_MockError: Error?
+    public var encryptDataContextData_MockMethod: ((Data, Data) throws -> (data: Data, nonce: Data))?
+    public var encryptDataContextData_MockValue: (data: Data, nonce: Data)?
+
+    public func encrypt(data: Data, contextData: Data) throws -> (data: Data, nonce: Data) {
+        encryptDataContextData_Invocations.append((data: data, contextData: contextData))
+
+        if let error = encryptDataContextData_MockError {
+            throw error
+        }
+
+        if let mock = encryptDataContextData_MockMethod {
+            return try mock(data, contextData)
+        } else if let mock = encryptDataContextData_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `encryptDataContextData`")
+        }
+    }
+
+    // MARK: - decrypt
+
+    public var decryptDataNonceContextData_Invocations: [(data: Data, nonce: Data, contextData: Data)] = []
+    public var decryptDataNonceContextData_MockError: Error?
+    public var decryptDataNonceContextData_MockMethod: ((Data, Data, Data) throws -> Data)?
+    public var decryptDataNonceContextData_MockValue: Data?
+
+    public func decrypt(data: Data, nonce: Data, contextData: Data) throws -> Data {
+        decryptDataNonceContextData_Invocations.append((data: data, nonce: nonce, contextData: contextData))
+
+        if let error = decryptDataNonceContextData_MockError {
+            throw error
+        }
+
+        if let mock = decryptDataNonceContextData_MockMethod {
+            return try mock(data, nonce, contextData)
+        } else if let mock = decryptDataNonceContextData_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `decryptDataNonceContextData`")
+        }
+    }
+
+}
+
+public class MockEARMigratorProtocol: EARMigratorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - migrateTowardEncryptionAtRest
+
+    public var migrateTowardEncryptionAtRestContext_Invocations: [NSManagedObjectContext] = []
+    public var migrateTowardEncryptionAtRestContext_MockError: Error?
+    public var migrateTowardEncryptionAtRestContext_MockMethod: ((NSManagedObjectContext) throws -> Void)?
+
+    public func migrateTowardEncryptionAtRest(context: NSManagedObjectContext) throws {
+        migrateTowardEncryptionAtRestContext_Invocations.append(context)
+
+        if let error = migrateTowardEncryptionAtRestContext_MockError {
+            throw error
+        }
+
+        guard let mock = migrateTowardEncryptionAtRestContext_MockMethod else {
+            fatalError("no mock for `migrateTowardEncryptionAtRestContext`")
+        }
+
+        try mock(context)
+    }
+
+    // MARK: - migrateAwayFromEncryptionAtRest
+
+    public var migrateAwayFromEncryptionAtRestContext_Invocations: [NSManagedObjectContext] = []
+    public var migrateAwayFromEncryptionAtRestContext_MockError: Error?
+    public var migrateAwayFromEncryptionAtRestContext_MockMethod: ((NSManagedObjectContext) throws -> Void)?
+
+    public func migrateAwayFromEncryptionAtRest(context: NSManagedObjectContext) throws {
+        migrateAwayFromEncryptionAtRestContext_Invocations.append(context)
+
+        if let error = migrateAwayFromEncryptionAtRestContext_MockError {
+            throw error
+        }
+
+        guard let mock = migrateAwayFromEncryptionAtRestContext_MockMethod else {
+            fatalError("no mock for `migrateAwayFromEncryptionAtRestContext`")
+        }
+
+        try mock(context)
+    }
+
+}
+
 public class MockEARServiceInterface: EARServiceInterface {
 
     // MARK: - Life cycle
@@ -2894,6 +3081,24 @@ public class MockEARServiceInterface: EARServiceInterface {
     // MARK: - delegate
 
     public var delegate: EARServiceDelegate?
+
+    // MARK: - isLocked
+
+    public var isLocked: Bool {
+        get { return underlyingIsLocked }
+        set(value) { underlyingIsLocked = value }
+    }
+
+    public var underlyingIsLocked: Bool!
+
+    // MARK: - isEAREnabled
+
+    public var isEAREnabled: Bool {
+        get { return underlyingIsEAREnabled }
+        set(value) { underlyingIsEAREnabled = value }
+    }
+
+    public var underlyingIsEAREnabled: Bool!
 
 
     // MARK: - enableEncryptionAtRest

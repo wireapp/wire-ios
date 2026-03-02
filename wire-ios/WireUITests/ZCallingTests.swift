@@ -20,7 +20,9 @@ import WireFoundation
 import WireLocators
 import XCTest
 
-final class CallingTests: WireUITestCase {
+/// Prefixed 'Z' in the class name to run these tests at the end, just to avoid if this test may impact others due to
+/// alert keep showing
+final class ZCallingTests: WireUITestCase {
 
     struct GroupCallSetupResponse {
         let conversationId: String
@@ -122,6 +124,7 @@ final class CallingTests: WireUITestCase {
 
             let participantIdentifier = Locators.OngoingCallPage
                 .participantIdentifier(teamAndGroupCallSetup.appUserWhoWillJoinTheCall.name)
+
             XCTAssertTrue(
                 app.buttons[participantIdentifier].waitForExistence(timeout: 15),
                 "Expected \(teamAndGroupCallSetup.appUserWhoWillJoinTheCall.name) to be in the call OR took more than 15 seconds to join"
