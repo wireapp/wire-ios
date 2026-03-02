@@ -56,24 +56,23 @@ final class DeviceInfoViewModelTests: XCTestCase {
     func test_actionButtonsWhenCertStateIsValid() {
         showViewAlwaysAndUpdateWhenIsSelfClient_HideGetAllways(.mockValid, isFromConversation: false)
     }
-    
-    func test_actionButtonsWhenCertStateIsValidAndFromConversation () {
+
+    func test_actionButtonsWhenCertStateIsValidAndFromConversation() {
         showViewAlwaysAndUpdateWhenIsSelfClient_HideGetAllways(.mockValid, isFromConversation: true)
     }
 
     func test_actionButtonsWhenCertStateIsInvalid() {
         showViewAlwaysAndUpdateWhenIsSelfClient_HideGetAllways(.mockInvalid, isFromConversation: false)
     }
-    
+
     func test_actionButtonsWhenCertStateIsInvalidAndFromConversation() {
         showViewAlwaysAndUpdateWhenIsSelfClient_HideGetAllways(.mockValid, isFromConversation: true)
     }
-    
 
     func test_actionButtonsWhenCertStateNotActivated() {
         showGetWhenIsSelfClient(.mockNotActivated, isFromConversation: false)
     }
-    
+
     func test_actionButtonsWhenCertStateNotActivatedAndFromConversation() {
         showGetWhenIsSelfClient(.mockNotActivated, isFromConversation: false)
     }
@@ -174,6 +173,7 @@ final class DeviceInfoViewModelTests: XCTestCase {
     }
 
     // MARK: - Helpers
+
     fileprivate func showViewAlwaysAndUpdateWhenIsSelfClient_HideGetAllways(
         _ e2eIdentityCertificate: E2eIdentityCertificate,
         isFromConversation: Bool,
@@ -181,14 +181,17 @@ final class DeviceInfoViewModelTests: XCTestCase {
         line: UInt = #line
     ) {
         for isSelfClient in [true, false] {
-            setup(e2eIdentityCertificate: e2eIdentityCertificate,isFromConversation: isFromConversation, isSelfClient: isSelfClient)
+            setup(
+                e2eIdentityCertificate: e2eIdentityCertificate,
+                isFromConversation: isFromConversation,
+                isSelfClient: isSelfClient
+            )
             XCTAssertEqual(deviceInfoViewModel.showCertificateButtonVisible, true)
             XCTAssertEqual(deviceInfoViewModel.getCertificateButtonVisible, false)
             XCTAssertEqual(deviceInfoViewModel.updateCertificateButtonVisible, isSelfClient)
         }
     }
-    
-    
+
     fileprivate func showGetWhenIsSelfClient(
         _ e2eIdentityCertificate: E2eIdentityCertificate,
         isFromConversation: Bool,
