@@ -953,9 +953,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         // If the user isn't logged in it's because they still need
         // to complete the login flow, which will be handle elsewhere.
         if session.isLoggedIn {
+            await session.triggerSync()
             delegate?.sessionManagerDidReportLockChange(forSession: session)
             performPostUnlockActionsIfPossible(for: session)
-
             await configureAnalytics(for: session)
             await requestCertificateEnrollmentIfNeeded()
         } else {

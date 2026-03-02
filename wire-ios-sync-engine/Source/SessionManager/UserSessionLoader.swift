@@ -651,20 +651,14 @@ final class UserSessionLoader {
         }
 
         // Perform consumable notifications migration.
-        var shouldTriggerSync = true
         do {
             try await userSession.migrateToConsumableNotificationsIfNeeded()
         } catch ZMUserSessionError.selfClientNotReady {
             // We skip trigger sync, because in this case (fresh login),
             // we don't have a registered client yet, so no consumable capability
             WireLogger.sync.warn("No consumable-notifications migrator available")
-            shouldTriggerSync = false
         } catch {
             throw Failure.failedToMigrationToConsumableNotifications(error)
-        }
-
-        if shouldTriggerSync {
-            await userSession.triggerSync()
         }
     }
 
