@@ -144,26 +144,54 @@ jobs:
           git clone --depth 1 --branch develop \
             https://github.com/wireapp/kalium.git "$KALIUM_DIR"
 
+      - name: Get Kalium HEAD SHA
+        if: ${{ inputs.run_critical_flows }}
+        id: kalium-sha
+        shell: bash
+        run: echo "sha=$(git -C $RUNNER_TEMP/kalium rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Cache Gradle dependencies
+        if: ${{ inputs.run_critical_flows }}
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: kalium-gradle-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-sha.outputs.sha }}
+          restore-keys: |
+            kalium-gradle-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Cache Kalium fat jar
+        if: ${{ inputs.run_critical_flows }}
+        id: jar-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/kalium/tools/testservice/build/libs/
+          key: kalium-jar-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-sha.outputs.sha }}
+
       - name: Setup Java 17 for Kalium Testservice
         if: ${{ inputs.run_critical_flows }}
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
-          cache: gradle
 
       - name: Build Kalium Testservice fat jar
         if: ${{ inputs.run_critical_flows }}
         shell: bash
         run: |
           set -euo pipefail
-          cd "$RUNNER_TEMP/kalium"
-          ./gradlew --no-daemon --parallel :tools:testservice:shadowJar
+          if [[ "${{ steps.jar-cache.outputs.cache-hit }}" != "true" ]]; then
+            cd "$RUNNER_TEMP/kalium"
+            ./gradlew --no-daemon --parallel :tools:testservice:shadowJar
+          else
+            echo "Jar restored from cache, skipping build."
+          fi
 
           JAR="$(ls -1t "$RUNNER_TEMP/kalium/tools/testservice/build/libs/"*"-all.jar" | head -n 1)"
-          [[ -z "$JAR" ]] && { echo "::error::Fat jar not found after build!"; exit 1; }
+          [[ -z "$JAR" ]] && { echo "::error::Fat jar not found!"; exit 1; }
           echo "JAR=$JAR" >> $GITHUB_ENV
-          echo "Built jar: $JAR"
+          echo "Using jar: $JAR"
 
 
       - name: Start Kalium Testservice
@@ -176,15 +204,16 @@ jobs:
             >"$RUNNER_TEMP/testservice.log" 2>&1 &
           echo $! > "$RUNNER_TEMP/testservice.pid"
           echo "Testservice started with PID $(cat $RUNNER_TEMP/testservice.pid)"
+
           echo "Polling http://localhost:8080/api/v1/instance (up to 90s)..."
           for i in {1..90}; do
             STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
               "http://localhost:8080/api/v1/instance" || true)
-            if echo "$STATUS" | grep -Eq '^[0-9]{3}$'; then
+            if echo "$STATUS" | grep -Eq '^[234][0-9]{2}$'; then
               echo "HTTP responder is up on /api/v1/instance (status: $STATUS) after ${i}s"
               exit 0
             fi
-            echo "  attempt $i/90 — not responding yet"
+            echo "  attempt $i/90 — status: $STATUS"
             sleep 1
           done
 
