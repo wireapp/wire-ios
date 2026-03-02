@@ -168,6 +168,8 @@ jobs:
         with:
           path: ${{ runner.temp }}/kalium/tools/testservice/build/libs/
           key: kalium-jar-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-sha.outputs.sha }}
+          restore-keys: |
+            kalium-jar-${{ runner.os }}-${{ runner.arch }}-
 
       - name: Setup Java 17 for Kalium Testservice
         if: ${{ inputs.run_critical_flows }}
@@ -176,18 +178,22 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-
       - name: Kalium Testservice jar
         if: ${{ inputs.run_critical_flows }}
         shell: bash
         run: |
           set -euo pipefail
 
+          echo "Kalium fat-jar cache hit: ${{ steps.jar-cache.outputs.cache-hit }}"
+
           LIBS_DIR="$RUNNER_TEMP/kalium/tools/testservice/build/libs"
+          mkdir -p "$LIBS_DIR"
+
+          # Try to find jar (either restored from cache or from a previous build in this run)
           JAR="$(ls -1 "$LIBS_DIR/"*"-all.jar" 2>/dev/null | head -n 1 || true)"
 
           if [[ -z "$JAR" ]]; then
-            echo "Jar not found in cache — so building..."
+            echo "Jar not found in $LIBS_DIR — so building..."
             cd "$RUNNER_TEMP/kalium"
             ./gradlew --no-daemon --parallel :tools:testservice:shadowJar
             JAR="$(ls -1 "$LIBS_DIR/"*"-all.jar" 2>/dev/null | head -n 1 || true)"
