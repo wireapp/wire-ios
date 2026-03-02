@@ -28,6 +28,8 @@ public enum BackendContext {
             .staging
         case .anta:
             .anta
+        case .bella:
+            .bella
         }
     }
 }
@@ -35,6 +37,7 @@ public enum BackendContext {
 public enum BackendTarget {
     case staging
     case anta
+    case bella
 
     var domainInfo: String {
         switch self {
@@ -42,6 +45,8 @@ public enum BackendTarget {
             "staging.zinfra.io"
         case .anta:
             "anta.wire.link"
+        case .bella:
+            "bella.wire.link"
         }
     }
 }

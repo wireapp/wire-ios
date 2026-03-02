@@ -17,6 +17,7 @@
 //
 
 import WireSyncEngine
+import WireLocators
 
 protocol SectionListCellType: AnyObject {
     var sectionName: String? { get set }
@@ -72,7 +73,7 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
 
     override var accessibilityIdentifier: String? {
         get {
-            identifier
+            Locators.ConversationsPage.connectionRequestsCell.rawValue
         }
         set {
             // no op

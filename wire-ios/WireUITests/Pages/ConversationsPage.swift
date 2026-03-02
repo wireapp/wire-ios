@@ -85,7 +85,7 @@ class ConversationsPage: PageModel {
     }
 
     var acceptRequestButton: XCUIElement {
-        app.buttons[Locators.ConnectionRequestsPage.connectRequestButton.rawValue]
+        app.buttons[Locators.ConversationsPage.connectionRequestsCell.rawValue]
     }
 
     var accountProfileImageView: XCUIElement {
@@ -161,6 +161,11 @@ class ConversationsPage: PageModel {
     func blockUser() throws -> ConversationsPage {
         blockButtonOnMoreOptions.tap()
         blockButtonOnBottomSheet.tap()
+        return self
+    }
+    
+    func acceptConnection() throws -> ConversationsPage {
+        acceptRequestButton.tap()
         return self
     }
 

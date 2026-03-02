@@ -29,7 +29,7 @@ struct Member {
 class UserHelper {
     private let httpClient = HttpClient()
 
-    let backendURL = BackendContext.backendEnvironment.url
+    let backendURL: URL
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
 
@@ -45,11 +45,12 @@ class UserHelper {
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
 
-    init(apiVersion: APIVersion = APIVersion.productionVersions.max()!) {
+    init(apiVersion: APIVersion = APIVersion.productionVersions.max()!, environment: BackendEnvironment = BackendContext.backendEnvironment) {
         self.apiVersion = apiVersion
+        self.backendURL = environment.url
         self.createdUsers = []
         self.networkStack = NetworkStack(
-            backendEnvironment: BackendContext.backendEnvironment,
+            backendEnvironment: environment,
             minTLSVersion: .v1_2,
             cookieEncryptionKey: Data(),
             authenticationManager: authenticationManager
@@ -64,7 +65,7 @@ class UserHelper {
         self.connectionsAPI = ConnectionsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.accountsAPI = AccountsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
     }
-
+        
     /// Fetch basicAuth Info from Env variable
     /// - Parameter backend: backend
     /// - Returns: basicAuth String
@@ -75,10 +76,15 @@ class UserHelper {
                 fatalError("Missing BASIC_AUTH environment variable")
             }
             return auth
-
+            
         case .anta:
             guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_ANTA"] else {
                 fatalError("Missing BASIC_AUTH_ANTA environment variable")
+            }
+            return auth
+        case .bella:
+            guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_BELLA"] else {
+                fatalError("Missing BASIC_AUTH_BELLA environment variable")
             }
             return auth
         }
@@ -314,7 +320,8 @@ class UserHelper {
 
         let invitationCode = try await authenticationAPI.getInvitationCode(
             teamID: teamID,
-            invitationID: invitationID
+            invitationID: invitationID,
+            basicAuth: basicAuth()
         )
 
         let qualifiedID = try await authenticationAPI.registerTeamMember(
@@ -343,7 +350,8 @@ class UserHelper {
 
         let invitationCode = try await authenticationAPI.getInvitationCode(
             teamID: teamID,
-            invitationID: invitationID
+            invitationID: invitationID,
+            basicAuth: basicAuth()
         )
 
         let qualifiedID = try await authenticationAPI.registerTeamMember(
@@ -567,6 +575,8 @@ class UserHelper {
 extension BackendEnvironment {
     static let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
     static let backendURLAnta = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_ANTA"]!)"
+    static let backendURLBella = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_BELLA"]!)"
+    
     static let staging = BackendEnvironment(
         url: URL(string: backendURL)!,
         webSocketURL: URL(string: backendURL)!,
@@ -579,6 +589,14 @@ extension BackendEnvironment {
         url: URL(string: backendURLAnta)!,
         webSocketURL: URL(string: backendURLAnta)!,
         blacklistURL: URL(string: backendURLAnta)!,
+        pinnedKeys: [],
+        proxySettings: nil
+    )
+    
+    static let bella = BackendEnvironment(
+        url: URL(string: backendURLBella)!,
+        webSocketURL: URL(string: backendURLBella)!,
+        blacklistURL: URL(string: backendURLBella)!,
         pinnedKeys: [],
         proxySettings: nil
     )

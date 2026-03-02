@@ -481,13 +481,12 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         return apiResponse.qualifiedID
     }
 
-    func getInvitationCode(teamID: UUID, invitationID: UUID) async throws -> String {
+    func getInvitationCode(teamID: UUID, invitationID: UUID, basicAuth: String) async throws -> String {
         let path = "/i/teams/invitation-code?team=\(teamID)&invitation_id=\(invitationID)"
-        let auth = ProcessInfo.processInfo.environment["BASIC_AUTH"]!
-
+        
         let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
-            .addingHeader(field: "Authorization", value: "Basic \(auth)")
+            .addingHeader(field: "Authorization", value: "Basic \(basicAuth)")
             .build()
 
         let (data, response) = try await networkService.executeRequest(request)
