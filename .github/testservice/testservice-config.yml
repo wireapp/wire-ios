@@ -7,10 +7,11 @@ server:
     - type: http
       port: 8080
       bindHost: 0.0.0.0
-  adminConnectors:
-    - type: http
-      port: 8081
-      bindHost: 127.0.0.1
+
+swagger:
+  resourcePackage: com.wire.kalium.testservice.api.v1
+  title: Kalium Testservice
+  version: "1.0"
 
 logging:
   level: INFO

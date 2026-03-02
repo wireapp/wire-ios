@@ -177,6 +177,30 @@ jobs:
           java-version: "17"
 
 
+      - name: Kalium Testservice jar
+        if: ${{ inputs.run_critical_flows }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          LIBS_DIR="$RUNNER_TEMP/kalium/tools/testservice/build/libs"
+          JAR="$(ls -1 "$LIBS_DIR/"*"-all.jar" 2>/dev/null | head -n 1 || true)"
+
+          if [[ -z "$JAR" ]]; then
+            echo "Jar not found in cache — building..."
+            cd "$RUNNER_TEMP/kalium"
+            ./gradlew --no-daemon --parallel :tools:testservice:shadowJar
+            JAR="$(ls -1 "$LIBS_DIR/"*"-all.jar" 2>/dev/null | head -n 1 || true)"
+          fi
+
+          if [[ -z "$JAR" || ! -f "$JAR" ]]; then
+            echo "::error::Kalium fat jar not found in $LIBS_DIR"
+            ls -la "$LIBS_DIR" || true
+            exit 1
+          fi
+
+          echo "JAR=$JAR" >> "$GITHUB_ENV"
+          echo "Using jar: $JAR"
 
       - name: Start Kalium Testservice
         if: ${{ inputs.run_critical_flows }}
@@ -184,77 +208,21 @@ jobs:
         run: |
           set -euo pipefail
 
-          echo "== Debug paths =="
-          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
-          echo "RUNNER_TEMP=$RUNNER_TEMP"
-          pwd
-          ls -la "$GITHUB_WORKSPACE/.github/testservice" || true
-
           CONFIG="$GITHUB_WORKSPACE/.github/testservice/testservice-config.yml"
-          if [[ ! -f "$CONFIG" ]]; then
-            echo "::error::Config file not found at $CONFIG"
-            ls -la "$GITHUB_WORKSPACE/.github/testservice" || true
-            exit 1
-          fi
-          echo "Using config: $CONFIG"
+          [[ -f "$CONFIG" ]] || { echo "::error::Config not found: $CONFIG"; exit 1; }
+          [[ -n "${JAR:-}" && -f "$JAR" ]] || { echo "::error::JAR not found: '${JAR:-}'"; exit 1; }
 
-          JAR="${{ env.JAR }}"
-          if [[ -z "$JAR" || ! -f "$JAR" ]]; then
-            echo "::error::JAR not found. env.JAR='$JAR'"
-            ls -la "$RUNNER_TEMP/kalium/tools/testservice/build/libs" || true
-            exit 1
-          fi
-          echo "Using jar: $JAR"
-
-          echo "== Port pre-check =="
-          lsof -nP -iTCP:8080 -sTCP:LISTEN || true
-          lsof -nP -iTCP:8081 -sTCP:LISTEN || true
-
-          echo "== Start testservice =="
           nohup java -jar "$JAR" server "$CONFIG" >"$RUNNER_TEMP/testservice.log" 2>&1 &
-          PID=$!
-          echo "$PID" > "$RUNNER_TEMP/testservice.pid"
-          echo "Testservice started with PID $PID"
+          echo $! > "$RUNNER_TEMP/testservice.pid"
 
-          # If it dies immediately, show logs right away
-          sleep 2
-          if ! kill -0 "$PID" 2>/dev/null; then
-            echo "::error::Testservice process exited immediately."
-            echo "::group::Testservice log (last 200 lines)"
-            tail -n 200 "$RUNNER_TEMP/testservice.log" || true
-            echo "::endgroup::"
-            exit 1
-          fi
-
-          echo "== Polling http://localhost:8080/api/v1/instances (up to 90s) =="
           for i in {1..90}; do
-            if ! kill -0 "$PID" 2>/dev/null; then
-              echo "::error::Testservice process died while waiting."
-              echo "::group::Testservice log (last 200 lines)"
-              tail -n 200 "$RUNNER_TEMP/testservice.log" || true
-              echo "::endgroup::"
-              exit 1
-            fi
-
-            STATUS="$(curl -sS -o /dev/null -w "%{http_code}" \
-              "http://localhost:8080/api/v1/instances" || true)"
-
-            if echo "$STATUS" | grep -Eq '^[23][0-9]{2}$'; then
-              echo "Testservice is up (status: $STATUS) after ${i}s"
-              break
-            fi
-
-            echo "  attempt $i/90 — status: $STATUS"
+            curl -fsS "http://localhost:8080/api/v1/instances" >/dev/null 2>&1 && exit 0
             sleep 1
           done
 
-          echo "== Listeners after start =="
-          lsof -nP -iTCP:8080 -sTCP:LISTEN || true
-          lsof -nP -iTCP:8081 -sTCP:LISTEN || true
-
-          echo "::group::Testservice log (last 200 lines)"
+          echo "::error::Testservice not reachable"
           tail -n 200 "$RUNNER_TEMP/testservice.log" || true
-          echo "::endgroup::"
+          exit 1
 
           
       - name: Install 1Password
@@ -291,26 +259,15 @@ jobs:
           LOG_FILE="$RUNNER_TEMP/testservice.log"
 
           if [[ -f "$PID_FILE" ]]; then
-            PID="$(cat "$PID_FILE")"
-            if kill -0 "$PID" 2>/dev/null; then
-              kill "$PID" || true
-              for i in {1..10}; do
-                kill -0 "$PID" 2>/dev/null || break
-                sleep 1
-              done
-              kill -0 "$PID" 2>/dev/null && kill -9 "$PID" || true
-            fi
+            PID="$(cat "$PID_FILE" || true)"
+            [[ -n "$PID" ]] && kill "$PID" 2>/dev/null || true
             rm -f "$PID_FILE"
-          else
-            echo "::warning::No PID file — testservice may never have started"
           fi
 
           if [[ -f "$LOG_FILE" ]]; then
             echo "::group::Testservice log (last 200 lines)"
             tail -n 200 "$LOG_FILE" || true
             echo "::endgroup::"
-          else
-            echo "::warning::No log file found"
           fi
 
       - name: Find all .xcresult files
