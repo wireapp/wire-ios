@@ -151,12 +151,6 @@ jobs:
           distribution: temurin
           java-version: "17"
           cache: gradle
-          cache-dependency-path: |
-            ${{ runner.temp }}/kalium/**/build.gradle*
-            ${{ runner.temp }}/kalium/**/settings.gradle*
-            ${{ runner.temp }}/kalium/**/gradle.properties
-            ${{ runner.temp }}/kalium/**/gradle-wrapper.properties
-            ${{ runner.temp }}/kalium/**/libs.versions.toml
 
       - name: Build Kalium Testservice fat jar
         if: ${{ inputs.run_critical_flows }}
