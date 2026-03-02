@@ -161,7 +161,7 @@ jobs:
           restore-keys: |
             kalium-gradle-${{ runner.os }}-${{ runner.arch }}-
 
-      - name: Cache Kalium fat jar
+      - name: Build Kalium fat jar
         if: ${{ inputs.run_critical_flows }}
         id: jar-cache
         uses: actions/cache@v4
@@ -187,7 +187,7 @@ jobs:
           JAR="$(ls -1 "$LIBS_DIR/"*"-all.jar" 2>/dev/null | head -n 1 || true)"
 
           if [[ -z "$JAR" ]]; then
-            echo "Jar not found in cache — building..."
+            echo "Jar not found in cache — so building..."
             cd "$RUNNER_TEMP/kalium"
             ./gradlew --no-daemon --parallel :tools:testservice:shadowJar
             JAR="$(ls -1 "$LIBS_DIR/"*"-all.jar" 2>/dev/null | head -n 1 || true)"
@@ -216,7 +216,10 @@ jobs:
           echo $! > "$RUNNER_TEMP/testservice.pid"
 
           for i in {1..90}; do
-            curl -fsS "http://localhost:8080/api/v1/instances" >/dev/null 2>&1 && exit 0
+            if curl -fsS "http://localhost:8080/api/v1/instances" >/dev/null 2>&1; then
+              echo "✅ Kalium Testservice reachable at http://localhost:8080 (after ${i}s)"
+              exit 0
+            fi
             sleep 1
           done
 

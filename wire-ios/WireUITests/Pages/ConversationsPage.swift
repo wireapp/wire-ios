@@ -180,20 +180,21 @@ class ConversationsPage: PageModel {
         let predicate = NSPredicate(format: "label BEGINSWITH %@", sentBy)
         let button = app.staticTexts.containing(predicate).firstMatch
         return button.waitForExistence(timeout: 5)
-    func markConversationAsFavourite() throws -> ConversationsPage {
-        addFavouriteButtonOnMoreOptions.tap()
-        return self
-    }
+        func markConversationAsFavourite() throws -> ConversationsPage {
+            addFavouriteButtonOnMoreOptions.tap()
+            return self
+        }
 
-    func filterConversationByFavourite() throws -> ConversationsPage {
-        filterConversationsButton.tap()
-        filterByFavourite.tap()
-        return self
-    }
+        func filterConversationByFavourite() throws -> ConversationsPage {
+            filterConversationsButton.tap()
+            filterByFavourite.tap()
+            return self
+        }
 
-    func filterConversationByOneOnOne() throws -> ConversationsPage {
-        filterConversationsButton.tap()
-        filterByOneOnOneConversation.tap()
-        return self
+        func filterConversationByOneOnOne() throws -> ConversationsPage {
+            filterConversationsButton.tap()
+            filterByOneOnOneConversation.tap()
+            return self
+        }
     }
 }
