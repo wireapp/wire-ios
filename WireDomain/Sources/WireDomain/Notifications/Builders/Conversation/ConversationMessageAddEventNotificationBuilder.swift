@@ -43,58 +43,82 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
     let conversationTextMessageNotificationBuilder: any ConversationTextMessageNotificationBuilderProtocol
     let protobufMessageDecoder: ProtobufMessageDecoder
 
-    func buildContent(
-        event: Either<ConversationMLSMessageAddEvent, ConversationProteusMessageAddEvent>
-    ) async throws -> UserNotification? {
-
+    struct MessageContent {
         var message: GenericMessage
         var senderID: UserID
         var conversationID: ConversationID
         var timestamp: Date?
+    }
 
+    func buildContent(
+        event: Either<ConversationMLSMessageAddEvent, ConversationProteusMessageAddEvent>
+    ) async throws -> [UserNotification]? {
         switch event {
         case let .left(mlsMessageEvent):
-            guard let decryptedMessage = mlsMessageEvent.decryptedMessages.first else {
-                // TODO: [WPB-23426] get all messages
-                // The event may have contained only mls protocol messages so it's not
-                // unexpected to find no decrypted application messages.
-                return nil
+            var userNotifications = [UserNotification]()
+
+            for decryptedMessage in mlsMessageEvent.decryptedMessages {
+                do {
+                    let message = try protobufMessageDecoder.extractMLSMessageContent(
+                        from: decryptedMessage.message
+                    )
+                    
+                    let messageContent =
+                        MessageContent(
+                            message: message,
+                            senderID: mlsMessageEvent.senderID,
+                            conversationID: mlsMessageEvent.conversationID,
+                            timestamp: mlsMessageEvent.timestamp
+                        )
+
+                    if let userNotification = try await buildUserNotification(for: messageContent) {
+                        userNotifications.append(userNotification)
+                    }
+                } catch {
+                    WireLogger.sync.error(
+                        "Failed to build notification for message",
+                        attributes: [.conversationId: mlsMessageEvent.conversationID.id.safeForLoggingDescription]
+                    )
+                }
             }
 
-            message = try protobufMessageDecoder.extractMLSMessageContent(
-                from: decryptedMessage.message
-            )
-            senderID = mlsMessageEvent.senderID
-            conversationID = mlsMessageEvent.conversationID
-            timestamp = mlsMessageEvent.timestamp
+            return userNotifications.isEmpty ? nil : userNotifications
 
         case let .right(proteusMessageEvent):
             guard let decryptedMessage = proteusMessageEvent.message.decryptedMessage else {
                 throw Failure.proteusMessageMissing
             }
 
-            message = try protobufMessageDecoder.extractProteusMessageContent(
+            var message = try protobufMessageDecoder.extractProteusMessageContent(
                 from: decryptedMessage,
                 externalData: proteusMessageEvent.externalData
             )
 
-            senderID = proteusMessageEvent.senderID
-            conversationID = proteusMessageEvent.conversationID
-            timestamp = proteusMessageEvent.timestamp
+            let messageContent = MessageContent(
+                message: message,
+                senderID: proteusMessageEvent.senderID,
+                conversationID: proteusMessageEvent.conversationID,
+                timestamp: proteusMessageEvent.timestamp
+            )
+            let userNotification = try await buildUserNotification(for: messageContent)
+            return userNotification.flatMap { [$0] }
         }
+    }
+
+    private func buildUserNotification(for content: MessageContent) async throws -> UserNotification? {
 
         if let callingNotification = await conversationCallingEventNotificationBuilder.buildContent(
-            calling: message.calling,
-            at: timestamp,
-            conversationID: conversationID,
-            senderID: senderID
+            calling: content.message.calling,
+            at: content.timestamp,
+            conversationID: content.conversationID,
+            senderID: content.senderID
         ) {
-            return callingNotification
+            callingNotification
         } else {
-            return await buildMessageContentNotification(
-                message: message,
-                senderID: senderID,
-                conversationID: conversationID
+            await buildMessageContentNotification(
+                message: content.message,
+                senderID: content.senderID,
+                conversationID: content.conversationID
             )
         }
     }
