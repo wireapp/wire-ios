@@ -546,7 +546,9 @@ private extension WireDriveGetNodesRequest {
             )
         case .filesBrowserView:
             request.filters = RestLookupFilter(
-                metadata: metafilter.toDTO(), // Contains all filters except for the conversations filter. The conversations filter is applied via RestLookupScope below.
+                // Contains all filters except for the conversations filter.
+                // The conversations filter is applied via RestLookupScope below.
+                metadata: metafilter.toDTO(),
                 status: LookupFilterStatusFilter(
                     deleted: .not,
                     hasPublicLink: metafilter.hasPublicLink,
