@@ -115,7 +115,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         completion: @escaping () -> Void
     ) {
         WireLogger.calling.info(
-            "gagaga did receive incoming push 1",
+            "gagaga did receive incoming push 1 payload: \(payload)",
             attributes: .newNSE, .safePublic
         )
         guard
@@ -124,7 +124,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             let conversationIDString = payload["conversationID"] as? String,
             let conversationID = UUID(uuidString: conversationIDString),
             let shouldRing = payload["shouldRing"] as? Bool,
-            let callerName = payload["callerName"] as? String,
+//            let callerName = payload["callerName"] as? String,
             let hasVideo = payload["hasVideo"] as? Bool
         else {
             Self.logger.critical("error: processing NSE push: invalid payload - \(payload)")
@@ -135,6 +135,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             "did receive incoming push 2",
             attributes: .newNSE, .safePublic
         )
+        let callerName = "Test name"
         let handle = CallHandle(
             accountID: accountID,
             conversationID: conversationID

@@ -75,13 +75,17 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
         service.onIncomingCall = { [weak self] conversationId, shouldRing, isVideoCall in
             WireLogger.calling.info(
-                "gagaga onIncomingCall",
+                "gagaga onIncomingCall, conversationId: \(conversationId)",
                 attributes: .newNSE, .safePublic
             )
-            guard let self else { return }
+
+            guard let self,
+                  let qualifiedID = QualifiedID(rawValue: conversationId) else {
+                return
+            }
             let callKitContent: [String: Any] = [
                 "accountID": self.dependency.accountID.uuidString,
-                "conversationID": conversationId,
+                "conversationID": qualifiedID.uuid.uuidString,
                 "shouldRing": shouldRing,
                 "hasVideo": isVideoCall,
                 "callerName": ""
@@ -223,44 +227,41 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             }
 
         } else {
-            // callingService.start()
-             print("🥳 start")
+             callingService.start()
              WireLogger.calling.info(
                  "gagaga start",
                  attributes: .newNSE, .safePublic
              )
             eventStream = try await pullEventsUseCase.invoke(publicKeys: publicKeys)
         }
-//        for await events in eventStream {
-//            for event in events {
-//                WireLogger.calling.info(
-//                    "gagaga event \(event)",
-//                    attributes: .newNSE, .safePublic
-//                )
-//                if let param = await avsParameters(from: event)  {
-//                    print("🥳 process")
-//                    WireLogger.calling.info(
-//                        "gagaga process",
-//                        attributes: .newNSE, .safePublic
-//                    )
-//                    callingService.process(
-//                        data: param.data,
-//                        currentTime: param.currentTime,
-//                        serverTime: param.serverTime,
-//                        conversationId: param.conversationId,
-//                        userId: param.userId,
-//                        clientId: clientID,
-//                        conversationType: param.conversationType
-//                    )
-//                }
-//            }
-//        }
-//        callingService.end()
+        for await events in eventStream {
+            for event in events {
+                WireLogger.calling.info(
+                    "gagaga event \(event)",
+                    attributes: .newNSE, .safePublic
+                )
+                if let param = await avsParameters(from: event)  {
+                    WireLogger.calling.info(
+                        "gagaga process",
+                        attributes: .newNSE, .safePublic
+                    )
+                    callingService.process(
+                        data: param.data,
+                        currentTime: param.currentTime,
+                        serverTime: param.serverTime,
+                        conversationId: param.conversationId,
+                        userId: param.userId,
+                        clientId: clientID,
+                        conversationType: param.conversationType
+                    )
+                }
+            }
+        }
+        callingService.end()
         WireLogger.calling.info(
             "gagaga end",
             attributes: .newNSE, .safePublic
         )
-        print("🥳 end")
 
         // Generate notifications from events.
         let notifications = try await generateNotificationsUseCase(
@@ -281,13 +282,13 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         switch event {
         case .conversation(.proteusMessageAdd(let e)):
             WireLogger.calling.info(
-                "gagaga proteus",
+                "gagaga proteus conversation",
                 attributes: .newNSE, .safePublic
             )
             return await avsParametersForProteus(e).first
         case .conversation(.mlsMessageAdd(let e)):
             WireLogger.calling.info(
-                "gagaga MLS",
+                "gagaga MLS conversation",
                 attributes: .newNSE, .safePublic
             )
             return await avsParametersForMLS(e).first
