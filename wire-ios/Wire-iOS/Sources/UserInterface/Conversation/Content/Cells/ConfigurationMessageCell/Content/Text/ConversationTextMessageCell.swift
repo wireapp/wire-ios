@@ -177,6 +177,9 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             detectedLinkForegroundColor = UIColor.accent()
         }
 
+        // Create a set of mention ranges for quick lookup to avoid applying underline to mentions
+        let mentionRanges: Set<NSRange> = Set(object.mentions.map(\.range))
+
         // Apply styling for Mentions (NO UNDERLINE)
         for mention in object.mentions {
             let mentionRange = mention.range
@@ -195,12 +198,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             let linkRange = result.range
             guard linkRange.location + linkRange.length <= mutableAttributedText.length else { continue }
 
-            // IMPORTANT: Check for overlap with mentions.
-            // If a detected link overlaps with a mention, the mention's styling should take precedence.
-            let isOverlappingMention = object.mentions.contains { mention in
-                let mentionRange = mention.range // Access range from the Mention object
-                return NSIntersectionRange(linkRange, mentionRange).length > 0
-            }
+            let isOverlappingMention = mentionRanges.contains { NSIntersectionRange(linkRange, $0).length > 0 }
 
             if let link = result.url, !isOverlappingMention {
                 mutableAttributedText.addAttributes([
@@ -209,6 +207,28 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
                     .link: link
                 ], range: linkRange)
             }
+        }
+
+        mutableAttributedText.enumerateAttribute(
+            .link,
+            in: NSRange(location: 0, length: mutableAttributedText.length),
+            options: []
+        ) { value, range, _ in
+            guard let link = value as? URL else {
+                return
+            }
+
+            let isCoveredByMention = mentionRanges.contains { NSIntersectionRange(range, $0).length > 0 }
+
+            guard !isCoveredByMention else {
+                return
+            }
+
+            mutableAttributedText.addAttributes([
+                .foregroundColor: detectedLinkForegroundColor,
+                .underlineStyle: NSUnderlineStyle.single.rawValue,
+                .link: link
+            ], range: range)
         }
 
         messageTextView.attributedText = mutableAttributedText
@@ -379,7 +399,14 @@ extension ConversationTextMessageCellDescription {
             isObfuscated: message.isObfuscated,
             accentColor: (selfUser.zmAccentColor ?? .default).accentColor
         )
-        let detectedLinks = findDetectedLinks(in: messageText)
+
+        var allDetectedLinks: [NSTextCheckingResult] = []
+
+        let embeddedLinks = ConversationTextMessageCellDescription.findEmbeddedLinks(in: textMessageData)
+        allDetectedLinks.append(contentsOf: embeddedLinks)
+
+        let autoDetectedLinks = ConversationTextMessageCellDescription.findDetectedLinks(in: messageText)
+        allDetectedLinks.append(contentsOf: autoDetectedLinks)
 
         // Search queries
         if !searchQueries.isEmpty {
@@ -414,7 +441,7 @@ extension ConversationTextMessageCellDescription {
                 isObfuscated: message.isObfuscated,
                 userSession: userSession,
                 mentions: textMessageData.mentions,
-                detectedLinks: detectedLinks
+                detectedLinks: allDetectedLinks
             )
             cells.append(AnyConversationMessageCellDescription(textCell))
         }
@@ -455,6 +482,36 @@ extension ConversationTextMessageCellDescription {
             options: [],
             range: scanRange
         )
+    }
+
+    static func findEmbeddedLinks(in textMessageData: TextMessageData) -> [NSTextCheckingResult] {
+        guard let messageTextString = textMessageData.messageText else {
+            return []
+        }
+        guard let linkPreview = textMessageData.linkPreview,
+              let originalURLString = textMessageData.linkPreview?.originalURLString,
+              let url = URL(string: originalURLString),
+              let scheme = url.scheme,
+              ["http", "https"].contains(scheme.lowercased()) else {
+            return []
+        }
+        let expectedRange = NSRange(
+            location: linkPreview.characterOffsetInText,
+            length: linkPreview.textLengthInMessage
+        )
+        guard expectedRange.location >= 0,
+              expectedRange.length >= 0,
+              expectedRange.location + expectedRange.length <= messageTextString.count else {
+            return []
+        }
+
+        let nsMessageText = messageTextString as NSString
+        let textAtRange = nsMessageText.substring(with: expectedRange)
+        guard textAtRange == originalURLString else {
+            return []
+        }
+        let linkResult = NSTextCheckingResult.linkCheckingResult(range: expectedRange, url: url)
+        return [linkResult]
     }
 }
 

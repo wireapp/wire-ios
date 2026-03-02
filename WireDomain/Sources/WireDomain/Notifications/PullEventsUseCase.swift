@@ -23,7 +23,7 @@ import WireNetwork
 
 // sourcery: AutoMockable
 protocol PullEventsUseCaseProtocol {
-    func invoke() async throws -> AsyncStream<[UpdateEvent]>
+    func invoke(publicKeys: EARPublicKeys?) async throws -> AsyncStream<[UpdateEvent]>
 }
 
 struct PullEventsUseCase: PullEventsUseCaseProtocol {
@@ -40,14 +40,14 @@ struct PullEventsUseCase: PullEventsUseCaseProtocol {
         self.pendingEventsSync = pendingEventsSync
     }
 
-    func invoke() async throws -> AsyncStream<[UpdateEvent]> {
+    func invoke(publicKeys: EARPublicKeys?) async throws -> AsyncStream<[UpdateEvent]> {
         logger.info(
             "Attempting to fetch pending events",
             attributes: .newNSE, .safePublic
         )
 
         do {
-            return try await pendingEventsSync.pull()
+            return try await pendingEventsSync.pull(publicKeys: publicKeys)
 
         } catch {
             throw Failure.unableToPullPendingEvents(error)

@@ -37,10 +37,12 @@ extension SessionManager: UserSessionEncryptionAtRestDelegate {
                             applicationContainer: sharedContainerURL,
                             migration: onReady
                         )
-                        _ = await self?.loadSession(for: account)
+
                     } catch {
                         WireLogger.ear.error("failed to migrate account: \(error)")
                     }
+
+                    _ = await self?.loadSession(for: account)
                 }
             }
         })
