@@ -20,7 +20,11 @@ import Foundation
 import WireSyncEngine
 
 final class AuthenticationStatusProvider {
-    var sharedUserSession: ZMUserSession?
+
+    private let _sharedUserSession: ZMUserSession?
+    var sharedUserSession: ZMUserSession? {
+        _sharedUserSession ?? ZMUserSession.shared()
+    }
 
     var authenticatedUserWasRegisteredOnThisDevice: Bool {
         sharedUserSession?.registeredOnThisDevice == true
@@ -44,6 +48,6 @@ final class AuthenticationStatusProvider {
     }
 
     init(sharedUserSession: ZMUserSession?) {
-        self.sharedUserSession = sharedUserSession
+        self._sharedUserSession = sharedUserSession
     }
 }
