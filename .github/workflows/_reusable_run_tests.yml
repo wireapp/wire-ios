@@ -176,22 +176,6 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Build Kalium Testservice fat jar
-        if: ${{ inputs.run_critical_flows }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [[ "${{ steps.jar-cache.outputs.cache-hit }}" != "true" ]]; then
-            cd "$RUNNER_TEMP/kalium"
-            ./gradlew --no-daemon --parallel :tools:testservice:shadowJar
-          else
-            echo "Jar restored from cache, skipping build."
-          fi
-
-          JAR="$(ls -1t "$RUNNER_TEMP/kalium/tools/testservice/build/libs/"*"-all.jar" | head -n 1)"
-          [[ -z "$JAR" ]] && { echo "::error::Fat jar not found!"; exit 1; }
-          echo "JAR=$JAR" >> $GITHUB_ENV
-          echo "Using jar: $JAR"
 
 
       - name: Start Kalium Testservice
@@ -199,53 +183,79 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          JAR="${{ env.JAR }}"
-          nohup java -jar "$JAR" server ".github/testservice/testservice-config.yml" \
-            >"$RUNNER_TEMP/testservice.log" 2>&1 &
-          echo $! > "$RUNNER_TEMP/testservice.pid"
-          echo "Testservice started with PID $(cat $RUNNER_TEMP/testservice.pid)"
 
-          echo "Polling http://localhost:8080/api/v1/instance (up to 90s)..."
+          echo "== Debug paths =="
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          echo "RUNNER_TEMP=$RUNNER_TEMP"
+          pwd
+          ls -la "$GITHUB_WORKSPACE/.github/testservice" || true
+
+          CONFIG="$GITHUB_WORKSPACE/.github/testservice/testservice-config.yml"
+          if [[ ! -f "$CONFIG" ]]; then
+            echo "::error::Config file not found at $CONFIG"
+            ls -la "$GITHUB_WORKSPACE/.github/testservice" || true
+            exit 1
+          fi
+          echo "Using config: $CONFIG"
+
+          JAR="${{ env.JAR }}"
+          if [[ -z "$JAR" || ! -f "$JAR" ]]; then
+            echo "::error::JAR not found. env.JAR='$JAR'"
+            ls -la "$RUNNER_TEMP/kalium/tools/testservice/build/libs" || true
+            exit 1
+          fi
+          echo "Using jar: $JAR"
+
+          echo "== Port pre-check =="
+          lsof -nP -iTCP:8080 -sTCP:LISTEN || true
+          lsof -nP -iTCP:8081 -sTCP:LISTEN || true
+
+          echo "== Start testservice =="
+          nohup java -jar "$JAR" server "$CONFIG" >"$RUNNER_TEMP/testservice.log" 2>&1 &
+          PID=$!
+          echo "$PID" > "$RUNNER_TEMP/testservice.pid"
+          echo "Testservice started with PID $PID"
+
+          # If it dies immediately, show logs right away
+          sleep 2
+          if ! kill -0 "$PID" 2>/dev/null; then
+            echo "::error::Testservice process exited immediately."
+            echo "::group::Testservice log (last 200 lines)"
+            tail -n 200 "$RUNNER_TEMP/testservice.log" || true
+            echo "::endgroup::"
+            exit 1
+          fi
+
+          echo "== Polling http://localhost:8080/api/v1/instances (up to 90s) =="
           for i in {1..90}; do
-            STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
-              "http://localhost:8080/api/v1/instance" || true)
-            if echo "$STATUS" | grep -Eq '^[234][0-9]{2}$'; then
-              echo "HTTP responder is up on /api/v1/instance (status: $STATUS) after ${i}s"
-              exit 0
+            if ! kill -0 "$PID" 2>/dev/null; then
+              echo "::error::Testservice process died while waiting."
+              echo "::group::Testservice log (last 200 lines)"
+              tail -n 200 "$RUNNER_TEMP/testservice.log" || true
+              echo "::endgroup::"
+              exit 1
             fi
+
+            STATUS="$(curl -sS -o /dev/null -w "%{http_code}" \
+              "http://localhost:8080/api/v1/instances" || true)"
+
+            if echo "$STATUS" | grep -Eq '^[23][0-9]{2}$'; then
+              echo "Testservice is up (status: $STATUS) after ${i}s"
+              break
+            fi
+
             echo "  attempt $i/90 — status: $STATUS"
             sleep 1
           done
 
-          echo "::error::Testservice did not become reachable in 90s."
+          echo "== Listeners after start =="
+          lsof -nP -iTCP:8080 -sTCP:LISTEN || true
+          lsof -nP -iTCP:8081 -sTCP:LISTEN || true
+
           echo "::group::Testservice log (last 200 lines)"
           tail -n 200 "$RUNNER_TEMP/testservice.log" || true
           echo "::endgroup::"
-          exit 1
 
-
-#      - name: Wait for Kalium Testservice to be ready
-#        if: ${{ inputs.run_critical_flows }}
-#        shell: bash
-#        run: |
-#          set -euo pipefail
-#          echo "Polling http://localhost:8080/api/v1/instance (up to 90s)..."
-#          for i in {1..90}; do
-#            STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
-#              "http://localhost:8080/api/v1/instance" || true)
-#            if echo "$STATUS" | grep -Eq '^[0-9]{3}$'; then
-#              echo "HTTP responder is up on /api/v1/instance (status: $STATUS) after ${i}s"
-#              exit 0
-#            fi
-#            echo "  attempt $i/90 — not responding yet"
-#            sleep 1
-#          done
-#
-#          echo "::error::Testservice did not become reachable in 90s."
-#          echo "::group::Testservice log"
-#          tail -n 200 "$RUNNER_TEMP/testservice.log" || true
-#          echo "::endgroup::"
-#          exit 1
           
       - name: Install 1Password
         if: ${{ inputs.run_critical_flows }}
