@@ -161,7 +161,7 @@ jobs:
           restore-keys: |
             kalium-gradle-${{ runner.os }}-${{ runner.arch }}-
 
-      - name: Build Kalium fat jar
+      - name: Cache Kalium fat jar
         if: ${{ inputs.run_critical_flows }}
         id: jar-cache
         uses: actions/cache@v4
@@ -267,16 +267,24 @@ jobs:
           PID_FILE="$RUNNER_TEMP/testservice.pid"
           LOG_FILE="$RUNNER_TEMP/testservice.log"
 
+          # Stop the service
           if [[ -f "$PID_FILE" ]]; then
             PID="$(cat "$PID_FILE" || true)"
-            [[ -n "$PID" ]] && kill "$PID" 2>/dev/null || true
-            rm -f "$PID_FILE"
+            if [[ -n "$PID" ]]; then
+              kill "$PID" 2>/dev/null || true
+            fi
+            rm -f "$PID_FILE" || true
           fi
 
-          if [[ -f "$LOG_FILE" ]]; then
-            echo "::group::Testservice log (last 200 lines)"
-            tail -n 200 "$LOG_FILE" || true
-            echo "::endgroup::"
+          # Print logs only when the job is failing
+          if [[ "${{ job.status }}" != "success" ]]; then
+            if [[ -f "$LOG_FILE" ]]; then
+              echo "::group::Kalium Testservice log (last 200 lines)"
+              tail -n 200 "$LOG_FILE" || true
+              echo "::endgroup::"
+            else
+              echo "::warning::No testservice.log found"
+            fi
           fi
 
       - name: Find all .xcresult files

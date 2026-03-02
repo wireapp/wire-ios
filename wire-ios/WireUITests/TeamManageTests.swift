@@ -303,8 +303,9 @@ final class TeamManageTests: WireUITestCase {
         )
 
         XCTAssertTrue(
-            try conversationsPage.waitUntilLastMessageReceivedByTestService(with: teamMembers[2].name),
-            "Last message not received within 5 seconds by \(teamMembers[2].name)"
+            try conversationsPage
+                .waitUntilLastMessageReceivedByTestServiceOnConversationList(with: teamMembers[2].name),
+            "Last message not received by \(teamMembers[2].name)"
         )
 
         let activeConversationPage = try conversationsPage.openConversation()
@@ -312,23 +313,23 @@ final class TeamManageTests: WireUITestCase {
         let fetchFileNames = activeConversationPage.fetchFileNames()
         let fetchSenders = activeConversationPage.fetchSenders()
 
-//        XCTAssertTrue(
-//            fetchFileNames[0].contains(audioName.uppercased()) &&
-//                fetchSenders[0].contains(teamMembers[2].name),
-//            "Either expected message '\(audioName)' not found or not sent by \(teamMembers[2].name)"
-//        )
-//
-//        XCTAssertTrue(
-//            fetchFileNames[1].contains(imageName.uppercased()) &&
-//                fetchSenders[1].contains(teamMembers[1].name),
-//            "Either expected message '\(imageName)' not found or not sent by \(teamMembers[1].name)"
-//        )
-//
-//        XCTAssertTrue(
-//            fetchMessages[0].contains(messageFromMember1) &&
-//                fetchSenders[2].contains(teamMembers[0].name),
-//            "Expected message '\(messageFromMember1)' not found in sent messages: \(fetchMessages)"
-//        )
+        XCTAssertTrue(
+            fetchFileNames[0].contains(audioName.uppercased()) &&
+                fetchSenders[0].contains(teamMembers[2].name),
+            "Expected message '\(audioName)' not found sent by \(teamMembers[2].name)"
+        )
+
+        XCTAssertTrue(
+            fetchFileNames[1].contains(imageName.uppercased()) &&
+                fetchSenders[1].contains(teamMembers[1].name),
+            "Expected message '\(imageName)' not found sent by \(teamMembers[1].name)"
+        )
+
+        XCTAssertTrue(
+            fetchMessages[0].contains(messageFromMember1) &&
+                fetchSenders[2].contains(teamMembers[0].name),
+            "Expected message '\(messageFromMember1)' not found in sent messages: \(fetchMessages)"
+        )
 
     }
 }

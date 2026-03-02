@@ -176,7 +176,7 @@ class ConversationsPage: PageModel {
         loadBar.waitToDisappear()
     }
 
-    func waitUntilLastMessageReceivedByTestService(with sentBy: String) throws -> Bool {
+    func waitUntilLastMessageReceivedByTestServiceOnConversationList(with sentBy: String) throws -> Bool {
         let predicate = NSPredicate(format: "label BEGINSWITH %@", sentBy)
         let button = app.staticTexts.containing(predicate).firstMatch
         return button.waitForExistence(timeout: 5)
