@@ -1942,6 +1942,7 @@
 "url_action.confirm" = "确认";
 "url_action.title" = "确认 URL 操作";
 "url_action.connect_to_bot.message" = "你仍要连接到此服务器吗？";
+"url_action.user_profile_qr_feature_flag.message" = "Using profile links or QR codes is not allowed in your team. Contact your admin";
 
 "url_action.switch_backend_confirmation.title" = "重定向到本地后端？";
 "url_action.switch_backend_confirmation.message" = "如果继续，您将被重定向到以下本地后端进行登录：";

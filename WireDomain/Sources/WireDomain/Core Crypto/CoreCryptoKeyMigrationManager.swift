@@ -72,7 +72,11 @@ public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtoco
             attributes: .safePublic
         )
 
-        try await migrateDatabaseKeyTypeToBytes(path: path, oldKey: oldKey, newKey: newKey)
+        try await migrateDatabaseKeyTypeToBytes(
+            path: path,
+            oldKey: oldKey,
+            newKey: DatabaseKey(key: newKey)
+        )
         journal[.isCoreCryptoKeyMigrationToBytesRequired] = false
 
         WireLogger.coreCrypto.info("Core crypto key is migrated to bytes successfully", attributes: .safePublic)
@@ -80,7 +84,11 @@ public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtoco
 
     public func updateKey(path: String, oldKey: Data, newKey: Data) async throws {
         do {
-            try await updateDatabaseKey(name: path, oldKey: oldKey, newKey: newKey)
+            try await updateDatabaseKey(
+                name: path,
+                oldKey: DatabaseKey(key: oldKey),
+                newKey: DatabaseKey(key: newKey)
+            )
         } catch {
             throw CoreCryptoKeyMigrationManagerError.failedToUpdateKey(underlyingError: error)
         }

@@ -39,14 +39,18 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
         }
     }
 
-    private let button = SpinnerButton.alarmButton()
+    private let button = {
+        let button = SpinnerButton.alarmButton()
+        button.textTransform = .none
+        return button
+    }()
+
     private var buttonAction: Completion?
 
     private let errorLabel: UILabel = {
         let label = UILabel()
         label.font = .smallLightFont
         label.textColor = UIColor.AlarmButton.alarmRed
-
         return label
     }()
 

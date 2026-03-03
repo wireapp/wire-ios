@@ -66,6 +66,15 @@ public enum Locators {
         case blockButtonOnBottomSheet
         case bottomBarArchivedButton
         case accountProfileImageView
+        case status
+        case loadBar
+        case addToFavourite = "Add to Favorites"
+        case removeFromFavourite = "Remove from Favorites"
+        case filterConversations = "Filter conversations"
+        case filterByFavourites = "Show all favorite conversations"
+        case filterByOneOnOneConversation = "Show all one on one conversations"
+        case textFilteredByFavourites = "Filtered by Favorites"
+        case textFilteredByOneOnOne = "Filtered by 1:1 Conversations"
     }
 
     public enum SettingsPage: String {
@@ -102,6 +111,8 @@ public enum Locators {
         case conversationDetailsButton
         case message
         case imageCell = "ImageCell"
+        case mentionButton
+        case userCellName
     }
 
     public enum BackupOrRestorePage: String {
@@ -148,6 +159,7 @@ public enum Locators {
         case createWireTeamButton
         case manageTeamButton
         case addAccountOrTeamButton
+        case userProfilePicture
     }
 
     public enum CreateGroupPage: String {
@@ -277,7 +289,7 @@ public enum Locators {
 
         case imageTile = "PXGGridLayout-Info"
         case shareButton = "PUOneUpBarButtonItemIdentifierShare"
-        case chooseConversations = "chevron"
+        case chooseConversations = "Choose"
         case sendButtonOnShareExtension
         case continueButton = "Continue"
     }
@@ -285,11 +297,13 @@ public enum Locators {
     public enum IncomingCallPage: String {
 
         case acceptCall = "Accept"
+        case turnOffMicrophone = "Microphone"
     }
 
     public enum OngoingCallPage: String {
 
         case endOngoingCallButton = "End call"
+        case timeLabel
 
         public static func participantIdentifier(_ name: String) -> String {
             "audioView.\(name).minimized.inactive"
