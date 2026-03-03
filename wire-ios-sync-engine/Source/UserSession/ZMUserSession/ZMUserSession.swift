@@ -900,10 +900,12 @@ public final class ZMUserSession: NSObject {
                 notifyAVSOfNetworkInterfaceChanged()
             }
 
-        isNetworkReachableCancellable = networkReachability.isOnlinePublisher.sink { [weak self] _ in
-            guard let self else { return }
-            notifyAVSOfNetworkInterfaceChanged()
-        }
+        isNetworkReachableCancellable = networkReachability.isOnlinePublisher
+            .filter { $0 }
+            .sink { [weak self] _ in
+                guard let self else { return }
+                notifyAVSOfNetworkInterfaceChanged()
+            }
     }
 
     func trackAnalyticsEvent(_ event: AnalyticsEvent) {
