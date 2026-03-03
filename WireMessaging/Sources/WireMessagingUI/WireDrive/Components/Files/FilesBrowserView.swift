@@ -41,109 +41,35 @@ package struct FilesBrowserView: FilesViewProtocol {
     }
 
     package var body: some View {
-        ZStack {
-            ColorTheme.Backgrounds.surface.color
-                .ignoresSafeArea(.all)
-
-            VStack {
-                VStack(alignment: .leading, spacing: 0) {
-                    FilesFilteringView(
-                        useCases: .init(fetchTagsUseCase: viewModel.useCases.getTagSuggestions),
-                        filtersSelection: viewModel.filtersSelection,
-                        isBrowsing: isBrowsing,
-                        conversations: Set(viewModel.conversations),
-                        onUpdate: viewModel.onUpdate(of:),
-                        onSearchFocused: { isSearchFocused = $0 }
-                    )
-                    .opacity(isFilterBarPresented ? 1 : 0)
-                    .frame(height: isFilterBarPresented ? nil : 0)
-                    .padding(.bottom, isFilterBarPresented ? 15 : 0)
-
-                    FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
-                }
-                .padding(.top, 4)
-
-                switch viewModel.state {
-                case .loading:
-                    Spacer()
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                    Spacer()
-                case .received, .pending:
-                    filesList
-                        .safeAreaInset(edge: .top) {
-                            if viewModel.shouldShowOfflineBar {
-                                offlineBar
-                                    .id(UUID())
-                                    .background(ColorTheme.Backgrounds.surface.color)
-                            }
-                        }
-                case let .error(isConnectionError):
-                    Spacer()
-                    FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
-                        reloadTask()
-                    })
-                    Spacer()
-                }
+        defaultContainer(
+            backgroundColor: ColorTheme.Backgrounds.surface.color,
+            navigationTitle: Strings.AllFiles.navigationTitle,
+            toolbarContent: { emptyToolbar() },
+            sheetContent: { navigationItem in
+                sheetContent(navigationItem)
             }
-            .animation(.easeInOut(duration: 0.25), value: viewModel.connectionState)
-            .animation(.easeOut(duration: 0.25), value: isSearchFocused)
-            .quickLookPreview($viewModel.viewingURL)
-            .navigationTitle(Strings.AllFiles.navigationTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
-            .if(viewModel.showSearchBar, transform: searchView(content:))
-            .onAppear { reloadTask() }
-            .onDisappear {
-                isSearchFocused = false
-                viewModel.resetFilters()
-            }
-            .alert(
-                item: $viewModel.alert,
-                title: { Text($0.title) },
-                message: { Text($0.message) },
-                actions: { _ in confirmButton }
-            )
-            .sheet(item: $viewModel.sheetNavigation) {
-                Task { await viewModel.onSheetDismissed() }
-            } content: { navigationItem in
-                switch navigationItem {
-                case let .shareLink(shareLinkView):
-                    shareLinkView
-                default:
-                    EmptyView()
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func searchView(content: some View) -> some View {
-        content.searchable(
-            text: $viewModel.searchText,
-            placement: .navigationBarDrawer(displayMode: .always),
-            prompt: Strings.Files.Search.title
         )
     }
 
     private var isFilterBarPresented: Bool {
         isSearchFocused || !viewModel.searchText.isEmpty || viewModel.filtersSelection.hasFilterSelected
     }
+
+    @ToolbarContentBuilder private func emptyToolbar() -> some ToolbarContent {
+        if false {
+            ToolbarItem {}
+        }
+    }
 }
 
-// MARK: - Helper
-
-extension View {
+private extension FilesBrowserView {
     @ViewBuilder
-    func `if`(
-        _ condition: Bool,
-        transform: (Self) -> some View
-    ) -> some View {
-        if condition {
-            transform(self)
-        } else {
-            self
+    func sheetContent(_ navigationItem: FilesViewModel.SheetNavigation) -> some View {
+        switch navigationItem {
+        case let .shareLink(shareLinkView):
+            shareLinkView
+        default:
+            EmptyView()
         }
     }
 }

@@ -34,9 +34,114 @@ package protocol FilesViewProtocol: View {
     )
 }
 
-// MARK: - List
+// MARK: - Default container
 
 extension FilesViewProtocol {
+        /// Common container used by both `FilesView` and `FilesBrowserView`.
+        ///
+        /// - Parameters:
+        ///   - backgroundColor: background color for the ZStack.
+        ///   - navigationTitle: title shown in the navigation bar.
+        ///   - toolbarContent: toolbar content builder.
+        ///   - sheetContent: sheet builder for navigation items.
+    @ViewBuilder
+    func defaultContainer(
+        backgroundColor: Color,
+        navigationTitle: String,
+        @ToolbarContentBuilder toolbarContent: @escaping () -> some ToolbarContent,
+        @ViewBuilder sheetContent: @escaping (FilesViewModel.SheetNavigation) -> some View
+    ) -> some View {
+        ZStack {
+            backgroundColor
+                .ignoresSafeArea(.all)
+
+            VStack {
+                VStack(alignment: .leading, spacing: 0) {
+                    FilesFilteringView(
+                        useCases: .init(fetchTagsUseCase: viewModel.useCases.getTagSuggestions),
+                        filtersSelection: viewModel.filtersSelection,
+                        isBrowsing: isBrowsing,
+                        conversations: Set(viewModel.conversations),
+                        onUpdate: viewModel.onUpdate(of:),
+                        onSearchFocused: { isSearchFocused = $0 }
+                    )
+                    .opacity(isFilterBarPresented ? 1 : 0)
+                    .frame(height: isFilterBarPresented ? nil : 0)
+                    .padding(.bottom, isFilterBarPresented ? 15 : 0)
+
+                    FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
+                }
+                .padding(.top, 4)
+
+                switch viewModel.state {
+                case .loading:
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                case .received, .pending:
+                    filesList
+                        .safeAreaInset(edge: .top) {
+                            if viewModel.shouldShowOfflineBar {
+                                offlineBar
+                                    .id(UUID())
+                                    .background(backgroundColor)
+                            }
+                        }
+                case let .error(isConnectionError):
+                    Spacer()
+                    FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
+                        reloadTask()
+                    })
+                    Spacer()
+                }
+            }
+            .animation(.easeInOut(duration: 0.25), value: viewModel.connectionState)
+            .animation(.easeOut(duration: 0.25), value: isSearchFocused)
+            .quickLookPreview(bindableViewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
+            .navigationTitle(navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(backgroundColor, for: .navigationBar)
+            .toolbar { toolbarContent() }
+            .if(viewModel.showSearchBar, transform: searchView(content:))
+            .onAppear { reloadTask() }
+            .onDisappear {
+                isSearchFocused = false
+                viewModel.resetFilters()
+            }
+            .alert(
+                item: bindableViewModel.alert,
+                title: { Text($0.title) },
+                message: { Text($0.message) },
+                actions: { _ in confirmButton }
+            )
+            .sheet(
+                item: bindableViewModel.sheetNavigation,
+                onDismiss: {
+                    Task { await viewModel.onSheetDismissed() }
+                },
+                content: { navigationItem in
+                    sheetContent(navigationItem)
+                }
+            )
+        }
+    }
+
+    private var isFilterBarPresented: Bool {
+        isSearchFocused || !viewModel.searchText.isEmpty || viewModel.filtersSelection.hasFilterSelected
+    }
+}
+
+private extension FilesViewProtocol {
+    /// A helper to extract bindings from the protocol's view model.
+    var bindableViewModel: ObservedObject<FilesViewModel>.Wrapper {
+        ObservedObject(wrappedValue: viewModel).projectedValue
+    }
+}
+
+
+// MARK: - List
+
+private extension FilesViewProtocol {
 
     @ViewBuilder var filesList: some View {
         List {
@@ -81,7 +186,7 @@ extension FilesViewProtocol {
 
 // MARK: - Rows
 
-extension FilesViewProtocol {
+private extension FilesViewProtocol {
 
     @ViewBuilder
     func itemRow(index: Int) -> some View {
@@ -95,7 +200,7 @@ extension FilesViewProtocol {
 
 // MARK: - Buttons
 
-extension FilesViewProtocol {
+private extension FilesViewProtocol {
 
     var confirmButton: some View {
         Button(L10n.Localizable.General.confirm, action: {})
@@ -104,7 +209,7 @@ extension FilesViewProtocol {
 
 // MARK: - Tasks
 
-extension FilesViewProtocol {
+private extension FilesViewProtocol {
 
     func reloadTask(refreshing: Bool = false) {
         Task { await viewModel.reload(refreshing: refreshing) }
@@ -122,7 +227,7 @@ extension FilesViewProtocol {
 
 // MARK: - Offline bar
 
-extension FilesViewProtocol {
+private extension FilesViewProtocol {
 
     var offlineBar: some View {
         FilesOfflineBarView()
@@ -132,4 +237,34 @@ extension FilesViewProtocol {
             )
     }
 
+}
+
+// MARK: - SearchView
+
+private extension FilesViewProtocol {
+
+    @ViewBuilder
+    private func searchView(content: some View) -> some View {
+        content.searchable(
+            text: bindableViewModel.searchText,
+            placement: .navigationBarDrawer(displayMode: .always),
+            prompt: Strings.Files.Search.title
+        )
+    }
+}
+
+// MARK: - Global helpers
+
+extension View {
+    @ViewBuilder
+    func `if`(
+        _ condition: Bool,
+        transform: (Self) -> some View
+    ) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
+        }
+    }
 }
