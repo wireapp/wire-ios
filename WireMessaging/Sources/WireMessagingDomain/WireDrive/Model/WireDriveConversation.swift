@@ -118,9 +118,9 @@ public extension Collection<WireDriveConversation> {
 public extension Collection<WireDriveConversation.Participant> {
     static func mocked() -> [Element] {
         [
-            .init(handle: "walterwhite", displayName: "Heisenberg", isSelfUser: false, id: .init()),
-            .init(handle: "jessepinkman", displayName: "The Cook", isSelfUser: false, id: .init()),
-            .init(handle: "tucosalamanca", displayName: "Tuco", isSelfUser: false, id: .init())
+            .init(handle: "walterwhite", displayName: "Heisenberg", isSelfUser: false, id: UUID().uuidString),
+            .init(handle: "jessepinkman", displayName: "The Cook", isSelfUser: false, id: UUID().uuidString),
+            .init(handle: "tucosalamanca", displayName: "Tuco", isSelfUser: false, id: UUID().uuidString)
         ]
     }
 }
