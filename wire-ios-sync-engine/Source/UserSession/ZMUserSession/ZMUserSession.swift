@@ -510,6 +510,7 @@ public final class ZMUserSession: NSObject {
             sharedContainerURL: sharedContainerURL,
             syncContext: coreDataStack.syncContext,
             eventContext: coreDataStack.eventContext,
+            earService: earService,
             mlsService: mlsService,
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
@@ -1323,7 +1324,7 @@ extension ZMUserSession: SyncAgentDelegate {
             attributes: .incrementalSync
         )
 
-        syncAgent?.resume()
+        syncAgent?.resume(callEventsOnly: true)
     }
 
     func notifyAuthenticationInvalidated(_ error: Error) {

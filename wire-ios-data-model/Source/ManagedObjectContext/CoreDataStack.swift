@@ -112,6 +112,8 @@ public protocol CoreDataStackProtocol: ContextProvider {
 
     func load() async throws
 
+    func setEARMessageEncryptionService(_ service: EARMessageEncryptionServiceProtocol)
+
 }
 
 @objc @objcMembers
@@ -123,12 +125,25 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
         messagesContainer.viewContext
     }
 
+    private var earMessageEncryptionService: EARMessageEncryptionServiceProtocol?
+
     public func newBackgroundContext() -> NSManagedObjectContext {
         #if DEBUG
-            return newBackgroundContextProvider?() ?? messagesContainer.newBackgroundContext()
+            let context = newBackgroundContextProvider?() ?? messagesContainer.newBackgroundContext()
         #else
-            return messagesContainer.newBackgroundContext()
+            let context = messagesContainer.newBackgroundContext()
         #endif
+
+        // Set the EARMessageEncryptionService on the new background context
+        context.performAndWait {
+            context.earMessageEncryptionService = earMessageEncryptionService
+        }
+
+        return context
+    }
+
+    public func setEARMessageEncryptionService(_ service: EARMessageEncryptionServiceProtocol) {
+        earMessageEncryptionService = service
     }
 
     private var _syncContext: NSManagedObjectContext!

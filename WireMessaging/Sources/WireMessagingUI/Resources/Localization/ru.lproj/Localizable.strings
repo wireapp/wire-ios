@@ -30,6 +30,7 @@
 "general.create" = "Создать";
 "general.cancel" = "Отмена";
 "general.done" = "Готово";
+"general.noInternet.title" = "Нет доступа к интернету";
 
 // MARK: - Channel Access level
 "channel_access_level.public" = "Публичный";
@@ -107,6 +108,7 @@
 "conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "Произошла ошибка при получении параметров глубины истории канала.";
 "conversation.channelHistory.updateHistoryDepth.error" = "Произошла ошибка при обновлении глубины истории канала.";
 "conversation.file.preview.open" = "Открыть предпросмотр";
+"conversation.draft.attachmentMenu.errorTitle" = "Не удается загрузить файл";
 "conversation.draft.attachmentMenu.retry" = "Повторить";
 "conversation.draft.attachmentMenu.remove" = "Удалить файл";
 
@@ -114,6 +116,7 @@
 "conversation.wireCells.files.navigationTitle" = "Shared Drive";
 "conversation.wireCells.allFiles.navigationTitle" = "Drive";
 "conversation.wireCells.files.item.subtitle" = "%@ от %@";
+"conversation.wireCells.allFiles.item.subtitle" = "%@ в %@";
 "conversation.wireCells.files.loadMore.title" = "Загрузить еще";
 "conversation.wireCells.files.item.menu.open" = "Открыть";
 "conversation.wireCells.files.item.menu.shareLink" = "Поделится";
@@ -136,11 +139,16 @@
 "conversation.wireCells.allFiles.noData.title" = "There are no files yet";
 "conversation.wireCells.allFiles.noData.message" = "For conversations that use shared Drive, you'll find all files here.";
 "conversation.wireCells.allFiles.noData.learnMore" = "Подробнее";
+"conversation.wireCells.files.noSearchResults.title" = "Ничего не найдено";
+"conversation.wireCells.files.noSearchResults.message" = "Попробуйте изменить поиск.";
 "conversation.wireCells.files.pendingCells.title" = "Файлы загружаются";
 "conversation.wireCells.files.pendingCells.message" = "Ваши документы и медиафайлы будут доступны здесь после того, как мы загрузим все файлы и папки.";
 "conversation.wireCells.files.error.title" = "Невозможно загрузить файлы";
-"conversation.wireCells.files.error.message" = "Не удалось загрузить ваши файлы и папки. Пожалуйста, попробуйте еще раз.";
-"conversation.wireCells.files.error.reload" = "Перезагрузить";
+"conversation.wireCells.files.error.message" = "Что-то пошло не так при загрузке. Пожалуйста, попробуйте еще раз.";
+"conversation.wireCells.files.error.retry" = "Повторить";
+"conversation.wireCells.files.error.noConnection.title" = "Не удается загрузить файлы";
+"conversation.wireCells.files.error.noConnection.message" = "Не удалось загрузить список ваших файлов. Пожалуйста, проверьте подключение к интернету и повторите попытку.";
+"conversation.wireCells.files.error.noConnection.retry" = "Повторить";
 "conversation.wireCells.files.search.title" = "Поиск файлов";
 "conversation.wireCells.files.list.createFolder" = "Создать папку";
 "conversation.wireCells.files.list.createFile" = "Создать файл";
@@ -215,6 +223,7 @@
 "conversation.wireCells.shareLink.on" = "ВКЛ";
 "conversation.wireCells.shareLink.expired" = "ИСТЕКЛА";
 "conversation.wireCells.shareLink.linkExpiredOn" = "Ссылка истекла %@";
+"conversation.wireCells.shareLink.sharedMessage" = "Откройте эту ссылку, чтобы ознакомиться с прикрепленными файлами: %@";
 
 // MARK: - Share Link Password View
 "conversation.wireCells.shareLink.password.title" = "Пароль";

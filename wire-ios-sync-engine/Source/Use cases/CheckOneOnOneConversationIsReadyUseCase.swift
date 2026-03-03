@@ -88,7 +88,7 @@ struct CheckOneOnOneConversationIsReadyUseCase: CheckOneOnOneConversationIsReady
     // MARK: - Helpers
 
     private func isMLSConversationEstablished(groupID: MLSGroupID) async throws -> Bool {
-        try await coreCryptoProvider.coreCrypto().perform {
+        try await coreCryptoProvider.coreCrypto().transaction {
             try await $0.conversationExists(conversationId: groupID.conversationId)
         }
     }

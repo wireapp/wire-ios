@@ -53,7 +53,7 @@ public extension CoreDataStack {
     enum BackupError: Error {
         case failedToRead
         case failedToWrite(Error)
-        case missingEAREncryptionKey
+        case missingEARMigrator
     }
 
     struct BackupInfo {
@@ -93,7 +93,7 @@ public extension CoreDataStack {
         accountIdentifier: UUID,
         clientIdentifier: String,
         applicationContainer: URL,
-        databaseKey: VolatileData? = nil
+        earMigrator: EARMigratorProtocol
     ) async throws -> BackupInfo {
         let accountDirectory = Self.accountDataFolder(
             accountIdentifier: accountIdentifier,
@@ -137,7 +137,7 @@ public extension CoreDataStack {
                 coordinator: coordinator,
                 location: backupLocation,
                 options: options,
-                databaseKey: databaseKey
+                earMigrator: earMigrator
             )
 
             // Create & write metadata
@@ -299,7 +299,7 @@ public extension CoreDataStack {
         coordinator: NSPersistentStoreCoordinator,
         location: URL,
         options: [String: Any],
-        databaseKey: VolatileData? = nil
+        earMigrator: EARMigratorProtocol
     ) throws {
         // Add persistent store at the new location to allow creation of NSManagedObjectContext
         let store = try coordinator.addPersistentStore(
@@ -313,8 +313,8 @@ public extension CoreDataStack {
 
         try context.performGroupedAndWait {
             if context.encryptMessagesAtRest {
-                guard let databaseKey else { throw BackupError.missingEAREncryptionKey }
-                try context.migrateAwayFromEncryptionAtRest(databaseKey: databaseKey)
+                try earMigrator.migrateAwayFromEncryptionAtRest(context: context)
+
                 context.encryptMessagesAtRest = false
                 _ = context.makeMetadataPersistent()
                 try context.save()

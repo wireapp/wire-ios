@@ -87,6 +87,7 @@ public enum ColorTheme {
         public static let background = UIColor(light: .gray20, dark: .gray100)
         public static let onBackground = UIColor(light: .black, dark: .white)
 
+        public static let chatBackground = UIColor(light: .gray10, dark: .gray90)
         public static let backgroundVariant = UIColor(light: .gray10, dark: .gray95)
         public static let onBackgroundVariant = UIColor(light: .black, dark: .white)
 
