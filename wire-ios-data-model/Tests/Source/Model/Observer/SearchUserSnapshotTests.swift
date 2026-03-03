@@ -222,7 +222,8 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         handle: String,
         accentColor: ZMAccentColor?,
         remoteIdentifier: UUID?,
-        user: ZMUser? = nil
+        user: ZMUser? = nil,
+        type: TypeOfUser = .regular
     ) -> ZMSearchUser {
         ZMSearchUser(
             viewContext: coreDataStack.viewContext,
@@ -231,7 +232,8 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
             accentColor: accentColor,
             remoteIdentifier: remoteIdentifier,
             user: user,
-            searchUsersCache: nil
+            searchUsersCache: nil,
+            type: type
         )
     }
 }

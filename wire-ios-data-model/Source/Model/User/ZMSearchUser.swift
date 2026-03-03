@@ -548,6 +548,33 @@ public class ZMSearchUser: NSObject, UserType {
         }
     }
 
+    @objc(initWithViewContext:name:handle:accentColor:remoteIdentifier:domain:teamIdentifier:user:searchUsersCache:type:)
+    public convenience init(
+        viewContext: NSManagedObjectContext,
+        name: String,
+        handle: String?,
+        accentColor: ZMAccentColor?,
+        remoteIdentifier: UUID?,
+        domain: String? = nil,
+        teamIdentifier: UUID? = nil,
+        user: ZMUser? = nil,
+        searchUsersCache: SearchUsersCache?,
+        typeWrapper: TypeOfUserWrapper?
+    ) {
+        self.init(
+            viewContext: viewContext,
+            name: name,
+            handle: handle,
+            accentColor: accentColor,
+            remoteIdentifier: remoteIdentifier,
+            domain: domain,
+            teamIdentifier: teamIdentifier,
+            user: user,
+            searchUsersCache: searchUsersCache,
+            type: typeWrapper?.value
+        )
+    }
+
     @objc
     public convenience init(
         contextProvider: ContextProvider,
@@ -782,6 +809,24 @@ public class ZMSearchUser: NSObject, UserType {
         internalTeamPermissions = permissions
         internalTeamCreatedBy = createdBy
     }
+
+    // MARK: - Helper
+
+    @objc(ZMTypeOfUserWrapper) @objcMembers
+    public final class TypeOfUserWrapper: NSObject {
+
+        let value: TypeOfUser
+
+        public init(value: TypeOfUser) {
+            self.value = value
+        }
+
+        public static let regular = TypeOfUserWrapper(value: .regular)
+        public static let app = TypeOfUserWrapper(value: .app)
+        public static let bot = TypeOfUserWrapper(value: .bot)
+
+    }
+
 }
 
 private extension TypeOfUser {

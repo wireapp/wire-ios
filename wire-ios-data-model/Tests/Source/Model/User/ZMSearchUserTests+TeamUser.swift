@@ -79,7 +79,8 @@ final class ZMSearchUserTests_TeamUser: ModelObjectsTests {
             accentColor: .amber,
             remoteIdentifier: teamIdentifier,
             teamIdentifier: teamIdentifier,
-            searchUsersCache: nil
+            searchUsersCache: nil,
+            type: .regular
         )
     }
 }
