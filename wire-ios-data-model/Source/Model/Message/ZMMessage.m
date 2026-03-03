@@ -341,7 +341,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
         return conversation;
     }
 
-    return [ZMConversation fetchOrCreateWith:conversationUUID domain:event.conversationDomain in:moc];
+    return [ZMConversation fetchOrCreateWith:conversationUUID domain:event.conversationDomain in:moc skipUpdate:false];
 }
 
 - (void)removeMessageClearingSender:(BOOL)clearingSender

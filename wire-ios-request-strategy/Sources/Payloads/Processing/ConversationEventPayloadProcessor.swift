@@ -774,7 +774,8 @@ struct ConversationEventPayloadProcessor {
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
-                in: context
+                in: context,
+                skipUpdate: true
             )
 
             conversation.conversationType = self.conversationType(for: conversation, from: conversationType)

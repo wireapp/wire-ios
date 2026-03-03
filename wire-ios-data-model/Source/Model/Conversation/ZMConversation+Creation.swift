@@ -32,7 +32,8 @@ public extension ZMConversation {
     static func fetchOrCreate(
         with remoteIdentifier: UUID,
         domain: String?,
-        in context: NSManagedObjectContext
+        in context: NSManagedObjectContext,
+        skipUpdate: Bool = false
     ) -> ZMConversation {
         var created = false
         return fetchOrCreate(
@@ -57,7 +58,8 @@ public extension ZMConversation {
         with remoteIdentifier: UUID,
         domain: String?,
         in context: NSManagedObjectContext,
-        created: UnsafeMutablePointer<Bool>
+        created: UnsafeMutablePointer<Bool>,
+        skipUpdate: Bool = false
     ) -> ZMConversation {
         // We must only ever call this on the sync context. Otherwise, there's a race condition
         // where the UI and sync contexts could both insert the same conversation (same UUID) and we'd end up
@@ -72,7 +74,7 @@ public extension ZMConversation {
             let conversation = ZMConversation.insertNewObject(in: context)
             conversation.remoteIdentifier = remoteIdentifier
             conversation.domain = if let domain, !domain.isEmpty { domain } else { .none }
-            conversation.needsToBeUpdatedFromBackend = true
+            conversation.needsToBeUpdatedFromBackend = !skipUpdate
             return conversation
         }
     }
