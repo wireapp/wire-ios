@@ -53,10 +53,10 @@ public struct TeamMember: Equatable, Sendable {
 
     public init(
         userID: UUID,
-        creationDate: Date? = nil,
-        creatorID: UUID? = nil,
-        legalholdStatus: LegalholdStatus? = nil,
-        permissions: TeamMemberPermissions? = nil
+        creationDate: Date?,
+        creatorID: UUID?,
+        legalholdStatus: LegalholdStatus?,
+        permissions: TeamMemberPermissions?
     ) {
         self.userID = userID
         self.creationDate = creationDate
