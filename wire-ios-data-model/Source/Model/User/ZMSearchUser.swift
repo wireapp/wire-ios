@@ -549,7 +549,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     @objc(initWithViewContext:name:handle:accentColor:remoteIdentifier:domain:teamIdentifier:user:searchUsersCache:type:)
-    public convenience init(
+    convenience init(
         viewContext: NSManagedObjectContext,
         name: String,
         handle: String?,
@@ -815,17 +815,17 @@ public class ZMSearchUser: NSObject, UserType {
     /// Objective-C does not support optional arguments of primitive types.
     /// This class wraps the ``TypeOfUser`` enum value in order to pass it as optional argument.
     @objc(ZMTypeOfUserWrapper) @objcMembers
-    public final class TypeOfUserWrapper: NSObject {
+    final class TypeOfUserWrapper: NSObject {
 
         let value: TypeOfUser
 
-        public init(value: TypeOfUser) {
+        init(value: TypeOfUser) {
             self.value = value
         }
 
-        public static let regular = TypeOfUserWrapper(value: .regular)
-        public static let app = TypeOfUserWrapper(value: .app)
-        public static let bot = TypeOfUserWrapper(value: .bot)
+        static let regular = TypeOfUserWrapper(value: .regular)
+        static let app = TypeOfUserWrapper(value: .app)
+        static let bot = TypeOfUserWrapper(value: .bot)
 
     }
 
