@@ -20,7 +20,7 @@ public import WireFoundation
 
 public extension AnalyticsEvent {
     enum WireDriveSendFiles {
-        /// Sends an event for one file.
+        /// Sends an event for the set of files attached to a chat message.
         /// - Parameters:
         ///   - containsText: Whether the message that is associated with the files has non-empty text
         ///   - numberOfAttachments: How many files that message contains
