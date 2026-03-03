@@ -60,7 +60,7 @@ final class PersonalUsersTests: WireUITestCase {
 
     /// testiny:  https://app.testiny.io/IOS/testcases/tcf/1286/tc/8799
     @MainActor
-    func test_Login_asExistingPersonalUser() async throws {
+    func test_Login_asExistingPersonalUser_TC_8804() async throws {
         let user = try await userHelper.createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
