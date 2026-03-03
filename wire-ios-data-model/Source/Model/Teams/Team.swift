@@ -98,7 +98,7 @@ public extension Team {
                 guard let user = member.user else {
                     return false
                 }
-                return !user.isSelfUser && searchPredicate.evaluate(with: user)
+                return !user.isSelfUser && user.type == .regular && searchPredicate.evaluate(with: user)
             }
             .sortedAscendingPrependingNil { $0.user?.normalizedName }
     }

@@ -239,7 +239,7 @@ public final class SearchTask {
         }
 
         let searchContext = contextProvider.newBackgroundContext()
-        let (connectedUserIDs, teamMemberIDs, conversationIDs) = await searchContext.perform { [self] in
+        let (connectedUserIDs, teamMemberIDs, appIDs, conversationIDs) = await searchContext.perform { [self] in
 
             var team: WireDataModel.Team?
             if let teamObjectID = request.team?.objectID {
@@ -259,6 +259,10 @@ public final class SearchTask {
                 searchOptions: request.searchOptions,
                 in: searchContext
             ) : []
+            let apps = request.searchOptions.contains(.apps) ? appsInTeam(
+                team: team,
+                in: searchContext
+            ) : []
 
             let conversations = request.searchOptions.contains(.conversations) ? conversations(
                 matchingQuery: request.query,
@@ -269,6 +273,7 @@ public final class SearchTask {
             return (
                 connectedUsers.map(\.objectID),
                 teamMembers.map(\.objectID),
+                apps.map(\.objectID),
                 conversations.map(\.objectID)
             )
 
@@ -278,6 +283,8 @@ public final class SearchTask {
         return await viewContext.perform { [self] in
 
             let copiedConnectedUsers = connectedUserIDs
+                .compactMap { viewContext.object(with: $0) as? ZMUser }
+            let copiedApps = appIDs
                 .compactMap { viewContext.object(with: $0) as? ZMUser }
             let searchConnectedUsers = copiedConnectedUsers
                 .map {
@@ -308,7 +315,7 @@ public final class SearchTask {
                 teamMembers: searchTeamMembers,
                 directory: [],
                 conversations: conversationIDs.compactMap { viewContext.object(with: $0) as? ZMConversation },
-                apps: [],
+                apps: copiedApps,
                 bots: [],
                 searchUsersCache: searchUsersCache
             )
@@ -364,6 +371,15 @@ public final class SearchTask {
         }
 
         return partialResult
+    }
+
+    private func appsInTeam(
+        // matchingQuery query: String, // TODO: delete?
+        team: WireDataModel.Team?,
+        // searchOptions: SearchOptions,
+        in context: NSManagedObjectContext
+    ) -> [ZMUser] {
+        fatalError()
     }
 
     private func connectedUsers(
