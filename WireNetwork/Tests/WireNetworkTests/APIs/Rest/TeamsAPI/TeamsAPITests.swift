@@ -624,38 +624,6 @@ final class TeamsAPITests: XCTestCase {
 
     }
 
-    // MARK: - V15
-
-    func testGetTeamRolesForID_SuccessResponse_200_V15_Then_Verify_Request() async throws {
-
-        // Given
-        let apiVersions = APIVersion.v15.andNextVersions
-        let apiService = MockAPIServiceProtocol.withResponses(
-            .init(repeating: (.ok, "GetTeamRolesSuccessResponseV15"), count: apiVersions.count)
-        )
-
-        // Then
-        try await apiSnapshotHelper.verifyRequest(for: APIVersion.v15.andNextVersions, apiService: apiService) { sut in
-            // When
-            let result = try await sut.getTeamRoles(for: .mockID1)
-
-            // Then
-            XCTAssertEqual(
-                result,
-                [
-                    ConversationRole(
-                        name: "admin",
-                        actions: [
-                            .addConversationMember,
-                            .modifyConversationHistory,
-                            .removeConversationMember
-                        ]
-                    )
-                ]
-            )
-        }
-    }
-
     // MARK: - V14
 
     func testGetApp_givenV14AndAbove_AndSuccessResponse200_thenSucceeds() async throws {
@@ -705,6 +673,36 @@ final class TeamsAPITests: XCTestCase {
     }
 
     // MARK: - V15
+
+    func testGetTeamRolesForID_SuccessResponse_200_V15_Then_Verify_Request() async throws {
+
+        // Given
+        let apiVersions = APIVersion.v15.andNextVersions
+        let apiService = MockAPIServiceProtocol.withResponses(
+            .init(repeating: (.ok, "GetTeamRolesSuccessResponseV15"), count: apiVersions.count)
+        )
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: APIVersion.v15.andNextVersions, apiService: apiService) { sut in
+            // When
+            let result = try await sut.getTeamRoles(for: .mockID1)
+
+            // Then
+            XCTAssertEqual(
+                result,
+                [
+                    ConversationRole(
+                        name: "admin",
+                        actions: [
+                            .addConversationMember,
+                            .modifyConversationHistory,
+                            .removeConversationMember
+                        ]
+                    )
+                ]
+            )
+        }
+    }
 
     func testGetApps_givenV15AndAbove_AndSuccessResponse200_thenSucceeds() async throws {
 
