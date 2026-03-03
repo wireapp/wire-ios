@@ -45,7 +45,6 @@ final class FederationTests: WireUITestCase {
         try switchBackend(target: .anta)
         let antaTeam = try await userHelper.registerTeam(withMemberCount: 0)
         let conversationsPage = try await loginToBackend(user: antaTeam.teamOwner, backend: .anta)
-        let messageFromOwner = "hello"
         
         // WHEN
         let federatedHandle = "@\(bellaTeam.teamOwner.username)@\(BackendTarget.bella.domainInfo)"
