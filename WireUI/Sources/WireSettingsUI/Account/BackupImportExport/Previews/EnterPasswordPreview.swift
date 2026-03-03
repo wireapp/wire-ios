@@ -35,7 +35,7 @@ struct EnterPasswordPreview: View {
                 )
                 .presentationDetents([.medium])
                 .interactiveDismissDisabled()
-                .onChange(of: password) { _ in
+                .onChange(of: password) { _, _ in
                     if isPasswordWrong {
                         isPasswordWrong = false
                     }

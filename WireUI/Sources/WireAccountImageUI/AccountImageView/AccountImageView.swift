@@ -128,14 +128,6 @@ public final class AccountImageView: UIView {
         updateShape()
     }
 
-    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        if #unavailable(iOS 17.0), previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
-            updateAvailabilityIndicator()
-        }
-    }
-
     // MARK: - Methods
 
     private func setupSubviews() {
