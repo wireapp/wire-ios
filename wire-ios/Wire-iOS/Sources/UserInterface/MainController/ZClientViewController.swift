@@ -447,11 +447,7 @@ final class ZClientViewController: UIViewController {
 
         // prevent split view appearance on large phones
         if traitCollection.userInterfaceIdiom != .pad {
-            if #available(iOS 17.0, *) {
-                mainSplitViewController.traitOverrides.horizontalSizeClass = .compact
-            } else {
-                setOverrideTraitCollection(.init(horizontalSizeClass: .compact), forChild: mainSplitViewController)
-            }
+            mainSplitViewController.traitOverrides.horizontalSizeClass = .compact
         }
 
         Task {

@@ -250,10 +250,8 @@ public final class AccountImageView: UIView {
         updateAvailabilityIndicator()
         updateNotificationBadge()
 
-        if #available(iOS 17.0, *) {
-            registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _: UITraitCollection) in
-                self.updateAvailabilityIndicator()
-            }
+        registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _: UITraitCollection) in
+            self.updateAvailabilityIndicator()
         }
     }
 
