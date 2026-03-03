@@ -38,6 +38,7 @@ public final class UserSessionComponent {
     private let syncContext: NSManagedObjectContext
     private let eventContext: NSManagedObjectContext
 
+    private let earService: any EARServiceInterface
     private let mlsService: any MLSServiceInterface
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
@@ -58,6 +59,7 @@ public final class UserSessionComponent {
         sharedContainerURL: URL?,
         syncContext: NSManagedObjectContext,
         eventContext: NSManagedObjectContext,
+        earService: any EARServiceInterface,
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
@@ -75,6 +77,7 @@ public final class UserSessionComponent {
         self.sharedUserDefaults = sharedUserDefaults
         self.syncContext = syncContext
         self.eventContext = eventContext
+        self.earService = earService
         self.mlsService = mlsService
         self.mlsDecryptionService = mlsDecryptionService
         self.proteusService = proteusService
@@ -103,6 +106,7 @@ public final class UserSessionComponent {
             sharedUserDefaults: sharedUserDefaults,
             syncContext: syncContext,
             eventContext: eventContext,
+            earService: earService,
             mlsService: mlsService,
             mlsDecryptionService: mlsDecryptionService,
             proteusService: proteusService,

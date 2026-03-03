@@ -17,13 +17,13 @@
 //
 
 import UIKit
-import WireLogging
 import WireAccountImageUI
 import WireCommonComponents
 import WireConversationListUI
 import WireDataModel
 import WireDesign
 import WireFoundation
+import WireLogging
 import WireMainNavigationUI
 import WireMessagingDomain
 import WireReusableUIComponents
@@ -446,7 +446,7 @@ final class ConversationListViewController: UIViewController {
 
     func applyColorTheme() {
         view.backgroundColor = mainSplitViewState == .expanded
-            ? ColorTheme.Backgrounds.backgroundVariant
+            ? ColorTheme.Backgrounds.chatBackground
             : ColorTheme.Backgrounds.surface
     }
 

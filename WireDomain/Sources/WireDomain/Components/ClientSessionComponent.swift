@@ -60,6 +60,7 @@ public final class ClientSessionComponent {
     private let syncContext: NSManagedObjectContext
     private let eventContext: NSManagedObjectContext
 
+    private let earService: any EARServiceInterface
     private let mlsService: any MLSServiceInterface
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
@@ -80,6 +81,7 @@ public final class ClientSessionComponent {
         sharedUserDefaults: UserDefaults,
         syncContext: NSManagedObjectContext,
         eventContext: NSManagedObjectContext,
+        earService: any EARServiceInterface,
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
@@ -97,6 +99,7 @@ public final class ClientSessionComponent {
         self.sharedUserDefaults = sharedUserDefaults
         self.syncContext = syncContext
         self.eventContext = eventContext
+        self.earService = earService
         self.mlsService = mlsService
         self.mlsDecryptionService = mlsDecryptionService
         self.proteusService = proteusService
@@ -405,7 +408,8 @@ public final class ClientSessionComponent {
         syncStateSubject: syncStateSubject,
         liveBrokenGroupSubject: liveBrokenGroupSubject,
         journal: journal,
-        mlsGroupRepairAgent: mlsGroupRepairAgent
+        mlsGroupRepairAgent: mlsGroupRepairAgent,
+        earService: earService
     )
 
     public lazy var incrementalSyncV2: IncrementalSyncV2 = if let sharedContainerURL {
@@ -423,6 +427,7 @@ public final class ClientSessionComponent {
             coreCryptoProvider: coreCryptoProvider,
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
+            earService: earService,
             createPushChannelState: { [selfClientID] in
                 PushChannelState(sharedContainerURL: sharedContainerURL, clientID: selfClientID)
             }

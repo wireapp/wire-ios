@@ -44,8 +44,36 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.conversationCell.rawValue]
     }
 
+    var textFilteredByFavourites: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.textFilteredByFavourites.rawValue]
+    }
+
+    var textFilteredByOneOnOne: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.textFilteredByOneOnOne.rawValue]
+    }
+
     var blockButtonOnMoreOptions: XCUIElement {
         app.buttons[Locators.ConversationsPage.blockOptionOnContextMenu.rawValue]
+    }
+
+    var addFavouriteButtonOnMoreOptions: XCUIElement {
+        app.buttons[Locators.ConversationsPage.addToFavourite.rawValue]
+    }
+
+    var removeFavouriteButtonOnMoreOptions: XCUIElement {
+        app.buttons[Locators.ConversationsPage.removeFromFavourite.rawValue]
+    }
+
+    var filterByFavourite: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterByFavourites.rawValue]
+    }
+
+    var filterByOneOnOneConversation: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterByOneOnOneConversation.rawValue]
+    }
+
+    var filterConversationsButton: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterConversations.rawValue]
     }
 
     var blockButtonOnBottomSheet: XCUIElement {
@@ -64,6 +92,14 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.accountProfileImageView.rawValue]
     }
 
+    var mentionStatus: XCUIElement {
+        app.otherElements[Locators.ConversationsPage.status.rawValue]
+    }
+
+    var loadBar: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationsPage.loadBar.rawValue]
+    }
+
     func openSettings() throws -> SettingsPage {
         settingsButton.tap()
         return try SettingsPage()
@@ -75,7 +111,7 @@ class ConversationsPage: PageModel {
     }
 
     func openUserProfilePage() throws -> UserProfilePage {
-        try VerifyUserIsOnConversationsTab()
+        try letTheSyncFinish()
         accountProfileImageView.waitAndTap()
         return try UserProfilePage()
     }
@@ -86,6 +122,7 @@ class ConversationsPage: PageModel {
     }
 
     func openPendingRequest() throws -> ConnectionRequestsPage {
+        try letTheSyncFinish()
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
 
         let maxDuration: TimeInterval = 10
@@ -101,6 +138,7 @@ class ConversationsPage: PageModel {
     }
 
     func openConversation() throws -> ActiveConversationPage {
+        try letTheSyncFinish()
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
 
         let maxDuration: TimeInterval = 10
@@ -130,11 +168,24 @@ class ConversationsPage: PageModel {
         conversationCell.label
     }
 
-    // Problem: Opening the user profile can occasionally fail while sync is in progress after login
-    // Workaround: Assert the presence of some UI elements to give the sync time to complete.
-    func VerifyUserIsOnConversationsTab() throws {
-        XCTAssertTrue(plusButtonToCreateGroup.exists)
-        XCTAssertTrue(archivedButton.exists)
-        XCTAssert(settingsButton.exists)
+    func letTheSyncFinish() throws {
+        loadBar.waitToDisappear()
+    }
+
+    func markConversationAsFavourite() throws -> ConversationsPage {
+        addFavouriteButtonOnMoreOptions.tap()
+        return self
+    }
+
+    func filterConversationByFavourite() throws -> ConversationsPage {
+        filterConversationsButton.tap()
+        filterByFavourite.tap()
+        return self
+    }
+
+    func filterConversationByOneOnOne() throws -> ConversationsPage {
+        filterConversationsButton.tap()
+        filterByOneOnOneConversation.tap()
+        return self
     }
 }

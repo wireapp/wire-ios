@@ -18,6 +18,15 @@
 
 import WireCoreCrypto
 
+public extension MockCoreCryptoProtocol {
+
+    func mockTransaction(context: CoreCryptoContextProtocol) {
+        transaction_MockMethod = { block in
+            try await block(context)
+        }
+    }
+}
+
 public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - Life cycle
@@ -59,7 +68,7 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
     // MARK: - transaction<Result>
 
     public typealias transaction_MethodType<Result> =
-        ((_ context: any WireCoreCryptoUniffi.CoreCryptoContextProtocol) async throws -> Result) async throws -> Void
+        ((_ context: any WireCoreCryptoUniffi.CoreCryptoContextProtocol) async throws -> Result) async throws -> Result
 
     public var transaction_Invocations: [
         (_ context: any WireCoreCryptoUniffi.CoreCryptoContextProtocol) async throws

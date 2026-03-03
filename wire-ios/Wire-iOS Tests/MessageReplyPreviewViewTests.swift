@@ -217,7 +217,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             )
     }
 
-    func testThatItRendersLinkPreviewMessagePreview() {
+    func testThatItRendersLinkPreviewMessagePreview() throws {
         let url = "https://www.example.com/article/1"
         let article = ArticleMetadata(
             originalURLString: url,
@@ -234,7 +234,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .jpegData(compressionQuality: 0.9)
         message.backingTextMessageData.linkPreviewHasImage = true
 
-        let previewView = message.replyPreview()!
+        let previewView = try XCTUnwrap(message.replyPreview())
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
         snapshotHelper

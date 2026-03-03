@@ -37,6 +37,10 @@ class IncomingCallPage: PageModel {
         app.staticTexts[Locators.IncomingCallPage.acceptCall.rawValue]
     }
 
+    var turnOffMicrophoneButton: XCUIElement {
+        app.staticTexts[Locators.IncomingCallPage.turnOffMicrophone.rawValue]
+    }
+
     func getCallerName() -> String {
         let callerElement = app.staticTexts.containing(NSPredicate(format: "label CONTAINS[c] %@", "calling")).element
         return callerElement.label
@@ -45,7 +49,7 @@ class IncomingCallPage: PageModel {
     func acceptIncommingCall(with testCase: XCTestCase) throws -> OngoingCallPage {
         handleMicrophonePermissionAlert(testCase: testCase)
         acceptButton.tap()
-        app.tap()
+        turnOffMicrophoneButton.tap()
         return try OngoingCallPage()
     }
 
