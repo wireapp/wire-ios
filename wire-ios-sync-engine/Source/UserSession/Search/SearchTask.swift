@@ -282,6 +282,8 @@ public final class SearchTask {
         let viewContext = contextProvider.viewContext
         return await viewContext.perform { [self] in
 
+            let copiedConversations = conversationIDs
+                .compactMap { viewContext.object(with: $0) as? ZMConversation }
             let copiedConnectedUsers = connectedUserIDs
                 .compactMap { viewContext.object(with: $0) as? ZMUser }
             let copiedApps = appIDs
@@ -314,7 +316,7 @@ public final class SearchTask {
                 contacts: searchConnectedUsers,
                 teamMembers: searchTeamMembers,
                 directory: [],
-                conversations: conversationIDs.compactMap { viewContext.object(with: $0) as? ZMConversation },
+                conversations: copiedConversations,
                 apps: copiedApps,
                 bots: [],
                 searchUsersCache: searchUsersCache
@@ -345,7 +347,10 @@ public final class SearchTask {
         searchOptions: SearchOptions,
         in context: NSManagedObjectContext
     ) -> [Member] {
-        var partialResult = team?.members(matchingQuery: query) ?? []
+        var partialResult = team?.members(
+            matchingQuery: query,
+            filteredBy: .regular
+        ) ?? []
 
         if searchOptions.contains(.excludeNonActiveTeamMembers) {
             partialResult = filterNonActiveTeamMembers(
@@ -379,7 +384,10 @@ public final class SearchTask {
         // searchOptions: SearchOptions,
         in context: NSManagedObjectContext
     ) -> [ZMUser] {
-        fatalError()
+        return team?.members(
+            matchingQuery: "",
+            filteredBy: .app
+        ).compactMap(\.user) ?? []
     }
 
     private func connectedUsers(
