@@ -563,6 +563,112 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertEqual(sut.cellDescriptionsForTesting.count, 3)
     }
 
+    func testFindEmbeddedLinks_directMatch() {
+        let originalURLString = "http://foo.bar/baz"
+        let messageText = "Check out this [amazing article]\(originalURLString)"
+        let visibleLinkText = "[amazing article]"
+        guard let rangeOfVisibleText = messageText.range(of: visibleLinkText) else {
+            XCTFail("Test setup error: visibleLinkText not found in messageText.")
+            return
+        }
+        let embeddedTextOffset = messageText.distance(from: messageText.startIndex, to: rangeOfVisibleText.upperBound)
+        let linkMessage = MockMessageFactory.textMessageWithEmbeddedLink(
+            text: messageText,
+            originalURL: originalURLString,
+            offset: embeddedTextOffset
+        )
+        let detectedLinks = ConversationTextMessageCellDescription
+            .findEmbeddedLinks(in: linkMessage.backingTextMessageData)
+        XCTAssertEqual(detectedLinks.count, 1, "Should detect exactly one link")
+    }
+
+    func testFindEmbeddedLinks_linkPreviewHasNoOriginalURLString() {
+        let originalURLString = ""
+        let messageText = "Check out this [amazing article]"
+        let visibleLinkText = "[amazing article]"
+        guard let rangeOfVisibleText = messageText.range(of: visibleLinkText) else {
+            XCTFail("Test setup error: visibleLinkText not found in messageText.")
+            return
+        }
+        let embeddedTextOffset = messageText.distance(from: messageText.startIndex, to: rangeOfVisibleText.upperBound)
+        let linkMessage = MockMessageFactory.textMessageWithEmbeddedLink(
+            text: messageText,
+            originalURL: originalURLString,
+            offset: embeddedTextOffset
+        )
+
+        let detectedLinks = ConversationTextMessageCellDescription
+            .findEmbeddedLinks(in: linkMessage.backingTextMessageData)
+
+        XCTAssertTrue(detectedLinks.isEmpty, "Should return an empty array if link preview has no original URL string.")
+    }
+
+    func testFindEmbeddedLinks_invalidOriginalURLString() {
+        let originalURLString = "not a valid url"
+        let messageText = "Check out this [amazing article]"
+        let visibleLinkText = "[amazing article]"
+        guard let rangeOfVisibleText = messageText.range(of: visibleLinkText) else {
+            XCTFail("Test setup error: visibleLinkText not found in messageText.")
+            return
+        }
+        let embeddedTextOffset = messageText.distance(from: messageText.startIndex, to: rangeOfVisibleText.upperBound)
+        let linkMessage = MockMessageFactory.textMessageWithEmbeddedLink(
+            text: messageText,
+            originalURL: originalURLString,
+            offset: embeddedTextOffset
+        )
+
+        let detectedLinks = ConversationTextMessageCellDescription
+            .findEmbeddedLinks(in: linkMessage.backingTextMessageData)
+
+        XCTAssertTrue(detectedLinks.isEmpty, "Should return an empty array if the original URL string is invalid.")
+    }
+
+    func testFindEmbeddedLinks_urlPartiallyInMessageText() {
+        let originalURLString = "http://foo.bar/baz/full/path"
+        let messageText = "Only [amazing article]http://foo.bar/baz is in the message."
+        let visibleLinkText = "[amazing article]"
+        guard let rangeOfVisibleText = messageText.range(of: visibleLinkText) else {
+            XCTFail("Test setup error: visibleLinkText not found in messageText.")
+            return
+        }
+        let embeddedTextOffset = messageText.distance(from: messageText.startIndex, to: rangeOfVisibleText.upperBound)
+        let linkMessage = MockMessageFactory.textMessageWithEmbeddedLink(
+            text: messageText,
+            originalURL: originalURLString,
+            offset: embeddedTextOffset
+        )
+
+        let detectedLinks = ConversationTextMessageCellDescription
+            .findEmbeddedLinks(in: linkMessage.backingTextMessageData)
+
+        XCTAssertTrue(
+            detectedLinks.isEmpty,
+            "Should return an empty array if only a partial match of the URL is found."
+        )
+    }
+
+    func testFindEmbeddedLinks_urlWithDifferentSchemeInMessageText() {
+        let originalURLString = "http://foo.bar/baz"
+        let messageText = "Check out [amazing article]https://foo.bar/baz"
+        let visibleLinkText = "[amazing article]"
+        guard let rangeOfVisibleText = messageText.range(of: visibleLinkText) else {
+            XCTFail("Test setup error: visibleLinkText not found in messageText.")
+            return
+        }
+        let embeddedTextOffset = messageText.distance(from: messageText.startIndex, to: rangeOfVisibleText.upperBound)
+        let linkMessage = MockMessageFactory.textMessageWithEmbeddedLink(
+            text: messageText,
+            originalURL: originalURLString,
+            offset: embeddedTextOffset
+        )
+
+        let detectedLinks = ConversationTextMessageCellDescription
+            .findEmbeddedLinks(in: linkMessage.backingTextMessageData)
+
+        XCTAssertTrue(detectedLinks.isEmpty, "Should return an empty array if the scheme doesn't match.")
+    }
+
     private func makeSUT(
         message: MockMessage = MockMessage(),
         context: ConversationMessageContext? = nil,
