@@ -58,6 +58,8 @@ private extension WireNetwork.ConversationAction {
             "modify_conversation_access"
         case .modifyConversationHistory:
             "modify_conversation_history"
+        case .removeConversationMember:
+            "remove_conversation_member"
         case .modifyConversationMessageTimer:
             "modify_conversation_message_timer"
         case .modifyConversationName:
@@ -66,8 +68,6 @@ private extension WireNetwork.ConversationAction {
             "modify_conversation_receipt_mode"
         case .modifyOtherConversationMember:
             "modify_other_conversation_member"
-        case .removeConversationMember:
-            "remove_conversation_member"
         }
     }
 
