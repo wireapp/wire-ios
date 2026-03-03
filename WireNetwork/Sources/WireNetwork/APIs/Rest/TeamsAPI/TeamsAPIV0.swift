@@ -167,6 +167,23 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         return payload.id
     }
 
+    // MARK: - Get apps
+
+    func getApps(
+        for teamID: Team.ID
+    ) async throws -> [App] {
+        throw TeamsAPIError.unsupportedEndpointForAPIVersion
+    }
+
+    // MARK: - Get app details
+
+    func getApp(
+        for teamID: Team.ID,
+        with id: UUID
+    ) async throws -> App {
+        throw TeamsAPIError.unsupportedEndpointForAPIVersion
+    }
+
     // MARK: - Get whitelisted bots
 
     func getWhitelistedBots(
