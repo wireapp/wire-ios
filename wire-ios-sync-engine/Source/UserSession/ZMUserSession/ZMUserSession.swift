@@ -901,7 +901,7 @@ public final class ZMUserSession: NSObject {
             }
 
         isNetworkReachableCancellable = networkReachability.isOnlinePublisher
-            .filter { $0 }
+            .filter(\.self)
             .sink { [weak self] _ in
                 guard let self else { return }
                 notifyAVSOfNetworkInterfaceChanged()
