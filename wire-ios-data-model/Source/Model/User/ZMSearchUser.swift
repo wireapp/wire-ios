@@ -812,6 +812,8 @@ public class ZMSearchUser: NSObject, UserType {
 
     // MARK: - Helper
 
+    /// Objective-C does not support optional arguments of primitive types.
+    /// This class wraps the ``TypeOfUser`` enum value in order to pass it as optional argument.
     @objc(ZMTypeOfUserWrapper) @objcMembers
     public final class TypeOfUserWrapper: NSObject {
 
