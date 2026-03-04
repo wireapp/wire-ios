@@ -562,6 +562,16 @@ class UserHelper {
 
         try await connectionsAPI.acceptConnectionRequest(domain: domain, userId: userId)
     }
+
+    /// Unlock and Enable Drive feature
+    /// - Parameter teamID: teamID where this needs to be enabled
+    func unlockAndEnableDriveFeature(teamID: UUID) async throws {
+        let backOffice = BackOffice(backendURL: backendURL)
+        let basicAuth = basicAuth()
+        try await backOffice.getCellsInternal(teamId: teamID.uuidString, basicAuth: basicAuth)
+        try await backOffice.unlockCellsFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
+        try await backOffice.enableCellsFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
+    }
 }
 
 extension BackendEnvironment {

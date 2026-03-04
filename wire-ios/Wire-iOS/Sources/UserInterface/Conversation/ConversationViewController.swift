@@ -478,15 +478,15 @@ final class ConversationViewController: UIViewController {
 
         // uncomment code when feature prod ready
         if userSession.isWireDriveEnabled, conversation.isWireDriveEnabled {
-            actions.append(
-                UIAction(
-                    title: L10n.Localizable.Conversation.Action.files,
-                    image: UIImage(resource: .files),
-                    handler: { [weak self] _ in
-                        self?.onFilesButtonPressed(nil)
-                    }
-                )
+            let filesAction = UIAction(
+                title: L10n.Localizable.Conversation.Action.files,
+                image: UIImage(resource: .files),
+                handler: { [weak self] _ in
+                    self?.onFilesButtonPressed(nil)
+                }
             )
+            filesAction.accessibilityIdentifier = Locators.ActiveConversationPage.sharedDriveButton.rawValue
+            actions.append(filesAction)
         }
 
         if shouldShowCollectionsButton {
