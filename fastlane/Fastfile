@@ -897,7 +897,7 @@ class Build
             height = Integer(image_height) / 4.0
 
             # Add build number to the icon
-            %x( magick -background '#0008' -fill white -gravity center -size #{width}x#{height} caption:"#{extra_info}" "#{image}" +swap -gravity south -composite "#{image}" )
+            %x( magick -background '#0008' -fill white -font '/System/Library/Fonts/Helvetica.ttc' -gravity center -size #{width}x#{height} caption:"#{extra_info}" "#{image}" +swap -gravity south -composite "#{image}" )
             processed += 1
         end
         UI.important("Processed #{processed} icons in #{iconset_location} by adding '#{extra_info}'")
