@@ -198,7 +198,10 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
             let isOverlappingMention = mentionRanges.contains { NSIntersectionRange(linkRange, $0).length > 0 }
 
-            if let link = result.url, !isOverlappingMention {
+            let isPhone = result.resultType == .phoneNumber
+            let url = result.url
+
+            if url != nil || isPhone, !isOverlappingMention {
                 mutableAttributedText.addAttributes([
                     .foregroundColor: detectedLinkForegroundColor,
                     .underlineStyle: NSUnderlineStyle.single.rawValue,
