@@ -71,6 +71,7 @@ public protocol SessionActivationObserver: AnyObject {
 // sourcery: AutoMockable
 public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerWillLogout(
+        accountID: UUID?,
         environment: BackendEnvironment2?,
         error: Error?,
         userSessionCanBeTornDown: (() -> Void)?
@@ -641,6 +642,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         } else {
             createUnauthenticatedSession()
             delegate?.sessionManagerWillLogout(
+                accountID: nil,
                 environment: nil,
                 error: nil,
                 userSessionCanBeTornDown: nil
@@ -747,6 +749,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             guard isConfirmed else { return }
             let error = NSError(userSessionErrorCode: .addAccountRequested, userInfo: userInfo)
             self?.delegate?.sessionManagerWillLogout(
+                accountID: nil,
                 environment: nil,
                 error: error
             ) { [weak self] in
@@ -860,6 +863,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         guard let activeUserSession else {
             WireLogger.sessionManager.critical("No active user session")
             delegate?.sessionManagerWillLogout(
+                accountID: nil,
                 environment: nil,
                 error: error,
                 userSessionCanBeTornDown: nil
@@ -877,6 +881,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         let environment = try? environmentStore.fetchBackendEnvironment(accountID: account.userIdentifier)
 
         delegate?.sessionManagerWillLogout(
+            accountID: account.userIdentifier,
             environment: environment,
             error: error
         ) { [weak self] in
@@ -912,6 +917,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             let environment = try? environmentStore.fetchBackendEnvironment(accountID: account.userIdentifier)
 
             delegate?.sessionManagerWillLogout(
+                accountID: account.userIdentifier,
                 environment: environment,
                 error: error,
                 userSessionCanBeTornDown: nil
@@ -947,9 +953,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         // If the user isn't logged in it's because they still need
         // to complete the login flow, which will be handle elsewhere.
         if session.isLoggedIn {
+            await session.triggerSync()
             delegate?.sessionManagerDidReportLockChange(forSession: session)
             performPostUnlockActionsIfPossible(for: session)
-
             await configureAnalytics(for: session)
             await requestCertificateEnrollmentIfNeeded()
         } else {
@@ -1020,6 +1026,9 @@ public final class SessionManager: NSObject, SessionManagerType {
                     newSession: userSession,
                     coreDataStack: userSession.coreDataStack
                 )
+
+                await userSession.start()
+
                 return userSession
 
             } catch UserSessionLoader.Failure.buildIsBlacklisted {
@@ -1593,6 +1602,14 @@ extension SessionManager: UnauthenticatedSessionDelegate {
             loginDelegate?.authenticationDidFail(error)
             return
         }
+
+        // The journal may have old values for the same user
+        // from a previous installation or login session.
+        var journal = Journal(
+            userID: account.userIdentifier,
+            storage: sharedUserDefaults
+        )
+        journal[.isInitialSyncRequired] = true
 
         accountManager.addAndSelect(account)
 
