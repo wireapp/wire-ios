@@ -23,6 +23,7 @@ extension ZClientViewController: StartUIDelegate {
 
     @MainActor
     func startUIViewController(_ viewController: StartUIViewController, didSelect user: any UserType) {
+        // TODO: apps should probably not end up here
         Task {
             let userSession = viewController.userSession
             let conversation = user.oneToOneConversation

@@ -155,7 +155,7 @@ extension SearchResult {
             teamMembers: result.teamMembers,
             directory: directory,
             conversations: result.conversations,
-            apps: apps,
+            apps: result.apps,
             bots: bots,
             searchUsersCache: searchUsersCache
         )

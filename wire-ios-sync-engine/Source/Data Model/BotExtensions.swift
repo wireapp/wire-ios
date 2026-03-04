@@ -59,6 +59,20 @@ public final class ServiceProvider {
     public let url: String
     public let providerDescription: String
 
+    public init(
+        identifier: String,
+        name: String,
+        email: String,
+        url: String,
+        providerDescription: String
+    ) {
+        self.identifier = identifier
+        self.name = name
+        self.email = email
+        self.url = url
+        self.providerDescription = providerDescription
+    }
+
     init?(payload: [AnyHashable: Any]) {
         guard let identifier  = payload["id"] as? String,
               let name        = payload["name"] as? String,

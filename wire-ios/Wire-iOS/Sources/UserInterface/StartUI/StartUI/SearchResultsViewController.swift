@@ -433,6 +433,7 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
         didSelectUser user: UserType,
         at indexPath: IndexPath
     ) {
+        // TODO: apps?
         if let user = user as? ZMUser {
             delegate?.searchResultsViewController(
                 self,
@@ -449,6 +450,8 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
                 indexPath: indexPath,
                 section: sectionFor(controller: searchSectionController)
             )
+        } else {
+            fatalError("TODO: ?")
         }
     }
 

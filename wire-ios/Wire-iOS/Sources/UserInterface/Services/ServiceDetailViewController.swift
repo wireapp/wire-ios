@@ -189,6 +189,13 @@ final class ServiceDetailViewController: UIViewController {
                         assets: [], // TODO: convert assets
                         tags: []
                     )
+                    detailView.service.provider = ServiceProvider(
+                        identifier: "",
+                        name: "TODO", // TODO: appDetails.author?
+                        email: "",
+                        url: "",
+                        providerDescription: ""
+                    )
                 } catch {
                     WireLogger.ui.error("failed to get app details", attributes: .safePublic)
                 }
