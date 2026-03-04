@@ -44,7 +44,7 @@ public protocol ConversationLocalStoreProtocol {
         id: UUID,
         domain: String?
     ) async -> ZMConversation
-    
+
     func fetchOrCreateConversation(
         id: UUID,
         domain: String?,

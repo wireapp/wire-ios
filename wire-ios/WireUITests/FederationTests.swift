@@ -28,8 +28,8 @@ final class FederationTests: WireUITestCase {
         return try firstTimePage
             .acceptPopup(with: self)
     }
-    
-    
+
+
     @MainActor
     func testConnectFederatedUsers() async throws {
 
@@ -45,7 +45,7 @@ final class FederationTests: WireUITestCase {
         try switchBackend(target: .anta)
         let antaTeam = try await userHelper.registerTeam(withMemberCount: 0)
         let conversationsPage = try await loginToBackend(user: antaTeam.teamOwner, backend: .anta)
-        
+
         // WHEN
         let federatedHandle = "@\(bellaTeam.teamOwner.username)@\(BackendTarget.bella.domainInfo)"
         let activeConversationPage = try conversationsPage
@@ -59,10 +59,10 @@ final class FederationTests: WireUITestCase {
             .switchUserAccountForUser(withName: bellaTeam.teamOwner.name)
             .tapConnectionRequestsCell()
             .acceptConnectionRequest()
-        
+
         // THEN
         _ = try activeConversationPage.goBackToConversationPage()
-            
+
         XCTAssertTrue(conversationsPage.conversationCell.exists)
         let conversationName = try XCTUnwrap(conversationsPage.getNameLabel())
         XCTAssertEqual(conversationName, antaTeam.teamOwner.name, "name didn't match \(conversationName)")

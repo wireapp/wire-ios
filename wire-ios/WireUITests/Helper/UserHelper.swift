@@ -45,7 +45,10 @@ class UserHelper {
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
 
-    init(apiVersion: APIVersion = APIVersion.productionVersions.max()!, environment: BackendEnvironment = BackendContext.backendEnvironment) {
+    init(
+        apiVersion: APIVersion = APIVersion.productionVersions.max()!,
+        environment: BackendEnvironment = BackendContext.backendEnvironment
+    ) {
         self.apiVersion = apiVersion
         self.backendURL = environment.url
         self.createdUsers = []
@@ -65,7 +68,7 @@ class UserHelper {
         self.connectionsAPI = ConnectionsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.accountsAPI = AccountsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
     }
-        
+
     /// Fetch basicAuth Info from Env variable
     /// - Parameter backend: backend
     /// - Returns: basicAuth String
@@ -76,12 +79,13 @@ class UserHelper {
                 fatalError("Missing BASIC_AUTH environment variable")
             }
             return auth
-            
+
         case .anta:
             guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_ANTA"] else {
                 fatalError("Missing BASIC_AUTH_ANTA environment variable")
             }
             return auth
+
         case .bella:
             guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_BELLA"] else {
                 fatalError("Missing BASIC_AUTH_BELLA environment variable")
@@ -576,7 +580,7 @@ extension BackendEnvironment {
     static let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
     static let backendURLAnta = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_ANTA"]!)"
     static let backendURLBella = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_BELLA"]!)"
-    
+
     static let staging = BackendEnvironment(
         url: URL(string: backendURL)!,
         webSocketURL: URL(string: backendURL)!,
@@ -592,7 +596,7 @@ extension BackendEnvironment {
         pinnedKeys: [],
         proxySettings: nil
     )
-    
+
     static let bella = BackendEnvironment(
         url: URL(string: backendURLBella)!,
         webSocketURL: URL(string: backendURLBella)!,

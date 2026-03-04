@@ -163,7 +163,7 @@ class ConversationsPage: PageModel {
         blockButtonOnBottomSheet.tap()
         return self
     }
-    
+
     func tapConnectionRequestsCell() throws -> ConnectionRequestsPage {
         connectionsRequestCell.tap()
         return try ConnectionRequestsPage()

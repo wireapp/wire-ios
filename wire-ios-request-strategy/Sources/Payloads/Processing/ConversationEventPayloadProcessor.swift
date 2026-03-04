@@ -775,7 +775,9 @@ struct ConversationEventPayloadProcessor {
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
                 in: context,
-                setNeedsToBeUpdatedFromBackend: false  // for 1:1 we don't want to trigger a sync with backend since it only returns the 1:1 conversations once the first commit bundle is processed (MLS) which would lead on the conversation being deleted.
+                setNeedsToBeUpdatedFromBackend: false  // for 1:1 we don't want to trigger a sync with backend since it
+                // only returns the 1:1 conversations once the first commit bundle is processed (MLS) which would lead
+                // on the conversation being deleted.
             )
 
             conversation.conversationType = self.conversationType(for: conversation, from: conversationType)

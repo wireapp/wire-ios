@@ -483,7 +483,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
 
     func getInvitationCode(teamID: UUID, invitationID: UUID, basicAuth: String) async throws -> String {
         let path = "/i/teams/invitation-code?team=\(teamID)&invitation_id=\(invitationID)"
-        
+
         let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
             .addingHeader(field: "Authorization", value: "Basic \(basicAuth)")

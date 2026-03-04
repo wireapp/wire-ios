@@ -40,7 +40,7 @@ class WireUITestCase: XCTestCase {
         ]
 
         userHelper = UserHelper()
-        
+
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
         app.launchArguments = launchArguments

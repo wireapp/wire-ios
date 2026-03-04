@@ -39,10 +39,10 @@ struct EnvironmentVariables {
     private let stagingInbucketURL: URL
     private let antaInbucketURL: URL
     private let bellaInbucketURL: URL
-    
+
     let antaDeepLinkURL: URL
     let bellaDeepLinkURL: URL
-    
+
     let inbucketUsername: String
     let inbucketPassword: String
     let callingServiceURL: URL
@@ -97,7 +97,7 @@ struct EnvironmentVariables {
             throw Failure.missingDeepLinkURL
 
         }
-        
+
         guard let antaInbucketURL = ProcessInfo.processInfo.environment["ANTA_INBUCKET_URL"],
               !antaInbucketURL.isEmpty else {
             throw Failure.missingInbucketURL
@@ -117,7 +117,7 @@ struct EnvironmentVariables {
               !backendURLBellaString.isEmpty else {
             throw Failure.missingBackendURL
         }
-        
+
         guard let callingBackend = ProcessInfo.processInfo.environment["PREDEFINED_BACKEND"],
               !callingBackend.isEmpty else {
             throw Failure.missingCallingBackend

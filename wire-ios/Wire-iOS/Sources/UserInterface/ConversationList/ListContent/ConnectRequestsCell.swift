@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngine
 import WireLocators
+import WireSyncEngine
 
 protocol SectionListCellType: AnyObject {
     var sectionName: String? { get set }
