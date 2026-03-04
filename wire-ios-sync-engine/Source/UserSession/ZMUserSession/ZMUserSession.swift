@@ -1263,12 +1263,17 @@ extension ZMUserSession: SyncAgentDelegate {
             guard let self else { return }
             await fetchAndStoreFeatureConfig()
 
-            let (qualifiedSelfClientID, hasRegisteredMLSClient, isE2EIRequired) = await syncContext.perform {
+            var isE2EIRequired = false
+            let featureConfigStore = FeatureConfigLocalStore(context: self.syncContext)
+            if let e2eiFeature = try? await featureConfigStore.fetchFeature(name: .e2ei) {
+                isE2EIRequired = await featureConfigStore.isFeatureEnabled(feature: e2eiFeature)
+            }
+
+            let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
                 let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
                 let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
 
-                let isE2EIRequired = LegacyFeatureRepository(context: self.syncContext).fetchE2EI().isEnabled
-                return (selfClient?.qualifiedClientID, hasRegisteredMLSClient, isE2EIRequired)
+                return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
             }
 
             if let qualifiedSelfClientID {
