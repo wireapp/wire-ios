@@ -108,7 +108,9 @@ class ExpiringActivityTests: XCTestCase {
                     // Simulates work that ignores cooperative cancellation.
                     // Task.yield() suspends but does NOT propagate CancellationError,
                     // so task.cancel() has no effect here.
-                    while true { await Task.yield() }
+                    while true {
+                        await Task.yield()
+                    }
                 }
             } catch {
                 // Any error is acceptable; we just need the call to return.

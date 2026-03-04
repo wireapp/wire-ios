@@ -108,7 +108,10 @@ actor ExpiringActivityManager {
         }
     }
 
-    private func startWork(block: @escaping () async throws -> Void, semaphore: DispatchSemaphore) -> Task<Void, any Error> {
+    private func startWork(
+        block: @escaping () async throws -> Void,
+        semaphore: DispatchSemaphore
+    ) -> Task<Void, any Error> {
         let task = Task {
             defer {
                 WireLogger.backgroundActivity.debug("Releasing semaphore")
