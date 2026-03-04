@@ -87,6 +87,22 @@ public final class ServiceDetails {
     public let assets: [[String: Any]]
     public let tags: [String]
 
+    public init(
+        serviceIdentifier: String,
+        providerIdentifier: String,
+        name: String,
+        serviceDescription: String,
+        assets: [[String: Any]],
+        tags: [String]
+    ) {
+        self.serviceIdentifier = serviceIdentifier
+        self.providerIdentifier = providerIdentifier
+        self.name = name
+        self.serviceDescription = serviceDescription
+        self.assets = assets
+        self.tags = tags
+    }
+
     fileprivate init?(payload: [AnyHashable: Any]) {
         guard let serviceIdentifier   = payload["id"] as? String,
               let providerIdentifier  = payload["provider"] as? String,

@@ -18,6 +18,8 @@
 
 import UIKit
 import WireDesign
+import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 extension ConversationLike where Self: GroupDetailsConversationType {
@@ -28,12 +30,12 @@ extension ConversationLike where Self: GroupDetailsConversationType {
 
 struct Service {
 
-    let user: any UserType
+    let user: any WireDataModel.UserType
     let isLegacyBot: Bool
     var serviceUserDetails: ServiceDetails?
     var provider: ServiceProvider?
 
-    init(user: any UserType) {
+    init(user: any WireDataModel.UserType) {
         self.user = user
         self.isLegacyBot = user.isBot
     }
@@ -64,6 +66,7 @@ final class ServiceDetailViewController: UIViewController {
     private let actionButton: ZMButton
     private let actionType: ActionType
     private let userSession: UserSession
+    private let teamsAPI: any TeamsAPI
 
     /// init method with ServiceUser, destination conversation and customized UI.
     ///
@@ -74,14 +77,16 @@ final class ServiceDetailViewController: UIViewController {
     ///   - selfUser: self user, for inject mock user for testing
     ///   - completion: completion handler
     init(
-        user: any UserType,
+        user: any WireDataModel.UserType,
         actionType: ActionType,
         userSession: UserSession,
+        teamsAPI: any TeamsAPI,
         completion: @escaping (AddBotResult) -> Void
     ) {
         self.service = Service(user: user)
         self.completion = completion
         self.userSession = userSession
+        self.teamsAPI = teamsAPI
 
         self.detailView = ServiceDetailView(service: service)
 
@@ -144,19 +149,7 @@ final class ServiceDetailViewController: UIViewController {
 
         createConstraints()
 
-        guard let userSession = userSession as? ZMUserSession else { return }
-
-        guard service.isLegacyBot, let bot = service.user as? any Bot else {
-            return // TODO: what is required for apps to start a conversation with?
-        }
-
-        bot.fetchProvider(in: userSession) { [weak self] provider in
-            self?.detailView.service.provider = provider
-        }
-
-        bot.fetchDetails(in: userSession) { [weak self] details in
-            self?.detailView.service.serviceUserDetails = details
-        }
+        fetchDetails()
     }
 
     private func createConstraints() {
@@ -172,6 +165,46 @@ final class ServiceDetailViewController: UIViewController {
             actionButton.topAnchor.constraint(equalTo: detailView.bottomAnchor, constant: 16),
             actionButton.heightAnchor.constraint(equalToConstant: 48)
         ])
+    }
+
+    private func fetchDetails() {
+        guard let userSession = userSession as? ZMUserSession else { return }
+
+        if
+            !service.isLegacyBot,
+            let teamID = service.user.membership?.team?.remoteIdentifier,
+            let appID = service.user.remoteIdentifier {
+
+            Task {
+                do {
+                    let appDetails = try await teamsAPI.getApp(
+                        for: teamID,
+                        with: appID
+                    )
+                    detailView.service.serviceUserDetails = ServiceDetails(
+                        serviceIdentifier: "",
+                        providerIdentifier: "",
+                        name: appDetails.name,
+                        serviceDescription: appDetails.description,
+                        assets: [], // TODO: convert assets
+                        tags: []
+                    )
+                } catch {
+                    WireLogger.ui.error("failed to get app details", attributes: .safePublic)
+                }
+            }
+
+        } else if let bot = service.user as? any Bot {
+
+            bot.fetchProvider(in: userSession) { [weak self] provider in
+                self?.detailView.service.provider = provider
+            }
+
+            bot.fetchDetails(in: userSession) { [weak self] details in
+                self?.detailView.service.serviceUserDetails = details
+            }
+
+        }
     }
 
     @objc

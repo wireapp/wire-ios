@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireLogging
 import WireSyncEngine
 import WireSystem
 
@@ -89,10 +90,15 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         _ searchResultsViewController: SearchResultsViewController,
         didTapOnBot bot: any Bot
     ) {
+        guard let teamsAPI = userSession.clientSessionComponent?.teamsAPI else {
+            return WireLogger.ui.error("clientSessionComponent is nil", attributes: .safePublic)
+        }
+
         let detail = ServiceDetailViewController(
             user: bot,
             actionType: .openConversation,
-            userSession: userSession
+            userSession: userSession,
+            teamsAPI: teamsAPI
         ) { [weak self] result in
             guard let self else { return }
 

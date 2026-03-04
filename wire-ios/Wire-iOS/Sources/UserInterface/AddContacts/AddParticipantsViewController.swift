@@ -576,12 +576,16 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
         didTapOnBot bot: any Bot
     ) {
 
-        guard case let .add(conversation) = viewModel.context else { return }
+        guard
+            case let .add(conversation) = viewModel.context,
+            let teamsAPI = userSession.clientSessionComponent?.teamsAPI
+        else { return }
 
         let detail = ServiceDetailViewController(
             user: bot,
             actionType: .addService(conversation as! ZMConversation),
-            userSession: userSession
+            userSession: userSession,
+            teamsAPI: teamsAPI
         ) { [weak self] result in
             guard let self else { return }
 

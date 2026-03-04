@@ -534,13 +534,17 @@ extension GroupDetailsViewController: ProfileViewControllerDelegate {
 extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, GroupOptionsSectionControllerDelegate {
 
     func presentDetails(for user: WireDataModel.UserType) {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard
+            let conversation = conversation as? ZMConversation,
+            let teamsAPI = userSession.clientSessionComponent?.teamsAPI
+        else { return }
 
         let viewController = UserDetailViewControllerFactory.createUserDetailViewController(
             user: user,
             conversation: conversation,
             profileViewControllerDelegate: self,
             userSession: userSession,
+            teamsAPI: teamsAPI,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder,
             conversationCreationRepository: conversationCreationRepository

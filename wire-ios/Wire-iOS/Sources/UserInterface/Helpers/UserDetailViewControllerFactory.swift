@@ -20,6 +20,7 @@ import Foundation
 import WireDataModel
 import WireMainNavigationUI
 import WireMessagingDomain
+import WireNetwork
 import WireSyncEngine
 
 enum UserDetailViewControllerFactory {
@@ -33,10 +34,11 @@ enum UserDetailViewControllerFactory {
     /// - Returns: if the user is a serviceUser, return a ProfileHeaderServiceDetailViewController. if the user not a
     /// serviceUser, return a ProfileViewController
     static func createUserDetailViewController(
-        user: UserType,
+        user: WireDataModel.UserType,
         conversation: ZMConversation,
         profileViewControllerDelegate: ProfileViewControllerDelegate,
         userSession: UserSession,
+        teamsAPI: some TeamsAPI,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
         conversationCreationRepository: any ConversationCreationRepositoryProtocol
@@ -47,6 +49,7 @@ enum UserDetailViewControllerFactory {
                 user: bot,
                 actionType: .removeService(conversation),
                 userSession: userSession,
+                teamsAPI: teamsAPI,
                 completion: { _ in }
             )
 

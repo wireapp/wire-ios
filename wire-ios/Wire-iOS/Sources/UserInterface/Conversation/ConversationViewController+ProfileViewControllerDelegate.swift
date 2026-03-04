@@ -21,7 +21,10 @@ import WireSyncEngine
 extension ConversationViewController {
 
     func createUserDetailViewController() -> UIViewController {
-        guard let user = (conversation.firstActiveParticipantOtherThanSelf ?? conversation.connectedUser) else {
+        guard
+            let user = (conversation.firstActiveParticipantOtherThanSelf ?? conversation.connectedUser),
+            let teamsAPI = userSession.clientSessionComponent?.teamsAPI
+        else {
             fatal("no firstActiveParticipantOtherThanSelf!")
         }
 
@@ -30,6 +33,7 @@ extension ConversationViewController {
             conversation: conversation,
             profileViewControllerDelegate: self,
             userSession: userSession,
+            teamsAPI: teamsAPI,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder,
             conversationCreationRepository: conversationCreationRepository
