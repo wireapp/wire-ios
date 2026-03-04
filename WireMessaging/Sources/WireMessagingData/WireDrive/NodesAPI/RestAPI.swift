@@ -697,7 +697,7 @@ private extension WireDriveFileType {
         case .text:
             ["text/*"]
         case .other, .folder, .code:
-            fatalError("Not supported")
+            []
         }
     }
 }
