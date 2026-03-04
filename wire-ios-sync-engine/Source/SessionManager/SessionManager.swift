@@ -273,16 +273,21 @@ public final class SessionManager: NSObject, SessionManagerType {
     public let environmentStore: BackendEnvironmentStore
     public weak var loginDelegate: LoginDelegate?
 
-    private let _activeUserSession = OSAllocatedUnfairLock<ZMUserSession?>(uncheckedState: nil)
+    struct State {
+        var activeUserSession: ZMUserSession?
+    }
+
+    private let state = OSAllocatedUnfairLock<State>(uncheckedState: State())
+
     public internal(set) var activeUserSession: ZMUserSession? {
         get {
-            _activeUserSession.withLockUnchecked { $0 }
+            state.withLockUnchecked { $0.activeUserSession }
         }
         set {
-            let old = _activeUserSession.withLockUnchecked { state -> ZMUserSession? in
-                guard state !== newValue else { return nil }
-                let old = state
-                state = newValue
+            let old = state.withLockUnchecked { state -> ZMUserSession? in
+                guard state.activeUserSession !== newValue else { return nil }
+                let old = state.activeUserSession
+                state.activeUserSession = newValue
                 return old
             }
             old?.appLockController.beginTimer()
