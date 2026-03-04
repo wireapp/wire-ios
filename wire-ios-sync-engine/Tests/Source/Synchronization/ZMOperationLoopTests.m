@@ -46,6 +46,8 @@
                                           isDeveloperModeEnabled:NO
                                                  isSyncV2Enabled:NO
                                                       apiVersion:@5];
+    [self.sut resumeEnqueuing];
+    self.mockRequestStrategy.nextRequestCalled = NO;
 }
 
 - (void)tearDown;
