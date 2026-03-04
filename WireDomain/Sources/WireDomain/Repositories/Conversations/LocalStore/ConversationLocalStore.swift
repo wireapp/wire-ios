@@ -23,7 +23,6 @@ import WireLogging
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
-
     enum Error: Swift.Error {
         case noBackendConversationID
     }

@@ -29,7 +29,6 @@ final class FederationTests: WireUITestCase {
             .acceptPopup(with: self)
     }
 
-
     @MainActor
     func testConnectFederatedUsers() async throws {
 
@@ -67,6 +66,5 @@ final class FederationTests: WireUITestCase {
         let conversationName = try XCTUnwrap(conversationsPage.getNameLabel())
         XCTAssertEqual(conversationName, antaTeam.teamOwner.name, "name didn't match \(conversationName)")
     }
-
 
 }
