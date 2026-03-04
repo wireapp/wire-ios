@@ -30,7 +30,7 @@ public extension Sequence where Element: UserType {
         precondition(context.zm_isUserInterfaceContext, "You can only materialize users on the UI context")
 
         let nonExistingUsers = compactMap { $0 as? ZMSearchUser }.filter { $0.user == nil }
-        nonExistingUsers.createLocalUsers(in: context.zm_sync)
+        nonExistingUsers.createLocalUsers(in: context.zm_sync) // TODO: verify it works on on older apps with new backend where suddenly apps are are pretended to be real users
 
         return compactMap { $0.unbox(in: context) }
     }

@@ -234,19 +234,41 @@ final class ServiceDetailViewController: UIViewController {
         completion: @escaping (AddBotResult) -> Void
     ) -> Callback<LegacyButton> {
         { [weak self] _ in
-            guard let self, let userSession = userSession as? ZMUserSession, let bot = service.user as? any Bot else {
-                return
-            }
+            guard let self, let userSession = userSession as? ZMUserSession else { return }
 
             switch type {
 
             case let .addApp(conversation):
-                fatalError()
+                guard let user = service.user as? ZMUser else { return }
+                Task {
+                    do {
+                        let syncContext = userSession.syncContext
+                        let conversationParticipantsService = ConversationParticipantsService(
+                            context: syncContext,
+                            localDomain: userSession.resolvedBackendMetadata.domain
+                        )
+                        let user = try await syncContext.perform { [objectID = user.objectID] in
+                            try ZMUser.existingObject(for: objectID, in: syncContext)
+                        }
+                        let conversation_ = try await syncContext.perform { [objectID = conversation.objectID] in
+                            return try ZMConversation.existingObject(for: objectID, in: syncContext)
+                        }
+
+                        try await conversationParticipantsService.addParticipants([user], to: conversation_)
+                        try await syncContext.perform {
+                            try syncContext.save()
+                        }
+                        completion(.success(conversation: conversation)) TODO: why do we end up here after failed to claim key packages?
+                    } catch {
+                        completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
+                    }
+                }
 
             case let .removeApp(conversation):
                 fatalError()
 
             case let .addBot(conversation):
+                guard let bot = service.user as? any Bot else { return }
                 conversation.add(bot: bot, in: userSession) { result in
                     switch result {
                     case .success:
@@ -257,6 +279,7 @@ final class ServiceDetailViewController: UIViewController {
                 }
 
             case let .removeBot(conversation):
+                guard let bot = service.user as? any Bot else { return }
                 presentRemoveDialogue(
                     for: bot,
                     from: conversation,
@@ -264,6 +287,7 @@ final class ServiceDetailViewController: UIViewController {
                 )
 
             case .openConversation: // TODO: apps?
+                guard let bot = service.user as? any Bot else { return }
                 if let existingConversation = ZMConversation.existingConversation(
                     in: userSession.managedObjectContext,
                     bot: bot,
