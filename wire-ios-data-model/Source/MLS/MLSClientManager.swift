@@ -63,7 +63,10 @@ public final class MLSClientManager: MLSClientManagerProtocol {
         }
 
         if !hasRegisteredMLSClient, isE2EIRequired {
-            WireLogger.mls.info("MLS client needs to be initialized via E2EI.")
+            WireLogger.mls.info(
+                "MLS client needs to be initialized via E2EI.",
+                attributes: .safePublic
+            )
             return
         }
 
