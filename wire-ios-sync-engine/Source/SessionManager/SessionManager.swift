@@ -820,8 +820,12 @@ public final class SessionManager: NSObject, SessionManagerType {
     public func logout(account: Account, error: Error? = nil) {
         WireLogger.sessionManager.debug("Logging out account \(account.userIdentifier)...")
 
-        if let session = backgroundUserSessions[account.userIdentifier] {
-            if session == activeUserSession {
+        let (accountSession, activeSession) = state.withLockUnchecked {
+            ($0.backgroundUserSessions[account.userIdentifier], $0.activeUserSession)
+        }
+
+        if let accountSession {
+            if accountSession == activeUserSession {
                 logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
             } else {
                 tearDownBackgroundSession(for: account.userIdentifier)
@@ -1235,8 +1239,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         markSessionsAsReady(true)
         userSession.sessionManager = self
         userSession.delegate = self
-        require(backgroundUserSessions[account.userIdentifier] == nil, "User session is already loaded")
-        state.withLockUnchecked { $0.backgroundUserSessions[account.userIdentifier] = userSession }
+        state.withLockUnchecked {
+            require($0.backgroundUserSessions[account.userIdentifier] == nil, "User session is already loaded")
+            $0.backgroundUserSessions[account.userIdentifier] = userSession
+        }
         userSession.useConstantBitRateAudio = useConstantBitRateAudio
         userSession.usePackagingFeatureConfig = usePackagingFeatureConfig
         configurePushToken(session: userSession)
@@ -1348,8 +1354,10 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     // Tears down and releases all background user sessions.
     func tearDownAllBackgroundSessions() {
-        let backgroundSessions = backgroundUserSessions.filter { _, session in
-            activeUserSession != session
+        let backgroundSessions = state.withLockUnchecked { state in
+            state.backgroundUserSessions.filter { _, session in
+                session != state.activeUserSession
+            }
         }
 
         backgroundSessions.keys.forEach {
@@ -1755,6 +1763,10 @@ extension SessionManager: WireCallCenterCallStateObserver {
 
         switch callState {
         case .answered, .outgoing:
+            let (backgroundUserSessions, activeUserSession) = state.withLockUnchecked { state in
+                (state.backgroundUserSessions, state.activeUserSession)
+            }
+
             for (_, session) in backgroundUserSessions
                 where session.managedObjectContext == moc && activeUserSession != session {
                 showConversation(conversation, at: nil, in: session)
