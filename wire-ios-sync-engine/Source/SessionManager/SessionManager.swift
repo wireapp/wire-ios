@@ -283,15 +283,17 @@ public final class SessionManager: NSObject, SessionManagerType {
         state.withLockUnchecked { $0.activeUserSession }
     }
 
-    func setActiveUserSession(_ session: ZMUserSession?) {
-        let old = state.withLockUnchecked { state -> ZMUserSession? in
-            guard state.activeUserSession !== session else { return nil }
-            let old = state.activeUserSession
-            state.activeUserSession = session
+    func setActiveUserSession(_ newSession: ZMUserSession?) {
+        let old = state.withLockUnchecked {
+            let old = $0.activeUserSession
+            $0.activeUserSession = newSession
             return old
         }
-        old?.appLockController.beginTimer()
-        old?.setAnalyticsEventTracker(nil)
+
+        if let old, old !== newSession {
+            old.appLockController.beginTimer()
+            old.setAnalyticsEventTracker(nil)
+        }
     }
 
     private let _backgroundUserSessions = OSAllocatedUnfairLock<[UUID: ZMUserSession]>(uncheckedState: [:])
