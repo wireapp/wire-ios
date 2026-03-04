@@ -28,6 +28,8 @@ public extension Notification.Name {
 /// An `Account` holds information related to a single account,
 /// such as the accounts users name,
 /// team name if there is any, picture and uuid.
+///
+/// - note: `Account` is manually implemented to be thread safe so it is marked `@unchecked Sendable`.
 public final class Account: NSObject, Codable, @unchecked Sendable {
 
     private let lock = OSAllocatedUnfairLock()
