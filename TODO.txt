@@ -1,0 +1,1 @@
+check upgrading from earlier versions if apps are stored as regular users or team members
