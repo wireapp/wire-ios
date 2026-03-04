@@ -119,7 +119,12 @@ final class AppStateCalculatorTests: XCTestCase {
         sut.applicationDidBecomeActive()
 
         // WHEN
-        sut.sessionManagerWillLogout(accountID: accountID, environment: nil, error: error, userSessionCanBeTornDown: nil)
+        sut.sessionManagerWillLogout(
+            accountID: accountID,
+            environment: nil,
+            error: error,
+            userSessionCanBeTornDown: nil
+        )
 
         // THEN
         XCTAssertEqual(sut.appState, .unauthenticated(accountID: accountID, environment: nil, error: error))
@@ -134,7 +139,12 @@ final class AppStateCalculatorTests: XCTestCase {
         sut.applicationDidBecomeActive()
 
         // WHEN
-        sut.sessionManagerWillLogout(accountID: accountID, environment: nil, error: error, userSessionCanBeTornDown: nil)
+        sut.sessionManagerWillLogout(
+            accountID: accountID,
+            environment: nil,
+            error: error,
+            userSessionCanBeTornDown: nil
+        )
 
         // THEN
         XCTAssertEqual(sut.appState, .unauthenticated(accountID: accountID, environment: nil, error: error))
@@ -148,7 +158,12 @@ final class AppStateCalculatorTests: XCTestCase {
         sut.applicationDidBecomeActive()
 
         // WHEN
-        sut.sessionManagerWillLogout(accountID: accountID, environment: nil, error: error, userSessionCanBeTornDown: nil)
+        sut.sessionManagerWillLogout(
+            accountID: accountID,
+            environment: nil,
+            error: error,
+            userSessionCanBeTornDown: nil
+        )
 
         // THEN
         XCTAssertEqual(sut.appState, .unauthenticated(accountID: accountID, environment: nil, error: error))
