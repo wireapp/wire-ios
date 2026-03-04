@@ -276,6 +276,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     struct State {
         var activeUserSession: ZMUserSession?
         var backgroundUserSessions: [UUID: ZMUserSession] = [:]
+        var unauthenticatedSession: UnauthenticatedSession?
     }
 
     private let state = OSAllocatedUnfairLock<State>(uncheckedState: State())
@@ -301,26 +302,23 @@ public final class SessionManager: NSObject, SessionManagerType {
         state.withLockUnchecked { $0.backgroundUserSessions }
     }
 
-    private let _unauthenticatedSession = OSAllocatedUnfairLock<UnauthenticatedSession?>(uncheckedState: nil)
+    public var unauthenticatedSession: UnauthenticatedSession? {
+        state.withLockUnchecked { $0.unauthenticatedSession }
+    }
 
-    public internal(set) var unauthenticatedSession: UnauthenticatedSession? {
-        get {
-            _unauthenticatedSession.withLockUnchecked { $0 }
+    func setUnauthenticatedSession(_ newSession: UnauthenticatedSession?) {
+        let old = state.withLockUnchecked {
+            let old = $0.unauthenticatedSession
+            $0.unauthenticatedSession = newSession
+            return old
         }
-        set {
-            let old = _unauthenticatedSession.withLockUnchecked { state -> UnauthenticatedSession? in
-                let old = state
-                state = newValue
-                return old
-            }
-            old?.tearDown()
-            if let newValue {
-                NotificationInContext(
-                    name: sessionManagerCreatedUnauthenticatedSessionNotificationName,
-                    context: self,
-                    object: newValue
-                ).post()
-            }
+        old?.tearDown()
+        if let newSession {
+            NotificationInContext(
+                name: sessionManagerCreatedUnauthenticatedSessionNotificationName,
+                context: self,
+                object: newSession
+            ).post()
         }
     }
 
@@ -1230,7 +1228,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             authenticationStatusDelegate: self
         )
         unauthenticatedSession.accountId = accountId
-        self.unauthenticatedSession = unauthenticatedSession
+        setUnauthenticatedSession(unauthenticatedSession)
         return unauthenticatedSession
     }
 
