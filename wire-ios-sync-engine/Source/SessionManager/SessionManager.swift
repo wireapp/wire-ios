@@ -279,20 +279,19 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let state = OSAllocatedUnfairLock<State>(uncheckedState: State())
 
-    public internal(set) var activeUserSession: ZMUserSession? {
-        get {
-            state.withLockUnchecked { $0.activeUserSession }
+    public var activeUserSession: ZMUserSession? {
+        state.withLockUnchecked { $0.activeUserSession }
+    }
+
+    func setActiveUserSession(_ session: ZMUserSession?) {
+        let old = state.withLockUnchecked { state -> ZMUserSession? in
+            guard state.activeUserSession !== session else { return nil }
+            let old = state.activeUserSession
+            state.activeUserSession = session
+            return old
         }
-        set {
-            let old = state.withLockUnchecked { state -> ZMUserSession? in
-                guard state.activeUserSession !== newValue else { return nil }
-                let old = state.activeUserSession
-                state.activeUserSession = newValue
-                return old
-            }
-            old?.appLockController.beginTimer()
-            old?.setAnalyticsEventTracker(nil)
-        }
+        old?.appLockController.beginTimer()
+        old?.setAnalyticsEventTracker(nil)
     }
 
     private let _backgroundUserSessions = OSAllocatedUnfairLock<[UUID: ZMUserSession]>(uncheckedState: [:])
@@ -733,7 +732,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 account,
                 from: selectedAccount,
                 userSessionCanBeTornDown: { [weak self] in
-                    self?.activeUserSession = nil
+                    self?.setActiveUserSession(nil)
                     tearDownCompletion?()
 
                     Task { @MainActor [weak self] in
@@ -765,7 +764,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 environment: nil,
                 error: error
             ) { [weak self] in
-                self?.activeUserSession = nil
+                self?.setActiveUserSession(nil)
                 completion?()
             }
         }
@@ -901,7 +900,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 }
             }
 
-            self?.activeUserSession = nil
+            self?.setActiveUserSession(nil)
         }
     }
 
@@ -949,7 +948,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             return nil
         }
 
-        activeUserSession = session
+        setActiveUserSession(session)
 
         WireLogger.sessionManager.debug(
             "Activated ZMUserSession for account - "
@@ -1129,12 +1128,12 @@ public final class SessionManager: NSObject, SessionManagerType {
 
             if let accountID = activeUserSession?.account.userIdentifier {
                 tearDownBackgroundSession(for: accountID) { [self] in
-                    activeUserSession = nil
+                    setActiveUserSession(nil)
                     accountTokens.removeValue(forKey: accountID)
                     completion()
                 }
             } else {
-                activeUserSession = nil
+                setActiveUserSession(nil)
                 completion()
             }
         }

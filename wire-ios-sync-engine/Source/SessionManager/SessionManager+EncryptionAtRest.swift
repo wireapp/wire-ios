@@ -30,7 +30,7 @@ extension SessionManager: UserSessionEncryptionAtRestDelegate {
 
         delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: { [weak self] in
             self?.tearDownBackgroundSession(for: account.userIdentifier) {
-                self?.activeUserSession = nil
+                self?.setActiveUserSession(nil)
                 Task {
                     do {
                         try await CoreDataStack.migrateLocalStorage(
