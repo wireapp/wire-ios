@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLogging
 import WireMainNavigationUI
 import WireMessagingDomain
 import WireReusableUIComponents
@@ -61,8 +62,16 @@ final class SearchUserViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        if let session = ZMUserSession.shared() {
-            self.searchDirectory = SearchDirectory(userSession: session)
+        if let session = ZMUserSession.shared(),
+           let searchAPI = session.clientSessionComponent?.searchAPI,
+           let teamsAPI = session.clientSessionComponent?.teamsAPI,
+           let usersAPI = session.clientSessionComponent?.usersAPI {
+            self.searchDirectory = SearchDirectory(
+                userSession: session,
+                searchAPI: searchAPI,
+                teamsAPI: teamsAPI,
+                usersAPI: usersAPI
+            )
         }
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
