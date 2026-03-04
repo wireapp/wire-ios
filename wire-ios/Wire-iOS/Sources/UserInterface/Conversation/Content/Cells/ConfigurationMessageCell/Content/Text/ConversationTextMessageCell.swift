@@ -125,7 +125,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         let insets = ConversationMessageContainerView.bubbleEdgeInsets
         messageTextView.fitIn(view: self, insets: insets)
     }
-    
+
     private func configureTextColor(forOwnMessage ownMessage: Bool) {
         let ownColor = SemanticColors.ChatBubble.foregroundOwnMessage
         let otherColor = SemanticColors.ChatBubble.foregroundOtherMessage
@@ -155,12 +155,12 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         paragraphStyle.lineSpacing = 3
 
         let attributes: [NSAttributedString.Key: AnyObject] = [
-                    .paragraphStyle: paragraphStyle
+            .paragraphStyle: paragraphStyle
         ]
 
         messageTextView.attributedText = object.attributedText.addAttributes(
-                   attributes,
-                   toSubstring: object.attributedText.string
+            attributes,
+            toSubstring: object.attributedText.string
         )
 
         if object.isObfuscated {
