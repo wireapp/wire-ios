@@ -1027,7 +1027,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                     coreDataStack: userSession.coreDataStack
                 )
 
-                userSession.operationLoop?.resumeEnqueuing()
                 await userSession.start()
 
                 return userSession

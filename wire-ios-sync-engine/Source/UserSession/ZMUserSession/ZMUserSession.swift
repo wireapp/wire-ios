@@ -657,6 +657,8 @@ public final class ZMUserSession: NSObject {
     }
 
     public func start() async {
+        operationLoop?.resumeEnqueuing()
+
         await syncContext.perform {
             self.applicationStatusDirectory.clientRegistrationStatus.prepareForClientRegistration()
             self.applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
