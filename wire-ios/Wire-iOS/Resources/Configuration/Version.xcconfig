@@ -16,5 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+<<<<<<< HEAD
 WIRE_SHORT_VERSION = 4.16.0
+=======
+WIRE_SHORT_VERSION = 4.15.1
+>>>>>>> 14e2d8178e (fix: decoder not converting snake case to camel case - WPB-23815 (#4390))
 MAJOR_VERSION = 4
