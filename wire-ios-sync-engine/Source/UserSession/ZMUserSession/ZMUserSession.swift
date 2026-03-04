@@ -1264,7 +1264,7 @@ extension ZMUserSession: SyncAgentDelegate {
             await fetchAndStoreFeatureConfig()
 
             var isE2EIRequired = false
-            let featureConfigStore = FeatureConfigLocalStore(context: self.syncContext)
+            let featureConfigStore = FeatureConfigLocalStore(context: syncContext)
             if let e2eiFeature = try? await featureConfigStore.fetchFeature(name: .e2ei) {
                 isE2EIRequired = await featureConfigStore.isFeatureEnabled(feature: e2eiFeature)
             }
