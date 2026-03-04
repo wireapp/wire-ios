@@ -84,8 +84,6 @@ public final class ServiceDetails {
 
     public let name: String
     public let serviceDescription: String
-    public let assets: [[String: Any]]
-    public let tags: [String]
 
     public init(
         serviceIdentifier: String,
@@ -99,25 +97,19 @@ public final class ServiceDetails {
         self.providerIdentifier = providerIdentifier
         self.name = name
         self.serviceDescription = serviceDescription
-        self.assets = assets
-        self.tags = tags
     }
 
     fileprivate init?(payload: [AnyHashable: Any]) {
         guard let serviceIdentifier   = payload["id"] as? String,
               let providerIdentifier  = payload["provider"] as? String,
               let name                = payload["name"] as? String,
-              let description         = payload["description"] as? String,
-              let assets              = payload["assets"] as? [[String: Any]],
-              let tags                = payload["tags"] as? [String]
+              let description         = payload["description"] as? String
         else { return nil }
 
-        self.serviceIdentifier  = serviceIdentifier
+        self.serviceIdentifier = serviceIdentifier
         self.providerIdentifier = providerIdentifier
-        self.name               = name
+        self.name = name
         self.serviceDescription = description
-        self.assets             = assets
-        self.tags               = tags
     }
 
 }
