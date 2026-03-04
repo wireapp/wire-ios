@@ -22,7 +22,7 @@ import WireLocators
 import WireMessagingDomain
 import WireSyncEngine
 
-final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
+final class ConversationTextMessageCell: UIView, ConversationMessageCell  {
 
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
@@ -199,13 +199,13 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             let isOverlappingMention = mentionRanges.contains { NSIntersectionRange(linkRange, $0).length > 0 }
 
             let isPhone = result.resultType == .phoneNumber
-            let url = result.url
+            let url = isPhone ? URL(string:"tel:\(result.phoneNumber!)")! : result.url
 
-            if url != nil || isPhone, !isOverlappingMention {
+            if !isOverlappingMention {
                 mutableAttributedText.addAttributes([
                     .foregroundColor: detectedLinkForegroundColor,
                     .underlineStyle: NSUnderlineStyle.single.rawValue,
-                    .link: link
+                    .link: url
                 ], range: linkRange)
             }
         }
@@ -263,6 +263,29 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         container?.bubbleStyle = isOwnMessage ? .ownMessage(userColor: userColor) : .otherMessage
     }
 
+    func openMention(_ mention: Mention) -> Bool {
+        delegate?.conversationMessageWantsToOpenUserDetails(
+            self,
+            user: mention.user,
+            sourceView: messageTextView,
+            frame: selectionRect
+        )
+        return true
+    }
+
+    private func setupAccessibility(accessibilityLabel: String) {
+        typealias Conversation = L10n.Accessibility.Conversation
+
+        isAccessibilityElement = false
+        container?.isAccessibilityElement = true
+        container?.accessibilityLabel = accessibilityLabel
+        container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
+    }
+}
+
+// MARK: - TextViewInteractionDelegate
+extension ConversationTextMessageCell: TextViewInteractionDelegate {
+    
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
         // Open mention link
         if url.isMention {
@@ -277,17 +300,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         // Open the URL
         return url.open()
     }
-
-    func openMention(_ mention: Mention) -> Bool {
-        delegate?.conversationMessageWantsToOpenUserDetails(
-            self,
-            user: mention.user,
-            sourceView: messageTextView,
-            frame: selectionRect
-        )
-        return true
-    }
-
+    
     func textViewDidLongPress(_ textView: LinkInteractionTextView) {
         if !UIMenuController.shared.isMenuVisible {
             if !Settings.isClipboardEnabled {
@@ -296,15 +309,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
                 menuPresenter?.showMenu()
             }
         }
-    }
-
-    private func setupAccessibility(accessibilityLabel: String) {
-        typealias Conversation = L10n.Accessibility.Conversation
-
-        isAccessibilityElement = false
-        container?.isAccessibilityElement = true
-        container?.accessibilityLabel = accessibilityLabel
-        container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
     }
 }
 
