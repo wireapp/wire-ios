@@ -275,6 +275,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     struct State {
         var activeUserSession: ZMUserSession?
+        var backgroundUserSessions: [UUID: ZMUserSession] = [:]
     }
 
     private let state = OSAllocatedUnfairLock<State>(uncheckedState: State())
@@ -296,10 +297,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    private let _backgroundUserSessions = OSAllocatedUnfairLock<[UUID: ZMUserSession]>(uncheckedState: [:])
-
     public var backgroundUserSessions: [UUID: ZMUserSession] {
-        _backgroundUserSessions.withLockUnchecked { $0 }
+        state.withLockUnchecked { $0.backgroundUserSessions }
     }
 
     private let _unauthenticatedSession = OSAllocatedUnfairLock<UnauthenticatedSession?>(uncheckedState: nil)
@@ -867,7 +866,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             return
         }
 
-        _backgroundUserSessions.withLockUnchecked { $0[account.userIdentifier] = nil }
+        state.withLockUnchecked { $0.backgroundUserSessions[account.userIdentifier] = nil }
         tearDownObservers(account: account.userIdentifier)
         notifyUserSessionDestroyed(account.userIdentifier)
 
@@ -1237,7 +1236,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         userSession.sessionManager = self
         userSession.delegate = self
         require(backgroundUserSessions[account.userIdentifier] == nil, "User session is already loaded")
-        _backgroundUserSessions.withLockUnchecked { $0[account.userIdentifier] = userSession }
+        state.withLockUnchecked { $0.backgroundUserSessions[account.userIdentifier] = userSession }
         userSession.useConstantBitRateAudio = useConstantBitRateAudio
         userSession.usePackagingFeatureConfig = usePackagingFeatureConfig
         configurePushToken(session: userSession)
@@ -1336,7 +1335,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             return
         }
         tearDownObservers(account: accountId)
-        _backgroundUserSessions.withLockUnchecked { $0[accountId] = nil }
+        state.withLockUnchecked { $0.backgroundUserSessions[accountId] = nil }
 
         dispatchGroup.enter()
         userSession.close(deleteCookie: false) { [weak self] in
