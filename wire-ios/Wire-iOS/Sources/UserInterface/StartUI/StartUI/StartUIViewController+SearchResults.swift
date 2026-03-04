@@ -88,7 +88,17 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(
         _ searchResultsViewController: SearchResultsViewController,
-        didTapOnBot bot: any Bot
+        didTapOnApp app: any UserType
+    ) {
+        searchResultsViewController.delegate?.searchResultsViewController(
+            searchResultsViewController,
+            didTapOnBot: app
+        )
+    }
+
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnBot bot: any UserType
     ) {
         guard let teamsAPI = userSession.clientSessionComponent?.teamsAPI else {
             return WireLogger.ui.error("clientSessionComponent is nil", attributes: .safePublic)

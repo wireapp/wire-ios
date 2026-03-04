@@ -573,17 +573,31 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(
         _ searchResultsViewController: SearchResultsViewController,
-        didTapOnBot bot: any Bot
+        didTapOnApp app: any UserType
     ) {
+        didTapOnAppOrBot(user: app, isApp: true)
+    }
 
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnBot bot: any UserType
+    ) {
+        didTapOnAppOrBot(user: bot, isApp: false)
+    }
+
+    private func didTapOnAppOrBot(
+        user: any UserType,
+        isApp: Bool
+    ) {
         guard
             case let .add(conversation) = viewModel.context,
-            let teamsAPI = userSession.clientSessionComponent?.teamsAPI
+            let teamsAPI = userSession.clientSessionComponent?.teamsAPI,
+            let conversation = conversation as? ZMConversation
         else { return }
 
         let detail = ServiceDetailViewController(
-            user: bot,
-            actionType: .addService(conversation as! ZMConversation),
+            user: user,
+            actionType: isApp ? .addApp(conversation) : .addBot(conversation),
             userSession: userSession,
             teamsAPI: teamsAPI
         ) { [weak self] result in

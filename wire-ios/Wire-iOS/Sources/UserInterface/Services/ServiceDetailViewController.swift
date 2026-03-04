@@ -45,8 +45,10 @@ struct Service {
 final class ServiceDetailViewController: UIViewController {
 
     enum ActionType {
-        case addService(ZMConversation)
-        case removeService(ZMConversation)
+        case addApp(ZMConversation)
+        case removeApp(ZMConversation)
+        case addBot(ZMConversation)
+        case removeBot(ZMConversation)
         case openConversation
     }
 
@@ -93,14 +95,14 @@ final class ServiceDetailViewController: UIViewController {
         let selfUser = userSession.selfUser
 
         switch actionType {
-        case let .addService(conversation):
-            self.actionButton = .createAddServiceButton()
+        case let .addApp(conversation), let .addBot(conversation):
+            self.actionButton = .createAddAppButton()
             actionButton.isHidden = !selfUser.canAddService(to: conversation)
-        case let .removeService(conversation):
-            self.actionButton = .createDestructiveServiceButton()
+        case let .removeApp(conversation), let .removeBot(conversation):
+            self.actionButton = .createDestructiveAppButton()
             actionButton.isHidden = !selfUser.canRemoveService(from: conversation)
         case .openConversation:
-            self.actionButton = .openServiceConversationButton()
+            self.actionButton = .openAppConversationButton()
             actionButton.isHidden = !selfUser.canCreateService
         }
 
@@ -238,7 +240,13 @@ final class ServiceDetailViewController: UIViewController {
 
             switch type {
 
-            case let .addService(conversation):
+            case let .addApp(conversation):
+                fatalError()
+
+            case let .removeApp(conversation):
+                fatalError()
+
+            case let .addBot(conversation):
                 conversation.add(bot: bot, in: userSession) { result in
                     switch result {
                     case .success:
@@ -248,21 +256,21 @@ final class ServiceDetailViewController: UIViewController {
                     }
                 }
 
-            case let .removeService(conversation):
+            case let .removeBot(conversation):
                 presentRemoveDialogue(
                     for: bot,
                     from: conversation,
                     sender: sender
                 )
 
-            case .openConversation:
+            case .openConversation: // TODO: apps?
                 if let existingConversation = ZMConversation.existingConversation(
                     in: userSession.managedObjectContext,
                     bot: bot,
                     team: userSession.selfUser.membership?.team
                 ) {
                     completion(.success(conversation: existingConversation))
-                } else {
+                } else { // TODO: apps?
                     bot.createConversation(in: userSession, completionHandler: { result in
                         switch result {
                         case let .success(conversation):
@@ -281,21 +289,21 @@ private extension ZMButton {
 
     typealias PeoplePickerApps = L10n.Localizable.Peoplepicker.Apps
 
-    static func openServiceConversationButton() -> Self {
+    static func openAppConversationButton() -> Self {
         .init(
             style: .accentColorTextButtonStyle,
             title: PeoplePickerApps.OpenConversation.item.capitalized
         )
     }
 
-    static func createAddServiceButton() -> Self {
+    static func createAddAppButton() -> Self {
         .init(
             style: .accentColorTextButtonStyle,
             title: PeoplePickerApps.AddApp.button.capitalized
         )
     }
 
-    static func createDestructiveServiceButton() -> Self {
+    static func createDestructiveAppButton() -> Self {
         .init(
             style: .accentColorTextButtonStyle,
             title: L10n.Localizable.Participants.Apps.RemoveIntegration.button.capitalized

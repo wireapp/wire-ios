@@ -41,7 +41,12 @@ protocol SearchResultsViewControllerDelegate: AnyObject {
 
     func searchResultsViewController(
         _ searchResultsViewController: SearchResultsViewController,
-        didTapOnBot bot: any Bot
+        didTapOnApp app: any UserType
+    )
+
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnBot bot: any UserType
     )
 
 }

@@ -433,14 +433,15 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
         didSelectUser user: UserType,
         at indexPath: IndexPath
     ) {
-        // TODO: apps?
-        if let user = user as? ZMUser {
+        if let user = user as? ZMUser, user.type == .regular {
             delegate?.searchResultsViewController(
                 self,
                 didTapOnUser: user,
                 indexPath: indexPath,
                 section: sectionFor(controller: searchSectionController)
             )
+        } else if let user = user as? ZMUser, user.type == .app {
+            delegate?.searchResultsViewController(self, didTapOnApp: user)
         } else if let bot = user as? any Bot, bot.isAppOrBot {
             delegate?.searchResultsViewController(self, didTapOnBot: bot)
         } else if let searchUser = user as? ZMSearchUser {
@@ -450,8 +451,6 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
                 indexPath: indexPath,
                 section: sectionFor(controller: searchSectionController)
             )
-        } else {
-            fatalError("TODO: ?")
         }
     }
 
