@@ -182,12 +182,13 @@ final class UserSessionLoader {
         }
 
         // Check if this backend supports MLS.
-        let isBackendMLSEnabled = try await isBackendMLSEnabled(
+        if let isBackendMLSEnabled = try await isBackendMLSEnabled(
             networkService: networkServices.rest,
             cookieStorage: cookieStorage,
             apiVersion: metadata.apiVersion
-        )
-        journal[.isBackendMLSEnabled] = isBackendMLSEnabled
+        ) {
+            journal[.isBackendMLSEnabled] = isBackendMLSEnabled
+        }
 
         // Create user session.
         let userSession = await createUserSession(
@@ -579,7 +580,7 @@ final class UserSessionLoader {
         networkService: NetworkService,
         cookieStorage: CookieStorage,
         apiVersion: WireNetwork.APIVersion
-    ) async throws -> Bool {
+    ) async throws -> Bool? {
         do {
             let authenticationManager = AuthenticationManager(
                 clientID: nil,
@@ -600,7 +601,7 @@ final class UserSessionLoader {
             MLSAPIError.unsupportedEndpointForAPIVersion,
             MLSAPIError.mlsNotEnabled {
             // Don't block session loading, we'll try again later.
-            return false
+            return nil
         }
     }
 
