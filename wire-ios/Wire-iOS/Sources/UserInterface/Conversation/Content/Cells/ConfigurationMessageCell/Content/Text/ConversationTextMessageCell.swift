@@ -198,10 +198,19 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell  {
 
             let isOverlappingMention = mentionRanges.contains { NSIntersectionRange(linkRange, $0).length > 0 }
 
+            let isAddress = result.resultType == .address
             let isPhone = result.resultType == .phoneNumber
-            let url = isPhone ? URL(string:"tel:\(result.phoneNumber!)")! : result.url
+            // TODO: finish handling address case for multiple componets and write tests
+            let url: URL?
+            if let address = result.addressComponents?.first?.value.split(separator: " "), isAddress {
+                url = URL(string: "http://maps.apple.com/?q=\(address.joined(separator: "+"))")!
+            } else if let phoneNumber = result.phoneNumber, isPhone {
+                url = URL(string:"tel:\(phoneNumber)")
+            } else {
+                url = result.url
+            }
 
-            if !isOverlappingMention {
+            if let url, !isOverlappingMention {
                 mutableAttributedText.addAttributes([
                     .foregroundColor: detectedLinkForegroundColor,
                     .underlineStyle: NSUnderlineStyle.single.rawValue,
