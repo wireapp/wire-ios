@@ -67,6 +67,53 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
         XCTAssertEqual(userEventBuilder.buildContentEvent_Invocations.count, 1)
     }
 
+    func testCancellation_stopsGeneratingNotifications() async throws {
+        // Mock
+        conversationEventBuilder.buildContentEvent_MockValue = .text(UNMutableNotificationContent())
+        userEventBuilder.buildContentEvent_MockValue = .text(UNMutableNotificationContent())
+
+        // Create multiple events to test partial processing
+        let events = [
+            Scaffolding.userPushRemoveEvent,
+            Scaffolding.conversationRenameEvent,
+            Scaffolding.makeConversationRenameEvent(name: "test2"),
+            Scaffolding.makeConversationRenameEvent(name: "test3")
+        ]
+
+        let (stream, continuation) = AsyncStream<[UpdateEvent]>.makeStream()
+
+        // When
+        let task = Task {
+            try await sut.invoke(updateEvents: stream)
+        }
+
+        // Yield first batch and give it time to start processing
+        continuation.yield(events)
+
+        // Cancel the task while it's processing events
+        task.cancel()
+
+        // Finish the stream
+        continuation.finish()
+
+        let result = await task.result
+
+        // Then
+        do {
+            _ = try result.get()
+            XCTFail("Expected CancellationError to be thrown")
+        } catch is CancellationError {
+            // Expected error
+        } catch {
+            XCTFail("Expected CancellationError but got \(error)")
+        }
+
+        // Verify that not all events were processed (some but not all)
+        let totalInvocations = conversationEventBuilder.buildContentEvent_Invocations.count +
+            userEventBuilder.buildContentEvent_Invocations.count
+        XCTAssertLessThan(totalInvocations, events.count, "Should not process all events after cancellation")
+    }
+
     private enum Scaffolding {
         static let conversationID = WireNetwork.QualifiedID(id: .mockID2, domain: "domain.com")
         static let userID = UserID(id: .mockID3, domain: "domain.com")
@@ -81,6 +128,19 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
                 )
             )
         )
+
+        static func makeConversationRenameEvent(name: String) -> UpdateEvent {
+            UpdateEvent.conversation(
+                .rename(
+                    .init(
+                        conversationID: conversationID,
+                        senderID: userID,
+                        timestamp: .now,
+                        newName: name
+                    )
+                )
+            )
+        }
     }
 
 }

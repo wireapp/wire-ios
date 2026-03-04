@@ -74,6 +74,21 @@ final class DeviceInfoViewModel: ObservableObject {
             .replacingOccurrences(of: " ", with: ":")
     }
 
+    var showCertificateButtonVisible: Bool {
+        guard let status = e2eIdentityCertificate?.status, status != .notActivated else { return false }
+        return true
+    }
+
+    var getCertificateButtonVisible: Bool {
+        guard let status = e2eIdentityCertificate?.status, status == .notActivated, isSelfClient  else { return false }
+        return true
+    }
+
+    var updateCertificateButtonVisible: Bool {
+        guard let status = e2eIdentityCertificate?.status, status != .notActivated, isSelfClient else { return false }
+        return true
+    }
+
     var showCertificateUpdateSuccess: ((String) -> Void)?
 
     @Published var e2eIdentityCertificate: E2eIdentityCertificate?

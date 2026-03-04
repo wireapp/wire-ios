@@ -41,7 +41,7 @@ extension SessionManager: VoIPPushManagerDelegate {
         }
 
         if let session = await withSession(for: account) {
-            await session.processPendingCallEvents(only: true)
+            await session.processPendingCallEvents()
         }
         BackgroundActivityFactory.shared.endBackgroundActivity(activity)
     }
