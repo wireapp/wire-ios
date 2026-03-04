@@ -798,17 +798,17 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
 
     // MARK: - sessionManagerWillLogout
 
-    public var sessionManagerWillLogoutEnvironmentErrorUserSessionCanBeTornDown_Invocations: [(environment: BackendEnvironment2?, error: Error?, userSessionCanBeTornDown: (() -> Void)?)] = []
-    public var sessionManagerWillLogoutEnvironmentErrorUserSessionCanBeTornDown_MockMethod: ((BackendEnvironment2?, Error?, (() -> Void)?) -> Void)?
+    public var sessionManagerWillLogoutAccountIDEnvironmentErrorUserSessionCanBeTornDown_Invocations: [(accountID: UUID?, environment: BackendEnvironment2?, error: Error?, userSessionCanBeTornDown: (() -> Void)?)] = []
+    public var sessionManagerWillLogoutAccountIDEnvironmentErrorUserSessionCanBeTornDown_MockMethod: ((UUID?, BackendEnvironment2?, Error?, (() -> Void)?) -> Void)?
 
-    public func sessionManagerWillLogout(environment: BackendEnvironment2?, error: Error?, userSessionCanBeTornDown: (() -> Void)?) {
-        sessionManagerWillLogoutEnvironmentErrorUserSessionCanBeTornDown_Invocations.append((environment: environment, error: error, userSessionCanBeTornDown: userSessionCanBeTornDown))
+    public func sessionManagerWillLogout(accountID: UUID?, environment: BackendEnvironment2?, error: Error?, userSessionCanBeTornDown: (() -> Void)?) {
+        sessionManagerWillLogoutAccountIDEnvironmentErrorUserSessionCanBeTornDown_Invocations.append((accountID: accountID, environment: environment, error: error, userSessionCanBeTornDown: userSessionCanBeTornDown))
 
-        guard let mock = sessionManagerWillLogoutEnvironmentErrorUserSessionCanBeTornDown_MockMethod else {
-            fatalError("no mock for `sessionManagerWillLogoutEnvironmentErrorUserSessionCanBeTornDown`")
+        guard let mock = sessionManagerWillLogoutAccountIDEnvironmentErrorUserSessionCanBeTornDown_MockMethod else {
+            fatalError("no mock for `sessionManagerWillLogoutAccountIDEnvironmentErrorUserSessionCanBeTornDown`")
         }
 
-        mock(environment, error, userSessionCanBeTornDown)
+        mock(accountID, environment, error, userSessionCanBeTornDown)
     }
 
     // MARK: - sessionManagerWillOpenAccount
