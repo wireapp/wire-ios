@@ -27,12 +27,11 @@ import WireReusableUIComponents
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-package struct FilesView: FilesViewProtocol {
+package struct FilesView: View {
     package var isBrowsing: Bool { false }
     @StateObject package var viewModel: FilesViewModel
     @Environment(\.dismiss) var dismiss
     @Environment(\.wireAccentColor) private var accentColor
-    @State private var isSearchFocused = false
 
     let onOpenRecycleBin: () -> Void
     let onDismissContainer: () -> Void
@@ -48,13 +47,13 @@ package struct FilesView: FilesViewProtocol {
     }
 
     package var body: some View {
-        defaultContainer(
+        FilesContentView(
+            viewModel: viewModel,
+            isBrowsing: isBrowsing,
             backgroundColor: ColorTheme.Backgrounds.background.color,
             navigationTitle: viewModel.navigationTitle,
             toolbarContent: { toolbarContent },
-            sheetContent: { navigationItem in
-                sheetContent(navigationItem)
-            }
+            sheetContent: { sheetContent($0) }
         )
         // FilesView-specific extras
         .onReceive(viewModel.triggerReload) { _ in
@@ -71,10 +70,6 @@ package struct FilesView: FilesViewProtocol {
                 viewModel.editFileView(item: item)
             }
         )
-    }
-
-    private var isFilterBarPresented: Bool {
-        isSearchFocused || !viewModel.searchText.isEmpty || viewModel.filtersSelection.hasFilterSelected
     }
 }
 
@@ -175,6 +170,7 @@ private extension FilesView {
         .tint(ColorTheme.Base.primary(accentColor).color)
     }
 }
+
 // MARK: - Sheet Navigation
 
 private extension FilesView {

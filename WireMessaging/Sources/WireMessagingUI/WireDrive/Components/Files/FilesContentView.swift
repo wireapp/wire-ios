@@ -22,35 +22,27 @@ import WireDesign
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-/// Since `FilesView` and `FilesBrowserView` share many UI components, the extension of this protocol expose
-/// common reusable views.
-package protocol FilesViewProtocol: View {
-    var viewModel: FilesViewModel { get }
-    var isBrowsing: Bool { get }
-    init(
-        viewModel: @autoclosure @escaping () -> FilesViewModel,
-        onOpenRecycleBin: @escaping () -> Void,
-        onDismissContainer: @escaping () -> Void
-    )
-}
+/// Common view used by both `FilesView` and `FilesBrowserView`.
+///
+/// - Parameters:
+///   - viewModel: viewModel reference
+///   - isBrowsing: bool for when we are on browsing view
+///   - backgroundColor: background color for the ZStack.
+///   - navigationTitle: title shown in the navigation bar.
+///   - toolbarContent: toolbar content builder.
+///   - sheetContent: sheet builder for navigation items.
+package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
+    @ObservedObject package var viewModel: FilesViewModel
+    package let isBrowsing: Bool
+    package let backgroundColor: Color
+    package let navigationTitle: String
 
-// MARK: - Default container
+    @ToolbarContentBuilder package let toolbarContent: () -> Toolbar
+    @ViewBuilder let sheetContent: (FilesViewModel.SheetNavigation) -> Sheet
 
-extension FilesViewProtocol {
-        /// Common container used by both `FilesView` and `FilesBrowserView`.
-        ///
-        /// - Parameters:
-        ///   - backgroundColor: background color for the ZStack.
-        ///   - navigationTitle: title shown in the navigation bar.
-        ///   - toolbarContent: toolbar content builder.
-        ///   - sheetContent: sheet builder for navigation items.
-    @ViewBuilder
-    func defaultContainer(
-        backgroundColor: Color,
-        navigationTitle: String,
-        @ToolbarContentBuilder toolbarContent: @escaping () -> some ToolbarContent,
-        @ViewBuilder sheetContent: @escaping (FilesViewModel.SheetNavigation) -> some View
-    ) -> some View {
+    @State private var isSearchFocused = false
+
+    package var body: some View {
         ZStack {
             backgroundColor
                 .ignoresSafeArea(.all)
@@ -73,6 +65,8 @@ extension FilesViewProtocol {
                 }
                 .padding(.top, 4)
 
+                Spacer()
+
                 switch viewModel.state {
                 case .loading:
                     ProgressView()
@@ -83,23 +77,21 @@ extension FilesViewProtocol {
                             if viewModel.shouldShowOfflineBar {
                                 offlineBar
                                     .id(UUID())
-                                    .background(backgroundColor)
                             }
                         }
                 case let .error(isConnectionError):
-                    Spacer()
                     FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
                         reloadTask()
                     })
-                    Spacer()
                 }
+                Spacer()
             }
             .animation(.easeInOut(duration: 0.25), value: viewModel.connectionState)
             .animation(.easeOut(duration: 0.25), value: isSearchFocused)
-            .quickLookPreview(bindableViewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
+            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
             .navigationTitle(navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(.hidden, for: .navigationBar)
             .toolbarBackground(backgroundColor, for: .navigationBar)
             .toolbar { toolbarContent() }
             .if(viewModel.showSearchBar, transform: searchView(content:))
@@ -109,13 +101,13 @@ extension FilesViewProtocol {
                 viewModel.resetFilters()
             }
             .alert(
-                item: bindableViewModel.alert,
+                item: $viewModel.alert,
                 title: { Text($0.title) },
                 message: { Text($0.message) },
                 actions: { _ in confirmButton }
             )
             .sheet(
-                item: bindableViewModel.sheetNavigation,
+                item: $viewModel.sheetNavigation,
                 onDismiss: {
                     Task { await viewModel.onSheetDismissed() }
                 },
@@ -131,17 +123,9 @@ extension FilesViewProtocol {
     }
 }
 
-private extension FilesViewProtocol {
-    /// A helper to extract bindings from the protocol's view model.
-    var bindableViewModel: ObservedObject<FilesViewModel>.Wrapper {
-        ObservedObject(wrappedValue: viewModel).projectedValue
-    }
-}
-
-
 // MARK: - List
 
-private extension FilesViewProtocol {
+private extension FilesContentView {
 
     @ViewBuilder var filesList: some View {
         List {
@@ -186,7 +170,7 @@ private extension FilesViewProtocol {
 
 // MARK: - Rows
 
-private extension FilesViewProtocol {
+private extension FilesContentView {
 
     @ViewBuilder
     func itemRow(index: Int) -> some View {
@@ -200,7 +184,7 @@ private extension FilesViewProtocol {
 
 // MARK: - Buttons
 
-private extension FilesViewProtocol {
+private extension FilesContentView {
 
     var confirmButton: some View {
         Button(L10n.Localizable.General.confirm, action: {})
@@ -209,7 +193,7 @@ private extension FilesViewProtocol {
 
 // MARK: - Tasks
 
-private extension FilesViewProtocol {
+private extension FilesContentView {
 
     func reloadTask(refreshing: Bool = false) {
         Task { await viewModel.reload(refreshing: refreshing) }
@@ -227,7 +211,7 @@ private extension FilesViewProtocol {
 
 // MARK: - Offline bar
 
-private extension FilesViewProtocol {
+private extension FilesContentView {
 
     var offlineBar: some View {
         FilesOfflineBarView()
@@ -241,21 +225,21 @@ private extension FilesViewProtocol {
 
 // MARK: - SearchView
 
-private extension FilesViewProtocol {
+private extension FilesContentView {
 
     @ViewBuilder
     private func searchView(content: some View) -> some View {
         content.searchable(
-            text: bindableViewModel.searchText,
+            text: $viewModel.searchText,
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: Strings.Files.Search.title
         )
     }
 }
 
-// MARK: - Global helpers
+// MARK: - View helper
 
-extension View {
+private extension View {
     @ViewBuilder
     func `if`(
         _ condition: Bool,

@@ -27,10 +27,9 @@ import WireReusableUIComponents
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 /// Allows browsing files shared across all conversations
-package struct FilesBrowserView: FilesViewProtocol {
+package struct FilesBrowserView: View {
     @StateObject package var viewModel: FilesViewModel
     package var isBrowsing: Bool { true }
-    @State private var isSearchFocused = false
 
     package init(
         viewModel: @autoclosure @escaping () -> FilesViewModel,
@@ -41,21 +40,18 @@ package struct FilesBrowserView: FilesViewProtocol {
     }
 
     package var body: some View {
-        defaultContainer(
+        FilesContentView(
+            viewModel: viewModel,
+            isBrowsing: isBrowsing,
             backgroundColor: ColorTheme.Backgrounds.surface.color,
             navigationTitle: Strings.AllFiles.navigationTitle,
             toolbarContent: { emptyToolbar() },
-            sheetContent: { navigationItem in
-                sheetContent(navigationItem)
-            }
+            sheetContent: { sheetContent($0) }
         )
     }
 
-    private var isFilterBarPresented: Bool {
-        isSearchFocused || !viewModel.searchText.isEmpty || viewModel.filtersSelection.hasFilterSelected
-    }
-
-    @ToolbarContentBuilder private func emptyToolbar() -> some ToolbarContent {
+    @ToolbarContentBuilder
+    private func emptyToolbar() -> some ToolbarContent {
         if false {
             ToolbarItem {}
         }
