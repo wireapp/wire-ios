@@ -286,15 +286,17 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     func setActiveUserSession(_ newSession: ZMUserSession?) {
-        let old = state.withLockUnchecked {
-            let old = $0.activeUserSession
-            $0.activeUserSession = newSession
-            return old
-        }
+        let oldSession = activeUserSession
+        guard oldSession !== newSession else { return }
 
-        if let old, old !== newSession {
-            old.appLockController.beginTimer()
-            old.setAnalyticsEventTracker(nil)
+        oldSession?.appLockController.beginTimer()
+        oldSession?.setAnalyticsEventTracker(nil)
+
+        state.withLockUnchecked {
+            if oldSession !== $0.activeUserSession {
+                WireLogger.sessionManager.critical("Invalid state updating active user session")
+            }
+            $0.activeUserSession = newSession
         }
     }
 
