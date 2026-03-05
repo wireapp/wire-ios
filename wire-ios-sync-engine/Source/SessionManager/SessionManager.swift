@@ -293,9 +293,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         oldSession?.setAnalyticsEventTracker(nil)
 
         state.withLockUnchecked {
-            if oldSession !== $0.activeUserSession {
-                WireLogger.sessionManager.critical("Invalid state updating active user session")
-            }
+            requireInternal(oldSession === $0.activeUserSession, "Invalid state updating active user session")
             $0.activeUserSession = newSession
         }
     }
@@ -309,12 +307,14 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     func setUnauthenticatedSession(_ newSession: UnauthenticatedSession?) {
-        let old = state.withLockUnchecked {
-            let old = $0.unauthenticatedSession
+        let oldSession = unauthenticatedSession
+        oldSession?.tearDown()
+
+        state.withLockUnchecked {
+            requireInternal(oldSession === $0.unauthenticatedSession, "Invalid state updating unauthenticated session")
             $0.unauthenticatedSession = newSession
-            return old
         }
-        old?.tearDown()
+
         if let newSession {
             NotificationInContext(
                 name: sessionManagerCreatedUnauthenticatedSessionNotificationName,
