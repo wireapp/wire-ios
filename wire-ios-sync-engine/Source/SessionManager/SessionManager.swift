@@ -825,7 +825,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         if let accountSession {
-            if accountSession == activeUserSession {
+            if accountSession == activeSession {
                 logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
             } else {
                 tearDownBackgroundSession(for: account.userIdentifier)
