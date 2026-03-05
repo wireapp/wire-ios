@@ -72,36 +72,29 @@ class CommitPendingProposalsGeneratorTests {
             proposalDate: date
         )
 
-        var items = [CommitPendingProposalItem]()
+        let (stream, streamContinuation) = AsyncStream.makeStream(of: CommitPendingProposalItem.self)
         commitPendingProposalItemClosure = { item in
-            items.append(item)
+            streamContinuation.yield(item)
         }
+        var iterator = stream.makeAsyncIterator()
+
         // WHEN
         await sut.start()
 
-        // THEN
-        #expect(items.count == 1)
-        #expect(items.first?.conversationID == conversationID)
+        // THEN — properly await the async delivery rather than checking immediately
+        let firstItem = await iterator.next()
+        #expect(firstItem?.conversationID == conversationID)
 
         // WHEN
         let newConversationID = QualifiedID.random()
-        try await confirmation("generator delivers an update for a new conversation") { confirm in
-            self.commitPendingProposalItemClosure = {  item in
-                items.append(item)
-                confirm()
-            }
+        await createPendingMLSConversation(
+            id: newConversationID,
+            proposalDate: date
+        )
 
-            await self.createPendingMLSConversation(
-                id: newConversationID,
-                proposalDate: date
-            )
-
-            try await Task.sleep(for: .seconds(0.5))
-        }
-
-        // THEN
-        #expect(items.count == 2)
-        #expect(items.last?.conversationID == newConversationID)
+        // THEN — await the second delivery (handles future-dated proposals naturally)
+        let secondItem = await iterator.next()
+        #expect(secondItem?.conversationID == newConversationID)
     }
 
     @Test("It does not generate an item on conversation insertion")
@@ -162,7 +155,7 @@ class CommitPendingProposalsGeneratorTests {
                 with: [selfUser],
                 in: context
             )
-            conversation.commitPendingProposalDate = Date()
+            conversation.commitPendingProposalDate = proposalDate
         }
     }
 }
