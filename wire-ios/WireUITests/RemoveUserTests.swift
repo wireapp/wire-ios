@@ -34,6 +34,7 @@ class RemoveUserTests: WireUITestCase {
     @MainActor
     func testRemoveTeamMember() async throws {
         // GIVEN
+        let testRemovalOnConversation = false // FIXME: true case does not work
         let team = try await userHelper.registerTeam(withMemberCount: 2)
         let member1 = try XCTUnwrap(team.teamMembers.first)
         let member2 = try XCTUnwrap(team.teamMembers.last)
@@ -42,7 +43,7 @@ class RemoveUserTests: WireUITestCase {
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
-        let member1conversationsPage = try await login(member1)
+        let member1UserProfilePage = try await login(member1)
             .tapPlusButtonToCreateGroup()
             .searchUserByUserHandle(member2.name)
             .tapSearchedUserCell(handle: member2.username)
@@ -50,21 +51,32 @@ class RemoveUserTests: WireUITestCase {
             .goBackToConversationPage()
             .openUserProfilePage()
 
-        // logout member2 to avoid receiving event in other session -> crash
-        try member1conversationsPage
+        // FIXME: logout member2 to avoid receiving event in other session -> crash
+        try member1UserProfilePage
             .switchUserAccountForUser(withName: member2.name)
             .openSettings()
             .openAccountSettings()
             .logout()
             .enterPassword(member2.password, expectWelcomePage: false)
 
-        let member1ConversationsPage = try ConversationsPage()
+        let member2ConversationsPage = try ConversationsPage()
+        let oneOnOneConversation = try member2ConversationsPage
+            .openConversation()
+            .sendMessage("test")
+
+        if !testRemovalOnConversation {
+            try oneOnOneConversation.goBackToConversationPage()
+        }
 
         // WHEN
         try await deleteMember(member2)
 
         // THEN
-        let oneOnOneConversation = try member1ConversationsPage.openConversation()
+        if !testRemovalOnConversation {
+            try member2ConversationsPage.openConversation()
+        }
+
         XCTAssertFalse(oneOnOneConversation.inputMessageField.exists, "conversation should be readonly")
+        // TODO: assert system message
     }
 }

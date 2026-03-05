@@ -88,6 +88,7 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @discardableResult
     func goBackToConversationPage() throws -> ConversationsPage {
         conversationBackButton.tap()
         return try ConversationsPage()
