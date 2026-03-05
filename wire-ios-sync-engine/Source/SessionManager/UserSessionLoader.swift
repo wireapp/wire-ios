@@ -33,6 +33,7 @@ final class UserSessionLoader {
     private let account: Account
     private let accountManager: AccountManager
     private let sharedContainerURL: URL
+    private let defaultEnvironment: BackendEnvironment2
     private let legacyEnvironment: WireTransport.BackendEnvironment
     private let minTLSVersion: String?
     private let dispatchGroup: ZMSDispatchGroup
@@ -56,6 +57,7 @@ final class UserSessionLoader {
         account: Account,
         accountManager: AccountManager,
         sharedContainerURL: URL,
+        defaultEnvironment: BackendEnvironment2,
         legacyEnvironment: WireTransport.BackendEnvironment,
         minTLSVersion: String?,
         dispatchGroup: ZMSDispatchGroup,
@@ -72,6 +74,7 @@ final class UserSessionLoader {
         self.account = account
         self.accountManager = accountManager
         self.sharedContainerURL = sharedContainerURL
+        self.defaultEnvironment = defaultEnvironment
         self.legacyEnvironment = legacyEnvironment
         self.minTLSVersion = minTLSVersion
         self.dispatchGroup = dispatchGroup
@@ -103,10 +106,21 @@ final class UserSessionLoader {
         }
 
         // Get the environment for this account.
-        let backendEnvironment: BackendEnvironment2 = if let environment = newEnvironment?.backendEnvironment {
+        var backendEnvironment: BackendEnvironment2 = if let environment = newEnvironment?.backendEnvironment {
             environment
         } else {
             try fetchBackendEnvironment()
+        }
+
+        // Update stored default environment if needed.
+        // See WPB-23624 for more info.
+        if backendEnvironment.environmentType == .default, journal[.isDefaultEnvironmentRefreshRequired] {
+            try backendStore.storeBackendEnvironment(
+                defaultEnvironment,
+                for: accountID
+            )
+            journal[.isDefaultEnvironmentRefreshRequired] = false
+            backendEnvironment = defaultEnvironment
         }
 
         // Update account metadata.
