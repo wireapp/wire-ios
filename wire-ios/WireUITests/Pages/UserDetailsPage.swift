@@ -78,5 +78,10 @@ class UserDetailsPage: PageModel {
         confirmButton.tap()
         return try ConversationDetailsPage()
     }
+    
+    func tapStartConversationButton() throws -> ActiveConversationPage {
+        connectButton.tap()
+        return try ActiveConversationPage()
+    }
 
 }
