@@ -510,6 +510,7 @@ public final class ZMUserSession: NSObject {
             sharedContainerURL: sharedContainerURL,
             syncContext: coreDataStack.syncContext,
             eventContext: coreDataStack.eventContext,
+            earService: earService,
             mlsService: mlsService,
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
@@ -899,10 +900,12 @@ public final class ZMUserSession: NSObject {
                 notifyAVSOfNetworkInterfaceChanged()
             }
 
-        isNetworkReachableCancellable = networkReachability.isOnlinePublisher.sink { [weak self] _ in
-            guard let self else { return }
-            notifyAVSOfNetworkInterfaceChanged()
-        }
+        isNetworkReachableCancellable = networkReachability.isOnlinePublisher
+            .filter(\.self)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                notifyAVSOfNetworkInterfaceChanged()
+            }
     }
 
     func trackAnalyticsEvent(_ event: AnalyticsEvent) {
@@ -1323,7 +1326,7 @@ extension ZMUserSession: SyncAgentDelegate {
             attributes: .incrementalSync
         )
 
-        syncAgent?.resume()
+        syncAgent?.resume(callEventsOnly: true)
     }
 
     func notifyAuthenticationInvalidated(_ error: Error) {

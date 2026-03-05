@@ -57,15 +57,13 @@ package struct FilesView: FilesViewProtocol {
                     ProgressView()
                         .progressViewStyle(.circular)
                 case .received, .pending:
-                    VStack {
-                        if viewModel.connectionState == .offline {
-                            Spacer()
-                            offlineBar.id(UUID())
-                            Spacer()
+                    filesList
+                        .safeAreaInset(edge: .top) {
+                            if viewModel.shouldShowOfflineBar {
+                                offlineBar
+                                    .id(UUID())
+                            }
                         }
-
-                        filesList
-                    }
                 case let .error(isConnectionError):
                     FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
                         reloadTask()
@@ -82,7 +80,7 @@ package struct FilesView: FilesViewProtocol {
             .if(viewModel.showSearchBar) { view in
                 view.searchable(
                     text: $viewModel.searchText,
-                    placement: .navigationBarDrawer,
+                    placement: .navigationBarDrawer(displayMode: .always),
                     prompt: Strings.Files.Search.title
                 )
             }

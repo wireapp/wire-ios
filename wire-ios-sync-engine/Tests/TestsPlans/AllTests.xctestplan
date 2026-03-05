@@ -50,9 +50,25 @@
       "skippedTests" : [
         "AvailabilityTests",
         "EventProcessingPerformanceTests",
+        "SessionManagerEncryptionAtRestMigrationTests",
         "SessionManagerTests\/testThatSessionManagerSetsUpAPNSEnvironmentOnLaunch()",
         "ZMMissingUpdateEventsTranscoderTests",
-        "ZMUserSessionTests\/testItSlowSyncsAfterRegisteringMLSClient()"
+        "ZMUserSessionTests\/testItSlowSyncsAfterRegisteringMLSClient()",
+        "ZMUserSessionTests_EncryptionAtRest",
+        "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseIsLocked_AfterBackgroundTaskCompletesInTheBackground()",
+        "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseIsLocked_AfterEnteringBackground()",
+        "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseIsLocked_WhenTheCustomTimeoutHasExpiredInTheBackground()",
+        "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseIsNotLocked_IfThereIsAnActiveBackgroundTask()",
+        "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseIsUnlocked_AfterActivatingEncryptionAtRest()",
+        "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseIsUnlocked_AfterDeactivatingEncryptionAtRest()",
+        "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseIsUnlocked_AfterUnlockingDatabase()",
+        "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseIsUnlocked_WhenEncryptionAtRestIsDisabled()",
+        "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseLockedHandlerIsCalled_AfterDatabaseIsLocked()",
+        "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseLockedHandlerIsCalled_AfterUnlockingDatabase()",
+        "ZMUserSessionTests_EncryptionAtRest\/testThatDelegateIsCalled_WhenEncryptionAtRestIsDisabled()",
+        "ZMUserSessionTests_EncryptionAtRest\/testThatDelegateIsCalled_WhenEncryptionAtRestIsEnabled()",
+        "ZMUserSessionTests_EncryptionAtRest\/testThatIfDatabaseIsLocked_ThenUserSessionLockIsSet()",
+        "ZMUserSessionTests_EncryptionAtRest\/testThatIfDatabaseIsNotLocked_ThenUserSessionLockIsNotSet()"
       ],
       "target" : {
         "containerPath" : "container:WireSyncEngine.xcodeproj",

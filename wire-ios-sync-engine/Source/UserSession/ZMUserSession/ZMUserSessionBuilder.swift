@@ -203,7 +203,7 @@ struct ZMUserSessionBuilder {
         coreCryptoProvider: CoreCryptoProviderProtocol,
         configuration: ZMUserSession.Configuration,
         contextStorage: any LAContextStorable,
-        earService: (any EARServiceInterface)?,
+        earService: any EARServiceInterface,
         flowManager: any FlowManagerType,
         mediaManager: any MediaManagerType,
         mlsService: (any MLSServiceInterface)?,
@@ -248,16 +248,6 @@ struct ZMUserSessionBuilder {
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
-        )
-        let earService = earService ?? EARService(
-            accountID: coreDataStack.account.userIdentifier,
-            databaseContexts: [
-                coreDataStack.viewContext,
-                coreDataStack.syncContext
-            ],
-            canPerformKeyMigration: true,
-            sharedUserDefaults: sharedUserDefaults,
-            authenticationContext: AuthenticationContext(storage: contextStorage)
         )
         let lastE2EIdentityUpdateDateRepository = LastE2EIdentityUpdateDateRepository(
             userID: userId,

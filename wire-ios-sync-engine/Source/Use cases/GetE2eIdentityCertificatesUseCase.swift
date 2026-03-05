@@ -62,8 +62,8 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
                     clientId: identity.clientId,
                     certificateDetails: x509Identity.certificate,
                     mlsThumbprint: identity.thumbprint,
-                    notValidBefore: Date(timeIntervalSince1970: Double(x509Identity.notBefore)),
-                    expiryDate: Date(timeIntervalSince1970: Double(x509Identity.notAfter)),
+                    notValidBefore: x509Identity.notBefore,
+                    expiryDate: x509Identity.notAfter,
                     certificateStatus: status,
                     serialNumber: x509Identity.serialNumber
                 )
@@ -123,11 +123,11 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
 
     @MainActor
     private func getWireIdentity(
-        coreCrypto: SafeCoreCryptoProtocol,
+        coreCrypto: CoreCryptoProtocol,
         conversationId: WireCoreCryptoUniffi.ConversationId,
         clientIDs: [WireCoreCryptoUniffi.ClientId]
     ) async throws -> [WireIdentity] {
-        try await coreCrypto.perform {
+        try await coreCrypto.transaction {
             try await $0.getDeviceIdentities(
                 conversationId: conversationId,
                 deviceIds: clientIDs

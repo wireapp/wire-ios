@@ -899,7 +899,7 @@ final class MessageSenderTests: MessagingTestBase {
             encoding: .utf8
         ))
         arrangement.mlsService.commitPendingProposalsInSkipRetry_MockError = CoreCryptoError
-            .Mls(.MessageRejected(reason: errorString))
+            .Mls(mlsError: .MessageRejected(reason: errorString))
         arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
             message + [000]
         }

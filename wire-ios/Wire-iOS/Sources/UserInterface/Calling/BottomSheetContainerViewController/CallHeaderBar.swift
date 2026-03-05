@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireLocators
 
 final class CallHeaderBar: UIView {
     private let verticalStackView = UIStackView(axis: .vertical)
@@ -57,7 +58,7 @@ final class CallHeaderBar: UIView {
         verticalStackView.addArrangedSubview(bitrateLabel)
 
         bitrateLabel.accessibilityIdentifier = "bitrate-indicator"
-        timeLabel.accessibilityIdentifier = "time label"
+        timeLabel.accessibilityIdentifier = Locators.OngoingCallPage.timeLabel.rawValue
     }
 
     private func setupConstraints() {

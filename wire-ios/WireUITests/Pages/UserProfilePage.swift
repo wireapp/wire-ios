@@ -23,11 +23,15 @@ import XCTest
 class UserProfilePage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        qrCodeButton
+        userProfilePicture
     }
 
     var qrCodeButton: XCUIElement {
         app.buttons[Locators.UserProfilePage.qrCodeButton.rawValue]
+    }
+
+    var userProfilePicture: XCUIElement {
+        app.buttons[Locators.UserProfilePage.userProfilePicture.rawValue]
     }
 
     var createTeamButton: XCUIElement {

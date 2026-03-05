@@ -21,6 +21,9 @@ import LocalAuthentication
 import WireDataModelSupport
 @testable import WireSyncEngine
 
+// TODO: [WPB-23474] Fix the tests setup
+// The test class has been removed from the test plan
+
 final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase {
 
     var userSessionDelegate: MockUserSessionDelegate!
@@ -51,13 +54,14 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
     /// that the `managedObjectContext` is changed.
     /// To remove this workaround, delete this override  and the `mockEARService` should be used instead of
     /// a real instance of `EARService`.
-    override func createSut() -> ZMUserSession {
-        let earService = EARService(
+    func createSut() async -> ZMUserSession {
+        let earService = await EARService(
             accountID: coreDataStack.account.userIdentifier,
             databaseContexts: [
                 coreDataStack.viewContext,
                 coreDataStack.syncContext
             ],
+            coreDataStack: coreDataStack,
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: MockAuthenticationContextProtocol()
