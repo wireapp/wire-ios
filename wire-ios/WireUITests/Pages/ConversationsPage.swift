@@ -137,6 +137,7 @@ class ConversationsPage: PageModel {
         return try ConnectionRequestsPage()
     }
 
+    @discardableResult
     func openConversation() throws -> ActiveConversationPage {
         try letTheSyncFinish()
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
