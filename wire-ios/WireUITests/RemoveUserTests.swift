@@ -20,32 +20,11 @@ import XCTest
 
 class RemoveUserTests: WireUITestCase {
     
-    private func createTeam()  async throws -> (UserInfo, UserInfo, UserInfo) {
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
-            email: teamOwner.email,
-            password: teamOwner.password
-        )
-        let teamID = try XCTUnwrap(teamOwner.teamID)
-        let countOfMembers = 2
-
-        var qualifiedIds: [QualifiedID] = []
-        var teamMembers: [UserInfo] = []
-
-        for _ in 0 ..< countOfMembers {
-            let (qualifiedId, teamMember) = try await userHelper.registerUsersAsTeamMember(
-                ownerAccessToken: ownerAccessToken.token,
-                teamID: teamID
-            )
-            qualifiedIds.append(qualifiedId)
-            teamMembers.append(teamMember)
-        }
-        return (teamOwner, teamMembers[0], teamMembers[1])
-    }
     
-    private func login(_ user: UserInfo) async throws -> SetUsernamePage {
+    @MainActor
+    private func login(_ user: UserInfo) async throws -> ConversationsPage {
         let page = try app.loginUser(email: user.email, password: user.password)
-            .acceptPopupOnTeamMemberSetup(with: self)
+            .acceptPopup(with: self)
             
         return page
     }
@@ -53,25 +32,30 @@ class RemoveUserTests: WireUITestCase {
     private func deleteMember(_ user: UserInfo) async throws {
         try await userHelper.deleteUser(user)
     }
+    
     /// Test when a team member is removed, the 1:1 with the user is marked as readonly
     @MainActor
     func testRemoveTeamMember() async throws {
         // GIVEN
-        let (owner, member1, member2) = try await createTeam()
+        let team = try await userHelper.registerTeam(withMemberCount: 2)
+        let member1 = try XCTUnwrap(team.teamMembers.first)
+        let member2 = try XCTUnwrap(team.teamMembers.last)
         
-        let firstTimePage = try await login(member1)
-        let userProfilePage = try firstTimePage
-            .setUsername(member1.username)
+        _ = try await login(member2)
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        let activeConversation = try await login(member1)
             .tapPlusButtonToCreateGroup()
-            .tapSearchBox()
-            .searchUserByUserHandle(member2.username)
-            .tapSearchedUserCell()
-    
+            .searchUserByUserHandle(member2.name)
+            .tapSearchedUserCell(handle: member2.username)
+            .tapStartConversationButton()
+//            .sendMessage("test")
         
         // WHEN
-//        try await deleteMember(member2)
+        try await deleteMember(member2)
         
         // THEN
-        
+        XCTAssertFalse(activeConversation.inputMessageField.exists, "conversation should be readonly")
     }
 }
