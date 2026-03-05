@@ -63,7 +63,7 @@ class NewConversationPage: PageModel {
     }
 
     func tapSearchedUserCell(handle: String) throws -> UserDetailsPage {
-        searchedUserCell(handle: handle).tap()
+        searchedUserCell(handle: handle).waitAndTap()
         return try UserDetailsPage()
     }
 

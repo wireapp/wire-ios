@@ -147,6 +147,7 @@ class ConversationsPage: PageModel {
         while !videoCallButton.exists, Date().timeIntervalSince(start) < maxDuration {
             if conversationCell.isHittable {
                 conversationCell.tap()
+                break
             }
             RunLoop.current.run(until: Date().addingTimeInterval(1.0))
         }

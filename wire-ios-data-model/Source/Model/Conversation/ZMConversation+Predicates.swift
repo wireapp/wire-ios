@@ -122,7 +122,7 @@ extension ZMConversation {
             hasOnlyOneParticipant
         ])
     }
-    
+
     public class func predicateForTeamOneToOneDeletedUserConversation(selfUser: ZMUser) -> NSPredicate {
         // We consider a conversation being an existing 1:1 team conversation in case the following point are true:
         //  1. It is a conversation inside a team

@@ -105,7 +105,8 @@ public final class ConversationPredicateFactory: NSObject {
         let isNotChannelGroupType =
             NSPredicate(format: "\(ZMConversationGroupTypeKey) != \(ConversationGroupType.channel.rawValue)")
         let isNotDeletedUserTeamOneOnOne = NSCompoundPredicate(
-            notPredicateWithSubpredicate: ZMConversation.predicateForTeamOneToOneDeletedUserConversation(selfUser: selfUser)
+            notPredicateWithSubpredicate: ZMConversation
+                .predicateForTeamOneToOneDeletedUserConversation(selfUser: selfUser)
         )
 
         return .all(of: [
@@ -232,12 +233,12 @@ public final class ConversationPredicateFactory: NSObject {
         }
 
         let isOtherUserBot = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.serviceIdentifier)) != NULL")
-        
+
         let otherUserDeleted = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.isAccountDeleted)) == YES")
 
-        let userDeletedProteusOneOnOne = isOneOnOne.and(ZMConversation.predicateForTeamOneToOneDeletedUserConversation(selfUser: selfUser))
-        
-        
+        let userDeletedProteusOneOnOne = isOneOnOne
+            .and(ZMConversation.predicateForTeamOneToOneDeletedUserConversation(selfUser: selfUser))
+
         return (isOneOnOne.and(otherUserDeleted))
             .or(userDeletedProteusOneOnOne)
             .or(

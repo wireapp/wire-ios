@@ -225,7 +225,10 @@ public final class UserLocalStore: UserLocalStoreProtocol {
 
     public func markAccountAsDeleted(for user: ZMUser) async {
         await context.perform {
-            WireLogger.conversation.debug("⚠️ mark as deleted store", attributes: [.senderUserId: user.qualifiedID?.safeForLoggingDescription ?? "<nil>"])
+            WireLogger.conversation.debug(
+                "⚠️ mark as deleted store",
+                attributes: [.senderUserId: user.qualifiedID?.safeForLoggingDescription ?? "<nil>"]
+            )
             user.isAccountDeleted = true
         }
     }
