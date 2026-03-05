@@ -22,7 +22,7 @@ import XCTest
 class ActiveConversationPage: PageModel {
 
     override var pageMainElement: XCUIElement {
-        videoCallButton
+        conversationTitleButton
     }
 
     var videoCallButton: XCUIElement {

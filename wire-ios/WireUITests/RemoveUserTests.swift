@@ -19,20 +19,17 @@ import WireFoundation
 import XCTest
 
 class RemoveUserTests: WireUITestCase {
-    
-    
+
     @MainActor
     private func login(_ user: UserInfo) async throws -> ConversationsPage {
-        let page = try app.loginUser(email: user.email, password: user.password)
+        try app.loginUser(email: user.email, password: user.password)
             .acceptPopup(with: self)
-            
-        return page
     }
-    
+
     private func deleteMember(_ user: UserInfo) async throws {
         try await userHelper.deleteUser(user)
     }
-    
+
     /// Test when a team member is removed, the 1:1 with the user is marked as readonly
     @MainActor
     func testRemoveTeamMember() async throws {
@@ -40,22 +37,34 @@ class RemoveUserTests: WireUITestCase {
         let team = try await userHelper.registerTeam(withMemberCount: 2)
         let member1 = try XCTUnwrap(team.teamMembers.first)
         let member2 = try XCTUnwrap(team.teamMembers.last)
-        
+
         _ = try await login(member2)
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
 
-        let activeConversation = try await login(member1)
+        let member1conversationsPage = try await login(member1)
             .tapPlusButtonToCreateGroup()
             .searchUserByUserHandle(member2.name)
             .tapSearchedUserCell(handle: member2.username)
             .tapStartConversationButton()
-//            .sendMessage("test")
-        
+            .goBackToConversationPage()
+            .openUserProfilePage()
+
+        // logout member2 to avoid receiving event in other session -> crash
+        try member1conversationsPage
+            .switchUserAccountForUser(withName: member2.name)
+            .openSettings()
+            .openAccountSettings()
+            .logout()
+            .enterPassword(member2.password, expectWelcomePage: false)
+
+        let member1ConversationsPage = try ConversationsPage()
+
         // WHEN
         try await deleteMember(member2)
-        
+
         // THEN
-        XCTAssertFalse(activeConversation.inputMessageField.exists, "conversation should be readonly")
+        let oneOnOneConversation = try member1ConversationsPage.openConversation()
+        XCTAssertFalse(oneOnOneConversation.inputMessageField.exists, "conversation should be readonly")
     }
 }

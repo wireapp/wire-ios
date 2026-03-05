@@ -31,7 +31,8 @@ class ZMConversationTests_Predicates: ZMConversationTestsBase {
             conversation.mlsStatus = .ready
 
             // when
-            let sut = ConversationPredicateFactory(selfUser: ZMUser.selfUser(in: syncMOC)).predicateForConversationsIncludingArchived()
+            let sut = ConversationPredicateFactory(selfUser: ZMUser.selfUser(in: syncMOC))
+                .predicateForConversationsIncludingArchived()
 
             // then
             XCTAssertTrue(sut.evaluate(with: conversation))
@@ -47,7 +48,8 @@ class ZMConversationTests_Predicates: ZMConversationTestsBase {
             conversation.mlsStatus = .pendingJoin
 
             // when
-            let sut = ConversationPredicateFactory(selfUser: ZMUser.selfUser(in: syncMOC)).predicateForConversationsIncludingArchived()
+            let sut = ConversationPredicateFactory(selfUser: ZMUser.selfUser(in: syncMOC))
+                .predicateForConversationsIncludingArchived()
 
             // then
             XCTAssertTrue(sut.evaluate(with: conversation))
