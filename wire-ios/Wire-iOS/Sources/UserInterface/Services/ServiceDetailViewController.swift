@@ -46,9 +46,8 @@ final class ServiceDetailViewController: UIViewController {
 
     enum ActionType {
         case addApp(ZMConversation)
-        case removeApp(ZMConversation)
         case addBot(ZMConversation)
-        case removeBot(ZMConversation)
+        case removeParticipant(ZMConversation)
         case openConversation
     }
 
@@ -101,7 +100,7 @@ final class ServiceDetailViewController: UIViewController {
         case let .addApp(conversation), let .addBot(conversation):
             self.actionButton = .createAddAppButton()
             actionButton.isHidden = !selfUser.canAddService(to: conversation)
-        case let .removeApp(conversation), let .removeBot(conversation):
+        case let .removeParticipant(conversation):
             self.actionButton = .createDestructiveAppButton()
             actionButton.isHidden = !selfUser.canRemoveService(from: conversation)
         case .openConversation:
@@ -259,14 +258,11 @@ final class ServiceDetailViewController: UIViewController {
                         try await syncContext.perform {
                             try syncContext.save()
                         }
-                        completion(.success(conversation: conversation)) TODO: why do we end up here after failed to claim key packages?
+                        completion(.success(conversation: conversation))
                     } catch {
                         completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
                     }
                 }
-
-            case let .removeApp(conversation):
-                fatalError() // TODO: not used?
 
             case let .addBot(conversation):
                 guard let bot = service.user as? any Bot else { return }
@@ -279,7 +275,7 @@ final class ServiceDetailViewController: UIViewController {
                     }
                 }
 
-            case let .removeBot(conversation):
+            case let .removeParticipant(conversation):
                 guard let bot = service.user as? any Bot else { return }
                 presentRemoveDialogue(
                     for: bot,
