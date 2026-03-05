@@ -103,9 +103,7 @@ public final class ServiceDetails {
         serviceIdentifier: String,
         providerIdentifier: String,
         name: String,
-        serviceDescription: String,
-        assets: [[String: Any]],
-        tags: [String]
+        serviceDescription: String
     ) {
         self.serviceIdentifier = serviceIdentifier
         self.providerIdentifier = providerIdentifier

@@ -90,7 +90,10 @@ final class ServiceDetailViewController: UIViewController {
         self.userSession = userSession
         self.teamsAPI = teamsAPI
 
-        self.detailView = ServiceDetailView(service: service)
+        self.detailView = ServiceDetailView(
+            service: service,
+            userSession: userSession
+        )
 
         let selfUser = userSession.selfUser
 
@@ -187,9 +190,7 @@ final class ServiceDetailViewController: UIViewController {
                         serviceIdentifier: "",
                         providerIdentifier: "",
                         name: appDetails.name,
-                        serviceDescription: appDetails.description,
-                        assets: [], // TODO: convert assets
-                        tags: []
+                        serviceDescription: appDetails.description
                     )
                     detailView.service.provider = ServiceProvider(
                         identifier: "",

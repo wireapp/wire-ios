@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireSyncEngine
 
 final class ServiceDetailView: UIView {
     private let serviceView: ServiceView
@@ -31,9 +32,15 @@ final class ServiceDetailView: UIView {
         }
     }
 
-    init(service: Service) {
+    init(
+        service: Service,
+        userSession: any UserSession
+    ) {
         self.service = service
-        self.serviceView = ServiceView(service: service)
+        self.serviceView = ServiceView(
+            service: service,
+            userSession: userSession
+        )
         super.init(frame: .zero)
 
         [serviceView, descriptionTextView].forEach(addSubview)
@@ -75,7 +82,8 @@ final class ServiceDetailView: UIView {
 }
 
 final class ServiceView: UIView {
-    private let logoView = UserImageView(size: .normal)
+
+    private let logoView: UserImageView
     private let nameLabel = UILabel()
     private let providerLabel = UILabel()
 
@@ -85,9 +93,17 @@ final class ServiceView: UIView {
         }
     }
 
-    init(service: Service) {
+    init(
+        service: Service,
+        userSession: any UserSession
+    ) {
         self.service = service
+        let logoView = UserImageView(size: .normal)
+        logoView.userSession = userSession
+        self.logoView = logoView
+
         super.init(frame: .zero)
+
         [logoView, nameLabel, providerLabel].forEach(addSubview)
 
         createConstraints()
