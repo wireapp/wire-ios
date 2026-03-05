@@ -68,7 +68,7 @@ extension FilesViewProtocol {
             FilesInfoView(
                 info: .noFilesFound(
                     scope: viewModel.isRecycleBin ? .recycleBin : isBrowsing ? .allConversations : .oneConversation,
-                    isSearch: !viewModel.searchText.isEmpty
+                    isSearch: !viewModel.searchText.isEmpty || viewModel.filtersSelection != .empty
                 )
             )
         case .pending:
