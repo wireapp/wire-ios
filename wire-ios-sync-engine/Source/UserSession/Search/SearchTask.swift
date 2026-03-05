@@ -317,7 +317,7 @@ public final class SearchTask {
                 teamMembers: searchTeamMembers,
                 directory: [],
                 conversations: copiedConversations,
-                apps: copiedApps,
+                apps: copiedApps, // TODO: remotely found apps are listed separately even if the same app is already known locally
                 bots: [],
                 searchUsersCache: searchUsersCache
             )

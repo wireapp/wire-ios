@@ -175,7 +175,7 @@ final class ServiceDetailViewController: UIViewController {
     private func fetchDetails() {
         guard let userSession = userSession as? ZMUserSession else { return }
 
-        if
+        if // TODO: for remotely found apps we end up in the else branch (fatal error)
             !service.isLegacyBot,
             let teamID = service.user.membership?.team?.remoteIdentifier,
             let appID = service.user.remoteIdentifier {
@@ -266,7 +266,7 @@ final class ServiceDetailViewController: UIViewController {
                 }
 
             case let .removeApp(conversation):
-                fatalError()
+                fatalError() // TODO: not used?
 
             case let .addBot(conversation):
                 guard let bot = service.user as? any Bot else { return }

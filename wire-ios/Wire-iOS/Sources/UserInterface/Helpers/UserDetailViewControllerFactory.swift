@@ -47,7 +47,7 @@ enum UserDetailViewControllerFactory {
         if user.isAppOrBot, let bot = user as? any Bot {
             return ServiceDetailViewController(
                 user: bot,
-                actionType: .removeBot(conversation),
+                actionType: .removeBot(conversation), // TODO: removeApp?
                 userSession: userSession,
                 teamsAPI: teamsAPI,
                 completion: { _ in }
