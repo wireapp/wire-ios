@@ -26,6 +26,8 @@ public struct App: Equatable, Sendable {
 
     public let description: String
 
+    public let author = "TODO" // TODO: will the API be adjusted?
+
     /// Accent color of the app
 
     public let accentID: Int
