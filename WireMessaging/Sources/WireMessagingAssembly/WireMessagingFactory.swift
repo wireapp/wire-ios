@@ -28,6 +28,7 @@ public import WireMessagingUI
 public struct WireMessagingFactory {
 
     public typealias DriveURLResolver = @Sendable () throws -> URL
+    public typealias DriveAnalyticsProvider = @Sendable () -> (any AnalyticsEventTrackerProtocol)?
 
     private let nodesAPI: NodesAPI
     private let uploadManager: WireDriveNodeUploadManager
@@ -39,7 +40,7 @@ public struct WireMessagingFactory {
     private let lastOpenRequest: WireDriveLastOpenRequest
     private let nodeCache: WireDriveNodeCache
     private let nodeRenameNotifier: WireDriveNodeRenameNotifier
-    private let analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
+    private let analyticsProvider: DriveAnalyticsProvider
 
     @MainActor var lastOpenRequestNodeID: UUID?
 
@@ -50,7 +51,7 @@ public struct WireMessagingFactory {
         accessToken: any AccessTokenProvider,
         fileCache: any FileCache,
         contextProvider: any ManagedObjectContextProvider,
-        analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
+        analyticsProvider: @escaping DriveAnalyticsProvider
     ) {
         self.nodeCache = WireDriveNodeCache()
         self.nodesAPI = NodesAPI(
@@ -69,7 +70,7 @@ public struct WireMessagingFactory {
         )
         self.lastOpenRequest = WireDriveLastOpenRequest()
         self.nodeRenameNotifier = WireDriveNodeRenameNotifier()
-        self.analyticsEventTracker = analyticsEventTracker
+        self.analyticsProvider = analyticsProvider
     }
 
     public func makeUploadDraftUseCase(cellName: String) -> any WireDriveUploadDraftUseCaseProtocol {
@@ -88,7 +89,7 @@ public struct WireMessagingFactory {
     }
 
     public func makePublishDraftsUseCase(cellName: String) -> any WireDrivePublishDraftsUseCaseProtocol {
-        PublishDraftsUseCase(cellName: cellName, draftRepository: draftsRepository, analyticsEventTracker: analyticsEventTracker)
+        PublishDraftsUseCase(cellName: cellName, draftRepository: draftsRepository, analyticsProvider: analyticsProvider)
     }
 
     public func makeClearPublishedDraftsUseCase(cellName: String) -> any WireDriveClearPublishedDraftsUseCaseProtocol {
