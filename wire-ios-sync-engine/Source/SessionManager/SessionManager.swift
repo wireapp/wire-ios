@@ -320,6 +320,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private(set) var reachability: ReachabilityWrapper
 
+    private let defaultEnvironment: BackendEnvironment2
+
     public internal(set) var environment: WireTransport.BackendEnvironment {
         didSet {
             reachability.tearDown()
@@ -396,6 +398,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         dispatchGroup: ZMSDispatchGroup? = nil,
+        defaultEnvironment: BackendEnvironment2,
         environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
@@ -452,6 +455,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             delegate: delegate,
             application: application,
             dispatchGroup: dispatchGroup,
+            defaultEnvironment: defaultEnvironment,
             environment: environment,
             configuration: configuration,
             detector: detector,
@@ -515,6 +519,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         dispatchGroup: ZMSDispatchGroup,
+        defaultEnvironment: BackendEnvironment2,
         environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
@@ -531,6 +536,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         logFilesProvider: LogFilesProviding
     ) throws {
         SessionManager.enableLogsByEnvironmentVariable()
+        self.defaultEnvironment = defaultEnvironment
         self.environment = environment
         self.currentAppVersion = currentAppVersion
         self.currentBuildNumber = currentBuildNumber
@@ -1000,6 +1006,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                     account: account,
                     accountManager: accountManager,
                     sharedContainerURL: sharedContainerURL,
+                    defaultEnvironment: defaultEnvironment,
                     legacyEnvironment: environment,
                     minTLSVersion: minTLSVersion,
                     dispatchGroup: dispatchGroup,
