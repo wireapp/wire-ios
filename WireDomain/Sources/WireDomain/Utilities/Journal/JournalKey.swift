@@ -110,6 +110,14 @@ public extension JournalKey where Value == Bool {
         defaultValue: false
     )
 
+    /// Whether the default backend environment (if used by
+    /// the self user) needs to be refreshed and persisted.
+
+    static let isDefaultEnvironmentRefreshRequired = Self(
+        "isDefaultEnvironmentRefreshRequired",
+        defaultValue: true
+    )
+
 }
 
 public extension JournalKey where Value == Set<String> {
