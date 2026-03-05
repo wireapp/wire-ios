@@ -65,7 +65,6 @@ public enum CallNotificationStyle: UInt {
 }
 
 public protocol SessionActivationObserver: AnyObject {
-    func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession)
     func sessionManagerDidReportLockChange(forSession session: UserSession)
 }
 
@@ -960,7 +959,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                 + account.userIdentifier.safeForLoggingDescription
         )
 
-        delegate?.sessionManagerDidChangeActiveUserSession(userSession: session)
         configureUserNotifications()
 
         // If the user isn't logged in it's because they still need

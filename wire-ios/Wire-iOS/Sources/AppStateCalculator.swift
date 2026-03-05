@@ -312,10 +312,6 @@ extension AppStateCalculator: SessionManagerDelegate {
         )
     }
 
-    func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession) {
-        // No op
-    }
-
     func sessionManagerDidReportLockChange(forSession session: UserSession) {
         if session.isBuildBlacklisted {
             transition(to: .blacklisted(reason: .appVersionBlacklisted))
