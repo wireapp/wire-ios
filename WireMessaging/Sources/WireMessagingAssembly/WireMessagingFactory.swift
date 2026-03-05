@@ -39,6 +39,7 @@ public struct WireMessagingFactory {
     private let lastOpenRequest: WireDriveLastOpenRequest
     private let nodeCache: WireDriveNodeCache
     private let nodeRenameNotifier: WireDriveNodeRenameNotifier
+    private let analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
     @MainActor var lastOpenRequestNodeID: UUID?
 
@@ -48,7 +49,8 @@ public struct WireMessagingFactory {
         driveConversationLocalStore: any WireDriveConversationsLocalStoreProtocol,
         accessToken: any AccessTokenProvider,
         fileCache: any FileCache,
-        contextProvider: any ManagedObjectContextProvider
+        contextProvider: any ManagedObjectContextProvider,
+        analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
     ) {
         self.nodeCache = WireDriveNodeCache()
         self.nodesAPI = NodesAPI(
@@ -67,6 +69,7 @@ public struct WireMessagingFactory {
         )
         self.lastOpenRequest = WireDriveLastOpenRequest()
         self.nodeRenameNotifier = WireDriveNodeRenameNotifier()
+        self.analyticsEventTracker = analyticsEventTracker
     }
 
     public func makeUploadDraftUseCase(cellName: String) -> any WireDriveUploadDraftUseCaseProtocol {
@@ -85,7 +88,7 @@ public struct WireMessagingFactory {
     }
 
     public func makePublishDraftsUseCase(cellName: String) -> any WireDrivePublishDraftsUseCaseProtocol {
-        PublishDraftsUseCase(cellName: cellName, draftRepository: draftsRepository, analyticsEventTracker: nil) //TODO: make and pass an analyticsEventTracker instance
+        PublishDraftsUseCase(cellName: cellName, draftRepository: draftsRepository, analyticsEventTracker: analyticsEventTracker)
     }
 
     public func makeClearPublishedDraftsUseCase(cellName: String) -> any WireDriveClearPublishedDraftsUseCaseProtocol {

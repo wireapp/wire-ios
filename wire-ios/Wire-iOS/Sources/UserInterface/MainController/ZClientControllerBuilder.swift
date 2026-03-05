@@ -27,6 +27,8 @@ import WireMessagingDomain
 import WireNetwork
 @preconcurrency import WireSyncEngine
 import WireTransport
+import WireCountly
+import WireAnalytics
 
 final class ZClientControllerBuilder {
 
@@ -101,13 +103,24 @@ final class ZClientControllerBuilder {
             localDomain: userSession.resolvedBackendMetadata.domain,
             isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
         )
+        
+        let analyticsServiceConfiguration = AnalyticsServiceConfigurationBuilder.build()
+        let analyticsService = analyticsServiceConfiguration.map { config in
+            AnalyticsService(
+                config: CountlyConfiguration(appKey: config.secretKey, host: config.serverHost),
+                deviceModel: UIDevice.current.model,
+                osVersion: UIDevice.current.systemVersion,
+                countlyProvider: { CountlyWrapper() }
+            )
+        }
 
         return WireMessagingFactory(
             driveURLResolver: driveURLResolver,
             driveConversationLocalStore: driveConversationLocalStore,
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
-            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider)
+            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
+            analyticsEventTracker: analyticsService
         )
     }
 

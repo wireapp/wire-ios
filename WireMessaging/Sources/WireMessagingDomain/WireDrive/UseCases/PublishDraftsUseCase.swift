@@ -24,7 +24,7 @@ package struct PublishDraftsUseCase: WireDrivePublishDraftsUseCaseProtocol {
 
     private let cellName: String
     private let draftRepository: any DraftsRepositoryProtocol
-    private weak var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
+    private let analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
     package init(cellName: String, draftRepository: any DraftsRepositoryProtocol, analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?) {
         self.cellName = cellName
