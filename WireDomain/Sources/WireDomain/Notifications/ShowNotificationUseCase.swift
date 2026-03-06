@@ -68,10 +68,10 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
                     )
 
                     WireLogger.calling.info(
-                        "gagaga !!! callKitContent \(callKitContent)",
+                        "WOW !!! callKitContent \(callKitContent)",
                         attributes: .newNSE, .safePublic
                     )
-                    try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
+                   // try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
                 } catch {
                     WireLogger.calling.error(
                         "failed to wake up main app: \(String(describing: error))",

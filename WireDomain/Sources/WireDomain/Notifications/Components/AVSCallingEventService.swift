@@ -18,6 +18,7 @@
 
 import Foundation
 import avs
+import WireLogging
 
 public enum CallClosedReason: Int32 {
     case normal, canceled, answeredElsewhere, rejectedElsewhere
@@ -47,6 +48,11 @@ public enum CallClosedReason: Int32 {
 }
 
 public protocol AVSCallingEventServiceProtocol: AnyObject {
+
+    var onIncomingCall: ((_ conversationId: String, _ shouldRing: Bool, _ isVideoCall: Bool) -> Void)? { get set }
+    var onMissedCall: ((_ conversationId: String, _ messageTime: Date, _ isVideoCall: Bool) -> Void)? { get set }
+    var onCallClosed: ((_ reason: CallClosedReason, _ conversationId: String) -> Void)? { get set }
+
     func start()
     func process(data: Data,
                  currentTime: UInt32,
@@ -83,6 +89,7 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
             Self.closedCallHandler,
             Unmanaged.passUnretained(self).toOpaque()
         )
+        WireLogger.calling.info("WOW NSE AVS: wcall_event_create handle=\(self.handle)", attributes: .newNSE, .safePublic)
     }
 
     // MARK: - AVSCallingEventServiceProtocol

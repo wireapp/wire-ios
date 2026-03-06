@@ -98,7 +98,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
     ) {
         Self.logger.debug("did receive incoming push: \(payload.safeForLoggingDescription)")
         WireLogger.calling.info(
-            "gagaga did receive incoming push",
+            "WOW did receive incoming push",
             attributes: .newNSE, .safePublic
         )
         // We're only interested in voIP tokens.
@@ -115,7 +115,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         completion: @escaping () -> Void
     ) {
         WireLogger.calling.info(
-            "gagaga did receive incoming push 1 payload: \(payload)",
+            "WOW did receive incoming push 1 payload: \(payload)",
             attributes: .newNSE, .safePublic
         )
         guard

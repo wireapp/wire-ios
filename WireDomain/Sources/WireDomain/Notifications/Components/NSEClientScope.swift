@@ -19,10 +19,10 @@
 import Foundation
 import NeedleFoundation
 import WireDataModel
-import GenericMessageProtocol
+//import GenericMessageProtocol
 import WireLogging
 import WireNetwork
-import CallKit
+//import CallKit
 
 protocol NSEClientScopeDependency: Dependency {
 
@@ -62,83 +62,88 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private let pushChannelCoordinator: AppExtensionPushChannelCoordinator
     private var currentTask: Task<Void, any Error>?
     private var monitoringTask: Task<Void, any Error>?
+    //private var callKitReportTask: Task<Void, Never>?
 
-    private lazy var callingService: any AVSCallingEventServiceProtocol = {
-        let service = AVSCallingEventService(
-            userID: dependency.accountID.transportString(),
-            clientID: clientID
-        )
-
-        // Track whether we reported an incoming call to CallKit,
-        // so onCallClosed knows whether it needs to stop ringing.
-        var didReportIncomingCall = false
-
-        service.onIncomingCall = { [weak self] conversationId, shouldRing, isVideoCall in
-            WireLogger.calling.info(
-                "gagaga onIncomingCall, conversationId: \(conversationId)",
-                attributes: .newNSE, .safePublic
-            )
-
-            guard let self,
-                  let qualifiedID = QualifiedID(rawValue: conversationId) else {
-                return
-            }
-            let callKitContent: [String: Any] = [
-                "accountID": self.dependency.accountID.uuidString,
-                "conversationID": qualifiedID.uuid.uuidString,
-                "shouldRing": shouldRing,
-                "hasVideo": isVideoCall,
-                "callerName": ""
-            ]
-            WireLogger.calling.info(
-                "gagaga onIncomingCall, callKitContent \(callKitContent)",
-                attributes: .newNSE, .safePublic
-            )
-            didReportIncomingCall = shouldRing
-
-            CXProvider.reportNewIncomingVoIPPushPayload(callKitContent) { error in
-                if let error {
-                    WireLogger.calling.error("gagaga reportNewIncomingVoIPPushPayload error: \(error)", attributes: .newNSE, .safePublic)
-                } else {
-                    WireLogger.calling.info("gagaga reportNewIncomingVoIPPushPayload done", attributes: .newNSE, .safePublic)
-                }
-            }
-        }
-
-        service.onMissedCall = { conversationId, messageTime, isVideoCall in
-            WireLogger.calling.info(
-                "gagaga onMissedCall",
-                attributes: .newNSE, .safePublic
-            )
-            // Nothing to do here — the missed call text notification
-            // is already built by ConversationCallingEventNotificationBuilder
-            // from the same event in the event stream.
-            WireLogger.calling.info(
-                "AVS: missed call in conversation \(conversationId)",
-                attributes: .newNSE, .safePublic
-            )
-        }
-
-        service.onCallClosed = { [weak self] reason, conversationId in
-            WireLogger.calling.info(
-                "gagaga onCallClosed",
-                attributes: .newNSE, .safePublic
-            )
-            guard let self, didReportIncomingCall else { return }
-            // Stop ringing — only if we previously started it
-            let callKitContent: [String: Any] = [
-                "accountID": self.dependency.accountID.uuidString,
-                "conversationID": conversationId,
-                "shouldRing": false
-            ]
-            didReportIncomingCall = false
-            Task {
-                try? await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
-            }
-        }
-
-        return service
-    }()
+//    private lazy var callingService: any AVSCallingEventServiceProtocol = {
+//        let service = AVSCallingEventService(
+//            userID: dependency.accountID.transportString(),
+//            clientID: clientID
+//        )
+//
+//        // Track whether we reported an incoming call to CallKit,
+//        // so onCallClosed knows whether it needs to stop ringing.
+//        var didReportIncomingCall = false
+//
+//        service.onIncomingCall = { [weak self] conversationId, shouldRing, isVideoCall in
+//            WireLogger.calling.info(
+//                "gagaga onIncomingCall, conversationId: \(conversationId)",
+//                attributes: .newNSE, .safePublic
+//            )
+//
+//            guard let self,
+//                  let qualifiedID = QualifiedID(rawValue: conversationId) else {
+//                return
+//            }
+//            let callKitContent: [String: Any] = [
+//                "accountID": self.dependency.accountID.uuidString,
+//                "conversationID": qualifiedID.uuid.uuidString,
+//                "shouldRing": shouldRing,
+//                "hasVideo": isVideoCall,
+//                "callerName": ""
+//            ]
+//            WireLogger.calling.info(
+//                "gagaga onIncomingCall, callKitContent \(callKitContent)",
+//                attributes: .newNSE, .safePublic
+//            )
+//            didReportIncomingCall = shouldRing
+//
+//            self.callKitReportTask = Task {
+//                await withCheckedContinuation { continuation in
+//                    CXProvider.reportNewIncomingVoIPPushPayload(callKitContent) { error in
+//                        if let error {
+//                            WireLogger.calling.error("gagaga reportNewIncomingVoIPPushPayload error: \(error)", attributes: .newNSE, .safePublic)
+//                        } else {
+//                            WireLogger.calling.info("gagaga reportNewIncomingVoIPPushPayload done", attributes: .newNSE, .safePublic)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        service.onMissedCall = { conversationId, messageTime, isVideoCall in
+//            WireLogger.calling.info(
+//                "gagaga onMissedCall",
+//                attributes: .newNSE, .safePublic
+//            )
+//            // Nothing to do here — the missed call text notification
+//            // is already built by ConversationCallingEventNotificationBuilder
+//            // from the same event in the event stream.
+//            WireLogger.calling.info(
+//                "AVS: missed call in conversation \(conversationId)",
+//                attributes: .newNSE, .safePublic
+//            )
+//        }
+//
+//        service.onCallClosed = { [weak self] reason, conversationId in
+//            WireLogger.calling.info(
+//                "gagaga onCallClosed",
+//                attributes: .newNSE, .safePublic
+//            )
+//            guard let self, didReportIncomingCall else { return }
+//            // Stop ringing — only if we previously started it
+//            let callKitContent: [String: Any] = [
+//                "accountID": self.dependency.accountID.uuidString,
+//                "conversationID": conversationId,
+//                "shouldRing": false
+//            ]
+//            didReportIncomingCall = false
+//            Task {
+//                try? await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
+//            }
+//        }
+//
+//        return service
+//    }()
 
     init(
         parent: any Scope,
@@ -169,12 +174,14 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         contentHandler: @escaping (UNNotificationContent) -> Void
     ) async throws {
         // Pull pending update events.
-        let eventStream: AsyncStream<[UpdateEvent]>
+//        let eventStream: AsyncStream<[UpdateEvent]>
         let publicKeys = try earService.fetchPublicKeys()
 
+        // 1. Pull pending update events.
+        let upstream: AsyncStream<[UpdateEvent]>
         if dependency.journal[.isConsumableNotificationsEnabled] {
             let (useCase, stream) = syncEventsUseCase()
-            eventStream = stream
+            upstream = stream
 
             // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
             // cancel the task (not keeping any file lock in suspend mode)
@@ -227,249 +234,109 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             }
 
         } else {
-             callingService.start()
-             WireLogger.calling.info(
-                 "gagaga start",
-                 attributes: .newNSE, .safePublic
-             )
-            eventStream = try await pullEventsUseCase.invoke(publicKeys: publicKeys)
+            upstream = try await pullEventsUseCase.invoke(publicKeys: publicKeys)
         }
-        for await events in eventStream {
-            for event in events {
-                WireLogger.calling.info(
-                    "gagaga event \(event)",
-                    attributes: .newNSE, .safePublic
-                )
-                if let param = await avsParameters(from: event)  {
-                    WireLogger.calling.info(
-                        "gagaga process",
-                        attributes: .newNSE, .safePublic
-                    )
-                    callingService.process(
-                        data: param.data,
-                        currentTime: param.currentTime,
-                        serverTime: param.serverTime,
-                        conversationId: param.conversationId,
-                        userId: param.userId,
-                        clientId: clientID,
-                        conversationType: param.conversationType
-                    )
-                }
-            }
+        // 2. Buffer all events (stream is finite in NSE).
+        var eventBatches: [[UpdateEvent]] = []
+        for await batch in upstream {
+            eventBatches.append(batch)
         }
-        callingService.end()
         WireLogger.calling.info(
-            "gagaga end",
+            "WOW NSE: buffered \(eventBatches.count) batches, total events: \(eventBatches.flatMap { $0 }.count)",
             attributes: .newNSE, .safePublic
         )
+        let isAvsReady = dependency.sharedUserDefaults.bool(forKey: "isAVSReady")
+        let isCallKitAvailable = dependency.sharedUserDefaults.bool(forKey: "isCallKitAvailable")
+        WireLogger.calling.info("WOW NSE state: isAvsReady=\(isAvsReady), isCallKitAvailable=\(isCallKitAvailable)", attributes: .newNSE, .safePublic)
 
-        // Generate notifications from events.
+        // 3. Process calling events via AVS — CallKit is reported internally via callingService callbacks.
+        await processCallingEventsUseCase().invoke(eventBatches: eventBatches)
+
+        // 4. Generate notifications from events.
+        let eventStream = AsyncStream<[UpdateEvent]> { continuation in
+            for batch in eventBatches { continuation.yield(batch) }
+            continuation.finish()
+        }
         let notifications = try await generateNotificationsUseCase(
             eventID: eventID
         ).invoke(
             updateEvents: eventStream
         )
 
-        // Show notifications.
+        // 5. Show notifications.
         try await showNotificationsUseCase(
             contentHandler: contentHandler
         ).invoke(
             userNotifications: notifications
         )
+//        _ = await callKitReportTask?.value
     }
 
-    private func avsParameters(from event: UpdateEvent) async -> AVSCallParams? {
-        switch event {
-        case .conversation(.proteusMessageAdd(let e)):
-            WireLogger.calling.info(
-                "gagaga proteus conversation",
-                attributes: .newNSE, .safePublic
+//    private func teeCallingEvents(
+//        from upstream: AsyncStream<[UpdateEvent]>
+//    ) -> AsyncStream<[UpdateEvent]> {
+//        AsyncStream<[UpdateEvent]> { continuation in
+//            // Ensure end() even if downstream cancels early
+//            continuation.onTermination = { _ in
+//                self.callingService.end()
+//            }
+//
+//            // Start once, right before consumption begins
+//            callingService.start()
+//
+//            Task { [weak self] in
+//                guard let self else {
+//                    continuation.finish()
+//                    return
+//                }
+//
+//                for await batch in upstream {
+//                    if Task.isCancelled { break }
+//
+//                    // Only process calling events
+//                    for event in batch {
+//                        if let param = await self.avsParameters(from: event) {
+//                            callingService.process(
+//                                data: param.data,
+//                                currentTime: param.currentTime,
+//                                serverTime: param.serverTime,
+//                                conversationId: param.conversationId,
+//                                userId: param.userId,
+//                                clientId: clientID,
+//                                conversationType: param.conversationType
+//                            )
+//                        }
+//                    }
+//
+//                    // Forward batch to downstream consumer (normal notifications)
+//                    continuation.yield(batch)
+//                }
+//
+//                continuation.finish()
+//                callingService.end()
+//            }
+//        }
+//    }
+//
+
+    // MARK: - Calling
+
+    private var callingService: any AVSCallingEventServiceProtocol {
+        shared {
+            AVSCallingEventService(
+                userID: dependency.accountID.transportString(),
+                clientID: clientID
             )
-            return await avsParametersForProteus(e).first
-        case .conversation(.mlsMessageAdd(let e)):
-            WireLogger.calling.info(
-                "gagaga MLS conversation",
-                attributes: .newNSE, .safePublic
-            )
-            return await avsParametersForMLS(e).first
-        default:
-            return nil
         }
     }
 
-    private func avsParametersForProteus(
-         _ event: ConversationProteusMessageAddEvent
-     ) async -> [AVSCallParams] {
-         guard
-             let decryptedBase64 = event.message.decryptedMessage,
-             let payload = Data(base64Encoded: decryptedBase64),
-             let genericMessage = GenericMessage(from: payload, validate: false),
-             genericMessage.hasCalling,
-             let callingData = genericMessage.calling.content.data(using: .utf8)
-         else { return [] }
-
-         let params = await buildParams(
-             callingData: callingData,
-             callingProto: genericMessage.calling,
-             fallbackConversationID: event.conversationID,
-             senderID: event.senderID,
-             senderClientID: event.messageSenderClientID,
-             timestamp: event.timestamp,
-             isMLS: false
-         )
-         return params.map { [$0] } ?? []
-     }
-
-    private func avsParametersForMLS(
-          _ event: ConversationMLSMessageAddEvent
-      ) async -> [AVSCallParams] {
-          var result: [AVSCallParams] = []
-
-          for decryptedMessage in event.decryptedMessages {
-              guard
-                  let payload = Data(base64Encoded: decryptedMessage.message),
-                  let genericMessage = GenericMessage(from: payload, validate: false),
-                  genericMessage.hasCalling,
-                  let callingData = genericMessage.calling.content.data(using: .utf8),
-                  let clientID = decryptedMessage.senderClientID,  // optional in MLS
-                  let timestamp = event.timestamp                   // optional in MLS
-              else { continue }
-              WireLogger.calling.info(
-                  "gagaga hasCalling is true",
-                  attributes: .newNSE, .safePublic
-              )
-              if let params = await buildParams(
-                  callingData: callingData,
-                  callingProto: genericMessage.calling,
-                  fallbackConversationID: event.conversationID,
-                  senderID: event.senderID,
-                  senderClientID: clientID,
-                  timestamp: timestamp,
-                  isMLS: true
-              ) {
-                  result.append(params)
-              }
-          }
-
-          return result
-      }
-
-    private func buildParams(
-          callingData: Data,
-          callingProto: Calling,
-          fallbackConversationID: ConversationID,
-          senderID: UserID,
-          senderClientID: String,
-          timestamp: Date,
-          isMLS: Bool
-      ) async -> AVSCallParams? {
-          // Prefer conversation ID embedded in the calling proto (mirrors WireCallCenterV3)
-          let callingConvID = callingProto.qualifiedConversationID
-          let conversationUUID: UUID
-          let conversationDomain: String?
-          if !callingConvID.id.isEmpty, let uuid = UUID(uuidString: callingConvID.id) {
-              conversationUUID = uuid
-              conversationDomain = callingConvID.domain.isEmpty ? nil : callingConvID.domain
-          } else {
-              conversationUUID = fallbackConversationID.id
-              conversationDomain = fallbackConversationID.domain
-          }
-
-          func serialize(id: UUID, domain: String?) -> String {
-              if isFederationEnabled, let domain { return "\(id.transportString())@\(domain)" }
-              return id.transportString()
-          }
-
-          let conversation = await conversationLocalStore.fetchOrCreateConversation(
-              id: conversationUUID,
-              domain: conversationDomain
-          )
-          let isGroup = await conversationLocalStore.isGroupConversation(conversation)
-
-          // WCALL_CONV_TYPE: 0 = oneToOne, 1 = group (Proteus), 3 = conference_mls
-          let conversationType: Int32 = if !isGroup {
-              0  // WCALL_CONV_TYPE_ONEONONE
-          } else if isMLS {
-              3  // WCALL_CONV_TYPE_CONFERENCE_MLS
-          } else {
-              1  // WCALL_CONV_TYPE_GROUP
-          }
-
-          return AVSCallParams(
-              data: callingData,
-              currentTime: UInt32(Date.now.timeIntervalSince1970),
-              serverTime: UInt32(timestamp.timeIntervalSince1970),
-              conversationId: serialize(id: conversationUUID, domain: conversationDomain),
-              userId: serialize(id: senderID.id, domain: senderID.domain),
-              clientId: senderClientID,
-              conversationType: conversationType
-          )
-      }
-
-
-
-    private func avsParameters1(
-        from event: UpdateEvent
-    ) async -> (data: Data, currentTime: UInt32, serverTime: UInt32,
-                conversationId: String, userId: String,
-                clientId: String, conversationType: Int32)? {
-
-        // Only proteusMessageAdd events carry calling payloads
-        guard
-            case .conversation(.proteusMessageAdd(let proteusEvent)) = event,
-            let decryptedBase64 = proteusEvent.message.decryptedMessage,
-            let payload = Data(base64Encoded: decryptedBase64),
-            let genericMessage = GenericMessage(from: payload, validate: false),
-            genericMessage.hasCalling,
-            // The calling content is a JSON string — AVS needs it as raw bytes
-            let callingData = genericMessage.calling.content.data(using: .utf8)
-        else { return nil }
-        WireLogger.calling.info(
-            "gagaga hasCalling is true",
-            attributes: .newNSE, .safePublic
-        )
-        // Prefer the conversation ID embedded in the calling message (mirrors WireCallCenterV3)
-        let callingConvID = genericMessage.calling.qualifiedConversationID
-        let conversationUUID: UUID
-        let conversationDomain: String?
-        if !callingConvID.id.isEmpty, let uuid = UUID(uuidString: callingConvID.id) {
-            conversationUUID = uuid
-            conversationDomain = callingConvID.domain.isEmpty ? nil : callingConvID.domain
-        } else {
-            conversationUUID = proteusEvent.conversationID.id
-            conversationDomain = proteusEvent.conversationID.domain
-        }
-
-        // Serialize UUID as "uuid@domain" when federation is enabled (mirrors AVSIdentifier.serialized)
-        func serialize(id: UUID, domain: String?) -> String {
-            if isFederationEnabled, let domain { return "\(id.transportString())@\(domain)" }
-            return id.transportString()
-        }
-
-        // Look up conversation type from CoreData
-        // WCALL_CONV_TYPE_ONEONONE = 0, WCALL_CONV_TYPE_GROUP = 1
-        let conversation = await conversationLocalStore.fetchOrCreateConversation(
-            id: conversationUUID,
-            domain: conversationDomain
-        )
-        WireLogger.calling.info(
-            "gagaga conversation \(conversation)",
-            attributes: .newNSE, .safePublic
-        )
-        let isGroup = await conversationLocalStore.isGroupConversation(conversation)
-        WireLogger.calling.info(
-            "gagaga isGroup \(isGroup)",
-            attributes: .newNSE, .safePublic
-        )
-
-        return (
-            data: callingData,
-            currentTime: UInt32(Date.now.timeIntervalSince1970),   // mirrors CallEvent.currentTimestamp
-            serverTime: UInt32(proteusEvent.timestamp.timeIntervalSince1970), // mirrors CallEvent.serverTimestamp
-            conversationId: serialize(id: conversationUUID, domain: conversationDomain),
-            userId: serialize(id: proteusEvent.senderID.id, domain: proteusEvent.senderID.domain),
-            clientId: proteusEvent.messageSenderClientID,
-            conversationType: isGroup ? 1 : 0
+    private func processCallingEventsUseCase() -> ProcessCallingEventsUseCase {
+        ProcessCallingEventsUseCase(
+            callingService: callingService,
+            clientID: clientID,
+            conversationLocalStore: conversationLocalStore,
+            isFederationEnabled: isFederationEnabled,
+            accountID: dependency.accountID
         )
     }
 
