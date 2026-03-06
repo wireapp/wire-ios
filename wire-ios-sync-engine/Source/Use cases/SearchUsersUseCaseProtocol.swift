@@ -25,6 +25,6 @@ public protocol SearchUsersUseCaseProtocol {
         query: String,
         options: SearchOptions,
         messageProtocol: WireDataModel.MessageProtocol?
-    ) async throws -> SearchResult
+    ) async -> SearchResult
 
 }
