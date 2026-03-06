@@ -53,7 +53,7 @@ public final class SearchUsersUseCase: SearchUsersUseCaseProtocol {
         query: String,
         options: SearchOptions,
         messageProtocol: MessageProtocol?
-    ) async throws -> SearchResult {
+    ) async -> SearchResult {
         activeSearchTask?.cancel()
         activeSearchTask = nil
 

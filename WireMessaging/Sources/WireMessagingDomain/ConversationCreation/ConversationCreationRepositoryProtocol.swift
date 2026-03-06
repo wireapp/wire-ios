@@ -25,6 +25,6 @@ public protocol ConversationCreationRepositoryProtocol {
     /// MLS-only service) or adding an app to a conversation, there is no feature flag for bots (old-style Proteus-only
     /// services). If there are bots already added to the team, bots are considered enabled.
 
-    func areBotsSetUpInTheTeam() async throws -> Bool
+    func areBotsSetUpInTheTeam() async -> Bool
 
 }

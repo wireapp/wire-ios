@@ -82,7 +82,6 @@ package struct FilesView: FilesViewProtocol {
                             if viewModel.shouldShowOfflineBar {
                                 offlineBar
                                     .id(UUID())
-                                    .background(ColorTheme.Backgrounds.surface.color)
                             }
                         }
                 case let .error(isConnectionError):
