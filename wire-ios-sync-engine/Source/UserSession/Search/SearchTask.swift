@@ -23,6 +23,8 @@ import WireLogging
 import WireNetwork
 import WireUtilities
 
+// TODO: apps existing in the local db are listed twice in the search results
+
 public final class SearchTask {
 
     private let type: `Type`
