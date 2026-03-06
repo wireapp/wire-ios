@@ -268,7 +268,7 @@ final class AddParticipantsViewController: UIViewController {
             }
             // Remove selected users when switching to services tab to avoid the user confusion: users in the field are
             // not going to be added to the new conversation with the bot.
-            if group == .apps { // TODO: apps?
+            if group == .apps {
                 searchHeaderViewController.clearInput()
                 confirmButton.isHidden = true
             } else {

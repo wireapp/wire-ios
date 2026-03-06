@@ -77,7 +77,7 @@ public struct SearchOptions: OptionSet, CustomDebugStringConvertible {
             (.apps, "apps"),
             (.bots, "bots"),
             (.federated, "federated"),
-            (.localResultsOnly, "localResultsOnly"),
+            (.localResultsOnly, "localResultsOnly")
         ]
         let names = allOptions
             .filter { contains($0.0) }

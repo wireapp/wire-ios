@@ -23,8 +23,6 @@ import WireLogging
 import WireNetwork
 import WireUtilities
 
-// TODO: find out why apps search queries don't trigger API requests
-
 public final class SearchTask {
 
     private let type: `Type`
@@ -384,7 +382,7 @@ public final class SearchTask {
         // searchOptions: SearchOptions,
         in context: NSManagedObjectContext
     ) -> [ZMUser] {
-        return team?.members(
+        team?.members(
             matchingQuery: "",
             filteredBy: .app
         ).compactMap(\.user) ?? []
@@ -497,7 +495,7 @@ public final class SearchTask {
 
     }
 
-// MARK: -
+    // MARK: -
 
     func performRemoteSearch() async throws -> SearchResultAggregator {
         guard
@@ -622,7 +620,7 @@ public final class SearchTask {
 
     }
 
-// MARK: -
+    // MARK: -
 
     func performRemoteSearchForTeamUser() async -> SearchResultAggregator {
         guard

@@ -26,11 +26,6 @@ private struct ServiceUserData: Equatable { // TODO: rename BotData? or delete?
     let provider: UUID
     let service: UUID
 
-    init(provider: UUID, service: UUID) {
-        self.provider = provider
-        self.service = service
-    }
-
 }
 
 private extension Bot {

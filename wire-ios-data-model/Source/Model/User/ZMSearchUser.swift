@@ -548,7 +548,9 @@ public class ZMSearchUser: NSObject, UserType {
         }
     }
 
-    @objc(initWithViewContext:name:handle:accentColor:remoteIdentifier:domain:teamIdentifier:user:searchUsersCache:type:)
+    @objc(
+        initWithViewContext:name:handle:accentColor:remoteIdentifier:domain:teamIdentifier:user:searchUsersCache:type:
+    )
     convenience init(
         viewContext: NSManagedObjectContext,
         name: String,
