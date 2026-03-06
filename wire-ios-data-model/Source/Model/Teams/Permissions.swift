@@ -109,7 +109,8 @@ extension Permissions: Hashable {
 /// specific users.
 ///
 @objc
-public enum TeamRole: Int {
+public enum TeamRole: Int, CustomStringConvertible {
+
     case none
     case partner
     case member
@@ -152,6 +153,22 @@ public enum TeamRole: Int {
     public func hasPermissions(_ permissions: Permissions) -> Bool {
         self.permissions.isSuperset(of: permissions)
     }
+
+    public var description: String {
+        switch self {
+        case .none:
+            "none"
+        case .partner:
+            "partner"
+        case .member:
+            "member"
+        case .admin:
+            "admin"
+        case .owner:
+            "owner"
+        }
+    }
+
 }
 
 public extension Member {

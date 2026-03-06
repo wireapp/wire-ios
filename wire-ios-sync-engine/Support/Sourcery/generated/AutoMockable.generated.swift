@@ -670,19 +670,14 @@ public class MockSearchUsersUseCaseProtocol: SearchUsersUseCaseProtocol {
     // MARK: - invoke
 
     public var invokeQueryOptionsMessageProtocol_Invocations: [(query: String, options: SearchOptions, messageProtocol: WireDataModel.MessageProtocol?)] = []
-    public var invokeQueryOptionsMessageProtocol_MockError: Error?
-    public var invokeQueryOptionsMessageProtocol_MockMethod: ((String, SearchOptions, WireDataModel.MessageProtocol?) async throws -> SearchResult)?
+    public var invokeQueryOptionsMessageProtocol_MockMethod: ((String, SearchOptions, WireDataModel.MessageProtocol?) async -> SearchResult)?
     public var invokeQueryOptionsMessageProtocol_MockValue: SearchResult?
 
-    public func invoke(query: String, options: SearchOptions, messageProtocol: WireDataModel.MessageProtocol?) async throws -> SearchResult {
+    public func invoke(query: String, options: SearchOptions, messageProtocol: WireDataModel.MessageProtocol?) async -> SearchResult {
         invokeQueryOptionsMessageProtocol_Invocations.append((query: query, options: options, messageProtocol: messageProtocol))
 
-        if let error = invokeQueryOptionsMessageProtocol_MockError {
-            throw error
-        }
-
         if let mock = invokeQueryOptionsMessageProtocol_MockMethod {
-            return try await mock(query, options, messageProtocol)
+            return await mock(query, options, messageProtocol)
         } else if let mock = invokeQueryOptionsMessageProtocol_MockValue {
             return mock
         } else {

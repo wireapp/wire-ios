@@ -251,38 +251,38 @@ struct ConversationRoleResponseV0: Decodable {
 enum ConversationActionResponseV0: String, Decodable {
 
     case addConversationMember = "add_conversation_member"
-    case removeConversationMember = "remove_conversation_member"
-    case modifyConversationName = "modify_conversation_name"
-    case modifyConversationMessageTimer = "modify_conversation_message_timer"
-    case modifyConversationReceiptMode = "modify_conversation_receipt_mode"
-    case modifyConversationAccess = "modify_conversation_access"
-    case modifyOtherConversationMember = "modify_other_conversation_member"
-    case modifyAddPermission = "modify_add_permission"
-    case leaveConversation = "leave_conversation"
     case deleteConversation = "delete_conversation"
+    case leaveConversation = "leave_conversation"
+    case modifyAddPermission = "modify_add_permission"
+    case modifyConversationAccess = "modify_conversation_access"
+    case modifyConversationMessageTimer = "modify_conversation_message_timer"
+    case modifyConversationName = "modify_conversation_name"
+    case modifyConversationReceiptMode = "modify_conversation_receipt_mode"
+    case modifyOtherConversationMember = "modify_other_conversation_member"
+    case removeConversationMember = "remove_conversation_member"
 
     func toAPIModel() -> ConversationAction {
         switch self {
         case .addConversationMember:
             .addConversationMember
-        case .removeConversationMember:
-            .removeConversationMember
-        case .modifyConversationName:
-            .modifyConversationName
-        case .modifyConversationMessageTimer:
-            .modifyConversationMessageTimer
-        case .modifyConversationReceiptMode:
-            .modifyConversationReceiptMode
-        case .modifyConversationAccess:
-            .modifyConversationAccess
-        case .modifyOtherConversationMember:
-            .modifyOtherConversationMember
-        case .leaveConversation:
-            .leaveConversation
         case .deleteConversation:
             .deleteConversation
+        case .leaveConversation:
+            .leaveConversation
         case .modifyAddPermission:
             .modifyAddPermission
+        case .modifyConversationAccess:
+            .modifyConversationAccess
+        case .modifyConversationMessageTimer:
+            .modifyConversationMessageTimer
+        case .modifyConversationName:
+            .modifyConversationName
+        case .modifyConversationReceiptMode:
+            .modifyConversationReceiptMode
+        case .modifyOtherConversationMember:
+            .modifyOtherConversationMember
+        case .removeConversationMember:
+            .removeConversationMember
         }
     }
 

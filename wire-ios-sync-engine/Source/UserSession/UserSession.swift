@@ -294,7 +294,7 @@ public protocol UserSession: AnyObject {
 
     func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCase
 
-    func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol
+    func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol?
 
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 
