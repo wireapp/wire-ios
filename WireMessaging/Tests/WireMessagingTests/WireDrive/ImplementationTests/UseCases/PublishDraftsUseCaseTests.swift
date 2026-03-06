@@ -18,8 +18,8 @@
 
 import Foundation
 import Testing
-import WireMessagingDomain
 import WireFoundation
+import WireMessagingDomain
 
 @testable import WireMessagingData
 @testable import WireMessagingDomainSupport
