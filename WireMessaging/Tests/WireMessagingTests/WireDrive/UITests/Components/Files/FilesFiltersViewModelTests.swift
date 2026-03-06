@@ -90,15 +90,34 @@ final class FilesFiltersViewModelTests {
         static let savedTag = "Urgent"
         static let selectedTag = "Marketing"
 
-        static let expectedTags = Array(
-            mockTags.filter { !$0.isEmpty }
-                .sorted { lhs, rhs in
-                    lhs.localizedCaseInsensitiveCompare(rhs) == .orderedAscending
-                } // order alphabetically
-                .sorted { lhs, _ in
-                    lhs.localizedCaseInsensitiveCompare(savedTag) == .orderedSame
-                } // but initially selected tags should be the first in the list
-        )
+        static let expectedTags = mockTags
+            .filter { !$0.isEmpty }
+            .reduce(into: [String](), removingDuplicates)
+            .sorted { lhs, rhs in
+                let lhsSelected = lhs.localizedCaseInsensitiveCompare(savedTag) == .orderedSame
+                let rhsSelected = rhs.localizedCaseInsensitiveCompare(savedTag) == .orderedSame
+                
+                if lhsSelected != rhsSelected {
+                    return lhsSelected
+                }
+                
+                if lhs.containsEmoji != rhs.containsEmoji {
+                    return !lhs.containsEmoji
+                }
+                
+                return lhs.localizedCaseInsensitiveCompare(rhs) == .orderedAscending
+            }
+        
+        private static func removingDuplicates(tags: inout [String], tag: String) {
+            let normalized = tag.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+            let isDuplicate = tags.contains {
+                $0.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == normalized
+            }
+            
+            if !isDuplicate {
+                tags.append(tag)
+            }
+        }
     }
-
+    
 }
