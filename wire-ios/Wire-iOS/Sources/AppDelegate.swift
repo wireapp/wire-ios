@@ -452,6 +452,7 @@ private extension AppDelegate {
         let maxNumberAccounts = SecurityFlags.maxNumberAccounts.intValue ?? SessionManager.defaultMaxNumberAccounts
 
         func deleteAllAccountsLogs() { // we don't have per account logging yet
+            return
             let fileManager = FileManager.default
             if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier,
                let logsDirectory = FileManager.default.sharedLogsDirectoryURL(for: appGroupIdentifier) {

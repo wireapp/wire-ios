@@ -255,7 +255,8 @@ final class ConversationViewController: UIViewController {
     private func update(conversation: ZMConversation) {
         setupNavigationItem()
         updateOutgoingConnectionVisibility()
-
+        updateInputBarVisibility()
+        
         voiceChannelStateObserverToken = addCallStateObserver()
         conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
         if let participant = conversation.firstActiveParticipantOtherThanSelf {
@@ -753,6 +754,7 @@ extension ConversationViewController: ZMConversationObserver {
 extension ConversationViewController: ZMConversationListObserver {
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         updateLeftNavigationBarItems()
+        updateInputBarVisibility()
         if changeInfo.deletedObjects.contains(conversation) {
             ZClientViewController.shared?.transitionToList(animated: true, completion: nil)
         }
@@ -768,6 +770,7 @@ extension ConversationViewController: ZMConversationListObserver {
 extension ConversationViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
+        WireLogger.conversation.debug("⚠️ conversation userDidChange: \(changeInfo)")
         if changeInfo.accentColorValueChanged {
             if changeInfo.user.isSelfUser {
                 titleView.updateSelfUserAccentColor(changeInfo.user.accentColor)
@@ -779,6 +782,10 @@ extension ConversationViewController: UserObserving {
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged ||
             changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
             setupNavigationItem(isAfterTitleRelatedDataChanged: true)
+        }
+        if changeInfo.user.isAccountDeleted {
+            // updates UI since conversation should be readonly
+            update(conversation: conversation)
         }
     }
 }
