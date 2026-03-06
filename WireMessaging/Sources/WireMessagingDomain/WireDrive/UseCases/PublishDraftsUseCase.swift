@@ -17,8 +17,8 @@
 //
 
 import Foundation
-package import WireFoundation
 import WireAnalytics
+package import WireFoundation
 
 package struct PublishDraftsUseCase: WireDrivePublishDraftsUseCaseProtocol {
 
@@ -26,7 +26,11 @@ package struct PublishDraftsUseCase: WireDrivePublishDraftsUseCaseProtocol {
     private let draftRepository: any DraftsRepositoryProtocol
     private var analyticsProvider: () -> (any AnalyticsEventTrackerProtocol)?
 
-    package init(cellName: String, draftRepository: any DraftsRepositoryProtocol, analyticsProvider: @escaping () -> (any AnalyticsEventTrackerProtocol)?) {
+    package init(
+        cellName: String,
+        draftRepository: any DraftsRepositoryProtocol,
+        analyticsProvider: @escaping () -> (any AnalyticsEventTrackerProtocol)?
+    ) {
         self.cellName = cellName
         self.draftRepository = draftRepository
         self.analyticsProvider = analyticsProvider
@@ -34,9 +38,9 @@ package struct PublishDraftsUseCase: WireDrivePublishDraftsUseCaseProtocol {
 
     package func invoke(containsText: Bool) async throws {
         let drafts = try await draftRepository.publishAll(for: cellName)
-        
-        let mixedTypes = Set(drafts.map { $0.fileType }).count > 1
-        
+
+        let mixedTypes = Set(drafts.map(\.fileType)).count > 1
+
         analyticsProvider()?.trackEvent(
             .WireDriveSendFiles.shareFileNumber(
                 containsText: containsText,
@@ -44,11 +48,11 @@ package struct PublishDraftsUseCase: WireDrivePublishDraftsUseCaseProtocol {
                 mixedTypes: mixedTypes
             )
         )
-        
+
         for draft in drafts {
             let fileExtension = "." + draft.assetURL.pathExtension
             let fileSize = UInt64(draft.bytes)
-            
+
             analyticsProvider()?.trackEvent(
                 .WireDriveSendFiles.shareFile(
                     fileExtension: fileExtension,

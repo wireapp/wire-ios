@@ -89,7 +89,11 @@ public struct WireMessagingFactory {
     }
 
     public func makePublishDraftsUseCase(cellName: String) -> any WireDrivePublishDraftsUseCaseProtocol {
-        PublishDraftsUseCase(cellName: cellName, draftRepository: draftsRepository, analyticsProvider: analyticsProvider)
+        PublishDraftsUseCase(
+            cellName: cellName,
+            draftRepository: draftsRepository,
+            analyticsProvider: analyticsProvider
+        )
     }
 
     public func makeClearPublishedDraftsUseCase(cellName: String) -> any WireDriveClearPublishedDraftsUseCaseProtocol {

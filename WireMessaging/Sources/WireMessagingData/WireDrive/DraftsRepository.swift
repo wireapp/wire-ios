@@ -123,8 +123,8 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         guard self.drafts.value[cellName]?.areAllPublished == true else {
             throw DraftsRepositoryError.notAllFilesArePublished
         }
-        
-        return drafts.map { $0.value }
+
+        return drafts.map(\.value)
     }
 
     /// Clears all published drafts for the specified cell name.
