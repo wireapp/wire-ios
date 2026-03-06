@@ -19,6 +19,7 @@
 import Foundation
 import WireFoundation
 import WireMessagingDomain
+import WireUtilities
 
 extension FilesFilterBy.TagsView {
     @MainActor
@@ -77,8 +78,17 @@ extension FilesFilterBy.TagsView {
                 availableTags = tags
                     .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
                     .reduce(into: [String](), removingDuplicates)
-                    .sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
-                    .sorted { isTagSelected($0) && !isTagSelected($1) }
+                    .sorted { a, b in
+                        if isTagSelected(a) != isTagSelected(b) {
+                            return isTagSelected(a)
+                        }
+
+                        if a.containsEmoji != b.containsEmoji {
+                            return !a.containsEmoji
+                        }
+
+                        return a.localizedCaseInsensitiveCompare(b) == .orderedAscending
+                    }
 
                 applySearchFilter()
             } catch {
