@@ -96,28 +96,28 @@ final class FilesFiltersViewModelTests {
             .sorted { lhs, rhs in
                 let lhsSelected = lhs.localizedCaseInsensitiveCompare(savedTag) == .orderedSame
                 let rhsSelected = rhs.localizedCaseInsensitiveCompare(savedTag) == .orderedSame
-                
+
                 if lhsSelected != rhsSelected {
                     return lhsSelected
                 }
-                
+
                 if lhs.containsEmoji != rhs.containsEmoji {
                     return !lhs.containsEmoji
                 }
-                
+
                 return lhs.localizedCaseInsensitiveCompare(rhs) == .orderedAscending
             }
-        
+
         private static func removingDuplicates(tags: inout [String], tag: String) {
             let normalized = tag.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
             let isDuplicate = tags.contains {
                 $0.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == normalized
             }
-            
+
             if !isDuplicate {
                 tags.append(tag)
             }
         }
     }
-    
+
 }

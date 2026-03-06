@@ -831,7 +831,10 @@ package final class FilesViewModel: ObservableObject {
     // MARK: - Sorting & Filtering
 
     func makeFilesSortingViewModel() -> FilesSortingViewModel {
-        FilesSortingViewModel(isBrowsing: isBrowsing, subfolderName: navigationPath.last?.name) { [weak self] sortingSelection in
+        FilesSortingViewModel(
+            isBrowsing: isBrowsing,
+            subfolderName: navigationPath.last?.name
+        ) { [weak self] sortingSelection in
             self?.sortingSelection = sortingSelection
             Task { await self?.reload() }
         }

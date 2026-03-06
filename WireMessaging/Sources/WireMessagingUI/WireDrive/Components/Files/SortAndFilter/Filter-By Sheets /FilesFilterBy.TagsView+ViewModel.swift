@@ -95,7 +95,7 @@ extension FilesFilterBy.TagsView {
                 showError = true
             }
         }
-        
+
         private func removingDuplicates(tags: inout [String], tag: String) {
             let normalized = tag.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
             let isDuplicate = tags.contains {

@@ -125,7 +125,7 @@ final class FilesSortingViewModel: ObservableObject {
             Strings.title
         }
     }
-    
+
     var resultsInTitle: String {
         if let subfolderName {
             Strings.Subfolder.results(subfolderName)
