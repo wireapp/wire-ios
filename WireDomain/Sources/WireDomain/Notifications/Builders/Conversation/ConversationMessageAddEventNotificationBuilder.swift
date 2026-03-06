@@ -62,7 +62,7 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
                     let message = try protobufMessageDecoder.extractMLSMessageContent(
                         from: decryptedMessage.message
                     )
-                    
+
                     let messageContent =
                         MessageContent(
                             message: message,
