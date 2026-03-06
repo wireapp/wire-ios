@@ -116,7 +116,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
             case let .success(conversation):
                 delegate?.startUIViewController(self, didSelect: conversation)
             case let .failure(error):
-                error.displayAddBotError(in: self)
+                error.displayAddBotError(in: (navigationController ?? self))
             case .cancelled:
                 navigationController?.dismiss(animated: true, completion: nil)
             }
