@@ -21,7 +21,8 @@ let package = Package(
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
         .package(name: "WireUI", path: "../WireUI"),
-        .package(path: "../WireData")
+        .package(path: "../WireData"),
+        .package(path: "../WireAnalytics")
     ],
     targets: [
         .target(
@@ -29,7 +30,8 @@ let package = Package(
             dependencies: [
                 .product(name: "CellsSDK", package: "cells-sdk-swift"),
                 "WireFoundation",
-                "WireLogging"
+                "WireLogging",
+                "WireAnalytics"
             ]
         ),
         .target(
