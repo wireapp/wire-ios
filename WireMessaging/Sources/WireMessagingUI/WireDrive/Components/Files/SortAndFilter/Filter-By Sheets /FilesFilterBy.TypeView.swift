@@ -27,7 +27,9 @@ extension FilesFilterBy {
     struct TypeView: View {
         @Environment(\.wireAccentColor) private var wireAccentColor
         @Environment(\.dismiss) private var dismiss
-
+        private let iconSpaceWidth: CGFloat = 56 // this is explicitly not supposed to scale.
+        @ScaledMetric private var iconSpaceHeight: CGFloat = 28
+        @ScaledMetric private var iconHorizontalPadding: CGFloat = 7
         @StateObject private var viewModel: ViewModel
 
         let onApply: (Set<ViewModel.Item>) -> Void
@@ -94,6 +96,9 @@ extension FilesFilterBy {
                 Image(item.imageResource)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
+                    .padding(.horizontal, iconHorizontalPadding)
+                    .frame(minWidth: iconSpaceWidth)
+                    .frame(height: iconSpaceHeight)
             }
         }
     }
