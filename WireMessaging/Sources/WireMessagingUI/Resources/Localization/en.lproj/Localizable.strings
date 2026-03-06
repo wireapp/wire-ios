@@ -303,6 +303,7 @@
 "conversation.wireCells.sorting.order.size.smallestFirst" = "Smallest first";
 "conversation.wireCells.sorting.order.size.largestFirst" = "Largest first";
 "conversation.wireCells.sorting.results" = "Results in Shared Drive";
+"conversation.wireCells.sorting.subfolder.results" = "Results in %@";
 
 // MARK: - Filtering
 "conversation.wireCells.filtering.tags" = "Tags";

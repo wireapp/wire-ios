@@ -74,6 +74,7 @@ final class FilesSortingViewModel: ObservableObject {
 
     let isBrowsing: Bool
     private let onUpdate: (SortingSelection) -> Void
+    private let subfolderName: String?
 
     var sortingOrders: [SortingOrder] {
         switch sortingSelection.sortingKey {
@@ -87,10 +88,12 @@ final class FilesSortingViewModel: ObservableObject {
     init(
         sortingSelection: SortingSelection = .default,
         isBrowsing: Bool,
+        subfolderName: String? = nil,
         onUpdate: @escaping (SortingSelection) -> Void
     ) {
         self.sortingSelection = sortingSelection
         self.isBrowsing = isBrowsing
+        self.subfolderName = subfolderName
         self.onUpdate = onUpdate
     }
 
@@ -120,6 +123,14 @@ final class FilesSortingViewModel: ObservableObject {
             sortingOrder.title(forKey: sortingKey)
         } else {
             Strings.title
+        }
+    }
+    
+    var resultsInTitle: String {
+        if let subfolderName {
+            Strings.Subfolder.results(subfolderName)
+        } else {
+            Strings.results
         }
     }
 }

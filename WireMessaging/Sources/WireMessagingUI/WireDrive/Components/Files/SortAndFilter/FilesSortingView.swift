@@ -86,7 +86,7 @@ struct FilesSortingView: View {
             Spacer()
 
             if !viewModel.isBrowsing {
-                Text(Strings.results)
+                Text(viewModel.resultsInTitle)
                     .font(for: .subline2)
                     .fontWeight(.semibold)
                     .foregroundStyle(ColorTheme.Base.secondaryText.color)
