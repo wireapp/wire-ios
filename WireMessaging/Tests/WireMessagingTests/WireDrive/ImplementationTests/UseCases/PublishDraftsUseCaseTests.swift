@@ -18,7 +18,6 @@
 
 import Foundation
 import Testing
-import WireFoundation
 import WireMessagingDomain
 
 @testable import WireMessagingData
@@ -51,16 +50,19 @@ final class PublishDraftsUseCaseTests {
             "cell-5": [:] // Empty cell
         ]
     )
-    private let analyticsProvider: () -> (any AnalyticsEventTrackerProtocol)? = { nil }
+
+    private func makeUseCase(cellName: String) -> PublishDraftsUseCase {
+        PublishDraftsUseCase(
+            cellName: cellName,
+            draftRepository: draftsRepository,
+            analyticsProvider: { nil }
+        )
+    }
 
     @Test(arguments: ["cell-1", "cell-2", "cell-3"])
     func invoke_whenNotAllFilesUploaded(cellName: String) async {
         // Given
-        let sut = PublishDraftsUseCase(
-            cellName: cellName,
-            draftRepository: draftsRepository,
-            analyticsProvider: analyticsProvider
-        )
+        let sut = makeUseCase(cellName: cellName)
 
         // When, Then
         await #expect(throws: (any Error).self) {
@@ -71,11 +73,7 @@ final class PublishDraftsUseCaseTests {
     @Test
     func invoke_whenNoFilesInCell() async {
         // Given
-        let sut = PublishDraftsUseCase(
-            cellName: "cell-5",
-            draftRepository: draftsRepository,
-            analyticsProvider: analyticsProvider
-        )
+        let sut = makeUseCase(cellName: "cell-5")
 
         // When, Then
         await #expect(throws: Never.self) {
@@ -86,11 +84,7 @@ final class PublishDraftsUseCaseTests {
     @Test
     func invoke_whenNonExistentCell() async throws {
         // Given
-        let sut = PublishDraftsUseCase(
-            cellName: "non-existent-cell",
-            draftRepository: draftsRepository,
-            analyticsProvider: analyticsProvider
-        )
+        let sut = makeUseCase(cellName: "non-existent-cell")
 
         // When, Then
         await #expect(throws: Never.self) {
@@ -101,11 +95,7 @@ final class PublishDraftsUseCaseTests {
     @Test
     func invoke_whenPublishingFails() async {
         // Given
-        let sut = PublishDraftsUseCase(
-            cellName: "cell-4",
-            draftRepository: draftsRepository,
-            analyticsProvider: analyticsProvider
-        )
+        let sut = makeUseCase(cellName: "cell-4")
         nodesAPI.publishDraftNodeIDVersionID_MockError = URLError(.notConnectedToInternet)
 
         // When, Then
@@ -117,11 +107,7 @@ final class PublishDraftsUseCaseTests {
     @Test
     func invoke_whenPublishingSucceeds() async throws {
         // Given
-        let sut = PublishDraftsUseCase(
-            cellName: "cell-4",
-            draftRepository: draftsRepository,
-            analyticsProvider: analyticsProvider
-        )
+        let sut = makeUseCase(cellName: "cell-4")
         nodesAPI.publishDraftNodeIDVersionID_MockMethod = { _, _ in }
 
         // When
@@ -137,11 +123,7 @@ final class PublishDraftsUseCaseTests {
     @Test
     func invoke_whenNewDraftAddedConcurrently() async throws {
         // Given
-        let sut = PublishDraftsUseCase(
-            cellName: "cell-4",
-            draftRepository: draftsRepository,
-            analyticsProvider: analyticsProvider
-        )
+        let sut = makeUseCase(cellName: "cell-4")
         nodesAPI.publishDraftNodeIDVersionID_MockMethod = { [draftsRepository] _, _ in
             // Add a new draft while invoke is running
             var drafts = await draftsRepository.getDraftsForTesting
