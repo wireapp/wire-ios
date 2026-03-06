@@ -34,7 +34,7 @@ class RemoveUserTests: WireUITestCase {
     @MainActor
     func testRemoveTeamMember() async throws {
         // GIVEN
-        let testRemovalOnConversation = false // FIXME: true case does not work
+        let testRemovalOnConversation = true
         let team = try await userHelper.registerTeam(withMemberCount: 2)
         let member1 = try XCTUnwrap(team.teamMembers.first)
         let member2 = try XCTUnwrap(team.teamMembers.last)
@@ -75,8 +75,9 @@ class RemoveUserTests: WireUITestCase {
         if !testRemovalOnConversation {
             try member2ConversationsPage.openConversation()
         }
-
-        XCTAssertFalse(oneOnOneConversation.inputMessageField.exists, "conversation should be readonly")
+        
+        XCTAssertTrue(oneOnOneConversation.inputMessageField.waitToDisappear(), "conversation should be readonly")
         // TODO: assert system message
+        try oneOnOneConversation.goBackToConversationPage()
     }
 }

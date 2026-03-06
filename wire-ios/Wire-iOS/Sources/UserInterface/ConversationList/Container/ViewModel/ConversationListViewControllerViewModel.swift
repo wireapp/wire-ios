@@ -329,6 +329,7 @@ extension ConversationListViewController.ViewModel: UserObserving {
 
     @MainActor
     func userDidChange(_ changeInfo: UserChangeInfo) {
+        WireLogger.conversation.debug("⚠️ userDidChange conversationlist: \(changeInfo)")
 
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo
             .imageSmallProfileDataChanged || changeInfo.teamsChanged {
