@@ -76,12 +76,24 @@ extension FilesFilterBy.TagsView {
 
                 availableTags = tags
                     .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+                    .reduce(into: [String](), removingDuplicates)
                     .sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
                     .sorted { isTagSelected($0) && !isTagSelected($1) }
 
                 applySearchFilter()
             } catch {
                 showError = true
+            }
+        }
+        
+        private func removingDuplicates(tags: inout [String], tag: String) {
+            let normalized = tag.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+            let isDuplicate = tags.contains {
+                $0.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == normalized
+            }
+
+            if !isDuplicate {
+                tags.append(tag)
             }
         }
 
