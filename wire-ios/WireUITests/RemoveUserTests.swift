@@ -60,10 +60,11 @@ class RemoveUserTests: WireUITestCase {
             .enterPassword(member2.password, expectWelcomePage: false)
 
         let member2ConversationsPage = try ConversationsPage()
-        let oneOnOneConversation = try member2ConversationsPage
+        let oneOnOneConversation = try await member2ConversationsPage
             .openConversation()
             .sendMessage("test")
-
+            .backgroundAndResume(app: app, forDelay: 0) // fix for issue where sync is not resume after logout of first account
+        
         if !testRemovalOnConversation {
             try oneOnOneConversation.goBackToConversationPage()
         }

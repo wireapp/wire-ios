@@ -47,4 +47,15 @@ class PageModel {
             throw Failure.notLoaded(self)
         }
     }
+    
+    @discardableResult
+    func backgroundAndResume(
+        app: XCUIApplication,
+        forDelay duration: TimeInterval
+    ) async throws -> Self {
+        await XCUIDevice.shared.press(.home)
+        try await Task.sleep(for: .seconds(duration))
+        await app.activate()
+        return self
+    }
 }
