@@ -518,11 +518,14 @@ extension WireCallCenterV3 {
         previousParticipants: [AVSCallMember],
         newParticipants: [AVSCallMember]
     ) -> Bool {
-        /// We assume that the 2nd participant is the other user, and if the other user's audio state is connecting, the
-        /// call should end.
+        /// We assume that the 2nd participant is the other user.
+        /// If the other user's audio state changes from `established` to `connecting`,
+        /// it means the call connection was dropped and the call should be ended.
+        ///  https://wearezeta.atlassian.net/wiki/spaces/PAD/pages/1314750477/2024-07-29+1+1+calls+over+SFT
         guard
             previousParticipants.count == 2,
             newParticipants.count == 2,
+            previousParticipants[1].audioState == .established,
             newParticipants[1].audioState == .connecting
         else {
             return false
