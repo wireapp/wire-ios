@@ -25,6 +25,8 @@ import WireUtilities
 
 // TODO: apps existing in the local db are listed twice in the search results
 
+// TODO: is user.type updated after migrating from earlier versions?
+
 public final class SearchTask {
 
     private let type: `Type`
