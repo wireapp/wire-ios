@@ -61,8 +61,8 @@ class CommitPendingProposalsGeneratorTests {
     }
 
     @Test(
-        "It generates an item when a conversation with commitPendingProposalDate set is found",
-        arguments: [Date(), Date().addingTimeInterval(0.5)]
+        "It generates an item when a conversation with commitPendingProposalDate set is found", .timeLimit(.minutes(1)),
+        arguments: [Date(), Date().addingTimeInterval(0.5), Date().addingTimeInterval(1)]
     )
     func startGeneratesItem(date: Date) async throws {
         // GIVEN
