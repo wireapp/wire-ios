@@ -84,10 +84,6 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
         false
     }
 
-    func checkJailbreakIfNeeded() -> Bool {
-        false
-    }
-
     func passwordVerificationDidFail(with failCount: Int) {
         // no-op
     }
