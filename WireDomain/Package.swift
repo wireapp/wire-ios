@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "WireDomainPackage",
     defaultLocalization: "en",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
         .library(name: "WireDomainPackage", targets: ["WireDomainPackage"]),
         .library(name: "WireDomainPackageSupport", targets: ["WireDomainPackageSupport"]),

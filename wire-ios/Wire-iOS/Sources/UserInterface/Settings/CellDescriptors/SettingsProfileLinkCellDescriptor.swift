@@ -28,6 +28,7 @@ final class SettingsProfileLinkCellDescriptor: SettingsCellDescriptorType {
 
         linkCell.linkText = link && .lineSpacing(8)
         linkCell.titleText = title
+        linkCell.setupAccessibility()
     }
 
     // MARK: - SettingsCellDescriptorType
