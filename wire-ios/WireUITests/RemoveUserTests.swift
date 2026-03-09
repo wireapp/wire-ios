@@ -90,7 +90,6 @@ class RemoveUserTests: WireUITestCase {
         }
         
         XCTAssertTrue(oneOnOneConversation.inputMessageField.waitToDisappear(), "conversation should be readonly")
-        // TODO: assert system message
-        
+        XCTAssertTrue(oneOnOneConversation.userRemovedSystemMessage.waitForExistence(timeout: 1), "system message should be inserted")
     }
 }

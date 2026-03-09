@@ -754,7 +754,6 @@ extension ConversationViewController: ZMConversationObserver {
 extension ConversationViewController: ZMConversationListObserver {
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         updateLeftNavigationBarItems()
-        updateInputBarVisibility()
         if changeInfo.deletedObjects.contains(conversation) {
             ZClientViewController.shared?.transitionToList(animated: true, completion: nil)
         }
@@ -784,7 +783,8 @@ extension ConversationViewController: UserObserving {
         }
         if changeInfo.user.isAccountDeleted {
             // updates UI since conversation should be readonly
-            up
+            update(conversation: conversation)
+        }
     }
 }
 
