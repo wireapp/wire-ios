@@ -7,7 +7,7 @@ let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", p
 let package = Package(
     name: "WireMessaging",
     defaultLocalization: "en",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
         .library(name: "WireMessagingDomain", targets: ["WireMessagingDomain"]),
         .library(name: "WireMessagingAssembly", targets: ["WireMessagingAssembly"]),
@@ -21,7 +21,8 @@ let package = Package(
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
         .package(name: "WireUI", path: "../WireUI"),
-        .package(path: "../WireData")
+        .package(path: "../WireData"),
+        .package(path: "../WireAnalytics")
     ],
     targets: [
         .target(
@@ -29,7 +30,8 @@ let package = Package(
             dependencies: [
                 .product(name: "CellsSDK", package: "cells-sdk-swift"),
                 "WireFoundation",
-                "WireLogging"
+                "WireLogging",
+                "WireAnalytics"
             ]
         ),
         .target(

@@ -196,12 +196,13 @@ final class UserSessionLoader {
         }
 
         // Check if this backend supports MLS.
-        let isBackendMLSEnabled = try await isBackendMLSEnabled(
+        if let isBackendMLSEnabled = try await isBackendMLSEnabled(
             networkService: networkServices.rest,
             cookieStorage: cookieStorage,
             apiVersion: metadata.apiVersion
-        )
-        journal[.isBackendMLSEnabled] = isBackendMLSEnabled
+        ) {
+            journal[.isBackendMLSEnabled] = isBackendMLSEnabled
+        }
 
         // Create user session.
         let userSession = await createUserSession(
@@ -593,7 +594,7 @@ final class UserSessionLoader {
         networkService: NetworkService,
         cookieStorage: CookieStorage,
         apiVersion: WireNetwork.APIVersion
-    ) async throws -> Bool {
+    ) async throws -> Bool? {
         do {
             let authenticationManager = AuthenticationManager(
                 clientID: nil,
@@ -614,7 +615,7 @@ final class UserSessionLoader {
             MLSAPIError.unsupportedEndpointForAPIVersion,
             MLSAPIError.mlsNotEnabled {
             // Don't block session loading, we'll try again later.
-            return false
+            return nil
         }
     }
 
@@ -665,20 +666,14 @@ final class UserSessionLoader {
         }
 
         // Perform consumable notifications migration.
-        var shouldTriggerSync = true
         do {
             try await userSession.migrateToConsumableNotificationsIfNeeded()
         } catch ZMUserSessionError.selfClientNotReady {
             // We skip trigger sync, because in this case (fresh login),
             // we don't have a registered client yet, so no consumable capability
             WireLogger.sync.warn("No consumable-notifications migrator available")
-            shouldTriggerSync = false
         } catch {
             throw Failure.failedToMigrationToConsumableNotifications(error)
-        }
-
-        if shouldTriggerSync {
-            await userSession.triggerSync()
         }
     }
 
