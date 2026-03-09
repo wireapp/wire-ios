@@ -43,6 +43,8 @@
 		59DA5E202DA7ED95007C3629 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DA5E1F2DA7ED95007C3629 /* WireDomainSupport.framework */; };
 		59FFADA02C8229BB000C8085 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB79AC7B2C6DFAA2003CF5F4 /* WireTransportSupport.framework */; };
 		CB4895532C4FB77C00CA2C25 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4895522C4FB77C00CA2C25 /* WireTesting.framework */; };
+		CB605CCC2F45C0EE001C022E /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB605CCB2F45C0EE001C022E /* WireSystem.framework */; };
+		CB605CCD2F45C0EE001C022E /* WireSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CB605CCB2F45C0EE001C022E /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CBD35F2A2D09EBA50080DA37 /* WireCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = CBD35F292D09EBA50080DA37 /* WireCrypto */; };
 		EE4E6A262B714490007C476D /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE4E6A252B714490007C476D /* WireRequestStrategySupport.framework */; };
 		EE668BB62954AA7F00D939E7 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BB52954AA7F00D939E7 /* WireRequestStrategy.framework */; };
@@ -87,6 +89,20 @@
 			remoteInfo = "WireSyncEngine Test Host";
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CB605CCE2F45C0EE001C022E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CB605CCD2F45C0EE001C022E /* WireSystem.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSyncEngineSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -136,6 +152,7 @@
 		B4D37F961D7EEA5B00D0C1BC /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Push.strings; sourceTree = "<group>"; };
 		B4D37F971D7EEA5B00D0C1BC /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ru; path = ru.lproj/Push.stringsdict; sourceTree = "<group>"; };
 		CB4895522C4FB77C00CA2C25 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB605CCB2F45C0EE001C022E /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB79AC7B2C6DFAA2003CF5F4 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE4E6A252B714490007C476D /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE668BB52954AA7F00D939E7 /* WireRequestStrategy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -271,6 +288,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CB605CCC2F45C0EE001C022E /* WireSystem.framework in Frameworks */,
 				0177AAC42F15225600303844 /* WireNetworkSupport in Frameworks */,
 				544BA1571A43424F00D3B852 /* WireSyncEngine.framework in Frameworks */,
 				591B6E102C8B0926009F8A7B /* WireMockTransport.framework in Frameworks */,
@@ -368,6 +386,7 @@
 		540029B61918CA8500578793 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CB605CCB2F45C0EE001C022E /* WireSystem.framework */,
 				59DA5E1F2DA7ED95007C3629 /* WireDomainSupport.framework */,
 				59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */,
 				015519452C20D20800037358 /* WireDomain.framework */,
@@ -439,6 +458,7 @@
 				3E186084191A56F6000FE027 /* Sources */,
 				3E186085191A56F6000FE027 /* Frameworks */,
 				3E186086191A56F6000FE027 /* Resources */,
+				CB605CCE2F45C0EE001C022E /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
