@@ -237,113 +237,70 @@ final class FilesItemViewModel: ObservableObject {
         calendar: Calendar,
         timeZone: TimeZone
     ) -> String? {
+        var primary: String?
+
         if isBrowsing {
             switch selectedSortingKey {
             case .date:
-                if let conversationName, let date = formattedDate(
-                    modifiedAt: modifiedAt,
-                    locale: locale,
-                    calendar: calendar,
-                    timeZone: timeZone
-                ) {
-                    Strings.AllFiles.Item.subtitle(date, conversationName)
-                } else {
-                    defaultSubtitle(
-                        conversationName: conversationName,
-                        modifiedAt: modifiedAt,
-                        ownedBy: ownedBy,
-                        locale: locale,
-                        calendar: calendar,
-                        timeZone: timeZone
-                    )
+                if let conversationName,
+                   let date = formattedDate(
+                       modifiedAt: modifiedAt,
+                       locale: locale,
+                       calendar: calendar,
+                       timeZone: timeZone
+                   ) {
+                    primary = Strings.AllFiles.Item.subtitle(date, conversationName)
                 }
             case .name:
                 if let conversationName, let ownedBy {
-                    Strings.AllFiles.Item.subtitle(ownedBy, conversationName)
-                } else {
-                    defaultSubtitle(
-                        conversationName: conversationName,
-                        modifiedAt: modifiedAt,
-                        ownedBy: ownedBy,
-                        locale: locale,
-                        calendar: calendar,
-                        timeZone: timeZone
-                    )
+                    primary = Strings.AllFiles.Item.subtitle(ownedBy, conversationName)
                 }
             case .size:
-                if let conversationName, let size = formattedFileSize(size: size) {
-                    Strings.AllFiles.Item.subtitle(size, conversationName)
-                } else {
-                    defaultSubtitle(
-                        conversationName: conversationName,
-                        modifiedAt: modifiedAt,
-                        ownedBy: ownedBy,
-                        locale: locale,
-                        calendar: calendar,
-                        timeZone: timeZone
-                    )
+                if let conversationName,
+                   let size = formattedFileSize(size: size) {
+                    primary = Strings.AllFiles.Item.subtitle(size, conversationName)
                 }
             default:
-                defaultSubtitle(
-                    conversationName: conversationName,
-                    modifiedAt: modifiedAt,
-                    ownedBy: ownedBy,
-                    locale: locale,
-                    calendar: calendar,
-                    timeZone: timeZone
-                )
+                break
             }
+
+            return primary ?? defaultSubtitle(
+                conversationName: conversationName,
+                modifiedAt: modifiedAt,
+                ownedBy: ownedBy,
+                locale: locale,
+                calendar: calendar,
+                timeZone: timeZone
+            )
+
         } else {
             switch selectedSortingKey {
             case .date:
                 if let ownedBy {
-                    Strings.Files.Item.subtitle(Strings.Sorting.Key.date, ownedBy)
-                } else {
-                    defaultSubtitle(
-                        modifiedAt: modifiedAt,
-                        ownedBy: ownedBy,
-                        locale: locale,
-                        calendar: calendar,
-                        timeZone: timeZone
-                    )
+                    primary = Strings.Files.Item.subtitle(Strings.Sorting.Key.date, ownedBy)
                 }
-            case .name:
-                defaultSubtitle(
-                    modifiedAt: modifiedAt,
-                    ownedBy: ownedBy,
-                    locale: locale,
-                    calendar: calendar,
-                    timeZone: timeZone
-                )
             case .size:
                 if let size = formattedFileSize(size: size), let ownedBy {
-                    Strings.Files.Item.subtitle(size, ownedBy)
-                } else {
-                    defaultSubtitle(
-                        modifiedAt: modifiedAt,
-                        ownedBy: ownedBy,
-                        locale: locale,
-                        calendar: calendar,
-                        timeZone: timeZone
-                    )
+                    primary = Strings.Files.Item.subtitle(size, ownedBy)
                 }
             default:
-                defaultSubtitle(
-                    modifiedAt: modifiedAt,
-                    ownedBy: ownedBy,
-                    locale: locale,
-                    calendar: calendar,
-                    timeZone: timeZone
-                )
+                break
             }
-        }
 
+            return primary ?? defaultSubtitle(
+                modifiedAt: modifiedAt,
+                ownedBy: ownedBy,
+                locale: locale,
+                calendar: calendar,
+                timeZone: timeZone
+            )
+        }
     }
 
     private static func formattedFileSize(size: UInt64?) -> String? {
         guard let size else { return nil }
         let formatter = ByteCountFormatter()
-        formatter.allowedUnits = [.useKB, .useMB, .useGB]
+        formatter.allowedUnits = [.useBytes, .useKB, .useMB, .useGB]
         formatter.countStyle = .file
         return formatter.string(fromByteCount: Int64(size))
     }
