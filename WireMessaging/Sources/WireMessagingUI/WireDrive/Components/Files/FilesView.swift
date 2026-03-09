@@ -27,12 +27,11 @@ import WireReusableUIComponents
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-package struct FilesView: FilesViewProtocol {
+package struct FilesView: View {
     package var isBrowsing: Bool { false }
     @StateObject package var viewModel: FilesViewModel
     @Environment(\.dismiss) var dismiss
     @Environment(\.wireAccentColor) private var accentColor
-    @State private var isSearchFocused = false
 
     let onOpenRecycleBin: () -> Void
     let onDismissContainer: () -> Void
@@ -48,125 +47,29 @@ package struct FilesView: FilesViewProtocol {
     }
 
     package var body: some View {
-        ZStack {
-            ColorTheme.Backgrounds.background.color
-                .ignoresSafeArea(.all)
-
-            VStack {
-                VStack(alignment: .leading, spacing: 0) {
-                    FilesFilteringView(
-                        useCases: .init(fetchTagsUseCase: viewModel.useCases.getTagSuggestions),
-                        filtersSelection: viewModel.filtersSelection,
-                        isBrowsing: isBrowsing,
-                        conversations: Set(viewModel.conversations),
-                        onUpdate: viewModel.onUpdate(of:),
-                        onSearchFocused: { isSearchFocused = $0 }
-                    )
-                    .opacity(isFilterBarPresented ? 1 : 0)
-                    .frame(height: isFilterBarPresented ? nil : 0)
-                    .padding(.bottom, isFilterBarPresented ? 15 : 0)
-
-                    FilesSortingView(viewModel: viewModel.makeFilesSortingViewModel())
-                }
-                .padding(.top, 4)
-
-                switch viewModel.state {
-                case .loading:
-                    Spacer()
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                    Spacer()
-                case .received, .pending:
-                    filesList
-                        .safeAreaInset(edge: .top) {
-                            if viewModel.shouldShowOfflineBar {
-                                offlineBar
-                                    .id(UUID())
-                            }
-                        }
-                case let .error(isConnectionError):
-                    Spacer()
-                    FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
-                        reloadTask()
-                    })
-                    Spacer()
-                }
-            }
-            .animation(.easeInOut(duration: 0.25), value: viewModel.connectionState)
-            .animation(.easeOut(duration: 0.25), value: isSearchFocused)
-            .quickLookPreview($viewModel.viewingURL)
-            .navigationTitle(viewModel.navigationTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
-            .toolbar { toolbarContent }
-            .if(viewModel.showSearchBar, transform: searchView(content:))
-            .onAppear { reloadTask() }
-            .onReceive(viewModel.triggerReload) { _ in
-                Task {
-                    await viewModel.reload()
-                }
-            }
-            .alert(
-                item: $viewModel.alert,
-                title: { Text($0.title) },
-                message: { Text($0.message) },
-                actions: { _ in confirmButton }
-            )
-            .sheet(
-                item: $viewModel.sheetNavigation,
-                onDismiss: {
-                    Task { await viewModel.onSheetDismissed() }
-                },
-                content: { navigationItem in
-                    switch navigationItem {
-                    case let .editTags(fileItem: fileItem):
-                        TagsEditView(
-                            fileItem: fileItem,
-                            useCases: .init(
-                                updateTags: viewModel.useCases.updateTags,
-                                getSuggestions: viewModel.useCases.getTagSuggestions
-                            ),
-                            postSaveAction: {
-                                await viewModel.reload()
-                            }
-                        )
-                    case let .shareLink(shareLinkView):
-                        shareLinkView
-                    case let .renameFile(fileRenameView):
-                        fileRenameView
-                    case let .create(folderView):
-                        folderView
-                    case let .versionHistory(versionHistoryView):
-                        versionHistoryView
-                    case let .moveToFolder(fileItem):
-                        viewModel.moveToFolderView(item: fileItem)
-                    }
-                }
-            )
-            .fullScreenCover(
-                item: $viewModel.isEditing,
-                onDismiss: {
-                    Task { await viewModel.reload() }
-                },
-                content: { item in
-                    viewModel.editFileView(item: item)
-                }
-            )
-        }
-    }
-
-    @ViewBuilder
-    private func searchView(content: some View) -> some View {
-        content.searchable(
-            text: $viewModel.searchText,
-            placement: .navigationBarDrawer(displayMode: .always),
-            prompt: Strings.Files.Search.title
+        FilesContentView(
+            viewModel: viewModel,
+            isBrowsing: isBrowsing,
+            backgroundColor: ColorTheme.Backgrounds.background.color,
+            navigationTitle: viewModel.navigationTitle,
+            toolbarContent: { toolbarContent },
+            sheetContent: { sheetContent($0) }
         )
-    }
-
-    private var isFilterBarPresented: Bool {
-        isSearchFocused || !viewModel.searchText.isEmpty || viewModel.filtersSelection.hasFilterSelected
+        // FilesView-specific extras
+        .onReceive(viewModel.triggerReload) { _ in
+            Task {
+                await viewModel.reload()
+            }
+        }
+        .fullScreenCover(
+            item: $viewModel.isEditing,
+            onDismiss: {
+                Task { await viewModel.reload() }
+            },
+            content: { item in
+                viewModel.editFileView(item: item)
+            }
+        )
     }
 }
 
@@ -265,6 +168,38 @@ private extension FilesView {
             Image(systemName: "ellipsis.circle")
         }
         .tint(ColorTheme.Base.primary(accentColor).color)
+    }
+}
+
+// MARK: - Sheet Navigation
+
+private extension FilesView {
+
+    @ViewBuilder
+    func sheetContent(_ navigationItem: FilesViewModel.SheetNavigation) -> some View {
+        switch navigationItem {
+        case let .editTags(fileItem: fileItem):
+            TagsEditView(
+                fileItem: fileItem,
+                useCases: .init(
+                    updateTags: viewModel.useCases.updateTags,
+                    getSuggestions: viewModel.useCases.getTagSuggestions
+                ),
+                postSaveAction: {
+                    await viewModel.reload()
+                }
+            )
+        case let .shareLink(shareLinkView):
+            shareLinkView
+        case let .renameFile(fileRenameView):
+            fileRenameView
+        case let .create(folderView):
+            folderView
+        case let .versionHistory(versionHistoryView):
+            versionHistoryView
+        case let .moveToFolder(fileItem):
+            viewModel.moveToFolderView(item: fileItem)
+        }
     }
 }
 
