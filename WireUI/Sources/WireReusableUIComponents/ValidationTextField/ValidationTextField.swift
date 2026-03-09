@@ -59,10 +59,10 @@ public struct ValidationTextField: View {
                     .font(for: .body1)
                     .frame(height: fieldHeight)
                     .focused($isFocusedState)
-                    .onChange(of: $isFocusedState.wrappedValue) { newValue in
+                    .onChange(of: $isFocusedState.wrappedValue) { _, newValue in
                         isFocused = newValue
                     }
-                    .onChange(of: isFocused) { newValue in
+                    .onChange(of: isFocused) { _, newValue in
                         $isFocusedState.wrappedValue = newValue
                     }
                     .onAppear {

@@ -107,7 +107,8 @@ final class ZClientControllerBuilder {
             driveConversationLocalStore: driveConversationLocalStore,
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
-            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider)
+            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
+            analyticsProvider: { [self] in userSession.analyticsEventTracker }
         )
     }
 
