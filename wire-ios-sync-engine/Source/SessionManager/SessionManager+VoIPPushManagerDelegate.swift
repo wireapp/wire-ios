@@ -47,7 +47,7 @@ extension SessionManager: VoIPPushManagerDelegate {
 
         do {
             let session = try await withSession(for: account)
-            await session.processPendingCallEvents()
+            await session.processPendingCallEvents(only: true)
         } catch let error as NSError {
             let errorMessage = error.safeForLoggingDescription
             WireLogger.calling.critical(
