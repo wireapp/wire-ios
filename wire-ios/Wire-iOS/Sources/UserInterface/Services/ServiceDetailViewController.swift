@@ -193,7 +193,7 @@ final class ServiceDetailViewController: UIViewController {
                     )
                     detailView.service.provider = ServiceProvider(
                         identifier: "",
-                        name: appDetails.author,
+                        name: service.user.teamName ?? "",
                         email: "",
                         url: "",
                         providerDescription: ""
