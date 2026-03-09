@@ -176,7 +176,7 @@ final class ServiceDetailViewController: UIViewController {
 
         if // TODO: for remotely found apps we end up in the else branch (fatal error)
             !service.isLegacyBot,
-            let teamID = service.user.membership?.team?.remoteIdentifier,
+            let teamID = service.user.teamIdentifier,
             let appID = service.user.remoteIdentifier {
 
             Task {
