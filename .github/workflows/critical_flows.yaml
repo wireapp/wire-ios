@@ -3,9 +3,9 @@ name: Critical Flows
 on:
   workflow_dispatch:
     inputs:
-      testiny_run_id:
-        description: "Testiny test run ID: paste the number from the testrun URL"
-        required: true
+      testiny_run_name:
+        description: "Testiny test run NAME (title): paste the exact run title from Testiny UI"
+        required: false
         type: string
   push:
     branches:
@@ -26,5 +26,5 @@ jobs:
       notify_secret: WIRE_IOS_QA_WEBHOOK
       test_dependencies: false
       run_critical_flows: true
-      testiny_run_id: ${{ inputs.testiny_run_id }}
+      testiny_run_name: ${{ inputs.testiny_run_name }}
     secrets: inherit
