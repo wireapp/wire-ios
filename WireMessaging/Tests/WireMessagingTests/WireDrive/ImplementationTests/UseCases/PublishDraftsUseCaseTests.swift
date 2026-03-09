@@ -50,61 +50,68 @@ final class PublishDraftsUseCaseTests {
             "cell-5": [:] // Empty cell
         ]
     )
-    private lazy var sut = PublishDraftsUseCase(cellName: "cell-name", draftRepository: draftsRepository)
+
+    private func makeUseCase(cellName: String) -> PublishDraftsUseCase {
+        PublishDraftsUseCase(
+            cellName: cellName,
+            draftRepository: draftsRepository,
+            analyticsProvider: { nil }
+        )
+    }
 
     @Test(arguments: ["cell-1", "cell-2", "cell-3"])
     func invoke_whenNotAllFilesUploaded(cellName: String) async {
         // Given
-        let sut = PublishDraftsUseCase(cellName: cellName, draftRepository: draftsRepository)
+        let sut = makeUseCase(cellName: cellName)
 
         // When, Then
         await #expect(throws: (any Error).self) {
-            try await sut.invoke()
+            try await sut.invoke(containsText: false)
         }
     }
 
     @Test
     func invoke_whenNoFilesInCell() async {
         // Given
-        let sut = PublishDraftsUseCase(cellName: "cell-5", draftRepository: draftsRepository)
+        let sut = makeUseCase(cellName: "cell-5")
 
         // When, Then
         await #expect(throws: Never.self) {
-            try await sut.invoke()
+            try await sut.invoke(containsText: false)
         }
     }
 
     @Test
     func invoke_whenNonExistentCell() async throws {
         // Given
-        let sut = PublishDraftsUseCase(cellName: "non-existent-cell", draftRepository: draftsRepository)
+        let sut = makeUseCase(cellName: "non-existent-cell")
 
         // When, Then
         await #expect(throws: Never.self) {
-            try await sut.invoke()
+            try await sut.invoke(containsText: false)
         }
     }
 
     @Test
     func invoke_whenPublishingFails() async {
         // Given
-        let sut = PublishDraftsUseCase(cellName: "cell-4", draftRepository: draftsRepository)
+        let sut = makeUseCase(cellName: "cell-4")
         nodesAPI.publishDraftNodeIDVersionID_MockError = URLError(.notConnectedToInternet)
 
         // When, Then
         await #expect(throws: DraftsRepositoryError.notAllFilesArePublished) {
-            try await sut.invoke()
+            try await sut.invoke(containsText: false)
         }
     }
 
     @Test
     func invoke_whenPublishingSucceeds() async throws {
         // Given
-        let sut = PublishDraftsUseCase(cellName: "cell-4", draftRepository: draftsRepository)
+        let sut = makeUseCase(cellName: "cell-4")
         nodesAPI.publishDraftNodeIDVersionID_MockMethod = { _, _ in }
 
         // When
-        try await sut.invoke()
+        try await sut.invoke(containsText: false)
 
         // Then
         let drafts = try await #require(draftsRepository.getDraftsForTesting["cell-4"]).values
@@ -116,7 +123,7 @@ final class PublishDraftsUseCaseTests {
     @Test
     func invoke_whenNewDraftAddedConcurrently() async throws {
         // Given
-        let sut = PublishDraftsUseCase(cellName: "cell-4", draftRepository: draftsRepository)
+        let sut = makeUseCase(cellName: "cell-4")
         nodesAPI.publishDraftNodeIDVersionID_MockMethod = { [draftsRepository] _, _ in
             // Add a new draft while invoke is running
             var drafts = await draftsRepository.getDraftsForTesting
@@ -126,7 +133,7 @@ final class PublishDraftsUseCaseTests {
 
         // When, Then
         await #expect(throws: DraftsRepositoryError.notAllFilesArePublished) {
-            try await sut.invoke()
+            try await sut.invoke(containsText: false)
         }
     }
 }
