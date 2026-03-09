@@ -34,7 +34,7 @@ class RemoveUserTests: WireUITestCase {
     
     /// Test when a team member is removed, the 1:1 with the user is marked as readonly on an active conversation
     @MainActor
-    func disable_testRemoveTeamMemberAndActiveConversationUpdated() async throws {
+    func testRemoveTeamMemberAndActiveConversationUpdated() async throws {
         // TODO: [WPB-18909] restore test
         try await testRemoveTeamMember(testRemovalOnConversation: true)
     }
@@ -91,6 +91,6 @@ class RemoveUserTests: WireUITestCase {
         
         XCTAssertTrue(oneOnOneConversation.inputMessageField.waitToDisappear(), "conversation should be readonly")
         // TODO: assert system message
-        try oneOnOneConversation.goBackToConversationPage()
+        
     }
 }

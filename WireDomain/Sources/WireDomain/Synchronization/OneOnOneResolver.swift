@@ -406,7 +406,6 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                 [.proteus] : otherUser.supportedProtocols /// default to Proteus if empty.
 
             if otherUser.isAccountDeleted {
-                WireLogger.conversation.info("⚠️ deleted user, skipping for MLS resolution.")
                 return nil
             }
             let commonProtocols = selfUserProtocols.intersection(otherUserProtocols)

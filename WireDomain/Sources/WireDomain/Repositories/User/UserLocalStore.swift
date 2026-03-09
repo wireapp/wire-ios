@@ -91,8 +91,6 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             return results
                 .compactMap { user in
                     guard let userID = user.qualifiedID else {
-                        WireLogger.conversation.error(
-                            "⚠️ Missing user's qualifiedID")
                         return nil
                     }
                     return userID
@@ -225,10 +223,6 @@ public final class UserLocalStore: UserLocalStoreProtocol {
 
     public func markAccountAsDeleted(for user: ZMUser) async {
         await context.perform {
-            WireLogger.conversation.debug(
-                "⚠️ mark as deleted store",
-                attributes: [.senderUserId: user.qualifiedID?.safeForLoggingDescription ?? "<nil>"]
-            )
             user.isAccountDeleted = true
         }
     }

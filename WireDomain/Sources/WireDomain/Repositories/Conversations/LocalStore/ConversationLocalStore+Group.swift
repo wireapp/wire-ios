@@ -102,10 +102,6 @@ extension ConversationLocalStore {
         }
 
         guard let otherUser = localConversation.localParticipantsExcludingSelf.first else {
-            WireLogger.conversation
-                .debug(
-                    "⚠️ this conversation is a 1:1 from a deleted user, conv: \(localConversation.remoteIdentifier) \(localConversation.messageProtocol)"
-                )
             localConversation.isForcedReadOnly = true
             if localConversation.messageProtocol.isOne(of: .mls, .mixed) {
                 localConversation.mlsStatus = .invalid

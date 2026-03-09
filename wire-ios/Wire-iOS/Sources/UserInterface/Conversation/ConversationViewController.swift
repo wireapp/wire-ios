@@ -770,7 +770,6 @@ extension ConversationViewController: ZMConversationListObserver {
 extension ConversationViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        WireLogger.conversation.debug("⚠️ conversation userDidChange: \(changeInfo)")
         if changeInfo.accentColorValueChanged {
             if changeInfo.user.isSelfUser {
                 titleView.updateSelfUserAccentColor(changeInfo.user.accentColor)
@@ -785,8 +784,7 @@ extension ConversationViewController: UserObserving {
         }
         if changeInfo.user.isAccountDeleted {
             // updates UI since conversation should be readonly
-            update(conversation: conversation)
-        }
+            up
     }
 }
 

@@ -493,10 +493,6 @@ public extension ZMUser {
     @objc
     func markAccountAsDeleted(at timestamp: Date) {
         isAccountDeleted = true
-        WireLogger.conversation.debug(
-            "⚠️ mark as deleted",
-            attributes: [.senderUserId: qualifiedID?.safeForLoggingDescription ?? "<nil>"]
-        )
         removeFromAllGroupConversations(at: timestamp)
         addSystemMessageInOneOnOneConversation(at: timestamp)
     }
