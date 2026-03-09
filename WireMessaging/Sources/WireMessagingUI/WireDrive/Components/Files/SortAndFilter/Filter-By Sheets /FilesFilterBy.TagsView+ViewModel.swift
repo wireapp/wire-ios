@@ -19,7 +19,7 @@
 import Foundation
 import WireFoundation
 import WireMessagingDomain
-import WireUtilities
+import WireUtilitiesPackage
 
 extension FilesFilterBy.TagsView {
     @MainActor
