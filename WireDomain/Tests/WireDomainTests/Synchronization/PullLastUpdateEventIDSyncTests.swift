@@ -62,7 +62,7 @@ final class PullLastUpdateEventIDSyncTests: XCTestCase {
         try XCTAssertCount(storeInvocations, count: 1)
         XCTAssertEqual(storeInvocations[0], Scaffolding.envelope1.id)
     }
-    
+
     func testPull_Skips_WhenLastEventIDIsAlreadyStored() async throws {
         // Mock
         store.lastEventID_MockValue = UUID()
