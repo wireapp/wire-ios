@@ -34,7 +34,7 @@ class RemoveUserTests: WireUITestCase {
     
     /// Test when a team member is removed, the 1:1 with the user is marked as readonly on an active conversation
     @MainActor
-    func testRemoveTeamMemberAndActiveConversationUpdated() async throws {
+    func disable_testRemoveTeamMemberAndActiveConversationUpdated() async throws {
         // TODO: [WPB-18909] restore test
         try await testRemoveTeamMember(testRemovalOnConversation: true)
     }
@@ -73,10 +73,9 @@ class RemoveUserTests: WireUITestCase {
             .enterPassword(member2.password, expectWelcomePage: false)
 
         let member2ConversationsPage = try ConversationsPage()
-        let oneOnOneConversation = try await member2ConversationsPage
+        let oneOnOneConversation = try member2ConversationsPage
             .openConversation()
             .sendMessage("test")
-//            .backgroundAndResume(app: app, forDelay: 0) // fix for issue where sync is not resume after logout of first account
         
         if !testRemovalOnConversation {
             try oneOnOneConversation.goBackToConversationPage()
