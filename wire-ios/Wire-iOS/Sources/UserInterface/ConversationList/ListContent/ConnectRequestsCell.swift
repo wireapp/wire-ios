@@ -19,25 +19,7 @@
 import WireLocators
 import WireSyncEngine
 
-protocol SectionListCellType: AnyObject {
-    var sectionName: String? { get set }
-    var obfuscatedSectionName: String? { get set }
-    var cellIdentifier: String? { get set }
-}
-
-extension SectionListCellType {
-
-    var identifier: String {
-        [obfuscatedSectionName ?? sectionName, cellIdentifier]
-            .compactMap(\.self)
-            .joined(separator: " - ")
-    }
-}
-
-final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
-    var sectionName: String?
-    var obfuscatedSectionName: String?
-    var cellIdentifier: String?
+final class ConnectRequestsCell: UICollectionViewCell {
 
     let itemView = ConversationListItemView()
 
