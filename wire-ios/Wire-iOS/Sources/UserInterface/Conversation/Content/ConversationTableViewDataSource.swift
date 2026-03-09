@@ -554,11 +554,8 @@ final class ConversationTableViewDataSource: NSObject {
     }
 
     func index(of message: ZMConversationMessage) -> Int? {
-        if let indexPath = fetchController?.indexPath(forObject: message as! ZMMessage) {
-            indexPath.row
-        } else {
-            nil
-        }
+        guard let nonce = message.nonce else { return nil }
+        return currentSections.firstIndex(where: { $0.model == nonce })
     }
 
     func topIndexPath(for message: ZMConversationMessage) -> IndexPath? {
