@@ -315,4 +315,13 @@ public enum Locators {
         case classificationBanner = "ClassificationBanner"
 
     }
+    
+    public enum WireDrive {
+        
+        public enum FilesFilterPage: String {
+            case saveButton
+            case cancelButton
+            case removeFilterButton
+        }
+    }
 }

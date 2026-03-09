@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireLocators
 
 extension FilesFilterBy {
     enum Buttons {
@@ -30,7 +31,7 @@ extension FilesFilterBy {
                     Text(L10n.Localizable.General.save)
                         .fontWeight(.semibold)
                 }
-                .accessibilityIdentifier("saveButton")
+                .accessibilityIdentifier(Locators.WireDrive.FilesFilterPage.saveButton.rawValue)
             }
         }
 
@@ -44,7 +45,7 @@ extension FilesFilterBy {
                     Text(L10n.Localizable.General.cancel)
                         .fontWeight(.semibold)
                 }
-                .accessibilityIdentifier("cancelButton")
+                .accessibilityIdentifier(Locators.WireDrive.FilesFilterPage.cancelButton.rawValue)
             }
         }
 
@@ -57,7 +58,7 @@ extension FilesFilterBy {
                 } label: {
                     Text(L10n.Localizable.Conversation.WireCells.Filter.clearAll)
                 }
-                .accessibilityIdentifier("removeFilterButton")
+                .accessibilityIdentifier(Locators.WireDrive.FilesFilterPage.removeFilterButton.rawValue)
             }
         }
     }
