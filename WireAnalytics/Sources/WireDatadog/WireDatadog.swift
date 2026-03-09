@@ -21,9 +21,7 @@ public import WireLogging
 
 import CryptoKit
 import DatadogCore
-import DatadogCrashReporting
 import DatadogLogs
-import DatadogRUM
 import DatadogTrace
 import UIKit
 
@@ -67,8 +65,6 @@ public final class WireDatadog {
             trackingConsent: .granted
         )
 
-        CrashReporting.enable()
-
         let logsConfiguration = Logs.Configuration()
         Logs.enable(with: logsConfiguration)
 
@@ -86,15 +82,6 @@ public final class WireDatadog {
             networkInfoEnabled: true
         )
         Trace.enable(with: traceConfiguration)
-
-        let rumConfiguration = RUM.Configuration(
-            applicationID: applicationID,
-            sessionSampleRate: 100,
-            uiKitViewsPredicate: DefaultUIKitRUMViewsPredicate(),
-            uiKitActionsPredicate: DefaultUIKitRUMActionsPredicate(),
-            trackBackgroundEvents: true
-        )
-        RUM.enable(with: rumConfiguration)
 
         Datadog.setUserInfo(id: userIdentifier)
 
