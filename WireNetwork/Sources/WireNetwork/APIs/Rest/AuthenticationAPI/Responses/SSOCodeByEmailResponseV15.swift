@@ -16,22 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-//
-// This is the main file used by Framework targets on iOS.
-// It gets included by {target}-ios.xcconfig
-//
+import Foundation
 
-// Code Signing
-//
-CODE_SIGN_IDENTITY = iPhone Developer
+struct SSOCodeByEmailResponseV15: Decodable, ToAPIModelConvertible {
 
-// Deployment
-//
-IPHONEOS_DEPLOYMENT_TARGET = 17.0
-TARGETED_DEVICE_FAMILY = 1,2
-DYLIB_INSTALL_NAME_BASE = @rpath
-FRAMEWORK_VERSION = A
+    let ssoCode: UUID
 
-// Linking
-//
-OTHER_LDFLAGS = -ObjC
+    private enum CodingKeys: String, CodingKey {
+        case ssoCode = "sso_code"
+    }
+
+    func toAPIModel() -> UUID {
+        ssoCode
+    }
+
+}

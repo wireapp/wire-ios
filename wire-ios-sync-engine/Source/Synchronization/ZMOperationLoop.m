@@ -70,7 +70,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         self.transportSession = transportSession;
         self.requestStrategy = requestStrategy;
         self.syncMOC = syncMOC;
-        self.shouldStopEnqueueing = NO;
+        self.shouldStopEnqueueing = YES;
         self.operationStatus.delegate = self;
         self.isDeveloperModeEnabled = isDeveloperModeEnabled;
         self.isSyncV2Enabled = isSyncV2Enabled;
@@ -169,6 +169,12 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         }
         [BackgroundActivityFactory.sharedFactory endBackgroundActivity:enqueueActivity];
     }];
+}
+
+- (void)resumeEnqueuing
+{
+    self.shouldStopEnqueueing = NO;
+    [self newRequestsAvailable];
 }
 
 @end

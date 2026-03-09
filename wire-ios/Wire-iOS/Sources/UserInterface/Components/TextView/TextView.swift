@@ -185,9 +185,7 @@ class TextView: UITextView {
 
     override func buildMenu(with builder: any UIMenuBuilder) {
         if !isContextMenuAllowed {
-            if #available(iOS 17.0, *) {
-                builder.remove(menu: .autoFill)
-            }
+            builder.remove(menu: .autoFill)
         }
     }
 

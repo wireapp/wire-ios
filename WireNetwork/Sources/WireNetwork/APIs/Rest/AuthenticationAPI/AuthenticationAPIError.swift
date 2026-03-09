@@ -50,6 +50,11 @@ public enum AuthenticationAPIError: Error {
 
     case invalidEmail
 
+    /// Thrown by `getSSOCode(forEmail:)` when no SSO code exists for the given email
+    /// or the SSO feature is disabled.
+
+    case ssoCodeNotFound
+
 }
 
 public extension AuthenticationAPIError {
@@ -132,6 +137,8 @@ extension AuthenticationAPIError: Equatable {
             lhsMessage == rhsMessage && lhsRetyAfter == rhsRetyAfter
 
         case (.invalidEmail, .invalidEmail): true
+
+        case (.ssoCodeNotFound, .ssoCodeNotFound): true
 
         default: false
         }
