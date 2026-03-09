@@ -604,7 +604,6 @@
 				ConversationInputBarViewController/ConversationInputBarViewControllerDelegateTests.swift,
 				ConversationInputBarViewController/ConversationInputBarViewControllerTests.swift,
 				ConversationList/ConnectRequestsCell/ConnectRequestsCellSnapshotTests.swift,
-				ConversationList/ConnectRequestsCell/ConnectRequestsCellTests.swift,
 				ConversationList/Container/ConversationListViewControllerSnapshotTests.swift,
 				ConversationList/Container/ConversationListViewControllerViewModelSnapshotTests.swift,
 				ConversationList/Container/ConversationListViewControllerViewModelTests.swift,

@@ -10,6 +10,22 @@
             "value" : "$(INBUCKET_USERNAME)"
           },
           {
+            "key" : "BELLA_INBUCKET_URL",
+            "value" : "$(BELLA_INBUCKET_URL)"
+          },
+          {
+            "key" : "BELLA_DEEPLINK_URL",
+            "value" : "$(BELLA_DEEPLINK_URL)"
+          },
+          {
+            "key" : "ANTA_INBUCKET_URL",
+            "value" : "$(ANTA_INBUCKET_URL)"
+          },
+          {
+            "key" : "BACKEND_URL_ANTA",
+            "value" : "$(BACKEND_URL_ANTA)"
+          },
+          {
             "key" : "PREDEFINED_BACKEND",
             "value" : "$(PREDEFINED_BACKEND)"
           },
@@ -54,16 +70,16 @@
             "value" : "$(ANTA_DEEPLINK_URL)"
           },
           {
-            "key" : "ANTA_INBUCKET_URL",
-            "value" : "$(ANTA_INBUCKET_URL)"
-          },
-          {
-            "key" : "BACKEND_URL_ANTA",
-            "value" : "$(BACKEND_URL_ANTA)"
-          },
-          {
             "key" : "BASIC_AUTH_ANTA",
             "value" : "$(BASIC_AUTH_ANTA)"
+          },
+          {
+            "key" : "BACKEND_URL_BELLA",
+            "value" : "$(BACKEND_URL_BELLA)"
+          },
+          {
+            "key" : "BASIC_AUTH_BELLA",
+            "value" : "$(BASIC_AUTH_BELLA)"
           }
         ],
         "targetForVariableExpansion" : {

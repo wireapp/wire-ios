@@ -15,38 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
 import Foundation
-import WireNetwork
 
-public enum BackendContext {
-    static var current: BackendTarget = .staging
-
-    static var backendEnvironment: BackendEnvironment {
-        switch current {
-        case .staging:
-            .staging
-        case .anta:
-            .anta
-        case .bella:
-            .bella
-        }
-    }
+protocol SectionListCellType: AnyObject {
+    var sectionName: String? { get set }
+    var obfuscatedSectionName: String? { get set }
+    var cellIdentifier: String? { get set }
 }
 
-public enum BackendTarget {
-    case staging
-    case anta
-    case bella
+extension SectionListCellType {
 
-    var domainInfo: String {
-        switch self {
-        case .staging:
-            "staging.zinfra.io"
-        case .anta:
-            "anta.wire.link"
-        case .bella:
-            "bella.wire.link"
-        }
+    var identifier: String {
+        [obfuscatedSectionName ?? sectionName, cellIdentifier]
+            .compactMap(\.self)
+            .joined(separator: " - ")
     }
 }
