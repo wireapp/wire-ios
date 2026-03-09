@@ -30,7 +30,7 @@ final class WireDriveTests: WireUITestCase {
 
         XCTAssertTrue(activeConversationPage.sharedDriveButton.exists)
     }
-    
+
     /// testiny: https://app.testiny.io/IOS/testcases/tcf/1389/tc/8955/
     @MainActor
     func test_CreateGroupConversationWithDrive() async throws {
