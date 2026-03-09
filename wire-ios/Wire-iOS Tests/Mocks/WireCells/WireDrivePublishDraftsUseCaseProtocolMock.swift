@@ -20,7 +20,7 @@ import WireMessagingDomain
 
 final class WireDrivePublishDraftsUseCaseProtocolMock: WireDrivePublishDraftsUseCaseProtocol {
 
-    func invoke() async {
+    func invoke(containsText: Bool) async {
         fatalError("Implement")
     }
 
