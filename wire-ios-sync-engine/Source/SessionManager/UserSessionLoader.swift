@@ -327,10 +327,11 @@ final class UserSessionLoader {
                 domain: metadata.domain,
                 isFederationEnabled: metadata.isFederationEnabled
             )
-        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+        } catch is URLError {
             // To allow offline browsing fallback to previous metadata if possible.
             if let prevMetadata {
                 newMetadata = prevMetadata
+                // TODO: Schedule fetching the latest backend metadata.
             } else {
                 throw Failure.noResolvedBackendMetadataAvailable
             }
@@ -609,12 +610,11 @@ final class UserSessionLoader {
             let api = MLSAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
             let keys = try await api.getBackendMLSPublicKeys()
             return keys.removal.isValid
-        } catch
-        URLError.notConnectedToInternet,
-            URLError.networkConnectionLost,
+        } catch is URLError,
             MLSAPIError.unsupportedEndpointForAPIVersion,
             MLSAPIError.mlsNotEnabled {
             // Don't block session loading, we'll try again later.
+            // TODO: Schedule trying again later
             return nil
         }
     }
