@@ -16,12 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMessagingDomain
+import Foundation
 
-final class WireDrivePublishDraftsUseCaseProtocolMock: WireDrivePublishDraftsUseCaseProtocol {
+struct SSOCodeByEmailResponseV15: Decodable, ToAPIModelConvertible {
 
-    func invoke(containsText: Bool) async {
-        fatalError("Implement")
+    let ssoCode: UUID
+
+    private enum CodingKeys: String, CodingKey {
+        case ssoCode = "sso_code"
+    }
+
+    func toAPIModel() -> UUID {
+        ssoCode
     }
 
 }

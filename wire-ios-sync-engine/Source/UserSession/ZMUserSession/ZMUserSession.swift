@@ -566,10 +566,6 @@ public final class ZMUserSession: NSObject {
             // FIXME: [WPB-5827] inject instead of storing on context - [jacob]
             syncManagedObjectContext.proteusService = proteusService
             syncManagedObjectContext.mlsService = mlsService
-
-            applicationStatusDirectory.clientRegistrationStatus.prepareForClientRegistration()
-            applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
-            applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
         }
 
         setupMLSGroupVerification()
@@ -582,25 +578,8 @@ public final class ZMUserSession: NSObject {
         enableBackgroundFetch()
         observeChangesOnShareExtension()
         startEphemeralTimers()
-        RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
-
-        // Proactively keep the self user in sync, which helps add resilience
-        // in cases where the self client may otherwise only have limited
-        // one time opportunities to discover important changes.
-        let selfUser = ZMUser.selfUser(in: managedObjectContext)
-        selfUser.needsToBeUpdatedFromBackend = true
-
-        // Proactively ensure we clean up invalid connection state.
-        Task {
-            do {
-                let connectionValidator = ConnectionValidator(context: syncContext)
-                try await connectionValidator.cleanUpAllInvalidConnections()
-            } catch {
-                WireLogger.session.error("failed to clean up invalid connections: \(String(describing: error))")
-            }
-        }
 
         if let selfUserClient {
             WireLogger.authentication.setClientID(selfUserClient.safeRemoteIdentifier.safeForLoggingDescription)
@@ -675,23 +654,51 @@ public final class ZMUserSession: NSObject {
             }
             syncStrategy?.updateClientContextChangeTrackers()
         }
-        Task { [weak self] in
-            guard let self else { return }
-            await clientSessionComponent.workAgent.setAutoStartEnabled(true)
-            await clientSessionComponent.workAgent.start()
-            clientSessionComponent.generatorsDirectory.observeSyncState()
-            clientSessionComponent.syncStateSubject.sink { [weak clientSessionComponent] state in
-                if state == .suspended {
-                    Task {
-                        // clear all items, those will be regenerated when sync is resumed
-                        await clientSessionComponent?.workAgent.clearSchedulerQueue()
-                    }
-                }
-            }.store(in: &cancellables)
-            // Initialize the generator to enqueue repair work item if needed
-            clientSessionComponent.repairFaultyMLSRemovalKeysGenerator.submitWorkItemIfNeeded()
+    }
 
+    public func start() async {
+        operationLoop?.resumeEnqueuing()
+
+        await syncContext.perform {
+            self.applicationStatusDirectory.clientRegistrationStatus.prepareForClientRegistration()
+            self.applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
+            self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
+
+            // Proactively keep the self user in sync, which helps add resilience
+            // in cases where the self client may otherwise only have limited
+            // one time opportunities to discover important changes.
+            let selfUser = ZMUser.selfUser(in: self.syncContext)
+            selfUser.needsToBeUpdatedFromBackend = true
         }
+
+        RequestAvailableNotification.notifyNewRequestsAvailable(self)
+
+        // Proactively ensure we clean up invalid connection state.
+        do {
+            let connectionValidator = ConnectionValidator(context: syncContext)
+            try await connectionValidator.cleanUpAllInvalidConnections()
+        } catch {
+            WireLogger.session.error("failed to clean up invalid connections: \(String(describing: error))")
+        }
+
+        guard let clientSessionComponent else {
+            return
+        }
+
+        await clientSessionComponent.workAgent.setAutoStartEnabled(true)
+        await clientSessionComponent.workAgent.start()
+        clientSessionComponent.generatorsDirectory.observeSyncState()
+        clientSessionComponent.syncStateSubject.sink { [weak clientSessionComponent] state in
+            if state == .suspended {
+                Task {
+                    // clear all items, those will be regenerated when sync is resumed
+                    await clientSessionComponent?.workAgent.clearSchedulerQueue()
+                }
+            }
+        }.store(in: &cancellables)
+        // Initialize the generator to enqueue repair work item if needed
+        clientSessionComponent.repairFaultyMLSRemovalKeysGenerator.submitWorkItemIfNeeded()
+
     }
 
     public func migrateToConsumableNotificationsIfNeeded() async throws {
@@ -1260,18 +1267,27 @@ extension ZMUserSession: SyncAgentDelegate {
             guard let self else { return }
             await fetchAndStoreFeatureConfig()
 
+            var isE2EIRequired = false
+            let featureConfigStore = FeatureConfigLocalStore(context: syncContext)
+            if let e2eiFeature = try? await featureConfigStore.fetchFeature(name: .e2ei) {
+                isE2EIRequired = await featureConfigStore.isFeatureEnabled(feature: e2eiFeature)
+            }
+
             let (qualifiedSelfClientID, hasRegisteredMLSClient) = await syncContext.perform {
                 let selfClient = ZMUser.selfUser(in: self.syncContext).selfClient()
                 let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient == true
+
                 return (selfClient?.qualifiedClientID, hasRegisteredMLSClient)
             }
 
             if let qualifiedSelfClientID {
+
                 await mlsClientManager.initializeMLSClientIfNeeded(
                     for: qualifiedSelfClientID,
                     hasRegisteredMLSClient: hasRegisteredMLSClient,
                     mlsFeature: mlsFeature,
-                    isBackendMLSEnabled: isBackendMLSEnabled
+                    isBackendMLSEnabled: isBackendMLSEnabled,
+                    isE2EIRequired: isE2EIRequired
                 )
             } else {
                 WireLogger.mls.warn("`qualifiedClientID` is missing for selfClient")
@@ -1322,9 +1338,9 @@ extension ZMUserSession: SyncAgentDelegate {
         }
     }
 
-    func processPendingCallEvents() async {
+    func processPendingCallEvents(only onlyCallEvents: Bool) async {
         WireLogger.sync.debug(
-            "process pending call events",
+            "process pending call events (onlyCallEvents: \(onlyCallEvents)",
             attributes: .incrementalSync
         )
 
