@@ -69,7 +69,7 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
 
     func testCancellation_stopsGeneratingNotifications() async throws {
         // Mock
-        conversationEventBuilder.buildContentEvent_MockValue = .text(UNMutableNotificationContent())
+        conversationEventBuilder.buildContentEvent_MockValue = [.text(UNMutableNotificationContent())]
         userEventBuilder.buildContentEvent_MockValue = .text(UNMutableNotificationContent())
 
         // Create multiple events to test partial processing
