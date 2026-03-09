@@ -198,9 +198,16 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
             return
         }
 
-        delegate?.lookupConversation(by: callHandle) { result in
-            guard case let .success(conversation) = result else { return }
-            completion(conversation)
+        delegate?.lookupConversation(by: callHandle) { [logger] result in
+            do {
+                let conversation = try result.get()
+                completion(conversation)
+            } catch let error as NSError {
+                logger.error(
+                    "failed to find conversation associated with contacts: \(error.safeForLoggingDescription)",
+                    attributes: .safePublic
+                )
+            }
         }
     }
 
