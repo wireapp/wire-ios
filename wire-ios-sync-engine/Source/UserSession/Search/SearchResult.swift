@@ -168,7 +168,11 @@ extension SearchResult {
             teamMembers: teamMembers,
             directory: directory,
             conversations: conversations,
-            apps: apps + result.apps,
+            apps: apps + result.apps.filter { newApp in
+                !apps.contains { existingApp in
+                    newApp.remoteIdentifier == existingApp.remoteIdentifier
+                }
+            },
             bots: bots,
             searchUsersCache: searchUsersCache
         )
