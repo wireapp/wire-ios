@@ -125,3 +125,79 @@ package extension WireDriveLocalAsset.DownloadState {
         }
     }
 }
+
+//TODO: move this type to its own file and maybe think of a better name.
+@MainActor
+public final class WireDriveFileUITracker: Sendable, ObservableObject {
+    public enum State: Sendable {
+        /// The file hasn't been downloaded yet.
+        case notDownloaded
+        
+        /// The file is currently being downloaded.
+        case downloading(progress: Double)
+        
+        /// The file has been downloaded.
+        /// Big files go into a `ready` state for 3 seconds, then become `ready` = `false`.
+        case downloaded(ready: Bool)
+        
+        /// The download has failed.
+        case failed(error: any Error)
+    }
+    
+    private(set) public var state: State {
+        didSet {
+            switch (oldValue, state) {
+            case (.downloading, .downloaded):
+                // state is changing from downloading to downloaded:
+                
+                let isBig = downloadingTimerStart.flatMap { Date().timeIntervalSince($0) > 0.3 } ?? true
+                self.state = .downloaded(ready: isBig)
+                
+                if isBig {
+                    Task {
+                        try? await Task.sleep(for: .seconds(3))
+                        self.state = .downloaded(ready: false)
+                    }
+                } else {
+                    fileShouldOpen?()
+                }
+            default:
+                break
+            }
+            
+            if case .downloading = state {
+                if downloadingTimerStart == nil {
+                    downloadingTimerStart = Date()
+                }
+            } else {
+                downloadingTimerStart = nil
+            }
+        }
+    }
+    
+    /// This closure will be called when a file should be automatically opened after the download.
+    public var fileShouldOpen: (() -> ())?
+    
+    private var downloadingTimerStart: Date? = nil
+    
+    public init(downloadState: WireDriveLocalAsset.DownloadState) {
+        state = Self.stateFromDownloadState(downloadState)
+    }
+    
+    public func handleDownloadState(_ downloadState: WireDriveLocalAsset.DownloadState) {
+        state = Self.stateFromDownloadState(downloadState)
+    }
+    
+    private static func stateFromDownloadState(_ downloadState: WireDriveLocalAsset.DownloadState) -> State {
+        switch downloadState {
+        case .pending:
+            .notDownloaded
+        case let .downloading(progress):
+            .downloading(progress: progress)
+        case .downloaded:
+            .downloaded(ready: false)
+        case let .failed(error):
+            .failed(error: error)
+        }
+    }
+}

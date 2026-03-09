@@ -48,7 +48,15 @@ final class FilesItemViewModel: ObservableObject {
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
 
-    @Published private var asset: WireDriveLocalAsset?
+    @Published private var asset: WireDriveLocalAsset? {
+        didSet {
+            if let downloadState = asset?.downloadState {
+                fileTracker.handleDownloadState(downloadState)
+            }
+        }
+    }
+    
+    @Published var fileTracker: WireDriveFileUITracker
 
     @Published var isPresentingDeleteFilePermanentlyConfirmation = false
     @Published var isPresentingDeleteFolderPermanentlyConfirmation = false
@@ -106,6 +114,11 @@ final class FilesItemViewModel: ObservableObject {
         self.isBrowsing = isBrowsing
         self.isInRecycleBin = isInRecycleBin
 
+        self.fileTracker = .init(downloadState: .pending)
+        self.fileTracker.fileShouldOpen = {
+            print("### file should open automatically now")
+        }
+        
         self.menuActions = makeMenuActions()
 
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
