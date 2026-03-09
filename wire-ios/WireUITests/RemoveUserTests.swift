@@ -22,7 +22,8 @@ class RemoveUserTests: WireUITestCase {
 
     @MainActor
     private func login(_ user: UserInfo) async throws -> ConversationsPage {
-        try app.loginUser(email: user.email, password: user.password)
+        print("login: email \(user.email) and password \(user.password)")
+        return try app.loginUser(email: user.email, password: user.password)
             .acceptPopup(with: self)
     }
 
@@ -30,11 +31,23 @@ class RemoveUserTests: WireUITestCase {
         try await userHelper.deleteUser(user)
     }
 
-    /// Test when a team member is removed, the 1:1 with the user is marked as readonly
+    
+    /// Test when a team member is removed, the 1:1 with the user is marked as readonly on an active conversation
     @MainActor
-    func testRemoveTeamMember() async throws {
+    func testRemoveTeamMemberAndActiveConversationUpdated() async throws {
+        // TODO: [WPB-18909] restore test
+        try await testRemoveTeamMember(testRemovalOnConversation: true)
+    }
+
+    /// Test when a team member is removed, the 1:1 with the user is marked as readonly on the conversation list
+    @MainActor
+    func testRemoveTeamMemberAndConversationListUpdated() async throws {
+        try await testRemoveTeamMember(testRemovalOnConversation: false)
+    }
+
+    @MainActor
+        func testRemoveTeamMember(testRemovalOnConversation: Bool) async throws {
         // GIVEN
-        let testRemovalOnConversation = true
         let team = try await userHelper.registerTeam(withMemberCount: 2)
         let member1 = try XCTUnwrap(team.teamMembers.first)
         let member2 = try XCTUnwrap(team.teamMembers.last)
@@ -63,7 +76,7 @@ class RemoveUserTests: WireUITestCase {
         let oneOnOneConversation = try await member2ConversationsPage
             .openConversation()
             .sendMessage("test")
-            .backgroundAndResume(app: app, forDelay: 0) // fix for issue where sync is not resume after logout of first account
+//            .backgroundAndResume(app: app, forDelay: 0) // fix for issue where sync is not resume after logout of first account
         
         if !testRemovalOnConversation {
             try oneOnOneConversation.goBackToConversationPage()
