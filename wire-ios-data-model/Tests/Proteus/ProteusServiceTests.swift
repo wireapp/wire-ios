@@ -207,6 +207,51 @@ class ProteusServiceTests: XCTestCase {
         XCTAssertEqual(mockCoreCrypto.transaction_Invocations.count, 0)
     }
 
+    func test_DecryptDataForSession_CancellationStopsDecryption() async throws {
+        // Given
+        let sessionID = ProteusSessionID.random()
+        let encryptedData = Data.secureRandomData(length: 8)
+
+        // Mock
+        mockCoreCryptoContext.proteusSessionExistsSessionId_MockMethod = { id in
+            XCTAssertEqual(id, sessionID.rawValue)
+            return true
+        }
+
+        mockCoreCryptoContext.proteusDecryptSessionIdCiphertext_MockMethod = { id, ciphertext in
+            XCTAssertEqual(id, sessionID.rawValue)
+            XCTAssertEqual(ciphertext, encryptedData)
+            return Data([0, 1, 2, 3, 4, 5])
+        }
+
+        // When
+        let task = Task {
+            try await sut.decrypt(
+                data: encryptedData,
+                forSession: sessionID,
+                context: mockCoreCryptoContext
+            )
+        }
+
+        // Cancel the task before decryption happens
+        task.cancel()
+
+        let result = await task.result
+
+        // Then
+        do {
+            _ = try result.get()
+            XCTFail("Expected CancellationError to be thrown")
+        } catch is CancellationError {
+            // Expected error
+        } catch {
+            XCTFail("Expected CancellationError but got \(error)")
+        }
+
+        // Verify that decryption was NOT called because we cancelled before it
+        XCTAssertEqual(mockCoreCryptoContext.proteusDecryptSessionIdCiphertext_Invocations.count, 0)
+    }
+
     // MARK: - Encrypting messages
 
     func test_EncryptDataForSession_Success() async throws {
