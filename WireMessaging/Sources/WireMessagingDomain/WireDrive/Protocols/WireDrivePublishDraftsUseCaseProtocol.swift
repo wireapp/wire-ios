@@ -24,9 +24,11 @@ public protocol WireDrivePublishDraftsUseCaseProtocol {
 
     /// Publish all drafts.
     ///
+    /// - Parameters:
+    ///   - containsText: weather the message also contains text.
     /// - Throws: Throws an error if not **all** drafts have been uploaded or if there are unpublished drafts remaining
     /// once the operation completes.
 
-    func invoke() async throws
+    func invoke(containsText: Bool) async throws
 
 }

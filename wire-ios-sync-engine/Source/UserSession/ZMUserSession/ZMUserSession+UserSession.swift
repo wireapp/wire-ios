@@ -380,10 +380,22 @@ extension ZMUserSession: UserSession {
         CreateConversationFolderUseCase(context: syncContext)
     }
 
-    public func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol {
-        SearchUsersUseCase(
+    public func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol? {
+        guard
+            let searchAPI = clientSessionComponent?.searchAPI,
+            let teamsAPI = clientSessionComponent?.teamsAPI,
+            let usersAPI = clientSessionComponent?.usersAPI
+        else { return nil }
+
+        let searchDirectory = SearchDirectory(
+            userSession: self,
+            searchAPI: searchAPI,
+            teamsAPI: teamsAPI,
+            usersAPI: usersAPI
+        )
+        return SearchUsersUseCase(
             context: syncContext,
-            searchDirectory: SearchDirectory(userSession: self),
+            searchDirectory: searchDirectory,
             isFederationUsageAllowed: isFederationUsageAllowed,
             isMLSEnabled: isBackendMLSEnabled
         )
