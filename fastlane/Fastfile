@@ -233,6 +233,7 @@ platform :ios do
         options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_RESTRICTED']
         options[:upload_testflight] = true
         options[:produce_debug_builds] = true
+        options[:extra_distribution_groups] = ["Wire Employees"]
         save_app_name('Column 1 Restricted')
         build_and_upload_app(options)
     end
@@ -244,6 +245,7 @@ platform :ios do
         options[:s3_subfolder] = ENV['C2_S3_SUBFOLDER_RESTRICTED']
         options[:upload_testflight] = true
         options[:produce_debug_builds] = true
+        options[:extra_distribution_groups] = ["Wire Employees"]
         save_app_name('Column 2 Restricted')
         build_and_upload_app(options)
     end
@@ -255,6 +257,7 @@ platform :ios do
         options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_RESTRICTED']
         options[:upload_testflight] = true
         options[:produce_debug_builds] = true
+        options[:extra_distribution_groups] = ["Wire Employees"]
         save_app_name('Column 3 Restricted')
         build_and_upload_app(options)
     end
