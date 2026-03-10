@@ -47,7 +47,7 @@ class PageModel {
             throw Failure.notLoaded(self)
         }
     }
-    
+
     @discardableResult
     func backgroundAndResume(
         app: XCUIApplication,

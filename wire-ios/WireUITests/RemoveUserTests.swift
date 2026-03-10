@@ -31,7 +31,6 @@ class RemoveUserTests: WireUITestCase {
         try await userHelper.deleteUser(user)
     }
 
-    
     /// Test when a team member is removed, the 1:1 with the user is marked as readonly on an active conversation
     @MainActor
     func disabled_testRemoveTeamMemberAndActiveConversationUpdated() async throws {
@@ -46,7 +45,7 @@ class RemoveUserTests: WireUITestCase {
     }
 
     @MainActor
-        func testRemoveTeamMember(testRemovalOnConversation: Bool) async throws {
+    func testRemoveTeamMember(testRemovalOnConversation: Bool) async throws {
         // GIVEN
         let team = try await userHelper.registerTeam(withMemberCount: 2)
         let member1 = try XCTUnwrap(team.teamMembers.first)
@@ -64,7 +63,8 @@ class RemoveUserTests: WireUITestCase {
             .goBackToConversationPage()
             .openUserProfilePage()
 
-        // FIXME: logout member2 to avoid receiving event in other session -> crash
+        // here we logout member2 to avoid receiving event in other session ->
+        // TODO: [WPB-23949] avoid logout once crash is resolved
         try member1UserProfilePage
             .switchUserAccountForUser(withName: member2.name)
             .openSettings()
@@ -76,7 +76,7 @@ class RemoveUserTests: WireUITestCase {
         let oneOnOneConversation = try member2ConversationsPage
             .openConversation()
             .sendMessage("test")
-        
+
         if !testRemovalOnConversation {
             try oneOnOneConversation.goBackToConversationPage()
         }
@@ -88,8 +88,24 @@ class RemoveUserTests: WireUITestCase {
         if !testRemovalOnConversation {
             try member2ConversationsPage.openConversation()
         }
-        
+
         XCTAssertTrue(oneOnOneConversation.inputMessageField.waitToDisappear(), "conversation should be readonly")
-        XCTAssertTrue(oneOnOneConversation.userRemovedSystemMessage.waitForExistence(timeout: 1), "system message should be inserted")
+        XCTAssertTrue(
+            oneOnOneConversation.userRemovedSystemMessage.waitForExistence(timeout: 1),
+            "system message should be inserted"
+        )
+        
+        
+        // THEN
+        let welcomePage = try oneOnOneConversation.goBackToConversationPage()
+            .openSettings()
+            .openAccountSettings()
+            .logout()
+            .enterPassword(member1.password)
+
+        try await login(member1)
+            .openConversation()
+        
+        XCTAssertTrue(oneOnOneConversation.inputMessageField.waitToDisappear(), "conversation should be readonly")        
     }
 }

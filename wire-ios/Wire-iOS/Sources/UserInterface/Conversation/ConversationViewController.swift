@@ -256,7 +256,7 @@ final class ConversationViewController: UIViewController {
         setupNavigationItem()
         updateOutgoingConnectionVisibility()
         updateInputBarVisibility()
-        
+
         voiceChannelStateObserverToken = addCallStateObserver()
         conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
         if let participant = conversation.firstActiveParticipantOtherThanSelf {
