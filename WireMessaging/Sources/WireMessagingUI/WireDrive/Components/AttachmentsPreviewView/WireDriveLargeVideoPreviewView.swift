@@ -37,7 +37,7 @@ struct WireDriveLargeVideoPreviewView: View {
     let progress: Double?
     let downloadError: Bool
     let url: URL?
-    var imageAspectRatio: CGFloat? = defaultAspectRatio
+    var imageAspectRatio: CGFloat = defaultAspectRatio
     let duration: String?
 
     @Environment(\.wireAccentColor) private var wireAccentColor
@@ -89,7 +89,7 @@ struct WireDriveLargeVideoPreviewView: View {
             case let .success(image):
                 image
                     .resizable()
-                    .scaledToFill()
+                    .aspectRatio(imageAspectRatio, contentMode: .fit)
                     .overlay {
                         PlayIcon()
                             .disabled(false)
@@ -106,7 +106,7 @@ struct WireDriveLargeVideoPreviewView: View {
     private func previewContainer(@ViewBuilder content: () -> some View)
         -> some View {
         Color.clear
-            .aspectRatio(imageAspectRatio ?? Self.defaultAspectRatio, contentMode: .fit)
+            .aspectRatio(imageAspectRatio, contentMode: .fit)
             .background(alignment: .top) {
                 content()
             }
