@@ -44,7 +44,10 @@ private extension ConversationProteusMessageAddEvent {
     var hasCallingContent: Bool {
         guard
             let decryptedMessage = message.decryptedMessage,
-            let message = ProtobufMessageDecoder.getProtobufMessage(from: decryptedMessage)
+            let message = try? ProtobufMessageDecoder().extractProteusMessageContent(
+                from: decryptedMessage,
+                externalData: externalData
+            )
         else {
             return false
         }
@@ -58,7 +61,7 @@ private extension ConversationMLSMessageAddEvent {
 
     var hasCallingContent: Bool {
         for decryptedMessage in decryptedMessages {
-            guard let message = ProtobufMessageDecoder.getProtobufMessage(
+            guard let message = try? ProtobufMessageDecoder().extractMLSMessageContent(
                 from: decryptedMessage.message
             ) else {
                 continue

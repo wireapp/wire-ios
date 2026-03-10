@@ -82,7 +82,8 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
             conversationLocationMessageNotificationBuilder: conversationLocationMessageNotificationBuilder,
             conversationPingMessageNotificationBuilder: conversationPingMessageNotificationBuilder,
             conversationVideoMessageNotificationBuilder: conversationVideoMessageNotificationBuilder,
-            conversationTextMessageNotificationBuilder: conversationTextNotificationBuilder
+            conversationTextMessageNotificationBuilder: conversationTextNotificationBuilder,
+            protobufMessageDecoder: ProtobufMessageDecoder()
         )
     }
 
