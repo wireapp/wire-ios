@@ -20,15 +20,10 @@ import XCTest
 
 class RemoveUserTests: WireUITestCase {
 
+    /// Test when a team member is removed, the 1:1 with the user is marked as readonly on the conversation list
     @MainActor
-    private func login(_ user: UserInfo) async throws -> ConversationsPage {
-        print("login: email \(user.email) and password \(user.password)")
-        return try app.loginUser(email: user.email, password: user.password)
-            .acceptPopup(with: self)
-    }
-
-    private func deleteMember(_ user: UserInfo) async throws {
-        try await userHelper.deleteUser(user)
+    func testRemoveTeamMemberAndConversationListUpdated() async throws {
+        try await testRemoveTeamMember(testRemovalOnConversation: false)
     }
 
     /// Test when a team member is removed, the 1:1 with the user is marked as readonly on an active conversation
@@ -38,14 +33,8 @@ class RemoveUserTests: WireUITestCase {
         try await testRemoveTeamMember(testRemovalOnConversation: true)
     }
 
-    /// Test when a team member is removed, the 1:1 with the user is marked as readonly on the conversation list
     @MainActor
-    func testRemoveTeamMemberAndConversationListUpdated() async throws {
-        try await testRemoveTeamMember(testRemovalOnConversation: false)
-    }
-
-    @MainActor
-    func testRemoveTeamMember(testRemovalOnConversation: Bool) async throws {
+    private func testRemoveTeamMember(testRemovalOnConversation: Bool) async throws {
         // GIVEN
         let team = try await userHelper.registerTeam(withMemberCount: 2)
         let member1 = try XCTUnwrap(team.teamMembers.first)
@@ -94,18 +83,16 @@ class RemoveUserTests: WireUITestCase {
             oneOnOneConversation.userRemovedSystemMessage.waitForExistence(timeout: 1),
             "system message should be inserted"
         )
-        
-        
-        // THEN
-        let welcomePage = try oneOnOneConversation.goBackToConversationPage()
-            .openSettings()
-            .openAccountSettings()
-            .logout()
-            .enterPassword(member1.password)
+    }
 
-        try await login(member1)
-            .openConversation()
-        
-        XCTAssertTrue(oneOnOneConversation.inputMessageField.waitToDisappear(), "conversation should be readonly")        
+    @MainActor
+    private func login(_ user: UserInfo) async throws -> ConversationsPage {
+        print("login: email \(user.email) and password \(user.password)")
+        return try app.loginUser(email: user.email, password: user.password)
+            .acceptPopup(with: self)
+    }
+
+    private func deleteMember(_ user: UserInfo) async throws {
+        try await userHelper.deleteUser(user)
     }
 }
