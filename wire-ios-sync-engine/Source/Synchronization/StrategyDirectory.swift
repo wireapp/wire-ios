@@ -194,11 +194,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 localDomain: metadata.domain,
                 isFederationEnabled: metadata.isFederationEnabled
             ),
-            SearchUserImageStrategy(
-                applicationStatus: applicationStatusDirectory,
-                managedObjectContext: syncMOC,
-                searchUsersCache: searchUsersCache
-            ),
             ConnectionRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
