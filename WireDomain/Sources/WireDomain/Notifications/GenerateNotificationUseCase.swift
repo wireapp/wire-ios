@@ -60,6 +60,9 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
             )
 
             for event in events {
+                // Abort if needed.
+                try Task.checkCancellation()
+
                 if let notifications = await generateNotification(for: event) {
                     logger.info(
                         "Generated \(notifications.count) notifications from an event",
@@ -82,7 +85,7 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
                 return try await conversationEventBuilder.buildContent(
                     event: conversationEvent
                 )
-            } catch ConversationMessageAddEventNotificationBuilder.Failure.unknownMessageContent {
+            } catch ProtobufMessageDecoder.Failure.unknownMessageContent {
                 // Can't show notifications for unknown message types,
                 // so just ignore.
                 return nil

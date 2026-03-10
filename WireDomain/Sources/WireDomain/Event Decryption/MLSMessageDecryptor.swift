@@ -34,6 +34,9 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         let welcomeMessage = eventData.welcomeMessage
         let conversationID = eventData.conversationID
 
+        // Abort if needed.
+        try Task.checkCancellation()
+
         let groupID = try await mlsDecryptionService.processWelcomeMessage(
             welcomeMessage: welcomeMessage,
             context: context
@@ -73,6 +76,9 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
             WireLogger.mls.error("WOW NSE MLS: MLS conversation not ready for \(conversationID.id)")
             throw MLSMessageDecryptorError.mlsConversationNotReady
         }
+
+        // Abort if needed.
+        try Task.checkCancellation()
 
         do {
             let decryptionResults = try await decryptMLSMessage(

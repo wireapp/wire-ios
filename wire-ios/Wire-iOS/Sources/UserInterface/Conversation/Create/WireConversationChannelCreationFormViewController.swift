@@ -63,7 +63,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         self.userSession = userSession
         let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
             .isFeatureEnabled(.apps) ?? false
-        let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+        let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
         self.values = ConversationCreationValues(
             isChannel: true,
             isAppsFeatureEnabled: isAppsFeatureEnabled,
@@ -133,13 +133,10 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     @MainActor
     func attemptToProceedToParticipants() {
-        guard let channelCreationSettings else {
-            return
-        }
-
-        guard !channelCreationSettings.channelName.isEmpty else {
-            return
-        }
+        guard
+            let channelCreationSettings,
+            !channelCreationSettings.channelName.isEmpty
+        else { return }
 
         values.name = channelCreationSettings.channelName
         values.allowGuests = channelCreationSettings.guestsAllowed
@@ -154,7 +151,10 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
             isAppsFeatureEnabled: values.isAppsFeatureEnabled,
             areLegacyBotsAvailable: values.areLegacyBotsAvailable
         )
-
+        guard let participantsController else {
+            WireLogger.ui.error("failed to proceed to participants, VC is nil", attributes: .safePublic)
+            return
+        }
         participantsController.conversationCreationDelegate = self
         navigationController?.pushViewController(participantsController, animated: true)
     }
