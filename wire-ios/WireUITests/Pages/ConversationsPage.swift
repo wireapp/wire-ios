@@ -84,8 +84,8 @@ class ConversationsPage: PageModel {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.videoCallBarButton.rawValue].firstMatch
     }
 
-    var acceptRequestButton: XCUIElement {
-        app.buttons[Locators.ConnectionRequestsPage.connectRequestButton.rawValue]
+    var connectionsRequestCell: XCUIElement {
+        app.cells[Locators.ConversationsPage.connectionRequestsCell.rawValue]
     }
 
     var accountProfileImageView: XCUIElement {
@@ -128,7 +128,7 @@ class ConversationsPage: PageModel {
         let maxDuration: TimeInterval = 10
         let start = Date()
 
-        while !acceptRequestButton.exists, Date().timeIntervalSince(start) < maxDuration {
+        while !connectionsRequestCell.exists, Date().timeIntervalSince(start) < maxDuration {
             if conversationCell.isHittable {
                 conversationCell.tap()
             }
@@ -164,6 +164,11 @@ class ConversationsPage: PageModel {
         blockButtonOnMoreOptions.tap()
         blockButtonOnBottomSheet.tap()
         return self
+    }
+
+    func tapConnectionRequestsCell() throws -> ConnectionRequestsPage {
+        connectionsRequestCell.tap()
+        return try ConnectionRequestsPage()
     }
 
     func getNameLabel() -> String? {
