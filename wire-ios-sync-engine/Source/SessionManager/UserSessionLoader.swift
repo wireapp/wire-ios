@@ -321,12 +321,7 @@ final class UserSessionLoader {
         // Get new metadata.
         let newMetadata: ResolvedBackendMetadata
         do {
-            let metadata = try await networkStack.resolvedBackendMetadata()
-            newMetadata = ResolvedBackendMetadata(
-                apiVersion: metadata.apiVersion,
-                domain: metadata.domain,
-                isFederationEnabled: metadata.isFederationEnabled
-            )
+            newMetadata = try await networkStack.resolvedBackendMetadata()
         } catch is URLError {
             // To allow offline browsing fallback to previous metadata if possible.
             if let prevMetadata {
