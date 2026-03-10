@@ -312,7 +312,7 @@
         
         // when
 
-        ZMConversation *conversation = [ZMConversation fetchOrCreateWith:uuid domain:nil in:self.syncMOC];
+        ZMConversation *conversation = [ZMConversation fetchOrCreateWith:uuid domain:nil in:self.syncMOC setNeedsToBeUpdatedFromBackend:YES];
         
         // then
         XCTAssertNotNil(conversation);
@@ -367,7 +367,7 @@
         NSUUID *uuid = NSUUID.createUUID;
         
         // when
-        ZMConversation *created = [ZMConversation fetchOrCreateWith:uuid domain:nil in:self.syncMOC];
+        ZMConversation *created = [ZMConversation fetchOrCreateWith:uuid domain:nil in:self.syncMOC setNeedsToBeUpdatedFromBackend:YES];
         
         // then
         XCTAssertEqualObjects(uuid, created.remoteIdentifier);
