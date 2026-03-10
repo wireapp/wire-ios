@@ -20,7 +20,8 @@ import WireDataModel
 import WireDomain
 import WireLogging
 
-/// Version 4.18 is the first which supports API v15 and can deal with the user's `type` value (`.regular`, `.app`, `.bot`).
+/// Version 4.18 is the first which supports API v15 and can deal with the user's `type` value (`.regular`, `.app`,
+/// `.bot`).
 /// This migration triggers a sync of all users in order to fetch the correct `type`.
 struct AppVersionMigration_4_18_0: AppVersionMigration {
 

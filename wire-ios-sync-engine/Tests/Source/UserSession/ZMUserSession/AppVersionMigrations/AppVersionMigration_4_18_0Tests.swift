@@ -36,7 +36,8 @@ struct AppVersionMigration_4_18_0Tests {
         )
     }
 
-    @Test func testNeedsToBeUpdatedFromBackendIsSetToTrue() async throws {
+    @Test
+    func testNeedsToBeUpdatedFromBackendIsSetToTrue() async throws {
 
         // GIVEN
         let context = stack.syncContext
@@ -61,7 +62,7 @@ struct AppVersionMigration_4_18_0Tests {
             let fetchRequest = ZMUser.fetchRequest()
             let users = try context.fetch(fetchRequest) as! [ZMUser]
             return users
-                .sorted { lhs, rhs in lhs.isSelfUser }
+                .sorted { lhs, _ in lhs.isSelfUser }
                 .map(\.needsToBeUpdatedFromBackend)
         }
         // all users except the self user need to be updated
