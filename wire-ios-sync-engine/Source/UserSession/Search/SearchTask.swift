@@ -23,8 +23,6 @@ import WireLogging
 import WireNetwork
 import WireUtilities
 
-// TODO: is user.type updated after migrating from earlier versions?
-
 public final class SearchTask {
 
     private let type: `Type`
