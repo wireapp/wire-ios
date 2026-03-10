@@ -45,6 +45,12 @@ public protocol ConversationLocalStoreProtocol {
         domain: String?
     ) async -> ZMConversation
 
+    func fetchOrCreateConversation(
+        id: UUID,
+        domain: String?,
+        setNeedsToBeUpdatedFromBackend: Bool
+    ) async -> ZMConversation
+
     /// Stores a given conversation locally.
     /// - Parameter conversation: The conversation to store locally.
     /// - Parameter timestamp: The date the conversation was created or last modified.
