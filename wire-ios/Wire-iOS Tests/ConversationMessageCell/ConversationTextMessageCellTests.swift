@@ -31,7 +31,7 @@ final class ConversationTextMessageCellTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        sut = ConversationTextMessageCellMock(frame: CGRect(x: 0, y: 0, width: 320, height: 100))
+        sut = ConversationTextMessageCell(frame: CGRect(x: 0, y: 0, width: 320, height: 100))
         otherUser = MockUserType.createUser(name: "Bruno")
         selfUser = MockUserType.createDefaultSelfUser()
     }
