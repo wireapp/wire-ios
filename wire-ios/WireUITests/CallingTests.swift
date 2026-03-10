@@ -87,10 +87,9 @@ final class CallingTests: WireUITestCase {
         return ongoingCallPage
     }
 
-    /// Testiny : https://app.testiny.io/IOS/testcases/tc/8801
     /// Team Owner create group conversation and initiate a group call with members
     @MainActor
-    func test_MultipleUsersJoiningGroupCall() async throws {
+    func testMultipleUsersJoiningGroupCall_TC_8910_TC_8880() async throws {
 
         let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 3)
 

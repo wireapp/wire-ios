@@ -20,9 +20,8 @@ import XCTest
 
 final class PersonalUsersTests: WireUITestCase {
 
-    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8587
     @MainActor
-    func test_Register_asPersonalUser() async throws {
+    func testRegisterAsPersonalUser_TC_8971() async throws {
         let user = UserGenerator.generateUniqueUserInfo()
 
         let welcomePage = try WelcomePage()
@@ -58,9 +57,8 @@ final class PersonalUsersTests: WireUITestCase {
         XCTAssertEqual(accountPage.getEmail(), user.email, "Email didn't contain \(user.email)")
     }
 
-    /// testiny:  https://app.testiny.io/IOS/testcases/tcf/1286/tc/8799
     @MainActor
-    func test_Login_asExistingPersonalUser_TC_8804() async throws {
+    func testLoginAsExistingPersonalUser_TC_8804() async throws {
         let user = try await userHelper.createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
@@ -71,9 +69,8 @@ final class PersonalUsersTests: WireUITestCase {
             .enterPassword(user.password)
     }
 
-    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8798
     @MainActor
-    func test_PersonalAccountLifecycle() async throws {
+    func testPersonalAccountLifecycle_TC_8807_TC_8810_TC_8819_TC_8826_TC_8867_TC_9450() async throws {
         let userA = try await userHelper.createPersonalUser()
         let userB = try await userHelper.createPersonalUser()
         let messageFromUserB = "Hello from \(userB.name)"
