@@ -35,7 +35,7 @@ jobs:
           if [ "true" == "${IS_CLOUD_BUILD}" ]; then
             echo "regex='appstore/[0-9]+\.[0-9]+\.[0-9]*'" >> $GITHUB_ENV
           else
-            echo "regex='bk_build/[0-9]+\.[0-9]+\.[0-9]*'" >> $GITHUB_ENV
+            echo "regex='build/bk_[0-9]+\.[0-9]+\.[0-9]*'" >> $GITHUB_ENV
           fi
         env:
           IS_CLOUD_BUILD: ${{ inputs.is_cloud_build }}
