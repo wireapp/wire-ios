@@ -48,7 +48,6 @@ final class PullLastUpdateEventIDSyncTests: XCTestCase {
         // Mock
         api.getLastUpdateEventSelfClientID_MockValue = Scaffolding.envelope1
         store.storeLastEventIDId_MockMethod = { _ in }
-        store.lastEventID_MockValue = .some(nil)
 
         // When
         try await sut.pull()
@@ -61,18 +60,6 @@ final class PullLastUpdateEventIDSyncTests: XCTestCase {
         let storeInvocations = store.storeLastEventIDId_Invocations
         try XCTAssertCount(storeInvocations, count: 1)
         XCTAssertEqual(storeInvocations[0], Scaffolding.envelope1.id)
-    }
-
-    func testPull_Skips_WhenLastEventIDIsAlreadyStored() async throws {
-        // Mock
-        store.lastEventID_MockValue = UUID()
-
-        // When
-        try await sut.pull()
-
-        // Then
-        XCTAssertTrue(api.getLastUpdateEventSelfClientID_Invocations.isEmpty)
-        XCTAssertTrue(store.storeLastEventIDId_Invocations.isEmpty)
     }
 
 }

@@ -37,14 +37,6 @@ struct PullLastUpdateEventIDSync: PullLastUpdateEventIDSyncProtocol {
     }
 
     func pull() async throws {
-        if let id = store.lastEventID() {
-            WireLogger.sync.debug(
-                "skipping pull of last event id because it is already stored",
-                attributes: [.eventEnvelopeID: id]
-            )
-            return
-        }
-
         do {
             let lastEvent = try await api.getLastUpdateEvent(
                 selfClientID: selfClientID
