@@ -36,33 +36,36 @@ struct AppVersionMigration_4_18_0Tests {
         )
     }
 
-    func `test needsToBeUpdatedFromBackend is set to true`() async throws {
+    @Test func testNeedsToBeUpdatedFromBackendIsSetToTrue() async throws {
 
         // GIVEN
         let context = stack.syncContext
-        let needsUpdateBefore = try await context.perform {
+        try await context.perform {
+            // self user + two more users
             modelHelper.createUser(in: context)
             modelHelper.createUser(in: context)
             try context.save()
 
             let fetchRequest = ZMUser.fetchRequest()
-            fetchRequest.propertiesToFetch = ["needsToBeUpdatedFromBackend"]
             let users = try context.fetch(fetchRequest) as! [ZMUser]
-            return users.map(\.needsToBeUpdatedFromBackend)
+            users.forEach { user in
+                user.needsToBeUpdatedFromBackend = false
+            }
         }
-        #expect(needsUpdateBefore == [false, false])
 
         // WHEN
         try await sut.perform()
 
         // THEN
-        let needsUpdateAfter = try await context.perform {
+        let needsUpdateValues = try await context.perform {
             let fetchRequest = ZMUser.fetchRequest()
-            fetchRequest.propertiesToFetch = ["needsToBeUpdatedFromBackend"]
             let users = try context.fetch(fetchRequest) as! [ZMUser]
-            return users.map(\.needsToBeUpdatedFromBackend)
+            return users
+                .sorted { lhs, rhs in lhs.isSelfUser }
+                .map(\.needsToBeUpdatedFromBackend)
         }
-        #expect(needsUpdateAfter == [true, true])
+        // all users except the self user need to be updated
+        #expect(needsUpdateValues == [false, true, true])
 
     }
 

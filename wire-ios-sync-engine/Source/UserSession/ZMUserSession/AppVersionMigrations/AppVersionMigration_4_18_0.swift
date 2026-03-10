@@ -32,11 +32,12 @@ struct AppVersionMigration_4_18_0: AppVersionMigration {
         let context = coreDataStack.syncContext
         try await context.perform { [context] in
             let fetchRequest = ZMUser.fetchRequest()
-            fetchRequest.propertiesToFetch = ["needsToBeUpdatedFromBackend"]
             let users = try context.fetch(fetchRequest) as! [ZMUser]
-            users.forEach { user in
-                user.needsToBeUpdatedFromBackend = true
-            }
+            users
+                .filter { !$0.isSelfUser }
+                .forEach { user in
+                    user.needsToBeUpdatedFromBackend = true
+                }
             try context.save()
         }
 
