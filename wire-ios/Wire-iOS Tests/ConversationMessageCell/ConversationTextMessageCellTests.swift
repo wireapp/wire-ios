@@ -25,7 +25,7 @@ import XCTest
 
 final class ConversationTextMessageCellTests: XCTestCase {
 
-    var sut: ConversationTextMessageCellMock!
+    var sut: ConversationTextMessageCell!
     var otherUser: MockUserType!
     var selfUser: MockUserType!
 
@@ -122,16 +122,9 @@ final class ConversationTextMessageCellTests: XCTestCase {
 
     private func getAttributes(at range: NSRange) -> [NSAttributedString.Key: Any]? {
         var effectiveRange = NSRange()
-        return sut.messageTextViewExposed.attributedText?.attributes(
+        return sut.messageTextView.attributedText?.attributes(
             at: range.location,
             effectiveRange: &effectiveRange
         )
     }
-}
-
-class ConversationTextMessageCellMock: ConversationTextMessageCell {
-    var messageTextViewExposed: LinkInteractionTextView {
-        super.messageTextView
-    }
-
 }

@@ -22,7 +22,7 @@ import WireLocators
 import WireMessagingDomain
 import WireSyncEngine
 
-class ConversationTextMessageCell: UIView, ConversationMessageCell {
+final class ConversationTextMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
