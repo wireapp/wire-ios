@@ -118,6 +118,7 @@ final class FilesItemViewModel: ObservableObject {
 
         self.fileTracker = .init(downloadState: .pending)
         self.fileTracker.fileShouldOpen = {
+            //TODO: call the function to open the file here, later when we implement the new loading&opening design
             print("### file should open automatically now")
         }
         
@@ -135,7 +136,7 @@ final class FilesItemViewModel: ObservableObject {
     var isDownloadOptionAvailable: Bool {
         guard item.kind == .file else { return false }
 
-        return switch asset?.downloadState {
+        return switch fileTracker.state {
         case .downloaded:
             false
         default:
@@ -144,7 +145,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var isDownloading: Bool {
-        switch asset?.downloadState {
+        switch fileTracker.state {
         case .downloading:
             true
         default:
@@ -153,7 +154,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var progress: Double? {
-        switch asset?.downloadState {
+        switch fileTracker.state {
         case let .downloading(progress):
             progress
         case .failed:
@@ -164,7 +165,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var showErrorState: Bool {
-        switch asset?.downloadState {
+        switch fileTracker.state {
         case .failed:
             true
         default:

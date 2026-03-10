@@ -81,17 +81,6 @@ struct FilesItemView: View {
                             .lineLimit(1)
                             .foregroundStyle(ColorTheme.Base.secondaryText.color)
                     }
-                    
-                    //TODO: remove this temporary debug text
-                    let debugText: String = switch viewModel.fileTracker.state {
-                    case .notDownloaded: "Not downloaded"
-                    case .downloaded(showReadyToOpen: let ready): "Downloaded, ready: \(ready)"
-                    case .downloading(progress: let progress): "Progress: \(Int(progress * 100))%"
-                    case .failed(error: let error): "Failed: \(error)"
-                    }
-                    Text(debugText)
-                        .lineLimit(5)
-                        .foregroundStyle(Color.green)
                 }
 
                 Spacer()
