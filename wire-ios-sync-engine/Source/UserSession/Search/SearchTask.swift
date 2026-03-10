@@ -317,7 +317,7 @@ public final class SearchTask {
                 teamMembers: searchTeamMembers,
                 directory: [],
                 conversations: copiedConversations,
-                apps: copiedApps, // TODO: remotely found apps are listed separately even if the same app is already known locally
+                apps: copiedApps,
                 bots: [],
                 searchUsersCache: searchUsersCache
             )
@@ -379,9 +379,7 @@ public final class SearchTask {
     }
 
     private func appsInTeam(
-        // matchingQuery query: String, // TODO: delete?
         team: WireDataModel.Team?,
-        // searchOptions: SearchOptions,
         in context: NSManagedObjectContext
     ) -> [ZMUser] {
         team?.members(

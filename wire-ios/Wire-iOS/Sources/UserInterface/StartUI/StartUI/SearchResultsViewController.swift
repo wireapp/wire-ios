@@ -32,7 +32,7 @@ extension SearchGroup {
         switch self {
         case .people:
             return true
-        case .apps, .bots: // TODO: searching apps is more similar to searching people
+        case .apps, .bots:
             guard let user = SelfUser.provider?.providedSelfUser else {
                 assertionFailure("expected available 'user'!")
                 return false

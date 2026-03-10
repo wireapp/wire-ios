@@ -174,7 +174,7 @@ final class ServiceDetailViewController: UIViewController {
     private func fetchDetails() {
         guard let userSession = userSession as? ZMUserSession else { return }
 
-        if // TODO: for remotely found apps we end up in the else branch (fatal error)
+        if
             !service.isLegacyBot,
             let teamID = service.user.teamIdentifier,
             let appID = service.user.remoteIdentifier {
@@ -305,13 +305,15 @@ final class ServiceDetailViewController: UIViewController {
                                     case let .success(conversation):
                                         completion(.success(conversation: conversation))
                                     case let .failure(error):
-                                        WireLogger.conversation.warn("failed to create team one on one from search result: \(error)")
+                                        WireLogger.conversation
+                                            .warn("failed to create team one on one from search result: \(error)")
                                         completion(.failure(error: AddBotError.general))
                                     }
                                 }
                             }
                         } catch {
-                            WireLogger.conversation.warn("failed to check if one on one conversation is ready: \(error)")
+                            WireLogger.conversation
+                                .warn("failed to check if one on one conversation is ready: \(error)")
                             completion(.failure(error: AddBotError.general))
                         }
                     }

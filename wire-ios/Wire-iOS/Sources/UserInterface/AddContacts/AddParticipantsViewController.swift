@@ -223,7 +223,7 @@ final class AddParticipantsViewController: UIViewController {
 
         self.searchHeaderViewController = SearchHeaderViewController(userSelection: userSelection)
 
-        self.searchGroupSelector = SearchGroupSelector(for: viewModel.filterConversation?.messageProtocol ?? userSession.defaultProtocol) // TODO: what is filterConversation?
+        self.searchGroupSelector = SearchGroupSelector(for: viewModel.filterConversation?.messageProtocol ?? userSession.defaultProtocol)
 
         guard let searchResultsViewController = SearchResultsViewController(
             userSelection: userSelection,
