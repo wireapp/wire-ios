@@ -126,7 +126,11 @@ package extension WireDriveLocalAsset.DownloadState {
     }
 }
 
-//TODO: move this type to its own file and maybe think of a better name.
+//TODO: move this type to its own file
+
+/// Intended for tracking the UI state of Drive files in different parts of the app.
+/// Consumes state changes from `WireDriveLocalAsset.DownloadState` and provides observable state changes specifically for the UI that represents the file.
+/// Also notifies if and when a file should be opened automatically after download.
 @MainActor
 public final class WireDriveFileUITracker: Sendable, ObservableObject {
     public enum State: Sendable {
@@ -137,7 +141,8 @@ public final class WireDriveFileUITracker: Sendable, ObservableObject {
         case downloading(progress: Double)
         
         /// The file has been downloaded.
-        /// Big files go into a `ready` state for 3 seconds, then become `ready` = `false`.
+        /// `ready` = `true` is a temporary state, visible in the UI for 3 seconds.
+        /// It indicates that a file is ready to be opened after the download of a big file.
         case downloaded(ready: Bool)
         
         /// The download has failed.
@@ -150,10 +155,13 @@ public final class WireDriveFileUITracker: Sendable, ObservableObject {
             case (.downloading, .downloaded):
                 // state is changing from downloading to downloaded:
                 
-                let isBig = downloadingTimerStart.flatMap { Date().timeIntervalSince($0) > 0.3 } ?? true
-                self.state = .downloaded(ready: isBig)
+                // if the download takes longer than this amount of time, the file is considered "big"
+                let downloadTimeForBigFiles: TimeInterval = 0.3
+                let fileIsBig = downloadingTimerStart.flatMap { Date().timeIntervalSince($0) > downloadTimeForBigFiles } ?? true
                 
-                if isBig {
+                self.state = .downloaded(ready: fileIsBig)
+                
+                if fileIsBig {
                     Task {
                         try? await Task.sleep(for: .seconds(3))
                         self.state = .downloaded(ready: false)
