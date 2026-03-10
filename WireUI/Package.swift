@@ -78,7 +78,7 @@ let package = Package(
 
         .target(
             name: "WireMainNavigationUI",
-            dependencies: ["WireLocators"]
+            dependencies: ["WireLocators", "WireDesign"]
         ),
         .testTarget(name: "WireMainNavigationUITests", dependencies: ["WireMainNavigationUI"]),
 

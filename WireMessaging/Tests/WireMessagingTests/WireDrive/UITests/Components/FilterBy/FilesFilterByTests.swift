@@ -27,7 +27,7 @@ import XCTest
 
 @testable import WireMessagingUI
 
-final class FilesFiltersViewTests: XCTestCase {
+final class FilesFilterByTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
     private var fetchTagsUseCase: (any WireDriveGetTagSuggestionsUseCaseProtocol)!
@@ -37,98 +37,103 @@ final class FilesFiltersViewTests: XCTestCase {
     override func setUp() async throws {
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
+
         nodesAPI = MockNodesAPIProtocol()
+        nodesAPI.getAllTags_MockMethod = { ["Lorem", "ipsum", "dolor", "sit", "amet"] }
+
         fetchTagsUseCase = WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI)
     }
 
     @MainActor
     override func tearDown() async throws {
         snapshotHelper = nil
-        fetchTagsUseCase = nil
-        nodesAPI = nil
     }
 
     @MainActor
-    func testFilterTagsEmptyTags() async {
-        let viewModel = await makeViewModel(tags: [])
-        let view = FilesFiltersView(viewModel: viewModel)
-            .frame(width: 375, height: 667)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
-    @MainActor
-    func testFilterTagsLimitedItems() async {
-        let viewModel = await makeViewModel(tags: Array(mockTags.prefix(7)))
-        let view = FilesFiltersView(viewModel: viewModel)
-            .frame(width: 375, height: 667)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
-    @MainActor
-    func testFilterTagsSavedTags() async {
-        let viewModel = await makeViewModel(
-            tags: mockTags,
-            savedTags: [mockTags[2], mockTags[4], mockTags[6]]
-        )
-
-        let view = FilesFiltersView(viewModel: viewModel)
-            .frame(width: 375, height: 667)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
-    @MainActor
-    func testFilterTagsMoreItemsLoaded() async {
-        let viewModel = await makeViewModel(
-            tags: mockTags
-        )
-
-        let view = FilesFiltersView(viewModel: viewModel)
-            .frame(width: 375, height: 667)
-
-        viewModel.showMore()
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
-    @MainActor
-    private func makeViewModel(
-        tags: [String],
-        savedTags: [String] = []
-    ) async -> FilesFiltersViewModel {
-        nodesAPI.getAllTags_MockMethod = { tags }
-
-        let viewModel = FilesFiltersViewModel(
+    func testFilterByTags() async {
+        let view = FilesFilterBy.TagsView(
             fetchTagsUseCase: fetchTagsUseCase,
-            savedTags: savedTags,
-            accentColorProvider: { .default }
+            selectedItems: ["sit"],
+            onApply: { _ in }
         )
+        .frame(width: 375, height: 667)
 
-        await viewModel.fetch()
-
-        return viewModel
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
     }
 
+    @MainActor
+    func testFilterByTypes() async {
+        let view = FilesFilterBy.TypeView(
+            includeFolders: false,
+            selectedItems: [.audio, .video],
+            onApply: { _ in }
+        )
+        .frame(width: 375, height: 667)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testFilterByConversations() async {
+        let mockedItems = [WireDriveConversation].mocked()
+
+        let view = FilesFilterBy.ConversationView(
+            availableItems: mockedItems,
+            selectedItems: [mockedItems.first!, mockedItems.last!],
+            onApply: { _ in }
+        )
+        .frame(width: 375, height: 667)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testFilterByOwners() async {
+        let mockedItems = [WireDriveConversation.Participant].mocked()
+
+        let view = FilesFilterBy.OwnerView(
+            availableItems: mockedItems,
+            selectedItems: [mockedItems.first!, mockedItems.last!],
+            onApply: { _ in }
+        )
+        .frame(width: 375, height: 667)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testFilterBySharedLink() async {
+        let view = FilesFilterBy.SharedLinkView(
+            selected: true,
+            onApply: { _ in }
+        )
+        .frame(width: 375, height: 667)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
 }
