@@ -88,7 +88,7 @@ struct WireDriveLargeVideoPreviewView: View {
             case let .success(image):
                 image
                     .resizable()
-                    .scaledToFill()
+                    .aspectRatio(imageAspectRatio ?? Self.defaultAspectRatio, contentMode: .fit)
                     .overlay {
                         PlayIcon()
                             .disabled(false)
