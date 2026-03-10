@@ -51,9 +51,6 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// The availability of the user
     var availability: Availability { get set }
 
-    /// If the user is part of a team this property returns the team's remote identifier.
-    var teamIdentifier: UUID? { get }
-
     /// Team membership for this user.
     /// This property is `nil` even for users, who are part of a
     /// team, but not the same team as the self user.
