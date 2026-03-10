@@ -52,6 +52,7 @@ package struct FilesBrowserView: View {
 
     @ToolbarContentBuilder
     private func emptyToolbar() -> some ToolbarContent {
+        // prevents compilation issue, no toolbar for this view.
         if false {
             ToolbarItem {}
         }
