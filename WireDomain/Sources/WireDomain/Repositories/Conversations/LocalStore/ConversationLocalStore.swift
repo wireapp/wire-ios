@@ -232,11 +232,21 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         id: UUID,
         domain: String?
     ) async -> ZMConversation {
+        await fetchOrCreateConversation(id: id, domain: domain, setNeedsToBeUpdatedFromBackend: true)
+    }
+
+    public func fetchOrCreateConversation(
+        id: UUID,
+        domain: String?,
+        setNeedsToBeUpdatedFromBackend: Bool = true
+
+    ) async -> ZMConversation {
         await context.perform { [context] in
             ZMConversation.fetchOrCreate(
                 with: id,
                 domain: domain,
-                in: context
+                in: context,
+                setNeedsToBeUpdatedFromBackend: setNeedsToBeUpdatedFromBackend
             )
         }
     }
@@ -1194,9 +1204,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             return
         }
 
+        // for 1:1 we don't want to set needsToBeUpdatedFromBackend since backend only returns them once the first
+        // commit bundle is processed (MLS), so do not try to sync with backend right now
         let localConversation = await fetchOrCreateConversation(
             id: id,
-            domain: conversation.qualifiedID?.domain
+            domain: conversation.qualifiedID?.domain,
+            setNeedsToBeUpdatedFromBackend: false
         )
 
         await context.perform { [self] in
