@@ -54,7 +54,7 @@ public struct ConversationChannelCreationForm: View {
             }
 
         }
-        .onChange(of: channelName) { newValue in
+        .onChange(of: channelName) { _, newValue in
             viewModel.onChannelNameUpdate(newValue)
         }
         .overlay {
