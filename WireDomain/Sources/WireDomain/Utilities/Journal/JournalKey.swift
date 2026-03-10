@@ -66,7 +66,7 @@ public extension JournalKey where Value == Bool {
         "isResourcesSyncRequired",
         defaultValue: false
     )
-    
+
     /// Whether all conversations should be pulled from the backend.
 
     static let isConversationSyncRequired = Self(

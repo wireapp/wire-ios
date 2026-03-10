@@ -144,11 +144,11 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         XCTAssertEqual(initialSync.performSkipPullingLastUpdateEventID_Invocations, [false])
         XCTAssertEqual(incrementalSync.perform_Invocations.count, 1)
     }
-    
+
     func testPerformSyncIfNeeded_ResourcesSync() async throws {
         // Given
         journal[.isResourcesSyncRequired] = true
-        
+
         // Mock
         initialSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
         incrementalSync.perform_MockMethod = {
@@ -157,10 +157,10 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
                 closePushChannel: {}
             )
         }
-        
+
         // When
         try await sut.performSync()
-        
+
         // Then
         XCTAssertEqual(initialSync.performSkipPullingLastUpdateEventID_Invocations, [true])
         XCTAssertEqual(incrementalSync.perform_Invocations.count, 1)
