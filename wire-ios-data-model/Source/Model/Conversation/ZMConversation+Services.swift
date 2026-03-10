@@ -19,6 +19,7 @@
 import Foundation
 
 public extension ZMConversation {
+
     class func existingConversation(
         in moc: NSManagedObjectContext,
         service: ServiceUser,
@@ -61,4 +62,5 @@ public extension ZMConversation {
 
         return result.first as? ZMConversation
     }
+
 }

@@ -18,7 +18,7 @@
 
 final class SearchUserImageStrategy: AbstractRequestStrategy {
 
-    private static let userPath = "/users?ids="
+    private static let userPath = "/users?ids=" // TODO: this endpoint has been deleted from v2 onwards
 
     fileprivate unowned var uiContext: NSManagedObjectContext
     fileprivate unowned var syncContext: NSManagedObjectContext

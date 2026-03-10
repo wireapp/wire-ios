@@ -74,4 +74,5 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
             snapshotHelper.verify(matching: sut)
         }
     }
+
 }

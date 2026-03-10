@@ -39,4 +39,5 @@ extension MockServiceUserType {
         serviceUser.serviceIdentifier = UUID.create().transportString()
         return serviceUser
     }
+
 }
