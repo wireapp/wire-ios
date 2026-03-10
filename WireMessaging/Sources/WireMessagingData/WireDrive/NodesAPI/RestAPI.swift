@@ -559,7 +559,7 @@ private extension WireDriveGetNodesRequest {
             )
             request.scope = RestLookupScope(
                 recursive: true,
-                // this is a temp solution until BE handles multiple conversations filtering
+                // TODO: [WPB-23948] - This is a temp solution until BE handles multiple conversations filtering
                 root: metafilter.conversations?.first.map { RestNodeLocator(.path($0)) }
             )
 
