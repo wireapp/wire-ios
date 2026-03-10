@@ -205,9 +205,9 @@ class ConversationTextMessageCell: UIView, ConversationMessageCell {
             case .address:
                 let addressQuery = result.addressComponents?.values.joined(separator: "+")
                 let encoded = addressQuery?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-                url = URL(string: "http://maps.apple.com/?q=\(encoded)") ?? result.url
+                url = URL(string: "http://maps.apple.com/?q=\(encoded)")
             case .phoneNumber:
-                url = result.phoneNumber.flatMap { URL(string: "tel:\($0)") } ?? result.url
+                url = result.phoneNumber.flatMap { URL(string: "tel:\($0)") }
             default:
                 url = result.url
             }
