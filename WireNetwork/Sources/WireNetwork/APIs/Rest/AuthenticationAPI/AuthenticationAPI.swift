@@ -136,7 +136,7 @@ public protocol AuthenticationAPI: Sendable {
     ///   - invitationID: invitationID
     /// - Returns: Invitation code
     #if DEBUG
-        func getInvitationCode(teamID: UUID, invitationID: UUID) async throws -> String
+        func getInvitationCode(teamID: UUID, invitationID: UUID, basicAuth: String) async throws -> String
     #endif
 
     /// Register member to team
