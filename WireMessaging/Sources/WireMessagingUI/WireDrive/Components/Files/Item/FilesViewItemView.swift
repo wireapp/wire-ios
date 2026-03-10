@@ -85,7 +85,7 @@ struct FilesItemView: View {
                     //TODO: remove this temporary debug text
                     let debugText: String = switch viewModel.fileTracker.state {
                     case .notDownloaded: "Not downloaded"
-                    case .downloaded(ready: let ready): "Downloaded, ready: \(ready)"
+                    case .downloaded(showReadyToOpen: let ready): "Downloaded, ready: \(ready)"
                     case .downloading(progress: let progress): "Progress: \(Int(progress * 100))%"
                     case .failed(error: let error): "Failed: \(error)"
                     }

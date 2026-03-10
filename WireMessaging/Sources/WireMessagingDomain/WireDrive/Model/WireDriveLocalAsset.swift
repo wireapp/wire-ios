@@ -141,9 +141,9 @@ public final class WireDriveFileUITracker: Sendable, ObservableObject {
         case downloading(progress: Double)
         
         /// The file has been downloaded.
-        /// `ready` = `true` is a temporary state, visible in the UI for 3 seconds.
-        /// It indicates that a file is ready to be opened after the download of a big file.
-        case downloaded(ready: Bool)
+        /// `downloaded(showReadyToOpen: true)` indicates that the file should be shown in a specific "ready to open" state in the UI.
+        /// Will automatically change to `downloaded(showReadyToOpen: false)` state after a few seconds.
+        case downloaded(showReadyToOpen: Bool)
         
         /// The download has failed.
         case failed(error: any Error)
@@ -157,14 +157,15 @@ public final class WireDriveFileUITracker: Sendable, ObservableObject {
                 
                 // if the download takes longer than this amount of time, the file is considered "big"
                 let downloadTimeForBigFiles: TimeInterval = 0.3
+                
                 let fileIsBig = downloadingTimerStart.flatMap { Date().timeIntervalSince($0) > downloadTimeForBigFiles } ?? true
                 
-                self.state = .downloaded(ready: fileIsBig)
+                self.state = .downloaded(showReadyToOpen: fileIsBig)
                 
                 if fileIsBig {
                     Task {
                         try? await Task.sleep(for: .seconds(3))
-                        self.state = .downloaded(ready: false)
+                        self.state = .downloaded(showReadyToOpen: false)
                     }
                 } else {
                     fileShouldOpen?()
@@ -203,7 +204,7 @@ public final class WireDriveFileUITracker: Sendable, ObservableObject {
         case let .downloading(progress):
             .downloading(progress: progress)
         case .downloaded:
-            .downloaded(ready: false)
+            .downloaded(showReadyToOpen: false)
         case let .failed(error):
             .failed(error: error)
         }
