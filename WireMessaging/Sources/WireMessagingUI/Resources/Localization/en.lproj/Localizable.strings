@@ -298,8 +298,8 @@
 "conversation.wireCells.sorting.key.size" = "Size";
 "conversation.wireCells.sorting.order.date.recentFirst" = "Newest first";
 "conversation.wireCells.sorting.order.date.oldestFirst" = "Oldest first";
-"conversation.wireCells.sorting.order.name.az" = "A-Z";
-"conversation.wireCells.sorting.order.name.za" = "Z-A";
+"conversation.wireCells.sorting.order.name.az" = "A to Z";
+"conversation.wireCells.sorting.order.name.za" = "Z to A";
 "conversation.wireCells.sorting.order.size.smallestFirst" = "Smallest first";
 "conversation.wireCells.sorting.order.size.largestFirst" = "Largest first";
 "conversation.wireCells.sorting.results" = "Results in Shared Drive";
