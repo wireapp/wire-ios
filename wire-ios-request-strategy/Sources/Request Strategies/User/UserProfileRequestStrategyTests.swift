@@ -21,6 +21,7 @@ import WireDataModelSupport
 import WireRequestStrategySupport
 import WireTransport
 import XCTest
+
 @testable import WireRequestStrategy
 
 class UserProfileRequestStrategyTests: MessagingTestBase {
@@ -87,23 +88,6 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
     }
 
     // MARK: - Response processing
-
-    func testThatUsesLegacyEndpointOnV0_WhenFederatedEndpointIsDisabled() {
-        syncMOC.performGroupedAndWait {
-            // given
-            let apiVersion = APIVersion.v0
-            self.sut = self.createSUT(apiVersion: apiVersion)
-            self.otherUser.domain = "example.com"
-            self.otherUser.needsToBeUpdatedFromBackend = true
-            self.sut.objectsDidChange(Set([self.otherUser]))
-
-            // when
-            let request = self.sut.nextRequest(for: apiVersion)!
-
-            // then
-            XCTAssertEqual(request.path, "/users?ids=\(self.otherUser.remoteIdentifier.transportString())")
-        }
-    }
 
     func testThatNeedsToUpdatedFromBackendIsReset_WhenSuccessfullyProcessingResponse() {
         syncMOC.performGroupedAndWait {
@@ -198,7 +182,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
     func testThatNeedsToUpdatedFromBackendIsReset_WhenSuccessfullyProcessingResponseFromLegacyEndpoint() {
         syncMOC.performGroupedAndWait {
             // given
-            let apiVersion = APIVersion.v0
+            let apiVersion = APIVersion.v1
             self.sut = self.createSUT(apiVersion: apiVersion)
             self.otherUser.needsToBeUpdatedFromBackend = true
             self.sut.objectsDidChange(Set([self.otherUser]))
@@ -248,7 +232,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
     func testThatNeedsToUpdatedFromBackendIsReset_WhenUserProfileIsNotIncludedInResponseFromLegacyEndpoint() {
         syncMOC.performGroupedAndWait {
             // given
-            let apiVersion = APIVersion.v0
+            let apiVersion = APIVersion.v1
             self.sut = self.createSUT(apiVersion: apiVersion)
             self.otherUser.needsToBeUpdatedFromBackend = true
             self.sut.objectsDidChange(Set([self.otherUser]))
@@ -293,7 +277,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
     func testThatNeedsToUpdatedFromBackendIsReset_WhenResponseIndicateAPermanentErrorFromLegacyEndpoint() {
         syncMOC.performGroupedAndWait {
             // given
-            let apiVersion = APIVersion.v0
+            let apiVersion = APIVersion.v1
             self.sut = self.createSUT(apiVersion: apiVersion)
             self.otherUser.needsToBeUpdatedFromBackend = true
             self.sut.objectsDidChange(Set([self.otherUser]))
