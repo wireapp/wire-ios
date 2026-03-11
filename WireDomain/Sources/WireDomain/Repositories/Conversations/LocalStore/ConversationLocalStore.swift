@@ -30,7 +30,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     // MARK: - Properties
 
     public let context: NSManagedObjectContext
-    let mlsService: (any MLSServiceInterface)?
     let eventProcessingLogger = WireLogger.eventProcessing
     let mlsLogger = WireLogger.mls
     let updateEventLogger = WireLogger.updateEvent
@@ -42,13 +41,11 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public init(
         context: NSManagedObjectContext,
-        mlsService: (any MLSServiceInterface)?,
         messageLocalStore: any MessageLocalStoreProtocol,
         localDomain: String?,
         isFederationEnabled: Bool
     ) {
         self.context = context
-        self.mlsService = mlsService
         self.messageLocalStore = messageLocalStore
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
@@ -884,8 +881,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         )
     }
 
-    public func wipeMLSGroup(groupID: MLSGroupID) async throws {
-        try await mlsService?.wipeGroup(groupID)
     }
 
     public func storeConversation(

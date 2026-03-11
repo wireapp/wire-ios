@@ -232,8 +232,8 @@ final class ConversationRepositoryTests: XCTestCase {
             true
         )
         conversationsLocalStore.fetchConversationIdDomain_MockValue = conversation
-        conversationsLocalStore.wipeMLSGroupGroupID_MockMethod = { _ in }
         conversationsLocalStore.deleteConversation_MockMethod = { _ in }
+        mlsService.wipeGroup_MockMethod = { _ in }
 
         // When
 
@@ -246,7 +246,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         XCTAssertEqual(conversationsLocalStore.mlsConversationInfoConversation_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.fetchConversationIdDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationsLocalStore.wipeMLSGroupGroupID_Invocations.count, 1)
+        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.deleteConversation_Invocations.count, 1)
     }
 
@@ -266,7 +266,6 @@ final class ConversationRepositoryTests: XCTestCase {
             false
         )
         conversationsLocalStore.deleteConversation_MockMethod = { _ in }
-        conversationsLocalStore.wipeMLSGroupGroupID_MockMethod = { _ in }
 
         // When
 
@@ -280,7 +279,7 @@ final class ConversationRepositoryTests: XCTestCase {
         XCTAssertEqual(conversationsLocalStore.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.mlsConversationInfoConversation_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.deleteConversation_Invocations.count, 1)
-        XCTAssertEqual(conversationsLocalStore.wipeMLSGroupGroupID_Invocations.count, 1)
+        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 0)
     }
 
     func testStoreConversation_It_Invokes_Local_Store_Method() async {
