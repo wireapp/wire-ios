@@ -33,10 +33,19 @@ class CreateGroupPage: PageModel {
         app.descendants(matching: .any)[Locators.CreateGroupPage.newGroupNextButton.rawValue].firstMatch
     }
 
+    var shareDriveSwitch: XCUIElement {
+        app.descendants(matching: .switch)[Locators.CreateGroupPage.sharedDriveSwitch.rawValue]
+    }
+
     func enterGroupName(_ groupName: String) throws -> SelectParticipantsPage {
         try groupNameTextfield.tapIfKeyboardNotFocused().typeText(groupName)
         nextButton.tap()
         return try SelectParticipantsPage()
+    }
+
+    func enableShareDriveSwitch() throws -> CreateGroupPage {
+        shareDriveSwitch.tap()
+        return self
     }
 
 }
