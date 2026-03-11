@@ -22,7 +22,7 @@ import WireLocators
 import WireMessagingDomain
 import WireSyncEngine
 
-final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
+final class ConversationTextMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
@@ -61,7 +61,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         }
     }
 
-    private lazy var messageTextView: LinkInteractionTextView = {
+    lazy var messageTextView: LinkInteractionTextView = {
         let view = LinkInteractionTextView()
 
         view.isEditable = false
@@ -200,11 +200,23 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
             let isOverlappingMention = mentionRanges.contains { NSIntersectionRange(linkRange, $0).length > 0 }
 
-            if let link = result.url, !isOverlappingMention {
+            let url: URL?
+            switch result.resultType {
+            case .address:
+                let addressQuery = result.addressComponents?.values.joined(separator: "+")
+                let encoded = addressQuery?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+                url = URL(string: "http://maps.apple.com/?q=\(encoded)")
+            case .phoneNumber:
+                url = result.phoneNumber.flatMap { URL(string: "tel:\($0)") }
+            default:
+                url = result.url
+            }
+
+            if let url, !isOverlappingMention {
                 mutableAttributedText.addAttributes([
                     .foregroundColor: detectedLinkForegroundColor,
                     .underlineStyle: NSUnderlineStyle.single.rawValue,
-                    .link: link
+                    .link: url
                 ], range: linkRange)
             }
         }
@@ -264,6 +276,30 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     }
 
+    func openMention(_ mention: Mention) -> Bool {
+        delegate?.conversationMessageWantsToOpenUserDetails(
+            self,
+            user: mention.user,
+            sourceView: messageTextView,
+            frame: selectionRect
+        )
+        return true
+    }
+
+    private func setupAccessibility(accessibilityLabel: String) {
+        typealias Conversation = L10n.Accessibility.Conversation
+
+        isAccessibilityElement = false
+        container?.isAccessibilityElement = true
+        container?.accessibilityLabel = accessibilityLabel
+        container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
+    }
+}
+
+// MARK: - TextViewInteractionDelegate
+
+extension ConversationTextMessageCell: TextViewInteractionDelegate {
+
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
         // Open mention link
         if url.isMention {
@@ -279,16 +315,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         return url.open()
     }
 
-    func openMention(_ mention: Mention) -> Bool {
-        delegate?.conversationMessageWantsToOpenUserDetails(
-            self,
-            user: mention.user,
-            sourceView: messageTextView,
-            frame: selectionRect
-        )
-        return true
-    }
-
     func textViewDidLongPress(_ textView: LinkInteractionTextView) {
         if !UIMenuController.shared.isMenuVisible {
             if !Settings.isClipboardEnabled {
@@ -297,15 +323,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
                 menuPresenter?.showMenu()
             }
         }
-    }
-
-    private func setupAccessibility(accessibilityLabel: String) {
-        typealias Conversation = L10n.Accessibility.Conversation
-
-        isAccessibilityElement = false
-        container?.isAccessibilityElement = true
-        container?.accessibilityLabel = accessibilityLabel
-        container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
     }
 }
 
