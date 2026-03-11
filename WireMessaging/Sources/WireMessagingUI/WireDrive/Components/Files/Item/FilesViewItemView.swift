@@ -50,37 +50,18 @@ struct FilesItemView: View {
                         .lineLimit(1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
-                    HStack(spacing: 5) {
-                        let tagsInfo = viewModel.tagsInfo
-
-                        if let firstTag = tagsInfo.firstTag {
-                            Text(firstTag)
-                                .font(for: .subline1)
-                                .fontWeight(.medium)
-                                .lineLimit(1)
-                                .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
-                                .padding(.vertical, 2)
-                                .padding(.horizontal, 5)
-                                .background {
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(ColorTheme.Base.primaryVariant(wireAccentColor).color)
-                                }
-                        }
-
-                        if let additionalTagsIndicator = tagsInfo.additionalTagsIndicator {
-                            Text(additionalTagsIndicator)
-                                .font(for: .subline1)
-                                .fontWeight(.medium)
-                                .lineLimit(1)
-                                .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
-                                .padding(.trailing, 2)
-                        }
-
-                        Text(viewModel.subtitle ?? "")
-                            .font(for: .subline1)
-                            .lineLimit(1)
-                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    infoRow()
+                    
+                    //TODO: remove this temporary debug text
+                    let debugText: String = switch viewModel.fileTracker.state {
+                    case .notDownloaded: "Not downloaded"
+                    case .downloaded(showReadyToOpen: let ready): "Downloaded, ready: \(ready)"
+                    case .downloading(progress: let progress): "Progress: \(Int(progress * 100))%"
+                    case .failed(error: let error): "Failed: \(error)"
                     }
+                    Text(debugText)
+                        .lineLimit(5)
+                        .foregroundStyle(Color.green)
                 }
 
                 Spacer()
@@ -164,6 +145,69 @@ struct FilesItemView: View {
             .padding(.horizontal, iconHorizontalPadding)
             .frame(minWidth: iconSpaceWidth)
             .frame(height: iconSpaceHeight)
+    }
+    
+    @ViewBuilder
+    private func tagsInfo() -> some View {
+        let tagsInfo = viewModel.tagsInfo
+
+        if let firstTag = tagsInfo.firstTag {
+            HStack(spacing: 5) {
+                Text(firstTag)
+                    .font(for: .subline1)
+                    .fontWeight(.medium)
+                    .lineLimit(1)
+                    .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
+                    .padding(.vertical, 2)
+                    .padding(.horizontal, 5)
+                    .background {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(ColorTheme.Base.primaryVariant(wireAccentColor).color)
+                    }
+                
+                if let additionalTagsIndicator = tagsInfo.additionalTagsIndicator {
+                    Text(additionalTagsIndicator)
+                        .font(for: .subline1)
+                        .fontWeight(.medium)
+                        .lineLimit(1)
+                        .foregroundStyle(ColorTheme.Base.primary(wireAccentColor).color)
+                        .padding(.trailing, 2)
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func infoRow() -> some View {
+        let state: WireDriveFileUITracker.State = viewModel.fileTracker.state
+        //let state: WireDriveFileUITracker.State = .downloading(progress: 0.7)
+
+        switch state {
+        case .notDownloaded, .downloaded(showReadyToOpen: false):
+            HStack(spacing: 5) {
+                tagsInfo()
+                
+                Text(viewModel.subtitle ?? "")
+                    .font(for: .subline1)
+                    .lineLimit(1)
+                    .foregroundStyle(ColorTheme.Base.secondaryText.color)
+            }
+        case .downloaded(showReadyToOpen: true):
+            Text("Ready to open") //TODO: localize
+                .font(for: .subline1)
+                .lineLimit(1)
+                .foregroundStyle(ColorTheme.Base.secondaryText.color)
+        case .downloading:
+            Text("Tap to cancel loading") //TODO: localize
+                .font(for: .subline1)
+                .lineLimit(1)
+                .foregroundStyle(ColorTheme.Base.secondaryText.color)
+        case .failed:
+            Text("Unable to load, retry") //TODO: localize
+                .font(for: .subline1)
+                .lineLimit(1)
+                .foregroundStyle(ColorTheme.Base.error.color)
+        }
     }
 
     @ViewBuilder
