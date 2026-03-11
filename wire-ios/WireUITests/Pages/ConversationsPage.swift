@@ -125,16 +125,11 @@ class ConversationsPage: PageModel {
         try letTheSyncFinish()
 
         let maxDuration: TimeInterval = 10
-        let start = Date()
-
-        while !connectionsRequestCell.exists, Date().timeIntervalSince(start) < maxDuration {
-            RunLoop.current.run(until: Date().addingTimeInterval(0.5))
+        guard connectionsRequestCell.waitForExistence(timeout: maxDuration) else {
+            XCTFail("Connection request cell did not appear within \(maxDuration) seconds")
+            return try ConnectionRequestsPage()
         }
 
-        XCTAssertTrue(
-            connectionsRequestCell.exists,
-            "Connection request cell did not appear within \(maxDuration) seconds"
-        )
         connectionsRequestCell.tap()
         return try ConnectionRequestsPage()
     }
