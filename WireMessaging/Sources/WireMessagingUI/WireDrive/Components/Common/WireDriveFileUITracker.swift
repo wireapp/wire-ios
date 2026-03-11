@@ -20,39 +20,42 @@ import Foundation
 public import WireMessagingDomain
 
 /// Intended for tracking the UI state of Drive files in different parts of the app.
-/// Consumes state changes from `WireDriveLocalAsset.DownloadState` and provides observable state changes specifically for the UI that represents the file.
+/// Consumes state changes from `WireDriveLocalAsset.DownloadState` and provides observable state changes specifically
+/// for the UI that represents the file.
 /// Also notifies if and when a file should be opened automatically after download.
 @MainActor
-public final class WireDriveFileUITracker: Sendable, ObservableObject {
+public final class WireDriveFileUITracker: ObservableObject {
     public enum State: Sendable {
         /// The file hasn't been downloaded yet.
         case notDownloaded
-        
+
         /// The file is currently being downloaded.
         case downloading(progress: Double)
-        
+
         /// The file has been downloaded.
-        /// `downloaded(showReadyToOpen: true)` indicates that the file should be shown in a specific "ready to open" state in the UI.
+        /// `downloaded(showReadyToOpen: true)` indicates that the file should be shown in a specific "ready to open"
+        /// state in the UI.
         /// Will automatically change to `downloaded(showReadyToOpen: false)` state after a few seconds.
         case downloaded(showReadyToOpen: Bool)
-        
+
         /// The download has failed.
         case failed(error: any Error)
     }
-    
-    private(set) public var state: State {
+
+    public private(set) var state: State {
         didSet {
             switch (oldValue, state) {
             case (.downloading, .downloaded):
                 // state is changing from downloading to downloaded:
-                
+
                 // if the download takes longer than this amount of time, the file is considered "big"
                 let downloadTimeForBigFiles: TimeInterval = 0.3
-                
-                let fileIsBig = downloadingTimerStart.flatMap { Date().timeIntervalSince($0) > downloadTimeForBigFiles } ?? true
-                
-                self.state = .downloaded(showReadyToOpen: fileIsBig)
-                
+
+                let fileIsBig = downloadingTimerStart
+                    .flatMap { Date().timeIntervalSince($0) > downloadTimeForBigFiles } ?? true
+
+                state = .downloaded(showReadyToOpen: fileIsBig)
+
                 if fileIsBig {
                     Task {
                         try? await Task.sleep(for: .seconds(3))
@@ -64,7 +67,7 @@ public final class WireDriveFileUITracker: Sendable, ObservableObject {
             default:
                 break
             }
-            
+
             if case .downloading = state {
                 if downloadingTimerStart == nil {
                     downloadingTimerStart = Date()
@@ -74,20 +77,20 @@ public final class WireDriveFileUITracker: Sendable, ObservableObject {
             }
         }
     }
-    
+
     /// This closure will be called when a file should be automatically opened after the download.
-    public var fileShouldOpen: (() -> ())?
-    
-    private var downloadingTimerStart: Date? = nil
-    
+    public var fileShouldOpen: (() -> Void)?
+
+    private var downloadingTimerStart: Date?
+
     public init(downloadState: WireDriveLocalAsset.DownloadState) {
-        state = Self.stateFromDownloadState(downloadState)
+        self.state = Self.stateFromDownloadState(downloadState)
     }
-    
+
     public func handleDownloadState(_ downloadState: WireDriveLocalAsset.DownloadState) {
         state = Self.stateFromDownloadState(downloadState)
     }
-    
+
     private static func stateFromDownloadState(_ downloadState: WireDriveLocalAsset.DownloadState) -> State {
         switch downloadState {
         case .pending:
