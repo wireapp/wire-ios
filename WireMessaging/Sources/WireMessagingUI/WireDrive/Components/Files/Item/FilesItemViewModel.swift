@@ -36,7 +36,7 @@ final class FilesItemViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     enum ItemAction {
-        // TODO: we will need this "download" action later because with the new design, sometimes we want to just download, and sometimes we want to download and then open.
+        // we will need this "download" action later because with the new design, sometimes we want to just download, and sometimes we want to download and then open.
         // case download
         case open
         case showVersionHistory
@@ -124,7 +124,7 @@ final class FilesItemViewModel: ObservableObject {
 
         self.fileTracker = .init(downloadState: .pending)
         fileTracker.fileShouldOpen = {
-            // TODO: call the function to open the file here, later when we implement the new loading&opening design
+            // call the function to open the file here, later when we implement the new loading&opening design
             print("### file should open automatically now")
         }
 
