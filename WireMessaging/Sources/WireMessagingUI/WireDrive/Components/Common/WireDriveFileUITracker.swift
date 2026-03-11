@@ -18,13 +18,15 @@
 
 import Foundation
 public import WireMessagingDomain
+public import Observation
 
 /// Intended for tracking the UI state of Drive files in different parts of the app.
 /// Consumes state changes from `WireDriveLocalAsset.DownloadState` and provides observable state changes specifically
 /// for the UI that represents the file.
 /// Also notifies if and when a file should be opened automatically after download.
 @MainActor
-public final class WireDriveFileUITracker: ObservableObject {
+@Observable
+public final class WireDriveFileUITracker {
     public enum State: Sendable {
         /// The file hasn't been downloaded yet.
         case notDownloaded
