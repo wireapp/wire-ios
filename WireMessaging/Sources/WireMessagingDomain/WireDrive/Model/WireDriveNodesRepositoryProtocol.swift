@@ -123,8 +123,14 @@ package struct WireDriveGetNodesRequest: Equatable, Sendable {
     /// An optional search term to filter nodes by name.
     package let searchTerm: String?
 
-    /// Filter nodes by tags names.
-    package let tags: [String]
+    /// Filter nodes by file types, conversations, owners, tags or publicly shared files.
+    package let metafilter: Set<WireDriveNodesMetaFilter>
+
+    /// Sort nodes by the specified value (name, owner, date or size)
+    package let sortField: String?
+
+    /// Whether the filtering should be ascending or descending (false = ascending, true = descending)
+    package let sortDirDesc: Bool?
 
     /// The maximum number of nodes to return.
     package let limit: Int
@@ -135,9 +141,19 @@ package struct WireDriveGetNodesRequest: Equatable, Sendable {
     /// The configuration for the request.
     package let configuration: Configuration
 
-    package init(searchTerm: String?, tags: [String] = [], limit: Int, offset: Int, configuration: Configuration) {
+    package init(
+        searchTerm: String?,
+        metafilter: Set<WireDriveNodesMetaFilter> = [],
+        sortField: String? = nil,
+        sortDirDesc: Bool? = nil,
+        limit: Int,
+        offset: Int,
+        configuration: Configuration
+    ) {
         self.searchTerm = searchTerm
-        self.tags = tags
+        self.metafilter = metafilter
+        self.sortField = sortField
+        self.sortDirDesc = sortDirDesc
         self.limit = limit
         self.offset = offset
         self.configuration = configuration

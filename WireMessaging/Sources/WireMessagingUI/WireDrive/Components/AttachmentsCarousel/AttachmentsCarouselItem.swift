@@ -17,6 +17,7 @@
 //
 
 public import UIKit
+import WireMessagingDomain
 
 public struct AttachmentsCarouselItem: Identifiable, Sendable, Equatable {
 
@@ -39,6 +40,6 @@ public struct AttachmentsCarouselItem: Identifiable, Sendable, Equatable {
     public var name: String
     public var fileExtension: String?
     public var size: String
-    var fileIcon: FileIcon
+    var fileIcon: WireDriveFileType
 
 }
