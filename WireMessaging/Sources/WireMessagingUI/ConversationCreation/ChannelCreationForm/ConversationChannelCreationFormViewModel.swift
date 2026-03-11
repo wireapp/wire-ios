@@ -18,9 +18,10 @@
 
 public import Foundation
 public import Combine
+public import WireMessagingDomain
+
 import SwiftUI
 import WireFoundation
-public import WireMessagingDomain
 
 public final class ConversationChannelCreationFormViewModel: ObservableObject {
 
@@ -96,6 +97,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
         channelAccess: ChannelAccessOption = .private,
         channelInvitePolicy: ChannelInvitePolicyOption = .admins,
         channelHistoryOption: ChannelHistoryOption = .off,
+        areAppsSupported: Bool,
         appsAllowed: Bool = true,
         guestsAllowed: Bool = true,
         readReceiptsEnabled: Bool = true,
@@ -111,6 +113,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
         self.channelAccess = channelAccess
         self.channelInvitePolicy = channelInvitePolicy
         self.channelHistoryOption = channelHistoryOption
+        self.areAppsSupported = areAppsSupported
         self.appsAllowed = appsAllowed
         self.guestsAllowed = guestsAllowed
         self.readReceiptsEnabled = readReceiptsEnabled

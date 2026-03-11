@@ -183,6 +183,7 @@ public struct ConversationChannelCreationForm: View {
     var appsSection: some View {
         Section(content: {
             Toggle(Strings.CreationForm.Apps.toggle, isOn: $viewModel.appsAllowed)
+                .disabled(!viewModel.areAppsSupported) // TODO: make sure appsAllowed is set to off when disabled
             Toggle(Strings.CreationForm.Guests.toggle, isOn: $viewModel.guestsAllowed)
         }, footer: {
             if viewModel.areAppsSupported {
@@ -225,10 +226,23 @@ public struct ConversationChannelCreationForm: View {
     }
 }
 
-#Preview {
+#Preview("apps supported") {
     ConversationChannelCreationForm(
         viewModel: ConversationChannelCreationFormViewModel(
             channelName: "",
+            areAppsSupported: true,
+            isUserPremium: false,
+            isWireDriveEnabled: true,
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
+    )
+}
+
+#Preview("apps not supported") {
+    ConversationChannelCreationForm(
+        viewModel: ConversationChannelCreationFormViewModel(
+            channelName: "",
+            areAppsSupported: false,
             isUserPremium: false,
             isWireDriveEnabled: true,
             teamsURL: URL(string: "https://wire.com")!
