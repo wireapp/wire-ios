@@ -123,17 +123,16 @@ class ConversationsPage: PageModel {
 
     func openPendingRequest() throws -> ConnectionRequestsPage {
         try letTheSyncFinish()
-        XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
 
         let maxDuration: TimeInterval = 10
         let start = Date()
 
         while !connectionsRequestCell.exists, Date().timeIntervalSince(start) < maxDuration {
-            if conversationCell.isHittable {
-                conversationCell.tap()
-            }
-            RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+            RunLoop.current.run(until: Date().addingTimeInterval(0.5))
         }
+
+        XCTAssertTrue(connectionsRequestCell.exists, "Connection request cell did not appear within \(maxDuration) seconds")
+        connectionsRequestCell.tap()
         return try ConnectionRequestsPage()
     }
 
