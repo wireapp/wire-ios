@@ -96,7 +96,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
             for: qualifiedID,
             hasRegisteredMLSClient: hasRegisteredMLSClient,
             mlsFeature: mlsFeature,
-            isBackendMLSEnabled: true
+            isBackendMLSEnabled: true,
+            isE2EIRequired: false
         )
 
         // Then
@@ -147,7 +148,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
             for: qualifiedID,
             hasRegisteredMLSClient: hasRegisteredMLSClient,
             mlsFeature: mlsFeature,
-            isBackendMLSEnabled: true
+            isBackendMLSEnabled: true,
+            isE2EIRequired: false
         )
 
         // Then
@@ -200,7 +202,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
             for: qualifiedID,
             hasRegisteredMLSClient: hasRegisteredMLSClient,
             mlsFeature: mlsFeature,
-            isBackendMLSEnabled: true
+            isBackendMLSEnabled: true,
+            isE2EIRequired: false
         )
 
         // Then
@@ -251,7 +254,8 @@ class MLSClientManagerTests: ZMBaseManagedObjectTest {
             for: qualifiedID,
             hasRegisteredMLSClient: hasRegisteredMLSClient,
             mlsFeature: mlsFeature,
-            isBackendMLSEnabled: false
+            isBackendMLSEnabled: false,
+            isE2EIRequired: false
         )
 
         // Then

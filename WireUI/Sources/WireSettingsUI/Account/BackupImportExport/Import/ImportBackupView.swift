@@ -73,7 +73,7 @@ struct ImportBackupView: View {
                     )
                     .interactiveDismissDisabled()
                     .presentationDetents([.large])
-                    .onChange(of: viewModel.backupPassword) { _ in
+                    .onChange(of: viewModel.backupPassword) {
                         if viewModel.isBackupPasswordWrong {
                             viewModel.isBackupPasswordWrong = false
                         }

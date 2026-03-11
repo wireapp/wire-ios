@@ -27,7 +27,7 @@ import WireReusableUIComponents
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 
 /// Allows browsing files shared across all conversations
-package struct FilesBrowserView: FilesViewProtocol {
+package struct FilesBrowserView: View {
     @StateObject package var viewModel: FilesViewModel
     package var isBrowsing: Bool { true }
 
@@ -40,101 +40,39 @@ package struct FilesBrowserView: FilesViewProtocol {
     }
 
     package var body: some View {
-        ZStack {
-            ColorTheme.Backgrounds.surface.color
-                .ignoresSafeArea(.all)
-            Group {
-                switch viewModel.state {
-                case .loading:
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                case .received, .pending:
-                    filesList
-                        .safeAreaInset(edge: .top) {
-                            if viewModel.shouldShowOfflineBar {
-                                offlineBar
-                                    .id(UUID())
-                                    .background(ColorTheme.Backgrounds.surface.color)
-                            }
-                        }
-                case let .error(isConnectionError):
-                    FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
-                        reloadTask()
-                    })
-                }
-            }
-            .animation(.easeInOut(duration: 0.25), value: viewModel.connectionState)
-            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
-            .navigationTitle(Strings.AllFiles.navigationTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
-            .toolbar { toolbarContent }
-            .if(viewModel.showSearchBar) { view in
-                view.searchable(
-                    text: $viewModel.searchText,
-                    placement: .navigationBarDrawer(displayMode: .always),
-                    prompt: Strings.Files.Search.title
-                )
-            }
-            .onAppear { reloadTask() }
-            .alert(
-                item: $viewModel.alert,
-                title: { Text($0.title) },
-                message: { Text($0.message) },
-                actions: { _ in confirmButton }
-            )
-            .sheet(item: $viewModel.sheetNavigation) {
-                Task { await viewModel.onSheetDismissed() }
-            } content: { navigationItem in
-                switch navigationItem {
-                case let .filters(filtersView):
-                    filtersView
-                case let .shareLink(shareLinkView):
-                    shareLinkView
-                default:
-                    EmptyView()
-                }
-            }
+        FilesContentView(
+            viewModel: viewModel,
+            isBrowsing: isBrowsing,
+            backgroundColor: ColorTheme.Backgrounds.surface.color,
+            navigationTitle: Strings.AllFiles.navigationTitle,
+            toolbarContent: { emptyToolbar() },
+            sheetContent: { sheetContent($0) }
+        )
+    }
+
+    @ToolbarContentBuilder
+    private func emptyToolbar() -> some ToolbarContent {
+        // prevents compilation issue, no toolbar for this view.
+        if false {
+            ToolbarItem {}
         }
     }
 }
-
-// MARK: - Toolbar
 
 private extension FilesBrowserView {
-
-    @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarTrailing) {
-            Button {
-                viewModel.openFilters()
-            } label: {
-                Image(systemName: "line.3.horizontal.decrease.circle")
-            }
-
-        }
-    }
-
-}
-
-// MARK: - Helper
-
-extension View {
     @ViewBuilder
-    func `if`(
-        _ condition: Bool,
-        transform: (Self) -> some View
-    ) -> some View {
-        if condition {
-            transform(self)
-        } else {
-            self
+    func sheetContent(_ navigationItem: FilesViewModel.SheetNavigation) -> some View {
+        switch navigationItem {
+        case let .shareLink(shareLinkView):
+            shareLinkView
+        default:
+            EmptyView()
         }
     }
 }
 
 #Preview {
     NavigationStack {
-        FilesBrowserView(viewModel: .preview())
+        FilesBrowserView(viewModel: .preview(isBrowsing: true))
     }
 }

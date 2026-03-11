@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireMessagingDomain
 
 struct WireDriveLargeVideoPreviewView: View {
     private static let errorMessage = L10n.Localizable.Conversation.Message
@@ -36,7 +37,7 @@ struct WireDriveLargeVideoPreviewView: View {
     let progress: Double?
     let downloadError: Bool
     let url: URL?
-    var imageAspectRatio: CGFloat? = defaultAspectRatio
+    var imageAspectRatio: CGFloat = defaultAspectRatio
     let duration: String?
 
     @Environment(\.wireAccentColor) private var wireAccentColor
@@ -88,7 +89,7 @@ struct WireDriveLargeVideoPreviewView: View {
             case let .success(image):
                 image
                     .resizable()
-                    .scaledToFill()
+                    .aspectRatio(imageAspectRatio, contentMode: .fit)
                     .overlay {
                         PlayIcon()
                             .disabled(false)
@@ -105,7 +106,7 @@ struct WireDriveLargeVideoPreviewView: View {
     private func previewContainer(@ViewBuilder content: () -> some View)
         -> some View {
         Color.clear
-            .aspectRatio(imageAspectRatio ?? Self.defaultAspectRatio, contentMode: .fit)
+            .aspectRatio(imageAspectRatio, contentMode: .fit)
             .background(alignment: .top) {
                 content()
             }
@@ -156,7 +157,7 @@ struct WireDriveLargeVideoPreviewView: View {
 
 #Preview {
     WireDriveLargeVideoPreviewView(
-        headerIcon: Image(FileIcon.pdf.resource),
+        headerIcon: Image(WireDriveFileType.pdf.imageResource),
         headerText: "PDF (336 KB)",
         labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
         progress: 0.7,

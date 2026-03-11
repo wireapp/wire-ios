@@ -76,16 +76,9 @@ public struct LabeledTextField: View {
             .padding(.leading, 16)
             .frame(height: fieldHeight)
             .background {
-                if #available(iOS 17.0, *) {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(labelBackgroundColor)
-                        .stroke(labelBorderColor, lineWidth: 1)
-                } else {
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(labelBorderColor, lineWidth: 1)
-                        .background(labelBackgroundColor)
-                        .cornerRadius(12)
-                }
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(labelBackgroundColor)
+                    .stroke(labelBorderColor, lineWidth: 1)
             }
         }
     }
