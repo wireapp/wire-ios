@@ -20,6 +20,8 @@ import Combine
 import Foundation
 import WireMessagingDomain
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+
 /// A view model for a single item in the `FilesView`.
 ///
 /// A view model is needed as the item is _live_ - it can be updated remotely, it's file downloaded locally, and so on.
@@ -71,7 +73,7 @@ final class FilesItemViewModel: ObservableObject {
 
     let fileName: String
     let subtitle: String?
-    let icon: FileIcon
+    let icon: WireDriveFileType
 
     let isBrowsing: Bool
     let isInRecycleBin: Bool
@@ -89,6 +91,7 @@ final class FilesItemViewModel: ObservableObject {
 
     init(
         item: FilesViewItem,
+        selectedSortingKey: FilesSortingViewModel.SortingKey?,
         conversationName: String?,
         localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         onItemAction: @escaping (ItemAction, FilesViewItem) async -> Void,
@@ -103,8 +106,11 @@ final class FilesItemViewModel: ObservableObject {
         self.onItemAction = onItemAction
         self.fileName = item.name
         self.subtitle = Self.subtitle(
+            selectedSortingKey: selectedSortingKey,
+            isBrowsing: isBrowsing,
             conversationName: conversationName,
             modifiedAt: item.modifiedAt,
+            size: item.size,
             ownedBy: item.ownedBy,
             locale: locale,
             calendar: calendar,
@@ -236,28 +242,117 @@ final class FilesItemViewModel: ObservableObject {
         await onItemAction(.restore, item)
     }
 
-    static func subtitle(
+    private static func subtitle(
+        selectedSortingKey: FilesSortingViewModel.SortingKey?,
+        isBrowsing: Bool,
         conversationName: String?,
+        modifiedAt: Date?,
+        size: UInt64?,
+        ownedBy: String?,
+        locale: Locale,
+        calendar: Calendar,
+        timeZone: TimeZone
+    ) -> String? {
+        var primary: String?
+
+        if isBrowsing {
+            switch selectedSortingKey {
+            case .date:
+                if let conversationName,
+                   let date = formattedDate(
+                       modifiedAt: modifiedAt,
+                       locale: locale,
+                       calendar: calendar,
+                       timeZone: timeZone
+                   ) {
+                    primary = Strings.AllFiles.Item.subtitle(date, conversationName)
+                }
+            case .name:
+                if let conversationName, let ownedBy {
+                    primary = Strings.AllFiles.Item.subtitle(ownedBy, conversationName)
+                }
+            case .size:
+                if let conversationName,
+                   let size = formattedFileSize(size: size) {
+                    primary = Strings.AllFiles.Item.subtitle(size, conversationName)
+                }
+            default:
+                break
+            }
+
+            return primary ?? defaultSubtitle(
+                conversationName: conversationName,
+                modifiedAt: modifiedAt,
+                ownedBy: ownedBy,
+                locale: locale,
+                calendar: calendar,
+                timeZone: timeZone
+            )
+
+        } else {
+            switch selectedSortingKey {
+            case .date:
+                if let ownedBy {
+                    primary = Strings.Files.Item.subtitle(Strings.Sorting.Key.date, ownedBy)
+                }
+            case .size:
+                if let size = formattedFileSize(size: size), let ownedBy {
+                    primary = Strings.Files.Item.subtitle(size, ownedBy)
+                }
+            default:
+                break
+            }
+
+            return primary ?? defaultSubtitle(
+                modifiedAt: modifiedAt,
+                ownedBy: ownedBy,
+                locale: locale,
+                calendar: calendar,
+                timeZone: timeZone
+            )
+        }
+    }
+
+    private static func formattedFileSize(size: UInt64?) -> String? {
+        guard let size else { return nil }
+        let formatter = ByteCountFormatter()
+        formatter.allowedUnits = [.useBytes, .useKB, .useMB, .useGB]
+        formatter.countStyle = .file
+        return formatter.string(fromByteCount: Int64(size))
+    }
+
+    private static func formattedDate(
+        modifiedAt: Date?,
+        locale: Locale,
+        calendar: Calendar,
+        timeZone: TimeZone
+    ) -> String? {
+        modifiedAt.map { date in
+            let style = Date.FormatStyle(
+                date: .abbreviated,
+                time: .shortened,
+                locale: locale,
+                calendar: calendar,
+                timeZone: timeZone,
+                capitalizationContext: .beginningOfSentence
+            )
+            return date.formatted(style)
+        }
+    }
+
+    private static func defaultSubtitle(
+        conversationName: String? = nil,
         modifiedAt: Date?,
         ownedBy: String?,
         locale: Locale,
         calendar: Calendar,
         timeZone: TimeZone
     ) -> String? {
+        let modifiedAt = formattedDate(modifiedAt: modifiedAt, locale: locale, calendar: calendar, timeZone: timeZone)
+
         if let conversationName, let ownedBy {
             return L10n.Localizable.Conversation.WireCells.AllFiles.Item.subtitle(ownedBy, conversationName)
         } else {
-            let modifiedAt = modifiedAt.map { date in
-                let style = Date.FormatStyle(
-                    date: .abbreviated,
-                    time: .shortened,
-                    locale: locale,
-                    calendar: calendar,
-                    timeZone: timeZone,
-                    capitalizationContext: .beginningOfSentence
-                )
-                return date.formatted(style)
-            }
             return if let modifiedAt, let ownedBy {
                 L10n.Localizable.Conversation.WireCells.Files.Item.subtitle(modifiedAt, ownedBy)
             } else {

@@ -8,7 +8,7 @@ on:
     inputs:
       distribute_externals:
         type: boolean
-        description: 'Distribute externally'
+        description: 'Distribute externally: Wire Employees and Externals - Non Wire Employees (Public Beta)'
         default: false
 permissions: 
   checks: write

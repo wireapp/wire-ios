@@ -34,11 +34,14 @@ struct EnvironmentVariables {
 
     private let stagingBackendURL: URL
     private let antaBackendURL: URL
+    private let bellaBackendURL: URL
 
     private let stagingInbucketURL: URL
     private let antaInbucketURL: URL
+    private let bellaInbucketURL: URL
 
     let antaDeepLinkURL: URL
+    let bellaDeepLinkURL: URL
 
     let inbucketUsername: String
     let inbucketPassword: String
@@ -87,6 +90,12 @@ struct EnvironmentVariables {
         guard let antaDeeplinkURL = ProcessInfo.processInfo.environment["ANTA_DEEPLINK_URL"],
               !antaDeeplinkURL.isEmpty else {
             throw Failure.missingDeepLinkURL
+
+        }
+        guard let bellaDeeplinkURL = ProcessInfo.processInfo.environment["BELLA_DEEPLINK_URL"],
+              !bellaDeeplinkURL.isEmpty else {
+            throw Failure.missingDeepLinkURL
+
         }
 
         guard let antaInbucketURL = ProcessInfo.processInfo.environment["ANTA_INBUCKET_URL"],
@@ -94,8 +103,18 @@ struct EnvironmentVariables {
             throw Failure.missingInbucketURL
         }
 
+        guard let bellaInbucketURL = ProcessInfo.processInfo.environment["BELLA_INBUCKET_URL"],
+              !bellaInbucketURL.isEmpty else {
+            throw Failure.missingInbucketURL
+        }
+
         guard let backendURLAntaString = ProcessInfo.processInfo.environment["BACKEND_URL_ANTA"],
               !backendURLAntaString.isEmpty else {
+            throw Failure.missingBackendURL
+        }
+
+        guard let backendURLBellaString = ProcessInfo.processInfo.environment["BACKEND_URL_BELLA"],
+              !backendURLBellaString.isEmpty else {
             throw Failure.missingBackendURL
         }
 
@@ -123,6 +142,9 @@ struct EnvironmentVariables {
         self.antaDeepLinkURL = URL(string: "https://\(antaDeeplinkURL)")!
         self.antaInbucketURL = URL(string: "https://\(antaInbucketURL)")!
         self.antaBackendURL = URL(string: "https://\(backendURLAntaString)")!
+        self.bellaDeepLinkURL = URL(string: "https://\(bellaDeeplinkURL)")!
+        self.bellaInbucketURL = URL(string: "https://\(bellaInbucketURL)")!
+        self.bellaBackendURL = URL(string: "https://\(backendURLBellaString)")!
         self.callingServiceURL = URL(string: "https://\(callingServiceURLString)")!
         self.callingBackend = callingBackend
         self.callingInstanceTypeName = callingInstanceTypeName
@@ -135,6 +157,8 @@ struct EnvironmentVariables {
             antaInbucketURL
         case .staging:
             stagingInbucketURL
+        case .bella:
+            bellaInbucketURL
         }
     }
 
@@ -144,6 +168,8 @@ struct EnvironmentVariables {
             antaBackendURL
         case .staging:
             stagingBackendURL
+        case .bella:
+            bellaBackendURL
         }
     }
 
@@ -151,6 +177,8 @@ struct EnvironmentVariables {
         switch target {
         case .anta:
             antaDeepLinkURL
+        case .bella:
+            bellaDeepLinkURL
         case .staging:
             fatalError("Not implemented yet")
         }
