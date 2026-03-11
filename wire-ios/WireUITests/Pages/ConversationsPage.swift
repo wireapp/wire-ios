@@ -131,7 +131,10 @@ class ConversationsPage: PageModel {
             RunLoop.current.run(until: Date().addingTimeInterval(0.5))
         }
 
-        XCTAssertTrue(connectionsRequestCell.exists, "Connection request cell did not appear within \(maxDuration) seconds")
+        XCTAssertTrue(
+            connectionsRequestCell.exists,
+            "Connection request cell did not appear within \(maxDuration) seconds"
+        )
         connectionsRequestCell.tap()
         return try ConnectionRequestsPage()
     }
