@@ -24,7 +24,7 @@ public enum URLAction: Equatable {
     /// Connect to a service user (bot)
     case connectBot(serviceUser: ServiceUserData)
 
-    /// The SSO login sucessfully completed
+    /// The SSO login successfully completed
     case companyLoginSuccess(userInfo: UserInfo)
 
     /// Start the SSO login flow
