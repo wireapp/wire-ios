@@ -218,7 +218,6 @@ package final class FilesViewModel: ObservableObject {
     private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
     private let nodesRepository: any WireDriveNodesRepositoryProtocol
     private let fileCache: any FileCache
-    private var lastSelectedItem: FilesViewItem?
     private let cellName: String? // nil when browsing all files
     private var subscriptions = Set<AnyCancellable>()
     private let navigationPath: [FilesViewItem]
@@ -489,7 +488,7 @@ package final class FilesViewModel: ObservableObject {
         )
     }
 
-    /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary and views it.
+    /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary or views it.
     func openItem(item: FilesViewItem) async {
         switch item.kind {
         case .file:
@@ -554,16 +553,15 @@ package final class FilesViewModel: ObservableObject {
         setNavigation(navigationPath + [targetItem])
     }
 
-    /// Downloads if necessary and views the asset represented by the given item.
+    /// Downloads if necessary or views the asset represented by the given item.
     private func viewAsset(item: FilesViewItem) async {
         precondition(item.kind == .file)
 
-        // Bookkeeping ensure we only attempt to display the most recently selected item.
-        lastSelectedItem = item
-
         do {
+            let isAlreadyDownloaded = try await useCases.getAssetUseCase.isDownloaded(nodeID: item.id, eTag: item.eTag)
             let url = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
-            if item == lastSelectedItem {
+            
+            if isAlreadyDownloaded {
                 viewingURL = url
             }
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {

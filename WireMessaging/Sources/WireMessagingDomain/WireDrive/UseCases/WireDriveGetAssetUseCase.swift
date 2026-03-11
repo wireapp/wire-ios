@@ -54,6 +54,10 @@ package struct WireDriveGetAssetUseCase {
 
         return fileURL
     }
+    
+    package func isDownloaded(nodeID: UUID, eTag: String?) async throws -> Bool {
+        try await cachedAssetURL(for: nodeID, eTag: eTag) != nil
+    }
 
     // MARK: - Private helpers
 
