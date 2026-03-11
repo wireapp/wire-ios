@@ -516,33 +516,4 @@ extension SettingsCellDescriptorFactory {
     func signOutElement() -> any SettingsCellDescriptorType {
         SettingsSignOutCellDescriptor()
     }
-
-}
-
-// MARK: -
-
-private extension ConversationProtobufMessageProcessor {
-
-    init(
-        context: NSManagedObjectContext,
-        localDomain: String?,
-        isFederationEnabled: Bool
-    ) {
-        let messageLocalStore = MessageLocalStore(context: context)
-        self.init(
-            messageLocalStore: messageLocalStore,
-            conversationLocalStore: ConversationLocalStore(
-                context: context,
-                mlsService: context.performAndWait { context.mlsService },
-                messageLocalStore: messageLocalStore,
-                localDomain: localDomain,
-                isFederationEnabled: isFederationEnabled
-            ),
-            userLocalStore: UserLocalStore(
-                context: context,
-                messageLocalStore: messageLocalStore
-            )
-        )
-    }
-
 }
