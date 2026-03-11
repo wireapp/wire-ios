@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireDataModel
 
 final class RoleTests: ZMBaseManagedObjectTest {

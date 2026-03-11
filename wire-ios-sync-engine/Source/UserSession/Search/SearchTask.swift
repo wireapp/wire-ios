@@ -156,9 +156,8 @@ public final class SearchTask {
             return result
         }
     }
-}
 
-extension SearchTask {
+    // MARK: -
 
     /// Look up a user ID from contacts and teamMembers locally.
     private func performLocalLookup() async -> SearchResultAggregator {
@@ -414,9 +413,7 @@ extension SearchTask {
         return matching + nonMatching
     }
 
-}
-
-extension SearchTask {
+    // MARK: -
 
     func performUserLookup() async throws -> SearchResultAggregator {
         guard case var .lookup(qualifiedID) = type else {
@@ -469,9 +466,7 @@ extension SearchTask {
 
     }
 
-}
-
-extension SearchTask {
+    // MARK: -
 
     func performRemoteSearch() async throws -> SearchResultAggregator {
         guard
@@ -594,9 +589,7 @@ extension SearchTask {
 
     }
 
-}
-
-extension SearchTask {
+    // MARK: -
 
     func performRemoteSearchForTeamUser() async -> SearchResultAggregator {
         guard
@@ -687,9 +680,8 @@ extension SearchTask {
         let urlStr = url.string?.replacingOccurrences(of: "+", with: "%2B") ?? ""
         return ZMTransportRequest(getFromPath: urlStr, apiVersion: apiVersion.rawValue)
     }
-}
 
-extension SearchTask {
+    // MARK: -
 
     func performRemoteSearchForServices() async throws -> SearchResultAggregator {
 

@@ -32,7 +32,6 @@ final class EmptySearchResultsViewTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
@@ -47,7 +46,6 @@ final class EmptySearchResultsViewTests: XCTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
-        super.tearDown()
     }
 
     // MARK: - Snapshot Tests
