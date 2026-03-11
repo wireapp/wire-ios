@@ -79,10 +79,13 @@ public extension Feature {
 
                 /// Member, Admin, Owner
                 case teamMembers = "team-members"
+
                 /// Partner (a.k.a. external), Member, Admin, Owner
                 case everyone
+
                 /// Admin, Owner
                 case admins
+
             }
         }
 
