@@ -157,6 +157,16 @@ extension ZMConversation {
         NSPredicate(format: "\(ZMConversationIsPendingMetadataRefreshKey) == YES")
     }
 
+    /// Returns a predicate matching conversations whose MLS group is invalid and still has a group ID to wipe.
+    public static func predicateForInvalidMLSGroup() -> NSPredicate {
+        NSPredicate(
+            format: "%K == %d AND %K != nil",
+            mlsStatusKey,
+            MLSGroupStatus.invalid.rawValue,
+            mlsGroupIdKey
+        )
+    }
+
 }
 
 extension String {

@@ -881,6 +881,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         )
     }
 
+    public func clearMLSGroupID(objectID: NSManagedObjectID) async {
+        await context.perform { [context] in
+            guard let conversation = try? context.existingObject(with: objectID) as? ZMConversation else {
+                return
+            }
+            conversation.mlsGroupID = nil
+            context.saveOrRollback()
+        }
     }
 
     public func storeConversation(

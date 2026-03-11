@@ -869,10 +869,21 @@ public final class ClientSessionComponent {
         }
     )
 
+    public lazy var invalidMLSGroupGenerator: IncrementalGeneratorProtocol = InvalidMLSGroupGenerator(
+        context: syncContext,
+        mlsService: mlsService,
+        conversationLocalStore: conversationLocalStore,
+        onInvalidMLSGroup: { [weak self] workItem in
+
+            self?.workAgent.submitItem(workItem)
+        }
+    )
+
     public lazy var generatorsDirectory = GeneratorsDirectory(
         generators: [
             conversationUpdatesGenerator,
-            commitPendingProposalsGenerator
+            commitPendingProposalsGenerator,
+            invalidMLSGroupGenerator
         ],
         syncStatePublisher: syncStateSubject.eraseToAnyPublisher()
     )
