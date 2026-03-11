@@ -19,43 +19,27 @@
 import Foundation
 public import SwiftUI
 public import UniformTypeIdentifiers
+public import WireMessagingDomain
 
-public enum FileIcon: Sendable {
-
-    case archive
-    case audio
-    case code
-    case document
-    case image
-    case other
-    case pdf
-    case presentation
-    case spreadsheet
-    case video
-    case folder
-
-}
-
-extension FileIcon {
+extension WireDriveFileType {
 
     // MARK: - Factory
 
-    /// Creates a `FileIcon` based on the provided optional type and file extension.
-
-    public static func make(type: UTType?, fileExtension: String?) -> FileIcon {
-        if let type, let icon = FileIcon.make(type: type) {
+    /// Creates an instance based on the provided optional type and file extension.
+    public static func make(type: UTType?, fileExtension: String?) -> WireDriveFileType {
+        if let type, let icon = WireDriveFileType.make(type: type) {
             icon
-        } else if let fileExtension, let icon = FileIcon.make(fileExtension: fileExtension) {
+        } else if let fileExtension, let icon = WireDriveFileType.make(fileExtension: fileExtension) {
             icon
         } else {
             .other
         }
     }
 
-    private static func make(type: UTType) -> FileIcon? {
-        func icon(type: UTType) -> FileIcon? {
+    private static func make(type: UTType) -> WireDriveFileType? {
+        func icon(type: UTType) -> WireDriveFileType? {
             switch type {
-            case .archive:
+            case .archive, .zip, .gzip, .bz2:
                 .archive
             case .audio:
                 .audio
@@ -71,28 +55,39 @@ extension FileIcon {
                 .spreadsheet
             case .movie:
                 .video
+            case .text, .plainText:
+                .text
             default:
                 nil
             }
         }
 
-        var types = type.supertypes
-        types.insert(type)
+        if let icon = icon(type: type) {
+            return icon
+        } else {
+            var types = type.supertypes
+            types.insert(type)
 
-        for type in types {
-            if let icon = icon(type: type) {
-                return icon
+            for type in types {
+                if let icon = icon(type: type) {
+                    return icon
+                }
             }
         }
+
         return nil
     }
 
-    private static func make(fileExtension: String) -> FileIcon? {
+    private static func make(fileExtension: String) -> WireDriveFileType? {
         switch fileExtension.lowercased() {
         case "docx", "doc", "dotx", "dot", "odt", "ott", "rtf":
             .document
-        case "css", "phtml", "sparql", "cs", "java", "jsp", "sql", "cgi", "pl", "inc", "xsl":
+        case "css", "phtml", "sparql", "cs", "java", "jsp", "sql", "cgi", "pl", "inc", "xsl", "html":
             .code
+        case "rar", "7z", "tar":
+            .archive
+        case "txt":
+            .text
         default:
             nil
         }
@@ -100,7 +95,7 @@ extension FileIcon {
 
     // MARK: - Resource
 
-    var resource: ImageResource {
+    var imageResource: ImageResource {
         switch self {
         case .archive:
             .fileIconArchive
@@ -124,11 +119,13 @@ extension FileIcon {
             .fileIconVideo
         case .folder:
             .fileIconFolder
+        case .text:
+            .fileIconText
         }
     }
 
     public var image: UIImage {
-        UIImage(resource: resource)
+        UIImage(resource: imageResource)
     }
 
 }

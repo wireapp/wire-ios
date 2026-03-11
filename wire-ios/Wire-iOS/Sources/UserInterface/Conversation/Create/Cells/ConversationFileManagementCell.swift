@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireLocators
 
 final class ConversationCreateFileManagementCell: IconToggleCell {
 
@@ -25,6 +26,7 @@ final class ConversationCreateFileManagementCell: IconToggleCell {
         title = L10n.Localizable.Conversation.Create.FileManagement.title
         showSeparator = false
         icon = nil
+        toggle.accessibilityIdentifier = Locators.CreateGroupPage.sharedDriveSwitch.rawValue
     }
 }
 

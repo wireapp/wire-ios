@@ -69,7 +69,10 @@ class FirstTimePage: PageModel {
 
     func acceptPopup(with testCase: XCTestCase) throws -> ConversationsPage {
         handleNotificationPermissionAlert(testCase: testCase)
-        conversationsButton.tap()
+        // Sometimes the OK button take longer to disappear after tapping.
+        if conversationsButton.exists || conversationsButton.waitForExistence(timeout: 10) {
+            conversationsButton.tap()
+        }
         return try ConversationsPage()
     }
 

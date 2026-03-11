@@ -338,8 +338,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Drive"
+            "state" : "translated",
+            "value" : "Диск"
           }
         },
         "sl" : {

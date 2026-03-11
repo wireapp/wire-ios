@@ -194,7 +194,7 @@ final class TeamManageTests: WireUITestCase {
 
     /// testiny: https://app.testiny.io/IOS/testcases/tcf/1389/tc/8865/
     @MainActor
-    func test_mentionUserInGroup() async throws {
+    func test_MentionUserInGroup() async throws {
 
         let (teamOwner, teamMembers, _, _) = try await userHelper
             .registerTeam(

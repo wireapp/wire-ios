@@ -127,17 +127,13 @@ class ConversationsPage: PageModel {
 
     func openPendingRequest() throws -> ConnectionRequestsPage {
         try letTheSyncFinish()
-        XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
 
         let maxDuration: TimeInterval = 10
-        let start = Date()
-
-        while !connectionsRequestCell.exists, Date().timeIntervalSince(start) < maxDuration {
-            if conversationCell.isHittable {
-                conversationCell.tap()
-            }
-            RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+        guard connectionsRequestCell.waitForExistence(timeout: maxDuration) else {
+            throw Error.connectionRequestsCellNotFound
         }
+
+        connectionsRequestCell.tap()
         return try ConnectionRequestsPage()
     }
 
@@ -203,5 +199,9 @@ class ConversationsPage: PageModel {
         filterConversationsButton.tap()
         filterByOneOnOneConversation.tap()
         return self
+    }
+
+    enum Error: Swift.Error {
+        case connectionRequestsCellNotFound
     }
 }

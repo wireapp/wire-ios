@@ -38,6 +38,7 @@ extension Service {
         self.serviceUserDetails = nil
         self.provider = nil
     }
+
 }
 
 final class ServiceDetailViewController: UIViewController {
