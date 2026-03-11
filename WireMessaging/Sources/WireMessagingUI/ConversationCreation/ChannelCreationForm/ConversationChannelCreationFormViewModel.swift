@@ -77,6 +77,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
     @Published var channelHistoryOption: ChannelHistoryOption
     @Published var channelHistoryOptionCustom: ChannelHistoryOption.Custom = .init()
     @Published var showUpgradeBanner: Bool = false
+    @Published var areAppsSupported: Bool = false // TODO: set based on feature flag value
     @Published var appsAllowed: Bool
     @Published var guestsAllowed: Bool
     @Published var readReceiptsEnabled: Bool
