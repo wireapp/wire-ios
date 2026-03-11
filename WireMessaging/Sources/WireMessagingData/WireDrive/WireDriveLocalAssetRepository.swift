@@ -127,7 +127,7 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
             var fileSize: WireDriveLocalAsset.FileSize = .small
             
             let timerTask = Task {
-                try await Task.sleep(nanoseconds: 300_000_000)
+                try await Task.sleep(for: .milliseconds(300))
                 fileSize = .large
             }
             
