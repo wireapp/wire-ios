@@ -78,9 +78,21 @@ public final class AVSCallingEventService: AVSCallingEventServiceProtocol {
     private var handle: UInt32
 
     // MARK: - Init
+    private static let avsInitialize: Void = {
+        let result = wcall_init(WCALL_ENV_DEFAULT)
+        if result != 0 {
+            WireLogger.calling.error("NSE AVS: wcall_init failed with code \(result)", attributes: .newNSE, .safePublic)
+        }
+
+    }()
 
     public init(userID: String, clientID: String) {
+        //Self.avsInitialize
         self.handle = 0
+        wcall_set_log_handler({ level, msgPtr, _ in
+            guard let msg = msgPtr.flatMap({ String(cString: $0) }) else { return }
+            WireLogger.calling.debug(msg, attributes: .newNSE, .safePublic)
+        }, nil)
         self.handle = wcall_event_create(
             userID,
             clientID,

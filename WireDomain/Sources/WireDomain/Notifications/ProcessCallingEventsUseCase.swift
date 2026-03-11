@@ -115,9 +115,9 @@ final class ProcessCallingEventsUseCase {
         WireLogger.calling.info("WOW NSE calling: start called", attributes: .newNSE, .safePublic)
         for batch in eventBatches {
             for event in batch {
-                WireLogger.calling.info("WOW NSE calling: processing event \(event)", attributes: .newNSE, .safePublic)
+                WireLogger.calling.info("WOW NSE calling: will process event \(event)", attributes: .newNSE, .safePublic)
                 if let params = await avsParameters(from: event) {
-                    WireLogger.calling.info("WOW NSE calling: found AVS params, conversationId=\(params.conversationId)", attributes: .newNSE, .safePublic)
+                    WireLogger.calling.info("WOW NSE calling: found AVS params,currentTime = \(params.currentTime), serverTime = \(params.serverTime), conversationId = \(params.conversationId), userId = \(params.userId), clientId = \(clientID), conversationType = \(params.conversationType)", attributes: .newNSE, .safePublic)
                     callingService.process(
                         data: params.data,
                         currentTime: params.currentTime,
@@ -127,11 +127,14 @@ final class ProcessCallingEventsUseCase {
                         clientId: clientID,
                         conversationType: params.conversationType
                     )
+                    WireLogger.calling.info("WOW NSE calling: did process event \(event)", attributes: .newNSE, .safePublic)
+
                 }
             }
         }
+        WireLogger.calling.info("WOW NSE calling: about to call end()", attributes: .newNSE, .safePublic)
         callingService.end()
-        WireLogger.calling.info("WOW NSE calling: end called", attributes: .newNSE, .safePublic)
+        WireLogger.calling.info("WOW NSE calling: did call end()", attributes: .newNSE, .safePublic)
         // Wait for CXProvider report to complete before returning —
         // without this the NSE may terminate before the report fires.
         _ = await callKitReportTask?.value
@@ -194,12 +197,16 @@ final class ProcessCallingEventsUseCase {
                 let payload = Data(base64Encoded: decryptedMessage.message),
                 let genericMessage = GenericMessage(from: payload, validate: false),
                 genericMessage.hasCalling,
-                let callingData = genericMessage.calling.content.data(using: .utf8),
+                let callingData = genericMessage.calling.content.data(using: .utf8, allowLossyConversion: false),
                 let clientID = decryptedMessage.senderClientID,
                 let timestamp = event.timestamp                  
             else { continue }
             WireLogger.calling.info(
                 "WOW hasCalling is true",
+                attributes: .newNSE, .safePublic
+            )
+            WireLogger.calling.info(
+                "WOW callingContent: \(genericMessage.calling.content)",
                 attributes: .newNSE, .safePublic
             )
             if let params = await buildParams(
