@@ -123,11 +123,22 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
             )
 
             let (progress, download) = fileDownloader.download(from: downloadURL)
+            
+            var fileSize: WireDriveLocalAsset.FileSize = .small
+            
+            let timerTask = Task {
+                try await Task.sleep(nanoseconds: 300_000_000)
+                fileSize = .large
+            }
+            
             for await progress in progress {
                 var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
                 asset.downloadState = .downloading(progress: progress)
+                asset.fileSize = fileSize
                 try store.upsertAsset(asset)
             }
+            
+            timerTask.cancel()
 
             let (tempURL, _) = try await download.value
 

@@ -50,16 +50,8 @@ final class FilesItemViewModel: ObservableObject {
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
 
-    @Published private var asset: WireDriveLocalAsset? {
-        didSet {
-            if let downloadState = asset?.downloadState {
-                fileTracker.handleDownloadState(downloadState)
-            }
-        }
-    }
-
+    @Published private var asset: WireDriveLocalAsset?
     @Published var fileTracker: WireDriveFileUITracker
-
     @Published var isPresentingDeleteFilePermanentlyConfirmation = false
     @Published var isPresentingDeleteFolderPermanentlyConfirmation = false
     @Published var isPresentingDeleteFileToRecycleBinConfirmation = false
@@ -120,7 +112,7 @@ final class FilesItemViewModel: ObservableObject {
         self.isBrowsing = isBrowsing
         self.isInRecycleBin = isInRecycleBin
 
-        self.fileTracker = .init(downloadState: .pending)
+        self.fileTracker = .init()
         fileTracker.fileShouldOpen = { [weak self] in
             self?.performMenuAction(.open)
         }
@@ -129,6 +121,9 @@ final class FilesItemViewModel: ObservableObject {
 
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
             self?.asset = asset
+            if let asset {
+                self?.fileTracker.handleDownloadState(from: asset)
+            }
         }.store(in: &cancellables)
     }
 
@@ -158,7 +153,7 @@ final class FilesItemViewModel: ObservableObject {
 
     var progress: Double? {
         switch fileTracker.state {
-        case let .downloading(progress):
+        case let .downloading(progress, _):
             progress
         case .failed:
             1 // We show a full red progress bar on failure
