@@ -56,7 +56,7 @@ struct FilesItemView: View {
                     let debugText: String = switch viewModel.fileTracker.state {
                     case .notDownloaded: "Not downloaded"
                     case .downloaded(showReadyToOpen: let ready): "Downloaded, ready: \(ready)"
-                    case .downloading(progress: let progress): "Progress: \(Int(progress * 100))%"
+                    case let .downloading(progress: progress, isLargeFile: _): "Progress: \(Int(progress * 100))%"
                     case .failed(error: let error): "Failed: \(error)"
                     }
                     Text(debugText)
@@ -180,7 +180,7 @@ struct FilesItemView: View {
     @ViewBuilder
     private func infoRow() -> some View {
         let state: WireDriveFileUITracker.State = viewModel.fileTracker.state
-        //let state: WireDriveFileUITracker.State = .downloading(progress: 0.7)
+        //let state: WireDriveFileUITracker.State = .downloading(progress: 0.7, isLargeFile: false)
 
         switch state {
         case .notDownloaded, .downloaded(showReadyToOpen: false):
