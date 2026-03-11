@@ -23,8 +23,8 @@ public final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
 
     // MARK: - Error
 
-    enum Error: Swift.Error {
-        case failedToFetchFeatureLocally
+    public enum Error: Swift.Error {
+        case failedToFetchFeatureLocally(Feature.Name)
     }
 
     // MARK: - Properties
@@ -49,7 +49,7 @@ public final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
                 name: name,
                 context: context
             ) else {
-                throw Error.failedToFetchFeatureLocally
+                throw Error.failedToFetchFeatureLocally(name)
             }
 
             return feature
