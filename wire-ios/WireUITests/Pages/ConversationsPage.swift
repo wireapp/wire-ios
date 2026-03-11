@@ -126,8 +126,7 @@ class ConversationsPage: PageModel {
 
         let maxDuration: TimeInterval = 10
         guard connectionsRequestCell.waitForExistence(timeout: maxDuration) else {
-            XCTFail("Connection request cell did not appear within \(maxDuration) seconds")
-            return try ConnectionRequestsPage()
+            throw Error.connectionRequestsCellNotFound
         }
 
         connectionsRequestCell.tap()
@@ -189,5 +188,9 @@ class ConversationsPage: PageModel {
         filterConversationsButton.tap()
         filterByOneOnOneConversation.tap()
         return self
+    }
+
+    enum Error: Swift.Error {
+        case connectionRequestsCellNotFound
     }
 }
