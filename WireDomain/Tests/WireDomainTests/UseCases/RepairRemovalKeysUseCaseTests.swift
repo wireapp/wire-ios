@@ -52,6 +52,7 @@ struct RepairRemovalKeysUseCaseTests {
         let messageLocalStore = MessageLocalStore(context: context)
         self.conversationLocalStore = ConversationLocalStore(
             context: context,
+            mlsService: mlsService,
             messageLocalStore: messageLocalStore,
             localDomain: affectedDomain,
             isFederationEnabled: true

@@ -832,19 +832,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
-    // MARK: - clearMLSGroupID
+    // MARK: - wipeMLSGroup
 
-    public var clearMLSGroupIDObjectID_Invocations: [NSManagedObjectID] = []
-    public var clearMLSGroupIDObjectID_MockMethod: ((NSManagedObjectID) async -> Void)?
+    public var wipeMLSGroupGroupID_Invocations: [WireDataModel.MLSGroupID] = []
+    public var wipeMLSGroupGroupID_MockError: Error?
+    public var wipeMLSGroupGroupID_MockMethod: ((WireDataModel.MLSGroupID) async throws -> Void)?
 
-    public func clearMLSGroupID(objectID: NSManagedObjectID) async {
-        clearMLSGroupIDObjectID_Invocations.append(objectID)
+    public func wipeMLSGroup(groupID: WireDataModel.MLSGroupID) async throws {
+        wipeMLSGroupGroupID_Invocations.append(groupID)
 
-        guard let mock = clearMLSGroupIDObjectID_MockMethod else {
-            fatalError("no mock for `clearMLSGroupIDObjectID`")
+        if let error = wipeMLSGroupGroupID_MockError {
+            throw error
         }
 
-        await mock(objectID)
+        guard let mock = wipeMLSGroupGroupID_MockMethod else {
+            fatalError("no mock for `wipeMLSGroupGroupID`")
+        }
+
+        try await mock(groupID)
     }
 
     // MARK: - removeParticipantFromAllGroupConversations

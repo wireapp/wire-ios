@@ -533,6 +533,7 @@ private extension ConversationProtobufMessageProcessor {
             messageLocalStore: messageLocalStore,
             conversationLocalStore: ConversationLocalStore(
                 context: context,
+                mlsService: context.performAndWait { context.mlsService },
                 messageLocalStore: messageLocalStore,
                 localDomain: localDomain,
                 isFederationEnabled: isFederationEnabled

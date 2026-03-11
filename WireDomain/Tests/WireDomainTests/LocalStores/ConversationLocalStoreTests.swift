@@ -31,6 +31,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
     private var sut: ConversationLocalStore!
     private var messageLocalStore: MockMessageLocalStoreProtocol!
+    private var mlsService: MockMLSServiceInterface!
 
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
@@ -43,12 +44,14 @@ final class ConversationLocalStoreTests: XCTestCase {
     private var subscription: AnyCancellable?
 
     override func setUp() async throws {
+        mlsService = MockMLSServiceInterface()
         coreDataStackHelper = CoreDataStackHelper()
         messageLocalStore = MockMessageLocalStoreProtocol()
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         sut = ConversationLocalStore(
             context: context,
+            mlsService: mlsService,
             messageLocalStore: messageLocalStore,
             localDomain: "wire.com",
             isFederationEnabled: false
@@ -56,6 +59,7 @@ final class ConversationLocalStoreTests: XCTestCase {
     }
 
     override func tearDown() async throws {
+        mlsService = nil
         stack = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()

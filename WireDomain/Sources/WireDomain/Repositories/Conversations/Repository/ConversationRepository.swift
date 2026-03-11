@@ -238,7 +238,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
         if let mlsGroupID {
 
-            try await mlsProvider.service.wipeGroup(mlsGroupID)
+            try await conversationsLocalStore.wipeMLSGroup(groupID: mlsGroupID)
 
             await conversationsLocalStore.deleteConversation(
                 conversation

@@ -201,6 +201,7 @@ public final class ClientSessionComponent {
 
     public private(set) lazy var conversationLocalStore = ConversationLocalStore(
         context: syncContext,
+        mlsService: mlsService,
         messageLocalStore: messageLocalStore,
         localDomain: backendMetadata.domain,
         isFederationEnabled: backendMetadata.isFederationEnabled

@@ -96,6 +96,7 @@ final class ZClientControllerBuilder {
         let context = userSession.contextProvider.syncContext
         let driveConversationLocalStore = ConversationLocalStore(
             context: context,
+            mlsService: nil,
             messageLocalStore: MessageLocalStore(context: context),
             localDomain: userSession.resolvedBackendMetadata.domain,
             isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled

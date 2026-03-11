@@ -328,6 +328,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         shared {
             ConversationLocalStore(
                 context: coreDataStack.syncContext,
+                mlsService: nil,
                 messageLocalStore: messageLocalStore,
                 localDomain: localDomain,
                 isFederationEnabled: isFederationEnabled
