@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       testiny_run_name:
-        description: "Testiny test run NAME (title): paste the exact run title from Testiny UI"
+        description: "Testiny test run name: paste the exact run name from Testiny"
         required: false
         type: string
   push:

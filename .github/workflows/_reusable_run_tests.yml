@@ -19,9 +19,6 @@ on:
       run_critical_flows:
         type: boolean
         required: true
-      testiny_run_id:
-        type: string
-        required: false
       testiny_run_name:
         type: string
         required: false
@@ -160,7 +157,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          TESTINY_API_KEY="$(op read 'op://Test Automation/TESTINY_API_KEY_IOS')"
+          TESTINY_API_KEY="$(op read 'op://Test Automation/TESTINY_API_KEY_IOS/password')"
           echo "TESTINY_API_KEY=$TESTINY_API_KEY" >> "$GITHUB_ENV"
 
       - name: Upload XCResult results to Testiny
@@ -168,6 +165,7 @@ jobs:
         shell: bash
         env:
           TESTINY_API_KEY: ${{ env.TESTINY_API_KEY }}
+          TESTINY_RUN_NAME: ${{ inputs.testiny_run_name }}
         run: |
           set -euo pipefail
 
@@ -180,9 +178,9 @@ jobs:
 
           echo "[INFO] Using xcresult: $XCRESULT"
 
-          python3 ./send_xcresult_to_testiny.py \
+          python3 ./scripts/send_xcresult_to_testiny.py \
             --xcresult "$XCRESULT" \
-            --run-name "${{ inputs.testiny_run_name }}" \
+            --run-name "$TESTINY_RUN_NAME" \
             --require-existing-run
 
       - name: "Test all selected frameworks"
