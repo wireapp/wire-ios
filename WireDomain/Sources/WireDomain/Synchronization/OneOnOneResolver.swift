@@ -133,11 +133,8 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
 
     @discardableResult
     private func resolveMLSConversation(for user: ZMUser) async throws -> MLSGroupID {
+        WireLogger.conversation.debug("Should resolve to mls 1-1 conversation")
         let userID = try await context.unpack(user) { $0.qualifiedID }
-        WireLogger.conversation.debug(
-            "Should resolve to mls 1-1 conversation",
-            attributes: [.senderUserId: userID?.safeForLoggingDescription ?? "<nil>"]
-        )
 
         guard let userID else {
             throw Error.failedToActivateConversation
@@ -349,7 +346,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         and user: ZMUser
     ) async {
 
-        let mlsGroupToWipe: MLSGroupID? = await context.perform {
+        await context.perform {
             WireLogger.conversation.debug(
                 "No common protocols found",
                 attributes: [.senderUserId: user.qualifiedID?.safeForLoggingDescription ?? "<nil>"]
@@ -360,7 +357,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                     "Failed to resolve 1:1 conversation with no common protocol: missing 1:1 conversation for user with id",
                     attributes: [.senderUserId: user.qualifiedID?.safeForLoggingDescription ?? "<nil>"]
                 )
-                return nil
+                return
             }
 
             if !conversation.isForcedReadOnly {
@@ -372,26 +369,8 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
 
                 conversation.isForcedReadOnly = true
                 if user.isAccountDeleted {
-                    return conversation.mlsGroupID
+                    conversation.mlsStatus = .invalid
                 }
-            }
-            return nil
-        }
-
-        if let mlsGroupToWipe {
-            do {
-                WireLogger.mls.info(
-                    "wiping mls group of user",
-                    attributes: .safePublic,
-                    [.mlsGroupID: mlsGroupToWipe.safeForLoggingDescription]
-                )
-                try await mlsProvider.service.wipeGroup(mlsGroupToWipe)
-            } catch {
-                WireLogger.mls.error(
-                    "failed to wipe mls group for deleted user",
-                    attributes: .safePublic,
-                    [.mlsGroupID: mlsGroupToWipe.safeForLoggingDescription]
-                )
             }
         }
     }
