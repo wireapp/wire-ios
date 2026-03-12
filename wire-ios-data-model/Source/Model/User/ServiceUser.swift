@@ -17,14 +17,10 @@
 //
 
 @objc
-public protocol Bot: AnyObject, UserType {}
-
-@objc
-public protocol BotSearchResult: Bot {
+public protocol BotSearchResult: UserType { // TODO: ?
     var summary: String? { get }
 }
 
-public typealias ServiceUser = Bot
 public typealias SearchServiceUser = BotSearchResult
 
 extension ZMUser {

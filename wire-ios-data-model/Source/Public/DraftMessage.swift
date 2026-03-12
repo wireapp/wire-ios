@@ -192,11 +192,9 @@ private extension UserType {
     var userIdentifier: UUID? {
         if let user = self as? ZMUser {
             return user.remoteIdentifier
-        } else if let user = self as? ServiceUser {
-            return user.userIdentifier
+        } else {
+            return nil // TODO: check again
         }
-
-        return nil
     }
 
 }

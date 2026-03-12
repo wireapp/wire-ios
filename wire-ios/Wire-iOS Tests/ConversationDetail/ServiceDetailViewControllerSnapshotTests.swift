@@ -24,7 +24,7 @@ import XCTest
 final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     private var sut: ServiceDetailViewController!
-    private var serviceUser: MockServiceUserType!
+    private var serviceUser: MockUserType!
     private var groupConversation: ZMConversation!
     private var mockSelfUser: MockUserType!
     private var snapshotHelper: SnapshotHelper!
@@ -50,7 +50,7 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     func createSut() {
         sut = ServiceDetailViewController(
-            serviceUser: serviceUser,
+            serviceUser: serviceUser as! Bot,
             actionType: .removeService(groupConversation),
             userSession: UserSessionMock(mockUser: mockSelfUser)
         )

@@ -80,7 +80,7 @@ final class ConversationAvatarViewTests: XCTestCase {
 
     func testThatItRendersASingleServiceUser() {
         // GIVEN
-        let otherUser = MockServiceUserType()
+        let otherUser = MockUserType()
         otherUser.initials = "B"
         otherUser.serviceIdentifier = "serviceIdentifier"
         otherUser.providerIdentifier = "providerIdentifier"
