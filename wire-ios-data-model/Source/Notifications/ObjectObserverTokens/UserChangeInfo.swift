@@ -43,7 +43,6 @@ extension ZMUser: ObjectInSnapshot {
             #keyPath(ZMUser.handle),
             #keyPath(ZMUser.team),
             #keyPath(ZMUser.availability),
-            #keyPath(ZMUser.isAccountDeleted),
             #keyPath(ZMUser.readReceiptsEnabled),
             #keyPath(ZMUser.readReceiptsEnabledChangedRemotely),
             ZMUserKeys.RichProfile,

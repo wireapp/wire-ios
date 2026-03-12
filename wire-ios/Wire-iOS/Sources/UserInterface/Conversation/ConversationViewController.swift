@@ -255,7 +255,6 @@ final class ConversationViewController: UIViewController {
     private func update(conversation: ZMConversation) {
         setupNavigationItem()
         updateOutgoingConnectionVisibility()
-        updateInputBarVisibility()
 
         voiceChannelStateObserverToken = addCallStateObserver()
         conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
