@@ -43,6 +43,14 @@ class FirstTimePage: PageModel {
         app.buttons[Locators.FirstTimePage.notNowOption.rawValue]
     }
 
+    var conversationsButton: XCUIElement {
+        app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
+    }
+
+    var usernameField: XCUIElement {
+        app.descendants(matching: .textField)[Locators.SetUsernamePage.usernameTextField.rawValue].firstMatch
+    }
+
     var handler: (XCTestCase, any NSObjectProtocol)?
 
     // Tap OK button on first time using Wire popup
@@ -61,6 +69,10 @@ class FirstTimePage: PageModel {
 
     func acceptPopup(with testCase: XCTestCase) throws -> ConversationsPage {
         handleNotificationPermissionAlert(testCase: testCase)
+        // Sometimes the OK button take longer to disappear after tapping.
+        if conversationsButton.exists || conversationsButton.waitForExistence(timeout: 10) {
+            conversationsButton.tap()
+        }
         return try ConversationsPage()
     }
 

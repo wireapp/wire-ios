@@ -33,6 +33,8 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
     enum Error: Swift.Error {
         case failedToFetchStoredEvents(Swift.Error)
         case failedToDeleteStoredEvents(Swift.Error)
+        case missingPrivateKeys
+        case missingPrimaryPrivateKey
     }
 
     // MARK: - Properties
@@ -93,43 +95,104 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
     public func persistEventEnvelope(
         _ eventEnvelope: UpdateEventEnvelope,
-        index: Int64
+        index: Int64,
+        publicKeys: EARPublicKeys?
     ) async throws {
+
         try await eventContext.perform { [eventContext, updateEventCoder] in
-            let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
-            storedEventEnvelope.data = try updateEventCoder.encode(eventEnvelope)
-            storedEventEnvelope.sortIndex = index
+            try Self.internalPersistEventEnvelope(
+                updateEventCoder: updateEventCoder,
+                eventContext: eventContext,
+                eventEnvelope: eventEnvelope,
+                index: index,
+                publicKeys: publicKeys
+            )
             try eventContext.save()
         }
     }
 
     public func persistEventEnvelopes(
         _ eventEnvelopes: [UpdateEventEnvelope],
-        index: Int64
+        index: Int64,
+        publicKeys: EARPublicKeys?
     ) async throws {
         try await eventContext.perform { [eventContext, updateEventCoder] in
             var currentIndex = index
+
             for eventEnvelope in eventEnvelopes {
-                let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
-                storedEventEnvelope.data = try updateEventCoder.encode(eventEnvelope)
-                storedEventEnvelope.sortIndex = currentIndex
+                try Self.internalPersistEventEnvelope(
+                    updateEventCoder: updateEventCoder,
+                    eventContext: eventContext,
+                    eventEnvelope: eventEnvelope,
+                    index: currentIndex,
+                    publicKeys: publicKeys
+                )
                 currentIndex += 1
             }
+
             try eventContext.save()
         }
     }
 
     public func fetchStoredEventEnvelopes(
-        limit: UInt
+        limit: UInt,
+        privateKeys: EARPrivateKeys?,
+        backgroundAccessibleOnly: Bool
     ) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)] {
         try await eventContext.perform { [eventContext, updateEventCoder] in
             do {
                 let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+
+                WireLogger.ear.info("fetching stored events. backgroundAccessibleOnly: \(backgroundAccessibleOnly)")
+
+                if backgroundAccessibleOnly {
+                    request.predicate = NSPredicate(
+                        format: "%K == true",
+                        #keyPath(StoredUpdateEventEnvelope.isBackgroundAccessible)
+                    )
+                }
+
                 request.fetchLimit = Int(limit)
                 request.returnsObjectsAsFaults = false
                 let storedEventEnvelopes = try eventContext.fetch(request)
-                return try storedEventEnvelopes.map {
-                    (try updateEventCoder.decode($0.data), $0.objectID)
+                return try storedEventEnvelopes.compactMap { storedEnvelope in
+                    var data = storedEnvelope.data
+
+                    if storedEnvelope.isEncrypted {
+
+                        WireLogger.ear.info("decrypting stored event.")
+
+                        guard let privateKeys else {
+                            WireLogger.ear.critical(
+                                "Failed to decrypt stored event: no private keys. Private keys MUST be available to decrypt encrypted stored events.",
+                                attributes: .safePublic, .incrementalSync
+                            )
+                            throw Error.missingPrivateKeys
+                        }
+
+                        let key: SecKey!
+
+                        if storedEnvelope.isBackgroundAccessible {
+                            key = privateKeys.secondary
+                        } else {
+                            guard let primaryKey = privateKeys.primary else {
+                                WireLogger.ear.critical(
+                                    "Failed to decrypt stored event: no private primary key. Primary key MUST be available to decrypt non-background-accessible event",
+                                    attributes: .safePublic, .incrementalSync
+                                )
+                                throw Error.missingPrimaryPrivateKey
+                            }
+                            key = primaryKey
+                        }
+
+                        data = try EAREncryptionHelper.decrypt(
+                            data: data,
+                            privateKey: key
+                        )
+
+                    }
+
+                    return (try updateEventCoder.decode(data), storedEnvelope.objectID)
                 }
             } catch {
                 throw Error.failedToFetchStoredEvents(error)
@@ -220,4 +283,38 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         }
     }
 
+    // MARK: - Private Helpers
+
+    private static func internalPersistEventEnvelope(
+        updateEventCoder: StorableUpdateEventCoder,
+        eventContext: NSManagedObjectContext,
+        eventEnvelope: UpdateEventEnvelope,
+        index: Int64,
+        publicKeys: EARPublicKeys?
+    ) throws {
+        let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
+
+        var data = try updateEventCoder.encode(eventEnvelope)
+
+        let isBackgroundAccessible = eventEnvelope.isBackgroundAccessible
+
+        if let publicKeys {
+            let key = isBackgroundAccessible ? publicKeys.secondary : publicKeys.primary
+
+            WireLogger.ear.debug("encrypting event. backgroundAccessible: \(isBackgroundAccessible)")
+
+            data = try EAREncryptionHelper.encrypt(
+                data: data,
+                publicKey: key
+            )
+
+            storedEventEnvelope.isEncrypted = true
+        } else {
+            storedEventEnvelope.isEncrypted = false
+        }
+
+        storedEventEnvelope.isBackgroundAccessible = isBackgroundAccessible
+        storedEventEnvelope.data = data
+        storedEventEnvelope.sortIndex = index
+    }
 }

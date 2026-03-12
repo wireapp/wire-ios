@@ -107,7 +107,8 @@ final class ZClientControllerBuilder {
             driveConversationLocalStore: driveConversationLocalStore,
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
-            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider)
+            contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
+            analyticsProvider: { [self] in userSession.analyticsEventTracker }
         )
     }
 
@@ -151,13 +152,34 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
 
         return await context.perform {
             driveEnabledConversations.reduce(into: [WireDriveConversation]()) { result, conversation in
-                let participants = conversation.participants.compactMap(\.name)
                 if let name = conversation.name {
-                    result.append(WireDriveConversation(
+                    let participants: [WireDriveConversation.Participant] = conversation.participants
+                        .compactMap { item -> WireDriveConversation.Participant? in
+                            guard let id = item.remoteIdentifier, let domain = item.domain else { return nil }
+
+                            return .init(
+                                handle: item.handle ?? "-",
+                                displayName: item.name ?? "-",
+                                isSelfUser: item.isSelfUser,
+                                id: id.uuidString + "@" + domain,
+                                iconData: WireDriveConversation.Participant.IconData(
+                                    initials: item.initials ?? "",
+                                    color: item.accentColor,
+                                    image: item.previewImageData.flatMap(UIImage.init)
+                                )
+                            )
+                        }
+
+                    let kind: WireDriveConversation.Kind = conversation.isChannel ? .channel : .group
+
+                    let driveConversation = WireDriveConversation(
                         id: conversation.wireDriveCellName,
                         name: name,
-                        participants: participants
-                    ))
+                        kind: kind,
+                        participants: Set(participants)
+                    )
+
+                    result.append(driveConversation)
                 }
             }
         }

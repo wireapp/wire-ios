@@ -39,6 +39,7 @@ final class FilesViewModelTests {
         let nodesApi = MockNodesAPIProtocol()
         nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
+        nodesApi.getDriveConversations_MockValue = [.mocked()]
 
         let editingURLRepository = MockWireDriveEditingURLRepositoryProtocol()
         editingURLRepository.getEditorURLId_MockValue = nil
@@ -84,6 +85,7 @@ final class FilesViewModelTests {
                 deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesApi),
                 updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesApi),
                 updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesApi),
+                getDriveConversations: WireDriveGetConversationsUseCase<MockNodesAPIProtocol>(nodesAPI: nodesApi)
             ),
             isCellsStatePending: false,
             localAssetRepository: localAssetRepository,
@@ -177,7 +179,8 @@ final class FilesViewModelTests {
                 tags: [],
                 isEditable: false,
                 publicLinkID: nil,
-                conversationName: nil
+                conversationName: nil,
+                size: nil
             )],
             [], // Clears items
             [FilesViewItem(
@@ -192,7 +195,8 @@ final class FilesViewModelTests {
                 tags: [],
                 isEditable: false,
                 publicLinkID: nil,
-                conversationName: nil
+                conversationName: nil,
+                size: nil
             )]
         ])
     }
@@ -244,7 +248,8 @@ final class FilesViewModelTests {
                 tags: [],
                 isEditable: false,
                 publicLinkID: nil,
-                conversationName: nil
+                conversationName: nil,
+                size: nil
             ),
             FilesViewItem(
                 id: node2.id,
@@ -258,7 +263,8 @@ final class FilesViewModelTests {
                 tags: [],
                 isEditable: false,
                 publicLinkID: nil,
-                conversationName: nil
+                conversationName: nil,
+                size: nil
             )
         ])
     }
@@ -300,7 +306,8 @@ final class FilesViewModelTests {
                 tags: [],
                 isEditable: false,
                 publicLinkID: nil,
-                conversationName: nil
+                conversationName: nil,
+                size: nil
             ),
             FilesViewItem(
                 id: node2.id,
@@ -314,7 +321,8 @@ final class FilesViewModelTests {
                 tags: [],
                 isEditable: false,
                 publicLinkID: nil,
-                conversationName: nil
+                conversationName: nil,
+                size: nil
             ),
             FilesViewItem(
                 id: node3.id,
@@ -328,7 +336,8 @@ final class FilesViewModelTests {
                 tags: [],
                 isEditable: false,
                 publicLinkID: nil,
-                conversationName: nil
+                conversationName: nil,
+                size: nil
             )
         ])
     }
@@ -455,7 +464,8 @@ final class FilesViewModelTests {
                     tags: [],
                     isEditable: false,
                     publicLinkID: nil,
-                    conversationName: nil
+                    conversationName: nil,
+                    size: nil
                 ),
                 FilesViewItem(
                     id: nodeC.id,
@@ -469,7 +479,8 @@ final class FilesViewModelTests {
                     tags: [],
                     isEditable: false,
                     publicLinkID: nil,
-                    conversationName: nil
+                    conversationName: nil,
+                    size: nil
                 ),
                 FilesViewItem(
                     id: nodeD.id,
@@ -483,7 +494,8 @@ final class FilesViewModelTests {
                     tags: [],
                     isEditable: false,
                     publicLinkID: nil,
-                    conversationName: nil
+                    conversationName: nil,
+                    size: nil
                 ),
                 FilesViewItem(
                     id: nodeA.id,
@@ -497,7 +509,8 @@ final class FilesViewModelTests {
                     tags: [],
                     isEditable: false,
                     publicLinkID: nil,
-                    conversationName: nil
+                    conversationName: nil,
+                    size: nil
                 )
             ]
         )
@@ -557,6 +570,41 @@ final class FilesViewModelTests {
 
         // then
         #expect(sut.alert == expectedAlert)
+    }
+
+    @Test
+    func testOfflineBarIsHiddenWhenItemsAreEmpty() {
+        sut.connectionState = .offline
+        sut.state = .received(items: [])
+
+        #expect(sut.shouldShowOfflineBar == false)
+    }
+
+    @Test
+    func testOfflineBarIsShownWhenOfflineWithItems() {
+        let nodeA = WireDriveNode.fixture(path: "foo/aa.xyz")
+        let now = Date()
+
+        sut.connectionState = .offline
+        sut.state = .received(items: [
+            FilesViewItem(
+                id: nodeA.id,
+                eTag: "eTag",
+                kind: .file,
+                name: "aaa.xyz",
+                filePath: "foo/aaa.xyz",
+                ownedBy: nil,
+                modifiedAt: now,
+                icon: .other,
+                tags: [],
+                isEditable: false,
+                publicLinkID: nil,
+                conversationName: nil,
+                size: nil
+            )
+        ])
+
+        #expect(sut.shouldShowOfflineBar == true)
     }
 
 }

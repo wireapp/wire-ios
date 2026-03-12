@@ -116,7 +116,7 @@ final class ConversationViewController: UIViewController {
     var participantsController: UIViewController? {
         get async {
 
-            let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+            let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
             let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
                 .isFeatureEnabled(.apps) ?? false
 
@@ -478,15 +478,15 @@ final class ConversationViewController: UIViewController {
 
         // uncomment code when feature prod ready
         if userSession.isWireDriveEnabled, conversation.isWireDriveEnabled {
-            actions.append(
-                UIAction(
-                    title: L10n.Localizable.Conversation.Action.files,
-                    image: UIImage(resource: .files),
-                    handler: { [weak self] _ in
-                        self?.onFilesButtonPressed(nil)
-                    }
-                )
+            let filesAction = UIAction(
+                title: L10n.Localizable.Conversation.Action.files,
+                image: UIImage(resource: .files),
+                handler: { [weak self] _ in
+                    self?.onFilesButtonPressed(nil)
+                }
             )
+            filesAction.accessibilityIdentifier = Locators.ActiveConversationPage.sharedDriveButton.rawValue
+            actions.append(filesAction)
         }
 
         if shouldShowCollectionsButton {
@@ -862,10 +862,9 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         }
     }
 
-    @MainActor
     @objc
     private func onConversationDetailsPressed() {
-        Task {
+        Task { @MainActor in
             if let superview = titleView.superview, let participantsController = await participantsController {
                 presentParticipantsViewController(participantsController, from: superview)
             }

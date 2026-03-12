@@ -25,22 +25,23 @@ class E2EIVerificationStatusServiceTests: XCTestCase {
 
     var sut: E2EIVerificationStatusService!
     var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
-    var mockSafeCoreCrypto: MockSafeCoreCrypto!
+    var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     override func setUp() {
         super.setUp()
 
         mockCoreCryptoContext = MockCoreCryptoContextProtocol()
-        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCryptoContext: mockCoreCryptoContext)
+        mockCoreCrypto = MockCoreCryptoProtocol()
+        mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
         sut = E2EIVerificationStatusService(coreCryptoProvider: mockCoreCryptoProvider)
     }
 
     override func tearDown() {
         mockCoreCryptoContext = nil
-        mockSafeCoreCrypto = nil
+        mockCoreCrypto = nil
         mockCoreCryptoProvider = nil
 
         sut = nil

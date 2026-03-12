@@ -134,7 +134,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
         var storedEnvelopes: [(UpdateEventEnvelope, Int64)] = []
 
         // decrypt
-        try await coreCryptoProvider.coreCrypto().perform { coreCryptoContext in
+        try await coreCryptoProvider.coreCrypto().transaction { coreCryptoContext in
             for envelope in envelopes {
                 var envelope = envelope
                 envelope.events = await decryptEnvelope(envelope, in: coreCryptoContext)
@@ -181,7 +181,8 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
                 attributes: [.eventEnvelopeID: envelope.id] + logAttributes
             )
             index = try await updateEventsStore.indexOfLastEventEnvelope() + 1
-            try await updateEventsStore.persistEventEnvelope(envelope, index: index)
+            // TODO: [WPB-23558] Support EAR in incremental sync v2
+            try await updateEventsStore.persistEventEnvelope(envelope, index: index, publicKeys: nil)
         } catch {
             logger.error(
                 "failed to store live event envelope: \(String(describing: error))",

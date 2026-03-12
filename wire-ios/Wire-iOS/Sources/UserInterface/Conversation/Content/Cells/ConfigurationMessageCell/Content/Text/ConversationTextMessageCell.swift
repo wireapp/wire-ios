@@ -22,7 +22,7 @@ import WireLocators
 import WireMessagingDomain
 import WireSyncEngine
 
-final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
+final class ConversationTextMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
@@ -49,7 +49,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             rhs: ConversationTextMessageCell.Configuration
         ) -> Bool {
             lhs.isObfuscated == rhs.isObfuscated &&
-                lhs.attributedText.description == rhs.attributedText.description &&
+                lhs.attributedText.isEqual(to: rhs.attributedText) &&
                 lhs.mentions.elementsEqual(
                     rhs.mentions,
                     by: {
@@ -61,7 +61,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         }
     }
 
-    private lazy var messageTextView: LinkInteractionTextView = {
+    lazy var messageTextView: LinkInteractionTextView = {
         let view = LinkInteractionTextView()
 
         view.isEditable = false
@@ -177,6 +177,9 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             detectedLinkForegroundColor = UIColor.accent()
         }
 
+        // Create a set of mention ranges for quick lookup to avoid applying underline to mentions
+        let mentionRanges: Set<NSRange> = Set(object.mentions.map(\.range))
+
         // Apply styling for Mentions (NO UNDERLINE)
         for mention in object.mentions {
             let mentionRange = mention.range
@@ -195,20 +198,49 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
             let linkRange = result.range
             guard linkRange.location + linkRange.length <= mutableAttributedText.length else { continue }
 
-            // IMPORTANT: Check for overlap with mentions.
-            // If a detected link overlaps with a mention, the mention's styling should take precedence.
-            let isOverlappingMention = object.mentions.contains { mention in
-                let mentionRange = mention.range // Access range from the Mention object
-                return NSIntersectionRange(linkRange, mentionRange).length > 0
+            let isOverlappingMention = mentionRanges.contains { NSIntersectionRange(linkRange, $0).length > 0 }
+
+            let url: URL?
+            switch result.resultType {
+            case .address:
+                let addressQuery = result.addressComponents?.values.joined(separator: "+")
+                let encoded = addressQuery?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+                url = URL(string: "http://maps.apple.com/?q=\(encoded)")
+            case .phoneNumber:
+                url = result.phoneNumber.flatMap { URL(string: "tel:\($0)") }
+            default:
+                url = result.url
             }
 
-            if let link = result.url, !isOverlappingMention {
+            if let url, !isOverlappingMention {
                 mutableAttributedText.addAttributes([
                     .foregroundColor: detectedLinkForegroundColor,
                     .underlineStyle: NSUnderlineStyle.single.rawValue,
-                    .link: link
+                    .link: url
                 ], range: linkRange)
             }
+        }
+
+        mutableAttributedText.enumerateAttribute(
+            .link,
+            in: NSRange(location: 0, length: mutableAttributedText.length),
+            options: []
+        ) { value, range, _ in
+            guard let link = value as? URL else {
+                return
+            }
+
+            let isCoveredByMention = mentionRanges.contains { NSIntersectionRange(range, $0).length > 0 }
+
+            guard !isCoveredByMention else {
+                return
+            }
+
+            mutableAttributedText.addAttributes([
+                .foregroundColor: detectedLinkForegroundColor,
+                .underlineStyle: NSUnderlineStyle.single.rawValue,
+                .link: link
+            ], range: range)
         }
 
         messageTextView.attributedText = mutableAttributedText
@@ -244,6 +276,30 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     }
 
+    func openMention(_ mention: Mention) -> Bool {
+        delegate?.conversationMessageWantsToOpenUserDetails(
+            self,
+            user: mention.user,
+            sourceView: messageTextView,
+            frame: selectionRect
+        )
+        return true
+    }
+
+    private func setupAccessibility(accessibilityLabel: String) {
+        typealias Conversation = L10n.Accessibility.Conversation
+
+        isAccessibilityElement = false
+        container?.isAccessibilityElement = true
+        container?.accessibilityLabel = accessibilityLabel
+        container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
+    }
+}
+
+// MARK: - TextViewInteractionDelegate
+
+extension ConversationTextMessageCell: TextViewInteractionDelegate {
+
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
         // Open mention link
         if url.isMention {
@@ -259,16 +315,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         return url.open()
     }
 
-    func openMention(_ mention: Mention) -> Bool {
-        delegate?.conversationMessageWantsToOpenUserDetails(
-            self,
-            user: mention.user,
-            sourceView: messageTextView,
-            frame: selectionRect
-        )
-        return true
-    }
-
     func textViewDidLongPress(_ textView: LinkInteractionTextView) {
         if !UIMenuController.shared.isMenuVisible {
             if !Settings.isClipboardEnabled {
@@ -277,15 +323,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
                 menuPresenter?.showMenu()
             }
         }
-    }
-
-    private func setupAccessibility(accessibilityLabel: String) {
-        typealias Conversation = L10n.Accessibility.Conversation
-
-        isAccessibilityElement = false
-        container?.isAccessibilityElement = true
-        container?.accessibilityLabel = accessibilityLabel
-        container?.accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
     }
 }
 
@@ -379,7 +416,14 @@ extension ConversationTextMessageCellDescription {
             isObfuscated: message.isObfuscated,
             accentColor: (selfUser.zmAccentColor ?? .default).accentColor
         )
-        let detectedLinks = findDetectedLinks(in: messageText)
+
+        var allDetectedLinks: [NSTextCheckingResult] = []
+
+        let embeddedLinks = ConversationTextMessageCellDescription.findEmbeddedLinks(in: textMessageData)
+        allDetectedLinks.append(contentsOf: embeddedLinks)
+
+        let autoDetectedLinks = ConversationTextMessageCellDescription.findDetectedLinks(in: messageText)
+        allDetectedLinks.append(contentsOf: autoDetectedLinks)
 
         // Search queries
         if !searchQueries.isEmpty {
@@ -414,7 +458,7 @@ extension ConversationTextMessageCellDescription {
                 isObfuscated: message.isObfuscated,
                 userSession: userSession,
                 mentions: textMessageData.mentions,
-                detectedLinks: detectedLinks
+                detectedLinks: allDetectedLinks
             )
             cells.append(AnyConversationMessageCellDescription(textCell))
         }
@@ -455,6 +499,36 @@ extension ConversationTextMessageCellDescription {
             options: [],
             range: scanRange
         )
+    }
+
+    static func findEmbeddedLinks(in textMessageData: TextMessageData) -> [NSTextCheckingResult] {
+        guard let messageTextString = textMessageData.messageText else {
+            return []
+        }
+        guard let linkPreview = textMessageData.linkPreview,
+              let originalURLString = textMessageData.linkPreview?.originalURLString,
+              let url = URL(string: originalURLString),
+              let scheme = url.scheme,
+              ["http", "https"].contains(scheme.lowercased()) else {
+            return []
+        }
+        let expectedRange = NSRange(
+            location: linkPreview.characterOffsetInText,
+            length: linkPreview.textLengthInMessage
+        )
+        guard expectedRange.location >= 0,
+              expectedRange.length >= 0,
+              expectedRange.location + expectedRange.length <= messageTextString.count else {
+            return []
+        }
+
+        let nsMessageText = messageTextString as NSString
+        let textAtRange = nsMessageText.substring(with: expectedRange)
+        guard textAtRange == originalURLString else {
+            return []
+        }
+        let linkResult = NSTextCheckingResult.linkCheckingResult(range: expectedRange, url: url)
+        return [linkResult]
     }
 }
 

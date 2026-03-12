@@ -21,10 +21,22 @@ import Foundation
 
 class ConversationTests_DraftMessage: ZMConversationTestsBase {
 
+    private var earMessageEncryptionService: EARMessageEncryptionService!
+    private var earStorage: EARStorage!
+
     override func setUp() {
         super.setUp()
 
         createSelfClient(onMOC: uiMOC)
+        earStorage = EARStorage(userID: UUID(), sharedUserDefaults: .temporary())
+        earMessageEncryptionService = EARMessageEncryptionService(earStorage: earStorage)
+        uiMOC.earMessageEncryptionService = earMessageEncryptionService
+    }
+
+    override func tearDown() {
+        earStorage = nil
+        earMessageEncryptionService = nil
+        super.tearDown()
     }
 
     // MARK: Persist encrypted draft message
@@ -32,8 +44,8 @@ class ConversationTests_DraftMessage: ZMConversationTestsBase {
     // @SF.Storage @TSFI.FS-IOS @TSFI.Enclave-IOS @S0.1 @S0.2
     func testThatItEncryptsDraftMessage_WhenEncryptionAtRestIsEnabled() {
         // GIVEN
-        uiMOC.encryptMessagesAtRest = true
-        uiMOC.databaseKey = validDatabaseKey
+        setEAREnabled(true)
+        earMessageEncryptionService.setDatabaseKey(validDatabaseKey)
 
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
@@ -48,8 +60,8 @@ class ConversationTests_DraftMessage: ZMConversationTestsBase {
     // @SF.Storage @TSFI.FS-IOS @TSFI.Enclave-IOS @S0.1 @S0.2
     func testThatItDiscardsDraftMessage_WhenEncryptionAtRestIsEnabled_And_DatabaseKeyIsMissing() {
         // GIVEN
-        uiMOC.encryptMessagesAtRest = true
-        uiMOC.databaseKey = nil
+        setEAREnabled(true)
+        earMessageEncryptionService.setDatabaseKey(nil)
 
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
@@ -65,35 +77,37 @@ class ConversationTests_DraftMessage: ZMConversationTestsBase {
 
     func testThatEncryptedDraftMessageCanBeAccessed_WhenDatabaseKeyIsAvailable() {
         // GIVEN
-        uiMOC.encryptMessagesAtRest = true
-        uiMOC.databaseKey = validDatabaseKey
+        setEAREnabled(true)
+        earMessageEncryptionService.setDatabaseKey(validDatabaseKey)
 
         let draftText = "Draft test"
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.draftMessage = DraftMessage(text: draftText, mentions: [], quote: nil)
 
-        // WHEN
-        XCTAssertNotNil(uiMOC.databaseKey)
-
-        // THEN
+        // WHEN / THEN
         XCTAssertEqual(conversation.draftMessage?.text, draftText)
     }
 
     // @SF.Storage @TSFI.FS-IOS @TSFI.Enclave-IOS @S0.1 @S0.2
     func testThatEncryptedDraftMessageCantBeAccessed_WhenDatabaseKeyIsMissing() {
         // GIVEN
-        uiMOC.encryptMessagesAtRest = true
-        uiMOC.databaseKey = validDatabaseKey
+        setEAREnabled(true)
+        earMessageEncryptionService.setDatabaseKey(validDatabaseKey)
 
         let draftText = "Draft test"
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.draftMessage = DraftMessage(text: draftText, mentions: [], quote: nil)
 
         // WHEN
-        uiMOC.databaseKey = nil
+        earMessageEncryptionService.setDatabaseKey(nil)
 
         // THEN
         XCTAssertNil(conversation.draftMessage)
+    }
+
+    private func setEAREnabled(_ enabled: Bool) {
+        uiMOC.encryptMessagesAtRest = enabled
+        earStorage.enableEAR(enabled)
     }
 
 }

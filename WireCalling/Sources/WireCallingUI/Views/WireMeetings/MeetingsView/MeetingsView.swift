@@ -50,7 +50,7 @@ struct MeetingsView: View {
         .onAppear {
             viewModel.loadInitialData()
         }
-        .onChange(of: viewModel.selectedTab) { newValue in
+        .onChange(of: viewModel.selectedTab) { _, newValue in
             if newValue == .past {
                 viewModel.refreshPastMeetings()
             } else {

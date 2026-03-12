@@ -245,9 +245,9 @@ extension CoreDataFixture {
         serviceUser.serviceIdentifier = UUID.create().transportString()
         serviceUser.providerIdentifier = UUID.create().transportString()
         uiMOC.saveOrRollback()
-
         return serviceUser
     }
+
 }
 
 protocol CoreDataFixtureTestHelper {

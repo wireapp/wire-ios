@@ -68,6 +68,14 @@ public enum Locators {
         case accountProfileImageView
         case status
         case loadBar
+        case addToFavourite = "Add to Favorites"
+        case removeFromFavourite = "Remove from Favorites"
+        case filterConversations = "Filter conversations"
+        case filterByFavourites = "Show all favorite conversations"
+        case filterByOneOnOneConversation = "Show all one on one conversations"
+        case textFilteredByFavourites = "Filtered by Favorites"
+        case textFilteredByOneOnOne = "Filtered by 1:1 Conversations"
+        case connectionRequestsCell
     }
 
     public enum SettingsPage: String {
@@ -102,10 +110,14 @@ public enum Locators {
         case authorName
         case conversationTitleButton
         case conversationDetailsButton
+        case sharedDriveButton
+        case ephemeralTimeSelectionButton
         case message
         case imageCell = "ImageCell"
         case mentionButton
         case userCellName
+        case labelSharedDriveON = "Shared Drive is on"
+        case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
     }
 
     public enum BackupOrRestorePage: String {
@@ -159,6 +171,7 @@ public enum Locators {
 
         case groupNameField
         case newGroupNextButton
+        case sharedDriveSwitch
     }
 
     public enum CreatePersonalAccountFormPage: String {
@@ -290,6 +303,7 @@ public enum Locators {
     public enum IncomingCallPage: String {
 
         case acceptCall = "Accept"
+        case turnOffMicrophone = "Microphone"
     }
 
     public enum OngoingCallPage: String {
@@ -306,5 +320,14 @@ public enum Locators {
 
         case classificationBanner = "ClassificationBanner"
 
+    }
+
+    public enum WireDrive {
+
+        public enum FilesFilterPage: String {
+            case saveButton
+            case cancelButton
+            case removeFilterButton
+        }
     }
 }

@@ -7,7 +7,7 @@ let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", p
 let package = Package(
     name: "WireUI",
     defaultLocalization: "en",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("17.0"), .macOS(.v12)],
     products: [
         .library(name: "WireAccountImageUI", targets: ["WireAccountImageUI"]),
         .library(name: "WireConversationListUI", targets: ["WireConversationListUI"]),
@@ -78,7 +78,7 @@ let package = Package(
 
         .target(
             name: "WireMainNavigationUI",
-            dependencies: ["WireLocators"]
+            dependencies: ["WireLocators", "WireDesign"]
         ),
         .testTarget(name: "WireMainNavigationUITests", dependencies: ["WireMainNavigationUI"]),
 

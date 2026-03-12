@@ -437,7 +437,7 @@ public final class MessageSender: MessageSenderInterface {
                     mlsService: mlsService
                 )
             } else {
-                throw CoreCryptoError.Mls(.MessageRejected(reason: reason))
+                throw CoreCryptoError.Mls(mlsError: .MessageRejected(reason: reason))
             }
 
         }

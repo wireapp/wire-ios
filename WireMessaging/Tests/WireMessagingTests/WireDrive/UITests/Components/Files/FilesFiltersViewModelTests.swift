@@ -28,15 +28,14 @@ import WireMessagingDomain
 final class FilesFiltersViewModelTests {
 
     private let nodesRepository = MockWireDriveNodesRepositoryProtocol()
-    private let sut: FilesFiltersViewModel!
+    private let sut: FilesFilterBy.TagsView.ViewModel!
 
     init() {
         let nodesApi = MockNodesAPIProtocol()
         nodesApi.getAllTags_MockMethod = { mockTags }
-        self.sut = FilesFiltersViewModel(
+        self.sut = FilesFilterBy.TagsView.ViewModel(
             fetchTagsUseCase: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesApi),
-            savedTags: [Scaffolding.savedTag],
-            accentColorProvider: { .default }
+            selectedTags: [Scaffolding.savedTag]
         )
     }
 
@@ -46,19 +45,7 @@ final class FilesFiltersViewModelTests {
         await sut.fetch()
 
         // then
-        #expect(sut.presentedTags.map(\.name) == Scaffolding.expectedTagsFirstBatch)
-    }
-
-    @Test
-    func morePresentedTags() async throws {
-        // given
-        await sut.fetch()
-
-        // when
-        sut.showMore()
-
-        // then
-        #expect(sut.presentedTags.map(\.name) == Scaffolding.expectedTagsSecondBatch)
+        #expect(sut.presentedTags == Scaffolding.expectedTags)
     }
 
     @Test
@@ -77,43 +64,60 @@ final class FilesFiltersViewModelTests {
         await sut.fetch()
 
         // when
-        sut.selectTag(sut.presentedTags[1])
+        sut.toggleTag(sut.presentedTags[1])
 
         // then
         let presentedTags = [sut.presentedTags[0], sut.presentedTags[1]]
-        #expect(sut.selectedTags == presentedTags)
-    }
-
-    @Test
-    func hasMore() async throws {
-        // when
-        await sut.fetch()
-
-        // then
-        #expect(sut.hasMore)
+        #expect(sut.selectedTags == Set(presentedTags))
     }
 
     @Test
     func clearAll() async throws {
         // given
         await sut.fetch()
-        sut.selectTag(sut.presentedTags[1])
-        sut.selectTag(sut.presentedTags[2])
+        sut.toggleTag(sut.presentedTags[1])
+        sut.toggleTag(sut.presentedTags[2])
         #expect(sut.selectedTags.count == 3)
 
         // when
-        await sut.clearAll()
+        sut.clearAll()
 
         // then
         #expect(sut.selectedTags.isEmpty)
     }
 
     private enum Scaffolding {
-        static let batchCount = 7
-        static let expectedTagsFirstBatch = Array(mockTags.filter { !$0.isEmpty }.prefix(batchCount))
-        static let expectedTagsSecondBatch = Array(mockTags.filter { !$0.isEmpty }.prefix(batchCount * 2))
         static let savedTag = "Urgent"
         static let selectedTag = "Marketing"
+
+        static let expectedTags = mockTags
+            .filter { !$0.isEmpty }
+            .reduce(into: [String](), removingDuplicates)
+            .sorted { lhs, rhs in
+                let lhsSelected = lhs.localizedCaseInsensitiveCompare(savedTag) == .orderedSame
+                let rhsSelected = rhs.localizedCaseInsensitiveCompare(savedTag) == .orderedSame
+
+                if lhsSelected != rhsSelected {
+                    return lhsSelected
+                }
+
+                if lhs.containsEmoji != rhs.containsEmoji {
+                    return !lhs.containsEmoji
+                }
+
+                return lhs.localizedCaseInsensitiveCompare(rhs) == .orderedAscending
+            }
+
+        private static func removingDuplicates(tags: inout [String], tag: String) {
+            let normalized = tag.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+            let isDuplicate = tags.contains {
+                $0.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == normalized
+            }
+
+            if !isDuplicate {
+                tags.append(tag)
+            }
+        }
     }
 
 }

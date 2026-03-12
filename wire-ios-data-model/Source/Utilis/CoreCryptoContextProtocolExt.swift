@@ -198,11 +198,16 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
         customConfiguration: WireCoreCryptoUniffi.CustomConfiguration
     ) async throws -> WireCoreCryptoUniffi.WelcomeBundle
 
-    /// See [core_crypto::transaction_context::TransactionContext::proteus_cryptobox_migrate]
-    func proteusCryptoboxMigrate(path: String) async throws
-
     /// See [core_crypto::transaction_context::TransactionContext::proteus_decrypt]
     func proteusDecrypt(sessionId: String, ciphertext: Data) async throws -> Data
+
+    /// Decrypt a message whether or not the proteus session already exists, and saves the session.
+    ///
+    /// This is intended to replace simple usages of `proteusDecrypt`.
+    ///
+    /// However, when decrypting large numbers of messages in a single session, the existing methods
+    /// may be more efficient.
+    func proteusDecryptSafe(sessionId: String, ciphertext: Data) async throws -> Data
 
     /// See [core_crypto::transaction_context::TransactionContext::proteus_encrypt]
     func proteusEncrypt(sessionId: String, plaintext: Data) async throws -> Data
@@ -231,9 +236,18 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     /// See [core_crypto::proteus::ProteusCentral::last_resort_prekey_id]
     func proteusLastResortPrekeyId() throws -> UInt16
 
+    /// Creates a new Proteus prekey with the given id and returns the CBOR-serialized version of the prekey bundle
+    ///
+    /// Warning: The Proteus client **MUST** be initialized with `proteus_init` first or an error will be returned
+    ///
     /// See [core_crypto::transaction_context::TransactionContext::proteus_new_prekey]
     func proteusNewPrekey(prekeyId: UInt16) async throws -> Data
 
+    /// Creates a new Proteus prekey with an automatically incremented ID and returns the CBOR-serialized version of the
+    /// prekey bundle
+    ///
+    /// Warning: The Proteus client **MUST** be initialized with `proteus_init` first or an error will be returned
+    ///
     /// See [core_crypto::transaction_context::TransactionContext::proteus_new_prekey_auto]
     func proteusNewPrekeyAuto() async throws -> WireCoreCryptoUniffi.ProteusAutoPrekeyBundle
 
