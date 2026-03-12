@@ -66,7 +66,7 @@ class UserDetailsPage: PageModel {
         closeProfileButton.tap()
         return try NewConversationPage()
     }
-    
+
     func removeParticipantFromConversation() throws -> ConversationDetailsPage {
         moreActionsButton.tap()
         removeFromConversationButton.tap()
@@ -83,7 +83,7 @@ class UserDetailsPage: PageModel {
         connectButton.tap()
         return try ActiveConversationPage()
     }
-    
+
     func tapConnect() throws -> Self {
         connectButton.tap()
         return self

@@ -43,7 +43,7 @@ class RemoveUserTests: WireUITestCase {
             .tapConnect()
             .closeProfilePage()
             .closeNewConversationPage()
-        
+
         // here we logout member2 to avoid receiving event in other session ->
         // TODO: [WPB-23949] avoid logout once crash is resolved
         try ConversationsPage()
@@ -62,7 +62,6 @@ class RemoveUserTests: WireUITestCase {
             .openConversation()
             .sendMessage("test")
 
-
         // WHEN
         try await deleteMember(member2)
 
@@ -75,7 +74,6 @@ class RemoveUserTests: WireUITestCase {
         )
     }
 
-    
     /// Test when a team member is removed, the 1:1 with the user is marked as readonly on an active conversation
     @MainActor
     func disabled_testRemoveTeamMemberAndActiveConversationUpdated() async throws {

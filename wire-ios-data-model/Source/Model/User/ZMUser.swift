@@ -525,7 +525,7 @@ public extension ZMUser {
         }
 
         conversations.forEach { conversation in
-            WireLogger.conversation.debug("inserting message for user removal from team")
+            WireLogger.conversation.debug("inserting message for user removal")
             conversation.appendUserRemovedFromTeamSystemMessage(user: self, at: timestamp)
 
             // could update the conversation state here and delete mls

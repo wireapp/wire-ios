@@ -253,50 +253,63 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             )
         }
 
-        let allGroupConversations = await context.perform {
+        let allConversations = await context.perform {
             // swiftformat:disable:next redundantProperty
-            let allGroupConversations: [ZMConversation] = user.participantRoles.compactMap {
-                guard $0.conversation?.conversationType == .group else {
-                    return nil
-                }
-
-                return $0.conversation
-            }
-
-            return allGroupConversations
+            user.participantRoles.compactMap(\.conversation)
         }
 
-        for conversation in allGroupConversations {
-            let (userTeam, isTeamMember, conversationTeam, conversationID, conversationDomain) = await context.perform {
+        for conversation in allConversations {
+            let (
+                userTeam,
+                isTeamMember,
+                conversationTeam,
+                conversationID,
+                conversationDomain,
+                conversationType
+            ) = await context.perform {
                 (
                     user.team,
                     user.isTeamMember,
                     conversation.team,
                     conversation.remoteIdentifier as UUID,
-                    conversation.domain
+                    conversation.domain,
+                    conversation.conversationType
                 )
             }
 
-            if isTeamMember, conversationTeam == userTeam {
+            if conversationType == .group {
+                if isTeamMember, conversationTeam == userTeam {
 
-                let systemMessageType: SystemMessageType = .teamMemberRemoved(
-                    member: (id, domain),
-                    date: date
-                )
+                    let systemMessageType: SystemMessageType = .teamMemberRemoved(
+                        member: (id, domain),
+                        date: date
+                    )
 
-                await messageLocalStore.addSystemMessage(
-                    messageType: systemMessageType,
-                    conversationID: conversationID,
-                    conversationDomain: conversationDomain
-                )
+                    await messageLocalStore.addSystemMessage(
+                        messageType: systemMessageType,
+                        conversationID: conversationID,
+                        conversationDomain: conversationDomain
+                    )
 
-            } else {
+                } else {
 
-                let systemMessageType: SystemMessageType = .participantsRemoved(
-                    participants: [(id, domain)],
-                    sender: (id, domain),
-                    date: date
-                )
+                    let systemMessageType: SystemMessageType = .participantsRemoved(
+                        participants: [(id, domain)],
+                        sender: (id, domain),
+                        date: date
+                    )
+
+                    await messageLocalStore.addSystemMessage(
+                        messageType: systemMessageType,
+                        conversationID: conversationID,
+                        conversationDomain: conversationDomain
+                    )
+                }
+
+            } else if conversationType == .oneOnOne {
+
+                // insert User is no longer available system message
+                let systemMessageType: SystemMessageType = .userDeleted(sender: (id, domain))
 
                 await messageLocalStore.addSystemMessage(
                     messageType: systemMessageType,
@@ -306,6 +319,9 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             }
 
             await context.perform {
+                if conversationType == .oneOnOne, conversation.messageProtocol.isOne(of: .mls, .mixed) {
+                    conversation.mlsStatus = .invalid
+                }
                 conversation.removeParticipantAndUpdateConversationState(
                     user: user,
                     initiatingUser: user
