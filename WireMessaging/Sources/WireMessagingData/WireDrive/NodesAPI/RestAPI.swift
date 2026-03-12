@@ -501,14 +501,16 @@ private extension WireDriveGetNodesRequest {
                 nil
             }
 
-            if searchTerm != nil {
-                request.sortField = "mtime"
-                request.sortDirDesc = true
+            if let sortField, let sortDirDesc {
+                request.sortField = sortField
+                request.sortDirDesc = sortDirDesc
             }
 
             request.filters = RestLookupFilter(
+                metadata: metafilter.toDTO(),
                 status: LookupFilterStatusFilter(
                     deleted: .not,
+                    hasPublicLink: metafilter.hasPublicLink,
                     isDraft: false // Backend filtering is not available; filtering is handled on the client side.
                 ),
                 text: lookupFilterTextSearch,
@@ -544,22 +546,27 @@ private extension WireDriveGetNodesRequest {
             )
         case .filesBrowserView:
             request.filters = RestLookupFilter(
-                metadata: tags.isEmpty ? [] : [LookupFilterMetaFilter(
-                    namespace: "usermeta-tags",
-                    term: tags.joined(separator: ",")
-                )], status: LookupFilterStatusFilter(
+                // Contains all filters except for the conversations filter.
+                // The conversations filter is applied via RestLookupScope below.
+                metadata: metafilter.toDTO(),
+                status: LookupFilterStatusFilter(
                     deleted: .not,
-                    isDraft: false // // Backend filtering is not available; filtering is handled on the client side.
+                    hasPublicLink: metafilter.hasPublicLink,
+                    isDraft: false // Backend filtering is not available; filtering is handled on the client side.
                 ),
                 text: LookupFilterTextSearch(searchIn: .baseName, term: searchTerm ?? "*"),
                 type: .leaf
             )
             request.scope = RestLookupScope(
                 recursive: true,
-                root: nil
+                // TODO: [WPB-23948] - This is a temp solution until BE handles multiple conversations filtering
+                root: metafilter.conversations?.first.map { RestNodeLocator(.path($0)) }
             )
-            request.sortDirDesc = true
-            request.sortField = "mtime"
+
+            if let sortField, let sortDirDesc {
+                request.sortField = sortField
+                request.sortDirDesc = sortDirDesc
+            }
         case let .moveToFolder(root):
             request.filters = RestLookupFilter(
                 status: LookupFilterStatusFilter(
@@ -619,4 +626,78 @@ private extension WireDrivePublicLink {
         )
     }
 
+}
+
+private extension Set<WireDriveNodesMetaFilter> {
+    func toDTO() -> [LookupFilterMetaFilter] {
+        flatMap { filter -> [LookupFilterMetaFilter] in
+            switch filter {
+            case .conversations:
+                [] // The conversations filter is applied via the "scope" (RestLookupScope) in the RestLookupRequest.
+            case let .owners(values):
+                values.map { LookupFilterMetaFilter(namespace: "usermeta-owner-uuid", operation: .should, term: $0.id) }
+            case let .tags(values):
+                values.map { LookupFilterMetaFilter(namespace: "usermeta-tags", operation: .should, term: $0) }
+            case let .types(values):
+                values.flatMap(\.contentTypes).compactMap {
+                    LookupFilterMetaFilter(namespace: "mime", operation: .should, term: $0)
+                }
+            case let .sharedByMe(selfUserID):
+                [LookupFilterMetaFilter(namespace: "usermeta-owner-uuid", operation: .should, term: selfUserID)]
+            }
+        }
+    }
+
+    var hasPublicLink: Bool? {
+        for filter in self {
+            switch filter {
+            case .sharedByMe:
+                return true
+            default:
+                continue
+            }
+        }
+
+        return nil
+    }
+
+    var conversations: [String]? {
+        for filter in self {
+            switch filter {
+            case let .conversations(values):
+                return values.map(\.id)
+            default:
+                continue
+            }
+        }
+
+        return nil
+    }
+}
+
+private extension WireDriveFileType {
+    var contentTypes: [String] {
+        switch self {
+        case .archive:
+            ["*zip*", "*rar*", "*7z*", "*tar*", "*gz*", "*bz2*"]
+        case .audio:
+            ["audio/*"]
+        case .document:
+            ["*word*"]
+        case .image:
+            ["image/*"]
+        case .pdf:
+            ["application/pdf"]
+        case .presentation:
+            ["*presentation*"]
+        case .spreadsheet:
+            ["*spreadsheet*"]
+        case .video:
+            ["video/*"]
+        case .text:
+            ["text/*"]
+        case .other, .folder, .code:
+            []
+        }
+    }
 }

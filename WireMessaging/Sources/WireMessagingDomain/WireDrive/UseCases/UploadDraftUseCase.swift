@@ -38,7 +38,7 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
     private let intermediaryFilesDirectory: URL
     private let filenameGenerator: FilenameGenerator
 
-    package let charactersToReplace: [Character] = ["\\", "\""]
+    package let charactersToReplace: [Character] = ["/", "\\", "\""]
 
     package init(
         cellName: String,

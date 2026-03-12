@@ -411,9 +411,9 @@ final class UserSessionLoader {
         do {
             if try await migrator.isMigrationNeeded() {
                 try await migrator.migrateLegacyUpdateEvents()
-                // Since we only migrate some events, we require an
-                // initial sync to ensure we didn't miss updates.
-                journal[.isInitialSyncRequired] = true
+                // Since we only migrate some events, we require a
+                // resources sync to ensure we didn't miss updates.
+                journal[.isResourcesSyncRequired] = true
             } else {
                 WireLogger.sync.debug("no migration needed")
             }
