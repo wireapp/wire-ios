@@ -33,6 +33,12 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     private lazy var viewModel = ConversationChannelCreationFormViewModel(
         channelName: "",
+        channelInvitePolicy: .admins,
+        channelHistoryOption: .off,
+        areAppsSupported: false,
+        appsAllowed: true,
+        guestsAllowed: true,
+        readReceiptsEnabled: true,
         isUserPremium: userSession.isEnterpriseUser,
         isWireDriveEnabled: userSession.isWireDriveEnabled,
         teamsURL: URL.manageTeam(source: .settings),
@@ -45,12 +51,11 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     weak var delegate: ConversationCreationControllerDelegate?
 
-    private lazy var hostingController: UIHostingController<ConversationChannelCreationForm> = {
-        let rootView = ConversationChannelCreationForm(
+    private lazy var hostingController = UIHostingController(
+        rootView: ConversationChannelCreationForm(
             viewModel: viewModel
         )
-        return UIHostingController(rootView: rootView)
-    }()
+    )
 
     @MainActor var channelCreationSettings: ConversationChannelCreationSettings? {
         viewModel.getChannelCreationSettings()
