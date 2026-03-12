@@ -30,11 +30,11 @@ import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Dict
 
 TESTINY_BASE_URL = "https://app.testiny.io/api/v1"
 TESTINY_API_KEY = os.environ.get("TESTINY_API_KEY")
-PROJECT_FIELD: Dict = {"project_id": 7}
+PROJECT_FIELD: Dict = {"project_id": 7} #IOS
 
 @dataclass
 class FlatTest:
@@ -213,6 +213,46 @@ def call_testiny_api(method: str, endpoint: str, body=None):
     except urllib.error.URLError as e:
         raise RuntimeError(f"Network error calling {endpoint}: {e.reason}")
 
+def append_ci_summary(run_id: int) -> None:
+    github_server = os.environ.get("GITHUB_SERVER_URL")
+    github_repo = os.environ.get("GITHUB_REPOSITORY")
+    github_run_id = os.environ.get("GITHUB_RUN_ID")
+
+    if not github_server or not github_repo or not github_run_id:
+        return
+
+    build_url = f"{github_server}/{github_repo}/actions/runs/{github_run_id}"
+    print(f"[INFO] Appending CI run URL to Testiny: {build_url}")
+
+    try:
+        run = call_testiny_api("GET", f"/testrun/{run_id}")
+        description = run.get("description")
+
+        try:
+            doc = json.loads(description) if description else {"t": "slate", "v": 1, "c": []}
+        except Exception:
+            doc = {"t": "slate", "v": 1, "c": []}
+
+        doc["c"].append({
+            "t": "p",
+            "children": [
+                {"text": "Build URL: "},
+                {"t": "a", "url": build_url, "children": [{"text": build_url}]},
+                {"text": ""}
+            ]
+        })
+
+        call_testiny_api(
+            "PUT",
+            f"/testrun/{run_id}?force=true",
+            {"description": json.dumps(doc)}
+        )
+
+        print("[OK] Testiny run description updated")
+
+    except Exception as e:
+        print(f"[WARN] Could not update Testiny run description: {e}")
+
 # Find an existing run by the provided name
 def resolve_run(title: str, require_existing: bool) -> int:
     found = call_testiny_api("POST", "/testrun/find", {"filter": {"title": title, **PROJECT_FIELD}})
@@ -326,14 +366,32 @@ def main():
     else:
         print("[INFO] No results to send")
 
-    print("\n" + "=" * 60)
-    print("Testiny Upload Summary")
-    print("-" * 60)
-    print(f"Total testcases updated           : {len(final)}")
-    print(f"Tests without TC ID               : {skipped_no_tag}")
-    print(f"Invalid Testiny ID                : {skipped_missing}")
-    print("=" * 60 + "\n")
+    print("\n" + "=" * 72)
+    print("Test Run Summary")
+    print("-" * 72)
+    print(f"Run name                     : {args.run_name}")
+    print(f"Run ID                       : {run_id}")
+    print(f"Total tests parsed           : {len(tests)}")
+    print(f"Total testcases updated      : {len(final)}")
+    print(f"Tests without TC ID          : {skipped_no_tag}")
+    print(f"Invalid Testiny ID           : {skipped_missing}")
+    print(f"Upload status                : {'SUCCESS' if exit_code == 0 else 'FAILED'}")
 
+    if final:
+        updated_ids = ", ".join(f"TC-{r.test_case_id}" for r in final[:10])
+        extra_count = len(final) - min(len(final), 10)
+        if extra_count > 0:
+            updated_ids += f" ... (+{extra_count} more)"
+        print(f"Updated Testiny IDs          : {updated_ids}")
+
+    github_server = os.environ.get("GITHUB_SERVER_URL")
+    github_repo = os.environ.get("GITHUB_REPOSITORY")
+    github_run_id = os.environ.get("GITHUB_RUN_ID")
+    if github_server and github_repo and github_run_id:
+        print(f"GitHub Actions run           : {github_server}/{github_repo}/actions/runs/{github_run_id}")
+
+    print("=" * 72 + "\n")
+    append_ci_summary(run_id)
     sys.exit(exit_code)
 
 if __name__ == "__main__":
