@@ -48,7 +48,7 @@ public struct ConversationChannelCreationForm: View {
             }
             appsSection
             #if false // TODO: [WPB-16771] Uncomment when read receipts supported on MLS
-            readReceiptsSection
+                readReceiptsSection
             #endif
 
             if viewModel.isWireDriveEnabled {
@@ -183,7 +183,7 @@ public struct ConversationChannelCreationForm: View {
     var appsSection: some View {
         Section(content: {
             Toggle(Strings.CreationForm.Apps.toggle, isOn: $viewModel.appsAllowed)
-                .disabled(!viewModel.areAppsSupported) // TODO: make sure appsAllowed is set to off when disabled
+                .disabled(!viewModel.areAppsSupported)
             Toggle(Strings.CreationForm.Guests.toggle, isOn: $viewModel.guestsAllowed)
         }, footer: {
             if viewModel.areAppsSupported {
