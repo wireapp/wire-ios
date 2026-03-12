@@ -52,6 +52,7 @@ struct FilesItemView: View {
 
                     infoRow()
                     
+                    /*
                     //TODO: remove this temporary debug text
                     let debugText: String = switch viewModel.fileTracker.state {
                     case .notDownloaded: "Not downloaded"
@@ -62,6 +63,7 @@ struct FilesItemView: View {
                     Text(debugText)
                         .lineLimit(5)
                         .foregroundStyle(Color.green)
+                     */
                 }
 
                 Spacer()
@@ -120,12 +122,14 @@ struct FilesItemView: View {
                     confirm: { confirmRestore() }
                 )
             }
-            .padding(.top, 8)
-            .padding(.bottom, 5) // Less padding to accommodate progress bar
+            .padding(.vertical, 8)
 
+            /*
+            //TODO: remove this progress view because it will be replaced by a circular one
             ProgressView(value: viewModel.progress, total: 1)
                 .opacity(viewModel.progress == nil ? 0 : 1)
                 .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
+             */
 
             Divider()
         }
@@ -134,6 +138,23 @@ struct FilesItemView: View {
 
     @ViewBuilder
     private func icon() -> some View {
+        let state: WireDriveFileUITracker.State = viewModel.fileTracker.state
+        //let state: WireDriveFileUITracker.State = .downloading(progress: 0.7, isLargeFile: false)
+        //let state: WireDriveFileUITracker.State = .failed(error: URLError(.badURL))
+        //let state: WireDriveFileUITracker.State = .downloaded(showReadyToOpen: true)
+
+        switch state {
+        case .notDownloaded, .downloaded(showReadyToOpen: false), .failed:
+            fileTypeIcon()
+        case .downloaded(showReadyToOpen: true):
+            progressIcon(readyToOpen: true)
+        case .downloading:
+            progressIcon(readyToOpen: false)
+        }
+    }
+    
+    @ViewBuilder
+    private func fileTypeIcon() -> some View {
         Image(viewModel.icon.imageResource)
             .resizable()
             .aspectRatio(contentMode: .fit)
@@ -145,6 +166,23 @@ struct FilesItemView: View {
             .padding(.horizontal, iconHorizontalPadding)
             .frame(minWidth: iconSpaceWidth)
             .frame(height: iconSpaceHeight)
+    }
+    
+    @ViewBuilder
+    private func progressIcon(readyToOpen: Bool) -> some View {
+        //TODO: replace Circle() with circular progress view
+        Circle()
+            .stroke(style: StrokeStyle(lineWidth: 2))
+            .padding(.horizontal, iconHorizontalPadding)
+            .frame(minWidth: iconSpaceWidth)
+            .frame(height: iconSpaceHeight + 3)
+            .overlay {
+                if readyToOpen {
+                    Image(systemName: "checkmark")
+                        .fontWeight(.medium)
+                }
+            }
+            .foregroundStyle(wireAccentColor)
     }
     
     @ViewBuilder
