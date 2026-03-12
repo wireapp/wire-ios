@@ -178,35 +178,33 @@ struct FilesItemView: View {
     }
     
     @ViewBuilder
+    private func infoRowTextLine(_ text: String, error: Bool = false) -> some View {
+        let color = error ? ColorTheme.Base.error.color : ColorTheme.Base.secondaryText.color
+        Text(text)
+            .font(for: .subline1)
+            .lineLimit(1)
+            .foregroundStyle(color)
+    }
+    
+    @ViewBuilder
     private func infoRow() -> some View {
         let state: WireDriveFileUITracker.State = viewModel.fileTracker.state
         //let state: WireDriveFileUITracker.State = .downloading(progress: 0.7, isLargeFile: false)
+        //let state: WireDriveFileUITracker.State = .failed(error: URLError(.badURL))
+        //let state: WireDriveFileUITracker.State = .downloaded(showReadyToOpen: true)
 
         switch state {
         case .notDownloaded, .downloaded(showReadyToOpen: false):
             HStack(spacing: 5) {
                 tagsInfo()
-                
-                Text(viewModel.subtitle ?? "")
-                    .font(for: .subline1)
-                    .lineLimit(1)
-                    .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                infoRowTextLine(viewModel.subtitle ?? "")
             }
         case .downloaded(showReadyToOpen: true):
-            Text("Ready to open") //TODO: localize
-                .font(for: .subline1)
-                .lineLimit(1)
-                .foregroundStyle(ColorTheme.Base.secondaryText.color)
+            infoRowTextLine(Strings.Files.readyToOpenAfterDownload)
         case .downloading:
-            Text("Tap to cancel loading") //TODO: localize
-                .font(for: .subline1)
-                .lineLimit(1)
-                .foregroundStyle(ColorTheme.Base.secondaryText.color)
+            infoRowTextLine(Strings.Files.tapToCancelDownload)
         case .failed:
-            Text("Unable to load, retry") //TODO: localize
-                .font(for: .subline1)
-                .lineLimit(1)
-                .foregroundStyle(ColorTheme.Base.error.color)
+            infoRowTextLine(Strings.Files.downloadFailed, error: true)
         }
     }
 
