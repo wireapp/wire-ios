@@ -309,8 +309,8 @@ final class OneOnOneResolverTests: XCTestCase {
         try await sut.resolveAllOneOnOneConversations()
 
         // Then
-        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 1)
         await context.perform {
+            XCTAssertEqual(user.oneOnOneConversation?.mlsStatus, .invalid)
             XCTAssertEqual(user.oneOnOneConversation?.isForcedReadOnly, true)
         }
     }
