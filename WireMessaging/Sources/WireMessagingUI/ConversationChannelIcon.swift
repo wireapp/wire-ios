@@ -17,22 +17,63 @@
 //
 
 package import SwiftUI
+import WireDesign
 package import WireMessagingDomain
 
 package struct ConversationChannelIcon: View {
     let groupIcon: ConversationChannelIconAsset
+    let isPrivateChannel: Bool
 
-    package init(asset: ConversationChannelIconAsset) {
+    @ScaledMetric private var iconSize: CGFloat
+
+    // TODO: [WPB-16527] Pass in correct `isPrivateChannel` when we implement public channels
+    package init(asset: ConversationChannelIconAsset, size: CGFloat = 34, isPrivateChannel: Bool = true) {
         self.groupIcon = asset
+        self.isPrivateChannel = isPrivateChannel
+        self._iconSize = .init(wrappedValue: size)
     }
 
     package var body: some View {
         groupIcon.image
             .resizable()
             .aspectRatio(contentMode: .fit)
+            .overlay(alignment: .bottomTrailing) {
+                if isPrivateChannel {
+                    PrivateIcon()
+                }
+            }
+            .frame(width: iconSize, height: iconSize)
+    }
+}
+
+package extension ConversationChannelIcon {
+    struct PrivateIcon: View {
+        @ScaledMetric private var width: CGFloat = 9
+        @ScaledMetric private var height: CGFloat = 10
+        @ScaledMetric private var innerPadding: CGFloat = 3.5
+        @ScaledMetric private var cornerRadius: CGFloat = 3
+        @ScaledMetric private var offsetX: CGFloat = 3
+        @ScaledMetric private var offsetY: CGFloat = 3
+
+        package var body: some View {
+            Image(systemName: "lock.fill")
+                .resizable()
+                .frame(width: width, height: height)
+                .fontWeight(.bold)
+                .foregroundStyle(ColorTheme.Backgrounds.background.color)
+                .padding(innerPadding)
+                .background {
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .aspectRatio(1, contentMode: .fit)
+                        .foregroundStyle(ColorTheme.Backgrounds.inverted.color)
+                }
+                .offset(x: offsetX, y: offsetY)
+        }
     }
 }
 
 #Preview {
     ConversationChannelIcon(asset: .amber)
+    ConversationChannelIcon(asset: .green)
+    ConversationChannelIcon(asset: .green, isPrivateChannel: false)
 }

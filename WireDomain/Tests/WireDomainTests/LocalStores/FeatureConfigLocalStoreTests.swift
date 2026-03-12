@@ -66,6 +66,21 @@ final class FeatureConfigLocalStoreTests: XCTestCase {
         }
     }
 
+    func testFetchFeature_SimplifiedQRCode_IfMissingIsEnabled() async throws {
+        // GIVEN
+        // database is empty - no features
+        // WHEN
+        do {
+            _ = try await sut.fetchFeature(name: .simplifiedUserConnectionRequestQRCode)
+            // THEN
+            XCTFail("Not triggered error")
+        } catch let FeatureConfigLocalStore.Error.failedToFetchFeatureLocally(name) {
+            XCTAssertEqual(name, .simplifiedUserConnectionRequestQRCode)
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+
     func testFetchFeature_It_Retrieves_Feature_With_Correct_Config() async throws {
         // Given
 
