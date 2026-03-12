@@ -188,7 +188,12 @@ final class TeamManageTests: WireUITestCase {
     }
 
     @MainActor
+<<<<<<< HEAD
     func testMentionUserInGroup_TC_8865() async throws {
+=======
+    func test_MentionUserInGroup() async throws {
+
+>>>>>>> origin/develop
         let (teamOwner, teamMembers, _, _) = try await userHelper
             .registerTeam(
                 withMemberCount: 4,
