@@ -451,15 +451,16 @@ extension UserCell: UserCellSubtitleProtocol {}
 extension UserCell {
 
     private func subtitle(for user: UserType) -> NSAttributedString? {
-        if user.isAppOrBot, let appOrBot = user as? SearchServiceUser {
+        if user.isAppOrBot, let appOrBot = user as? UserSearchResult {
             subtitle(forServiceUser: appOrBot)
         } else {
             subtitle(forRegularUser: user)
         }
     }
 
-    private func subtitle(forServiceUser service: SearchServiceUser) -> NSAttributedString? {
+    private func subtitle(forServiceUser service: UserSearchResult) -> NSAttributedString? {
         guard let summary = service.summary else { return nil }
         return .init(string: summary, attributes: [.font: UserCell.boldFont.font].compactMapValues { $0 })
     }
+
 }

@@ -86,10 +86,10 @@ public struct SearchUserAssetKeys {
 
 }
 
-extension ZMSearchUser: SearchServiceUser {
+extension ZMSearchUser: UserSearchResult { // TODO: still needed?
 
     public var serviceIdentifier: String? {
-        remoteIdentifier?.transportString()
+        remoteIdentifier?.transportString() // TODO: why not the actual service identifier?
     }
 
 }

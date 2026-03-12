@@ -17,13 +17,11 @@
 //
 
 @objc
-public protocol BotSearchResult: UserType { // TODO: ?
+public protocol UserSearchResult: UserType { // TODO: still needed?
     var summary: String? { get }
 }
 
-public typealias SearchServiceUser = BotSearchResult
-
-extension ZMUser {
+extension ZMUser { // TODO: delete
     static let servicesMustBeMentioned = false
     static let serviceMentionKeyword = "@bots"
 }
