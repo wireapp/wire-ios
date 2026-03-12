@@ -528,7 +528,6 @@ public extension ZMUser {
             WireLogger.conversation.debug("inserting message for user removal")
             conversation.appendUserRemovedFromTeamSystemMessage(user: self, at: timestamp)
 
-            // could update the conversation state here and delete mls
             if conversation.messageProtocol.isOne(of: .mls, .mixed) {
                 conversation.mlsStatus = .invalid
             }
