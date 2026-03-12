@@ -213,16 +213,16 @@ def call_testiny_api(method: str, endpoint: str, body=None):
     except urllib.error.URLError as e:
         raise RuntimeError(f"Network error calling {endpoint}: {e.reason}")
 
-def append_ci_summary(run_id: int) -> None:
+def append_ci_summary(run_id: int, run_name: str) -> None:
     github_server = os.environ.get("GITHUB_SERVER_URL")
     github_repo = os.environ.get("GITHUB_REPOSITORY")
     github_run_id = os.environ.get("GITHUB_RUN_ID")
+    github_run_number = os.environ.get("GITHUB_RUN_NUMBER")
 
     if not github_server or not github_repo or not github_run_id:
         return
 
     build_url = f"{github_server}/{github_repo}/actions/runs/{github_run_id}"
-    print(f"[INFO] Appending CI run URL to Testiny: {build_url}")
 
     try:
         run = call_testiny_api("GET", f"/testrun/{run_id}")
@@ -233,10 +233,15 @@ def append_ci_summary(run_id: int) -> None:
         except Exception:
             doc = {"t": "slate", "v": 1, "c": []}
 
+        link_label = f"{run_name}"
+        if github_run_number:
+            link_label += f" #{github_run_number}"
+        link_label += ": "
+
         doc["c"].append({
             "t": "p",
             "children": [
-                {"text": "Build URL: "},
+                {"text": link_label},
                 {"t": "a", "url": build_url, "children": [{"text": build_url}]},
                 {"text": ""}
             ]
@@ -247,8 +252,6 @@ def append_ci_summary(run_id: int) -> None:
             f"/testrun/{run_id}?force=true",
             {"description": json.dumps(doc)}
         )
-
-        print("[OK] Testiny run description updated")
 
     except Exception as e:
         print(f"[WARN] Could not update Testiny run description: {e}")
@@ -366,32 +369,7 @@ def main():
     else:
         print("[INFO] No results to send")
 
-    print("\n" + "=" * 72)
-    print("Test Run Summary")
-    print("-" * 72)
-    print(f"Run name                     : {args.run_name}")
-    print(f"Run ID                       : {run_id}")
-    print(f"Total tests parsed           : {len(tests)}")
-    print(f"Total testcases updated      : {len(final)}")
-    print(f"Tests without TC ID          : {skipped_no_tag}")
-    print(f"Invalid Testiny ID           : {skipped_missing}")
-    print(f"Upload status                : {'SUCCESS' if exit_code == 0 else 'FAILED'}")
-
-    if final:
-        updated_ids = ", ".join(f"TC-{r.test_case_id}" for r in final[:10])
-        extra_count = len(final) - min(len(final), 10)
-        if extra_count > 0:
-            updated_ids += f" ... (+{extra_count} more)"
-        print(f"Updated Testiny IDs          : {updated_ids}")
-
-    github_server = os.environ.get("GITHUB_SERVER_URL")
-    github_repo = os.environ.get("GITHUB_REPOSITORY")
-    github_run_id = os.environ.get("GITHUB_RUN_ID")
-    if github_server and github_repo and github_run_id:
-        print(f"GitHub Actions run           : {github_server}/{github_repo}/actions/runs/{github_run_id}")
-
-    print("=" * 72 + "\n")
-    append_ci_summary(run_id)
+    append_ci_summary(run_id, args.run_name)
     sys.exit(exit_code)
 
 if __name__ == "__main__":
