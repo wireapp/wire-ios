@@ -17,10 +17,7 @@
 //
 
 @objc
-public protocol Bot: AnyObject, UserType {
-    var providerIdentifier: String? { get }
-    var serviceIdentifier: String? { get }
-}
+public protocol Bot: AnyObject, UserType {}
 
 @objc
 public protocol BotSearchResult: Bot {
