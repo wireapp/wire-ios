@@ -42,17 +42,10 @@ final class ConversationChannelCreationFormTests: XCTestCase {
         let view = ConversationChannelCreationForm(
             viewModel: ConversationChannelCreationFormViewModel(
                 channelName: "",
-                channelInvitePolicy: .admins,
-                channelHistoryOption: .off,
-                areAppsSupported: true,
-                appsAllowed: true,
-                guestsAllowed: true,
-                readReceiptsEnabled: true,
                 isUserPremium: true,
                 isWireDriveEnabled: true,
-                teamsURL: URL(string: "https://wire.com")!,
-                onFormValidityUpdate: { _ in }
-            )
+                teamsURL: URL(string: "https://wire.com")!
+            ) { _ in }
         )
         .frame(width: 375, height: 667)
         .padding()
@@ -70,17 +63,10 @@ final class ConversationChannelCreationFormTests: XCTestCase {
         let view = ConversationChannelCreationForm(
             viewModel: ConversationChannelCreationFormViewModel(
                 channelName: "",
-                channelInvitePolicy: .admins,
-                channelHistoryOption: .off,
-                areAppsSupported: true,
-                appsAllowed: true,
-                guestsAllowed: true,
-                readReceiptsEnabled: true,
                 isUserPremium: true,
                 isWireDriveEnabled: true,
-                teamsURL: URL(string: "https://wire.com")!,
-                onFormValidityUpdate: { _ in }
-            )
+                teamsURL: URL(string: "https://wire.com")!
+            ) { _ in }
         )
         .frame(width: 375, height: 667)
         .padding()
@@ -98,17 +84,10 @@ final class ConversationChannelCreationFormTests: XCTestCase {
     func testColorSchemeVariantsEmptyState_Visible_Picker() {
         let viewModel = ConversationChannelCreationFormViewModel(
             channelName: "",
-            channelInvitePolicy: .admins,
-            channelHistoryOption: .off,
-            areAppsSupported: true,
-            appsAllowed: true,
-            guestsAllowed: true,
-            readReceiptsEnabled: true,
             isUserPremium: true,
             isWireDriveEnabled: true,
-            teamsURL: URL(string: "https://wire.com")!,
-            onFormValidityUpdate: { _ in }
-        )
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
 
         viewModel.channelHistoryOption = .custom
 
@@ -130,17 +109,10 @@ final class ConversationChannelCreationFormTests: XCTestCase {
     func testDynamicTypeVariantsEmptyState_Visible_Picker() {
         let viewModel = ConversationChannelCreationFormViewModel(
             channelName: "",
-            channelInvitePolicy: .admins,
-            channelHistoryOption: .off,
-            areAppsSupported: true,
-            appsAllowed: true,
-            guestsAllowed: true,
-            readReceiptsEnabled: true,
             isUserPremium: true,
             isWireDriveEnabled: true,
-            teamsURL: URL(string: "https://wire.com")!,
-            onFormValidityUpdate: { _ in }
-        )
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
 
         viewModel.channelHistoryOption = .custom
         let view = ConversationChannelCreationForm(
@@ -162,17 +134,10 @@ final class ConversationChannelCreationFormTests: XCTestCase {
     func testDynamicTypeVariants_Upgrade_Banner_Visible() {
         let viewModel = ConversationChannelCreationFormViewModel(
             channelName: "",
-            channelInvitePolicy: .admins,
-            channelHistoryOption: .off,
-            areAppsSupported: true,
-            appsAllowed: true,
-            guestsAllowed: true,
-            readReceiptsEnabled: true,
             isUserPremium: true,
             isWireDriveEnabled: true,
-            teamsURL: URL(string: "https://wire.com")!,
-            onFormValidityUpdate: { _ in }
-        )
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
 
         viewModel.channelHistoryOption = .custom
         viewModel.showUpgradeBanner = true
@@ -196,17 +161,10 @@ final class ConversationChannelCreationFormTests: XCTestCase {
     func testColorSchemeVariants_Upgrade_Banner_Visible() {
         let viewModel = ConversationChannelCreationFormViewModel(
             channelName: "",
-            channelInvitePolicy: .admins,
-            channelHistoryOption: .off,
-            areAppsSupported: true,
-            appsAllowed: true,
-            guestsAllowed: true,
-            readReceiptsEnabled: true,
             isUserPremium: true,
             isWireDriveEnabled: true,
-            teamsURL: URL(string: "https://wire.com")!,
-            onFormValidityUpdate: { _ in }
-        )
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
 
         viewModel.channelHistoryOption = .custom
         viewModel.showUpgradeBanner = true
@@ -229,12 +187,6 @@ final class ConversationChannelCreationFormTests: XCTestCase {
     func testInfoBannerVisible() {
         let viewModel = ConversationChannelCreationFormViewModel(
             channelName: "",
-            channelInvitePolicy: .admins,
-            channelHistoryOption: .off,
-            areAppsSupported: false,
-            appsAllowed: true,
-            guestsAllowed: true,
-            readReceiptsEnabled: true,
             isUserPremium: true,
             isWireDriveEnabled: true,
             teamsURL: URL(string: "https://wire.com")!,
@@ -252,6 +204,32 @@ final class ConversationChannelCreationFormTests: XCTestCase {
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: view, named: "dark")
+    }
+
+}
+
+private extension ConversationChannelCreationFormViewModel {
+
+    convenience init(
+        channelName: String,
+        isUserPremium: Bool,
+        isWireDriveEnabled: Bool,
+        teamsURL: URL,
+        onFormValidityUpdate: @escaping @Sendable (_ isValid: Bool) -> Void
+    ) {
+        self.init(
+            channelName: channelName,
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            areAppsSupported: false,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
+            isUserPremium: isUserPremium,
+            isWireDriveEnabled: isWireDriveEnabled,
+            teamsURL: teamsURL,
+            onFormValidityUpdate: onFormValidityUpdate
+        )
     }
 
 }
