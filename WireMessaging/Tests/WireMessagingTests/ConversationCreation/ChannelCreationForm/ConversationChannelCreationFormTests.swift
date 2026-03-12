@@ -187,6 +187,12 @@ final class ConversationChannelCreationFormTests: XCTestCase {
     func testInfoBannerVisible() {
         let viewModel = ConversationChannelCreationFormViewModel(
             channelName: "",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            areAppsSupported: false,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
             isUserPremium: true,
             isWireDriveEnabled: true,
             teamsURL: URL(string: "https://wire.com")!,
@@ -221,7 +227,7 @@ private extension ConversationChannelCreationFormViewModel {
             channelName: channelName,
             channelInvitePolicy: .admins,
             channelHistoryOption: .off,
-            areAppsSupported: false,
+            areAppsSupported: true,
             appsAllowed: true,
             guestsAllowed: true,
             readReceiptsEnabled: true,
