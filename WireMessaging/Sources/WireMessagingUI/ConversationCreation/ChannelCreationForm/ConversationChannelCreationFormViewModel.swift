@@ -78,7 +78,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
     @Published var channelHistoryOption: ChannelHistoryOption
     @Published var channelHistoryOptionCustom: ChannelHistoryOption.Custom = .init()
     @Published var showUpgradeBanner: Bool = false
-    @Published var areAppsSupported: Bool = false // TODO: set based on feature flag value
+    @Published private(set) var areAppsSupported: Bool
     @Published var appsAllowed: Bool
     @Published var guestsAllowed: Bool
     @Published var readReceiptsEnabled: Bool
@@ -94,13 +94,13 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
     public init(
         channelName: String,
         // Channel access is always hard coded to private for now.
-        channelAccess: ChannelAccessOption = .private,
-        channelInvitePolicy: ChannelInvitePolicyOption = .admins,
-        channelHistoryOption: ChannelHistoryOption = .off,
+        // channelAccess: ChannelAccessOption = .private,
+        channelInvitePolicy: ChannelInvitePolicyOption,
+        channelHistoryOption: ChannelHistoryOption,
         areAppsSupported: Bool,
-        appsAllowed: Bool = true,
-        guestsAllowed: Bool = true,
-        readReceiptsEnabled: Bool = true,
+        appsAllowed: Bool,
+        guestsAllowed: Bool,
+        readReceiptsEnabled: Bool,
         isUserPremium: Bool,
         isWireDriveEnabled: Bool,
         teamsURL: URL,
@@ -110,11 +110,11 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
 
         self.isFormValid = Self.validateForm(channelName: channelName)
         self.channelName = channelName
-        self.channelAccess = channelAccess
+        self.channelAccess = .private // channelAccess
         self.channelInvitePolicy = channelInvitePolicy
         self.channelHistoryOption = channelHistoryOption
         self.areAppsSupported = areAppsSupported
-        self.appsAllowed = appsAllowed
+        self.appsAllowed = appsAllowed && areAppsSupported
         self.guestsAllowed = guestsAllowed
         self.readReceiptsEnabled = readReceiptsEnabled
         self.isUserPremium = isUserPremium

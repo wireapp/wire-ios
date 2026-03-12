@@ -230,11 +230,17 @@ public struct ConversationChannelCreationForm: View {
     ConversationChannelCreationForm(
         viewModel: ConversationChannelCreationFormViewModel(
             channelName: "",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
             areAppsSupported: true,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
             isUserPremium: false,
             isWireDriveEnabled: true,
-            teamsURL: URL(string: "https://wire.com")!
-        ) { _ in }
+            teamsURL: URL(string: "https://wire.com")!,
+            onFormValidityUpdate: { _ in }
+        )
     )
 }
 
@@ -242,10 +248,16 @@ public struct ConversationChannelCreationForm: View {
     ConversationChannelCreationForm(
         viewModel: ConversationChannelCreationFormViewModel(
             channelName: "",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
             areAppsSupported: false,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
             isUserPremium: false,
             isWireDriveEnabled: true,
-            teamsURL: URL(string: "https://wire.com")!
-        ) { _ in }
+            teamsURL: URL(string: "https://wire.com")!,
+            onFormValidityUpdate: { _ in }
+        )
     )
 }

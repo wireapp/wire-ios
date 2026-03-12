@@ -18,6 +18,7 @@
 
 import WireMessagingDomain
 import XCTest
+
 @testable import WireMessagingUI
 
 final class ConversationChannelCreationFormViewModelTests: XCTestCase {
@@ -28,10 +29,17 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
         // Given
         let sut = ConversationChannelCreationFormViewModel(
             channelName: "",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            areAppsSupported: true,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
             isUserPremium: true,
             isWireDriveEnabled: true,
-            teamsURL: URL(string: "https://wire.com")!
-        ) { _ in }
+            teamsURL: URL(string: "https://wire.com")!,
+            onFormValidityUpdate: { _ in }
+        )
         let value = ""
 
         // When
@@ -47,10 +55,17 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
         // Given
         let sut = ConversationChannelCreationFormViewModel(
             channelName: "",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            areAppsSupported: true,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
             isUserPremium: true,
             isWireDriveEnabled: true,
-            teamsURL: URL(string: "https://wire.com")!
-        ) { _ in }
+            teamsURL: URL(string: "https://wire.com")!,
+            onFormValidityUpdate: { _ in }
+        )
         let value = String(
             repeating: "a",
             count: ConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength + 1
@@ -69,10 +84,17 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
         // Given
         let sut = ConversationChannelCreationFormViewModel(
             channelName: "",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            areAppsSupported: true,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
             isUserPremium: true,
             isWireDriveEnabled: true,
-            teamsURL: URL(string: "https://wire.com")!
-        ) { _ in }
+            teamsURL: URL(string: "https://wire.com")!,
+            onFormValidityUpdate: { _ in }
+        )
         let value = String(
             repeating: "\(0x27BF)",
             count: ConversationChannelCreationFormViewModel.Constants.channelNameMaxByteLength + 1
@@ -91,10 +113,17 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
         // Given
         let sut = ConversationChannelCreationFormViewModel(
             channelName: "",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            areAppsSupported: true,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
             isUserPremium: true,
             isWireDriveEnabled: true,
-            teamsURL: URL(string: "https://wire.com")!
-        ) { _ in }
+            teamsURL: URL(string: "https://wire.com")!,
+            onFormValidityUpdate: { _ in }
+        )
         let value = String(
             repeating: " ",
             count: ConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength
@@ -113,10 +142,17 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
         // Given
         let sut = ConversationChannelCreationFormViewModel(
             channelName: "",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            areAppsSupported: true,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
             isUserPremium: true,
             isWireDriveEnabled: true,
-            teamsURL: URL(string: "https://wire.com")!
-        ) { _ in }
+            teamsURL: URL(string: "https://wire.com")!,
+            onFormValidityUpdate: { _ in }
+        )
         let value = " " +
             String(
                 repeating: "a",
@@ -140,10 +176,17 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
         // Given
         let sut = ConversationChannelCreationFormViewModel(
             channelName: "",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            areAppsSupported: true,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
             isUserPremium: true,
             isWireDriveEnabled: true,
-            teamsURL: URL(string: "https://wire.com")!
-        ) { _ in }
+            teamsURL: URL(string: "https://wire.com")!,
+            onFormValidityUpdate: { _ in }
+        )
         let value = "a"
         let expectedValue = "a"
 
@@ -160,10 +203,17 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
         // Given
         let sut = ConversationChannelCreationFormViewModel(
             channelName: "Test",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            areAppsSupported: true,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
             isUserPremium: true,
             isWireDriveEnabled: true,
-            teamsURL: URL(string: "https://wire.com")!
-        ) { _ in }
+            teamsURL: URL(string: "https://wire.com")!,
+            onFormValidityUpdate: { _ in }
+        )
 
         let useCases = [
             ChannelHistoryOption.oneDay,
