@@ -21,18 +21,22 @@ import WireDesign
 import WireFoundation
 import WireMessagingDomain
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+
 struct WireDriveDocumentHeaderView: View {
     enum Constants {
         static let errorColor = ColorTheme.Base.error.color
     }
 
     @ScaledMetric private var scale: CGFloat = 1
+    @Environment(\.wireAccentColor) private var wireAccentColor
 
     let headerIcon: Image
     let headerText: String
     let labelText: String
     let progress: Double?
     let isError: Bool
+    let showReadyToOpen: Bool
 
     var body: some View {
         header()
@@ -42,24 +46,19 @@ struct WireDriveDocumentHeaderView: View {
     private func header() -> some View {
         VStack(alignment: .leading) {
             HStack(spacing: 4) {
-                if isError {
-                    Image(systemName: "exclamationmark.triangle")
-                        .fontWeight(.semibold)
-                        .font(.system(size: 14 * scale))
-                        .foregroundStyle(Constants.errorColor)
-                } else {
-                    headerIcon
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 16 * scale)
-                }
-
+                stateIconView()
+                
                 Text(headerText)
                     .foregroundStyle(ColorTheme.Base.secondaryText.color)
                     .font(for: .subline1)
                     .lineLimit(1)
 
                 Spacer()
+                
+                stateTextView()
+                    .foregroundStyle(isError ? ColorTheme.Base.error.color : ColorTheme.Base.secondaryText.color)
+                    .font(for: .subline1)
+                    .lineLimit(1)
             }
             .padding([.horizontal, .top], 8)
 
@@ -73,6 +72,57 @@ struct WireDriveDocumentHeaderView: View {
                 .padding([.horizontal, .bottom], 8)
         }
     }
+    
+    @ViewBuilder
+    private func stateTextView() -> some View {
+        switch state {
+        case .readyToOpen:
+            Text(Strings.Files.readyToOpenAfterDownload)
+        case .failed:
+            Text(Strings.Files.downloadFailed)
+        case .default:
+            EmptyView()
+        case .loading:
+            Text(Strings.Files.tapToCancelDownload)
+        }
+    }
+
+    @ViewBuilder
+    private func stateIconView() -> some View {
+        switch state {
+        case .readyToOpen:
+            Image(systemName: "checkmark.circle")
+                .foregroundStyle(.blue)
+        case .default, .failed:
+            headerIcon
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 16 * scale)
+        case .loading:
+            ProgressView(value: progress, total: 1)
+                .tint(Color.blue)
+                .progressViewStyle(AssetProgressStyle(fillColor: ColorTheme.Base.primary(wireAccentColor).color))
+        }
+    }
+    
+    private enum State {
+        case `default`
+        case readyToOpen
+        case failed
+        case loading
+    }
+    
+    private var state: State {
+        if showReadyToOpen {
+            .readyToOpen
+        } else if isError {
+            .failed
+        } else if progress != nil {
+            .loading
+        } else {
+            .default
+        }
+    }
 }
 
 #Preview {
@@ -81,7 +131,8 @@ struct WireDriveDocumentHeaderView: View {
         headerText: "PDF (336 KB)",
         labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
         progress: 0.7,
-        isError: false
+        isError: false,
+        showReadyToOpen: false
     )
-    .frame(width: 222, height: 74)
+    .frame(width: 300, height: 74)
 }
