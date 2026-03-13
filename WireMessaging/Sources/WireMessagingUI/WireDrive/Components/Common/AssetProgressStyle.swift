@@ -20,24 +20,36 @@ import SwiftUI
 
 /// A custom progress view style (a progress bar) for upload & download of assets.
 struct AssetProgressStyle: ProgressViewStyle {
-
+    
     enum Constants {
-        static let height: Double = 3
+        static let lineWidth: CGFloat = 2
+        static let size: CGFloat = 12
     }
-
+    
     let fillColor: Color
-
+    let trackColor: Color = .gray.opacity(0.2)
+    
+    @ScaledMetric private var scale: CGFloat = 1
+    
     func makeBody(configuration: Configuration) -> some View {
-        GeometryReader { geometry in
-            let totalWidth = geometry.size.width
-            let progress = Double(configuration.fractionCompleted ?? 0)
-            let barWidth = totalWidth * progress
-
-            let cornerRadius = progress < 1 ? Constants.height / 2 : 0
-            UnevenRoundedRectangle(bottomTrailingRadius: cornerRadius, topTrailingRadius: cornerRadius)
-                .fill(fillColor)
-                .frame(width: barWidth, height: Constants.height)
+        let progress = configuration.fractionCompleted ?? 0
+        
+        ZStack {
+            Circle()
+                .stroke(trackColor, lineWidth: Constants.lineWidth)
+            
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(
+                    fillColor,
+                    style: StrokeStyle(
+                        lineWidth: Constants.lineWidth,
+                        lineCap: .round
+                    )
+                )
+                .rotationEffect(.degrees(-90))
+                .animation(.easeInOut, value: progress)
         }
-        .frame(height: Constants.height)
+        .frame(width: Constants.size * scale, height: Constants.size * scale)
     }
 }
