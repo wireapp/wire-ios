@@ -477,7 +477,7 @@ public final class SearchTask {
                 teamMembers: [],
                 directory: [searchUser],
                 conversations: [],
-                apps: [], // TODO: ?
+                apps: [],
                 bots: [],
                 searchUsersCache: searchUsersCache
             )
@@ -729,8 +729,8 @@ public final class SearchTask {
             teamMembers: [],
             directory: [],
             conversations: [],
-            apps: [], // TODO: ?
-            bots: [], // TODO: ?
+            apps: [],
+            bots: [],
             searchUsersCache: searchUsersCache
         )
 

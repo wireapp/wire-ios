@@ -54,7 +54,7 @@ extension SearchGroup {
                 [.people, .bots]
                     .filter(\.accessible)
             case .mixed:
-                [.people] // TODO: correct?
+                [.people]
             }
         }
     #endif

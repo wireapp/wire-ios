@@ -90,22 +90,12 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         _ searchResultsViewController: SearchResultsViewController,
         didTapOnApp app: any UserType
     ) {
-        searchResultsViewController.delegate?.searchResultsViewController(
-            searchResultsViewController,
-            didTapOnBot: app
-        )
-    }
-
-    func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didTapOnBot bot: any UserType
-    ) {
         guard let teamsAPI = userSession.clientSessionComponent?.teamsAPI else {
             return WireLogger.ui.error("clientSessionComponent is nil", attributes: .safePublic)
         }
 
         let detail = ServiceDetailViewController(
-            user: bot,
+            user: app,
             actionType: .openConversation,
             userSession: userSession,
             teamsAPI: teamsAPI
@@ -122,6 +112,16 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
             }
         }
         navigationController?.pushViewController(detail, animated: true)
+    }
+
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnBot bot: any UserType
+    ) {
+        searchResultsViewController.delegate?.searchResultsViewController(
+            searchResultsViewController,
+            didTapOnApp: bot
+        )
     }
 }
 

@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-class URLActionTests: ZMTBaseTest {
+final class URLActionTests: ZMTBaseTest {
 
     // MARK: Company Login
 
@@ -170,6 +170,23 @@ class URLActionTests: ZMTBaseTest {
             // then
             XCTAssertEqual(error as? DeepLinkRequestError, .invalidConversationLink)
         }
+    }
+
+    func testThatIt() throws {
+        // given
+        let url = URL(string: "wire://connect?service=d554c310-8237-4f85-b3cc-b7ae5ec1e6cd&provider=d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!
+
+        // when
+        let action = try URLAction(url: url)
+
+        // then
+        XCTAssertEqual(
+            action,
+            .connectBot(
+                providerID: UUID(uuidString: "d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!,
+                serviceID: UUID(uuidString: "d554c310-8237-4f85-b3cc-b7ae5ec1e6cd")!
+            )
+        )
     }
 
     func testThatItDiscardsInvalidWireURLs() {
