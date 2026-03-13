@@ -634,7 +634,6 @@
 				ConversationMessageCell/ConversationReactionMessageTests.swift,
 				ConversationMessageCell/ConversationSenderMessageDetailsCellSnapshotTests.swift,
 				ConversationMessageCell/ConversationSystemMessageTests.swift,
-				ConversationMessageCell/ConversationTextMessageCellTests.swift,
 				ConversationMessageCell/ConversationTextMessageTests.swift,
 				ConversationMessageCell/ConversationVideoMessageCellTests.swift,
 				ConversationMessageCell/EmoliRepositoryTests.swift,
