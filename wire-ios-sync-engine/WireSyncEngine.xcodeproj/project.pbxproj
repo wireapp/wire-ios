@@ -49,21 +49,6 @@
 		EE4E6A262B714490007C476D /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE4E6A252B714490007C476D /* WireRequestStrategySupport.framework */; };
 		EE668BB62954AA7F00D939E7 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BB52954AA7F00D939E7 /* WireRequestStrategy.framework */; };
 		EEDDB6A42BCFC5E7009ECF97 /* WireSyncEngine.docc in Sources */ = {isa = PBXBuildFile; fileRef = EEDDB6A32BCFC5E4009ECF97 /* WireSyncEngine.docc */; };
-		F148F6671FB9AA7600BD6909 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		F16558D1225F3F2A00EA2F2A /* (null) in Sources */ = {isa = PBXBuildFile; };
-		F19E55A022B3A2C5005C792D /* (null) in Sources */ = {isa = PBXBuildFile; };
-		F19E55A222B3A3FA005C792D /* (null) in Sources */ = {isa = PBXBuildFile; };
-		F19E55A422B3A740005C792D /* (null) in Sources */ = {isa = PBXBuildFile; };
-		F19E55A622B3AAA8005C792D /* (null) in Sources */ = {isa = PBXBuildFile; };
-		F19F1D141EFBC18E00275E27 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		F19F1D1F1EFBC2F000275E27 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		F19F1D281EFBC34E00275E27 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		F19F1D331EFBE3FE00275E27 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		F19F1D381EFBF61800275E27 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		F19F4F3A1E5F1AE400F4D8FF /* (null) in Sources */ = {isa = PBXBuildFile; };
-		F19F4F3C1E604AA700F4D8FF /* (null) in Sources */ = {isa = PBXBuildFile; };
-		F19F4F4F1E6575F700F4D8FF /* (null) in Sources */ = {isa = PBXBuildFile; };
-		F1A94BD21F010287003083D9 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		F1A989BA1FD03E1B00B8A82E /* ZMLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F1A989BC1FD03E1B00B8A82E /* ZMLocalizable.strings */; };
 /* End PBXBuildFile section */
 
@@ -716,22 +701,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F19E55A622B3AAA8005C792D /* (null) in Sources */,
-				F19F4F3C1E604AA700F4D8FF /* (null) in Sources */,
-				F19F1D141EFBC18E00275E27 /* (null) in Sources */,
-				F19F1D1F1EFBC2F000275E27 /* (null) in Sources */,
-				F1A94BD21F010287003083D9 /* (null) in Sources */,
-				F19F1D281EFBC34E00275E27 /* (null) in Sources */,
-				F19E55A222B3A3FA005C792D /* (null) in Sources */,
-				F148F6671FB9AA7600BD6909 /* (null) in Sources */,
 				EEDDB6A42BCFC5E7009ECF97 /* WireSyncEngine.docc in Sources */,
-				F19E55A422B3A740005C792D /* (null) in Sources */,
-				F19F4F3A1E5F1AE400F4D8FF /* (null) in Sources */,
-				F19F1D331EFBE3FE00275E27 /* (null) in Sources */,
-				F19F4F4F1E6575F700F4D8FF /* (null) in Sources */,
-				F19F1D381EFBF61800275E27 /* (null) in Sources */,
-				F19E55A022B3A2C5005C792D /* (null) in Sources */,
-				F16558D1225F3F2A00EA2F2A /* (null) in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
