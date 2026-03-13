@@ -17,9 +17,9 @@
 //
 
 public struct EARServiceFactory {
-    
+
     public init() {}
-    
+
     public func createEARService(
         accountID: UUID,
         databaseContexts: [NSManagedObjectContext] = [],
@@ -43,13 +43,13 @@ public struct EARServiceFactory {
             migrator: migrator,
             authenticationContext: authenticationContext
         )
-        
+
         if !databaseContexts.isEmpty {
             await earService.setupDatabaseContexts(
                 databaseContexts: databaseContexts
             )
         }
-        
+
         return earService
     }
 

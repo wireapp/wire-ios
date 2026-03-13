@@ -220,7 +220,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             cookieStorage.authenticationCookieData = validCookie
         }
     }
-    
+
     func simulateLoggedInUser() async {
         await syncMOC.perform { [syncMOC] in
             syncMOC.setPersistentStoreMetadata("clientID", key: ZMPersistedClientIdKey)

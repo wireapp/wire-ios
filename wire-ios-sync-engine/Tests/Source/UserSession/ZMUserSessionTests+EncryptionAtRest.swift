@@ -26,7 +26,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     private var activityManager: MockBackgroundActivityManager!
     private var factory: BackgroundActivityFactory!
     private var earService: EARService!
-    
+
     private var account: Account {
         coreDataStack.account
     }
@@ -51,7 +51,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: MockAuthenticationContextProtocol()
         )
-        
+
         self.earService = earService
 
         return createSut(earService: earService)
@@ -80,13 +80,13 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
             ]
         )
     }
-    
+
     private func isDatabaseLocked() async -> Bool {
         await uiMOC.perform { [sut] in
             sut.isDatabaseLocked
         }
     }
-    
+
     // MARK: - Database migration
 
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
@@ -94,7 +94,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         // given
         await setupDatabaseContexts()
         await simulateLoggedInUser()
-        
+
         let userSessionDelegate = MockUserSessionDelegate()
         sut.delegate = userSessionDelegate
 
@@ -110,7 +110,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         // given
         await setupDatabaseContexts()
         await simulateLoggedInUser()
-        
+
         try await setEncryptionAtRest(enabled: true, skipMigration: true)
         let userSessionDelegate = MockUserSessionDelegate()
         sut.delegate = userSessionDelegate
@@ -154,7 +154,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         // given
         await setupDatabaseContexts()
         await simulateLoggedInUser()
-        
+
         try await setEncryptionAtRest(enabled: true, skipMigration: true)
 
         // when
@@ -170,7 +170,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         // given
         await setupDatabaseContexts()
         await simulateLoggedInUser()
-        
+
         try await setEncryptionAtRest(enabled: true, skipMigration: true)
         sut.applicationDidEnterBackground(nil)
 
@@ -188,7 +188,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         // given
         await setupDatabaseContexts()
         await simulateLoggedInUser()
-        
+
         try await setEncryptionAtRest(enabled: true, skipMigration: true)
 
         // when
@@ -204,7 +204,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         // given
         await setupDatabaseContexts()
         await simulateLoggedInUser()
-        
+
         try await setEncryptionAtRest(enabled: true, skipMigration: true)
 
         // when
@@ -222,7 +222,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         // given
         await setupDatabaseContexts()
         await simulateLoggedInUser()
-        
+
         try await setEncryptionAtRest(enabled: true, skipMigration: true)
 
         // when
@@ -246,7 +246,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         let earMessageEncryptionService = try await uiMOC.perform { [uiMOC] in
             try uiMOC.getEarMessageEncryptionService()
         }
-        
+
         try await setEncryptionAtRest(enabled: true, skipMigration: true)
 
         // when
@@ -272,7 +272,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         // given
         await setupDatabaseContexts()
         await simulateLoggedInUser()
-        
+
         try await setEncryptionAtRest(enabled: true, skipMigration: true)
 
         // expect
@@ -297,7 +297,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         // given
         await setupDatabaseContexts()
         await simulateLoggedInUser()
-        
+
         try await setEncryptionAtRest(enabled: true, skipMigration: true)
         sut.applicationDidEnterBackground(nil)
 
@@ -345,7 +345,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         // then
         XCTAssertTrue(sut.isDatabaseLocked)
         XCTAssertEqual(sut.lock, .database)
-        
+
         // cleanup
         token = nil
     }
@@ -355,7 +355,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         // given
         await setupDatabaseContexts()
         await simulateLoggedInUser()
-        
+
         try await setEncryptionAtRest(enabled: false, skipMigration: true)
         let locked = await isDatabaseLocked()
         XCTAssertFalse(locked)

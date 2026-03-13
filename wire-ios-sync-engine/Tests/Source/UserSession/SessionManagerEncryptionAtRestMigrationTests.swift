@@ -61,7 +61,7 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
         }
 
         self.earService = earService
-        
+
         return session
     }
 
@@ -74,7 +74,7 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
     }
 
     private func setupDatabaseContexts() async {
-        await self.earService.setupDatabaseContexts(
+        await earService.setupDatabaseContexts(
             databaseContexts: [
                 coreDataStack.viewContext,
                 coreDataStack.syncContext
@@ -84,7 +84,7 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
 
     private func login() async {
         await simulateLoggedInUser()
-        
+
         await syncMOC.perform { [syncMOC] in
             ModelHelper().createSelfClient(in: syncMOC)
             syncMOC.saveOrRollback()

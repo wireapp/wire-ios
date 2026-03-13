@@ -244,7 +244,7 @@ public final class SharingSession {
             featureRepository: featureRepository
         )
         let contextStorage = LAContextStorage()
-        
+
         let earService = await EARServiceFactory().createEARService(
             accountID: accountIdentifier,
             databaseContexts: [
