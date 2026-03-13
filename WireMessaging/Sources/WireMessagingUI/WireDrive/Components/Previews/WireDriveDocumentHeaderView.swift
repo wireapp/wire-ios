@@ -26,8 +26,10 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 struct WireDriveDocumentHeaderView: View {
     enum Constants {
         static let errorColor = ColorTheme.Base.error.color
+        static let headerIconSize: CGFloat = 16
     }
 
+    @ScaledMetric private var readyToOpenIconPadding: CGFloat = 3.8
     @ScaledMetric private var scale: CGFloat = 1
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -100,6 +102,13 @@ struct WireDriveDocumentHeaderView: View {
             Text(Strings.Files.tapToCancelDownload)
         }
     }
+    
+    @ViewBuilder
+    private func progressView(progress: Double) -> some View {
+        ProgressView(value: progress)
+            .progressViewStyle(.wireDriveAsset)
+            .frame(height: Constants.headerIconSize)
+    }
 
     @ViewBuilder
     private func stateIconView() -> some View {
@@ -108,12 +117,12 @@ struct WireDriveDocumentHeaderView: View {
             if showReadyToOpen {
                 Image(systemName: "checkmark.circle")
                     .foregroundStyle(.blue)
-                    .frame(width: 12 * scale, height: 12 * scale)
+                    .frame(width: Constants.headerIconSize * scale, height: Constants.headerIconSize * scale)
             } else {
                 headerIcon
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(height: 16 * scale)
+                    .frame(height: Constants.headerIconSize * scale)
             }
         case .failed:
             if isDraftPreview {
@@ -125,17 +134,15 @@ struct WireDriveDocumentHeaderView: View {
                 headerIcon
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(height: 16 * scale)
+                    .frame(height: Constants.headerIconSize * scale)
             }
         case .notDownloaded:
             headerIcon
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(height: 16 * scale)
+                .frame(height: Constants.headerIconSize * scale)
         case .downloading(let progress, _):
-            ProgressView(value: progress, total: 1)
-                .tint(Color.blue)
-                .progressViewStyle(AssetProgressStyle(fillColor: ColorTheme.Base.primary(wireAccentColor).color))
+            progressView(progress: progress)
         }
     }
     
