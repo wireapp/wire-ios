@@ -29,13 +29,13 @@ final class ZMUserMentionsTest: XCTestCase {
     override func setUp() {
         selfUser = MockUserType.createSelfUser(name: "selfUser")
         otherUser = MockUserType.createUser(name: "Bruno")
-        bot = MockServiceUserType.createBot(name: "Mr. Bot")
+        bot = MockUserType.createBot(name: "Mr. Bot")
     }
 
     override func tearDown() {
         selfUser = nil
         otherUser = nil
-        serviceUser = nil
+        bot = nil
     }
 
     func testThatItSearchesByName() {

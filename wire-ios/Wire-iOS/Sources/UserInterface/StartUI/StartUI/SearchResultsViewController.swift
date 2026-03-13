@@ -442,8 +442,8 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
             )
         } else if let user = user as? ZMUser, user.type == .app {
             delegate?.searchResultsViewController(self, didTapOnApp: user)
-        } else if let bot = user as? any Bot, bot.isAppOrBot {
-            delegate?.searchResultsViewController(self, didTapOnBot: bot)
+        } else if user.isAppOrBot {
+            delegate?.searchResultsViewController(self, didTapOnBot: user)
         } else if let searchUser = user as? ZMSearchUser {
             delegate?.searchResultsViewController(
                 self,

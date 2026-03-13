@@ -25,7 +25,7 @@ import XCTest
 final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     private var sut: ServiceDetailViewController!
-    private var bot: MockServiceUserType!
+    private var bot: MockUserType!
     private var groupConversation: ZMConversation!
     private var mockSelfUser: MockUserType!
     private var snapshotHelper: SnapshotHelper!

@@ -203,13 +203,13 @@ final class ServiceDetailViewController: UIViewController {
                 }
             }
 
-        } else if let bot = service.user as? any Bot {
+        } else {
 
-            bot.fetchProvider(in: userSession) { [weak self] provider in
+            service.user.fetchProvider(in: userSession) { [weak self] provider in
                 self?.detailView.service.provider = provider
             }
 
-            bot.fetchDetails(in: userSession) { [weak self] details in
+            service.user.fetchDetails(in: userSession) { [weak self] details in
                 self?.detailView.service.serviceUserDetails = details
             }
 
@@ -265,8 +265,7 @@ final class ServiceDetailViewController: UIViewController {
                 }
 
             case let .addBot(conversation):
-                guard let bot = service.user as? any Bot else { return }
-                conversation.add(bot: bot, in: userSession) { result in
+                conversation.add(bot: service.user, in: userSession) { result in
                     switch result {
                     case .success:
                         completion(.success(conversation: conversation))
@@ -276,9 +275,8 @@ final class ServiceDetailViewController: UIViewController {
                 }
 
             case let .removeParticipant(conversation):
-                guard let bot = service.user as? any Bot else { return }
                 presentRemoveDialogue(
-                    for: bot,
+                    for: service.user,
                     from: conversation,
                     sender: sender
                 )
@@ -320,11 +318,9 @@ final class ServiceDetailViewController: UIViewController {
 
                 } else {
 
-                    guard let bot = service.user as? any Bot else { return }
-
                     if let existingConversation = ZMConversation.existingConversation(
                         in: userSession.managedObjectContext,
-                        bot: bot,
+                        bot: service.user,
                         team: userSession.selfUser.membership?.team
                     ) {
 
@@ -332,7 +328,7 @@ final class ServiceDetailViewController: UIViewController {
 
                     } else {
 
-                        bot.createConversation(in: userSession) { result in
+                        service.user.createConversation(in: userSession) { result in
                             switch result {
                             case let .success(conversation):
                                 completion(.success(conversation: conversation))
