@@ -155,7 +155,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             throw Failure.mainAppRequired(message: "no self client id")
         }
 
-        let earService = await EARService(
+        let earService = await EARServiceFactory().createEARService(
             accountID: accountID,
             coreDataStack: coreDataStack,
             sharedUserDefaults: dependency.sharedUserDefaults,
