@@ -220,6 +220,14 @@ class ZMUserSessionTestsBase: MessagingTest {
             cookieStorage.authenticationCookieData = validCookie
         }
     }
+    
+    func simulateLoggedInUser() async {
+        await syncMOC.perform { [syncMOC] in
+            syncMOC.setPersistentStoreMetadata("clientID", key: ZMPersistedClientIdKey)
+            ZMUser.selfUser(in: syncMOC).remoteIdentifier = UUID.create()
+        }
+        cookieStorage.authenticationCookieData = validCookie
+    }
 
     private func clearCache() {
         let cachesURL = FileManager.default.cachesURLForAccount(
