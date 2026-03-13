@@ -681,9 +681,19 @@ public final class ZMUserSession: NSObject {
             WireLogger.session.error("failed to clean up invalid connections: \(String(describing: error))")
         }
 
+        await startWorkAgentAndGenerators()
+    }
+
+    private func startWorkAgentAndGenerators() async {
         guard let clientSessionComponent else {
+            WireLogger.session.warn(
+                "no client session component, skipping startWorkAgentAndGenerators",
+                attributes: .safePublic
+            )
             return
         }
+
+        WireLogger.session.info("start work agent and generators", attributes: .safePublic)
 
         await clientSessionComponent.workAgent.setAutoStartEnabled(true)
         await clientSessionComponent.workAgent.start()
@@ -698,7 +708,6 @@ public final class ZMUserSession: NSObject {
         }.store(in: &cancellables)
         // Initialize the generator to enqueue repair work item if needed
         clientSessionComponent.repairFaultyMLSRemovalKeysGenerator.submitWorkItemIfNeeded()
-
     }
 
     public func migrateToConsumableNotificationsIfNeeded() async throws {
@@ -1401,6 +1410,8 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
             // this is a fresh client so we need an initialSync
             journal[.isInitialSyncRequired] = true
             Task {
+                //
+                await startWorkAgentAndGenerators()
                 WireLogger.sync.debug("Triggering initial sync after client registration")
                 await triggerSync()
             }
