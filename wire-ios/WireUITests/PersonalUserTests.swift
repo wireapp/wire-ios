@@ -134,9 +134,8 @@ final class PersonalUsersTests: WireUITestCase {
         XCTAssertNotEqual(accountNameUserA, accountNameUserB, "Account name didn't change after deleting")
     }
 
-    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1389/tc/8869
     @MainActor
-    func test_AddConversationAsFavourite() async throws {
+    func test_AddConversationAsFavourite_TC_8869() async throws {
         let groupName = UserGenerator.generateRandomGroupName()
         let (teamOwner, _, _, _) = try await userHelper
             .registerTeam(
@@ -156,9 +155,8 @@ final class PersonalUsersTests: WireUITestCase {
         )
     }
 
-    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1389/tc/8874
     @MainActor
-    func test_FilterConversationByFavourite() async throws {
+    func test_FilterConversationByFavourite_TC_8874() async throws {
         let groupName = UserGenerator.generateRandomGroupName()
         let (teamOwner, _, _, _) = try await userHelper
             .registerTeam(
