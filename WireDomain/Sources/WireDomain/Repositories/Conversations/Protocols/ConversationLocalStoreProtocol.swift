@@ -496,4 +496,10 @@ public protocol ConversationLocalStoreProtocol {
         identifier: MLSGroupID,
         block: @escaping @Sendable (ZMConversation?, NSManagedObjectContext) -> Void
     ) async
+
+    func execute(
+        identifier: QualifiedID,
+        block: @escaping @Sendable (ZMConversation?, NSManagedObjectContext) -> Void
+    ) async
+
 }

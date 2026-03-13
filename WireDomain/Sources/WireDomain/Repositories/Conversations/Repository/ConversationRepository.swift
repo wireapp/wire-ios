@@ -381,7 +381,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     public func isSelfAnActiveMember(
-        in groupID: MLSGroupID
+        in groupID: WireDataModel.QualifiedID
     ) async -> Bool {
         nonisolated(unsafe) var isSelfAnActiveMember = false
         await conversationsLocalStore.execute(identifier: groupID) { conversation, _ in

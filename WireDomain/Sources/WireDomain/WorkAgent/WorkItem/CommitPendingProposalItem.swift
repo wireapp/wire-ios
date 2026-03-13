@@ -58,7 +58,7 @@ struct CommitPendingProposalItem: WorkItem, CustomStringConvertible {
     func start() async throws {
         let logAttributes: LogAttributes = [.mlsGroupID: groupID.safeForLoggingDescription] + LogAttributes.safePublic
 
-        let isSelfAnActiveMember = await repository.isSelfAnActiveMember(in: groupID)
+        let isSelfAnActiveMember = await repository.isSelfAnActiveMember(in: conversationID)
 
         guard isSelfAnActiveMember else {
             logger.info("cancelling commit as the user is no longer a member", attributes: logAttributes)
