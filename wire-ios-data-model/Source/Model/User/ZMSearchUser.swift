@@ -86,20 +86,11 @@ public struct SearchUserAssetKeys {
 
 }
 
-extension ZMSearchUser: UserSearchResult { // TODO: still needed?
-
-    public var serviceIdentifier: String? {
-        remoteIdentifier?.transportString() // TODO: why not the actual service identifier?
-    }
-
-}
-
 // MARK: NSManagedObjectContext
 
 @objc
-public class ZMSearchUser: NSObject, UserType {
+public class ZMSearchUser: NSObject, UserType, UserSearchResult {
 
-    public var providerIdentifier: String?
     public var summary: String?
     public var assetKeys: SearchUserAssetKeys?
     public var remoteIdentifier: UUID!
@@ -127,6 +118,7 @@ public class ZMSearchUser: NSObject, UserType {
     fileprivate var internalPreviewImageData: Data?
     fileprivate var internalCompleteImageData: Data?
     fileprivate var internalIsAccountDeleted: Bool?
+    fileprivate var internalProviderIdentifier: String?
 
     @objc public var hasTeam: Bool {
         user?.hasTeam ?? false
@@ -215,7 +207,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var isBot: Bool {
-        providerIdentifier?.isEmpty == false
+        providerIdentifier?.isEmpty == false && serviceIdentifier?.isEmpty == false
     }
 
     public var isAppOrBot: Bool { isBot }
@@ -359,6 +351,14 @@ public class ZMSearchUser: NSObject, UserType {
         user?.canManageTeam ?? false
     }
 
+    public var providerIdentifier: String? {
+        user?.providerIdentifier ?? internalProviderIdentifier
+    }
+
+    public var serviceIdentifier: String? {
+        user?.serviceIdentifier ?? remoteIdentifier.transportString()
+    }
+
     public func canAddService(to conversation: ZMConversation) -> Bool {
         user?.canAddService(to: conversation) == true
     }
@@ -489,6 +489,7 @@ public class ZMSearchUser: NSObject, UserType {
         remoteIdentifier: UUID?,
         domain: String? = nil,
         teamIdentifier: UUID? = nil,
+        providerIdentifier: String?,
         user existingUser: ZMUser? = nil,
         searchUsersCache: SearchUsersCache?,
         isDeleted: Bool
@@ -501,6 +502,7 @@ public class ZMSearchUser: NSObject, UserType {
             remoteIdentifier: remoteIdentifier,
             domain: domain,
             teamIdentifier: teamIdentifier,
+            providerIdentifier: providerIdentifier,
             user: existingUser,
             searchUsersCache: searchUsersCache
         )
@@ -516,6 +518,7 @@ public class ZMSearchUser: NSObject, UserType {
         remoteIdentifier: UUID?,
         domain: String? = nil,
         teamIdentifier: UUID? = nil,
+        providerIdentifier: String?,
         user existingUser: ZMUser? = nil,
         searchUsersCache: SearchUsersCache?
     ) {
@@ -530,6 +533,7 @@ public class ZMSearchUser: NSObject, UserType {
         self.internalDomain = domain
         self.remoteIdentifier = existingUser?.remoteIdentifier ?? remoteIdentifier
         self.teamIdentifier = existingUser?.teamIdentifier ?? teamIdentifier
+        self.internalProviderIdentifier = existingUser?.providerIdentifier ?? providerIdentifier
         self.viewContext = viewContext
         self.searchUsersCache = searchUsersCache
 
@@ -558,6 +562,7 @@ public class ZMSearchUser: NSObject, UserType {
             remoteIdentifier: user.remoteIdentifier,
             domain: user.domain,
             teamIdentifier: user.teamIdentifier,
+            providerIdentifier: user.providerIdentifier,
             user: user,
             searchUsersCache: searchUsersCache
         )
@@ -590,11 +595,11 @@ public class ZMSearchUser: NSObject, UserType {
             remoteIdentifier: remoteIdentifier,
             domain: domain,
             teamIdentifier: teamIdentifier,
+            providerIdentifier: payload["provider"] as? String,
             user: user,
             searchUsersCache: searchUsersCache
         )
 
-        self.providerIdentifier = payload["provider"] as? String
         self.summary = payload["summary"] as? String
         self.assetKeys = SearchUserAssetKeys(payload: payload)
         self.internalIsAccountDeleted = payload["deleted"] as? Bool
