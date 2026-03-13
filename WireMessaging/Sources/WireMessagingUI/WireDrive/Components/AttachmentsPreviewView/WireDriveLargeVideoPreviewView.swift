@@ -54,7 +54,8 @@ struct WireDriveLargeVideoPreviewView: View {
                     headerText: headerText,
                     labelText: labelText,
                     progress: progress,
-                    isError: downloadError
+                    isError: downloadError,
+                    showReadyToOpen: false //TODO: just did that to silence the build error
                 )
                 .background(ColorTheme.Backgrounds.surfaceVariant.color)
                 .frame(height: 74)  // This might break the UI if text font is too big

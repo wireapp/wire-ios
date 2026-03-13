@@ -50,6 +50,7 @@ struct WireDriveDocumentAttachmentPreview: View {
                 labelText: labelText,
                 progress: progress,
                 isError: isError,
+                showReadyToOpen: false //TODO: just did that to silence the build error
             )
             .background(ColorTheme.Backgrounds.surfaceVariant.color)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
