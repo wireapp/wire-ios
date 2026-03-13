@@ -121,18 +121,3 @@ enum ConversationActionResponseV15: String, Decodable {
     }
 
 }
-
-private struct GetAppsResponseV15: Decodable, ToAPIModelConvertible {
-
-    var apps: [GetAppResponseV14]
-
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        self.apps = try container.decode([GetAppResponseV14].self)
-    }
-
-    func toAPIModel() -> [App] {
-        apps.map { $0.toAPIModel() }
-    }
-
-}
