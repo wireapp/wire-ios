@@ -102,7 +102,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-NSShowNonLocalizedStrings YES"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-com.apple.CoreData.MigrationDebug 1"
