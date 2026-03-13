@@ -86,7 +86,7 @@ public struct SearchUserAssetKeys {
 
 }
 
-extension ZMSearchUser: SearchServiceUser {
+extension ZMSearchUser {
 
     public var serviceIdentifier: String? {
         remoteIdentifier?.transportString()

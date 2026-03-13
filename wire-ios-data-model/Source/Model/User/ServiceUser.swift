@@ -22,13 +22,7 @@ public protocol Bot: AnyObject, UserType {
     var serviceIdentifier: String? { get }
 }
 
-@objc
-public protocol BotSearchResult: Bot {
-    var summary: String? { get }
-}
-
 public typealias ServiceUser = Bot
-public typealias SearchServiceUser = BotSearchResult
 
 extension ZMUser {
     static let servicesMustBeMentioned = false
