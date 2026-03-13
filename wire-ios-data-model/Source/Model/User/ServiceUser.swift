@@ -16,12 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@objc
 public protocol UserSearchResult: UserType { // TODO: still needed?
     var summary: String? { get }
-}
-
-extension ZMUser { // TODO: delete
-    static let servicesMustBeMentioned = false
-    static let serviceMentionKeyword = "@bots"
 }
