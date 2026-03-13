@@ -42,7 +42,7 @@ public struct SearchResult {
 
     public var apps: [any UserType]
 
-    public var bots: [any Bot]
+    public var bots: [any UserType]
 
     /// Cache for search users.
 

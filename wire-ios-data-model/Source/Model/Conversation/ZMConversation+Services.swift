@@ -22,7 +22,7 @@ public extension ZMConversation {
 
     class func existingConversation(
         in moc: NSManagedObjectContext,
-        bot: any Bot,
+        bot: any UserType,
         team: Team?
     ) -> ZMConversation? {
         guard let team else { return nil }

@@ -28,7 +28,7 @@ private struct ServiceUserData: Equatable { // TODO: rename BotData? or delete?
 
 }
 
-private extension Bot {
+private extension UserType {
 
     var serviceUserData: ServiceUserData? {
         guard let providerIdentifier,
@@ -159,7 +159,7 @@ private extension ServiceUserData {
 
 }
 
-public extension Bot {
+public extension UserType {
 
     func fetchProvider(
         in userSession: ZMUserSession,
@@ -324,7 +324,7 @@ extension AddBotError {
 extension ZMConversation {
 
     public func add(
-        bot: any Bot,
+        bot: any UserType,
         in userSession: ZMUserSession,
         completionHandler: @escaping (Result<Void, Error>) -> Void
     ) {

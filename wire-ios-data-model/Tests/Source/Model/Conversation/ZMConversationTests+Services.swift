@@ -23,7 +23,7 @@ import Foundation
 final class ZMConversationTests_Bots: BaseZMMessageTests {
 
     var team: Team!
-    var bot: (any Bot)!
+    var bot: (any UserType)!
     var user: ZMUser!
 
     override func setUp() {
@@ -42,7 +42,7 @@ final class ZMConversationTests_Bots: BaseZMMessageTests {
         user = nil
     }
 
-    func createConversation(with bot: Bot) throws -> ZMConversation {
+    func createConversation(with bot: UserType) throws -> ZMConversation {
         let conversation = createConversation(in: uiMOC)
         conversation.team = team
         conversation.conversationType = .group

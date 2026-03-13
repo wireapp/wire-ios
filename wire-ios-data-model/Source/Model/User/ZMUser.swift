@@ -196,6 +196,11 @@ extension ZMUser: UserType {
         return mlsFeature.isEnabled && mlsFeature.config.protocolToggleUsers.contains(id)
     }
 
+    // MARK: - Bot specific properties
+
+    @NSManaged public var providerIdentifier: String?
+    @NSManaged public var serviceIdentifier: String?
+
 }
 
 public struct AssetKey {
@@ -260,11 +265,6 @@ extension ProfileImageSize: CustomDebugStringConvertible {
             "ProfileImageSize.complete"
         }
     }
-}
-
-extension ZMUser: Bot {
-    @NSManaged public var providerIdentifier: String?
-    @NSManaged public var serviceIdentifier: String?
 }
 
 public extension Notification.Name {

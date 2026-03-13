@@ -56,6 +56,7 @@
                                                    remoteIdentifier:remoteIDA
                                                              domain:nil
                                                      teamIdentifier:nil
+                                                 providerIdentifier:nil
                                                                user:nil
                                                    searchUsersCache:nil
                                                                type:[ZMTypeOfUserWrapper regular]];
@@ -68,6 +69,7 @@
                                                    remoteIdentifier:remoteIDA
                                                              domain:nil
                                                      teamIdentifier:nil
+                                                 providerIdentifier:nil
                                                                user:nil
                                                    searchUsersCache:nil
                                                                type:[ZMTypeOfUserWrapper regular]];
@@ -83,6 +85,7 @@
                                                    remoteIdentifier:remoteIDB
                                                              domain:nil
                                                      teamIdentifier:nil
+                                                 providerIdentifier:nil
                                                                user:nil
                                                    searchUsersCache:nil
                                                                type:[ZMTypeOfUserWrapper regular]];
@@ -105,6 +108,7 @@
                                                         remoteIdentifier:remoteID
                                                                   domain:nil
                                                           teamIdentifier:nil
+                                                      providerIdentifier:nil
                                                                     user:nil
                                                         searchUsersCache:nil
                                                                     type:[ZMTypeOfUserWrapper regular]];
@@ -145,6 +149,7 @@
                                                         remoteIdentifier:[NSUUID createUUID]
                                                                   domain:nil
                                                           teamIdentifier:nil
+                                                      providerIdentifier:nil
                                                                     user:user
                                                         searchUsersCache:nil
                                                                     type:[ZMTypeOfUserWrapper regular]];
@@ -174,6 +179,7 @@
                                                         remoteIdentifier:NSUUID.createUUID
                                                                   domain:nil
                                                           teamIdentifier:nil
+                                                      providerIdentifier:nil
                                                                     user:nil
                                                         searchUsersCache:nil
                                                                     type:[ZMTypeOfUserWrapper regular]];
@@ -194,6 +200,7 @@
                                                         remoteIdentifier:nil
                                                                   domain:nil
                                                           teamIdentifier:nil
+                                                      providerIdentifier:nil
                                                                     user:nil
                                                         searchUsersCache:nil
                                                                     type:[ZMTypeOfUserWrapper regular]];

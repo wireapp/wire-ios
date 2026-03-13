@@ -27,8 +27,6 @@ final class ZMUserMentionsTest: XCTestCase {
     var bot: MockUserType!
 
     override func setUp() {
-        super.setUp()
-
         selfUser = MockUserType.createSelfUser(name: "selfUser")
         otherUser = MockUserType.createUser(name: "Bruno")
         bot = MockServiceUserType.createBot(name: "Mr. Bot")
@@ -37,9 +35,7 @@ final class ZMUserMentionsTest: XCTestCase {
     override func tearDown() {
         selfUser = nil
         otherUser = nil
-        bot = nil
-
-        super.tearDown()
+        serviceUser = nil
     }
 
     func testThatItSearchesByName() {

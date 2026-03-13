@@ -186,26 +186,11 @@ extension ZMConversation {
 
 // MARK: - Storable Helper
 
-private extension UserType {
-
-    // Private helper to get the user identifier for a `UserType`.
-    var userIdentifier: UUID? {
-        if let user = self as? ZMUser {
-            return user.remoteIdentifier
-        } else if let user = self as? any Bot {
-            return user.userIdentifier
-        }
-
-        return nil
-    }
-
-}
-
 private extension Mention {
 
     /// The storable version of the object.
     var storable: StorableMention? {
-        user.userIdentifier.map {
+        user.remoteIdentifier.map {
             StorableMention(range: range, userIdentifier: $0)
         }
     }
