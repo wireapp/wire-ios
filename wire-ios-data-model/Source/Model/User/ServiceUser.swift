@@ -17,5 +17,5 @@
 //
 
 public protocol UserSearchResult: UserType { // TODO: still needed?
-    var summary: String? { get }
+    // var summary: String? { get }
 }
