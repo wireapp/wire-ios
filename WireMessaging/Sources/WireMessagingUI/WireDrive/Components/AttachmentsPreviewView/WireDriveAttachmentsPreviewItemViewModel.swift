@@ -47,6 +47,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
     @Published private var asset: WireDriveLocalAsset?
     @Published private var node: WireDriveNode?
     @Published private var isDeleted: Bool
+    @Published var fileTracker: WireDriveFileUITracker
 
     init(
         attachment: WireDriveMessageAttachment,
@@ -69,6 +70,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         self.localAssetRepository = localAssetRepository
         self._displayStyle = displayStyle
         self.isDeleted = false
+        self.fileTracker = .init()
 
         setupBindings()
 
@@ -122,26 +124,6 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         preview?.url
     }
 
-    var progress: Double {
-        switch asset?.downloadState {
-        case let .downloading(progress):
-            progress
-        case .failed:
-            1 // We show a full red progress bar on failure
-        default:
-            0
-        }
-    }
-
-    var isAssetDownloadError: Bool {
-        switch asset?.downloadState {
-        case .failed:
-            true
-        default:
-            false
-        }
-    }
-
     private var preview: WireDriveNodePreview? {
         node?.previews.sorted(by: { $0.dimension < $1.dimension }).last
     }
@@ -193,13 +175,14 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
     }
 
     func open() async {
-        guard !isDeleted, !isDownloading else { return }
+        // TODO: to handle tap to cancel
+        guard !isDeleted else { return }
 
         lastOpenRequest.nodeID = nodeID
 
         do {
             let url = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
-            if lastOpenRequest.nodeID == nodeID {
+            if lastOpenRequest.nodeID == nodeID, canOpen {
                 QuickLookPreviewPresenter.present(url: url)
             }
         } catch {
@@ -274,8 +257,13 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         return fileSize.map { $0.formatted(.byteCount(style: .decimal)) }
     }
 
-    private var isDownloading: Bool {
-        asset?.downloadState.isDownloading == true
+    private var canOpen: Bool {
+        switch fileTracker.state {
+        case .downloaded(let showReadyToOpen):
+            !showReadyToOpen
+        default:
+            false
+        }
     }
 
     private func setupBindings() {
@@ -294,6 +282,9 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         localAssetRepository.observeAsset(nodeID: attachment.nodeID)
             .sink { [weak self] asset in
                 self?.asset = asset
+                if let asset {
+                    self?.fileTracker.handleDownloadState(fromAsset: asset)
+                }
             }.store(in: &cancellables)
     }
 

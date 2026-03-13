@@ -91,7 +91,6 @@ public final class AttachmentsCarouselViewModel: ObservableObject {
 
         generatingThumbnailIDs.remove(draft.versionID)
     }
-
 }
 
 private extension AttachmentsCarouselItem {

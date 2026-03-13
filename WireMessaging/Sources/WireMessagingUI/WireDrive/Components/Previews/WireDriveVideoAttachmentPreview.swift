@@ -22,17 +22,13 @@ import WireDesign
 struct WireDriveVideoAttachmentPreview: View {
 
     let thumbnail: Image?
-    let progress: Double?
-    let isError: Bool
+    let state: WireDriveFileUITracker.State
     let canPlay: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireDriveAttachmentPreview(
-            progress: progress,
-            progressColor: isError ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
-        ) {
+        WireDriveAttachmentPreview() {
             ZStack(alignment: .center) {
                 if let thumbnail {
                     GeometryReader { geometry in
@@ -53,6 +49,15 @@ struct WireDriveVideoAttachmentPreview: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+    
+    private var isError: Bool {
+        switch state {
+        case .failed:
+            true
+        default:
+            false
         }
     }
 }
@@ -83,8 +88,7 @@ struct PlayIcon: View {
 #Preview {
     WireDriveVideoAttachmentPreview(
         thumbnail: Image("rectangular-placeholder", bundle: .module),
-        progress: 0.7,
-        isError: false,
+        state: .downloading(progress: 0.7, isLargeFile: false),
         canPlay: true
     ).frame(width: 74, height: 74)
 }

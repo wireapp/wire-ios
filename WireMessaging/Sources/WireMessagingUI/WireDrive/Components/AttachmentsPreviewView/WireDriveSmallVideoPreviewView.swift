@@ -23,27 +23,23 @@ import WireFoundation
 struct WireDriveSmallVideoPreviewView: View {
 
     let url: URL?
-    let progress: Double?
-    let downloadError: Bool
+    let state: WireDriveFileUITracker.State
     let duration: String?
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireDriveAttachmentPreview(
-            progress: progress,
-            progressColor: downloadError ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color,
-        ) {
+        WireDriveAttachmentPreview() {
             ZStack(alignment: .center) {
                 if let url {
                     asyncImage(url: url)
                 }
 
-                if url == nil, !downloadError {
+                if url == nil, case .downloading = state {
                     ProgressView()
                 }
 
-                if downloadError {
+                if case .failed = state {
                     WireDriveAttachmentPreviewErrorCircle()
                 }
             }
@@ -70,7 +66,7 @@ struct WireDriveSmallVideoPreviewView: View {
                     .resizable()
                     .scaledToFill()
                     .overlay {
-                        if !downloadError {
+                        if case .notDownloaded = state {
                             PlayIcon()
                                 .disabled(false)
                         }
@@ -99,8 +95,7 @@ struct WireDriveSmallVideoPreviewView: View {
             string:
             "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
         ),
-        progress: 0.7,
-        downloadError: false,
+        state: .downloading(progress: 0.7, isLargeFile: false),
         duration: "2:22",
     )
 }

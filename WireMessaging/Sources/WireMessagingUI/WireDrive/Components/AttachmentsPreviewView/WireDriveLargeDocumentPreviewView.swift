@@ -30,33 +30,28 @@ struct WireDriveLargeDocumentPreviewView: View {
     let headerIcon: Image
     let headerText: String
     let labelText: String
-    let progress: Double?
-    let downloadError: Bool
     let url: URL?
+    let state: WireDriveFileUITracker.State
+    let isDraftPreview: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireDriveAttachmentPreview(
-            progress: progress,
-            progressColor: downloadError
-                ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
-        ) {
+        WireDriveAttachmentPreview() {
             VStack {
                 WireDriveDocumentHeaderView(
                     headerIcon: headerIcon,
                     headerText: headerText,
                     labelText: labelText,
-                    progress: progress,
-                    isError: downloadError,
-                    showReadyToOpen: false //TODO: just did that to silence the build error
+                    isDraftPreview: isDraftPreview,
+                    state: state
                 )
                 .background(ColorTheme.Backgrounds.surfaceVariant.color)
                 .frame(height: 74) // This might break the UI if text font is too big
                 .frame(maxWidth: .infinity)
 
                 previewContainer {
-                    if downloadError {
+                    if case .failed = state {
                         errorView(text: Self.downloadErrorMessage)
                     } else {
                         if let url {
@@ -131,11 +126,11 @@ struct WireDriveLargeDocumentPreviewView: View {
         headerIcon: Image(WireDriveFileType.pdf.imageResource),
         headerText: "PDF (336 KB)",
         labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-        progress: 0.7,
-        downloadError: false,
         url: URL(
             string:
             "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
-        )
+        ),
+        state: .downloading(progress: 0.7, isLargeFile: false),
+        isDraftPreview: false
     )
 }

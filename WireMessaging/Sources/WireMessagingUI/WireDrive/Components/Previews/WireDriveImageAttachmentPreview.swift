@@ -22,16 +22,12 @@ import WireDesign
 struct WireDriveImageAttachmentPreview: View {
 
     let thumbnail: Image?
-    let progress: Double?
-    let isError: Bool
+    let state: WireDriveFileUITracker.State
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireDriveAttachmentPreview(
-            progress: progress,
-            progressColor: isError ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
-        ) {
+        WireDriveAttachmentPreview() {
             ZStack(alignment: .center) {
                 if let thumbnail {
                     GeometryReader { geometry in
@@ -42,7 +38,7 @@ struct WireDriveImageAttachmentPreview: View {
                     }
                 }
 
-                if isError {
+                if case .failed = state {
                     WireDriveAttachmentPreviewErrorCircle()
                 }
             }
@@ -54,7 +50,6 @@ struct WireDriveImageAttachmentPreview: View {
 #Preview {
     WireDriveImageAttachmentPreview(
         thumbnail: Image("rectangular-placeholder", bundle: .module),
-        progress: 0.7,
-        isError: true
+        state: .downloaded(showReadyToOpen: false)
     ).frame(width: 74, height: 74)
 }

@@ -34,10 +34,9 @@ struct WireDriveDocumentHeaderView: View {
     let headerIcon: Image
     let headerText: String
     let labelText: String
-    let progress: Double?
-    let isError: Bool
-    let showReadyToOpen: Bool
-
+    let isDraftPreview: Bool
+    let state: WireDriveFileUITracker.State
+    
     var body: some View {
         header()
     }
@@ -55,10 +54,12 @@ struct WireDriveDocumentHeaderView: View {
 
                 Spacer()
                 
-                stateTextView()
-                    .foregroundStyle(isError ? ColorTheme.Base.error.color : ColorTheme.Base.secondaryText.color)
-                    .font(for: .subline1)
-                    .lineLimit(1)
+                if !isDraftPreview {
+                    stateTextView()
+                        .foregroundStyle(isError ? ColorTheme.Base.error.color : ColorTheme.Base.secondaryText.color)
+                        .font(for: .subline1)
+                        .lineLimit(1)
+                }
             }
             .padding([.horizontal, .top], 8)
 
@@ -73,16 +74,29 @@ struct WireDriveDocumentHeaderView: View {
         }
     }
     
+    private var isError: Bool {
+        switch state {
+        case .failed:
+            true
+        default:
+            false
+        }
+    }
+    
     @ViewBuilder
     private func stateTextView() -> some View {
         switch state {
-        case .readyToOpen:
-            Text(Strings.Files.readyToOpenAfterDownload)
+        case .downloaded(let showReadyToOpen):
+            if showReadyToOpen {
+                Text(Strings.Files.readyToOpenAfterDownload)
+            } else {
+                EmptyView()
+            }
         case .failed:
             Text(Strings.Files.downloadFailed)
-        case .default:
+        case .notDownloaded:
             EmptyView()
-        case .loading:
+        case .downloading:
             Text(Strings.Files.tapToCancelDownload)
         }
     }
@@ -90,39 +104,41 @@ struct WireDriveDocumentHeaderView: View {
     @ViewBuilder
     private func stateIconView() -> some View {
         switch state {
-        case .readyToOpen:
-            Image(systemName: "checkmark.circle")
-                .foregroundStyle(.blue)
-        case .default, .failed:
+        case .downloaded(let showReadyToOpen):
+            if showReadyToOpen {
+                Image(systemName: "checkmark.circle")
+                    .foregroundStyle(.blue)
+                    .frame(width: 12 * scale, height: 12 * scale)
+            } else {
+                headerIcon
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 16 * scale)
+            }
+        case .failed:
+            if isDraftPreview {
+                Image(systemName: "exclamationmark.triangle")
+                    .fontWeight(.semibold)
+                    .font(.system(size: 14 * scale))
+                    .foregroundStyle(Constants.errorColor)
+            } else {
+                headerIcon
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 16 * scale)
+            }
+        case .notDownloaded:
             headerIcon
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(height: 16 * scale)
-        case .loading:
+        case .downloading(let progress, _):
             ProgressView(value: progress, total: 1)
                 .tint(Color.blue)
                 .progressViewStyle(AssetProgressStyle(fillColor: ColorTheme.Base.primary(wireAccentColor).color))
         }
     }
     
-    private enum State {
-        case `default`
-        case readyToOpen
-        case failed
-        case loading
-    }
-    
-    private var state: State {
-        if showReadyToOpen {
-            .readyToOpen
-        } else if isError {
-            .failed
-        } else if progress != nil {
-            .loading
-        } else {
-            .default
-        }
-    }
 }
 
 #Preview {
@@ -130,9 +146,8 @@ struct WireDriveDocumentHeaderView: View {
         headerIcon: Image(WireDriveFileType.pdf.imageResource),
         headerText: "PDF (336 KB)",
         labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-        progress: 0.7,
-        isError: false,
-        showReadyToOpen: false
+        isDraftPreview: false,
+        state: .downloading(progress: 0.7, isLargeFile: false)
     )
     .frame(width: 300, height: 74)
 }

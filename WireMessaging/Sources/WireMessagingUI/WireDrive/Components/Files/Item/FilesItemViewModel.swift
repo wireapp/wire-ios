@@ -122,7 +122,7 @@ final class FilesItemViewModel: ObservableObject {
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
             self?.asset = asset
             if let asset {
-                self?.fileTracker.handleDownloadState(from: asset)
+                self?.fileTracker.handleDownloadState(fromAsset: asset)
             }
         }.store(in: &cancellables)
     }

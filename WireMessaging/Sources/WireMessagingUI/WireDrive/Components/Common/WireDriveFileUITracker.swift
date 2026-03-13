@@ -41,7 +41,7 @@ public final class WireDriveFileUITracker {
         case downloaded(showReadyToOpen: Bool)
 
         /// The download has failed.
-        case failed(error: any Error)
+        case failed(error: (any Error)?)
     }
 
     public private(set) var state: State = .notDownloaded {
@@ -68,20 +68,39 @@ public final class WireDriveFileUITracker {
     /// This closure will be called when a file should be automatically opened after the download.
     public var fileShouldOpen: (() -> Void)?
 
-    public func handleDownloadState(from file: WireDriveLocalAsset) {
-        state = Self.stateFromFile(file)
+    public func handleDownloadState(fromAsset asset: WireDriveLocalAsset) {
+        state = Self.stateFromAsset(asset)
     }
+    
+    // MARK: - State mapping from `WireDriveLocalAsset` (downloading a Drive file)
 
-    private static func stateFromFile(_ file: WireDriveLocalAsset) -> State {
-        switch file.downloadState {
+    private static func stateFromAsset(_ asset: WireDriveLocalAsset) -> State {
+        switch asset.downloadState {
         case .pending:
                 .notDownloaded
         case let .downloading(progress):
-                .downloading(progress: progress, isLargeFile: file.fileSize == .large)
+                .downloading(progress: progress, isLargeFile: asset.fileSize == .large)
         case .downloaded:
                 .downloaded(showReadyToOpen: false)
         case let .failed(error):
                 .failed(error: error)
+        }
+    }
+    
+    // MARK: - State mapping from `AttachmentsCarouselItem` (uploading a Drive file)
+    
+    public func handleDownloadState(fromCarouselItem item: AttachmentsCarouselItem) {
+        state = Self.stateFromCarouselItem(item)
+    }
+    
+    private static func stateFromCarouselItem(_ carouselItem: AttachmentsCarouselItem) -> State {
+        switch carouselItem.state {
+        case .uploading(let progress):
+                .downloading(progress: Double(progress), isLargeFile: false)
+        case .uploaded:
+                .downloaded(showReadyToOpen: false)
+        case .failed:
+                .failed(error: nil)
         }
     }
 }

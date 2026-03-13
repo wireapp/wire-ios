@@ -23,26 +23,19 @@ import WireFoundation
 struct WireDriveImageConversationAttachmentPreview: View {
 
     let thumbnailURL: URL?
-    let progress: Double?
-    let isAssetDownloadError: Bool
+    let state: WireDriveFileUITracker.State
     let canShowNoPreviewMessage: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
-    init(thumbnailURL: URL?, progress: Double?, isAssetDownloadError: Bool, canShowNoPreviewMessage: Bool) {
+    init(thumbnailURL: URL?, state: WireDriveFileUITracker.State, canShowNoPreviewMessage: Bool) {
         self.thumbnailURL = thumbnailURL
-        self.progress = progress
-        self.isAssetDownloadError = isAssetDownloadError
+        self.state = state
         self.canShowNoPreviewMessage = canShowNoPreviewMessage
     }
 
     var body: some View {
-        WireDriveAttachmentPreview(
-            progress: progress,
-            progressColor: isAssetDownloadError
-                ? ColorTheme.Base.error.color
-                : ColorTheme.Base.primary(wireAccentColor).color
-        ) {
+        WireDriveAttachmentPreview() {
             ZStack {
                 if let thumbnailURL {
                     AsyncImage(url: thumbnailURL, scale: UIScreen.main.scale) { phase in
@@ -77,6 +70,15 @@ struct WireDriveImageConversationAttachmentPreview: View {
     }
 
     // MARK: Helpers
+    
+    private var isAssetDownloadError: Bool {
+        switch state {
+        case .failed:
+            true
+        default:
+            false
+        }
+    }
 
     @ViewBuilder private var noPreviewMessageView: some View {
         if canShowNoPreviewMessage {
@@ -97,8 +99,7 @@ struct WireDriveImageConversationAttachmentPreview: View {
 #Preview {
     WireDriveImageConversationAttachmentPreview(
         thumbnailURL: nil,
-        progress: 0.5,
-        isAssetDownloadError: false,
+        state: .downloading(progress: 0.5, isLargeFile: false),
         canShowNoPreviewMessage: true
     )
 }

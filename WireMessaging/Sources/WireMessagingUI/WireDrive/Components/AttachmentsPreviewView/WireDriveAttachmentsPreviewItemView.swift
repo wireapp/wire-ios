@@ -41,16 +41,14 @@ struct WireDriveAttachmentsPreviewItemView: View {
             case (.image, .small):
                 WireDriveImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
-                    progress: viewModel.progress,
-                    isAssetDownloadError: viewModel.isAssetDownloadError,
+                    state: viewModel.fileTracker.state,
                     canShowNoPreviewMessage: false
                 )
                 .frame(width: 120, height: 120)
             case (.image, .large):
                 WireDriveImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
-                    progress: viewModel.progress,
-                    isAssetDownloadError: viewModel.isAssetDownloadError,
+                    state: viewModel.fileTracker.state,
                     canShowNoPreviewMessage: true
                 )
                 .aspectRatio(viewModel.previewAspectRatio, contentMode: .fit)
@@ -64,8 +62,7 @@ struct WireDriveAttachmentsPreviewItemView: View {
             case (.video, .small):
                 WireDriveSmallVideoPreviewView(
                     url: viewModel.imagePreviewURL,
-                    progress: viewModel.progress,
-                    downloadError: viewModel.isAssetDownloadError,
+                    state: viewModel.fileTracker.state,
                     duration: viewModel.attachmentDuration,
                 )
             case (.video, .large):
@@ -73,11 +70,10 @@ struct WireDriveAttachmentsPreviewItemView: View {
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
-                    progress: viewModel.progress,
-                    downloadError: viewModel.isAssetDownloadError,
                     url: viewModel.imagePreviewURL,
                     imageAspectRatio: viewModel.previewAspectRatio,
                     duration: viewModel.attachmentDuration,
+                    state: viewModel.fileTracker.state
                 )
                 .frame(idealWidth: 288)
             case (.document, .small):
@@ -85,8 +81,8 @@ struct WireDriveAttachmentsPreviewItemView: View {
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
-                    progress: viewModel.progress,
-                    isError: viewModel.isAssetDownloadError,
+                    state: viewModel.fileTracker.state,
+                    isDraftPreview: false
                 )
                 .frame(height: 74)
                 .frame(idealWidth: 288)
@@ -95,9 +91,9 @@ struct WireDriveAttachmentsPreviewItemView: View {
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
-                    progress: viewModel.progress,
-                    downloadError: viewModel.isAssetDownloadError,
                     url: viewModel.imagePreviewURL,
+                    state: viewModel.fileTracker.state,
+                    isDraftPreview: false
                 )
                 .frame(idealWidth: 288)
             case (.audio, .small), (.audio, .large):
@@ -105,8 +101,8 @@ struct WireDriveAttachmentsPreviewItemView: View {
                     headerIcon: Image(viewModel.icon),
                     headerText: viewModel.headerText,
                     labelText: viewModel.fileName,
-                    progress: viewModel.progress,
-                    isError: viewModel.isAssetDownloadError,
+                    state: viewModel.fileTracker.state,
+                    isDraftPreview: false
                 )
                 .frame(height: 74)
                 .frame(idealWidth: 288)
