@@ -25,7 +25,7 @@ import WireLogging
 /// This migration triggers a sync of all users in order to fetch the correct `type`.
 struct AppVersionMigration_4_18_0: AppVersionMigration {
 
-    let version: SemanticVersion = "4.17.0" // TODO: change to 4.18.0
+    let version: SemanticVersion = "4.18.0"
     let coreDataStack: CoreDataStackProtocol
 
     func perform() async throws {
