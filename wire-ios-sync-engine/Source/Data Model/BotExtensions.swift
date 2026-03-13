@@ -18,30 +18,24 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
-private let zmLog = ZMSLog(tag: "Services") // TODO: x
-
-private struct ServiceUserData: Equatable { // TODO: rename BotData? or delete?
-
-    let provider: UUID
-    let service: UUID
-
+private struct ServiceUserData: Equatable {
+    let providerIdentifier: String
+    let serviceIdentifier: String
 }
 
 private extension UserType {
 
     var serviceUserData: ServiceUserData? {
-        guard let providerIdentifier,
-              let serviceIdentifier,
-              let provider = UUID(uuidString: providerIdentifier),
-              let service = UUID(uuidString: serviceIdentifier)
-        else {
-            return nil
-        }
+        guard
+            let providerIdentifier, !providerIdentifier.isEmpty,
+            let serviceIdentifier, !serviceIdentifier.isEmpty
+        else { return nil }
 
         return ServiceUserData(
-            provider: provider,
-            service: service
+            providerIdentifier: providerIdentifier,
+            serviceIdentifier: serviceIdentifier
         )
     }
 }
@@ -134,8 +128,8 @@ private extension ServiceUserData {
             : "/conversations/\(remoteIdentifier.transportString())/bots"
 
         let payload: NSDictionary = [
-            "provider": provider.transportString(),
-            "service": service.transportString(),
+            "provider": providerIdentifier,
+            "service": serviceIdentifier,
             "locale": NSLocale.formattedLocaleIdentifier()!
         ]
 
@@ -148,12 +142,12 @@ private extension ServiceUserData {
     }
 
     func requestToFetchProvider(apiVersion: APIVersion) -> ZMTransportRequest {
-        let path = "/providers/\(provider.transportString())/"
+        let path = "/providers/\(providerIdentifier)/"
         return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
     func requestToFetchDetails(apiVersion: APIVersion) -> ZMTransportRequest {
-        let path = "/providers/\(provider.transportString())/services/\(service.transportString())"
+        let path = "/providers/\(providerIdentifier)/services/\(serviceIdentifier)"
         return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
@@ -180,7 +174,7 @@ public extension UserType {
             guard response.httpStatus == 200,
                   let responseDictionary = response.payload?.asDictionary(),
                   let provider = ServiceProvider(payload: responseDictionary) else {
-                zmLog.error("Wrong response for fetching a provider: \(response)")
+                WireLogger.messaging.error("Wrong response for fetching a provider: \(response)")
                 completion(nil)
                 return
             }
@@ -207,7 +201,7 @@ public extension UserType {
             guard response.httpStatus == 200,
                   let responseDictionary = response.payload?.asDictionary(),
                   let serviceDetails = ServiceDetails(payload: responseDictionary) else {
-                zmLog.error("Wrong response for fetching a service: \(response)")
+                WireLogger.messaging.error("Wrong response for fetching a service: \(response)")
                 completion(nil)
                 return
             }

@@ -85,7 +85,7 @@ extension ZMBaseManagedObjectTest {
         return user
     }
 
-    func createBot(in moc: NSManagedObjectContext, named: String) -> any UserType {
+    func createService(in moc: NSManagedObjectContext, named: String) -> UserType {
         let serviceUser = createUser(in: moc)
         serviceUser.serviceIdentifier = UUID.create().transportString()
         serviceUser.providerIdentifier = UUID.create().transportString()

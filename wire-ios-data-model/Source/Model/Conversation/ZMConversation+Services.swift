@@ -22,11 +22,11 @@ public extension ZMConversation {
 
     class func existingConversation(
         in moc: NSManagedObjectContext,
-        bot: any UserType,
+        service: UserType,
         team: Team?
     ) -> ZMConversation? {
         guard let team else { return nil }
-        guard let serviceID = bot.serviceIdentifier else { return nil }
+        guard let serviceID = service.serviceIdentifier else { return nil }
         let sameTeam = predicateForConversations(in: team)
         let groupConversation = NSPredicate(
             format: "%K == %d",

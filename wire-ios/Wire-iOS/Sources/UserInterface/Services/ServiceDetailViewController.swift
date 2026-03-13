@@ -320,7 +320,7 @@ final class ServiceDetailViewController: UIViewController {
 
                     if let existingConversation = ZMConversation.existingConversation(
                         in: userSession.managedObjectContext,
-                        bot: service.user,
+                        service: service.user,
                         team: userSession.selfUser.membership?.team
                     ) {
 
