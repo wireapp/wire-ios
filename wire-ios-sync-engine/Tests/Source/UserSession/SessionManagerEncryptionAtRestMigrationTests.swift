@@ -26,6 +26,7 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
     var userSessionDelegate: MockUserSessionDelegate!
     private var setEncryptionAtRestExpectation: XCTestExpectation?
     private var earService: EARService!
+    private let earServiceFactory: EARServiceFactory = .init()
 
     private var account: Account {
         coreDataStack.account
@@ -44,7 +45,7 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
     /// To remove this workaround, delete this override  and the `mockEARService` should be used instead of
     /// a real instance of `EARService`.
     override func createSut() -> ZMUserSession {
-        let earService = EARService(
+        let earService = earServiceFactory.createEARService(
             accountID: coreDataStack.account.userIdentifier,
             coreDataStack: coreDataStack,
             canPerformKeyMigration: true,
@@ -74,11 +75,12 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
     }
 
     private func setupDatabaseContexts() async {
-        await earService.setupDatabaseContexts(
+        await earServiceFactory.setupDatabaseContexts(
             databaseContexts: [
                 coreDataStack.viewContext,
                 coreDataStack.syncContext
-            ]
+            ],
+            onEARService: earService
         )
     }
 

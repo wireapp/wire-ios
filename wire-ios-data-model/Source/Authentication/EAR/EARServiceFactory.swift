@@ -20,6 +20,18 @@ public struct EARServiceFactory {
 
     public init() {}
 
+    /// Create a new `EARService`.
+    ///
+    /// - Parameters:
+    ///   - accountID: The id of the self user.
+    ///   - databaseContexts: The managed object contexts on which to set the `EARMessageEncryptionService`
+    ///   - coreDataStack: The core data stack on which the `EARMessageEncryptionService` will be set.
+    ///   - canPerformKeyMigration: Whether key migration can be performed. Key migration should not be performed when
+    /// the service is running in app extensions.
+    ///   - sharedUserDefaults:  The shared user defaults in which to keep track of whether EAR is enabled.
+    ///   - authenticationContext: The authentication context used to access encryption keys.
+    /// - Returns: a newly created `EARService` instance
+    ///
     public func createEARService(
         accountID: UUID,
         databaseContexts: [NSManagedObjectContext] = [],
@@ -52,5 +64,63 @@ public struct EARServiceFactory {
 
         return earService
     }
+    
+    #if DEBUG
+    
+    /// Synchronously creates an `EARService` instance
+    ///
+    /// - Parameters:
+    ///   - accountID: The id of the self user.
+    ///   - coreDataStack: The core data stack on which the `EARMessageEncryptionService` will be set.
+    ///   - canPerformKeyMigration: Whether key migration can be performed. Key migration should not be performed when
+    /// the service is running in app extensions.
+    ///   - sharedUserDefaults: The shared user defaults in which to keep track of whether EAR is enabled.
+    ///   - authenticationContext:  The authentication context used to access encryption keys.
+    /// - Returns: a newly created `EARService` instance
+    ///
+    public func createEARService(
+        accountID: UUID,
+        coreDataStack: CoreDataStackProtocol,
+        canPerformKeyMigration: Bool = false,
+        sharedUserDefaults: UserDefaults,
+        authenticationContext: any AuthenticationContextProtocol
+    ) -> EARService {
+        let earStorage = EARStorage(userID: accountID, sharedUserDefaults: sharedUserDefaults)
+        let messageEncryptionService = EARMessageEncryptionService(earStorage: earStorage)
+        let migrator = EARMigrator(messageEncryptionService: messageEncryptionService)
+
+        let earService = EARService(
+            accountID: accountID,
+            keyRepository: EARKeyRepository(),
+            keyEncryptor: EARKeyEncryptor(),
+            coreDataStack: coreDataStack,
+            canPerformKeyMigration: canPerformKeyMigration,
+            earStorage: earStorage,
+            messageEncryptionService: messageEncryptionService,
+            migrator: migrator,
+            authenticationContext: authenticationContext
+        )
+
+        return earService
+    }
+    
+    
+    /// Sets the `EARMessageEncryptionService` on the given managed object contexts
+    ///
+    /// - Parameters:
+    ///   - databaseContexts: The managed object contexts on which to set the `EARMessageEncryptionService`
+    ///   - earService: The `EARService` instance to setup
+    ///
+    public func setupDatabaseContexts(
+        databaseContexts: [NSManagedObjectContext],
+        onEARService earService: EARService
+    ) async {
+        guard !databaseContexts.isEmpty else { return }
+        
+        await earService.setupDatabaseContexts(
+            databaseContexts: databaseContexts
+        )
+    }
+    #endif
 
 }
