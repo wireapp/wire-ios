@@ -89,7 +89,7 @@ public struct SearchUserAssetKeys {
 // MARK: NSManagedObjectContext
 
 @objc
-public class ZMSearchUser: NSObject, UserType, UserSearchResult {
+public class ZMSearchUser: NSObject, UserType {
 
     public var summary: String?
     public var assetKeys: SearchUserAssetKeys?
