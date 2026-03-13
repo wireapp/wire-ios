@@ -1410,7 +1410,6 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
             // this is a fresh client so we need an initialSync
             journal[.isInitialSyncRequired] = true
             Task {
-                //
                 await startWorkAgentAndGenerators()
                 WireLogger.sync.debug("Triggering initial sync after client registration")
                 await triggerSync()
