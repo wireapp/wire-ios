@@ -124,13 +124,6 @@ struct FilesItemView: View {
             }
             .padding(.vertical, 8)
 
-            /*
-            //TODO: remove this progress view because it will be replaced by a circular one
-            ProgressView(value: viewModel.progress, total: 1)
-                .opacity(viewModel.progress == nil ? 0 : 1)
-                .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
-             */
-
             Divider()
         }
         .contentShape(Rectangle()) // Tap area
@@ -138,8 +131,8 @@ struct FilesItemView: View {
 
     @ViewBuilder
     private func icon() -> some View {
-        let state: WireDriveFileUITracker.State = viewModel.fileTracker.state
-        //let state: WireDriveFileUITracker.State = .downloading(progress: 0.7, isLargeFile: false)
+        //let state: WireDriveFileUITracker.State = viewModel.fileTracker.state
+        let state: WireDriveFileUITracker.State = .downloading(progress: 0.3, isLargeFile: false)
         //let state: WireDriveFileUITracker.State = .failed(error: URLError(.badURL))
         //let state: WireDriveFileUITracker.State = .downloaded(showReadyToOpen: true)
 
@@ -147,9 +140,9 @@ struct FilesItemView: View {
         case .notDownloaded, .downloaded(showReadyToOpen: false), .failed:
             fileTypeIcon()
         case .downloaded(showReadyToOpen: true):
-            progressIcon(readyToOpen: true)
-        case .downloading:
-            progressIcon(readyToOpen: false)
+            progressIcon(progress: 1, readyToOpen: true)
+        case let .downloading(progress: progress, _):
+            progressIcon(progress: progress, readyToOpen: false)
         }
     }
     
@@ -169,10 +162,9 @@ struct FilesItemView: View {
     }
     
     @ViewBuilder
-    private func progressIcon(readyToOpen: Bool) -> some View {
-        //TODO: replace Circle() with circular progress view
-        Circle()
-            .stroke(style: StrokeStyle(lineWidth: 2))
+    private func progressIcon(progress: Double, readyToOpen: Bool) -> some View {
+        ProgressView(value: progress)
+            .progressViewStyle(.wireDriveAsset)
             .padding(.horizontal, iconHorizontalPadding)
             .frame(minWidth: iconSpaceWidth)
             .frame(height: iconSpaceHeight + 3)

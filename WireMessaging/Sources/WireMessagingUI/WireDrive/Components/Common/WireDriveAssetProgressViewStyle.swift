@@ -18,38 +18,55 @@
 
 import SwiftUI
 
-/// A custom progress view style (a progress bar) for upload & download of assets.
-struct AssetProgressStyle: ProgressViewStyle {
+/// A custom circular progress view style (a progress bar) for upload & download of assets.
+struct WireDriveAssetProgressViewStyle: ProgressViewStyle {
+    @Environment(\.wireAccentColor) private var wireAccentColor
+    @ScaledMetric private var lineWidth: CGFloat = 2
     
-    enum Constants {
-        static let lineWidth: CGFloat = 2
-        static let size: CGFloat = 12
+    private var color: Color {
+        wireAccentColor.color
     }
-    
-    let fillColor: Color
-    let trackColor: Color = .gray.opacity(0.2)
-    
-    @ScaledMetric private var scale: CGFloat = 1
     
     func makeBody(configuration: Configuration) -> some View {
         let progress = configuration.fractionCompleted ?? 0
         
         ZStack {
             Circle()
-                .stroke(trackColor, lineWidth: Constants.lineWidth)
+                .stroke(color.opacity(0.2), lineWidth: lineWidth)
             
             Circle()
                 .trim(from: 0, to: progress)
                 .stroke(
-                    fillColor,
+                    color,
                     style: StrokeStyle(
-                        lineWidth: Constants.lineWidth,
+                        lineWidth: lineWidth,
                         lineCap: .round
                     )
                 )
                 .rotationEffect(.degrees(-90))
                 .animation(.easeInOut, value: progress)
         }
-        .frame(width: Constants.size * scale, height: Constants.size * scale)
     }
+}
+
+extension ProgressViewStyle where Self == WireDriveAssetProgressViewStyle {
+    @MainActor static var wireDriveAsset: Self {
+        Self()
+    }
+}
+
+#Preview {
+    @Previewable @ScaledMetric var size: CGFloat = 40
+    
+    VStack(spacing: 16) {
+        Group {
+            ProgressView(value: 0)
+            ProgressView(value: 0.3)
+            ProgressView(value: 0.5)
+            ProgressView(value: 0.9)
+            ProgressView(value: 1)
+        }
+        .frame(width: size, height: size)
+    }
+    .progressViewStyle(.wireDriveAsset)
 }

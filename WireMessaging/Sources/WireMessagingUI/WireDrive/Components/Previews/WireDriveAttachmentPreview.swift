@@ -42,9 +42,9 @@ struct WireDriveAttachmentPreview<Content: View>: View {
             .overlay(
                 VStack {
                     Spacer()
-                    ProgressView(value: progress, total: 1)
+                    ProgressView(value: progress)
                         .tint(Color.blue)
-                        .progressViewStyle(AssetProgressStyle(fillColor: progressColor))
+                        .progressViewStyle(.wireDriveAsset)
                         .padding(.bottom, Constants.borderWidth / 2)
                         .opacity(progress == nil ? 0 : 1)
 

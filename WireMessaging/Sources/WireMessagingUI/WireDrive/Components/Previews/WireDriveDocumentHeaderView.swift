@@ -28,7 +28,9 @@ struct WireDriveDocumentHeaderView: View {
         static let errorColor = ColorTheme.Base.error.color
     }
 
-    @ScaledMetric private var scale: CGFloat = 1
+    @ScaledMetric private var headerIconSize: CGFloat = 16
+    @ScaledMetric private var readyToOpenIconPadding: CGFloat = 3.8
+    
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     let headerIcon: Image
@@ -86,22 +88,34 @@ struct WireDriveDocumentHeaderView: View {
             Text(Strings.Files.tapToCancelDownload)
         }
     }
+    
+    @ViewBuilder
+    private func progressView() -> some View {
+        ProgressView(value: progress)
+            .progressViewStyle(.wireDriveAsset)
+            .frame(height: headerIconSize)
+    }
 
     @ViewBuilder
     private func stateIconView() -> some View {
         switch state {
         case .readyToOpen:
-            Image(systemName: "checkmark.circle")
-                .foregroundStyle(.blue)
+            progressView()
+                .overlay {
+                    Image(systemName: "checkmark")
+                        .resizable()
+                        .fontWeight(.black)
+                        .aspectRatio(contentMode: .fit)
+                        .padding(readyToOpenIconPadding)
+                        .foregroundStyle(wireAccentColor)
+                }
         case .default, .failed:
             headerIcon
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(height: 16 * scale)
+                .frame(height: headerIconSize)
         case .loading:
-            ProgressView(value: progress, total: 1)
-                .tint(Color.blue)
-                .progressViewStyle(AssetProgressStyle(fillColor: ColorTheme.Base.primary(wireAccentColor).color))
+            progressView()
         }
     }
     
