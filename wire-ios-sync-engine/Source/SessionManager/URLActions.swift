@@ -21,8 +21,6 @@ import WireLogging
 
 public enum URLAction: Equatable {
 
-    // TODO: connect to an app?
-
     /// Connect to a service user (bot)
     case connectBot(providerID: UUID, serviceID: UUID)
 
