@@ -48,7 +48,11 @@ struct DeveloperE2eiView: View {
             }
 
             Section("Enroll E2EI Certificate") {
-                Stepper(value: $viewModel.certificateExpirationTime, in: DeveloperE2eiViewModel.minimumCertificateExpirationTime...Int.max, step: 60) {
+                Stepper(
+                    value: $viewModel.certificateExpirationTime,
+                    in: DeveloperE2eiViewModel.minimumCertificateExpirationTime ... Int.max,
+                    step: 60
+                ) {
                     HStack {
                         Text(String("Expiration time"))
                         Spacer()
@@ -61,8 +65,10 @@ struct DeveloperE2eiView: View {
             }
 
             Section("Certificate Revocation Lists") {
-                footNote("a Certificate Revocation List (CRL) lists all the certificates that have been revoked for a given domain. They have an expiration time, after which they will be refetched.")
-                
+                footNote(
+                    "a Certificate Revocation List (CRL) lists all the certificates that have been revoked for a given domain. They have an expiration time, after which they will be refetched."
+                )
+
                 toggleRow(
                     title: "Force CRL expiry after 1 minute",
                     description: "Sets the CRL expiration time to 1 minute. Enable to force refresh the CRLs when the app comes to the foreground (at least one minute after the CRL has been fetched the 1st time). -  Best to enable before login.",
@@ -78,8 +84,10 @@ struct DeveloperE2eiView: View {
 
             Section("CRLs expiration dates") {
 
-                footNote("A CRL (Certificate Revocation List) has an expiration date. When the date is reached, the CRL will be refetched.")
-                
+                footNote(
+                    "A CRL (Certificate Revocation List) has an expiration date. When the date is reached, the CRL will be refetched."
+                )
+
                 if viewModel.storedCRLExpirationDatesByURL.isEmpty {
                     Text(String("There are no stored expiration dates"))
                         .foregroundColor(.secondary)
