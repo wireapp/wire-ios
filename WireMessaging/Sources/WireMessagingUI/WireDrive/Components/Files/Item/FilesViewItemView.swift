@@ -273,6 +273,7 @@ struct FilesItemView: View {
     ) -> some View {
         if viewModel.menuActions.contains(itemAction) {
             menuItem(itemAction)
+                .accessibilityIdentifier(itemAction.rawValue)
         }
     }
 

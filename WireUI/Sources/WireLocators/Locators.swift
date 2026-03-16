@@ -329,5 +329,33 @@ public enum Locators {
             case cancelButton
             case removeFilterButton
         }
+
+        public enum ShareLinkPasswordPage: String {
+            case togglePassword
+            case sharePassword
+            case resetPassword
+            case savePassword
+        }
+
+        public enum ShareLinkPage: String {
+            case sharePassword
+            case shareLink
+        }
+
+        public enum FilesContentPage: String {
+            case confirm
+            case search
+
+            public static func fileItem(_ index: Int) -> String {
+                "fileItem\(index)"
+            }
+        }
+
+        public enum FilesPage: String {
+            case close
+            case createFolder
+            case createFile
+            case recycleBin
+        }
     }
 }
