@@ -1583,21 +1583,6 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - execute
 
-    public var executeGroupIDBlock_Invocations: [(groupID: MLSGroupID, block: (ZMConversation?, NSManagedObjectContext) -> Void)] = []
-    public var executeGroupIDBlock_MockMethod: ((MLSGroupID, @Sendable @escaping (ZMConversation?, NSManagedObjectContext) -> Void) async -> Void)?
-
-    public func execute(groupID: MLSGroupID, block: @Sendable @escaping (ZMConversation?, NSManagedObjectContext) -> Void) async {
-        executeGroupIDBlock_Invocations.append((groupID: groupID, block: block))
-
-        guard let mock = executeGroupIDBlock_MockMethod else {
-            fatalError("no mock for `executeGroupIDBlock`")
-        }
-
-        await mock(groupID, block)
-    }
-
-    // MARK: - execute
-
     public var executeConversationIDBlock_Invocations: [(conversationID: QualifiedID, block: (ZMConversation?, NSManagedObjectContext) -> Void)] = []
     public var executeConversationIDBlock_MockMethod: ((QualifiedID, @Sendable @escaping (ZMConversation?, NSManagedObjectContext) -> Void) async -> Void)?
 
@@ -2044,17 +2029,17 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol,
 
     // MARK: - clearPendingProposals
 
-    public var clearPendingProposalsIn_Invocations: [WireDataModel.MLSGroupID] = []
-    public var clearPendingProposalsIn_MockMethod: ((WireDataModel.MLSGroupID) async -> Void)?
+    public var clearPendingProposalsIn_Invocations: [WireDataModel.QualifiedID] = []
+    public var clearPendingProposalsIn_MockMethod: ((WireDataModel.QualifiedID) async -> Void)?
 
-    public func clearPendingProposals(in groupID: WireDataModel.MLSGroupID) async {
-        clearPendingProposalsIn_Invocations.append(groupID)
+    public func clearPendingProposals(in conversationID: WireDataModel.QualifiedID) async {
+        clearPendingProposalsIn_Invocations.append(conversationID)
 
         guard let mock = clearPendingProposalsIn_MockMethod else {
             fatalError("no mock for `clearPendingProposalsIn`")
         }
 
-        await mock(groupID)
+        await mock(conversationID)
     }
 
 }
