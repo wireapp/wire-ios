@@ -137,7 +137,7 @@ public actor WorkAgent {
     }
 
     public func clearSchedulerQueue() async {
-        WireLogger.workAgent.info("⚠️ clear scheduler queue", attributes: .safePublic)
+        WireLogger.workAgent.info("clear scheduler queue", attributes: .safePublic)
         await scheduler.clearAllItems()
     }
 }
