@@ -44,9 +44,8 @@ final class ConversationConnectAvatarViewModeTests: XCTestCase {
 
     func testThatModeIsOneWhenGroupConversationWithOneServiceUser() {
         // GIVEN
-        let mockServiceUser = MockServiceUserType()
-        mockServiceUser.serviceIdentifier = "serviceIdentifier"
-        mockServiceUser.providerIdentifier = "providerIdentifier"
+        let mockServiceUser = MockUserType()
+        mockServiceUser.mockedIsBot = true
         XCTAssert(mockServiceUser.isAppOrBot)
 
         users = [mockServiceUser]

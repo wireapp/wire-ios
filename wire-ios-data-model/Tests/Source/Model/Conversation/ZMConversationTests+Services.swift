@@ -23,7 +23,7 @@ import Foundation
 final class ZMConversationTests_Services: BaseZMMessageTests {
 
     var team: Team!
-    var service: ServiceUser!
+    var service: UserType!
     var user: ZMUser!
 
     override func setUp() {
@@ -40,7 +40,7 @@ final class ZMConversationTests_Services: BaseZMMessageTests {
         user = nil
     }
 
-    func createConversation(with service: ServiceUser) throws -> ZMConversation {
+    func createConversation(with service: UserType) throws -> ZMConversation {
         let conversation = createConversation(in: uiMOC)
         conversation.team = team
         conversation.conversationType = .group
