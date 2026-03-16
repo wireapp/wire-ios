@@ -32,7 +32,7 @@ public final class WireDriveFileUITracker {
         case notDownloaded
 
         /// The file is currently being downloaded.
-        case downloading(progress: Double)
+        case downloading(progress: Double, isLargeFile: Bool)
 
         /// The file has been downloaded.
         /// `downloaded(showReadyToOpen: true)` indicates that the file should be shown in a specific "ready to open"
@@ -41,24 +41,17 @@ public final class WireDriveFileUITracker {
         case downloaded(showReadyToOpen: Bool)
 
         /// The download has failed.
-        case failed(error: any Error)
+        case failed(error: (any Error)?)
     }
 
-    public private(set) var state: State {
+    public private(set) var state: State = .notDownloaded {
         didSet {
             switch (oldValue, state) {
-            case (.downloading, .downloaded):
+            case (.downloading(_, let isLargeFile), .downloaded):
                 // state is changing from downloading to downloaded:
+                state = .downloaded(showReadyToOpen: isLargeFile)
 
-                // if the download takes longer than this amount of time, the file is considered "big"
-                let downloadTimeForBigFiles: TimeInterval = 0.3
-
-                let fileIsBig = downloadingTimerStart
-                    .flatMap { Date().timeIntervalSince($0) > downloadTimeForBigFiles } ?? true
-
-                state = .downloaded(showReadyToOpen: fileIsBig)
-
-                if fileIsBig {
+                if isLargeFile {
                     Task {
                         try? await Task.sleep(for: .seconds(3))
                         self.state = .downloaded(showReadyToOpen: false)
@@ -69,40 +62,45 @@ public final class WireDriveFileUITracker {
             default:
                 break
             }
-
-            if case .downloading = state {
-                if downloadingTimerStart == nil {
-                    downloadingTimerStart = Date()
-                }
-            } else {
-                downloadingTimerStart = nil
-            }
         }
     }
 
     /// This closure will be called when a file should be automatically opened after the download.
     public var fileShouldOpen: (() -> Void)?
 
-    private var downloadingTimerStart: Date?
-
-    public init(downloadState: WireDriveLocalAsset.DownloadState) {
-        self.state = Self.stateFromDownloadState(downloadState)
+    public func handleDownloadState(fromAsset asset: WireDriveLocalAsset) {
+        state = Self.stateFromAsset(asset)
     }
+    
+    // MARK: - State mapping from `WireDriveLocalAsset` (downloading a Drive file)
 
-    public func handleDownloadState(_ downloadState: WireDriveLocalAsset.DownloadState) {
-        state = Self.stateFromDownloadState(downloadState)
-    }
-
-    private static func stateFromDownloadState(_ downloadState: WireDriveLocalAsset.DownloadState) -> State {
-        switch downloadState {
+    private static func stateFromAsset(_ asset: WireDriveLocalAsset) -> State {
+        switch asset.downloadState {
         case .pending:
             .notDownloaded
         case let .downloading(progress):
-            .downloading(progress: progress)
+            .downloading(progress: progress, isLargeFile: asset.fileSize == .large)
         case .downloaded:
             .downloaded(showReadyToOpen: false)
         case let .failed(error):
             .failed(error: error)
+        }
+    }
+    
+    // MARK: - State mapping from `AttachmentsCarouselItem` (uploading a Drive file)
+    
+    public func handleDownloadState(fromCarouselItem item: AttachmentsCarouselItem) {
+        state = Self.stateFromCarouselItem(item)
+    }
+    
+    private static func stateFromCarouselItem(_ carouselItem: AttachmentsCarouselItem) -> State {
+        switch carouselItem.state {
+        case .uploading(let progress):
+            .downloading(progress: Double(progress), isLargeFile: false)
+        case .uploaded:
+            .downloaded(showReadyToOpen: false)
+        case .failed:
+            .failed(error: nil)
         }
     }
 }

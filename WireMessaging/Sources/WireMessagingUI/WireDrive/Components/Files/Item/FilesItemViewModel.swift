@@ -52,8 +52,8 @@ final class FilesItemViewModel: ObservableObject {
 
     @Published private var asset: WireDriveLocalAsset? {
         didSet {
-            if let downloadState = asset?.downloadState {
-                fileTracker.handleDownloadState(downloadState)
+            if let asset {
+                fileTracker.handleDownloadState(fromAsset: asset)
             }
         }
     }
@@ -120,7 +120,7 @@ final class FilesItemViewModel: ObservableObject {
         self.isBrowsing = isBrowsing
         self.isInRecycleBin = isInRecycleBin
 
-        self.fileTracker = .init(downloadState: .pending)
+        self.fileTracker = .init()
         fileTracker.fileShouldOpen = {
             // TODO: [WPB-23688] call the function to open the file here, later when we implement the new loading&opening design
             print("### file should open automatically now")
@@ -159,7 +159,7 @@ final class FilesItemViewModel: ObservableObject {
 
     var progress: Double? {
         switch fileTracker.state {
-        case let .downloading(progress):
+        case let .downloading(progress, _):
             progress
         case .failed:
             1 // We show a full red progress bar on failure
