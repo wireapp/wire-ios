@@ -29,6 +29,7 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
 
     private let conversation: GroupDetailsConversationType
     private let syncCompleted: Bool
+    private let userSession: UserSession
 
     private var footerView = SectionFooter(frame: .zero)
     private weak var presentingViewController: UIViewController?
@@ -45,10 +46,12 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
         conversation: GroupDetailsConversationType,
         syncCompleted: Bool,
         collectionView: UICollectionView,
-        presentingViewController: UIViewController
+        presentingViewController: UIViewController,
+        userSession: UserSession
     ) {
         self.conversation = conversation
         self.syncCompleted = syncCompleted
+        self.userSession = userSession
         self.presentingViewController = presentingViewController
 
         SectionFooter.register(collectionView: collectionView)
@@ -89,7 +92,9 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
 
         cell.configure(with: conversation)
         cell.action = { [weak self] enabled in
-            guard let userSession = ZMUserSession.shared(), let conversation = self?.conversation else { return }
+            guard let userSession = self?.userSession as? ZMUserSession, let conversation = self?.conversation else {
+                return
+            }
 
             cell.isUserInteractionEnabled = false
             (conversation as? ZMConversation)?.setEnableReadReceipts(enabled, in: userSession) { result in

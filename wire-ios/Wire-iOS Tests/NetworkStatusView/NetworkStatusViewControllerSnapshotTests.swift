@@ -56,7 +56,7 @@ final class NetworkStatusViewControllerSnapshotTests: XCTestCase {
         mockContainerViewController.view.bounds.size = CGSize(width: 375.0, height: 667.0)
         mockContainerViewController.view.backgroundColor = .lightGray
 
-        sut = NetworkStatusViewController()
+        sut = NetworkStatusViewController(userSession: UserSessionMock())
         sut.view.backgroundColor = .gray
         mockContainerViewController.view.addSubview(sut.view)
         sut.delegate = mockContainerViewController

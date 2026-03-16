@@ -147,7 +147,7 @@ final class ConversationContentViewController: UIViewController {
         userDefaults: UserDefaultsProtocol = UserDefaults.standard,
         wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
-        self.messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
+        self.messagePresenter = MessagePresenter(userSession: userSession, mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
