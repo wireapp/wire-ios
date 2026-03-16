@@ -887,11 +887,14 @@ public final class MLSService: MLSServiceInterface {
                             groupID: mlsGroupID
                         )
 
-                        let shouldEstablishGroup = (epoch == 0 && !conversationExists) &&
-                            (isOneOnOne || (!isOneOnOne && conversationQualifiedID
-                                    .domain == self.localDomain))
+                        let shouldEstablish = (epoch == 0 && !conversationExists)
+                        let isLocalGroup = (!isOneOnOne && conversationQualifiedID
+                            .domain == self.localDomain)
 
-                        if shouldEstablishGroup {
+                        // don't establishGroup for federatedGroup
+                        let shouldEstablishMLSGroup = shouldEstablish && (isLocalGroup || isOneOnOne)
+
+                        if shouldEstablishMLSGroup {
                             try await self.internalEstablishPendingGroup(
                                 groupID: mlsGroupID,
                                 pendingGroup: pendingGroupConversation,
