@@ -258,63 +258,10 @@ final class ServiceDetailViewController: UIViewController {
                 )
 
             case .openConversation:
-
                 if !service.isLegacyBot {
-
-                    let user = service.user
-                    Task {
-                        guard let userID = user.qualifiedID(
-                            localDomain: userSession.resolvedBackendMetadata.domain
-                        ) else { return }
-
-                        let conversation = user.oneToOneConversation
-                        do {
-                            let isReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
-                            if isReady {
-                                guard let conversation else { return }
-                                completion(.success(conversation: conversation))
-                            } else {
-                                userSession.createTeamOneOnOne(with: user) { result in
-                                    switch result {
-                                    case let .success(conversation):
-                                        completion(.success(conversation: conversation))
-                                    case let .failure(error):
-                                        WireLogger.conversation
-                                            .warn("failed to create team one on one from search result: \(error)")
-                                        completion(.failure(error: AddBotError.general))
-                                    }
-                                }
-                            }
-                        } catch {
-                            WireLogger.conversation
-                                .warn("failed to check if one on one conversation is ready: \(error)")
-                            completion(.failure(error: AddBotError.general))
-                        }
-                    }
-
+                    openConversationWithBot(completion: completion)
                 } else {
-
-                    if let existingConversation = ZMConversation.existingConversation(
-                        in: userSession.managedObjectContext,
-                        service: service.user,
-                        team: userSession.selfUser.membership?.team
-                    ) {
-
-                        completion(.success(conversation: existingConversation))
-
-                    } else {
-
-                        service.user.createConversation(in: userSession) { result in
-                            switch result {
-                            case let .success(conversation):
-                                completion(.success(conversation: conversation))
-                            case let .failure(error):
-                                completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
-                            }
-                        }
-
-                    }
-
+                    openConversationWithApp(userSession: userSession, completion: completion)
                 }
             }
         }
@@ -365,6 +312,63 @@ final class ServiceDetailViewController: UIViewController {
                 completion(.success(conversation: conversation))
             case let .failure(error):
                 completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
+            }
+        }
+    }
+
+    private func openConversationWithApp(
+        userSession: ZMUserSession,
+        completion: @escaping (AddBotResult) -> Void
+    ) {
+        if let existingConversation = ZMConversation.existingConversation(
+            in: userSession.managedObjectContext,
+            service: service.user,
+            team: userSession.selfUser.membership?.team
+        ) {
+            completion(.success(conversation: existingConversation))
+        } else {
+            service.user.createConversation(in: userSession) { result in
+                switch result {
+                case let .success(conversation):
+                    completion(.success(conversation: conversation))
+                case let .failure(error):
+                    completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
+                }
+            }
+        }
+    }
+
+    private func openConversationWithBot(
+        completion: @escaping (AddBotResult) -> Void
+    ) {
+        let user = service.user
+        Task {
+            guard let userID = user.qualifiedID(
+                localDomain: userSession.resolvedBackendMetadata.domain
+            ) else { return }
+
+            let conversation = user.oneToOneConversation
+            do {
+                let isReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
+                if isReady {
+                    guard let conversation else { return }
+                    completion(.success(conversation: conversation))
+                } else {
+                    userSession.createTeamOneOnOne(with: user) { result in
+                        switch result {
+                        case let .success(conversation):
+                            completion(.success(conversation: conversation))
+                        case let .failure(error):
+                            WireLogger.conversation
+                                .warn("failed to create team one on one from search result: \(error)")
+                            completion(.failure(error: AddBotError.general))
+                        }
+                    }
+                }
+            } catch {
+                WireLogger.conversation
+                    .warn("failed to check if one on one conversation is ready: \(error)")
+                completion(.failure(error: AddBotError.general))
             }
         }
     }
