@@ -217,7 +217,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             )
     }
 
-    func testThatItRendersLinkPreviewMessagePreview() throws {
+    func testThatItRendersLinkPreviewMessagePreview() {
         let url = "https://www.example.com/article/1"
         let article = ArticleMetadata(
             originalURLString: url,
@@ -234,7 +234,11 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .jpegData(compressionQuality: 0.9)
         message.backingTextMessageData.linkPreviewHasImage = true
 
+<<<<<<< HEAD
         let previewView = try XCTUnwrap(message.replyPreview(userSession: UserSessionMock()))
+=======
+        let previewView = message.replyPreview()!
+>>>>>>> 53af83d50b (revert: phone numbers in own and others messages should be underlined/clickable - WPB-23799 (#4430))
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
         snapshotHelper
