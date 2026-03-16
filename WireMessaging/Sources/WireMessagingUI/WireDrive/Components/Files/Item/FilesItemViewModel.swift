@@ -36,8 +36,6 @@ final class FilesItemViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     enum ItemAction {
-        // TODO: [WPB-23688] we will need this "download" action later because with the new design, sometimes we want to just download, and sometimes we want to download and then open.
-        // case download
         case open
         case showVersionHistory
         case edit
