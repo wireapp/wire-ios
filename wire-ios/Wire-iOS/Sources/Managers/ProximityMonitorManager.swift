@@ -19,9 +19,8 @@
 import avs
 import UIKit
 import WireDataModel
+import WireLogging
 import WireSyncEngine
-
-private let zmLog = ZMSLog(tag: "calling")
 
 final class ProximityMonitorManager: NSObject {
 
@@ -54,7 +53,7 @@ final class ProximityMonitorManager: NSObject {
 
         // This is a hack for testing as a real ZMUserSession is not available
         guard userSession is ZMUserSession else {
-            zmLog.error("UserSession not available when initializing \(type(of: self))")
+            WireLogger.calling.error("UserSession not available when initializing \(type(of: self))")
             return
         }
 
