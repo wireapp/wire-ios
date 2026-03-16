@@ -172,47 +172,53 @@ final class ServiceDetailViewController: UIViewController {
     }
 
     private func fetchDetails() {
-        guard let userSession = userSession as? ZMUserSession else { return }
-
         if
             !service.isLegacyBot,
             let teamID = service.user.teamIdentifier,
             let appID = service.user.remoteIdentifier {
-
-            Task {
-                do {
-                    let appDetails = try await teamsAPI.getApp(
-                        for: teamID,
-                        with: appID
-                    )
-                    detailView.service.serviceUserDetails = ServiceDetails(
-                        serviceIdentifier: "",
-                        providerIdentifier: "",
-                        name: appDetails.name,
-                        serviceDescription: appDetails.description
-                    )
-                    detailView.service.provider = ServiceProvider(
-                        identifier: "",
-                        name: service.user.teamName ?? "",
-                        email: "",
-                        url: "",
-                        providerDescription: ""
-                    )
-                } catch {
-                    WireLogger.ui.error("failed to get app details", attributes: .safePublic)
-                }
-            }
-
+            fetchAppDetails(for: teamID, with: appID)
         } else {
+            fetchBotDetails()
+        }
+    }
 
-            service.user.fetchProvider(in: userSession) { [weak self] provider in
-                self?.detailView.service.provider = provider
+    private func fetchAppDetails(
+        for teamID: WireNetwork.Team.ID,
+        with appID: UUID
+    ) {
+        Task {
+            do {
+                let appDetails = try await teamsAPI.getApp(
+                    for: teamID,
+                    with: appID
+                )
+                detailView.service.serviceUserDetails = ServiceDetails(
+                    serviceIdentifier: "",
+                    providerIdentifier: "",
+                    name: appDetails.name,
+                    serviceDescription: appDetails.description
+                )
+                detailView.service.provider = ServiceProvider(
+                    identifier: "",
+                    name: service.user.teamName ?? "",
+                    email: "",
+                    url: "",
+                    providerDescription: ""
+                )
+            } catch {
+                WireLogger.ui.error("failed to get app details", attributes: .safePublic)
             }
+        }
+    }
 
-            service.user.fetchDetails(in: userSession) { [weak self] details in
-                self?.detailView.service.serviceUserDetails = details
-            }
+    private func fetchBotDetails() {
+        guard let userSession = userSession as? ZMUserSession else { return }
 
+        service.user.fetchProvider(in: userSession) { [weak self] provider in
+            self?.detailView.service.provider = provider
+        }
+        service.user.fetchDetails(in: userSession) { [weak self] details in
+            self?.detailView.service.serviceUserDetails = details
         }
     }
 

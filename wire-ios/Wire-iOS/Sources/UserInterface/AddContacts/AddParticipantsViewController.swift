@@ -549,38 +549,38 @@ extension AddParticipantsViewController: UIPopoverPresentationControllerDelegate
 extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didTapOnUser user: UserType,
-        indexPath: IndexPath,
-        section: SearchResultsViewControllerSection
+        _: SearchResultsViewController,
+        didTapOnUser _: UserType,
+        indexPath _: IndexPath,
+        section _: SearchResultsViewControllerSection
     ) {
         // no-op
     }
 
     func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didDoubleTapOnUser user: UserType,
-        indexPath: IndexPath
+        _: SearchResultsViewController,
+        didDoubleTapOnUser _: UserType,
+        indexPath _: IndexPath
     ) {
         // no-op
     }
 
     func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
-        didTapOnConversation conversation: ZMConversation
+        _: SearchResultsViewController,
+        didTapOnConversation _: ZMConversation
     ) {
         // no-op
     }
 
     func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
+        _: SearchResultsViewController,
         didTapOnApp app: any UserType
     ) {
         didTapOnAppOrBot(user: app, isApp: true)
     }
 
     func searchResultsViewController(
-        _ searchResultsViewController: SearchResultsViewController,
+        _: SearchResultsViewController,
         didTapOnBot bot: any UserType
     ) {
         didTapOnAppOrBot(user: bot, isApp: false)

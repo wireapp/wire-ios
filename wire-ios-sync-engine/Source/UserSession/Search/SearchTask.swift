@@ -249,10 +249,7 @@ public final class SearchTask {
                 searchOptions: request.searchOptions,
                 in: searchContext
             ) : []
-            let apps = request.searchOptions.contains(.apps) ? appsInTeam(
-                team: team,
-                in: searchContext
-            ) : []
+            let apps = request.searchOptions.contains(.apps) ? apps(in: team) : []
 
             let conversations = request.searchOptions.contains(.conversations) ? conversations(
                 matchingQuery: request.query,
@@ -368,9 +365,8 @@ public final class SearchTask {
         return partialResult
     }
 
-    private func appsInTeam(
-        team: WireDataModel.Team?,
-        in context: NSManagedObjectContext
+    private func apps(
+        in team: WireDataModel.Team?
     ) -> [ZMUser] {
         team?.members(
             matchingQuery: "",
