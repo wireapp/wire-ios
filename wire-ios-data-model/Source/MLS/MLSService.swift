@@ -869,12 +869,14 @@ public final class MLSService: MLSServiceInterface {
             for pendingGroupConversation in pendingGroupConversations {
                 group.addTask {
                     let (mlsGroupID, conversationQualifiedID, epoch, isOneOnOne) = await context.perform {
-                        (pendingGroupConversation.mlsGroupID,
-                         pendingGroupConversation.qualifiedID,
-                         pendingGroupConversation.epoch,
-                         pendingGroupConversation.conversationType == .oneOnOne)
+                        (
+                            pendingGroupConversation.mlsGroupID,
+                            pendingGroupConversation.qualifiedID,
+                            pendingGroupConversation.epoch,
+                            pendingGroupConversation.conversationType == .oneOnOne
+                        )
                     }
-                    
+
                     guard let mlsGroupID,
                           let conversationQualifiedID else {
                         return false
@@ -884,9 +886,10 @@ public final class MLSService: MLSServiceInterface {
                         let conversationExists = try await self.conversationExists(
                             groupID: mlsGroupID
                         )
-                        
-                        let shouldEstablishGroup = (epoch == 0 && !conversationExists) && (isOneOnOne || (!isOneOnOne && conversationQualifiedID
-                            .domain == self.localDomain))
+
+                        let shouldEstablishGroup = (epoch == 0 && !conversationExists) &&
+                            (isOneOnOne || (!isOneOnOne && conversationQualifiedID
+                                    .domain == self.localDomain))
 
                         if shouldEstablishGroup {
                             try await self.internalEstablishPendingGroup(

@@ -227,8 +227,12 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                     mlsConversation.ciphersuite = ciphersuite
                     mlsConversation.mlsStatus = .ready
                 }
-                WireLogger.mls.info("mls 1-1 conversation established", attributes: .safePublic, [.mlsGroupID: groupID.safeForLoggingDescription])
-                
+                WireLogger.mls.info(
+                    "mls 1-1 conversation established",
+                    attributes: .safePublic,
+                    [.mlsGroupID: groupID.safeForLoggingDescription]
+                )
+
             } catch {
                 throw Error.failedToEstablishGroup(error)
             }
