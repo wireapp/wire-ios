@@ -85,7 +85,7 @@ final class SecurityLevelView: UIView {
     func configure(
         with otherUsers: [UserType],
         conversationDomain: String?,
-        provider: SecurityClassificationProviding? = ZMUserSession.shared()
+        provider: SecurityClassificationProviding?
     ) {
         guard let classification = provider?.classification(
             users: otherUsers,

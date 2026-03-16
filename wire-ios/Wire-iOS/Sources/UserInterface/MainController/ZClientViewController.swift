@@ -185,7 +185,7 @@ final class ZClientViewController: UIViewController {
         getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
     )
 
-    var proximityMonitorManager: ProximityMonitorManager?
+    let proximityMonitorManager: ProximityMonitorManager
     var legalHoldDisclosureController: LegalHoldDisclosureController?
 
     var userObserverToken: NSObjectProtocol?
@@ -232,10 +232,10 @@ final class ZClientViewController: UIViewController {
 
         self.wireMeetingsFactory = wireMeetingsFactory
         self.wireMessagingFactory = wireMessagingFactory
+        self.proximityMonitorManager = ProximityMonitorManager(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
 
-        self.proximityMonitorManager = ProximityMonitorManager()
         self.mediaPlaybackManager = MediaPlaybackManager(name: "conversationMedia", userSession: userSession)
 
         AVSMediaManager.sharedInstance().register(mediaPlaybackManager, withOptions: ["media": "external "])
@@ -617,7 +617,7 @@ final class ZClientViewController: UIViewController {
         // TODO: [WPB-11609] check if needed
 
         if let currentAccount = SessionManager.shared?.accountManager.selectedAccount {
-            if let conversation = Settings.shared.lastViewedConversation(for: currentAccount) {
+            if let conversation = Settings.shared.lastViewedConversation(for: currentAccount, in: userSession) {
                 select(conversation: conversation, focusOnView: focus, animated: animated)
             }
 
@@ -788,7 +788,10 @@ final class ZClientViewController: UIViewController {
         if user.isSelfUser, let clients = user.allClients as? [UserClient] {
             let clientListViewController = ClientListViewController(
                 clientsList: clients,
+                selfClient: userSession.selfUserClient,
+                userSession: userSession,
                 credentials: nil,
+                contextProvider: userSession.contextProvider,
                 detailedView: true,
                 showTemporary: true
             )

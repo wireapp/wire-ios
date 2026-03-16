@@ -79,13 +79,13 @@ final class CallTopOverlayController: UIViewController {
 
     // MARK: - Init
 
-    init(conversation: ZMConversation) {
+    init(conversation: ZMConversation, userSession: UserSession) {
         self.conversation = conversation
         callDurationFormatter.allowedUnits = [.minute, .second]
         callDurationFormatter.zeroFormattingBehavior = DateComponentsFormatter.ZeroFormattingBehavior(rawValue: 0)
         super.init(nibName: nil, bundle: nil)
 
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             observerTokens.append(WireCallCenterV3.addCallStateObserver(
                 observer: self,
                 contextProvider: userSession.contextProvider
