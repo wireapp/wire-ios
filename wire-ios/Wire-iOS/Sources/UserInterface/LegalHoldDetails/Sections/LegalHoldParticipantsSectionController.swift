@@ -56,16 +56,18 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
     fileprivate weak var collectionView: UICollectionView?
     private var viewModel: LegalHoldParticipantsSectionViewModel
     private let conversation: LegalHoldDetailsConversation
+    private let userSession: UserSession
     private var token: AnyObject?
 
     weak var delegate: LegalHoldParticipantsSectionControllerDelegate?
 
-    init(conversation: LegalHoldDetailsConversation) {
+    init(conversation: LegalHoldDetailsConversation, userSession: UserSession) {
         self.viewModel = conversation.createViewModel()
         self.conversation = conversation
+        self.userSession = userSession
         super.init()
 
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             self.token = UserChangeInfo.add(userObserver: self, in: userSession)
         }
     }

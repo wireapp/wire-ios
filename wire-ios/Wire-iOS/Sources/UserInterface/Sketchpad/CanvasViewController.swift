@@ -64,6 +64,20 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
     let emojiKeyboardViewController = EmojiKeyboardViewController()
     let colorPickerController = SketchColorPickerController()
 
+    private let userSession: UserSession
+
+    // MARK: - Init
+
+    init(userSession: UserSession) {
+        self.userSession = userSession
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     // MARK: - Override methods
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -154,7 +168,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         photoButton.hitAreaPadding = hitAreaPadding
         photoButton.accessibilityIdentifier = "photoButton"
         photoButton.accessibilityLabel = Sketch.SelectPictureButton.description
-        photoButton.isHidden = !MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
+        photoButton.isHidden = !MediaShareRestrictionManager(sessionRestriction: userSession as? ZMUserSession)
             .hasAccessToCameraRoll
 
         emojiButton.setIcon(.emoji, size: .tiny, for: .normal)

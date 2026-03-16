@@ -42,8 +42,7 @@ enum ConversationInputBarViewControllerMode {
 final class ConversationInputBarViewController: UIViewController,
     UIPopoverPresentationControllerDelegate {
 
-    let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
-
+    let mediaShareRestrictionManager: MediaShareRestrictionManager
     let conversation: InputBarConversationType
     weak var delegate: ConversationInputBarViewControllerDelegate?
 
@@ -389,12 +388,13 @@ final class ConversationInputBarViewController: UIViewController,
         self.retryUploadDraftUseCase = wireMessagingFactory.makeRetryUploadDraftUseCase(
             cellName: conversation.wireDriveCellName
         )
+        self.mediaShareRestrictionManager = MediaShareRestrictionManager(
+            sessionRestriction: userSession as? ZMUserSession
+        )
 
         super.init(nibName: nil, bundle: nil)
 
-        if !ProcessInfo.processInfo.isRunningTests,
-           let conversation = conversation as? ZMConversation {
-            conversation.qualifiedID
+        if !ProcessInfo.processInfo.isRunningTests, let conversation = conversation as? ZMConversation {
             self.conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
             self.typingObserverToken = conversation.addTypingObserver(self)
         }
@@ -1029,7 +1029,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
     }
 
     private func sketch() {
-        let viewController = CanvasViewController()
+        let viewController = CanvasViewController(userSession: userSession)
         viewController.delegate = self
         viewController.setupNavigationBarTitle(conversation.displayNameWithFallback)
 
@@ -1053,8 +1053,7 @@ extension ConversationInputBarViewController: InformalTextViewDelegate {
             }
         )
 
-        let confirmImageViewController = ConfirmAssetViewController(context: context)
-
+        let confirmImageViewController = ConfirmAssetViewController(context: context, userSession: userSession)
         confirmImageViewController.previewTitle = conversation.displayNameWithFallback
 
         present(confirmImageViewController, animated: false)
