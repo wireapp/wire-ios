@@ -174,7 +174,10 @@ final class URLActionTests: ZMTBaseTest {
 
     func testThatIt() throws {
         // given
-        let url = URL(string: "wire://connect?service=d554c310-8237-4f85-b3cc-b7ae5ec1e6cd&provider=d64af9ae-e0c5-4ce6-b38a-02fd9363b54c")!
+        let url =
+            URL(
+                string: "wire://connect?service=d554c310-8237-4f85-b3cc-b7ae5ec1e6cd&provider=d64af9ae-e0c5-4ce6-b38a-02fd9363b54c"
+            )!
 
         // when
         let action = try URLAction(url: url)
