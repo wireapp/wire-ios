@@ -77,13 +77,13 @@ public final class WireDriveFileUITracker {
     private static func stateFromAsset(_ asset: WireDriveLocalAsset) -> State {
         switch asset.downloadState {
         case .pending:
-                .notDownloaded
+            .notDownloaded
         case let .downloading(progress):
-                .downloading(progress: progress, isLargeFile: asset.fileSize == .large)
+            .downloading(progress: progress, isLargeFile: asset.fileSize == .large)
         case .downloaded:
-                .downloaded(showReadyToOpen: false)
+            .downloaded(showReadyToOpen: false)
         case let .failed(error):
-                .failed(error: error)
+            .failed(error: error)
         }
     }
     
@@ -96,11 +96,11 @@ public final class WireDriveFileUITracker {
     private static func stateFromCarouselItem(_ carouselItem: AttachmentsCarouselItem) -> State {
         switch carouselItem.state {
         case .uploading(let progress):
-                .downloading(progress: Double(progress), isLargeFile: false)
+            .downloading(progress: Double(progress), isLargeFile: false)
         case .uploaded:
-                .downloaded(showReadyToOpen: false)
+            .downloaded(showReadyToOpen: false)
         case .failed:
-                .failed(error: nil)
+            .failed(error: nil)
         }
     }
 }
