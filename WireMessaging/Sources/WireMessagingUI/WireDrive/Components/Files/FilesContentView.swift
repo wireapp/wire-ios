@@ -147,7 +147,7 @@ private extension FilesContentView {
         ForEach(Array(viewModel.state.items.enumerated()), id: \.element) { index, item in
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
-                .onTapGesture { Task { await viewModel.openItem(item: item) } }
+                .onTapGesture { Task { await viewModel.performPrimaryAction(item: item) } }
         }
     }
 

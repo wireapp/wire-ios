@@ -428,8 +428,8 @@ package final class FilesViewModel: ObservableObject {
             onItemAction: { [weak self] action, item in
                 guard let self else { return }
                 switch action {
-                case .open:
-                    await openItem(item: item)
+                case .primaryAction:
+                    await performPrimaryAction(item: item)
                 case .deleteToRecycleBin:
                     await deleteItem(item, permanently: false)
                 case .deletePermanently:
@@ -488,8 +488,8 @@ package final class FilesViewModel: ObservableObject {
         )
     }
 
-    /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary or views it.
-    func openItem(item: FilesViewItem) async {
+    /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary or views it or cancels the download.
+    func performPrimaryAction(item: FilesViewItem) async {
         switch item.kind {
         case .file:
             await viewAsset(item: item)
@@ -553,16 +553,26 @@ package final class FilesViewModel: ObservableObject {
         setNavigation(navigationPath + [targetItem])
     }
 
-    /// Downloads if necessary or views the asset represented by the given item.
+    /// Downloads if necessary or views the asset represented by the given item or cancels the download.
     private func viewAsset(item: FilesViewItem) async {
         precondition(item.kind == .file)
 
         do {
-            let isAlreadyDownloaded = try await useCases.getAssetUseCase.isDownloaded(nodeID: item.id, eTag: item.eTag)
-            let url = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
+            let fileExists = try await useCases.getAssetUseCase.downloadedFileExists(nodeID: item.id, eTag: item.eTag)
+            let downloadState: WireDriveLocalAsset.DownloadState = !fileExists ?
+                .pending :
+                try await useCases.getAssetUseCase.downloadState(nodeID: item.id) ?? .pending
             
-            if isAlreadyDownloaded {
+            print("### downloadState: \(downloadState)")
+            
+            switch downloadState {
+            case .pending, .failed:
+                let _ = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
+            case .downloaded:
+                let url = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
                 viewingURL = url
+            case .downloading:
+                await useCases.getAssetUseCase.cancelDownload(nodeID: item.id)
             }
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
             alert = .noInternet

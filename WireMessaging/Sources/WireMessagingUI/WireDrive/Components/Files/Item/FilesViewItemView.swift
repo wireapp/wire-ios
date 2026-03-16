@@ -51,19 +51,6 @@ struct FilesItemView: View {
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                     infoRow()
-                    
-                    /*
-                    //TODO: remove this temporary debug text
-                    let debugText: String = switch viewModel.fileTracker.state {
-                    case .notDownloaded: "Not downloaded"
-                    case .downloaded(showReadyToOpen: let ready): "Downloaded, ready: \(ready)"
-                    case let .downloading(progress: progress, isLargeFile: _): "Progress: \(Int(progress * 100))%"
-                    case .failed(error: let error): "Failed: \(error)"
-                    }
-                    Text(debugText)
-                        .lineLimit(5)
-                        .foregroundStyle(Color.green)
-                     */
                 }
 
                 Spacer()
@@ -131,8 +118,8 @@ struct FilesItemView: View {
 
     @ViewBuilder
     private func icon() -> some View {
-        //let state: WireDriveFileUITracker.State = viewModel.fileTracker.state
-        let state: WireDriveFileUITracker.State = .downloading(progress: 0.3, isLargeFile: false)
+        let state: WireDriveFileUITracker.State = viewModel.fileTracker.state
+        //let state: WireDriveFileUITracker.State = .downloading(progress: 0.3, isLargeFile: false)
         //let state: WireDriveFileUITracker.State = .failed(error: URLError(.badURL))
         //let state: WireDriveFileUITracker.State = .downloaded(showReadyToOpen: true)
 
@@ -240,14 +227,16 @@ struct FilesItemView: View {
 
     @ViewBuilder
     private func menuContent() -> some View {
-        menuItem(.open) { item in
+        menuItem(.primaryAction) { item in
             Button {
-                viewModel.performMenuAction(item)
+                viewModel.performAction(item)
             } label: {
+                //TODO: show "cancel download" if it's currently downloading
                 Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
             }
             .disabled(viewModel.isDownloading)
 
+            //TODO: maybe remove this case?
             if viewModel.isDownloadOptionAvailable {
                 Button {
                     Task { await viewModel.download() }
@@ -259,7 +248,7 @@ struct FilesItemView: View {
 
         menuItem(.shareLink) { item in
             Button {
-                viewModel.performMenuAction(item)
+                viewModel.performAction(item)
             } label: {
                 Label(
                     Strings.Files.Item.Menu.shareLink,
@@ -270,7 +259,7 @@ struct FilesItemView: View {
 
         menuItem(.showVersionHistory) { item in
             Button {
-                viewModel.performMenuAction(item)
+                viewModel.performAction(item)
             } label: {
                 Label(
                     Strings.Files.Item.Menu.versionHistory,
@@ -281,7 +270,7 @@ struct FilesItemView: View {
 
         menuItem(.edit) { item in
             Button {
-                viewModel.performMenuAction(item)
+                viewModel.performAction(item)
             } label: {
                 Label(Strings.Files.Item.Menu.editFile, systemImage: "square.and.pencil")
             }
@@ -291,7 +280,7 @@ struct FilesItemView: View {
 
         menuItem(.rename) { item in
             Button {
-                viewModel.performMenuAction(item)
+                viewModel.performAction(item)
             } label: {
                 Label(Strings.Files.Item.Menu.rename, systemImage: "pencil")
             }
@@ -299,7 +288,7 @@ struct FilesItemView: View {
 
         menuItem(.moveToFolder) { item in
             Button {
-                viewModel.performMenuAction(item)
+                viewModel.performAction(item)
             } label: {
                 Label(Strings.Files.Item.Menu.moveToFolder, systemImage: "folder")
             }
@@ -307,7 +296,7 @@ struct FilesItemView: View {
 
         menuItem(.editTags) { item in
             Button {
-                viewModel.performMenuAction(item)
+                viewModel.performAction(item)
             } label: {
                 Label(Strings.Files.Item.Menu.addOrRemoveTags, systemImage: "tag")
             }
@@ -315,7 +304,7 @@ struct FilesItemView: View {
 
         menuItem(.restore) { item in
             Button {
-                viewModel.performMenuAction(item)
+                viewModel.performAction(item)
             } label: {
                 Label(Strings.RecycleBin.Item.Menu.restore, systemImage: "arrow.uturn.backward")
             }
@@ -324,7 +313,7 @@ struct FilesItemView: View {
         menuItem(.deletePermanently) { item in
             Button(
                 role: .destructive,
-                action: { viewModel.performMenuAction(item) },
+                action: { viewModel.performAction(item) },
                 label: { Label(Strings.RecycleBin.Item.Menu.delete, systemImage: "trash.fill") }
             )
         }
@@ -332,7 +321,7 @@ struct FilesItemView: View {
         menuItem(.deleteToRecycleBin) { item in
             Button(
                 role: .destructive,
-                action: { viewModel.performMenuAction(item) },
+                action: { viewModel.performAction(item) },
                 label: { Label(Strings.Files.Item.Menu.delete, systemImage: "trash.fill") }
             )
         }

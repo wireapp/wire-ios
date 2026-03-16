@@ -36,7 +36,8 @@ final class FilesItemViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     enum ItemAction {
-        case open
+        /// Can be open, download or cancel download, depening on the state of the file
+        case primaryAction
         case showVersionHistory
         case edit
         case rename
@@ -114,7 +115,7 @@ final class FilesItemViewModel: ObservableObject {
 
         self.fileTracker = .init()
         fileTracker.fileShouldOpen = { [weak self] in
-            self?.performMenuAction(.open)
+            self?.performAction(.primaryAction)
         }
 
         self.menuActions = makeMenuActions()
@@ -175,7 +176,7 @@ final class FilesItemViewModel: ObservableObject {
         item.isEditable
     }
 
-    func performMenuAction(_ action: ItemAction) {
+    func performAction(_ action: ItemAction) {
         switch action {
         case .restore:
             showRestoreConfirmation()
@@ -370,7 +371,7 @@ final class FilesItemViewModel: ObservableObject {
         var actions: Set<ItemAction> = []
 
         if !isInRecycleBin {
-            actions.insert(.open)
+            actions.insert(.primaryAction)
             actions.insert(.shareLink)
         }
 
