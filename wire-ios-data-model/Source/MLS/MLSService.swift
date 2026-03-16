@@ -856,43 +856,48 @@ public final class MLSService: MLSServiceInterface {
             return
         }
 
-        let pendingGroups = try await context.perform {
+        let pendingGroupConversations = try await context.perform {
             try ZMConversation.fetchConversationsWithMLSGroupStatus(
                 mlsGroupStatus: .pendingJoin,
                 in: context
             )
         }
 
-        logger.info("joining \(pendingGroups.count) group(s)")
+        logger.info("joining \(pendingGroupConversations.count) group(s)")
 
         let needToSave = await withTaskGroup(of: Bool.self) { group in
-            for pendingGroup in pendingGroups {
+            for pendingGroupConversation in pendingGroupConversations {
                 group.addTask {
-                    guard let mlsGroupID = await context.perform({ pendingGroup.mlsGroupID }),
-                          let conversationQualifiedID = await context.perform({ pendingGroup.qualifiedID }) else {
+                    let (mlsGroupID, conversationQualifiedID, epoch, isOneOnOne) = await context.perform {
+                        (pendingGroupConversation.mlsGroupID,
+                         pendingGroupConversation.qualifiedID,
+                         pendingGroupConversation.epoch,
+                         pendingGroupConversation.conversationType == .oneOnOne)
+                    }
+                    
+                    guard let mlsGroupID,
+                          let conversationQualifiedID else {
                         return false
                     }
 
                     do {
-                        let epoch = await context.perform {
-                            pendingGroup.epoch
-                        }
                         let conversationExists = try await self.conversationExists(
                             groupID: mlsGroupID
                         )
-                        let shouldEstablishGroup = epoch == 0 && !conversationExists && conversationQualifiedID
-                            .domain == self.localDomain
+                        
+                        let shouldEstablishGroup = (epoch == 0 && !conversationExists) && (isOneOnOne || (!isOneOnOne && conversationQualifiedID
+                            .domain == self.localDomain))
 
                         if shouldEstablishGroup {
                             try await self.internalEstablishPendingGroup(
                                 groupID: mlsGroupID,
-                                pendingGroup: pendingGroup,
+                                pendingGroup: pendingGroupConversation,
                                 context: context
                             )
                             return true
                         } else {
                             try await self.joinByExternalCommit(groupID: mlsGroupID)
-                            return false
+                            return true // save change of ZMConversation
                         }
                     } catch {
                         WireLogger.mls.error(
