@@ -28,7 +28,9 @@ final class DeveloperE2eiViewModel: ObservableObject {
         return CRLExpirationDatesRepository(userID: userSession.selfUser.remoteIdentifier)
     }
 
-    @Published var certificateExpirationTime = ""
+    static let minimumCertificateExpirationTime = 360
+
+    @Published var certificateExpirationTime = minimumCertificateExpirationTime
 
     @Published var storedCRLExpirationDatesByURL = [String: String]()
 
