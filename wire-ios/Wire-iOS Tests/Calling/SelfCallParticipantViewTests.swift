@@ -51,7 +51,8 @@ final class SelfCallParticipantViewTests: XCTestCase {
             isCovered: false,
             shouldShowActiveSpeakerFrame: false,
             shouldShowBorderWhenVideoIsStopped: false,
-            pinchToZoomRule: .enableWhenFitted
+            pinchToZoomRule: .enableWhenFitted,
+            userSession: UserSessionMock()
         )
         sut.previewView = previewViewMock
     }

@@ -77,6 +77,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
             clientRemovalObserver = ClientRemovalObserver(
                 userClientToDelete: userClient,
                 delegate: self,
+                userSession: userSession,
                 credentials: credentials
             ) { [logger] error in
                 if let error {
