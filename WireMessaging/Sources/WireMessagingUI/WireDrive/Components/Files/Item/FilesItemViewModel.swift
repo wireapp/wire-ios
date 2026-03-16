@@ -141,7 +141,7 @@ final class FilesItemViewModel: ObservableObject {
         guard item.kind == .file else { return false }
 
         return switch fileTracker.state {
-        case .downloaded:
+        case .loaded:
             false
         default:
             true
@@ -150,7 +150,7 @@ final class FilesItemViewModel: ObservableObject {
 
     var isDownloading: Bool {
         switch fileTracker.state {
-        case .downloading:
+        case .loading:
             true
         default:
             false
@@ -159,7 +159,7 @@ final class FilesItemViewModel: ObservableObject {
 
     var progress: Double? {
         switch fileTracker.state {
-        case let .downloading(progress, _):
+        case let .loading(progress, _):
             progress
         case .failed:
             1 // We show a full red progress bar on failure
