@@ -1330,16 +1330,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func execute(
-        groupID: MLSGroupID,
-        block: @escaping @Sendable (ZMConversation?, NSManagedObjectContext) -> Void
-    ) async {
-        await context.perform { [context] in
-            let conversation = ZMConversation.fetch(with: groupID, in: context)
-            block(conversation, context)
-        }
-    }
-
-    public func execute(
         conversationID: QualifiedID,
         block: @escaping @Sendable (ZMConversation?, NSManagedObjectContext) -> Void
     ) async {

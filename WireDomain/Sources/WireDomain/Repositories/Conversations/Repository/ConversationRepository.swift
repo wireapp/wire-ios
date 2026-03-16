@@ -390,8 +390,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         return isSelfAnActiveMember
     }
 
-    public func clearPendingProposals(in groupID: WireDataModel.MLSGroupID) async {
-        await conversationsLocalStore.execute(groupID: groupID) { conversation, context in
+    public func clearPendingProposals(in conversationID: WireDataModel.QualifiedID) async {
+        await conversationsLocalStore.execute(conversationID: conversationID) { conversation, context in
             conversation?.commitPendingProposalDate = nil
             context.saveOrRollback()
         }

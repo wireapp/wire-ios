@@ -67,7 +67,7 @@ struct CommitPendingProposalItem: WorkItem, CustomStringConvertible {
 
         guard try await mlsService.conversationExists(groupID: groupID) else {
             logger.warn("mls group does not exist, clearing pending proposal", attributes: logAttributes)
-            await repository.clearPendingProposals(in: groupID)
+            await repository.clearPendingProposals(in: conversationID)
             return
         }
 

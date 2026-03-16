@@ -492,16 +492,6 @@ public protocol ConversationLocalStoreProtocol {
 
     func fetchServerTimeDelta() async -> TimeInterval
 
-    /// Fetches the conversation matching the given MLS group ID and executes a block,
-    /// providing the conversation (if found) and the context.
-    /// - Parameters:
-    ///   - groupID: The MLS group ID used to look up the conversation.
-    ///   - block: Some code that should be invoked with the fetched conversation and the managed object context.
-    func execute(
-        groupID: MLSGroupID,
-        block: @escaping @Sendable (ZMConversation?, NSManagedObjectContext) -> Void
-    ) async
-
     /// Fetches the conversation matching the given qualified ID and executes a block,
     /// providing the conversation (if found) and the context.
     /// - Parameters:
