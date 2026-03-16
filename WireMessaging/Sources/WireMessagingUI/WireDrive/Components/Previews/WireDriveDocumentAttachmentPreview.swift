@@ -59,7 +59,7 @@ struct WireDriveDocumentAttachmentPreview: View {
         headerIcon: Image(WireDriveFileType.pdf.imageResource),
         headerText: "PDF (336 KB)",
         labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
-        state: .downloading(progress: 0.7, isLargeFile: false),
+        state: .loading(progress: 0.7, isLargeFile: false),
         isDraftPreview: false
     )
     .frame(width: 222, height: 74)

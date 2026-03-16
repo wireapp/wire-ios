@@ -124,11 +124,11 @@ struct FilesItemView: View {
         //let state: WireDriveFileUITracker.State = .downloaded(showReadyToOpen: true)
 
         switch state {
-        case .notDownloaded, .downloaded(showReadyToOpen: false), .failed:
+        case .notLoaded, .loaded(showReadyToOpen: false), .failed:
             fileTypeIcon()
-        case .downloaded(showReadyToOpen: true):
+        case .loaded(showReadyToOpen: true):
             progressIcon(progress: 1, readyToOpen: true)
-        case let .downloading(progress: progress, _):
+        case let .loading(progress: progress, _):
             progressIcon(progress: progress, readyToOpen: false)
         }
     }
@@ -211,14 +211,14 @@ struct FilesItemView: View {
         //let state: WireDriveFileUITracker.State = .downloaded(showReadyToOpen: true)
 
         switch state {
-        case .notDownloaded, .downloaded(showReadyToOpen: false):
+        case .notLoaded, .loaded(showReadyToOpen: false):
             HStack(spacing: 5) {
                 tagsInfo()
                 infoRowTextLine(viewModel.subtitle ?? "")
             }
-        case .downloaded(showReadyToOpen: true):
+        case .loaded(showReadyToOpen: true):
             infoRowTextLine(Strings.Files.readyToOpenAfterDownload)
-        case .downloading:
+        case .loading:
             infoRowTextLine(Strings.Files.tapToCancelDownload)
         case .failed:
             infoRowTextLine(Strings.Files.downloadFailed, error: true)

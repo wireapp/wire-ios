@@ -35,7 +35,7 @@ struct WireDriveSmallVideoPreviewView: View {
                     asyncImage(url: url)
                 }
 
-                if url == nil, case .downloading = state {
+                if url == nil, case .loading = state {
                     ProgressView()
                 }
 
@@ -66,7 +66,7 @@ struct WireDriveSmallVideoPreviewView: View {
                     .resizable()
                     .scaledToFill()
                     .overlay {
-                        if case .notDownloaded = state {
+                        if case .notLoaded = state {
                             PlayIcon()
                                 .disabled(false)
                         }
@@ -95,7 +95,7 @@ struct WireDriveSmallVideoPreviewView: View {
             string:
             "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
         ),
-        state: .downloading(progress: 0.7, isLargeFile: false),
+        state: .loading(progress: 0.7, isLargeFile: false),
         duration: "2:22",
     )
 }

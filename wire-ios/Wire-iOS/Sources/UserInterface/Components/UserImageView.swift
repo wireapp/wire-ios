@@ -206,9 +206,7 @@ class UserImageView: AvatarImageView, UserObserving {
 
     /// Called when the user or user session changes.
     func updateUser() {
-        guard let user, let initials = user.initials else {
-            return
-        }
+        guard let user, let initials = user.initials else { return }
 
         let defaultAvatar: Avatar = initials.isEmpty ? .init() : .text(initials.localizedUppercase)
         setAvatar(defaultAvatar, user: user, animated: false)

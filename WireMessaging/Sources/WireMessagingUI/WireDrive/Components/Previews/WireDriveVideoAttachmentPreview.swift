@@ -88,7 +88,7 @@ struct PlayIcon: View {
 #Preview {
     WireDriveVideoAttachmentPreview(
         thumbnail: Image("rectangular-placeholder", bundle: .module),
-        state: .downloading(progress: 0.7, isLargeFile: false),
+        state: .loading(progress: 0.7, isLargeFile: false),
         canPlay: true
     ).frame(width: 74, height: 74)
 }

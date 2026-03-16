@@ -88,7 +88,7 @@ struct WireDriveDocumentHeaderView: View {
     @ViewBuilder
     private func stateTextView() -> some View {
         switch state {
-        case .downloaded(let showReadyToOpen):
+        case .loaded(let showReadyToOpen):
             if showReadyToOpen {
                 Text(Strings.Files.readyToOpenAfterDownload)
             } else {
@@ -96,9 +96,9 @@ struct WireDriveDocumentHeaderView: View {
             }
         case .failed:
             Text(Strings.Files.downloadFailed)
-        case .notDownloaded:
+        case .notLoaded:
             EmptyView()
-        case .downloading:
+        case .loading:
             Text(Strings.Files.tapToCancelDownload)
         }
     }
@@ -113,7 +113,7 @@ struct WireDriveDocumentHeaderView: View {
     @ViewBuilder
     private func stateIconView() -> some View {
         switch state {
-        case .downloaded(let showReadyToOpen):
+        case .loaded(let showReadyToOpen):
             if showReadyToOpen {
                 Image(systemName: "checkmark.circle")
                     .foregroundStyle(.blue)
@@ -136,12 +136,12 @@ struct WireDriveDocumentHeaderView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(height: Constants.headerIconSize * scale)
             }
-        case .notDownloaded:
+        case .notLoaded:
             headerIcon
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(height: Constants.headerIconSize * scale)
-        case .downloading(let progress, _):
+        case .loading(let progress, _):
             progressView(progress: progress)
         }
     }
@@ -154,7 +154,7 @@ struct WireDriveDocumentHeaderView: View {
         headerText: "PDF (336 KB)",
         labelText: "CDR_20220120 Accessibility Review Reviewed Final Plus",
         isDraftPreview: false,
-        state: .downloading(progress: 0.7, isLargeFile: false)
+        state: .loading(progress: 0.7, isLargeFile: false)
     )
     .frame(width: 300, height: 74)
 }

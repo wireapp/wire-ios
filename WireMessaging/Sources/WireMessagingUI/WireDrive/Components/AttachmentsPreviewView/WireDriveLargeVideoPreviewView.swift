@@ -161,6 +161,6 @@ struct WireDriveLargeVideoPreviewView: View {
         ),
         imageAspectRatio: CGFloat(16.0 / 9.0),
         duration: "02:34",
-        state: .downloading(progress: 0.7, isLargeFile: false)
+        state: .loading(progress: 0.7, isLargeFile: false)
     )
 }

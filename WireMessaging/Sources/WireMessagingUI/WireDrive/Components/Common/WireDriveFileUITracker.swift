@@ -21,40 +21,41 @@ public import WireMessagingDomain
 public import Observation
 
 /// Intended for tracking the UI state of Drive files in different parts of the app.
-/// Consumes state changes from `WireDriveLocalAsset.DownloadState` and provides observable state changes specifically
+/// Consumes state changes from `WireDriveLocalAsset.DownloadState` or
+/// `AttachmentsCarouselItem.State` and provides observable state changes specifically
 /// for the UI that represents the file.
-/// Also notifies if and when a file should be opened automatically after download.
+/// Also notifies if and when a file should be opened automatically after download or upload.
 @MainActor
 @Observable
 public final class WireDriveFileUITracker {
-    public enum State: Sendable {
-        /// The file hasn't been downloaded yet.
-        case notDownloaded
+    public enum State: Sendable, Hashable {
+        /// The file hasn't been downloaded or uploaded yet.
+        case notLoaded
 
-        /// The file is currently being downloaded.
-        case downloading(progress: Double, isLargeFile: Bool)
+        /// The file is currently being downloaded or uploaded.
+        case loading(progress: Double, isLargeFile: Bool)
 
-        /// The file has been downloaded.
-        /// `downloaded(showReadyToOpen: true)` indicates that the file should be shown in a specific "ready to open"
+        /// The file has been downloaded or uploaded.
+        /// `loaded(showReadyToOpen: true)` indicates that the file should be shown in a specific "ready to open"
         /// state in the UI.
-        /// Will automatically change to `downloaded(showReadyToOpen: false)` state after a few seconds.
-        case downloaded(showReadyToOpen: Bool)
+        /// Will automatically change to `loaded(showReadyToOpen: false)` state after a few seconds.
+        case loaded(showReadyToOpen: Bool)
 
-        /// The download has failed.
-        case failed(error: (any Error)?)
+        /// The download or upload has failed.
+        case failed
     }
 
-    public private(set) var state: State = .notDownloaded {
+    public private(set) var state: State = .notLoaded {
         didSet {
             switch (oldValue, state) {
-            case (.downloading(_, let isLargeFile), .downloaded):
-                // state is changing from downloading to downloaded:
-                state = .downloaded(showReadyToOpen: isLargeFile)
+            case (.loading(_, let isLargeFile), .loaded):
+                // state is changing from loading to loaded:
+                state = .loaded(showReadyToOpen: isLargeFile)
 
                 if isLargeFile {
                     Task {
                         try? await Task.sleep(for: .seconds(3))
-                        self.state = .downloaded(showReadyToOpen: false)
+                        self.state = .loaded(showReadyToOpen: false)
                     }
                 } else {
                     fileShouldOpen?()
@@ -65,7 +66,7 @@ public final class WireDriveFileUITracker {
         }
     }
 
-    /// This closure will be called when a file should be automatically opened after the download.
+    /// This closure will be called when a file should be automatically opened after the download or upload.
     public var fileShouldOpen: (() -> Void)?
 
     public func handleDownloadState(fromAsset asset: WireDriveLocalAsset) {
@@ -77,13 +78,13 @@ public final class WireDriveFileUITracker {
     private static func stateFromAsset(_ asset: WireDriveLocalAsset) -> State {
         switch asset.downloadState {
         case .pending:
-            .notDownloaded
+            .notLoaded
         case let .downloading(progress):
-            .downloading(progress: progress, isLargeFile: asset.fileSize == .large)
+            .loading(progress: progress, isLargeFile: asset.fileSize == .large)
         case .downloaded:
-            .downloaded(showReadyToOpen: false)
-        case let .failed(error):
-            .failed(error: error)
+            .loaded(showReadyToOpen: false)
+        case .failed:
+            .failed
         }
     }
     
@@ -96,11 +97,11 @@ public final class WireDriveFileUITracker {
     private static func stateFromCarouselItem(_ carouselItem: AttachmentsCarouselItem) -> State {
         switch carouselItem.state {
         case .uploading(let progress):
-            .downloading(progress: Double(progress), isLargeFile: false)
+            .loading(progress: Double(progress), isLargeFile: false)
         case .uploaded:
-            .downloaded(showReadyToOpen: false)
+            .loaded(showReadyToOpen: false)
         case .failed:
-            .failed(error: nil)
+            .failed
         }
     }
 }

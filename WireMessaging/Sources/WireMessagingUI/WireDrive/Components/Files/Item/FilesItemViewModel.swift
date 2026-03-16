@@ -136,7 +136,7 @@ final class FilesItemViewModel: ObservableObject {
         guard item.kind == .file else { return false }
 
         return switch fileTracker.state {
-        case .downloaded:
+        case .loaded:
             false
         default:
             true
@@ -145,7 +145,7 @@ final class FilesItemViewModel: ObservableObject {
 
     var isDownloading: Bool {
         switch fileTracker.state {
-        case .downloading:
+        case .loading:
             true
         default:
             false

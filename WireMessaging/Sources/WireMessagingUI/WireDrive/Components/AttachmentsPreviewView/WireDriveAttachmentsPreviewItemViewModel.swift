@@ -259,7 +259,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
 
     private var canOpen: Bool {
         switch fileTracker.state {
-        case .downloaded(let showReadyToOpen):
+        case .loaded(let showReadyToOpen):
             !showReadyToOpen
         default:
             false

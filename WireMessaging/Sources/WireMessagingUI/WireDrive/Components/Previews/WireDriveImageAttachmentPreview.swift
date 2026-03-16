@@ -50,6 +50,6 @@ struct WireDriveImageAttachmentPreview: View {
 #Preview {
     WireDriveImageAttachmentPreview(
         thumbnail: Image("rectangular-placeholder", bundle: .module),
-        state: .downloaded(showReadyToOpen: false)
+        state: .loaded(showReadyToOpen: false)
     ).frame(width: 74, height: 74)
 }
