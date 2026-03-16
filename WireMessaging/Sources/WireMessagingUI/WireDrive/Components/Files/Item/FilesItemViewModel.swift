@@ -36,6 +36,8 @@ final class FilesItemViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     enum ItemAction {
+        // TODO: [WPB-23688] we will need this "download" action later because with the new design, sometimes we want to just download, and sometimes we want to download and then open.
+        // case download
         case open
         case showVersionHistory
         case edit
@@ -50,7 +52,15 @@ final class FilesItemViewModel: ObservableObject {
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
 
-    @Published private var asset: WireDriveLocalAsset?
+    @Published private var asset: WireDriveLocalAsset? {
+        didSet {
+            if let downloadState = asset?.downloadState {
+                fileTracker.handleDownloadState(downloadState)
+            }
+        }
+    }
+
+    @Published var fileTracker: WireDriveFileUITracker
 
     @Published var isPresentingDeleteFilePermanentlyConfirmation = false
     @Published var isPresentingDeleteFolderPermanentlyConfirmation = false
@@ -112,6 +122,12 @@ final class FilesItemViewModel: ObservableObject {
         self.isBrowsing = isBrowsing
         self.isInRecycleBin = isInRecycleBin
 
+        self.fileTracker = .init(downloadState: .pending)
+        fileTracker.fileShouldOpen = {
+            // TODO: [WPB-23688] call the function to open the file here, later when we implement the new loading&opening design
+            print("### file should open automatically now")
+        }
+
         self.menuActions = makeMenuActions()
 
         localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
@@ -126,7 +142,7 @@ final class FilesItemViewModel: ObservableObject {
     var isDownloadOptionAvailable: Bool {
         guard item.kind == .file else { return false }
 
-        return switch asset?.downloadState {
+        return switch fileTracker.state {
         case .downloaded:
             false
         default:
@@ -135,7 +151,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var isDownloading: Bool {
-        switch asset?.downloadState {
+        switch fileTracker.state {
         case .downloading:
             true
         default:
@@ -144,7 +160,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var progress: Double? {
-        switch asset?.downloadState {
+        switch fileTracker.state {
         case let .downloading(progress):
             progress
         case .failed:
@@ -155,7 +171,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var showErrorState: Bool {
-        switch asset?.downloadState {
+        switch fileTracker.state {
         case .failed:
             true
         default:
