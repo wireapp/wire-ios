@@ -245,40 +245,10 @@ final class ServiceDetailViewController: UIViewController {
             switch type {
 
             case let .addApp(conversation):
-                guard let user = service.user as? ZMUser else { return }
-                Task {
-                    do {
-                        let syncContext = userSession.syncContext
-                        let conversationParticipantsService = ConversationParticipantsService(
-                            context: syncContext,
-                            localDomain: userSession.resolvedBackendMetadata.domain
-                        )
-                        let user = try await syncContext.perform { [objectID = user.objectID] in
-                            try ZMUser.existingObject(for: objectID, in: syncContext)
-                        }
-                        let conversation_ = try await syncContext.perform { [objectID = conversation.objectID] in
-                            return try ZMConversation.existingObject(for: objectID, in: syncContext)
-                        }
-
-                        try await conversationParticipantsService.addParticipants([user], to: conversation_)
-                        try await syncContext.perform {
-                            try syncContext.save()
-                        }
-                        completion(.success(conversation: conversation))
-                    } catch {
-                        completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
-                    }
-                }
+                addApp(to: conversation, contextProvider: userSession, completion: completion)
 
             case let .addBot(conversation):
-                conversation.add(bot: service.user, in: userSession) { result in
-                    switch result {
-                    case .success:
-                        completion(.success(conversation: conversation))
-                    case let .failure(error):
-                        completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
-                    }
-                }
+                addBot(to: conversation, userSession: userSession, completion: completion)
 
             case let .removeParticipant(conversation):
                 presentRemoveDialogue(
@@ -349,6 +319,56 @@ final class ServiceDetailViewController: UIViewController {
             }
         }
     }
+
+    private func addApp(
+        to conversation: ZMConversation,
+        contextProvider: some ContextProvider,
+        completion: @escaping (AddBotResult) -> Void
+    ) {
+        guard let user = service.user as? ZMUser else {
+            return completion(.failure(error: .general))
+        }
+
+        Task {
+            do {
+                let syncContext = contextProvider.syncContext
+                let conversationParticipantsService = ConversationParticipantsService(
+                    context: syncContext,
+                    localDomain: userSession.resolvedBackendMetadata.domain
+                )
+                let user = try await syncContext.perform { [objectID = user.objectID] in
+                    try ZMUser.existingObject(for: objectID, in: syncContext)
+                }
+                let conversation_ = try await syncContext.perform { [objectID = conversation.objectID] in
+                    return try ZMConversation.existingObject(for: objectID, in: syncContext)
+                }
+
+                try await conversationParticipantsService.addParticipants([user], to: conversation_)
+                try await syncContext.perform {
+                    try syncContext.save()
+                }
+                completion(.success(conversation: conversation))
+            } catch {
+                completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
+            }
+        }
+    }
+
+    private func addBot(
+        to conversation: ZMConversation,
+        userSession: ZMUserSession,
+        completion: @escaping (AddBotResult) -> Void
+    ) {
+        conversation.add(bot: service.user, in: userSession) { result in
+            switch result {
+            case .success:
+                completion(.success(conversation: conversation))
+            case let .failure(error):
+                completion(.failure(error: (error as? AddBotError) ?? AddBotError.general))
+            }
+        }
+    }
+
 }
 
 private extension ZMButton {
