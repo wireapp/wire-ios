@@ -26,10 +26,10 @@ final class ConnectRequestsCell: UICollectionViewCell {
     private var hasCreatedInitialConstraints = false
     private var currentConnectionRequestsCount: Int = 0
     private var conversationListObserverToken: Any?
+    private var userSession: UserSession?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupConnectRequestsCell()
     }
 
     @available(*, unavailable)
@@ -37,12 +37,14 @@ final class ConnectRequestsCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupConnectRequestsCell() {
+    func setupConnectRequestsCell(userSession: UserSession) {
+        self.userSession = userSession
+
         clipsToBounds = true
         addSubview(itemView)
         updateAppearance()
 
-        if let userSession = ZMUserSession.shared() {
+        if let userSession = userSession as? ZMUserSession {
             conversationListObserverToken = ConversationListChangeInfo.add(
                 observer: self,
                 for: ConversationList.pendingConnectionConversations(inUserSession: userSession),
@@ -95,7 +97,7 @@ final class ConnectRequestsCell: UICollectionViewCell {
 
     private
     func updateAppearance() {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = userSession as? ZMUserSession else { return }
 
         let connectionRequests: ConversationList = .pendingConnectionConversations(inUserSession: userSession)
         let users = connectionRequests.items.compactMap(\.oneOnOneUser)

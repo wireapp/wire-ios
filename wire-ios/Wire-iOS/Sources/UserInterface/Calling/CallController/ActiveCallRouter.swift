@@ -101,10 +101,11 @@ final class ActiveCallRouter<TopOverlayPresenter>
         self.topOverlayPresenter = topOverlayPresenter
 
         self.callController = CallController(userSession: userSession)
-        callController.callConversationProvider = ZMUserSession.shared()
+        callController.callConversationProvider = userSession as? CallConversationProvider
 
         self.callQualityController = CallQualityController(
             mainWindow: mainWindow,
+            userSession: userSession,
             submitCallQualitySurvey: userSession.makeCallQualitySurveyUseCase()
         )
         self.transitioningDelegate = CallQualityAnimator()
@@ -190,7 +191,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     func showCallTopOverlay(for conversation: ZMConversation) {
         guard !isCallTopOverlayShown else { return }
-        let callTopOverlayController = CallTopOverlayController(conversation: conversation)
+        let callTopOverlayController = CallTopOverlayController(conversation: conversation, userSession: userSession)
         callTopOverlayController.delegate = self
         topOverlayPresenter.presentTopOverlay(callTopOverlayController, animated: true)
         isCallTopOverlayShown = true
