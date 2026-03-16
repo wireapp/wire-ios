@@ -344,10 +344,6 @@ struct FilesItemView: View {
     private func confirmRestore() {
         Task { await viewModel.confirmRestore() }
     }
-
-    private var progressColor: Color {
-        viewModel.showErrorState ? ColorTheme.Base.error.color : ColorTheme.Base.primary(wireAccentColor).color
-    }
 }
 
 extension FilesItemView {

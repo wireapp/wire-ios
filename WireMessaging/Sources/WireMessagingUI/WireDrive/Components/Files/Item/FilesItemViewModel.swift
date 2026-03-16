@@ -152,26 +152,6 @@ final class FilesItemViewModel: ObservableObject {
         }
     }
 
-    var progress: Double? {
-        switch fileTracker.state {
-        case let .downloading(progress, _):
-            progress
-        case .failed:
-            1 // We show a full red progress bar on failure
-        default:
-            nil
-        }
-    }
-
-    var showErrorState: Bool {
-        switch fileTracker.state {
-        case .failed:
-            true
-        default:
-            false
-        }
-    }
-
     var isEditable: Bool {
         item.isEditable
     }
