@@ -179,9 +179,9 @@ final class AudioMessageView: UIView, TransferView {
     }
 
     func setUserSession(userSession: UserSession) {
-        self.userSession = userSession
+        guard self.userSession !== userSession else { return }
 
-        if callStateObserverToken == nil, let userSession = userSession as? ZMUserSession {
+        if let userSession = userSession as? ZMUserSession {
             callStateObserverToken = WireCallCenterV3.addCallStateObserver(
                 observer: self,
                 contextProvider: userSession.contextProvider
