@@ -238,6 +238,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         if let cell = cell as? SettingsTableCell {
             cell.showDisclosureIndicatorAccessoryView()
             cell.accessibilityIdentifier = settingsTopLevelMenuItem?.accessibilityID
+            cell.accessibilityTraits = .button
         }
     }
 

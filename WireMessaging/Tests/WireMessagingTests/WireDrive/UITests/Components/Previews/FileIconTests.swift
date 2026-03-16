@@ -18,74 +18,86 @@
 
 import Testing
 import UniformTypeIdentifiers
+import WireMessagingDomain
 
 @testable import WireMessagingUI
 
 struct FileIconTests {
 
     @Test(arguments: [
-        (type: UTType.archive, expected: FileIcon.archive),
-        (type: UTType.audio, expected: FileIcon.audio),
-        (type: UTType.script, expected: FileIcon.code),
-        (type: UTType.sourceCode, expected: FileIcon.code),
-        (type: UTType.xml, expected: FileIcon.code),
-        (type: UTType.html, expected: FileIcon.code),
-        (type: UTType.json, expected: FileIcon.code),
-        (type: UTType.image, expected: FileIcon.image),
-        (type: UTType.pdf, expected: FileIcon.pdf),
-        (type: UTType.presentation, expected: FileIcon.presentation),
-        (type: UTType.spreadsheet, expected: FileIcon.spreadsheet),
-        (type: UTType.movie, expected: FileIcon.video),
-        (type: UTType.text, expected: FileIcon.other)
+        (type: UTType.archive, expected: WireDriveFileType.archive),
+        (type: UTType.zip, expected: WireDriveFileType.archive),
+        (type: UTType.gzip, expected: WireDriveFileType.archive),
+        (type: UTType.bz2, expected: WireDriveFileType.archive),
+        (type: UTType.audio, expected: WireDriveFileType.audio),
+        (type: UTType.script, expected: WireDriveFileType.code),
+        (type: UTType.sourceCode, expected: WireDriveFileType.code),
+        (type: UTType.xml, expected: WireDriveFileType.code),
+        (type: UTType.html, expected: WireDriveFileType.code),
+        (type: UTType.json, expected: WireDriveFileType.code),
+        (type: UTType.image, expected: WireDriveFileType.image),
+        (type: UTType.pdf, expected: WireDriveFileType.pdf),
+        (type: UTType.presentation, expected: WireDriveFileType.presentation),
+        (type: UTType.spreadsheet, expected: WireDriveFileType.spreadsheet),
+        (type: UTType.movie, expected: WireDriveFileType.video),
+        (type: UTType.text, expected: WireDriveFileType.text),
+        (type: UTType.plainText, expected: WireDriveFileType.text)
     ])
-    func makeFileIconWithUTType(type: UTType, expectedIcon: FileIcon) {
-        #expect(FileIcon.make(type: type, fileExtension: nil) == expectedIcon)
+    func makeFileIconWithUTType(type: UTType, expectedIcon: WireDriveFileType) {
+        #expect(WireDriveFileType.make(type: type, fileExtension: nil) == expectedIcon)
     }
 
     @Test(arguments: [
         // Test document extensions
-        (extension: "doc", expected: FileIcon.document),
-        (extension: "docx", expected: FileIcon.document),
-        (extension: "dot", expected: FileIcon.document),
-        (extension: "dotx", expected: FileIcon.document),
-        (extension: "odt", expected: FileIcon.document),
-        (extension: "ott", expected: FileIcon.document),
-        (extension: "rtf", expected: FileIcon.document),
+        (extension: "doc", expected: WireDriveFileType.document),
+        (extension: "docx", expected: WireDriveFileType.document),
+        (extension: "dot", expected: WireDriveFileType.document),
+        (extension: "dotx", expected: WireDriveFileType.document),
+        (extension: "odt", expected: WireDriveFileType.document),
+        (extension: "ott", expected: WireDriveFileType.document),
+        (extension: "rtf", expected: WireDriveFileType.document),
+        // Test text extensions
+        (extension: "txt", expected: WireDriveFileType.text),
         // Test code extensions
-        (extension: "css", expected: FileIcon.code),
-        (extension: "phtml", expected: FileIcon.code),
-        (extension: "sparql", expected: FileIcon.code),
-        (extension: "cs", expected: FileIcon.code),
-        (extension: "java", expected: FileIcon.code),
-        (extension: "jsp", expected: FileIcon.code),
-        (extension: "sql", expected: FileIcon.code),
-        (extension: "cgi", expected: FileIcon.code),
-        (extension: "pl", expected: FileIcon.code),
-        (extension: "inc", expected: FileIcon.code),
-        (extension: "xsl", expected: FileIcon.code),
+        (extension: "css", expected: WireDriveFileType.code),
+        (extension: "phtml", expected: WireDriveFileType.code),
+        (extension: "html", expected: WireDriveFileType.code),
+        (extension: "sparql", expected: WireDriveFileType.code),
+        (extension: "cs", expected: WireDriveFileType.code),
+        (extension: "java", expected: WireDriveFileType.code),
+        (extension: "jsp", expected: WireDriveFileType.code),
+        (extension: "sql", expected: WireDriveFileType.code),
+        (extension: "cgi", expected: WireDriveFileType.code),
+        (extension: "pl", expected: WireDriveFileType.code),
+        (extension: "inc", expected: WireDriveFileType.code),
+        (extension: "xsl", expected: WireDriveFileType.code),
+        // Test archive extensions,
+        (extension: "rar", expected: WireDriveFileType.archive),
+        (extension: "7z", expected: WireDriveFileType.archive),
+        (extension: "tar", expected: WireDriveFileType.archive),
         // Test case insensitivity
-        (extension: "DOCX", expected: FileIcon.document),
-        (extension: "Java", expected: FileIcon.code),
+        (extension: "DOCX", expected: WireDriveFileType.document),
+        (extension: "Java", expected: WireDriveFileType.code),
         // Test unknown extension (should default to .other)
-        (extension: "foo", expected: FileIcon.other)
+        (extension: "foo", expected: WireDriveFileType.other)
     ])
-    func makeFileIconWithExtension(fileExtension: String, expectedIcon: FileIcon) {
-        #expect(FileIcon.make(type: nil, fileExtension: fileExtension) == expectedIcon)
+    func makeFileIconWithExtension(fileExtension: String, expectedIcon: WireDriveFileType) {
+        #expect(WireDriveFileType.make(type: nil, fileExtension: fileExtension) == expectedIcon)
     }
 
     @Test
     func makeFileIconPrecedence() {
         // Test that type takes precedence over extension
-        #expect(FileIcon.make(type: .audio, fileExtension: "doc") == .audio)
-        #expect(FileIcon.make(type: .image, fileExtension: "java") == .image)
+        #expect(WireDriveFileType.make(type: .audio, fileExtension: "doc") == .audio)
+        #expect(WireDriveFileType.make(type: .image, fileExtension: "java") == .image)
 
         // Test fallback to extension when type doesn't match
         let customType = UTType(filenameExtension: "custom")
-        #expect(FileIcon.make(type: customType, fileExtension: "doc") == .document)
+        #expect(WireDriveFileType.make(type: customType, fileExtension: "doc") == .document)
 
         // Test fallback to .other when neither matches
-        #expect(FileIcon.make(type: customType, fileExtension: "unknown") == .other)
-        #expect(FileIcon.make(type: nil, fileExtension: nil) == .other)
+        #expect(WireDriveFileType.make(type: customType, fileExtension: "unknown") == .other)
+        #expect(WireDriveFileType.make(type: nil, fileExtension: nil) == .other)
     }
 
 }

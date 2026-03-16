@@ -147,8 +147,10 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
             case .automatic:
                 if presentationStyle == .modal {
                     groupCell.hideAccessoryView()
+                    groupCell.accessibilityTraits = .button
                 } else {
                     groupCell.showDisclosureIndicatorAccessoryView()
+                    groupCell.accessibilityTraits = .button
                 }
             case .disclosureIndicator:
                 groupCell.showDisclosureIndicatorAccessoryView()

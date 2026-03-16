@@ -143,6 +143,11 @@ final class CallGridViewController: UIViewController {
         displayNetworkConditionViewIfNeeded(for: networkQuality)
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        requestVideoStreamsIfNeeded(forPage: gridView.currentPage)
+    }
+
     // MARK: - Setup
 
     private func setupViews() {
@@ -441,7 +446,8 @@ final class CallGridViewController: UIViewController {
         let newVisibleClientsSharingVideo = Set(clientStreams)
 
         guard newVisibleClientsSharingVideo != visibleClientsSharingVideo else { return }
-        delegate?.callGridViewController(self, perform: .requestVideoStreamsForClients(clientStreams))
+        guard let delegate else { return }
+        delegate.callGridViewController(self, perform: .requestVideoStreamsForClients(clientStreams))
         visibleClientsSharingVideo = newVisibleClientsSharingVideo
     }
 

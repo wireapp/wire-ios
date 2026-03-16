@@ -15,12 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
 import Foundation
 import Testing
 import WireDataModelSupport
 import WireDomainSupport
 import WireNetwork
 import WireNetworkSupport
+
 @testable import WireSyncEngine
 
 struct AppVersionMigration_4_12_1Tests {

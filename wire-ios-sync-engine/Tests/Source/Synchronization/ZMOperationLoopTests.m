@@ -46,6 +46,7 @@
                                           isDeveloperModeEnabled:NO
                                                  isSyncV2Enabled:NO
                                                       apiVersion:@5];
+    [self.sut resumeEnqueuing];
 }
 
 - (void)tearDown;
@@ -97,6 +98,7 @@
 {
     // given
     [self.sut setApiVersion:nil];
+    self.mockRequestStrategy.nextRequestCalled = NO;
     XCTAssertNil(self.sut.currentAPIVersion);
 
     self.mockRequestStrategy.mockRequest = [[ZMTransportRequest alloc] initWithPath:@"/test"

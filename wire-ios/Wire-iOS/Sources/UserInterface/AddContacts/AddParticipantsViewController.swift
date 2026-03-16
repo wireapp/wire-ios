@@ -151,7 +151,7 @@ final class AddParticipantsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    convenience init(
+    convenience init?(
         conversation: GroupDetailsConversationType,
         userSession: UserSession,
         isAppsFeatureEnabled: Bool,
@@ -173,6 +173,7 @@ final class AddParticipantsViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
         _ = searchHeaderViewController.tokenField.resignFirstResponder()
     }
 
@@ -186,7 +187,7 @@ final class AddParticipantsViewController: UIViewController {
         wr_supportedInterfaceOrientations
     }
 
-    init(
+    init?(
         context: Context,
         userSession: UserSession,
         isAppsFeatureEnabled: Bool,
@@ -224,13 +225,14 @@ final class AddParticipantsViewController: UIViewController {
 
         self.searchGroupSelector = SearchGroupSelector()
 
-        self.searchResultsViewController = SearchResultsViewController(
+        guard let searchResultsViewController = SearchResultsViewController(
             userSelection: userSelection,
             userSession: userSession,
             isAddingParticipants: true,
             shouldIncludeGuests: viewModel.context.includeGuests,
             isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
-        )
+        ) else { return nil }
+        self.searchResultsViewController = searchResultsViewController
 
         let user = SelfUser.provider?.providedSelfUser
         self.emptyResultView = EmptySearchResultsView(

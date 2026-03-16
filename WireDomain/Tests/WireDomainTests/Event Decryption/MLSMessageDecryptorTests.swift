@@ -129,6 +129,95 @@ final class MLSMessageDecryptorTests: XCTestCase {
         )
     }
 
+    func testCancellation_stopsWelcomeMessageDecryption() async throws {
+        // Mock
+        mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_MockValue = Scaffolding.mlsGroupID
+        conversationLocalStore
+            .createMLSConversationConversationIDConversationDomainMlsGroupID_MockMethod = { _, _, _ in }
+
+        // When
+        let task = Task {
+            try await sut.decryptedWelcomeMessageEventData(
+                from: Scaffolding.makeWelcomeEvent(),
+                context: nil
+            )
+        }
+
+        // Cancel the task before the decryption happens
+        task.cancel()
+
+        let result = await task.result
+
+        // Then
+        do {
+            _ = try result.get()
+            XCTFail("Expected CancellationError to be thrown")
+        } catch is CancellationError {
+            // Expected error
+        } catch {
+            XCTFail("Expected CancellationError but got \(error)")
+        }
+
+        // Verify that the MLS service was NOT called because we cancelled before decryption
+        XCTAssertEqual(mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_Invocations.count, 0)
+        XCTAssertEqual(
+            conversationLocalStore.createMLSConversationConversationIDConversationDomainMlsGroupID_Invocations.count,
+            0
+        )
+    }
+
+    func testCancellation_stopsMessageAddDecryption() async throws {
+        // Mock
+        let conversation = await context.perform { [self] in
+            return modelHelper.createMLSConversation(
+                id: Scaffolding.conversationID.id,
+                mlsGroupID: Scaffolding.mlsGroupID,
+                in: context
+            )
+        }
+
+        let encryptedMessage = try XCTUnwrap("!?@".base64EncodedString)
+        let decryptedMessage = try XCTUnwrap("foo".base64EncodedString)
+        let decryptedMessageData = try XCTUnwrap(decryptedMessage.base64DecodedData)
+
+        let mockDecryptionResult = MLSDecryptResult.message(
+            decryptedMessageData,
+            .randomAlphanumerical(length: 3)
+        )
+
+        conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
+        conversationLocalStore.mlsConversationInfoConversation_MockValue = (try XCTUnwrap(Scaffolding.mlsGroupID), true)
+        mlsDecryptionService.decryptMessageForSubconversationTypeContext_MockValue = [mockDecryptionResult]
+
+        // When
+        let task = Task {
+            try await sut.decryptedMessageAddEventData(
+                from: Scaffolding.makeAddMessageEvent(content: encryptedMessage),
+                context: nil
+            )
+        }
+
+        // Cancel the task before the decryption happens
+        task.cancel()
+
+        let result = await task.result
+
+        // Then
+        do {
+            _ = try result.get()
+            XCTFail("Expected CancellationError to be thrown")
+        } catch is CancellationError {
+            // Expected error
+        } catch {
+            XCTFail("Expected CancellationError but got \(error)")
+        }
+
+        // Verify that conversation was fetched but decryption was NOT called
+        XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
+        XCTAssertEqual(conversationLocalStore.mlsConversationInfoConversation_Invocations.count, 1)
+        XCTAssertEqual(mlsDecryptionService.decryptMessageForSubconversationTypeContext_Invocations.count, 0)
+    }
+
     private enum Scaffolding {
 
         static let localDomain = "local.com"

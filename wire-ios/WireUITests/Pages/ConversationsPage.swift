@@ -84,8 +84,8 @@ class ConversationsPage: PageModel {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.videoCallBarButton.rawValue].firstMatch
     }
 
-    var acceptRequestButton: XCUIElement {
-        app.buttons[Locators.ConnectionRequestsPage.connectRequestButton.rawValue]
+    var connectionsRequestCell: XCUIElement {
+        app.cells[Locators.ConversationsPage.connectionRequestsCell.rawValue]
     }
 
     var accountProfileImageView: XCUIElement {
@@ -123,17 +123,13 @@ class ConversationsPage: PageModel {
 
     func openPendingRequest() throws -> ConnectionRequestsPage {
         try letTheSyncFinish()
-        XCTAssertTrue(conversationCell.waitForExistence(timeout: 5), "Conversation cell did not appear")
 
         let maxDuration: TimeInterval = 10
-        let start = Date()
-
-        while !acceptRequestButton.exists, Date().timeIntervalSince(start) < maxDuration {
-            if conversationCell.isHittable {
-                conversationCell.tap()
-            }
-            RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+        guard connectionsRequestCell.waitForExistence(timeout: maxDuration) else {
+            throw Error.connectionRequestsCellNotFound
         }
+
+        connectionsRequestCell.tap()
         return try ConnectionRequestsPage()
     }
 
@@ -164,6 +160,11 @@ class ConversationsPage: PageModel {
         return self
     }
 
+    func tapConnectionRequestsCell() throws -> ConnectionRequestsPage {
+        connectionsRequestCell.tap()
+        return try ConnectionRequestsPage()
+    }
+
     func getNameLabel() -> String? {
         conversationCell.label
     }
@@ -187,5 +188,9 @@ class ConversationsPage: PageModel {
         filterConversationsButton.tap()
         filterByOneOnOneConversation.tap()
         return self
+    }
+
+    enum Error: Swift.Error {
+        case connectionRequestsCellNotFound
     }
 }

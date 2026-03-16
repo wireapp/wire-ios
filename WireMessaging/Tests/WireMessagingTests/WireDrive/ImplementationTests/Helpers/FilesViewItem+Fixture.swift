@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireMessagingDomain
 
 @testable import WireMessagingUI
 
@@ -30,7 +31,7 @@ extension FilesViewItem {
         filePath: String = "5b189264-4300-4f21-8dca-7acd2b1925c7@wire.com/Image filename.png",
         ownedBy: String? = nil,
         modifiedAt: Date? = nil,
-        icon: FileIcon = .image,
+        icon: WireDriveFileType = .image,
         tags: [String] = [],
         isEditable: Bool = false,
         publicLinkID: String? = nil,
@@ -48,7 +49,8 @@ extension FilesViewItem {
             tags: tags,
             isEditable: isEditable,
             publicLinkID: publicLinkID,
-            conversationName: conversationName
+            conversationName: conversationName,
+            size: nil
         )
     }
 

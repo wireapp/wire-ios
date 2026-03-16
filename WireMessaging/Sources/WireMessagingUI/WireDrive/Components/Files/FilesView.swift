@@ -27,7 +27,7 @@ import WireReusableUIComponents
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
-package struct FilesView: FilesViewProtocol {
+package struct FilesView: View {
     package var isBrowsing: Bool { false }
     @StateObject package var viewModel: FilesViewModel
     @Environment(\.dismiss) var dismiss
@@ -47,101 +47,30 @@ package struct FilesView: FilesViewProtocol {
     }
 
     package var body: some View {
-        ZStack {
-            ColorTheme.Backgrounds.background.color
-                .ignoresSafeArea(.all)
-
-            Group {
-                switch viewModel.state {
-                case .loading:
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                case .received, .pending:
-                    filesList
-                        .safeAreaInset(edge: .top) {
-                            if viewModel.shouldShowOfflineBar {
-                                offlineBar
-                                    .id(UUID())
-                                    .background(ColorTheme.Backgrounds.surface.color)
-                            }
-                        }
-                case let .error(isConnectionError):
-                    FilesInfoView(info: .error(isConnectionError: isConnectionError), onRetry: {
-                        reloadTask()
-                    })
-                }
+        FilesContentView(
+            viewModel: viewModel,
+            isBrowsing: isBrowsing,
+            backgroundColor: ColorTheme.Backgrounds.background.color,
+            navigationTitle: viewModel.navigationTitle,
+            toolbarContent: { toolbarContent },
+            sheetContent: { sheetContent($0) }
+        )
+        // FilesView-specific extras
+        .onReceive(viewModel.triggerReload) { _ in
+            Task {
+                await viewModel.reload()
             }
-            .animation(.easeInOut(duration: 0.25), value: viewModel.connectionState)
-            .quickLookPreview($viewModel.viewingURL) // TODO: [WPB-19395] Temporary implementation
-            .navigationTitle(viewModel.navigationTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.visible, for: .navigationBar) // shows navigation bar divider
-            .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
-            .toolbar { toolbarContent }
-            .if(viewModel.showSearchBar) { view in
-                view.searchable(
-                    text: $viewModel.searchText,
-                    placement: .navigationBarDrawer(displayMode: .always),
-                    prompt: Strings.Files.Search.title
-                )
-            }
-            .onAppear { reloadTask() }
-            .onReceive(viewModel.triggerReload) { _ in
-                Task {
-                    await viewModel.reload()
-                }
-            }
-            .alert(
-                item: $viewModel.alert,
-                title: { Text($0.title) },
-                message: { Text($0.message) },
-                actions: { _ in confirmButton }
-            )
-            .sheet(
-                item: $viewModel.sheetNavigation,
-                onDismiss: {
-                    Task { await viewModel.onSheetDismissed() }
-                },
-                content: { navigationItem in
-                    switch navigationItem {
-                    case let .editTags(fileItem: fileItem):
-                        TagsEditView(
-                            fileItem: fileItem,
-                            useCases: .init(
-                                updateTags: viewModel.useCases.updateTags,
-                                getSuggestions: viewModel.useCases.getTagSuggestions
-                            ),
-                            postSaveAction: {
-                                await viewModel.reload()
-                            }
-                        )
-                    case let .shareLink(shareLinkView):
-                        shareLinkView
-                    case let .renameFile(fileRenameView):
-                        fileRenameView
-                    case let .create(folderView):
-                        folderView
-                    case let .versionHistory(versionHistoryView):
-                        versionHistoryView
-                    case let .moveToFolder(fileItem):
-                        viewModel.moveToFolderView(item: fileItem)
-                    case .filters:
-                        EmptyView()
-                    }
-                }
-            )
-            .fullScreenCover(
-                item: $viewModel.isEditing,
-                onDismiss: {
-                    Task { await viewModel.reload() }
-                },
-                content: { item in
-                    viewModel.editFileView(item: item)
-                }
-            )
         }
+        .fullScreenCover(
+            item: $viewModel.isEditing,
+            onDismiss: {
+                Task { await viewModel.reload() }
+            },
+            content: { item in
+                viewModel.editFileView(item: item)
+            }
+        )
     }
-
 }
 
 // MARK: - Toolbar
@@ -239,6 +168,38 @@ private extension FilesView {
             Image(systemName: "ellipsis.circle")
         }
         .tint(ColorTheme.Base.primary(accentColor).color)
+    }
+}
+
+// MARK: - Sheet Navigation
+
+private extension FilesView {
+
+    @ViewBuilder
+    func sheetContent(_ navigationItem: FilesViewModel.SheetNavigation) -> some View {
+        switch navigationItem {
+        case let .editTags(fileItem: fileItem):
+            TagsEditView(
+                fileItem: fileItem,
+                useCases: .init(
+                    updateTags: viewModel.useCases.updateTags,
+                    getSuggestions: viewModel.useCases.getTagSuggestions
+                ),
+                postSaveAction: {
+                    await viewModel.reload()
+                }
+            )
+        case let .shareLink(shareLinkView):
+            shareLinkView
+        case let .renameFile(fileRenameView):
+            fileRenameView
+        case let .create(folderView):
+            folderView
+        case let .versionHistory(versionHistoryView):
+            versionHistoryView
+        case let .moveToFolder(fileItem):
+            viewModel.moveToFolderView(item: fileItem)
+        }
     }
 }
 
