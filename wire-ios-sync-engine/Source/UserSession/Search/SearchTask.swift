@@ -441,6 +441,7 @@ public final class SearchTask {
                     remoteIdentifier: qualifiedID.uuid,
                     domain: qualifiedID.domain,
                     teamIdentifier: result.teamID,
+                    providerIdentifier: result.service?.provider.transportString(),
                     user: localUser,
                     searchUsersCache: searchUsersCache,
                     isDeleted: result.deleted ?? false
@@ -520,6 +521,7 @@ public final class SearchTask {
                         remoteIdentifier: filteredContact.id,
                         domain: domain,
                         teamIdentifier: filteredContact.team,
+                        providerIdentifier: nil,
                         user: localUser,
                         searchUsersCache: searchUsersCache
                     )
@@ -736,11 +738,11 @@ public final class SearchTask {
                             remoteIdentifier: profile.id,
                             domain: profile.qualifiedID?.domain,
                             teamIdentifier: profile.teamID,
+                            providerIdentifier: profile.provider.transportString(),
                             user: localUser,
                             searchUsersCache: searchUsersCache,
                             isDeleted: profile.isDeleted
                         )
-                        searchUser.providerIdentifier = profile.provider.uuidString
                         searchUser.summary = profile.summary
                         searchUser.assetKeys = SearchUserAssetKeys(profile.assets)
                         return searchUser

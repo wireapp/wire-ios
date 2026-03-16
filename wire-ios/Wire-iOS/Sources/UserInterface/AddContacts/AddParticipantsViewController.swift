@@ -570,7 +570,7 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(
         _ searchResultsViewController: SearchResultsViewController,
-        didTapOnSeviceUser user: ServiceUser
+        didTapOnServiceUser user: UserType
     ) {
 
         guard case let .add(conversation) = viewModel.context else { return }
