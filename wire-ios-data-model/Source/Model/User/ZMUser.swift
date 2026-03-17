@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireData
 import WireFoundation
 import WireSystem
 import WireTransport
@@ -200,6 +201,12 @@ extension ZMUser: UserType {
 
     @NSManaged public var providerIdentifier: String?
     @NSManaged public var serviceIdentifier: String?
+
+    // MARK: - App
+
+    /// The app info associated with this user, if the user is an app.
+
+    @NSManaged public var app: App?
 
 }
 
