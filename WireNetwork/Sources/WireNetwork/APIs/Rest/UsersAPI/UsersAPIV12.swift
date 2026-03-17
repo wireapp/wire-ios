@@ -61,6 +61,7 @@ class UsersAPIV12: UsersAPIV11 {
             .success(code: .ok, type: UserListResponseV12.self)
             .parse(code: response.statusCode, data: data)
     }
+
 }
 
 private struct UserListResponseV12: Decodable, ToAPIModelConvertible {
@@ -130,13 +131,14 @@ private struct UserResponseV12: Decodable, ToAPIModelConvertible {
             expiresAt: expiresAt?.date,
             service: service?.toAPIModel(),
             supportedProtocols: supportedProtocols.flatMap { Set($0) },
-            legalholdStatus: legalholdStatus.toAPIModel()
+            legalholdStatus: legalholdStatus.toAPIModel(),
+            app: nil
         )
     }
 
 }
 
-private enum UserTypeV12: String, Decodable {
+enum UserTypeV12: String, Decodable {
 
     case regular
     case app

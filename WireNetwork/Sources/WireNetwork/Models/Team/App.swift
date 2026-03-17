@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct App: Equatable, Sendable {
+public struct App: Equatable, Sendable { // TODO: delete
 
     /// The app name.
 
