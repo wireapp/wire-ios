@@ -12,10 +12,10 @@
             <fetchIndexElement property="localIdentifier" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
-    <entity name="App" representedClassName="App" syncable="YES">
+    <entity name="AppInfo" representedClassName="WireDataModel.AppInfo" syncable="YES">
         <attribute name="appDescription" optional="YES" attributeType="String"/>
         <attribute name="category" optional="YES" attributeType="String"/>
-        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="app" inverseEntity="User"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="appInfo" inverseEntity="User"/>
     </entity>
     <entity name="AssetClientMessage" representedClassName="WireDataModel.ZMAssetClientMessage" parentEntity="Message" syncable="YES">
         <attribute name="assetId" optional="YES" transient="YES"/>
@@ -355,7 +355,7 @@
         <attribute name="typeValue" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="usesCompanyLogin" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <relationship name="addressBookEntry" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AddressBookEntry" inverseName="user" inverseEntity="AddressBookEntry"/>
-        <relationship name="app" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="App" inverseName="user" inverseEntity="App"/>
+        <relationship name="appInfo" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AppInfo" inverseName="user" inverseEntity="AppInfo"/>
         <relationship name="clients" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="user" inverseEntity="UserClient"/>
         <relationship name="connection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Connection" inverseName="to" inverseEntity="Connection"/>
         <relationship name="conversationsCreated" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Conversation" inverseName="creator" inverseEntity="Conversation"/>

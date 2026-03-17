@@ -20,11 +20,11 @@ import CoreData
 
 /// Additional information about an app.
 
-public final class App: NSManagedObject {
+public final class AppInfo: NSManagedObject {
 
     /// The name of the associated Core Data entity.
 
-    public static let entityName = "App"
+    public static let entityName = "AppInfo"
 
     /// The category name of the app (e.g., `"other"`).
 

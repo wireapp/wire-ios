@@ -206,7 +206,7 @@ extension ZMUser: UserType {
 
     /// The app info associated with this user, if the user is an app.
 
-    @NSManaged public var app: App?
+    @NSManaged public var appInfo: AppInfo?
 
 }
 
