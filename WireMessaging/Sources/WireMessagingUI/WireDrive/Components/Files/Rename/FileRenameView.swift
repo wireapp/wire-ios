@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireLocators
 import WireReusableUIComponents
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -95,7 +96,7 @@ private extension FileRenameView {
             }
         )
         .accessibilityLabel(L10n.Accessibility.General.cancel)
-        .accessibilityIdentifier("cancel")
+        .accessibilityIdentifier(Locators.WireDrive.FileRenamePage.cancel.rawValue)
     }
 
     var saveButton: some View {
@@ -113,7 +114,7 @@ private extension FileRenameView {
                 )
                 .disabled(viewModel.isSaveDisabled)
                 .accessibilityLabel(L10n.Accessibility.General.save)
-                .accessibilityIdentifier("save")
+                .accessibilityIdentifier(Locators.WireDrive.FileRenamePage.save.rawValue)
             }
         }
     }

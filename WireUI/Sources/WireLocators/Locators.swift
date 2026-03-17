@@ -357,5 +357,33 @@ public enum Locators {
             case createFile
             case recycleBin
         }
+
+        public enum FilesInfoPage: String {
+            case preparingFilesTitle
+            case preparingFilesMessage
+            case noFilesSearchTitle
+            case noFilesSearchMessage
+            case noFilesTitle
+            case noFilesAllConversationsMessage
+            case noFilesMessage
+            case errorTitle
+            case errorMessage
+            case retryButton
+            case loadMore
+        }
+
+        public enum EditFilePage: String {
+            case close
+        }
+
+        public enum CreateFilePage: String {
+            case cancelButton
+            case createButton
+        }
+
+        public enum FileRenamePage: String {
+            case cancel
+            case save
+        }
     }
 }
