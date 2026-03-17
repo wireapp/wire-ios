@@ -2458,7 +2458,7 @@ extension WireCallCenterV3Tests {
             uiMOC.zm_sync.mlsService = mlsService
         }
 
-        let didGenerateConferenceInfo = customExpectation(description: "didGenerateConferenceInfo1")
+        let didGenerateConferenceInfo = customExpectation(description: "didGenerateConferenceInfo")
         mlsService.generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod = {
             defer { didGenerateConferenceInfo.fulfill() }
             XCTAssertEqual($0, parentGroupID)
@@ -2466,7 +2466,7 @@ extension WireCallCenterV3Tests {
             return conferenceInfo
         }
 
-        let didSetConferenceInfo = customExpectation(description: "didSetConferenceInfo1")
+        let didSetConferenceInfo = customExpectation(description: "didSetConferenceInfo")
         mockAVSWrapper.mockSetMLSConferenceInfo = {
             defer { didSetConferenceInfo.fulfill() }
             XCTAssertEqual($0, conversationID)
