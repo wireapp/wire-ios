@@ -79,6 +79,12 @@ public struct User: Equatable, Sendable {
 
     public let legalholdStatus: LegalholdStatus
 
+    /// App related info.
+
+    public let app: NewApp?
+
+    // MARK: -
+
     public init(
         id: UserID,
         name: String,
@@ -92,7 +98,8 @@ public struct User: Equatable, Sendable {
         expiresAt: Date?,
         service: Service?,
         supportedProtocols: Set<MessageProtocol>?,
-        legalholdStatus: LegalholdStatus
+        legalholdStatus: LegalholdStatus,
+        app: NewApp?
     ) {
         self.id = id
         self.name = name
@@ -107,6 +114,7 @@ public struct User: Equatable, Sendable {
         self.service = service
         self.supportedProtocols = supportedProtocols
         self.legalholdStatus = legalholdStatus
+        self.app = app
     }
 
 }

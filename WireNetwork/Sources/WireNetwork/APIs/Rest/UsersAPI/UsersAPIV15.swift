@@ -114,14 +114,23 @@ private struct UserResponseV15: Decodable, ToAPIModelConvertible {
             expiresAt: expiresAt?.date,
             service: service?.toAPIModel(),
             supportedProtocols: supportedProtocols.flatMap { Set($0) },
-            legalholdStatus: legalholdStatus.toAPIModel()
-            // TODO: app?
+            legalholdStatus: legalholdStatus.toAPIModel(),
+            app: app?.toAPIModel()
         )
     }
 
 }
 
-private struct UserAppV15: Decodable {
+private struct UserAppV15: Decodable, ToAPIModelConvertible {
+
     let category: String // TODO: optional?
     let description: String // TODO: optional?
+
+    func toAPIModel() -> NewApp {
+        NewApp(
+            category: category,
+            description: description
+        )
+    }
+
 }

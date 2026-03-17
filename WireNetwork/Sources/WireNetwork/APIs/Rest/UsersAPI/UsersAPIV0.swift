@@ -116,7 +116,8 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
             expiresAt: expiresAt?.date,
             service: service?.toAPIModel(),
             supportedProtocols: [.proteus],
-            legalholdStatus: legalholdStatus.toAPIModel()
+            legalholdStatus: legalholdStatus.toAPIModel(),
+            app: nil
         )
     }
 }
