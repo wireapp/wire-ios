@@ -2444,6 +2444,7 @@ extension WireCallCenterV3Tests {
         let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
         let parentGroupID = MLSGroupID.random()
         let subconversationGroupID = MLSGroupID.random()
+        let conferenceInfo = MLSConferenceInfo.random()
 
         createsMLSConferenceSnapshot(
             conversationID: conversationID,
@@ -2457,10 +2458,19 @@ extension WireCallCenterV3Tests {
             uiMOC.zm_sync.mlsService = mlsService
         }
 
-        let didGenereateNewEpoch = customExpectation(description: "didGenerateNewEpoch")
-        mlsService.generateNewEpochGroupID_MockMethod = {
-            XCTAssertEqual($0, subconversationGroupID)
-            didGenereateNewEpoch.fulfill()
+        let didGenerateConferenceInfo = customExpectation(description: "didGenerateConferenceInfo1")
+        mlsService.generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod = {
+            defer { didGenerateConferenceInfo.fulfill() }
+            XCTAssertEqual($0, parentGroupID)
+            XCTAssertEqual($1, subconversationGroupID)
+            return conferenceInfo
+        }
+
+        let didSetConferenceInfo = customExpectation(description: "didSetConferenceInfo1")
+        mockAVSWrapper.mockSetMLSConferenceInfo = {
+            defer { didSetConferenceInfo.fulfill() }
+            XCTAssertEqual($0, conversationID)
+            XCTAssertEqual($1, conferenceInfo)
         }
 
         // When
@@ -2468,6 +2478,69 @@ extension WireCallCenterV3Tests {
 
         // Then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func test_HandleNewEpochRequest_DoesNothing_WhenSnapshotIsMissing() throws {
+        // Given
+        let conversationID = try XCTUnwrap(groupConversationID)
+        // No snapshot added for conversationID
+
+        let mlsService = MockMLSServiceInterface()
+        uiMOC.zm_sync.performAndWait {
+            uiMOC.zm_sync.mlsService = mlsService
+        }
+
+        mlsService.generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod = { _, _ in
+            XCTFail("generateConferenceInfo should not be called when snapshot is missing")
+            return .random()
+        }
+
+        // When
+        sut.handleNewEpochRequest(conversationID: conversationID.serialized)
+
+        // Then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func test_HandleNewEpochRequest_DoesNotSetConferenceInfo_WhenGenerateFails() throws {
+        // Given
+        let conversationID = try XCTUnwrap(groupConversationID)
+        let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
+        let parentGroupID = MLSGroupID.random()
+        let subconversationGroupID = MLSGroupID.random()
+
+        createsMLSConferenceSnapshot(
+            conversationID: conversationID,
+            qualifiedID: qualifiedID,
+            parentGroupID: parentGroupID,
+            subconversationGroupID: subconversationGroupID
+        )
+
+        let mlsService = MockMLSServiceInterface()
+        uiMOC.zm_sync.performAndWait {
+            uiMOC.zm_sync.mlsService = mlsService
+        }
+
+        struct FakeError: Error {}
+        let didAttemptGenerate = customExpectation(description: "didAttemptGenerate")
+        mlsService.generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod = { _, _ in
+            didAttemptGenerate.fulfill()
+            throw FakeError()
+        }
+
+        mockAVSWrapper.mockSetMLSConferenceInfo = { _, _ in
+            XCTFail("setMLSConferenceInfo should not be called when generateConferenceInfo throws")
+        }
+
+        // When
+        sut.handleNewEpochRequest(conversationID: conversationID.serialized)
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(
+            mlsService.generateConferenceInfoParentGroupIDSubconversationGroupID_Invocations.count,
+            1
+        )
     }
 
     private func createsMLSConferenceSnapshot(
