@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 final class CollectionAudioCell: CollectionCell {
     private var containerView = UIView()
@@ -59,6 +60,10 @@ final class CollectionAudioCell: CollectionCell {
             + ", \(message.serverTimestamp?.formattedDate ?? ""), "
             + ConversationSearch.AudioMessage.description
         accessibilityHint = ConversationSearch.ItemPlay.hint
+    }
+
+    func setUserSession(userSession: UserSession) {
+        audioMessageView.setUserSession(userSession: userSession)
     }
 
     func loadView() {

@@ -43,7 +43,8 @@ extension SettingsCellDescriptorFactory {
             icon: .settingsAdvanced,
             accessibilityBackButtonText: L10n.Accessibility.AdvancedSettings.BackButton.description,
             settingsTopLevelMenuItem: .advanced,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -56,7 +57,7 @@ extension SettingsCellDescriptorFactory {
         let submitDebugButton = SettingsExternalScreenCellDescriptor(
             title: SelfSettingsAdvancedLocale.Troubleshooting.SubmitDebug.title,
             presentationAction: { () -> (UIViewController?) in
-                let router = SettingsDebugReportRouter(mainCoordinator: mainCoordinator)
+                let router = SettingsDebugReportRouter(userSession: userSession, mainCoordinator: mainCoordinator)
                 let shareFile = ShareFileUseCase(contextProvider: userSession.contextProvider)
                 let fetchShareableConversations = FetchShareableConversationsUseCase(
                     contextProvider: userSession
@@ -86,8 +87,8 @@ extension SettingsCellDescriptorFactory {
             title: SelfSettingsAdvancedLocale.ResetPushToken.title,
             isDestructive: false,
             presentationStyle: .modal,
-            presentationAction: { () -> (UIViewController?) in
-                ZMUserSession.shared()?.validatePushToken()
+            presentationAction: { [weak userSession] () -> (UIViewController?) in
+                (userSession as? ZMUserSession)?.validatePushToken()
                 return self.pushButtonAlertController
             }
         )
@@ -108,12 +109,18 @@ extension SettingsCellDescriptorFactory {
             SettingsButtonCellDescriptor(
                 title: SelfSettingsAdvancedLocale.DebuggingTools.FirstUnreadConversation.title,
                 isDestructive: false,
-                selectAction: DebugActions.findUnreadConversationContributingToBadgeCount
+                selectAction: { [weak userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.findUnreadConversationContributingToBadgeCount(userSession: session)
+                }
             ),
             SettingsButtonCellDescriptor(
                 title: SelfSettingsAdvancedLocale.DebuggingTools.EnterDebugCommand.title,
                 isDestructive: false,
-                selectAction: DebugActions.enterDebugCommand
+                selectAction: { [weak userSession] _ in
+                    guard let session = userSession as? ZMUserSession else { return }
+                    DebugActions.enterDebugCommand(userSession: session)
+                }
             )
         ])
 
@@ -123,7 +130,8 @@ extension SettingsCellDescriptorFactory {
             title: L10n.Localizable.Self.Settings.Advanced.DebuggingTools.title,
             accessibilityBackButtonText: L10n.Accessibility.AdvancedSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
 
         // Section

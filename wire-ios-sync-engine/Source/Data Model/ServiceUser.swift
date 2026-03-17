@@ -31,7 +31,7 @@ public struct ServiceUserData: Equatable {
     }
 }
 
-extension ServiceUser {
+extension UserType {
     var serviceUserData: ServiceUserData? {
         guard let providerIdentifier,
               let serviceIdentifier,
@@ -142,7 +142,7 @@ private extension ServiceUserData {
     }
 }
 
-public extension ServiceUser {
+public extension UserType {
 
     func fetchProvider(in userSession: ZMUserSession, completion: @escaping (ServiceProvider?) -> Void) {
         guard let serviceUserData else {
@@ -300,7 +300,7 @@ extension AddBotError {
 public extension ZMConversation {
 
     func add(
-        serviceUser: ServiceUser,
+        serviceUser: UserType,
         in userSession: ZMUserSession,
         completionHandler: @escaping (Result<Void, Error>) -> Void
     ) {
