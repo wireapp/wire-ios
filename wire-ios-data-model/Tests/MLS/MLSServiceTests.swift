@@ -1005,6 +1005,62 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
     }
 
+    func test_PerformPendingJoins_It_JoinsByExternalCommit_DifferentDomain() async throws {
+        let groupID = MLSGroupID.random()
+        let conversationID = UUID.create()
+        let domain = localDomain
+        let conversationDomain = "other.domain.local"
+        let conversation = await uiMOC.perform { [uiMOC] in
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.remoteIdentifier = conversationID
+            conversation.mlsGroupID = groupID
+            conversation.messageProtocol = .mls
+            conversation.mlsStatus = .pendingJoin
+            conversation.conversationType = .group
+            conversation.domain = conversationDomain
+
+            // Only epoch 0 leads to establishing group
+            conversation.epoch = 0
+
+            return conversation
+        }
+
+        // mock fetching group info
+        let publicGroupState = Data()
+        mockActionsProvider
+            .fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = publicGroupState
+
+        // mock joining group
+        var joinGroupArguments = [(groupID: MLSGroupID, groupState: Data)]()
+        mockMLSActionExecutor.mockJoinGroup = {
+            joinGroupArguments.append(($0, $1))
+        }
+
+        // mock CC conversation exists
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = false
+
+        // When
+        try await sut.performPendingJoins()
+
+        // Then
+
+        // it fetches public group state
+        let groupStateInvocations = mockActionsProvider
+            .fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations
+        XCTAssertEqual(groupStateInvocations.count, 1)
+        XCTAssertEqual(groupStateInvocations.first?.conversationId, conversationID)
+        XCTAssertEqual(groupStateInvocations.first?.domain, conversationDomain)
+
+        // it asks executor to join group
+        XCTAssertEqual(joinGroupArguments.count, 1)
+        XCTAssertEqual(joinGroupArguments.first?.groupID, groupID)
+        XCTAssertEqual(joinGroupArguments.first?.groupState, publicGroupState)
+
+        // it sets conversation state to ready
+        let conversationMLSStatus = await uiMOC.perform { conversation.mlsStatus }
+        XCTAssertEqual(conversationMLSStatus, .ready)
+    }
+
     func test_PerformPendingJoins_It_JoinsViaExternalCommit_FederationGroup() async throws {
         // Given
         let groupID = MLSGroupID.random()
