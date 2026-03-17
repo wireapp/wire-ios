@@ -61,6 +61,7 @@ class UsersAPIV12: UsersAPIV11 {
             .success(code: .ok, type: UserListResponseV12.self)
             .parse(code: response.statusCode, data: data)
     }
+
 }
 
 private struct UserListResponseV12: Decodable, ToAPIModelConvertible {
@@ -136,7 +137,7 @@ private struct UserResponseV12: Decodable, ToAPIModelConvertible {
 
 }
 
-private enum UserTypeV12: String, Decodable {
+enum UserTypeV12: String, Decodable {
 
     case regular
     case app
