@@ -26,14 +26,15 @@ public final class App: NSManagedObject {
 
     public static let entityName = "App"
 
-    // TODO: fix doc
-    /// The identifier of the asset on the Wire Cells backend.
+    /// The category name of the app (e.g., `"other"`).
 
     @NSManaged public var category: String
 
-    // TODO: fix doc
-    /// The identifier of the asset on the Wire Cells backend.
+    /// A short description of the app (max 300 characters).
+    ///
+    /// - Note: This corresponds to the `description` field in the API
+    ///   but is renamed to avoid shadowing `NSObject.description`.
 
-    @NSManaged public var description: String
+    @NSManaged public var appDescription: String
 
 }
