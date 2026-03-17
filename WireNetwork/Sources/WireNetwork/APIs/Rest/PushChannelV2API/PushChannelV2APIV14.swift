@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class PushChannelV2APIV14: PushChannelV2APIV13 {
+class PushChannelV2APIV14: PushChannelV2APIV13 {
 
     override var apiVersion: APIVersion { .v14 }
 

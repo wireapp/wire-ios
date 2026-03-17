@@ -111,6 +111,14 @@ public class MockAVSWrapper: AVSWrapperType {
         // do nothing
     }
 
+    public func networkInterfaceChanged() {
+        // do nothing
+    }
+
+    public func setLiveSyncPaused(_ paused: Bool) {
+        // do nothing
+    }
+
     var mockSetMLSConferenceInfo: ((AVSIdentifier, MLSConferenceInfo) -> Void)?
 
     public func setMLSConferenceInfo(conversationId: AVSIdentifier, info: MLSConferenceInfo) {

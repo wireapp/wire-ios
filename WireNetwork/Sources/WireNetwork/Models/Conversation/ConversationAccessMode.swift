@@ -41,7 +41,7 @@ public enum ConversationAccessMode: Sendable {
 
 }
 
-enum ConversationAccessModeV0: String, Sendable, Decodable, ToAPIModelConvertible {
+enum ConversationAccessModeV0: String, Sendable, Codable, ToAPIModelConvertible {
 
     case `private`
     case invite

@@ -18,14 +18,17 @@
 
 import Combine
 import Foundation
+import WireDataModel
 import WireLogging
 import WireNetwork
 import WireSystem
+import WireUtilities
 
 public struct IncrementalSync: IncrementalSyncProtocol {
 
     public enum Failure: Error {
         case missedEvents
+        case databaseLocked
     }
 
     private let selfClientID: String
@@ -36,10 +39,12 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let messageStore: any MessageLocalStoreProtocol
     private let processor: any UpdateEventProcessorProtocol
     private let databaseSaver: any DatabaseSaverProtocol
+    private let liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
     private let logger = WireLogger.sync
     private let journal: Journal
     private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
+    private let earService: EARServiceInterface
 
     public init(
         selfClientID: String,
@@ -51,8 +56,10 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         processor: any UpdateEventProcessorProtocol,
         databaseSaver: any DatabaseSaverProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
+        liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>,
         journal: Journal,
-        mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
+        mlsGroupRepairAgent: MLSGroupRepairAgentProtocol,
+        earService: EARServiceInterface
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -63,15 +70,42 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.processor = processor
         self.databaseSaver = databaseSaver
         self.syncStateSubject = syncStateSubject
+        self.liveBrokenGroupSubject = liveBrokenGroupSubject
         self.journal = journal
         self.mlsGroupRepairAgent = mlsGroupRepairAgent
+        self.earService = earService
     }
 
     public func perform() async throws -> Token {
+        // Abort sync if we're in foreground and database is locked
+        if earService.isLocked {
+            logger.info(
+                "not starting incremental sync: database is locked",
+                attributes: .incrementalSyncV2, .safePublic
+            )
+            throw Failure.databaseLocked
+        }
+
+        return try await internalPerform(backgroundAccessibleOnly: false)
+    }
+
+    public func performForCallingEventsOnly() async throws -> Token {
+        // we'll process only the calling events (they are marked as `backgroundAccessible`)
+        try await internalPerform(backgroundAccessibleOnly: true)
+    }
+
+    private func internalPerform(backgroundAccessibleOnly: Bool) async throws -> Token {
         try await logger.measureTime(
             label: "new incremental sync",
             attributes: .incrementalSyncV2
         ) {
+
+            // Fetch keys (will return nil if EAR is disabled)
+            let publicKeys = try earService.fetchPublicKeys()
+            let privateKeys = try earService.fetchPrivateKeys(
+                includingPrimary: !backgroundAccessibleOnly
+            )
+
             syncStateSubject.send(.incrementalSyncing(.createPushChannel))
             let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
 
@@ -84,11 +118,18 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             do {
                 logger.info("pulling pending update events", attributes: .incrementalSyncV2, .safePublic)
                 syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
-                try await updateEventsSync.pull()
+                try await updateEventsSync.pull(publicKeys: publicKeys)
 
-                logger.info("processing stored update events", attributes: .incrementalSyncV2, .safePublic)
+                logger.info(
+                    "processing stored update events",
+                    attributes: .incrementalSyncV2, .safePublic
+                )
                 syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
-                processedEnvelopeIDs = try await processStoredEvents()
+
+                processedEnvelopeIDs = try await processStoredEvents(
+                    privateKeys: privateKeys,
+                    backgroundAccessibleOnly: backgroundAccessibleOnly
+                )
             } catch {
                 func tearDown() async {
                     logger.info(
@@ -130,7 +171,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     try await withExpiringActivity(reason: "processLiveStream IncrementalSync") {
                         await processLiveEvents(
                             liveEventStream: liveEventStream,
-                            processedEnvelopeIDs: processedEnvelopeIDs
+                            processedEnvelopeIDs: processedEnvelopeIDs,
+                            publicKeys: publicKeys
                         )
                     }
                 } catch {
@@ -154,7 +196,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
     private func processLiveEvents(
         liveEventStream: AsyncThrowingStream<UpdateEventEnvelope, any Error>,
-        processedEnvelopeIDs: Set<UUID>
+        processedEnvelopeIDs: Set<UUID>,
+        publicKeys: EARPublicKeys?
     ) async {
         do {
             for try await var envelope in liveEventStream {
@@ -166,6 +209,14 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 if processedEnvelopeIDs.contains(envelope.id) {
                     logger.debug(
                         "live event already processed, skipping...",
+                        attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
+                    )
+                    continue
+                }
+
+                if DeveloperFlag.ignoreIncomingEvents.isOn {
+                    logger.warn(
+                        "ignore incoming events",
                         attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                     )
                     continue
@@ -183,7 +234,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
                 let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
                 if !brokenMLSGroupIDs.isEmpty {
-                    journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
+                    journal.addValues(brokenMLSGroupIDs, for: .brokenMLSGroupIDs)
+                    liveBrokenGroupSubject.send(brokenMLSGroupIDs)
                 }
 
                 let index: Int64
@@ -194,7 +246,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
                     )
                     index = try await updateEventsStore.indexOfLastEventEnvelope() + 1
-                    try await updateEventsStore.persistEventEnvelope(envelope, index: index)
+                    try await updateEventsStore.persistEventEnvelope(envelope, index: index, publicKeys: publicKeys)
                 } catch {
                     logger.error(
                         "failed to store live event envelope: \(String(describing: error))",
@@ -213,36 +265,10 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 }
 
                 // Process.
-                for event in envelope.events {
-                    do {
-                        logger.debug(
-                            "processing live event: \(event.name)",
-                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id, .eventType: event.name]
-                        )
-                        try await processor.processEvent(event)
-                    } catch {
-                        logger.error(
-                            "failed to process live event: \(String(describing: error))",
-                            attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id, .eventType: event.name]
-                        )
-                    }
-                }
-
-                do {
-                    // Delete.
-                    logger.debug(
-                        "deleting live event envelope",
-                        attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
-                    )
-                    try await updateEventsStore.deleteEventEnvelope(atIndex: index)
-                } catch {
-                    logger.error(
-                        "failed to delete live event envelope: \(String(describing: error))",
-                        attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
-                    )
-                }
-
-                await updateEventsStore.calculateLastUnreadMessages()
+                await processLiveEventEnvelope(
+                    envelope: envelope,
+                    index: index
+                )
 
                 do {
                     // Save.
@@ -258,7 +284,59 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         }
     }
 
-    private func processStoredEvents() async throws -> Set<UUID> {
+    private func processLiveEventEnvelope(
+        envelope: UpdateEventEnvelope,
+        index: Int64
+    ) async {
+        // if the database key is nil (`earService.isLocked == true`),
+        // we cannot process events that require access to it,
+        // so we only process events that we're certain do not need the database key.
+        // such events are marked as "background accessible"
+        guard !earService.isLocked || envelope.isBackgroundAccessible else {
+            logger.info(
+                "skipping processing of live event envelope: not accessible in the background",
+                attributes: .safePublic,
+                .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
+            )
+            return
+        }
+
+        for event in envelope.events {
+            do {
+                logger.debug(
+                    "processing live event: \(event.name)",
+                    attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id, .eventType: event.name]
+                )
+                try await processor.processEvent(event)
+            } catch {
+                logger.error(
+                    "failed to process live event: \(String(describing: error))",
+                    attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id, .eventType: event.name]
+                )
+            }
+        }
+
+        do {
+            // Delete.
+            logger.debug(
+                "deleting live event envelope",
+                attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
+            )
+            try await updateEventsStore.deleteEventEnvelope(atIndex: index)
+        } catch {
+            logger.error(
+                "failed to delete live event envelope: \(String(describing: error))",
+                attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
+            )
+        }
+
+        await updateEventsStore.calculateLastUnreadMessages()
+    }
+
+    private func processStoredEvents(
+        privateKeys: EARPrivateKeys?,
+        backgroundAccessibleOnly: Bool
+    ) async throws -> Set<UUID> {
         let batchSize: UInt = 500
         var processedEnvelopeIDs = Set<UUID>()
 
@@ -266,7 +344,11 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             // If we need to abort, do it before processing the next batch.
             try Task.checkCancellation()
 
-            let envelopesWithObjectIDs = try await updateEventsStore.fetchStoredEventEnvelopes(limit: batchSize)
+            let envelopesWithObjectIDs = try await updateEventsStore.fetchStoredEventEnvelopes(
+                limit: batchSize,
+                privateKeys: privateKeys,
+                backgroundAccessibleOnly: backgroundAccessibleOnly
+            )
             let envelopes = envelopesWithObjectIDs.map(\.envelope)
             let envelopesObjectIDs = envelopesWithObjectIDs.map(\.objectID)
 
@@ -341,13 +423,22 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 }
 
 extension IncrementalSyncV1: SyncMigratorProtocol {
+
+    // TODO: [WPB-23558] Support EAR in incremental sync v2
     public func migrateFromIncrementalSyncV1() async throws {
+        guard !earService.isLocked else {
+            throw Failure.databaseLocked
+        }
+
         logger.debug("pulling pending update events", attributes: .incrementalSyncV2)
         syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
-        try await updateEventsSync.pull()
+        try await updateEventsSync.pull(publicKeys: try earService.fetchPublicKeys())
 
         logger.debug("processing stored update events", attributes: .incrementalSyncV2)
-        syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
-        _ = try await processStoredEvents()
+        let privateKeys = try earService.fetchPrivateKeys(includingPrimary: true)
+        _ = try await processStoredEvents(
+            privateKeys: privateKeys,
+            backgroundAccessibleOnly: false
+        )
     }
 }

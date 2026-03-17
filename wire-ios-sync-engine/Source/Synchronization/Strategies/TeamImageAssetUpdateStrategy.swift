@@ -85,7 +85,7 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         switch apiVersion {
         case .v0, .v1:
             path = "/assets/v3/\(assetId)"
-        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             guard let localDomain else { return nil }
             path = "/assets/\(localDomain)/\(assetId)"
         }

@@ -35,9 +35,20 @@ class ImagePickerManager: NSObject {
 
     // MARK: - Properties
 
+    let userSession: UserSession
     private var completion: ((UIImage) -> Void)?
-    private let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
+    private let mediaShareRestrictionManager: MediaShareRestrictionManager
     private let device = DeviceWrapper(device: .current)
+
+    // MARK: - Initialization
+
+    init(userSession: UserSession) {
+        self.userSession = userSession
+        self.mediaShareRestrictionManager = MediaShareRestrictionManager(
+            sessionRestriction: userSession as? ZMUserSession
+        )
+        super.init()
+    }
 
     // MARK: - Methods
 
@@ -169,7 +180,7 @@ extension ImagePickerManager: UIImagePickerControllerDelegate, UINavigationContr
                 onCancel: onCancel
             )
 
-            let confirmImageViewController = ConfirmAssetViewController(context: context)
+            let confirmImageViewController = ConfirmAssetViewController(context: context, userSession: userSession)
             confirmImageViewController.modalPresentationStyle = .fullScreen
 
             picker.present(confirmImageViewController, animated: true)

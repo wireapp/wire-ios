@@ -49,15 +49,10 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     // MARK: Helpers
 
     func startQuickSync() {
-        sut.applicationStatusDirectory.syncStatus.currentSyncPhase = .done
-        sut.applicationStatusDirectory.syncStatus.pushChannelDidOpen()
         sut.didStartIncrementalSync()
     }
 
     func finishQuickSync() {
-        syncMOC.performAndWait {
-            sut.applicationStatusDirectory.syncStatus.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
-        }
         sut.didFinishIncrementalSync(isRecovering: false)
     }
 
@@ -169,38 +164,6 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
 
         // when
         finishQuickSync()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // then
-        XCTAssertFalse(sut.isPerformingSync)
-    }
-
-    // MARK: Process events
-
-    func testThatPerformingSyncIsStillOngoingAfterProcessingEvents_IfQuickSyncIsNotCompleted() {
-
-        // given
-        startQuickSync()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertTrue(sut.isPerformingSync)
-
-        // when
-        sut.processLegacyEvents()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // then
-        XCTAssertTrue(sut.isPerformingSync)
-    }
-
-    func testThatItNotifiesOnlineSynchronzingWhileProcessingEvents() {
-
-        // given
-        startQuickSync()
-        finishQuickSync()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // when
-        sut.processLegacyEvents()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then

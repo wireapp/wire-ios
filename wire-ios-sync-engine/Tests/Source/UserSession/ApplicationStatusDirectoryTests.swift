@@ -37,7 +37,6 @@ class ApplicationStatusDirectoryTests: MessagingTest {
                 cookieStorage: cookieStorage,
                 requestCancellation: self,
                 application: mockApplication,
-                lastEventIDRepository: lastEventIDRepository,
                 coreCryptoProvider: MockCoreCryptoProviderProtocol(),
                 isSyncV2Enabled: false,
                 localDomain: "wire.com",

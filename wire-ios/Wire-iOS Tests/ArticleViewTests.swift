@@ -76,6 +76,10 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
     ) {
         // no-op
     }
+
+    func conversationMessageContentDidChangeSize() {
+        // no-op
+    }
 }
 
 // MARK: - MockArticleViewDelegate

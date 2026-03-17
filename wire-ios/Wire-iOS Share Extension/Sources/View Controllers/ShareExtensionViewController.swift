@@ -28,6 +28,7 @@ import WireDesign
 import WireDomain
 import WireFoundation
 import WireLinkPreview
+import WireLocators
 import WireLogging
 import WireNetwork
 import WireShareEngine
@@ -185,6 +186,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         guard let item = navigationController?.navigationBar.items?.first else { return }
         item.rightBarButtonItem?.action = #selector(appendPostTapped)
         item.rightBarButtonItem?.title = L10n.ShareExtension.SendButton.title
+        item.rightBarButtonItem?.accessibilityIdentifier = Locators.ShareExtensionPage.sendButtonOnShareExtension
+            .rawValue
         item
             .titleView = UIImageView(
                 image: WireStyleKit.imageOfLogo(color: UIColor.Wire.primaryLabel)
@@ -208,34 +211,17 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             return
         }
 
-        if DeveloperFlag.multibackend.isOn {
-            let appContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
+        let appContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
 
-            let loader = try SharingSessionLoader(
-                account: account,
-                appContainerURL: appContainerURL,
-                appGroupID: appGroupID,
-                buildNumber: buildNumber,
-                sharedUserDefaults: .applicationGroup,
-                minTLSVersion: SecurityFlags.minTLSVersion.stringValue
-            )
-            sharingSession = try await loader.load()
-        } else {
-            let legacyConfig = AppLockController.LegacyConfig.fromBundle()
-
-            sharingSession = try await SharingSession(
-                applicationGroupIdentifier: appGroupID,
-                accountIdentifier: account.userIdentifier,
-                hostBundleIdentifier: hostBundleID,
-                environment: BackendEnvironment.shared,
-                appLockConfig: legacyConfig,
-                sharedUserDefaults: .applicationGroup,
-                minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
-                currentBuildNumber: buildNumber,
-                localDomain: BackendInfo.domain,
-                isFederationEnabled: BackendInfo.isFederationEnabled
-            )
-        }
+        let loader = try SharingSessionLoader(
+            account: account,
+            appContainerURL: appContainerURL,
+            appGroupID: appGroupID,
+            buildNumber: buildNumber,
+            sharedUserDefaults: .applicationGroup,
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+        )
+        sharingSession = try await loader.load()
     }
 
     override func configurationItems() -> [Any]! {

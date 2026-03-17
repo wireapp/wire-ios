@@ -109,13 +109,12 @@ class ZMUserSessionTestsBase: MessagingTest {
             continuation.yield(MLSGroupID.random())
             continuation.finish()
         }
-        mockMLSService.setSyncDelegate_MockMethod = { _ in }
         mockMLSService.setResetBrokenMLSConversationDelegate_MockMethod = { _ in }
 
         mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
         mockRecurringActionService.performActionsIfNeeded_MockMethod = {}
-
+        mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         sut = createSut()
         sut.sessionManager = mockSessionManager
 
@@ -156,9 +155,8 @@ class ZMUserSessionTestsBase: MessagingTest {
     func createSut(earService: EARServiceInterface) -> ZMUserSession {
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
-        let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
 
         let mockContextStorable = MockLAContextStorable()
         mockContextStorable.clear_MockMethod = {}
@@ -201,7 +199,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         let userSession = builder.build()
         userSession.setup(
             apiVersion: nil,
-            eventProcessor: MockUpdateEventProcessor(),
             strategyDirectory: MockStrategyDirectory(),
             syncStrategy: nil,
             operationLoop: nil,

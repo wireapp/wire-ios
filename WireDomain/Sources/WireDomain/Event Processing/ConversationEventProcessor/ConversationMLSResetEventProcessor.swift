@@ -85,6 +85,7 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
                 // CoreCrypto group already exists, just make sure state is set in ZMConversation
                 await conversationLocalStore.storeMLSConversationEstablished(
                     mlsGroupID: newMLSGroupID,
+                    epoch: try await mlsService.epoch(for: newMLSGroupID),
                     conversation: localConversation
                 )
             } else {

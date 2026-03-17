@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireNetwork
 
 final class PayloadPagerTests: XCTestCase {

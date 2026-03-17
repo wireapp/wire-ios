@@ -36,10 +36,7 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
         super.init(withManagedObjectContext: moc, applicationStatus: applicationStatus)
         self.configuration = [
             .allowsRequestsWhileUnauthenticated,
-            .allowsRequestsWhileOnline,
-            .allowsRequestsDuringSlowSync,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket
+            .allowsRequestsWhileOnline
         ]
         self.deleteSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }

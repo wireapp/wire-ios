@@ -53,7 +53,7 @@ final class CollectionsViewController: UIViewController {
         view as? CollectionsView
     }
 
-    private let messagePresenter = MessagePresenter()
+    private let messagePresenter: MessagePresenter
     private weak var selectedMessage: ZMConversationMessage? = .none
 
     private var imageMessages: [ZMConversationMessage] = []
@@ -112,7 +112,7 @@ final class CollectionsViewController: UIViewController {
 
         self.init(
             collection: holder,
-            isCellsEnabled: conversation.isCellsEnabled,
+            isCellsEnabled: conversation.isWireDriveEnabled,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder,
@@ -155,6 +155,7 @@ final class CollectionsViewController: UIViewController {
         }
 
         self.fetchingDone = fetchingDone
+        self.messagePresenter = MessagePresenter(userSession: userSession)
 
         super.init(nibName: .none, bundle: .none)
         collection.assetCollectionDelegate.add(self)
@@ -581,10 +582,12 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
 
         case CollectionsSectionSet.filesAndAudio:
             if message(for: indexPath).fileMessageData?.isAudio == true {
-                resultCell = collectionView.dequeueReusableCell(
+                let audioCell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: CollectionAudioCell.reuseIdentifier,
                     for: indexPath
                 ) as! CollectionAudioCell
+                audioCell.setUserSession(userSession: userSession)
+                resultCell = audioCell
             } else {
                 resultCell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: CollectionFileCell.reuseIdentifier,

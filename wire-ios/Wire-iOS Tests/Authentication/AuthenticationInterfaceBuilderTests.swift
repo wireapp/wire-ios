@@ -220,53 +220,6 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         runSnapshotTest(for: .pendingEmailLinkVerification(credentials))
     }
 
-    @MainActor
-    func testReauthenticate_Email_TokenExpired() {
-        DeveloperFlag.multibackend.enable(false, storage: .temporary())
-        let credentials = LoginCredentials(emailAddress: "test@example.com", usesCompanyLogin: false)
-        runSnapshotTest(for: .reauthenticate(
-            credentials: credentials,
-            environment: nil,
-            numberOfAccounts: 1,
-            isSignedOut: true
-        ))
-    }
-
-    @MainActor
-    func testReauthenticate_Email_DuringLogin() {
-        DeveloperFlag.multibackend.enable(false, storage: .temporary())
-        let credentials = LoginCredentials(emailAddress: "test@example.com", usesCompanyLogin: false)
-        runSnapshotTest(for: .reauthenticate(
-            credentials: credentials,
-            environment: nil,
-            numberOfAccounts: 1,
-            isSignedOut: false
-        ))
-    }
-
-    @MainActor
-    func testReauthenticate_CompanyLogin() {
-        DeveloperFlag.multibackend.enable(false, storage: .temporary())
-        let credentials = LoginCredentials(emailAddress: nil, usesCompanyLogin: true)
-        runSnapshotTest(for: .reauthenticate(
-            credentials: credentials,
-            environment: nil,
-            numberOfAccounts: 1,
-            isSignedOut: true
-        ))
-    }
-
-    @MainActor
-    func testReauthenticate_NoCredentials() {
-        DeveloperFlag.multibackend.enable(false, storage: .temporary())
-        runSnapshotTest(for: .reauthenticate(
-            credentials: nil,
-            environment: nil,
-            numberOfAccounts: 1,
-            isSignedOut: true
-        ))
-    }
-
     // MARK: - Helpers
 
     @MainActor

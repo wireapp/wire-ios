@@ -16,11 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /// Errors originating from `TeamsAPI`.
 
 public enum TeamsAPIError: Error {
+
+    /// Unsupported endpoint for API version
+
+    case unsupportedEndpointForAPIVersion
 
     /// A supplied team id is not valid.
 

@@ -19,26 +19,19 @@
 import Foundation
 import WireLogging
 
-/// Request strategy for fetching user profiles and processing user update events.
+/// Request strategy for fetching user profiles.
 ///
 /// User profiles are fetched:
-/// - During the `.fetchingUsers` slow sync phase.
 /// - When a user is marked as `needsToBeUpdatedFromBackend`.
 ///
-public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObjectSyncDelegate {
+public class UserProfileRequestStrategy: AbstractRequestStrategy {
 
-    var isFetchingAllConnectedUsers: Bool = false
-    let syncProgress: SyncProgress
-
-    let userProfileByID: IdentifierObjectSync<UserProfileByIDTranscoder>
     let userProfileByQualifiedID: IdentifierObjectSync<UserProfileByQualifiedIDTranscoder>
 
-    let userProfileByIDTranscoder: UserProfileByIDTranscoder
     let userProfileByQualifiedIDTranscoder: UserProfileByQualifiedIDTranscoder
 
     let actionSync: EntityActionSync
 
-    let oneOnOneResolver: any OneOnOneResolverInterface
     private let apiVersion: WireTransport.APIVersion?
     private let localDomain: String?
     private let isFederationEnabled: Bool
@@ -46,27 +39,15 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
     public init(
         managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        syncProgress: SyncProgress,
-        oneOnOneResolver: any OneOnOneResolverInterface,
         apiVersion: WireTransport.APIVersion?,
         localDomain: String?,
         isFederationEnabled: Bool
     ) {
-        self.syncProgress = syncProgress
-        self.oneOnOneResolver = oneOnOneResolver
-        self.userProfileByIDTranscoder = UserProfileByIDTranscoder(
-            context: managedObjectContext,
-            isFederationEnabled: isFederationEnabled
-        )
         self.userProfileByQualifiedIDTranscoder = UserProfileByQualifiedIDTranscoder(
             context: managedObjectContext,
             isFederationEnabled: isFederationEnabled
         )
 
-        self.userProfileByID = IdentifierObjectSync(
-            managedObjectContext: managedObjectContext,
-            transcoder: userProfileByIDTranscoder
-        )
         self.userProfileByQualifiedID = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
             transcoder: userProfileByQualifiedIDTranscoder
@@ -83,42 +64,15 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.configuration = [
-            .allowsRequestsWhileOnline,
-            .allowsRequestsDuringSlowSync
+            .allowsRequestsWhileOnline // so once we have a client it can request
+            // TODO: [WPB-22688] fix so it request only after initial sync is over?
         ]
-        userProfileByID.delegate = self
-        userProfileByQualifiedID.delegate = self
         userProfileByQualifiedIDTranscoder.contextChangedTracker = self
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        fetchAllConnectedUsers(for: apiVersion)
 
-        return [userProfileByID, userProfileByQualifiedID, actionSync].nextRequest(for: apiVersion)
-    }
-
-    func fetchAllConnectedUsers(for apiVersion: APIVersion) {
-        guard
-            syncProgress.currentSyncPhase == .fetchingUsers,
-            !isFetchingAllConnectedUsers
-        else {
-            return
-        }
-
-        let allConnectedUsers = allConnectedUsers()
-
-        if allConnectedUsers.isEmpty {
-            syncProgress.finishCurrentSyncPhase(phase: .fetchingUsers)
-        } else {
-            fetch(users: allConnectedUsers, for: apiVersion)
-            isFetchingAllConnectedUsers = true
-        }
-    }
-
-    func allConnectedUsers() -> Set<ZMUser> {
-        let fetchRequest = NSFetchRequest<ZMConnection>(entityName: ZMConnection.entityName())
-        let connections = managedObjectContext.fetchOrAssert(request: fetchRequest)
-        return Set(connections.compactMap(\.to))
+        [userProfileByQualifiedID, actionSync].nextRequest(for: apiVersion)
     }
 
     func fetch(users: Set<ZMUser>, for apiVersion: APIVersion) {
@@ -127,9 +81,9 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 
         switch apiVersion {
         case .v0:
-            userProfileByID.sync(identifiers: users.compactMap(\.remoteIdentifier))
+            return
 
-        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             if let qualifiedUserIDs = users.qualifiedUserIDs {
                 userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
             } else if let localDomain {
@@ -138,27 +92,6 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
             }
         }
     }
-
-    public func didFailToSyncAllObjects() {
-        if syncProgress.currentSyncPhase == .fetchingUsers {
-            syncProgress.failCurrentSyncPhase(phase: .fetchingUsers)
-            isFetchingAllConnectedUsers = false
-        }
-    }
-
-    public func didFinishSyncingAllObjects() {
-        guard
-            syncProgress.currentSyncPhase == .fetchingUsers,
-            !userProfileByID.isSyncing,
-            !userProfileByQualifiedID.isSyncing
-        else {
-            return
-        }
-
-        syncProgress.finishCurrentSyncPhase(phase: .fetchingUsers)
-        isFetchingAllConnectedUsers = false
-    }
-
 }
 
 extension UserProfileRequestStrategy: ZMContextChangeTracker {
@@ -186,167 +119,6 @@ extension UserProfileRequestStrategy: ZMContextChangeTracker {
         }
 
         fetch(users: users, for: apiVersion)
-    }
-
-}
-
-extension UserProfileRequestStrategy: ZMEventConsumer {
-
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        for event in events {
-            switch event.type {
-            case .userUpdate:
-                processUserUpdate(event)
-            case .userDelete:
-                processUserDeletion(event)
-            default:
-                break
-            }
-        }
-    }
-
-    func processUserUpdate(_ updateEvent: ZMUpdateEvent) {
-        guard updateEvent.type == .userUpdate else { return }
-
-        guard
-            let payloadAsDictionary = updateEvent.payload["user"] as? [String: Any],
-            let payloadData = try? JSONSerialization.data(withJSONObject: payloadAsDictionary, options: []),
-            let userProfile = Payload.UserProfile(payloadData),
-            let userID = userProfile.id
-        else {
-            return WireLogger.eventProcessing.error("Malformed user.update update event, skipping...")
-        }
-
-        let user = ZMUser.fetchOrCreate(
-            with: userID,
-            domain: userProfile.qualifiedID?.domain,
-            in: managedObjectContext
-        )
-
-        let processor = UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
-        processor.updateUserProfile(
-            from: userProfile,
-            for: user,
-            authoritative: false
-        )
-
-        if userProfile.updatedKeys.contains(.teamID) {
-            // The user may have just been added to a team which may
-            // invalidate existing connections.
-            let isSelfUser = user.isSelfUser
-            let userObjectID = user.objectID
-            let userID = user.qualifiedID
-
-            Task {
-                do {
-                    let connectionValidator = ConnectionValidator(context: managedObjectContext)
-
-                    if isSelfUser {
-                        try await connectionValidator.cleanUpAllInvalidConnections()
-                        try await oneOnOneResolver.resolveAllOneOnOneConversations(in: managedObjectContext)
-                    } else {
-                        try await connectionValidator.cleanUpInvalidConnectionIfNeeded(userObjectID: userObjectID)
-                        if let userID {
-                            try await oneOnOneResolver.resolveOneOnOneConversation(
-                                with: userID,
-                                in: managedObjectContext
-                            )
-                        }
-                    }
-                } catch {
-                    WireLogger.individualToTeamMigration
-                        .error("failed to clean up invalid connection: \(String(describing: error))")
-                }
-            }
-        }
-    }
-
-    func processUserDeletion(_ updateEvent: ZMUpdateEvent) {
-        guard updateEvent.type == .userDelete else { return }
-
-        guard let userId = (updateEvent.payload["id"] as? String).flatMap(UUID.init(transportString:)),
-              let user = ZMUser.fetch(with: userId, in: managedObjectContext)
-        else {
-            return WireLogger.eventProcessing.error("Malformed user.delete update event, skipping...")
-        }
-
-        if user.isSelfUser {
-            deleteAccount()
-        } else {
-            user.markAccountAsDeleted(at: updateEvent.timestamp ?? Date())
-        }
-    }
-
-    private func deleteAccount() {
-        let notification = AccountDeletedNotification(context: managedObjectContext)
-        notification.post(in: managedObjectContext.notificationContext)
-    }
-
-}
-
-class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
-
-    public typealias T = UUID
-
-    var fetchLimit: Int = 1600 / 25 // UUID as string is 24 + 1 for the comma
-
-    let context: NSManagedObjectContext
-    let decoder: JSONDecoder = .defaultDecoder
-    let encoder: JSONEncoder = .defaultEncoder
-
-    private let processor: UserProfilePayloadProcessor
-
-    init(
-        context: NSManagedObjectContext,
-        isFederationEnabled: Bool
-    ) {
-        self.context = context
-        self.processor = UserProfilePayloadProcessor(isFederationEnabled: isFederationEnabled)
-    }
-
-    func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard apiVersion == .v0 else { return nil }
-        // GET /users?ids=?
-        let userIDs = identifiers.map { $0.transportString() }.joined(separator: ",")
-        return ZMTransportRequest(getFromPath: "/users?ids=\(userIDs)", apiVersion: apiVersion.rawValue)
-    }
-
-    func didReceive(
-        response: ZMTransportResponse,
-        for identifiers: Set<UUID>,
-        completionHandler: @escaping () -> Void
-    ) {
-        defer { completionHandler() }
-
-        if response.httpStatus == 404, let responseFailure = Payload.ResponseFailure(response, decoder: decoder) {
-            if case .notFound = responseFailure.label {
-                markUserProfilesAsFetched(identifiers)
-                return
-            }
-        }
-
-        guard
-            let rawData = response.rawData,
-            let payload = Payload.UserProfiles(rawData, decoder: decoder)
-        else {
-            Logging.network.warn("Can't process response, aborting.")
-            return
-        }
-
-        processor.updateUserProfiles(
-            from: payload,
-            in: context
-        )
-
-        let missingIdentifiers = identifiers.subtracting(payload.compactMap(\.id))
-        markUserProfilesAsFetched(missingIdentifiers)
-    }
-
-    private func markUserProfilesAsFetched(_ missingUsers: Set<UUID>) {
-        for userID in missingUsers {
-            let user = ZMUser.fetch(with: userID, in: context)
-            user?.needsToBeUpdatedFromBackend = false
-        }
     }
 
 }
@@ -433,7 +205,7 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             let missingIdentifiers = identifiers.subtracting(payload.compactMap(\.qualifiedID))
             markUserProfilesAsFetched(missingIdentifiers)
 
-        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
+        case .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
             guard
                 let rawData = response.rawData,
                 let payload = Payload.UserProfilesV4(rawData, decoder: decoder)

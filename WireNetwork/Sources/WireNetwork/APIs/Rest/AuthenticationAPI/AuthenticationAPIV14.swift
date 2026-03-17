@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class AuthenticationAPIV14: AuthenticationAPIV13 {
+class AuthenticationAPIV14: AuthenticationAPIV13 {
 
     override var apiVersion: APIVersion { .v14 }
 

@@ -17,28 +17,25 @@
 //
 
 import XCTest
+
 @testable import Wire
 
-class ZMUserMentionsTest: XCTestCase {
+final class ZMUserMentionsTest: XCTestCase {
 
     var selfUser: MockUserType!
     var otherUser: MockUserType!
     var serviceUser: MockUserType!
 
     override func setUp() {
-        super.setUp()
-
         selfUser = MockUserType.createSelfUser(name: "selfUser")
         otherUser = MockUserType.createUser(name: "Bruno")
-        serviceUser = MockServiceUserType.createServiceUser(name: "Mr. Bot")
+        serviceUser = MockUserType.createServiceUser(name: "Mr. Bot")
     }
 
     override func tearDown() {
         selfUser = nil
         otherUser = nil
         serviceUser = nil
-
-        super.tearDown()
     }
 
     func testThatItSearchesByName() {

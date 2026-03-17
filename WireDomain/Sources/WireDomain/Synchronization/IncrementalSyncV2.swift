@@ -45,11 +45,13 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let databaseSaver: any DatabaseSaverProtocol
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
+    private let liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>
     private let logger = WireLogger.sync
     private let journal: Journal
     private let syncMarkerGenerator: SyncMarkerGenerator
     private let createPushChannelState: CreatePushChannelStateClosure
     private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
+    private let earService: EARServiceInterface
 
     weak var delegate: (any LiveSyncDelegate)?
 
@@ -63,9 +65,11 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         processor: any UpdateEventProcessorProtocol,
         databaseSaver: any DatabaseSaverProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
+        liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         journal: Journal,
         mlsGroupRepairAgent: MLSGroupRepairAgentProtocol,
+        earService: EARServiceInterface,
         createPushChannelState: @escaping CreatePushChannelStateClosure,
         syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
@@ -78,9 +82,11 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.processor = processor
         self.databaseSaver = databaseSaver
         self.syncStateSubject = syncStateSubject
+        self.liveBrokenGroupSubject = liveBrokenGroupSubject
         self.coreCryptoProvider = coreCryptoProvider
         self.journal = journal
         self.mlsGroupRepairAgent = mlsGroupRepairAgent
+        self.earService = earService
         self.syncMarkerGenerator = syncMarkerGenerator
         self.createPushChannelState = createPushChannelState
     }
@@ -189,7 +195,12 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             // If we need to abort, do it before processing the next batch.
             try Task.checkCancellation()
 
-            let envelopesWithObjectIDs = try await updateEventsStore.fetchStoredEventEnvelopes(limit: batchSize)
+            // TODO: [WPB-23558] Support EAR in incremental sync v2
+            let envelopesWithObjectIDs = try await updateEventsStore.fetchStoredEventEnvelopes(
+                limit: batchSize,
+                privateKeys: nil,
+                backgroundAccessibleOnly: false
+            )
             let envelopes = envelopesWithObjectIDs.map(\.envelope)
             let envelopesObjectIDs = envelopesWithObjectIDs.map(\.objectID)
 
@@ -318,8 +329,18 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         var storedEnvelopes: [(UpdateEventEnvelope, Int64)] = []
 
         // decrypt
-        try await coreCryptoProvider.coreCrypto().perform { coreCryptoContext in
+        try await coreCryptoProvider.coreCrypto().transaction { coreCryptoContext in
             for envelope in envelopes {
+
+                if DeveloperFlag.ignoreIncomingEvents.isOn {
+                    logger.warn(
+                        "ignore incoming events",
+                        attributes: .incrementalSyncV3 + [.eventEnvelopeID: envelope.id]
+                    )
+                    await acknowledgeUntilEnvelope(envelope, through: pushChannel, batchSize: 1)
+                    continue
+                }
+
                 var envelope = envelope
                 envelope.events = await decryptEnvelope(envelope, in: coreCryptoContext)
 
@@ -373,8 +394,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
         if !brokenMLSGroupIDs.isEmpty {
-            journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
+            journal.addValues(brokenMLSGroupIDs, for: .brokenMLSGroupIDs)
+            liveBrokenGroupSubject.send(brokenMLSGroupIDs)
         }
+
         return decryptionEventsResult.events
     }
 
@@ -387,7 +410,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 attributes: [.eventEnvelopeID: envelope.id] + logAttributes
             )
             index = try await updateEventsStore.indexOfLastEventEnvelope() + 1
-            try await updateEventsStore.persistEventEnvelope(envelope, index: index)
+            try await updateEventsStore.persistEventEnvelope(envelope, index: index, publicKeys: nil)
         } catch {
             logger.error(
                 "failed to store live event envelope: \(String(describing: error))",

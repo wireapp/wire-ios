@@ -63,7 +63,7 @@ class UsersAPIV12: UsersAPIV11 {
     }
 }
 
-struct UserListResponseV12: Decodable, ToAPIModelConvertible {
+private struct UserListResponseV12: Decodable, ToAPIModelConvertible {
 
     /// List of users which were found and successfully retrieved.
 
@@ -81,7 +81,7 @@ struct UserListResponseV12: Decodable, ToAPIModelConvertible {
     }
 }
 
-struct UserResponseV12: Decodable, ToAPIModelConvertible {
+private struct UserResponseV12: Decodable, ToAPIModelConvertible {
 
     let id: QualifiedIDV0
     let name: String
@@ -136,7 +136,7 @@ struct UserResponseV12: Decodable, ToAPIModelConvertible {
 
 }
 
-enum UserTypeV12: String, Decodable {
+private enum UserTypeV12: String, Decodable {
 
     case regular
     case app

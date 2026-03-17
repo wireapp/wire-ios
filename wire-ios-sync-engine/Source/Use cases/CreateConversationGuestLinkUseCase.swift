@@ -47,22 +47,37 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
         password: String?,
         completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void
     ) {
+        guard let context = conversation.managedObjectContext else {
+            return completion(.failure(.contextUnavailable))
+        }
 
-        if conversation.isLegacyAccessMode {
-            setGuestsAndAppsUseCase.invoke(
-                conversation: conversation,
-                allowGuests: true,
-                allowApps: conversation.allowApps
-            ) { result in
-                switch result {
-                case let .failure(error):
+        let completion = { result in
+            DispatchQueue.main.async {
+                completion(result)
+            }
+        }
+
+        let isLegacyAccessMode = context.performAndWait { conversation.isLegacyAccessMode }
+        if isLegacyAccessMode {
+            Task {
+                do {
+                    let allowApps = await context.perform { conversation.allowApps }
+                    try await setGuestsAndAppsUseCase.invoke(
+                        conversation: conversation,
+                        allowGuests: true,
+                        allowApps: allowApps
+                    )
+                    await context.perform { [self] in
+                        createGuestLink(conversation: conversation, password: password, completion)
+                    }
+                } catch {
                     completion(.failure(.failedToEnableGuestAccess(error)))
-                case .success:
-                    createGuestLink(conversation: conversation, password: password, completion)
                 }
             }
         } else {
-            createGuestLink(conversation: conversation, password: password, completion)
+            context.perform { [self] in
+                createGuestLink(conversation: conversation, password: password, completion)
+            }
         }
     }
 

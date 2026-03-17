@@ -50,7 +50,6 @@ public struct WireAuthenticationAssembly {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
-        isMultibackendEnabled: Bool,
         registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
@@ -66,7 +65,6 @@ public struct WireAuthenticationAssembly {
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
             accountsPublisher: accountsPublisher,
-            isMultibackendEnabled: isMultibackendEnabled,
             registrationAnalyticsTracker: registrationAnalyticsTracker
         )
 

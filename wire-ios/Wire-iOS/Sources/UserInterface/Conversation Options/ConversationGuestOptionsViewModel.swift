@@ -367,17 +367,21 @@ final class ConversationGuestOptionsViewModel {
             }
 
             configuration.setAllowGuests(allowGuests) { [weak self] result in
-                guard let self else { return }
-                item.cancel()
-                state.isLoading = false
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
 
-                switch result {
-                case .success:
-                    updateRows()
-                    if link == nil, securedLink == nil, allowGuests {
-                        fetchLink()
+                    item.cancel()
+                    state.isLoading = false
+
+                    switch result {
+                    case .success:
+                        updateRows()
+                        if link == nil, securedLink == nil, allowGuests {
+                            fetchLink()
+                        }
+                    case let .failure(error):
+                        delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
                     }
-                case let .failure(error): delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
                 }
             }
         }

@@ -65,7 +65,7 @@ final class PullAllConversationsSyncTests: XCTestCase {
         })
 
         api.getConversationsFor_MockValue = .init(
-            found: [Scaffolding.remoteConversation1],
+            found: [Scaffolding.remoteConversation1, Scaffolding.remoteConversation4],
             notFound: [Scaffolding.conversationID2],
             failed: [Scaffolding.conversationID3]
         )
@@ -84,10 +84,15 @@ final class PullAllConversationsSyncTests: XCTestCase {
         XCTAssertEqual(api.getConversationsFor_Invocations[0], Scaffolding.conversationIDs)
 
         let storeFoundInvocations = store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations
-        try XCTAssertCount(storeFoundInvocations, count: 1)
+        try XCTAssertCount(storeFoundInvocations, count: 2)
         XCTAssertEqual(storeFoundInvocations[0].conversation, Scaffolding.localConversation1)
         XCTAssertEqual(storeFoundInvocations[0].isFederationEnabled, Scaffolding.isFederationEnabled)
         XCTAssertEqual(storeFoundInvocations[0].isMLSEnabled, Scaffolding.isMLSEnabled)
+        XCTAssertEqual(storeFoundInvocations[0].timestamp, Date.distantPast)
+        XCTAssertEqual(storeFoundInvocations[1].conversation, Scaffolding.localConversation4)
+        XCTAssertEqual(storeFoundInvocations[1].isFederationEnabled, Scaffolding.isFederationEnabled)
+        XCTAssertEqual(storeFoundInvocations[1].isMLSEnabled, Scaffolding.isMLSEnabled)
+        XCTAssertEqual(storeFoundInvocations[1].timestamp, Scaffolding.aGivenDate)
 
         let storeNotFoundInvocations = store
             .storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations
@@ -209,12 +214,14 @@ private enum Scaffolding {
     static let conversationID1 = WireNetwork.QualifiedID(id: UUID(), domain: localDomain)
     static let conversationID2 = WireNetwork.QualifiedID(id: UUID(), domain: localDomain)
     static let conversationID3 = WireNetwork.QualifiedID(id: UUID(), domain: localDomain)
+    static let conversationID4 = WireNetwork.QualifiedID(id: UUID(), domain: localDomain)
 
     static var conversationIDs: [WireNetwork.QualifiedID] {
         [
             conversationID1,
             conversationID2,
-            conversationID3
+            conversationID3,
+            conversationID4
         ]
     }
 
@@ -244,8 +251,37 @@ private enum Scaffolding {
         lastEventTime: nil
     )
 
+    static let remoteConversation4 = WireNetwork.Conversation(
+        id: conversationID4.id,
+        qualifiedID: conversationID4,
+        teamID: UUID(),
+        type: .group,
+        messageProtocol: .proteus,
+        mlsGroupID: nil,
+        cipherSuite: nil,
+        epoch: nil,
+        epochTimestamp: nil,
+        creator: UUID(),
+        members: nil,
+        name: "conversation 1",
+        messageTimer: nil,
+        readReceiptMode: nil,
+        access: nil,
+        accessRoles: nil,
+        legacyAccessRole: nil,
+        lastEvent: nil,
+        lastEventTime: aGivenDate
+    )
+
     static var localConversation1: WireDomain.Conversation {
         remoteConversation1.toDomainModel()
     }
 
+    static var localConversation4: WireDomain.Conversation {
+        remoteConversation4.toDomainModel()
+    }
+
+    static var aGivenDate: Date {
+        ISO8601DateFormatter().date(from: "2025-10-31T10:00:00Z") ?? Date.now
+    }
 }

@@ -17,6 +17,7 @@
 //
 
 public import SwiftUI
+
 import WireDesign
 import WireMessagingDomain
 import WireReusableUIComponents
@@ -46,15 +47,16 @@ public struct ConversationChannelCreationForm: View {
                 channelHistorySection
             }
             appsSection
-            // TODO: [WPB-16771] Uncomment when read receipts supported on MLS
-            //            readReceiptsSection
+            #if false // TODO: [WPB-16771] Uncomment when read receipts supported on MLS
+                readReceiptsSection
+            #endif
 
-            if viewModel.isWireCellsEnabled {
+            if viewModel.isWireDriveEnabled {
                 fileManagementSection
             }
 
         }
-        .onChange(of: channelName) { newValue in
+        .onChange(of: channelName) { _, newValue in
             viewModel.onChannelNameUpdate(newValue)
         }
         .overlay {
@@ -181,9 +183,19 @@ public struct ConversationChannelCreationForm: View {
     var appsSection: some View {
         Section(content: {
             Toggle(Strings.CreationForm.Apps.toggle, isOn: $viewModel.appsAllowed)
+                .disabled(!viewModel.areAppsSupported)
             Toggle(Strings.CreationForm.Guests.toggle, isOn: $viewModel.guestsAllowed)
         }, footer: {
-            Text(Strings.CreationForm.Guests.description)
+            if viewModel.areAppsSupported {
+                Text(Strings.CreationForm.Guests.description)
+            } else {
+                InfoBannerView(
+                    title: Strings.CreationForm.AppsDisabled.title,
+                    message: Strings.CreationForm.AppsDisabled.message
+                )
+                .foregroundStyle(Color.primary)
+                .padding(.horizontal, -16)
+            }
         })
     }
 
@@ -197,22 +209,55 @@ public struct ConversationChannelCreationForm: View {
 
     var fileManagementSection: some View {
         Section(content: {
-            Toggle(Strings.CreationForm.WireCells.toggle + " (Cells beta)", isOn: $viewModel.fileManagementEnabled)
+            Toggle(Strings.CreationForm.WireCells.toggle, isOn: $viewModel.fileManagementEnabled)
         }, footer: {
-            Text(Strings.CreationForm.WireCells.description)
-            // Text(" [\(Strings.CreationForm.WireCells.learnMore)](https://wire.com)") // TODO: [WPB-20191] URL to be
-            // defined, uncomment when we have the URL
+            Text(footerText)
         })
+    }
+
+    private var footerText: AttributedString {
+        var text = AttributedString(Strings.CreationForm.WireCells.description + " ")
+
+        var link = AttributedString(Strings.CreationForm.WireCells.learnMore)
+        link.link = URL.useWireDriveInConversations
+
+        text.append(link)
+        return text
     }
 }
 
-#Preview {
+#Preview("apps supported") {
     ConversationChannelCreationForm(
         viewModel: ConversationChannelCreationFormViewModel(
             channelName: "",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            areAppsSupported: true,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
             isUserPremium: false,
-            isWireCellsEnabled: true,
-            teamsURL: URL(string: "https://wire.com")!
-        ) { _ in }
+            isWireDriveEnabled: true,
+            teamsURL: URL(string: "https://wire.com")!,
+            onFormValidityUpdate: { _ in }
+        )
+    )
+}
+
+#Preview("apps not supported") {
+    ConversationChannelCreationForm(
+        viewModel: ConversationChannelCreationFormViewModel(
+            channelName: "",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            areAppsSupported: false,
+            appsAllowed: true,
+            guestsAllowed: true,
+            readReceiptsEnabled: true,
+            isUserPremium: false,
+            isWireDriveEnabled: true,
+            teamsURL: URL(string: "https://wire.com")!,
+            onFormValidityUpdate: { _ in }
+        )
     )
 }

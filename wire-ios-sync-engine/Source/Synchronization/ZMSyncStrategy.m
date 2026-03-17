@@ -63,7 +63,6 @@ ZM_EMPTY_ASSERTING_INIT()
                         operationStatus:(OperationStatus *)operationStatus
                             application:(id<ZMApplication>)application
                       strategyDirectory:(id<StrategyDirectoryProtocol>)strategyDirectory
-                 eventProcessingTracker:(id<EventProcessingTrackerProtocol>)eventProcessingTracker
 {
     self = [super init];
     if (self) {
@@ -73,7 +72,6 @@ ZM_EMPTY_ASSERTING_INIT()
         self.uiMOC = contextProvider.viewContext;
         self.operationStatus = operationStatus;
         self.strategyDirectory = strategyDirectory;
-        self.eventProcessingTracker = eventProcessingTracker;
         self.changeTrackerBootStrap = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.syncMOC changeTrackers:self.strategyDirectory.contextChangeTrackers];
 
         ZM_ALLOW_MISSING_SELECTOR([[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(managedObjectContextDidSave:) name:NSManagedObjectContextDidSaveNotification object:self.syncMOC]);

@@ -21,7 +21,7 @@ import XCTest
 
 @testable import Wire
 
-final class ConversationReactionMessageTests: XCTestCase {
+final class ConversationReactionMessageTests: ConversationMessageSnapshotTestCase {
 
     // MARK: - Properties
 
@@ -53,8 +53,10 @@ final class ConversationReactionMessageTests: XCTestCase {
     func testThatItConfiguresWithSelfReaction() {
         // GIVEN
         let reaction = MessageReactionMetadata(emoji: .like, count: 1, isSelfUserReacting: true)
-        let configuration = [reaction]
-
+        let configuration = MessageReactionsCell.Configuration(
+            reactions: [reaction],
+            userSession: userSession
+        )
         sut.configure(with: configuration, animated: false)
 
         // THEN
@@ -93,13 +95,17 @@ final class ConversationReactionMessageTests: XCTestCase {
             isSelfUserReacting: false
         )
 
-        let configuration = [
+        let reaction = [
             likeReaction,
             thumbsUpReaction,
             thumbsDownReaction,
             slightlySmilingReaction,
             frowningFaceReaction
         ]
+        let configuration = MessageReactionsCell.Configuration(
+            reactions: reaction,
+            userSession: userSession
+        )
 
         // WHEN
         sut.configure(with: configuration, animated: false)
@@ -107,5 +113,4 @@ final class ConversationReactionMessageTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
-
 }

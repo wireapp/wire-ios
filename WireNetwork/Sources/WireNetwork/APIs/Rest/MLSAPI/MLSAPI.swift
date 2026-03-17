@@ -35,6 +35,17 @@ public protocol MLSAPI {
 
     func postCommitBundle(_ bundle: CommitBundle) async throws -> [UpdateEvent]
 
+    /// Upload MLS key packages for a client.
+    ///
+    /// - Parameters:
+    ///   - clientID: The client ID to upload key packages for.
+    ///   - keyPackages: The key packages to upload.
+    ///
+    /// Available from ``APIVersion`` v5.
+    ///
+
+    func uploadKeyPackages(clientID: String, keyPackages: KeyPackageUpload) async throws
+
     /// Reset an MLS Conversation to epoch 0
     /// - Parameters:
     ///   - epoch: current epoch

@@ -20,12 +20,12 @@ extension MockWireMessagingFactoryProtocol {
 
     static func makeDefault() -> MockWireMessagingFactoryProtocol {
         let mock = MockWireMessagingFactoryProtocol()
-        mock.makeClearPublishedDraftsUseCaseCellName_MockValue = WireCellsClearPublishedDraftsUseCaseProtocolMock()
-        mock.makeDeleteDraftUseCaseCellName_MockValue = WireCellsDeleteDraftUseCaseProtocolMock()
-        mock.makeObserveDraftsUseCaseCellName_MockValue = WireCellsObserveDraftsUseCaseProtocolMock()
-        mock.makePublishDraftsUseCaseCellName_MockValue = WireCellsPublishDraftsUseCaseProtocolMock()
-        mock.makeRetryUploadDraftUseCaseCellName_MockValue = WireCellsRetryUploadDraftUseCaseProtocolMock()
-        mock.makeUploadDraftUseCaseCellName_MockValue = WireCellsUploadDraftUseCaseProtocolMock()
+        mock.makeClearPublishedDraftsUseCaseCellName_MockValue = WireDriveClearPublishedDraftsUseCaseProtocolMock()
+        mock.makeDeleteDraftUseCaseCellName_MockValue = WireDriveDeleteDraftUseCaseProtocolMock()
+        mock.makeObserveDraftsUseCaseCellName_MockValue = WireDriveObserveDraftsUseCaseProtocolMock()
+        mock.makePublishDraftsUseCaseCellName_MockValue = WireDrivePublishDraftsUseCaseProtocolMock()
+        mock.makeRetryUploadDraftUseCaseCellName_MockValue = WireDriveRetryUploadDraftUseCaseProtocolMock()
+        mock.makeUploadDraftUseCaseCellName_MockValue = WireDriveUploadDraftUseCaseProtocolMock()
         mock.makeConversationCellProviderInsetsProvider_MockValue = MockConversationCellProviderProtocol()
         return mock
     }

@@ -151,13 +151,17 @@ final class AddParticipantsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    convenience init(
+    convenience init?(
         conversation: GroupDetailsConversationType,
-        userSession: UserSession
+        userSession: UserSession,
+        isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool
     ) {
         self.init(
             context: .add(conversation),
-            userSession: userSession
+            userSession: userSession,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable
         )
     }
 
@@ -169,6 +173,7 @@ final class AddParticipantsViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
         _ = searchHeaderViewController.tokenField.resignFirstResponder()
     }
 
@@ -182,13 +187,18 @@ final class AddParticipantsViewController: UIViewController {
         wr_supportedInterfaceOrientations
     }
 
-    init(
+    init?(
         context: Context,
-        userSession: UserSession
+        userSession: UserSession,
+        isAppsFeatureEnabled: Bool,
+        areLegacyBotsAvailable: Bool
     ) {
         self.userSession = userSession
-
-        self.viewModel = AddParticipantsViewModel(with: context)
+        self.viewModel = AddParticipantsViewModel(
+            context: context,
+            isAppsFeatureEnabled: isAppsFeatureEnabled,
+            areLegacyBotsAvailable: areLegacyBotsAvailable
+        )
 
         self.collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
@@ -215,13 +225,14 @@ final class AddParticipantsViewController: UIViewController {
 
         self.searchGroupSelector = SearchGroupSelector()
 
-        self.searchResultsViewController = SearchResultsViewController(
+        guard let searchResultsViewController = SearchResultsViewController(
             userSelection: userSelection,
             userSession: userSession,
             isAddingParticipants: true,
             shouldIncludeGuests: viewModel.context.includeGuests,
             isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
-        )
+        ) else { return nil }
+        self.searchResultsViewController = searchResultsViewController
 
         let user = SelfUser.provider?.providedSelfUser
         self.emptyResultView = EmptySearchResultsView(
@@ -376,7 +387,11 @@ final class AddParticipantsViewController: UIViewController {
                 encryptionProtocol: userSession.defaultProtocol,
                 selfUser: userSession.selfUser
             )
-            viewModel = AddParticipantsViewModel(with: .create(updated))
+            viewModel = AddParticipantsViewModel(
+                context: .create(updated),
+                isAppsFeatureEnabled: values.isAppsFeatureEnabled,
+                areLegacyBotsAvailable: values.areLegacyBotsAvailable
+            )
         }
 
         // Enable button & collection view content inset
@@ -555,7 +570,7 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(
         _ searchResultsViewController: SearchResultsViewController,
-        didTapOnSeviceUser user: ServiceUser
+        didTapOnServiceUser user: UserType
     ) {
 
         guard case let .add(conversation) = viewModel.context else { return }

@@ -19,6 +19,8 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireFoundation
+import WireSyncEngine
 
 // MARK: - ReactionToggle
 
@@ -39,11 +41,14 @@ final class ReactionToggle: UIControl {
     )
 
     private var onToggle: (() -> Void)?
+    private var accentColor: WireAccentColor?
+    private var userSession: UserSession
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     var isToggled: Bool {
         didSet {
             guard oldValue != isToggled else { return }
-            updateAppearance()
+            updateAppearance(accentColor: accentColor)
         }
     }
 
@@ -53,10 +58,13 @@ final class ReactionToggle: UIControl {
         emoji: Emoji.ID,
         count: UInt,
         isToggled: Bool = false,
+        userSession: UserSession,
         onToggle: (() -> Void)? = nil
     ) {
-        self.isToggled = isToggled
         self.onToggle = onToggle
+        self.accentColor = userSession.selfUser.wireAccentColor
+        self.userSession = userSession
+        self.isToggled = isToggled
 
         super.init(frame: .zero)
 
@@ -84,13 +92,14 @@ final class ReactionToggle: UIControl {
         layer.borderWidth = 1
         layer.masksToBounds = true
 
-        updateAppearance()
+        updateAppearance(accentColor: accentColor)
         addTarget(self, action: #selector(didToggle), for: .touchUpInside)
 
         setupAccessibility(
             value: emoji,
             count: count
         )
+        addAccentColorChangeObserver(userSession: userSession)
     }
 
     @available(*, unavailable)
@@ -105,11 +114,19 @@ final class ReactionToggle: UIControl {
         layer.cornerRadius = rect.height / 2.0
     }
 
-    private func updateAppearance() {
+    private func addAccentColorChangeObserver(userSession: UserSession?) {
+        guard accentColorChangeHandler == nil, let userSession else { return }
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(userSession: userSession) { [weak self] color in
+                self?.updateAppearance(accentColor: color?.accentColor)
+            }
+    }
+
+    private func updateAppearance(accentColor: WireAccentColor?) {
         if isToggled {
-            backgroundColor = ButtonColors.backgroundReactionSelected
-            layer.borderColor = ButtonColors.borderReactionSelected.cgColor
-            counterLabel.textColor = SemanticColors.Label.textReactionCounterSelected
+            backgroundColor = ColorTheme.Base.primaryVariant(accentColor ?? .default)
+            layer.borderColor = ColorTheme.Base.primary(accentColor ?? .default).cgColor
+            counterLabel.textColor = SemanticColors.Label.textDefault
         } else {
             backgroundColor = ButtonColors.backroundReactionNormal
             layer.borderColor = ButtonColors.borderReactionNormal.cgColor

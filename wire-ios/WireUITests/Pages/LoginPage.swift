@@ -49,7 +49,7 @@ class LoginPage: PageModel {
 
     func enterPassword(_ password: String) throws -> FirstTimePage {
         try passwordField.tapIfKeyboardNotFocused().typeText(password)
-        nextButton.tap()
+        nextButton.waitAndTap()
         return try FirstTimePage()
     }
 }

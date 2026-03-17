@@ -25,6 +25,7 @@ import WireNetwork
 import WireRequestStrategy
 import WireUtilities
 
+@available(*, deprecated, message: "See UserSessionLoader instead.")
 struct ZMUserSessionBuilder {
 
     // MARK: - Properties
@@ -202,7 +203,7 @@ struct ZMUserSessionBuilder {
         coreCryptoProvider: CoreCryptoProviderProtocol,
         configuration: ZMUserSession.Configuration,
         contextStorage: any LAContextStorable,
-        earService: (any EARServiceInterface)?,
+        earService: any EARServiceInterface,
         flowManager: any FlowManagerType,
         mediaManager: any MediaManagerType,
         mlsService: (any MLSServiceInterface)?,
@@ -239,7 +240,6 @@ struct ZMUserSessionBuilder {
             cookieStorage: transportSession.cookieStorage,
             requestCancellation: transportSession,
             application: application,
-            lastEventIDRepository: lastEventIDRepository,
             coreCryptoProvider: coreCryptoProvider,
             isSyncV2Enabled: journal[.isSyncV2Enabled],
             localDomain: BackendInfo.domain,
@@ -248,17 +248,6 @@ struct ZMUserSessionBuilder {
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
-        )
-        let earService = earService ?? EARService(
-            accountID: coreDataStack.account.userIdentifier,
-            databaseContexts: [
-                coreDataStack.viewContext,
-                coreDataStack.syncContext,
-                coreDataStack.searchContext
-            ],
-            canPerformKeyMigration: true,
-            sharedUserDefaults: sharedUserDefaults,
-            authenticationContext: AuthenticationContext(storage: contextStorage)
         )
         let lastE2EIdentityUpdateDateRepository = LastE2EIdentityUpdateDateRepository(
             userID: userId,
@@ -271,7 +260,7 @@ struct ZMUserSessionBuilder {
             featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
             userID: coreDataStack.account.userIdentifier,
-            localDomain: BackendInfo.domain
+            localDomain: BackendInfo.domain ?? "unused" // unused
         )
         let proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,

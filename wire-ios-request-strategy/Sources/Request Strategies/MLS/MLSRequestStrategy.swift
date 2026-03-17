@@ -46,7 +46,6 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
             DeleteSubgroupActionHandler(context: managedObjectContext),
             LeaveSubconversationActionHandler(context: managedObjectContext),
             ReplaceSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
-            FetchSupportedProtocolsActionHandler(context: managedObjectContext),
             SyncMLSOneToOneConversationActionHandler(
                 context: managedObjectContext,
                 localDomain: localDomain,
@@ -60,10 +59,8 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
         )
 
         configuration = [
-            .allowsRequestsDuringSlowSync,
-            .allowsRequestsWhileOnline,
-            .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket
+            .allowsRequestsWhileInBackground,
+            .allowsRequestsWhileOnline
         ]
     }
 

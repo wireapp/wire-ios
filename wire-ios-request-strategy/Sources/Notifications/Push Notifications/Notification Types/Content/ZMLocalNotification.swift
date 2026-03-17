@@ -174,35 +174,6 @@ extension ZMLocalNotification {
     }
 }
 
-// MARK: - Unread Count
-
-public extension ZMLocalNotification {
-
-    func increaseEstimatedUnreadCount(on conversation: ZMConversation?) {
-
-        if type.shouldIncreaseUnreadCount {
-            conversation?.internalEstimatedUnreadCount += 1
-            WireLogger.badgeCount
-                .info(
-                    "increase internalEstimatedUnreadCount: \(String(describing: conversation?.internalEstimatedUnreadCount)) in \(String(describing: conversation?.remoteIdentifier?.uuidString)) timestamp: \(Date())"
-                )
-        }
-
-        if type.shouldDecreaseUnreadCount {
-            conversation?.internalEstimatedUnreadCount -= 1
-        }
-
-        if type.shouldIncreaseUnreadMentionCount {
-            conversation?.internalEstimatedUnreadSelfMentionCount += 1
-        }
-
-        if type.shouldIncreaseUnreadReplyCount {
-            conversation?.internalEstimatedUnreadSelfReplyCount += 1
-        }
-    }
-
-}
-
 extension LocalNotificationType {
 
     var shouldIncreaseUnreadCount: Bool {
@@ -265,16 +236,14 @@ extension LocalNotificationType {
 
 }
 
-public extension ZMLocalNotification {
-
-    static func bundledMessages(count: Int, in context: NSManagedObjectContext) -> ZMLocalNotification? {
-        let builder = BundledMessagesNotificationBuilder(messageCount: count)
-        return ZMLocalNotification(builder: builder, moc: context)
-    }
-
-}
-
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUNNotificationSoundName(_ input: String) -> UNNotificationSoundName {
     UNNotificationSoundName(rawValue: input)
+}
+
+public extension ZMLocalNotification {
+
+    // Determines if the notification content should be hidden as reflected in the store
+    // metadata for the given managed object context.
+    static let ZMShouldHideNotificationContentKey = "ZMShouldHideNotificationContentKey"
 }

@@ -22,6 +22,10 @@ import Foundation
 
 enum ConversationRepositoryError: Error {
 
+    /// Conversation failed to be retrieved
+
+    case retrievalFailed
+
     /// Conversation not found
 
     case conversationNotFound

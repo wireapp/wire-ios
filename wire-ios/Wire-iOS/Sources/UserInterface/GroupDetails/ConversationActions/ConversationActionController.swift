@@ -59,9 +59,9 @@ final class ConversationActionController {
         actions.map(alertAction).forEach(controller.addAction)
         controller.addAction(.cancel())
 
-        if controller.popoverPresentationController != nil {
+        if let superView = sourceView.superview, controller.popoverPresentationController != nil {
             currentContext = .sourceView(
-                sourceView: sourceView.superview!,
+                sourceView: superView,
                 sourceRect: sourceView.frame
             )
         }
@@ -86,7 +86,7 @@ final class ConversationActionController {
 
         switch action {
         case .delete:
-            guard let userSession = ZMUserSession.shared() else { return }
+            guard let userSession = userSession as? ZMUserSession else { return }
 
             requestDeleteGroupResult { result in
                 self.handleDeleteGroupResult(result, conversation: conversation, in: userSession)

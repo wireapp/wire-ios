@@ -38,6 +38,11 @@ struct MessageReactionMetadata: Equatable {
 
 final class MessageReactionsCell: UIView, ConversationMessageCell {
 
+    struct Configuration {
+        let reactions: [MessageReactionMetadata]
+        let userSession: UserSession
+    }
+
     // MARK: - Properties
 
     var isSelected = false
@@ -76,15 +81,13 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     // MARK: - configure method
 
-    func configure(
-        with reactions: [MessageReactionMetadata],
-        animated: Bool
-    ) {
-        let reactionToggles = reactions.map { reaction in
+    func configure(with object: Configuration, animated: Bool) {
+        let reactionToggles = object.reactions.map { reaction in
             ReactionToggle(
                 emoji: reaction.emoji,
                 count: reaction.count,
-                isToggled: reaction.isSelfUserReacting
+                isToggled: reaction.isSelfUserReacting,
+                userSession: object.userSession
             ) { [weak self] in
                 guard
                     let self,

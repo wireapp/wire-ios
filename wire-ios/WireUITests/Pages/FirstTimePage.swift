@@ -43,18 +43,36 @@ class FirstTimePage: PageModel {
         app.buttons[Locators.FirstTimePage.notNowOption.rawValue]
     }
 
+    var conversationsButton: XCUIElement {
+        app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
+    }
+
+    var usernameField: XCUIElement {
+        app.descendants(matching: .textField)[Locators.SetUsernamePage.usernameTextField.rawValue].firstMatch
+    }
+
     var handler: (XCTestCase, any NSObjectProtocol)?
 
     // Tap OK button on first time using Wire popup
     func acceptFirstTimeAlert() -> FirstTimePage {
         dismissSavePasswordAlertIfPresent()
-        okButton.tap()
+        _ = okButton.waitForExistence(timeout: 2)
+        if !okButton.isHittable {
+            dismissSavePasswordAlertIfPresent()
+        }
+        if okButton.isHittable {
+            okButton.tap()
+        }
         okButton.waitToDisappear()
         return self
     }
 
     func acceptPopup(with testCase: XCTestCase) throws -> ConversationsPage {
         handleNotificationPermissionAlert(testCase: testCase)
+        // Sometimes the OK button take longer to disappear after tapping.
+        if conversationsButton.exists || conversationsButton.waitForExistence(timeout: 10) {
+            conversationsButton.tap()
+        }
         return try ConversationsPage()
     }
 
@@ -77,9 +95,9 @@ class FirstTimePage: PageModel {
     }
 
     private func dismissSavePasswordAlertIfPresent() {
-        if savePasswordSheet.waitForExistence(timeout: 2) {
+        if savePasswordSheet.waitForExistence(timeout: 4) {
             notNowOptionOnSavePasswordSheet.tap()
-            _ = savePasswordSheet.waitToDisappear(timeout: 2)
+            _ = savePasswordSheet.waitToDisappear(timeout: 4)
         }
     }
 }

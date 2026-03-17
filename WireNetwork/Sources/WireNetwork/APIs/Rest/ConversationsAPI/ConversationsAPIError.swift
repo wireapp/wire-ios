@@ -17,7 +17,7 @@
 //
 
 /// Errors originating from `ConversationsAPI`.
-public enum ConversationsAPIError: Error {
+public enum ConversationsAPIError: Error, Equatable {
 
     /// Failure if functionality has not been implemented.
     case notImplemented
@@ -80,7 +80,7 @@ public enum ConversationsAPIError: Error {
     case unreachableBackends
 
     /// Insufficient authorizations
-    case insufficienAuthorization
+    case insufficientAuthorization
 
     /// Insufficient permissions
     case insufficientPermissions

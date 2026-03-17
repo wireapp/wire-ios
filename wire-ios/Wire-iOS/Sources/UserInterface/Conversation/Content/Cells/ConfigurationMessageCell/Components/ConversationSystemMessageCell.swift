@@ -29,6 +29,13 @@ final class ConversationSystemMessageCell<
         let icon: UIImage?
         let attributedText: NSAttributedString?
         let showLine: Bool
+
+        /// If `true`, allows to set the link style with the attributes in `attributedText`,
+        /// rather than via `linkTextAttributes`.
+        var resetLinkStyleForOverride: Bool = false
+
+        /// Overrides the background color for the whole cell.
+        var backgroundColor: UIColor?
     }
 
     // MARK: - Configuration
@@ -37,6 +44,14 @@ final class ConversationSystemMessageCell<
         lineView.isHidden = !object.showLine
         imageView.image = object.icon
         attributedText = object.attributedText
+
+        if object.resetLinkStyleForOverride {
+            textLabel.linkTextAttributes = [:]
+        }
+
+        if let bgColor = object.backgroundColor {
+            backgroundColor = bgColor
+        }
     }
 
 }

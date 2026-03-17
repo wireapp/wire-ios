@@ -494,6 +494,7 @@ extension WireCallCenterV3 {
                   in: context
               ),
               conversation.conversationType == .oneOnOne,
+              isSFTEnabledForOneToOneCalls(context: context),
               callSnapshots[conversationId]?.callState == .established
         else {
             return false
@@ -517,11 +518,14 @@ extension WireCallCenterV3 {
         previousParticipants: [AVSCallMember],
         newParticipants: [AVSCallMember]
     ) -> Bool {
-        /// We assume that the 2nd participant is the other user, and if the other user's audio state is connecting, the
-        /// call should end.
+        /// We assume that the 2nd participant is the other user.
+        /// If the other user's audio state changes from `established` to `connecting`,
+        /// it means the call connection was dropped and the call should be ended.
+        ///  https://wearezeta.atlassian.net/wiki/spaces/PAD/pages/1314750477/2024-07-29+1+1+calls+over+SFT
         guard
             previousParticipants.count == 2,
             newParticipants.count == 2,
+            previousParticipants[1].audioState == .established,
             newParticipants[1].audioState == .connecting
         else {
             return false
@@ -749,6 +753,10 @@ public extension WireCallCenterV3 {
             let parentGroupID = conversation.mlsGroupID,
             let syncContext = conversation.managedObjectContext?.zm_sync
         else {
+            WireLogger.calling.error(
+                "MLS conference setup failed: missing required data",
+                attributes: .safePublic
+            )
             onMLSConferenceFailure(id: conversationID)
             throw Failure.failedToSetupMLSConference
         }
@@ -758,6 +766,10 @@ public extension WireCallCenterV3 {
                 let self,
                 let mlsService = syncContext.mlsService
             else {
+                WireLogger.calling.error(
+                    "MLS conference setup failed: service unavailable",
+                    attributes: .safePublic
+                )
                 self?.onMLSConferenceFailure(id: conversationID)
                 return
             }
@@ -769,6 +781,10 @@ public extension WireCallCenterV3 {
                         parentQualifiedID: parentQualifiedID,
                         parentID: parentGroupID
                     )
+                    WireLogger.calling.info(
+                        "MLS conference: subgroup joined successfully",
+                        attributes: .safePublic
+                    )
 
                     try avsCallHandler()
 
@@ -776,6 +792,10 @@ public extension WireCallCenterV3 {
                     let initialConferenceInfo = try await mlsService.generateConferenceInfo(
                         parentGroupID: parentGroupID,
                         subconversationGroupID: subgroupID
+                    )
+                    WireLogger.calling.info(
+                        "MLS conference: conference info generated successfully",
+                        attributes: .safePublic
                     )
 
                     self.avsWrapper.setMLSConferenceInfo(
@@ -801,7 +821,11 @@ public extension WireCallCenterV3 {
                                 )
                             }
                         } catch {
-                            WireLogger.calling.error("Error updating conference info: \(error)")
+                            let nsError = error as NSError
+                            WireLogger.calling.error(
+                                "Error updating conference info: \(nsError.safeForLoggingDescription)",
+                                attributes: .safePublic
+                            )
                         }
                     }
 
@@ -825,9 +849,12 @@ public extension WireCallCenterV3 {
                         self.callSnapshots[conversationID] = snapshot
                     }
                 } catch {
-                    Self.logger.error("failed to set up MLS conference: \(String(describing: error))")
+                    let nsError = error as NSError
+                    WireLogger.calling.error(
+                        "failed to set up MLS conference: \(nsError.safeForLoggingDescription)",
+                        attributes: .safePublic
+                    )
                     self.onMLSConferenceFailure(id: conversationID)
-                    assertionFailure(String(reflecting: error))
                 }
             }
         }
@@ -835,6 +862,11 @@ public extension WireCallCenterV3 {
 
     private func onMLSConferenceFailure(id: AVSIdentifier) {
         uiMOC?.perform { [weak self] in
+            // Notify to close calling UI
+            self?.handle(
+                callState: .terminating(reason: .unknown),
+                conversationId: id
+            )
             self?.closeCall(conversationId: id, reason: .unknown)
         }
     }
@@ -1195,8 +1227,7 @@ extension WireCallCenterV3 {
     private func getAVSConversationTypeForOneOnOne(_ conversation: ZMConversation) -> AVSConversationType {
         guard
             let context = conversation.managedObjectContext,
-            let featureConfig = LegacyFeatureRepository(context: context).fetchConferenceCalling().config,
-            featureConfig.useSFTForOneToOneCalls
+            isSFTEnabledForOneToOneCalls(context: context)
         else {
             return .oneToOne
         }
@@ -1207,6 +1238,16 @@ extension WireCallCenterV3 {
         case .proteus, .mixed:
             return .conference
         }
+    }
+
+    private func isSFTEnabledForOneToOneCalls(context: NSManagedObjectContext) -> Bool {
+        guard let config = LegacyFeatureRepository(context: context)
+            .fetchConferenceCalling()
+            .config
+        else {
+            return false
+        }
+        return config.useSFTForOneToOneCalls
     }
 
 }

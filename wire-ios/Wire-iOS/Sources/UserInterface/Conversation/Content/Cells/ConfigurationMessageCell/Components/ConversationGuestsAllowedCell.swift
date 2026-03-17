@@ -113,7 +113,7 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
 
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
-            stackView.topAnchor.constraint(equalTo: topAnchor),
+            stackView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: margins.right),
             bottomAnchor.constraint(equalTo: stackView.bottomAnchor)
         ])

@@ -585,53 +585,6 @@ public class MockEnrollE2EICertificateUseCaseProtocol: EnrollE2EICertificateUseC
 
 }
 
-public class MockEventDecoderProtocol: EventDecoderProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - decryptAndStoreEvents
-
-    public var decryptAndStoreEventsPublicKeys_Invocations: [(events: [ZMUpdateEvent], publicKeys: EARPublicKeys?)] = []
-    public var decryptAndStoreEventsPublicKeys_MockError: Error?
-    public var decryptAndStoreEventsPublicKeys_MockMethod: (([ZMUpdateEvent], EARPublicKeys?) async throws -> [ZMUpdateEvent])?
-    public var decryptAndStoreEventsPublicKeys_MockValue: [ZMUpdateEvent]?
-
-    public func decryptAndStoreEvents(_ events: [ZMUpdateEvent], publicKeys: EARPublicKeys?) async throws -> [ZMUpdateEvent] {
-        decryptAndStoreEventsPublicKeys_Invocations.append((events: events, publicKeys: publicKeys))
-
-        if let error = decryptAndStoreEventsPublicKeys_MockError {
-            throw error
-        }
-
-        if let mock = decryptAndStoreEventsPublicKeys_MockMethod {
-            return try await mock(events, publicKeys)
-        } else if let mock = decryptAndStoreEventsPublicKeys_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `decryptAndStoreEventsPublicKeys`")
-        }
-    }
-
-    // MARK: - processStoredEvents
-
-    public var processStoredEventsWithCallEventsOnly_Invocations: [(privateKeys: EARPrivateKeys?, callEventsOnly: Bool, block: ([ZMUpdateEvent]) async -> Void)] = []
-    public var processStoredEventsWithCallEventsOnly_MockMethod: ((EARPrivateKeys?, Bool, @escaping ([ZMUpdateEvent]) async -> Void) async -> Void)?
-
-    public func processStoredEvents(with privateKeys: EARPrivateKeys?, callEventsOnly: Bool, _ block: @escaping ([ZMUpdateEvent]) async -> Void) async {
-        processStoredEventsWithCallEventsOnly_Invocations.append((privateKeys: privateKeys, callEventsOnly: callEventsOnly, block: block))
-
-        guard let mock = processStoredEventsWithCallEventsOnly_MockMethod else {
-            fatalError("no mock for `processStoredEventsWithCallEventsOnly`")
-        }
-
-        await mock(privateKeys, callEventsOnly, block)
-    }
-
-}
-
 public class MockIncrementalSyncObserverProtocol: IncrementalSyncObserverProtocol {
 
     // MARK: - Life cycle
@@ -1302,54 +1255,6 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
         }
 
         try await mock(clients, apiVersion)
-    }
-
-}
-
-public class MockSyncProgress: SyncProgress {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-    // MARK: - currentSyncPhase
-
-    public var currentSyncPhase: SyncPhase {
-        get { return underlyingCurrentSyncPhase }
-        set(value) { underlyingCurrentSyncPhase = value }
-    }
-
-    public var underlyingCurrentSyncPhase: SyncPhase!
-
-
-    // MARK: - finishCurrentSyncPhase
-
-    public var finishCurrentSyncPhasePhase_Invocations: [SyncPhase] = []
-    public var finishCurrentSyncPhasePhase_MockMethod: ((SyncPhase) -> Void)?
-
-    public func finishCurrentSyncPhase(phase: SyncPhase) {
-        finishCurrentSyncPhasePhase_Invocations.append(phase)
-
-        guard let mock = finishCurrentSyncPhasePhase_MockMethod else {
-            fatalError("no mock for `finishCurrentSyncPhasePhase`")
-        }
-
-        mock(phase)
-    }
-
-    // MARK: - failCurrentSyncPhase
-
-    public var failCurrentSyncPhasePhase_Invocations: [SyncPhase] = []
-    public var failCurrentSyncPhasePhase_MockMethod: ((SyncPhase) -> Void)?
-
-    public func failCurrentSyncPhase(phase: SyncPhase) {
-        failCurrentSyncPhasePhase_Invocations.append(phase)
-
-        guard let mock = failCurrentSyncPhasePhase_MockMethod else {
-            fatalError("no mock for `failCurrentSyncPhasePhase`")
-        }
-
-        mock(phase)
     }
 
 }

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 import WireNetwork
 
 // sourcery: AutoMockable
@@ -28,6 +29,6 @@ public protocol PullPendingUpdateEventsSyncProtocol {
     /// and store them locally.
     /// - Returns: Stream of UpdateEvent's batch
     @discardableResult
-    func pull() async throws -> AsyncStream<[UpdateEvent]>
+    func pull(publicKeys: EARPublicKeys?) async throws -> AsyncStream<[UpdateEvent]>
 
 }

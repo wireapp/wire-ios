@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
+import WireNetwork
+
 public enum SetAllowGuestsAndAppsUseCaseError: Error {
 
     case invalidOperation
@@ -30,41 +33,44 @@ public protocol SetAllowGuestAndAppsUseCaseProtocol {
     func invoke(
         conversation: ZMConversation,
         allowGuests: Bool,
-        allowApps: Bool,
-        completion: @escaping (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void
-    )
+        allowApps: Bool
+    ) async throws
+
 }
 
 struct SetAllowGuestAndAppsUseCase: SetAllowGuestAndAppsUseCaseProtocol {
 
+    let api: any ConversationsAPI
+
     func invoke(
         conversation: ZMConversation,
         allowGuests: Bool,
-        allowApps: Bool,
-        completion: @escaping (Result<Void, SetAllowGuestsAndAppsUseCaseError>) -> Void
-    ) {
-        guard conversation.canManageGuestsAccess else {
-            return completion(.failure(.invalidOperation))
-        }
+        allowApps: Bool
+    ) async throws {
 
         guard let context = conversation.managedObjectContext else {
-            return completion(.failure(.contextUnavailable))
+            throw SetAllowGuestsAndAppsUseCaseError.contextUnavailable
         }
 
-        var action = SetAllowGuestsAndAppsAction(
+        let (canManageGuestsAccess, conversationID) = await context.perform {
+            let canManageGuestsAccess = conversation.canManageGuestsAccess
+            let conversationID = WireFoundation.QualifiedID(conversation.qualifiedID!)
+            return (canManageGuestsAccess, conversationID)
+        }
+
+        guard canManageGuestsAccess else {
+            throw SetAllowGuestsAndAppsUseCaseError.invalidOperation
+        }
+
+        try await api.updateConversationAccess(
+            conversationID: conversationID,
             allowGuests: allowGuests,
-            allowApps: allowApps,
-            conversationID: conversation.objectID
+            allowApps: allowApps
         )
 
-        action.perform(in: context.notificationContext) { result in
-            switch result {
-            case .success:
-                completion(.success(()))
-            case let .failure(error):
-                completion(.failure(.networkError(error)))
-            }
-
+        await context.perform {
+            conversation.allowApps = allowApps
+            conversation.allowGuests = allowGuests
         }
     }
 }

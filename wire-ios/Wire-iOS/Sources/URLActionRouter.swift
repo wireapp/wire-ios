@@ -199,7 +199,7 @@ extension URLActionRouter: PresentationDelegate {
         typealias UrlAction = L10n.Localizable.UrlAction
         switch action {
         case .connectBot:
-            presentConfirmationAlert(
+            presentAlert(
                 title: UrlAction.title,
                 message: UrlAction.ConnectToBot.message,
                 decisionHandler: decisionHandler
@@ -208,17 +208,50 @@ extension URLActionRouter: PresentationDelegate {
             if let error = sessionManager?.canSwitchBackend() {
                 let localizedError = mapToLocalizedError(error)
                 presentLocalizedErrorAlert(localizedError)
+                decisionHandler(false)
+                return
             }
 
             if DeveloperFlag.useWireAuthentication.isOn {
-                decisionHandler(SecurityFlags.customBackend.isEnabled)
+                if let sessionManager, sessionManager.activeUserSession?.isLoggedIn == true {
+                    // allows switching backend from current session
+                    sessionManager.addAccount {
+                        decisionHandler(SecurityFlags.customBackend.isEnabled)
+                    }
+                } else {
+                    decisionHandler(SecurityFlags.customBackend.isEnabled)
+                }
+
             } else {
                 // Switching backend is handled below, so pass false here.
                 decisionHandler(false)
                 switchBackend(configURL: url)
             }
+        case .openUserProfile:
+            openUserProfileIfNeeded(decisionHandler)
         default:
             decisionHandler(true)
+        }
+    }
+
+    private func openUserProfileIfNeeded(_ decisionHandler: @escaping (Bool) -> Void) {
+        guard let userSession = sessionManager?.activeUserSession, !userSession.isLocked else {
+            decisionHandler(false)
+            return
+        }
+        typealias UrlAction = L10n.Localizable.UrlAction
+        Task {
+            let shouldShowUserProfile = await userSession.isSimplifiedUserConnectionRequestQRCodeEnabled()
+            await MainActor.run { [shouldShowUserProfile] in
+                if shouldShowUserProfile {
+                    decisionHandler(shouldShowUserProfile)
+                } else {
+                    presentAlertWarning(
+                        message: UrlAction.UserProfileQrFeatureFlag.message,
+                        decisionHandler: decisionHandler
+                    )
+                }
+            }
         }
     }
 
@@ -229,7 +262,7 @@ extension URLActionRouter: PresentationDelegate {
     ) {
         switch action {
         case .joinConversation:
-            presentConfirmationAlert(
+            presentAlert(
                 title: nil,
                 message: L10n.Localizable.UrlAction.JoinConversation.Confirmation.message(message),
                 decisionHandler: decisionHandler
@@ -261,19 +294,28 @@ extension URLActionRouter: PresentationDelegate {
         NotificationCenter.default.post(name: .companyLoginDidFinish, object: self)
     }
 
-    private func presentConfirmationAlert(title: String?, message: String, decisionHandler: @escaping (Bool) -> Void) {
-
-        let alert = UIAlertController(
-            title: title,
-            message: message,
-            preferredStyle: .alert
-        )
+    private func presentAlert(
+        title: String?,
+        message: String,
+        decisionHandler: @escaping (Bool) -> Void
+    ) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
         let agreeAction = UIAlertAction.confirm(style: .default) { _ in decisionHandler(true) }
-        alert.addAction(agreeAction)
-
         let cancelAction = UIAlertAction.cancel { decisionHandler(false) }
-        alert.addAction(cancelAction)
+        [agreeAction, cancelAction].forEach { alert.addAction($0) }
+
+        presentAlert(alert)
+    }
+
+    private func presentAlertWarning(
+        message: String,
+        decisionHandler: @escaping (Bool) -> Void
+    ) {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+
+        let agreeAction = UIAlertAction.confirm(style: .default) { _ in decisionHandler(false) }
+        alert.addAction(agreeAction)
 
         presentAlert(alert)
     }

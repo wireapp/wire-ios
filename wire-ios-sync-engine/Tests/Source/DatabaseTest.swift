@@ -40,10 +40,6 @@ class DatabaseTest: ZMTBaseTest {
         coreDataStack!.syncContext
     }
 
-    var searchMOC: NSManagedObjectContext {
-        coreDataStack!.searchContext
-    }
-
     var sharedContainerURL: URL? {
         let bundleIdentifier = Bundle.main.bundleIdentifier
         let groupIdentifier = "group." + bundleIdentifier!
@@ -117,7 +113,7 @@ class DatabaseTest: ZMTBaseTest {
 
     func performPretendingUIMocIsSyncMoc(_ block: () -> Void) {
         uiMOC.resetContextType()
-        uiMOC.markAsSyncContext()
+        uiMOC.performMarkAsSyncContext()
         block()
         uiMOC.resetContextType()
         uiMOC.markAsUIContext()

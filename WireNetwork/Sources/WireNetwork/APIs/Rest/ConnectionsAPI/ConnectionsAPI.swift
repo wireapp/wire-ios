@@ -24,5 +24,23 @@ public protocol ConnectionsAPI {
 
     /// Fetch all connections .
 
-    func getConnections() async throws -> PayloadPager<[Connection]>
+    func getConnections() throws -> PayloadPager<[Connection]>
+
+    /// Send connection request to user
+    /// - Parameters:
+    ///   - domain: domain info
+    ///   - userID: userID
+
+    #if DEBUG
+        func sendConnectionRequest(domain: String, userId: String) async throws
+    #endif
+
+    /// Accept connection request from user
+    /// - Parameters:
+    ///   - domain: domain info
+    ///   - userID: userID
+
+    #if DEBUG
+        func acceptConnectionRequest(domain: String, userId: String) async throws
+    #endif
 }

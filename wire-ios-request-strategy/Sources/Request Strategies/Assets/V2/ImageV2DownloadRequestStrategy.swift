@@ -119,7 +119,7 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
                     )
                 }
 
-            case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14:
+            case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10, .v11, .v12, .v13, .v14, .v15:
                 // v2 assets are legacy and no longer supported in API v2
                 return nil
             }

@@ -129,4 +129,9 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
         dataSource.loadMessages(forceRecalculate: true)
     }
 
+    func conversationMessageContentDidChangeSize() {
+        tableView.beginUpdates()
+        tableView.endUpdates()
+    }
+
 }

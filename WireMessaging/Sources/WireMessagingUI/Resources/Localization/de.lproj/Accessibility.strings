@@ -25,19 +25,24 @@
 
 // MARK: Channel History
 "conversation.create.channel.back" = "Zurück zur Übersicht der neuen Unterhaltung";
-"conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";
+"conversation.creationForm.channelHistory.upgradeBanner.close" = "Upgrade-Banner schließen";
 
 // MARK: Conversation Files View
 "conversation.wireCells.files.close" = "Dateien schließen";
 "conversation.wireCells.files.loadMore.title" = "Weitere Objekte laden";
 "conversation.wireCells.files.noData.title" = "Es gibt noch keine Dateien oder Ordner";
 "conversation.wireCells.files.noData.message" = "Hier finden Sie alle Dateien und Ordner, die in dieser Unterhaltung geteilt wurden.";
+"conversation.wireCells.files.noSearchResults.title" = "Keine Ergebnisse gefunden";
+"conversation.wireCells.files.noSearchResults.message" = "Versuchen Sie, Ihre Suche anzupassen.";
 "conversation.wireCells.files.pendingCells.title" = "Dateien werden geladen";
 "conversation.wireCells.files.pendingCells.message" = "Ihre Dokumente und Mediendateien werden hier verfügbar sein, sobald wir alle Dateien und Ordner hochgeladen haben.";
 "conversation.wireCells.allFiles.noData.message" = "Hier finden Sie alle Dateien und Ordner, die Sie in Ihren Unterhaltungen gemeinsam nutzen.";
 "conversation.wireCells.files.error.title" = "Dateien werden nicht geladen";
-"conversation.wireCells.files.error.message" = "Ihre Dateien und Ordner konnten nicht geladen werden. Bitte laden Sie sie erneut.";
-"conversation.wireCells.files.error.reload" = "Erneut laden";
+"conversation.wireCells.files.error.message" = "Beim Laden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
+"conversation.wireCells.files.error.retry" = "Wiederholen";
+"conversation.wireCells.files.error.noConnection.title" = "Dateien können nicht geladen werden";
+"conversation.wireCells.files.error.noConnection.message" = "Ihre Datei-Liste konnte nicht geladen werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.";
+"conversation.wireCells.files.error.noConnection.retry" = "Erneut versuchen";
 "conversation.wireCells.files.moreActionsButton" = "Mehr";
 "conversation.wireCells.recycleBin.noData.message" = "Hier finden Sie alle gelöschten Dateien und Ordner.";
 "conversation.wireCells.files.moveToFolder.move" = "Hierhin verschieben";
@@ -45,3 +50,7 @@
 // MARK: - File Tags View
 "conversation.wireCells.tags.removeTag" = "Tag entfernen {0}";
 "conversation.wireCells.tags.addTag" = "Tag hinzufügen {0}";
+
+// MARK: - Share Link View
+"conversation.wireCells.shareLink.hidePassword" = "Passwort ausblenden";
+"conversation.wireCells.shareLink.showPassword" = "Passwort anzeigen";

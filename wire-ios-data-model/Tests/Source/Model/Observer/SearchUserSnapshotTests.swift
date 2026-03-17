@@ -225,11 +225,12 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         user: ZMUser? = nil
     ) -> ZMSearchUser {
         ZMSearchUser(
-            contextProvider: coreDataStack,
+            viewContext: coreDataStack.viewContext,
             name: name,
             handle: handle,
             accentColor: accentColor,
             remoteIdentifier: remoteIdentifier,
+            providerIdentifier: nil,
             user: user,
             searchUsersCache: nil
         )

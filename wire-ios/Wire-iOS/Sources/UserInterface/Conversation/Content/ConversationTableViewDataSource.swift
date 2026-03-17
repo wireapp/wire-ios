@@ -599,7 +599,8 @@ final class ConversationTableViewDataSource: NSObject {
 
         // 3. Get the index path of the message that should stay displayed
         if let newestMessageBeforeReload,
-           let sectionIndex = index(of: newestMessageBeforeReload) {
+           let sectionIndex = index(of: newestMessageBeforeReload),
+           sectionIndex < tableView.numberOfSections {
 
             // 4. Get the frame of that message
             let indexPathRect = tableView.rect(forSection: sectionIndex)

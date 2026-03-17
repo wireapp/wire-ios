@@ -104,7 +104,7 @@ public enum ConversationAccessRole: String, Equatable {
 /// The issue:
 ///
 /// The access_role specifies who can be in the conversation. When “guests and services” is allowed,
-/// then the value is non_activated (indicating the anyone can be in the conversation).
+/// then the value is non_activated (indicating that anyone can be in the conversation).
 /// When “guests and services” is not allowed, then the value is team, indicating that only team member can be in the
 /// conversation.
 /// These values do not distinguish between human guests and non-human services.

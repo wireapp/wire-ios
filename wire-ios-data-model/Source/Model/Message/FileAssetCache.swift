@@ -945,14 +945,19 @@ private struct FileCache: Cache {
         movingOriginal: Bool,
         createdAt creationDate: Date = Date()
     ) {
-
         guard fromUrl.scheme == NSURLFileScheme else { fatal("Can't save remote URL to cache: \(fromUrl)") }
 
         let toUrl = URLForKey(key)
+
+        let destinationFolder = toUrl.deletingLastPathComponent()
+        if !FileManager.default.fileExists(atPath: destinationFolder.path) {
+            try? FileManager.default.createDirectory(at: destinationFolder, withIntermediateDirectories: true)
+        }
+
         let coordinator = NSFileCoordinator()
 
         var error: NSError?
-        coordinator.coordinate(writingItemAt: toUrl, options: .forReplacing, error: &error) { url in
+        coordinator.coordinate(writingItemAt: toUrl, options: .forMoving, error: &error) { url in
             do {
                 if movingOriginal {
                     try FileManager.default.moveItem(at: fromUrl, to: url)
@@ -973,7 +978,7 @@ private struct FileCache: Cache {
         }
 
         if let error {
-            WireLogger.assets.error("Failed to copy asset data from \(fromUrl)  for key = \(key): \(error)")
+            WireLogger.assets.error("Failed to copy asset data from \(fromUrl) for key = \(key): \(error)")
         }
     }
 
@@ -1012,8 +1017,13 @@ private struct FileCache: Cache {
     fileprivate func URLForKey(_ key: String) -> URL {
         guard key != ".", key != ".." else { fatal("Can't use \(key) as cache key") }
         var safeKey = key
-        for c in ":\\/%\"" { // see https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
-            safeKey = safeKey.replacingOccurrences(of: "\(c)", with: "_")
+
+        /// see https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
+        /// however we allow the slash character `/` to be able to have directories in the key
+        let reservedCharacters = ":\\%\""
+
+        for character in reservedCharacters {
+            safeKey = safeKey.replacingOccurrences(of: "\(character)", with: "_")
         }
         return cacheFolderURL.appendingPathComponent(safeKey)
     }

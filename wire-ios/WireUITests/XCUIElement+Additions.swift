@@ -58,4 +58,14 @@ extension XCUIElement {
         let result = XCTWaiter().wait(for: [appearExpectation], timeout: timeout)
         return result == .completed
     }
+
+    @discardableResult
+    func waitAndTap(timeout: TimeInterval = 5) -> Bool {
+        let predicate = NSPredicate(format: "exists == true && isHittable == true")
+        let exp = XCTNSPredicateExpectation(predicate: predicate, object: self)
+        let result = XCTWaiter().wait(for: [exp], timeout: timeout)
+        guard result == .completed else { return false }
+        tap()
+        return true
+    }
 }

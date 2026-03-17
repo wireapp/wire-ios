@@ -92,7 +92,7 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
     ) async {
         let mockSelfUser = MockUserType.createSelfUser(name: "Alice", inTeam: isTeamMember ? UUID() : nil)
         let mockUserSession = UserSessionMock(mockUser: mockSelfUser)
-        mockUserSession.isWireCellsEnabled = true
+        mockUserSession.isWireDriveEnabled = true
         mockUserSession.mlsFeature = .init(
             status: .enabled,
             config: .init(

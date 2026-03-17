@@ -40,6 +40,7 @@ final class WireAuthenticationTests: WireUITestCase {
             .enterEmailOrSSO(LoginCredentials.email)
 
         XCTAssertEqual(app.textFields["Enter email"].value as? String, LoginCredentials.email)
+        XCTAssertTrue(loginPage.nextButton.waitForExistence(timeout: 2.0))
         XCTAssertFalse(loginPage.nextButton.isEnabled, "nextButton should be disabled if no password")
     }
 }

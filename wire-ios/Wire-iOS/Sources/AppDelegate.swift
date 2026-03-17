@@ -345,23 +345,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(
         _ application: UIApplication,
-        performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-    ) {
-        WireLogger.appDelegate.info("application:performFetchWithCompletionHandler:", attributes: .safePublic)
-
-        guard let appRootRouter else {
-            WireLogger.appDelegate.info("no appRouter, calling completionHandler", attributes: .safePublic)
-            completionHandler(.noData)
-            return
-        }
-
-        appRootRouter.performWhenAuthenticated {
-            ZMUserSession.shared()?.application(application, performFetchWithCompletionHandler: completionHandler)
-        }
-    }
-
-    func application(
-        _ application: UIApplication,
         handleEventsForBackgroundURLSession identifier: String,
         completionHandler: @escaping () -> Void
     ) {
@@ -412,9 +395,11 @@ private extension AppDelegate {
     }
 
     private func createAppRootRouter() {
+        let defaultEnvironment = fetchDefaultEnvironment()
+
         let sessionManager: SessionManager
         do {
-            sessionManager = try createSessionManager()
+            sessionManager = try createSessionManager(defaultEnvironment: defaultEnvironment)
         } catch {
             fatalError("sessionManager is not created")
         }
@@ -426,7 +411,7 @@ private extension AppDelegate {
         }
 
         appRootRouter = AppRootRouter(
-            defaultEnvironment: fetchDefaultEnvironment(),
+            defaultEnvironment: defaultEnvironment,
             mainWindow: mainWindow,
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator,
@@ -437,7 +422,7 @@ private extension AppDelegate {
         )
     }
 
-    private func createSessionManager() throws -> SessionManager {
+    private func createSessionManager(defaultEnvironment: BackendEnvironment2) throws -> SessionManager {
         let infoDictionary = Bundle.main.infoDictionary
 
         guard let currentAppVersion = infoDictionary?["CFBundleShortVersionString"] as? String  else {
@@ -481,6 +466,7 @@ private extension AppDelegate {
             mediaManager: mediaManager,
             delegate: appStateCalculator,
             application: UIApplication.shared,
+            defaultEnvironment: defaultEnvironment,
             environment: BackendEnvironment.shared,
             configuration: configuration,
             detector: jailbreakDetector,

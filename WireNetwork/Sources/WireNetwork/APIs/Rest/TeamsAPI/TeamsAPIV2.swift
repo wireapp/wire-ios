@@ -44,6 +44,46 @@ class TeamsAPIV2: TeamsAPIV1 {
             .parse(code: response.statusCode, data: data)
     }
 
+    // MARK: - Get team members for ids
+
+    override func getTeamMembers(
+        of teamID: Team.ID,
+        for userIDs: [UUID]
+    ) async throws -> [TeamMember] {
+
+        let maxResults = 2000 // backend-side limit
+        guard userIDs.count <= maxResults else {
+            throw TeamsAPIError.invalidRequest
+        }
+
+        let path = "\(basePath(for: teamID))/get-members-by-ids-using-post"
+
+        let body = try JSONEncoder.defaultEncoder.encode(
+            GetMembersByIDsRequestV2(userIDs: userIDs)
+        )
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withQueryItem(name: "maxResults", value: "\(maxResults)")
+            .withBody(body, contentType: .json)
+            .withAcceptType(.json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            // The specs mention, that the backend currently doesn't paginate for this endpoint.
+            .success(code: .ok, type: TeamMemberListResponseV0.self)
+            .failure(code: .badRequest, error: TeamsAPIError.invalidQueryParmeter)
+            .failure(code: .forbidden, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
+            .failure(code: .notFound, error: TeamsAPIError.teamNotFound)
+            .parse(code: response.statusCode, data: data)
+
+    }
+
 }
 
 struct TeamResponseV2: Decodable, ToAPIModelConvertible {
@@ -79,6 +119,16 @@ struct TeamResponseV2: Decodable, ToAPIModelConvertible {
             logoKey: iconKey,
             splashScreenID: splashScreen
         )
+    }
+
+}
+
+private struct GetMembersByIDsRequestV2: Encodable {
+
+    var userIDs: [UUID]
+
+    enum CodingKeys: String, CodingKey {
+        case userIDs = "user_ids"
     }
 
 }

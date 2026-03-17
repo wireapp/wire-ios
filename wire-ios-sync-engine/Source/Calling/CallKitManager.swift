@@ -198,9 +198,16 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
             return
         }
 
-        delegate?.lookupConversation(by: callHandle) { result in
-            guard case let .success(conversation) = result else { return }
-            completion(conversation)
+        delegate?.lookupConversation(by: callHandle) { [logger] result in
+            do {
+                let conversation = try result.get()
+                completion(conversation)
+            } catch let error as NSError {
+                logger.error(
+                    "failed to find conversation associated with contacts: \(error.safeForLoggingDescription)",
+                    attributes: .safePublic
+                )
+            }
         }
     }
 
@@ -365,10 +372,10 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         callerName: String,
         hasVideo: Bool
     ) {
-        logger.info("report incoming call preemptively")
+        logger.info("report incoming call preemptively", attributes: .safePublic)
 
         guard !callRegister.callExists(for: handle) else {
-            logger.critical("fail: report incoming call preemptively: call doesn't exist")
+            logger.critical("fail: report incoming call preemptively: call doesn't exist", attributes: .safePublic)
             return
         }
 
@@ -401,10 +408,10 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         handle: CallHandle,
         reason: CXCallEndedReason
     ) {
-        logger.info("report call ended preemptively")
+        logger.info("report call ended preemptively", attributes: .safePublic)
 
         guard let call = callRegister.lookupCall(by: handle) else {
-            logger.critical("fail: report call ended preemptively: call doesn't exist")
+            logger.critical("fail: report call ended preemptively: call doesn't exist", attributes: .safePublic)
             return
         }
 

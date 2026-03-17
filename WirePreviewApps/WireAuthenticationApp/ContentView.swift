@@ -32,6 +32,7 @@ struct ContentView: View {
     var body: some View {
         WireAuthenticationAssembly()
             .assemble(
+                authenticationType: .new,
                 environmentType: configuration.defaultBackendEnvironment,
                 environment: BackendEnvironment2(
                     title: "Mock backend",
@@ -79,7 +80,6 @@ struct ContentView: View {
                         ]
                     )
                 ),
-                isMultibackendEnabled: true,
                 registrationAnalyticsTracker: MockPersonalAccountCreationAnalyticsTracker()
             ).view
     }

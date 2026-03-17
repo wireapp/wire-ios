@@ -717,17 +717,6 @@ static NSString *const PrimaryKey = @"primaryKey";
 @end
 
 
-@implementation ZMUser (Utilities)
-
-+ (ZMUser<ZMEditableUserType> *)selfUserInUserSession:(id<ZMContextProvider>)session
-{
-    VerifyReturnNil(session != nil);
-    return [self selfUserInContext:session.viewContext];
-}
-
-@end
-
-
 
 
 @implementation ZMUser (Editable)

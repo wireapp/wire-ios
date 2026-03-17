@@ -20,6 +20,7 @@ import XCTest
 
 final class PersonalUsersTests: WireUITestCase {
 
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8587
     @MainActor
     func testCritical_Register_asPersonalUser() async throws {
         let user = UserGenerator.generateUniqueUserInfo()
@@ -57,6 +58,7 @@ final class PersonalUsersTests: WireUITestCase {
         XCTAssertEqual(accountPage.getEmail(), user.email, "Email didn't contain \(user.email)")
     }
 
+    /// testiny:  https://app.testiny.io/IOS/testcases/tcf/1286/tc/8799
     @MainActor
     func testCritical_Login_asExistingPersonalUser() async throws {
         let user = try await userHelper.createPersonalUser()
@@ -69,6 +71,7 @@ final class PersonalUsersTests: WireUITestCase {
             .enterPassword(user.password)
     }
 
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8798
     @MainActor
     func testCritical_PersonalAccountLifecycle() async throws {
         let userA = try await userHelper.createPersonalUser()
@@ -88,7 +91,7 @@ final class PersonalUsersTests: WireUITestCase {
         _ = try userDetailsPage.sendConnectionRequest()
             .closeProfilePage()
             .closeNewConversationPage()
-            .openUserAccountPageForUser(with: userA.name)
+            .openUserProfilePage()
             .tapAddAccountOrTeamButton()
         let connectionRequestsPage = try app.loginUser(email: userB.email, password: userB.password)
             .acceptPopup(with: self)
@@ -104,7 +107,7 @@ final class PersonalUsersTests: WireUITestCase {
         let nameA = try XCTUnwrap(conversationsPage.getNameLabel())
         XCTAssertEqual(nameA, userA.name, "name didn't match \(userA.name)")
 
-        conversationsPage = try conversationsPage.openUserAccountPageForUser(with: userB.name)
+        conversationsPage = try conversationsPage.openUserProfilePage()
             .switchUserAccountForUser(withName: userA.name)
 
         let nameUserB = try XCTUnwrap(conversationsPage.getNameLabel())
@@ -132,5 +135,74 @@ final class PersonalUsersTests: WireUITestCase {
         let accountNameUserB = try XCTUnwrap(accountSettingsPage.getAccountName())
 
         XCTAssertNotEqual(accountNameUserA, accountNameUserB, "Account name didn't change after deleting")
+    }
+
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1389/tc/8869
+    @MainActor
+    func test_AddConversationAsFavourite() async throws {
+        let groupName = UserGenerator.generateRandomGroupName()
+        let (teamOwner, _, _, _) = try await userHelper
+            .registerTeam(
+                withMemberCount: 1,
+                groupName: groupName
+            )
+
+        let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup(with: self)
+            .longPressForMoreOptionOnConversation()
+            .markConversationAsFavourite()
+            .longPressForMoreOptionOnConversation()
+
+        XCTAssertTrue(
+            conversationsPage.removeFavouriteButtonOnMoreOptions.exists,
+            "Conversation not added to favourite as 'Remove from Favourites' not shown"
+        )
+    }
+
+    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1389/tc/8874
+    @MainActor
+    func test_FilterConversationByFavourite() async throws {
+        let groupName = UserGenerator.generateRandomGroupName()
+        let (teamOwner, _, _, _) = try await userHelper
+            .registerTeam(
+                withMemberCount: 1,
+                groupName: groupName
+            )
+
+        let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup(with: self)
+            .longPressForMoreOptionOnConversation()
+            .markConversationAsFavourite()
+            .filterConversationByFavourite()
+
+        let conversationsCell = conversationsPage.conversationCell
+
+        XCTAssertTrue(
+            conversationsPage.textFilteredByFavourites.exists,
+            "'Filtered by Favorites' label did not appear"
+        )
+
+        XCTAssertTrue(
+            conversationsCell.waitForExistence(timeout: 5),
+            "Favourite group conversation did not appear"
+        )
+
+        XCTAssertEqual(
+            conversationsCell.label,
+            groupName,
+            "Conversation cell label did not match groupName"
+        )
+
+        _ = try conversationsPage.filterConversationByOneOnOne()
+
+        XCTAssertFalse(
+            conversationsPage.conversationCell.exists,
+            "Favourite group conversation still appearing in OneOnOne conversations"
+        )
+
+        XCTAssertTrue(
+            conversationsPage.textFilteredByOneOnOne.exists,
+            "'Filtered by Favorites' label did not appear"
+        )
     }
 }

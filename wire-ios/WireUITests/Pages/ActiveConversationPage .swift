@@ -46,7 +46,11 @@ class ActiveConversationPage: PageModel {
     }
 
     var messageLabels: XCUIElementQuery {
-        app.textViews.matching(identifier: Locators.ActiveConversationPage.message.rawValue)
+        app.descendants(matching: .any).matching(identifier: Locators.ActiveConversationPage.message.rawValue)
+    }
+
+    var mentionButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.mentionButton.rawValue]
     }
 
     func getSenderName() -> String? {
@@ -54,11 +58,31 @@ class ActiveConversationPage: PageModel {
     }
 
     var conversationTitleButton: XCUIElement {
-        app.buttons[Locators.ActiveConversationPage.conversationTitleButton.rawValue]
+        app.buttons[Locators.ActiveConversationPage.conversationTitleButton.rawValue].firstMatch
     }
 
     var conversationDetailsButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.conversationDetailsButton.rawValue]
+    }
+
+    var selfDeletingMessageButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.ephemeralTimeSelectionButton.rawValue]
+    }
+
+    var imageCell: XCUIElement {
+        app.otherElements[Locators.ActiveConversationPage.imageCell.rawValue]
+    }
+
+    var labelSharedDriveIsOn: XCUIElement {
+        app.staticTexts[Locators.ActiveConversationPage.labelSharedDriveON.rawValue]
+    }
+
+    var sharedDriveButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.sharedDriveButton.rawValue]
+    }
+
+    var labelSelfDeletingMessageIsOFF: XCUIElement {
+        app.staticTexts[Locators.ActiveConversationPage.labelSelfDeletingMessagesOFF.rawValue]
     }
 
     func fetchMessages() -> [String] {
@@ -66,7 +90,9 @@ class ActiveConversationPage: PageModel {
         for i in 0 ..< messageLabels.count {
             let element = messageLabels.element(boundBy: i)
             if let value = element.value as? String {
-                messages.append(value)
+                // Normalize spaces inserted by UI
+                let normalized = value.replacingOccurrences(of: "\u{00A0}", with: " ")
+                messages.append(normalized)
             }
         }
         return messages
@@ -87,5 +113,22 @@ class ActiveConversationPage: PageModel {
         conversationTitleButton.tap()
         conversationDetailsButton.tap()
         return try ConversationDetailsPage()
+    }
+
+    func chooseUser(nameOfUser: String) {
+        let predicate = NSPredicate(
+            format: "identifier == %@ AND label == %@",
+            Locators.ActiveConversationPage.userCellName.rawValue,
+            nameOfUser
+        )
+        let user = app.staticTexts.matching(predicate).firstMatch
+        user.tap()
+    }
+
+    func mentionUserAndSendMessage(nameOfUser: String) throws -> ActiveConversationPage {
+        mentionButton.tap()
+        chooseUser(nameOfUser: nameOfUser)
+        sendButton.tap()
+        return self
     }
 }

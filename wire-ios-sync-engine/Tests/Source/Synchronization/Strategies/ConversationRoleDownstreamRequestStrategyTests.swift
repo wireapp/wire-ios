@@ -20,18 +20,12 @@
 
 final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
     var sut: ConversationRoleDownstreamRequestStrategy!
-    var mockSyncStatus: MockSyncStatus!
     var mockApplicationStatus: MockApplicationStatus!
 
     override func setUp() {
         super.setUp()
-        mockSyncStatus = MockSyncStatus(
-            managedObjectContext: syncMOC,
-            lastEventIDRepository: lastEventIDRepository,
-            isSyncV2Enabled: false
-        )
         mockApplicationStatus = MockApplicationStatus()
-        mockApplicationStatus.mockSynchronizationState = .slowSyncing
+        mockApplicationStatus.mockSynchronizationState = .unauthenticated
         sut = ConversationRoleDownstreamRequestStrategy(
             withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus
@@ -40,7 +34,6 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
 
     override func tearDown() {
         sut = nil
-        mockSyncStatus = nil
         mockApplicationStatus = nil
         super.tearDown()
     }

@@ -196,6 +196,11 @@ extension ZMUser: UserType {
         return mlsFeature.isEnabled && mlsFeature.config.protocolToggleUsers.contains(id)
     }
 
+    // MARK: - Bot specific properties
+
+    @NSManaged public var providerIdentifier: String?
+    @NSManaged public var serviceIdentifier: String?
+
 }
 
 public struct AssetKey {
@@ -262,11 +267,6 @@ extension ProfileImageSize: CustomDebugStringConvertible {
     }
 }
 
-extension ZMUser: ServiceUser {
-    @NSManaged public var providerIdentifier: String?
-    @NSManaged public var serviceIdentifier: String?
-}
-
 public extension Notification.Name {
     static let userDidRequestPreviewAsset = Notification.Name("UserDidRequestPreviewAsset")
     static let userDidRequestCompleteAsset = Notification.Name("UserDidRequestCompleteAsset")
@@ -300,6 +300,7 @@ public extension ZMUser {
     @NSManaged var usesCompanyLogin: Bool
 
     /// If `needsToRefetchLabels` is true we need to refetch the conversation labels (favorites & folders)
+    @available(*, deprecated, message: "not used, can be cleaned up")
     @NSManaged var needsToRefetchLabels: Bool
 
     /// The analytics identifier used for tag analytic events.

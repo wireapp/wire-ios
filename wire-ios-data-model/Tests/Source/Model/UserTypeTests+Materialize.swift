@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireDataModel
 
 final class UserTypeTests_Materialize: ModelObjectsTests {
@@ -97,12 +98,13 @@ final class UserTypeTests_Materialize: ModelObjectsTests {
         teamIdentifier: UUID?
     ) -> ZMSearchUser {
         ZMSearchUser(
-            contextProvider: coreDataStack,
+            viewContext: coreDataStack.viewContext,
             name: name.capitalized,
             handle: name.lowercased(),
             accentColor: .amber,
             remoteIdentifier: remoteIdentifier,
             teamIdentifier: teamIdentifier,
+            providerIdentifier: nil,
             searchUsersCache: nil
         )
     }

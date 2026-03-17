@@ -38,7 +38,7 @@ public enum ConversationAccessRole: Sendable {
 
 }
 
-enum ConversationAccessRoleV0: String, Sendable, Decodable, ToAPIModelConvertible {
+enum ConversationAccessRoleV0: String, Sendable, Codable, ToAPIModelConvertible {
     case teamMember = "team_member"
     case nonTeamMember = "non_team_member"
     case guest

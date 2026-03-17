@@ -43,4 +43,13 @@ public final class StoredUpdateEventEnvelope: NSManagedObject {
 
     @NSManaged public var sortIndex: Int64
 
+    /// Whether the event envelope is encrypted at rest
+
+    @NSManaged public var isEncrypted: Bool
+
+    /// Whether the event envelope should be accessible in the background, with secondary encryption keys.
+    /// Only applies to envelopes encrypted at rest.
+
+    @NSManaged public var isBackgroundAccessible: Bool
+
 }

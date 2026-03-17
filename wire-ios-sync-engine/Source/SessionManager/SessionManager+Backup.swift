@@ -31,20 +31,25 @@ extension SessionManager {
     public func backupActiveAccount(password: String) async throws -> URL {
         guard
             let userId = accountManager.selectedAccount?.userIdentifier,
-            let clientId = activeUserSession?.selfUserClient?.remoteIdentifier,
-            let handle = activeUserSession.flatMap(ZMUser.selfUser)?.handle,
-            let activeUserSession
+            let activeUserSession,
+            let clientId = activeUserSession.selfUserClient?.remoteIdentifier,
+            let handle = ZMUser.selfUser(in: activeUserSession.viewContext).handle
         else {
             throw CreateLegacyBackupError.noActiveAccountForExport
         }
 
         let backupInfo: CoreDataStack.BackupInfo
         do {
+            let context = activeUserSession.managedObjectContext
+
+            let earEncryptionService = try context.getEarMessageEncryptionService()
+            let earMigrator = EARMigrator(messageEncryptionService: earEncryptionService)
+
             backupInfo = try await CoreDataStack.backupLocalStorage(
                 accountIdentifier: userId,
                 clientIdentifier: clientId,
                 applicationContainer: sharedContainerURL,
-                databaseKey: activeUserSession.managedObjectContext.databaseKey
+                earMigrator: earMigrator
             )
         } catch {
             activeUserSession.analyticsEventTracker?.trackEvent(.Backup.exportFailed)

@@ -155,7 +155,6 @@ extension ArchivedListViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let conversation = viewModel[indexPath.row]
-        viewModel.unarchiveConversation(at: indexPath.row)
         delegate?.archivedListViewController(self, didSelectConversation: conversation)
     }
 }
@@ -224,7 +223,11 @@ extension ArchivedListViewController: ConversationListCellDelegate {
     func conversationListCellJoinCallButtonTapped(_ cell: ConversationListCell) {
         guard let conversation = cell.conversation as? ZMConversation else { return }
 
-        startCallController = ConversationCallController(conversation: conversation, target: self)
+        startCallController = ConversationCallController(
+            conversation: conversation,
+            target: self,
+            userSession: userSession
+        )
         startCallController?.joinCall()
     }
 

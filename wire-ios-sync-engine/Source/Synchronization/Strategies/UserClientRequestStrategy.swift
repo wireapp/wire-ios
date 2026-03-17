@@ -17,13 +17,11 @@
 //
 
 import Foundation
-import WireDataModel
+@preconcurrency import WireDataModel
 import WireLogging
 import WireSystem
 import WireTransport
 import WireUtilities
-
-private let zmLog = ZMSLog(tag: "userClientRS")
 
 /// Performs actions on the self clients
 ///
@@ -394,7 +392,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                 let payload = response.payload as? [String: AnyObject],
                 let remoteIdentifier = payload["id"] as? String
             else {
-                zmLog.warn("Unexpected backend response for inserted client")
+                WireLogger.userClient.warn("Unexpected backend response for inserted client")
                 return
             }
 
@@ -559,9 +557,4 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
         nil
     }
-
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        // Events are processed by the UserClientEventConsumer
-    }
-
 }

@@ -60,6 +60,7 @@ struct FeatureConfigsResponseAPIV12: Decodable, ToAPIModelConvertible {
 
     // Added in v12
     let assetAuditLog: FeatureWithoutConfig
+    let simplifiedUserConnectionRequestQRCode: FeatureWithoutConfig
 
     func toAPIModel() -> [FeatureConfig] {
         var featureConfigs: [FeatureConfig] = []
@@ -144,6 +145,12 @@ struct FeatureConfigsResponseAPIV12: Decodable, ToAPIModelConvertible {
         featureConfigs.append(.consumableNotifications(consumableNotifications))
 
         // added in v12
+        let simplifiedUserConnectionRequestQRCode = SimplifiedUserConnectionRequestQRCodeConfig(
+            status: simplifiedUserConnectionRequestQRCode.status
+                .toAPIModel()
+        )
+        featureConfigs.append(.simplifiedUserConnectionRequestQRCode(simplifiedUserConnectionRequestQRCode))
+
         featureConfigs.append(.assetAuditLog(AssetAuditLogFeatureConfig(
             status: assetAuditLog.status.toAPIModel()
         )))

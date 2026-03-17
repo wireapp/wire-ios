@@ -168,7 +168,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         serviceUser.serviceIdentifier = UUID.create().transportString()
         serviceUser.providerIdentifier = UUID.create().transportString()
         uiMOC.saveOrRollback()
-
         return serviceUser
     }
+
 }

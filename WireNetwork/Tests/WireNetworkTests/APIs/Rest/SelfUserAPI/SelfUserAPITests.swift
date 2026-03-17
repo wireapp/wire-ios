@@ -42,14 +42,29 @@ final class SelfUserAPITests: XCTestCase {
     // MARK: - Request generation
 
     func testGetSelfUserRequest() async throws {
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "GetSelfUserSuccessResponseV0"),
+            count: APIVersion.allCases.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
             _ = try await sut.getSelfUser()
         }
     }
 
     func testPushSupportedProtocolsRequest() async throws {
         let supportedVersions = APIVersion.v5.andNextVersions
-        try await apiSnapshotHelper.verifyRequest(for: supportedVersions) { sut in
+
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, nil),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
+
+        try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
             _ = try await sut.pushSupportedProtocols([.mls])
         }
     }
@@ -177,12 +192,16 @@ final class SelfUserAPITests: XCTestCase {
     // MARK: - V5
 
     func testPushSupportedProtocols_SuccessResponse_200_V5_And_Next_Versions_Verify_Requests() async throws {
-        // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
-            (.ok, nil)
-        ])
 
         let supportedVersions = APIVersion.v5.andNextVersions
+
+        // Given
+        let responses: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, nil),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(responses)
 
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in

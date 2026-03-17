@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import UIKit
+import WireDesign
 import WireDomain
 import WireLogging
 import WireMessagingDomain
@@ -33,8 +33,14 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     private lazy var viewModel = ConversationChannelCreationFormViewModel(
         channelName: "",
+        channelInvitePolicy: .admins,
+        channelHistoryOption: .off,
+        areAppsSupported: values.isAppsFeatureEnabled,
+        appsAllowed: true,
+        guestsAllowed: true,
+        readReceiptsEnabled: true,
         isUserPremium: userSession.isEnterpriseUser,
-        isWireCellsEnabled: userSession.isWireCellsEnabled,
+        isWireDriveEnabled: userSession.isWireDriveEnabled,
         teamsURL: URL.manageTeam(source: .settings),
         onFormValidityUpdate: { formIsValid in
             Task { @MainActor [weak self] in
@@ -45,12 +51,11 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     weak var delegate: ConversationCreationControllerDelegate?
 
-    private lazy var hostingController: UIHostingController<ConversationChannelCreationForm> = {
-        let rootView = ConversationChannelCreationForm(
+    private lazy var hostingController: UIHostingController<some View> = UIHostingController(
+        rootView: ConversationChannelCreationForm(
             viewModel: viewModel
-        )
-        return UIHostingController(rootView: rootView)
-    }()
+        ).environment(\.wireAccentColor, userSession.selfUser.wireAccentColor)
+    )
 
     @MainActor var channelCreationSettings: ConversationChannelCreationSettings? {
         viewModel.getChannelCreationSettings()
@@ -63,7 +68,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         self.userSession = userSession
         let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
             .isFeatureEnabled(.apps) ?? false
-        let areLegacyBotsAvailable = (try? await conversationCreationRepository.areBotsSetUpInTheTeam()) ?? false
+        let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
         self.values = ConversationCreationValues(
             isChannel: true,
             isAppsFeatureEnabled: isAppsFeatureEnabled,
@@ -133,13 +138,10 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     @MainActor
     func attemptToProceedToParticipants() {
-        guard let channelCreationSettings else {
-            return
-        }
-
-        guard !channelCreationSettings.channelName.isEmpty else {
-            return
-        }
+        guard
+            let channelCreationSettings,
+            !channelCreationSettings.channelName.isEmpty
+        else { return }
 
         values.name = channelCreationSettings.channelName
         values.allowGuests = channelCreationSettings.guestsAllowed
@@ -150,9 +152,14 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
         let participantsController = AddParticipantsViewController(
             context: .create(values),
-            userSession: userSession
+            userSession: userSession,
+            isAppsFeatureEnabled: values.isAppsFeatureEnabled,
+            areLegacyBotsAvailable: values.areLegacyBotsAvailable
         )
-
+        guard let participantsController else {
+            WireLogger.ui.error("failed to proceed to participants, VC is nil", attributes: .safePublic)
+            return
+        }
         participantsController.conversationCreationDelegate = self
         navigationController?.pushViewController(participantsController, animated: true)
     }
@@ -231,7 +238,7 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
                 teamID: teamID,
                 name: values.name,
                 historyDepth: channelHistoryDepth,
-                cells: userSession.isWireCellsEnabled ? values.enableFileManagement : nil,
+                cells: userSession.isWireDriveEnabled ? values.enableFileManagement : nil,
                 users: Set(users),
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),

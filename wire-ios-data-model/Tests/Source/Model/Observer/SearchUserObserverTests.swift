@@ -137,11 +137,12 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         user: ZMUser? = nil
     ) -> ZMSearchUser {
         ZMSearchUser(
-            contextProvider: coreDataStack,
+            viewContext: coreDataStack.viewContext,
             name: name,
             handle: name.lowercased(),
             accentColor: .amber,
             remoteIdentifier: remoteIdentifier,
+            providerIdentifier: nil,
             user: user,
             searchUsersCache: nil
         )

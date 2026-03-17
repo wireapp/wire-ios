@@ -51,6 +51,7 @@ struct ConversationMLSWelcomeEventProcessor: ConversationMLSWelcomeEventProcesso
         // This conversation is now a MLS one so we need to update its group ID and set MLS status to ready..
         await conversationLocalStore.storeMLSConversationEstablished(
             mlsGroupID: groupID,
+            epoch: try await mlsService.epoch(for: groupID),
             conversation: conversation
         )
 

@@ -27,7 +27,7 @@ final class SearchServicesSectionController: SearchSectionController {
 
     weak var delegate: SearchServicesSectionDelegate?
 
-    var services: [ServiceUser] = []
+    var services: [UserType] = []
 
     let canSelfUserManageTeam: Bool
 
@@ -59,7 +59,7 @@ final class SearchServicesSectionController: SearchSectionController {
         L10n.Localizable.Peoplepicker.Header.apps
     }
 
-    func service(for indexPath: IndexPath) -> ServiceUser {
+    func service(for indexPath: IndexPath) -> UserType {
         if canSelfUserManageTeam {
             services[indexPath.row - 1]
         } else {

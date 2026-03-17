@@ -90,6 +90,8 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 
 - (void)dealloc {
     [self.backoff tearDown];
+    self->_accessTokenRenewalFailureHandler = nil;
+    self->_accessTokenRenewalSuccessHandler = nil;
 }
 
 - (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler

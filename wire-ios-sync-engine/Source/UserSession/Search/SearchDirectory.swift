@@ -17,16 +17,20 @@
 //
 
 import Foundation
+import WireDataModel
+import WireNetwork
+import WireTransport
 
-@objcMembers
-public class SearchDirectory: NSObject {
+public final class SearchDirectory: NSObject {
 
-    let searchContext: NSManagedObjectContext
-    let contextProvider: ContextProvider
-    let transportSession: TransportSessionType
+    private let contextProvider: ContextProvider
+    private let transportSession: TransportSessionType
     private let apiVersion: WireTransport.APIVersion?
+    private let searchAPI: any SearchAPI
+    private let teamsAPI: any TeamsAPI
+    private let usersAPI: any UsersAPI
 
-    var isTornDown = false
+    private var isTornDown = false
 
     private let refreshUsersMissingMetadataAction: RecurringAction
     private let refreshConversationsMissingMetadataAction: RecurringAction
@@ -37,83 +41,75 @@ public class SearchDirectory: NSObject {
         assert(isTornDown, "`tearDown` must be called before SearchDirectory is deinitialized")
     }
 
-    public convenience init(userSession: ZMUserSession) {
+    public convenience init(
+        userSession: ZMUserSession,
+        searchAPI: some SearchAPI,
+        teamsAPI: some TeamsAPI,
+        usersAPI: some UsersAPI
+    ) {
         self.init(
-            searchContext: userSession.searchManagedObjectContext,
             contextProvider: userSession,
             transportSession: userSession.transportSession,
             searchUsersCache: userSession.searchUsersCache,
             refreshUsersMissingMetadataAction: userSession.refreshUsersMissingMetadataAction,
             refreshConversationsMissingMetadataAction: userSession.refreshConversationsMissingMetadataAction,
-            apiVersion: userSession.resolvedBackendMetadata.apiVersion
+            apiVersion: userSession.resolvedBackendMetadata.apiVersion,
+            searchAPI: searchAPI,
+            teamsAPI: teamsAPI,
+            usersAPI: usersAPI
         )
     }
 
     init(
-        searchContext: NSManagedObjectContext,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
         refreshUsersMissingMetadataAction: RecurringAction,
         refreshConversationsMissingMetadataAction: RecurringAction,
-        apiVersion: WireTransport.APIVersion?
+        apiVersion: WireTransport.APIVersion?,
+        searchAPI: some SearchAPI,
+        teamsAPI: some TeamsAPI,
+        usersAPI: some UsersAPI
     ) {
-        self.searchContext = searchContext
         self.contextProvider = contextProvider
         self.transportSession = transportSession
         self.searchUsersCache = searchUsersCache
         self.apiVersion = apiVersion
+        self.searchAPI = searchAPI
+        self.teamsAPI = teamsAPI
+        self.usersAPI = usersAPI
 
         self.refreshUsersMissingMetadataAction = refreshUsersMissingMetadataAction
         self.refreshConversationsMissingMetadataAction = refreshConversationsMissingMetadataAction
     }
 
-    /// Perform a search request.
-    ///
-    /// Returns a SearchTask which should be retained until the results arrive.
-    public func perform(_ request: SearchRequest) -> SearchTask {
-        let task = SearchTask(
-            task: .search(searchRequest: request),
-            searchContext: searchContext,
+    public func createSearchTask(with request: SearchRequest) -> SearchTask {
+        SearchTask(
+            type: .search(searchRequest: request),
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            searchAPI: searchAPI,
+            teamsAPI: teamsAPI,
+            usersAPI: usersAPI
         )
-
-        task.addResultHandler { [weak self] result, _ in
-            self?.observeSearchUsers(result)
-        }
-
-        return task
     }
 
     /// Lookup a user by user Id and domain (qualifiedID), returns a search user in the directory results. If the user
     /// doesn't exists
     /// an empty directory result is returned.
-    ///
-    /// Returns a SearchTask which should be retained until the results arrive.
-    public func lookup(qualifiedID: QualifiedID) -> SearchTask {
-        let task = SearchTask(
-            task: .lookup(qualifiedID: qualifiedID),
-            searchContext: searchContext,
+    public func createLookupTask(with qualifiedID: WireDataModel.QualifiedID) -> SearchTask {
+        SearchTask(
+            type: .lookup(qualifiedID: qualifiedID),
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            searchAPI: searchAPI,
+            teamsAPI: teamsAPI,
+            usersAPI: usersAPI
         )
-
-        task.addResultHandler { [weak self] result, _ in
-            self?.observeSearchUsers(result)
-        }
-
-        return task
-    }
-
-    func observeSearchUsers(_ result: SearchResult) {
-        let searchUserObserverCenter = contextProvider.viewContext.searchUserObserverCenter
-        result.directory.forEach(searchUserObserverCenter.addSearchUser)
-        result.services.compactMap { $0 as? ZMSearchUser }.forEach(searchUserObserverCenter.addSearchUser)
     }
 
     public func updateIncompleteMetadataIfNeeded() async {

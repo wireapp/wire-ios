@@ -512,6 +512,10 @@ extension BackupLocalStore {
             }
 
             message.visibleInConversation = conversation
+            if let messageServerTimestamp = message.serverTimestamp {
+                conversation.updateLastModified(messageServerTimestamp)
+            }
+
             message.markAsSent()
         } catch {
             throw RehydrationFailure.failedToSetGenericMessage(error: error)

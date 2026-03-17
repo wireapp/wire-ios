@@ -37,7 +37,10 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             fatal("SplitViewController is not created")
         }
         let splitLayoutObserver = SplitLayoutObserver(zClientViewController: zClientViewController)
-        let cameraKeyboardViewController = CameraKeyboardViewController(splitLayoutObservable: splitLayoutObserver)
+        let cameraKeyboardViewController = CameraKeyboardViewController(
+            splitLayoutObservable: splitLayoutObserver,
+            userSession: userSession
+        )
         cameraKeyboardViewController.delegate = self
         self.cameraKeyboardViewController = cameraKeyboardViewController
         return cameraKeyboardViewController
@@ -92,7 +95,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                     }
                 }
             )
-            let confirmVideoViewController = ConfirmAssetViewController(context: context)
+            let confirmVideoViewController = ConfirmAssetViewController(context: context, userSession: userSession)
             confirmVideoViewController.previewTitle = conversation.displayNameWithFallback
 
             view.window?.endEditing(true)
@@ -181,8 +184,8 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                         image.utType ?? .image
                     }
 
-                    if self.userSession.isWireCellsEnabled,
-                       self.conversation.isCellsEnabled {
+                    if self.userSession.isWireDriveEnabled,
+                       self.conversation.isWireDriveEnabled {
                         self.uploadDraft(data: dataToSend, type: utType)
                     } else {
                         let image = SendableImage(
@@ -206,7 +209,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             }
         )
 
-        let confirmImageViewController = ConfirmAssetViewController(context: context)
+        let confirmImageViewController = ConfirmAssetViewController(context: context, userSession: userSession)
         confirmImageViewController.previewTitle = conversation.displayNameWithFallback
 
         view.window?.endEditing(true)
@@ -228,7 +231,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
     private func writeToSavedPhotoAlbumIfNecessary(imageData: Data, isFromCamera: Bool) {
         guard isFromCamera,
-              MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll,
+              mediaShareRestrictionManager.hasAccessToCameraRoll,
               SecurityFlags.cameraRoll.isEnabled,
               let image = UIImage(data: imageData as Data)
         else {
@@ -307,8 +310,8 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 
             dismiss(animated: true) {
                 if let imageData = image.pngData() {
-                    if self.userSession.isWireCellsEnabled,
-                       self.conversation.isCellsEnabled {
+                    if self.userSession.isWireDriveEnabled,
+                       self.conversation.isWireDriveEnabled {
                         self.uploadDraft(data: imageData, type: .png)
                     } else {
                         let image = SendableImage(
@@ -343,9 +346,9 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 extension ConversationInputBarViewController {
 
     func showCameraAndPhotos() {
-        UIApplication.wr_requestVideoAccess { _ in
+        UIApplication.wr_requestVideoAccess { [mediaShareRestrictionManager] _ in
             if SecurityFlags.cameraRoll.isEnabled,
-               MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll {
+               mediaShareRestrictionManager.hasAccessToCameraRoll {
                 self.executeWithCameraRollPermission { _ in
                     self.mode = .camera
                     self.inputBar.textView.becomeFirstResponder()

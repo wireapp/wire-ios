@@ -47,6 +47,14 @@ public protocol AVSWrapperType {
     /// This method should be called before processing with `isProcessingNotifications` set to `true` as well as
     /// after processing has been completed with `isProcessingNotifications` set to `false`.
     func notify(isProcessingNotifications isProcessing: Bool)
+    func networkInterfaceChanged()
+
+    /// Inform AVS whether live syncing is paused.
+    ///
+    /// Pass `true` when the app is active but live syncing is not ongoing
+    /// (for example, when the app is in the background or network connectivity is lost),
+    /// and `false` when the app is active and live syncing is ongoing.
+    func setLiveSyncPaused(_ paused: Bool)
 
     func setMLSConferenceInfo(conversationId: AVSIdentifier, info: MLSConferenceInfo)
     var isMuted: Bool { get set }
@@ -249,6 +257,14 @@ public final class AVSWrapper: AVSWrapperType {
 
     public func notify(isProcessingNotifications isProcessing: Bool) {
         wcall_process_notifications(handle, isProcessing ? 1 : 0)
+    }
+
+    public func setLiveSyncPaused(_ paused: Bool) {
+        wcall_set_background(handle, paused ? 1 : 0)
+    }
+
+    public func networkInterfaceChanged() {
+        wcall_network_changed()
     }
 
     /// Set the MLS conference info for a given conversation.

@@ -45,6 +45,12 @@ public protocol ConversationLocalStoreProtocol {
         domain: String?
     ) async -> ZMConversation
 
+    func fetchOrCreateConversation(
+        id: UUID,
+        domain: String?,
+        setNeedsToBeUpdatedFromBackend: Bool
+    ) async -> ZMConversation
+
     /// Stores a given conversation locally.
     /// - Parameter conversation: The conversation to store locally.
     /// - Parameter timestamp: The date the conversation was created or last modified.
@@ -396,10 +402,12 @@ public protocol ConversationLocalStoreProtocol {
     /// Stores the conversation MLS group ID and marks the mls status as ready.
     /// - Parameters:
     ///     - mlsGroupID: The MLS group ID related to the conversation.
+    ///     - epoch: The epoch for the new MLS group
     ///     - conversation: The conversation to update the properties for.
 
     func storeMLSConversationEstablished(
         mlsGroupID: MLSGroupID,
+        epoch: UInt64,
         conversation: ZMConversation
     ) async
 

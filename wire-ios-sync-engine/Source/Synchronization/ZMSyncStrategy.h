@@ -39,14 +39,12 @@
                           notificationsDispatcher:(NotificationDispatcher * _Nonnull)notificationsDispatcher
                                   operationStatus:(OperationStatus * _Nonnull)operationStatus
                                       application:(id<ZMApplication> _Nonnull)application
-                                strategyDirectory:(id<StrategyDirectoryProtocol> _Nonnull)strategyDirectory
-                           eventProcessingTracker:(id<EventProcessingTrackerProtocol> _Nonnull)eventProcessingTracker;
+                                strategyDirectory:(id<StrategyDirectoryProtocol> _Nonnull)strategyDirectory;
 
 - (void)tearDown;
 - (void)updateStrategyClientContextChangeTrackers;
 
 @property (nonatomic, readonly, nonnull) NSManagedObjectContext *syncMOC;
-@property (nonatomic, nullable) id<EventProcessingTrackerProtocol> eventProcessingTracker;
 @property (nonatomic, readonly, nullable) id<StrategyDirectoryProtocol> strategyDirectory;
 @end
 

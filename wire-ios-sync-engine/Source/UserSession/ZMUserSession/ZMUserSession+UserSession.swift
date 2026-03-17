@@ -114,10 +114,8 @@ extension ZMUserSession: UserSession {
 
     public func unlockDatabase() throws {
         try earService.unlockDatabase()
-
+        syncAgent?.resume()
         DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: notificationContext)
-
-        processLegacyEvents()
     }
 
     public func deleteAppLockPasscode() throws {
@@ -125,15 +123,15 @@ extension ZMUserSession: UserSession {
     }
 
     public var selfUser: any UserType {
-        ZMUser.selfUser(inUserSession: self)
+        ZMUser.selfUser(in: viewContext)
     }
 
     public var selfUserLegalHoldSubject: any SelfUserLegalHoldable {
-        ZMUser.selfUser(inUserSession: self)
+        ZMUser.selfUser(in: viewContext)
     }
 
     public var editableSelfUser: any EditableUserType & UserType {
-        ZMUser.selfUser(inUserSession: self)
+        ZMUser.selfUser(in: viewContext)
     }
 
     public func addUserObserver(
@@ -302,12 +300,15 @@ extension ZMUserSession: UserSession {
         return GetMLSFeatureUseCase(featureRepository: featureRepository)
     }
 
-    public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
-        CreateConversationGuestLinkUseCase(setGuestsAndAppsUseCase: makeSetConversationGuestsAndAppsUseCase())
+    public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol? {
+        guard let setGuestsAndAppsUseCase = makeSetConversationGuestsAndAppsUseCase() else { return nil }
+        return CreateConversationGuestLinkUseCase(setGuestsAndAppsUseCase: setGuestsAndAppsUseCase)
     }
 
-    public func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol {
-        SetAllowGuestAndAppsUseCase()
+    public func makeSetConversationGuestsAndAppsUseCase() -> SetAllowGuestAndAppsUseCaseProtocol? {
+        clientSessionComponent.map { component in
+            SetAllowGuestAndAppsUseCase(api: component.conversationsAPI)
+        }
     }
 
     @MainActor
@@ -355,7 +356,7 @@ extension ZMUserSession: UserSession {
         AppendKnockMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
-    public func makeAppendLocationMessageUseCase() -> AppendLocationMessagekUseCaseProtocol {
+    public func makeAppendLocationMessageUseCase() -> AppendLocationMessageUseCaseProtocol {
         AppendLocationMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
@@ -379,32 +380,35 @@ extension ZMUserSession: UserSession {
         CreateConversationFolderUseCase(context: syncContext)
     }
 
-    public func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol {
-        SearchUsersUseCase(
+    public func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol? {
+        guard
+            let searchAPI = clientSessionComponent?.searchAPI,
+            let teamsAPI = clientSessionComponent?.teamsAPI,
+            let usersAPI = clientSessionComponent?.usersAPI
+        else { return nil }
+
+        let searchDirectory = SearchDirectory(
+            userSession: self,
+            searchAPI: searchAPI,
+            teamsAPI: teamsAPI,
+            usersAPI: usersAPI
+        )
+        return SearchUsersUseCase(
             context: syncContext,
-            searchDirectory: SearchDirectory(userSession: self),
+            searchDirectory: searchDirectory,
             isFederationUsageAllowed: isFederationUsageAllowed,
             isMLSEnabled: isBackendMLSEnabled
         )
     }
 
     public var resolvedBackendMetadata: BackendMetadataProvider {
-        if DeveloperFlag.multibackend.isOn {
-            let metadata = userSessionComponent.backendMetadata
-            return BackendMetadataProvider(
-                apiVersionOverride: .init(rawValue: Int32(metadata.apiVersion.rawValue)),
-                domainOverride: metadata.domain,
-                isFederationEnabledOverride: metadata.isFederationEnabled,
-                isBackendMLSEnabledOverride: journal[.isBackendMLSEnabled]
-            )
-        } else {
-            return BackendMetadataProvider(
-                apiVersionOverride: nil,
-                domainOverride: nil,
-                isFederationEnabledOverride: nil,
-                isBackendMLSEnabledOverride: nil
-            )
-        }
+        let metadata = userSessionComponent.backendMetadata
+        return BackendMetadataProvider(
+            apiVersionOverride: .init(rawValue: Int32(metadata.apiVersion.rawValue)),
+            domainOverride: metadata.domain,
+            isFederationEnabledOverride: metadata.isFederationEnabled,
+            isBackendMLSEnabledOverride: journal[.isBackendMLSEnabled]
+        )
     }
 
 }
