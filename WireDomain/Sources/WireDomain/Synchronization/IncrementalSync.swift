@@ -425,7 +425,6 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         return Set(processedItems.map(\.envelope.id))
     }
 
-
     /// A token containing the task that processes live events via the push
     /// channel.
     ///
