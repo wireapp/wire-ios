@@ -49,9 +49,8 @@ final class ShareExtensionTests: WireUITestCase {
         }
     }
 
-    // TestCase: https://app.testiny.io/IOS/testplans/tp/109/tc/8199
     @MainActor
-    func test_ShareImageOnetoOne() async throws {
+    func testShareImageOnetoOne_TC_8915() async throws {
 
         let user1 = try await userHelper.createPersonalUser()
         let user2 = try await userHelper.createPersonalUser()
@@ -76,9 +75,8 @@ final class ShareExtensionTests: WireUITestCase {
         )
     }
 
-    // TestCase: https://app.testiny.io/IOS/testplans/tp/109/tc/8200
     @MainActor
-    func test_ShareImageToGroupConversation() async throws {
+    func testShareImageToGroupConversation_TC_8919() async throws {
 
         let groupName = UserGenerator.generateRandomGroupName()
 
