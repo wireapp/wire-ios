@@ -12,7 +12,7 @@
             <fetchIndexElement property="localIdentifier" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
-    <entity name="AppInfo" representedClassName="WireDataModel.AppInfo" syncable="YES">
+    <entity name="AppInfo" representedClassName="WireData.AppInfo" syncable="YES">
         <attribute name="appDescription" optional="YES" attributeType="String"/>
         <attribute name="category" optional="YES" attributeType="String"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="appInfo" inverseEntity="User"/>

@@ -126,8 +126,8 @@ private struct UserAppV15: Decodable, ToAPIModelConvertible {
     let category: String
     let description: String
 
-    func toAPIModel() -> NewApp {
-        NewApp(
+    func toAPIModel() -> AppInfo {
+        AppInfo(
             category: category,
             description: description
         )
