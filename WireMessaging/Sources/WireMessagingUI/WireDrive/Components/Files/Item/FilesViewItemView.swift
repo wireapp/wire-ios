@@ -151,7 +151,7 @@ struct FilesItemView: View {
     @ViewBuilder
     private func progressIcon(progress: Double, readyToOpen: Bool) -> some View {
         ProgressView(value: progress)
-            .progressViewStyle(.wireDriveAsset)
+            .progressViewStyle(.wireDriveAsset())
             .padding(.horizontal, iconHorizontalPadding)
             .frame(minWidth: iconSpaceWidth)
             .frame(height: iconSpaceHeight + 3)
