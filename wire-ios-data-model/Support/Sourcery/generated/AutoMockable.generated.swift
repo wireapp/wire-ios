@@ -4916,26 +4916,6 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         await mock(groupID)
     }
 
-    // MARK: - generateNewEpoch
-
-    public var generateNewEpochGroupID_Invocations: [MLSGroupID] = []
-    public var generateNewEpochGroupID_MockError: Error?
-    public var generateNewEpochGroupID_MockMethod: ((MLSGroupID) async throws -> Void)?
-
-    public func generateNewEpoch(groupID: MLSGroupID) async throws {
-        generateNewEpochGroupID_Invocations.append(groupID)
-
-        if let error = generateNewEpochGroupID_MockError {
-            throw error
-        }
-
-        guard let mock = generateNewEpochGroupID_MockMethod else {
-            fatalError("no mock for `generateNewEpochGroupID`")
-        }
-
-        try await mock(groupID)
-    }
-
     // MARK: - epochChanges
 
     public var epochChanges_Invocations: [Void] = []
