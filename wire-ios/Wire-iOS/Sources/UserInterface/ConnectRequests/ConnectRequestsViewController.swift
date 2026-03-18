@@ -146,19 +146,20 @@ final class ConnectRequestsViewController: UIViewController,
         // Get the user in reversed order, newer request is shown on top
         let request = connectionRequests[(connectionRequests.count - 1) - (indexPath.row)]
 
-        let user = request.connectedUserType
-        cell.user = user
+        guard let user = request.connectedUserType else { return }
+
+        cell.configure(user: user, userSession: userSession)
         cell.selectionStyle = .none
         cell.separatorInset = .zero
         cell.preservesSuperviewLayoutMargins = false
         cell.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 8, right: 0)
 
         cell.acceptBlock = { [weak self] in
-            self?.acceptConnectionRequest(from: cell.user)
+            self?.acceptConnectionRequest(from: user)
         }
 
         cell.ignoreBlock = { [weak self] in
-            self?.ignoreConnectionRequest(from: cell.user)
+            self?.ignoreConnectionRequest(from: user)
         }
 
     }

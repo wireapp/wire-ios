@@ -42,9 +42,9 @@ enum UserDetailViewControllerFactory {
         conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) -> UIViewController {
 
-        if user.isAppOrBot, let serviceUser = user as? ServiceUser {
+        if user.isAppOrBot {
             return ServiceDetailViewController(
-                serviceUser: serviceUser,
+                serviceUser: user,
                 actionType: .removeService(conversation),
                 userSession: userSession
             )

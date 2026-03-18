@@ -206,6 +206,13 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     var canManageTeam: Bool = false
 
+    // MARK: - Bot specific
+
+    var providerIdentifier: String?
+    var serviceIdentifier: String?
+
+    // MARK: - Methods
+
     func canLeave(_ conversation: ZMConversation) -> Bool {
         canLeaveConversation
     }

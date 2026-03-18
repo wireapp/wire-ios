@@ -26,6 +26,12 @@ final class DirectorySectionController: SearchSectionController {
     weak var delegate: SearchSectionControllerDelegate?
     var token: AnyObject?
     weak var collectionView: UICollectionView?
+    private let userSession: UserSession
+
+    init(userSession: UserSession) {
+        self.userSession = userSession
+        super.init()
+    }
 
     override var isHidden: Bool {
         suggestions.isEmpty
@@ -39,7 +45,7 @@ final class DirectorySectionController: SearchSectionController {
         super.prepareForUse(in: collectionView)
 
         collectionView?.register(UserCell.self, forCellWithReuseIdentifier: UserCell.zm_reuseIdentifier)
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = userSession as? ZMUserSession else { return }
         token = UserChangeInfo.add(searchUserObserver: self, in: userSession)
 
         self.collectionView = collectionView

@@ -56,6 +56,7 @@
                                                    remoteIdentifier:remoteIDA
                                                              domain:nil
                                                      teamIdentifier:nil
+                                                 providerIdentifier:nil
                                                                user:nil
                                                    searchUsersCache:nil];
 
@@ -67,6 +68,7 @@
                                                    remoteIdentifier:remoteIDA
                                                              domain:nil
                                                      teamIdentifier:nil
+                                                 providerIdentifier:nil
                                                                user:nil
                                                    searchUsersCache:nil];
 
@@ -81,6 +83,7 @@
                                                    remoteIdentifier:remoteIDB
                                                              domain:nil
                                                      teamIdentifier:nil
+                                                 providerIdentifier:nil
                                                                user:nil
                                                    searchUsersCache:nil];
 
@@ -102,6 +105,7 @@
                                                         remoteIdentifier:remoteID
                                                                   domain:nil
                                                           teamIdentifier:nil
+                                                      providerIdentifier:nil
                                                                     user:nil
                                                         searchUsersCache:nil];
 
@@ -141,6 +145,7 @@
                                                         remoteIdentifier:[NSUUID createUUID]
                                                                   domain:nil
                                                           teamIdentifier:nil
+                                                      providerIdentifier:nil
                                                                     user:user
                                                         searchUsersCache:nil];
 
@@ -169,6 +174,7 @@
                                                         remoteIdentifier:NSUUID.createUUID
                                                                   domain:nil
                                                           teamIdentifier:nil
+                                                      providerIdentifier:nil
                                                                     user:nil
                                                         searchUsersCache:nil];
 
@@ -188,6 +194,7 @@
                                                         remoteIdentifier:nil
                                                                   domain:nil
                                                           teamIdentifier:nil
+                                                      providerIdentifier:nil
                                                                     user:nil
                                                         searchUsersCache:nil];
 

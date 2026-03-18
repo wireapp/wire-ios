@@ -151,6 +151,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     let group: SettingsInternalGroupCellDescriptorType
     fileprivate var sections: [SettingsSectionDescriptorType]
     fileprivate var selfUserObserver: NSObjectProtocol!
+    private let userSession: UserSession
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -160,9 +161,11 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
 
     required init(
         group: SettingsInternalGroupCellDescriptorType,
-        settingsCoordinator: AnySettingsCoordinator
+        settingsCoordinator: AnySettingsCoordinator,
+        userSession: UserSession
     ) {
         self.group = group
+        self.userSession = userSession
         self.sections = group.visibleItems
         super.init(
             style: group.style == .plain ? .plain : .grouped,
@@ -176,11 +179,11 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
             }
         }
 
-        if let userSession = ZMUserSession.shared() {
+        if let zmSession = userSession as? ZMUserSession {
             self.selfUserObserver = UserChangeInfo.add(
                 observer: self,
-                for: userSession.providedSelfUser,
-                in: userSession
+                for: zmSession.providedSelfUser,
+                in: zmSession
             )
         }
 
@@ -362,7 +365,7 @@ extension SettingsTableViewController: UserObserving {
             refreshData()
         }
 
-        if note.imageMediumDataChanged, let userSession = ZMUserSession.shared() {
+        if note.imageMediumDataChanged {
             note.user.fetchProfileImage(
                 session: userSession,
                 imageCache: UIImage.defaultUserImageCache,
