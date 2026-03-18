@@ -126,6 +126,7 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
                     repository: repository,
                     conversationID: conversationID,
                     groupID: mlsGroupID,
+                    isSubconversation: false,
                     mlsService: mlsService
                 )
             )
@@ -137,6 +138,7 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
                         repository: repository,
                         conversationID: conversationID,
                         groupID: subgroupID,
+                        isSubconversation: true,
                         mlsService: mlsService
                     )
                 )

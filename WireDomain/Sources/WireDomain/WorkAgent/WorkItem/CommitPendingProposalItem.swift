@@ -41,22 +41,28 @@ struct CommitPendingProposalItem: WorkItem, CustomStringConvertible {
 
     let conversationID: WireDataModel.QualifiedID
     let groupID: WireDataModel.MLSGroupID
+    let isSubconversation: Bool
     let logger = WireLogger.mls
 
     public init(
         repository: ConversationRepositoryProtocol,
         conversationID: WireDataModel.QualifiedID,
         groupID: WireDataModel.MLSGroupID,
+        isSubconversation: Bool,
         mlsService: MLSServiceInterface
     ) {
         self.repository = repository
         self.conversationID = conversationID
         self.groupID = groupID
+        self.isSubconversation = isSubconversation
         self.mlsService = mlsService
     }
 
     func start() async throws {
-        let logAttributes: LogAttributes = [.mlsGroupID: groupID.safeForLoggingDescription] + LogAttributes.safePublic
+        let logAttributes: LogAttributes = [
+            .mlsGroupID: groupID.safeForLoggingDescription,
+            .isSubconversation: isSubconversation
+        ] + LogAttributes.safePublic
 
         let isSelfAnActiveMember = await repository.isSelfAnActiveMember(in: conversationID)
 
