@@ -76,7 +76,7 @@ final class TeamManageTests: WireUITestCase {
     @MainActor
     func testTeamOwnerGroupCreatedAndSendMessage_TC_9454() async throws {
 
-        let groupName = UserGenerator.generateRandomGroupName()
+        let groupName = UserGenerator.generateRandomConversationName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
@@ -105,7 +105,7 @@ final class TeamManageTests: WireUITestCase {
     @MainActor
     func testGroupAdminRemoveAndAddParticipantFromGroup_TC_9455() async throws {
 
-        let groupName = UserGenerator.generateRandomGroupName()
+        let groupName = UserGenerator.generateRandomConversationName()
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
         let ownerAccessToken = try await userHelper.fetchAccessToken(
             email: teamOwner.email,
@@ -162,8 +162,8 @@ final class TeamManageTests: WireUITestCase {
 
     /// [WPB-3772] Bug: Opening an archived conversation unarchives it
     @MainActor
-    func testArchivedConversationUnarchivesWhenOpened_TC_8872() async throws {
-        let groupName = UserGenerator.generateRandomGroupName()
+    func test_ArchivedConversationUnarchivesWhenOpened_TC_8872() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
 
@@ -193,7 +193,7 @@ final class TeamManageTests: WireUITestCase {
         let (teamOwner, teamMembers, _, _) = try await userHelper
             .registerTeam(
                 withMemberCount: 4,
-                groupName: UserGenerator.generateRandomGroupName()
+                conversation: .group(UserGenerator.generateRandomConversationName())
             )
 
         _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
