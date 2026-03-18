@@ -263,8 +263,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"SymmetricEncryption";
         dataWithoutIV.length,          // Length of data to encrypt or decrypt
         decryptedData.mutableBytes,    // Result is written here
         decryptedData.length,          // The size of the dataOut buffer in bytes
-        &copiedBytes
-    );                                 // On successful return, the number of bytes written to dataOut.
+        &copiedBytes                   // On successful return, the number of bytes written to dataOut.
+    );
 
     if(status != kCCSuccess) {
         ZMLogError(@"Error in decryption: %d", status);
