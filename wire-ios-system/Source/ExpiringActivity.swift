@@ -75,7 +75,7 @@ actor ExpiringActivityManager {
                                 WireLogger.backgroundActivity.warn("Expiring activity ended with an error: \(error)")
                                 continuation.resume(throwing: error)
                             }
-                            
+
                         }
                         semaphore.wait()
                     } else {

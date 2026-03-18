@@ -68,13 +68,13 @@ public extension NonReentrantTaskManager where Failure == any Error {
             }
 
             state = .inFlight(task)
-            
+
             return try await performWithTaskCancellationHandler(task: task)
         }
     }
-    
+
     private func performWithTaskCancellationHandler(task: Task<Success, Failure>) async throws -> Success {
-        return try await withTaskCancellationHandler {
+        try await withTaskCancellationHandler {
             try await task.value
         } onCancel: {
             task.cancel()
@@ -112,7 +112,7 @@ public extension NonReentrantTaskManager where Failure == Never {
     }
 
     private func performWithTaskCancellationHandler(task: Task<Success, Failure>) async -> Success {
-        return await withTaskCancellationHandler {
+        await withTaskCancellationHandler {
             await task.value
         } onCancel: {
             task.cancel()
