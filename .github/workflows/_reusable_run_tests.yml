@@ -22,6 +22,7 @@ on:
       testiny_run_name:
         type: string
         required: false
+        default: ''
     secrets:
       ZENKINS_USERNAME:
         required: true
@@ -152,22 +153,17 @@ jobs:
         run: |
           bundle exec fastlane run_uitests
 
-      - name: Load Testiny API key
-        if: ${{ always() && inputs.run_critical_flows && inputs.testiny_run_name != '' }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          TESTINY_API_KEY="$(op read 'op://Test Automation/TESTINY_API_KEY_IOS/password')"
-          echo "TESTINY_API_KEY=$TESTINY_API_KEY" >> "$GITHUB_ENV"
 
       - name: Upload XCResult results to Testiny
-        if: ${{ always() && inputs.run_critical_flows && inputs.testiny_run_name != '' }}
+        if: ${{ always() && inputs.run_critical_flows && inputs.testiny_run_name }}
         shell: bash
         env:
-          TESTINY_API_KEY: ${{ env.TESTINY_API_KEY }}
           TESTINY_RUN_NAME: ${{ inputs.testiny_run_name }}
         run: |
           set -euo pipefail
+          TESTINY_API_KEY="$(op read 'op://Test Automation/TESTINY_API_KEY_IOS/password')"
+          echo "::add-mask::$TESTINY_API_KEY"
+          export TESTINY_API_KEY
 
           # Find a xcresult bundle produced by the run
           XCRESULT="$(find artifacts -type d -name '*.xcresult' | head -n 1)"

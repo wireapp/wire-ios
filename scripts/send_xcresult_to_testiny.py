@@ -51,18 +51,24 @@ class PendingResult:
 
 def extract_tc_keys(test_name: str) -> List[str]:
     """
-    Extract TC IDs from function name.
-    Example:
-        test_Login_TC_1234_1111_2222
-        -> ["TC-1234", "TC-1111", "TC-2222"]
+    Extract all TC IDs from function name.
+    Supports:
+        test_TC_1234
+        test_TC_1234_1111_2222
+        test_TC_1234_TC_1111_TC_2222
+        test_TC_1234_1111_TC_2222
     """
-    m = re.search(r'_TC_(\d+)((?:_\d+)*)', test_name, re.IGNORECASE)
-    if not m:
+    matches = re.findall(r'_TC_(\d+)', test_name, re.IGNORECASE)
+    if not matches:
         return []
 
-    keys = [f"TC-{m.group(1)}"]
-    if m.group(2):
-        keys += [f"TC-{n}" for n in re.findall(r'\d+', m.group(2))]
+    seen = set()
+    keys: List[str] = []
+    for m in matches:
+        if m not in seen:
+            seen.add(m)
+            keys.append(f"TC-{m}")
+
     return keys
 
 
