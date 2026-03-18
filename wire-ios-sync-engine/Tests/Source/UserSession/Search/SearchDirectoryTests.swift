@@ -90,6 +90,7 @@ final class SearchDirectoryTests: DatabaseTest {
             handle: "john",
             accentColor: .amber,
             remoteIdentifier: remoteIdentifier,
+            providerIdentifier: nil,
             searchUsersCache: mockCache
         )
     }
