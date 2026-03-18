@@ -80,15 +80,24 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
     /// The download can be observed via the `observeAsset(nodeID:)` method.
     @MainActor
     package func downloadAsset(nodeID: UUID) async throws {
+        let downloadTask: Task<Void, any Error>
+        
         if let existingTask = downloadTasks[nodeID] {
-            try await existingTask.value
+            downloadTask = existingTask
         } else {
             defer { downloadTasks[nodeID] = nil }
 
             let task = Task { try await _downloadAsset(nodeID: nodeID) }
             downloadTasks[nodeID] = task
-            try await task.value
+            downloadTask = task
         }
+        
+        try await withTaskCancellationHandler {
+            try await downloadTask.value
+        } onCancel: {
+            downloadTask.cancel()
+        }
+
     }
 
     /// Observes the asset for the given `nodeID`. A value of `nil` is emitted if the asset has never been fetched.
@@ -122,7 +131,7 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
                 )
             )
 
-            let (progress, download) = fileDownloader.download(from: downloadURL)
+            let (progress, urlDownloadTask) = fileDownloader.download(from: downloadURL)
             
             var fileSize: WireDriveLocalAsset.FileSize = .small
             
@@ -139,8 +148,13 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
             }
             
             timerTask.cancel()
+            
+            if Task.isCancelled {
+                urlDownloadTask.cancel()
+                try Task.checkCancellation()
+            }
 
-            let (tempURL, _) = try await download.value
+            let (tempURL, _) = try await urlDownloadTask.value
 
             let filename = node.path.split(separator: "/").last.flatMap(String.init) ?? "-"
 
@@ -156,14 +170,14 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
             let key = pathWithoutExtension + "/" + filename
 
             try await fileCache.saveFile(at: tempURL, key: key)
-
+            
             asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
             asset.downloadState = .downloaded(cacheKey: key)
             try store.upsertAsset(asset)
         } catch {
             // We don't care about the eTag when setting download state to failed.
             if var asset = try store.asset(nodeID: nodeID) {
-                asset.downloadState = .failed(error: error)
+                asset.downloadState = (error is CancellationError) ? .pending : .failed(error: error)
                 try store.upsertAsset(asset)
             }
 

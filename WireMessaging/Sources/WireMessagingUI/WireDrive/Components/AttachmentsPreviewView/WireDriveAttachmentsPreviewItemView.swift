@@ -111,15 +111,15 @@ struct WireDriveAttachmentsPreviewItemView: View {
         .contentShape(Rectangle()) // Constrains the tappable content area of the view.
         .onAppear(perform: viewModel.startPolling)
         .onDisappear(perform: viewModel.stopPolling)
-        .onTapGesture(perform: open)
+        .onTapGesture(perform: onTap)
     }
 
     private func refresh() {
         Task { await viewModel.refresh() }
     }
 
-    private func open() {
-        Task { await viewModel.open() }
+    private func onTap() {
+        Task { await viewModel.onTap() }
     }
 
 }

@@ -28,13 +28,17 @@ extension URLSession: FileDownloading {
             progressContinuation.yield(fractionCompleted)
         }
 
-        let downloadTask = Task {
-            let result = try await download(from: url, delegate: delegate)
-            progressContinuation.finish()
-            return result
+        let urlDownloadTask = Task {
+            try await withTaskCancellationHandler {
+                let result = try await download(from: url, delegate: delegate)
+                progressContinuation.finish()
+                return result
+            } onCancel: {
+                delegate.cancel()
+            }
         }
-
-        return (progress: progressStream, download: downloadTask)
+        
+        return (progress: progressStream, download: urlDownloadTask)
     }
 
 }

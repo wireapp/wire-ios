@@ -23,6 +23,7 @@ final class URLSessionTaskProgressDelegate: NSObject, URLSessionTaskDelegate, @u
 
     private let progress: @Sendable (Double) -> Void
     private var cancellables: Set<AnyCancellable> = []
+    private var task: URLSessionTask?
 
     init(progress: @Sendable @escaping (Double) -> Void) {
         self.progress = progress
@@ -30,10 +31,16 @@ final class URLSessionTaskProgressDelegate: NSObject, URLSessionTaskDelegate, @u
 
     func urlSession(_ session: URLSession, didCreateTask task: URLSessionTask) {
         precondition(cancellables.isEmpty, "Delegate must not be reused across multiple tasks.")
+        self.task = task
 
         task.progress.publisher(for: \.fractionCompleted)
             .sink { [progress] in progress($0) }
             .store(in: &cancellables)
+    }
+    
+    func cancel() {
+        task?.cancel()
+        cancellables = .init()
     }
 
 }
