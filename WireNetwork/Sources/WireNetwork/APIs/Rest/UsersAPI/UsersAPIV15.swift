@@ -123,8 +123,8 @@ private struct UserResponseV15: Decodable, ToAPIModelConvertible {
 
 private struct UserAppV15: Decodable, ToAPIModelConvertible {
 
-    let category: String // TODO: optional?
-    let description: String // TODO: optional?
+    let category: String
+    let description: String
 
     func toAPIModel() -> NewApp {
         NewApp(
