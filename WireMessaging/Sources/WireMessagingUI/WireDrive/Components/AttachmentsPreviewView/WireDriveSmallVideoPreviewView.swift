@@ -20,6 +20,8 @@ import SwiftUI
 import WireDesign
 import WireFoundation
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+
 struct WireDriveSmallVideoPreviewView: View {
 
     let url: URL?
@@ -69,6 +71,16 @@ struct WireDriveSmallVideoPreviewView: View {
                         if case .notLoaded = state {
                             PlayIcon()
                                 .disabled(false)
+                        } else if case .loading(let progress, _) = state {
+                            ZStack {
+                                PlayIcon()
+                                
+                                Color.black.opacity(0.7)
+                                
+                                ProgressView(value: progress)
+                                    .progressViewStyle(WireDriveAssetProgressViewStyle(strokeColor: .white))
+                                    .frame(height: 30)
+                            }
                         }
                     }
             case .failure:

@@ -42,14 +42,14 @@ struct WireDriveAttachmentsPreviewItemView: View {
                 WireDriveImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
                     state: viewModel.fileTracker.state,
-                    canShowNoPreviewMessage: false
+                    isLargePreview: false
                 )
                 .frame(width: 120, height: 120)
             case (.image, .large):
                 WireDriveImageConversationAttachmentPreview(
                     thumbnailURL: viewModel.imagePreviewURL,
                     state: viewModel.fileTracker.state,
-                    canShowNoPreviewMessage: true
+                    isLargePreview: true
                 )
                 .aspectRatio(viewModel.previewAspectRatio, contentMode: .fit)
                 .frame(

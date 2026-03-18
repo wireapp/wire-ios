@@ -20,18 +20,20 @@ import SwiftUI
 import WireDesign
 import WireFoundation
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+
 struct WireDriveImageConversationAttachmentPreview: View {
 
     let thumbnailURL: URL?
     let state: WireDriveFileUITracker.State
-    let canShowNoPreviewMessage: Bool
+    let isLargePreview: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
-    init(thumbnailURL: URL?, state: WireDriveFileUITracker.State, canShowNoPreviewMessage: Bool) {
+    init(thumbnailURL: URL?, state: WireDriveFileUITracker.State, isLargePreview: Bool) {
         self.thumbnailURL = thumbnailURL
         self.state = state
-        self.canShowNoPreviewMessage = canShowNoPreviewMessage
+        self.isLargePreview = isLargePreview
     }
 
     var body: some View {
@@ -59,9 +61,36 @@ struct WireDriveImageConversationAttachmentPreview: View {
                 } else {
                     noPreviewMessageView
                 }
-
-                if isAssetDownloadError {
-                    WireDriveAttachmentPreviewErrorCircle()
+                
+                switch state {
+                case .loading(let progress, _):
+                    Color.black.opacity(0.7)
+                    
+                    VStack(spacing: 12) {
+                        ProgressView(value: progress)
+                            .progressViewStyle(WireDriveAssetProgressViewStyle(strokeColor: .white))
+                            .frame(height: 16)
+                        
+                        if isLargePreview {
+                            Text(Strings.Files.tapToCancelDownload)
+                                .font(for: .subline1)
+                                .foregroundStyle(.white)
+                        }
+                        
+                    }
+                    
+                case .failed:
+                    if isLargePreview {
+                        Color.black.opacity(0.7)
+                        
+                        Text(Strings.Files.downloadFailed)
+                            .font(for: .subline1)
+                            .foregroundStyle(.white)
+                    } else {
+                        WireDriveAttachmentPreviewErrorCircle()
+                    }
+                default:
+                    EmptyView()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -81,7 +110,7 @@ struct WireDriveImageConversationAttachmentPreview: View {
     }
 
     @ViewBuilder private var noPreviewMessageView: some View {
-        if canShowNoPreviewMessage {
+        if isLargePreview {
             Text(L10n.Localizable.Conversation.Message.Attachment.previewNotAvailable)
                 .font(for: .subline1)
                 .foregroundColor(ColorTheme.Backgrounds.surface.color)
@@ -100,6 +129,6 @@ struct WireDriveImageConversationAttachmentPreview: View {
     WireDriveImageConversationAttachmentPreview(
         thumbnailURL: nil,
         state: .loading(progress: 0.5, isLargeFile: false),
-        canShowNoPreviewMessage: true
+        isLargePreview: true
     )
 }

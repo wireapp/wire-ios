@@ -22,9 +22,14 @@ import SwiftUI
 struct WireDriveAssetProgressViewStyle: ProgressViewStyle {
     @Environment(\.wireAccentColor) private var wireAccentColor
     @ScaledMetric private var lineWidth: CGFloat = 2
+    private let strokeColor: Color?
     
     private var color: Color {
         wireAccentColor.color
+    }
+    
+    init(strokeColor: Color? = nil) {
+        self.strokeColor = strokeColor
     }
     
     func makeBody(configuration: Configuration) -> some View {
@@ -32,7 +37,7 @@ struct WireDriveAssetProgressViewStyle: ProgressViewStyle {
         
         ZStack {
             Circle()
-                .stroke(color.opacity(0.2), lineWidth: lineWidth)
+                .stroke(strokeColor ?? color.opacity(0.2), lineWidth: lineWidth)
             
             Circle()
                 .trim(from: 0, to: progress)

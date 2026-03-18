@@ -19,6 +19,8 @@
 import SwiftUI
 import WireDesign
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+
 struct WireDriveVideoAttachmentPreview: View {
 
     let thumbnail: Image?
@@ -36,28 +38,40 @@ struct WireDriveVideoAttachmentPreview: View {
                             .resizable()
                             .scaledToFill()
                             .frame(width: geometry.size.width, height: geometry.size.height)
+                            .overlay {
+                                if case .notLoaded = state {
+                                    PlayIcon()
+                                } else if case .loading(let progress, _) = state {
+                                    ZStack {
+                                        PlayIcon()
+                                        
+                                        Color.black.opacity(0.7)
+                                        
+                                        ProgressView(value: progress)
+                                            .progressViewStyle(WireDriveAssetProgressViewStyle(strokeColor: .white))
+                                            .frame(height: 30)
+                                    }
+                                }
+                            }
                     }
                 }
-
-                if thumbnail != nil, !isError {
-                    PlayIcon()
-                        .disabled(!canPlay)
-                }
-
-                if isError {
-                    WireDriveAttachmentPreviewErrorCircle()
-                }
+                
+                stateView
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
     
-    private var isError: Bool {
+    @ViewBuilder
+    private var stateView: some View {
         switch state {
+        case .loaded where thumbnail != nil:
+            PlayIcon()
+                .disabled(!canPlay)
         case .failed:
-            true
+            WireDriveAttachmentPreviewErrorCircle()
         default:
-            false
+            EmptyView()
         }
     }
 }

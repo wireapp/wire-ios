@@ -19,6 +19,8 @@
 import SwiftUI
 import WireDesign
 
+private typealias Strings = L10n.Localizable.Conversation.WireCells
+
 struct WireDriveImageAttachmentPreview: View {
 
     let thumbnail: Image?
@@ -38,11 +40,26 @@ struct WireDriveImageAttachmentPreview: View {
                     }
                 }
 
-                if case .failed = state {
-                    WireDriveAttachmentPreviewErrorCircle()
-                }
+                stateView
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+    
+    @ViewBuilder
+    private var stateView: some View {
+        switch state {
+        case .loading(let progress, _):
+            Color.black.opacity(0.7)
+            
+            ProgressView(value: progress)
+                .progressViewStyle(WireDriveAssetProgressViewStyle(strokeColor: .white))
+                .frame(height: 16)
+            
+        case .failed:
+            WireDriveAttachmentPreviewErrorCircle()
+        default:
+            EmptyView()
         }
     }
 }
