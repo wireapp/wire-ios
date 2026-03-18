@@ -360,23 +360,23 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 "fetched \(envelopes.count) stored envelopes for processing",
                 attributes: .incrementalSyncV2
             )
-            
+
             let processed = try await processEventEnvelopes(envelopesWithObjectIDs: envelopesWithObjectIDs)
             processedEnvelopeIDs.formUnion(processed)
         }
 
         return processedEnvelopeIDs
     }
-    
+
     private typealias EnvelopeWithObjectID = (envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)
 
     private func processEventEnvelopes(
         envelopesWithObjectIDs: [EnvelopeWithObjectID]
     ) async throws -> Set<UUID> {
-        
+
         func finishProcessing(processedObjectIds: [NSManagedObjectID]) async throws {
             if processedObjectIds.isEmpty { return }
-            
+
             try await updateEventsStore.deleteNextPendingEvents(with: processedObjectIds)
             await updateEventsStore.calculateLastUnreadMessages()
 
@@ -389,16 +389,16 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 )
             }
         }
-        
+
         var processedItems: [EnvelopeWithObjectID] = []
-        
+
         do {
             for item in envelopesWithObjectIDs {
-                
+
                 guard !earService.isLocked || item.envelope.isBackgroundAccessible else {
                     throw Failure.databaseLocked
                 }
-                
+
                 for event in item.envelope.events {
                     do {
                         logger.debug(
@@ -413,19 +413,19 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         )
                     }
                 }
-                
+
                 processedItems.append(item)
             }
         } catch {
             try await finishProcessing(processedObjectIds: processedItems.map(\.objectID))
             throw error
         }
-        
+
         try await finishProcessing(processedObjectIds: processedItems.map(\.objectID))
         return Set(processedItems.map(\.envelope.id))
     }
-    
-    
+
+
     /// A token containing the task that processes live events via the push
     /// channel.
     ///
