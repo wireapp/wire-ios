@@ -177,6 +177,7 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
         } catch {
             // We don't care about the eTag when setting download state to failed.
             if var asset = try store.asset(nodeID: nodeID) {
+                // On cancellation error, resets the asset to its initial download state.
                 asset.downloadState = (error is CancellationError) ? .pending : .failed(error: error)
                 try store.upsertAsset(asset)
             }
