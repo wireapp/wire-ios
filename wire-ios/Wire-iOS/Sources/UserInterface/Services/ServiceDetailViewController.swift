@@ -186,29 +186,21 @@ final class ServiceDetailViewController: UIViewController {
         for teamID: WireNetwork.Team.ID,
         with appID: UUID
     ) {
-        Task {
-            do {
-                let appDetails = try await teamsAPI.getApp(
-                    for: teamID,
-                    with: appID
-                )
-                detailView.service.serviceUserDetails = ServiceDetails(
-                    serviceIdentifier: "",
-                    providerIdentifier: "",
-                    name: appDetails.name,
-                    serviceDescription: appDetails.description
-                )
-                detailView.service.provider = ServiceProvider(
-                    identifier: "",
-                    name: service.user.teamName ?? "",
-                    email: "",
-                    url: "",
-                    providerDescription: ""
-                )
-            } catch {
-                WireLogger.ui.error("failed to get app details", attributes: .safePublic)
-            }
-        }
+        guard let appInfo = service.user.appInfo else { return } // TODO: fix
+
+        detailView.service.serviceUserDetails = ServiceDetails(
+            serviceIdentifier: "",
+            providerIdentifier: "",
+            name: service.user.name ?? "",
+            serviceDescription: appInfo.appDescription
+        )
+        detailView.service.provider = ServiceProvider(
+            identifier: "",
+            name: service.user.teamName ?? "",
+            email: "",
+            url: "",
+            providerDescription: ""
+        )
     }
 
     private func fetchBotDetails() {

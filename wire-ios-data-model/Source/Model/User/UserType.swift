@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireData
 
 @objc
 public protocol UserType: NSObjectProtocol, UserConnections {
@@ -136,7 +137,10 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Whether the user verified all own devices plus others
     var isVerified: Bool { get }
 
-    // these properties will only be used for legacy services (bots)
+    // these property are used for apps
+    var appInfo: AppInfo? { get }
+
+    // these properties are used for legacy services (bots)
     var providerIdentifier: String? { get }
     var serviceIdentifier: String? { get }
 

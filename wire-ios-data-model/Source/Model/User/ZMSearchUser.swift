@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireData
 
 public extension Notification.Name {
     static let searchUserDidRequestPreviewAsset = Notification.Name("SearchUserDidRequestPreviewAsset")
@@ -350,6 +351,10 @@ public class ZMSearchUser: NSObject, UserType {
 
     public var canManageTeam: Bool {
         user?.canManageTeam ?? false
+    }
+
+    public var appInfo: AppInfo? {
+        user?.appInfo
     }
 
     public var providerIdentifier: String? {
