@@ -1841,13 +1841,6 @@ public final class MLSService: MLSServiceInterface {
         onEpochChangedSubject.send(MLSGroupID(conversationId))
     }
 
-    // MARK: - Generate new epoch
-
-    public func generateNewEpoch(groupID: MLSGroupID) async throws {
-        logger.info("generating new epoch in subconveration (\(groupID.safeForLoggingDescription))")
-        try await updateKeyMaterial(for: groupID)
-    }
-
     // MARK: - CRLs distribution points
 
     public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
