@@ -362,6 +362,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             )
 
             for envelope in envelopes {
+                try Task.checkCancellation()
+                
                 for event in envelope.events {
                     do {
                         logger.debug(
