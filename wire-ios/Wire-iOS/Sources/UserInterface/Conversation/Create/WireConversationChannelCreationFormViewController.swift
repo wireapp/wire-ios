@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import UIKit
+import WireDesign
 import WireDomain
 import WireLogging
 import WireMessagingDomain
@@ -33,6 +33,12 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     private lazy var viewModel = ConversationChannelCreationFormViewModel(
         channelName: "",
+        channelInvitePolicy: .admins,
+        channelHistoryOption: .off,
+        areAppsSupported: values.isAppsFeatureEnabled,
+        appsAllowed: true,
+        guestsAllowed: true,
+        readReceiptsEnabled: true,
         isUserPremium: userSession.isEnterpriseUser,
         isWireDriveEnabled: userSession.isWireDriveEnabled,
         teamsURL: URL.manageTeam(source: .settings),
@@ -45,12 +51,11 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     weak var delegate: ConversationCreationControllerDelegate?
 
-    private lazy var hostingController: UIHostingController<ConversationChannelCreationForm> = {
-        let rootView = ConversationChannelCreationForm(
+    private lazy var hostingController: UIHostingController<some View> = UIHostingController(
+        rootView: ConversationChannelCreationForm(
             viewModel: viewModel
-        )
-        return UIHostingController(rootView: rootView)
-    }()
+        ).environment(\.wireAccentColor, userSession.selfUser.wireAccentColor)
+    )
 
     @MainActor var channelCreationSettings: ConversationChannelCreationSettings? {
         viewModel.getChannelCreationSettings()

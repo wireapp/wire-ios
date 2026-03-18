@@ -27,6 +27,7 @@ extension ConversationContentViewController {
     ) -> ReplyComposingView {
         let replyComposingView = ReplyComposingView(
             message: message,
+            userSession: userSession,
             messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
         )
         replyComposingView.translatesAutoresizingMaskIntoConstraints = false

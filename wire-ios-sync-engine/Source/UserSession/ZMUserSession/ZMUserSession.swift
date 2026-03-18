@@ -829,7 +829,7 @@ public final class ZMUserSession: NSObject {
                 metadata: resolvedBackendMetadata
             ),
             ConnectToBotURLActionProcessor(
-                contextprovider: coreDataStack,
+                contextProvider: coreDataStack,
                 transportSession: transportSession,
                 eventProcessor: conversationEventProcessor,
                 searchUsersCache: dependencies.caches.searchUsers,
@@ -1588,20 +1588,30 @@ extension ZMUserSession {
 
     private func makeAppVersionMigrations() -> [any AppVersionMigration] {
         var migrations: [any AppVersionMigration] = [
-            AppVersionMigration_4_1_1(journal: journal, logFilesProvider: logFilesProvider),
+            AppVersionMigration_4_1_1(
+                journal: journal,
+                logFilesProvider: logFilesProvider
+            ),
             AppVersionMigration_4_2_0(
                 appGroupIdentifier: Bundle.main.appGroupIdentifier,
                 lastEventIDRepository: lastEventIDRepository,
                 journal: journal,
                 sessionManager: sessionManager
             ),
-            AppVersionMigration_4_3_0(coreCryptoProvider: coreCryptoProvider),
-            AppVersionMigration_4_10_0(journal: journal),
+            AppVersionMigration_4_3_0(
+                coreCryptoProvider: coreCryptoProvider
+            ),
+            AppVersionMigration_4_10_0(
+                journal: journal
+            ),
             AppVersionMigration_4_12_0(
                 journal: journal,
                 repairGenerator: clientSessionComponent?.repairFaultyMLSRemovalKeysGenerator
             ),
-            AppVersionMigration_4_12_2(coreDataStack: coreDataStack, coreCryptoProvider: coreCryptoProvider)
+            AppVersionMigration_4_12_2(
+                coreDataStack: coreDataStack,
+                coreCryptoProvider: coreCryptoProvider
+            )
         ]
 
         if let clientSessionComponent {

@@ -59,7 +59,6 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         indexPath: IndexPath,
         section: SearchResultsViewControllerSection
     ) {
-
         if !user.isConnected, !user.isTeamMember {
             presentProfileViewController(for: user, at: indexPath)
         } else {
@@ -72,10 +71,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         didDoubleTapOnUser user: UserType,
         indexPath: IndexPath
     ) {
-
-        guard user.isConnected, !user.isBlocked else {
-            return
-        }
+        guard user.isConnected, !user.isBlocked else { return }
 
         delegate?.startUIViewController(self, didSelect: user)
     }
@@ -91,7 +87,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(
         _ searchResultsViewController: SearchResultsViewController,
-        didTapOnSeviceUser user: ServiceUser
+        didTapOnServiceUser user: UserType
     ) {
 
         let detail = ServiceDetailViewController(
@@ -112,7 +108,6 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
                 navigationController?.dismiss(animated: true, completion: nil)
             }
         }
-
         navigationController?.pushViewController(detail, animated: true)
     }
 }

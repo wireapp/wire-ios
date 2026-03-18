@@ -37,7 +37,7 @@ final class ConversationRootViewController: UIViewController {
 
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
-    fileprivate let networkStatusViewController: NetworkStatusViewController = .init()
+    fileprivate let networkStatusViewController: NetworkStatusViewController
     fileprivate(set) weak var conversationViewController: ConversationViewController?
 
     // MARK: - Init
@@ -53,6 +53,7 @@ final class ConversationRootViewController: UIViewController {
         wireMessagingFactory: any WireMessagingFactoryProtocol
     ) {
         self.conversation = conversation
+        self.networkStatusViewController = NetworkStatusViewController(userSession: userSession)
 
         let conversationController = ConversationViewController(
             conversation: conversation,
@@ -62,7 +63,7 @@ final class ConversationRootViewController: UIViewController {
             selfProfileUIBuilder: selfProfileUIBuilder,
             conversationCreationRepository: conversationCreationRepository,
             mediaPlaybackManager: mediaPlaybackManager,
-            classificationProvider: ZMUserSession.shared(),
+            classificationProvider: userSession as? ZMUserSession,
             networkStatusObservable: NetworkStatus.shared,
             getParticipantImageSourceUseCase: GetParticipantImageSourceUseCase(
                 repository: GetParticipantImageSourceRepository(
