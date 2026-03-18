@@ -118,7 +118,7 @@ open class AuthenticatedSessionFactory {
             localDomain: BackendInfo.domain
         )
         let contextStorage = LAContextStorage()
-        let earService = await EARServiceFactory().createEARService(
+        let earService = await EARServiceFactory.createEARService(
             accountID: coreDataStack.account.userIdentifier,
             databaseContexts: [
                 coreDataStack.viewContext,

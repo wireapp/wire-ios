@@ -245,7 +245,7 @@ public final class SharingSession {
         )
         let contextStorage = LAContextStorage()
 
-        let earService = await EARServiceFactory().createEARService(
+        let earService = await EARServiceFactory.createEARService(
             accountID: accountIdentifier,
             databaseContexts: [
                 coreDataStack.viewContext,
