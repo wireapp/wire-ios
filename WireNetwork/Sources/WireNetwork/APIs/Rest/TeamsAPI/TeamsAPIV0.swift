@@ -172,7 +172,7 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
     func getApp(
         for teamID: Team.ID,
         with id: UUID
-    ) async throws -> App {
+    ) async throws -> TmpApp {
         throw TeamsAPIError.unsupportedEndpointForAPIVersion
     }
 
