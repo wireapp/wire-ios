@@ -235,15 +235,6 @@ struct FilesItemView: View {
                 Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
             }
             .disabled(viewModel.isDownloading)
-
-            //TODO: maybe remove this case?
-            if viewModel.isDownloadOptionAvailable {
-                Button {
-                    Task { await viewModel.download() }
-                } label: {
-                    Label(Strings.Files.Item.Menu.download, systemImage: "square.and.arrow.down")
-                }
-            }
         }
 
         menuItem(.shareLink) { item in

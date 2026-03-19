@@ -169,13 +169,6 @@ final class FilesItemViewModel: ObservableObject {
         }
     }
 
-    func download() async {
-        precondition(item.kind == .file)
-
-        // Ignore errors as these will be reported via the `asset` publisher.
-        try? await localAssetRepository.downloadAsset(nodeID: nodeID)
-    }
-
     func showDeleteConfirmation(deletePermanently: Bool) {
         switch (deletePermanently, item.kind) {
         case (true, .file):
