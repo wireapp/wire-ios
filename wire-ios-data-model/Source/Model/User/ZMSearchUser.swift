@@ -92,7 +92,6 @@ public struct SearchUserAssetKeys {
 @objc
 public class ZMSearchUser: NSObject, UserType {
 
-    public var summary: String?
     public var assetKeys: SearchUserAssetKeys?
     public var remoteIdentifier: UUID!
     public var teamIdentifier: UUID?
@@ -121,6 +120,7 @@ public class ZMSearchUser: NSObject, UserType {
     fileprivate var internalCompleteImageData: Data?
     fileprivate var internalIsAccountDeleted: Bool?
     fileprivate var internalProviderIdentifier: String?
+    fileprivate var internalSummary: String?
 
     @objc public var hasTeam: Bool {
         user?.hasTeam ?? false
@@ -335,6 +335,10 @@ public class ZMSearchUser: NSObject, UserType {
 
     public var richProfile: [UserRichProfileField] {
         user?.richProfile ?? []
+    }
+
+    public var summary: String? {
+        internalSummary
     }
 
     public func canAccessCompanyInformation(of otherUser: UserType) -> Bool {
@@ -607,6 +611,7 @@ public class ZMSearchUser: NSObject, UserType {
             searchUsersCache: searchUsersCache,
             type: user.type
         )
+        internalSummary = user.appInfo?.appDescription
     }
 
     convenience init?(
@@ -643,7 +648,7 @@ public class ZMSearchUser: NSObject, UserType {
             type: type
         )
 
-        self.summary = payload["summary"] as? String
+        self.internalSummary = payload["summary"] as? String
         self.assetKeys = SearchUserAssetKeys(payload: payload)
         self.internalIsAccountDeleted = payload["deleted"] as? Bool
 
