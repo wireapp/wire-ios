@@ -614,7 +614,7 @@ final class UserSessionLoader {
 
     private func isBuildBlacklisted(userSession: ZMUserSession) async -> Bool {
         let useCase = userSession.userSessionComponent.makeIsBuildBlacklistedUseCase()
-        return await useCase.invoke()
+        return await useCase.invoke().isBuildBlacklisted
     }
 
     private func performPendingMigrations(
