@@ -95,7 +95,7 @@ private extension CreateFileView {
                 Text(L10n.Localizable.General.cancel)
             }
         )
-        .accessibilityIdentifier(Locators.WireDrive.CreateFilePage.cancelButton.rawValue)
+        .accessibilityIdentifier(Locators.WireDrive.CreateFilePage.cancelButton)
     }
 
     @ViewBuilder var createButton: some View {
@@ -111,7 +111,7 @@ private extension CreateFileView {
                 }
             )
             .disabled(viewModel.isCreateDisabled)
-            .accessibilityIdentifier(Locators.WireDrive.CreateFilePage.createButton.rawValue)
+            .accessibilityIdentifier(Locators.WireDrive.CreateFilePage.createButton)
         }
     }
 }

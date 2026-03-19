@@ -23,7 +23,7 @@ import Foundation
 // because the current UI tests depend on these exact values.
 // We are keeping them as-is for now to avoid breaking existing tests.
 //
-// TODO: [WPB-21952] Replace these explicit string values with properly camel-cased,
+// TODO: [WPB-21952] Replace these explicit string values with properly camelCased,
 // non-UI-text-based identifiers (e.g., accessibility identifiers) to have this
 // unform format and reduce test fragility.
 

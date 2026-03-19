@@ -96,7 +96,7 @@ private extension FileRenameView {
             }
         )
         .accessibilityLabel(L10n.Accessibility.General.cancel)
-        .accessibilityIdentifier(Locators.WireDrive.FileRenamePage.cancel.rawValue)
+        .accessibilityIdentifier(Locators.WireDrive.FileRenamePage.cancel)
     }
 
     var saveButton: some View {
@@ -114,7 +114,7 @@ private extension FileRenameView {
                 )
                 .disabled(viewModel.isSaveDisabled)
                 .accessibilityLabel(L10n.Accessibility.General.save)
-                .accessibilityIdentifier(Locators.WireDrive.FileRenamePage.save.rawValue)
+                .accessibilityIdentifier(Locators.WireDrive.FileRenamePage.save)
             }
         }
     }

@@ -210,7 +210,7 @@ struct FilesInfoView: View {
                 )
         }
         .accessibilityLabel(Strings.Files.Error.retry)
-        .accessibilityIdentifier(Locators.WireDrive.FilesInfoPage.retryButton.rawValue)
+        .accessibilityIdentifier(Locators.WireDrive.FilesInfoPage.retryButton)
     }
 }
 

@@ -190,7 +190,7 @@ private extension FilesContentView {
 
     var confirmButton: some View {
         Button(L10n.Localizable.General.confirm, action: {})
-            .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.confirm.rawValue)
+            .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.confirm)
     }
 }
 
@@ -237,7 +237,7 @@ private extension FilesContentView {
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: Strings.Files.Search.title
         )
-        .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.search.rawValue)
+        .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.search)
     }
 }
 
