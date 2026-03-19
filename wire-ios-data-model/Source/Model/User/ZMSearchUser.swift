@@ -503,6 +503,7 @@ public class ZMSearchUser: NSObject, UserType {
         user existingUser: ZMUser? = nil,
         searchUsersCache: SearchUsersCache?,
         type: TypeOfUser?,
+        summary: String?,
         isDeleted: Bool
     ) {
         self.init(
@@ -518,6 +519,7 @@ public class ZMSearchUser: NSObject, UserType {
             searchUsersCache: searchUsersCache,
             type: type
         )
+        self.internalSummary = summary
         self.internalIsAccountDeleted = isDeleted
     }
 

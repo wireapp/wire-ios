@@ -459,6 +459,7 @@ public final class SearchTask {
                     user: localUser,
                     searchUsersCache: searchUsersCache,
                     type: localUser?.type,
+                    summary: localUser?.appInfo?.description,
                     isDeleted: result.deleted ?? false
                 )
             }
@@ -759,9 +760,9 @@ public final class SearchTask {
                             user: localUser,
                             searchUsersCache: searchUsersCache,
                             type: localUser?.type,
+                            summary: profile.summary,
                             isDeleted: profile.isDeleted
                         )
-                        searchUser.summary = profile.summary
                         searchUser.assetKeys = SearchUserAssetKeys(profile.assets)
                         return searchUser
                     }
