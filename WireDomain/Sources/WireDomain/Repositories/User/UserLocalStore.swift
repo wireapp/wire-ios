@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireData
 import WireDataModel
 import WireLogging
 import WireNetwork
@@ -322,7 +323,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             domain: userInfo.userID.domain
         )
 
-        await context.perform {
+        await context.perform { [context] in
             guard !userInfo.isDeleted else {
                 return persistedUser.markAccountAsDeleted(at: Date())
             }
@@ -335,6 +336,12 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             persistedUser.previewProfileAssetIdentifier = userInfo.completeAssetKey
             persistedUser.emailAddress = userInfo.email
             persistedUser.expiresAt = userInfo.expiresAt
+            if let appDescription = userInfo.appDescription, let appCategory = userInfo.appCategory {
+                let appInfo = persistedUser.appInfo ?? WireData.AppInfo(context: context)
+                appInfo.appDescription = appDescription
+                appInfo.category = appCategory
+                persistedUser.appInfo = appInfo
+            }
             persistedUser.serviceIdentifier = userInfo.serviceID?.transportString()
             persistedUser.providerIdentifier = userInfo.serviceProvider?.transportString()
             persistedUser.supportedProtocols = userInfo.supportedProtocols ?? [.proteus]

@@ -238,6 +238,46 @@ final class UsersAPITests: XCTestCase {
         }
     }
 
+    // MARK: - V15
+
+    func testGetUserForID_SuccessResponse_200_V15_Then_Verify_Request() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetUserSuccessResponseV15")
+        ])
+
+        try await apiSnapshotHelper.verifyRequest(for: [.v15], apiService: apiService) { sut in
+            // When
+            let result = try await sut.getUser(
+                for: Scaffolding.userID
+            )
+
+            // Then
+            XCTAssertEqual(
+                result,
+                Scaffolding.userV15
+            )
+        }
+    }
+
+    func testGetUsersForIDs_SuccessResponse_200_V15_Then_Verify_Request() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetUsersSuccessResponseV15")
+        ])
+
+        try await apiSnapshotHelper.verifyRequest(for: [.v15], apiService: apiService) { sut in
+            // When
+            let result = try await sut.getUsers(userIDs: [Scaffolding.userID])
+
+            // Then
+            XCTAssertEqual(
+                result,
+                UserList(found: [Scaffolding.userV15], failed: [Scaffolding.userID])
+            )
+        }
+    }
+
     // MARK: -
 
     enum Scaffolding {
@@ -261,13 +301,13 @@ final class UsersAPITests: XCTestCase {
             deleted: true,
             email: "john.doe@example.com",
             expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            app: nil,
             service: Service(
                 id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
                 provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
             ),
             supportedProtocols: [.proteus],
-            legalholdStatus: .enabled,
-            app: nil
+            legalholdStatus: .enabled
         )
         static let userV12 = User(
             id: userID,
@@ -284,13 +324,39 @@ final class UsersAPITests: XCTestCase {
             deleted: true,
             email: "john.doe@example.com",
             expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            app: nil,
             service: Service(
                 id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
                 provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
             ),
             supportedProtocols: [.proteus],
-            legalholdStatus: .enabled,
-            app: nil
+            legalholdStatus: .enabled
+        )
+        static let userV15 = User(
+            id: userID,
+            name: "name",
+            handle: "handle",
+            teamID: teamID,
+            type: .regular,
+            accentID: 1,
+            assets: [UserAsset(
+                key: "3-1-47de4580-ae51-4650-acbb-d10c028cb0ac",
+                size: .preview,
+                type: .image
+            )],
+            deleted: true,
+            email: "john.doe@example.com",
+            expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            app: AppInfo( // added in v15
+                category: "cat",
+                description: "desc"
+            ),
+            service: Service(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
+            ),
+            supportedProtocols: [.proteus],
+            legalholdStatus: .enabled
         )
     }
 
