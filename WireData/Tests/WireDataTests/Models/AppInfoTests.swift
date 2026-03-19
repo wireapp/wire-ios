@@ -29,7 +29,7 @@ struct AppInfoTests {
     @Test
     func initialization() async throws {
         let context = container.newBackgroundContext()
-        try await context.perform {
+        let (appDescription, category) = try await context.perform {
 
             // given
             let appInfo = AppInfo(context: context)
@@ -38,15 +38,14 @@ struct AppInfoTests {
 
             // when
             try context.save()
-
-            // then
             let request = try #require(AppInfo.fetchRequest() as? NSFetchRequest<AppInfo>)
             let persisted = try #require(context.fetch(request).first)
-
-            #expect(persisted.description == "desc")
-            #expect(persisted.category == "cat")
-
+            return (persisted.appDescription, persisted.category)
         }
+
+        // then
+        #expect(appDescription == "desc")
+        #expect(category == "cat")
     }
 
 }

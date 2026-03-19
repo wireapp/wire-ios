@@ -31,7 +31,7 @@ struct WireCellsLocalAssetTests {
     }
 
     @Test
-    func initialization() async throws {
+    func initialization() throws {
         // given
         let context = container.viewContext
         let nodeID = UUID()
