@@ -23,4 +23,12 @@ public struct AppInfo: Equatable, Sendable {
 
     public let description: String
 
+    public init(
+        category: String,
+        description: String
+    ) {
+        self.category = category
+        self.description = description
+    }
+
 }
