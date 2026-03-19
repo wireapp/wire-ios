@@ -326,7 +326,6 @@ final class UserSessionLoader {
             // To allow offline browsing fallback to previous metadata if possible.
             if let prevMetadata {
                 newMetadata = prevMetadata
-                // TODO: Schedule fetching the latest backend metadata.
             } else {
                 throw Failure.noResolvedBackendMetadataAvailable
             }
@@ -609,7 +608,6 @@ final class UserSessionLoader {
             MLSAPIError.unsupportedEndpointForAPIVersion,
             MLSAPIError.mlsNotEnabled {
             // Don't block session loading, we'll try again later.
-            // TODO: Schedule trying again later
             return nil
         }
     }
