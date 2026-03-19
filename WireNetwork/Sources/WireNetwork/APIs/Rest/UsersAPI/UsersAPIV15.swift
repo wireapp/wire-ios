@@ -22,6 +22,24 @@ final class UsersAPIV15: UsersAPIV14 {
 
     override var apiVersion: APIVersion { .v15 }
 
+    override func getUser(for userID: UserID) async throws -> User {
+        let path = "\(pathPrefix)/users/\(userID.domain)/\(userID.id.transportString())"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: UserResponseV15.self)
+            .failure(code: .notFound, label: "not-found", error: UsersAPIError.userNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
+
     override func getUsers(userIDs: [UserID]) async throws -> UserList {
         let body = try JSONEncoder.defaultEncoder
             .encode(ListUsersRequestV0(qualifiedIDs: userIDs.map { $0.toNetworkModel() }))
@@ -112,10 +130,10 @@ private struct UserResponseV15: Decodable, ToAPIModelConvertible {
             deleted: deleted,
             email: email,
             expiresAt: expiresAt?.date,
+            app: app?.toAPIModel(),
             service: service?.toAPIModel(),
             supportedProtocols: supportedProtocols.flatMap { Set($0) },
-            legalholdStatus: legalholdStatus.toAPIModel(),
-            app: app?.toAPIModel()
+            legalholdStatus: legalholdStatus.toAPIModel()
         )
     }
 
