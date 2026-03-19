@@ -19,6 +19,10 @@ on:
       run_critical_flows:
         type: boolean
         required: true
+      kalium_ref:
+        type: string
+        required: false
+        default: ''
       testiny_run_name:
         type: string
         required: false
@@ -139,20 +143,40 @@ jobs:
         run: |
           bundle exec fastlane prepare_for_tests
 
+      - name: Resolve Kalium ref
+        if: ${{ inputs.run_critical_flows }}
+        id: kalium-ref
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -n "${{ inputs.kalium_ref }}" ]]; then
+            KALIUM_REF="${{ inputs.kalium_ref }}"
+          else
+            KALIUM_REF="$({
+              git ls-remote --tags --refs https://github.com/wireapp/kalium.git 'refs/tags/test-service-v*' \
+              | awk -F/ '{print $3}' \
+              | sort -V \
+              | tail -n 1
+            })"
+          fi
+
+          if [[ -z "$KALIUM_REF" ]]; then
+            echo "::error::Could not resolve Kalium testservice ref"
+            exit 1
+          fi
+
+          echo "ref=$KALIUM_REF" >> "$GITHUB_OUTPUT"
+          echo "Using Kalium ref: $KALIUM_REF"
+
       - name: Clone Kalium
         if: ${{ inputs.run_critical_flows }}
         shell: bash
         run: |
           KALIUM_DIR="$RUNNER_TEMP/kalium"
           rm -rf "$KALIUM_DIR"
-          git clone --depth 1 --branch develop \
+          git clone --depth 1 --branch "${{ steps.kalium-ref.outputs.ref }}" \
             https://github.com/wireapp/kalium.git "$KALIUM_DIR"
-
-      - name: Get Kalium HEAD SHA
-        if: ${{ inputs.run_critical_flows }}
-        id: kalium-sha
-        shell: bash
-        run: echo "sha=$(git -C $RUNNER_TEMP/kalium rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Cache Gradle dependencies
         if: ${{ inputs.run_critical_flows }}
@@ -161,7 +185,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: kalium-gradle-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-sha.outputs.sha }}
+          key: kalium-gradle-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-ref.outputs.ref }}
           restore-keys: |
             kalium-gradle-${{ runner.os }}-${{ runner.arch }}-
 
@@ -171,7 +195,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ runner.temp }}/kalium/tools/testservice/build/libs/
-          key: kalium-jar-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-sha.outputs.sha }}
+          key: kalium-jar-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-ref.outputs.ref }}
           restore-keys: |
             kalium-jar-${{ runner.os }}-${{ runner.arch }}-
 
