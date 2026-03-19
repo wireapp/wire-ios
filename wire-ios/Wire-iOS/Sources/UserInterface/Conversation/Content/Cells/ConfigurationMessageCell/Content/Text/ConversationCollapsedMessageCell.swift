@@ -26,6 +26,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     struct Configuration: Equatable {
         var message: ZMConversationMessage
         let accentColor: AccentColor
+        let userSession: UserSession
         let collapseExpandAction: () -> Void
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
@@ -58,7 +59,6 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
     private lazy var avatar: UserImageView = {
         let view = UserImageView()
-        view.userSession = ZMUserSession.shared()
         view.initialsFont = .avatarInitial
         view.size = .badge
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -159,11 +159,12 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         messageTextView.textColor = SemanticColors.Label.textDefault
 
         let user = object.message.senderUser
+        avatar.userSession = object.userSession
         avatar.user = user
         availabilityIndicatorView.availability = user?.availability.mapToAccountImageAvailability()
 
-        if let session = ZMUserSession.shared(), let user {
-            userObservation = UserChangeInfo.add(observer: self, for: user, in: session)
+        if let userSession = object.userSession as? ZMUserSession, let user {
+            userObservation = UserChangeInfo.add(observer: self, for: user, in: userSession)
         }
 
         let message = object.message
@@ -344,11 +345,13 @@ final class ConversationCollapsedMessageCellDescription: ConversationMessageCell
     init(
         message: ConversationMessage,
         accentColor: AccentColor,
+        userSession: UserSession,
         collapseExpandAction: @escaping () -> Void
     ) {
         self.configuration = View.Configuration(
             message: message,
             accentColor: accentColor,
+            userSession: userSession,
             collapseExpandAction: collapseExpandAction
         )
     }

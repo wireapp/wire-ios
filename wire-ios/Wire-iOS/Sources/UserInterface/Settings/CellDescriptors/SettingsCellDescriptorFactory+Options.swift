@@ -53,7 +53,8 @@ extension SettingsCellDescriptorFactory {
             icon: .settingsOptions,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: .options,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -206,7 +207,8 @@ extension SettingsCellDescriptorFactory {
     private var popularDemandDarkThemeSection: SettingsSectionDescriptorType {
         let darkThemeSection = SettingsCellDescriptorFactory.darkThemeGroup(
             for: settingsPropertyFactory.property(.darkMode),
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
         return SettingsSectionDescriptor(
             cellDescriptors: [darkThemeSection],
@@ -258,7 +260,8 @@ extension SettingsCellDescriptorFactory {
 
     static func darkThemeGroup(
         for property: SettingsProperty,
-        settingsCoordinator: AnySettingsCoordinator
+        settingsCoordinator: AnySettingsCoordinator,
+        userSession: UserSession
     ) -> SettingsCellDescriptorType {
         let cells = SettingsColorScheme.allCases.map { option -> SettingsPropertySelectValueCellDescriptor in
 
@@ -283,7 +286,8 @@ extension SettingsCellDescriptorFactory {
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -316,7 +320,8 @@ extension SettingsCellDescriptorFactory {
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -344,7 +349,8 @@ extension SettingsCellDescriptorFactory {
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 

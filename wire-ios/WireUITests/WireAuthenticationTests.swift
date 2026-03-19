@@ -25,7 +25,7 @@ final class WireAuthenticationTests: WireUITestCase {
     }
 
     @MainActor
-    func test_Login_withWrongEmail_NextIsDisabled() throws {
+    func testLoginWithWrongEmail_NextIsDisabled_TC_9457() throws {
 
         let welcomePage = try WelcomePage()
             .typeEmailOrSSO("notAnEmail.com")
@@ -34,7 +34,7 @@ final class WireAuthenticationTests: WireUITestCase {
     }
 
     @MainActor
-    func test_Login_withoutPassword_NextIsDisabled() throws {
+    func testLoginWithoutPassword_NextIsDisabled_TC_9457() throws {
 
         let loginPage = try WelcomePage()
             .enterEmailOrSSO(LoginCredentials.email)

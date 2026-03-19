@@ -51,7 +51,7 @@ extension ConversationContentViewController {
     }
 
     func openSketch(for message: ZMConversationMessage, in editMode: CanvasViewControllerEditMode) {
-        let canvasViewController = CanvasViewController()
+        let canvasViewController = CanvasViewController(userSession: userSession)
         if let imageData = message.imageMessageData?.imageData {
             canvasViewController.sketchImage = UIImage(data: imageData)
         }
@@ -232,7 +232,7 @@ extension ConversationContentViewController: SignatureObserver {
 
     func didReceiveDigitalSignature(_ cmsFileMetadata: ZMFileMetadata) {
         dismissDigitalSignatureVerification { [weak self] in
-            ZMUserSession.shared()?.perform {
+            self?.userSession.perform {
                 do {
                     try self?.conversation.appendFile(with: cmsFileMetadata)
                 } catch {

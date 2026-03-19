@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireSyncEngine
 
 final class PasscodeSetupPresenter {
     private weak var userInterface: PasscodeSetupUserInterface?
@@ -39,8 +40,8 @@ final class PasscodeSetupPresenter {
         }
     }
 
-    convenience init(userInterface: PasscodeSetupUserInterface) {
-        let interactor = PasscodeSetupInteractor()
+    convenience init(userInterface: PasscodeSetupUserInterface, userSession: UserSession) {
+        let interactor = PasscodeSetupInteractor(userSession: userSession)
         self.init(userInterface: userInterface, interactorInput: interactor)
         interactor.interactorOutput = self
     }

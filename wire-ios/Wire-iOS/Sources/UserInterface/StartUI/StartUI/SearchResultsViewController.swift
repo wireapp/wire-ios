@@ -78,7 +78,7 @@ protocol SearchResultsViewControllerDelegate: AnyObject {
     )
     func searchResultsViewController(
         _ searchResultsViewController: SearchResultsViewController,
-        didTapOnSeviceUser user: ServiceUser
+        didTapOnServiceUser user: UserType
     )
 }
 
@@ -154,15 +154,15 @@ final class SearchResultsViewController: UIViewController {
     let sectionController: SectionCollectionViewController = .init()
     let contactsSection: ContactsSectionController = .init()
     let teamMemberAndContactsSection: ContactsSectionController = .init()
-    let directorySection = DirectorySectionController()
+    let directorySection: DirectorySectionController
     let conversationsSection: GroupConversationsSectionController = .init()
     let federationSection = FederationSectionController()
 
     lazy var topPeopleSection: TopPeopleSectionController = {
-        let userSession = (userSession as? ZMUserSession)
-        let directory = userSession?.topConversationsDirectory
+        let zmUserSession = userSession as? ZMUserSession
+        let directory = zmUserSession?.topConversationsDirectory
 
-        return TopPeopleSectionController(topConversationsDirectory: directory)
+        return TopPeopleSectionController(topConversationsDirectory: directory, userSession: userSession)
     }()
 
     let servicesSection: SearchServicesSectionController
@@ -220,6 +220,7 @@ final class SearchResultsViewController: UIViewController {
         conversationsSection.title = team != nil ? L10n.Localizable.Peoplepicker.Header
             .teamConversations(teamName ?? "") : L10n.Localizable.Peoplepicker.Header.conversations
         self.inviteTeamMemberSection = InviteTeamMemberSection(team: team)
+        self.directorySection = DirectorySectionController(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -442,8 +443,8 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
                 indexPath: indexPath,
                 section: sectionFor(controller: searchSectionController)
             )
-        } else if let service = user as? ServiceUser, service.isAppOrBot {
-            delegate?.searchResultsViewController(self, didTapOnSeviceUser: service)
+        } else if user.isAppOrBot {
+            delegate?.searchResultsViewController(self, didTapOnServiceUser: user)
         } else if let searchUser = user as? ZMSearchUser {
             delegate?.searchResultsViewController(
                 self,
