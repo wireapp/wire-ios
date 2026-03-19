@@ -24,7 +24,11 @@ import Testing
 @MainActor
 struct AppInfoTests {
 
-    private let container = try! NSPersistentContainer.inMemoryContainer()
+    private let container: NSPersistentContainer
+
+    init() throws {
+        self.container = try NSPersistentContainer.inMemoryContainer()
+    }
 
     @Test
     func initialization() async throws {
