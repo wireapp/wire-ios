@@ -28,35 +28,25 @@ struct AppInfoTests {
 
     @Test
     func initialization() async throws {
-        // given
         let context = container.newBackgroundContext()
-        await context.perform {
+        try await context.perform {
+
+            // given
             let appInfo = AppInfo(context: context)
             appInfo.appDescription = "desc"
             appInfo.category = "cat"
-        }
 
-        fatalError("TODO: Implement test")
-        /*
-
-        // when
-        await context.perform {
+            // when
             try context.save()
+
+            // then
+            let request = try #require(AppInfo.fetchRequest() as? NSFetchRequest<AppInfo>)
+            let persisted = try #require(context.fetch(request).first)
+
+            #expect(persisted.description == "desc")
+            #expect(persisted.category == "cat")
+
         }
-
-        // withExtendedLifetime(<#T##x: ~Copyable & ~Escapable##~Copyable & ~Escapable#>, <#T##body: () throws(Error) -> ~Copyable##() throws(Error) -> ~Copyable#>)
-
-        // then
-        let request = try #require(WireCellsLocalAsset.fetchRequest() as? NSFetchRequest<WireCellsLocalAsset>)
-        let persisted = try #require(context.fetch(request).first)
-
-        #expect(persisted.nodeID == nodeID)
-        #expect(persisted.eTag == "etag")
-        #expect(persisted.path == "asset/path")
-        #expect(persisted.contentType == "image/png")
-        #expect(persisted.size == 1024)
-        #expect(persisted.isDownloaded == true)
-         */
     }
 
 }
