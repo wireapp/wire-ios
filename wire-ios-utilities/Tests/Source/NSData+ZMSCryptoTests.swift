@@ -142,6 +142,20 @@ extension NSData_ZMSCryptoTests {
             generatedDataSet.insert(data)
         }
     }
+
+    func testThatItReturnsNilForInvalidPayload_plaintextIV() {
+
+        // given
+        let data = NSData()
+        let key = sampleKey
+
+        // when
+        let decryptedData = data.zmDecryptPrefixedPlainTextIV(withKey: key)
+
+        // then
+        XCTAssertNil(decryptedData)
+    }
+
 }
 
 // MARK: - Random data generation
