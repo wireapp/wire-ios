@@ -231,10 +231,12 @@ struct FilesItemView: View {
             Button {
                 viewModel.performAction(item)
             } label: {
-                //TODO: show "cancel download" if it's currently downloading
-                Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
+                if viewModel.isDownloading {
+                    Label(Strings.Files.Item.Menu.cancelDownload, systemImage: "xmark")
+                } else {
+                    Label(Strings.Files.Item.Menu.open, systemImage: "arrow.up.forward.square")
+                }
             }
-            .disabled(viewModel.isDownloading)
         }
 
         menuItem(.shareLink) { item in

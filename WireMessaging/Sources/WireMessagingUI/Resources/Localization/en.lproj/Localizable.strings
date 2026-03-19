@@ -122,6 +122,7 @@
 "conversation.wireCells.allFiles.item.subtitle" = "%@ in %@";
 "conversation.wireCells.files.loadMore.title" = "Load more";
 "conversation.wireCells.files.item.menu.open" = "Open";
+"conversation.wireCells.files.item.menu.cancelDownload" = "Cancel loading...";
 "conversation.wireCells.files.item.menu.shareLink" = "Share";
 "conversation.wireCells.files.item.menu.download" = "Download";
 "conversation.wireCells.files.item.menu.editFile" = "Edit file";
