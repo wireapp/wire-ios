@@ -26,7 +26,7 @@ extension WireDriveLocalAsset {
     /// The file name of the URL path will be shown as the title in the QuickLook preview when the file os opened,
     /// so it's important to make it readable and correspond to the actual file name, rather than a generated id.
     static func cacheKey(nodeID: UUID, eTag: String, path: String) -> String {
-        let filename = path.split(separator: "/").last.flatMap(String.init) ?? "-"
+        let filename = URL(fileURLWithPath: path).lastPathComponent
         return "\(nodeID.uuidString)-\(eTag)/\(filename)"
     }
 
