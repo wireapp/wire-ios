@@ -22,30 +22,29 @@ import Testing
 @testable import WireData
 
 @MainActor
-struct WireCellsLocalAssetTests {
+struct AppInfoTests {
 
-    private let container: NSPersistentContainer
-
-    init() throws {
-        self.container = try NSPersistentContainer.inMemoryContainer()
-    }
+    private let container = try! NSPersistentContainer.inMemoryContainer()
 
     @Test
     func initialization() async throws {
         // given
-        let context = container.viewContext
-        let nodeID = UUID()
+        let context = container.newBackgroundContext()
+        await context.perform {
+            let appInfo = AppInfo(context: context)
+            appInfo.appDescription = "desc"
+            appInfo.category = "cat"
+        }
 
-        let asset = WireCellsLocalAsset(context: context)
-        asset.nodeID = nodeID
-        asset.eTag = "etag"
-        asset.path = "asset/path"
-        asset.contentType = "image/png"
-        asset.size = 1024
-        asset.isDownloaded = true
+        fatalError("TODO: Implement test")
+        /*
 
         // when
-        try context.save()
+        await context.perform {
+            try context.save()
+        }
+
+        // withExtendedLifetime(<#T##x: ~Copyable & ~Escapable##~Copyable & ~Escapable#>, <#T##body: () throws(Error) -> ~Copyable##() throws(Error) -> ~Copyable#>)
 
         // then
         let request = try #require(WireCellsLocalAsset.fetchRequest() as? NSFetchRequest<WireCellsLocalAsset>)
@@ -57,6 +56,7 @@ struct WireCellsLocalAssetTests {
         #expect(persisted.contentType == "image/png")
         #expect(persisted.size == 1024)
         #expect(persisted.isDownloaded == true)
+         */
     }
 
 }
