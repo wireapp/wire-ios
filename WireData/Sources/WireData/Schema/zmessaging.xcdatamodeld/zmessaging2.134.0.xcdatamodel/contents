@@ -13,8 +13,8 @@
         </fetchIndex>
     </entity>
     <entity name="AppInfo" representedClassName="WireData.AppInfo" syncable="YES">
-        <attribute name="appDescription" optional="YES" attributeType="String"/>
-        <attribute name="category" optional="YES" attributeType="String"/>
+        <attribute name="appDescription" attributeType="String"/>
+        <attribute name="category" attributeType="String"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="appInfo" inverseEntity="User"/>
     </entity>
     <entity name="AssetClientMessage" representedClassName="WireDataModel.ZMAssetClientMessage" parentEntity="Message" syncable="YES">
