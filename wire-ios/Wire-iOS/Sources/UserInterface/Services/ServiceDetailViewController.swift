@@ -186,13 +186,12 @@ final class ServiceDetailViewController: UIViewController {
         for teamID: WireNetwork.Team.ID,
         with appID: UUID
     ) {
-        guard let appInfo = service.user.appInfo else { return } // TODO: fix
-
+        let appInfo = service.user.appInfo
         detailView.service.serviceUserDetails = ServiceDetails(
             serviceIdentifier: "",
             providerIdentifier: "",
             name: service.user.name ?? "",
-            serviceDescription: appInfo.appDescription
+            serviceDescription: appInfo?.appDescription ?? ""
         )
         detailView.service.provider = ServiceProvider(
             identifier: "",
