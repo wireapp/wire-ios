@@ -25,7 +25,7 @@ class TeamsAPIV14: TeamsAPIV13 {
     override func getApp(
         for teamID: Team.ID,
         with id: UUID
-    ) async throws -> App {
+    ) async throws -> TmpApp {
 
         let path = "\(basePath(for: teamID))/apps/\(id.transportString())"
         let request = try URLRequestBuilder(path: path)
@@ -64,8 +64,8 @@ struct GetAppResponseV14: Decodable, ToAPIModelConvertible {
 
     }
 
-    func toAPIModel() -> App {
-        App(
+    func toAPIModel() -> TmpApp {
+        TmpApp(
             name: name,
             category: category,
             description: description,

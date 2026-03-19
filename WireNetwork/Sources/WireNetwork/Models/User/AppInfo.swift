@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: rename App
-
 /// App related info within a user profile.
-public struct NewApp: Equatable, Sendable {
+public struct AppInfo: Equatable, Sendable {
 
     public let category: String
 

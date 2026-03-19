@@ -640,7 +640,7 @@ final class TeamsAPITests: XCTestCase {
                 let app = try await sut.getApp(for: Scaffolding.teamID, with: Scaffolding.appID)
 
                 // Then
-                let expectedApp = App(
+                let expectedApp = TmpApp(
                     name: "WPB-18618",
                     category: "developer",
                     description: "WPB-18618",

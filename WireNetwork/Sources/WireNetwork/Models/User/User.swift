@@ -81,7 +81,7 @@ public struct User: Equatable, Sendable {
 
     /// App related info.
 
-    public let app: NewApp?
+    public let app: AppInfo?
 
     // MARK: -
 
@@ -99,7 +99,7 @@ public struct User: Equatable, Sendable {
         service: Service?,
         supportedProtocols: Set<MessageProtocol>?,
         legalholdStatus: LegalholdStatus,
-        app: NewApp?
+        app: AppInfo?
     ) {
         self.id = id
         self.name = name
