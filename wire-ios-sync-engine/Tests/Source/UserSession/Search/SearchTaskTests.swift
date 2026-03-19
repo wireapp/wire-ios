@@ -1163,6 +1163,7 @@ final class SearchTaskTests: DatabaseTest {
                 deleted: nil,
                 email: nil,
                 expiresAt: nil,
+                app: nil,
                 service: nil,
                 supportedProtocols: nil,
                 legalholdStatus: .disabled
@@ -1197,6 +1198,7 @@ final class SearchTaskTests: DatabaseTest {
                 deleted: nil,
                 email: nil,
                 expiresAt: nil,
+                app: nil,
                 service: nil,
                 supportedProtocols: nil,
                 legalholdStatus: .disabled
@@ -1224,6 +1226,7 @@ final class SearchTaskTests: DatabaseTest {
             deleted: nil,
             email: nil,
             expiresAt: nil,
+            app: nil,
             service: nil,
             supportedProtocols: nil,
             legalholdStatus: .disabled
