@@ -130,24 +130,12 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
             }
 
             let (tempURL, _) = try await download.value
-
-            let filename = node.path.split(separator: "/").last.flatMap(String.init) ?? "-"
-
-            var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
-
-            let extensionComponents = asset.cacheKey.split(separator: ".")
-            let pathWithoutExtension: String = if extensionComponents.count > 1 {
-                String(extensionComponents.dropLast().joined(separator: "."))
-            } else {
-                asset.cacheKey
-            }
-
-            let key = pathWithoutExtension + "/" + filename
-
+            let key = WireDriveLocalAsset.cacheKey(nodeID: nodeID, eTag: eTag, path: node.path)
             try await fileCache.saveFile(at: tempURL, key: key)
 
-            asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
+            var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
             asset.downloadState = .downloaded(cacheKey: key)
+
             try store.upsertAsset(asset)
         } catch {
             // We don't care about the eTag when setting download state to failed.

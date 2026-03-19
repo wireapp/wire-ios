@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct TmpApp: Equatable, Sendable { // TODO: delete
+public struct TmpApp: Equatable, Sendable { // TODO: [WPB-20362] delete
 
     /// The app name.
 
