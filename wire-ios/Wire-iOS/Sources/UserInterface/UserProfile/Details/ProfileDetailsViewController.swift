@@ -91,7 +91,8 @@ final class ProfileDetailsViewController: UIViewController {
         self.contentController = .init(
             user: user,
             viewer: viewer,
-            conversation: conversation
+            conversation: conversation,
+            userSession: userSession
         )
 
         super.init(nibName: nil, bundle: nil)

@@ -33,7 +33,7 @@ final class CanvasViewControllerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
-        sut = CanvasViewController()
+        sut = CanvasViewController(userSession: UserSessionMock())
 
         sut.loadViewIfNeeded()
     }

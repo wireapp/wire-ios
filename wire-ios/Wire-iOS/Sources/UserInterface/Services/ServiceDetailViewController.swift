@@ -27,13 +27,13 @@ extension ConversationLike where Self: GroupDetailsConversationType {
 }
 
 struct Service {
-    let serviceUser: ServiceUser
+    let serviceUser: UserType
     var serviceUserDetails: ServiceDetails?
     var provider: ServiceProvider?
 }
 
 extension Service {
-    init(serviceUser: ServiceUser) {
+    init(serviceUser: UserType) {
         self.serviceUser = serviceUser
         self.serviceUserDetails = nil
         self.provider = nil
@@ -77,7 +77,7 @@ final class ServiceDetailViewController: UIViewController {
     ///   - selfUser: self user, for inject mock user for testing
     ///   - completion: completion handler
     init(
-        serviceUser: ServiceUser,
+        serviceUser: UserType,
         actionType: ActionType,
         userSession: UserSession,
         completion: Completion? = nil

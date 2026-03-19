@@ -61,6 +61,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             managedObjectContext: coreDataStack.viewContext,
             description: "all conversations"
         )
+        userSession.networkState = .online
 
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false

@@ -86,7 +86,8 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         self.recorder = audioRecorder ?? AudioRecorder(
             format: .wav,
             maxRecordingDuration: maxAudioLength,
-            maxFileSize: maxUploadSize
+            maxFileSize: maxUploadSize,
+            userSession: userSession
         )
 
         super.init(nibName: nil, bundle: nil)
