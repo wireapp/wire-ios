@@ -26,6 +26,7 @@ final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
     struct Configuration: Equatable {
         var message: ZMConversationMessage
         var isObfuscated: Bool
+        var userSession: UserSession
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.message == rhs.message &&
@@ -83,6 +84,8 @@ final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
     }
 
     func configure(with object: Configuration, animated: Bool) {
+        transferView.setUserSession(userSession: object.userSession)
+
         if object.isObfuscated {
             setup(obfuscationView)
         } else if !object.message.canBeShared {
@@ -153,9 +156,9 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
 
     let accessibilityLabel: String?
 
-    init(message: ZMConversationMessage) {
+    init(message: ZMConversationMessage, userSession: UserSession) {
         self.configuration = View
-            .Configuration(message: message, isObfuscated: message.isObfuscated)
+            .Configuration(message: message, isObfuscated: message.isObfuscated, userSession: userSession)
         self.accessibilityLabel = L10n.Accessibility.ConversationSearch.AudioMessage.description
     }
 

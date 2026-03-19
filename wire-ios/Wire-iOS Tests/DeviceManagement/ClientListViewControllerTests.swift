@@ -75,7 +75,9 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
                 count: numberOfClients
             ),
             selfClient: selfClient,
+            userSession: UserSessionMock(),
             credentials: nil,
+            contextProvider: nil,
             detailedView: true,
             showTemporary: true
         )

@@ -57,7 +57,6 @@
 
 ### Epoch
 
-- ``generateNewEpoch(groupID:)``
 - ``onEpochChanged()``
 - ``epochChanges()``
 

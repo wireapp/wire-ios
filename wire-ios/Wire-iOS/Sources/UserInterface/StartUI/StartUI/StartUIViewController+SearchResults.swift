@@ -87,7 +87,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(
         _ searchResultsViewController: SearchResultsViewController,
-        didTapOnSeviceUser user: ServiceUser
+        didTapOnServiceUser user: UserType
     ) {
 
         let detail = ServiceDetailViewController(
