@@ -613,7 +613,7 @@ public class ZMSearchUser: NSObject, UserType {
             searchUsersCache: searchUsersCache,
             type: user.type
         )
-        internalSummary = user.appInfo?.appDescription
+        self.internalSummary = user.appInfo?.appDescription
     }
 
     convenience init?(
