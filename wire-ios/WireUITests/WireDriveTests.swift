@@ -32,13 +32,11 @@ final class WireDriveTests: WireUITestCase {
     }
 
     @MainActor
-    func test_CreateGroupConversationWithDrive_TC_8955() async throws {
+    func testCreateGroupConversationWithDrive_TC_8955() async throws {
 
         // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
-
         let (teamOwner, teamMembers, _, _) = try await userHelper.registerTeam(withMemberCount: 2)
-
         try await userHelper.unlockAndEnableDriveFeature(teamID: teamOwner.teamID!)
 
         // WHEN
@@ -56,13 +54,14 @@ final class WireDriveTests: WireUITestCase {
     }
 
     @MainActor
-    func test_CreateChannelConversationWithDrive_TC_8954() async throws {
+    func testCreateChannelConversationWithDrive_TC_8954() async throws {
 
         // GIVEN
         let channelName = UserGenerator.generateRandomConversationName()
-
-        let (teamOwner, teamMembers, _, _) = try await userHelper.registerTeam(withMemberCount: 2)
-        try await userHelper.unlockAndEnableChannelFeature(teamID: teamOwner.teamID!)
+        let (teamOwner, teamMembers, _, _) = try await userHelper.registerTeam(
+            withMemberCount: 2,
+            conversation: .channel(channelName)
+        )
         try await userHelper.unlockAndEnableDriveFeature(teamID: teamOwner.teamID!)
 
         // WHEN

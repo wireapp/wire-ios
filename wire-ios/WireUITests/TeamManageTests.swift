@@ -162,7 +162,7 @@ final class TeamManageTests: WireUITestCase {
 
     /// [WPB-3772] Bug: Opening an archived conversation unarchives it
     @MainActor
-    func test_ArchivedConversationUnarchivesWhenOpened_TC_8872() async throws {
+    func testArchivedConversationUnarchivesWhenOpened_TC_8872() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()

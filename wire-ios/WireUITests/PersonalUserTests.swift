@@ -135,7 +135,7 @@ final class PersonalUsersTests: WireUITestCase {
     }
 
     @MainActor
-    func test_AddConversationAsFavourite_TC_8869() async throws {
+    func testAddConversationAsFavourite_TC_8869() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
         let (teamOwner, _, _, _) = try await userHelper
             .registerTeam(
@@ -156,7 +156,7 @@ final class PersonalUsersTests: WireUITestCase {
     }
 
     @MainActor
-    func test_FilterConversationByFavourite_TC_8874() async throws {
+    func testFilterConversationByFavourite_TC_8874() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
         let (teamOwner, _, _, _) = try await userHelper
             .registerTeam(
