@@ -91,7 +91,7 @@ actor ExpiringActivityManager {
                 }
             }
         } onCancel: {
-            Task { try await self.stopWork() }
+            Task { try? await self.stopWork() }
         }
     }
 
