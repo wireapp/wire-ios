@@ -558,12 +558,7 @@ package final class FilesViewModel: ObservableObject {
         precondition(item.kind == .file)
 
         do {
-            let fileExists = try await useCases.getAssetUseCase.downloadedFileExists(nodeID: item.id, eTag: item.eTag)
-            let downloadState: WireDriveLocalAsset.DownloadState = !fileExists ?
-                .pending :
-                try await useCases.getAssetUseCase.downloadState(nodeID: item.id) ?? .pending
-            
-            print("### downloadState: \(downloadState)")
+            let downloadState = try await useCases.getAssetUseCase.downloadState(nodeID: item.id) ?? .pending
             
             switch downloadState {
             case .pending, .failed:
