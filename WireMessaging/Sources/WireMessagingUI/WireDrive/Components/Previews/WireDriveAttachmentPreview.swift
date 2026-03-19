@@ -54,7 +54,7 @@ private enum Constants {
 }
 
 #Preview {
-    WireDriveAttachmentPreview() {
+    WireDriveAttachmentPreview {
         Rectangle()
             .fill(Color.gray.opacity(0.2))
     }

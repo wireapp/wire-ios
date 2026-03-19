@@ -38,7 +38,7 @@ struct WireDriveDocumentHeaderView: View {
     let labelText: String
     let isDraftPreview: Bool
     let state: WireDriveFileUITracker.State
-    
+
     var body: some View {
         header()
     }
@@ -48,14 +48,14 @@ struct WireDriveDocumentHeaderView: View {
         VStack(alignment: .leading) {
             HStack(spacing: 4) {
                 stateIconView()
-                
+
                 Text(headerText)
                     .foregroundStyle(ColorTheme.Base.secondaryText.color)
                     .font(for: .subline1)
                     .lineLimit(1)
 
                 Spacer()
-                
+
                 if !isDraftPreview {
                     stateTextView()
                         .foregroundStyle(isError ? ColorTheme.Base.error.color : ColorTheme.Base.secondaryText.color)
@@ -75,7 +75,7 @@ struct WireDriveDocumentHeaderView: View {
                 .padding([.horizontal, .bottom], 8)
         }
     }
-    
+
     private var isError: Bool {
         switch state {
         case .failed:
@@ -84,11 +84,11 @@ struct WireDriveDocumentHeaderView: View {
             false
         }
     }
-    
+
     @ViewBuilder
     private func stateTextView() -> some View {
         switch state {
-        case .loaded(let showReadyToOpen):
+        case let .loaded(showReadyToOpen):
             if showReadyToOpen {
                 Text(Strings.Files.readyToOpenAfterDownload)
             } else {
@@ -102,7 +102,7 @@ struct WireDriveDocumentHeaderView: View {
             Text(Strings.Files.tapToCancelDownload)
         }
     }
-    
+
     @ViewBuilder
     private func progressView(progress: Double) -> some View {
         ProgressView(value: progress)
@@ -113,7 +113,7 @@ struct WireDriveDocumentHeaderView: View {
     @ViewBuilder
     private func stateIconView() -> some View {
         switch state {
-        case .loaded(let showReadyToOpen):
+        case let .loaded(showReadyToOpen):
             if showReadyToOpen {
                 Image(systemName: "checkmark.circle")
                     .foregroundStyle(.blue)
@@ -141,11 +141,11 @@ struct WireDriveDocumentHeaderView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(height: Constants.headerIconSize * scale)
-        case .loading(let progress, _):
+        case let .loading(progress, _):
             progressView(progress: progress)
         }
     }
-    
+
 }
 
 #Preview {

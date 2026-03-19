@@ -29,7 +29,7 @@ struct WireDriveImageAttachmentPreview: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
-        WireDriveAttachmentPreview() {
+        WireDriveAttachmentPreview {
             ZStack(alignment: .center) {
                 if let thumbnail {
                     GeometryReader { geometry in
@@ -45,19 +45,19 @@ struct WireDriveImageAttachmentPreview: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
-    
-    @ViewBuilder
-    private var stateView: some View {
+
+    @ViewBuilder private var stateView: some View {
         switch state {
-        case .loading(let progress, _):
+        case let .loading(progress, _):
             Color.black.opacity(0.7)
-            
+
             ProgressView(value: progress)
                 .progressViewStyle(WireDriveAssetProgressViewStyle(strokeColor: .white))
                 .frame(height: 16)
-            
+
         case .failed:
             WireDriveAttachmentPreviewErrorCircle()
+
         default:
             EmptyView()
         }

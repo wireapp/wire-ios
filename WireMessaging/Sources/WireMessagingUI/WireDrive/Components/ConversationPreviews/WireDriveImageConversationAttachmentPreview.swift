@@ -37,7 +37,7 @@ struct WireDriveImageConversationAttachmentPreview: View {
     }
 
     var body: some View {
-        WireDriveAttachmentPreview() {
+        WireDriveAttachmentPreview {
             ZStack {
                 if let thumbnailURL {
                     AsyncImage(url: thumbnailURL, scale: UIScreen.main.scale) { phase in
@@ -61,34 +61,35 @@ struct WireDriveImageConversationAttachmentPreview: View {
                 } else {
                     noPreviewMessageView
                 }
-                
+
                 switch state {
-                case .loading(let progress, _):
+                case let .loading(progress, _):
                     Color.black.opacity(0.7)
-                    
+
                     VStack(spacing: 12) {
                         ProgressView(value: progress)
                             .progressViewStyle(WireDriveAssetProgressViewStyle(strokeColor: .white))
                             .frame(height: 16)
-                        
+
                         if isLargePreview {
                             Text(Strings.Files.tapToCancelDownload)
                                 .font(for: .subline1)
                                 .foregroundStyle(.white)
                         }
-                        
+
                     }
-                    
+
                 case .failed:
                     if isLargePreview {
                         Color.black.opacity(0.7)
-                        
+
                         Text(Strings.Files.downloadFailed)
                             .font(for: .subline1)
                             .foregroundStyle(.white)
                     } else {
                         WireDriveAttachmentPreviewErrorCircle()
                     }
+
                 default:
                     EmptyView()
                 }
@@ -99,7 +100,7 @@ struct WireDriveImageConversationAttachmentPreview: View {
     }
 
     // MARK: Helpers
-    
+
     private var isAssetDownloadError: Bool {
         switch state {
         case .failed:

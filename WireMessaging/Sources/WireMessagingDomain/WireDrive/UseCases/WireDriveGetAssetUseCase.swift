@@ -54,19 +54,19 @@ package struct WireDriveGetAssetUseCase {
 
         return fileURL
     }
-    
-    //TODO: this is only needed as a temporary solution until we change the folder which we download the files into so that the files are not cleaned up by the system.
+
+    // TODO: this is only needed as a temporary solution until we change the folder which we download the files into so that the files are not cleaned up by the system.
     package func downloadedFileExists(nodeID: UUID, eTag: String?) async throws -> Bool {
         try await cachedAssetURL(for: nodeID, eTag: eTag) != nil
     }
-    
+
     package func downloadState(nodeID: UUID) async throws -> WireDriveLocalAsset.DownloadState? {
         let asset = try await localAssetRepository.asset(nodeID: nodeID)
         return asset?.downloadState
     }
-    
+
     package func cancelDownload(nodeID: UUID) async {
-        //TODO: this still continues to dl the file and will finish it. needs to be fixed.
+        // TODO: this still continues to dl the file and will finish it. needs to be fixed.
         await localAssetRepository.cancelDownload(nodeID: nodeID)
     }
 

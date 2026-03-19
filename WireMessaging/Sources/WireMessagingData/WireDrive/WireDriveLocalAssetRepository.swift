@@ -81,7 +81,7 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
     @MainActor
     package func downloadAsset(nodeID: UUID) async throws {
         let downloadTask: Task<Void, any Error>
-        
+
         if let existingTask = downloadTasks[nodeID] {
             downloadTask = existingTask
         } else {
@@ -91,7 +91,7 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
             downloadTasks[nodeID] = task
             downloadTask = task
         }
-        
+
         try await withTaskCancellationHandler {
             try await downloadTask.value
         } onCancel: {
@@ -132,23 +132,23 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
             )
 
             let (progress, urlDownloadTask) = fileDownloader.download(from: downloadURL)
-            
+
             var fileSize: WireDriveLocalAsset.FileSize = .small
-            
+
             let timerTask = Task {
                 try await Task.sleep(for: .milliseconds(300))
                 fileSize = .large
             }
-            
+
             for await progress in progress {
                 var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
                 asset.downloadState = .downloading(progress: progress)
                 asset.fileSize = fileSize
                 try store.upsertAsset(asset)
             }
-            
+
             timerTask.cancel()
-            
+
             if Task.isCancelled {
                 urlDownloadTask.cancel()
                 try Task.checkCancellation()
@@ -170,7 +170,7 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
             let key = pathWithoutExtension + "/" + filename
 
             try await fileCache.saveFile(at: tempURL, key: key)
-            
+
             asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
             asset.downloadState = .downloaded(cacheKey: key)
             try store.upsertAsset(asset)

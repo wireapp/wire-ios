@@ -48,7 +48,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
     @Published private var node: WireDriveNode?
     @Published private var isDeleted: Bool
     @Published var fileTracker: WireDriveFileUITracker
-    
+
     private var openAssetTask: Task<Void, Never>?
 
     init(
@@ -178,7 +178,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
 
     func onTap() async {
         guard !isDeleted else { return }
-        
+
         switch fileTracker.state {
         case .loading:
             // cancel asset download.
@@ -187,11 +187,11 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
             // downloads / opens asset.
             openAssetTask = openAsset()
         }
-        
+
     }
-    
+
     private func openAsset() -> Task<Void, Never> {
-        let task = Task {
+        Task {
             do {
                 let url = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
                 if canOpen {
@@ -203,8 +203,6 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
                 WireLogger.wireDrive.error("Failed to open file with node ID: \(nodeID), error: \(error)")
             }
         }
-        
-        return task
     }
 
     private var previewSize: CGSize? {
@@ -276,7 +274,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
 
     private var canOpen: Bool {
         switch fileTracker.state {
-        case .loaded(let showReadyToOpen):
+        case let .loaded(showReadyToOpen):
             !showReadyToOpen
         default:
             false

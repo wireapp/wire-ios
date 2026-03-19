@@ -488,7 +488,8 @@ package final class FilesViewModel: ObservableObject {
         )
     }
 
-    /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary or views it or cancels the download.
+    /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary or views it or
+    /// cancels the download.
     func performPrimaryAction(item: FilesViewItem) async {
         switch item.kind {
         case .file:
@@ -562,12 +563,12 @@ package final class FilesViewModel: ObservableObject {
             let downloadState: WireDriveLocalAsset.DownloadState = !fileExists ?
                 .pending :
                 try await useCases.getAssetUseCase.downloadState(nodeID: item.id) ?? .pending
-            
+
             print("### downloadState: \(downloadState)")
-            
+
             switch downloadState {
             case .pending, .failed:
-                let _ = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
+                _ = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
             case .downloaded:
                 let url = try await useCases.getAssetUseCase.invoke(nodeID: item.id, eTag: item.eTag)
                 viewingURL = url

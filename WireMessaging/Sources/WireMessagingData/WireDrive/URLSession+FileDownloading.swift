@@ -37,7 +37,7 @@ extension URLSession: FileDownloading {
                 delegate.cancel()
             }
         }
-        
+
         return (progress: progressStream, download: urlDownloadTask)
     }
 

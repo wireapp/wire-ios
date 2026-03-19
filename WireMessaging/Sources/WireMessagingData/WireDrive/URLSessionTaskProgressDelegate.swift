@@ -37,7 +37,7 @@ final class URLSessionTaskProgressDelegate: NSObject, URLSessionTaskDelegate, @u
             .sink { [progress] in progress($0) }
             .store(in: &cancellables)
     }
-    
+
     func cancel() {
         task?.cancel()
         cancellables = .init()
