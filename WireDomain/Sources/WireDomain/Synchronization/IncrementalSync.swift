@@ -417,6 +417,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 processedItems.append(item)
             }
         } catch {
+            WireLogger.sync.warn("aborting stored event processing: \(String(describing: error))")
             try await finishProcessing(processedObjectIds: processedItems.map(\.objectID))
             throw error
         }
