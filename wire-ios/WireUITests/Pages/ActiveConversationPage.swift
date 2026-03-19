@@ -67,6 +67,8 @@ class ActiveConversationPage: PageModel {
 
     var senderNames: XCUIElementQuery {
         app.staticTexts.matching(identifier: "author.name")
+    }
+
     var selfDeletingMessageButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.ephemeralTimeSelectionButton.rawValue]
     }
@@ -77,6 +79,8 @@ class ActiveConversationPage: PageModel {
 
     var fileLabels: XCUIElementQuery {
         app.staticTexts.matching(identifier: "FileTransferTopLabel")
+    }
+
     var labelSharedDriveIsOn: XCUIElement {
         app.staticTexts[Locators.ActiveConversationPage.labelSharedDriveON.rawValue]
     }
