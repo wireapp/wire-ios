@@ -147,11 +147,13 @@ jobs:
         if: ${{ inputs.run_critical_flows }}
         id: kalium-ref
         shell: bash
+        env:
+          KALIUM_REF_INPUT: ${{ inputs.kalium_ref }}
         run: |
           set -euo pipefail
 
-          if [[ -n "${{ inputs.kalium_ref }}" ]]; then
-            KALIUM_REF="${{ inputs.kalium_ref }}"
+          if [[ -n "${KALIUM_REF_INPUT:-}" ]]; then
+            KALIUM_REF="$KALIUM_REF_INPUT"
           else
             KALIUM_REF="$({
               git ls-remote --tags --refs https://github.com/wireapp/kalium.git 'refs/tags/test-service-v*' \
@@ -163,6 +165,11 @@ jobs:
 
           if [[ -z "$KALIUM_REF" ]]; then
             echo "::error::Could not resolve Kalium testservice ref"
+            exit 1
+          fi
+
+          if [[ ! "$KALIUM_REF" =~ ^test-service-v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid Kalium ref: $KALIUM_REF"
             exit 1
           fi
 

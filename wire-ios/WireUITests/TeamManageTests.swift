@@ -227,7 +227,7 @@ final class TeamManageTests: WireUITestCase {
     }
 
     @MainActor
-    func test_TeamOwner_VerifyMessagesAndFileSentByMembersInGroup() async throws {
+    func testTeamOwnerVerifyMessagesAndFileSentByMembersInGroup_TC_0000() async throws {
 
         let groupName = UserGenerator.generateRandomGroupName()
         let messageFromMember1 = UserGenerator.generateRandomMessage()
