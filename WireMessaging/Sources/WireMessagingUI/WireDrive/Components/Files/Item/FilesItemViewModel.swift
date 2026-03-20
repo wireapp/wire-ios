@@ -35,7 +35,7 @@ final class FilesItemViewModel: ObservableObject {
     private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
 
-    enum ItemAction {
+    enum ItemAction: String {
         case open
         case showVersionHistory
         case edit
