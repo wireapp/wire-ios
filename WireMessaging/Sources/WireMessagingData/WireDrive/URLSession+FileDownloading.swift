@@ -21,8 +21,8 @@ public import WireMessagingDomain
 
 extension URLSession: FileDownloading {
 
-    func download(from url: URL) -> (progress: AsyncStream<Double>, download: Task<(URL, URLResponse), any Error>) {
-        let (progressStream, progressContinuation) = AsyncStream.makeStream(of: Double.self)
+    func download(from url: URL) -> (progress: AsyncThrowingStream<Double, any Error>, download: Task<(URL, URLResponse), any Error>) {
+        let (progressStream, progressContinuation) = AsyncThrowingStream.makeStream(of: Double.self)
 
         let delegate = URLSessionTaskProgressDelegate { fractionCompleted in
             progressContinuation.yield(fractionCompleted)
@@ -30,9 +30,15 @@ extension URLSession: FileDownloading {
 
         let urlDownloadTask = Task {
             try await withTaskCancellationHandler {
-                let result = try await download(from: url, delegate: delegate)
-                progressContinuation.finish()
-                return result
+                do {
+                    let result = try await download(from: url, delegate: delegate)
+                    progressContinuation.finish()
+                    return result
+                } catch {
+                    progressContinuation.finish(throwing: error)
+                    delegate.cancel()
+                    throw error
+                }
             } onCancel: {
                 delegate.cancel()
             }

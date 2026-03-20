@@ -131,7 +131,7 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
                 fileSize = .large
             }
 
-            for await progress in progress {
+            for try await progress in progress {
                 var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
                 asset.downloadState = .downloading(progress: progress)
                 asset.fileSize = fileSize
