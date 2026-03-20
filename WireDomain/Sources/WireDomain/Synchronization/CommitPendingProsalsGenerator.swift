@@ -117,7 +117,7 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
             }
 
             // Re-check membership right before enqueuing the actual work item
-            let stillMember = await repository.isSelfAnActiveMember(in: mlsGroupID)
+            let stillMember = await repository.isSelfAnActiveMember(in: conversationID)
             guard stillMember else { return }
 
             // Enqueue parent group item
@@ -126,6 +126,7 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
                     repository: repository,
                     conversationID: conversationID,
                     groupID: mlsGroupID,
+                    isSubconversation: false,
                     mlsService: mlsService
                 )
             )
@@ -137,6 +138,7 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
                         repository: repository,
                         conversationID: conversationID,
                         groupID: subgroupID,
+                        isSubconversation: true,
                         mlsService: mlsService
                     )
                 )
