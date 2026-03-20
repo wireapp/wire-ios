@@ -40,7 +40,12 @@ final class WireDriveDocumentAttachmentPreviewTests: XCTestCase {
 
     @MainActor
     func testConfigurationVariations() async throws {
-        let testCases: [(headerIcon: Image, headerText: String, labelText: String, state: WireDriveFileUITracker.State)] =
+        let testCases: [(
+            headerIcon: Image,
+            headerText: String,
+            labelText: String,
+            state: WireDriveFileUITracker.State
+        )] =
             [
                 (
                     headerIcon: Image(WireDriveFileType.pdf.imageResource),

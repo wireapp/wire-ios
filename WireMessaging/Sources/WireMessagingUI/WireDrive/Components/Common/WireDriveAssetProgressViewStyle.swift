@@ -22,17 +22,17 @@ import SwiftUI
 struct WireDriveAssetProgressViewStyle: ProgressViewStyle {
     @Environment(\.wireAccentColor) private var wireAccentColor
     @ScaledMetric private var lineWidth: CGFloat = 2
-    
+
     /// The color of the empty circle in the background. Defaults to the user accent color with transparency if `nil`.
     var strokeColor: Color?
-    
+
     /// The color of the progress circle in the foreground. Defaults to the user accent color if `nil`.
     var progressStrokeColor: Color?
 
     private var color: Color {
         strokeColor ?? wireAccentColor.color.opacity(0.2)
     }
-    
+
     private var progressColor: Color {
         progressStrokeColor ?? wireAccentColor.color
     }
@@ -61,8 +61,10 @@ struct WireDriveAssetProgressViewStyle: ProgressViewStyle {
 
 extension ProgressViewStyle where Self == WireDriveAssetProgressViewStyle {
     /// - Parameters:
-    ///   - strokeColor: The color of the empty circle in the background. Defaults to the user accent color with transparency if `nil`.
-    ///   - progressStrokeColor: The color of the progress circle in the foreground. Defaults to the user accent color if `nil`.
+    ///   - strokeColor: The color of the empty circle in the background. Defaults to the user accent color with
+    /// transparency if `nil`.
+    ///   - progressStrokeColor: The color of the progress circle in the foreground. Defaults to the user accent color
+    /// if `nil`.
     @MainActor
     static func wireDriveAsset(strokeColor: Color? = nil, progressStrokeColor: Color? = nil) -> Self {
         Self(strokeColor: strokeColor, progressStrokeColor: progressStrokeColor)

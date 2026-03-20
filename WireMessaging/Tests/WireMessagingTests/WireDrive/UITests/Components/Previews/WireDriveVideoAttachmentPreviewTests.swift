@@ -17,8 +17,8 @@
 //
 
 import SwiftUI
-import WireTestingPackage
 import WireMessagingDomain
+import WireTestingPackage
 import XCTest
 
 @testable import WireMessagingUI
@@ -42,9 +42,17 @@ final class WireDriveVideoAttachmentPreviewTests: XCTestCase {
             (thumbnail: nil, state: .loaded(showReadyToOpen: false), canPlay: true),
             (thumbnail: nil, state: .loaded(showReadyToOpen: false), canPlay: false),
             (thumbnail: nil, state: .loaded(showReadyToOpen: true), canPlay: true),
-            (thumbnail: Image(.rectangularPlaceholder), state: .loading(progress: 0.5, isLargeFile: true), canPlay: true),
-            (thumbnail: Image(.rectangularPlaceholder), state: .loading(progress: 0.5, isLargeFile: true), canPlay: false),
-            (thumbnail: Image(.rectangularPlaceholder), state: .failed, canPlay: true),
+            (
+                thumbnail: Image(.rectangularPlaceholder),
+                state: .loading(progress: 0.5, isLargeFile: true),
+                canPlay: true
+            ),
+            (
+                thumbnail: Image(.rectangularPlaceholder),
+                state: .loading(progress: 0.5, isLargeFile: true),
+                canPlay: false
+            ),
+            (thumbnail: Image(.rectangularPlaceholder), state: .failed, canPlay: true)
         ]
 
         for (index, testCase) in testCases.enumerated() {
