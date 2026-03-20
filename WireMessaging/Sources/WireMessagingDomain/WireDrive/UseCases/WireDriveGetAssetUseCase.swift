@@ -66,7 +66,6 @@ package struct WireDriveGetAssetUseCase {
     }
 
     package func cancelDownload(nodeID: UUID) async {
-        // TODO: this still continues to dl the file and will finish it. needs to be fixed.
         await localAssetRepository.cancelDownload(nodeID: nodeID)
     }
 

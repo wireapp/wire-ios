@@ -180,7 +180,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         switch fileTracker.state {
         case .loading:
             // cancels asset download.
-            localAssetRepository.cancelDownload(nodeID: nodeID)
+            await getAssetUseCase.cancelDownload(nodeID: nodeID)
         case .notLoaded, .failed, .loaded:
             // downloads / opens asset.
             await openAsset()
