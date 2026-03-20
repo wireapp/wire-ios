@@ -553,7 +553,7 @@ final class FilesViewModelTests {
 
         // then
         #expect(fileCache.fileURLForKey_Invocations == ["some-key"])
-        #expect(sut.viewingURL == URL(fileURLWithPath: "/foo"))
+        #expect(sut.viewingURL == nil) // expecting the file to not open automatically after download anymore, if it's large.
     }
 
     @Test(arguments: [

@@ -40,44 +40,46 @@ final class WireDriveDocumentAttachmentPreviewTests: XCTestCase {
 
     @MainActor
     func testConfigurationVariations() async throws {
-        let testCases: [(headerIcon: Image, headerText: String, labelText: String, progress: Double?, isError: Bool)] =
+        let testCases: [(headerIcon: Image, headerText: String, labelText: String, state: WireDriveFileUITracker.State)] =
             [
                 (
                     headerIcon: Image(WireDriveFileType.pdf.imageResource),
                     headerText: "PDF (336 KB)",
                     labelText: "short file name",
-                    progress: nil,
-                    isError: false
+                    state: .notLoaded
                 ),
                 (
                     headerIcon: Image(WireDriveFileType.pdf.imageResource),
                     headerText: "PDF (336 KB)",
                     labelText: "this is a file with a medium name that wraps",
-                    progress: 0.5,
-                    isError: false
+                    state: .loading(progress: 0.5, isLargeFile: true)
                 ),
                 (
                     headerIcon: Image(WireDriveFileType.pdf.imageResource),
                     headerText: "PDF (336 KB)",
                     labelText: "this is a file with a long name that wraps and doesn't fit into the two lines of text",
-                    progress: 1,
-                    isError: true
+                    state: .loaded(showReadyToOpen: false)
+                ),
+                (
+                    headerIcon: Image(WireDriveFileType.pdf.imageResource),
+                    headerText: "PDF (336 KB)",
+                    labelText: "short file name",
+                    state: .loaded(showReadyToOpen: true)
+                ),
+                (
+                    headerIcon: Image(WireDriveFileType.pdf.imageResource),
+                    headerText: "PDF (336 KB)",
+                    labelText: "short file name",
+                    state: .failed
                 )
             ]
 
         for (index, testCase) in testCases.enumerated() {
-            let state: WireDriveFileUITracker.State = if let progress = testCase.progress {
-                .loading(progress: progress, isLargeFile: false)
-            } else if testCase.isError {
-                .failed
-            } else {
-                .loaded(showReadyToOpen: false)
-            }
             let view = WireDriveDocumentAttachmentPreview(
                 headerIcon: testCase.headerIcon,
                 headerText: testCase.headerText,
                 labelText: testCase.labelText,
-                state: state,
+                state: testCase.state,
                 isDraftPreview: false
             )
             .frame(width: 222, height: 74)
