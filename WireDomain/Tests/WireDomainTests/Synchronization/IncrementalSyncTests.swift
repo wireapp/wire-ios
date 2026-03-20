@@ -562,7 +562,7 @@ final class IncrementalSyncTests: XCTestCase {
             [[objectID1]]
         )
     }
-    
+
     func test_processStoredEvents_databaseLocksBeforeSecondBatch_commitsFirstBatchAndAborts() async throws {
         // Given: database starts unlocked, two separate batches
         earService.underlyingIsLocked = false
@@ -698,8 +698,6 @@ final class IncrementalSyncTests: XCTestCase {
         // ...AND deleted from store after processing
         XCTAssertEqual(updateEventsStore.deleteEventEnvelopeAtIndex_Invocations, [11])
     }
-
-
 
     // MARK: - Helper Methods
 
