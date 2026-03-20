@@ -100,6 +100,7 @@ struct WireDriveDocumentHeaderView: View {
             EmptyView()
         case .loading:
             Text(Strings.Files.tapToCancelDownload)
+                .minimumScaleFactor(0.5)
         }
     }
 
