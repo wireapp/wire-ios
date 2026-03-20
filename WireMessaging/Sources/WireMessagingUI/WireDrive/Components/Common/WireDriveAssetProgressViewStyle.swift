@@ -29,7 +29,7 @@ struct WireDriveAssetProgressViewStyle: ProgressViewStyle {
     }
     
     private var color: Color {
-        strokeColor ?? wireAccentColor.color
+        wireAccentColor.color
     }
 
     func makeBody(configuration: Configuration) -> some View {
