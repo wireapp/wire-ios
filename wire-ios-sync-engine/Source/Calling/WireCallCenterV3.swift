@@ -849,7 +849,7 @@ public extension WireCallCenterV3 {
                     shouldRing: false,
                     degraded: isDegraded(conversationId: conversationId)
                 )
-                callSnapshots[conversationId] = previousSnapshot.update(with: callState)
+                callSnapshots[conversationId] = previousSnapshot.update(with: callState).updateVideoState(.stopped)
             } else {
                 callSnapshots[conversationId] = previousSnapshot.update(with: .terminating(reason: reason))
             }
