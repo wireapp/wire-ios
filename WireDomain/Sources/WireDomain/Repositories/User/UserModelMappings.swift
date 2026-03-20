@@ -161,6 +161,8 @@ extension WireNetwork.User {
             isDeleted: deleted ?? false,
             email: email,
             expiresAt: expiresAt,
+            appDescription: app?.description,
+            appCategory: app?.category,
             serviceID: service?.id,
             serviceProvider: service?.provider,
             supportedProtocols: supportedProtocols?.toDomainModel()
@@ -189,6 +191,8 @@ extension WireNetwork.SelfUser {
             isDeleted: deleted ?? false,
             email: email,
             expiresAt: expiresAt,
+            appDescription: app?.description,
+            appCategory: app?.category,
             serviceID: service?.id,
             serviceProvider: service?.provider,
             supportedProtocols: supportedProtocols?.toDomainModel()
