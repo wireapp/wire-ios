@@ -16,24 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireData
-import WireDataModel
+import CoreData
 
-public struct NewUserInfo: Equatable, Sendable {
-    let userID: WireDataModel.QualifiedID
-    let name: String
-    let handle: String?
-    let teamID: UUID?
-    let type: WireDataModel.TypeOfUser?
-    let accentID: Int
-    let previewAssetKey: String?
-    let completeAssetKey: String?
-    let isDeleted: Bool
-    let email: String?
-    let expiresAt: Date?
-    let appDescription: String?
-    let appCategory: String?
-    let serviceID: UUID?
-    let serviceProvider: UUID?
-    let supportedProtocols: Set<WireDataModel.MessageProtocol>?
+/// Additional information about an app.
+
+public final class AppInfo: NSManagedObject {
+
+    /// The name of the associated Core Data entity.
+
+    public static let entityName = "AppInfo"
+
+    /// The category name of the app (e.g., `"other"`).
+
+    @NSManaged public var category: String
+
+    /// A short description of the app (max 300 characters).
+    ///
+    /// - Note: This corresponds to the `description` field in the API
+    ///   but is renamed to avoid shadowing `NSObject.description`.
+
+    @NSManaged public var appDescription: String
+
 }

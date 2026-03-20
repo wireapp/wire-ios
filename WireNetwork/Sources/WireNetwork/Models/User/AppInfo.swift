@@ -16,24 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireData
-import WireDataModel
+/// App related info within a user profile.
+public struct AppInfo: Equatable, Sendable {
 
-public struct NewUserInfo: Equatable, Sendable {
-    let userID: WireDataModel.QualifiedID
-    let name: String
-    let handle: String?
-    let teamID: UUID?
-    let type: WireDataModel.TypeOfUser?
-    let accentID: Int
-    let previewAssetKey: String?
-    let completeAssetKey: String?
-    let isDeleted: Bool
-    let email: String?
-    let expiresAt: Date?
-    let appDescription: String?
-    let appCategory: String?
-    let serviceID: UUID?
-    let serviceProvider: UUID?
-    let supportedProtocols: Set<WireDataModel.MessageProtocol>?
+    public let category: String
+
+    public let description: String
+
+    public init(
+        category: String,
+        description: String
+    ) {
+        self.category = category
+        self.description = description
+    }
+
 }

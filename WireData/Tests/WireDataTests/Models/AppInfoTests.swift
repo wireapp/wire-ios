@@ -22,7 +22,7 @@ import Testing
 @testable import WireData
 
 @MainActor
-struct WireCellsLocalAssetTests {
+struct AppInfoTests {
 
     private let container: NSPersistentContainer
 
@@ -31,32 +31,25 @@ struct WireCellsLocalAssetTests {
     }
 
     @Test
-    func initialization() throws {
-        // given
-        let context = container.viewContext
-        let nodeID = UUID()
+    func initialization() async throws {
+        let context = container.newBackgroundContext()
+        let (appDescription, category) = try await context.perform {
 
-        let asset = WireCellsLocalAsset(context: context)
-        asset.nodeID = nodeID
-        asset.eTag = "etag"
-        asset.path = "asset/path"
-        asset.contentType = "image/png"
-        asset.size = 1024
-        asset.isDownloaded = true
+            // given
+            let appInfo = AppInfo(context: context)
+            appInfo.appDescription = "desc"
+            appInfo.category = "cat"
 
-        // when
-        try context.save()
+            // when
+            try context.save()
+            let request = try #require(AppInfo.fetchRequest() as? NSFetchRequest<AppInfo>)
+            let persisted = try #require(context.fetch(request).first)
+            return (persisted.appDescription, persisted.category)
+        }
 
         // then
-        let request = try #require(WireCellsLocalAsset.fetchRequest() as? NSFetchRequest<WireCellsLocalAsset>)
-        let persisted = try #require(context.fetch(request).first)
-
-        #expect(persisted.nodeID == nodeID)
-        #expect(persisted.eTag == "etag")
-        #expect(persisted.path == "asset/path")
-        #expect(persisted.contentType == "image/png")
-        #expect(persisted.size == 1024)
-        #expect(persisted.isDownloaded == true)
+        #expect(appDescription == "desc")
+        #expect(category == "cat")
     }
 
 }
