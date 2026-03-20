@@ -114,7 +114,7 @@ final class FilesItemViewModel: ObservableObject {
         self.isInRecycleBin = isInRecycleBin
 
         self.fileTracker = .init()
-        fileTracker.fileShouldOpen = { [weak self] in
+        fileTracker.onSmallFileLoaded = { [weak self] in
             self?.performAction(.primaryAction)
         }
 

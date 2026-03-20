@@ -58,7 +58,7 @@ public final class WireDriveFileUITracker {
                         self.state = .loaded(showReadyToOpen: false)
                     }
                 } else {
-                    fileShouldOpen?()
+                    onSmallFileLoaded?()
                 }
             default:
                 break
@@ -67,7 +67,7 @@ public final class WireDriveFileUITracker {
     }
 
     /// This closure will be called when a file should be automatically opened after the download or upload.
-    public var fileShouldOpen: (() -> Void)?
+    public var onSmallFileLoaded: (() -> Void)?
 
     public func handleDownloadState(fromAsset asset: WireDriveLocalAsset) {
         state = Self.stateFromAsset(asset)

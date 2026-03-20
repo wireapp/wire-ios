@@ -71,7 +71,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         self._displayStyle = displayStyle
         self.isDeleted = false
         self.fileTracker = .init()
-        fileTracker.fileShouldOpen = { [weak self] in
+        fileTracker.onSmallFileLoaded = { [weak self] in
             Task { await self?.handleAsset() }
         }
 
