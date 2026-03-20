@@ -63,6 +63,7 @@ static NSString *const AddressBookEntryKey = @"addressBookEntry";
 static NSString *const MembershipKey = @"membership";
 static NSString *const CreatedTeamsKey = @"createdTeams";
 static NSString *const TypeKey = @"typeValue";
+static NSString *const AppInfoKey = @"appInfo";
 static NSString *const ServiceIdentifierKey = @"serviceIdentifier";
 static NSString *const ProviderIdentifierKey = @"providerIdentifier";
 NSString *const AvailabilityKey = @"availability";
@@ -342,6 +343,7 @@ static NSString *const PrimaryKey = @"primaryKey";
                                            HandleKey, // this is not set on the user directly
                                            MembershipKey,
                                            CreatedTeamsKey,
+                                           AppInfoKey,
                                            ServiceIdentifierKey,
                                            ProviderIdentifierKey,
                                            ExpiresAtKey,

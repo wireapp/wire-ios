@@ -23,7 +23,7 @@ import Foundation
 // because the current UI tests depend on these exact values.
 // We are keeping them as-is for now to avoid breaking existing tests.
 //
-// TODO: [WPB-21952] Replace these explicit string values with properly camel-cased,
+// TODO: [WPB-21952] Replace these explicit string values with properly camelCased,
 // non-UI-text-based identifiers (e.g., accessibility identifiers) to have this
 // unform format and reduce test fragility.
 
@@ -328,6 +328,62 @@ public enum Locators {
             case saveButton
             case cancelButton
             case removeFilterButton
+        }
+
+        public enum ShareLinkPasswordPage: String {
+            case togglePassword
+            case sharePassword
+            case resetPassword
+            case savePassword
+        }
+
+        public enum ShareLinkPage: String {
+            case sharePassword
+            case shareLink
+        }
+
+        public enum FilesContentPage: String {
+            case confirm
+            case search
+
+            public static func fileItem(_ index: Int) -> String {
+                "fileItem\(index)"
+            }
+        }
+
+        public enum FilesPage: String {
+            case close
+            case createFolder
+            case createFile
+            case recycleBin
+        }
+
+        public enum FilesInfoPage: String {
+            case preparingFilesTitle
+            case preparingFilesMessage
+            case noFilesSearchTitle
+            case noFilesSearchMessage
+            case noFilesTitle
+            case noFilesAllConversationsMessage
+            case noFilesMessage
+            case errorTitle
+            case errorMessage
+            case retryButton
+            case loadMore
+        }
+
+        public enum EditFilePage: String {
+            case close
+        }
+
+        public enum CreateFilePage: String {
+            case cancelButton
+            case createButton
+        }
+
+        public enum FileRenamePage: String {
+            case cancel
+            case save
         }
     }
 }

@@ -18,6 +18,10 @@
         "domain": "example.com",
         "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
     },
+    "app": {
+      "category": "cat",
+      "description": "desc"
+    },
     "service": {
         "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
         "provider": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
