@@ -118,12 +118,7 @@ struct FilesItemView: View {
 
     @ViewBuilder
     private func icon() -> some View {
-        let state: WireDriveFileUITracker.State = viewModel.fileTracker.state
-        // let state: WireDriveFileUITracker.State = .downloading(progress: 0.3, isLargeFile: false)
-        // let state: WireDriveFileUITracker.State = .failed(error: URLError(.badURL))
-        // let state: WireDriveFileUITracker.State = .downloaded(showReadyToOpen: true)
-
-        switch state {
+        switch viewModel.fileTracker.state {
         case .notLoaded, .loaded(showReadyToOpen: false), .failed:
             fileTypeIcon()
         case .loaded(showReadyToOpen: true):
@@ -205,12 +200,7 @@ struct FilesItemView: View {
 
     @ViewBuilder
     private func infoRow() -> some View {
-        let state: WireDriveFileUITracker.State = viewModel.fileTracker.state
-        // let state: WireDriveFileUITracker.State = .downloading(progress: 0.7, isLargeFile: false)
-        // let state: WireDriveFileUITracker.State = .failed(error: URLError(.badURL))
-        // let state: WireDriveFileUITracker.State = .downloaded(showReadyToOpen: true)
-
-        switch state {
+        switch viewModel.fileTracker.state {
         case .notLoaded, .loaded(showReadyToOpen: false):
             HStack(spacing: 5) {
                 tagsInfo()
