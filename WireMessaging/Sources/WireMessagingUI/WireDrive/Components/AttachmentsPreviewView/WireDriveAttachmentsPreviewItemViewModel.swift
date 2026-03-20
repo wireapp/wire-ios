@@ -71,6 +71,9 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         self._displayStyle = displayStyle
         self.isDeleted = false
         self.fileTracker = .init()
+        fileTracker.fileShouldOpen = { [weak self] in
+            Task { await self?.handleAsset() }
+        }
 
         setupBindings()
 
@@ -174,31 +177,25 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         pollingTask = nil
     }
 
-    func onTap() async {
+    func handleAsset() async {
         guard !isDeleted else { return }
         
-        switch fileTracker.state {
-        case .loading:
-            // cancels asset download.
-            await getAssetUseCase.cancelDownload(nodeID: nodeID)
-        case .notLoaded, .failed, .loaded:
-            // downloads / opens asset.
-            await openAsset()
-        }
-
-    }
-    
-    private func openAsset() async {
         do {
-            let url = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
-            if canOpen {
+            switch fileTracker.state {
+            case .notLoaded, .failed:
+                _ = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
+            case .loaded:
+                let url = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
                 QuickLookPreviewPresenter.present(url: url)
+            case .loading:
+                await getAssetUseCase.cancelDownload(nodeID: nodeID)
             }
         } catch {
             WireLogger.wireDrive.error("Failed to open file with node ID: \(nodeID), error: \(error)")
         }
-    }
 
+    }
+    
     private var previewSize: CGSize? {
         guard let size = attachment.initialMetadata?.dimension, size.width > 0, size.height > 0 else {
             return nil
@@ -264,15 +261,6 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
     private var fileSize: String? {
         let fileSize = node?.size.map { Int($0) } ?? attachment.initialSize
         return fileSize.map { $0.formatted(.byteCount(style: .decimal)) }
-    }
-
-    private var canOpen: Bool {
-        switch fileTracker.state {
-        case let .loaded(showReadyToOpen):
-            !showReadyToOpen
-        default:
-            false
-        }
     }
 
     private func setupBindings() {

@@ -119,7 +119,7 @@ struct WireDriveAttachmentsPreviewItemView: View {
     }
 
     private func onTap() {
-        Task { await viewModel.onTap() }
+        Task { await viewModel.handleAsset() }
     }
 
 }
