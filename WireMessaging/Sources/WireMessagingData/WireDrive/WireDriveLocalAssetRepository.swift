@@ -80,24 +80,15 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
     /// The download can be observed via the `observeAsset(nodeID:)` method.
     @MainActor
     package func downloadAsset(nodeID: UUID) async throws {
-        let downloadTask: Task<Void, any Error>
-
         if let existingTask = downloadTasks[nodeID] {
-            downloadTask = existingTask
+            try await existingTask.value
         } else {
             defer { downloadTasks[nodeID] = nil }
 
             let task = Task { try await _downloadAsset(nodeID: nodeID) }
             downloadTasks[nodeID] = task
-            downloadTask = task
+            try await task.value
         }
-
-        try await withTaskCancellationHandler {
-            try await downloadTask.value
-        } onCancel: {
-            downloadTask.cancel()
-        }
-
     }
 
     /// Observes the asset for the given `nodeID`. A value of `nil` is emitted if the asset has never been fetched.

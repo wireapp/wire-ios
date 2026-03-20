@@ -49,8 +49,6 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
     @Published private var isDeleted: Bool
     @Published var fileTracker: WireDriveFileUITracker
 
-    private var openAssetTask: Task<Void, Never>?
-
     init(
         attachment: WireDriveMessageAttachment,
         alignment: HorizontalAlignment,
@@ -178,30 +176,26 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
 
     func onTap() async {
         guard !isDeleted else { return }
-
+        
         switch fileTracker.state {
         case .loading:
-            // cancel asset download.
-            openAssetTask?.cancel()
-        case .notLoaded, .loaded, .failed:
+            // cancels asset download.
+            localAssetRepository.cancelDownload(nodeID: nodeID)
+        case .notLoaded, .failed, .loaded:
             // downloads / opens asset.
-            openAssetTask = openAsset()
+            await openAsset()
         }
 
     }
-
-    private func openAsset() -> Task<Void, Never> {
-        Task {
-            do {
-                let url = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
-                if canOpen {
-                    QuickLookPreviewPresenter.present(url: url)
-                }
-            } catch is CancellationError {
-                WireLogger.wireDrive.debug("Cancelled opening file with node ID: \(nodeID)")
-            } catch {
-                WireLogger.wireDrive.error("Failed to open file with node ID: \(nodeID), error: \(error)")
+    
+    private func openAsset() async {
+        do {
+            let url = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
+            if canOpen {
+                QuickLookPreviewPresenter.present(url: url)
             }
+        } catch {
+            WireLogger.wireDrive.error("Failed to open file with node ID: \(nodeID), error: \(error)")
         }
     }
 
