@@ -27,7 +27,7 @@ struct WireDriveAssetProgressViewStyle: ProgressViewStyle {
     init(strokeColor: Color? = nil) {
         self.strokeColor = strokeColor
     }
-    
+
     private var color: Color {
         wireAccentColor.color
     }
@@ -38,7 +38,7 @@ struct WireDriveAssetProgressViewStyle: ProgressViewStyle {
         ZStack {
             Circle()
                 .stroke(strokeColor ?? color.opacity(0.2), lineWidth: lineWidth)
-            
+
             Circle()
                 .trim(from: 0, to: progress)
                 .stroke(
@@ -55,7 +55,8 @@ struct WireDriveAssetProgressViewStyle: ProgressViewStyle {
 }
 
 extension ProgressViewStyle where Self == WireDriveAssetProgressViewStyle {
-    @MainActor static func wireDriveAsset(strokeColor: Color? = nil) -> Self {
+    @MainActor
+    static func wireDriveAsset(strokeColor: Color? = nil) -> Self {
         Self(strokeColor: strokeColor)
     }
 }

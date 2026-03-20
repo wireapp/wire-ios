@@ -21,6 +21,9 @@ public import Foundation
 // sourcery: AutoMockable
 public protocol FileDownloading: Sendable {
 
-    func download(from url: URL) -> (progress: AsyncThrowingStream<Double, any Error>, download: Task<(URL, URLResponse), any Error>)
+    func download(from url: URL) -> (progress: AsyncThrowingStream<Double, any Error>, download: Task<
+        (URL, URLResponse),
+        any Error
+    >)
 
 }

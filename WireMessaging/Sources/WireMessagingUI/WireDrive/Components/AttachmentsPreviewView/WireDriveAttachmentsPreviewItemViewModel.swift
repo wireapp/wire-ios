@@ -179,7 +179,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
 
     func handleAsset() async {
         guard !isDeleted else { return }
-        
+
         do {
             switch fileTracker.state {
             case .notLoaded, .failed:
@@ -195,7 +195,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         }
 
     }
-    
+
     private var previewSize: CGSize? {
         guard let size = attachment.initialMetadata?.dimension, size.width > 0, size.height > 0 else {
             return nil

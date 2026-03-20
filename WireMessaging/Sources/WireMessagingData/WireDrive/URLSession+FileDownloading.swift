@@ -21,7 +21,10 @@ public import WireMessagingDomain
 
 extension URLSession: FileDownloading {
 
-    func download(from url: URL) -> (progress: AsyncThrowingStream<Double, any Error>, download: Task<(URL, URLResponse), any Error>) {
+    func download(from url: URL) -> (progress: AsyncThrowingStream<Double, any Error>, download: Task<
+        (URL, URLResponse),
+        any Error
+    >) {
         let (progressStream, progressContinuation) = AsyncThrowingStream.makeStream(of: Double.self)
 
         let delegate = URLSessionTaskProgressDelegate { fractionCompleted in

@@ -72,7 +72,7 @@ struct WireDriveSmallVideoPreviewView: View {
                         case .notLoaded, .loaded:
                             PlayIcon()
                                 .disabled(false)
-                        case .loading(let progress, _):
+                        case let .loading(progress, _):
                             ZStack {
                                 PlayIcon()
 
