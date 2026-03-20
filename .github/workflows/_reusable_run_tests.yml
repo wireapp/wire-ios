@@ -196,10 +196,10 @@ jobs:
           restore-keys: |
             kalium-gradle-${{ runner.os }}-${{ runner.arch }}-
 
-      - name: Cache Kalium fat jar
+      - name: Restore Kalium fat jar cache
         if: ${{ inputs.run_critical_flows }}
         id: jar-cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ${{ runner.temp }}/kalium/tools/testservice/build/libs/
           key: kalium-jar-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-ref.outputs.ref }}
@@ -242,6 +242,14 @@ jobs:
 
           echo "JAR=$JAR" >> "$GITHUB_ENV"
           echo "Using jar: $JAR"
+          ls -la "$LIBS_DIR"
+
+      - name: Save Kalium fat jar cache
+        if: ${{ inputs.run_critical_flows && steps.jar-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/kalium/tools/testservice/build/libs/
+          key: kalium-jar-${{ runner.os }}-${{ runner.arch }}-${{ steps.kalium-ref.outputs.ref }}
 
       - name: Start Kalium Testservice
         if: ${{ inputs.run_critical_flows }}

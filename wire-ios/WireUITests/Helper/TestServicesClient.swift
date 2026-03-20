@@ -63,7 +63,7 @@ class TestServicesClient {
         ]
 
         let (responseData, response) = try await sendHttpRequest(
-            url: String(describing: requestUrl),
+            url: requestUrl.absoluteString,
             body: body,
             requestType: "PUT"
         )
@@ -100,7 +100,7 @@ class TestServicesClient {
         ]
 
         let (responseData, response) = try await sendHttpRequest(
-            url: String(describing: requestUrl),
+            url: requestUrl.absoluteString,
             body: body,
             requestType: "POST"
         )
@@ -160,8 +160,8 @@ class TestServicesClient {
             body["buttons"] = buttons
         }
 
-        let (responseData, response) = try await sendHttpRequest(
-            url: String(describing: requestUrl),
+        let (_, response) = try await sendHttpRequest(
+            url: requestUrl.absoluteString,
             body: body,
             requestType: "POST"
         )
@@ -172,8 +172,8 @@ class TestServicesClient {
         }
     }
 
-    func fileToBase64String(filePath: String) throws -> String {
-        let fileData = try Data(contentsOf: URL(fileURLWithPath: filePath))
+    func fileToBase64String(fileURL: URL) throws -> String {
+        let fileData = try Data(contentsOf: fileURL)
         return fileData.base64EncodedString()
     }
 
@@ -201,7 +201,7 @@ class TestServicesClient {
 
         var body: [String: Any] = [
             "conversationId": convoId.uuidString.lowercased(),
-            "data": try fileToBase64String(filePath: filepath),
+            "data": try fileToBase64String(fileURL: URL(fileURLWithPath: filepath)),
             "fileName": fileName,
             "type": type
         ]
@@ -215,7 +215,64 @@ class TestServicesClient {
         }
 
         let (_, response) = try await sendHttpRequest(
-            url: String(describing: requestUrl),
+            url: requestUrl.absoluteString,
+            body: body,
+            requestType: "POST"
+        )
+
+        let pureResponse = response as! HTTPURLResponse
+        if pureResponse.statusCode != 200 {
+            throw RuntimeError("Error \(pureResponse.description)")
+        }
+    }
+
+    func sendImage(
+        user: UserInfo,
+        fileURL: URL,
+        type: String,
+        convoId: UUID,
+        domain: String,
+//        width: Int = 0,
+//        height: Int = 0,
+//        timeoutMillis: Int = 0,
+//        expectsReadConfirmation: Bool = true
+    ) async throws {
+
+        let instanceId = try await getInstanceId(
+            email: user.email,
+            password: user.password,
+            name: user.name,
+            verificationCode: nil,
+            deviceName: nil
+        )
+
+        let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)/sendImage")
+        guard let requestUrl = url else { fatalError("Invalid URL") }
+
+        let body: [String: Any] = [
+            "conversationId": convoId.uuidString.lowercased(),
+            "data": try fileToBase64String(fileURL: fileURL),
+            "conversationDomain": domain,
+            "type": type,
+//            "width": width,
+//            "height": height,
+//            "legalHoldStatus": 0
+        ]
+
+//        if domain != "staging.zinfra.io" {
+//            body["conversationDomain"] = domain
+//        }
+//
+//        if timeoutMillis > 0 {
+//            body["messageTimer"] = timeoutMillis
+//        }
+//
+//        if expectsReadConfirmation {
+//            body["expectsReadConfirmation"] = true
+//        }
+
+        let (_, response) = try await sendHttpRequest(
+            url: requestUrl.absoluteString,
             body: body,
             requestType: "POST"
         )
@@ -243,13 +300,13 @@ class TestServicesClient {
         let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)/getMessages")
         guard let requestUrl = url else { fatalError("Invalid URL") }
 
-        var body: [String: Any] = [
+        let body: [String: Any] = [
             "conversationId": convoId.uuidString.lowercased(),
             "conversationDomain": domain
         ]
 
         let (responseData, response) = try await sendHttpRequest(
-            url: String(describing: requestUrl),
+            url: requestUrl.absoluteString,
             body: body,
             requestType: "POST"
         )

@@ -22,7 +22,7 @@ import XCTest
 final class MessagingTests: WireUITestCase {
 
     @MainActor
-    func testSendAndReceiveTextMessageInGroupConversation_TC_0000() async throws {
+    func testSendAndReceiveTextInGroupConversation_TC_0000() async throws {
 
         // GIVEN
         let groupName = UserGenerator.generateRandomGroupName()
@@ -62,6 +62,60 @@ final class MessagingTests: WireUITestCase {
         XCTAssertTrue(
             receivedMessages.contains(messageFromMember1),
             "Expected message '\(messageFromMember1)' not found in sent messages: \(receivedMessages)"
+        )
+    }
+    
+    @MainActor
+    func testSendAndReceiveImageInGroupConversation_TC_0000() async throws {
+
+        // GIVEN
+        let groupName = UserGenerator.generateRandomGroupName()
+        let (teamOwner, teamMembers, _, conversationId) = try await userHelper
+            .registerTeam(
+                withMemberCount: 1,
+                groupName: groupName
+            )
+
+        let convId = try XCTUnwrap(conversationId, "conversationId is nil")
+
+        let (_, domain) = try await userHelper.getConversationId(matching: .groupName(groupName))
+        let convoDomain = try XCTUnwrap(domain)
+
+        let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+        let conversationsPage = try firstTimePage.acceptPopup(with: self)
+        let imageURL = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("TestServicesData/Img/testImage.jpg")
+        let imageExtension = imageURL.pathExtension
+        
+        // WHEN member1 send image
+        try await testServicesClient.sendImage(
+            user: teamMembers[0],
+            fileURL: imageURL,
+            type: imageExtension,
+            convoId: convId,
+            domain: convoDomain
+        )
+
+        XCTAssertTrue(
+            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 2),
+            "Unread messages count element did not appear"
+        )
+
+        let activeConversationPage = try conversationsPage.openConversation()
+
+        // THEN
+        XCTAssertTrue(
+            activeConversationPage.fileTypeIcons.firstMatch.exists,
+            "Expected image attachment not found"
+        )
+        
+        let senders = activeConversationPage.fetchSenders()
+        XCTAssertEqual(
+            senders.first,
+            teamMembers[0].name,
+            "Expected sender '\(teamMembers[0].name)' but found '\(senders.first ?? "nil")'"
         )
     }
 }

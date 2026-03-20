@@ -80,6 +80,10 @@ class ActiveConversationPage: PageModel {
     var fileLabels: XCUIElementQuery {
         app.staticTexts.matching(identifier: "FileTransferTopLabel")
     }
+    
+    var fileTypeIcons: XCUIElementQuery {
+        app.images.matching(identifier: "FileTransferFileTypeIcon")
+    }
 
     var labelSharedDriveIsOn: XCUIElement {
         app.staticTexts[Locators.ActiveConversationPage.labelSharedDriveON.rawValue]
