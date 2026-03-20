@@ -22,14 +22,19 @@ import SwiftUI
 struct WireDriveAssetProgressViewStyle: ProgressViewStyle {
     @Environment(\.wireAccentColor) private var wireAccentColor
     @ScaledMetric private var lineWidth: CGFloat = 2
-    private let strokeColor: Color?
-
-    init(strokeColor: Color? = nil) {
-        self.strokeColor = strokeColor
-    }
+    
+    /// The color of the empty circle in the background. Defaults to the user accent color with transparency if `nil`.
+    var strokeColor: Color?
+    
+    /// The color of the progress circle in the foreground. Defaults to the user accent color if `nil`.
+    var progressStrokeColor: Color?
 
     private var color: Color {
-        wireAccentColor.color
+        strokeColor ?? wireAccentColor.color.opacity(0.2)
+    }
+    
+    private var progressColor: Color {
+        progressStrokeColor ?? wireAccentColor.color
     }
 
     func makeBody(configuration: Configuration) -> some View {
@@ -37,12 +42,12 @@ struct WireDriveAssetProgressViewStyle: ProgressViewStyle {
 
         ZStack {
             Circle()
-                .stroke(strokeColor ?? color.opacity(0.2), lineWidth: lineWidth)
+                .stroke(color, lineWidth: lineWidth)
 
             Circle()
                 .trim(from: 0, to: progress)
                 .stroke(
-                    color,
+                    progressColor,
                     style: StrokeStyle(
                         lineWidth: lineWidth,
                         lineCap: .round
@@ -55,9 +60,12 @@ struct WireDriveAssetProgressViewStyle: ProgressViewStyle {
 }
 
 extension ProgressViewStyle where Self == WireDriveAssetProgressViewStyle {
+    /// - Parameters:
+    ///   - strokeColor: The color of the empty circle in the background. Defaults to the user accent color with transparency if `nil`.
+    ///   - progressStrokeColor: The color of the progress circle in the foreground. Defaults to the user accent color if `nil`.
     @MainActor
-    static func wireDriveAsset(strokeColor: Color? = nil) -> Self {
-        Self(strokeColor: strokeColor)
+    static func wireDriveAsset(strokeColor: Color? = nil, progressStrokeColor: Color? = nil) -> Self {
+        Self(strokeColor: strokeColor, progressStrokeColor: progressStrokeColor)
     }
 }
 
