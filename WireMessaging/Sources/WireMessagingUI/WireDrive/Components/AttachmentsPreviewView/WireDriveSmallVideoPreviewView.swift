@@ -68,10 +68,11 @@ struct WireDriveSmallVideoPreviewView: View {
                     .resizable()
                     .scaledToFill()
                     .overlay {
-                        if case .notLoaded = state {
+                        switch state {
+                        case .notLoaded, .loaded:
                             PlayIcon()
                                 .disabled(false)
-                        } else if case let .loading(progress, _) = state {
+                        case .loading(let progress, _):
                             ZStack {
                                 PlayIcon()
 
@@ -81,6 +82,8 @@ struct WireDriveSmallVideoPreviewView: View {
                                     .progressViewStyle(.wireDriveAsset(strokeColor: .white))
                                     .frame(height: 30)
                             }
+                        case .failed:
+                            EmptyView()
                         }
                     }
             case .failure:
